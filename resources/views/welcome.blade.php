@@ -63,9 +63,14 @@
                                     <li><a><i class="fa fa-folder"></i> Catálogos<span
                                                 class="fa fa-chevron-down"></span></a>
                                         <ul class="nav child_menu">
-                                            <li><a href="{{ url('partido/') }}">Partido</a></li>
-                                            <li><a href="{{ url('torneo/') }}">Torneo</a></li>
-                                            <li><a href="{{ url('equipo/') }}">Equipo</a></li>
+                                            <li><a href="{{ url('catalogo/aseguradoras') }}">Aseguradora</a></li>
+                                            <li><a href="{{ url('catalogo/ejecutivos') }}">Ejecutivo</a></li>
+                                            <li><a href="{{ url('catalogo/estado_polizas') }}">Estado Poliza</a></li>
+                                            <li><a href="{{ url('catalogo/estado_ventas') }}">Estado Venta</a></li>
+                                            <li><a href="{{ url('catalogo/tipo_carteras') }}">Tipo Cartera</a></li>
+                                            <li><a href="{{ url('catalogo/tipo_negocios') }}">Tipo Negocio</a></li>
+                                            <li><a href="{{ url('catalogo/tipo_polizas') }}">Tipo Poliza (ramo)</a></li>    
+                                            <li><a href="{{ url('catalogo/ubicacion_cobros') }}">Ubicacion Cobro</a></li>
                                         </ul>
                                     </li>
 
