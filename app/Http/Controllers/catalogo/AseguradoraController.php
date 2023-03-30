@@ -117,8 +117,9 @@ class AseguradoraController extends Controller
      */
     public function destroy($id)
     {
-        $aseguradora = Aseguradora::findOrFail($id)->update(['Activo' => 0]);
-        Alert::success('El registro ha sido desactivado correctamente');
-        return Redirect::to('catalogo/aseguradoras');
+        $aseguradora = Aseguradora::findOrFail($id)->update(['Activo' => 0]);       
+        alert()->error('El registro ha sido desactivado correctamente');
+        return back(); 
+        //return Redirect::to('catalogo/aseguradoras');
     }
 }

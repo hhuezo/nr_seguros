@@ -2,13 +2,14 @@
 @section('contenido')
     <div class="x_panel">
 
-        <script src="{{ asset('vendors/sweetalert/sweetalert.min.js') }}"></script>
+        @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
         <div class="x_title">
             <div class="col-md-6 col-sm-6 col-xs-12">
                 <h3>Listado de aseguradoras </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
-                <a href="{{ url('catalogo/aseguradoras/create/') }}"><button class="btn btn-info float-right"> <i class="fa fa-plus"></i> Nuevo</button></a>
+                <a href="{{ url('catalogo/aseguradoras/create/') }}"><button class="btn btn-info float-right"> <i
+                            class="fa fa-plus"></i> Nuevo</button></a>
             </div>
             <div class="clearfix"></div>
         </div>
@@ -33,8 +34,8 @@
                             <tr>
                                 <td>{{ $obj->Nombre }}</td>
                                 <td>{{ $obj->Codigo }}</td>
-                                <td>{{ $obj->Telefono}}</td>
-                                <td>{{ $obj->Contacto}}</td>
+                                <td>{{ $obj->Telefono }}</td>
+                                <td>{{ $obj->Contacto }}</td>
                                 @if ($obj->Activo == 1)
                                     <td align="center"><input type="checkbox" checked></td>
                                 @else
@@ -43,24 +44,25 @@
                                 <td align="center">
 
                                     @can('edit users')
-                                    <a href="{{ url('catalogo/aseguradoras') }}/{{ $obj->Id }}/edit"
-                                        class="on-default edit-row">
-                                        <i class="fa fa-pencil fa-lg"></i></a>
+                                        <a href="{{ url('catalogo/aseguradoras') }}/{{ $obj->Id }}/edit"
+                                            class="on-default edit-row">
+                                            <i class="fa fa-pencil fa-lg"></i></a>
                                     @endcan
 
 
-                                     @can('delete users')
+                                    @can('delete users')
                                         &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}"
                                             data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
-                                    @endcan 
+                                    @endcan
                                 </td>
                             </tr>
-                          <?php /*  @include('catalogo.aseguradora.modal') */ ?>
+                            @include('catalogo.aseguradora.modal')
                         @endforeach
                     </tbody>
                 </table>
 
             </div>
-           </div>
+        </div>
     </div>
+    @include('sweetalert::alert')
 @endsection
