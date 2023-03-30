@@ -104,6 +104,16 @@ class AseguradoraController extends Controller
     public function update(Request $request, $id)
     {
 
+        $messages = [
+            'Nombre.required' => 'El campo nombre es requerido',
+        ];
+
+
+
+        $request->validate([   
+            'Nombre' => 'required',
+        ], $messages);
+
         $aseguradora = Aseguradora::findOrFail($id);
         $aseguradora->Nombre = $request->Nombre;
         $aseguradora->Codigo = $request->Codigo;
