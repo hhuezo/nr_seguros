@@ -90,8 +90,7 @@
 
                                     </ul>
                                 </li>
-                                <li><a href="{{ url('resultado') }}"><i class="fa fa-file-pdf-o"></i> Torneos</a>
-                                </li>
+                               
 
 
 

@@ -12,6 +12,7 @@ use App\Http\Controllers\catalogo\TipoCarteraController;
 use App\Http\Controllers\catalogo\TipoNegocioController;
 use App\Http\Controllers\catalogo\TipoPolizaController;
 use App\Http\Controllers\catalogo\UbicacionCobroController;
+use App\Http\Controllers\catalogo\NegocioController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,12 +50,13 @@ Route::resource('usuario', UserController::class);*/
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::resource('catalogo/aseguradoras', AseguradoraController::class);
 Route::resource('catalogo/ejecutivos', EjecutivoController::class);
-Route::resource('catalogo/estado_ventas', EstadoVentaController::class);
-Route::resource('catalogo/tipo_carteras', TipoCarteraController::class);
-Route::resource('catalogo/tipo_negocios', TipoNegocioController::class);
-Route::resource('catalogo/tipo_polizas', TipoPolizaController::class);
-Route::resource('catalogo/ubicacion_cobros', UbicacionCobroController::class);
+Route::resource('catalogo/estado_venta', EstadoVentaController::class);
+Route::resource('catalogo/tipo_cartera', TipoCarteraController::class);
+Route::resource('catalogo/tipo_negocio', TipoNegocioController::class);
+Route::resource('catalogo/tipo_poliza', TipoPolizaController::class);
+Route::resource('catalogo/ubicacion_cobro', UbicacionCobroController::class);
 Route::resource('catalogo/cliente', ClienteController::class);
+Route::resource('catalogo/negocio', NegocioController::class);
 
 
 
