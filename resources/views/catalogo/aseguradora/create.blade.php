@@ -25,93 +25,105 @@
                 @csrf
                 <div class="x_content">
                     <br />
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 ">
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Nombre</label>
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <input type="text" name="Nombre" value="{{old('Nombre')}}" class="form-control" onblur="this.value = this.value.toUpperCase();" required autofocus="true">
+                            </div>
+                           
+                        </div>
+    
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Código</label>
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <input type="text" name="Codigo" value="{{old('Codigo')}}" class="form-control">
+                            </div>
+                          
+                        </div>
 
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Teléfono</label>
+                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <input type="text" name="Telefono" value="{{old('Telefono')}}" class="form-control" data-inputmask="'mask': ['9999-9999']" >
+                            </div>
+                            
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Contacto</label>
+                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <input type="text" name="Contacto" value="{{old('Contacto')}}" class="form-control" autofocus="true">
+                            </div>
+                            
+                        </div>
+    
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Dirección</label>
+                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                            <textarea name="Direccion" rows="3"  class="form-control">{{old('Direccion')}}</textarea>
+                            </div>
+                            
+                        </div>
+    
 
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">Nombre</label>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                            <input type="text" name="Nombre" class="form-control" autofocus="true">
-                        </div>
-                        <label class="col-sm-3 control-label">&nbsp;</label>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">Código</label>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                            <input type="text" name="Codigo" class="form-control">
-                        </div>
-                        <label class="col-sm-3 control-label">&nbsp;</label>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">Teléfono</label>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                            <input type="text" name="Telefono" class="form-control" data-inputmask="'mask': ['9999-9999']" >
-                        </div>
-                        <label class="col-sm-3 control-label">&nbsp;</label>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">Contacto</label>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                            <input type="text" name="Contacto" class="form-control" autofocus="true">
-                        </div>
-                        <label class="col-sm-3 control-label">&nbsp;</label>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">Dirección</label>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                        <textarea name="Direccion" id="Direccion" cols="30" rows="10" class="form-control"></textarea>
-                        </div>
-                        <label class="col-sm-3 control-label">&nbsp;</label>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">Página Web</label>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                            <input type="text" name="PaginaWeb" class="form-control" >
-                        </div>
-                        <label class="col-sm-3 control-label">&nbsp;</label>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">Fax</label>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                            <input type="text" name="Fax" class="form-control" autofocus="true" data-inputmask="'mask': ['9999-9999']">
-                        </div>
-                        <label class="col-sm-3 control-label">&nbsp;</label>
                     </div>
 
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">Nit</label>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                            <input type="text" name="Nit" class="form-control" data-inputmask="'mask': ['9999-999999-999-9']">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 ">
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Página Web</label>
+                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <input type="text" name="PaginaWeb" value="{{old('PaginaWeb')}}" class="form-control" >
+                            </div>
+                            
                         </div>
-                        <label class="col-sm-3 control-label">&nbsp;</label>
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Fax</label>
+                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <input type="text" name="Fax" value="{{old('Fax')}}" class="form-control" autofocus="true" data-inputmask="'mask': ['9999-9999']">
+                            </div>
+                            
+                        </div>
+    
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Nit</label>
+                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <input type="text" name="Nit" value="{{old('Nit')}}" class="form-control" data-inputmask="'mask': ['9999-999999-999-9']">
+                            </div>
+                            
+                        </div>
+    
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Registro Físcal</label>
+                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <input type="text" name="RegistroFiscal" value="{{old('RegistroFiscal')}}" class="form-control">
+                            </div>
+                            
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Abreviatura</label>
+                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <input type="text" name="Abreviatura" value="{{old('Abreviatura')}}" class="form-control" >
+                            </div>
+                            
+                        </div>
+    
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Correo</label>
+                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <input type="email" name="Correo" value="{{old('Correo')}}" class="form-control">
+                            </div>
+                            
+                        </div>
+    
                     </div>
 
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">Registro Físcal</label>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                            <input type="text" name="RegistroFiscal" class="form-control">
-                        </div>
-                        <label class="col-sm-3 control-label">&nbsp;</label>
-                    </div>
+                   
 
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">Abreviatura</label>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                            <input type="text" name="Abreviatura" class="form-control" >
-                        </div>
-                        <label class="col-sm-3 control-label">&nbsp;</label>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">Correo</label>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                            <input type="email" name="Correo" class="form-control">
-                        </div>
-                        <label class="col-sm-3 control-label">&nbsp;</label>
-                    </div>
+                  
+                  
+                    
 
                 </div>
 

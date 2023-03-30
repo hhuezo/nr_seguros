@@ -39,6 +39,20 @@ class AseguradoraController extends Controller
      */
     public function store(Request $request)
     {
+
+
+        $messages = [
+            'Nombre.required' => 'El campo nombre es requerido',
+            'Nombre.unique' => 'El registro ya existe',
+        ];
+
+
+
+        $request->validate([   
+            'Nombre' => 'required|unique:aseguradora',
+        ], $messages);
+
+
         $aseguradora = new Aseguradora();
         $aseguradora->Nombre = $request->Nombre;
         $aseguradora->Codigo = $request->Codigo;

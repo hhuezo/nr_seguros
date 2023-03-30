@@ -20,6 +20,13 @@
     <!-- Custom Theme Style -->
     <link href="{{ asset('build/css/custom.min.css') }}" rel="stylesheet">
 
+    <style>
+        @media (min-width: 768px) .form-horizontal .control-label {
+            padding-top: 7px;
+            margin-bottom: 0;
+            /* text-align: right; */
+        }
+    </style>
 
 </head>
 
@@ -53,37 +60,37 @@
                         <div class="menu_section">
                             <h3>NR Seguros</h3>
                             <ul class="nav side-menu">
-                                    <li><a><i class="fa fa-users"></i> Seguridad <span
-                                                class="fa fa-chevron-down"></span></a>
-                                        <ul class="nav child_menu">
-                                            <li><a href="{{ url('usuario/') }}">Usuario</a></li>
-                                        </ul>
-                                    </li>
+                                <li><a><i class="fa fa-users"></i> Seguridad <span
+                                            class="fa fa-chevron-down"></span></a>
+                                    <ul class="nav child_menu">
+                                        <li><a href="{{ url('usuario/') }}">Usuario</a></li>
+                                    </ul>
+                                </li>
 
-                                    <li><a><i class="fa fa-folder"></i> Catálogos<span
-                                                class="fa fa-chevron-down"></span></a>
-                                        <ul class="nav child_menu">
-                                            <li><a href="{{ url('catalogo/aseguradoras') }}">Aseguradora</a></li>
-                                            <li><a href="{{ url('catalogo/ejecutivos') }}">Ejecutivo</a></li>
-                                            <li><a href="{{ url('catalogo/estado_polizas') }}">Estado Poliza</a></li>
-                                            <li><a href="{{ url('catalogo/estado_ventas') }}">Estado Venta</a></li>
-                                            <li><a href="{{ url('catalogo/tipo_carteras') }}">Tipo Cartera</a></li>
-                                            <li><a href="{{ url('catalogo/tipo_negocios') }}">Tipo Negocio</a></li>
-                                            <li><a href="{{ url('catalogo/tipo_polizas') }}">Tipo Poliza (ramo)</a></li>    
-                                            <li><a href="{{ url('catalogo/ubicacion_cobros') }}">Ubicacion Cobro</a></li>
-                                        </ul>
-                                    </li>
+                                <li><a><i class="fa fa-folder"></i> Catálogos<span
+                                            class="fa fa-chevron-down"></span></a>
+                                    <ul class="nav child_menu">
+                                        <li><a href="{{ url('catalogo/aseguradoras') }}">Aseguradora</a></li>
+                                        <li><a href="{{ url('catalogo/ejecutivos') }}">Ejecutivo</a></li>
+                                        <li><a href="{{ url('catalogo/estado_polizas') }}">Estado Poliza</a></li>
+                                        <li><a href="{{ url('catalogo/estado_ventas') }}">Estado Venta</a></li>
+                                        <li><a href="{{ url('catalogo/tipo_carteras') }}">Tipo Cartera</a></li>
+                                        <li><a href="{{ url('catalogo/tipo_negocios') }}">Tipo Negocio</a></li>
+                                        <li><a href="{{ url('catalogo/tipo_polizas') }}">Tipo Poliza (ramo)</a></li>
+                                        <li><a href="{{ url('catalogo/ubicacion_cobros') }}">Ubicacion Cobro</a></li>
+                                    </ul>
+                                </li>
 
-                                    <li><a><i class="fa fa-file-pdf-o"></i> Reportes<span
-                                                class="fa fa-chevron-down"></span></a>
-                                        <ul class="nav child_menu">
+                                <li><a><i class="fa fa-file-pdf-o"></i> Reportes<span
+                                            class="fa fa-chevron-down"></span></a>
+                                    <ul class="nav child_menu">
 
-                                            <li><a href="{{ url('reportes/corte_caja') }}">Cortes de caja</a></li>
+                                        <li><a href="{{ url('reportes/corte_caja') }}">Cortes de caja</a></li>
 
-                                        </ul>
-                                    </li>
-                                    <li><a href="{{ url('resultado') }}"><i class="fa fa-file-pdf-o"></i> Torneos</a>
-                                    </li>
+                                    </ul>
+                                </li>
+                                <li><a href="{{ url('resultado') }}"><i class="fa fa-file-pdf-o"></i> Torneos</a>
+                                </li>
 
 
 
