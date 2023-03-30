@@ -1,6 +1,6 @@
 @extends ('welcome')
 @section('contenido')
-    <script src="{{ asset('vendors/sweetalert/sweetalert.min.js') }}"></script>
+@include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
     <div class="x_panel">
         <div class="clearfix"></div>
         <div class="row">
@@ -150,7 +150,7 @@
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Ubicación de
                                         cobro</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <select name="UnicacionCobro" class="form-control" style="width: 100%">
+                                        <select name="UbicacionCobro" class="form-control" style="width: 100%">
                                             @foreach ($ubicaciones_cobro as $obj)
                                                 <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
                                             @endforeach
@@ -234,4 +234,5 @@
             </div>
         </div>
     </div>
+    @include('sweetalert::alert')
 @endsection
