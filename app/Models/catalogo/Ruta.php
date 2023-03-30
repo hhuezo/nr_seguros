@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Ruta extends Model
 {
     use HasFactory;
-    protected $table = 'tipo_negocio';
+    protected $table = 'ruta';
 
     protected $primaryKey = 'Id';
 
