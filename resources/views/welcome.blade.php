@@ -82,6 +82,14 @@
                                     </ul>
                                 </li>
 
+                                <li><a><i class="fa fa-folder-open"></i> Pólizas<span
+                                            class="fa fa-chevron-down"></span></a>
+                                    <ul class="nav child_menu">
+                                        <li><a href="{{ url('polizas/residencia') }}">Recidencias</a></li>
+                                        
+                                    </ul>
+                                </li>
+
                                 <li><a><i class="fa fa-file-pdf-o"></i> Reportes<span
                                             class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
@@ -90,7 +98,7 @@
 
                                     </ul>
                                 </li>
-                               
+
 
 
 
