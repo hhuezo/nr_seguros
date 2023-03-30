@@ -34,6 +34,7 @@ Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
+/*
 //security
 Route::resource('permission', PermissionController::class);
 Route::post('permission/unlink', [PermissionController::class, 'unlink']);
@@ -41,7 +42,7 @@ Route::post('permission/link', [PermissionController::class, 'link']);
 Route::post('role/unlink', [UserController::class, 'unlink']);
 Route::post('role/link', [UserController::class, 'link']);
 Route::resource('rol', RoleController::class);
-Route::resource('usuario', UserController::class);
+Route::resource('usuario', UserController::class);*/
 
 
 //catalogos

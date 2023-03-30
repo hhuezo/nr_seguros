@@ -55,7 +55,7 @@
                                     @endcan 
                                 </td>
                             </tr>
-                            @include('catalogo.aseguradora.modal')
+                          <?php /*  @include('catalogo.aseguradora.modal') */ ?>
                         @endforeach
                     </tbody>
                 </table>
