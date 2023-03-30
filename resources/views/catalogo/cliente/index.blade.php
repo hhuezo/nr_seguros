@@ -22,8 +22,8 @@
                     <thead>
                         <tr>
                             <th>Nombre</th>
-                            <th>Codigo</th>
-                            <th>Telefono</th>
+                            <th>NIT</th>
+                            <th>DUI</th>
                             <th>Contacto</th>
                             <th>Activo</th>
                             <th>Opciones</th>
@@ -33,8 +33,8 @@
                         @foreach ($clientes as $obj)
                             <tr>
                                 <td>{{ $obj->Nombre }}</td>
-                                <td>{{ $obj->Codigo }}</td>
-                                <td>{{ $obj->Telefono }}</td>
+                                <td>{{ $obj->Nit }}</td>
+                                <td>{{ $obj->Dui }}</td>
                                 <td>{{ $obj->Contacto }}</td>
                                 @if ($obj->Activo == 1)
                                     <td align="center"><input type="checkbox" checked></td>

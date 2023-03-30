@@ -16,7 +16,7 @@ class ClienteController extends Controller
 
     public function index()
     {
-        $clientes = Cliente::where('Activo','=',1)->get();
+        $clientes = Cliente::get();
         return view('catalogo.cliente.index',compact( 'clientes'));
     }
 
@@ -108,6 +108,8 @@ class ClienteController extends Controller
 
     public function destroy($id)
     {
-        //
+        Cliente::findOrFail($id)->update(['Activo' => 0]);       
+        alert()->error('El registro ha sido desactivado correctamente');
+        return back(); 
     }
 }
