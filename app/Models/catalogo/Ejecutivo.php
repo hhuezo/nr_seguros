@@ -8,4 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 class Ejecutivo extends Model
 {
     use HasFactory;
+    protected $table = 'ejecutivo';
+
+    protected $primaryKey = 'Id';
+
+    public $timestamps = false;
+
+
+    protected $fillable = [
+        'Nombre',
+        'Activo',
+        'Telefono',
+        'Codigo'
+    ];
+
+    protected $guarded = [];
 }

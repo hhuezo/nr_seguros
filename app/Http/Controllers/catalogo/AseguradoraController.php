@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\catalogo;
 
 use App\Http\Controllers\Controller;
+use App\Models\catalogo\Aseguradora;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class AseguradoraController extends Controller
 {
@@ -14,7 +16,8 @@ class AseguradoraController extends Controller
      */
     public function index()
     {
-        dd('holi');
+        $aseguradora = Aseguradora::all();
+        return view('catalogo.aseguradora.index', compact('aseguradora'));
     }
 
     /**
@@ -24,7 +27,7 @@ class AseguradoraController extends Controller
      */
     public function create()
     {
-        //
+        return view('catalogo.aseguradora.create');
     }
 
     /**
@@ -35,7 +38,22 @@ class AseguradoraController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $aseguradora = new Aseguradora();
+        $aseguradora->Nombre = $request->Nombre;
+        $aseguradora->Codigo = $request->Codigo;
+        $aseguradora->Telefono = $request->Telefono;
+        $aseguradora->Contacto = $request->Contacto;
+        $aseguradora->Direccion = $request->Direccion;
+        $aseguradora->PaginaWeb = $request->PaginaWeb;
+        $aseguradora->Fax = $request->Fax;
+        $aseguradora->Nit = $request->Nit;
+        $aseguradora->RegistroFiscal = $request->RegistroFiscal;
+        $aseguradora->Abreviatura = $request->Abreviatura;
+        $aseguradora->Correo = $request->Correo;
+        $aseguradora->save();
+
+        Alert::success('El registro ha sido agregado correctamente');
+        return Redirect::to('catalogo/aseguradoras/create');
     }
 
     /**
@@ -57,7 +75,8 @@ class AseguradoraController extends Controller
      */
     public function edit($id)
     {
-        //
+        $aseguradora = Aseguradora::findOrFail($id);
+        return view('catalogo/aseguradora/edit', compact('aseguradora'));
     }
 
     /**
@@ -69,7 +88,22 @@ class AseguradoraController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $aseguradora = Aseguradora::findOrFail($id);
+        $aseguradora->Nombre = $request->Nombre;
+        $aseguradora->Codigo = $request->Codigo;
+        $aseguradora->Telefono = $request->Telefono;
+        $aseguradora->Contacto = $request->Contacto;
+        $aseguradora->Direccion = $request->Direccion;
+        $aseguradora->PaginaWeb = $request->PaginaWeb;
+        $aseguradora->Fax = $request->Fax;
+        $aseguradora->Nit = $request->Nit;
+        $aseguradora->RegistroFiscal = $request->RegistroFiscal;
+        $aseguradora->Abreviatura = $request->Abreviatura;
+        $aseguradora->Correo = $request->Correo;
+        $aseguradora->update();
+
+        Alert::success('El registro ha sido modificado correctamente');
+        return Redirect::to('catalogo/aseguradoras/'. $id . 'edit');
     }
 
     /**
@@ -80,6 +114,8 @@ class AseguradoraController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $aseguradora = Aseguradora::findOrFail($id)->update(['Activo' => 0]);
+        Alert::success('El registro ha sido desactivado correctamente');
+        return Redirect::to('catalogo/aseguradoras');
     }
 }

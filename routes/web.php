@@ -1,10 +1,17 @@
 <?php
 
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\seguridad\UserController;
 use App\Http\Controllers\catalogo\ClienteController;
 use App\Http\Controllers\catalogo\AseguradoraController;
+use App\Http\Controllers\catalogo\EjecutivoController;
+use App\Http\Controllers\catalogo\EstadoVentaController;
+use App\Http\Controllers\catalogo\TipoCarteraController;
+use App\Http\Controllers\catalogo\TipoNegocioController;
+use App\Http\Controllers\catalogo\TipoPolizaController;
+use App\Http\Controllers\catalogo\UbicacionCobroController;
 
 /*
 |--------------------------------------------------------------------------
