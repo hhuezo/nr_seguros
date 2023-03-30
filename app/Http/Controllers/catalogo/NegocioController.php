@@ -63,12 +63,33 @@ class NegocioController extends Controller
 
     public function edit($id)
     {
-        //
+        $negocio = Negocio::findOrFail($id); 
+        $aseguradoras = Aseguradora::where('Activo','=',1)->get();
+        $tipos_poliza = TipoPoliza::where('Activo','=',1)->get();
+        $tipos_negocio = TipoNegocio::where('Activo','=',1)->get();
+        $estados_venta = EstadoVenta::where('Activo','=',1)->get();
+        $ejecutivos = Ejecutivo::where('Activo','=',1)->get();
+
+        return view('catalogo.negocio.edit', compact('negocio','aseguradoras','tipos_poliza','tipos_negocio','estados_venta','ejecutivos') );
     }
 
     public function update(Request $request, $id)
     {
-        //
+        $negocio = Negocio::findOrFail($id);
+        $negocio->Asegurado = $request->Asegurado;
+        $negocio->Aseguradora = $request->Aseguradora;
+        $negocio->FechaVenta = $request->FechaVenta;
+        $negocio->TipoPoliza = $request->TipoPoliza;
+        $negocio->InicioVigencia = $request->InicioVigencia;
+        $negocio->SumaAsegurada = $request->SumaAsegurada;
+        $negocio->Prima = $request->Prima;
+        $negocio->Observacion = $request->Observacion;
+        $negocio->TipoNegocio = $request->TipoNegocio;
+        $negocio->EstadoVenta = $request->EstadoVenta;
+        $negocio->Ejecutivo = $request->Ejecutivo;
+        $negocio->update();
+        alert()->success('El registro ha sido modificado correctamente');
+        return back(); 
     }
 
     public function destroy($id)
