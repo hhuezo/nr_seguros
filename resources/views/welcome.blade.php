@@ -70,6 +70,7 @@
                                 <li><a><i class="fa fa-folder"></i> Catálogos<span
                                             class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
+                                        <li><a href="{{ url('catalogo/cliente') }}">Clientes</a></li>
                                         <li><a href="{{ url('catalogo/aseguradoras') }}">Aseguradora</a></li>
                                         <li><a href="{{ url('catalogo/ejecutivos') }}">Ejecutivo</a></li>
                                         <li><a href="{{ url('catalogo/estado_polizas') }}">Estado Poliza</a></li>
