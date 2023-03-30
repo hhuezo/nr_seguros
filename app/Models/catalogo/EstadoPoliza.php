@@ -8,4 +8,18 @@ use Illuminate\Database\Eloquent\Model;
 class EstadoPoliza extends Model
 {
     use HasFactory;
+    protected $table = 'estado_poliza';
+
+    protected $primaryKey = 'Id';
+
+    public $timestamps = false;
+
+
+    protected $fillable = [
+        'Nombre',
+        'Activo'
+    ];
+
+    protected $guarded = [];
+
 }
