@@ -5,10 +5,10 @@ namespace App\Models\catalogo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class UbicacionCobro extends Model
+class Ruta extends Model
 {
     use HasFactory;
-    protected $table = 'ubicacion_cobro';
+    protected $table = 'ruta';
 
     protected $primaryKey = 'Id';
 
@@ -16,6 +16,7 @@ class UbicacionCobro extends Model
 
 
     protected $fillable = [
+        'Codigo',
         'Nombre',
         'Activo'
     ];
