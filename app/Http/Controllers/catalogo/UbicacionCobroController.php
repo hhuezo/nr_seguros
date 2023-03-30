@@ -24,7 +24,7 @@ class UbicacionCobroController extends Controller
      */
     public function create()
     {
-        //
+        
     }
 
     /**

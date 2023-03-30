@@ -3,6 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\seguridad\UserController;
+use App\Http\Controllers\catalogo\ClienteController;
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -43,6 +46,7 @@ Route::resource('catalogo/tipo_carteras', TipoCarteraController::class);
 Route::resource('catalogo/tipo_negocios', TipoNegocioController::class);
 Route::resource('catalogo/tipo_polizas', TipoPolizaController::class);
 Route::resource('catalogo/ubicacion_cobros', UbicacionCobroController::class);
+Route::resource('catalogo/cliente', ClienteController::class);
 
 
 
