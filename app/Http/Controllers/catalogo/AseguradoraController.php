@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\catalogo\Aseguradora;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class AseguradoraController extends Controller
 {
@@ -38,6 +39,20 @@ class AseguradoraController extends Controller
      */
     public function store(Request $request)
     {
+
+
+        $messages = [
+            'Nombre.required' => 'El campo nombre es requerido',
+            'Nombre.unique' => 'El registro ya existe',
+        ];
+
+
+
+        $request->validate([   
+            'Nombre' => 'required|unique:aseguradora',
+        ], $messages);
+
+
         $aseguradora = new Aseguradora();
         $aseguradora->Nombre = $request->Nombre;
         $aseguradora->Codigo = $request->Codigo;
@@ -52,7 +67,7 @@ class AseguradoraController extends Controller
         $aseguradora->Correo = $request->Correo;
         $aseguradora->save();
 
-        Alert::success('El registro ha sido agregado correctamente');
+        alert()->success('El registro ha sido creado correctamente');
         return Redirect::to('catalogo/aseguradoras/create');
     }
 
@@ -88,6 +103,17 @@ class AseguradoraController extends Controller
      */
     public function update(Request $request, $id)
     {
+
+        $messages = [
+            'Nombre.required' => 'El campo nombre es requerido',
+        ];
+
+
+
+        $request->validate([   
+            'Nombre' => 'required',
+        ], $messages);
+
         $aseguradora = Aseguradora::findOrFail($id);
         $aseguradora->Nombre = $request->Nombre;
         $aseguradora->Codigo = $request->Codigo;
@@ -102,8 +128,9 @@ class AseguradoraController extends Controller
         $aseguradora->Correo = $request->Correo;
         $aseguradora->update();
 
-        Alert::success('El registro ha sido modificado correctamente');
-        return Redirect::to('catalogo/aseguradoras/'. $id . 'edit');
+        alert()->success('El registro ha sido creado correctamente');
+        return back();  
+        //return Redirect::to('catalogo/aseguradoras/' . $id . 'edit');
     }
 
     /**
@@ -114,8 +141,9 @@ class AseguradoraController extends Controller
      */
     public function destroy($id)
     {
-        $aseguradora = Aseguradora::findOrFail($id)->update(['Activo' => 0]);
-        Alert::success('El registro ha sido desactivado correctamente');
-        return Redirect::to('catalogo/aseguradoras');
+        $aseguradora = Aseguradora::findOrFail($id)->update(['Activo' => 0]);       
+        alert()->error('El registro ha sido desactivado correctamente');
+        return back(); 
+        //return Redirect::to('catalogo/aseguradoras');
     }
 }

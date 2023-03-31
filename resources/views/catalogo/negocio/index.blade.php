@@ -5,10 +5,10 @@
         @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
         <div class="x_title">
             <div class="col-md-6 col-sm-6 col-xs-12">
-                <h3>Listado de aseguradoras </h3>
+                <h3>Listado de negocios </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
-                <a href="{{ url('catalogo/aseguradoras/create/') }}"><button class="btn btn-info float-right"> <i
+                <a href="{{ url('catalogo/negocio/create/') }}"><button class="btn btn-info float-right"> <i
                             class="fa fa-plus"></i> Nuevo</button></a>
             </div>
             <div class="clearfix"></div>
@@ -21,21 +21,39 @@
                 <table id="datatable" class="table table-striped table-bordered">
                     <thead>
                         <tr>
-                            <th>Nombre</th>
-                            <th>Codigo</th>
-                            <th>Telefono</th>
-                            <th>Contacto</th>
+                            <th>Asegurado</th>
+                            <th>Aseguradora</th>
+                            <th>Fecha venta</th>
+                            <th>Inicio vigencia</th>
+                            <th>Observaciones</th>
                             <th>Activo</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($aseguradora as $obj)
+                        @foreach ($negocios as $obj)
                             <tr>
-                                <td>{{ $obj->Nombre }}</td>
-                                <td>{{ $obj->Codigo }}</td>
-                                <td>{{ $obj->Telefono }}</td>
-                                <td>{{ $obj->Contacto }}</td>
+                                <td>{{ $obj->Asegurado }}</td>
+                                @if ($obj->Aseguradora)
+                                    <td>{{ $obj->aseguradora->Nombre }}</td>
+                                @else
+                                    <td></td>
+                                @endif
+
+                                @if ($obj->FechaVenta)
+                                    <td>{{ date('d/m/Y', strtotime($obj->FechaVenta)) }}</td>
+                                @else
+                                    <td></td>
+                                @endif
+
+                                @if ($obj->InicioVigencia)
+                                    <td>{{ date('d/m/Y', strtotime($obj->InicioVigencia)) }}</td>
+                                @else
+                                    <td></td>
+                                @endif
+
+                                <td align="center"><a href="" data-target="#modal-observacion-{{ $obj->Id }}"
+                                    data-toggle="modal"><i class="fa fa-eye fa-lg"></i></a></td>
                                 @if ($obj->Activo == 1)
                                     <td align="center"><input type="checkbox" checked></td>
                                 @else
@@ -44,7 +62,7 @@
                                 <td align="center">
 
                                     @can('edit users')
-                                        <a href="{{ url('catalogo/aseguradoras') }}/{{ $obj->Id }}/edit"
+                                        <a href="{{ url('catalogo/negocio') }}/{{ $obj->Id }}/edit"
                                             class="on-default edit-row">
                                             <i class="fa fa-pencil fa-lg"></i></a>
                                     @endcan
@@ -56,7 +74,8 @@
                                     @endcan
                                 </td>
                             </tr>
-                            @include('catalogo.aseguradora.modal')
+                            @include('catalogo.negocio.modal')
+                            @include('catalogo.negocio.observacion')
                         @endforeach
                     </tbody>
                 </table>
