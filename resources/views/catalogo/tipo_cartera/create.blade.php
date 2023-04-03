@@ -7,7 +7,7 @@
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
 
             <div class="x_title">
-                <h2>Nuevo Tipo Poliza <small></small></h2>
+                <h2>Nuevo Tipo Cartera <small></small></h2>
                 <ul class="nav navbar-right panel_toolbox">
 
                 </ul>
@@ -26,7 +26,7 @@
             <div class="x_content">
                 <br />
 
-                <form action="{{ url('catalogo/tipo_poliza') }}" method="POST">
+                <form action="{{ url('catalogo/tipo_cartera') }}" method="POST">
                     @csrf
                     <div class="form-horizontal">
                         <br>
@@ -43,7 +43,7 @@
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <div class="form-group" align="center">
                                 <button type="submit" class="btn btn-success">Aceptar</button>
-                                <a href="{{ url('catalogo/tipo_poliza') }}"><button type="button" class="btn btn-primary">Cancelar</button></a>
+                                <a href="{{ url('catalogo/tipo_cartera') }}"><button type="button" class="btn btn-primary">Cancelar</button></a>
                             </div>
                         </div>
 

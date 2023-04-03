@@ -51,7 +51,7 @@
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Nombre</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                         <input class="form-control" name="Nombre" type="text"
-                                            onblur="this.value = this.value.toUpperCase();">
+                                            >
                                     </div>
                                 </div>
 
@@ -59,7 +59,7 @@
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Dirección
                                         residencia</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <textarea class="form-control" name="DireccionResidencia" onblur="this.value = this.value.toUpperCase();"></textarea>
+                                        <textarea class="form-control" name="DireccionResidencia" ></textarea>
                                     </div>
                                 </div>
 
@@ -67,7 +67,7 @@
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Dirección
                                         correspondecia</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <textarea class="form-control" name="DireccionCorrespondencia" onblur="this.value = this.value.toUpperCase();"></textarea>
+                                        <textarea class="form-control" name="DireccionCorrespondencia" ></textarea>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -130,7 +130,7 @@
                                         pago</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                         <input class="form-control" name="ResponsablePago" type="text"
-                                            onblur="this.value = this.value.toUpperCase();">
+                                            >
                                     </div>
                                 </div>
 
@@ -162,7 +162,7 @@
                                         align="right">Contacto</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                         <input class="form-control" name="Contacto" type="text"
-                                            onblur="this.value = this.value.toUpperCase();">
+                                            >
                                     </div>
                                 </div>
 
@@ -171,7 +171,7 @@
                                         align="right">Referencia</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                         <input class="form-control" name="Referencia" type="text"
-                                            onblur="this.value = this.value.toUpperCase();">
+                                            >
                                     </div>
                                 </div>
 

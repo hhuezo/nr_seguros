@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\catalogo;
 
 use App\Http\Controllers\Controller;
+use App\Models\catalogo\EstadoVenta;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class EstadoVentaController extends Controller
 {
@@ -14,7 +16,8 @@ class EstadoVentaController extends Controller
      */
     public function index()
     {
-        //
+        $estado_venta = EstadoVenta::all();
+        return view('catalogo.estado_venta.index', compact('estado_venta'));
     }
 
     /**
@@ -24,7 +27,7 @@ class EstadoVentaController extends Controller
      */
     public function create()
     {
-        //
+        return view('catalogo.estado_venta.create');
     }
 
     /**
@@ -35,7 +38,15 @@ class EstadoVentaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $estado_venta = new EstadoVenta();
+        $estado_venta->Nombre = $request->Nombre;
+        $estado_venta->Activo = 1;
+        $estado_venta->save();
+
+        
+        alert()->success('El registro ha sido creado correctamente');
+        return Redirect::to('catalogo/estado_venta/create');
+
     }
 
     /**
@@ -57,7 +68,8 @@ class EstadoVentaController extends Controller
      */
     public function edit($id)
     {
-        //
+        $estado_venta = EstadoVenta::findOrFail($id);
+        return view('catalogo.estado_venta.edit', compact('estado_venta'));
     }
 
     /**
@@ -69,7 +81,13 @@ class EstadoVentaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $estado_venta = EstadoVenta::findOrFail($id);
+        $estado_venta->Nombre = $request->Nombre;
+        $estado_venta->update();
+
+        
+        alert()->success('El registro ha sido creado correctamente');
+        return Redirect::to('catalogo/estado_venta');
     }
 
     /**
@@ -80,6 +98,8 @@ class EstadoVentaController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $estado_venta = EstadoVenta::findOrFail($id)->update(['Activo' => 0]);
+        alert()->error('El registro ha sido desactivado correctamente');
+        return back();
     }
 }

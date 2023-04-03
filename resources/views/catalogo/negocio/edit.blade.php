@@ -33,7 +33,7 @@
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12">Asegurado</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                     <input type="text" name="Asegurado" value="{{ $negocio->Asegurado }}"
-                                        class="form-control" onblur="this.value = this.value.toUpperCase();" required
+                                        class="form-control"  required
                                         autofocus="true">
                                 </div>
 

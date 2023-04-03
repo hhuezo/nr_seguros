@@ -29,7 +29,7 @@
                         <div class="form-group">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12">Nombre</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input type="text" name="Nombre" value="{{old('Nombre')}}" class="form-control" onblur="this.value = this.value.toUpperCase();" required autofocus="true">
+                                <input type="text" name="Nombre" value="{{old('Nombre')}}" class="form-control"  required autofocus="true">
                             </div>
                            
                         </div>

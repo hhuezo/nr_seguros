@@ -58,7 +58,14 @@ class NegocioController extends Controller
 
     public function show($id)
     {
-        //
+        $ejecutivo = Ejecutivo::where('Activo','1')->get();
+        return view('catalogo.negocio.show', compact('ejecutivo'));
+    }
+
+    public function consultar(Request $request){
+        $negocio = Negocio::with('aseguradora')->whereBetween('FechaVenta',[$request->FechaInicio, $request->FechaFinal])->get();
+        //dd($negocio);
+        return view('catalogo.negocio.consulta', compact('negocio')); 
     }
 
     public function edit($id)

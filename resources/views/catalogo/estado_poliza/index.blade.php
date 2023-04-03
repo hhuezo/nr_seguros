@@ -8,7 +8,7 @@
                 <h3>Estado de Venta </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
-                <a href="{{ url('catalogo/estado_venta/create/') }}"><button class="btn btn-info float-right"> <i
+                <a href="{{ url('catalogo/estado_polizas/create/') }}"><button class="btn btn-info float-right"> <i
                             class="fa fa-plus"></i> Nuevo</button></a>
             </div>
             <div class="clearfix"></div>
@@ -27,7 +27,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($estado_venta as $obj)
+                        @foreach ($estado_poliza as $obj)
                             <tr>
                                 <td>{{ $obj->Nombre }}</td>
                                 @if ($obj->Activo == 1)
@@ -38,7 +38,7 @@
                                 <td align="center">
 
                                     @can('edit users')
-                                        <a href="{{ url('catalogo/estado_venta') }}/{{ $obj->Id }}/edit"
+                                        <a href="{{ url('catalogo/estado_polizas') }}/{{ $obj->Id }}/edit"
                                             class="on-default edit-row">
                                             <i class="fa fa-pencil fa-lg"></i></a>
                                     @endcan
@@ -50,7 +50,7 @@
                                     @endcan
                                 </td>
                             </tr>
-                            @include('catalogo.estado_venta.modal')
+                            @include('catalogo.estado_poliza.modal')
                         @endforeach
                     </tbody>
                 </table>

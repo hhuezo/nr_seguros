@@ -60,38 +60,35 @@
                         <div class="menu_section">
                             <h3>NR Seguros</h3>
                             <ul class="nav side-menu">
-                                <li><a><i class="fa fa-users"></i> Seguridad <span
-                                            class="fa fa-chevron-down"></span></a>
+                                <li><a><i class="fa fa-users"></i> Seguridad <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li><a href="{{ url('usuario/') }}">Usuario</a></li>
                                     </ul>
                                 </li>
 
-                                <li><a><i class="fa fa-folder"></i> Catálogos<span
-                                            class="fa fa-chevron-down"></span></a>
+                                <li><a><i class="fa fa-folder"></i> Catálogos<span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li><a href="{{ url('catalogo/cliente') }}">Clientes</a></li>
+                                        <li><a href="{{ url('catalogo/negocio') }}">Negocio</a></li>
                                         <li><a href="{{ url('catalogo/aseguradoras') }}">Aseguradora</a></li>
                                         <li><a href="{{ url('catalogo/ejecutivos') }}">Ejecutivo</a></li>
                                         <li><a href="{{ url('catalogo/estado_polizas') }}">Estado Poliza</a></li>
-                                        <li><a href="{{ url('catalogo/estado_ventas') }}">Estado Venta</a></li>
-                                        <li><a href="{{ url('catalogo/tipo_carteras') }}">Tipo Cartera</a></li>
-                                        <li><a href="{{ url('catalogo/tipo_negocios') }}">Tipo Negocio</a></li>
-                                        <li><a href="{{ url('catalogo/tipo_polizas') }}">Tipo Poliza (ramo)</a></li>
-                                        <li><a href="{{ url('catalogo/ubicacion_cobros') }}">Ubicacion Cobro</a></li>
+                                        <li><a href="{{ url('catalogo/estado_venta') }}">Estado Venta</a></li>
+                                        <li><a href="{{ url('catalogo/tipo_cartera') }}">Tipo Cartera</a></li>
+                                        <li><a href="{{ url('catalogo/tipo_negocio') }}">Tipo Negocio</a></li>
+                                        <li><a href="{{ url('catalogo/tipo_poliza') }}">Tipo Poliza (ramo)</a></li>
+                                        <li><a href="{{ url('catalogo/ubicacion_cobro') }}">Ubicacion Cobro</a></li>
                                     </ul>
                                 </li>
 
-                                <li><a><i class="fa fa-folder-open"></i> Pólizas<span
-                                            class="fa fa-chevron-down"></span></a>
+                                <li><a><i class="fa fa-folder-open"></i> Pólizas<span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li><a href="{{ url('polizas/residencia') }}">Recidencias</a></li>
-                                        
+
                                     </ul>
                                 </li>
 
-                                <li><a><i class="fa fa-file-pdf-o"></i> Reportes<span
-                                            class="fa fa-chevron-down"></span></a>
+                                <li><a><i class="fa fa-file-pdf-o"></i> Reportes<span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
 
                                         <li><a href="{{ url('reportes/corte_caja') }}">Cortes de caja</a></li>
@@ -128,18 +125,15 @@
 
                         <ul class="nav navbar-nav navbar-right">
                             <li class="">
-                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown"
-                                    aria-expanded="false">
-                                    <img src="{{ asset('img/usuario.jpg') }}"
-                                        alt="">{{ auth()->user()->name }}
+                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                    <img src="{{ asset('img/usuario.jpg') }}" alt="">{{ auth()->user()->name }}
                                     <span class=" fa fa-angle-down"></span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-usermenu pull-right">
 
 
 
-                                    <li> <a class="dropdown-item" href="{{ route('logout') }}"
-                                            onclick="event.preventDefault();
+                                    <li> <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
                                             {{ __('Salir') }}
                                         </a>
@@ -147,8 +141,7 @@
                                 </ul>
                             </li>
 
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                                style="display: none;">
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                 @csrf
                             </form>
                         </ul>

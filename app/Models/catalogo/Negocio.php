@@ -19,7 +19,7 @@ class Negocio extends Model
         'Asegurado',
         'Aseguradora',
         'FechaVenta',
-        'Ramo',
+        'TipoPoliza',
         'InicioVigencia',
         'Observacion',
         'TipoNegocio',
@@ -33,6 +33,18 @@ class Negocio extends Model
     public function aseguradora()
     {
         return $this->belongsTo('App\Models\catalogo\Aseguradora', 'Aseguradora', 'Id');
+    }
+
+    public function tipo_poliza(){
+        return $this->belongsTo('App\Models\catalogo\TipoPoliza','TipoPoliza','Id');
+    } 
+
+    public function ejecutivos(){
+        return $this->belongsTo('App\Models\catalogo\Ejecutivo','Ejecutivo','Id');
+    }
+
+    public function clientes(){
+        return $this->belongsTo('App\Models\catalogo\Cliente','Asegurado','Id');
     }
 
 }

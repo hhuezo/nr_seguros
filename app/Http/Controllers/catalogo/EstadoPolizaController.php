@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\catalogo;
 
 use App\Http\Controllers\Controller;
+use App\Models\catalogo\EstadoPoliza;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class EstadoPolizaController extends Controller
 {
@@ -14,7 +17,8 @@ class EstadoPolizaController extends Controller
      */
     public function index()
     {
-        //
+        $estado_poliza = EstadoPoliza::all();
+        return view('catalogo.estado_poliza.index', compact('estado_poliza'));
     }
 
     /**
@@ -24,7 +28,7 @@ class EstadoPolizaController extends Controller
      */
     public function create()
     {
-        //
+        return view('catalogo.estado_poliza.create');
     }
 
     /**
@@ -35,7 +39,15 @@ class EstadoPolizaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $estado_poliza = new EstadoPoliza();
+        $estado_poliza->Nombre = $request->Nombre;
+        $estado_poliza->Activo = 1;
+        $estado_poliza->save();
+
+        
+        alert()->success('El registro ha sido creado correctamente');
+        return Redirect::to('catalogo/estado_poliza/create');
+
     }
 
     /**
@@ -57,7 +69,8 @@ class EstadoPolizaController extends Controller
      */
     public function edit($id)
     {
-        //
+        $estado_poliza = EstadoPoliza::findOrFail($id);
+        return view('catalogo.estado_poliza.edit', compact('estado_poliza'));
     }
 
     /**
@@ -69,7 +82,13 @@ class EstadoPolizaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $estado_poliza = EstadoPoliza::findOrFail($id);
+        $estado_poliza->Nombre = $request->Nombre;
+        $estado_poliza->update();
+
+        
+        alert()->success('El registro ha sido creado correctamente');
+        return Redirect::to('catalogo/estado_poliza');
     }
 
     /**
@@ -80,6 +99,8 @@ class EstadoPolizaController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $estado_poliza = EstadoPoliza::findOrFail($id)->update(['Activo' => 0]);
+        alert()->error('El registro ha sido desactivado correctamente');
+        return back();
     }
 }

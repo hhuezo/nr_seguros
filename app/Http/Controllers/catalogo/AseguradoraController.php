@@ -110,7 +110,7 @@ class AseguradoraController extends Controller
 
 
 
-        $request->validate([   
+        $request->validate([
             'Nombre' => 'required',
         ], $messages);
 
@@ -129,7 +129,7 @@ class AseguradoraController extends Controller
         $aseguradora->update();
 
         alert()->success('El registro ha sido creado correctamente');
-        return back();  
+        return back();
         //return Redirect::to('catalogo/aseguradoras/' . $id . 'edit');
     }
 
@@ -141,9 +141,9 @@ class AseguradoraController extends Controller
      */
     public function destroy($id)
     {
-        $aseguradora = Aseguradora::findOrFail($id)->update(['Activo' => 0]);       
+        $aseguradora = Aseguradora::findOrFail($id)->update(['Activo' => 0]);
         alert()->error('El registro ha sido desactivado correctamente');
-        return back(); 
+        return back();
         //return Redirect::to('catalogo/aseguradoras');
     }
 }

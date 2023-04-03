@@ -7,6 +7,7 @@ use App\Http\Controllers\seguridad\UserController;
 use App\Http\Controllers\catalogo\ClienteController;
 use App\Http\Controllers\catalogo\AseguradoraController;
 use App\Http\Controllers\catalogo\EjecutivoController;
+use App\Http\Controllers\catalogo\EstadoPolizaController;
 use App\Http\Controllers\catalogo\EstadoVentaController;
 use App\Http\Controllers\catalogo\TipoCarteraController;
 use App\Http\Controllers\catalogo\TipoNegocioController;
@@ -51,6 +52,7 @@ Route::resource('usuario', UserController::class);*/
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::resource('catalogo/aseguradoras', AseguradoraController::class);
 Route::resource('catalogo/ejecutivos', EjecutivoController::class);
+Route::resource('catalogo/estado_polizas', EstadoPolizaController::class);
 Route::resource('catalogo/estado_venta', EstadoVentaController::class);
 Route::resource('catalogo/tipo_cartera', TipoCarteraController::class);
 Route::resource('catalogo/tipo_negocio', TipoNegocioController::class);
@@ -58,6 +60,7 @@ Route::resource('catalogo/tipo_poliza', TipoPolizaController::class);
 Route::resource('catalogo/ubicacion_cobro', UbicacionCobroController::class);
 Route::resource('catalogo/cliente', ClienteController::class);
 Route::resource('catalogo/negocio', NegocioController::class);
+Route::get('catalogo/negocios/consultar', [NegocioController::class, 'consultar']);
 
 
 //pólizas

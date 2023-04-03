@@ -5,10 +5,10 @@
         @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
         <div class="x_title">
             <div class="col-md-6 col-sm-6 col-xs-12">
-                <h3>Estado de Venta </h3>
+                <h3>Listado de Ejecutivos </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
-                <a href="{{ url('catalogo/estado_venta/create/') }}"><button class="btn btn-info float-right"> <i
+                <a href="{{ url('catalogo/ejecutivos/create/') }}"><button class="btn btn-info float-right"> <i
                             class="fa fa-plus"></i> Nuevo</button></a>
             </div>
             <div class="clearfix"></div>
@@ -22,35 +22,36 @@
                     <thead>
                         <tr>
                             <th>Nombre</th>
+                            <th>Codigo</th>
+                            <th>Telefono</th>
                             <th>Activo</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($estado_venta as $obj)
+                        @foreach ($ejecutivo as $obj)
                             <tr>
                                 <td>{{ $obj->Nombre }}</td>
+                                <td>{{ $obj->Codigo }}</td>
+                                <td>{{ $obj->Telefono }}</td>
                                 @if ($obj->Activo == 1)
                                     <td align="center"><input type="checkbox" checked></td>
                                 @else
                                     <td align="center"><input type="checkbox"></td>
                                 @endif
                                 <td align="center">
-
                                     @can('edit users')
-                                        <a href="{{ url('catalogo/estado_venta') }}/{{ $obj->Id }}/edit"
+                                        <a href="{{ url('catalogo/ejecutivos') }}/{{ $obj->Id }}/edit"
                                             class="on-default edit-row">
                                             <i class="fa fa-pencil fa-lg"></i></a>
                                     @endcan
-
-
                                     @can('delete users')
                                         &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}"
                                             data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
                                     @endcan
                                 </td>
                             </tr>
-                            @include('catalogo.estado_venta.modal')
+                            @include('catalogo.ejecutivo.modal')
                         @endforeach
                     </tbody>
                 </table>

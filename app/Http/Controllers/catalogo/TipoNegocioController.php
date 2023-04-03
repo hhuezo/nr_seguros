@@ -5,6 +5,8 @@ namespace App\Http\Controllers\catalogo;
 use App\Http\Controllers\Controller;
 use App\Models\catalogo\TipoNegocio;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
+use RealRashid\SweetAlert\Facades\Alert;
 
 
 class TipoNegocioController extends Controller
@@ -16,7 +18,7 @@ class TipoNegocioController extends Controller
      */
     public function index()
     {
-        $tipo_negocio = TipoNegocio::where('Activo','=', 1)->get();
+        $tipo_negocio = TipoNegocio::all();
         return view('catalogo.tipo_negocio.index', compact('tipo_negocio'));
     }
 
@@ -43,7 +45,7 @@ class TipoNegocioController extends Controller
         $tipo_negocio->Activo = 1;
         $tipo_negocio->save();
 
-      //  alert()->success('El registro ha sido agregado correctamente');
+        alert()->success('El registro ha sido agregado correctamente');
         return redirect(TipoNegocio::index());
     }
 
@@ -66,7 +68,8 @@ class TipoNegocioController extends Controller
      */
     public function edit($id)
     {
-        //
+        $tipo_negocio = TipoNegocio::findOrFail($id);
+        return view('catalogo.tipo_negocio.edit', compact('tipo_negocio'));
     }
 
     /**
@@ -78,7 +81,13 @@ class TipoNegocioController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $tipo_negocio = TipoNegocio::findOrFail($id);
+        $tipo_negocio->Nombre = $request->Nombre;
+        $tipo_negocio->update();
+
+        
+        alert()->success('El registro ha sido creado correctamente');
+        return Redirect::to('catalogo/tipo_negocio');
     }
 
     /**
@@ -89,6 +98,8 @@ class TipoNegocioController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $tipo_negocio = TipoNegocio::findOrFail($id)->update(['Activo' => 0]);
+        alert()->error('El registro ha sido desactivado correctamente');
+        return back();
     }
 }

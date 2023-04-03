@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\catalogo;
 
 use App\Http\Controllers\Controller;
+use App\Models\catalogo\TipoPoliza;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class TipoPolizaController extends Controller
 {
@@ -14,7 +16,8 @@ class TipoPolizaController extends Controller
      */
     public function index()
     {
-        //
+        $tipo_poliza = TipoPoliza::all();
+        return view('catalogo.tipo_poliza.index', compact('tipo_poliza'));
     }
 
     /**
@@ -24,7 +27,7 @@ class TipoPolizaController extends Controller
      */
     public function create()
     {
-        //
+        return view('catalogo.tipo_poliza.create');
     }
 
     /**
@@ -35,7 +38,15 @@ class TipoPolizaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $tipo_poliza = new TipoPoliza();
+        $tipo_poliza->Nombre = $request->Nombre;
+        $tipo_poliza->Activo = 1;
+        $tipo_poliza->save();
+
+        
+        alert()->success('El registro ha sido creado correctamente');
+        return Redirect::to('catalogo/tipo_poliza/create');
+
     }
 
     /**
@@ -57,7 +68,8 @@ class TipoPolizaController extends Controller
      */
     public function edit($id)
     {
-        //
+        $tipo_poliza = TipoPoliza::findOrFail($id);
+        return view('catalogo.tipo_poliza.edit', compact('tipo_poliza'));
     }
 
     /**
@@ -69,7 +81,13 @@ class TipoPolizaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $tipo_poliza = TipoPoliza::findOrFail($id);
+        $tipo_poliza->Nombre = $request->Nombre;
+        $tipo_poliza->update();
+
+        
+        alert()->success('El registro ha sido creado correctamente');
+        return Redirect::to('catalogo/tipo_poliza');
     }
 
     /**
@@ -80,6 +98,8 @@ class TipoPolizaController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $tipo_poliza = TipoPoliza::findOrFail($id)->update(['Activo' => 0]);
+        alert()->error('El registro ha sido desactivado correctamente');
+        return back();
     }
 }

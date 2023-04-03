@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\catalogo;
 
 use App\Http\Controllers\Controller;
+use App\Models\catalogo\TipoCartera;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class TipoCarteraController extends Controller
 {
@@ -14,7 +16,8 @@ class TipoCarteraController extends Controller
      */
     public function index()
     {
-        //
+        $tipo_cartera = TipoCartera::all();
+        return view('catalogo.tipo_cartera.index', compact('tipo_cartera'));
     }
 
     /**
@@ -24,7 +27,7 @@ class TipoCarteraController extends Controller
      */
     public function create()
     {
-        //
+        return view('catalogo.tipo_cartera.create');
     }
 
     /**
@@ -35,7 +38,13 @@ class TipoCarteraController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $tipo_cartera = new TipoCartera();
+        $tipo_cartera->Nombre = $request->Nombre;
+        $tipo_cartera->Activo = 1;
+        $tipo_cartera->save();
+
+        alert()->success('El registro ha sido agregado correctamente');
+        return redirect(TipoCartera::index());
     }
 
     /**
@@ -57,7 +66,8 @@ class TipoCarteraController extends Controller
      */
     public function edit($id)
     {
-        //
+        $tipo_cartera = TipoCartera::findOrFail($id);
+        return view('catalogo.tipo_cartera.edit', compact('tipo_cartera'));
     }
 
     /**
@@ -69,7 +79,13 @@ class TipoCarteraController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $tipo_cartera = TipoCartera::findOrFail($id);
+        $tipo_cartera->Nombre = $request->Nombre;
+        $tipo_cartera->update();
+
+        
+        alert()->success('El registro ha sido creado correctamente');
+        return Redirect::to('catalogo/tipo_cartera');
     }
 
     /**
@@ -80,6 +96,8 @@ class TipoCarteraController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $tipo_cartera = TipoCartera::findOrFail($id)->update(['Activo' => 0]);
+        alert()->error('El registro ha sido desactivado correctamente');
+        return back();
     }
 }
