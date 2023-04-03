@@ -76,6 +76,7 @@
                                         <li><a href="{{ url('catalogo/estado_venta') }}">Estado Venta</a></li>
                                         <li><a href="{{ url('catalogo/tipo_cartera') }}">Tipo Cartera</a></li>
                                         <li><a href="{{ url('catalogo/tipo_negocio') }}">Tipo Negocio</a></li>
+                                        <li><a href="{{ url('catalogo/ruta') }}">Ruta</a></li>
                                         <li><a href="{{ url('catalogo/tipo_poliza') }}">Tipo Poliza (ramo)</a></li>
                                         <li><a href="{{ url('catalogo/ubicacion_cobro') }}">Ubicacion Cobro</a></li>
                                     </ul>

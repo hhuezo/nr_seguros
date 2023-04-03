@@ -7,7 +7,7 @@
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
 
             <div class="x_title">
-                <h2>Nuevo Tipo Negocio <small></small></h2>
+                <h2>Nuevo Ruta <small></small></h2>
                 <ul class="nav navbar-right panel_toolbox">
 
                 </ul>
@@ -26,7 +26,7 @@
             <div class="x_content">
                 <br />
 
-                <form action="{{ url('catalogo/tipo_negocio') }}" method="POST">
+                <form action="{{ url('catalogo/ruta') }}" method="POST">
                     @csrf
                     <div class="form-horizontal">
                         <br>
@@ -39,11 +39,19 @@
                             </div>
                         </div>
 
+                        <div class="form-group row">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Codigo</label>
+                            <div class="col-lg-6 col-md-9 col-sm-12 col-xs-12">
+                                <input class="form-control" name="Codigo" type="text" >
+                            </div>
+                        </div>
+
+
 
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <div class="form-group" align="center">
                                 <button type="submit" class="btn btn-success">Aceptar</button>
-                                <a href="{{ url('catalogo/tipo_negocio') }}"><button type="button" class="btn btn-primary">Cancelar</button></a>
+                                <a href="{{ url('catalogo/ruta') }}"><button type="button" class="btn btn-primary">Cancelar</button></a>
                             </div>
                         </div>
 

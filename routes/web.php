@@ -14,6 +14,7 @@ use App\Http\Controllers\catalogo\TipoNegocioController;
 use App\Http\Controllers\catalogo\TipoPolizaController;
 use App\Http\Controllers\catalogo\UbicacionCobroController;
 use App\Http\Controllers\catalogo\NegocioController;
+use App\Http\Controllers\catalogo\RutaController;
 use App\Http\Controllers\polizas\ResidenciaController;
 
 /*
@@ -60,6 +61,7 @@ Route::resource('catalogo/tipo_poliza', TipoPolizaController::class);
 Route::resource('catalogo/ubicacion_cobro', UbicacionCobroController::class);
 Route::resource('catalogo/cliente', ClienteController::class);
 Route::resource('catalogo/negocio', NegocioController::class);
+Route::resource('catalogo/ruta',RutaController::class);
 Route::get('catalogo/negocios/consultar', [NegocioController::class, 'consultar']);
 
 
