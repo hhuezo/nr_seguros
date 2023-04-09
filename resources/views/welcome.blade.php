@@ -76,15 +76,18 @@
                                         <li><a href="{{ url('catalogo/estado_venta') }}">Estado Venta</a></li>
                                         <li><a href="{{ url('catalogo/tipo_cartera') }}">Tipo Cartera</a></li>
                                         <li><a href="{{ url('catalogo/tipo_negocio') }}">Tipo Negocio</a></li>
+                                        <li><a href="{{ url('catalogo/tipo_cobro') }}">Tipo Cobro</a></li>
                                         <li><a href="{{ url('catalogo/ruta') }}">Ruta</a></li>
                                         <li><a href="{{ url('catalogo/tipo_poliza') }}">Tipo Poliza (ramo)</a></li>
+                                        <li><a href="{{ url('catalogo/area_comercial')}}">Area Comercial</a></li>
                                         <li><a href="{{ url('catalogo/ubicacion_cobro') }}">Ubicacion Cobro</a></li>
                                     </ul>
                                 </li>
 
                                 <li><a><i class="fa fa-folder-open"></i> Pólizas<span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
-                                        <li><a href="{{ url('polizas/residencia') }}">Recidencias</a></li>
+                                        <li><a href="{{ url('polizas/residencia') }}">Residencias</a></li>
+                                        <li><a href="{{ url('polizas/deposito_plazo')}}">Depositos a Plazo</a></li>
 
                                     </ul>
                                 </li>
@@ -96,21 +99,10 @@
 
                                     </ul>
                                 </li>
-
-
-
-
                             </ul>
-
-
                         </div>
                         <!-- sidebar menu -->
-
-
                     </div>
-
-
-
                     <!-- /sidebar menu -->
 
                 </div>

@@ -4,11 +4,15 @@ namespace App\Http\Controllers\polizas;
 
 use App\Http\Controllers\Controller;
 use App\Models\catalogo\Aseguradora;
+use App\Models\catalogo\Cliente;
+use App\Models\catalogo\Ejecutivo;
 use App\Models\catalogo\EstadoPoliza;
-use App\Models\polizas\Residencia;
+use App\Models\catalogo\TipoCartera;
+use App\Models\catalogo\TipoCobro;
+use App\Models\polizas\DepositoPlazo;
 use Illuminate\Http\Request;
 
-class ResidenciaController extends Controller
+class DepositoPlazoController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,8 +21,8 @@ class ResidenciaController extends Controller
      */
     public function index()
     {
-        $residencias = Residencia::all();
-        return view('polizas.residencia.index',compact('residencias'));
+        $depositoPlazo = DepositoPlazo::all();
+        return view('polizas.deposito_plazo.index', compact('depositoPlazo'));
     }
 
     /**
@@ -28,9 +32,13 @@ class ResidenciaController extends Controller
      */
     public function create()
     {
-        $aseguradoras = Aseguradora::where('Activo','=',1)->get();
-        $estados_poliza = EstadoPoliza::where('Activo','=',1)->get();
-        return view('polizas.residencia.create', compact('aseguradoras','estados_poliza'));
+        $aseguradora = Aseguradora::where('Activo',1)->get();
+        $cliente = Cliente::where('Activo',1)->get();
+        $tipoCartera = TipoCartera::where('Activo',1)->get();
+        $estadoPoliza = EstadoPoliza::where('Activo',1)->get();
+        $tipoCobro = TipoCobro::where('Activo',1)->get();
+        $ejecutivo = Ejecutivo::where('Activo',1)->get();
+        return view('polizas.deposito_plazo.create',compact('aseguradora','cliente','tipoCartera','estadoPoliza','tipoCobro','ejecutivo'));
     }
 
     /**

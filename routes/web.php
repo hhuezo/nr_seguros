@@ -1,6 +1,6 @@
 <?php
 
-
+use App\Http\Controllers\catalogo\AreaComercialController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\seguridad\UserController;
@@ -15,6 +15,8 @@ use App\Http\Controllers\catalogo\TipoPolizaController;
 use App\Http\Controllers\catalogo\UbicacionCobroController;
 use App\Http\Controllers\catalogo\NegocioController;
 use App\Http\Controllers\catalogo\RutaController;
+use App\Http\Controllers\catalogo\TipoCobroController;
+use App\Http\Controllers\polizas\DepositoPlazoController;
 use App\Http\Controllers\polizas\ResidenciaController;
 
 /*
@@ -62,11 +64,15 @@ Route::resource('catalogo/ubicacion_cobro', UbicacionCobroController::class);
 Route::resource('catalogo/cliente', ClienteController::class);
 Route::resource('catalogo/negocio', NegocioController::class);
 Route::resource('catalogo/ruta',RutaController::class);
+Route::resource('catalogo/tipo_cobro', TipoCobroController::class);
+Route::resource('catalogo/area_comercial',AreaComercialController::class);
+
 Route::get('catalogo/negocios/consultar', [NegocioController::class, 'consultar']);
 
 
 //pólizas
 Route::resource('polizas/residencia', ResidenciaController::class);
+Route::resource('polizas/deposito_plazo', DepositoPlazoController::class);
 
 
 

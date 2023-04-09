@@ -5,10 +5,10 @@ namespace App\Models\catalogo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Ejecutivo extends Model
+class AreaComercial extends Model
 {
     use HasFactory;
-    protected $table = 'ejecutivo';
+    protected $table = 'area_comercial';
 
     protected $primaryKey = 'Id';
 
@@ -17,16 +17,9 @@ class Ejecutivo extends Model
 
     protected $fillable = [
         'Nombre',
-        'Activo',
-        'Telefono',
-        'Codigo',
-        'AreaComercial'
-        
+        'Activo'
     ];
 
     protected $guarded = [];
 
-    public function areaComercial(){
-        return $this->belongsTo('App\Models\catalogo\AreaComercial', 'AreaComercial', 'Id');
-    }
 }

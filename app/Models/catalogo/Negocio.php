@@ -25,7 +25,12 @@ class Negocio extends Model
         'TipoNegocio',
         'EstadoVenta',
         'Ejecutivo',
-        'Activo'
+        'Activo',
+        'SumaAsegurada',
+        'Prima',
+        'FechaIngreso',
+        'UsuarioIngreso',
+        'NumCuotas'
     ];
 
     protected $guarded = [];
@@ -35,16 +40,18 @@ class Negocio extends Model
         return $this->belongsTo('App\Models\catalogo\Aseguradora', 'Aseguradora', 'Id');
     }
 
-    public function tipo_poliza(){
-        return $this->belongsTo('App\Models\catalogo\TipoPoliza','TipoPoliza','Id');
-    } 
-
-    public function ejecutivos(){
-        return $this->belongsTo('App\Models\catalogo\Ejecutivo','Ejecutivo','Id');
+    public function tipo_poliza()
+    {
+        return $this->belongsTo('App\Models\catalogo\TipoPoliza', 'TipoPoliza', 'Id');
     }
 
-    public function clientes(){
-        return $this->belongsTo('App\Models\catalogo\Cliente','Asegurado','Id');
+    public function ejecutivos()
+    {
+        return $this->belongsTo('App\Models\catalogo\Ejecutivo', 'Ejecutivo', 'Id');
     }
 
+    public function clientes()
+    {
+        return $this->belongsTo('App\Models\catalogo\Cliente', 'Asegurado', 'Id');
+    }
 }

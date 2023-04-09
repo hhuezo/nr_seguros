@@ -3,13 +3,11 @@
 namespace App\Http\Controllers\catalogo;
 
 use App\Http\Controllers\Controller;
-use App\Models\catalogo\AreaComercial;
-use App\Models\catalogo\Ejecutivo;
+use App\Models\catalogo\TipoCobro;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
-use RealRashid\SweetAlert\Facades\Alert;
 
-class EjecutivoController extends Controller
+class TipoCobroController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,8 +16,8 @@ class EjecutivoController extends Controller
      */
     public function index()
     {
-        $ejecutivo = Ejecutivo::with('areaComercial')->get();
-        return view('catalogo.ejecutivo.index',compact('ejecutivo'));
+        $tipo_cobro = TipoCobro::all();
+        return view('catalogo.tipo_cobro.index', compact('tipo_cobro'));
     }
 
     /**
@@ -29,8 +27,7 @@ class EjecutivoController extends Controller
      */
     public function create()
     {
-        $area_comercial = AreaComercial::where('Activo',1)->get();
-        return view('catalogo.ejecutivo.create', compact('area_comercial'));
+        return view('catalogo.tipo_cobro.create');
     }
 
     /**
@@ -41,25 +38,15 @@ class EjecutivoController extends Controller
      */
     public function store(Request $request)
     {
-        $messages = [
-            'Nombre.required' => 'El campo nombre es requerido',
-        ];
+        $tipo_cobro = new TipoCobro();
+        $tipo_cobro->Nombre = $request->Nombre;
+        $tipo_cobro->Activo = 1;
+        $tipo_cobro->save();
 
-        $request->validate([
-            'Nombre' => 'required|unique:ejecutivo',
-        ], $messages);
-
-
-        $ejecutivo = new Ejecutivo();
-        $ejecutivo->Nombre = $request->Nombre;
-        $ejecutivo->Codigo = $request->Codigo;
-        $ejecutivo->Telefono = $request->Telefono;
-        $ejecutivo->Activo = 1;
-        $ejecutivo->AreaComercial = $request->AreaComercial;
-        $ejecutivo->save();
-
+        
         alert()->success('El registro ha sido creado correctamente');
-        return Redirect::to('catalogo/ejecutivo/create');
+        return Redirect::to('catalogo/tipo_cobro/create');
+
     }
 
     /**
@@ -81,9 +68,8 @@ class EjecutivoController extends Controller
      */
     public function edit($id)
     {
-        $area_comercial = AreaComercial::where('Activo',1)->get();
-        $ejecutivo = Ejecutivo::findOrFail($id);
-        return view('catalogo.ejecutivo.edit', compact('ejecutivo','area_comercial'));
+        $tipo_cobro = TipoCobro::findOrFail($id);
+        return view('catalogo.tipo_cobro.edit', compact('tipo_cobro'));
     }
 
     /**
@@ -95,16 +81,13 @@ class EjecutivoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $ejecutivo = Ejecutivo::findOrFail($id);
-        $ejecutivo->Nombre = $request->Nombre;
-        $ejecutivo->Codigo = $request->Codigo;
-        $ejecutivo->Telefono = $request->Telefono;
-        $ejecutivo->AreaComercial = $request->AreaComercial;
-        $ejecutivo->update();
+        $tipo_cobro = TipoCobro::findOrFail($id);
+        $tipo_cobro->Nombre = $request->Nombre;
+        $tipo_cobro->update();
 
-        alert()->success('El registro ha sido modificado correctamente');
-        return back();
         
+        alert()->success('El registro ha sido creado correctamente');
+        return Redirect::to('catalogo/tipo_cobro');
     }
 
     /**
@@ -115,7 +98,7 @@ class EjecutivoController extends Controller
      */
     public function destroy($id)
     {
-        $ejecutivo = Ejecutivo::findOrFail($id)->update(['Activo' => 0]);
+        $tipo_cobro = TipoCobro::findOrFail($id)->update(['Activo' => 0]);
         alert()->error('El registro ha sido desactivado correctamente');
         return back();
     }

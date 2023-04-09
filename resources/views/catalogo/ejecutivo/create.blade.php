@@ -49,6 +49,16 @@
                             </div>
 
                         </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Ejecutivo</label>
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <select name="AreaComercial" class="form-control select2" style="width: 100%">
+                                    @foreach ($area_comercial as $obj)
+                                    <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                     </div>
 
 

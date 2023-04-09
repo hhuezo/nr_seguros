@@ -5,10 +5,10 @@
         @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
         <div class="x_title">
             <div class="col-md-6 col-sm-6 col-xs-12">
-                <h3>Polizas de Residencia </h3>
+                <h3>Estado de Venta </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
-                <a href="{{ url('polizas/residencia/create/') }}"><button class="btn btn-info float-right"> <i
+                <a href="{{ url('catalogo/area_comercial/create/') }}"><button class="btn btn-info float-right"> <i
                             class="fa fa-plus"></i> Nuevo</button></a>
             </div>
             <div class="clearfix"></div>
@@ -22,20 +22,14 @@
                     <thead>
                         <tr>
                             <th>Nombre</th>
-                            <th>Codigo</th>
-                            <th>Telefono</th>
-                            <th>Contacto</th>
                             <th>Activo</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($residencias as $obj)
+                        @foreach ($area_comercial as $obj)
                             <tr>
                                 <td>{{ $obj->Nombre }}</td>
-                                <td>{{ $obj->Codigo }}</td>
-                                <td>{{ $obj->Telefono }}</td>
-                                <td>{{ $obj->Contacto }}</td>
                                 @if ($obj->Activo == 1)
                                     <td align="center"><input type="checkbox" checked></td>
                                 @else
@@ -44,7 +38,7 @@
                                 <td align="center">
 
                                     @can('edit users')
-                                        <a href="{{ url('catalogo/aseguradoras') }}/{{ $obj->Id }}/edit"
+                                        <a href="{{ url('catalogo/area_comercial') }}/{{ $obj->Id }}/edit"
                                             class="on-default edit-row">
                                             <i class="fa fa-pencil fa-lg"></i></a>
                                     @endcan
@@ -56,7 +50,7 @@
                                     @endcan
                                 </td>
                             </tr>
-                            @include('catalogo.aseguradora.modal')
+                            @include('catalogo.area_comercial.modal')
                         @endforeach
                     </tbody>
                 </table>

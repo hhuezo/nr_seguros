@@ -23,7 +23,7 @@
             </div>
             @endif
             <form method="POST" action="{{ route('ejecutivos.update', $ejecutivo->Id) }}">
-            @method('PUT')
+                @method('PUT')
                 @csrf
                 <div class="x_content">
                     <br />
@@ -31,7 +31,7 @@
                         <div class="form-group">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12">Nombre</label>
                             <div class="col-lg-6 col-md-9 col-sm-12 col-xs-12">
-                                <input type="text" name="Nombre"  class="form-control"  value="{{$ejecutivo->Nombre}}" required autofocus="true">
+                                <input type="text" name="Nombre" class="form-control" value="{{$ejecutivo->Nombre}}" required autofocus="true">
                             </div>
 
                         </div>
@@ -47,10 +47,25 @@
                         <div class="form-group">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12">Teléfono</label>
                             <div class="col-lg-6 col-md-9 col-sm-12 col-xs-12">
-                                <input type="text" name="Telefono"  class="form-control" value="{{$ejecutivo->Telefono}}" data-inputmask="'mask': ['9999-9999']">
+                                <input type="text" name="Telefono" class="form-control" value="{{$ejecutivo->Telefono}}" data-inputmask="'mask': ['9999-9999']">
                             </div>
 
                         </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Ejecutivo</label>
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                <select name="AreaComercial" class="form-control select2" style="width: 100%">
+                                    @foreach ($area_comercial as $obj)
+                                    <option value="{{$obj->Id}}" {{$ejecutivo->AreaComercial == $obj->Id ? 'selected ="selected"' : ''}}>
+                                    
+                                        {{ $obj->Nombre }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                       
                     </div>
 
 

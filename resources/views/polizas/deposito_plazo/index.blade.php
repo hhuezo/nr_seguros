@@ -5,10 +5,10 @@
         @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
         <div class="x_title">
             <div class="col-md-6 col-sm-6 col-xs-12">
-                <h3>Polizas de Residencia </h3>
+                <h3>Polizas de Deposito a Plazo </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
-                <a href="{{ url('polizas/residencia/create/') }}"><button class="btn btn-info float-right"> <i
+                <a href="{{ url('polizas/deposito_plazo/create/') }}"><button class="btn btn-info float-right"> <i
                             class="fa fa-plus"></i> Nuevo</button></a>
             </div>
             <div class="clearfix"></div>
@@ -30,7 +30,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($residencias as $obj)
+                        @foreach ($depositoPlazo as $obj)
                             <tr>
                                 <td>{{ $obj->Nombre }}</td>
                                 <td>{{ $obj->Codigo }}</td>

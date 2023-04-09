@@ -102,12 +102,15 @@
 
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12">Prima</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input type="number" step="0.01" name="Prima" value="{{ $negocio->Prima }}"
-                                        class="form-control">
-                                </div>
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Prima</label>
+                            <div class="col-lg-4 col-md-9 col-sm-12 col-xs-12">
+                                <input type="number" step="0.01" name="Prima" value="{{$negocio->Prima}}" class="form-control">
                             </div>
+                            <label class="control-label col-md-2 col-sm-12 col-xs-12">Num Cuotas</label>
+                            <div class="col-lg-3 col-md-9 col-sm-12 col-xs-12">
+                                <input type="number" name="NumCuotas" value="{{$negocio->NumCuotas }}" class="form-control">
+                            </div>
+                        </div>
 
                             <div class="form-group">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12">Tipo negocio</label>
