@@ -21,10 +21,9 @@
                 <table id="datatable" class="table table-striped table-bordered">
                     <thead>
                         <tr>
-                            <th>Nombre</th>
-                            <th>Codigo</th>
-                            <th>Telefono</th>
-                            <th>Contacto</th>
+                            <th>Asegurado</th>
+                            <th>Poliza</th>
+                            <th>Asegurada</th>
                             <th>Activo</th>
                             <th>Opciones</th>
                         </tr>
@@ -32,10 +31,9 @@
                     <tbody>
                         @foreach ($depositoPlazo as $obj)
                             <tr>
-                                <td>{{ $obj->Nombre }}</td>
-                                <td>{{ $obj->Codigo }}</td>
-                                <td>{{ $obj->Telefono }}</td>
-                                <td>{{ $obj->Contacto }}</td>
+                                <td>{{ $obj->clientes->Nombre }}</td>
+                                <td>{{ $obj->NumeroPoliza }}</td>
+                                <td>{{ $obj->aseguradoras->Nombre }}</td>
                                 @if ($obj->Activo == 1)
                                     <td align="center"><input type="checkbox" checked></td>
                                 @else
@@ -44,7 +42,7 @@
                                 <td align="center">
 
                                     @can('edit users')
-                                        <a href="{{ url('catalogo/aseguradoras') }}/{{ $obj->Id }}/edit"
+                                        <a href="{{ url('polizas/deposito_plazo') }}/{{ $obj->Id }}/edit"
                                             class="on-default edit-row">
                                             <i class="fa fa-pencil fa-lg"></i></a>
                                     @endcan
@@ -56,7 +54,7 @@
                                     @endcan
                                 </td>
                             </tr>
-                            @include('catalogo.aseguradora.modal')
+                            @include('polizas.deposito_plazo.modal')
                         @endforeach
                     </tbody>
                 </table>

@@ -10,7 +10,9 @@ use App\Models\catalogo\EstadoPoliza;
 use App\Models\catalogo\TipoCartera;
 use App\Models\catalogo\TipoCobro;
 use App\Models\polizas\DepositoPlazo;
+use App\Models\polizas\DetalleDepositoPlazo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class DepositoPlazoController extends Controller
 {
@@ -32,13 +34,19 @@ class DepositoPlazoController extends Controller
      */
     public function create()
     {
-        $aseguradora = Aseguradora::where('Activo',1)->get();
-        $cliente = Cliente::where('Activo',1)->get();
-        $tipoCartera = TipoCartera::where('Activo',1)->get();
-        $estadoPoliza = EstadoPoliza::where('Activo',1)->get();
-        $tipoCobro = TipoCobro::where('Activo',1)->get();
-        $ejecutivo = Ejecutivo::where('Activo',1)->get();
-        return view('polizas.deposito_plazo.create',compact('aseguradora','cliente','tipoCartera','estadoPoliza','tipoCobro','ejecutivo'));
+        $aseguradora = Aseguradora::where('Activo', 1)->get();
+        $cliente = Cliente::where('Activo', 1)->get();
+        $tipoCartera = TipoCartera::where('Activo', 1)->get();
+        $estadoPoliza = EstadoPoliza::where('Activo', 1)->get();
+        $tipoCobro = TipoCobro::where('Activo', 1)->get();
+        $ejecutivo = Ejecutivo::where('Activo', 1)->get();
+        return view('polizas.deposito_plazo.create', compact('aseguradora', 'cliente', 'tipoCartera', 'estadoPoliza', 'tipoCobro', 'ejecutivo'));
+    }
+
+    public function get_cliente(Request $request)
+    {
+        $cliente = Cliente::findOrFail($request->Cliente);
+        return $cliente;
     }
 
     /**
@@ -49,7 +57,79 @@ class DepositoPlazoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $depositoPlazo_codigo = DepositoPlazo::where('Codigo', $request->Codigo)->first();
+        if ($depositoPlazo_codigo) {
+            alert()->error('El Codigo ya fue utilizado');
+            return back();
+        } else {
+
+            $depositoPlazo = new DepositoPlazo();
+            $depositoPlazo->NumeroPoliza = $request->NumeroPoliza;
+            $depositoPlazo->Nit = $request->Nit;
+            $depositoPlazo->Codigo = $request->Codigo;
+            $depositoPlazo->Aseguradora = $request->Aseguradora;
+            $depositoPlazo->Asegurado = $request->Asegurado;
+            $depositoPlazo->GrupoAsegurado = $request->GrupoAsegurado;
+            $depositoPlazo->VigenciaDesde = $request->VigenciaDesde;
+            $depositoPlazo->VigenciaHasta = $request->VigenciaHasta;
+            $depositoPlazo->BeneficiosAdicionales = $request->BeneficiosAdicionales;
+            $depositoPlazo->ClausulasEspeciales = $request->ClausulasEspeciales;
+            $depositoPlazo->Concepto = $request->Concepto;
+            $depositoPlazo->Comentario = $request->Comentario;
+            $depositoPlazo->Ejecutivo = $request->Ejecutivo;
+            $depositoPlazo->TipoCartera = $request->TipoCartera;
+            $depositoPlazo->EstadoPoliza = $request->EstadoPoliza;
+            $depositoPlazo->TipoCobro = $request->TipoCobro;
+            $depositoPlazo->Tasa = $request->Tasa;
+            $depositoPlazo->PrimaTotal = $request->PrimaTotal;
+            $depositoPlazo->Descuento = $request->Descuento;
+            $depositoPlazo->ExtraPrima = $request->ExtraPrima;
+            $depositoPlazo->ValorCCF = $request->ValorCCF;
+            $depositoPlazo->ValorDescuento = $request->ValorDescuento;
+            $depositoPlazo->Retencion = $request->Retencion;
+            $depositoPlazo->IvaSobreComision = $request->IvaSobreComision;
+            $depositoPlazo->APagar = $request->APagar;
+            $depositoPlazo->NumeroUsuario1 = $request->NumeroUsuario1;
+            $depositoPlazo->SumaAseguradora1 = $request->SumaAseguradora1;
+            $depositoPlazo->Prima1 = $request->Prima1;
+            $depositoPlazo->NumeroUsuario2 = $request->NumeroUsuario2;
+            $depositoPlazo->SumaAseguradora2 = $request->SumaAseguradora2;
+            $depositoPlazo->Prima2 = $request->Prima2;
+            $depositoPlazo->NumeroUsuario3 = $request->NumeroUsuario3;
+            $depositoPlazo->SumaAseguradora3 = $request->SumaAseguradora3;
+            $depositoPlazo->Prima3 = $request->Prima3;
+            $depositoPlazo->NumeroUsuario4 = $request->NumeroUsuario4;
+            $depositoPlazo->SumaAseguradora4 = $request->SumaAseguradora4;
+            $depositoPlazo->Prima4 = $request->Prima4;
+            $depositoPlazo->NumeroUsuario5 = $request->NumeroUsuario5;
+            $depositoPlazo->SumaAseguradora5 = $request->SumaAseguradora5;
+            $depositoPlazo->Prima5 = $request->Prima5;
+            $depositoPlazo->NumeroUsuario6 = $request->NumeroUsuario6;
+            $depositoPlazo->SumaAseguradora6 = $request->SumaAseguradora6;
+            $depositoPlazo->Prima6 = $request->Prima6;
+            $depositoPlazo->Activo = 1;
+            $depositoPlazo->save();
+
+            $detalle = new DetalleDepositoPlazo();
+            $detalle->DepositoPlazo = $depositoPlazo->Id;
+            $detalle->Comentario = $request->Comentario;
+            $detalle->Tasa = $request->Tasa;
+            $detalle->PrimaTotal = $request->PrimaTotal;
+            $detalle->Descuento = $request->Descuento;
+            $detalle->ExtraPrima = $request->ExtraPrima;
+            $detalle->ValorCCF = $request->ValorCCF;
+            $detalle->APagar = $request->APagar;
+            $detalle->ValorDescuento = $request->ValorDescuento;
+            $detalle->Retencion = $request->Retencion;
+            $detalle->IvaSobreComision = $request->IvaSobreComision;
+            $detalle->ImpresionRecibo = $request->ImpresionRecibo;
+            $detalle->EnvioCartera = $request->EnvioCartera;
+            $detalle->EnvioPago = $request->EnvioPago;
+            $detalle->PagoAplicado = $request->PagoAplicado;
+            $detalle->save();
+            alert()->success('El registro ha sido creado correctamente');
+            return Redirect::to('poliza/deposito_plazo/create');
+        }
     }
 
     /**
@@ -71,7 +151,15 @@ class DepositoPlazoController extends Controller
      */
     public function edit($id)
     {
-        //
+        $depositoPlazo = DepositoPlazo::findOrFail($id);
+        $detalle = DetalleDepositoPlazo::where('DepositoPlazo', $depositoPlazo->Id)->first();
+        $aseguradora = Aseguradora::where('Activo', 1)->get();
+        $cliente = Cliente::where('Activo', 1)->get();
+        $tipoCartera = TipoCartera::where('Activo', 1)->get();
+        $estadoPoliza = EstadoPoliza::where('Activo', 1)->get();
+        $tipoCobro = TipoCobro::where('Activo', 1)->get();
+        $ejecutivo = Ejecutivo::where('Activo', 1)->get();
+        return view('polizas.deposito_plazo.edit', compact('depositoPlazo', 'detalle', 'aseguradora', 'cliente', 'tipoCartera', 'estadoPoliza', 'tipoCobro', 'ejecutivo'));
     }
 
     /**
@@ -83,7 +171,47 @@ class DepositoPlazoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $depositoPlazo = DepositoPlazo::findOrFail($id);
+        $depositoPlazo->NumeroUsuario1 = $request->NumeroUsuario1;
+        $depositoPlazo->SumaAseguradora1 = $request->SumaAseguradora1;
+        $depositoPlazo->Prima1 = $request->Prima1;
+        $depositoPlazo->NumeroUsuario2 = $request->NumeroUsuario2;
+        $depositoPlazo->SumaAseguradora2 = $request->SumaAseguradora2;
+        $depositoPlazo->Prima2 = $request->Prima2;
+        $depositoPlazo->NumeroUsuario3 = $request->NumeroUsuario3;
+        $depositoPlazo->SumaAseguradora3 = $request->SumaAseguradora3;
+        $depositoPlazo->Prima3 = $request->Prima3;
+        $depositoPlazo->NumeroUsuario4 = $request->NumeroUsuario4;
+        $depositoPlazo->SumaAseguradora4 = $request->SumaAseguradora4;
+        $depositoPlazo->Prima4 = $request->Prima4;
+        $depositoPlazo->NumeroUsuario5 = $request->NumeroUsuario5;
+        $depositoPlazo->SumaAseguradora5 = $request->SumaAseguradora5;
+        $depositoPlazo->Prima5 = $request->Prima5;
+        $depositoPlazo->NumeroUsuario6 = $request->NumeroUsuario6;
+        $depositoPlazo->SumaAseguradora6 = $request->SumaAseguradora6;
+        $depositoPlazo->Prima6 = $request->Prima6;
+        $depositoPlazo->update();
+
+        $detalle = new DetalleDepositoPlazo();
+        $detalle->DepositoPlazo = $depositoPlazo->Id;
+        $detalle->Comentario = $request->Comentario;
+        $detalle->Tasa = $request->Tasa;
+        $detalle->PrimaTotal = $request->PrimaTotal;
+        $detalle->Descuento = $request->Descuento;
+        $detalle->ExtraPrima = $request->ExtraPrima;
+        $detalle->ValorCCF = $request->ValorCCF;
+        $detalle->APagar = $request->APagar;
+        $detalle->ValorDescuento = $request->ValorDescuento;
+        $detalle->Retencion = $request->Retencion;
+        $detalle->IvaSobreComision = $request->IvaSobreComision;
+        $detalle->ImpresionRecibo = $request->ImpresionRecibo;
+        $detalle->EnvioCartera = $request->EnvioCartera;
+        $detalle->EnvioPago = $request->EnvioPago;
+        $detalle->PagoAplicado = $request->PagoAplicado;
+        $detalle->save();
+
+        alert()->success('El registro ha sido modificado correctamente');
+        return back();
     }
 
     /**

@@ -72,8 +72,9 @@ Route::get('catalogo/negocios/consultar', [NegocioController::class, 'consultar'
 
 //pólizas
 Route::resource('polizas/residencia', ResidenciaController::class);
-Route::resource('polizas/deposito_plazo', DepositoPlazoController::class);
 
+Route::resource('polizas/deposito_plazo', DepositoPlazoController::class);
+Route::get('get_cliente',[DepositoPlazoController::class, 'get_cliente']);
 
 
 

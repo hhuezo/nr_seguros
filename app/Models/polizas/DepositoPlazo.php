@@ -73,4 +73,23 @@ class DepositoPlazo extends Model
     public function clientes(){
         return $this->belongsTo('App\Models\catalogo\Cliente', 'Asegurado', 'Id');
     }
+
+    public function aseguradoras(){
+        return $this->belongsTo('App\Models\catalogo\Aseguradora', 'Aseguradora', 'Id');
+    }
+
+    public function tipoCarteras(){
+        return $this->belongsTo('App\Models\catalogo\TipoCartera', 'TipoCartera', 'Id');
+    }
+
+    public function ejecutivos(){
+        return $this->belongsTo('App\Models\catalogo\Ejecutivo', 'Ejecutivo', 'Id');
+    }
+    public function estadoPolizas(){
+        return $this->belongsTo('App\Models\catalogo\EstadoPoliza', 'EstadoPoliza', 'Id');
+    }
+
+    public function tipoCobros(){
+        return $this->belongsTo('App\Models\catalogo\TipoCobro', 'TipoCobro', 'Id');
+    }
 }

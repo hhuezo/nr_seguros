@@ -27,7 +27,8 @@
             <div class="x_content">
                 <br />
 
-                <form action="{{ url('polizas/deposito_plazo') }}" method="POST">
+                <form method="POST" action="{{ route('deposito_plazo.update', $depositoPlazo->Id) }}">
+                @method('PUT')
                     @csrf
                     <div class="form-horizontal" style="font-size: 12px;">
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -35,66 +36,56 @@
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right" style="margin-top: -3%;">Número de Póliza</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="NumeroPoliza" type="text" value="{{ old('NumeroPoliza') }}" required>
+                                        <input class="form-control" name="NumeroPoliza" type="text" value="{{$depositoPlazo->NumeroPoliza}}" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Código</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Codigo" type="text" value="{{ old('Codigo') }}" required>
+                                        <input class="form-control" name="Codigo" type="text" value="{{ $depositoPlazo->Codigo }}" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Aseguradora</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <select name="Aseguradora" class="form-control select2" required>
-                                            <option value="">Seleccione...</option>
-                                            @foreach($aseguradora as $obj)
-                                            <option value="{{$obj->Id}}">{{$obj->Nombre}}</option>
-                                            @endforeach
-                                        </select>
+                                    <input class="form-control" name="Aseguradora" type="text" value="{{ $depositoPlazo->aseguradoras->Nombre }}" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Asegurado</label>
-                                    <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
-                                        <select name="Asegurado" id="Asegurado" class="form-control select2" required>
-                                            <option value="">Seleccione...</option>
-                                            @foreach($cliente as $obj)
-                                            <option value="{{$obj->Id}}">{{$obj->Nombre}}</option>
-                                            @endforeach
-                                        </select>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="Asegurado" type="text" value="{{ $depositoPlazo->clientes->Nombre }}" readonly>
                                     </div>
-                                    <div class="col-md-1 col-lg-1 col-sm-12 col-xs-12"><a href="{{ url('catalogo/cliente/create/') }}" class="fa fa-plus fa-lg" style="padding-top: 60%;"></a></div>
+                                   
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Nit</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Nit" id="Nit" type="text" value="{{ old('Nit') }}">
+                                        <input class="form-control" name="Nit" id="Nit" type="text" value="{{ $depositoPlazo->Nit }}" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Grupo Asegurado</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <textarea class="form-control" name="GrupoAsegurado" row="3" col="4" value="{{ old('GrupoAsegurado') }}" required> </textarea>
+                                        <textarea class="form-control" name="GrupoAsegurado" row="3" col="4" value="" readonly>{{ $depositoPlazo->GrupoAsegurado }} </textarea>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Clausulas Especiales</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <textarea class="form-control" name="ClausulasEspeciales" row="3" col="4" value="{{ old('ClausulasEspeciales') }}"> </textarea>
+                                        <textarea class="form-control" name="ClausulasEspeciales" row="3" col="4" value="" readonly>{{ $depositoPlazo->ClausulasEspeciales }} </textarea>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Beneficios Adicionales</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <textarea class="form-control" name="BeneficiosAdicionales" row="3" col="4" value="{{ old('BeneficiosAdicionales') }}"> </textarea>
+                                        <textarea class="form-control" name="BeneficiosAdicionales" row="3" col="4" value="" readonly>{{ $depositoPlazo->BeneficiosAdicionales }} </textarea>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Concepto</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <textarea class="form-control" name="Concepto" row="3" col="4" value="{{ old('Concepto') }}" required> </textarea>
+                                        <textarea class="form-control" name="Concepto" row="3" col="4" readonly> {{$depositoPlazo->Concepto}}</textarea>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -108,29 +99,19 @@
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vigencia Desde</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="VigenciaDesde" type="date" value="{{ old('VigenciaDesde') }}">
+                                        <input class="form-control" name="VigenciaDesde" type="date" value="{{ $depositoPlazo->VigenciaDesde }}" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo Cartera</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <select name="TipoCartera" class="form-control select2" required>
-                                            <option value="">Seleccione...</option>
-                                            @foreach($tipoCartera as $obj)
-                                            <option value="{{$obj->Id}}">{{$obj->Nombre}}</option>
-                                            @endforeach
-                                        </select>
+                                    <input class="form-control" name="TipoCartera" type="text" value="{{ $depositoPlazo->tipoCarteras->Nombre }}" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vendedor</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <select name="Ejecutivo" class="form-control select2" required>
-                                            <option value="">Seleccione...</option>
-                                            @foreach($ejecutivo as $obj)
-                                            <option value="{{$obj->Id}}">{{$obj->Nombre}}</option>
-                                            @endforeach
-                                        </select>
+                                    <input class="form-control" name="Ejecutivo" type="text" value="{{ $depositoPlazo->ejecutivos->Nombre}}" readonly>
                                     </div>
                                 </div>
                                 <br>
@@ -178,29 +159,19 @@
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vigencia Hasta</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="VigenciaHasta" type="date" value="{{ old('VigenciaHasta') }}">
+                                        <input class="form-control" name="VigenciaHasta" type="date" value="{{ old('VigenciaHasta') }}" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Estatus</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <select name="EstadoPoliza" class="form-control select2" required>
-                                            <option value="">Seleccione...</option>
-                                            @foreach($estadoPoliza as $obj)
-                                            <option value="{{$obj->Id}}">{{$obj->Nombre}}</option>
-                                            @endforeach
-                                        </select>
+                                    <input class="form-control" name="EstadoPoliza" type="text" value="{{ $depositoPlazo->estadoPolizas->Nombre }}" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo de Cobro</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <select name="TipoCobro" class="form-control select2" required>
-                                            <option value="">Seleccione...</option>
-                                            @foreach($tipoCobro as $obj)
-                                            <option value="{{$obj->Id}}">{{$obj->Nombre}}</option>
-                                            @endforeach
-                                        </select>
+                                    <input class="form-control" name="TipoCobro" type="text" value="{{ $depositoPlazo->tipoCobros->Nombre }}" readonly>
                                     </div>
                                 </div>
                                 <br>
@@ -294,19 +265,19 @@
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">No Usuario 1 *</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="NumeroUsuario1" type="number" value="{{ old('NumeroUsuario1') }}" required>
+                                        <input class="form-control" name="NumeroUsuario1" type="number" value="{{ $depositoPlazo->NumeroUsuario1 }}" required>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right" style="margin-top: -3%;">Suma Asegurada 1 *</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="SumaAsegurada1" type="number" step="0.01" value="{{ old('SumaAsegurada1') }}" required>
+                                        <input class="form-control" name="SumaAsegurada1" type="number" step="0.01" value="{{ $depositoPlazo->SumaAsegurada1 }}" required>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Prima 1 *</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Prima1" type="number" step="0.01" value="{{ old('Prima1') }}" required>
+                                        <input class="form-control" name="Prima1" type="number" step="0.01" value="{{ $depositoPlazo->Prima1 }}" required>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -430,29 +401,5 @@
 <!-- jQuery -->
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
-    $(document).ready(function() {
-        $("#Asegurado").change(function() {
-            // alert(document.getElementById('Asegurado').value);
-            $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
-            var parametros = {
-                "Cliente": document.getElementById('Asegurado').value
-            };
-            $.ajax({
-                type: "get",
-                //ruta para obtener el horario del doctor
-                url: "{{ url('get_cliente') }}",
-                data: parametros,
-                success: function(data) {
-                    console.log(data);
-                    document.getElementById('Nit').value = data.Nit;
-                    if (data.TipoContribuyente < 2) {
-                        document.getElementById('Retencion').setAttribute("readonly", true);
-                    }
-
-
-                }
-            });
-        })
-    })
 </script>
 @endsection
