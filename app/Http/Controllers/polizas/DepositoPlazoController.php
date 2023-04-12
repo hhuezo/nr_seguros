@@ -7,8 +7,11 @@ use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\Cliente;
 use App\Models\catalogo\Ejecutivo;
 use App\Models\catalogo\EstadoPoliza;
+use App\Models\catalogo\Ruta;
 use App\Models\catalogo\TipoCartera;
 use App\Models\catalogo\TipoCobro;
+use App\Models\catalogo\TipoContribuyente;
+use App\Models\catalogo\UbicacionCobro;
 use App\Models\polizas\DepositoPlazo;
 use App\Models\polizas\DetalleDepositoPlazo;
 use Illuminate\Http\Request;
@@ -34,13 +37,18 @@ class DepositoPlazoController extends Controller
      */
     public function create()
     {
+        $tipos_contribuyente =  TipoContribuyente::get();
+        $rutas = Ruta::where('Activo','=',1)->get();
+        $ubicaciones_cobro =  UbicacionCobro::where('Activo','=',1)->get();
+
         $aseguradora = Aseguradora::where('Activo', 1)->get();
         $cliente = Cliente::where('Activo', 1)->get();
         $tipoCartera = TipoCartera::where('Activo', 1)->get();
         $estadoPoliza = EstadoPoliza::where('Activo', 1)->get();
         $tipoCobro = TipoCobro::where('Activo', 1)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
-        return view('polizas.deposito_plazo.create', compact('aseguradora', 'cliente', 'tipoCartera', 'estadoPoliza', 'tipoCobro', 'ejecutivo'));
+        return view('polizas.deposito_plazo.create', compact('aseguradora', 'cliente', 'tipoCartera', 'estadoPoliza',
+         'tipoCobro', 'ejecutivo','tipos_contribuyente','rutas','ubicaciones_cobro'));
     }
 
     public function get_cliente(Request $request)
