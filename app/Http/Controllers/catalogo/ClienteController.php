@@ -63,9 +63,9 @@ class ClienteController extends Controller
         return back();
     }
 
-    public function show($id)
+    public function cliente_create(Request $request)
     {
-        //
+        return $request;
     }
 
     public function edit($id)

@@ -62,6 +62,7 @@ Route::resource('catalogo/tipo_negocio', TipoNegocioController::class);
 Route::resource('catalogo/tipo_poliza', TipoPolizaController::class);
 Route::resource('catalogo/ubicacion_cobro', UbicacionCobroController::class);
 Route::resource('catalogo/cliente', ClienteController::class);
+Route::post('catalogo/cliente_create', [ClienteController::class, 'cliente_create']);
 Route::resource('catalogo/negocio', NegocioController::class);
 Route::resource('catalogo/ruta',RutaController::class);
 Route::resource('catalogo/tipo_cobro', TipoCobroController::class);
