@@ -65,7 +65,33 @@ class ClienteController extends Controller
 
     public function cliente_create(Request $request)
     {
-        return $request;
+       $time = Carbon::now();
+
+        $cliente = new  Cliente();
+        $cliente->Nit = $request->get('Nit');
+        $cliente->Dui = $request->get('Dui');
+        $cliente->Nombre = $request->get('Nombre');
+        $cliente->DireccionResidencia = $request->get('DireccionResidencia');
+        $cliente->DireccionCorrespondencia = $request->get('DireccionCorrespondencia');
+        $cliente->TelefonoResidencia = $request->get('TelefonoResidencia');
+        $cliente->TelefonoOficina = $request->get('TelefonoOficina');
+        $cliente->TelefonoCelular = $request->get('TelefonoCelular');
+        $cliente->Correo = $request->get('Correo');
+        $cliente->Ruta = $request->get('Ruta');
+        $cliente->ResponsablePago = $request->get('ResponsablePago');
+        $cliente->TipoContribuyente = $request->get('TipoContribuyente');
+        $cliente->UbicacionCobro = $request->get('UbicacionCobro');
+        $cliente->Contacto = $request->get('Contacto');
+        $cliente->Referencia = $request->get('Referencia');
+        $cliente->NumeroTarjeta = $request->get('NumeroTarjeta');
+        $cliente->FechaVencimiento = $request->get('FechaVencimiento');
+        $cliente->Genero = $request->get('Genero');
+        $cliente->TipoPersona = $request->get('TipoPersona');
+        $cliente->FechaCreacion = $time->toDateTimeString();
+        $cliente->UsuarioCreacion = auth()->user()->id;
+        $cliente->save();
+
+        return Cliente::where('Activo','=',1)->get();
     }
 
     public function edit($id)
@@ -108,8 +134,8 @@ class ClienteController extends Controller
 
     public function destroy($id)
     {
-        Cliente::findOrFail($id)->update(['Activo' => 0]);       
+        Cliente::findOrFail($id)->update(['Activo' => 0]);
         alert()->error('El registro ha sido desactivado correctamente');
-        return back(); 
+        return back();
     }
 }
