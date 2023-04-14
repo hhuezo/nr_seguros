@@ -191,11 +191,6 @@ class DepositoPlazoController extends Controller
     {
       // dd();
         $depositoPlazo = DepositoPlazo::findOrFail($id);
-        $depositoPlazo->Tasa = $request->Tasa;
-        $depositoPlazo->PrimaTotal = $request->PrimaTotal;
-        $depositoPlazo->Descuento = $request->Descuento;
-        $depositoPlazo->ExtraPrima = $request->ExtraPrima;
-        $depositoPlazo->ValorCCF = $request->ValorCCF;
         $depositoPlazo->NumeroUsuario1 = $request->NumeroUsuario1;
         $depositoPlazo->SumaAseguradora1 = $request->SumaAseguradora1;
         $depositoPlazo->Prima1 = $request->Prima1;

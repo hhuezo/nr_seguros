@@ -221,7 +221,7 @@
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Impresión de Recibo</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="ImpresionRecibo" id="ImpresionRecibo" type="text" value="{{ $detalle_last->ImpresionRecibo }}" readonly>
+                                        <input class="form-control" name="ImpresionRecibo" id="ImpresionRecibo" type="text" value="{{\Carbon\Carbon::parse( $detalle_last->ImpresionRecibo)->format('d/m/Y') }}" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -245,7 +245,7 @@
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Saldo A</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="SaldoA" id="SaldoA" type="number" style="background-color: yellow;">
+                                        <input class="form-control" name="SaldoA" id="SaldoA" type="text" style="background-color: yellow; " value="{{\Carbon\Carbon::parse( $detalle_last->ImpresionRecibo)->format('d/m/Y') }}" >
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -394,9 +394,9 @@
                                     <th>Descuento</th>
                                     <th>A Pagar</th>
                                     <th>Impresion de Recibo</th>
-                                    <th>Envio de CArtera</th>
-                                    <th>Envio de PAgo</th>
-                                    <th>PAgo Aplicado</th>
+                                    <th>Envio de Cartera</th>
+                                    <th>Envio de Pago</th>
+                                    <th>Pago Aplicado</th>
                                 </tr>
                                 @foreach($detalle as $obj)
                                 <tr>
@@ -442,6 +442,7 @@
             document.getElementById('EnvioCartera').type = 'date';
             document.getElementById('EnvioPago').type = 'date';
             document.getElementById('PagoAplicado').type = 'date';
+            document.getElementById('SaldoA').type = 'date';
             document.getElementById('ValorDescuento').value = 0;
             document.getElementById('IvaSobreComision').value = 0;
             document.getElementById('Retencion').value = 0;
@@ -463,10 +464,9 @@
            // alert(ValorCCF);
             document.getElementById('ValorCCFE').value = ValorCCF;
             document.getElementById('ValorCCF').value = ValorCCF;
-            var PrimaTotal = document.getElementById('PrimaTotal');
-            var ExtraPrima = document.getElementById('ExtraPrima');
-            var APagar = Number((Number(PrimaTotal) + Number(ExtraPrima)) - Number(ValorCCF));
-            //alert(Number(APagar));
+            var PrimaTotal = document.getElementById('PrimaTotal').value;
+            var ExtraPrima = document.getElementById('ExtraPrima').value;
+            var APagar = (Number(PrimaTotal) + Number(ExtraPrima)) - Number(ValorCCF);
             document.getElementById('APagar').value = APagar;
         })
 
