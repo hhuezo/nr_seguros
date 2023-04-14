@@ -38,8 +38,8 @@ class DepositoPlazoController extends Controller
     public function create()
     {
         $tipos_contribuyente =  TipoContribuyente::get();
-        $rutas = Ruta::where('Activo','=',1)->get();
-        $ubicaciones_cobro =  UbicacionCobro::where('Activo','=',1)->get();
+        $rutas = Ruta::where('Activo', '=', 1)->get();
+        $ubicaciones_cobro =  UbicacionCobro::where('Activo', '=', 1)->get();
 
         $aseguradora = Aseguradora::where('Activo', 1)->get();
         $cliente = Cliente::where('Activo', 1)->get();
@@ -47,8 +47,17 @@ class DepositoPlazoController extends Controller
         $estadoPoliza = EstadoPoliza::where('Activo', 1)->get();
         $tipoCobro = TipoCobro::where('Activo', 1)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
-        return view('polizas.deposito_plazo.create', compact('aseguradora', 'cliente', 'tipoCartera', 'estadoPoliza',
-         'tipoCobro', 'ejecutivo','tipos_contribuyente','rutas','ubicaciones_cobro'));
+        return view('polizas.deposito_plazo.create', compact(
+            'aseguradora',
+            'cliente',
+            'tipoCartera',
+            'estadoPoliza',
+            'tipoCobro',
+            'ejecutivo',
+            'tipos_contribuyente',
+            'rutas',
+            'ubicaciones_cobro'
+        ));
     }
 
     public function get_cliente(Request $request)
@@ -160,14 +169,15 @@ class DepositoPlazoController extends Controller
     public function edit($id)
     {
         $depositoPlazo = DepositoPlazo::findOrFail($id);
-        $detalle = DetalleDepositoPlazo::where('DepositoPlazo', $depositoPlazo->Id)->first();
+        $detalle = DetalleDepositoPlazo::where('DepositoPlazo', $depositoPlazo->Id)->get();
+        $detalle_last = DetalleDepositoPlazo::where('DepositoPlazo', $depositoPlazo->Id)->orderByDesc('PagoAplicado')->first();
         $aseguradora = Aseguradora::where('Activo', 1)->get();
         $cliente = Cliente::where('Activo', 1)->get();
         $tipoCartera = TipoCartera::where('Activo', 1)->get();
         $estadoPoliza = EstadoPoliza::where('Activo', 1)->get();
         $tipoCobro = TipoCobro::where('Activo', 1)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
-        return view('polizas.deposito_plazo.edit', compact('depositoPlazo', 'detalle', 'aseguradora', 'cliente', 'tipoCartera', 'estadoPoliza', 'tipoCobro', 'ejecutivo'));
+        return view('polizas.deposito_plazo.edit', compact('depositoPlazo', 'detalle','detalle_last' ,'aseguradora', 'cliente', 'tipoCartera', 'estadoPoliza', 'tipoCobro', 'ejecutivo'));
     }
 
     /**
@@ -179,7 +189,13 @@ class DepositoPlazoController extends Controller
      */
     public function update(Request $request, $id)
     {
+      // dd();
         $depositoPlazo = DepositoPlazo::findOrFail($id);
+        $depositoPlazo->Tasa = $request->Tasa;
+        $depositoPlazo->PrimaTotal = $request->PrimaTotal;
+        $depositoPlazo->Descuento = $request->Descuento;
+        $depositoPlazo->ExtraPrima = $request->ExtraPrima;
+        $depositoPlazo->ValorCCF = $request->ValorCCF;
         $depositoPlazo->NumeroUsuario1 = $request->NumeroUsuario1;
         $depositoPlazo->SumaAseguradora1 = $request->SumaAseguradora1;
         $depositoPlazo->Prima1 = $request->Prima1;

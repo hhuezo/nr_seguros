@@ -206,7 +206,7 @@
                                             Pagar</label>
                                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                             <input class="form-control" name="APagar" type="number" step="0.00000001"
-                                                value="{{ old('Apagar') }}">
+                                                value="{{ old('APagar') }}">
                                         </div>
                                     </div>
                                 </div>
