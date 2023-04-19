@@ -115,42 +115,91 @@
                                     </div>
                                 </div>
                                 <br>
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">&nbsp;
+                                    </label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        @if($depositoPlazo->Mensual == 1)
+                                        <input class="form-check-input" type="checkbox" name="tipoTasa" id="Mensual" value="1" checked>
+                                        @else
+                                        <input class="form-check-input" type="checkbox" name="tipoTasa" id="Mensual" value="1">
+                                        @endif
+                                        <label class="form-check-label" for="flexRadioDefault1">
+
+                                            Tasa ‰ Millar Mensual
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">&nbsp;
+                                    </label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        @if($depositoPlazo->Mensual == 0)
+                                        <input class="form-check-input" type="checkbox" name="tipoTasa" id="Anual" value="2" checked>
+                                        @else
+                                        <input class="form-check-input" type="checkbox" name="tipoTasa" id="Anual" value="2">
+                                        @endif
+                                        <label class="form-check-label" for="flexRadioDefault2">
+                                            Tasa ‰ Millar Anual
+                                        </label>
+                                    </div>
+                                </div>
                                 <br>
-                                <br>
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Monto Cartera
+                                    </label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="MontoCartera" id="MontoCartera" type="number" step="any" value="{{ $detalle_last->MontoCartera }}" required>
+                                    </div>
+                                </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa %</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Tasa" type="number" step="00000000.00000001" value="{{ $depositoPlazo->Tasa }}" required>
+                                        <input class="form-control" name="Tasa" id="Tasa" type="number" step="any" value="{{ $depositoPlazo->Tasa }}" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Prima Total</label>
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Sub
+                                        Total</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="PrimaTotal" id="PrimaTotal" type="number" step="00000000.00000001" value="{{ $depositoPlazo->PrimaTotal }}" required>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Descuento %</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Descuento" id="Descuento" type="number" step="0.00000001" value="{{ $depositoPlazo->Descuento}}">
+                                        <input class="form-control" name="SubTotal" type="number" id="SubTotal" step="any" value="" required>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Extra Prima</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="ExtraPrima" id="ExtraPrima" type="number" step="0.00000001" value="{{ $depositoPlazo->ExtraPrima }}">
+                                        <input class="form-control" name="ExtraPrima" id="ExtraPrima" type="number" step="any" value="{{ $detalle_last->ExtraPrima }}">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Prima Total</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="PrimaTotal" id="PrimaTotal" type="number" step="any" value="{{ $detalle_last->PrimaTotal }}" required>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Descuento %</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="Descuento" id="Descuento" type="number" step="any" value="{{ $detalle_last->Descuento}}">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">
+                                        Prima Descontada</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="PrimaDescontada" type="number" step="any" id="PrimaDescontada" value="$detalle_last->PrimaDescontada">
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Menos Valor CCF Comisión</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="ValorCCF" id="ValorCCF" type="number" step="0.00000001" value="{{ $depositoPlazo->ValorCCF }}">
+                                        <input class="form-control" name="ValorCCF" id="ValorCCF" type="number" step="any" value="{{ $detalle_last->ValorCCF }}">
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">A Pagar</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="APagar" type="number" id="APagar" step="0.00000001" value="{{ $depositoPlazo->APagar}}">
+                                        <input class="form-control" name="APagar" type="number" id="APagar" step="any" value="{{ $detalle_last->APagar}}">
                                     </div>
                                 </div>
                             </div>
@@ -179,24 +228,30 @@
                                     <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: center;">Estructura CCF de comisión</label>
                                 </div>
                                 <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Comision %</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" value="{{ $detalle_last->TasaComision}}">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Valor Desc</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="ValorDescuento" id="ValorDescuento" type="number" step="0.00000001" value="{{$depositoPlazo->ValorDescuento}}">
+                                        <input class="form-control" name="ValorDescuento" id="ValorDescuento" type="number" step="any" value="{{$detalle_last->ValorDescuento}}">
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">mas 13% IVA sobre comisión</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="IvaSobreComision" id="IvaSobreComision" type="number" step="0.00000001" value="{{$depositoPlazo->IvaSobreComision}}">
+                                        <input class="form-control" name="IvaSobreComision" id="IvaSobreComision" type="number" step="any" value="{{$detalle_last->IvaSobreComision}}">
                                     </div>
                                 </div>
 
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">menos 1% Retención</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        @if($depositoPlazo->clientes->TipoContribuyente < 2) <input class="form-control" name="Retencion" id="Retencion" type="number" step="0.00000001" value="{{$depositoPlazo->Retencion}}" disabled>
+                                        @if($depositoPlazo->clientes->TipoContribuyente < 2) <input class="form-control" name="Retencion" id="Retencion" type="number" step="any" value="{{$detalle_last->Retencion}}" disabled>
                                             @else
-                                            <input class="form-control" name="Retencion" id="Retencion" type="number" step="0.00000001" value="{{$depositoPlazo->Retencion}}">
+                                            <input class="form-control" name="Retencion" id="Retencion" type="number" step="any" value="{{$detalle_last->Retencion}}">
                                             @endif
                                     </div>
                                 </div>
@@ -204,7 +259,7 @@
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Valor CCF Comisión</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="ValorCCF" id="ValorCCFE" type="number" step="0.00000001">
+                                        <input class="form-control" name="ValorCCF" id="ValorCCFE" type="number" step="any">
                                     </div>
                                 </div>
                             </div>
@@ -245,7 +300,7 @@
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Saldo A</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="SaldoA" id="SaldoA" type="text" style="background-color: yellow; " value="{{\Carbon\Carbon::parse( $detalle_last->ImpresionRecibo)->format('d/m/Y') }}" >
+                                        <input class="form-control" name="SaldoA" id="SaldoA" type="text" style="background-color: yellow; " value="{{\Carbon\Carbon::parse( $detalle_last->ImpresionRecibo)->format('d/m/Y') }}">
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -434,11 +489,98 @@
 <!-- jQuery -->
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
+    if (document.getElementById('Anual').checked == false && document.getElementById('Mensual').checked == false) {
+        alert('Debe seleccionar el tipo de tasa');
+    } else {
+        var monto = document.getElementById('MontoCartera').value;
+        var tasa = document.getElementById('Tasa').value;
+        if (document.getElementById('Anual').checked == true) {
+            var tasaFinal = (tasa / 1000) / 12;
+        } else {
+            var tasaFinal = tasa / 1000;
+        }
+        var sub = Number(monto) * Number(tasaFinal);
+        document.getElementById('SubTotal').value = sub;
+    }
     $(document).ready(function() {
+        $("#Anual").change(function() {
+            if (document.getElementById('Anual').checked == true) {
+                document.getElementById('Mensual').setAttribute('disabled', true);
+
+            } else {
+                document.getElementById('Mensual').removeAttribute('disabled');
+            }
+        })
+
+        $("#Mensual").change(function() {
+            if (document.getElementById('Mensual').checked == true) {
+                document.getElementById('Anual').setAttribute('disabled', true);
+
+            } else {
+                document.getElementById('Anual').removeAttribute('disabled');
+            }
+        })
+
+        $("#MontoCartera").change(function() {
+            if (document.getElementById('Anual').checked == false && document.getElementById('Mensual').checked == false) {
+                alert('Debe seleccionar el tipo de tasa');
+            } else {
+                var monto = document.getElementById('MontoCartera').value;
+                var tasa = document.getElementById('Tasa').value;
+                if (document.getElementById('Anual').checked == true) {
+                    var tasaFinal = (tasa / 1000) / 12;
+                } else {
+                    var tasaFinal = tasa / 1000;
+                }
+                var sub = Number(monto) * Number(tasaFinal);
+                document.getElementById('SubTotal').value = sub;
+            }
+
+        })
+        $('#ExtPrima').change(function() {
+            var sub = document.getElementById('SubTotal').value;
+            var extra = document.getElementById('ExtPrima').value;
+            var prima = Number(sub) + Number(extra);
+            document.getElementById('PrimaTotal').value = Number(prima);
+        })
+        $('#Descuento').change(function() {
+            var prima = document.getElementById('PrimaTotal').value;
+            var descuento = document.getElementById('Descuento').value;
+            if (descuento == 0) {
+                var total = Number(prima);
+            } else {
+                var total = Number(prima * (descuento / 100));
+            }
+            document.getElementById('PrimaDescontada').value = total;
+        })
+        $('#TasaComision').change(function() {
+            var comision = document.getElementById('TasaComision').value;
+            var total = document.getElementById('PrimaDescontada').value;
+
+            var valorDes = total * (comision / 100);
+            document.getElementById('ValorDescuento').value = Number(valorDes);
+            var IvaSobreComision = Number(valorDes) * 0.13;
+
+            document.getElementById('IvaSobreComision').value = Number(IvaSobreComision);
+            if (document.getElementById('Retencion').hasAttribute('readonly')) {
+                var Retencion = 0;
+            } else {
+                var Retencion = valorDes * 0.01;
+                document.getElementById('Retencion').value = Retencion;
+            }
+            var ValorCCF = Number(valorDes) + Number(IvaSobreComision) - Number(Retencion);
+            // alert(ValorCCF);
+            document.getElementById('ValorCCFE').value = Number(ValorCCF);
+            document.getElementById('ValorCCF').value = Number(ValorCCF);
+            var PrimaTotal = document.getElementById('PrimaTotal').value;
+            var APagar = Number(PrimaTotal) - Number(ValorCCF);
+            document.getElementById('APagar').value = APagar;
+        })
+
         $("#habilitar").click(function() {
             //  $("#btn_guardar").click(function() {
-            document.getElementById('ImpresionRecibo').removeAttribute('readonly');
-            document.getElementById('ImpresionRecibo').type = 'date';
+          //  document.getElementById('ImpresionRecibo').removeAttribute('readonly');
+            document.getElementById('ImpresionRecibo').value = '';
             document.getElementById('EnvioCartera').type = 'date';
             document.getElementById('EnvioPago').type = 'date';
             document.getElementById('PagoAplicado').type = 'date';
@@ -449,26 +591,37 @@
             document.getElementById('ValorCCFE').value = 0;
 
         })
-        $("#ValorDescuento").change(function() {
-            var Descuento = document.getElementById('ValorDescuento').value;
-            var IvaSobreComision = Descuento * 0.13;
-            
-            document.getElementById('IvaSobreComision').value = IvaSobreComision;
-            if (document.getElementById('Retencion').hasAttribute('disabled')) {
-                var Retencion = 0;
-            } else {
-                var Retencion = Descuento * 0.01;
-                document.getElementById('Retencion').value = Retencion;
-            }
-            var ValorCCF = Number(Descuento) + Number(IvaSobreComision) - Number(Retencion);
-           // alert(ValorCCF);
-            document.getElementById('ValorCCFE').value = ValorCCF;
-            document.getElementById('ValorCCF').value = ValorCCF;
-            var PrimaTotal = document.getElementById('PrimaTotal').value;
-            var ExtraPrima = document.getElementById('ExtraPrima').value;
-            var APagar = (Number(PrimaTotal) + Number(ExtraPrima)) - Number(ValorCCF);
-            document.getElementById('APagar').value = APagar;
+        $('#SaldoA').change(function() {
+            var hoy = new Date().toLocaleDateString();
+            //alert(hoy);
+            document.getElementById('ImpresionRecibo').value = hoy;
+            document.getElementById('ImpresionRecibo').setAttribute("readonly", true);
         })
+        $('#EnvioCartera').change(function() {
+            var hoy = new Date();
+            // alert(hoy);
+            if (document.getElementById('ImpresionRecibo').value <= document.getElementById('EnvioCartera')) {
+                alert('debe seleccionar una fecha mayor o igual a la impresion recibo');
+            }
+
+        })
+        $('#EnvioPago').change(function() {
+            var hoy = new Date();
+            // alert(hoy);
+            if (document.getElementById('EnvioCartera').value <= document.getElementById('EnvioPago')) {
+                alert('debe seleccionar una fecha mayor o igual a la envio de cartera');
+            }
+
+        })
+        $('#PagoAplicado').change(function() {
+            var hoy = new Date();
+            // alert(hoy);
+            if (document.getElementById('EnvioPago').value <= document.getElementById('PagoAplicado')) {
+                alert('debe seleccionar una fecha mayor o igual a la envio de pago');
+            }
+
+        })
+
 
     })
 </script>

@@ -22,20 +22,20 @@
                     <thead>
                         <tr>
                             <th>Nombre</th>
-                            <th>Codigo</th>
-                            <th>Telefono</th>
+                            <th>Aseguradora</th>
+                            <th>Monto Cartera</th>
                             <th>Contacto</th>
-                            <th>Activo</th>
+                            <th>Vendedor</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($residencias as $obj)
                             <tr>
-                                <td>{{ $obj->Nombre }}</td>
-                                <td>{{ $obj->Codigo }}</td>
-                                <td>{{ $obj->Telefono }}</td>
-                                <td>{{ $obj->Contacto }}</td>
+                                <td>{{ $obj->clientes->Nombre }}</td>
+                                <td>{{ $obj->aseguradoras->Nombre }}</td>
+                                <td>{{ $obj->MontoCartera }}</td>
+                                <td>{{ $obj->ejecutivos->Nombre }}</td>
                                 @if ($obj->Activo == 1)
                                     <td align="center"><input type="checkbox" checked></td>
                                 @else
@@ -44,7 +44,7 @@
                                 <td align="center">
 
                                     @can('edit users')
-                                        <a href="{{ url('catalogo/aseguradoras') }}/{{ $obj->Id }}/edit"
+                                        <a href="{{ url('polizas/residencia') }}/{{ $obj->Id }}/edit"
                                             class="on-default edit-row">
                                             <i class="fa fa-pencil fa-lg"></i></a>
                                     @endcan

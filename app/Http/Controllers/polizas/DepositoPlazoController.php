@@ -98,6 +98,15 @@ class DepositoPlazoController extends Controller
             $depositoPlazo->EstadoPoliza = $request->EstadoPoliza;
             $depositoPlazo->TipoCobro = $request->TipoCobro;
             $depositoPlazo->Tasa = $request->Tasa;
+            $depositoPlazo->MontoCartera = $request->MontoCartera;
+            // guardar el valor del radio button
+            if($request->tipoTasa == 1){
+                $depositoPlazo->Mensual = 1;  //tasa mensual
+            }elseif($request->tipoTasa == 1){ 
+                $depositoPlazo->Mensual = 0;  //tasa anual
+            }
+            $depositoPlazo->PrimaDescontada = $request->PrimaDescontada;
+            $depositoPlazo->TasaComision = $request->TasaComision;
             $depositoPlazo->PrimaTotal = $request->PrimaTotal;
             $depositoPlazo->Descuento = $request->Descuento;
             $depositoPlazo->ExtraPrima = $request->ExtraPrima;
@@ -131,6 +140,9 @@ class DepositoPlazoController extends Controller
             $detalle->DepositoPlazo = $depositoPlazo->Id;
             $detalle->Comentario = $request->Comentario;
             $detalle->Tasa = $request->Tasa;
+            $detalle->TasaComision = $request->TasaComision;
+            $detalle->MontoCartera = $request->MontoCartera;
+            $detalle->PrimaDescontada = $request->PrimaDescontada;
             $detalle->PrimaTotal = $request->PrimaTotal;
             $detalle->Descuento = $request->Descuento;
             $detalle->ExtraPrima = $request->ExtraPrima;
@@ -139,10 +151,6 @@ class DepositoPlazoController extends Controller
             $detalle->ValorDescuento = $request->ValorDescuento;
             $detalle->Retencion = $request->Retencion;
             $detalle->IvaSobreComision = $request->IvaSobreComision;
-            $detalle->ImpresionRecibo = $request->ImpresionRecibo;
-            $detalle->EnvioCartera = $request->EnvioCartera;
-            $detalle->EnvioPago = $request->EnvioPago;
-            $detalle->PagoAplicado = $request->PagoAplicado;
             $detalle->save();
             alert()->success('El registro ha sido creado correctamente');
             return Redirect::to('poliza/deposito_plazo/create');
@@ -220,6 +228,9 @@ class DepositoPlazoController extends Controller
         $detalle->ExtraPrima = $request->ExtraPrima;
         $detalle->ValorCCF = $request->ValorCCF;
         $detalle->APagar = $request->APagar;
+        $detalle->TasaComision = $request->TasaComision;
+        $detalle->MontoCartera = $request->MontoCartera;
+        $detalle->PrimaDescontada = $request->PrimaDescontada;
         $detalle->ValorDescuento = $request->ValorDescuento;
         $detalle->Retencion = $request->Retencion;
         $detalle->IvaSobreComision = $request->IvaSobreComision;
