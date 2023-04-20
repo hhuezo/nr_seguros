@@ -142,25 +142,27 @@
                                         </label>
                                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                             @if ($depositoPlazo->Mensual == 1)
-                                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                                <input type="radio" name="tipoTasa" id="Mensual" value="1" checked>
-                                                <label class="control-label">Tasa ‰ Millar Mensual</label>
-                                            </div>
+                                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                                    <input type="radio" name="tipoTasa" id="Mensual" value="1"
+                                                        checked>
+                                                    <label class="control-label">Tasa ‰ Millar Mensual</label>
+                                                </div>
 
-                                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                                <input type="radio" name="tipoTasa" id="Mensual" value="0">
-                                                <label class="control-label">Tasa ‰ Millar Anual</label>
-                                            </div>
+                                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                                    <input type="radio" name="tipoTasa" id="Anual" value="0">
+                                                    <label class="control-label">Tasa ‰ Millar Anual</label>
+                                                </div>
                                             @else
-                                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                                <input type="radio" name="tipoTasa" id="Mensual" value="1" >
-                                                <label class="control-label">Tasa ‰ Millar Mensual</label>
-                                            </div>
+                                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                                    <input type="radio" name="tipoTasa" id="Mensual" value="1">
+                                                    <label class="control-label">Tasa ‰ Millar Mensual</label>
+                                                </div>
 
-                                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                                <input type="radio" name="tipoTasa" id="Mensual" value="0" checked>
-                                                <label class="control-label">Tasa ‰ Millar Anual</label>
-                                            </div>
+                                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                                    <input type="radio" name="tipoTasa" id="Anual" value="0"
+                                                        checked>
+                                                    <label class="control-label">Tasa ‰ Millar Anual</label>
+                                                </div>
                                             @endif
 
                                         </div>
@@ -550,8 +552,20 @@
 
                             <div class="x_title">
                                 <h2> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<small></small></h2>
+
+                            </div>
+
+
+                            <div class="x_title">
+                                <h2>Pagos<small></small>
+                                </h2>
+                                <ul class="nav navbar-right panel_toolbox">
+                                    <div class="btn btn-info float-right" data-bs-toggle="modal" data-bs-target="#modal_pago">Nuevo</div>
+                                </ul>
                                 <div class="clearfix"></div>
                             </div>
+
+
 
                             <div>
                                 <br>
@@ -597,6 +611,74 @@
 
             </div>
         </div>
+
+
+
+
+
+
+        <div class="modal fade" id="modal_pago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            aria-hidden="true" data-tipo="1">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form action="../add_documento" enctype="multipart/form-data" method="POST">
+                        <div class="modal-header">
+                            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                                <h5 class="modal-title" id="exampleModalLabel">Documento</h5>
+                            </div>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="box-body">
+                                <input type="hidden" name="Id" id="Id" value="{{ $depositoPlazo->Id }}"
+                                    class="form-control">
+                              @csrf
+
+                                <div class="form-group">
+                                    < class="col-sm-12">
+                                        Tipo de documento
+
+                                        <input type="text" class="form-control">
+
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        Archivo
+                                        <input type="file" name="Archivo" required="true" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Aceptar</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     </div>
     @include('sweetalert::alert')
     <!-- jQuery -->
