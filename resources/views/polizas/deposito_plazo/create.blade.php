@@ -33,16 +33,16 @@
                     <div class="form-horizontal" style="font-size: 12px;">
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right" style="margin-top: -3%;">Número de Póliza</label>
+                            <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Código</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="NumeroPoliza" type="text" value="{{ old('NumeroPoliza') }}" required>
+                                        <input class="form-control" name="Codigo" id="Codigo" type="text" value="{{ old('Codigo') }}" required>
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Código</label>
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right" style="margin-top: -3%;">Número de Póliza</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Codigo" type="text" value="{{ old('Codigo') }}" required>
+                                        <input class="form-control" name="NumeroPoliza" id="NumeroPoliza" type="text" value="{{ old('NumeroPoliza') }}" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -71,7 +71,7 @@
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Nit</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Nit" id="Nit" type="text" value="{{ old('Nit') }}">
+                                        <input class="form-control" name="Nit" id="Nit" type="text" value="{{ old('Nit') }}" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -498,7 +498,7 @@
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <div class="form-group" align="center">
                                 <button type="submit" class="btn btn-success">Aceptar</button>
-                                <a href="{{ url('poliza/depsoito_plazo') }}"><button type="button" class="btn btn-primary">Cancelar</button></a>
+                                <a href="{{ url('poliza/deposito_plazo') }}"><button type="button" class="btn btn-primary">Cancelar</button></a>
                             </div>
                         </div>
 
@@ -719,6 +719,12 @@
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function() {
+        $("#Codigo").change(function(){
+            var codigo = document.getElementById('Codigo').value;
+            var num = codigo.substr(-5,9);
+            document.getElementById('NumeroPoliza').value = num;
+    //        alert(num);
+        })
         $("#Anual").change(function() {
             if (document.getElementById('Anual').checked == true) {
                 document.getElementById('Mensual').setAttribute('disabled', true);

@@ -136,22 +136,6 @@ class DepositoPlazoController extends Controller
             $depositoPlazo->Activo = 1;
             $depositoPlazo->save();
 
-            $detalle = new DetalleDepositoPlazo();
-            $detalle->DepositoPlazo = $depositoPlazo->Id;
-            $detalle->Comentario = $request->Comentario;
-            $detalle->Tasa = $request->Tasa;
-            $detalle->TasaComision = $request->TasaComision;
-            $detalle->MontoCartera = $request->MontoCartera;
-            $detalle->PrimaDescontada = $request->PrimaDescontada;
-            $detalle->PrimaTotal = $request->PrimaTotal;
-            $detalle->Descuento = $request->Descuento;
-            $detalle->ExtraPrima = $request->ExtraPrima;
-            $detalle->ValorCCF = $request->ValorCCF;
-            $detalle->APagar = $request->APagar;
-            $detalle->ValorDescuento = $request->ValorDescuento;
-            $detalle->Retencion = $request->Retencion;
-            $detalle->IvaSobreComision = $request->IvaSobreComision;
-            $detalle->save();
             alert()->success('El registro ha sido creado correctamente');
             return Redirect::to('poliza/deposito_plazo/create');
         }
