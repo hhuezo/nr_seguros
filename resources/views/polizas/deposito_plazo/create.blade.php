@@ -145,24 +145,18 @@
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">&nbsp;
                                     </label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-check-input" type="checkbox" name="tipoTasa" id="Mensual" value="1">
-                                        <label class="form-check-label" for="flexRadioDefault1">
-                                            Tasa ‰ Millar Mensual
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">&nbsp;
-                                    </label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                            <input type="radio" name="tipoTasa" id="Mensual" value="1" checked>
+                                            <label class="control-label">Tasa ‰ Millar Mensual</label>
+                                        </div>
 
-                                        <input class="form-check-input" type="checkbox" name="tipoTasa" id="Anual" value="2">
-                                        <label class="form-check-label" for="flexRadioDefault2">
-                                            Tasa ‰ Millar Anual
-                                        </label>
+                                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                            <input type="radio" name="tipoTasa" id="Mensual" value="0">
+                                            <label class="control-label">Tasa ‰ Millar Anual</label>
+                                        </div>
                                     </div>
                                 </div>
-                                <br>
+
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Monto Cartera
                                     </label>

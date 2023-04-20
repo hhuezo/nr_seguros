@@ -100,11 +100,12 @@ class DepositoPlazoController extends Controller
             $depositoPlazo->Tasa = $request->Tasa;
             $depositoPlazo->MontoCartera = $request->MontoCartera;
             // guardar el valor del radio button
-            if($request->tipoTasa == 1){
+            /*if($request->tipoTasa == 1){
                 $depositoPlazo->Mensual = 1;  //tasa mensual
-            }elseif($request->tipoTasa == 1){ 
+            }elseif($request->tipoTasa == 1){
                 $depositoPlazo->Mensual = 0;  //tasa anual
-            }
+            }*/
+            $depositoPlazo->Mensual = $request->tipoTasa;
             $depositoPlazo->PrimaDescontada = $request->PrimaDescontada;
             $depositoPlazo->TasaComision = $request->TasaComision;
             $depositoPlazo->PrimaTotal = $request->PrimaTotal;
@@ -181,7 +182,7 @@ class DepositoPlazoController extends Controller
      */
     public function update(Request $request, $id)
     {
-      // dd();
+        // dd($request->tipoTasa);
         $depositoPlazo = DepositoPlazo::findOrFail($id);
         $depositoPlazo->NumeroUsuario1 = $request->NumeroUsuario1;
         $depositoPlazo->SumaAseguradora1 = $request->SumaAseguradora1;
@@ -201,9 +202,11 @@ class DepositoPlazoController extends Controller
         $depositoPlazo->NumeroUsuario6 = $request->NumeroUsuario6;
         $depositoPlazo->SumaAseguradora6 = $request->SumaAseguradora6;
         $depositoPlazo->Prima6 = $request->Prima6;
+        $depositoPlazo->Mensual = $request->tipoTasa;
         $depositoPlazo->update();
 
-        $detalle = new DetalleDepositoPlazo();
+
+       /* $detalle = new DetalleDepositoPlazo();
         $detalle->DepositoPlazo = $depositoPlazo->Id;
         $detalle->Comentario = $request->Comentario;
         $detalle->Tasa = $request->Tasa;
@@ -222,7 +225,7 @@ class DepositoPlazoController extends Controller
         $detalle->EnvioCartera = $request->EnvioCartera;
         $detalle->EnvioPago = $request->EnvioPago;
         $detalle->PagoAplicado = $request->PagoAplicado;
-        $detalle->save();
+        $detalle->save();*/
 
         alert()->success('El registro ha sido modificado correctamente');
         return back();
