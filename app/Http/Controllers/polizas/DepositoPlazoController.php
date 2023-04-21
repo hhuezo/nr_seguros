@@ -19,22 +19,14 @@ use Illuminate\Support\Facades\Redirect;
 
 class DepositoPlazoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
         $depositoPlazo = DepositoPlazo::all();
         return view('polizas.deposito_plazo.index', compact('depositoPlazo'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function create()
     {
         $tipos_contribuyente =  TipoContribuyente::get();
@@ -66,12 +58,6 @@ class DepositoPlazoController extends Controller
         return $cliente;
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $depositoPlazo_codigo = DepositoPlazo::where('Codigo', $request->Codigo)->first();
@@ -142,23 +128,11 @@ class DepositoPlazoController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         $depositoPlazo = DepositoPlazo::findOrFail($id);
@@ -173,13 +147,6 @@ class DepositoPlazoController extends Controller
         return view('polizas.deposito_plazo.edit', compact('depositoPlazo', 'detalle','detalle_last' ,'aseguradora', 'cliente', 'tipoCartera', 'estadoPoliza', 'tipoCobro', 'ejecutivo'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
         // dd($request->tipoTasa);
@@ -231,14 +198,34 @@ class DepositoPlazoController extends Controller
         return back();
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         //
     }
+
+    public function create_pago(Request $request)
+    {
+        $detalle = new DetalleDepositoPlazo();
+        $detalle->DepositoPlazo = $request->Id;
+        $detalle->Comentario = $request->Comentario;
+        $detalle->Tasa = $request->Tasa;
+        $detalle->PrimaTotal = $request->PrimaTotal;
+        $detalle->Descuento = $request->Descuento;
+        $detalle->ExtraPrima = $request->ExtraPrima;
+        $detalle->ValorCCF = $request->ValorCCF;
+        $detalle->APagar = $request->APagar;
+        $detalle->TasaComision = $request->TasaComision;
+        $detalle->MontoCartera = $request->MontoCartera;
+        $detalle->PrimaDescontada = $request->PrimaDescontada;
+        $detalle->ValorDescuento = $request->ValorDescuento;
+        $detalle->Retencion = $request->Retencion;
+        $detalle->IvaSobreComision = $request->IvaSobreComision;
+        $detalle->ImpresionRecibo = $request->ImpresionRecibo;
+        $detalle->EnvioCartera = $request->EnvioCartera;
+        $detalle->EnvioPago = $request->EnvioPago;
+        $detalle->PagoAplicado = $request->PagoAplicado;
+        $detalle->save();
+    }
+
+
 }
