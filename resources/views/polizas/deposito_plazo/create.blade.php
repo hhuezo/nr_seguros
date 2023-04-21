@@ -151,7 +151,7 @@
                                         </div>
 
                                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                            <input type="radio" name="tipoTasa" id="Mensual" value="0">
+                                            <input type="radio" name="tipoTasa" id="Anual" value="0">
                                             <label class="control-label">Tasa ‰ Millar Anual</label>
                                         </div>
                                     </div>
