@@ -572,6 +572,7 @@
                                 <br>
                                 <table class="table table-striped table-bordered">
                                     <tr>
+                                        <th><br><i class="fa fa-pencil"></i></th>
                                         <th>Tasa</th>
                                         <th>Descuento</th>
                                         <th>A Pagar</th>
@@ -582,6 +583,8 @@
                                     </tr>
                                     @foreach ($detalle as $obj)
                                         <tr>
+                                            <td><i class="fa fa-pencil" onclick="modal_edit({{ $obj->Id }})"></i>
+                                            </td>
                                             <td>{{ $obj->Tasa }}</td>
                                             <td>{{ $obj->Descuento }}</td>
                                             <td>{{ $obj->APagar }}</td>
@@ -620,9 +623,9 @@
 
         <div class="modal fade bs-example-modal-lg" id="modal_pago" tabindex="-1" role="dialog"
             aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
-            <div class="modal-dialog" role="document">
+            <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
-                    <form action="{{url('polizas/deposito_plazo/create_pago')}}"  method="POST">
+                    <form action="{{ url('polizas/deposito_plazo/create_pago') }}" method="POST">
                         <div class="modal-header">
                             <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
                                 <h5 class="modal-title" id="exampleModalLabel">Nuevo pago</h5>
@@ -632,35 +635,147 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <div class="box-body">
+                            <div class="box-body row">
                                 <input type="hidden" name="Id" id="Id" value="{{ $depositoPlazo->Id }}"
                                     class="form-control">
                                 @csrf
 
-                                <div class="form-group">
-                                    <div class="col-sm-12">
-                                        <label class="control-label">Saldo a</label>
-                                        <input type="date" name="SaldoA" class="form-control" required>
+                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 ">
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="control-label">Saldo a</label>
+                                            <input type="date" name="SaldoA" class="form-control" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="control-label">Tasa</label>
+                                            <input type="number" step="0.01" name="Tasa" class="form-control"
+                                                required>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="control-label">Extra Prima</label>
+                                            <input type="number" step="0.01" name="PrimaTotal" class="form-control"
+                                                required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="control-label">Descuento</label>
+                                            <input type="number" step="0.01" name="Descuento" class="form-control"
+                                                required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="control-label">Extra Prima</label>
+                                            <input type="number" step="0.01" name="ExtraPrima" class="form-control"
+                                                required>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="control-label">Valor CCF</label>
+                                            <input type="number" step="0.01" name="ValorCCF" class="form-control"
+                                                required>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="control-label">A pagar</label>
+                                            <input type="number" step="0.01" name="APagar" class="form-control"
+                                                required>
+                                        </div>
+                                    </div>
+
+
+
+                                </div>
+
+                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 ">
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="control-label">Tasa comision</label>
+                                            <input type="number" step="0.01" name="TasaComision"
+                                                class="form-control" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="control-label">Monto cartera</label>
+                                            <input type="number" step="0.01" name="MontoCartera"
+                                                class="form-control" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="control-label">Prima descontada</label>
+                                            <input type="number" step="0.01" name="PrimaDescontada"
+                                                class="form-control" required>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="control-label">Valor descuento</label>
+                                            <input type="number" step="0.01" name="ValorDescuento"
+                                                class="form-control" required>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="control-label">Retencion</label>
+                                            <input type="number" step="0.01" name="Retencion" class="form-control"
+                                                required>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="control-label">IVA sobre comision</label>
+                                            <input type="number" step="0.01" name="IvaSobreComision"
+                                                class="form-control" required>
+                                        </div>
+                                    </div>
+
+
+
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="control-label">Comentario</label>
+                                            <textarea name="Comentario" class="form-control"></textarea>
+                                        </div>
                                     </div>
                                 </div>
 
 
-                                <div class="form-group">
-                                    <div class="col-sm-12">
-                                        <label class="control-label">Comentario</label>
-                                        <textarea name="Comentario" class="form-control"></textarea>
-                                    </div>
-                                </div>
 
 
 
 
-                        </div>
-                        <div class="clearfix"></div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-primary">Aceptar</button>
-                        </div>
+
+
+
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-primary">Aceptar</button>
+                            </div>
                     </form>
                 </div>
 
@@ -668,92 +783,85 @@
             </div>
         </div>
 
-        <div class="modal fade " id="modal_editar_pago" tabindex="-1" role="dialog"
-            aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <form action="../add_documento" method="POST">
-                        <div class="modal-header">
-                            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
-                                <h5 class="modal-title" id="exampleModalLabel">Edtar Pagos</h5>
-                            </div>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+
+    </div>
+
+
+    <div class="modal fade " id="modal_editar_pago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true" data-tipo="1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="POST" action="{{ url('polizas/deposito_plazo/edit_pago') }}">
+                    <div class="modal-header">
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                            <h5 class="modal-title" id="exampleModalLabel">Pago</h5>
                         </div>
-                        <div class="modal-body">
-                            <div class="box-body">
-                                <input type="hidden" name="Id" id="Id" value="{{ $depositoPlazo->Id }}"
-                                    class="form-control">
-                                @csrf
-
-                                <div class="form-group">
-                                    <div class="col-sm-12">
-                                        <label class="control-label">Saldo A</label>
-                                        <input type="date" name="SaldoA" class="form-control">
-                                    </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="box-body">
+                            @csrf
+                            <input type="hidden" name="Id" id="ModalId" 
+                                class="form-control">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label class="control-label">Saldo a</label>
+                                    <input type="date" name="SaldoA" id="ModalSaldoA" class="form-control" readonly>
                                 </div>
-
-                                <div class="form-group">
-                                    <div class="col-sm-12">
-                                        <label class="control-label">Impresión de recibo</label>
-                                        <input type="date" name="ImpresionRecibo" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-sm-12">
-                                        <br>
-                                        <label class="control-label">Envió de Cartera</label>
-                                        <input type="date" name="EnvioCartera" class="form-control">
-                                    </div>
-                                </div>
-
-
-
-                                <div class="form-group">
-                                    <div class="col-sm-12">
-                                        <label class="control-label">Envió de pago</label>
-                                        <input type="date" name="EnvioPago" value="{{ $detalle_last->EnvioPago }}"
-                                            class="form-control">
-                                    </div>
-                                </div>
-
-
-
-
-
-
-
-
-                                <div class="form-group">
-                                    <div class="col-sm-12">
-                                        <label class="control-label">Pago Aplicado</label>
-                                        <input type="date" name="SaldoA" class="form-control">
-                                    </div>
-                                </div>
-
-
                             </div>
 
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label class="control-label">Impresión de Recibo</label>
+                                    <input type="date" name="ImpresionRecibo" id="ModalImpresionRecibo"
+                                        class="form-control" readonly>
+                                </div>
+                            </div>
 
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label class="control-label">Envio cartera</label>
+                                    <input type="date" name="EnvioCartera" id="ModalEnvioCartera"
+                                        class="form-control" >
+                                </div>
+                            </div>
 
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label class="control-label">Envio pago</label>
+                                    <input type="date" name="EnvioPago" id="ModalEnvioPago" class="form-control">
+                                </div>
+                            </div>
 
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label class="control-label">Pago aplicado</label>
+                                    <input type="date" name="PagoAplicado" id="ModalPagoAplicado"
+                                        class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label class="control-label">Comentario</label>
+                                    <textarea class="form-control" rows="4" name="Comentario" id="ModalComentario"></textarea>
+                                </div>
+                            </div>
 
                         </div>
-                        <div class="clearfix"></div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-primary">Aceptar</button>
-                        </div>
-                    </form>
-                </div>
-
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Aceptar</button>
+                    </div>
+                </form>
 
             </div>
         </div>
     </div>
-
-
 
 
 
@@ -909,6 +1017,56 @@
             })
 
 
-        })
+        });
+
+        function modal_edit(id) {
+            document.getElementById('ModalSaldoA').value =  "";
+            document.getElementById('ModalImpresionRecibo').value = "";
+            document.getElementById('ModalComentario').value = "";
+            document.getElementById('ModalEnvioCartera').value = "";
+            document.getElementById('ModalEnvioPago').value = "";
+            document.getElementById('ModalPagoAplicado').value = "";
+            document.getElementById('ModalId').value = id;
+            
+
+
+            $.get("{{ url('polizas/deposito_plazo/get_pago') }}" + '/' + id, function(data) {
+                console.log(data);
+                document.getElementById('ModalSaldoA').value = data.SaldoA.substring(0, 10);
+                document.getElementById('ModalImpresionRecibo').value = data.ImpresionRecibo.substring(0, 10);
+                document.getElementById('ModalComentario').value = data.Comentario;
+                if (data.EnvioCartera) {
+                    document.getElementById('ModalEnvioCartera').value = data.EnvioCartera.substring(0, 10);
+                }
+                else{
+                    $("#ModalEnvioPago").prop("readonly",true);
+                    $("#ModalPagoAplicado").prop("readonly",true);
+                }
+
+                if (data.EnvioPago) {
+                    document.getElementById('ModalEnvioPago').value = data.EnvioPago.substring(0, 10);
+                }
+                else{
+                    $("#ModalEnvioCartera").prop("readonly",true);
+                    $("#ModalPagoAplicado").prop("readonly",true);
+                }
+
+                if (data.PagoAplicado) {
+                    document.getElementById('ModalPagoAplicado').value = data.PagoAplicado.substring(0, 10);
+                    $("#ModalEnvioCartera").prop("readonly",true);
+                    $("#ModalEnvioPago").prop("readonly",true);
+                    $("#ModalPagoAplicado").prop("readonly",true);
+                }
+                else{
+                    $("#ModalEnvioCartera").prop("readonly",true);
+                    $("#ModalEnvioPago").prop("readonly",true);
+                }
+
+
+
+            });
+            $('#modal_editar_pago').modal('show');
+
+        }
     </script>
 @endsection
