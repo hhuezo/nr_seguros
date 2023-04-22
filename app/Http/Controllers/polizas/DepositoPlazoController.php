@@ -16,6 +16,7 @@ use App\Models\polizas\DepositoPlazo;
 use App\Models\polizas\DetalleDepositoPlazo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use Carbon\Carbon;
 
 class DepositoPlazoController extends Controller
 {
@@ -205,7 +206,10 @@ class DepositoPlazoController extends Controller
 
     public function create_pago(Request $request)
     {
+        $time = Carbon::now('America/El_Salvador');
+
         $detalle = new DetalleDepositoPlazo();
+        $detalle->SaldoA = $request->SaldoA;
         $detalle->DepositoPlazo = $request->Id;
         $detalle->Comentario = $request->Comentario;
         $detalle->Tasa = $request->Tasa;
@@ -220,11 +224,45 @@ class DepositoPlazoController extends Controller
         $detalle->ValorDescuento = $request->ValorDescuento;
         $detalle->Retencion = $request->Retencion;
         $detalle->IvaSobreComision = $request->IvaSobreComision;
-        $detalle->ImpresionRecibo = $request->ImpresionRecibo;
-        $detalle->EnvioCartera = $request->EnvioCartera;
+        $detalle->ImpresionRecibo = $time->toDateTimeString();
+        /*$detalle->EnvioCartera = $request->EnvioCartera;
         $detalle->EnvioPago = $request->EnvioPago;
-        $detalle->PagoAplicado = $request->PagoAplicado;
+        $detalle->PagoAplicado = $request->PagoAplicado;*/
         $detalle->save();
+
+        alert()->success('El registro ha sido ingresado correctamente');
+        return back();
+    }
+
+    public function edit_pago(Request $request)
+    {
+        $detalle = DetalleDepositoPlazo::findOrFail($request->Id);
+        //dd($request->EnvioCartera .' 00:00:00');
+        if($request->EnvioCartera)
+        {
+            $detalle->EnvioCartera = $request->EnvioCartera;
+        }
+        if($request->EnvioPago)
+        {
+            $detalle->EnvioPago = $request->EnvioPago;
+        }
+        if($request->PagoAplicado)
+        {
+            $detalle->PagoAplicado = $request->PagoAplicado;
+        }
+        $detalle->Comentario = $request->Comentario;
+        
+        /*$detalle->EnvioPago = $request->EnvioPago;
+        $detalle->PagoAplicado = $request->PagoAplicado;*/
+        $detalle->update();
+        alert()->success('El registro ha sido ingresado correctamente');
+        return back();
+    }
+
+    public function get_pago($id)
+    {
+        return DetalleDepositoPlazo::findOrFail($id);
+
     }
 
 
