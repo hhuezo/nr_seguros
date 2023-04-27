@@ -1,0 +1,138 @@
+    <div class="form-group row">
+                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Monto
+                                            Cartera
+                                        </label>
+                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                            <input class="form-control" name="MontoCartera" id="MontoCartera"
+                                                type="number" step="any" value="{{ $detalle_last->MontoCartera }}"
+                                                required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa
+                                            %</label>
+                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                            <input class="form-control" name="Tasa" id="Tasa" type="number"
+                                                step="any" value="{{ $depositoPlazo->Tasa }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Sub
+                                            Total</label>
+                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                            <input class="form-control" name="SubTotal" type="number" id="SubTotal"
+                                                step="any" value="" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Extra
+                                            Prima</label>
+                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                            <input class="form-control" name="ExtraPrima" id="ExtraPrima" type="number"
+                                                step="any" value="{{ $detalle_last->ExtraPrima }}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Prima
+                                            Total</label>
+                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                            <input class="form-control" name="PrimaTotal" id="PrimaTotal" type="number"
+                                                step="any" value="{{ $detalle_last->PrimaTotal }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Descuento
+                                            %</label>
+                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                            <input class="form-control" name="Descuento" id="Descuento" type="number"
+                                                step="any" value="{{ $detalle_last->Descuento }}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">
+                                            Prima Descontada</label>
+                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                            <input class="form-control" name="PrimaDescontada" type="number"
+                                                step="any" id="PrimaDescontada"
+                                                value="$detalle_last->PrimaDescontada">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Menos
+                                            Valor CCF Comisión</label>
+                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                            <input class="form-control" name="ValorCCF" id="ValorCCF" type="number"
+                                                step="any" value="{{ $detalle_last->ValorCCF }}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">A
+                                            Pagar</label>
+                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                            <input class="form-control" name="APagar" type="number" id="APagar"
+                                                step="any" value="{{ $detalle_last->APagar }}">
+                                        </div>
+                                    </div>
+<div class="form-group row">
+                                        <label class="control-label col-md-12 col-sm-12 col-xs-12"
+                                            style="text-align: center;">Estructura CCF de comisión</label>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Comision
+                                            %</label>
+                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                            <input class="form-control" name="TasaComision" id="TasaComision"
+                                                type="number" step="any" value="{{ $detalle_last->TasaComision }}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Valor
+                                            Desc</label>
+                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                            <input class="form-control" name="ValorDescuento" id="ValorDescuento"
+                                                type="number" step="any"
+                                                value="{{ $detalle_last->ValorDescuento }}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">mas 13%
+                                            IVA sobre comisión</label>
+                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                            <input class="form-control" name="IvaSobreComision" id="IvaSobreComision"
+                                                type="number" step="any"
+                                                value="{{ $detalle_last->IvaSobreComision }}">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">menos 1%
+                                            Retención</label>
+                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                            @if ($depositoPlazo->clientes->TipoContribuyente < 2)
+                                                <input class="form-control" name="Retencion" id="Retencion"
+                                                    type="number" step="any" value="{{ $detalle_last->Retencion }}"
+                                                    disabled>
+                                            @else
+                                                <input class="form-control" name="Retencion" id="Retencion"
+                                                    type="number" step="any"
+                                                    value="{{ $detalle_last->Retencion }}">
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Valor CCF
+                                            Comisión</label>
+                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                            <input class="form-control" name="ValorCCF" id="ValorCCFE" type="number"
+                                                step="any">
+                                        </div>
+                                    </div>
+
+<div class="form-group row">
+                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Comentarios
+                                            del Cobro</label>
+                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                            <textarea class="form-control" name="Comentario" row="3" col="4" value="{{ old('Comentario') }}"> </textarea>
+                                        </div>
+                                    </div>

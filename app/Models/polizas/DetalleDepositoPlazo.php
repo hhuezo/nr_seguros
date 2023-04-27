@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class DetalleDepositoPlazo extends Model
 {
     use HasFactory;
-    protected $table = 'detalle_poliza_deposito_plazo';
+    protected $table = 'poliza_deposito_plazo_detalle';
 
     protected $primaryKey = 'Id';
 
@@ -24,6 +24,7 @@ class DetalleDepositoPlazo extends Model
         'ExtraPrima',
         'ValorCCF',
         'APagar',
+        'Comision',
         'ValorDescuento',
         'IvaSobreComision',
         'Retencion',

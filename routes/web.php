@@ -73,6 +73,9 @@ Route::get('catalogo/negocios/consultar', [NegocioController::class, 'consultar'
 
 //pólizas
 Route::resource('polizas/residencia', ResidenciaController::class);
+Route::post('polizas/residencia/create_pago', [ResidenciaController::class,'create_pago']);
+Route::post('polizas/residencia/edit_pago', [ResidenciaController::class,'edit_pago']);
+Route::get('polizas/residencia/get_pago/{id}', [ResidenciaController::class,'get_pago']);
 
 Route::resource('polizas/deposito_plazo', DepositoPlazoController::class);
 Route::post('polizas/deposito_plazo/create_pago', [DepositoPlazoController::class,'create_pago']);

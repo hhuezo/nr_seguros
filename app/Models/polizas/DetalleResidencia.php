@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class DetalleResidencia extends Model
 {
     use HasFactory;
-    protected $table = 'detalle_poliza_residencia';
+    protected $table = 'poliza_residencia_detalle';
 
     protected $primaryKey = 'Id';
 
@@ -17,15 +17,15 @@ class DetalleResidencia extends Model
 
     protected $fillable = [
         'Residencia',
-        'MontoCartera',
+        'Comentario',
         'Tasa',
-        'Prima',
+        'PrimaTotal',
         'Descuento',
-        'Iva',
+        'ExtraPrima',
         'ValorCCF',
         'APagar',
-        'ComentariosDeCobro',
-        'DescuentoIva',
+        'ImpuestoBomberos',
+        'ValorDescuento',
         'Comision',
         'IvaSobreComision',
         'Retencion',
@@ -33,7 +33,10 @@ class DetalleResidencia extends Model
         'EnvioCartera',
         'EnvioPago',
         'PagoAplicado',
-        'SaldoA'
+        'SaldoA',
+        'MontoCartera',
+        'TasaComision',
+        'PrimaDescontada'
     ];
 
     protected $guarded = [];

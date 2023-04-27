@@ -25,16 +25,17 @@
                 <div class="x_content" style="font-size: 12px;">
                     <br />
                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
-                        <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right" style="margin-top: -3%;">Número de Póliza</label>
-                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="NumeroPoliza" type="text" value="{{ old('NumeroPoliza') }}" required>
-                            </div>
-                        </div>
+                        
                         <div class="form-group row">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Código</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="Codigo" type="text" value="{{ old('Codigo') }}" required>
+                                <input class="form-control" name="Codigo" id="Codigo" type="text" value="{{ old('Codigo') }}" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right" style="margin-top: -3%;">Número de Póliza</label>
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <input class="form-control" name="NumeroPoliza" id="NumeroPoliza" type="text" value="{{ old('NumeroPoliza') }}" readonly>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -101,26 +102,45 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Limite grupo</label>
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <input type="number" step="any" name="LimiteGrupo" id="LimiteGrupo" value="{{ old('LimiteGrupo') }}" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Limite individual</label>
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <input type="number" step="any" name="LimiteIndividual" id="LimiteIndividual" value="{{ old('LimiteIndividual') }}" class="form-control">
+                            </div>
+                        </div>
+                         <!-- radio button -->
+                         <div class="form-group row">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">&nbsp;
+                            </label>
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                    <input type="radio" name="tipoTasa" id="Mensual" value="1" checked>
+                                    <label class="control-label">Tasa ‰ Millar Mensual</label>
+                                </div>
+
+                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                    <input type="radio" name="tipoTasa" id="Anual" value="0">
+                                    <label class="control-label">Tasa ‰ Millar Anual</label>
+                                </div>
+                            </div>
+                        </div>
 
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
-                        <div class="form-group">
-                            <div class="form-group">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12">Limite grupo</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input type="number" step="any" name="LimiteGrupo" value="{{ old('LimiteGrupo') }}" class="form-control">
-                                </div>
-                            </div>
 
-                            <div class="form-group">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12">Limite individual</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input type="number" step="any" name="LimiteIndividual" value="{{ old('LimiteIndividual') }}" class="form-control">
-                                </div>
-                            </div>
+                       
+                       
+                        <div class="form-group">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12">Monto cartera</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input type="number" step="any" name="MontoCartera" value="{{ old('MontoCartera') }}" class="form-control">
+                                <input type="number" step="any" name="MontoCartera" id="MontoCartera" value="{{ old('MontoCartera') }}" class="form-control">
                             </div>
                         </div>
 
@@ -128,30 +148,63 @@
                         <div class="form-group">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12">Tasa %</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input type="number" step="any" name="Tasa" value="{{ old('Tasa') }}" class="form-control">
+                                <input type="number" step="any" name="Tasa" id="Tasa" value="{{ old('Tasa') }}" class="form-control">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Descuento %</label>
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Prima Calculada</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input type="number" step="any" name="Descuento" Id="Descuento" value="{{ old('Descuento') }}" class="form-control" >
+                                <input type="number" step="any" name="PrimaCalculada" id="PrimaCalculada" class="form-control">
                             </div>
-
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Extra
+                                Prima</label>
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <input class="form-control" name="ExtraPrima" type="number" step="any" id="ExtPrima" >
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">
+                                Prima Total</label>
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <input class="form-control" name="PrimaTotal" type="number" step="any" id="PrimaTotal" value="{{ old('PrimaToal') }}">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Descuento
+                                %</label>
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <input class="form-control" name="Descuento" type="number" step="any" id="Descuento" value="{{ old('Descuento') }}">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">
+                                Prima Descontada</label>
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <input class="form-control" name="PrimaDescontada" type="number" step="any" id="PrimaDescontada" value="{{ old('PrimaDescontada') }}">
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Valor prima</label>
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Impuestos bomberos</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input type="number" step="any" name="ValorPrima" id="ValorPrima" value="{{ old('ValorPrima') }}" class="form-control">
+                                <input type="number" step="any" name="ImpuestoBomberos" id="ImpuestoBomberos" value="{{ old('ImpuestosBomberos') }}" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Sub Total</label>
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <input type="number" step="any" name="SubTotal" id="SubTotal" class="form-control">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12">IVA</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input type="number" step="any" name="Iva" Id="Iva" value="{{ old('Iva') }}" class="form-control">
+                                <input type="number" step="any" name="Iva" id="Iva" value="{{ old('Iva') }}" class="form-control">
                             </div>
                         </div>
 
-                        
+
                         <div class="form-group">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12">Menos valor CCF de comision</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
@@ -174,7 +227,7 @@
                         <div class="form-group">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12">Descuento con Iva</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input type="checkbox" name="DescuentoIva" style="width: 10%; height: 5%;">
+                                <input type="checkbox" name="DescuentoIva" id="DescuentoIva" style="width: 10%; height: 5%;">
                             </div>
 
                         </div>
@@ -185,27 +238,28 @@
                                 <input type="number" step="any" name="GastosEmision" id="GastosEmision" value="{{ old('GastosEmision') }}" class="form-control">
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Impuestos bomberos</label>
-                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input type="number" step="any" name="ImpuestoBomberos" id="ImpuestoBomberos" value="{{ old('ImpuestosBomberos') }}" class="form-control">
-                            </div>
-                        </div>
+                      
                         <div class="form-group row">
                             <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: center;">Estructura CCF de comisión</label>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Comision %</label>
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any">
+                            </div>
                         </div>
                         <div class="form-group row">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Valor
                                 Desc</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="ValorDescuento" id="ValorDescuento" type="number" step="0.00000001">
+                                <input class="form-control" name="ValorDescuento" id="ValorDescuento" type="number" step="any">
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">mas 13%
                                 IVA sobre comisión</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="IvaSobreComision" id="IvaSobreComision" type="number" step="0.00000001">
+                                <input class="form-control" name="IvaSobreComision" id="IvaSobreComision" type="number" step="any">
                             </div>
                         </div>
 
@@ -213,7 +267,7 @@
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">menos 1%
                                 Retención</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="Retencion" id="Retencion" type="number" step="0.00000001">
+                                <input class="form-control" name="Retencion" id="Retencion" type="number" step="any">
                             </div>
                         </div>
 
@@ -221,7 +275,7 @@
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Valor CCF
                                 Comisión</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="ValorCCF" id="ValorCCFE" type="number" step="0.00000001">
+                                <input class="form-control" name="ValorCCF" id="ValorCCFE" type="number" step="any">
                             </div>
                         </div>
                     </div>
@@ -246,7 +300,7 @@
                     </div>
                     <br>
 
-
+                    <!-- 
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="border: 1px solid;">
                         <br>
                         <br>
@@ -299,7 +353,7 @@
                     <div class="x_title">
                         <h2> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<small></small></h2>
                         <div class="clearfix"></div>
-                    </div>
+                    </div> -->
 
 
 
@@ -409,7 +463,7 @@
                                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                                 <select name="Ruta" id="ModalRuta" class="form-control select2" style="width: 100%">
                                                     @foreach ($rutas as $obj)
-                                                    <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                                    <option value="{{ $obj->id }}">{{ $obj->Nombre }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -428,7 +482,7 @@
                                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                                 <select name="TipoContribuyente" id="ModalTipoContribuyente" class="form-control" style="width: 100%">
                                                     @foreach ($tipos_contribuyente as $obj)
-                                                    <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                                    <option value="{{ $obj->id }}">{{ $obj->Nombre }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -440,7 +494,7 @@
                                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                                 <select name="UbicacionCobro" id="ModalUbicacionCobro" class="form-control" style="width: 100%">
                                                     @foreach ($ubicaciones_cobro as $obj)
-                                                    <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                                    <option value="{{ $obj->id }}">{{ $obj->Nombre }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -521,6 +575,93 @@
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function() {
+        $('#MontoCartera').change(function(){
+            if(document.getElementById('LimiteGrupo').value < document.getElementById('MontoCartera').value){
+                alert('Su monto de cartera a superado al techo establecido en la poliza');
+            }
+        })
+        $("#Codigo").change(function(){
+            var codigo = document.getElementById('Codigo').value;
+            var num = codigo.substr(-5,9);   //encontrar el guion medio
+            document.getElementById('NumeroPoliza').value = num;
+    //        alert(num);
+        })
+        $("#Tasa").change(function() {
+            if (document.getElementById('Anual').checked == false && document.getElementById('Mensual').checked == false) {
+                alert('Debe seleccionar el tipo de tasa');
+            } else {
+                var monto = document.getElementById('MontoCartera').value;
+                var tasa = document.getElementById('Tasa').value;
+                if (document.getElementById('Anual').checked == true) {
+                    var tasaFinal = (tasa / 1000) / 12;
+                } else {
+                    var tasaFinal = tasa / 1000;
+                }
+                var sub = Number(monto) * Number(tasaFinal);
+                document.getElementById('PrimaCalculada').value = sub;
+                var bomberos = (monto * (0.04/12)/1000);   //valor de impuesto varia por gobierno
+                document.getElementById('ImpuestoBomberos').value = bomberos;
+            }
+
+        })
+        $("#Anual").change(function() {
+            var monto = document.getElementById('MontoCartera').value;
+            var tasa = document.getElementById('Tasa').value;
+            var tasaFinal = (tasa / 1000) / 12;
+            var sub = Number(monto) * Number(tasaFinal);
+            document.getElementById('PrimaCalculada').value = sub;
+        })
+        $("#Mensual").change(function() {
+            var monto = document.getElementById('MontoCartera').value;
+            var tasa = document.getElementById('Tasa').value;
+            var tasaFinal = tasa / 1000;
+            var sub = Number(monto) * Number(tasaFinal);
+            document.getElementById('PrimaCalculada').value = sub;
+        })
+        $('#ExtPrima').change(function() {
+            var sub = document.getElementById('PrimaCalculada').value;
+            var extra = document.getElementById('ExtPrima').value;
+            var prima = Number(sub) + Number(extra);
+            document.getElementById('PrimaTotal').value = Number(prima);
+        })
+        $('#Descuento').change(function() {
+            var prima = document.getElementById('PrimaTotal').value;
+            var descuento = document.getElementById('Descuento').value;
+            var bomberos = document.getElementById('ImpuestoBomberos').value;
+            if (descuento == 0) {
+                var total = Number(prima);
+            } else {
+                var total = Number(prima * (descuento / 100));
+            }
+            document.getElementById('PrimaDescontada').value = total;
+            document.getElementById('Iva').value = total * 0.13;
+            document.getElementById('SubTotal').value = Number(total) + Number(bomberos);
+        })
+        
+        $('#TasaComision').change(function() {
+            var comision = document.getElementById('TasaComision').value;
+            var total = document.getElementById('PrimaDescontada').value;
+
+            var valorDes = total * (comision / 100);
+            document.getElementById('ValorDescuento').value = Number(valorDes);
+            var IvaSobreComision = Number(valorDes) * 0.13;
+
+            document.getElementById('IvaSobreComision').value = Number(IvaSobreComision);
+            if (document.getElementById('Retencion').hasAttribute('readonly')) {
+                var Retencion = 0;
+            } else {
+                var Retencion = valorDes * 0.01;
+                document.getElementById('Retencion').value = Retencion;
+            }
+            var ValorCCF = Number(valorDes) + Number(IvaSobreComision) - Number(Retencion);
+            // alert(ValorCCF);
+            document.getElementById('ValorCCFE').value = Number(ValorCCF);
+            document.getElementById('ValorCCF').value = Number(ValorCCF);
+            var PrimaTotal = document.getElementById('PrimaTotal').value;
+            var APagar = Number(PrimaTotal) - Number(ValorCCF);
+            document.getElementById('APagar').value = APagar;
+        })
+
         $("#Asegurado").change(function() {
             // alert(document.getElementById('Asegurado').value);
             $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
@@ -543,7 +684,7 @@
                 }
             });
         });
-        $("#ValorPrima").change(function() {
+/*         $("#ValorPrima").change(function() {
             var ValorPrima = document.getElementById('ValorPrima').value;
             var Iva = Number(ValorPrima) * 0.13;
             document.getElementById('Iva').value = Iva;
@@ -551,7 +692,7 @@
         $("#ValorDescuento").change(function() {
             var Descuento = document.getElementById('ValorDescuento').value;
             var IvaSobreComision = Descuento * 0.13;
-            
+
             document.getElementById('IvaSobreComision').value = IvaSobreComision;
             if (document.getElementById('Retencion').hasAttribute('disabled')) {
                 var Retencion = 0;
@@ -560,14 +701,14 @@
                 document.getElementById('Retencion').value = Retencion;
             }
             var ValorCCF = Number(Descuento) + Number(IvaSobreComision) - Number(Retencion);
-           // alert(ValorCCF);
+            alert(ValorCCF);
             document.getElementById('ValorCCFE').value = ValorCCF;
             document.getElementById('ValorCCF').value = ValorCCF;
             var ValorPrima = document.getElementById('ValorPrima').value;
             var Iva = document.getElementById('Iva').value;
             var APagar = (Number(ValorPrima) + Number(Iva)) - Number(ValorCCF);
             document.getElementById('APagar').value = APagar;
-        })
+        }) */
 
 
 

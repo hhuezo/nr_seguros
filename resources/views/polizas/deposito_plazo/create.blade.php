@@ -33,7 +33,7 @@
                     <div class="form-horizontal" style="font-size: 12px;">
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                            <div class="form-group row">
+                                <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Código</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                         <input class="form-control" name="Codigo" id="Codigo" type="text" value="{{ old('Codigo') }}" required>
@@ -189,7 +189,7 @@
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">
                                         Prima Total</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="PrimaTotal" type="number" step="any" id="PrimaTotal" value="{{ old('ExtraPrima') }}">
+                                        <input class="form-control" name="PrimaTotal" type="number" step="any" id="PrimaTotal" value="{{ old('PrimaToal') }}">
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -713,29 +713,29 @@
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function() {
-        $("#Codigo").change(function(){
+        $("#Codigo").change(function() {
             var codigo = document.getElementById('Codigo').value;
-            var num = codigo.substr(-5,9);
+            var num = codigo.substr(-5, 9);
             document.getElementById('NumeroPoliza').value = num;
-    //        alert(num);
+            //        alert(num);
         })
-        $("#Anual").change(function() {
-            if (document.getElementById('Anual').checked == true) {
-                document.getElementById('Mensual').setAttribute('disabled', true);
+        /*         $("#Anual").change(function() {
+                    if (document.getElementById('Anual').checked == true) {
+                        document.getElementById('Mensual').setAttribute('disabled', true);
 
-            } else {
-                document.getElementById('Mensual').removeAttribute('disabled');
-            }
-        })
+                    } else {
+                        document.getElementById('Mensual').removeAttribute('disabled');
+                    }
+                })
 
-        $("#Mensual").change(function() {
-            if (document.getElementById('Mensual').checked == true) {
-                document.getElementById('Anual').setAttribute('disabled', true);
+                $("#Mensual").change(function() {
+                    if (document.getElementById('Mensual').checked == true) {
+                        document.getElementById('Anual').setAttribute('disabled', true);
 
-            } else {
-                document.getElementById('Anual').removeAttribute('disabled');
-            }
-        })
+                    } else {
+                        document.getElementById('Anual').removeAttribute('disabled');
+                    }
+                }) */
 
         $("#Tasa").change(function() {
             if (document.getElementById('Anual').checked == false && document.getElementById('Mensual').checked == false) {
@@ -752,6 +752,20 @@
                 document.getElementById('SubTotal').value = sub;
             }
 
+        })
+        $("#Anual").change(function() {
+            var monto = document.getElementById('MontoCartera').value;
+            var tasa = document.getElementById('Tasa').value;
+            var tasaFinal = (tasa / 1000) / 12;
+            var sub = Number(monto) * Number(tasaFinal);
+            document.getElementById('SubTotal').value = sub;
+        })
+        $("#Mensual").change(function() {
+            var monto = document.getElementById('MontoCartera').value;
+            var tasa = document.getElementById('Tasa').value;
+            var tasaFinal = tasa / 1000;
+            var sub = Number(monto) * Number(tasaFinal);
+            document.getElementById('SubTotal').value = sub;
         })
         $('#ExtPrima').change(function() {
             var sub = document.getElementById('SubTotal').value;

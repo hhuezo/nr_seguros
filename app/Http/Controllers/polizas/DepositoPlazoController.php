@@ -213,6 +213,7 @@ class DepositoPlazoController extends Controller
         $detalle->DepositoPlazo = $request->Id;
         $detalle->Comentario = $request->Comentario;
         $detalle->Tasa = $request->Tasa;
+        $detalle->Comision = $request->Comision;
         $detalle->PrimaTotal = $request->PrimaTotal;
         $detalle->Descuento = $request->Descuento;
         $detalle->ExtraPrima = $request->ExtraPrima;
