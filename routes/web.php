@@ -18,6 +18,7 @@ use App\Http\Controllers\catalogo\RutaController;
 use App\Http\Controllers\catalogo\TipoCobroController;
 use App\Http\Controllers\polizas\DepositoPlazoController;
 use App\Http\Controllers\polizas\ResidenciaController;
+use App\Models\polizas\Residencia;
 
 /*
 |--------------------------------------------------------------------------
@@ -62,7 +63,7 @@ Route::resource('catalogo/tipo_negocio', TipoNegocioController::class);
 Route::resource('catalogo/tipo_poliza', TipoPolizaController::class);
 Route::resource('catalogo/ubicacion_cobro', UbicacionCobroController::class);
 Route::resource('catalogo/cliente', ClienteController::class);
-Route::post('catalogo/cliente_create', [ClienteController::class, 'cliente_create']);
+Route::get('catalogo/cliente_create', [ClienteController::class, 'cliente_create']);
 Route::resource('catalogo/negocio', NegocioController::class);
 Route::resource('catalogo/ruta',RutaController::class);
 Route::resource('catalogo/tipo_cobro', TipoCobroController::class);
@@ -76,6 +77,8 @@ Route::resource('polizas/residencia', ResidenciaController::class);
 Route::post('polizas/residencia/create_pago', [ResidenciaController::class,'create_pago']);
 Route::post('polizas/residencia/edit_pago', [ResidenciaController::class,'edit_pago']);
 Route::get('polizas/residencia/get_pago/{id}', [ResidenciaController::class,'get_pago']);
+Route::get('polizas/residencia/{id}/renovar',[ResidenciaController::class, 'renovar']);
+Route::post('polizas/residencia/renovar/{id}',[ResidenciaController::class, 'renovarPoliza'])->name('residencia.renovarPoliza');
 
 Route::resource('polizas/deposito_plazo', DepositoPlazoController::class);
 Route::post('polizas/deposito_plazo/create_pago', [DepositoPlazoController::class,'create_pago']);

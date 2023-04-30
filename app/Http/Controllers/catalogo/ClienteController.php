@@ -65,6 +65,7 @@ class ClienteController extends Controller
 
     public function cliente_create(Request $request)
     {
+      //  dd("holi");
        $time = Carbon::now();
 
         $cliente = new  Cliente();

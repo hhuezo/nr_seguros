@@ -25,7 +25,7 @@
                 <div class="x_content" style="font-size: 12px;">
                     <br />
                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
-                        
+
                         <div class="form-group row">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Código</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
@@ -115,8 +115,8 @@
                                 <input type="number" step="any" name="LimiteIndividual" id="LimiteIndividual" value="{{ old('LimiteIndividual') }}" class="form-control">
                             </div>
                         </div>
-                         <!-- radio button -->
-                         <div class="form-group row">
+                        <!-- radio button -->
+                        <div class="form-group row">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">&nbsp;
                             </label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
@@ -135,10 +135,10 @@
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
 
-                       
-                       
+
+
                         <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Monto cartera</label>
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Monto Cartera</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                 <input type="number" step="any" name="MontoCartera" id="MontoCartera" value="{{ old('MontoCartera') }}" class="form-control">
                             </div>
@@ -161,7 +161,7 @@
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Extra
                                 Prima</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="ExtraPrima" type="number" step="any" id="ExtPrima" >
+                                <input class="form-control" name="ExtraPrima" type="number" step="any" id="ExtPrima">
                             </div>
                         </div>
                         <div class="form-group row">
@@ -172,8 +172,13 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Descuento
-                                %</label>
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa de Descuento %</label>
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <input class="form-control" name="TasaDescuento" type="number" step="any" id="TasaDescuento">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Descuento</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                 <input class="form-control" name="Descuento" type="number" step="any" id="Descuento" value="{{ old('Descuento') }}">
                             </div>
@@ -186,9 +191,21 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Gastos emisión</label>
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <input type="number" step="any" name="GastosEmision" id="GastosEmision" value="0" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Otros</label>
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <input type="number" step="any" name="Otros" id="Otros" value="0" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12">Impuestos bomberos</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input type="number" step="any" name="ImpuestoBomberos" id="ImpuestoBomberos" value="{{ old('ImpuestosBomberos') }}" class="form-control">
+                                <input type="number" step="any" name="ImpuestoBomberos" id="ImpuestoBomberos" value="{{ old('ImpuestosBomberos') }}" class="form-control" required>
                             </div>
                         </div>
                         <div class="form-group">
@@ -224,21 +241,7 @@
                     </div>
 
                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
-                        <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Descuento con Iva</label>
-                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input type="checkbox" name="DescuentoIva" id="DescuentoIva" style="width: 10%; height: 5%;">
-                            </div>
 
-                        </div>
-
-                        <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Gastos emision</label>
-                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input type="number" step="any" name="GastosEmision" id="GastosEmision" value="{{ old('GastosEmision') }}" class="form-control">
-                            </div>
-                        </div>
-                      
                         <div class="form-group row">
                             <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: center;">Estructura CCF de comisión</label>
                         </div>
@@ -365,205 +368,7 @@
                 </div>
 
             </form>
-
-            <div class="modal fade" id="modal_cliente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
-                <div class="modal-dialog modal-lg" role="document">
-                    <div class="modal-content">
-                        <form action="{{ url('catalogo/cliente_create') }}" method="POST">
-                            <div class="modal-header">
-                                <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
-                                    <h5 class="modal-title" id="exampleModalLabel">Nuevo cliente</h5>
-                                </div>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="box-body">
-
-                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">NIT</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="Nit" id="ModalNit" data-inputmask="'mask': ['9999-999999-999-9']" data-mask type="text" autofocus="true">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Dui</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="Dui" id="ModalDui" data-inputmask="'mask': ['99999999-9']" data-mask type="text" autofocus="true">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Nombre</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="Nombre" id="ModalNombre" type="text">
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Dirección
-                                                residencia</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <textarea class="form-control" name="DireccionResidencia" id="ModalDireccionResidencia"></textarea>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Dirección
-                                                correspondecia</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <textarea class="form-control" name="DireccionCorrespondencia" id="ModalDireccionCorrespondencia"></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Teléfono
-                                                residencia</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="TelefonoResidencia" id="ModalTelefonoResidencia" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Teléfono
-                                                oficina</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="TelefonoOficina" id="ModalTelefonoOficina" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Teléfono
-                                                celular</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="TelefonoCelular" id="ModalTelefonoCelular" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Correo
-                                                electrónico</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="Correo" id="ModalCorreo" type="email">
-                                            </div>
-                                        </div>
-
-                                    </div>
-
-
-
-
-
-
-
-
-                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Ruta</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <select name="Ruta" id="ModalRuta" class="form-control select2" style="width: 100%">
-                                                    @foreach ($rutas as $obj)
-                                                    <option value="{{ $obj->id }}">{{ $obj->Nombre }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Responsable
-                                                pago</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="ResponsablePago" id="ModalResponsablePago" type="text">
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo
-                                                contribuyente</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <select name="TipoContribuyente" id="ModalTipoContribuyente" class="form-control" style="width: 100%">
-                                                    @foreach ($tipos_contribuyente as $obj)
-                                                    <option value="{{ $obj->id }}">{{ $obj->Nombre }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Ubicación de
-                                                cobro</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <select name="UbicacionCobro" id="ModalUbicacionCobro" class="form-control" style="width: 100%">
-                                                    @foreach ($ubicaciones_cobro as $obj)
-                                                    <option value="{{ $obj->id }}">{{ $obj->Nombre }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Contacto</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="Contacto" id="ModalContacto" type="text">
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Referencia</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="Referencia" id="ModalReferencia" type="text">
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Número
-                                                tarjeta</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="NumeroTarjeta" id="ModalNumeroTarjeta" data-inputmask="'mask': ['9999-9999-9999-9999']" data-mask type="text">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
-                                                vencimiento</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="FechaVencimiento" id="ModalFechaVencimiento" data-inputmask="'mask': ['99/99']" data-mask type="text">
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Género</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <select name="Genero" id="ModalGenero" class="form-control">
-                                                    <option value="1">Masculino</option>
-                                                    <option value="2">Femenino</option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo
-                                                persona</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <select name="TipoPersona" id="ModalTipoPersona" class="form-control">
-                                                    <option value="1">Natural</option>
-                                                    <option value="2">Jurídica</option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                    </div>
-
-
-                                </div>
-                            </div>
-                            <div class="clearfix"></div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
-                                <button type="button" id="btn_guardar" class="btn btn-primary">Aceptar</button>
-                            </div>
-                        </form>
-
-                    </div>
-                </div>
-            </div>
+            @include('catalogo.cliente.modal_poliza')
 
         </div>
 
@@ -574,6 +379,7 @@
 <!-- jQuery -->
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
+   // func
     $(document).ready(function() {
         $('#MontoCartera').change(function(){
             if(document.getElementById('LimiteGrupo').value < document.getElementById('MontoCartera').value){
@@ -602,7 +408,6 @@
                 var bomberos = (monto * (0.04/12)/1000);   //valor de impuesto varia por gobierno
                 document.getElementById('ImpuestoBomberos').value = bomberos;
             }
-
         })
         $("#Anual").change(function() {
             var monto = document.getElementById('MontoCartera').value;
@@ -624,28 +429,32 @@
             var prima = Number(sub) + Number(extra);
             document.getElementById('PrimaTotal').value = Number(prima);
         })
+        $("#TasaDescuento").change(function(){
+            document.getElementById('Descuento').value = (document.getElementById('TasaDescuento').value) * (document.getElementById('PrimaTotal').value);
+        })
         $('#Descuento').change(function() {
             var prima = document.getElementById('PrimaTotal').value;
             var descuento = document.getElementById('Descuento').value;
             var bomberos = document.getElementById('ImpuestoBomberos').value;
+            var gastos = document.getElementById('GastosEmision').value;
+            var otros = document.getElementById('Otros').value;
             if (descuento == 0) {
                 var total = Number(prima);
             } else {
                 var total = Number(prima * (descuento / 100));
             }
             document.getElementById('PrimaDescontada').value = total;
-            document.getElementById('Iva').value = total * 0.13;
-            document.getElementById('SubTotal').value = Number(total) + Number(bomberos);
+            
+            document.getElementById('SubTotal').value = Number(total) + Number(bomberos) + Number(gastos) + Number(otros);
+            document.getElementById('Iva').value = document.getElementById('SubTotal').value * 0.13;
         })
         
         $('#TasaComision').change(function() {
             var comision = document.getElementById('TasaComision').value;
             var total = document.getElementById('PrimaDescontada').value;
-
             var valorDes = total * (comision / 100);
             document.getElementById('ValorDescuento').value = Number(valorDes);
             var IvaSobreComision = Number(valorDes) * 0.13;
-
             document.getElementById('IvaSobreComision').value = Number(IvaSobreComision);
             if (document.getElementById('Retencion').hasAttribute('readonly')) {
                 var Retencion = 0;
@@ -661,7 +470,6 @@
             var APagar = Number(PrimaTotal) - Number(ValorCCF);
             document.getElementById('APagar').value = APagar;
         })
-
         $("#Asegurado").change(function() {
             // alert(document.getElementById('Asegurado').value);
             $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
@@ -679,45 +487,19 @@
                     if (data.TipoContribuyente < 2) {
                         document.getElementById('Retencion').setAttribute("readonly", true);
                     }
-
-
                 }
             });
         });
-/*         $("#ValorPrima").change(function() {
-            var ValorPrima = document.getElementById('ValorPrima').value;
-            var Iva = Number(ValorPrima) * 0.13;
-            document.getElementById('Iva').value = Iva;
-        })
-        $("#ValorDescuento").change(function() {
-            var Descuento = document.getElementById('ValorDescuento').value;
-            var IvaSobreComision = Descuento * 0.13;
 
-            document.getElementById('IvaSobreComision').value = IvaSobreComision;
-            if (document.getElementById('Retencion').hasAttribute('disabled')) {
-                var Retencion = 0;
-            } else {
-                var Retencion = Descuento * 0.01;
-                document.getElementById('Retencion').value = Retencion;
-            }
-            var ValorCCF = Number(Descuento) + Number(IvaSobreComision) - Number(Retencion);
-            alert(ValorCCF);
-            document.getElementById('ValorCCFE').value = ValorCCF;
-            document.getElementById('ValorCCF').value = ValorCCF;
-            var ValorPrima = document.getElementById('ValorPrima').value;
-            var Iva = document.getElementById('Iva').value;
-            var APagar = (Number(ValorPrima) + Number(Iva)) - Number(ValorCCF);
-            document.getElementById('APagar').value = APagar;
-        }) */
-
-
+        
 
 
     });
 
-
+/* 
     $("#btn_guardar").click(function() {
 
+        alert('holi');
         var parametros = {
             "_token": "{{ csrf_token() }}",
             "Nit": document.getElementById('ModalNit').value,
@@ -742,12 +524,12 @@
             "TipoPersona": document.getElementById('ModalTipoPersona').value,
         };
         $.ajax({
-            type: "post",
+            type: "get",
             url: "{{ url('catalogo/cliente_create') }}",
             data: parametros,
             success: function(data) {
-                //console.log(data);
-                //$('#response').html(data);
+                console.log(data);
+                $('#response').html(data);
                 var _select = ''
                 for (var i = 0; i < data.length; i++)
                     _select += '<option value="' + data[i].Id + '" selected >' + data[i].Nombre +
@@ -756,7 +538,7 @@
                 $('#modal_cliente').modal('hide');
             }
         })
-    });
+    }); */
 
 
     function modal_cliente() {

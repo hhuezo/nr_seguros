@@ -127,18 +127,7 @@
                     </div>
 
                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
-                        <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Descuento con Iva</label>
-                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                @if($residencia->DescuentoIva == 1)
-                                <input type="checkbox" name="DescuentoIva" checked style="width: 10%; height: 5%;">
-                                @else
-                                <input type="checkbox" name="DescuentoIva" style="width: 10%; height: 5%;">
-                                @endif
-
-                            </div>
-
-                        </div>
+                
                         <div class="form-group row">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vigencia
                                 Desde</label>

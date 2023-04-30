@@ -48,6 +48,8 @@
                                             class="on-default edit-row">
                                             <i class="fa fa-pencil fa-lg"></i></a>
                                     @endcan
+                                    &nbsp;&nbsp;<a href="{{ url('polizas/residencia') }}/{{ $obj->Id }}/renovar"
+                                            class="on-default edit-row"><i class="fa fa-refresh fa-lg"></i></a>
 
 
                                     @can('delete users')

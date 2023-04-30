@@ -266,4 +266,13 @@ class ResidenciaController extends Controller
         return DetalleResidencia::findOrFail($id);
 
     }
+
+    public function renovar($id){
+        $residencia = Residencia::findOrFail($id);
+        return view('polizas.residencia.renovar', compact('residencia'));
+    }
+
+    public function renovarPoliza(Request $request, $id){
+        dd("holi");
+    }
 }
