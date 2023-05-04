@@ -127,7 +127,7 @@
                     </div>
 
                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
-                
+
                         <div class="form-group row">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vigencia
                                 Desde</label>
@@ -285,7 +285,7 @@
             <div class="modal-content">
                 <form action="{{ url('polizas/residencia/create_pago') }}" method="POST">
                     <div class="modal-header">
-                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <h5 class="modal-title" id="exampleModalLabel">Nuevo pago</h5>
                         </div>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -296,8 +296,7 @@
                         <div class="box-body row">
                             <input type="hidden" name="Id" id="Id" value="{{ $residencia->Id }}" class="form-control">
                             @csrf
-
-                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 ">
+                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
 
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Monto
@@ -308,14 +307,13 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa
-                                        %</label>
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa %</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Tasa" id="Tasa" type="number" step="any" value="{{ $residencia->Tasa }}" readonly>
+                                        <input type="number" step="any" name="Tasa" id="Tasa" value="{{$residencia->Tasa}}" class="form-control" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12 ">Prima Calculada</label>
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Prima Calculada</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                         <input type="number" step="any" name="PrimaCalculada" id="PrimaCalculada" class="form-control">
                                     </div>
@@ -324,7 +322,7 @@
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Extra
                                         Prima</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="ExtraPrima" type="number" step="any" id="ExtPrima" value="{{ old('ExtraPrima') }}">
+                                        <input class="form-control" name="ExtraPrima" type="number" step="any" id="ExtPrima">
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -334,9 +332,14 @@
                                         <input class="form-control" name="PrimaTotal" type="number" step="any" id="PrimaTotal" value="{{ old('PrimaToal') }}">
                                     </div>
                                 </div>
-                                <div class="form-group row ">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Descuento
-                                        %</label>
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa de Descuento %</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="TasaDescuento" type="number" step="any" id="TasaDescuento">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Descuento</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                         <input class="form-control" name="Descuento" type="number" step="any" id="Descuento" value="{{ old('Descuento') }}">
                                     </div>
@@ -348,20 +351,39 @@
                                         <input class="form-control" name="PrimaDescontada" type="number" step="any" id="PrimaDescontada" value="{{ old('PrimaDescontada') }}">
                                     </div>
                                 </div>
+
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
+
+
                                 <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12">Impuestos bomberos</label>
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Impuestos bomberos</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input type="number" step="any" name="ImpuestoBomberos" id="ImpuestoBomberos" value="{{ old('ImpuestosBomberos') }}" class="form-control">
+                                        <input type="number" step="any" name="ImpuestoBomberos" id="ImpuestoBomberos" value="{{ old('ImpuestosBomberos') }}" class="form-control" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12">Sub Total</label>
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Gastos emisión</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input type="number" step="any" name="GastosEmision" id="GastosEmision" value="0" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Otros</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input type="number" step="any" name="Otros" id="Otros" value="0" class="form-control">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Sub Total</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                         <input type="number" step="any" name="SubTotal" id="SubTotal" class="form-control">
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12">IVA</label>
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">IVA</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                         <input type="number" step="any" name="Iva" id="Iva" value="{{ old('Iva') }}" class="form-control">
                                     </div>
@@ -369,37 +391,22 @@
 
 
                                 <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12">Menos valor CCF de comision</label>
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Menos valor CCF de comision</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                         <input type="number" step="any" name="Comision" id="ValorCCF" value="{{ old('Comision') }}" class="form-control">
                                     </div>
-
+                                    <!-- <a href="" data-target="#modal-calculator" data-toggle="modal" class="col-md-1 control-label" style="text-align: center;"><span class="fa fa-calculator fa-lg"></span></a> -->
                                 </div>
 
                                 <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12">A pagar</label>
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">A pagar</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                         <input type="number" step="any" name="APagar" id="APagar" value="{{ old('APagar') }}" class="form-control">
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 ">
-
-                                 <div class="form-group">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12">Descuento con Iva</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input type="checkbox" name="DescuentoIva" id="DescuentoIva" style="width: 10%; height: 5%;">
-                                    </div>
-
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12">Gastos emision</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input type="number" step="any" name="GastosEmision" id="GastosEmision" value="{{ old('GastosEmision') }}" class="form-control">
-                                    </div>
-                                </div>
+                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
 
                                 <div class="form-group row">
                                     <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: center;">Estructura CCF de comisión</label>
@@ -450,7 +457,7 @@
 
                         </div>
                         <div class="clearfix"></div>
-                        <div class="modal-footer">
+                        <div class="modal-footer" align="center">
                             <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
                             <button type="submit" class="btn btn-primary">Aceptar</button>
                         </div>
@@ -462,75 +469,75 @@
 
     </div>
     <div class="modal fade " id="modal_editar_pago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <form method="POST" action="{{ url('polizas/deposito_plazo/edit_pago') }}">
-                <div class="modal-header">
-                    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
-                        <h5 class="modal-title" id="exampleModalLabel">Pago</h5>
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="POST" action="{{ url('polizas/deposito_plazo/edit_pago') }}">
+                    <div class="modal-header">
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                            <h5 class="modal-title" id="exampleModalLabel">Pago</h5>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="box-body">
-                        @csrf
-                        <input type="hidden" name="Id" id="ModalId" class="form-control">
-                        <div class="form-group">
-                            <div class="col-sm-12">
-                                <label class="control-label">Saldo a</label>
-                                <input type="date" name="SaldoA" id="ModalSaldoA" class="form-control" readonly>
+                    <div class="modal-body">
+                        <div class="box-body">
+                            @csrf
+                            <input type="hidden" name="Id" id="ModalId" class="form-control">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label class="control-label">Saldo a</label>
+                                    <input type="date" name="SaldoA" id="ModalSaldoA" class="form-control" readonly>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="form-group">
-                            <div class="col-sm-12">
-                                <label class="control-label">Impresión de Recibo</label>
-                                <input type="date" name="ImpresionRecibo" id="ModalImpresionRecibo" class="form-control" readonly>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label class="control-label">Impresión de Recibo</label>
+                                    <input type="date" name="ImpresionRecibo" id="ModalImpresionRecibo" class="form-control" readonly>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="form-group">
-                            <div class="col-sm-12">
-                                <label class="control-label">Envio cartera</label>
-                                <input type="date" name="EnvioCartera" id="ModalEnvioCartera" class="form-control">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label class="control-label">Envio cartera</label>
+                                    <input type="date" name="EnvioCartera" id="ModalEnvioCartera" class="form-control">
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="form-group">
-                            <div class="col-sm-12">
-                                <label class="control-label">Envio pago</label>
-                                <input type="date" name="EnvioPago" id="ModalEnvioPago" class="form-control">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label class="control-label">Envio pago</label>
+                                    <input type="date" name="EnvioPago" id="ModalEnvioPago" class="form-control">
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="form-group">
-                            <div class="col-sm-12">
-                                <label class="control-label">Pago aplicado</label>
-                                <input type="date" name="PagoAplicado" id="ModalPagoAplicado" class="form-control">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label class="control-label">Pago aplicado</label>
+                                    <input type="date" name="PagoAplicado" id="ModalPagoAplicado" class="form-control">
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="form-group">
-                            <div class="col-sm-12">
-                                <label class="control-label">Comentario</label>
-                                <textarea class="form-control" rows="4" name="Comentario" id="ModalComentario"></textarea>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label class="control-label">Comentario</label>
+                                    <textarea class="form-control" rows="4" name="Comentario" id="ModalComentario"></textarea>
+                                </div>
                             </div>
-                        </div>
 
+                        </div>
                     </div>
-                </div>
-                <div class="clearfix"></div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Aceptar</button>
-                </div>
-            </form>
+                    <div class="clearfix"></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Aceptar</button>
+                    </div>
+                </form>
 
+            </div>
         </div>
     </div>
-</div>
 </div>
 
 </div>
@@ -538,53 +545,109 @@
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#MontoCartera').change(function(){
-            if(document.getElementById('LimiteGrupo').value < document.getElementById('MontoCartera').value){
-               // alert()
-                alert('Su monto de cartera a superado al techo establecido en la poliza');
-            }else{
-
-                var monto = document.getElementById('MontoCartera').value;
-                var tasa = document.getElementById('Tasa').value;
-                if (document.getElementById('Anual').checked == true) {
-                    var tasaFinal = (tasa / 1000) / 12;
-                } else {
-                    var tasaFinal = tasa / 1000;
-                }
-                var sub = Number(monto) * Number(tasaFinal);
-                document.getElementById('PrimaCalculada').value = sub;
-                var bomberos = (monto * (0.04/12)/1000);   //valor de impuesto varia por gobierno
-                document.getElementById('ImpuestoBomberos').value = bomberos;
+        $('#MontoCartera').change(function() {
+            if (document.getElementById('LimiteGrupo').value < document.getElementById('MontoCartera').value) {
+                swal('Su monto de cartera a superado al techo establecido en la poliza');
+            } else {
+                calculoPrimaCalculada();
+                calculoPrimaTotal();
+                calculoDescuento();
+                calculoSubTotal();
+                calculoCCF();
             }
+
+
         })
-        $('#ExtPrima').change(function() {
+        $("#PrimaCalculada").change(function() {
+            //  calculoPrimaCalculada();
+            calculoPrimaTotal();
+            calculoDescuento();
+            calculoSubTotal();
+            calculoCCF();
+        })
+
+
+        function calculoPrimaCalculada() {
+            var monto = document.getElementById('MontoCartera').value;
+            var tasa = document.getElementById('Tasa').value;
+            if (document.getElementById('Anual').checked == true) {
+                var tasaFinal = (tasa / 1000) / 12;
+            } else {
+                var tasaFinal = tasa / 1000;
+            }
+            var sub = Number(monto) * Number(tasaFinal);
+            document.getElementById('PrimaCalculada').value = sub;
+            //  var bomberos = (monto * (0.04 / 12) / 1000); //valor de impuesto varia por gobierno
+            // document.getElementById('ImpuestoBomberos').value = bomberos;
+
+        }
+
+        $("#ExtPrima").change(function() {
+            calculoPrimaTotal();
+            calculoDescuento();
+            calculoSubTotal();
+            calculoCCF();
+        })
+
+        function calculoPrimaTotal() {
             var sub = document.getElementById('PrimaCalculada').value;
             var extra = document.getElementById('ExtPrima').value;
             var prima = Number(sub) + Number(extra);
             document.getElementById('PrimaTotal').value = Number(prima);
+        }
+        $("#PrimaTotal").change(function() {
+            calculoDescuento();
+            calculoSubTotal();
+            calculoCCF();
         })
-        $('#Descuento').change(function() {
-            var prima = document.getElementById('PrimaTotal').value;
-            var descuento = document.getElementById('Descuento').value;
-            var bomberos = document.getElementById('ImpuestoBomberos').value;
-            if (descuento == 0) {
-                var total = Number(prima);
+        $("#TasaDescuento").change(function() {
+            calculoDescuento();
+            calculoSubTotal();
+            calculoCCF();
+        })
+
+        function calculoDescuento() {
+            var tasa = document.getElementById('TasaDescuento').value;
+            var primaTotal = document.getElementById('PrimaTotal').value;
+            if (tasa < 1) {
+                document.getElementById('Descuento').value = tasa * primaTotal;
             } else {
-                var total = Number(prima * (descuento / 100));
+                document.getElementById('Descuento').value = (tasa / 100) * primaTotal;
             }
-            document.getElementById('PrimaDescontada').value = total;
-            document.getElementById('Iva').value = total * 0.13;
-            document.getElementById('SubTotal').value = Number(total) + Number(bomberos);
+            document.getElementById('PrimaDescontada').value = primaTotal - document.getElementById('Descuento').value;
+            //  var bomberos = (monto * (0.04 / 12) / 1000); //valor de impuesto varia por gobierno
+            document.getElementById('ImpuestoBomberos').value = (document.getElementById('MontoCartera').value * (0.04 / 12) / 1000);
+
+        }
+        $('#GastosEmision').change(function() {
+            calculoSubTotal();
+            calculoCCF();
         })
-        
+        $('#Otros').change(function() {
+            calculoSubTotal();
+            calculoCCF();
+        })
+
+        function calculoSubTotal() {
+            var bomberos = document.getElementById('ImpuestoBomberos').value;
+            var primaDescontada = document.getElementById('PrimaDescontada').value;
+            var gastos = document.getElementById('GastosEmision').value;
+            var otros = document.getElementById('Otros').value;
+            document.getElementById('SubTotal').value = Number(bomberos) + Number(primaDescontada) + Number(gastos) + Number(otros);
+            document.getElementById('Iva').value = document.getElementById('SubTotal').value * 0.13;
+        }
+
         $('#TasaComision').change(function() {
+            calculoCCF();
+            document.getElementById('APagar').style.backgroundColor = 'yellow';
+        })
+
+        function calculoCCF() {
             var comision = document.getElementById('TasaComision').value;
             var total = document.getElementById('PrimaDescontada').value;
-
             var valorDes = total * (comision / 100);
             document.getElementById('ValorDescuento').value = Number(valorDes);
             var IvaSobreComision = Number(valorDes) * 0.13;
-
             document.getElementById('IvaSobreComision').value = Number(IvaSobreComision);
             if (document.getElementById('Retencion').hasAttribute('readonly')) {
                 var Retencion = 0;
@@ -596,10 +659,13 @@
             // alert(ValorCCF);
             document.getElementById('ValorCCFE').value = Number(ValorCCF);
             document.getElementById('ValorCCF').value = Number(ValorCCF);
-            var PrimaTotal = document.getElementById('PrimaTotal').value;
-            var APagar = Number(PrimaTotal) - Number(ValorCCF);
+            var PrimaTotal = document.getElementById('SubTotal').value;
+            var iva = document.getElementById('Iva').value;
+            var APagar = Number(PrimaTotal) - Number(ValorCCF) + Number(iva);
             document.getElementById('APagar').value = APagar;
-        })
+            
+        }
+
 
         $("#habilitar").click(function() {
             //  $("#btn_guardar").click(function() {
@@ -616,6 +682,7 @@
 
         })
     })
+
     function modal_edit(id) {
         document.getElementById('ModalSaldoA').value = "";
         document.getElementById('ModalImpresionRecibo').value = "";

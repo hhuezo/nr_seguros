@@ -191,6 +191,12 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Impuestos bomberos</label>
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <input type="number" step="any" name="ImpuestoBomberos" id="ImpuestoBomberos" value="{{ old('ImpuestosBomberos') }}" class="form-control" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12">Gastos emisión</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                 <input type="number" step="any" name="GastosEmision" id="GastosEmision" value="0" class="form-control">
@@ -202,12 +208,7 @@
                                 <input type="number" step="any" name="Otros" id="Otros" value="0" class="form-control">
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Impuestos bomberos</label>
-                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input type="number" step="any" name="ImpuestoBomberos" id="ImpuestoBomberos" value="{{ old('ImpuestosBomberos') }}" class="form-control" required>
-                            </div>
-                        </div>
+
                         <div class="form-group">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12">Sub Total</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
@@ -379,77 +380,126 @@
 <!-- jQuery -->
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
-   // func
+    // func
     $(document).ready(function() {
-        $('#MontoCartera').change(function(){
-            if(document.getElementById('LimiteGrupo').value < document.getElementById('MontoCartera').value){
-                alert('Su monto de cartera a superado al techo establecido en la poliza');
-            }
-        })
-        $("#Codigo").change(function(){
-            var codigo = document.getElementById('Codigo').value;
-            var num = codigo.substr(-5,9);   //encontrar el guion medio
-            document.getElementById('NumeroPoliza').value = num;
-    //        alert(num);
-        })
-        $("#Tasa").change(function() {
-            if (document.getElementById('Anual').checked == false && document.getElementById('Mensual').checked == false) {
-                alert('Debe seleccionar el tipo de tasa');
-            } else {
-                var monto = document.getElementById('MontoCartera').value;
-                var tasa = document.getElementById('Tasa').value;
-                if (document.getElementById('Anual').checked == true) {
-                    var tasaFinal = (tasa / 1000) / 12;
-                } else {
-                    var tasaFinal = tasa / 1000;
-                }
-                var sub = Number(monto) * Number(tasaFinal);
-                document.getElementById('PrimaCalculada').value = sub;
-                var bomberos = (monto * (0.04/12)/1000);   //valor de impuesto varia por gobierno
-                document.getElementById('ImpuestoBomberos').value = bomberos;
-            }
-        })
         $("#Anual").change(function() {
-            var monto = document.getElementById('MontoCartera').value;
-            var tasa = document.getElementById('Tasa').value;
-            var tasaFinal = (tasa / 1000) / 12;
-            var sub = Number(monto) * Number(tasaFinal);
-            document.getElementById('PrimaCalculada').value = sub;
+            calculoPrimaCalculada();
+            calculoPrimaTotal();
+            calculoDescuento();
+            calculoSubTotal();
+            calculoCCF();
         })
         $("#Mensual").change(function() {
+            calculoPrimaCalculada();
+            calculoPrimaTotal();
+            calculoDescuento();
+            calculoSubTotal();
+            calculoCCF();
+        })
+        $('#MontoCartera').change(function() {
+            if (document.getElementById('LimiteGrupo').value < document.getElementById('MontoCartera').value) {
+                swal('Su monto de cartera a superado al techo establecido en la poliza');
+            } else {
+                calculoPrimaCalculada();
+                calculoPrimaTotal();
+                calculoDescuento();
+                calculoSubTotal();
+                calculoCCF();
+            }
+
+
+        })
+        $("#Tasa").change(function() {
+            calculoPrimaCalculada();
+            calculoPrimaTotal();
+            calculoDescuento();
+            calculoSubTotal();
+            calculoCCF();
+        })
+        $("#PrimaCalculada").change(function() {
+            //  calculoPrimaCalculada();
+            calculoPrimaTotal();
+            calculoDescuento();
+            calculoSubTotal();
+            calculoCCF();
+        })
+
+
+        function calculoPrimaCalculada() {
             var monto = document.getElementById('MontoCartera').value;
             var tasa = document.getElementById('Tasa').value;
-            var tasaFinal = tasa / 1000;
+            if (document.getElementById('Anual').checked == true) {
+                var tasaFinal = (tasa / 1000) / 12;
+            } else {
+                var tasaFinal = tasa / 1000;
+            }
             var sub = Number(monto) * Number(tasaFinal);
             document.getElementById('PrimaCalculada').value = sub;
+            //  var bomberos = (monto * (0.04 / 12) / 1000); //valor de impuesto varia por gobierno
+            // document.getElementById('ImpuestoBomberos').value = bomberos;
+
+        }
+
+        $("#ExtPrima").change(function() {
+            calculoPrimaTotal();
+            calculoDescuento();
+            calculoSubTotal();
+            calculoCCF();
         })
-        $('#ExtPrima').change(function() {
+
+        function calculoPrimaTotal() {
             var sub = document.getElementById('PrimaCalculada').value;
             var extra = document.getElementById('ExtPrima').value;
             var prima = Number(sub) + Number(extra);
             document.getElementById('PrimaTotal').value = Number(prima);
+        }
+        $("#PrimaTotal").change(function() {
+            calculoDescuento();
+            calculoSubTotal();
+            calculoCCF();
         })
-        $("#TasaDescuento").change(function(){
-            document.getElementById('Descuento').value = (document.getElementById('TasaDescuento').value) * (document.getElementById('PrimaTotal').value);
+        $("#TasaDescuento").change(function() {
+            calculoDescuento();
+            calculoSubTotal();
+            calculoCCF();
         })
-        $('#Descuento').change(function() {
-            var prima = document.getElementById('PrimaTotal').value;
-            var descuento = document.getElementById('Descuento').value;
+
+        function calculoDescuento() {
+            var tasa = document.getElementById('TasaDescuento').value;
+            var primaTotal = document.getElementById('PrimaTotal').value;
+            if (tasa < 1) {
+                document.getElementById('Descuento').value = tasa * primaTotal;
+            } else {
+                document.getElementById('Descuento').value = (tasa / 100) * primaTotal;
+            }
+            document.getElementById('PrimaDescontada').value = primaTotal - document.getElementById('Descuento').value;
+            //  var bomberos = (monto * (0.04 / 12) / 1000); //valor de impuesto varia por gobierno
+            document.getElementById('ImpuestoBomberos').value = (document.getElementById('MontoCartera').value * (0.04 / 12) / 1000);
+
+        }
+        $('#GastosEmision').change(function() {
+            calculoSubTotal();
+            calculoCCF();
+        })
+        $('#Otros').change(function() {
+            calculoSubTotal();
+            calculoCCF();
+        })
+
+        function calculoSubTotal() {
             var bomberos = document.getElementById('ImpuestoBomberos').value;
+            var primaDescontada = document.getElementById('PrimaDescontada').value;
             var gastos = document.getElementById('GastosEmision').value;
             var otros = document.getElementById('Otros').value;
-            if (descuento == 0) {
-                var total = Number(prima);
-            } else {
-                var total = Number(prima * (descuento / 100));
-            }
-            document.getElementById('PrimaDescontada').value = total;
-            
-            document.getElementById('SubTotal').value = Number(total) + Number(bomberos) + Number(gastos) + Number(otros);
+            document.getElementById('SubTotal').value = Number(bomberos) + Number(primaDescontada) + Number(gastos) + Number(otros);
             document.getElementById('Iva').value = document.getElementById('SubTotal').value * 0.13;
-        })
-        
+        }
+
         $('#TasaComision').change(function() {
+            calculoCCF();
+        })
+
+        function calculoCCF() {
             var comision = document.getElementById('TasaComision').value;
             var total = document.getElementById('PrimaDescontada').value;
             var valorDes = total * (comision / 100);
@@ -466,80 +516,18 @@
             // alert(ValorCCF);
             document.getElementById('ValorCCFE').value = Number(ValorCCF);
             document.getElementById('ValorCCF').value = Number(ValorCCF);
-            var PrimaTotal = document.getElementById('PrimaTotal').value;
-            var APagar = Number(PrimaTotal) - Number(ValorCCF);
+            var PrimaTotal = document.getElementById('SubTotal').value;
+            var iva = document.getElementById('Iva').value;
+            var APagar = Number(PrimaTotal) - Number(ValorCCF) + Number(iva);
             document.getElementById('APagar').value = APagar;
-        })
-        $("#Asegurado").change(function() {
-            // alert(document.getElementById('Asegurado').value);
-            $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
-            var parametros = {
-                "Cliente": document.getElementById('Asegurado').value
-            };
-            $.ajax({
-                type: "get",
-                //ruta para obtener el horario del doctor
-                url: "{{ url('get_cliente') }}",
-                data: parametros,
-                success: function(data) {
-                    console.log(data);
-                    document.getElementById('Nit').value = data.Nit;
-                    if (data.TipoContribuyente < 2) {
-                        document.getElementById('Retencion').setAttribute("readonly", true);
-                    }
-                }
-            });
-        });
+        }
 
-        
+
+
+
 
 
     });
-
-/* 
-    $("#btn_guardar").click(function() {
-
-        alert('holi');
-        var parametros = {
-            "_token": "{{ csrf_token() }}",
-            "Nit": document.getElementById('ModalNit').value,
-            "Dui": document.getElementById('ModalDui').value,
-            "Nombre": document.getElementById('ModalNombre').value,
-            "DireccionResidencia": document.getElementById('ModalDireccionResidencia').value,
-            "DireccionCorrespondencia": document.getElementById('ModalDireccionCorrespondencia').value,
-            "TelefonoResidencia": document.getElementById('ModalTelefonoResidencia').value,
-            "TelefonoOficina": document.getElementById('ModalTelefonoOficina').value,
-            "TelefonoCelular": document.getElementById('ModalTelefonoCelular').value,
-            "Correo": document.getElementById('ModalCorreo').value,
-
-            "Ruta": document.getElementById('ModalRuta').value,
-            "ResponsablePago": document.getElementById('ModalResponsablePago').value,
-            "TipoContribuyente": document.getElementById('ModalTipoContribuyente').value,
-            "UbicacionCobro": document.getElementById('ModalUbicacionCobro').value,
-            "Contacto": document.getElementById('ModalContacto').value,
-            "Referencia": document.getElementById('ModalReferencia').value,
-            "NumeroTarjeta": document.getElementById('ModalNumeroTarjeta').value,
-            "FechaVencimiento": document.getElementById('ModalFechaVencimiento').value,
-            "Genero": document.getElementById('ModalGenero').value,
-            "TipoPersona": document.getElementById('ModalTipoPersona').value,
-        };
-        $.ajax({
-            type: "get",
-            url: "{{ url('catalogo/cliente_create') }}",
-            data: parametros,
-            success: function(data) {
-                console.log(data);
-                $('#response').html(data);
-                var _select = ''
-                for (var i = 0; i < data.length; i++)
-                    _select += '<option value="' + data[i].Id + '" selected >' + data[i].Nombre +
-                    '</option>';
-                $("#Asegurado").html(_select);
-                $('#modal_cliente').modal('hide');
-            }
-        })
-    }); */
-
 
     function modal_cliente() {
         $('#modal_cliente').modal('show');
