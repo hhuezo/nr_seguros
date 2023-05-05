@@ -25,15 +25,21 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">NIT</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="Nit" id="ModalNit" data-inputmask="'mask': ['9999-999999-999-9']" data-mask type="text" autofocus="true">
-                                </div>
-                            </div>
-                            <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Dui</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                     <input class="form-control" name="Dui" id="ModalDui" data-inputmask="'mask': ['99999999-9']" data-mask type="text" autofocus="true">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Homologado</label>
+                                <div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="Homologado" id="Homologado" type="checkbox" autofocus="true">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">NIT</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="Nit" id="ModalNit" data-inputmask="'mask': ['9999-999999-999-9']" data-mask type="text" autofocus="true">
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -189,6 +195,28 @@
 </div>
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
+    $(document).ready(function() {
+        $("#Homologado").change(function() {
+            if (document.getElementById('Homologado').checked == true) {
+                document.getElementById('ModalNit').setAttribute("readonly", true);
+                document.getElementById('ModalNit').removeAttribute("data-inputmask");
+                document.getElementById('ModalNit').removeAttribute("data-mask");
+                document.getElementById('ModalNit').value = document.getElementById('ModalDui').value;
+                
+
+            }
+        })
+        $("#ModalDui").change(function(){
+            if (document.getElementById('Homologado').checked == true) {
+                document.getElementById('ModalNit').removeAttribute("data-inputmask");
+                document.getElementById('ModalNit').removeAttribute("data-mask");
+                document.getElementById('ModalNit').value = document.getElementById('ModalDui').value;
+                
+
+            }
+        })
+
+    })
     $("#btn_guardar").click(function() {
 
         //   alert('adadad');

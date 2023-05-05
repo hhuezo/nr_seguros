@@ -5,10 +5,10 @@
         @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
         <div class="x_title">
             <div class="col-md-6 col-sm-6 col-xs-12">
-                <h3>Polizas de Deposito a Plazo </h3>
+                <h3>Polizas de Vida </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
-                <a href="{{ url('polizas/deposito_plazo/create/') }}"><button class="btn btn-info float-right"> <i
+                <a href="{{ url('polizas/vida/create/') }}"><button class="btn btn-info float-right"> <i
                             class="fa fa-plus"></i> Nuevo</button></a>
             </div>
             <div class="clearfix"></div>
@@ -29,7 +29,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($depositoPlazo as $obj)
+                        @foreach ($vida as $obj)
                             <tr>
                                 <td>{{ $obj->clientes->Nombre }}</td>
                                 <td>{{ $obj->NumeroPoliza }}</td>
@@ -39,14 +39,16 @@
                                 @else
                                     <td align="center"><input type="checkbox"></td>
                                 @endif
+                                
                                 <td align="center">
 
                                     @can('edit users')
-                                        <a href="{{ url('polizas/deposito_plazo') }}/{{ $obj->Id }}/edit"
+                                        <a href="{{ url('polizas/vida') }}/{{ $obj->Id }}/edit"
                                             class="on-default edit-row">
                                             <i class="fa fa-pencil fa-lg"></i></a>
                                     @endcan
-
+                                    &nbsp;&nbsp;<a href="{{ url('polizas/vida') }}/{{ $obj->Id }}/renovar"
+                                            class="on-default edit-row"><i class="fa fa-refresh fa-lg"></i></a>
 
                                     @can('delete users')
                                         &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}"
@@ -54,7 +56,7 @@
                                     @endcan
                                 </td>
                             </tr>
-                            @include('polizas.deposito_plazo.modal')
+                            @include('polizas.vida.modal')
                         @endforeach
                     </tbody>
                 </table>

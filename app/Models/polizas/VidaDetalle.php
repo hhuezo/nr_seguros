@@ -5,10 +5,10 @@ namespace App\Models\polizas;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DetalleDepositoPlazo extends Model
+class VidaDetalle extends Model
 {
     use HasFactory;
-    protected $table = 'poliza_deposito_plazo_detalle';
+    protected $table = 'poliza_vida_detalle';
 
     protected $primaryKey = 'Id';
 
@@ -16,7 +16,7 @@ class DetalleDepositoPlazo extends Model
 
 
     protected $fillable = [
-        'DepositoPlazo',
+        'Vida',
         'Comentario',
         'Tasa',
         'PrimaTotal',
@@ -40,7 +40,7 @@ class DetalleDepositoPlazo extends Model
 
     protected $guarded = [];
 
-    public function depositoPlazos(){
-        return $this->belongsTo('App\Models\polizas\DepositoPlazo', 'DepositoPlazo', 'Id');
+    public function vidas(){
+        return $this->belongsTo('App\Models\polizas\Vida', 'Vida', 'Id');
     }
 }

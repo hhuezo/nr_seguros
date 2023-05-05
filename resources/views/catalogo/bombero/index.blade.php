@@ -5,10 +5,10 @@
         @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
         <div class="x_title">
             <div class="col-md-6 col-sm-6 col-xs-12">
-                <h3>Tipo de Cartera </h3>
+                <h3>Impuesto Bomberos </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
-                <a href="{{ url('catalogo/tipo_cartera/create/') }}"><button class="btn btn-info float-right"> <i
+                <a href="{{ url('catalogo/bombero/create/') }}"><button class="btn btn-info float-right"> <i
                             class="fa fa-plus"></i> Nuevo</button></a>
             </div>
             <div class="clearfix"></div>
@@ -21,34 +21,24 @@
                 <table id="datatable" class="table table-striped table-bordered">
                     <thead>
                         <tr>
-                            <th style="display: none;"></th>
-                            <th>Nombre</th>
+                            <th>Valor</th>
                             <th>Activo</th>
-                            <th>Poliza</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($tipo_cartera as $obj)
+                        @foreach ($bombero as $obj)
                             <tr>
-                                <td style="display: none;"></td>
-                                <td>{{ $obj->Nombre }}</td>
+                                <td>{{ $obj->Valor }}</td>
                                 @if ($obj->Activo == 1)
                                     <td align="center"><input type="checkbox" checked></td>
                                 @else
                                     <td align="center"><input type="checkbox"></td>
                                 @endif
-                                <td>
-                                    @if($obj->Poliza == 1)
-                                    Vida
-                                    @elseif($obj->Poliza == 2)
-                                    Deuda
-                                    @endif
-                                </td>
                                 <td align="center">
 
                                     @can('edit users')
-                                        <a href="{{ url('catalogo/tipo_cartera') }}/{{ $obj->Id }}/edit"
+                                        <a href="{{ url('catalogo/bombero') }}/{{ $obj->Id }}/edit"
                                             class="on-default edit-row">
                                             <i class="fa fa-pencil fa-lg"></i></a>
                                     @endcan
@@ -60,7 +50,7 @@
                                     @endcan
                                 </td>
                             </tr>
-                            @include('catalogo.tipo_cartera.modal')
+                            @include('catalogo.bombero.modal')
                         @endforeach
                     </tbody>
                 </table>

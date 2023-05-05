@@ -7,7 +7,7 @@
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
 
             <div class="x_title">
-                <h2>Editar Tipo Cartera <small></small></h2>
+                <h2>Editar Impuesto Bomberos <small></small></h2>
                 <ul class="nav navbar-right panel_toolbox">
 
                 </ul>
@@ -26,7 +26,7 @@
             <div class="x_content">
                 <br />
 
-                <form method="POST" action="{{ route('tipo_cartera.update', $tipo_cartera->Id) }}">
+                <form method="POST" action="{{ route('bombero.update', $bombero->Id) }}">
                     @method('PUT')
                     @csrf
                     <div class="form-horizontal">
@@ -34,19 +34,9 @@
 
 
                         <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Nombre</label>
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Valor</label>
                             <div class="col-lg-6 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="Nombre" type="text" value="{{$tipo_cartera->Nombre}}" >
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo de Poliza</label>
-                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                <select name="Poliza" class="form-control select2" id="TipoCobro" style="width: 100%" required>
-                                    
-                                    <option value="1" @if($tipo_cartera->Poliza == 1) selected @endif>Vida</option>
-                                    <option value="2" @if($tipo_cartera->Poliza == 2) selected @endif>Deuda</option>
-                                </select>
+                                <input class="form-control" name="Valor" type="text" value="{{$bombero->Valor}}" >
                             </div>
                         </div>
 
@@ -54,7 +44,7 @@
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <div class="form-group" align="center">
                                 <button type="submit" class="btn btn-success">Aceptar</button>
-                                <a href="{{ url('catalogo/tipo_cartera') }}"><button type="button" class="btn btn-primary">Cancelar</button></a>
+                                <a href="{{ url('catalogo/bombero') }}"><button type="button" class="btn btn-primary">Cancelar</button></a>
                             </div>
                         </div>
 

@@ -24,7 +24,7 @@
 
 
             <form method="POST" action="{{ route('residencia.renovarPoliza', $residencia->Id) }}">
-            
+
                 @csrf
                 <div class="x_content" style="font-size: 12px;">
                     <br />
@@ -72,22 +72,22 @@
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                 @if ($residencia->Mensual == 1)
                                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                    <input type="radio" name="tipoTasa" id="Mensual" value="1" checked >
+                                    <input type="radio" name="tipoTasa" id="Mensual" value="1" checked>
                                     <label class="control-label">Tasa ‰ Millar Mensual</label>
                                 </div>
 
                                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                    <input type="radio" name="tipoTasa" id="Anual" value="0" >
+                                    <input type="radio" name="tipoTasa" id="Anual" value="0">
                                     <label class="control-label">Tasa ‰ Millar Anual</label>
                                 </div>
                                 @else
                                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                    <input type="radio" name="tipoTasa" id="Mensual" value="1" >
+                                    <input type="radio" name="tipoTasa" id="Mensual" value="1">
                                     <label class="control-label">Tasa ‰ Millar Mensual</label>
                                 </div>
 
                                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                    <input type="radio" name="tipoTasa" id="Anual" value="0" checked >
+                                    <input type="radio" name="tipoTasa" id="Anual" value="0" checked>
                                     <label class="control-label">Tasa ‰ Millar Anual</label>
                                 </div>
                                 @endif
@@ -97,7 +97,7 @@
                         <div class="form-group">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12">Limite grupo</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input type="number" step="any" name="LimiteGrupo" id="LimiteGrupo" value="{{ $residencia->LimiteGrupo }}" class="form-control" >
+                                <input type="number" step="any" name="LimiteGrupo" id="LimiteGrupo" value="{{ $residencia->LimiteGrupo }}" class="form-control">
                             </div>
                         </div>
 
@@ -105,13 +105,13 @@
                         <div class="form-group">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12">Limite individual</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input type="number" step="any" name="LimiteIndividual" value="{{ $residencia->LimiteIndividual }}" class="form-control" >
+                                <input type="number" step="any" name="LimiteIndividual" value="{{ $residencia->LimiteIndividual }}" class="form-control">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12">Monto cartera</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input type="number" step="any" name="MontoCartera" value="{{ $residencia->MontoCartera }}" class="form-control" >
+                                <input type="number" step="any" name="MontoCartera" value="{{ $residencia->MontoCartera }}" class="form-control">
                             </div>
                         </div>
 
@@ -119,7 +119,7 @@
                         <div class="form-group">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12">Tasa %</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input type="number" step="any" name="Tasa" value="{{$residencia->Tasa }}" class="form-control" >
+                                <input type="number" step="any" name="Tasa" value="{{$residencia->Tasa }}" class="form-control">
                             </div>
                         </div>
 
@@ -127,19 +127,19 @@
                     </div>
 
                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
-                
+
                         <div class="form-group row">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vigencia
                                 Desde</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="VigenciaDesde" type="date" value="{{ \Carbon\Carbon::parse($residencia->VigenciaDesde)->format('d/m/Y') }}" >
+                                <input class="form-control" name="VigenciaDesde" type="date" value="{{ \Carbon\Carbon::parse($residencia->VigenciaDesde)->format('d/m/Y') }}">
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vigencia
                                 Hasta</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="VigenciaHasta" type="date" value="{{ \Carbon\Carbon::parse($residencia->VigenciaHasta)->format('d/m/Y') }}" >
+                                <input class="form-control" name="VigenciaHasta" type="date" value="{{ \Carbon\Carbon::parse($residencia->VigenciaHasta)->format('d/m/Y') }}">
                             </div>
                         </div>
                         <div class="form-group row">
@@ -151,7 +151,13 @@
                         <div class="form-group">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12">Estatus</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input type="text" value="{{$residencia->estadoPolizas->Nombre}}" class="form-control" readonly>
+                            <select name="EstadoPoliza" class="form-control" style="width: 100%" disabled>
+                                    @foreach ($estados_poliza as $obj)
+                                    @if($obj->Id == 2)
+                                    <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                    @endif
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
 
@@ -165,7 +171,7 @@
                     </div>
 
                     <div class="form-group" align="center">
-                        
+
                         <button class="btn btn-success" type="submit">Renovar</button>
                         <a href="#"><button class="btn btn-primary" type="button">Cancelar</button></a>
                     </div>
@@ -181,7 +187,7 @@
 
 
     </div>
-  
+
 </div>
 </div>
 
@@ -190,11 +196,11 @@
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#MontoCartera').change(function(){
-            if(document.getElementById('LimiteGrupo').value < document.getElementById('MontoCartera').value){
-               // alert()
+        $('#MontoCartera').change(function() {
+            if (document.getElementById('LimiteGrupo').value < document.getElementById('MontoCartera').value) {
+                // alert()
                 alert('Su monto de cartera a superado al techo establecido en la poliza');
-            }else{
+            } else {
 
                 var monto = document.getElementById('MontoCartera').value;
                 var tasa = document.getElementById('Tasa').value;
@@ -205,7 +211,7 @@
                 }
                 var sub = Number(monto) * Number(tasaFinal);
                 document.getElementById('PrimaCalculada').value = sub;
-                var bomberos = (monto * (0.04/12)/1000);   //valor de impuesto varia por gobierno
+                var bomberos = (monto * (0.04 / 12) / 1000); //valor de impuesto varia por gobierno
                 document.getElementById('ImpuestoBomberos').value = bomberos;
             }
         })
@@ -228,7 +234,7 @@
             document.getElementById('Iva').value = total * 0.13;
             document.getElementById('SubTotal').value = Number(total) + Number(bomberos);
         })
-        
+
         $('#TasaComision').change(function() {
             var comision = document.getElementById('TasaComision').value;
             var total = document.getElementById('PrimaDescontada').value;
@@ -268,6 +274,7 @@
 
         })
     })
+
     function modal_edit(id) {
         document.getElementById('ModalSaldoA').value = "";
         document.getElementById('ModalImpresionRecibo').value = "";
@@ -279,7 +286,7 @@
 
 
 
-        $.get("{{ url('polizas/deposito_plazo/get_pago') }}" + '/' + id, function(data) {
+        $.get("{{ url('polizas/vida/get_pago') }}" + '/' + id, function(data) {
             console.log(data);
             document.getElementById('ModalSaldoA').value = data.SaldoA.substring(0, 10);
             document.getElementById('ModalImpresionRecibo').value = data.ImpresionRecibo.substring(0, 10);

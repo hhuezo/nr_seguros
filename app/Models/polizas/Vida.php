@@ -5,10 +5,10 @@ namespace App\Models\polizas;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DepositoPlazo extends Model
+class Vida extends Model
 {
     use HasFactory;
-    protected $table = 'poliza_deposito_plazo';
+    protected $table = 'poliza_vida';
 
     protected $primaryKey = 'Id';
 

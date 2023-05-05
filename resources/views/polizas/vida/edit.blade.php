@@ -8,7 +8,7 @@
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
 
             <div class="x_title">
-                <h2>Nuevo Deposito de Plazo &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; VICO - Vida Colectivo Seguros<small></small>
+                <h2>Editar Poliza Vida &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; VICO - Vida Colectivo Seguros<small></small>
                 </h2>
                 <ul class="nav navbar-right panel_toolbox">
 
@@ -28,7 +28,7 @@
             <div class="x_content">
                 <br />
 
-                <form method="POST" action="{{ route('deposito_plazo.update', $depositoPlazo->Id) }}">
+                <form method="POST" action="{{ route('vida.update', $vida->Id) }}">
                     @method('PUT')
                     @csrf
                     <div class="form-horizontal" style="font-size: 12px;">
@@ -37,46 +37,46 @@
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right" style="margin-top: -3%;">Número de Póliza</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="NumeroPoliza" type="text" value="{{ $depositoPlazo->NumeroPoliza }}" readonly>
+                                        <input class="form-control" name="NumeroPoliza" type="text" value="{{ $vida->NumeroPoliza }}" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Código</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Codigo" type="text" value="{{ $depositoPlazo->Codigo }}" readonly>
+                                        <input class="form-control" name="Codigo" type="text" value="{{ $vida->Codigo }}" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Aseguradora</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Aseguradora" type="text" value="{{ $depositoPlazo->aseguradoras->Nombre }}" readonly>
+                                        <input class="form-control" name="Aseguradora" type="text" value="{{ $vida->aseguradoras->Nombre }}" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Asegurado</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Asegurado" type="text" value="{{ $depositoPlazo->clientes->Nombre }}" readonly>
+                                        <input class="form-control" name="Asegurado" type="text" value="{{ $vida->clientes->Nombre }}" readonly>
                                     </div>
 
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Nit</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Nit" id="Nit" type="text" value="{{ $depositoPlazo->Nit }}" readonly>
+                                        <input class="form-control" name="Nit" id="Nit" type="text" value="{{ $vida->Nit }}" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Grupo
                                         Asegurado</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <textarea class="form-control" name="GrupoAsegurado" row="3" col="4" value="" readonly>{{ $depositoPlazo->GrupoAsegurado }} </textarea>
+                                        <textarea class="form-control" name="GrupoAsegurado" row="3" col="4" value="" readonly>{{ $vida->GrupoAsegurado }} </textarea>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Clausulas
                                         Especiales</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <textarea class="form-control" name="ClausulasEspeciales" row="3" col="4" value="" readonly>{{ $depositoPlazo->ClausulasEspeciales }} </textarea>
+                                        <textarea class="form-control" name="ClausulasEspeciales" row="3" col="4" value="" readonly>{{ $vida->ClausulasEspeciales }} </textarea>
                                     </div>
                                 </div>
 
@@ -89,20 +89,20 @@
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vigencia
                                         Desde</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="VigenciaDesde" type="text" value="{{ \Carbon\Carbon::parse($depositoPlazo->VigenciaDesde)->format('d/m/Y') }}" readonly>
+                                        <input class="form-control" name="VigenciaDesde" type="text" value="{{ \Carbon\Carbon::parse($vida->VigenciaDesde)->format('d/m/Y') }}" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo
                                         Cartera</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="TipoCartera" type="text" value="{{ $depositoPlazo->tipoCarteras->Nombre }}" readonly>
+                                        <input class="form-control" name="TipoCartera" type="text" value="{{ $vida->tipoCarteras->Nombre }}" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vendedor</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Ejecutivo" type="text" value="{{ $depositoPlazo->ejecutivos->Nombre }}" readonly>
+                                        <input class="form-control" name="Ejecutivo" type="text" value="{{ $vida->ejecutivos->Nombre }}" readonly>
                                     </div>
                                 </div>
                                 <br>
@@ -110,7 +110,7 @@
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">&nbsp;
                                     </label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        @if ($depositoPlazo->Mensual == 1)
+                                        @if ($vida->Mensual == 1)
                                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                             <input type="radio" name="tipoTasa" id="Mensual" value="1" checked disabled>
                                             <label class="control-label">Tasa ‰ Millar Mensual</label>
@@ -139,14 +139,14 @@
                                         Cartera
                                     </label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="MontoCartera" type="number" step="any" value="{{ $depositoPlazo->MontoCartera }}" required>
+                                        <input class="form-control" name="MontoCartera" type="number" step="any" value="{{ $vida->MontoCartera }}" required>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa
                                         %</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Tasa" id="Tasa" type="number" step="any" value="{{ $depositoPlazo->Tasa }}" readonly>
+                                        <input class="form-control" name="Tasa" id="Tasa" type="number" step="any" value="{{ $vida->Tasa }}" readonly>
                                     </div>
                                 </div>
 
@@ -158,33 +158,33 @@
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vigencia
                                         Hasta</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="VigenciaHasta" type="text" value="{{ \Carbon\Carbon::parse($depositoPlazo->VigenciaHasta)->format('d/m/Y') }}" readonly>
+                                        <input class="form-control" name="VigenciaHasta" type="text" value="{{ \Carbon\Carbon::parse($vida->VigenciaHasta)->format('d/m/Y') }}" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Estatus</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="EstadoPoliza" type="text" value="{{ $depositoPlazo->estadoPolizas->Nombre }}" readonly>
+                                        <input class="form-control" name="EstadoPoliza" type="text" value="{{ $vida->estadoPolizas->Nombre }}" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo de
                                         Cobro</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="TipoCobro" type="text" value="{{ $depositoPlazo->tipoCobros->Nombre }}" readonly>
+                                        <input class="form-control" name="TipoCobro" type="text" value="{{ $vida->tipoCobros->Nombre }}" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Concepto</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <textarea class="form-control" name="Concepto" row="3" col="4" readonly> {{ $depositoPlazo->Concepto }}</textarea>
+                                        <textarea class="form-control" name="Concepto" row="3" col="4" readonly> {{ $vida->Concepto }}</textarea>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Beneficios
                                         Adicionales</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <textarea class="form-control" name="BeneficiosAdicionales" row="3" col="4" value="" readonly>{{ $depositoPlazo->BeneficiosAdicionales }} </textarea>
+                                        <textarea class="form-control" name="BeneficiosAdicionales" row="3" col="4" value="" readonly>{{ $vida->BeneficiosAdicionales }} </textarea>
                                     </div>
                                 </div>
 
@@ -198,59 +198,7 @@
                             </div>
                             <br>
                         </div>
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="border: 1px solid;">
-                            <br>
-                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Impresión
-                                        de Recibo</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="ImpresionRecibo" id="ImpresionRecibo" type="text" value="{{ \Carbon\Carbon::parse($detalle_last->ImpresionRecibo)->format('d/m/Y') }}" readonly>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Envió de
-                                        Cartera</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="EnvioCartera" id="EnvioCartera" type="text" value="{{ $detalle_last->EnvioCartera }}">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Envió de
-                                        Pago</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="EnvioPago" id="EnvioPago" type="text" value="{{ $detalle_last->EnvioPago }}">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Saldo
-                                        A</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="SaldoA" id="SaldoA" type="text" style="background-color: yellow; " value="{{ \Carbon\Carbon::parse($detalle_last->ImpresionRecibo)->format('d/m/Y') }}">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Pago
-                                        Aplicado</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="PagoAplicado" id="PagoAplicado" type="text" value="{{ $detalle_last->PagoAplicado }}">
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <br><br>
-                        <div class="x_title">
-                            <h2> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<small></small></h2>
-                            <div class="clearfix"></div>
-                        </div>
+                        @if($vida->TipoCobro == 1)
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <br><br>
                             <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
@@ -258,20 +206,20 @@
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">No
                                         Usuario 1 *</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="NumeroUsuario1" type="number" value="{{ $depositoPlazo->NumeroUsuario1 }}" required>
+                                        <input class="form-control" name="NumeroUsuario1" type="number" value="{{ $vida->NumeroUsuario1 }}" required>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right" style="margin-top: -3%;">Suma Asegurada 1 *</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="SumaAsegurada1" type="number" step="0.01" value="{{ $depositoPlazo->SumaAsegurada1 }}" required>
+                                        <input class="form-control" name="SumaAsegurada1" type="number" step="0.01" value="{{ $vida->SumaAsegurada1 }}" required>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Prima 1
                                         *</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Prima1" type="number" step="0.01" value="{{ $depositoPlazo->Prima1 }}" required>
+                                        <input class="form-control" name="Prima1" type="number" step="0.01" value="{{ $vida->Prima1 }}" required>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -381,14 +329,68 @@
                             </div>
                             <br>
                         </div>
+                        @endif
 
+
+                        <br><br>
                         <div class="x_title">
                             <h2> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<small></small></h2>
+                            <div class="clearfix"></div>
+                        </div>
+
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="border: 1px solid;">
+                            <br>
+                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Impresión
+                                        de Recibo</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="ImpresionRecibo" id="ImpresionRecibo" type="text" value="{{ \Carbon\Carbon::parse($detalle_last->ImpresionRecibo)->format('d/m/Y') }}" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Envió de
+                                        Cartera</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="EnvioCartera" id="EnvioCartera" type="text" value="{{ $detalle_last->EnvioCartera }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Envió de
+                                        Pago</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="EnvioPago" id="EnvioPago" type="text" value="{{ $detalle_last->EnvioPago }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Saldo
+                                        A</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="SaldoA" id="SaldoA" type="text" style="background-color: yellow; " value="{{ \Carbon\Carbon::parse($detalle_last->ImpresionRecibo)->format('d/m/Y') }}">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Pago
+                                        Aplicado</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="PagoAplicado" id="PagoAplicado" type="text" value="{{ $detalle_last->PagoAplicado }}">
+                                    </div>
+                                </div>
+                            </div>
 
                         </div>
 
-
                         <div class="x_title">
+                            <br>&nbsp;
+                            <br>&nbsp;
+                            <br>&nbsp;
+                            <h2> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<small></small></h2>
                             <h2>Pagos<small></small>
                             </h2>
                             <ul class="nav navbar-right panel_toolbox">
@@ -396,8 +398,6 @@
                             </ul>
                             <div class="clearfix"></div>
                         </div>
-
-
 
                         <div>
                             <br>
@@ -454,7 +454,7 @@
     <div class="modal fade bs-example-modal-lg" id="modal_pago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
-                <form action="{{ url('polizas/deposito_plazo/create_pago') }}" method="POST">
+                <form action="{{ url('polizas/vida/create_pago') }}" method="POST">
                     <div class="modal-header">
                         <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
                             <h5 class="modal-title" id="exampleModalLabel">Nuevo pago</h5>
@@ -465,24 +465,35 @@
                     </div>
                     <div class="modal-body">
                         <div class="box-body row">
-                            <input type="hidden" name="Id" id="Id" value="{{ $depositoPlazo->Id }}" class="form-control">
+                            <input type="hidden" name="Id" id="Id" value="{{ $vida->Id }}" class="form-control">
                             @csrf
 
                             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 ">
-
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha Inicio</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="FechaInicio" id="FechaInicio" type="date" required>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha Final</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="FechaFinal" id="FechaFinal" type="date" required>
+                                    </div>
+                                </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Monto
                                         Cartera
                                     </label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="MontoCartera" id="MontoCartera" type="number" step="any" value="{{ $depositoPlazo->MontoCartera }}" required>
+                                        <input class="form-control" name="MontoCartera" id="MontoCartera" type="number" step="any" value="{{ $vida->MontoCartera }}" required>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa
                                         %</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Tasa" id="Tasa" type="number" step="any" value="{{ $depositoPlazo->Tasa }}" readonly>
+                                        <input class="form-control" name="Tasa" id="Tasa" type="number" step="any" value="{{ $vida->Tasa }}" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -496,7 +507,7 @@
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Extra
                                         Prima</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="ExtraPrima" id="ExtraPrima" type="number" step="any">
+                                        <input class="form-control" name="ExtraPrima" id="ExtPrima" type="number" step="any">
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -568,7 +579,7 @@
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">menos 1%
                                         Retención</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        @if ($depositoPlazo->clientes->TipoContribuyente < 2) <input class="form-control" name="Retencion" id="Retencion" type="number" step="any" disabled>
+                                        @if ($vida->clientes->TipoContribuyente < 2) <input class="form-control" name="Retencion" id="Retencion" type="number" step="any" disabled>
                                             @else
                                             <input class="form-control" name="Retencion" id="Retencion" type="number" step="any">
                                             @endif
@@ -611,7 +622,7 @@
 <div class="modal fade " id="modal_editar_pago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form method="POST" action="{{ url('polizas/deposito_plazo/edit_pago') }}">
+            <form method="POST" action="{{ url('polizas/vida/edit_pago') }}">
                 <div class="modal-header">
                     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
                         <h5 class="modal-title" id="exampleModalLabel">Pago</h5>
@@ -686,48 +697,43 @@
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function() {
-        $("#Anual").change(function() {
-            if (document.getElementById('Anual').checked == true) {
-                document.getElementById('Mensual').setAttribute('disabled', true);
-
-            } else {
-                document.getElementById('Mensual').removeAttribute('disabled');
-            }
-        })
-
-        $("#Mensual").change(function() {
-            if (document.getElementById('Mensual').checked == true) {
-                document.getElementById('Anual').setAttribute('disabled', true);
-
-            } else {
-                document.getElementById('Anual').removeAttribute('disabled');
-            }
-        })
 
         $("#MontoCartera").change(function() {
-            if (document.getElementById('Anual').checked == false && document.getElementById('Mensual')
-                .checked == false) {
-                alert('Debe seleccionar el tipo de tasa');
-            } else {
-                var monto = document.getElementById('MontoCartera').value;
-                var tasa = document.getElementById('Tasa').value;
-                if (document.getElementById('Anual').checked == true) {
-                    var tasaFinal = (tasa / 1000) / 12;
-                } else {
-                    var tasaFinal = tasa / 1000;
-                }
-                var sub = Number(monto) * Number(tasaFinal);
-                document.getElementById('SubTotal').value = sub;
-            }
-
+            calculoSubTotal();
+            calculoPrimaTotal();
+            calculoPrimaDescontada();
+            calculoCCF();
         })
-        $('#ExtraPrima').change(function() {
+
+        function calculoSubTotal() {
+            var monto = document.getElementById('MontoCartera').value;
+            var tasa = document.getElementById('Tasa').value;
+            if (document.getElementById('Anual').checked == true) {
+                var tasaFinal = (tasa / 1000) / 12;
+            } else {
+                var tasaFinal = tasa / 1000;
+            }
+            var sub = Number(monto) * Number(tasaFinal);
+            document.getElementById('SubTotal').value = sub;
+        }
+        $('#ExtPrima').change(function() {
+            calculoPrimaTotal();
+            calculoPrimaDescontada();
+            calculoCCF();
+        })
+
+        function calculoPrimaTotal() {
             var sub = document.getElementById('SubTotal').value;
-            var extra = document.getElementById('ExtraPrima').value;
+            var extra = document.getElementById('ExtPrima').value;
             var prima = Number(sub) + Number(extra);
             document.getElementById('PrimaTotal').value = Number(prima);
+        }
+        $("#Descuento").change(function() {
+            calculoPrimaDescontada();
+            calculoCCF();
         })
-        $('#Descuento').change(function() {
+
+        function calculoPrimaDescontada() {
             var prima = document.getElementById('PrimaTotal').value;
             var descuento = document.getElementById('Descuento').value;
             if (descuento == 0) {
@@ -735,9 +741,15 @@
             } else {
                 var total = Number(prima * (descuento / 100));
             }
-            document.getElementById('PrimaDescontada').value = total;
+            document.getElementById('PrimaDescontada').value = total + Number(document.getElementById('PrimaTotal').value);
+
+        }
+
+        $("#TasaComision").change(function() {
+            calculoCCF();
         })
-        $('#TasaComision').change(function() {
+
+        function calculoCCF() {
             var comision = document.getElementById('TasaComision').value;
             var total = document.getElementById('PrimaDescontada').value;
 
@@ -759,7 +771,7 @@
             var PrimaTotal = document.getElementById('PrimaTotal').value;
             var APagar = Number(PrimaTotal) - Number(ValorCCF);
             document.getElementById('APagar').value = APagar;
-        })
+        }
 
         $("#habilitar").click(function() {
             //  $("#btn_guardar").click(function() {
@@ -821,7 +833,7 @@
 
 
 
-        $.get("{{ url('polizas/deposito_plazo/get_pago') }}" + '/' + id, function(data) {
+        $.get("{{ url('polizas/vida/get_pago') }}" + '/' + id, function(data) {
             console.log(data);
             document.getElementById('ModalSaldoA').value = data.SaldoA.substring(0, 10);
             document.getElementById('ModalImpresionRecibo').value = data.ImpresionRecibo.substring(0, 10);

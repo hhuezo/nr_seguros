@@ -297,6 +297,12 @@
                             <input type="hidden" name="Id" id="Id" value="{{ $residencia->Id }}" class="form-control">
                             @csrf
                             <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha Inicio</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="FechaInicio" id="FechaInicio" type="date" required>
+                                    </div>
+                                </div>
 
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Monto
@@ -356,7 +362,13 @@
 
                             <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
 
-
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha Final</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="FechaFinal" id="FechaFinal" type="date" required>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="Bomberos" id="Bomberos" value="{{$bomberos}}">
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Impuestos bomberos</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
@@ -471,7 +483,7 @@
     <div class="modal fade " id="modal_editar_pago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <form method="POST" action="{{ url('polizas/deposito_plazo/edit_pago') }}">
+                <form method="POST" action="{{ url('polizas/vida/edit_pago') }}">
                     <div class="modal-header">
                         <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
                             <h5 class="modal-title" id="exampleModalLabel">Pago</h5>
@@ -616,7 +628,11 @@
             }
             document.getElementById('PrimaDescontada').value = primaTotal - document.getElementById('Descuento').value;
             //  var bomberos = (monto * (0.04 / 12) / 1000); //valor de impuesto varia por gobierno
-            document.getElementById('ImpuestoBomberos').value = (document.getElementById('MontoCartera').value * (0.04 / 12) / 1000);
+            if (document.getElementById('Bomberos').value == 0) {
+                document.getElementById('ImpuestoBomberos').value = 0;
+            } else {
+                document.getElementById('ImpuestoBomberos').value = (document.getElementById('MontoCartera').value * (document.getElementById('Bomberos').value / 12) / 1000);
+            }
 
         }
         $('#GastosEmision').change(function() {
@@ -663,7 +679,7 @@
             var iva = document.getElementById('Iva').value;
             var APagar = Number(PrimaTotal) - Number(ValorCCF) + Number(iva);
             document.getElementById('APagar').value = APagar;
-            
+
         }
 
 
@@ -694,7 +710,7 @@
 
 
 
-        $.get("{{ url('polizas/deposito_plazo/get_pago') }}" + '/' + id, function(data) {
+        $.get("{{ url('polizas/vida/get_pago') }}" + '/' + id, function(data) {
             console.log(data);
             document.getElementById('ModalSaldoA').value = data.SaldoA.substring(0, 10);
             document.getElementById('ModalImpresionRecibo').value = data.ImpresionRecibo.substring(0, 10);

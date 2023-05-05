@@ -4,6 +4,7 @@ namespace App\Http\Controllers\polizas;
 
 use App\Http\Controllers\Controller;
 use App\Models\catalogo\Aseguradora;
+use App\Models\catalogo\Bombero;
 use App\Models\catalogo\Cliente;
 use App\Models\catalogo\Ejecutivo;
 use App\Models\catalogo\EstadoPoliza;
@@ -38,6 +39,13 @@ class ResidenciaController extends Controller
     {
         $aseguradoras = Aseguradora::where('Activo', '=', 1)->get();
         $estados_poliza = EstadoPoliza::where('Activo', '=', 1)->get();
+        $bombero = Bombero::where('Activo',1)->first();
+        if($bombero){
+           $bomberos = $bombero->Valor; 
+        }
+        else{
+            $bomberos = $bombero->Valor;
+        }
         $cliente = Cliente::where('Activo', 1)->get();
         $tipos_contribuyente =  TipoContribuyente::get();
         $rutas = Ruta::where('Activo', '=', 1)->get();
@@ -50,7 +58,8 @@ class ResidenciaController extends Controller
             'estados_poliza',
             'tipos_contribuyente',
             'rutas',
-            'ubicaciones_cobro'
+            'ubicaciones_cobro',
+            'bomberos'
         ));
     }
 
@@ -92,7 +101,7 @@ class ResidenciaController extends Controller
         $residencia->IvaSobreComision = $request->IvaSobreComision;
         $residencia->Retencion = $request->Retencion;
         $residencia->Activo = $request->Activo;
-        $residencia->Mensual = $request->MEnsual; //valor de radio button
+        $residencia->Mensual = $request->Mensual; //valor de radio button
         $residencia->TasaComison = $request->TasaComision;
         $residencia->ValorDescuento = $request->ValorDescuento;
         $residencia->ExtraPrima = $request->ExtraPrima;
@@ -152,6 +161,13 @@ class ResidenciaController extends Controller
         $ubicaciones_cobro =  UbicacionCobro::where('Activo', '=', 1)->get();
         $detalle = DetalleResidencia::where('Residencia',$residencia->Id)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
+        $bombero = Bombero::where('Activo',1)->first();
+        if($bombero){
+            $bomberos = $bombero->Valor; 
+         }
+         else{
+             $bomberos = $bombero->Valor;
+         }
 
         return view('polizas.residencia.edit',compact('residencia','ejecutivo','detalle',
         'cliente',
@@ -159,7 +175,7 @@ class ResidenciaController extends Controller
         'estados_poliza',
         'tipos_contribuyente',
         'rutas',
-        'ubicaciones_cobro'));
+        'ubicaciones_cobro, bomberos'));
     }
 
     /**
@@ -273,6 +289,19 @@ class ResidenciaController extends Controller
     }
 
     public function renovarPoliza(Request $request, $id){
-        dd("holi");
+        $residencia = Residencia::findOrFail($id);
+        $residencia->Mensual = $request->Mensual; //valor de radio button
+        $residencia->EstadoPoliza = $request->EstadoPoliza;
+        $residencia->VigenciaDesde = $request->VigenciaDesde;
+        $residencia->VigenciaHasta = $request->VigenciaHasta;
+        $residencia->LimiteGrupo = $request->LimiteGrupo;
+        $residencia->LimiteIndividual = $request->LimiteIndividual;
+        $residencia->MontoCartera = $request->MontoCartera;
+        $residencia->Tasa = $request->Tasa;
+        $residencia->update();
+
+        alert()->success('La poliza fue renovada correctamente');
+        return back();
+
     }
 }

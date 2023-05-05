@@ -97,7 +97,9 @@
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                 <select name="EstadoPoliza" class="form-control" style="width: 100%">
                                     @foreach ($estados_poliza as $obj)
+                                    @if($obj->Id == 1)
                                     <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                    @endif
                                     @endforeach
                                 </select>
                             </div>
@@ -134,6 +136,7 @@
 
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
+                        <input type="hidden" name="Bomberos" id="Bomberos" value="{{$bomberos}}">
 
 
 
@@ -303,64 +306,6 @@
                         <div class="clearfix"></div>
                     </div>
                     <br>
-
-                    <!-- 
-                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="border: 1px solid;">
-                        <br>
-                        <br>
-                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Impresión
-                                    de Recibo</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="ImpresionRecibo" type="date" value="{{ date('Y-m-d') }}" readonly>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Envió de
-                                    Cartera</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="EnvioCartera" type="date">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Envió de
-                                    Pago</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="EnvioPago" type="date">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Saldo
-                                    A</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="SaldoA" type="date" style="background-color: yellow;">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Pago
-                                    Aplicado</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="PagoAplicado" type="date">
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                    <br><br>
-                    <div class="x_title">
-                        <h2> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<small></small></h2>
-                        <div class="clearfix"></div>
-                    </div> -->
-
-
-
                 </div>
 
                 <div class="form-group" align="center">
@@ -474,7 +419,12 @@
             }
             document.getElementById('PrimaDescontada').value = primaTotal - document.getElementById('Descuento').value;
             //  var bomberos = (monto * (0.04 / 12) / 1000); //valor de impuesto varia por gobierno
-            document.getElementById('ImpuestoBomberos').value = (document.getElementById('MontoCartera').value * (0.04 / 12) / 1000);
+            if(document.getElementById('Bomberos').value == 0){
+                document.getElementById('ImpuestoBomberos').value = 0 ;
+            }else{
+                document.getElementById('ImpuestoBomberos').value = (document.getElementById('MontoCartera').value * (document.getElementById('Bomberos').value / 12) / 1000);
+            }
+            
 
         }
         $('#GastosEmision').change(function() {
@@ -521,6 +471,32 @@
             var APagar = Number(PrimaTotal) - Number(ValorCCF) + Number(iva);
             document.getElementById('APagar').value = APagar;
         }
+        
+
+        $("#Asegurado").change(function() {
+                // alert(document.getElementById('Asegurado').value);
+                $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
+                var parametros = {
+                    "Cliente": document.getElementById('Asegurado').value
+                };
+                $.ajax({
+                    type: "get",
+                    //ruta para obtener el horario del doctor
+                    url: "{{ url('get_cliente') }}",
+                    data: parametros,
+                    success: function(data) {
+                        console.log(data);
+                        document.getElementById('Nit').value = data.Nit;
+                        if (data.TipoContribuyente == 1) {
+                            document.getElementById('Retencion').setAttribute("readonly", true);
+                            document.getElementById('Retencion').value = 0;
+                            calculoCCF();
+                        }
+
+
+                    }
+                });
+            });
 
 
 

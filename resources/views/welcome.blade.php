@@ -69,6 +69,7 @@
                                 <li><a><i class="fa fa-folder"></i> Catálogos<span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li><a href="{{ url('catalogo/cliente') }}">Clientes</a></li>
+                                        <li><a href="{{ url('catalogo/bombero') }}">Impuesto Bomberos</a></li>
                                         <li><a href="{{ url('catalogo/negocio') }}">Negocio</a></li>
                                         <li><a href="{{ url('catalogo/aseguradoras') }}">Aseguradora</a></li>
                                         <li><a href="{{ url('catalogo/ejecutivos') }}">Ejecutivo</a></li>
@@ -87,7 +88,7 @@
                                 <li><a><i class="fa fa-folder-open"></i> Pólizas<span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li><a href="{{ url('polizas/residencia') }}">Residencias</a></li>
-                                        <li><a href="{{ url('polizas/deposito_plazo')}}">Depositos a Plazo</a></li>
+                                        <li><a href="{{ url('polizas/vida')}}">Vida</a></li>
 
                                     </ul>
                                 </li>

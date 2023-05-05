@@ -5,10 +5,10 @@ namespace App\Models\catalogo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TipoCartera extends Model
+class Bombero extends Model
 {
     use HasFactory;
-    protected $table = 'tipo_cartera';
+    protected $table = 'bombero';
 
     protected $primaryKey = 'Id';
 
@@ -16,11 +16,7 @@ class TipoCartera extends Model
 
 
     protected $fillable = [
-        'Nombre',
-        'Poliza',
+        'Valor',
         'Activo'
     ];
-
-    protected $guarded = [];
-
 }

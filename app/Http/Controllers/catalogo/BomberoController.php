@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\catalogo;
 
 use App\Http\Controllers\Controller;
-use App\Models\catalogo\TipoCartera;
+use App\Models\catalogo\Bombero;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 
-class TipoCarteraController extends Controller
+class BomberoController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,8 +16,8 @@ class TipoCarteraController extends Controller
      */
     public function index()
     {
-        $tipo_cartera = TipoCartera::orderBy('Poliza')->get();
-        return view('catalogo.tipo_cartera.index', compact('tipo_cartera'));
+        $bombero = Bombero::all();
+        return view('catalogo.bombero.index', compact('bombero'));
     }
 
     /**
@@ -27,7 +27,7 @@ class TipoCarteraController extends Controller
      */
     public function create()
     {
-        return view('catalogo.tipo_cartera.create');
+        return view('catalogo.bombero.create');
     }
 
     /**
@@ -38,14 +38,19 @@ class TipoCarteraController extends Controller
      */
     public function store(Request $request)
     {
-        $tipo_cartera = new TipoCartera();
-        $tipo_cartera->Nombre = $request->Nombre;
-        $tipo_cartera->Activo = 1;
-        $tipo_cartera->Poliza = $request->Poliza;
-        $tipo_cartera->save();
+        $bombero_ultimo = Bombero::where('Activo', 1)->first();
+        if ($bombero_ultimo) {
+            $bombero_ultimo->Activo = 0;
+            $bombero_ultimo->update();
+        }
+        $bombero = new Bombero();
+        $bombero->Valor = $request->Valor;
+        $bombero->Activo = 1;
+        $bombero->save();
 
-        alert()->success('El registro ha sido agregado correctamente');
-        return redirect(TipoCartera::index());
+
+        alert()->success('El registro ha sido creado correctamente');
+        return Redirect::to('catalogo/bombero/create');
     }
 
     /**
@@ -67,8 +72,8 @@ class TipoCarteraController extends Controller
      */
     public function edit($id)
     {
-        $tipo_cartera = TipoCartera::findOrFail($id);
-        return view('catalogo.tipo_cartera.edit', compact('tipo_cartera'));
+        $bombero = Bombero::findOrFail($id);
+        return view('catalogo.bombero.edit', compact('bombero'));
     }
 
     /**
@@ -80,14 +85,13 @@ class TipoCarteraController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $tipo_cartera = TipoCartera::findOrFail($id);
-        $tipo_cartera->Nombre = $request->Nombre;
-        $tipo_cartera->Poliza = $request->Poliza;
-        $tipo_cartera->update();
+        $bombero = Bombero::findOrFail($id);
+        $bombero->Valor = $request->Valor;
+        $bombero->update();
 
-        
+
         alert()->success('El registro ha sido creado correctamente');
-        return Redirect::to('catalogo/tipo_cartera');
+        return Redirect::to('catalogo/bombero');
     }
 
     /**
@@ -98,7 +102,7 @@ class TipoCarteraController extends Controller
      */
     public function destroy($id)
     {
-        $tipo_cartera = TipoCartera::findOrFail($id)->update(['Activo' => 0]);
+        $bombero = Bombero::findOrFail($id)->update(['Activo' => 0]);
         alert()->error('El registro ha sido desactivado correctamente');
         return back();
     }
