@@ -236,7 +236,7 @@
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Estatus</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                         <select name="EstadoPoliza" class="form-control select2" style="width: 100%" required>
-                                            @foreach ($estados_poliza as $obj)
+                                            @foreach ($estadoPoliza as $obj)
                                             @if($obj->Id == 1)
                                             <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
                                             @endif
@@ -532,6 +532,7 @@
             if (document.getElementById('TipoCobro').value == 1) {
                 $("#Usuarios").show();
                 document.getElementById('MontoCartera').setAttribute("readonly", true);
+                document.getElementById('SubTotal').setAttribute("readonly", true);
             } else {
                 $("#Usuarios").hide();
             }

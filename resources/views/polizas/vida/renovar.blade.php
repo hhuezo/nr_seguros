@@ -139,14 +139,21 @@
                                         Cartera
                                     </label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="MontoCartera" type="number" step="any" value="{{ $vida->MontoCartera }}" required>
+                                        <input class="form-control" name="MontoCartera" id="MontoCartera" type="number" step="any" value="{{ $vida->MontoCartera }}" required>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa
                                         %</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Tasa" id="Tasa" type="number" step="any" value="{{ $vida->Tasa }}" readonly>
+                                        <input class="form-control" name="Tasa" id="Tasa" type="number" step="any" value="{{ $vida->Tasa }}" >
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Sub
+                                        Total</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="SubTotal" type="number" id="SubTotal" step="any" value="{{ old('PrimaTotal') }}" required>
                                     </div>
                                 </div>
 
@@ -418,6 +425,22 @@
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function() {
+        $("#Anual").change(function() {
+            var monto = document.getElementById('MontoCartera').value;
+            var tasa = document.getElementById('Tasa').value;
+            var tasaFinal = (tasa / 1000) / 12;
+            var sub = Number(monto) * Number(tasaFinal);
+            document.getElementById('SubTotal').value = sub;
+            calculoPrimaRepartida();
+        })
+        $("#Mensual").change(function() {
+            var monto = document.getElementById('MontoCartera').value;
+            var tasa = document.getElementById('Tasa').value;
+            var tasaFinal = tasa / 1000;
+            var sub = Number(monto) * Number(tasaFinal);
+            document.getElementById('SubTotal').value = sub;
+            calculoPrimaRepartida();
+        })
 
         $("#MontoCartera").change(function() {
             calculoSubTotal();
@@ -431,6 +454,8 @@
             if (document.getElementById('TipoCobro').value == 1) {
                 $("#Usuarios").show();
                 document.getElementById('MontoCartera').setAttribute("readonly", true);
+                document.getElementById('SubTotal').setAttribute("readonly", true);
+                tasaRepartido();
             } else {
                 $("#Usuarios").hide();
             }
@@ -481,6 +506,117 @@
         $("#TasaComision").change(function() {
             calculoCCF();
         })
+        $("#Tasa").change(function() {
+            if (document.getElementById('TipoCobro').value == 1) {
+                $("#Usuarios").show();
+                document.getElementById('MontoCartera').setAttribute("readonly", true);
+                document.getElementById('SubTotal').setAttribute("readonly", true);
+                tasaRepartido();
+                calculoPrimaRepartida();
+            } else {
+                $("#Usuarios").hide();
+                calculoSubTotal();
+                calculoPrimaTotal();
+                calculoPrimaDescontada();
+                calculoCCF();
+            }
+
+        })
+        $("#MontoCartera").change(function() {
+            calculoSubTotal();
+            calculoPrimaTotal();
+            calculoPrimaDescontada();
+            calculoCCF();
+        })
+
+        function tasaRepartido() {
+            var tasa = document.getElementById('Tasa').value;
+            document.getElementById('Tasa1').value = tasa;
+            document.getElementById('Tasa2').value = tasa;
+            document.getElementById('Tasa3').value = tasa;
+            document.getElementById('Tasa4').value = tasa;
+            document.getElementById('Tasa5').value = tasa;
+            document.getElementById('Tasa6').value = tasa;
+
+        }
+
+        function calculoPrimaRepartida() {
+            if (document.getElementById('Anual').checked == true) {
+                var tasa1 = ((document.getElementById('Tasa1').value) / 1000) / 12;
+                var tasa2 = ((document.getElementById('Tasa2').value) / 1000) / 12;
+                var tasa3 = ((document.getElementById('Tasa3').value) / 1000) / 12;
+                var tasa4 = ((document.getElementById('Tasa4').value) / 1000) / 12;
+                var tasa5 = ((document.getElementById('Tasa5').value) / 1000) / 12;
+                var tasa6 = ((document.getElementById('Tasa6').value) / 1000) / 12;
+            } else if (document.getElementById('Mensual').checked == true) {
+                var tasa1 = ((document.getElementById('Tasa1').value) / 1000);
+                var tasa2 = ((document.getElementById('Tasa2').value) / 1000);
+                var tasa3 = ((document.getElementById('Tasa3').value) / 1000);
+                var tasa4 = ((document.getElementById('Tasa4').value) / 1000);
+                var tasa5 = ((document.getElementById('Tasa5').value) / 1000);
+                var tasa6 = ((document.getElementById('Tasa6').value) / 1000);
+            }
+
+            var prima1 = document.getElementById('SumaAsegurada1').value * tasa1;
+            var prima2 = document.getElementById('SumaAsegurada2').value * tasa2;
+            var prima3 = document.getElementById('SumaAsegurada3').value * tasa3;
+            var prima4 = document.getElementById('SumaAsegurada4').value * tasa4;
+            var prima5 = document.getElementById('SumaAsegurada5').value * tasa5;
+            var prima6 = document.getElementById('SumaAsegurada6').value * tasa6;
+
+            document.getElementById('Prima1').value = prima1;
+            document.getElementById('Prima2').value = prima2;
+            document.getElementById('Prima3').value = prima3;
+            document.getElementById('Prima4').value = prima4;
+            document.getElementById('Prima5').value = prima5;
+            document.getElementById('Prima6').value = prima6;
+            document.getElementById('SubTotal').value = Number(prima1) + Number(prima2) + Number(prima3) + Number(prima4) + Number(prima5) + Number(prima6);
+
+        }
+
+
+        $("#SumaAsegurada1").change(function() {
+            calculoMontoCartera();
+        })
+        $("#SumaAsegurada2").change(function() {
+            calculoMontoCartera();
+        })
+        $("#SumaAsegurada3").change(function() {
+            calculoMontoCartera();
+        })
+        $("#SumaAsegurada4").change(function() {
+            calculoMontoCartera();
+        })
+        $("#SumaAsegurada5").change(function() {
+            calculoMontoCartera();
+        })
+        $("#SumaAsegurada6").change(function() {
+            calculoMontoCartera();
+        })
+
+        function calculoMontoCartera() {
+            var suma1 = document.getElementById('SumaAsegurada1').value;
+            var suma2 = document.getElementById('SumaAsegurada2').value;
+            var suma3 = document.getElementById('SumaAsegurada3').value;
+            var suma4 = document.getElementById('SumaAsegurada4').value;
+            var suma5 = document.getElementById('SumaAsegurada5').value;
+            var suma6 = document.getElementById('SumaAsegurada6').value;
+            document.getElementById('MontoCartera').value = Number(suma1) + Number(suma2) + Number(suma3) + Number(suma4) + Number(suma5) + Number(suma6);
+            calculoPrimaRepartida();
+        }
+
+        function calculoSubTotal() {
+            var monto = document.getElementById('MontoCartera').value;
+            var tasa = document.getElementById('Tasa').value;
+            if (document.getElementById('Anual').checked == true) {
+                var tasaFinal = (tasa / 1000) / 12;
+            } else {
+                var tasaFinal = tasa / 1000;
+            }
+            var sub = Number(monto) * Number(tasaFinal);
+            document.getElementById('SubTotal').value = sub;
+        }
+
 
         function calculoCCF() {
             var comision = document.getElementById('TasaComision').value;

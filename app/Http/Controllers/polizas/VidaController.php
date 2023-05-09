@@ -286,4 +286,18 @@ class VidaController extends Controller
         $tipoCobro = TipoCobro::where('Activo', 1)->get();
         return view('polizas.vida.renovar', compact('vida','tipoCobro','estados_poliza'));
     }
+    public function renovarPoliza(Request $request, $id){
+        $vida = Vida::findOrFail($id);
+        $vida->Mensual = $request->Mensual; //valor de radio button
+        $vida->EstadoPoliza = $request->EstadoPoliza;
+        $vida->VigenciaDesde = $request->VigenciaDesde;
+        $vida->VigenciaHasta = $request->VigenciaHasta;
+        $vida->MontoCartera = $request->MontoCartera;
+        $vida->Tasa = $request->Tasa;
+        $vida->update();
+
+        alert()->success('La poliza fue renovada correctamente');
+        return back();
+
+    }
 }
