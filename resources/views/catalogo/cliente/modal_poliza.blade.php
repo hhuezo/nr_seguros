@@ -31,9 +31,10 @@
                                 </div>
                             </div>
                             <div class="form-group row">
+                               
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Homologado</label>
                                 <div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="Homologado" id="Homologado" type="checkbox" autofocus="true">
+                                    <input name="Homologado" id="Homologado" type="checkbox" class="js-switch" />
                                 </div>
                             </div>
                             <div class="form-group row">
