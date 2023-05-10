@@ -14,8 +14,12 @@
     <!-- Font Awesome -->
     <link href="{{ asset('vendors/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
 
+
     <!-- select 2 -->
     <link rel="stylesheet" href="{{ asset('vendors/select2/select2.min.css') }}">
+
+    <!-- Switchery -->
+	<link href="{{ asset('vendors/switchery/dist/switchery.min.css') }}" rel="stylesheet">
 
     <!-- Custom Theme Style -->
     <link href="{{ asset('build/css/custom.min.css') }}" rel="stylesheet">
@@ -170,8 +174,13 @@
     <script src="{{ asset('vendors/datatables.net/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('vendors/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
 
+           	<!-- Switchery -->
+	<script src="{{ asset('vendors/switchery/dist/switchery.min.js') }}"></script>
+
     <!-- Select2 -->
     <script src="{{ asset('vendors/select2/select2.min.js') }}"></script>
+
+ 
 
     <!-- mascara de entrada -->
     <script src="{{ asset('vendors/input-mask/jquery.inputmask.js') }}"></script>
