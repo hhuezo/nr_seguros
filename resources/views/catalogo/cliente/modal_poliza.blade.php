@@ -199,12 +199,14 @@
     $(document).ready(function() {
         $("#Homologado").change(function() {
             if (document.getElementById('Homologado').checked == true) {
-                document.getElementById('ModalNit').setAttribute("readonly", true);
+                $('#ModalNit').prop('readonly', true);
                 document.getElementById('ModalNit').removeAttribute("data-inputmask");
                 document.getElementById('ModalNit').removeAttribute("data-mask");
-                document.getElementById('ModalNit').value = document.getElementById('ModalDui').value;
-                
+                document.getElementById('ModalNit').value = document.getElementById('ModalDui').value;             
 
+            }
+            else{
+                $('#ModalNit').prop('readonly', false);
             }
         })
         $("#ModalDui").change(function(){
