@@ -104,6 +104,14 @@
 
                                     </ul>
                                 </li>
+
+                                <li><a><i class="fa fa-suitcase"></i> Validación<span class="fa fa-chevron-down"></span></a>
+                                    <ul class="nav child_menu">
+
+                                        <li><a href="{{ url('polizas/validacion_cartera') }}">Validación de cartera</a></li>
+
+                                    </ul>
+                                </li>
                             </ul>
                         </div>
                         <!-- sidebar menu -->
@@ -180,7 +188,7 @@
     <!-- Select2 -->
     <script src="{{ asset('vendors/select2/select2.min.js') }}"></script>
 
- 
+
 
     <!-- mascara de entrada -->
     <script src="{{ asset('vendors/input-mask/jquery.inputmask.js') }}"></script>
