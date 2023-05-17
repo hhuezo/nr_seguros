@@ -32,7 +32,19 @@ class CarteraImport implements ToModel
                 'SegundoNombre'     => $row[10],
                 'SociedadNombre'     => $row[11],
                 'Sexo'     => $row[12],
-                'FechaOtorgamiento' => $row[13]
+                'FechaOtorgamiento' => $row[13],
+                'FechaVencimiento' => $row[14],
+                'Ocupacion' => $row[15],
+                'NoRefereciaCredito' => $row[16],
+                'MontoOtorgado'=> $row[17],
+                'SaldoVigenteCapital' => $row[18],
+                'Interes' => $row[19],
+                'InteresMoratorio' => $row[20],
+                'SaldoTotal' => $row[21],
+                'TarifaMensual' => $row[22],
+                'PrimaMensual' => $row[23],
+                'TipoDeuda' => $row[24],
+                'PorcentajeExtraprima' => $row[25]
             ]);
         }
     }

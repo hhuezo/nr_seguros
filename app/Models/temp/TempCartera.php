@@ -33,6 +33,7 @@ class TempCartera extends Model
         'FechaVencimiento',
         'Ocupacion',
         'NoRefereciaCredito',
+        'MontoOtorgado',
         'SaldoVigenteCapital',
         'Interes',
         'InteresMoratorio',
