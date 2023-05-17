@@ -30,7 +30,7 @@ class ValidacionCarteraController extends Controller
         TempCartera::where('Usuario','=',auth()->user()->id)->delete();
         Excel::import(new  CarteraImport, $archivo);
 
-        $datos = \DB::select("select dateFormat(".auth()->user()->id.")");
+        $datos = \DB::select("call dateFormat(".auth()->user()->id.")");
 
        // $temp_cartera = TempCartera::where('Usuario', '=', auth()->user()->id)->get();
 
