@@ -21,6 +21,7 @@ use App\Http\Controllers\polizas\DeudaController;
 use App\Http\Controllers\polizas\VidaController;
 use App\Http\Controllers\polizas\ResidenciaController;
 use App\Models\polizas\Residencia;
+use App\Http\Controllers\polizas\ValidacionCarteraController;
 
 /*
 |--------------------------------------------------------------------------
@@ -92,6 +93,9 @@ Route::post('polizas/vida/renovar/{id}',[VidaController::class, 'renovarPoliza']
 Route::get('poliza/vida/usuario_create',[VidaController::class, 'agregarUsuario']);
 
 Route::resource('polizas/deuda',DeudaController::class);
+
+//validación de cartera
+Route::resource('polizas/validacion_cartera', ValidacionCarteraController::class);
 
 
 
