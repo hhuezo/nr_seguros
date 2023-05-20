@@ -481,7 +481,7 @@
 
     </div>
     <div class="modal fade " id="modal_editar_pago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <form method="POST" action="{{ url('polizas/vida/edit_pago') }}">
                     <div class="modal-header">

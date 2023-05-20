@@ -175,7 +175,7 @@ class ResidenciaController extends Controller
         'estados_poliza',
         'tipos_contribuyente',
         'rutas',
-        'ubicaciones_cobro, bomberos'));
+        'ubicaciones_cobro' , 'bomberos'));
     }
 
     /**

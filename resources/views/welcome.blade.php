@@ -93,7 +93,7 @@
                                     <ul class="nav child_menu">
                                         <li><a href="{{ url('polizas/residencia') }}">Residencias</a></li>
                                         <li><a href="{{ url('polizas/vida')}}">Vida</a></li>
-
+                                        <li><a href="{{ url('polizas/deuda')}}">Deuda</a></li>
                                     </ul>
                                 </li>
 

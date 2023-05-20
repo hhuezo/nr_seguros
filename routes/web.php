@@ -17,6 +17,7 @@ use App\Http\Controllers\catalogo\UbicacionCobroController;
 use App\Http\Controllers\catalogo\NegocioController;
 use App\Http\Controllers\catalogo\RutaController;
 use App\Http\Controllers\catalogo\TipoCobroController;
+use App\Http\Controllers\polizas\DeudaController;
 use App\Http\Controllers\polizas\VidaController;
 use App\Http\Controllers\polizas\ResidenciaController;
 use App\Models\polizas\Residencia;
@@ -88,7 +89,9 @@ Route::get('polizas/vida/get_pago/{id}', [VidaController::class,'get_pago']);
 Route::get('get_cliente', [VidaController::class, 'get_cliente']);
 Route::get('polizas/vida/{id}/renovar',[VidaController::class, 'renovar']);
 Route::post('polizas/vida/renovar/{id}',[VidaController::class, 'renovarPoliza'])->name('vida.renovarPoliza');
+Route::get('poliza/vida/usuario_create',[VidaController::class, 'agregarUsuario']);
 
+Route::resource('polizas/deuda',DeudaController::class);
 
 
 

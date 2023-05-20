@@ -8,7 +8,7 @@
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
 
             <div class="x_title">
-                <h2>Nuevo Poliza de Vida &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; VICO - Vida Colectivo Seguros<small></small>
+                <h2>Nuevo Poliza de Deuda &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; VIDE - Seguro por Deuda<small></small>
                 </h2>
                 <ul class="nav navbar-right panel_toolbox">
 
@@ -28,7 +28,7 @@
             <div class="x_content">
                 <br />
 
-                <form action="{{ url('polizas/vida') }}" method="POST">
+                <form action="{{ url('polizas/deuda') }}" method="POST">
                     @csrf
                     <div class="form-horizontal" style="font-size: 12px;">
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -42,7 +42,7 @@
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right" style="margin-top: -3%;">Número de Póliza</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="NumeroPoliza" id="NumeroPoliza" type="text" value="{{ old('NumeroPoliza') }}" required>
+                                        <input class="form-control" name="NumeroPoliza" id="NumeroPoliza" type="text" value="{{ old('NumeroPoliza') }}" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -74,11 +74,17 @@
                                         <input class="form-control" name="Nit" id="Nit" type="text" value="{{ old('Nit') }}" readonly>
                                     </div>
                                 </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Grupo
-                                        Asegurado</label>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12">Limite de Examenes Médico</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <textarea class="form-control" name="GrupoAsegurado" row="3" col="4" value="{{ old('GrupoAsegurado') }}" required> </textarea>
+                                        <input type="number" step="any" name="LimiteMedico" id="LimiteMedico" value="{{ old('LimiteMedico') }}" class="form-control">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12">Responsabilidad Máxima por Asegurado</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input type="number" step="any" name="MaxAsegurado" id="MaxAsegurado" value="{{ old('MaxAsegurado') }}" class="form-control">
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -139,6 +145,14 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Monto
+                                        Cartera (Saldos de Capital)
+                                    </label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="SaldoCapital" id="SaldoCapital" type="number" step="any" value="{{ old('SaldoCapital') }}" readonly>
+                                    </div>
+                                </div>
                                 <br>
                                 <!-- radio button -->
                                 <div class="form-group row">
@@ -157,23 +171,25 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group row">
-                                    <input type="hidden" name="Bomberos" id="Bomberos" value="{{$bomberos}}">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Monto
-                                        Cartera
-                                    </label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="MontoCartera" id="MontoCartera" type="number" step="any" value="{{ old('MontoCartera') }}" required>
-                                    </div>
-                                </div>
+                                
+                                
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa ‰
                                     </label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                                         <input class="form-control" name="Tasa" type="number" id="Tasa" step="any" value="{{ old('Tasa') }}" required>
+                                    </div>
+
+                                    <label class="control-label col-md-2 col-sm-12 col-xs-12" align="right">Meses desfase
+                                    </label>
+                                    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="MesesDesfase" type="number" id="MesesDesfase" step="any" value="{{ old('MesesDesfase') }}" required>
                                     </div>
                                 </div>
                                 <div class="form-group row">
+                                    
+                                </div>
+                                <!-- <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Sub
                                         Total</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
@@ -193,7 +209,7 @@
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                         <input class="form-control" name="PrimaTotal" type="number" step="any" id="PrimaTotal" value="{{ old('PrimaToal') }}">
                                     </div>
-                                </div>
+                                </div> -->
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Descuento
                                         %</label>
@@ -202,6 +218,13 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Descuento Especial
+                                        %</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="DescuentoEspecial" type="number" step="any" id="DescuentoEspecial" value="{{ old('DescuentoEspecial') }}">
+                                    </div>
+                                </div>
+                                <!-- <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">
                                         Prima Descontada</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
@@ -221,7 +244,7 @@
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                         <input class="form-control" name="APagar" type="number" id="APagar" step="any" value="{{ old('APagar') }}">
                                     </div>
-                                </div>
+                                </div> -->
                             </div>
 
                             <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
@@ -256,6 +279,15 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="form-group row">
+                                   
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Monto
+                                        Cartera (Monto Nominal)
+                                    </label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="MontoNominal" id="MontoNominal" type="number" step="any" value="{{ old('MontoNominal') }}" readonly>
+                                    </div>
+                                </div>
                                 <br>
                                 <br>
                                 <br>
@@ -271,11 +303,18 @@
                                         <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" value="{{ old('TasaComision') }}">
                                     </div>
                                 </div>
-                                <div class="form-group row">
+                                <!-- <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Valor
                                         Desc</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                         <input class="form-control" name="ValorDescuento" id="ValorDescuento" type="number" step="any" value="{{ old('ValorDescuento') }}">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Valor
+                                        Desc Especial</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="ValorDescuentoEspecial" id="ValorDescuentoEspecial" type="number" step="any" value="{{ old('ValorDescuentoEspecial') }}">
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -302,7 +341,7 @@
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                         <input class="form-control" name="ValorCCF" id="ValorCCFE" type="number" step="any">
                                     </div>
-                                </div>
+                                </div> -->
                             </div>
                             <br><br>
                             <div class="x_title">
@@ -312,29 +351,26 @@
                             <br>
                         </div>
 
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="Usuarios" style="display: none;">
-                            <div align="right">
-                                <a class="btn btn-primary" onclick="modal_usuario(document.getElementById('NumeroPoliza').value, document.getElementById('Tasa').value, document.getElementById('Mensual').checked, document.getElementById('Anual').checked);"><i class="fa fa-plus"></i>&nbsp; Nuevo Usuario     </a>
-                            </div>
-                            <br>
-                            <table id="datatable" class="table table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Numero Usuarios</th>
-                                        <th>Suma Asegurada</th>
-                                        <th>Sub Total</th>
-                                        <th>Tasa</th>
-                                        <th>Total Asegurado</th>
-                                        <th>Opciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    
-                                </tbody>
-                            </table>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                        </table>
 
-                            <br>
-                        </div>
 
 
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -351,7 +387,6 @@
     </div>
 </div>
 
-@include('polizas.vida.modal_usuario')
 
 
 @include('catalogo.cliente.modal_poliza')
@@ -390,10 +425,9 @@
                 document.getElementById('MontoCartera').setAttribute("readonly", true);
                 document.getElementById('SubTotal').setAttribute("readonly", true);
             } else {
-                document.getElementById('MontoCartera').removeAttribute("readonly");
-                document.getElementById('SubTotal').removeAttribute("readonly");
                 $("#Usuarios").hide();
             }
+
 
         })
 
@@ -408,8 +442,8 @@
                 $("#Usuarios").show();
                 document.getElementById('MontoCartera').setAttribute("readonly", true);
                 document.getElementById('SubTotal').setAttribute("readonly", true);
-               // tasaRepartido();
-               // calculoPrimaRepartida();
+                tasaRepartido();
+                calculoPrimaRepartida();
             } else {
                 $("#Usuarios").hide();
                 calculoSubTotal();
@@ -426,7 +460,81 @@
             calculoCCF();
         })
 
-     
+        function tasaRepartido() {
+            var tasa = document.getElementById('Tasa').value;
+            document.getElementById('Tasa1').value = tasa;
+            document.getElementById('Tasa2').value = tasa;
+            document.getElementById('Tasa3').value = tasa;
+            document.getElementById('Tasa4').value = tasa;
+            document.getElementById('Tasa5').value = tasa;
+            document.getElementById('Tasa6').value = tasa;
+
+        }
+
+        function calculoPrimaRepartida() {
+            if (document.getElementById('Anual').checked == true) {
+                var tasa1 = ((document.getElementById('Tasa1').value) / 1000) / 12;
+                var tasa2 = ((document.getElementById('Tasa2').value) / 1000) / 12;
+                var tasa3 = ((document.getElementById('Tasa3').value) / 1000) / 12;
+                var tasa4 = ((document.getElementById('Tasa4').value) / 1000) / 12;
+                var tasa5 = ((document.getElementById('Tasa5').value) / 1000) / 12;
+                var tasa6 = ((document.getElementById('Tasa6').value) / 1000) / 12;
+            } else if (document.getElementById('Mensual').checked == true) {
+                var tasa1 = ((document.getElementById('Tasa1').value) / 1000);
+                var tasa2 = ((document.getElementById('Tasa2').value) / 1000);
+                var tasa3 = ((document.getElementById('Tasa3').value) / 1000);
+                var tasa4 = ((document.getElementById('Tasa4').value) / 1000);
+                var tasa5 = ((document.getElementById('Tasa5').value) / 1000);
+                var tasa6 = ((document.getElementById('Tasa6').value) / 1000);
+            }
+
+            var prima1 = document.getElementById('SumaAsegurada1').value * tasa1;
+            var prima2 = document.getElementById('SumaAsegurada2').value * tasa2;
+            var prima3 = document.getElementById('SumaAsegurada3').value * tasa3;
+            var prima4 = document.getElementById('SumaAsegurada4').value * tasa4;
+            var prima5 = document.getElementById('SumaAsegurada5').value * tasa5;
+            var prima6 = document.getElementById('SumaAsegurada6').value * tasa6;
+
+            document.getElementById('Prima1').value = prima1;
+            document.getElementById('Prima2').value = prima2;
+            document.getElementById('Prima3').value = prima3;
+            document.getElementById('Prima4').value = prima4;
+            document.getElementById('Prima5').value = prima5;
+            document.getElementById('Prima6').value = prima6;
+            document.getElementById('SubTotal').value = Number(prima1) + Number(prima2) + Number(prima3) + Number(prima4) + Number(prima5) + Number(prima6);
+
+        }
+
+
+        $("#SumaAsegurada1").change(function() {
+            calculoMontoCartera();
+        })
+        $("#SumaAsegurada2").change(function() {
+            calculoMontoCartera();
+        })
+        $("#SumaAsegurada3").change(function() {
+            calculoMontoCartera();
+        })
+        $("#SumaAsegurada4").change(function() {
+            calculoMontoCartera();
+        })
+        $("#SumaAsegurada5").change(function() {
+            calculoMontoCartera();
+        })
+        $("#SumaAsegurada6").change(function() {
+            calculoMontoCartera();
+        })
+
+        function calculoMontoCartera() {
+            var suma1 = document.getElementById('SumaAsegurada1').value;
+            var suma2 = document.getElementById('SumaAsegurada2').value;
+            var suma3 = document.getElementById('SumaAsegurada3').value;
+            var suma4 = document.getElementById('SumaAsegurada4').value;
+            var suma5 = document.getElementById('SumaAsegurada5').value;
+            var suma6 = document.getElementById('SumaAsegurada6').value;
+            document.getElementById('MontoCartera').value = Number(suma1) + Number(suma2) + Number(suma3) + Number(suma4) + Number(suma5) + Number(suma6);
+            calculoPrimaRepartida();
+        }
 
         function calculoSubTotal() {
             var monto = document.getElementById('MontoCartera').value;
@@ -527,22 +635,6 @@
 
     function modal_cliente() {
         $('#modal_cliente').modal('show');
-    }
-    function modal_usuario(poliza,Tasa, Mensual, Anual) {
-        //alert(Tasa);
-        if(poliza == '' || Tasa == ''){
-            alert('Debe digitar la poliza o la tasa');  //cambiar por un swal
-        }else{
-            document.getElementById('ModalTasaUsuario').value = Tasa;
-            document.getElementById('ModalPoliza').value = poliza;
-            if(Mensual == true){
-                document.getElementById('ModalTipoTasa').value = 1;
-            }else if(Anual == true){
-                document.getElementById('ModalTipoTasa').value = 0;
-            }
-        $('#modal_usuario').modal('show');
-        }
-        
     }
 </script>
 @endsection

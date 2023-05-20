@@ -5,10 +5,10 @@ namespace App\Models\polizas;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Vida extends Model
+class Deuda extends Model
 {
     use HasFactory;
-    protected $table = 'poliza_vida';
+    protected $table = 'poliza_deuda';
 
     protected $primaryKey = 'Id';
 
@@ -20,37 +20,35 @@ class Vida extends Model
         'NumeroPoliza',
         'Nit',
         'Codigo',
-        'Aseguradora',
         'Asegurado',
-        'GrupoAsegurado',
+        'Aseguradora',
+        'Ejecutivo',
         'VigenciaDesde',
         'VigenciaHasta',
-        'BeneficiosAdicionales',
+        'Tasa',
+        'MesesDesfase',
+        'SaldoCapital',
+        'MontoNominal',
+        'Beneficios',
         'ClausulasEspeciales',
         'Concepto',
-        'Comentario',
-        'Ejecutivo',
         'TipoCartera',
         'EstadoPoliza',
-        'TipoCobro',
-        'Tasa',
-        'PrimaTotal',
+        'LimiteMedico',
+        'MaxAsegurado',
         'Descuento',
+        'DescuentoEspecial',
+        'ValorPrima',
         'ExtraPrima',
         'ValorCCF',
         'APagar',
-        'MontoCartera',
-        'TasaComision',
-        'Mensual',
-        'PrimaDescontada',
         'ValorDescuento',
+        'ValorDescuentoEspecial',
+        'Comision',
         'IvaSobreComision',
         'Retencion',
-        'ImpresionRecibo',
-        'EnvioCartera',
-        'EnvioPago',
-        'PagoAplicado',
-        'SaldoA',
+        'PrimaDescontada',
+        'FechaIngreso',
         'Activo',
         'Bomberos',
         'EdadTerminacion',
@@ -63,26 +61,27 @@ class Vida extends Model
 
     protected $guarded = [];
 
-    public function clientes(){
+    public function clientes()
+    {
         return $this->belongsTo('App\Models\catalogo\Cliente', 'Asegurado', 'Id');
     }
 
-    public function aseguradoras(){
+    public function aseguradoras()
+    {
         return $this->belongsTo('App\Models\catalogo\Aseguradora', 'Aseguradora', 'Id');
     }
 
-    public function tipoCarteras(){
+    public function tipoCarteras()
+    {
         return $this->belongsTo('App\Models\catalogo\TipoCartera', 'TipoCartera', 'Id');
     }
 
-    public function ejecutivos(){
+    public function ejecutivos()
+    {
         return $this->belongsTo('App\Models\catalogo\Ejecutivo', 'Ejecutivo', 'Id');
     }
-    public function estadoPolizas(){
+    public function estadoPolizas()
+    {
         return $this->belongsTo('App\Models\catalogo\EstadoPoliza', 'EstadoPoliza', 'Id');
-    }
-
-    public function tipoCobros(){
-        return $this->belongsTo('App\Models\catalogo\TipoCobro', 'TipoCobro', 'Id');
     }
 }

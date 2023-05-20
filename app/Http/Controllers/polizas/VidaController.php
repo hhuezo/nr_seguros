@@ -15,6 +15,7 @@ use App\Models\catalogo\TipoContribuyente;
 use App\Models\catalogo\UbicacionCobro;
 use App\Models\polizas\Vida;
 use App\Models\polizas\VidaDetalle;
+use App\Models\polizas\VidaUsuario;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -110,24 +111,6 @@ class VidaController extends Controller
             $vida->Retencion = $request->Retencion;
             $vida->IvaSobreComision = $request->IvaSobreComision;
             $vida->APagar = $request->APagar;
-            $vida->NumeroUsuario1 = $request->NumeroUsuario1;
-            $vida->SumaAseguradora1 = $request->SumaAseguradora1;
-            $vida->Prima1 = $request->Prima1;
-            $vida->NumeroUsuario2 = $request->NumeroUsuario2;
-            $vida->SumaAseguradora2 = $request->SumaAseguradora2;
-            $vida->Prima2 = $request->Prima2;
-            $vida->NumeroUsuario3 = $request->NumeroUsuario3;
-            $vida->SumaAseguradora3 = $request->SumaAseguradora3;
-            $vida->Prima3 = $request->Prima3;
-            $vida->NumeroUsuario4 = $request->NumeroUsuario4;
-            $vida->SumaAseguradora4 = $request->SumaAseguradora4;
-            $vida->Prima4 = $request->Prima4;
-            $vida->NumeroUsuario5 = $request->NumeroUsuario5;
-            $vida->SumaAseguradora5 = $request->SumaAseguradora5;
-            $vida->Prima5 = $request->Prima5;
-            $vida->NumeroUsuario6 = $request->NumeroUsuario6;
-            $vida->SumaAseguradora6 = $request->SumaAseguradora6;
-            $vida->Prima6 = $request->Prima6;
             $vida->Activo = 1;
             $vida->save();
 
@@ -139,6 +122,22 @@ class VidaController extends Controller
     public function show($id)
     {
         //
+    }
+
+    public function agregarUsuario(Request $request){
+        //agregar form de agregar usuario
+        $usuario_vida = new VidaUsuario();
+        $usuario_vida->Poliza = $request->Poliza;
+        $usuario_vida->NumeroUsuario = $request->NumeroUsuario;
+        $usuario_vida->SumaAsegurada = $request->SumaAsegurada;
+        $usuario_vida->Tasa = $request->Tasa;
+        $usuario_vida->TotalAsegurado = $request->TotalAseggurado;
+        $usuario_vida->save();
+
+        $usuario_vidas = VidaUsuario::where('Poliza',$request->Poliza)->get();
+        return $usuario_vidas;
+
+        
     }
 
     public function edit($id)
