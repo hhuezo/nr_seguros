@@ -52,7 +52,6 @@ class Deuda extends Model
         'Activo',
         'Bomberos',
         'EdadTerminacion',
-        'EdadOtorgamiento',
         'EdadMaxTerminacion',
         'EdadIntermediaTerminacion',
         'LimiteMaximoDeclaracion',

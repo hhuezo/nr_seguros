@@ -87,6 +87,20 @@
                                         <textarea class="form-control" name="ClausulasEspeciales" row="3" col="4" value="" readonly>{{ $vida->ClausulasEspeciales }} </textarea>
                                     </div>
                                 </div>
+                                <div class="form-group row">
+                                    
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Limite Maximo Declaracion    </label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="LimiteMaximoDeclaracion" id="LimiteMaximoDeclaracion" type="number" step="any" value="{{$vida->LimiteMaximoDeclaracion }}" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Limite Intermedio Declaracion                      </label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="LimiteIntermedioDeclaracion" id="LimiteIntermedioDeclaracion" type="number" step="any" value="{{ $vida->LimiteIntermedioDeclaracion }}" readonly>
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                                 <div class="form-group row">
@@ -151,6 +165,24 @@
                                         %</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                         <input class="form-control" name="Tasa" id="Tasa" type="number" step="any" value="{{ $vida->Tasa }}" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad Terminación</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="EdadTerminacion" id="EdadTerminacion" type="number"  value="{{ $vida->EdadTerminacion }}" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad Maxima Terminacion</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="EdadMaxTerminacion" id="EdadMaxTerminacion" type="number"  value="{{ $vida->EdadMaxTerminacion }}" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad Intermedia Terminacion</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="EdadIntermediaTerminacion" id="EdadIntermediaTerminacion" type="number" step="any" value="{{ $vida->EdadIntermediaTerminacion }}" readonly>
                                     </div>
                                 </div>
                             </div>
