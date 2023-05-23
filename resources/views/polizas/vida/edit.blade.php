@@ -45,7 +45,7 @@
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right" style="margin-top: -3%;">Número de Póliza</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="NumeroPoliza" type="text" value="{{ $vida->NumeroPoliza }}" readonly>
+                                        <input class="form-control" name="NumeroPoliza" id="NumeroPoliza" type="text" value="{{ $vida->NumeroPoliza }}" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -200,614 +200,15 @@
                             <br>
                         </div>
                         @if ($vida->TipoCobro == 1)
-                        <!-- <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <br><br>
-                                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">No
-                                                Usuario 1 *</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="NumeroUsuario1" type="number"
-                                                    value="{{ $vida->NumeroUsuario1 }}" required>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right"
-                                                style="margin-top: -3%;">Suma Asegurada 1 *</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="SumaAsegurada1" type="number"
-                                                    step="0.01" value="{{ $vida->SumaAsegurada1 }}" required>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Prima
-                                                1
-                                                *</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="Prima1" type="number" step="0.01"
-                                                    value="{{ $vida->Prima1 }}" required>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">No
-                                                Usuario 2</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="NumeroUsuario2" type="number"
-                                                    value="{{ old('NumeroUsuario2') }}">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right"
-                                                style="margin-top: -3%;">Suma Asegurada 2</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="SumaAsegurada2" type="number"
-                                                    step="0.01" value="{{ old('SumaAsegurada2') }}">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Prima
-                                                2</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="Prima2" type="number" step="0.01"
-                                                    value="{{ old('Prima2') }}">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">No
-                                                Usuario 3</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="NumeroUsuario3" type="number"
-                                                    value="{{ old('NumeroUsuario3') }}">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right"
-                                                style="margin-top: -3%;">Suma Asegurada 3</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="SumaAsegurada3" type="number"
-                                                    step="0.01" value="{{ old('SumaAsegurada3') }}">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Prima
-                                                3</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="Prima3" type="number" step="0.01"
-                                                    value="{{ old('Prima3') }}">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">No
-                                                Usuario 4</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="NumeroUsuario4" type="number"
-                                                    value="{{ old('NumeroUsuario4') }}">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right"
-                                                style="margin-top: -3%;">Suma Asegurada 4</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="SumaAsegurada4" type="number"
-                                                    step="0.01" value="{{ old('SumaAsegurada4') }}">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Prima
-                                                4</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="Prima4" type="number" step="0.01"
-                                                    value="{{ old('Prima4') }}">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">No
-                                                Usuario 5</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="NumeroUsuario5" type="number"
-                                                    value="{{ old('NumeroUsuario5') }}">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right"
-                                                style="margin-top: -3%;">Suma Asegurada 5</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="SumaAsegurada5" type="number"
-                                                    step="0.01" value="{{ old('SumaAsegurada5') }}">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Prima
-                                                5</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="Prima5" type="number" step="0.01"
-                                                    value="{{ old('Prima5') }}">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">No
-                                                Usuario 6</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="NumeroUsuario6" type="number"
-                                                    value="{{ old('NumeroUsuario6') }}">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right"
-                                                style="margin-top: -3%;">Suma Asegurada 6</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="SumaAsegurada6" type="number"
-                                                    step="0.01" value="{{ old('SumaAsegurada6') }}">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Prima
-                                                6</label>
-                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="Prima6" type="number" step="0.01"
-                                                    value="{{ old('Prima6') }}">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <br>
-                                </div> -->
-
 
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="Usuarios">
                             <br>
-                            <table id="datatable" class="table table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Numero Usuarios</th>
-                                        <th>Suma Asegurada</th>
-                                        <th>Sub Total</th>
-                                        <th>Tasa</th>
-                                        <th>Total Asegurado</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    
-                                    <tr>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="NumeroUsuario1" id="NumeroUsuario1" type="number" value="{{ old('NumeroUsuario1') }}" placeholder="Numero Usuarios">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="SumaAsegurada1" id="SumaAsegurada1" type="number" step="0.01" value="{{ old('SumaAsegurada1') }}" required placeholder="Suma Asegurada">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="SubTotal1" id="SubTotal1" type="number" step="0.01" value="{{ old('SumaAsegurada1') }}" required placeholder="Sub Total">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="Tasa1" id="Tasa1" type="number" step="0.01" value="{{ old('Tasa1') }}" required placeholder="Tasa">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="Prima1" id="Prima1" type="number" step="0.01" value="{{ old('Prima1') }}" required placeholder="Prima">
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="NumeroUsuario2" id="NumeroUsuario2" type="number" value="{{ old('NumeroUsuario2') }}" required placeholder="Numero Usuarios">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="SumaAsegurada2" id="SumaAsegurada2" type="number" step="0.01" value="{{ old('SumaAsegurada2') }}" required placeholder="Suma Asegurada">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="SubTotal2" id="SubTotal2" type="number" step="0.01" value="{{ old('SumaAsegurada2') }}" required placeholder="Sub Total">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="Tasa2" id="Tasa2" type="number" step="0.01" value="{{ old('Tasa2') }}" required placeholder="Tasa">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="Prima2" id="Prima2" type="number" step="0.01" value="{{ old('Prima2') }}" required placeholder="Prima">
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="NumeroUsuario3" id="NumeroUsuario3" type="number" value="{{ old('NumeroUsuario3') }}" required placeholder="Numero Usuarios">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="SumaAsegurada3" id="SumaAsegurada3" type="number" step="0.01" value="{{ old('SumaAsegurada3') }}" required placeholder="Suma Asegurada">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="SubTotal3" id="SubTotal3" type="number" step="0.01" required placeholder="Sub Total">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="Tasa3" id="Tasa3" type="number" step="0.01" value="{{ old('Tasa3') }}" required placeholder="Tasa">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="Prima3" id="Prima3" type="number" step="0.01" value="{{ old('Prima3') }}" required placeholder="Prima">
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="NumeroUsuario4" id="NumeroUsuario4" type="number" value="{{ old('NumeroUsuario4') }}" required placeholder="Numero Usuarios">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="SumaAsegurada4" id="SumaAsegurada4" type="number" step="0.01" value="{{ old('SumaAsegurada4') }}" required placeholder="Suma Asegurada">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="SubTotal4" id="SubTotal4" type="number" step="0.01" required placeholder="Sub Total">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="Tasa4" id="Tasa4" type="number" step="0.01" value="{{ old('Tasa4') }}" required placeholder="Tasa">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="Prima4" id="Prima4" type="number" step="0.01" value="{{ old('Prima4') }}" required placeholder="Prima">
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="NumeroUsuario5" id="NumeroUsuario5" type="number" value="{{ old('NumeroUsuario5') }}" required placeholder="Numero Usuarios">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="SumaAsegurada5" id="SumaAsegurada5" type="number" step="0.01" value="{{ old('SumaAsegurada5') }}" required placeholder="Suma Asegurada">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="SubTotal5" id="SubTotal5" type="number" step="0.01" required placeholder="Sub Total">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="Tasa5" id="Tasa5" type="number" step="0.01" value="{{ old('Tasa5') }}" required placeholder="Tasa">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="Prima5" id="Prima5" type="number" step="0.01" value="{{ old('Prima5') }}" required placeholder="Prima">
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="NumeroUsuario6" id="NumeroUsuario6" type="number" value="{{ old('NumeroUsuario6') }}" required placeholder="Numero Usuarios">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="SumaAsegurada6" id="SumaAsegurada6" type="number" step="0.01" value="{{ old('SumaAsegurada6') }}" required placeholder="Suma Asegurada">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="SubTotal6" id="SubTotal6" type="number" step="0.01" required placeholder="Sub Total">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="Tasa6" id="Tasa6" type="number" step="0.01" value="{{ old('Tasa6') }}" required placeholder="Tasa">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="Prima6" id="Prima6" type="number" step="0.01" value="{{ old('Prima6') }}" required placeholder="Prima">
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="NumeroUsuario7" id="NumeroUsuario7" type="number" value="{{ old('NumeroUsuario7') }}" required placeholder="Numero Usuarios">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="SumaAsegurada7" id="SumaAsegurada7" type="number" step="0.01" value="{{ old('SumaAsegurada7') }}" required placeholder="Suma Asegurada">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="SubTotal7" id="SubTotal7" type="number" step="0.01" required placeholder="Sub Total">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="Tasa7" id="Tasa7" type="number" step="0.01" value="{{ old('Tasa7') }}" required placeholder="Tasa">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="Prima7" id="Prima7" type="number" step="0.01" value="{{ old('Prima7') }}" required placeholder="Prima">
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="NumeroUsuario8" id="NumeroUsuario8" type="number" value="{{ old('NumeroUsuario8') }}" required placeholder="Numero Usuarios">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="SumaAsegurada8" id="SumaAsegurada8" type="number" step="0.01" value="{{ old('SumaAsegurada8') }}" required placeholder="Suma Asegurada">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="SubTotal8" id="SubTotal8" type="number" step="0.01" required placeholder="Sub Total">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="Tasa8" id="Tasa8" type="number" step="0.01" value="{{ old('Tasa8') }}" required placeholder="Tasa">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group row">
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="Prima8" id="Prima8" type="number" step="0.01" value="{{ old('Prima8') }}" required placeholder="Prima">
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <!--   
-                                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">No Usuario 2 *</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="NumeroUsuario2" id="NumeroUsuario2" type="number" value="{{ old('NumeroUsuario2') }}" required>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right" style="margin-top: -3%;">Suma Asegurada 2 *</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="SumaAsegurada2" id="SumaAsegurada2" type="number" step="0.01" value="{{ old('SumaAsegurada2') }}" required>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right" style="margin-top: -3%;">Tasa 2 %*</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Tasa2" id="Tasa2" type="number" step="0.01" value="{{ old('Tasa2') }}" required>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Prima 2
-                                        *</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Prima2" id="Prima2" type="number" step="0.01" value="{{ old('Prima2') }}" required>
-                                    </div>
-                                </div>
-
+                            <div align="right">
+                                <a class="btn btn-primary" onclick="modal_usuario(<?php echo $vida->Id ?>,document.getElementById('NumeroPoliza').value, document.getElementById('Tasa').value, document.getElementById('Mensual').checked, document.getElementById('Anual').checked);"><i class="fa fa-plus"></i>&nbsp; Nuevo Usuario </a>
                             </div>
-                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">No Usuario 3 *</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="NumeroUsuario3" id="NumeroUsuario3" type="number" value="{{ old('NumeroUsuario3') }}" required>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right" style="margin-top: -3%;">Suma Asegurada 3 *</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="SumaAsegurada3" id="SumaAsegurada3" type="number" step="0.01" value="{{ old('SumaAsegurada3') }}" required>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right" style="margin-top: -3%;">Tasa 3 %*</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Tasa3" id="Tasa3" type="number" step="0.01" value="{{ old('Tasa3') }}" required>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Prima 3
-                                        *</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Prima3" id="Prima3" type="number" step="0.01" value="{{ old('Prima3') }}" required>
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">No Usuario 4 *</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="NumeroUsuario4" id="NumeroUsuario4" type="number" value="{{ old('NumeroUsuario4') }}" required>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right" style="margin-top: -3%;">Suma Asegurada 4 *</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="SumaAsegurada4" id="SumaAsegurada4" type="number" step="0.01" value="{{ old('SumaAsegurada4') }}" required>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right" style="margin-top: -3%;">Tasa 4 %*</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Tasa4" id="Tasa4" type="number" step="0.01" value="{{ old('Tasa4') }}" required>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Prima 4
-                                        *</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Prima4" id="Prima4" type="number" step="0.01" value="{{ old('Prima4') }}" required>
-                                    </div>
-                                </div>
-
+                            <div id="response">
+                                @include('polizas.vida.tabla_usuario')
                             </div>
-                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">No Usuario 5 *</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="NumeroUsuario5" id="NumeroUsuario5" type="number" value="{{ old('NumeroUsuario5') }}" required>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right" style="margin-top: -3%;">Suma Asegurada 5 *</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="SumaAsegurada5" id="SumaAsegurada5" type="number" step="0.01" value="{{ old('SumaAsegurada5') }}" required>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right" style="margin-top: -3%;">Tasa 5 %*</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Tasa5" id="Tasa5" type="number" step="0.01" value="{{ old('Tasa5') }}" required>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Prima 5
-                                        *</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Prima5" id="Prima5" type="number" step="0.01" value="{{ old('Prima5') }}" required>
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">No Usuario 6 *</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="NumeroUsuario6" id="NumeroUsuario6" type="number" value="{{ old('NumeroUsuario6') }}" required>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right" style="margin-top: -3%;">Suma Asegurada 6 *</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="SumaAsegurada6" id="SumaAsegurada6" type="number" step="0.01" value="{{ old('SumaAsegurada6') }}" required>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right" style="margin-top: -3%;">Tasa 6 %*</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Tasa6" id="Tasa6" type="number" step="0.01" value="{{ old('Tasa6') }}" required>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Prima 6
-                                        *</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Prima6" id="Prima6" type="number" step="0.01" value="{{ old('Prima6') }}" required>
-                                    </div>
-                                </div>
-
-                            </div> -->
                             <br>
                         </div>
                         @endif
@@ -927,7 +328,7 @@
         </div>
     </div>
 
-
+    @include('polizas.vida.modal_usuario')
 
 
 
@@ -1179,6 +580,38 @@
 <script type="text/javascript">
     $(document).ready(function() {
 
+        $('#ModalSumaAseguradaa').change(function() {
+            calculo();
+        })
+        $('#ModalNumeroUsuarioo').change(function() {
+            calculo();
+        })
+        $('#ModalSubTotall').change(function() {
+            calculo();
+        })
+        $('#ModalTasaUsuarioo').change(function() {
+            calculo();
+        })
+        $('#ModalTotalAseguradaa').change(function() {
+            calculo();
+        })
+
+        function calculo() {
+            if (document.getElementById('ModalTipoTasaa').value == 1) { //mensual
+                var tasa = (document.getElementById('ModalTasaUsuarioo').value / 1000);
+                var usuarios = document.getElementById('ModalNumeroUsuarioo').value;
+                document.getElementById('ModalSubTotall').value = usuarios * document.getElementById('ModalSumaAseguradaa').value;
+                document.getElementById('ModalTotalAseguradoo').value = document.getElementById('ModalSubTotall').value * tasa;
+
+            } else if (document.getElementById('ModalTipoTasaa').value == 0) { //anual
+                var tasa = (document.getElementById('ModalTasaUsuarioo').value / 1000) / 12;
+                var usuarios = document.getElementById('ModalNumeroUsuarioo').value;
+                document.getElementById('ModalSubTotall').value = usuarios * document.getElementById('ModalSumaAseguradaa').value;
+                document.getElementById('ModalTotalAseguradoo').value = document.getElementById('ModalSubTotall').value * tasa;
+            }
+
+        }
+
         $("#MontoCartera").change(function() {
             calculoSubTotal();
             calculoPrimaTotal();
@@ -1349,6 +782,24 @@
         });
         $('#modal_editar_pago').modal('show');
 
+    }
+
+    function modal_usuario(id, poliza, Tasa, Mensual, Anual) {
+        //alert(Tasa);
+        document.getElementById('ModalId').value = id;
+        document.getElementById('ModalTasaUsuario').value = Tasa;
+        document.getElementById('ModalPoliza').value = poliza;
+        if (Mensual == true) {
+            document.getElementById('ModalTipoTasa').value = 1;
+        } else if (Anual == true) {
+            document.getElementById('ModalTipoTasa').value = 0;
+        }
+        $('#modal_usuario').modal('show');
+
+
+    }
+    function modal_usuario_edit(id){
+        $('#modal_usuario_edit').modal('show');
     }
 </script>
 @endsection

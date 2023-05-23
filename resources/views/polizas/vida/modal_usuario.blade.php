@@ -13,6 +13,7 @@
                 <div class="modal-body">
                     <div class="box-body">
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <input type="hidden" id="ModalId" name="Vida">
                             <div class="form-group row">
                                 <input type="hidden" id="ModalTipoTasa">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Numero de Poliza</label>
@@ -66,6 +67,7 @@
         </div>
     </div>
 </div>
+
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function() {
@@ -104,19 +106,17 @@
 
         }
 
-
-
-
-
     })
     $("#btn_guardar").click(function() {
 
         //   alert('adadad');
         var parametros = {
             "_token": "{{ csrf_token() }}",
+            "Vida": document.getElementById('ModalId').value,
             "Poliza": document.getElementById('ModalPoliza').value,
             "NumeroUsuario": document.getElementById('ModalNumeroUsuario').value,
             "SumaAsegurada": document.getElementById('ModalSumaAsegurada').value,
+            "SubTotalAsegurado": document.getElementById('ModalSubTotal').value,
             "Tasa": document.getElementById('ModalTasaUsuario').value,
             "TotalAsegurado": document.getElementById('ModalTotalAsegurado').value,
         };
@@ -127,12 +127,13 @@
             success: function(data) {
                 console.log(data);
                 $('#response').html(data);
-                // var _select = ''
-                // for (var i = 0; i < data.length; i++)
-                //     _select += '<option value="' + data[i].Id + '" selected >' + data[i].Nombre +
-                //     '</option>';
-                // $("#Asegurado").html(_select);
+                //     swal(data.title, data.mensaje, data.icon, {
+                //     showConfirmButton: true
+                // });
+
                 $('#modal_usuario').modal('hide');
+     
+                document.getElementById('NumeroPoliza').setAttribute('readonly', true)
             }
         })
     });

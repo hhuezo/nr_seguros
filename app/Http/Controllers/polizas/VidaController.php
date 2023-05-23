@@ -19,6 +19,7 @@ use App\Models\polizas\VidaUsuario;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use PhpOffice\PhpSpreadsheet\Calculation\MathTrig\Arabic;
 
 class VidaController extends Controller
 {
@@ -34,16 +35,16 @@ class VidaController extends Controller
         $tipos_contribuyente =  TipoContribuyente::get();
         $rutas = Ruta::where('Activo', '=', 1)->get();
         $ubicaciones_cobro =  UbicacionCobro::where('Activo', '=', 1)->get();
-        $bombero = Bombero::where('Activo',1)->first();
-        if($bombero){
-           $bomberos = $bombero->Valor; 
-        }
-        else{
+        $bombero = Bombero::where('Activo', 1)->first();
+        if ($bombero) {
+            $bomberos = $bombero->Valor;
+        } else {
             $bomberos = $bombero->Valor;
         }
+        $usuario_vidas = array();
         $aseguradora = Aseguradora::where('Activo', 1)->get();
         $cliente = Cliente::where('Activo', 1)->get();
-        $tipoCartera = TipoCartera::where('Activo', 1)->where('Poliza',1)->get();  //vida
+        $tipoCartera = TipoCartera::where('Activo', 1)->where('Poliza', 1)->get();  //vida
         $estadoPoliza = EstadoPoliza::where('Activo', 1)->get();
         $tipoCobro = TipoCobro::where('Activo', 1)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
@@ -57,7 +58,8 @@ class VidaController extends Controller
             'tipos_contribuyente',
             'rutas',
             'ubicaciones_cobro',
-            'bomberos'
+            'bomberos',
+            'usuario_vidas'
         ));
     }
 
@@ -114,6 +116,8 @@ class VidaController extends Controller
             $vida->Activo = 1;
             $vida->save();
 
+            $usuario_vidas = VidaUsuario::where('Poliza', $request->Poliza)->update(['Vida' => $vida->Id]);
+
             alert()->success('El registro ha sido creado correctamente');
             return Redirect::to('poliza/vida/create');
         }
@@ -124,20 +128,55 @@ class VidaController extends Controller
         //
     }
 
-    public function agregarUsuario(Request $request){
+    public function agregarUsuario(Request $request)
+    {
         //agregar form de agregar usuario
-        $usuario_vida = new VidaUsuario();
+        if ($request->Vida == '') {
+            $usuario_vida = new VidaUsuario();
+            $usuario_vida->Poliza = $request->Poliza;
+            $usuario_vida->NumeroUsuario = $request->NumeroUsuario;
+            $usuario_vida->SumaAsegurada = $request->SumaAsegurada;
+            $usuario_vida->SubTotalAsegurado = $request->SubTotalAsegurado;
+            $usuario_vida->Tasa = $request->Tasa;
+            $usuario_vida->TotalAsegurado = $request->TotalAsegurado;
+            $usuario_vida->save();
+        } else {
+            $usuario_vida = new VidaUsuario();
+            $usuario_vida->Poliza = $request->Poliza;
+            $usuario_vida->Vida = $request->Vida;
+            $usuario_vida->NumeroUsuario = $request->NumeroUsuario;
+            $usuario_vida->SumaAsegurada = $request->SumaAsegurada;
+            $usuario_vida->SubTotalAsegurado = $request->SubTotalAsegurado;
+            $usuario_vida->Tasa = $request->Tasa;
+            $usuario_vida->TotalAsegurado = $request->TotalAsegurado;
+            $usuario_vida->save();
+        }
+
+
+        $usuario_vidas = VidaUsuario::where('Poliza', $request->Poliza)->get();
+        //return response()->json(['mensaje' => 'Exitoo', 'title' => 'Exit!!!!', 'icon' => 'success', 'showConfirmButton' => true]);
+        return view('polizas.vida.tabla_usuario', compact('usuario_vidas'));
+    }
+
+    public function eliminarUsuario($id){
+        $usuario_vida = VidaUsuario::findOrFail($id)->delete();
+        
+    }
+
+    public function editarUsuario(Request $request){
+        $usuario_vida = VidaUsuario::findOrFail($request->Id);
         $usuario_vida->Poliza = $request->Poliza;
+        $usuario_vida->Vida = $request->Vida;
         $usuario_vida->NumeroUsuario = $request->NumeroUsuario;
         $usuario_vida->SumaAsegurada = $request->SumaAsegurada;
+        $usuario_vida->SubTotalAsegurado = $request->SubTotalAsegurado;
         $usuario_vida->Tasa = $request->Tasa;
-        $usuario_vida->TotalAsegurado = $request->TotalAseggurado;
-        $usuario_vida->save();
+        $usuario_vida->TotalAsegurado = $request->TotalAsegurado;
+        $usuario_vida->update();
+        $usuario_vidas = VidaUsuario::where('Poliza', $request->Poliza)->get();
+        alert()->success('Usuario Modificado');
+        return view('polizas.vida.tabla_usuario', compact('usuario_vidas'));
 
-        $usuario_vidas = VidaUsuario::where('Poliza',$request->Poliza)->get();
-        return $usuario_vidas;
-
-        
     }
 
     public function edit($id)
@@ -151,14 +190,14 @@ class VidaController extends Controller
         $estadoPoliza = EstadoPoliza::where('Activo', 1)->get();
         $tipoCobro = TipoCobro::where('Activo', 1)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
-        $bombero = Bombero::where('Activo',1)->first();
-        if($bombero){
-           $bomberos = $bombero->Valor; 
-        }
-        else{
+        $bombero = Bombero::where('Activo', 1)->first();
+        if ($bombero) {
+            $bomberos = $bombero->Valor;
+        } else {
             $bomberos = $bombero->Valor;
         }
-        return view('polizas.vida.edit', compact('bomberos','vida', 'detalle','detalle_last' ,'aseguradora', 'cliente', 'tipoCartera', 'estadoPoliza', 'tipoCobro', 'ejecutivo'));
+        $usuario_vidas = VidaUsuario::where('Vida', $id)->get();
+        return view('polizas.vida.edit', compact('bomberos', 'vida', 'detalle', 'detalle_last', 'aseguradora', 'cliente', 'tipoCartera', 'estadoPoliza', 'tipoCobro', 'ejecutivo', 'usuario_vidas'));
     }
 
     public function update(Request $request, $id)
@@ -187,7 +226,7 @@ class VidaController extends Controller
         $vida->update();
 
 
-       /* $detalle = new vidaDetalle();
+        /* $detalle = new vidaDetalle();
         $detalle->vida = $vida->Id;
         $detalle->Comentario = $request->Comentario;
         $detalle->Tasa = $request->Tasa;
@@ -252,20 +291,17 @@ class VidaController extends Controller
     {
         $detalle = VidaDetalle::findOrFail($request->Id);
         //dd($request->EnvioCartera .' 00:00:00');
-        if($request->EnvioCartera)
-        {
+        if ($request->EnvioCartera) {
             $detalle->EnvioCartera = $request->EnvioCartera;
         }
-        if($request->EnvioPago)
-        {
+        if ($request->EnvioPago) {
             $detalle->EnvioPago = $request->EnvioPago;
         }
-        if($request->PagoAplicado)
-        {
+        if ($request->PagoAplicado) {
             $detalle->PagoAplicado = $request->PagoAplicado;
         }
         $detalle->Comentario = $request->Comentario;
-        
+
         /*$detalle->EnvioPago = $request->EnvioPago;
         $detalle->PagoAplicado = $request->PagoAplicado;*/
         $detalle->update();
@@ -276,16 +312,17 @@ class VidaController extends Controller
     public function get_pago($id)
     {
         return VidaDetalle::findOrFail($id);
-
     }
 
-    public function renovar($id){
+    public function renovar($id)
+    {
         $vida = Vida::findOrFail($id);
-        $estados_poliza = EstadoPoliza::where('Activo',1)->get();
+        $estados_poliza = EstadoPoliza::where('Activo', 1)->get();
         $tipoCobro = TipoCobro::where('Activo', 1)->get();
-        return view('polizas.vida.renovar', compact('vida','tipoCobro','estados_poliza'));
+        return view('polizas.vida.renovar', compact('vida', 'tipoCobro', 'estados_poliza'));
     }
-    public function renovarPoliza(Request $request, $id){
+    public function renovarPoliza(Request $request, $id)
+    {
         $vida = Vida::findOrFail($id);
         $vida->Mensual = $request->Mensual; //valor de radio button
         $vida->EstadoPoliza = $request->EstadoPoliza;
@@ -297,6 +334,5 @@ class VidaController extends Controller
 
         alert()->success('La poliza fue renovada correctamente');
         return back();
-
     }
 }

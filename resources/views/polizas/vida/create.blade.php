@@ -314,24 +314,15 @@
 
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="Usuarios" style="display: none;">
                             <div align="right">
-                                <a class="btn btn-primary" onclick="modal_usuario(document.getElementById('NumeroPoliza').value, document.getElementById('Tasa').value, document.getElementById('Mensual').checked, document.getElementById('Anual').checked);"><i class="fa fa-plus"></i>&nbsp; Nuevo Usuario     </a>
+                                <a class="btn btn-primary" onclick="modal_usuario(id,document.getElementById('NumeroPoliza').value, document.getElementById('Tasa').value, document.getElementById('Mensual').checked, document.getElementById('Anual').checked);"><i class="fa fa-plus"></i>&nbsp; Nuevo Usuario </a>
                             </div>
-                            <br>
-                            <table id="datatable" class="table table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Numero Usuarios</th>
-                                        <th>Suma Asegurada</th>
-                                        <th>Sub Total</th>
-                                        <th>Tasa</th>
-                                        <th>Total Asegurado</th>
-                                        <th>Opciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    
-                                </tbody>
-                            </table>
+
+                            <br>@php($montocartera = 0)
+                            @php($subtotal = 0)
+                            <div id="response">
+
+                            </div>
+
 
                             <br>
                         </div>
@@ -365,6 +356,8 @@
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function() {
+        document.getElementById('MontoCartera').value = "{{$montocartera}}";   // enviar dato a monto de cartera
+      
 
 
         $("#Anual").change(function() {
@@ -397,6 +390,38 @@
 
         })
 
+        $('#ModalSumaAseguradaa').change(function() {
+            calculo();
+        })
+        $('#ModalNumeroUsuarioo').change(function() {
+            calculo();
+        })
+        $('#ModalSubTotall').change(function() {
+            calculo();
+        })
+        $('#ModalTasaUsuarioo').change(function() {
+            calculo();
+        })
+        $('#ModalTotalAseguradaa').change(function() {
+            calculo();
+        })
+
+        function calculo() {
+            if (document.getElementById('ModalTipoTasaa').value == 1) { //mensual
+                var tasa = (document.getElementById('ModalTasaUsuarioo').value / 1000);
+                var usuarios = document.getElementById('ModalNumeroUsuarioo').value;
+                document.getElementById('ModalSubTotall').value = usuarios * document.getElementById('ModalSumaAseguradaa').value;
+                document.getElementById('ModalTotalAseguradoo').value = document.getElementById('ModalSubTotall').value * tasa;
+
+            } else if (document.getElementById('ModalTipoTasaa').value == 0) { //anual
+                var tasa = (document.getElementById('ModalTasaUsuarioo').value / 1000) / 12;
+                var usuarios = document.getElementById('ModalNumeroUsuarioo').value;
+                document.getElementById('ModalSubTotall').value = usuarios * document.getElementById('ModalSumaAseguradaa').value;
+                document.getElementById('ModalTotalAseguradoo').value = document.getElementById('ModalSubTotall').value * tasa;
+            }
+
+        }
+
         $("#Codigo").change(function() {
             var codigo = document.getElementById('Codigo').value;
             var num = codigo.substr(-5, 9);
@@ -408,8 +433,8 @@
                 $("#Usuarios").show();
                 document.getElementById('MontoCartera').setAttribute("readonly", true);
                 document.getElementById('SubTotal').setAttribute("readonly", true);
-               // tasaRepartido();
-               // calculoPrimaRepartida();
+                // tasaRepartido();
+                // calculoPrimaRepartida();
             } else {
                 $("#Usuarios").hide();
                 calculoSubTotal();
@@ -426,7 +451,7 @@
             calculoCCF();
         })
 
-     
+
 
         function calculoSubTotal() {
             var monto = document.getElementById('MontoCartera').value;
@@ -528,21 +553,24 @@
     function modal_cliente() {
         $('#modal_cliente').modal('show');
     }
-    function modal_usuario(poliza,Tasa, Mensual, Anual) {
-        //alert(Tasa);
-        if(poliza == '' || Tasa == ''){
-            alert('Debe digitar la poliza o la tasa');  //cambiar por un swal
-        }else{
+
+    function modal_usuario(id,poliza, Tasa, Mensual, Anual) {
+       // alert(id);
+        if (poliza == '' || Tasa == '') {
+            alert('Debe digitar la poliza o la tasa'); //cambiar por un swal
+        } else {
+            document.getElementById('ModalId').value = id;
             document.getElementById('ModalTasaUsuario').value = Tasa;
             document.getElementById('ModalPoliza').value = poliza;
-            if(Mensual == true){
+            if (Mensual == true) {
                 document.getElementById('ModalTipoTasa').value = 1;
-            }else if(Anual == true){
+            } else if (Anual == true) {
                 document.getElementById('ModalTipoTasa').value = 0;
             }
-        $('#modal_usuario').modal('show');
+            $('#modal_usuario').modal('show');
         }
-        
+
     }
+
 </script>
 @endsection

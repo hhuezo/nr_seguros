@@ -20,6 +20,7 @@ class VidaUsuario extends Model
         'Poliza',
         'NumeroUsuario',
         'SumaAsegurada',
+        'SubTotalAsegurado',
         'Tasa',
         'TotalAsegurado' 
     ];
