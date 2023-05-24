@@ -121,20 +121,19 @@
             "TotalAsegurado": document.getElementById('ModalTotalAsegurado').value,
         };
         $.ajax({
-            type: "get",
+            type: "post",
             url: "{{ url('poliza/vida/usuario_create') }}",
             data: parametros,
             success: function(data) {
                 console.log(data);
                 $('#response').html(data);
-                //     swal(data.title, data.mensaje, data.icon, {
-                //     showConfirmButton: true
-                // });
 
                 $('#modal_usuario').modal('hide');
-     
+
                 document.getElementById('NumeroPoliza').setAttribute('readonly', true)
             }
         })
+        $('#modal_usuario').modal('hide');
+        get_usuarios(document.getElementById('ModalPoliza').value);
     });
 </script>

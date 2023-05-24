@@ -123,9 +123,10 @@ class VidaController extends Controller
         }
     }
 
-    public function show($id)
+    public function getUsuario($id)
     {
-        //
+        $usuario_vidas = VidaUsuario::where('Poliza', $id)->get();
+        return view('polizas.vida.tabla_usuario', compact('usuario_vidas'));
     }
 
     public function agregarUsuario(Request $request)
@@ -140,7 +141,9 @@ class VidaController extends Controller
             $usuario_vida->Tasa = $request->Tasa;
             $usuario_vida->TotalAsegurado = $request->TotalAsegurado;
             $usuario_vida->save();
-        } else {
+        }
+
+        else {
             $usuario_vida = new VidaUsuario();
             $usuario_vida->Poliza = $request->Poliza;
             $usuario_vida->Vida = $request->Vida;
@@ -152,18 +155,17 @@ class VidaController extends Controller
             $usuario_vida->save();
         }
 
-
         $usuario_vidas = VidaUsuario::where('Poliza', $request->Poliza)->get();
-        //return response()->json(['mensaje' => 'Exitoo', 'title' => 'Exit!!!!', 'icon' => 'success', 'showConfirmButton' => true]);
         return view('polizas.vida.tabla_usuario', compact('usuario_vidas'));
     }
 
-    public function eliminarUsuario($id){
+    public function eliminarUsuario($id)
+    {
         $usuario_vida = VidaUsuario::findOrFail($id)->delete();
-        
     }
 
-    public function editarUsuario(Request $request){
+    public function editarUsuario(Request $request)
+    {
         $usuario_vida = VidaUsuario::findOrFail($request->Id);
         $usuario_vida->Poliza = $request->Poliza;
         $usuario_vida->Vida = $request->Vida;
@@ -176,7 +178,6 @@ class VidaController extends Controller
         $usuario_vidas = VidaUsuario::where('Poliza', $request->Poliza)->get();
         alert()->success('Usuario Modificado');
         return view('polizas.vida.tabla_usuario', compact('usuario_vidas'));
-
     }
 
     public function edit($id)
