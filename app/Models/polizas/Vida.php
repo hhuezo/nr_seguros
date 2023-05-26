@@ -54,7 +54,6 @@ class Vida extends Model
         'Activo',
         'Bomberos',
         'EdadTerminacion',
-        'EdadOtorgamiento',
         'EdadMaxTerminacion',
         'EdadIntermediaTerminacion',
         'LimiteMaximoDeclaracion',

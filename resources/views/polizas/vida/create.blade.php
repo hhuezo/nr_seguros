@@ -115,12 +115,37 @@
                                             <textarea class="form-control" name="Concepto" row="3" col="4" value="{{ old('Concepto') }}" required> </textarea>
                                         </div>
                                     </div>
+
                                     <div class="form-group row">
                                         <label class="control-label col-md-3 col-sm-12 col-xs-12"
                                             align="right">Comentarios del Cobro</label>
                                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                             <textarea class="form-control" name="Comentario" row="3" col="4" value="{{ old('Comentario') }}"> </textarea>
                                         </div>
+
+                                </div>
+                                <div class="form-group row">
+                                    
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Limite Maximo Declaracion    </label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="LimiteMaximoDeclaracion" id="LimiteMaximoDeclaracion" type="number" step="any" value="{{ old('LimiteMaximoDeclaracion') }}" required>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Limite Intermedio Declaracion                      </label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="LimiteIntermedioDeclaracion" id="LimiteIntermedioDeclaracion" type="number" step="any" value="{{ old('LimiteIntermedioDeclaracion') }}" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vigencia
+                                        Desde</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="VigenciaDesde" type="date" value="{{ old('VigenciaDesde') }}">
+
                                     </div>
                                 </div>
                                 <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
@@ -291,6 +316,7 @@
                                             </select>
                                         </div>
                                     </div>
+
                                     <br>
                                     <br>
                                     <br>
@@ -299,6 +325,36 @@
                                     <div class="form-group row">
                                         <label class="control-label col-md-12 col-sm-12 col-xs-12"
                                             style="text-align: center;">Estructura CCF de comisión</label>
+
+                                </div>
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad Terminación</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="EdadTerminacion" id="EdadTerminacion" type="number"  value="{{ old('EdadTerminacion') }}">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad Maxima Terminacion</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="EdadMaxTerminacion" id="EdadMaxTerminacion" type="number"  value="{{ old('EdadMaxTerminacion') }}">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad Intermedia Terminacion</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="EdadIntermediaTerminacion" id="EdadIntermediaTerminacion" type="number" step="any" value="{{ old('EdadIntermediaTerminacion') }}">
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="form-group row">
+                                    <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: center;">Estructura CCF de comisión</label>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Comision
+                                        %</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" value="{{ old('TasaComision') }}">
+
                                     </div>
                                     <div class="form-group row">
                                         <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Comision
