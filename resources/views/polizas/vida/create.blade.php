@@ -28,9 +28,10 @@
                 <div class="x_content">
                     <br />
 
-                    <form action="{{ url('polizas/vida') }}" method="POST">
-                        @csrf
-                        <div class="form-horizontal" style="font-size: 12px;">
+
+                    <div class="form-horizontal" style="font-size: 12px;">
+                        <form action="{{ url('polizas/vida') }}" method="POST">
+                            @csrf
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                                     <div class="form-group row">
@@ -115,11 +116,34 @@
                                             <textarea class="form-control" name="Concepto" row="3" col="4" value="{{ old('Concepto') }}" required> </textarea>
                                         </div>
                                     </div>
+
                                     <div class="form-group row">
                                         <label class="control-label col-md-3 col-sm-12 col-xs-12"
                                             align="right">Comentarios del Cobro</label>
                                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                             <textarea class="form-control" name="Comentario" row="3" col="4" value="{{ old('Comentario') }}"> </textarea>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group row">
+
+                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Limite
+                                            Maximo Declaracion </label>
+                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                            <input class="form-control" name="LimiteMaximoDeclaracion"
+                                                id="LimiteMaximoDeclaracion" type="number" step="any"
+                                                value="{{ old('LimiteMaximoDeclaracion') }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+
+                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Limite
+                                            Intermedio Declaracion </label>
+                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                            <input class="form-control" name="LimiteIntermedioDeclaracion"
+                                                id="LimiteIntermedioDeclaracion" type="number" step="any"
+                                                value="{{ old('LimiteIntermedioDeclaracion') }}" required>
                                         </div>
                                     </div>
                                 </div>
@@ -130,8 +154,10 @@
                                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                             <input class="form-control" name="VigenciaDesde" type="date"
                                                 value="{{ old('VigenciaDesde') }}">
+
                                         </div>
                                     </div>
+
                                     <div class="form-group row">
                                         <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo
                                             Cartera</label>
@@ -253,6 +279,7 @@
                                                 step="any" value="{{ old('APagar') }}">
                                         </div>
                                     </div>
+
                                 </div>
 
                                 <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
@@ -291,15 +318,43 @@
                                             </select>
                                         </div>
                                     </div>
+
                                     <br>
                                     <br>
                                     <br>
                                     <br>
                                     <br>
                                     <div class="form-group row">
+                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad
+                                            Terminación</label>
+                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                            <input class="form-control" name="EdadTerminacion" id="EdadTerminacion"
+                                                type="number" value="{{ old('EdadTerminacion') }}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad
+                                            Maxima Terminacion</label>
+                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                            <input class="form-control" name="EdadMaxTerminacion" id="EdadMaxTerminacion"
+                                                type="number" value="{{ old('EdadMaxTerminacion') }}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad
+                                            Intermedia Terminacion</label>
+                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                            <input class="form-control" name="EdadIntermediaTerminacion"
+                                                id="EdadIntermediaTerminacion" type="number" step="any"
+                                                value="{{ old('EdadIntermediaTerminacion') }}">
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="form-group row">
                                         <label class="control-label col-md-12 col-sm-12 col-xs-12"
                                             style="text-align: center;">Estructura CCF de comisión</label>
                                     </div>
+
                                     <div class="form-group row">
                                         <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Comision
                                             %</label>
@@ -352,25 +407,6 @@
                                 </div>
                                 <br>
                             </div>
-
-                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="Usuarios" style="display: none;">
-                                <div align="right">
-                                    <a class="btn btn-primary"
-                                        onclick="modal_usuario(id,document.getElementById('NumeroPoliza').value, document.getElementById('Tasa').value, document.getElementById('Mensual').checked, document.getElementById('Anual').checked);"><i
-                                            class="fa fa-plus"></i>&nbsp; Nuevo Usuario </a>
-                                </div>
-
-                                <br>@php($montocartera = 0)
-                                @php($subtotal = 0)
-                                <div id="response">
-
-                                </div>
-
-
-                                <br>
-                            </div>
-
-
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div class="form-group" align="center">
                                     <button type="submit" class="btn btn-success">Aceptar</button>
@@ -379,9 +415,165 @@
                                 </div>
                             </div>
 
+                        </form>
+
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="Usuarios" style="display: none;">
+                            <div align="right">
+                                <a class="btn btn-primary"
+                                    onclick="modal_usuario(id,document.getElementById('NumeroPoliza').value, document.getElementById('Tasa').value, document.getElementById('Mensual').checked, document.getElementById('Anual').checked);"><i
+                                        class="fa fa-plus"></i>&nbsp; Nuevo Usuario </a>
+                            </div>
+
+                            <br>@php($montocartera = 0)
+                            @php($subtotal = 0)
+                            <div id="response">
+
+                            </div>
+
+
+                            <br>
                         </div>
-                    </form>
+
+
+
+
+                    </div>
+
                 </div>
+
+
+
+
+
+
+
+
+                <div class="modal fade" id="modal-usuario-edit" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <!-- <form action="{{ url('poliza/vida/usuario_edit') }}" method="POST">
+                                        @csrf-->
+                            <div class="modal-header">
+                                <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                                    <h5 class="modal-title" id="exampleModalLabel">Editar usuario - Polizas de Vida
+                                        Colectivo </h5>
+                                </div>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="box-body">
+
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <input type="hidden" name="Id" id="ModalEditId"
+                                            value="{{ $obj->Id }}">
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Numero de Poliza</label>
+                                            <div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
+                                                <input class="form-control" name="Poliza" id="ModalEditPoliza"
+                                                    type="text" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Numero de Usuarios</label>
+                                            <div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
+                                                <input class="form-control" name="NumeroUsuario"
+                                                    id="ModalEditNumeroUsuario" type="number">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Suma
+                                                Asegurada</label>
+                                            <div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
+                                                <input class="form-control" name="SumaAsegurada"
+                                                    id="ModalEditSumaAsegurada" type="text">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">SubTotal</label>
+                                            <div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
+                                                <input class="form-control" name="SubTotal" id="ModalEditSubTotal"
+                                                    type="text">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Tasa</label>
+                                            <div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
+                                                <input class="form-control" name="Tasa" id="ModalEditTasa"
+                                                    type="number" step="0.01">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">TotalAsegurado</label>
+                                            <div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
+                                                <input class="form-control" name="TotalAsegurado"
+                                                    id="ModalEditTotalAsegurado" type="number" step="0.01"
+                                                    value="{{ $obj->TotalAsegurado }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="modal-footer" align="center">
+                                <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+                                <button type="button" id="btn-edit-usuario" class="btn btn-primary">Aceptar</button>
+                            </div>
+                            <!--</form> -->
+
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+                <div class="modal fade" id="modal-usuario-delete" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+
+                            <div class="modal-header">
+                                <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                                    <h5 class="modal-title" id="exampleModalLabel">Eliminar usuario - Polizas de Vida
+                                        Colectivo </h5>
+                                </div>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="box-body">
+
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <input type="hidden" id="ModalDeleteId">
+                                        ¿Desea eliminar el registro?
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="modal-footer" align="center">
+                                <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+                                <button type="button" id="btn-delete-usuario" class="btn btn-primary">Aceptar</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+
+
             </div>
         </div>
     </div>
@@ -573,7 +765,7 @@
 
             $("#Asegurado").change(function() {
                 // alert(document.getElementById('Asegurado').value);
-                $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
+                $('#response').html('<div><img src="{{ url('/img/ajax-loader.gif') }}"/></div>');
                 var parametros = {
                     "Cliente": document.getElementById('Asegurado').value
                 };
@@ -606,7 +798,7 @@
 
         function get_usuarios(Codigo) {
 
-            $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
+            $('#response').html('<div><img src="{{ url('/img/ajax-loader.gif') }}"/></div>');
 
             $.get("{{ url('poliza/vida/usuario') }}" + '/' + Codigo, function(data) {
 
@@ -633,5 +825,67 @@
             }
 
         }
+
+        function edit_usuario(id, tasa, poliza, usuarios, suma_asegurada, sub_total, total) {
+            document.getElementById('ModalEditId').value = id;
+            document.getElementById('ModalEditTasa').value = tasa;
+            document.getElementById('ModalEditPoliza').value = poliza;
+            document.getElementById('ModalEditNumeroUsuario').value = usuarios;
+            document.getElementById('ModalEditSumaAsegurada').value = suma_asegurada;
+            document.getElementById('ModalEditSubTotal').value = sub_total;
+            document.getElementById('ModalEditTotalAsegurado').value = total;
+            $('#modal-usuario-edit').modal('show');
+        }
+
+        $("#btn-edit-usuario").click(function() {
+
+            var parametros = {
+                "_token": "{{ csrf_token() }}",
+                "Id": document.getElementById('ModalEditId').value,
+                "Poliza": document.getElementById('ModalEditPoliza').value,
+                "NumeroUsuario": document.getElementById('ModalEditNumeroUsuario').value,
+                "SumaAsegurada": document.getElementById('ModalEditSumaAsegurada').value,
+                "SubTotalAsegurado": document.getElementById('ModalEditSubTotal').value,
+                "Tasa": document.getElementById('ModalEditTasa').value,
+                "TotalAsegurado": document.getElementById('ModalEditTotalAsegurado').value,
+            };
+            $.ajax({
+                type: "post",
+                url: "{{ url('poliza/vida/usuario_edit') }}",
+                data: parametros,
+                success: function(data) {
+                    console.log(data);
+                    $('#response').html(data);
+                    $('#modal-usuario-edit').modal('hide');
+                }
+            })
+            $('#modal_usuario').modal('hide');
+            get_usuarios(document.getElementById('NumeroPoliza').value);
+        });
+
+        function delete_usuario(id) {
+            document.getElementById('ModalDeleteId').value = id;
+            $('#modal-usuario-delete').modal('show');
+
+        }
+
+        $("#btn-delete-usuario").click(function() {
+
+            var parametros = {
+                "_token": "{{ csrf_token() }}",
+                "Id": document.getElementById('ModalDeleteId').value,               
+            };
+            $.ajax({
+                type: "post",
+                url: "{{ url('poliza/vida/usuario_delete') }}",
+                data: parametros,
+                success: function(data) {
+                    console.log(data);
+                    $('#response').html(data);
+                    $('#modal-usuario-delete').modal('hide');
+                }
+            })
+            get_usuarios(document.getElementById('NumeroPoliza').value);
+        });
     </script>
 @endsection
