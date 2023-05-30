@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Models\temp;
+namespace App\Models\polizas;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TempCartera extends Model
+class CarteraMensual extends Model
 {
     use HasFactory;
-    protected $table = 'temp_cartera';
+    protected $table = 'cartera_mensual';
 
     protected $primaryKey = 'Id';
 
@@ -16,6 +16,7 @@ class TempCartera extends Model
 
 
     protected $fillable = [
+        'Vida',
         'Nit',
         'Dui',
         'Pasaporte',
@@ -45,10 +46,6 @@ class TempCartera extends Model
         'Usuario',
         'FechaNacimientoDate',
         'FechaOtorgamientoDate',
-        'FechaVencimientoDate',
-        'Mes',
-        'Axo'
+        'FechaVencimientoDate'
     ];
-
-    protected $guarded = [];
 }

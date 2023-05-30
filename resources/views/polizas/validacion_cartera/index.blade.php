@@ -29,8 +29,44 @@
 
                     <div class="form-horizontal" style="font-size: 12px;">
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <form action="{{ url('polizas/validacion_cartera') }}" method="POST" enctype="multipart/form-data" class="forms-sample">
+                            <form action="{{ url('polizas/validacion_cartera') }}" method="POST"
+                                enctype="multipart/form-data" class="forms-sample">
                                 @csrf
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Póliza</label>
+                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                        <select name="Poliza" class="form-control">
+                                            @foreach ($polizas as $poliza)
+                                                <option value="{{ $poliza->Id }}">{{ $poliza->NumeroPoliza }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Año</label>
+                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                        <select name="Axo" class="form-control">
+                                            @for ($i = date('Y'); $i >= 2022; $i--)
+                                                <option value="{{ $i }}">{{ $i }}</option>
+                                            @endfor
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Mes</label>
+                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                        <select name="Mes" class="form-control">
+                                            @for ($i = 1; $i < 12; $i++)
+                                                @if (date('m') == $i)
+                                                    <option value="{{ $i }}" selected>{{ $meses[$i] }}
+                                                    </option>
+                                                @else
+                                                    <option value="{{ $i }}">{{ $meses[$i] }}</option>
+                                                @endif
+                                            @endfor
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Archivo</label>
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
