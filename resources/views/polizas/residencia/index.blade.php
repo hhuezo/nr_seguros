@@ -24,8 +24,8 @@
                             <th>Nombre</th>
                             <th>Aseguradora</th>
                             <th>Monto Cartera</th>
-                            <th>Contacto</th>
                             <th>Vendedor</th>
+                            <th>Estado</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
@@ -34,15 +34,10 @@
                             <tr>
                                 <td>{{ $obj->clientes->Nombre }}</td>
                                 <td>{{ $obj->aseguradoras->Nombre }}</td>
-                                <td>{{ $obj->MontoCartera }}</td>
+                                <td>${{ number_format($obj->MontoCartera, 2, '.', ','); }}</td>
                                 <td>{{ $obj->ejecutivos->Nombre }}</td>
-                                @if ($obj->Activo == 1)
-                                    <td align="center"><input type="checkbox" checked></td>
-                                @else
-                                    <td align="center"><input type="checkbox"></td>
-                                @endif
+                                <td>{{ $obj->estadoPolizas->Nombre}}</td>
                                 <td align="center">
-
                                     @can('edit users')
                                         <a href="{{ url('polizas/residencia') }}/{{ $obj->Id }}/edit"
                                             class="on-default edit-row">
@@ -50,19 +45,16 @@
                                     @endcan
                                     &nbsp;&nbsp;<a href="{{ url('polizas/residencia') }}/{{ $obj->Id }}/renovar"
                                             class="on-default edit-row"><i class="fa fa-refresh fa-lg"></i></a>
-
-
                                     @can('delete users')
                                         &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}"
                                             data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
                                     @endcan
                                 </td>
                             </tr>
-                            @include('catalogo.aseguradora.modal')
+                            @include('polizas.residencia.modal')
                         @endforeach
                     </tbody>
                 </table>
-
             </div>
         </div>
     </div>

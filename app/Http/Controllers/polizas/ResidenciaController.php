@@ -26,7 +26,7 @@ class ResidenciaController extends Controller
      */
     public function index()
     {
-        $residencias = Residencia::all();
+        $residencias = Residencia::where('Activo', 1)->get();
         return view('polizas.residencia.index', compact('residencias'));
     }
 
@@ -71,6 +71,7 @@ class ResidenciaController extends Controller
      */
     public function store(Request $request)
     {
+       // dd($request->MontoCartera);
         $residencia = new Residencia();
         $residencia->Numero = 1;
         $residencia->NumeroPoliza = $request->NumeroPoliza;
@@ -93,14 +94,12 @@ class ResidenciaController extends Controller
         $residencia->ValorCCF = $request->ValorCCF;
         $residencia->APagar = $request->APagar;
         $residencia->ComentariosDeCobro = $request->Comentario;
-
         $residencia->DescuentoIva = $request->DescuentoIva;  //checked
-        
-        $residencia->Nit = $request->$request->Nit;
+        $residencia->Nit = $request->Nit;
         $residencia->Comision = $request->Comision;
         $residencia->IvaSobreComision = $request->IvaSobreComision;
         $residencia->Retencion = $request->Retencion;
-        $residencia->Activo = $request->Activo;
+        $residencia->Activo = 1;
         $residencia->Mensual = $request->Mensual; //valor de radio button
         $residencia->TasaComison = $request->TasaComision;
         $residencia->ValorDescuento = $request->ValorDescuento;
@@ -130,7 +129,7 @@ class ResidenciaController extends Controller
         $detalles->save(); */
 
         alert()->success('El registro ha sido creado correctamente');
-        return Redirect::to('poliza/residencia/create');
+        return Redirect::to('polizas/residencia/create');
     }
 
     /**
@@ -220,7 +219,12 @@ class ResidenciaController extends Controller
      */
     public function destroy($id)
     {
-        //
+        
+        $residencia = Residencia::findOrFail($id);
+        $residencia->Activo = 0;
+        $residencia->update();
+        alert()->success('El registro ha sido creado correctamente');
+        return Redirect::to('polizas/residencia');
     }
 
     public function create_pago(Request $request)
@@ -228,7 +232,10 @@ class ResidenciaController extends Controller
         $time = Carbon::now('America/El_Salvador');
 
         $detalle = new DetalleResidencia();
+        $detalle->FechaInicio = $request->FechaInicio;
+        $detalle->FechaFinal = $request->FechaFinal;
         $detalle->MontoCartera = $request->MontoCartera;
+        $detalle->Residencia = $request->Residencia;
         $detalle->Tasa = $request->Tasa;
         $detalle->PrimaTotal = $request->PrimaTotal;
         $detalle->Descuento = $request->Descuento;

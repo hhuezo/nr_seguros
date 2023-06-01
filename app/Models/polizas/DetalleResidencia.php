@@ -36,7 +36,9 @@ class DetalleResidencia extends Model
         'SaldoA',
         'MontoCartera',
         'TasaComision',
-        'PrimaDescontada'
+        'PrimaDescontada',
+        'FechaInicio',
+        'FechaFinal'
     ];
 
     protected $guarded = [];

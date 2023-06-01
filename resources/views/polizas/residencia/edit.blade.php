@@ -158,62 +158,6 @@
 
                     </div>
 
-                    <div class="x_title">
-                        <h2> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<small></small></h2>
-                        <div class="clearfix"></div>
-                    </div>
-                    <br>
-
-
-                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="border: 1px solid;">
-                        <br>
-                        <br>
-                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Impresión
-                                    de Recibo</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="ImpresionRecibo" id="ImpresionRecibo" type="text" readonly>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Envió de
-                                    Cartera</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="EnvioCartera" id="EnvioCartera" type="text">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Envió de
-                                    Pago</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="EnvioPago" id="EnvioPago" type="text">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Saldo
-                                    A</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="SaldoA" id="SaldoA" type="text" style="background-color: yellow;">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Pago
-                                    Aplicado</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="PagoAplicado" id="PagoAplicado" type="text">
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-
                     <br><br>
                     <div class="x_title">
                         <h2> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<small></small></h2>
@@ -237,6 +181,8 @@
                             <tr>
                                 <th><br><i class="fa fa-pencil"></i></th>
                                 <th>Tasa</th>
+                                <th>Fecha Inicio</th>
+                                <th>Fecha Final</th>
                                 <th>Descuento</th>
                                 <th>A Pagar</th>
                                 <th>Impresion de Recibo</th>
@@ -249,6 +195,8 @@
                                 <td><i class="fa fa-pencil" onclick="modal_edit({{ $obj->Id }})"></i>
                                 </td>
                                 <td>{{ $obj->Tasa }}</td>
+                                <td>{{$obj->FechaInicio}}</td>
+                                <td>{{$obj->FechaFinal}}</td>
                                 <td>{{ $obj->Descuento }}</td>
                                 <td>{{ $obj->APagar }}</td>
                                 <td>{{ $obj->ImpresionRecibo }}</td>
@@ -269,9 +217,6 @@
                         <a href="#"><button class="btn btn-primary" type="button">Cancelar</button></a>
                     </div>
                 </div>
-
-
-
             </form>
 
 
@@ -294,7 +239,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="box-body row">
-                            <input type="hidden" name="Id" id="Id" value="{{ $residencia->Id }}" class="form-control">
+                            <input type="hidden" name="Residencia" id="Residencia" value="{{ $residencia->Id }}" class="form-control">
                             @csrf
                             <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
                                 <div class="form-group row">
@@ -426,7 +371,7 @@
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Comision %</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any">
+                                        <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" value="{{$residencia->TasaComison}}">
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -448,7 +393,7 @@
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">menos 1%
                                         Retención</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Retencion" id="Retencion" type="number" step="any">
+                                        <input class="form-control" name="Retencion" id="Retencion" type="number" step="any" @if($residencia->clientes->TipoContribuyente == 1) readonly @endif>
                                     </div>
                                 </div>
 
@@ -631,7 +576,7 @@
             if (document.getElementById('Bomberos').value == 0) {
                 document.getElementById('ImpuestoBomberos').value = 0;
             } else {
-                document.getElementById('ImpuestoBomberos').value = (document.getElementById('MontoCartera').value * (document.getElementById('Bomberos').value / 12) / 1000);
+                document.getElementById('ImpuestoBomberos').value = (document.getElementById('MontoCartera').value * ((document.getElementById('Bomberos').value /100) / 12) / 1000);
             }
 
         }

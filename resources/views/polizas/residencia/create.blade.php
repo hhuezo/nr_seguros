@@ -35,7 +35,7 @@
                         <div class="form-group row">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right" style="margin-top: -3%;">Número de Póliza</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="NumeroPoliza" id="NumeroPoliza" type="text" value="{{ old('NumeroPoliza') }}" readonly>
+                                <input class="form-control" name="NumeroPoliza" id="NumeroPoliza" type="text" value="{{ old('NumeroPoliza') }}">
                             </div>
                         </div>
                         <div class="form-group row">
@@ -344,6 +344,7 @@
         $('#MontoCartera').change(function() {
             if (document.getElementById('LimiteGrupo').value < document.getElementById('MontoCartera').value) {
                 swal('Su monto de cartera a superado al techo establecido en la poliza');
+                document.getElementById('MontoCartera').value = 0;
             } else {
                 calculoPrimaCalculada();
                 calculoPrimaTotal();
@@ -422,7 +423,8 @@
             if(document.getElementById('Bomberos').value == 0){
                 document.getElementById('ImpuestoBomberos').value = 0 ;
             }else{
-                document.getElementById('ImpuestoBomberos').value = (document.getElementById('MontoCartera').value * (document.getElementById('Bomberos').value / 12) / 1000);
+                document.getElementById('ImpuestoBomberos').value = (((document.getElementById('MontoCartera').value * (document.getElementById('Bomberos').value)/100)/ 12) /1000);
+                
             }
             
 

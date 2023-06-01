@@ -124,7 +124,7 @@
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                     <select name="TipoContribuyente" id="ModalTipoContribuyente" class="form-control" style="width: 100%">
                                         @foreach ($tipos_contribuyente as $obj)
-                                        <option value="{{ $obj->id }}">{{ $obj->Nombre }}</option>
+                                        <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
                                         @endforeach
                                     </select>
                                 </div>

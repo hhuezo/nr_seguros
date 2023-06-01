@@ -1,6 +1,6 @@
 @extends ('welcome')
 @section('contenido')
-    <div class="x_panel">
+    <div class="x_panel" style="background-image:url('dentco-html/images/LOGO_app.png'); background-repeat: no-repeat; background-size: 30% ; background-position-x:right ; background-position-y:bottom ;">
 
         @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
         <div class="x_title">

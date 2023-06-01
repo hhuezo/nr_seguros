@@ -157,9 +157,9 @@
             <!-- /top navigation -->
 
             <!-- page content -->
-            <div class="right_col" role="main">
+            <div class="right_col" role="main" style="background-image:url('../dentco-html/images/LOGO_app.png'); background-repeat: no-repeat; background-size: 30% ; background-position-x:right ; background-position-y:bottom ;">
 
-                @yield('contenido') <div class="x_content"></div>
+                @yield('contenido') <div class="x_content" ></div>
 
             </div>
             <!-- /page content -->
