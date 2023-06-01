@@ -46,6 +46,8 @@ class CarteraMensual extends Model
         'Usuario',
         'FechaNacimientoDate',
         'FechaOtorgamientoDate',
-        'FechaVencimientoDate'
+        'FechaVencimientoDate',
+        'FechaInicio',
+        'FechaFinal'
     ];
 }
