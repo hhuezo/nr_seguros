@@ -41,7 +41,7 @@
                     @csrf
                     <div class="form-horizontal" style="font-size: 12px;">
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right" style="margin-top: -3%;">Número de Póliza</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
@@ -88,26 +88,47 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Limite Maximo Declaracion    </label>
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Beneficios
+                                        Adicionales</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="LimiteMaximoDeclaracion" id="LimiteMaximoDeclaracion" type="number" step="any" value="{{$vida->LimiteMaximoDeclaracion }}" readonly>
+                                        <textarea class="form-control" name="BeneficiosAdicionales" row="3" col="4"> {{ $vida->BeneficiosAdicionales }}</textarea>
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Limite Intermedio Declaracion                      </label>
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Concepto</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="LimiteIntermedioDeclaracion" id="LimiteIntermedioDeclaracion" type="number" step="any" value="{{ $vida->LimiteIntermedioDeclaracion }}" readonly>
+                                        <textarea class="form-control" name="Concepto" row="3" col="4"> {{ $vida->Concepto }} </textarea>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Limite Grupal </label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="LimiteGrupo" id="LimiteGrupo" type="number" step="any" value="{{$vida->LimiteGrupo }}" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Limite Individual </label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="LimiteIndividual" id="LimiteIndividual" type="number" step="any" value="{{ $vida->LimiteIndividual }}" readonly>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vigencia
                                         Desde</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                         <input class="form-control" name="VigenciaDesde" type="text" value="{{ \Carbon\Carbon::parse($vida->VigenciaDesde)->format('d/m/Y') }}" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vigencia
+                                        Hasta</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="VigenciaHasta" type="text" value="{{ \Carbon\Carbon::parse($vida->VigenciaHasta)->format('d/m/Y') }}" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -123,7 +144,21 @@
                                         <input class="form-control" name="Ejecutivo" type="text" value="{{ $vida->ejecutivos->Nombre }}" readonly>
                                     </div>
                                 </div>
-                                <br>
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Estatus</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="EstadoPoliza" type="text" value="{{ $vida->estadoPolizas->Nombre }}" readonly>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo de
+                                        Cobro</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="TipoCobro" type="text" value="{{ $vida->tipoCobros->Nombre }}" readonly>
+                                    </div>
+                                </div>
+
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">&nbsp;
                                     </label>
@@ -168,61 +203,107 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad Terminación</label>
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa Comision
+                                        %</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="EdadTerminacion" id="EdadTerminacion" type="number"  value="{{ $vida->EdadTerminacion }}" readonly>
+                                        <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" value="{{ $vida->TasaComision }}">
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad Maxima Terminacion</label>
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa Descuento
+                                        %</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="EdadMaxTerminacion" id="EdadMaxTerminacion" type="number"  value="{{ $vida->EdadMaxTerminacion }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad Intermedia Terminacion</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="EdadIntermediaTerminacion" id="EdadIntermediaTerminacion" type="number" step="any" value="{{ $vida->EdadIntermediaTerminacion }}" readonly>
+                                        <input class="form-control" name="TasaDescuento" id="TasaDescuento" type="number" step="any" value="{{ $vida->TasaDescuento }}">
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vigencia
-                                        Hasta</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="VigenciaHasta" type="text" value="{{ \Carbon\Carbon::parse($vida->VigenciaHasta)->format('d/m/Y') }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Estatus</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="EstadoPoliza" type="text" value="{{ $vida->estadoPolizas->Nombre }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo de
-                                        Cobro</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="TipoCobro" type="text" value="{{ $vida->tipoCobros->Nombre }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Concepto</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <textarea class="form-control" name="Concepto" row="3" col="4" readonly> {{ $vida->Concepto }}</textarea>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Beneficios
-                                        Adicionales</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <textarea class="form-control" name="BeneficiosAdicionales" row="3" col="4" value="" readonly>{{ $vida->BeneficiosAdicionales }} </textarea>
-                                    </div>
-                                </div>
-
+                            <br>
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <br>
+                                <table border="1" cellspeacing="0">
+                                    <tr>
+                                        <th colspan="4">
+                                            <div class="form-group row">
+                                                <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: center;" >Tabla de Requisitos Minimos de Asegurabilidad</label>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <td><label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: center;">Requisitos</label></td>
+                                        <td>
+                                            <br>
+                                            <div class="form-group row">
+                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad
+                                                    Terminación</label>
+                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                    <input class="form-control" name="EdadTerminacion" id="EdadTerminacion" type="number" value="{{ $vida->EdadTerminacion }}" readonly>
+                                                </div>
+                                            </div>
+                                            <br>
+                                        </td>
+                                        <td>
+                                            <br>
+                                            <div class="form-group row">
+                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad
+                                                    Intermedia Terminacion</label>
+                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                    <input class="form-control" name="EdadIntermedia" id="EdadIntermedia" type="number" step="any" readonly value="{{ $vida->EdadIntermedia }}">
+                                                </div>
+                                            </div>
+                                            <br>
+                                        </td>
+                                        <td>
+                                            <br>
+                                            <div class="form-group row">
+                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad
+                                                    Maxima Terminacion</label>
+                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                    <input class="form-control" name="EdadMaxTerminacion" id="EdadMaxTerminacion" type="number" value="{{ $vida->EdadMaxTerminacion }}" readonly>
+                                                </div>
+                                            </div>
+                                            <br>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: center;">Declaracion Jurada</label></td>
+                                        <td>
+                                            <br>
+                                            <div class="form-group row">
 
+                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Limite
+                                                    Menor Declaracion </label>
+                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                    <input class="form-control" name="LimiteMenDeclaracion" id="LimiteMenDeclaracion" type="number" step="any" value="{{ $vida->LimiteMenDeclaracion }}" readonly>
+                                                </div>
+                                            </div>
+                                            <br>
+                                        </td>
+                                        <td>
+                                            <br>
+                                            <div class="form-group row">
+
+                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Limite
+                                                    Intermedio Declaracion </label>
+                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                    <input class="form-control" name="LimiteIntermedioDeclaracion" id="LimiteIntermedioDeclaracion" type="number" step="any" value="{{ $vida->LimiteIntermedioDeclaracion }}" readonly>
+                                                </div>
+                                            </div>
+                                            <br>
+                                        </td>
+                                        <td>
+                                            <br>
+                                            <div class="form-group row">
+
+                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Limite
+                                                    Maximo Declaracion </label>
+                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                    <input class="form-control" name="LimiteMaxDeclaracion" id="LimiteMaxDeclaracion" type="number" step="any" value="{{ $vida->LimiteMaxDeclaracion }}" readonly>
+                                                </div>
+                                            </div>
+                                            <br>
+                                        </td>
+                                    </tr>
+                                </table>
                             </div>
                             <br><br>
                             <div class="x_title">
@@ -245,60 +326,7 @@
                         </div>
                         @endif
 
-
                         <br><br>
-                        <div class="x_title">
-                            <h2> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<small></small></h2>
-                            <div class="clearfix"></div>
-                        </div>
-
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="border: 1px solid;">
-                            <br>
-                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Impresión
-                                        de Recibo</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="ImpresionRecibo" id="ImpresionRecibo" type="text" value="{{ \Carbon\Carbon::parse($detalle_last->ImpresionRecibo)->format('d/m/Y') }}" readonly>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Envió de
-                                        Cartera</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="EnvioCartera" id="EnvioCartera" type="text" value="{{ $detalle_last->EnvioCartera }}">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Envió de
-                                        Pago</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="EnvioPago" id="EnvioPago" type="text" value="{{ $detalle_last->EnvioPago }}">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Saldo
-                                        A</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="SaldoA" id="SaldoA" type="text" style="background-color: yellow; " value="{{ \Carbon\Carbon::parse($detalle_last->ImpresionRecibo)->format('d/m/Y') }}">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Pago
-                                        Aplicado</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="PagoAplicado" id="PagoAplicado" type="text" value="{{ $detalle_last->PagoAplicado }}">
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
 
                         <div class="x_title">
                             <br>&nbsp;
@@ -830,7 +858,8 @@
 
 
     }
-    function modal_usuario_edit(id){
+
+    function modal_usuario_edit(id) {
         $('#modal_usuario_edit').modal('show');
     }
 </script>

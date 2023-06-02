@@ -89,37 +89,35 @@ class VidaController extends Controller
             $vida->BeneficiosAdicionales = $request->BeneficiosAdicionales;
             $vida->ClausulasEspeciales = $request->ClausulasEspeciales;
             $vida->Concepto = $request->Concepto;
-            $vida->Comentario = $request->Comentario;
             $vida->Ejecutivo = $request->Ejecutivo;
             $vida->TipoCartera = $request->TipoCartera;
             $vida->EstadoPoliza = $request->EstadoPoliza;
             $vida->TipoCobro = $request->TipoCobro;
             $vida->Tasa = $request->Tasa;
             $vida->MontoCartera = $request->MontoCartera;
-            // guardar el valor del radio button
-            /*if($request->tipoTasa == 1){
-                $vida->Mensual = 1;  //tasa mensual
-            }elseif($request->tipoTasa == 1){
-                $vida->Mensual = 0;  //tasa anual
-            }*/
             $vida->Mensual = $request->tipoTasa;
-            $vida->PrimaDescontada = $request->PrimaDescontada;
             $vida->TasaComision = $request->TasaComision;
-            $vida->PrimaTotal = $request->PrimaTotal;
-            $vida->Descuento = $request->Descuento;
-            $vida->ExtraPrima = $request->ExtraPrima;
-            $vida->ValorCCF = $request->ValorCCF;
-            $vida->ValorDescuento = $request->ValorDescuento;
-            $vida->Retencion = $request->Retencion;
-            $vida->IvaSobreComision = $request->IvaSobreComision;
-            $vida->APagar = $request->APagar;
+            $vida->EdadTerminacion = $request->EdadTerminacion;
+            $vida->EdadMaxTerminacion = $request->EdadMaxTerminacion;
+            $vida->EdadIntermedia = $request->EdadIntermedia;
+            $vida->LimiteMaxDeclaracion = $request->LimiteMaxDeclaracion;
+            $vida->LimiteIntermedioDeclaracion = $request->LimiteIntermedioDeclaracion;
+            $vida->LimiteGrupo = $request->LimiteGrupo;
+            $vida->LimiteIndividual = $request->LimiteIndividual;
+            $vida->Bomberos = $request->Bomberos;
+            $vida->LimiteMenDeclaracion = $request->LimiteMenDeclaracion;
+            $vida->TasaDescuento = $request->TasaDescuento;
             $vida->Activo = 1;
             $vida->save();
 
-            $usuario_vidas = VidaUsuario::where('Poliza', $request->Poliza)->update(['Vida' => $vida->Id]);
+            //   $usuario_vidas = VidaUsuario::where('Poliza', $request->Poliza)->update(['Vida' => $vida->Id]);
 
             alert()->success('El registro ha sido creado correctamente');
-            return Redirect::to('poliza/vida/create');
+            if ($request->TipoCobro == 1) {
+                return Redirect::to('polizas/vida/'.$vida->Id.'/edit');
+            } else { 
+                return Redirect::to('polizas/vida/create');
+            }
         }
     }
 
@@ -141,9 +139,7 @@ class VidaController extends Controller
             $usuario_vida->Tasa = $request->Tasa;
             $usuario_vida->TotalAsegurado = $request->TotalAsegurado;
             $usuario_vida->save();
-        }
-
-        else {
+        } else {
             $usuario_vida = new VidaUsuario();
             $usuario_vida->Poliza = $request->Poliza;
             $usuario_vida->Vida = $request->Vida;
@@ -208,48 +204,37 @@ class VidaController extends Controller
     {
         // dd($request->tipoTasa);
         $vida = Vida::findOrFail($id);
-        $vida->NumeroUsuario1 = $request->NumeroUsuario1;
-        $vida->SumaAseguradora1 = $request->SumaAseguradora1;
-        $vida->Prima1 = $request->Prima1;
-        $vida->NumeroUsuario2 = $request->NumeroUsuario2;
-        $vida->SumaAseguradora2 = $request->SumaAseguradora2;
-        $vida->Prima2 = $request->Prima2;
-        $vida->NumeroUsuario3 = $request->NumeroUsuario3;
-        $vida->SumaAseguradora3 = $request->SumaAseguradora3;
-        $vida->Prima3 = $request->Prima3;
-        $vida->NumeroUsuario4 = $request->NumeroUsuario4;
-        $vida->SumaAseguradora4 = $request->SumaAseguradora4;
-        $vida->Prima4 = $request->Prima4;
-        $vida->NumeroUsuario5 = $request->NumeroUsuario5;
-        $vida->SumaAseguradora5 = $request->SumaAseguradora5;
-        $vida->Prima5 = $request->Prima5;
-        $vida->NumeroUsuario6 = $request->NumeroUsuario6;
-        $vida->SumaAseguradora6 = $request->SumaAseguradora6;
-        $vida->Prima6 = $request->Prima6;
+        $vida->NumeroPoliza = $request->NumeroPoliza;
+        $vida->Nit = $request->Nit;
+        $vida->Codigo = $request->Codigo;
+        $vida->Aseguradora = $request->Aseguradora;
+        $vida->Asegurado = $request->Asegurado;
+        $vida->GrupoAsegurado = $request->GrupoAsegurado;
+        $vida->VigenciaDesde = $request->VigenciaDesde;
+        $vida->VigenciaHasta = $request->VigenciaHasta;
+        $vida->BeneficiosAdicionales = $request->BeneficiosAdicionales;
+        $vida->ClausulasEspeciales = $request->ClausulasEspeciales;
+        $vida->Concepto = $request->Concepto;
+        $vida->Ejecutivo = $request->Ejecutivo;
+        $vida->TipoCartera = $request->TipoCartera;
+        $vida->EstadoPoliza = $request->EstadoPoliza;
+        $vida->TipoCobro = $request->TipoCobro;
+        $vida->Tasa = $request->Tasa;
+        $vida->MontoCartera = $request->MontoCartera;
         $vida->Mensual = $request->tipoTasa;
+        $vida->TasaComision = $request->TasaComision;
+        $vida->EdadTerminacion = $request->EdadTerminacion;
+        $vida->EdadMaxTerminacion = $request->EdadMaxTerminacion;
+        $vida->EdadIntermedia = $request->EdadIntermedia;
+        $vida->LimiteMaxDeclaracion = $request->LimiteMaxDeclaracion;
+        $vida->LimiteIntermedioDeclaracion = $request->LimiteIntermedioDeclaracion;
+        $vida->LimiteGrupo = $request->LimiteGrupo;
+        $vida->LimiteIndividual = $request->LimiteIndividual;
+        $vida->Bomberos = $request->Bomberos;
+        $vida->LimiteMenDeclaracion = $request->LimiteMenDeclaracion;
+        $vida->TasaDescuento = $request->TasaDescuento;
+        $vida->Activo = 1;
         $vida->update();
-
-
-        /* $detalle = new vidaDetalle();
-        $detalle->vida = $vida->Id;
-        $detalle->Comentario = $request->Comentario;
-        $detalle->Tasa = $request->Tasa;
-        $detalle->PrimaTotal = $request->PrimaTotal;
-        $detalle->Descuento = $request->Descuento;
-        $detalle->ExtraPrima = $request->ExtraPrima;
-        $detalle->ValorCCF = $request->ValorCCF;
-        $detalle->APagar = $request->APagar;
-        $detalle->TasaComision = $request->TasaComision;
-        $detalle->MontoCartera = $request->MontoCartera;
-        $detalle->PrimaDescontada = $request->PrimaDescontada;
-        $detalle->ValorDescuento = $request->ValorDescuento;
-        $detalle->Retencion = $request->Retencion;
-        $detalle->IvaSobreComision = $request->IvaSobreComision;
-        $detalle->ImpresionRecibo = $request->ImpresionRecibo;
-        $detalle->EnvioCartera = $request->EnvioCartera;
-        $detalle->EnvioPago = $request->EnvioPago;
-        $detalle->PagoAplicado = $request->PagoAplicado;
-        $detalle->save();*/
 
         alert()->success('El registro ha sido modificado correctamente');
         return back();
