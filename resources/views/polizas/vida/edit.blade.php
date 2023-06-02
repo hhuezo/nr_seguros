@@ -302,7 +302,7 @@
                                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                             <input class="form-control" name="ImpresionRecibo" id="ImpresionRecibo"
                                                 type="text"
-                                                value="{{ \Carbon\Carbon::parse($detalle_last->ImpresionRecibo)->format('d/m/Y') }}"
+                                                @if ($detalle_last) value="{{ \Carbon\Carbon::parse($detalle_last->ImpresionRecibo)->format('d/m/Y') }}" @endif
                                                 readonly>
                                         </div>
                                     </div>
@@ -313,7 +313,7 @@
                                             Cartera</label>
                                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                             <input class="form-control" name="EnvioCartera" id="EnvioCartera"
-                                                type="text" value="{{ $detalle_last->EnvioCartera }}">
+                                                type="text"  @if ($detalle_last)  value="{{ $detalle_last->EnvioCartera }}" @endif>
                                         </div>
                                     </div>
                                 </div>
@@ -323,7 +323,7 @@
                                             Pago</label>
                                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                             <input class="form-control" name="EnvioPago" id="EnvioPago" type="text"
-                                                value="{{ $detalle_last->EnvioPago }}">
+                                            @if ($detalle_last)  value="{{ $detalle_last->EnvioPago }}" @endif>
                                         </div>
                                     </div>
                                 </div>
@@ -334,7 +334,7 @@
                                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                             <input class="form-control" name="SaldoA" id="SaldoA" type="text"
                                                 style="background-color: yellow; "
-                                                value="{{ \Carbon\Carbon::parse($detalle_last->ImpresionRecibo)->format('d/m/Y') }}">
+                                                @if ($detalle_last)  value="{{ \Carbon\Carbon::parse($detalle_last->ImpresionRecibo)->format('d/m/Y') }}" @endif>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -342,7 +342,7 @@
                                             Aplicado</label>
                                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                             <input class="form-control" name="PagoAplicado" id="PagoAplicado"
-                                                type="text" value="{{ $detalle_last->PagoAplicado }}">
+                                                type="text" @if ($detalle_last) value="{{ $detalle_last->PagoAplicado }}" @endif>
                                         </div>
                                     </div>
                                 </div>
@@ -414,8 +414,8 @@
         @include('polizas.vida.modal_usuario')
 
 
-      <div class="modal fade bs-example-modal-lg" id="modal_pago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-            aria-hidden="true" data-tipo="1">
+        <div class="modal fade bs-example-modal-lg" id="modal_pago" tabindex="-1" role="dialog"
+            aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -455,14 +455,17 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha inicio</label>
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
+                                    inicio</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="Id" value="{{$vida->Id}}" type="hidden" required>
+                                    <input class="form-control" name="Id" value="{{ $vida->Id }}"
+                                        type="hidden" required>
                                     <input class="form-control" name="FechaInicio" type="date" required>
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha final</label>
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
+                                    final</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                     <input class="form-control" name="FechaFinal" type="date" required>
                                 </div>
@@ -486,171 +489,171 @@
         </div>
 
         <!--<div class="modal fade bs-example-modal-lg" id="modal_pago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <form action="{{ url('polizas/vida/create_pago') }}" method="POST">
-                        <div class="modal-header">
-                            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
-                                <h5 class="modal-title" id="exampleModalLabel">Nuevo pago</h5>
-                            </div>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="box-body row">
-                                <input type="hidden" name="Id" id="Id" value="{{ $vida->Id }}" class="form-control">
-                                @csrf
-
-                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 ">
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
-                                            Inicio</label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            <input class="form-control" name="FechaInicio" id="FechaInicio" type="date" required>
-                                        </div>
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <form action="{{ url('polizas/vida/create_pago') }}" method="POST">
+                                <div class="modal-header">
+                                    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                                        <h5 class="modal-title" id="exampleModalLabel">Nuevo pago</h5>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
-                                            Final</label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            <input class="form-control" name="FechaFinal" id="FechaFinal" type="date" required>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Monto
-                                            Cartera
-                                        </label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            <input class="form-control" name="MontoCartera" id="MontoCartera" type="number" step="any" value="{{ $vida->MontoCartera }}" required>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa
-                                            %</label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            <input class="form-control" name="Tasa" id="Tasa" type="number" step="any" value="{{ $vida->Tasa }}" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Sub
-                                            Total</label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            <input class="form-control" name="SubTotal" type="number" id="SubTotal" step="any" value="" required>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Extra
-                                            Prima</label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            <input class="form-control" name="ExtraPrima" id="ExtPrima" type="number" step="any">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Prima
-                                            Total</label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            <input class="form-control" name="PrimaTotal" id="PrimaTotal" type="number" step="any" required>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Descuento
-                                            %</label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            <input class="form-control" name="Descuento" id="Descuento" type="number" step="any">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">
-                                            Prima Descontada</label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            <input class="form-control" name="PrimaDescontada" type="number" step="any" id="PrimaDescontada">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Menos
-                                            Valor CCF Comisión</label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            <input class="form-control" name="ValorCCF" id="ValorCCF" type="number" step="any">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">A
-                                            Pagar</label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            <input class="form-control" name="APagar" type="number" id="APagar" step="any">
-                                        </div>
-                                    </div>
-
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
                                 </div>
+                                <div class="modal-body">
+                                    <div class="box-body row">
+                                        <input type="hidden" name="Id" id="Id" value="{{ $vida->Id }}" class="form-control">
+                                        @csrf
 
-                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 ">
+                                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 ">
+                                            <div class="form-group row">
+                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
+                                                    Inicio</label>
+                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                    <input class="form-control" name="FechaInicio" id="FechaInicio" type="date" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
+                                                    Final</label>
+                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                    <input class="form-control" name="FechaFinal" id="FechaFinal" type="date" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Monto
+                                                    Cartera
+                                                </label>
+                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                    <input class="form-control" name="MontoCartera" id="MontoCartera" type="number" step="any" value="{{ $vida->MontoCartera }}" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa
+                                                    %</label>
+                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                    <input class="form-control" name="Tasa" id="Tasa" type="number" step="any" value="{{ $vida->Tasa }}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Sub
+                                                    Total</label>
+                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                    <input class="form-control" name="SubTotal" type="number" id="SubTotal" step="any" value="" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Extra
+                                                    Prima</label>
+                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                    <input class="form-control" name="ExtraPrima" id="ExtPrima" type="number" step="any">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Prima
+                                                    Total</label>
+                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                    <input class="form-control" name="PrimaTotal" id="PrimaTotal" type="number" step="any" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Descuento
+                                                    %</label>
+                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                    <input class="form-control" name="Descuento" id="Descuento" type="number" step="any">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">
+                                                    Prima Descontada</label>
+                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                    <input class="form-control" name="PrimaDescontada" type="number" step="any" id="PrimaDescontada">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Menos
+                                                    Valor CCF Comisión</label>
+                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                    <input class="form-control" name="ValorCCF" id="ValorCCF" type="number" step="any">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">A
+                                                    Pagar</label>
+                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                    <input class="form-control" name="APagar" type="number" id="APagar" step="any">
+                                                </div>
+                                            </div>
 
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: center;">Estructura CCF de comisión</label>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Comision
-                                            %</label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any">
                                         </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Valor
-                                            Desc</label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            <input class="form-control" name="ValorDescuento" id="ValorDescuento" type="number" step="any">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">mas 13%
-                                            IVA sobre comisión</label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            <input class="form-control" name="IvaSobreComision" id="IvaSobreComision" type="number" step="any">
-                                        </div>
-                                    </div>
 
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">menos 1%
-                                            Retención</label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            @if ($vida->clientes->TipoContribuyente < 2)
+                                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 ">
+
+                                            <div class="form-group row">
+                                                <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: center;">Estructura CCF de comisión</label>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Comision
+                                                    %</label>
+                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                    <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Valor
+                                                    Desc</label>
+                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                    <input class="form-control" name="ValorDescuento" id="ValorDescuento" type="number" step="any">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">mas 13%
+                                                    IVA sobre comisión</label>
+                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                    <input class="form-control" name="IvaSobreComision" id="IvaSobreComision" type="number" step="any">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">menos 1%
+                                                    Retención</label>
+                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                    @if ($vida->clientes->TipoContribuyente < 2)
     <input class="form-control" name="Retencion" id="Retencion" type="number" step="any" disabled>
 @else
     <input class="form-control" name="Retencion" id="Retencion" type="number" step="any">
     @endif
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Valor CCF
+                                                    Comisión</label>
+                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                    <input class="form-control" name="ValorCCF" id="ValorCCFE" type="number" step="any">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <div class="col-sm-12">
+                                                    <label class="control-label">Comentario</label>
+                                                    <textarea name="Comentario" class="form-control"></textarea>
+                                                </div>
+                                            </div>
                                         </div>
+
                                     </div>
-
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Valor CCF
-                                            Comisión</label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            <input class="form-control" name="ValorCCF" id="ValorCCFE" type="number" step="any">
-                                        </div>
+                                    <div class="clearfix"></div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+                                        <button type="submit" class="btn btn-primary">Aceptar</button>
                                     </div>
-
-                                    <div class="form-group">
-                                        <div class="col-sm-12">
-                                            <label class="control-label">Comentario</label>
-                                            <textarea name="Comentario" class="form-control"></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div class="clearfix"></div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
-                                <button type="submit" class="btn btn-primary">Aceptar</button>
-                            </div>
-                    </form>
-                </div>
+                            </form>
+                        </div>
 
 
-            </div>
-        </div>-->
+                    </div>
+                </div>-->
 
 
     </div>
