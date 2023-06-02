@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\polizas;
 
 use App\Http\Controllers\Controller;
+use App\Imports\CarteraImport;
 use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\Bombero;
 use App\Models\catalogo\Cliente;
@@ -13,13 +14,16 @@ use App\Models\catalogo\TipoCartera;
 use App\Models\catalogo\TipoCobro;
 use App\Models\catalogo\TipoContribuyente;
 use App\Models\catalogo\UbicacionCobro;
+use App\Models\polizas\CarteraMensual;
 use App\Models\polizas\Vida;
 use App\Models\polizas\VidaDetalle;
 use App\Models\polizas\VidaUsuario;
+use App\Models\temp\TempCartera;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
-use PhpOffice\PhpSpreadsheet\Calculation\MathTrig\Arabic;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\DB;
 
 class VidaController extends Controller
 {
@@ -197,7 +201,9 @@ class VidaController extends Controller
             $bomberos = $bombero->Valor;
         }
         $usuario_vidas = VidaUsuario::where('Vida', $id)->get();
-        return view('polizas.vida.edit', compact('bomberos', 'vida', 'detalle', 'detalle_last', 'aseguradora', 'cliente', 'tipoCartera', 'estadoPoliza', 'tipoCobro', 'ejecutivo', 'usuario_vidas'));
+        $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
+
+        return view('polizas.vida.edit', compact('bomberos', 'vida', 'detalle', 'detalle_last', 'aseguradora', 'cliente', 'tipoCartera', 'estadoPoliza', 'tipoCobro', 'ejecutivo', 'usuario_vidas','meses'));
     }
 
     public function update(Request $request, $id)
@@ -247,30 +253,68 @@ class VidaController extends Controller
 
     public function create_pago(Request $request)
     {
+        $vida = Vida::findOrFail($request->Id);
+
+        if ($request->Mes == 1) {
+            $mes_evaluar = 12;
+            $axo = $request->Axo - 1;
+        } else {
+            $mes_evaluar = $request->Mes - 1;
+            $axo = $request->Axo;
+        }
+
+        $archivo = $request->Archivo;
+        TempCartera::where('Usuario', '=', auth()->user()->id)->delete();
+        Excel::import(new CarteraImport, $archivo);
+
+        $datos = DB::select("call dateFormat(" . auth()->user()->id . ",$mes_evaluar,$axo)");
+
+        $temp = TempCartera::where('Usuario', '=', auth()->user()->id)->get();
+
+        $insert = DB::select("call create_cartera_mensual(" . auth()->user()->id . ",'$request->FechaInicio','$request->FechaFinal')");
+
+        $monto_cartera = CarteraMensual::where('Mes','=',$mes_evaluar)->where('Axo','=',$axo)->where('Vida','=',$vida->Id)->sum('SaldoTotal');
+
+        //74126861.7
+
+        if($vida->Mesual ==0)
+        {
+            $tasaFinal = ($vida->Tasa / 1000) / 12;
+        }
+        else{
+            $tasaFinal = $vida->Tasa / 1000;
+        }
+
+        $sub_total = $monto_cartera * $tasaFinal;
+
+        $prima_total = $sub_total;
+        $prima_descontada = $sub_total *2;
+
         $time = Carbon::now('America/El_Salvador');
 
         $detalle = new VidaDetalle();
         $detalle->SaldoA = $request->SaldoA;
-        $detalle->Vida = $request->Id;
-        $detalle->Comentario = $request->Comentario;
-        $detalle->Tasa = $request->Tasa;
-        $detalle->Comision = $request->Comision;
-        $detalle->PrimaTotal = $request->PrimaTotal;
-        $detalle->Descuento = $request->Descuento;
-        $detalle->ExtraPrima = $request->ExtraPrima;
-        $detalle->ValorCCF = $request->ValorCCF;
-        $detalle->APagar = $request->APagar;
-        $detalle->TasaComision = $request->TasaComision;
-        $detalle->MontoCartera = $request->MontoCartera;
-        $detalle->PrimaDescontada = $request->PrimaDescontada;
-        $detalle->ValorDescuento = $request->ValorDescuento;
-        $detalle->Retencion = $request->Retencion;
-        $detalle->IvaSobreComision = $request->IvaSobreComision;
-        $detalle->ImpresionRecibo = $time->toDateTimeString();
+        $detalle->Vida = $vida->Id;
+        //$detalle->Comentario = $request->Comentario;
+        $detalle->Tasa = $tasaFinal;
+        //$detalle->Comision = $request->Comision;
+        $detalle->PrimaTotal = $prima_total;
+        //$detalle->Descuento = $request->Descuento;
+        //$detalle->ExtraPrima = $request->ExtraPrima;
+        //$detalle->ValorCCF = $request->ValorCCF;
+        $detalle->APagar = $sub_total;
+        //$detalle->TasaComision = $request->TasaComision;
+        $detalle->MontoCartera = $monto_cartera;
+        $detalle->PrimaDescontada = $prima_descontada;
+        //$detalle->ValorDescuento = $request->ValorDescuento;
+        //$detalle->Retencion = $request->Retencion;
+        //$detalle->IvaSobreComision = $request->IvaSobreComision;
+        //$detalle->ImpresionRecibo = $time->toDateTimeString();
+        $detalle->save();
         /*$detalle->EnvioCartera = $request->EnvioCartera;
         $detalle->EnvioPago = $request->EnvioPago;
         $detalle->PagoAplicado = $request->PagoAplicado;*/
-        $detalle->save();
+
 
         alert()->success('El registro ha sido ingresado correctamente');
         return back();

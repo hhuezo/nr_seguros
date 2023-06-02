@@ -36,7 +36,7 @@ class DepositoPlazoController extends Controller
         $ubicaciones_cobro =  UbicacionCobro::where('Activo', '=', 1)->get();
         $bombero = Bombero::where('Activo',1)->first();
         if($bombero){
-           $bomberos = $bombero->Valor; 
+           $bomberos = $bombero->Valor;
         }
         else{
             $bomberos = $bombero->Valor;
@@ -155,7 +155,7 @@ class DepositoPlazoController extends Controller
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
         $bombero = Bombero::where('Activo',1)->first();
         if($bombero){
-           $bomberos = $bombero->Valor; 
+           $bomberos = $bombero->Valor;
         }
         else{
             $bomberos = $bombero->Valor;
@@ -267,7 +267,7 @@ class DepositoPlazoController extends Controller
             $detalle->PagoAplicado = $request->PagoAplicado;
         }
         $detalle->Comentario = $request->Comentario;
-        
+
         /*$detalle->EnvioPago = $request->EnvioPago;
         $detalle->PagoAplicado = $request->PagoAplicado;*/
         $detalle->update();
