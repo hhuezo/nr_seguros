@@ -24,6 +24,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class VidaController extends Controller
 {
@@ -118,8 +119,8 @@ class VidaController extends Controller
 
             alert()->success('El registro ha sido creado correctamente');
             if ($request->TipoCobro == 1) {
-                return Redirect::to('polizas/vida/'.$vida->Id.'/edit');
-            } else { 
+                return Redirect::to('polizas/vida/' . $vida->Id . '/edit');
+            } else {
                 return Redirect::to('polizas/vida/create');
             }
         }
@@ -203,7 +204,7 @@ class VidaController extends Controller
         $usuario_vidas = VidaUsuario::where('Vida', $id)->get();
         $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
 
-        return view('polizas.vida.edit', compact('bomberos', 'vida', 'detalle', 'detalle_last', 'aseguradora', 'cliente', 'tipoCartera', 'estadoPoliza', 'tipoCobro', 'ejecutivo', 'usuario_vidas','meses'));
+        return view('polizas.vida.edit', compact('bomberos', 'vida', 'detalle', 'detalle_last', 'aseguradora', 'cliente', 'tipoCartera', 'estadoPoliza', 'tipoCobro', 'ejecutivo', 'usuario_vidas', 'meses'));
     }
 
     public function update(Request $request, $id)
@@ -251,8 +252,120 @@ class VidaController extends Controller
         //
     }
 
+
+    /*
+
+
+DELIMITER $$
+
+CREATE PROCEDURE `dateFormat`(`usuario` INT)
+BEGIN
+        update temp_cartera set FechaNacimientoDate = CONCAT(SUBSTRING(FechaNacimiento, 7,4), '-',SUBSTRING(FechaNacimiento, 4,2), '-',SUBSTRING(FechaNacimiento, 4,2)),
+        FechaOtorgamientoDate = CONCAT(SUBSTRING(FechaOtorgamiento, 7,4), '-',SUBSTRING(FechaOtorgamiento, 4,2), '-',SUBSTRING(FechaOtorgamiento, 4,2)),
+        FechaVencimientoDate = CONCAT(SUBSTRING(FechaVencimiento, 7,4), '-',SUBSTRING(FechaVencimiento, 4,2), '-',SUBSTRING(FechaVencimiento, 4,2)),
+        Edad = TIMESTAMPDIFF(YEAR, FechaNacimientoDate , CURDATE()),
+        EdadTerminacion = TIMESTAMPDIFF(YEAR, FechaNacimientoDate , FechaVencimientoDate),
+        EdadOtorgamiento = TIMESTAMPDIFF(YEAR, FechaNacimientoDate , FechaOtorgamientoDate)
+        where temp_cartera.Usuario = usuario;
+
+END$$
+
+
+DELIMITER $$
+CREATE  PROCEDURE `create_cartera_mensual`(`usuario` INT, `fecha_inicio` DATE, `fecha_final` DATE)
+BEGIN
+	insert into cartera_mensual (
+   Id
+  ,Nit
+  ,Dui
+  ,Pasaporte
+  ,Nacionalidad
+  ,FechaNacimiento
+  ,TipoPersona
+  ,PrimerApellido
+  ,SegundoApellido
+  ,CasadaApellido
+  ,PrimerNombre
+  ,SegundoNombre
+  ,SociedadNombre
+  ,Sexo
+  ,FechaOtorgamiento
+  ,FechaVencimiento
+  ,Ocupacion
+  ,NoRefereciaCredito
+  ,MontoOtorgado
+  ,SaldoVigenteCapital
+  ,Interes
+  ,InteresMoratorio
+  ,SaldoTotal
+  ,TarifaMensual
+  ,PrimaMensual
+  ,TipoDeuda
+  ,PorcentajeExtraprima
+  ,Usuario
+  ,FechaNacimientoDate
+  ,FechaOtorgamientoDate
+  ,FechaVencimientoDate
+  ,Edad
+  ,EdadTerminacion
+  ,Vida
+  ,Mes
+  ,Axo
+  ,FechaInicio
+  ,FechaFinal,
+  EdadOtorgamiento
+) SELECT 
+   Id                     
+  ,Nit                    
+  ,Dui                     
+  ,Pasaporte              
+  ,Nacionalidad          
+  ,FechaNacimiento       
+  ,TipoPersona         
+  ,PrimerApellido        
+  ,SegundoApellido        
+  ,CasadaApellido         
+  ,PrimerNombre          
+  ,SegundoNombre         
+  ,SociedadNombre         
+  ,Sexo                  
+  ,FechaOtorgamiento     
+  ,FechaVencimiento       
+  ,Ocupacion              
+  ,NoRefereciaCredito     
+  ,MontoOtorgado           
+  ,SaldoVigenteCapital    
+  ,Interes                 
+  ,InteresMoratorio      
+  ,SaldoTotal             
+  ,TarifaMensual          
+  ,PrimaMensual            
+  ,TipoDeuda              
+  ,PorcentajeExtraprima    
+  ,Usuario                
+  ,FechaNacimientoDate     
+  ,FechaOtorgamientoDate   
+  ,FechaVencimientoDate    
+  ,Edad                   
+  ,EdadTerminacion              
+  ,1                  
+  ,Mes                    
+  ,Axo                    
+  ,fecha_inicio            
+  ,fecha_final,
+  EdadOtorgamiento             
+FROM temp_cartera where Usuario = usuario;
+
+END$$
+
+
+    */
+
     public function create_pago(Request $request)
     {
+
+
+
         $vida = Vida::findOrFail($request->Id);
 
         if ($request->Mes == 1) {
@@ -263,32 +376,68 @@ class VidaController extends Controller
             $axo = $request->Axo;
         }
 
-        $archivo = $request->Archivo;
-        TempCartera::where('Usuario', '=', auth()->user()->id)->delete();
-        Excel::import(new CarteraImport, $archivo);
+        try {
+            $archivo = $request->Archivo;
+            TempCartera::where('Usuario', '=', auth()->user()->id)->delete();
+            Excel::import(new CarteraImport, $archivo);
 
-        $datos = DB::select("call dateFormat(" . auth()->user()->id . ",$mes_evaluar,$axo)");
+            $datos = DB::select("call dateFormat(" . auth()->user()->id . ")");
 
-        $temp = TempCartera::where('Usuario', '=', auth()->user()->id)->get();
+            //$temp = TempCartera::where('Usuario', '=', auth()->user()->id)->get();
 
+            $calculo_saldo = $temp = TempCartera::where('Usuario', '=', auth()->user()->id)->sum('SaldoVigenteCapital');
+
+
+            //si hay validaciones
+            if ($request->Validar == "on") {
+                if ($calculo_saldo > $vida->LimiteGrupo) {
+                    alert()->error('Error, el saldo supera el limite de grupo');
+                    return back();
+                }
+
+                $calculo_limite_individual  = TempCartera::where('Usuario', '=', auth()->user()->id)
+                    ->select(DB::raw('*,SUM(SaldoVigenteCapital) as suma'))
+                    ->groupBy('Dui')
+                    ->having('suma', '>', $vida->LimiteIndividual)
+                    ->get();
+
+                if ($calculo_limite_individual->count()>0) {
+                    return view('polizas.validacion_cartera.resultado', compact('calculo_limite_individual'));
+                }
+
+
+                $nuevos = TempCartera::select('Id', 'Dui', 'Nit', 'PrimerApellido', 'SegundoApellido', 'CasadaApellido', 'PrimerNombre', 'SegundoNombre', 'SociedadNombre', 'NoRefereciaCredito', 'Edad', DB::raw('(select count(*) from cartera_mensual where
+        (cartera_mensual.Dui = temp_cartera.Dui or cartera_mensual.Nit = temp_cartera.Nit) and temp_cartera.NoRefereciaCredito = cartera_mensual.NoRefereciaCredito
+         and cartera_mensual.Mes = ' . $mes_evaluar . ' and  cartera_mensual.Axo = ' . $axo . ') as conteo'))
+                    ->where('Usuario', '=', auth()->user()->id)
+                    ->having('conteo', '=', 0)
+                    ->get();
+
+                return view('polizas.validacion_cartera.resultado', compact('nuevos'));
+            }
+        } catch (Throwable $e) {
+            print($e);
+
+            return false;
+        }
+
+        //dd(auth()->user()->id,$request->FechaInicio,$request->FechaFinal );
         $insert = DB::select("call create_cartera_mensual(" . auth()->user()->id . ",'$request->FechaInicio','$request->FechaFinal')");
 
-        $monto_cartera = CarteraMensual::where('Mes','=',$mes_evaluar)->where('Axo','=',$axo)->where('Vida','=',$vida->Id)->sum('SaldoTotal');
+        $monto_cartera = CarteraMensual::where('Mes', '=', $mes_evaluar)->where('Axo', '=', $axo)->where('Vida', '=', $vida->Id)->sum('SaldoTotal');
 
         //74126861.7
 
-        if($vida->Mesual ==0)
-        {
+        if ($vida->Mesual == 0) {
             $tasaFinal = ($vida->Tasa / 1000) / 12;
-        }
-        else{
+        } else {
             $tasaFinal = $vida->Tasa / 1000;
         }
 
         $sub_total = $monto_cartera * $tasaFinal;
 
         $prima_total = $sub_total;
-        $prima_descontada = $sub_total *2;
+        $prima_descontada = $sub_total * 2;
 
         $time = Carbon::now('America/El_Salvador');
 

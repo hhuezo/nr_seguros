@@ -4,6 +4,7 @@ namespace App\Imports;
 
 use App\Models\temp\TempCartera;
 use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
 class CarteraImport implements ToModel
 {
@@ -18,6 +19,14 @@ class CarteraImport implements ToModel
         if (strlen(trim($row[1])) == 9) {
 
             return new TempCartera([
+                /*'Nit'     => $row['nit'],
+                'Dui'     => $row['dui'],
+                'PrimerNombre'     => $row['nombre'],
+                'NoRefereciaCredito' => $row['noprestamo'],
+                'FechaNacimiento'     => $row['fechanacimiento'],
+                'FechaOtorgamiento' => $row['fechaotorgamiento'],
+                'FechaVencimiento' => $row['fechavencimiento'],
+                'Usuario' => auth()->user()->id*/
                 'Usuario' => auth()->user()->id,
                 'Nit'     => $row[0],
                 'Dui'     => $row[1],
