@@ -118,8 +118,8 @@ class VidaController extends Controller
 
             alert()->success('El registro ha sido creado correctamente');
             if ($request->TipoCobro == 1) {
-                return Redirect::to('polizas/vida/'.$vida->Id.'/edit');
-            } else { 
+                return Redirect::to('polizas/vida/' . $vida->Id . '/edit');
+            } else {
                 return Redirect::to('polizas/vida/create');
             }
         }
@@ -134,28 +134,18 @@ class VidaController extends Controller
     public function agregarUsuario(Request $request)
     {
         //agregar form de agregar usuario
-        if ($request->Vida == '') {
-            $usuario_vida = new VidaUsuario();
-            $usuario_vida->Poliza = $request->Poliza;
-            $usuario_vida->NumeroUsuario = $request->NumeroUsuario;
-            $usuario_vida->SumaAsegurada = $request->SumaAsegurada;
-            $usuario_vida->SubTotalAsegurado = $request->SubTotalAsegurado;
-            $usuario_vida->Tasa = $request->Tasa;
-            $usuario_vida->TotalAsegurado = $request->TotalAsegurado;
-            $usuario_vida->save();
-        } else {
-            $usuario_vida = new VidaUsuario();
-            $usuario_vida->Poliza = $request->Poliza;
-            $usuario_vida->Vida = $request->Vida;
-            $usuario_vida->NumeroUsuario = $request->NumeroUsuario;
-            $usuario_vida->SumaAsegurada = $request->SumaAsegurada;
-            $usuario_vida->SubTotalAsegurado = $request->SubTotalAsegurado;
-            $usuario_vida->Tasa = $request->Tasa;
-            $usuario_vida->TotalAsegurado = $request->TotalAsegurado;
-            $usuario_vida->save();
-        }
 
-        $usuario_vidas = VidaUsuario::where('Poliza', $request->Poliza)->get();
+        $usuario_vida = new VidaUsuario();
+        $usuario_vida->Vida = $request->Vida;
+        $usuario_vida->NumeroUsuario = $request->NumeroUsuario;
+        $usuario_vida->SumaAsegurada = $request->SumaAsegurada;
+        $usuario_vida->SubTotalAsegurado = $request->SubTotalAsegurado;
+        $usuario_vida->Tasa = $request->Tasa;
+        $usuario_vida->TotalAsegurado = $request->TotalAsegurado;
+        $usuario_vida->save();
+
+
+        $usuario_vidas = VidaUsuario::where('Vida', $request->Vida)->get();
         return view('polizas.vida.tabla_usuario', compact('usuario_vidas'));
     }
 
@@ -203,7 +193,7 @@ class VidaController extends Controller
         $usuario_vidas = VidaUsuario::where('Vida', $id)->get();
         $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
 
-        return view('polizas.vida.edit', compact('bomberos', 'vida', 'detalle', 'detalle_last', 'aseguradora', 'cliente', 'tipoCartera', 'estadoPoliza', 'tipoCobro', 'ejecutivo', 'usuario_vidas','meses'));
+        return view('polizas.vida.edit', compact('bomberos', 'vida', 'detalle', 'detalle_last', 'aseguradora', 'cliente', 'tipoCartera', 'estadoPoliza', 'tipoCobro', 'ejecutivo', 'usuario_vidas', 'meses'));
     }
 
     public function update(Request $request, $id)
@@ -273,22 +263,20 @@ class VidaController extends Controller
 
         $insert = DB::select("call create_cartera_mensual(" . auth()->user()->id . ",'$request->FechaInicio','$request->FechaFinal')");
 
-        $monto_cartera = CarteraMensual::where('Mes','=',$mes_evaluar)->where('Axo','=',$axo)->where('Vida','=',$vida->Id)->sum('SaldoTotal');
+        $monto_cartera = CarteraMensual::where('Mes', '=', $mes_evaluar)->where('Axo', '=', $axo)->where('Vida', '=', $vida->Id)->sum('SaldoTotal');
 
         //74126861.7
 
-        if($vida->Mesual ==0)
-        {
+        if ($vida->Mesual == 0) {
             $tasaFinal = ($vida->Tasa / 1000) / 12;
-        }
-        else{
+        } else {
             $tasaFinal = $vida->Tasa / 1000;
         }
 
         $sub_total = $monto_cartera * $tasaFinal;
 
         $prima_total = $sub_total;
-        $prima_descontada = $sub_total *2;
+        $prima_descontada = $sub_total * 2;
 
         $time = Carbon::now('America/El_Salvador');
 

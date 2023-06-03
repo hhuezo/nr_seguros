@@ -359,6 +359,14 @@
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function() {
+        $("#TipoCobro").change(function(){
+            if(document.getElementById('TipoCobro').value == 1){
+                document.getElementById('MontoCartera').removeAttribute('required');
+                document.getElementById('MontoCartera').value = 0;
+            }else{
+                document.getElementById('MontoCartera').attr('required',true);
+            }
+        })
 
         $("#Asegurado").change(function() {
             // alert(document.getElementById('Asegurado').value);

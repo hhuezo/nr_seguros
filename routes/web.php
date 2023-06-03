@@ -96,7 +96,7 @@ Route::post('poliza/vida/usuario_edit',[VidaController::class, 'editarUsuario'])
 Route::post('poliza/vida/usuario_delete',[VidaController::class,'eliminarUsuario']);
 
 
-Route::post('poliza/vida/usuario_create',[VidaController::class, 'agregarUsuario']);
+Route::get('poliza/vida/usuario_create',[VidaController::class, 'agregarUsuario']);
 Route::get('poliza/vida/usuario/{id}',[VidaController::class, 'getUsuario']);
 
 Route::resource('polizas/deuda',DeudaController::class);

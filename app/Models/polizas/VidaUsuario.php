@@ -17,7 +17,6 @@ class VidaUsuario extends Model
 
     protected $fillable = [
         'Vida',
-        'Poliza',
         'NumeroUsuario',
         'SumaAsegurada',
         'SubTotalAsegurado',
