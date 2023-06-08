@@ -34,7 +34,6 @@ class Vida extends Model
         'Tasa',
         'Activo',
         'MontoCartera',
-        'TasaComision',
         'Mensual',
         'EdadTerminacion',
         'EdadMaxTerminacion',

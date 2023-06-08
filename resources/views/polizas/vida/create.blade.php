@@ -102,20 +102,23 @@
                                         <textarea class="form-control" name="Concepto" row="3" col="4" value="{{ old('Concepto') }}" required> </textarea>
                                     </div>
                                 </div>
-
-                                <div class="form-group">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12">Limite grupo</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input type="number" step="any" name="LimiteGrupo" id="LimiteGrupo" value="{{ old('LimiteGrupo') }}" class="form-control">
+                                <div id="creditos" style="display: none;">
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3 col-sm-12 col-xs-12">Limite Menor</label>
+                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                            <input type="number" step="any" name="LimiteGrupo" id="LimiteGrupo" value="{{ old('LimiteGrupo') }}" class="form-control">
+                                        </div>
                                     </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3 col-sm-12 col-xs-12">Limite Mayor</label>
+                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                            <input type="number" step="any" name="LimiteIndividual" id="LimiteIndividual" value="{{ old('LimiteIndividual') }}" class="form-control">
+                                        </div>
+                                    </div>
+
                                 </div>
 
-                                <div class="form-group">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12">Limite individual</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input type="number" step="any" name="LimiteIndividual" id="LimiteIndividual" value="{{ old('LimiteIndividual') }}" class="form-control">
-                                    </div>
-                                </div>
 
                             </div>
                             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -210,6 +213,14 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
+                                    <input type="hidden" name="Bomberos" id="Bomberos" value="{{ $bomberos }}">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Multi Tarifa
+                                    </label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="Multitarifa" id="Multitarifa" type="checkbox" step="any" value="{{ old('Multitarifa') }}">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa ‰
                                     </label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
@@ -232,96 +243,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                <table border="1" cellspeacing="0"  >
-                                    <tr>
-                                        <th colspan="4">
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: center;">Tabla de Requisitos Minimos de Asegurabilidad</label>
-                                            </div>
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <td><label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: center;">Requisitos</label></td>
-                                        <td>
-                                            <br>
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad
-                                                    Terminación</label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="EdadTerminacion" id="EdadTerminacion" type="number" value="{{ old('EdadTerminacion') }}">
-                                                </div>
-                                            </div>
-                                            <br>
-                                        </td>
-                                        <td>
-                                            <br>
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad
-                                                    Intermedia Terminacion</label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="EdadIntermedia" id="EdadIntermedia" type="number" step="any" value="{{ old('EdadIntermedia') }}">
-                                                </div>
-                                            </div>
-                                            <br>
-                                        </td>
-                                        <td>
-                                            <br>
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad
-                                                    Maxima Terminacion</label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="EdadMaxTerminacion" id="EdadMaxTerminacion" type="number" value="{{ old('EdadMaxTerminacion') }}">
-                                                </div>
-                                            </div>
-                                            <br>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: center;">Declaracion Jurada</label></td>
-                                        <td>
-                                            <br>
-                                            <div class="form-group row">
 
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Limite
-                                                    Menor Declaracion </label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="LimiteMenDeclaracion" id="LimiteMenDeclaracion" type="number" step="any" value="{{ old('LimiteMenDeclaracion') }}" required>
-                                                </div>
-                                            </div>
-                                            <br>
-                                        </td>
-                                        <td>
-                                            <br>
-                                            <div class="form-group row">
-
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Limite
-                                                    Intermedio Declaracion </label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="LimiteIntermedioDeclaracion" id="LimiteIntermedioDeclaracion" type="number" step="any" value="{{ old('LimiteIntermedioDeclaracion') }}" required>
-                                                </div>
-                                            </div>
-                                            <br>
-                                        </td>
-                                        <td>
-                                            <br>
-                                            <div class="form-group row">
-
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Limite
-                                                    Maximo Declaracion </label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="LimiteMaxDeclaracion" id="LimiteMaxDeclaracion" type="number" step="any" value="{{ old('LimiteMaxDeclaracion') }}" required>
-                                                </div>
-                                            </div>
-                                            <br>
-                                        </td>
-                                    </tr>
-                                </table>
-                                <br>
-
-
-                                <br>
-                            </div>
                             <br><br>
                             <div class="x_title">
                                 <h2> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<small></small></h2>
@@ -359,12 +281,28 @@
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function() {
-        $("#TipoCobro").change(function(){
-            if(document.getElementById('TipoCobro').value == 1){
+
+        if (document.getElementById('Multitarifa').checked == true) {
+            $('#Tasa').attr('readonly');
+            $('#Tasa').removeAttr('required');
+        } else {
+            $('#Tasa').removeAttr('readonly');
+            $('#Tasa').attr('required');
+        }
+
+        $("#TipoCobro").change(function() {
+            if (document.getElementById('TipoCobro').value == 1) {
                 document.getElementById('MontoCartera').removeAttribute('required');
+                document.getElementById('LimiteGrupo').removeAttribute('required');
+                document.getElementById('LimiteIndividual').removeAttribute('required');
                 document.getElementById('MontoCartera').value = 0;
-            }else{
-                document.getElementById('MontoCartera').attr('required',true);
+                $("#creditos").hide();
+            } else {
+                $('#MontoCartera').attr('required', 'required');
+                document.getElementById('MontoCartera').value = "";
+                $('#creditos').show();
+                $('#LimiteGrupo').attr('required', 'required');
+                $('#LimiteIndividual').attr('required', 'required');
             }
         })
 
