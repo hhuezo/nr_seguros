@@ -552,11 +552,20 @@
                             </div>
                         </div>
 
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Validar</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input name="Validar"  type="checkbox" checked class="js-switch" />
+                                </div>
+                            </div>
+
+
                         <div class="form-group">
                             <div class="col-sm-12">
                                 <label class="control-label">Envio cartera</label>
                                 <input type="date" name="EnvioCartera" id="ModalEnvioCartera" class="form-control">
                             </div>
+
                         </div>
 
                         <div class="form-group">
