@@ -135,28 +135,18 @@ class VidaController extends Controller
     public function agregarUsuario(Request $request)
     {
         //agregar form de agregar usuario
-        if ($request->Vida == '') {
-            $usuario_vida = new VidaUsuario();
-            $usuario_vida->Poliza = $request->Poliza;
-            $usuario_vida->NumeroUsuario = $request->NumeroUsuario;
-            $usuario_vida->SumaAsegurada = $request->SumaAsegurada;
-            $usuario_vida->SubTotalAsegurado = $request->SubTotalAsegurado;
-            $usuario_vida->Tasa = $request->Tasa;
-            $usuario_vida->TotalAsegurado = $request->TotalAsegurado;
-            $usuario_vida->save();
-        } else {
-            $usuario_vida = new VidaUsuario();
-            $usuario_vida->Poliza = $request->Poliza;
-            $usuario_vida->Vida = $request->Vida;
-            $usuario_vida->NumeroUsuario = $request->NumeroUsuario;
-            $usuario_vida->SumaAsegurada = $request->SumaAsegurada;
-            $usuario_vida->SubTotalAsegurado = $request->SubTotalAsegurado;
-            $usuario_vida->Tasa = $request->Tasa;
-            $usuario_vida->TotalAsegurado = $request->TotalAsegurado;
-            $usuario_vida->save();
-        }
 
-        $usuario_vidas = VidaUsuario::where('Poliza', $request->Poliza)->get();
+        $usuario_vida = new VidaUsuario();
+        $usuario_vida->Vida = $request->Vida;
+        $usuario_vida->NumeroUsuario = $request->NumeroUsuario;
+        $usuario_vida->SumaAsegurada = $request->SumaAsegurada;
+        $usuario_vida->SubTotalAsegurado = $request->SubTotalAsegurado;
+        $usuario_vida->Tasa = $request->Tasa;
+        $usuario_vida->TotalAsegurado = $request->TotalAsegurado;
+        $usuario_vida->save();
+
+
+        $usuario_vidas = VidaUsuario::where('Vida', $request->Vida)->get();
         return view('polizas.vida.tabla_usuario', compact('usuario_vidas'));
     }
 

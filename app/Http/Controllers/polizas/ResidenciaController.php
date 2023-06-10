@@ -85,25 +85,12 @@ class ResidenciaController extends Controller
         $residencia->LimiteIndividual = $request->LimiteIndividual;
         $residencia->MontoCartera = $request->MontoCartera;
         $residencia->Tasa = $request->Tasa;
-        $residencia->PrimaCalculada = $request->PrimaCalculada;
         $residencia->Ejecutivo = $request->Ejecutivo;
-        $residencia->Descuento = $request->Descuento;
-        $residencia->GastosEmision = $request->GastosEmision;
-        $residencia->ImpuestoBomberos = $request->ImpuestoBomberos;
-        $residencia->Iva = $request->Iva;
-        $residencia->ValorCCF = $request->ValorCCF;
-        $residencia->APagar = $request->APagar;
-        $residencia->ComentariosDeCobro = $request->Comentario;
-        $residencia->DescuentoIva = $request->DescuentoIva;  //checked
+        $residencia->TasaDescuento = $request->TasaDescuento;
         $residencia->Nit = $request->Nit;
-        $residencia->Comision = $request->Comision;
-        $residencia->IvaSobreComision = $request->IvaSobreComision;
-        $residencia->Retencion = $request->Retencion;
         $residencia->Activo = 1;
         $residencia->Mensual = $request->Mensual; //valor de radio button
         $residencia->TasaComison = $request->TasaComision;
-        $residencia->ValorDescuento = $request->ValorDescuento;
-        $residencia->ExtraPrima = $request->ExtraPrima;
         $residencia->save();
 
 
@@ -292,7 +279,8 @@ class ResidenciaController extends Controller
 
     public function renovar($id){
         $residencia = Residencia::findOrFail($id);
-        return view('polizas.residencia.renovar', compact('residencia'));
+        $estados_poliza = EstadoPoliza::where('Activo', 1)->get();
+        return view('polizas.residencia.renovar', compact('residencia','estados_poliza'));
     }
 
     public function renovarPoliza(Request $request, $id){
