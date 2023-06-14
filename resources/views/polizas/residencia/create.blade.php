@@ -26,14 +26,9 @@
                     <br />
                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 ">
 
+                      
                         <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Código</label>
-                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="Codigo" id="Codigo" type="text" value="{{ old('Codigo') }}" required>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right" style="margin-top: -3%;">Número de Póliza</label>
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Número de Póliza</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                 <input class="form-control" name="NumeroPoliza" id="NumeroPoliza" type="text" value="{{ old('NumeroPoliza') }}">
                             </div>
@@ -65,6 +60,12 @@
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Nit</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                 <input class="form-control" name="Nit" id="Nit" type="text" value="{{ old('Nit') }}" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Código</label>
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <input class="form-control" name="Codigo" id="Codigo" type="text" value="{{ old('Codigo') }}" required>
                             </div>
                         </div>
                         <div class="form-group row">

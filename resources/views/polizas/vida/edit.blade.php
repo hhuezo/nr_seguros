@@ -218,93 +218,8 @@
                                 </div>
                             </div>
                             <br>
-                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                <br>
-                                <table border="1" cellspeacing="0">
-                                    <tr>
-                                        <th colspan="4">
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: center;">Tabla de Requisitos Minimos de Asegurabilidad</label>
-                                            </div>
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <td><label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: center;">Requisitos</label></td>
-                                        <td>
-                                            <br>
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad
-                                                    Terminación</label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="EdadTerminacion" id="EdadTerminacion" type="number" value="{{ $vida->EdadTerminacion }}" readonly>
-                                                </div>
-                                            </div>
-                                            <br>
-                                        </td>
-                                        <td>
-                                            <br>
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad
-                                                    Intermedia Terminacion</label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="EdadIntermedia" id="EdadIntermedia" type="number" step="any" readonly value="{{ $vida->EdadIntermedia }}">
-                                                </div>
-                                            </div>
-                                            <br>
-                                        </td>
-                                        <td>
-                                            <br>
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad
-                                                    Maxima Terminacion</label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="EdadMaxTerminacion" id="EdadMaxTerminacion" type="number" value="{{ $vida->EdadMaxTerminacion }}" readonly>
-                                                </div>
-                                            </div>
-                                            <br>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: center;">Declaracion Jurada</label></td>
-                                        <td>
-                                            <br>
-                                            <div class="form-group row">
 
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Limite
-                                                    Menor Declaracion </label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="LimiteMenDeclaracion" id="LimiteMenDeclaracion" type="number" step="any" value="{{ $vida->LimiteMenDeclaracion }}" readonly>
-                                                </div>
-                                            </div>
-                                            <br>
-                                        </td>
-                                        <td>
-                                            <br>
-                                            <div class="form-group row">
 
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Limite
-                                                    Intermedio Declaracion </label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="LimiteIntermedioDeclaracion" id="LimiteIntermedioDeclaracion" type="number" step="any" value="{{ $vida->LimiteIntermedioDeclaracion }}" readonly>
-                                                </div>
-                                            </div>
-                                            <br>
-                                        </td>
-                                        <td>
-                                            <br>
-                                            <div class="form-group row">
-
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Limite
-                                                    Maximo Declaracion </label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="LimiteMaxDeclaracion" id="LimiteMaxDeclaracion" type="number" step="any" value="{{ $vida->LimiteMaxDeclaracion }}" readonly>
-                                                </div>
-                                            </div>
-                                            <br>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
                             <br><br>
 
                             <br>
@@ -552,12 +467,12 @@
                             </div>
                         </div>
 
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Validar</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input name="Validar"  type="checkbox" checked class="js-switch" />
-                                </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Validar</label>
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <input name="Validar" type="checkbox" checked class="js-switch" />
                             </div>
+                        </div>
 
 
                         <div class="form-group">
@@ -769,7 +684,7 @@
 
     });
 
-    function edit_usuario(id, tasa, usuarios, suma_asegurada, sub_total, total,tipoTasa) {
+    function edit_usuario(id, tasa, usuarios, suma_asegurada, sub_total, total, tipoTasa) {
         document.getElementById('ModalEditId').value = id;
         document.getElementById('ModalEditTasaUsuario').value = tasa;
         document.getElementById('ModalEditNumeroUsuario').value = usuarios;
