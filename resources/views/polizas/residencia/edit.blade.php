@@ -29,7 +29,7 @@
                 <div class="x_content" style="font-size: 12px;">
                     <br />
                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
-                        
+
                         <div class="form-group row">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right" style="margin-top: -3%;">Número de Póliza</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
@@ -101,22 +101,12 @@
                                 <input type="number" step="any" name="LimiteGrupo" id="LimiteGrupo" value="{{ $residencia->LimiteGrupo }}" class="form-control" readonly>
                             </div>
                         </div>
-
-
                         <div class="form-group">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12">Limite individual</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                 <input type="number" step="any" name="LimiteIndividual" value="{{ $residencia->LimiteIndividual }}" class="form-control" readonly>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Monto cartera</label>
-                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input type="number" step="any" name="MontoCartera" value="{{ $residencia->MontoCartera }}" class="form-control" readonly>
-                            </div>
-                        </div>
-
-
                         <div class="form-group">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12">Tasa %</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
@@ -287,8 +277,83 @@
                                 <div class="clearfix"></div>
                             </div>-->
                             <ul class="nav navbar-right panel_toolbox">
-                                <div class="btn btn-info float-center" data-toggle="modal" data-target=".bs-example-modal-lg">Validar Cartera</div>
+                                <div class="btn btn-info float-right" data-toggle="modal" data-target=".bs-example-modal-lg">Nuevo</div>
                             </ul>
+                            <div class="modal fade bs-example-modal-lg" id="modal_pago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                                                <h5 class="modal-title" id="exampleModalLabel">Nuevo pago</h5>
+                                            </div>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <form action="{{ url('polizas/residencia/create_pago') }}" method="POST" enctype="multipart/form-data">
+                                            @csrf
+                                            <div class="modal-body">
+                                                <div class="form-group row">
+                                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Año</label>
+                                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                        <select name="Axo" class="form-control">
+                                                            @for ($i = date('Y'); $i >= 2022; $i--)
+                                                            <option value="{{ $i }}">{{ $i }}</option>
+                                                            @endfor
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Mes</label>
+                                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                        <select name="Mes" class="form-control">
+                                                            @for ($i = 1; $i < 12; $i++) @if (date('m')==$i) <option value="{{ $i }}" selected>{{ $meses[$i] }}
+                                                                </option>
+                                                                @else
+                                                                <option value="{{ $i }}">{{ $meses[$i] }}</option>
+                                                                @endif
+                                                                @endfor
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
+                                                        inicio</label>
+                                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                        <input class="form-control" name="Id" value="{{ $residencia->Id }}" type="hidden" required>
+                                                        <input class="form-control" name="FechaInicio" type="date" required>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
+                                                        final</label>
+                                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                        <input class="form-control" name="FechaFinal" type="date" required>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Archivo</label>
+                                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                        <input class="form-control" name="Archivo" type="file" required>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="form-group row">
+                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Validar</label>
+                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                    <input name="Validar" type="checkbox" checked class="js-switch" />
+                                                </div>
+                                            </div>
+                                            <div class="clearfix"></div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+                                                <button type="submit" class="btn btn-primary">Aceptar</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                             <div>
                                 <form action="{{ url('polizas/residencia/create_pago') }}" method="POST">
                                     <div class="modal-header">

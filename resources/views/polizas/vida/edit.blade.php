@@ -424,6 +424,12 @@
                         </div>
 
                     </div>
+                    <div class="form-group row">
+                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Validar</label>
+                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                            <input name="Validar" type="checkbox" checked class="js-switch" />
+                        </div>
+                    </div>
                     <div class="clearfix"></div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
@@ -467,12 +473,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Validar</label>
-                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input name="Validar" type="checkbox" checked class="js-switch" />
-                            </div>
-                        </div>
+
 
 
                         <div class="form-group">

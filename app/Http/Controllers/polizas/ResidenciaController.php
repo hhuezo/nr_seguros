@@ -155,13 +155,15 @@ class ResidenciaController extends Controller
              $bomberos = $bombero->Valor;
          }
 
+         $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
+
         return view('polizas.residencia.edit',compact('residencia','ejecutivo','detalle',
         'cliente',
         'aseguradoras',
         'estados_poliza',
         'tipos_contribuyente',
         'rutas',
-        'ubicaciones_cobro' , 'bomberos'));
+        'ubicaciones_cobro' , 'bomberos', 'meses'));
     }
 
     /**
