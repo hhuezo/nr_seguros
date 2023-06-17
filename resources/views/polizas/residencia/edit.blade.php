@@ -31,7 +31,7 @@
                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
 
                         <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right" style="margin-top: -3%;">Número de Póliza</label>
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right" >Número de Póliza</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                 <input class="form-control" name="NumeroPoliza" type="text" value="{{ $residencia->NumeroPoliza }}" readonly>
                             </div>
@@ -124,6 +124,12 @@
                     </div>
 
                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
+                    <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Tasa de Comision %</label>
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <input type="number" step="any" name="Comision" value="{{$residencia->Comision }}" class="form-control" readonly>
+                            </div>
+                        </div>
 
                         <div class="form-group row">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vigencia
@@ -396,24 +402,12 @@
                                                         <input type="number" step="any" name="PrimaCalculada" id="PrimaCalculada" class="form-control">
                                                     </div>
                                                 </div>
-                                                <div class="form-group row">
-                                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Extra
-                                                        Prima</label>
-                                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input class="form-control" name="ExtraPrima" type="number" step="any" id="ExtPrima">
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row">
-                                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">
-                                                        Prima Total</label>
-                                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input class="form-control" name="PrimaTotal" type="number" step="any" id="PrimaTotal" value="{{ old('PrimaToal') }}">
-                                                    </div>
-                                                </div>
+                                         
+                                            
                                                 <div class="form-group row">
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa de Descuento %</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input class="form-control" name="TasaDescuento" type="number" step="any" id="TasaDescuento">
+                                                        <input class="form-control" name="TasaDescuento" type="number" step="any" id="TasaDescuento" value="{{$Residencia->TasaDescuento}}">
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
@@ -498,7 +492,7 @@
                                                 <div class="form-group row">
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Comision %</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" value="{{$residencia->TasaComison}}">
+                                                        <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" value="{{$residencia->Comision}}">
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">

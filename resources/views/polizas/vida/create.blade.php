@@ -34,14 +34,9 @@
                         @csrf
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        
                                 <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Código</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Codigo" id="Codigo" type="text" value="{{ old('Codigo') }}" onblur="get_usuarios(this.value)" required>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right" style="margin-top: -3%;">Número de Póliza</label>
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Número de Póliza</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                         <input class="form-control" name="NumeroPoliza" id="NumeroPoliza" type="text" value="{{ old('NumeroPoliza') }}" required>
                                     </div>
@@ -73,6 +68,12 @@
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Nit</label>
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                         <input class="form-control" name="Nit" id="Nit" type="text" value="{{ old('Nit') }}" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Código</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="Codigo" id="Codigo" type="text" value="{{ old('Codigo') }}" onblur="get_usuarios(this.value)" required>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -203,7 +204,7 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group row">
+                                <!-- <div class="form-group row">
                                     <input type="hidden" name="Bomberos" id="Bomberos" value="{{ $bomberos }}">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Monto
                                         Cartera
@@ -219,7 +220,7 @@
                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                         <input class="form-control" name="Multitarifa" id="Multitarifa" type="checkbox" step="any" value="{{ old('Multitarifa') }}">
                                     </div>
-                                </div>
+                                </div> -->
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa ‰
                                     </label>
@@ -282,24 +283,22 @@
 <script type="text/javascript">
     $(document).ready(function() {
 
-        if (document.getElementById('Multitarifa').checked == true) {
-            $('#Tasa').attr('readonly');
-            $('#Tasa').removeAttr('required');
-        } else {
-            $('#Tasa').removeAttr('readonly');
-            $('#Tasa').attr('required');
-        }
+        // if (document.getElementById('Multitarifa').checked == true) {
+        //     $('#Tasa').attr('readonly');
+        //     $('#Tasa').removeAttr('required');
+        // } else {
+        //     $('#Tasa').removeAttr('readonly');
+        //     $('#Tasa').attr('required');
+        // }
 
         $("#TipoCobro").change(function() {
             if (document.getElementById('TipoCobro').value == 1) {
-                document.getElementById('MontoCartera').removeAttribute('required');
                 document.getElementById('LimiteGrupo').removeAttribute('required');
                 document.getElementById('LimiteIndividual').removeAttribute('required');
-                document.getElementById('MontoCartera').value = 0;
+
                 $("#creditos").hide();
             } else {
-                $('#MontoCartera').attr('required', 'required');
-                document.getElementById('MontoCartera').value = "";
+             
                 $('#creditos').show();
                 $('#LimiteGrupo').attr('required', 'required');
                 $('#LimiteIndividual').attr('required', 'required');

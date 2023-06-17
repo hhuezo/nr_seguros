@@ -27,7 +27,7 @@ class Residencia extends Model
         'LimiteGrupo',
         'LimiteIndividual',
         'Mensual',
-        'TasaComision',
+        'Comision',
         'ValorDescuento',
         'Tasa',
         'Ejecutivo',
@@ -35,6 +35,7 @@ class Residencia extends Model
         'Nit',
         'Comision',
         'Activo',
+        'TasaDescuento'
         
     ];
 

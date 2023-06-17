@@ -36,409 +36,436 @@
             <div class="x_content">
                 <br />
 
-                <form method="POST" action="{{ route('vida.update', $vida->Id) }}">
-                    @method('PUT')
-                    @csrf
-                    <div class="form-horizontal" style="font-size: 12px;">
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right" style="margin-top: -3%;">Número de Póliza</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="NumeroPoliza" id="NumeroPoliza" type="text" value="{{ $vida->NumeroPoliza }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Código</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Codigo" type="text" value="{{ $vida->Codigo }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Aseguradora</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Aseguradora" type="text" value="{{ $vida->aseguradoras->Nombre }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Asegurado</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Asegurado" type="text" value="{{ $vida->clientes->Nombre }}" readonly>
-                                    </div>
 
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Nit</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Nit" id="Nit" type="text" value="{{ $vida->Nit }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Grupo
-                                        Asegurado</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <textarea class="form-control" name="GrupoAsegurado" row="3" col="4" value="" readonly>{{ $vida->GrupoAsegurado }} </textarea>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Clausulas
-                                        Especiales</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <textarea class="form-control" name="ClausulasEspeciales" row="3" col="4" value="" readonly>{{ $vida->ClausulasEspeciales }} </textarea>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Beneficios
-                                        Adicionales</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <textarea class="form-control" name="BeneficiosAdicionales" row="3" col="4"> {{ $vida->BeneficiosAdicionales }}</textarea>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Concepto</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <textarea class="form-control" name="Concepto" row="3" col="4"> {{ $vida->Concepto }} </textarea>
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Limite Grupal </label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="LimiteGrupo" id="LimiteGrupo" type="number" step="any" value="{{$vida->LimiteGrupo }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Limite Individual </label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="LimiteIndividual" id="LimiteIndividual" type="number" step="any" value="{{ $vida->LimiteIndividual }}" readonly>
-                                    </div>
+                @method('PUT')
+                @csrf
+                <div class="form-horizontal" style="font-size: 12px;">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Número de Póliza</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="NumeroPoliza" id="NumeroPoliza" type="text" value="{{ $vida->NumeroPoliza }}" readonly>
                                 </div>
                             </div>
-                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vigencia
-                                        Desde</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="VigenciaDesde" type="text" value="{{ \Carbon\Carbon::parse($vida->VigenciaDesde)->format('d/m/Y') }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vigencia
-                                        Hasta</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="VigenciaHasta" type="text" value="{{ \Carbon\Carbon::parse($vida->VigenciaHasta)->format('d/m/Y') }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo
-                                        Cartera</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="TipoCartera" type="text" value="{{ $vida->tipoCarteras->Nombre }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vendedor</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Ejecutivo" type="text" value="{{ $vida->ejecutivos->Nombre }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Estatus</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="EstadoPoliza" type="text" value="{{ $vida->estadoPolizas->Nombre }}" readonly>
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo de
-                                        Cobro</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="TipoCobro" type="text" value="{{ $vida->tipoCobros->Nombre }}" readonly>
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">&nbsp;
-                                    </label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        @if ($vida->Mensual == 1)
-                                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                            <input type="radio" name="tipoTasa" id="Mensual" value="1" checked disabled>
-                                            <label class="control-label">Tasa ‰ Millar Mensual</label>
-                                        </div>
-
-                                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                            <input type="radio" name="tipoTasa" id="Anual" value="0" disabled>
-                                            <label class="control-label">Tasa ‰ Millar Anual</label>
-                                        </div>
-                                        @else
-                                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                            <input type="radio" name="tipoTasa" id="Mensual" value="1" disabled>
-                                            <label class="control-label">Tasa ‰ Millar Mensual</label>
-                                        </div>
-
-                                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                            <input type="radio" name="tipoTasa" id="Anual" value="0" checked disabled>
-                                            <label class="control-label">Tasa ‰ Millar Anual</label>
-                                        </div>
-                                        @endif
-
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Monto
-                                        Cartera
-                                    </label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="MontoCartera" type="number" step="any" value="{{ $vida->MontoCartera }}" required>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa
-                                        %</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Tasa" id="Tasa" type="number" step="any" value="{{ $vida->Tasa }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa Comision
-                                        %</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" value="{{ $vida->TasaComision }}">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa Descuento
-                                        %</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="TasaDescuento" id="TasaDescuento" type="number" step="any" value="{{ $vida->TasaDescuento }}">
-                                    </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Código</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="Codigo" type="text" value="{{ $vida->Codigo }}" readonly>
                                 </div>
                             </div>
-                            <br>
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Aseguradora</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="Aseguradora" type="text" value="{{ $vida->aseguradoras->Nombre }}" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Asegurado</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="Asegurado" type="text" value="{{ $vida->clientes->Nombre }}" readonly>
+                                </div>
 
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Nit</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="Nit" id="Nit" type="text" value="{{ $vida->Nit }}" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Grupo
+                                    Asegurado</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <textarea class="form-control" name="GrupoAsegurado" row="3" col="4" value="" readonly>{{ $vida->GrupoAsegurado }} </textarea>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Clausulas
+                                    Especiales</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <textarea class="form-control" name="ClausulasEspeciales" row="3" col="4" value="" readonly>{{ $vida->ClausulasEspeciales }} </textarea>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Beneficios
+                                    Adicionales</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <textarea class="form-control" name="BeneficiosAdicionales" row="3" col="4"> {{ $vida->BeneficiosAdicionales }}</textarea>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Concepto</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <textarea class="form-control" name="Concepto" row="3" col="4"> {{ $vida->Concepto }} </textarea>
+                                </div>
+                            </div>
 
-                            <br><br>
+                            <div class="form-group row">
 
-                            <br>
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Limite Grupal </label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="LimiteGrupo" id="LimiteGrupo" type="number" step="any" value="{{$vida->LimiteGrupo }}" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Limite Individual </label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="LimiteIndividual" id="LimiteIndividual" type="number" step="any" value="{{ $vida->LimiteIndividual }}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vigencia
+                                    Desde</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="VigenciaDesde" type="text" value="{{ \Carbon\Carbon::parse($vida->VigenciaDesde)->format('d/m/Y') }}" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vigencia
+                                    Hasta</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="VigenciaHasta" type="text" value="{{ \Carbon\Carbon::parse($vida->VigenciaHasta)->format('d/m/Y') }}" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo
+                                    Cartera</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="TipoCartera" type="text" value="{{ $vida->tipoCarteras->Nombre }}" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vendedor</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="Ejecutivo" type="text" value="{{ $vida->ejecutivos->Nombre }}" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Estatus</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="EstadoPoliza" type="text" value="{{ $vida->estadoPolizas->Nombre }}" readonly>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo de
+                                    Cobro</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="TipoCobro" type="text" value="{{ $vida->tipoCobros->Nombre }}" readonly>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">&nbsp;
+                                </label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    @if ($vida->Mensual == 1)
+                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                        <input type="radio" name="tipoTasa" id="Mensual" value="1" checked disabled>
+                                        <label class="control-label">Tasa ‰ Millar Mensual</label>
+                                    </div>
+
+                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                        <input type="radio" name="tipoTasa" id="Anual" value="0" disabled>
+                                        <label class="control-label">Tasa ‰ Millar Anual</label>
+                                    </div>
+                                    @else
+                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                        <input type="radio" name="tipoTasa" id="Mensual" value="1" disabled>
+                                        <label class="control-label">Tasa ‰ Millar Mensual</label>
+                                    </div>
+
+                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                        <input type="radio" name="tipoTasa" id="Anual" value="0" checked disabled>
+                                        <label class="control-label">Tasa ‰ Millar Anual</label>
+                                    </div>
+                                    @endif
+
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Monto
+                                    Cartera
+                                </label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="MontoCartera" type="number" step="any" value="{{ $vida->MontoCartera }}" required>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa
+                                    %</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="Tasa" id="Tasa" type="number" step="any" value="{{ $vida->Tasa }}" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa Comision
+                                    %</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" value="{{ $vida->TasaComision }}">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa Descuento
+                                    %</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="TasaDescuento" id="TasaDescuento" type="number" step="any" value="{{ $vida->TasaDescuento }}">
+                                </div>
+                            </div>
                         </div>
                         <br>
-                        &nbsp;
-                        <br>
-                        @if ($vida->TipoCobro == 1)
 
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="Usuarios">
-                            <div class="x_title">
-                                <h2> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<small></small></h2>
-                                <h2>Usuarios<small></small>
-                                </h2>
-                                <div class="clearfix" align="right">
-                                    <a class="btn btn-primary" onclick="modal_usuario(<?php echo $vida->Id ?>, <?php echo $vida->Tasa ?>, document.getElementById('Mensual').checked, document.getElementById('Anual').checked);"><i class="fa fa-plus"></i>&nbsp; Nuevo Usuario </a>
-                                </div>
-                                <br>@php($montocartera = 0)
-                                @php($subtotal = 0)
-
-                            </div>
-                            <br>
-
-                            <div>
-                                <table class="table table-striped table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Numero Usuarios</th>
-                                            <th>Suma Asegurada</th>
-                                            <th>MontoCartera</th>
-                                            <th>Tasa</th>
-                                            <th>Sub Total Asegurado</th>
-                                            <th>Opciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @php($totalUsuario = 0)
-                                        @php($montocartera = 0)
-                                        @php($subtotal = 0)
-                                        @foreach ($usuario_vidas as $obj)
-                                        <tr>
-                                            <td>{{ $obj->NumeroUsuario }}</td>
-                                            <td>{{ $obj->SumaAsegurada }}</td>
-                                            <td>{{ $obj->SubTotalAsegurado }}</td>
-                                            <td>{{ $obj->Tasa }}</td>
-                                            <td>{{ $obj->TotalAsegurado }}</td>
-                                            <td>
-                                                <a onclick="edit_usuario({{$obj->Id}},{{$obj->Tasa}},{{$obj->NumeroUsuario}},
-                        {{$obj->SumaAsegurada}},{{$obj->SubTotalAsegurado}},{{$obj->TotalAsegurado}},{{$vida->Mensual}})" data-toggle="modal" class="on-default edit-row">
-                                                    <i class="fa fa-pencil fa-lg"></i></a>
-                                                &nbsp;&nbsp;<a onclick="delete_usuario({{$obj->Id}})" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
-                                            </td>
-
-                                            @php($totalUsuario += $obj->NumeroUsuario)
-                                            @php($montocartera += $obj->SubTotalAsegurado)
-                                            @php($subtotal += $obj->TotalAsegurado)
-                                        </tr>
-
-
-
-                                        @endforeach
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td>Totales</td>
-                                            <td></td>
-                                            <td>${{ $montocartera }}</td>
-                                            <td></td>
-                                            <td>${{ $subtotal }}</td>
-                                            <td></td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-
-                            <br>
-                        </div>
-                        @include('polizas.vida.modal_usuario')
-                        @endif
 
                         <br><br>
 
-                        <div class="x_title">
-                            <br>&nbsp;
-                            <br>&nbsp;
-                            <br>&nbsp;
-                            <h2> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<small></small></h2>
-                            <h2>Pagos<small></small>
-                            </h2>
-                            <ul class="nav navbar-right panel_toolbox">
-                                <div class="btn btn-info float-right" data-toggle="modal" data-target=".bs-example-modal-lg">Nuevo</div>
+                        <br>
+                    </div>
+                    <br>
+                    &nbsp;
+                    <br>
+
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="" role="tabpanel" data-example-id="togglable-tabs">
+                            <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
+                                <li role="presentation" class="active"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Estado de Pagos</a>
+                                </li>
+                                <li role="presentation" class=""><a href="#tab_content2" role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">Generar Pago</a>
+                                </li>
+                                <li role="presentation" class=""><a href="#tab_content3" role="tab" id="usuarios-tab" data-toggle="tab" aria-expanded="false">Usuarios</a>
+                                </li>
                             </ul>
-                            <div class="clearfix"></div>
-                        </div>
-
-                        <div>
-                            <br>
-                            <table class="table table-striped table-bordered">
-                                <tr>
-                                    <th><br><i class="fa fa-pencil"></i></th>
-                                    <th>Tasa</th>
-                                    <th>Descuento</th>
-                                    <th>A Pagar</th>
-                                    <th>Impresion de Recibo</th>
-                                    <th>Envio de Cartera</th>
-                                    <th>Envio de Pago</th>
-                                    <th>Pago Aplicado</th>
-                                </tr>
-                                @foreach ($detalle as $obj)
-                                <tr>
-                                    <td><i class="fa fa-pencil" onclick="modal_edit({{ $obj->Id }})"></i>
-                                    </td>
-                                    <td>{{ $obj->Tasa }}</td>
-                                    <td>{{ $obj->Descuento }}</td>
-                                    <td>{{ $obj->APagar }}</td>
-                                    <td>{{ $obj->ImpresionRecibo }}</td>
-                                    <td>{{ $obj->EnvioCartera }}</td>
-                                    <td>{{ $obj->EnvioPago }}</td>
-                                    <td>{{ $obj->PagoAplicado }}</td>
-                                </tr>
-                                @endforeach
-                            </table>
-
-                        </div>
 
 
+                            <div id="myTabContent" class="tab-content">
+                                <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="home-tab">
+                                    <div class="x_title">
+                                        <br>&nbsp;
+                                        <br>&nbsp;
+                                        <br>&nbsp;
+                                        <h2> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<small></small></h2>
+                                        <h2>Pagos<small></small>
+                                        </h2>
+                                        <ul class="nav navbar-right panel_toolbox">
+                                        
+                                        </ul>
+                                        <div class="clearfix"></div>
+                                    </div>
 
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <div class="form-group" align="center">
-                                <!-- <span id="habilitar" class="btn btn-warning">Habilitar</span> -->
-                                <button type="submit" class="btn btn-success">Aceptar</button>
-                                <a href="{{ url('poliza/depsoito_plazo') }}"><button type="button" class="btn btn-primary">Cancelar</button></a>
+                                    <div>
+                                        <br>
+                                        <table class="table table-striped table-bordered">
+                                            <tr>
+                                                <th><br><i class="fa fa-pencil"></i></th>
+                                                <th>Tasa</th>
+                                                <th>Descuento</th>
+                                                <th>A Pagar</th>
+                                                <th>Impresion de Recibo</th>
+                                                <th>Envio de Cartera</th>
+                                                <th>Envio de Pago</th>
+                                                <th>Pago Aplicado</th>
+                                            </tr>
+                                            @foreach ($detalle as $obj)
+                                            <tr>
+                                                <td><i class="fa fa-pencil" onclick="modal_edit({{ $obj->Id }})"></i>
+                                                </td>
+                                                <td>{{ $obj->Tasa }}</td>
+                                                <td>{{ $obj->Descuento }}</td>
+                                                <td>{{ $obj->APagar }}</td>
+                                                <td>{{ $obj->ImpresionRecibo }}</td>
+                                                <td>{{ $obj->EnvioCartera }}</td>
+                                                <td>{{ $obj->EnvioPago }}</td>
+                                                <td>{{ $obj->PagoAplicado }}</td>
+                                            </tr>
+                                            @endforeach
+                                        </table>
+
+                                    </div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="profile-tab">
+                                    <div class="x_title">
+                                        <br>&nbsp;
+                                        <br>&nbsp;
+                                        <br>&nbsp;
+                                        <h2> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<small></small></h2>
+                                        <h2>Pagos<small></small>
+                                        </h2>
+                                        <ul class="nav navbar-right panel_toolbox">
+                                            <div class="btn btn-info float-right" data-toggle="modal" data-target=".bs-example-modal-lg">Nuevo</div>
+                                        </ul>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <div class="modal fade bs-example-modal-lg" id="modal_pago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                                                        <h5 class="modal-title" id="exampleModalLabel">Nuevo pago</h5>
+                                                    </div>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <form action="{{ url('polizas/vida/create_pago') }}" method="POST" enctype="multipart/form-data">
+                                                    @csrf
+                                                    <div class="modal-body">
+                                                        <div class="form-group row">
+                                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Año</label>
+                                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                                <select name="Axo" class="form-control">
+                                                                    @for ($i = date('Y'); $i >= 2022; $i--)
+                                                                    <option value="{{ $i }}">{{ $i }}</option>
+                                                                    @endfor
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Mes</label>
+                                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                                <select name="Mes" class="form-control">
+                                                                    @for ($i = 1; $i < 12; $i++) @if (date('m')==$i) <option value="{{ $i }}" selected>{{ $meses[$i] }}
+                                                                        </option>
+                                                                        @else
+                                                                        <option value="{{ $i }}">{{ $meses[$i] }}</option>
+                                                                        @endif
+                                                                        @endfor
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
+                                                                inicio</label>
+                                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                                <input class="form-control" name="Id" value="{{ $vida->Id }}" type="hidden" required>
+                                                                <input class="form-control" name="FechaInicio" type="date" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
+                                                                final</label>
+                                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                                <input class="form-control" name="FechaFinal" type="date" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Archivo</label>
+                                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                                <input class="form-control" name="Archivo" type="file" required>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Validar</label>
+                                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                            <input name="Validar" type="checkbox" checked class="js-switch" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="clearfix"></div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+                                                        <button type="submit" class="btn btn-primary">Aceptar</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="usuarios-tab">
+                                    @if ($vida->TipoCobro == 1)
+
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="Usuarios">
+                                        <div class="x_title">
+                                            <h2> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<small></small></h2>
+                                            <h2>Usuarios<small></small>
+                                            </h2>
+                                            <div class="clearfix" align="right">
+                                                <a class="btn btn-primary" onclick="modal_usuario(<?php echo $vida->Id ?>, <?php echo $vida->Tasa ?>, document.getElementById('Mensual').checked, document.getElementById('Anual').checked);"><i class="fa fa-plus"></i>&nbsp; Nuevo Usuario </a>
+                                            </div>
+                                            <br>@php($montocartera = 0)
+                                            @php($subtotal = 0)
+
+                                        </div>
+                                        <br>
+
+                                        <div>
+                                            <table class="table table-striped table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Numero Usuarios</th>
+                                                        <th>Suma Asegurada</th>
+                                                        <th>MontoCartera</th>
+                                                        <th>Tasa</th>
+                                                        <th>Sub Total Asegurado</th>
+                                                        <th>Opciones</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @php($totalUsuario = 0)
+                                                    @php($montocartera = 0)
+                                                    @php($subtotal = 0)
+                                                    @foreach ($usuario_vidas as $obj)
+                                                    <tr>
+                                                        <td>{{ $obj->NumeroUsuario }}</td>
+                                                        <td>{{ $obj->SumaAsegurada }}</td>
+                                                        <td>{{ $obj->SubTotalAsegurado }}</td>
+                                                        <td>{{ $obj->Tasa }}</td>
+                                                        <td>{{ $obj->TotalAsegurado }}</td>
+                                                        <td>
+                                                            <a onclick="edit_usuario({{$obj->Id}},{{$obj->Tasa}},{{$obj->NumeroUsuario}},{{$obj->SumaAsegurada}},{{$obj->SubTotalAsegurado}},{{$obj->TotalAsegurado}},{{$vida->Mensual}})" data-toggle="modal" class="on-default edit-row">
+                                                                <i class="fa fa-pencil fa-lg"></i></a>
+                                                            &nbsp;&nbsp;<a onclick="delete_usuario({{$obj->Id}})" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
+                                                        </td>
+
+                                                        @php($totalUsuario += $obj->NumeroUsuario)
+                                                        @php($montocartera += $obj->SubTotalAsegurado)
+                                                        @php($subtotal += $obj->TotalAsegurado)
+                                                    </tr>
+
+
+
+                                                    @endforeach
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td>Totales</td>
+                                                        <td></td>
+                                                        <td>${{ $montocartera }}</td>
+                                                        <td></td>
+                                                        <td>${{ $subtotal }}</td>
+                                                        <td></td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+
+                                        <br>
+                                    </div>
+                                    @include('polizas.vida.modal_usuario')
+                                    @endif
+                                </div>
                             </div>
+
                         </div>
-
                     </div>
-                </form>
-            </div>
-
-        </div>
-    </div>
-
-
-
-    <div class="modal fade bs-example-modal-lg" id="modal_pago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
-                        <h5 class="modal-title" id="exampleModalLabel">Nuevo pago</h5>
-                    </div>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
                 </div>
-                <form action="{{ url('polizas/vida/create_pago') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Año</label>
-                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <select name="Axo" class="form-control">
-                                    @for ($i = date('Y'); $i >= 2022; $i--)
-                                    <option value="{{ $i }}">{{ $i }}</option>
-                                    @endfor
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Mes</label>
-                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <select name="Mes" class="form-control">
-                                    @for ($i = 1; $i < 12; $i++) @if (date('m')==$i) <option value="{{ $i }}" selected>{{ $meses[$i] }}
-                                        </option>
-                                        @else
-                                        <option value="{{ $i }}">{{ $meses[$i] }}</option>
-                                        @endif
-                                        @endfor
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
-                                inicio</label>
-                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="Id" value="{{ $vida->Id }}" type="hidden" required>
-                                <input class="form-control" name="FechaInicio" type="date" required>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
-                                final</label>
-                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="FechaFinal" type="date" required>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Archivo</label>
-                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="Archivo" type="file" required>
-                            </div>
-                        </div>
 
-                    </div>
-                    <div class="form-group row">
-                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Validar</label>
-                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                            <input name="Validar" type="checkbox" checked class="js-switch" />
-                        </div>
-                    </div>
-                    <div class="clearfix"></div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Aceptar</button>
-                    </div>
-                </form>
+
+                <br><br>
+
+
+
             </div>
+
         </div>
     </div>
+
+
+
+
 
 </div>
 

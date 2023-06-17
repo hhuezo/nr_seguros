@@ -128,12 +128,12 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12">Monto Cartera</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                 <input type="number" step="any" name="MontoCartera" id="MontoCartera" value="{{ old('MontoCartera') }}" class="form-control">
                             </div>
-                        </div>
+                        </div> -->
 
 
                         <div class="form-group">

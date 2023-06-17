@@ -83,14 +83,14 @@ class ResidenciaController extends Controller
         $residencia->VigenciaHasta = $request->VigenciaHasta;
         $residencia->LimiteGrupo = $request->LimiteGrupo;
         $residencia->LimiteIndividual = $request->LimiteIndividual;
-        $residencia->MontoCartera = $request->MontoCartera;
+       // $residencia->MontoCartera = $request->MontoCartera;
         $residencia->Tasa = $request->Tasa;
         $residencia->Ejecutivo = $request->Ejecutivo;
         $residencia->TasaDescuento = $request->TasaDescuento;
         $residencia->Nit = $request->Nit;
         $residencia->Activo = 1;
         $residencia->Mensual = $request->Mensual; //valor de radio button
-        $residencia->TasaComison = $request->TasaComision;
+        $residencia->Comision = $request->TasaComision;
         $residencia->save();
 
 
