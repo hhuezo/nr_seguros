@@ -277,13 +277,13 @@
                             <ul class="nav navbar-right panel_toolbox">
                                 <div class="btn btn-info float-right" data-toggle="modal" data-target=".bs-example-modal-lg">Nuevo</div>
                             </ul>
-                            <div class="clearfix"></div> 
+                            <div class="clearfix"></div>
                             <div class="x_title">
                                 <h2> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<small></small></h2>
                                 <div class="clearfix"></div>
                             </div>-->
                             <ul class="nav navbar-right panel_toolbox">
-                                <div class="btn btn-info float-right" data-toggle="modal" data-target=".bs-example-modal-lg">Nuevo</div>
+                                <div class="btn btn-info float-right" data-toggle="modal" data-target="#modal_pago">Nuevo</div>
                             </ul>
                             <div class="modal fade bs-example-modal-lg" id="modal_pago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
                                 <div class="modal-dialog" role="document">
@@ -402,12 +402,12 @@
                                                         <input type="number" step="any" name="PrimaCalculada" id="PrimaCalculada" class="form-control">
                                                     </div>
                                                 </div>
-                                         
-                                            
+
+
                                                 <div class="form-group row">
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa de Descuento %</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input class="form-control" name="TasaDescuento" type="number" step="any" id="TasaDescuento" value="{{$Residencia->TasaDescuento}}">
+                                                        <input class="form-control" name="TasaDescuento" type="number" step="any" id="TasaDescuento" value="{{$residencia->TasaDescuento}}">
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
