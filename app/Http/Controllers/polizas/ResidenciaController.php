@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\polizas;
 
 use App\Http\Controllers\Controller;
+use App\Imports\PolizaResidenciaTempCarteraImport;
 use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\Bombero;
 use App\Models\catalogo\Cliente;
@@ -13,9 +14,12 @@ use App\Models\catalogo\TipoContribuyente;
 use App\Models\catalogo\UbicacionCobro;
 use App\Models\polizas\DetalleResidencia;
 use App\Models\polizas\Residencia;
+use App\Models\temp\PolizaResidenciaTempCartera;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use Maatwebsite\Excel\Facades\Excel;
+
 
 class ResidenciaController extends Controller
 {
@@ -41,7 +45,7 @@ class ResidenciaController extends Controller
         $estados_poliza = EstadoPoliza::where('Activo', '=', 1)->get();
         $bombero = Bombero::where('Activo',1)->first();
         if($bombero){
-           $bomberos = $bombero->Valor; 
+           $bomberos = $bombero->Valor;
         }
         else{
             $bomberos = $bombero->Valor;
@@ -149,7 +153,7 @@ class ResidenciaController extends Controller
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
         $bombero = Bombero::where('Activo',1)->first();
         if($bombero){
-            $bomberos = $bombero->Valor; 
+            $bomberos = $bombero->Valor;
          }
          else{
              $bomberos = $bombero->Valor;
@@ -208,7 +212,7 @@ class ResidenciaController extends Controller
      */
     public function destroy($id)
     {
-        
+
         $residencia = Residencia::findOrFail($id);
         $residencia->Activo = 0;
         $residencia->update();
@@ -220,7 +224,34 @@ class ResidenciaController extends Controller
     {
         $time = Carbon::now('America/El_Salvador');
 
-        $detalle = new DetalleResidencia();
+        $residencia = Residencia::findOrFail($request->Id);
+
+
+
+        if ($request->Mes == 1) {
+            $mes_evaluar = 12;
+            $axo = $request->Axo - 1;
+        } else {
+            $mes_evaluar = $request->Mes - 1;
+            $axo = $request->Axo;
+        }
+
+        try {
+            $archivo = $request->Archivo;
+            //PolizaResidenciaTempCartera::truncate();
+            //dd(Excel::toArray(new PolizaResidenciaTempCarteraImport, $archivo));
+            Excel::import(new PolizaResidenciaTempCarteraImport, $archivo);
+
+
+            //dd($imports);
+
+
+        } catch (Throwable $e) {
+            print($e);
+
+            return false;
+        }
+       /* $detalle = new DetalleResidencia();
         $detalle->FechaInicio = $request->FechaInicio;
         $detalle->FechaFinal = $request->FechaFinal;
         $detalle->MontoCartera = $request->MontoCartera;
@@ -245,7 +276,7 @@ class ResidenciaController extends Controller
         $detalle->save();
 
         alert()->success('El registro ha sido ingresado correctamente');
-        return back();
+        return back();*/
     }
 
     public function edit_pago(Request $request)
@@ -265,7 +296,7 @@ class ResidenciaController extends Controller
             $detalle->PagoAplicado = $request->PagoAplicado;
         }
         $detalle->Comentario = $request->Comentario;
-        
+
         /*$detalle->EnvioPago = $request->EnvioPago;
         $detalle->PagoAplicado = $request->PagoAplicado;*/
         $detalle->update();

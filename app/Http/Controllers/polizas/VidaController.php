@@ -304,46 +304,46 @@ BEGIN
   ,FechaInicio
   ,FechaFinal,
   EdadOtorgamiento
-) SELECT 
-   Id                     
-  ,Nit                    
-  ,Dui                     
-  ,Pasaporte              
-  ,Nacionalidad          
-  ,FechaNacimiento       
-  ,TipoPersona         
-  ,PrimerApellido        
-  ,SegundoApellido        
-  ,CasadaApellido         
-  ,PrimerNombre          
-  ,SegundoNombre         
-  ,SociedadNombre         
-  ,Sexo                  
-  ,FechaOtorgamiento     
-  ,FechaVencimiento       
-  ,Ocupacion              
-  ,NoRefereciaCredito     
-  ,MontoOtorgado           
-  ,SaldoVigenteCapital    
-  ,Interes                 
-  ,InteresMoratorio      
-  ,SaldoTotal             
-  ,TarifaMensual          
-  ,PrimaMensual            
-  ,TipoDeuda              
-  ,PorcentajeExtraprima    
-  ,Usuario                
-  ,FechaNacimientoDate     
-  ,FechaOtorgamientoDate   
-  ,FechaVencimientoDate    
-  ,Edad                   
-  ,EdadTerminacion              
-  ,1                  
-  ,Mes                    
-  ,Axo                    
-  ,fecha_inicio            
+) SELECT
+   Id
+  ,Nit
+  ,Dui
+  ,Pasaporte
+  ,Nacionalidad
+  ,FechaNacimiento
+  ,TipoPersona
+  ,PrimerApellido
+  ,SegundoApellido
+  ,CasadaApellido
+  ,PrimerNombre
+  ,SegundoNombre
+  ,SociedadNombre
+  ,Sexo
+  ,FechaOtorgamiento
+  ,FechaVencimiento
+  ,Ocupacion
+  ,NoRefereciaCredito
+  ,MontoOtorgado
+  ,SaldoVigenteCapital
+  ,Interes
+  ,InteresMoratorio
+  ,SaldoTotal
+  ,TarifaMensual
+  ,PrimaMensual
+  ,TipoDeuda
+  ,PorcentajeExtraprima
+  ,Usuario
+  ,FechaNacimientoDate
+  ,FechaOtorgamientoDate
+  ,FechaVencimientoDate
+  ,Edad
+  ,EdadTerminacion
+  ,1
+  ,Mes
+  ,Axo
+  ,fecha_inicio
   ,fecha_final,
-  EdadOtorgamiento             
+  EdadOtorgamiento
 FROM temp_cartera where Usuario = usuario;
 
 END$$
