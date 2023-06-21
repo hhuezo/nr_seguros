@@ -238,17 +238,34 @@ class ResidenciaController extends Controller
 
         try {
             $archivo = $request->Archivo;
+            PolizaResidenciaTempCartera::where('User', '=', auth()->user()->id)->delete();
             //PolizaResidenciaTempCartera::truncate();
             //dd(Excel::toArray(new PolizaResidenciaTempCarteraImport, $archivo));
             Excel::import(new PolizaResidenciaTempCarteraImport, $archivo);
 
+            $monto_cartera_total= PolizaResidenciaTempCartera::where('User', '=', auth()->user()->id)->sum('SumaAsegurada');
 
-            //dd($imports);
+            $asegurados_limite_individual = PolizaResidenciaTempCartera::where('User', '=', auth()->user()->id)
+            ->where('SumaAsegurada', '>', $residencia->LimiteIndividual)
+            ->get();
+
+            if ($monto_cartera_total > $residencia->LimiteGrupo) {
+                alert()->error('Error, el saldo supera el limite de grupo');
+                return back();
+            }
+
+            if ($asegurados_limite_individual->count()>0) {
+                alert()->error('Error, Hay polizas que superan el limte individual');
+                return view('polizas.validacion_cartera.resultado', compact('asegurados_limite_individual'));
+            }
+
+            if ($request->Validar == "on") {
+                # code...
+            }
 
 
         } catch (Throwable $e) {
             print($e);
-
             return false;
         }
        /* $detalle = new DetalleResidencia();

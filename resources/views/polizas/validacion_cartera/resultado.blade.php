@@ -47,7 +47,7 @@
         @endif
 
 
-        @if (isset($calculo_limite_individual))
+        @if (isset($asegurados_limite_individual))
         <div class="x_title">
             <div class="col-md-6 col-sm-6 col-xs-12">
                 <h3>Personas que sobre pasan el limite individual </h3>
@@ -61,24 +61,19 @@
                 <table id="datatable" class="table table-striped table-bordered">
                     <thead>
                         <tr>
-                            <th>Dui</th>
-                            <th>Nit</th>
-                            <th>Nombres</th>
-                            <th>Edad</th>
-                            <th>Suma</th>
+                            <th>Numero de Referencia</th>
+                            <th>DUI</th>
+                            <th>Nombre Completo</th>
+                            <th>Suma Asegurada</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($calculo_limite_individual as $obj)
+                        @foreach ($asegurados_limite_individual as $obj)
                             <tr>
-                               
+                                <td>{{ $obj->NumeroReferencia }}</td>
                                 <td>{{ $obj->Dui }}</td>
-                                <td>{{ $obj->Nit }}</td>
-                                <td>{{ $obj->PrimerNombre }} {{ $obj->SegundoNombre }} {{ $obj->SociedadNombre }}
-                                    {{ $obj->PrimerApellido }} {{ $obj->SegundoApellido }} {{ $obj->CasadaApellido }}
-                                </td>
-                                <td>{{ $obj->Edad }}</td>
-                                <td>${{ number_format($obj->suma, 2, '.', ',') }}</td>
+                                <td>{{ $obj->NombreCompleto }}</td>
+                                <td>${{ number_format($obj->SumaAsegurada, 2, '.', ',') }}</td>
                             </tr>
                         @endforeach
                     </tbody>
