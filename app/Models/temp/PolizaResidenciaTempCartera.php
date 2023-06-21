@@ -26,6 +26,7 @@ class PolizaResidenciaTempCartera extends Model
         'Genero',
         'Direccion',
         'FechaOtorgamiento',
+        'FechaVencimiento',
         'NumeroReferencia',
         'SumaAsegurada',
         'Tarifa',
@@ -33,5 +34,6 @@ class PolizaResidenciaTempCartera extends Model
         'NumeroCuotas',
         'TipoDeuda',
         'ClaseCartera',
+        'User'
     ];
 }
