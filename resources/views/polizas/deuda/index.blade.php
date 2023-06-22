@@ -5,7 +5,7 @@
         @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
         <div class="x_title">
             <div class="col-md-6 col-sm-6 col-xs-12">
-                <h3>Polizas de Residencia </h3>
+                <h3>Polizas de Deuda </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
                 <a href="{{ url('polizas/deuda/create/') }}"><button class="btn btn-info float-right"> <i
@@ -23,7 +23,6 @@
                         <tr>
                             <th>Nombre</th>
                             <th>Aseguradora</th>
-                            <th>Monto Cartera</th>
                             <th>Contacto</th>
                             <th>Vendedor</th>
                             <th>Opciones</th>
@@ -34,7 +33,6 @@
                             <tr>
                                 <td>{{ $obj->clientes->Nombre }}</td>
                                 <td>{{ $obj->aseguradoras->Nombre }}</td>
-                                <td>{{ $obj->MontoCartera }}</td>
                                 <td>{{ $obj->ejecutivos->Nombre }}</td>
                                 @if ($obj->Activo == 1)
                                     <td align="center"><input type="checkbox" checked></td>
@@ -51,7 +49,8 @@
                                     &nbsp;&nbsp;<a href="{{ url('polizas/residencia') }}/{{ $obj->Id }}/renovar"
                                             class="on-default edit-row"><i class="fa fa-refresh fa-lg"></i></a>
 
-
+                                    &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}"
+                                            data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
                                     @can('delete users')
                                         &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}"
                                             data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>

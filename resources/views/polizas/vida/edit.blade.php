@@ -100,7 +100,7 @@
                                     <textarea class="form-control" name="Concepto" row="3" col="4"> {{ $vida->Concepto }} </textarea>
                                 </div>
                             </div>
-
+                            @if($vida->TipoCobro == 2)
                             <div class="form-group row">
 
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Limite Grupal </label>
@@ -115,6 +115,7 @@
                                     <input class="form-control" name="LimiteIndividual" id="LimiteIndividual" type="number" step="any" value="{{ $vida->LimiteIndividual }}" readonly>
                                 </div>
                             </div>
+                            @endif
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                             <div class="form-group row">
@@ -187,14 +188,7 @@
 
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Monto
-                                    Cartera
-                                </label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="MontoCartera" type="number" step="any" value="{{ $vida->MontoCartera }}" required>
-                                </div>
-                            </div>
+                          
                             <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa
                                     %</label>
@@ -235,8 +229,10 @@
                                 </li>
                                 <li role="presentation" class=""><a href="#tab_content2" role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">Generar Pago</a>
                                 </li>
+                                @if ($vida->TipoCobro == 1)
                                 <li role="presentation" class=""><a href="#tab_content3" role="tab" id="usuarios-tab" data-toggle="tab" aria-expanded="false">Usuarios</a>
                                 </li>
+                                @endif
                             </ul>
 
 
@@ -244,8 +240,7 @@
                                 <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="home-tab">
                                     <div class="x_title">
                                         <br>&nbsp;
-                                        <br>&nbsp;
-                                        <br>&nbsp;
+                                      
                                         <h2> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<small></small></h2>
                                         <h2>Pagos<small></small>
                                         </h2>
@@ -287,8 +282,7 @@
                                 </div>
                                 <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="profile-tab">
                                     <div class="x_title">
-                                        <br>&nbsp;
-                                        <br>&nbsp;
+                                        
                                         <br>&nbsp;
                                         <h2> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<small></small></h2>
                                         <h2>Pagos<small></small>
@@ -374,8 +368,9 @@
                                         </div>
                                     </div>
                                 </div>
+                                @if ($vida->TipoCobro == 1)
                                 <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="usuarios-tab">
-                                    @if ($vida->TipoCobro == 1)
+                                    
 
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="Usuarios">
                                         <div class="x_title">
@@ -445,8 +440,9 @@
                                         <br>
                                     </div>
                                     @include('polizas.vida.modal_usuario')
-                                    @endif
+                                    
                                 </div>
+                                @endif
                             </div>
 
                         </div>

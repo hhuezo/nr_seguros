@@ -26,36 +26,16 @@ class Deuda extends Model
         'VigenciaDesde',
         'VigenciaHasta',
         'Tasa',
-        'MesesDesfase',
-        'SaldoCapital',
-        'MontoNominal',
         'Beneficios',
         'ClausulasEspeciales',
         'Concepto',
-        'TipoCartera',
         'EstadoPoliza',
-        'LimiteMedico',
-        'MaxAsegurado',
         'Descuento',
-        'DescuentoEspecial',
-        'ValorPrima',
-        'ExtraPrima',
-        'ValorCCF',
-        'APagar',
-        'ValorDescuento',
-        'ValorDescuentoEspecial',
         'Comision',
-        'IvaSobreComision',
-        'Retencion',
-        'PrimaDescontada',
         'FechaIngreso',
         'Activo',
         'Bomberos',
-        'EdadTerminacion',
-        'EdadMaxTerminacion',
-        'EdadIntermediaTerminacion',
-        'LimiteMaximoDeclaracion',
-        'LimiteIntermedioDeclaracion'
+        'Videuda'
     ];
 
     protected $guarded = [];
@@ -68,11 +48,6 @@ class Deuda extends Model
     public function aseguradoras()
     {
         return $this->belongsTo('App\Models\catalogo\Aseguradora', 'Aseguradora', 'Id');
-    }
-
-    public function tipoCarteras()
-    {
-        return $this->belongsTo('App\Models\catalogo\TipoCartera', 'TipoCartera', 'Id');
     }
 
     public function ejecutivos()

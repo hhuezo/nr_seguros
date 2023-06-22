@@ -74,7 +74,10 @@ class DeudaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //$deuda = new Deuda();
+        
+        
+        
     }
 
     /**
