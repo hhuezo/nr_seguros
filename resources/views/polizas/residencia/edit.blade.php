@@ -296,7 +296,7 @@
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
-                                        <form action="{{ url('polizas/residencia/create_pago') }}" method="POST" enctype="multipart/form-data">
+                                        <form action="{{ url('polizas/residencia/create_pago') }}" method="POST" enctype="multipart/form-data" target="_blank">
                                             @csrf
                                             <div class="modal-body">
                                                 <div class="form-group row">

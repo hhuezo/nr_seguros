@@ -34,6 +34,9 @@ class PolizaResidenciaTempCartera extends Model
         'NumeroCuotas',
         'TipoDeuda',
         'ClaseCartera',
-        'User'
+        'User',
+        'Axo',
+        'Mes',
+        'PolizaResidencia'
     ];
 }

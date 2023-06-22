@@ -2,19 +2,18 @@
 
 namespace App\Imports;
 
-use App\Models\temp\PolizaResidenciaTempCartera;
+use App\Models\polizas\PolizaResidenciaCartera;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 
-class PolizaResidenciaTempCarteraImport implements ToModel, WithStartRow, SkipsEmptyRows
+class PolizaResidenciaCarteraImport implements ToModel, WithStartRow,SkipsEmptyRows
 {
     /**
-     * @param array $row
-     *
-     * @return \Illuminate\Database\Eloquent\Model|null
-     */
-
+    * @param array $row
+    *
+    * @return \Illuminate\Database\Eloquent\Model|null
+    */
     public function startRow(): int
     {
         return 2;
@@ -35,7 +34,7 @@ class PolizaResidenciaTempCarteraImport implements ToModel, WithStartRow, SkipsE
     public function model(array $row)
     {
 
-        return new PolizaResidenciaTempCartera([
+        return new PolizaResidenciaCartera([
             'Dui' => $row[0],
             'Pasaporte' => $row[1],
             'CarnetResidencia' => $row[2],
