@@ -25,11 +25,13 @@ class PolizaResidenciaTempCarteraImport implements ToModel, WithStartRow, SkipsE
     private $PolizaResidencia;
 
 
-    public function __construct($Axo,$Mes,$PolizaResidencia)
+    public function __construct($Axo,$Mes,$PolizaResidencia,$FechaInicio,$FechaFinal)
     {
         $this->Axo = $Axo;
         $this->Mes = $Mes;
         $this->PolizaResidencia = $PolizaResidencia;
+        $this->FechaInicio = $FechaInicio;
+        $this->FechaFinal = $FechaFinal;
     }
 
     public function model(array $row)
@@ -59,6 +61,8 @@ class PolizaResidenciaTempCarteraImport implements ToModel, WithStartRow, SkipsE
             'Axo' =>  $this->Axo,
             'Mes' =>  $this->Mes,
             'PolizaResidencia' =>  $this->PolizaResidencia,
+            'FechaInicio' =>  $this->FechaInicio,
+            'FechaFinal' =>  $this->FechaFinal
         ]);
 
     }
