@@ -37,6 +37,8 @@ class PolizaResidenciaTempCartera extends Model
         'User',
         'Axo',
         'Mes',
-        'PolizaResidencia'
+        'PolizaResidencia',
+        'FechaInicio',
+        'FechaFinal'
     ];
 }
