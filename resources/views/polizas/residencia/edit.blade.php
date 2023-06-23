@@ -296,7 +296,7 @@
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
-                                        <form action="{{ url('polizas/residencia/create_pago') }}" method="POST" enctype="multipart/form-data">
+                                        <form id="FormArchivo" action="{{ url('polizas/residencia/create_pago') }}" method="POST" enctype="multipart/form-data"  target="_blank">
                                             @csrf
                                             <div class="modal-body">
                                                 <div class="form-group row">
@@ -348,7 +348,7 @@
                                             <div class="form-group row">
                                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Validar</label>
                                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input name="Validar" type="checkbox" checked class="js-switch" />
+                                                    <input name="Validar" id="Validar" type="checkbox" checked class="js-switch" />
                                                 </div>
                                             </div>
                                             <div class="clearfix"></div>
@@ -387,7 +387,7 @@
                                                         Cartera
                                                     </label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input class="form-control" name="MontoCartera" id="MontoCartera" type="number" step="any" value="{{ $residencia->MontoCartera }}" required>
+                                                        <input class="form-control" name="MontoCartera" id="MontoCartera" type="number" step="any" value="{{ session('MontoCartera', 0) }}" required>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
@@ -402,7 +402,21 @@
                                                         <input type="number" step="any" name="PrimaCalculada" id="PrimaCalculada" class="form-control">
                                                     </div>
                                                 </div>
+                                                <div class="form-group row">
+                                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Extra
+                                                        Prima</label>
+                                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                        <input class="form-control" name="ExtraPrima" type="number" step="any" id="ExtPrima">
+                                                    </div>
+                                                </div>
 
+                                                <div class="form-group row">
+                                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">
+                                                        Prima Total</label>
+                                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                        <input class="form-control" name="PrimaTotal" type="number" step="any" id="PrimaTotal" value="{{ old('PrimaToal') }}">
+                                                    </div>
+                                                </div>
 
                                                 <div class="form-group row">
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa de Descuento %</label>
@@ -547,206 +561,7 @@
                     </div>
 
                 </div>
-                <div class="modal fade bs-example-modal-lg" id="modal_pago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
-                    <div class="modal-dialog modal-lg" role="document">
-                        <div class="modal-content">
-                            <form action="{{ url('polizas/residencia/create_pago') }}" method="POST">
-                                <div class="modal-header">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <h5 class="modal-title" id="exampleModalLabel">Nuevo pago</h5>
-                                    </div>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="box-body row">
-                                        <input type="hidden" name="Residencia" id="Residencia" value="{{ $residencia->Id }}" class="form-control">
-                                        @csrf
-                                        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha Inicio</label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="FechaInicio" id="FechaInicio" type="date" required>
-                                                </div>
-                                            </div>
 
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Monto
-                                                    Cartera
-                                                </label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="MontoCartera" id="MontoCartera" type="number" step="any" value="{{ $residencia->MontoCartera }}" required>
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa %</label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input type="number" step="any" name="Tasa" id="Tasa" value="{{$residencia->Tasa}}" class="form-control" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Prima Calculada</label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input type="number" step="any" name="PrimaCalculada" id="PrimaCalculada" class="form-control">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Extra
-                                                    Prima</label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="ExtraPrima" type="number" step="any" id="ExtPrima">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">
-                                                    Prima Total</label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="PrimaTotal" type="number" step="any" id="PrimaTotal" value="{{ old('PrimaToal') }}">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa de Descuento %</label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="TasaDescuento" type="number" step="any" id="TasaDescuento">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Descuento</label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="Descuento" type="number" step="any" id="Descuento" value="{{ old('Descuento') }}">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">
-                                                    Prima Descontada</label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="PrimaDescontada" type="number" step="any" id="PrimaDescontada" value="{{ old('PrimaDescontada') }}">
-                                                </div>
-                                            </div>
-
-                                        </div>
-
-                                        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
-
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha Final</label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="FechaFinal" id="FechaFinal" type="date" required>
-                                                </div>
-                                            </div>
-                                            <input type="hidden" name="Bomberos" id="Bomberos" value="{{$bomberos}}">
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Impuestos bomberos</label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input type="number" step="any" name="ImpuestoBomberos" id="ImpuestoBomberos" value="{{ old('ImpuestosBomberos') }}" class="form-control" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Gastos emisión</label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input type="number" step="any" name="GastosEmision" id="GastosEmision" value="0" class="form-control">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Otros</label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input type="number" step="any" name="Otros" id="Otros" value="0" class="form-control">
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Sub Total</label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input type="number" step="any" name="SubTotal" id="SubTotal" class="form-control">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">IVA</label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input type="number" step="any" name="Iva" id="Iva" value="{{ old('Iva') }}" class="form-control">
-                                                </div>
-                                            </div>
-
-
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Menos valor CCF de comision</label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input type="number" step="any" name="Comision" id="ValorCCF" value="{{ old('Comision') }}" class="form-control">
-                                                </div>
-                                                <!-- <a href="" data-target="#modal-calculator" data-toggle="modal" class="col-md-1 control-label" style="text-align: center;"><span class="fa fa-calculator fa-lg"></span></a> -->
-                                            </div>
-
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">A pagar</label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input type="number" step="any" name="APagar" id="APagar" value="{{ old('APagar') }}" class="form-control">
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
-
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: center;">Estructura CCF de comisión</label>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Comision %</label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" value="{{$residencia->TasaComison}}">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Valor
-                                                    Desc</label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="ValorDescuento" id="ValorDescuento" type="number" step="any">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">mas 13%
-                                                    IVA sobre comisión</label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="IvaSobreComision" id="IvaSobreComision" type="number" step="any">
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">menos 1%
-                                                    Retención</label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="Retencion" id="Retencion" type="number" step="any" @if($residencia->clientes->TipoContribuyente == 1) readonly @endif>
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Valor CCF
-                                                    Comisión</label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" name="ValorCCF" id="ValorCCFE" type="number" step="any">
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <div class="col-sm-12">
-                                                    <label class="control-label">Comentario</label>
-                                                    <textarea name="Comentario" class="form-control"></textarea>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                    <div class="clearfix"></div>
-                                    <div class="modal-footer" align="center">
-                                        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
-                                        <button type="submit" class="btn btn-primary">Aceptar</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-
-                </div>
                 <div class="modal fade " id="modal_editar_pago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
                     <div class="modal-dialog modal-lg" role="document">
                         <div class="modal-content">
@@ -824,6 +639,20 @@
         <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
         <script type="text/javascript">
             $(document).ready(function() {
+                $('#Validar').on('change', function() {
+                    if($(this).is(':checked')){
+                    $('#FormArchivo').prop('target', '_blank');
+                    }else{
+                    $('#FormArchivo').removeAttr('target')
+                }
+                 });
+
+                calculoPrimaCalculada();
+                calculoPrimaTotal();
+                calculoDescuento();
+                calculoSubTotal();
+                calculoCCF();
+
                 $('#MontoCartera').change(function() {
                     if (document.getElementById('LimiteGrupo').value < document.getElementById('MontoCartera').value) {
                         swal('Su monto de cartera a superado al techo establecido en la poliza');
