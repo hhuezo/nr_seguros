@@ -82,7 +82,7 @@ Route::resource('polizas/residencia', ResidenciaController::class);
 Route::post('polizas/residencia/create_pago', [ResidenciaController::class,'create_pago']);
 Route::post('polizas/residencia/agregar_pago', [ResidenciaController::class,'agregar_pago']);
 Route::post('polizas/residencia/edit_pago', [ResidenciaController::class,'edit_pago']);
-
+Route::get('polizas/residencia/get_recibo',[ResidenciaController::class,'impresion']);
 Route::get('polizas/residencia/get_pago/{id}', [ResidenciaController::class,'get_pago']);
 Route::get('polizas/residencia/{id}/renovar',[ResidenciaController::class, 'renovar']);
 Route::get('polizas/residencia/{id}/cancelacion',[ResidenciaController::class, 'cancelacion']);

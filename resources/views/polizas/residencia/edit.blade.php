@@ -852,6 +852,7 @@
                 $("#ModalPagoAplicado").prop("readonly", true);
             }
 
+
             if (data.EnvioPago) {
                 document.getElementById('ModalEnvioPago').value = data.EnvioPago.substring(0, 10);
             } else {
