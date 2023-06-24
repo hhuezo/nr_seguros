@@ -833,8 +833,17 @@
 
 
             console.log(data);
-            document.getElementById('ModalSaldoA').value = data.SaldoA.substring(0, 10);
-            document.getElementById('ModalImpresionRecibo').value = data.ImpresionRecibo.substring(0, 10);
+            if(data.SaldoA != null)
+            {
+                document.getElementById('ModalSaldoA').value = data.SaldoA.substring(0, 10);
+            }
+
+            if(data.ImpresionRecibo != null)
+            {
+                document.getElementById('ModalImpresionRecibo').value = data.ImpresionRecibo.substring(0, 10);
+            }
+            
+            
             document.getElementById('ModalComentario').value = data.Comentario;
             if (data.EnvioCartera) {
                 document.getElementById('ModalEnvioCartera').value = data.EnvioCartera.substring(0, 10);
@@ -842,6 +851,7 @@
                 $("#ModalEnvioPago").prop("readonly", true);
                 $("#ModalPagoAplicado").prop("readonly", true);
             }
+
 
             if (data.EnvioPago) {
                 document.getElementById('ModalEnvioPago').value = data.EnvioPago.substring(0, 10);

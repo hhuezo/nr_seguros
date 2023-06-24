@@ -18,7 +18,7 @@
             </td>
             <td align="center">
                 @if ($requisito->EdadFinal2 == "")
-                    <strong>N/A</strong>
+                   
                 @else
                 <strong>De {{$requisito->EdadInicial2}} Hasta {{$requisito->EdadFinal2}} Años  <strong> <br>
                     Desde ${{$requisito->MontoInicial2}} <br> Hasta  ${{$requisito->MontoFinal2}}
@@ -27,7 +27,7 @@
             </td>
             <td align="center">
                 @if ($requisito->EdadFinal3 == "")
-                    <strong>N/A</strong>
+                   
                 @else
                 <strong>De {{$requisito->EdadInicial3}} Hasta {{$requisito->EdadFinal3}} Años  <strong> <br>
                     Desde ${{$requisito->MontoInicial3}} <br> Hasta  ${{$requisito->MontoFinal3}}

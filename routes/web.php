@@ -77,6 +77,7 @@ Route::get('catalogo/negocios/consultar', [NegocioController::class, 'consultar'
 
 
 //pólizas
+Route::get('polizas/residencia/get_recibo',[ResidenciaController::class,'impresion']);
 Route::resource('polizas/residencia', ResidenciaController::class);
 Route::post('polizas/residencia/create_pago', [ResidenciaController::class,'create_pago']);
 Route::post('polizas/residencia/agregar_pago', [ResidenciaController::class,'agregar_pago']);
