@@ -76,7 +76,6 @@ class ResidenciaController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->MontoCartera);
         $residencia = new Residencia();
         $residencia->Numero = 1;
         $residencia->NumeroPoliza = $request->NumeroPoliza;
@@ -88,58 +87,27 @@ class ResidenciaController extends Controller
         $residencia->VigenciaHasta = $request->VigenciaHasta;
         $residencia->LimiteGrupo = $request->LimiteGrupo;
         $residencia->LimiteIndividual = $request->LimiteIndividual;
-        // $residencia->MontoCartera = $request->MontoCartera;
         $residencia->Tasa = $request->Tasa;
         $residencia->Ejecutivo = $request->Ejecutivo;
         $residencia->TasaDescuento = $request->TasaDescuento;
         $residencia->Nit = $request->Nit;
         $residencia->Activo = 1;
-        $residencia->Mensual = $request->Mensual; //valor de radio button
+        $residencia->Mensual = $request->tipoTasa;
         $residencia->Comision = $request->TasaComision;
         $residencia->save();
 
-/*         $detalles = new DetalleResidencia();
-$detalles->MontoCartera = $request->MontoCartera;
-$detalles->Tasa = $request->Tasa;
-$detalles->Prima = $request->ValorPrima;
-$detalles->Descuento = $request->Descuento;
-$detalles->Iva = $request->Iva;
-$detalles->ValorCCF = $request->ValorCCF;
-$detalles->APagar = $request->APagar;
-$detalles->ComentariosDeCobro = $request->ComentariosdeCobro;
-$detalles->DescuentoIva = $request->DescuentoIva;
-$detalles->Comision = $request->Comision;
-$detalles->IvaSobreComision = $request->IvaSobreComision;
-$detalles->Retencion = $request->Retension;
-$detalles->ImpresionRecibo = $request->ImpresionRecibo;
-$detalles->EnvioCartera = $request->EnvioCartera;
-$detalles->PagoAplicado = $request->PagoAplicado;
-$detalles->SaldoA = $request->SaldoA;
-$detalles->EnvioPago = $request->EnvioPago;
-$detalles->Residencia = $residencia->Id;
-$detalles->save(); */
 
         alert()->success('El registro ha sido creado correctamente');
         return Redirect::to('polizas/residencia/create');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    /*
     public function show($id)
     {
         //
-    }
+    }*/
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function edit($id)
     {
         $residencia = Residencia::findOrFail($id);
@@ -160,13 +128,19 @@ $detalles->save(); */
 
         $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
 
-        return view('polizas.residencia.edit', compact('residencia', 'ejecutivo', 'detalle',
+        return view('polizas.residencia.edit', compact(
+            'residencia',
+            'ejecutivo',
+            'detalle',
             'cliente',
             'aseguradoras',
             'estados_poliza',
             'tipos_contribuyente',
             'rutas',
-            'ubicaciones_cobro', 'bomberos', 'meses'));
+            'ubicaciones_cobro',
+            'bomberos',
+            'meses'
+        ));
     }
 
     /**
@@ -303,41 +277,50 @@ $detalles->save(); */
 
             alert()->success('El registro ha sido ingresado correctamente');
             return back();
-
         } catch (Throwable $e) {
             print($e);
             return false;
         }
-        /* $detalle = new DetalleResidencia();
-    $detalle->FechaInicio = $request->FechaInicio;
-    $detalle->FechaFinal = $request->FechaFinal;
-    $detalle->MontoCartera = $request->MontoCartera;
-    $detalle->Residencia = $request->Residencia;
-    $detalle->Tasa = $request->Tasa;
-    $detalle->PrimaTotal = $request->PrimaTotal;
-    $detalle->Descuento = $request->Descuento;
-    $detalle->Iva = $request->Iva;
-    $detalle->ValorCCF = $request->ValorCCF;
-    $detalle->APagar = $request->APagar;
-    $detalle->Comentario = $request->Comentario;
-    $detalle->DescuentoIva = $request->DescuentoIva;  //checked
-    $detalle->Comision = $request->Comision;
-    $detalle->IvaSobreComision = $request->IvaSobreComision;
-    $detalle->Retencion = $request->Retencion;
-    $detalle->Residencia = $request->Residencia;
-    $detalle->ExtraPrima = $request->ExtraPrima;
-    $detalle->ImpuestoBomberos = $request->ImpuestoBomberos;
-    $detalle->ValorDescuento = $request->ValorDescuento;
-    $detalle->TasaComision = $request->TasaComision;
-    $detalle->PrimaDescontada = $request->PrimaDescontada;
-    $detalle->save();
+        /*
+        */
+    }
 
-     */
+    public function agregar_pago(Request $request){
+        
+
+       $residencia = Residencia::findOrFail($request->Residencia); 
+        $detalle = new DetalleResidencia();
+        $detalle->FechaInicio = $request->FechaInicio;
+        $detalle->FechaFinal = $request->FechaFinal;
+        $detalle->MontoCartera = $request->MontoCartera;
+        $detalle->Residencia = $request->Residencia;
+        $detalle->Tasa = $request->Tasa;
+        $detalle->PrimaTotal = $request->PrimaTotal;
+        $detalle->Descuento = $request->Descuento;
+        $detalle->Iva = $request->Iva;
+        $detalle->ValorCCF = $request->ValorCCF;
+        $detalle->APagar = $request->APagar;
+        $detalle->Comentario = $request->Comentario;
+        $detalle->DescuentoIva = $request->DescuentoIva;  //checked
+        $detalle->Comision = $request->Comision;
+        $detalle->IvaSobreComision = $request->IvaSobreComision;
+        $detalle->Retencion = $request->Retencion;
+        $detalle->Residencia = $request->Residencia;
+        $detalle->ExtraPrima = $request->ExtraPrima;
+        $detalle->ImpuestoBomberos = $request->ImpuestoBomberos;
+        $detalle->ValorDescuento = $request->ValorDescuento;
+        $detalle->TasaComision = $request->TasaComision;
+        $detalle->PrimaDescontada = $request->PrimaDescontada;
+        $detalle->save();
+        alert()->success('El registro de pago ha sido ingresado correctamente');
+        return back();
     }
 
     public function edit_pago(Request $request)
     {
         $detalle = DetalleResidencia::findOrFail($request->Id);
+        $detalle->APagar = $request->APagar;
+        $detalle->ImpresionRecibo = $request->ImpresionRecibo;
         //dd($request->EnvioCartera .' 00:00:00');
         if ($request->EnvioCartera) {
             $detalle->EnvioCartera = $request->EnvioCartera;
@@ -360,7 +343,10 @@ $detalles->save(); */
     public function get_pago($id)
     {
         return DetalleResidencia::findOrFail($id);
+    }
 
+    public function impresion(Request $request){
+        dd("holi");
     }
 
     public function renovar($id)
@@ -385,6 +371,5 @@ $detalles->save(); */
 
         alert()->success('La poliza fue renovada correctamente');
         return back();
-
     }
 }

@@ -77,11 +77,15 @@ Route::get('catalogo/negocios/consultar', [NegocioController::class, 'consultar'
 
 
 //pólizas
+Route::get('polizas/residencia/get_recibo',[ResidenciaController::class,'impresion']);
 Route::resource('polizas/residencia', ResidenciaController::class);
 Route::post('polizas/residencia/create_pago', [ResidenciaController::class,'create_pago']);
+Route::post('polizas/residencia/agregar_pago', [ResidenciaController::class,'agregar_pago']);
 Route::post('polizas/residencia/edit_pago', [ResidenciaController::class,'edit_pago']);
+Route::get('polizas/residencia/get_recibo',[ResidenciaController::class,'impresion']);
 Route::get('polizas/residencia/get_pago/{id}', [ResidenciaController::class,'get_pago']);
 Route::get('polizas/residencia/{id}/renovar',[ResidenciaController::class, 'renovar']);
+Route::get('polizas/residencia/{id}/cancelacion',[ResidenciaController::class, 'cancelacion']);
 Route::post('polizas/residencia/renovar/{id}',[ResidenciaController::class, 'renovarPoliza'])->name('residencia.renovarPoliza');
 
 Route::resource('polizas/vida', VidaController::class);
@@ -99,7 +103,10 @@ Route::post('poliza/vida/usuario_delete',[VidaController::class,'eliminarUsuario
 Route::get('poliza/vida/usuario_create',[VidaController::class, 'agregarUsuario']);
 Route::get('poliza/vida/usuario/{id}',[VidaController::class, 'getUsuario']);
 
+Route::post('polizas/deuda/store_requisitos',[DeudaController::class, 'store_requisitos']);
+Route::get('polizas/deuda/get_requisitos',[DeudaController::class, 'get_requisitos']);
 Route::resource('polizas/deuda',DeudaController::class);
+
 
 //validación de cartera
 Route::resource('polizas/validacion_cartera', ValidacionCarteraController::class);

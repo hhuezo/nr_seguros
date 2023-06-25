@@ -14,8 +14,9 @@ use App\Models\catalogo\TipoCobro;
 use App\Models\catalogo\TipoContribuyente;
 use App\Models\catalogo\UbicacionCobro;
 use App\Models\polizas\Deuda;
+use App\Models\polizas\DeudaRequisitos;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\DB;
 class DeudaController extends Controller
 {
     /**
@@ -41,7 +42,7 @@ class DeudaController extends Controller
         $ubicaciones_cobro =  UbicacionCobro::where('Activo', '=', 1)->get();
         $bombero = Bombero::where('Activo',1)->first();
         if($bombero){
-           $bomberos = $bombero->Valor; 
+           $bomberos = $bombero->Valor;
         }
         else{
             $bomberos = $bombero->Valor;
@@ -66,15 +67,41 @@ class DeudaController extends Controller
         ));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    public function store_requisitos(Request $request)
+    {
+        $requisito = new DeudaRequisitos();
+        $requisito->Requisito= $request->Requisito;
+        $requisito->EdadInicial= $request->EdadInicial;
+        $requisito->EdadFinal= $request->EdadFinal;
+        $requisito->MontoInicial= $request->MontoInicial;
+        $requisito->MontoFinal= $request->MontoFinal;
+        $requisito->EdadInicial2= $request->EdadInicial2;
+        $requisito->EdadFinal2= $request->EdadFinal2;
+        $requisito->MontoInicial2= $request->MontoInicial2;
+        $requisito->MontoFinal2= $request->MontoFinal2;
+        $requisito->EdadInicial3= $request->EdadInicial3;
+        $requisito->EdadFinal3= $request->EdadFinal3;
+        $requisito->MontoInicial3= $request->MontoInicial3;
+        $requisito->MontoFinal3= $request->MontoFinal3;
+        $requisito->save();
+        return $requisito->Id;
+    }
+
+    public function get_requisitos(Request $request)
+    {
+        $sql =  "select * from poliza_deuda_requisitos where id in ($request->Requisitos)";
+        $requisitos =  DB::select($sql);
+
+        return view('polizas.deuda.requisitos', compact('requisitos'));
+    }
+
+
     public function store(Request $request)
     {
-        //
+        //$deuda = new Deuda();
+
+
+
     }
 
     /**
