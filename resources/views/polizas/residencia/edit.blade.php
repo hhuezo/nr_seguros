@@ -386,7 +386,7 @@
                                                 <div class="form-group row">
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha Inicio</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input class="form-control" name="FechaInicio" id="FechaInicio" type="date" required>
+                                                        <input class="form-control" name="FechaInicio" id="FechaInicio" type="date"  value="{{ session('FechaInicio') }}" required>
                                                     </div>
                                                 </div>
 
@@ -453,7 +453,7 @@
                                                 <div class="form-group row">
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha Final</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input class="form-control" name="FechaFinal" id="FechaFinal" type="date" required>
+                                                        <input class="form-control" name="FechaFinal" id="FechaFinal"  value="{{ session('FechaFinal') }}" type="date" required>
                                                     </div>
                                                 </div>
                                                 <input type="hidden" name="Bomberos" id="Bomberos" value="{{$bomberos}}">
@@ -842,8 +842,8 @@
             {
                 document.getElementById('ModalImpresionRecibo').value = data.ImpresionRecibo.substring(0, 10);
             }
-            
-            
+
+
             document.getElementById('ModalComentario').value = data.Comentario;
             if (data.EnvioCartera) {
                 document.getElementById('ModalEnvioCartera').value = data.EnvioCartera.substring(0, 10);
