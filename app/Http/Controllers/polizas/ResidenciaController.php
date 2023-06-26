@@ -214,6 +214,7 @@ class ResidenciaController extends Controller
             $axo_evaluar = $request->Axo;
         }
 
+       // dd("call poliza_residencia_validaciones(".$request->Id."," . auth()->user()->id . ",$mes_evaluar,$axo_evaluar)");
         try {
             $archivo = $request->Archivo;
             PolizaResidenciaTempCartera::where('User', '=', auth()->user()->id)->delete();
@@ -239,7 +240,14 @@ class ResidenciaController extends Controller
 
             if ($request->Validar == "on") {
 
-                $eliminados = DB::table('poliza_residencia_cartera')
+                DB::unprepared("call poliza_residencia_validaciones(".$request->Id."," . auth()->user()->id . ",$mes_evaluar,$axo_evaluar)");
+
+                $eliminados = DB::table('poliza_residencia_cartera')->where('Eliminado','=',1)->get();
+                $nuevos = DB::table('poliza_residencia_temp_cartera')->where('Nuevo','=',1)->get();
+
+
+
+                /*$eliminados = DB::table('poliza_residencia_cartera')
                     ->select('poliza_residencia_cartera.NumeroReferencia', 'poliza_residencia_cartera.Dui', 'poliza_residencia_cartera.NombreCompleto', 'poliza_residencia_cartera.SumaAsegurada')
                     ->leftJoin('poliza_residencia_temp_cartera', function ($join) use ($request, $residencia) {
                         $join->on('poliza_residencia_cartera.NumeroReferencia', '=', 'poliza_residencia_temp_cartera.NumeroReferencia')
@@ -270,10 +278,14 @@ class ResidenciaController extends Controller
                     ->where('poliza_residencia_temp_cartera.Axo', $request->Axo)
                     ->where('poliza_residencia_temp_cartera.Mes', $request->Mes)
                     ->where('poliza_residencia_temp_cartera.PolizaResidencia', $residencia->Id)
-                    ->get();
+                    ->get();*/
 
-                return view('polizas.validacion_cartera.resultado', compact('nuevos', 'eliminados'));
+
+                    return view('polizas.validacion_cartera.resultado', compact('nuevos', 'eliminados'));
             }
+
+
+
 
             DB::unprepared('CALL insertar_temp_cartera_residencia();');
 
@@ -298,6 +310,7 @@ class ResidenciaController extends Controller
     {
 
         $residencia = Residencia::findOrFail($request->Residencia);
+
         $detalle = new DetalleResidencia();
         $detalle->FechaInicio = $request->FechaInicio;
         $detalle->FechaFinal = $request->FechaFinal;
