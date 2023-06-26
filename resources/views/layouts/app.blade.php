@@ -53,7 +53,7 @@
 
 </head>
 
-<body style="background-image:url('dentco-html/images/LOGO_app.png'); background-repeat: no-repeat; background-size: 30% ; background-position-x:right ; background-position-y:bottom ;">
+<body style=" background-repeat: no-repeat; background-size: 30% ; background-position-x:right ; background-position-y:bottom ;">
     <div id="app">
         <div class="container">
             <div class="row align-items-lg-center">
