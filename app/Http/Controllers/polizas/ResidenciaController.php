@@ -20,6 +20,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ResidenciaController extends Controller
@@ -31,7 +32,12 @@ class ResidenciaController extends Controller
      */
     public function index()
     {
+        $today = Carbon::now()->toDateString();
+
         session(['MontoCartera' => 0]);
+        session(['FechaInicio' => $today]);
+        session(['FechaFinal' => $today]);
+
         $residencias = Residencia::where('Activo', 1)->get();
         return view('polizas.residencia.index', compact('residencias'));
     }
@@ -96,7 +102,6 @@ class ResidenciaController extends Controller
         $residencia->Comision = $request->TasaComision;
         $residencia->save();
 
-
         alert()->success('El registro ha sido creado correctamente');
         return Redirect::to('polizas/residencia/create');
     }
@@ -104,9 +109,8 @@ class ResidenciaController extends Controller
     /*
     public function show($id)
     {
-        //
+    //
     }*/
-
 
     public function edit($id)
     {
@@ -195,6 +199,9 @@ class ResidenciaController extends Controller
 
     public function create_pago(Request $request)
     {
+        $fecha = Carbon::create(null, $request->Mes, 1);
+        $nombreMes = $fecha->locale('es')->monthName;
+
         $time = Carbon::now('America/El_Salvador');
 
         $residencia = Residencia::findOrFail($request->Id);
@@ -286,6 +293,10 @@ class ResidenciaController extends Controller
                 ->where('Mes', $request->Mes)
                 ->where('PolizaResidencia', $residencia->Id)->sum('SumaAsegurada');
             session(['MontoCartera' => $monto_cartera_total]);
+            session(['FechaInicio' => $request->FechaInicio]);
+            session(['FechaFinal' => $request->FechaFinal]);
+            $filePath = 'documentos/polizas/' . $residencia->NumeroPoliza .'-'.$nombreMes.'-'.$request->Axo.'.xlsx';
+            Storage::disk('public')->put($filePath, file_get_contents($archivo));
 
             alert()->success('El registro ha sido ingresado correctamente');
             return back();
@@ -293,14 +304,13 @@ class ResidenciaController extends Controller
             print($e);
             return false;
         }
-        /*
-        */
     }
 
-    public function agregar_pago(Request $request){
+    public function agregar_pago(Request $request)
+    {
 
+        $residencia = Residencia::findOrFail($request->Residencia);
 
-       $residencia = Residencia::findOrFail($request->Residencia);
         $detalle = new DetalleResidencia();
         $detalle->FechaInicio = $request->FechaInicio;
         $detalle->FechaFinal = $request->FechaFinal;
@@ -313,7 +323,7 @@ class ResidenciaController extends Controller
         $detalle->ValorCCF = $request->ValorCCF;
         $detalle->APagar = $request->APagar;
         $detalle->Comentario = $request->Comentario;
-        $detalle->DescuentoIva = $request->DescuentoIva;  //checked
+        $detalle->DescuentoIva = $request->DescuentoIva; //checked
         $detalle->Comision = $request->Comision;
         $detalle->IvaSobreComision = $request->IvaSobreComision;
         $detalle->Retencion = $request->Retencion;
@@ -357,7 +367,8 @@ class ResidenciaController extends Controller
         return DetalleResidencia::findOrFail($id);
     }
 
-    public function impresion(Request $request){
+    public function impresion(Request $request)
+    {
         dd("holi");
     }
 
