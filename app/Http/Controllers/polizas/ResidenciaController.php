@@ -214,6 +214,7 @@ class ResidenciaController extends Controller
             $axo_evaluar = $request->Axo;
         }
 
+       // dd("call poliza_residencia_validaciones(".$request->Id."," . auth()->user()->id . ",$mes_evaluar,$axo_evaluar)");
         try {
             $archivo = $request->Archivo;
             PolizaResidenciaTempCartera::where('User', '=', auth()->user()->id)->delete();
@@ -243,7 +244,8 @@ class ResidenciaController extends Controller
 
                 $nuevos = DB::select('CALL lista_residencia_nuevos(?, ?, ?, ?, ?, ?)', [ $axo_evaluar, $mes_evaluar, $residencia->Id, auth()->user()->id, $request->Axo, $request->Mes]);
 
-                return view('polizas.validacion_cartera.resultado', compact('nuevos', 'eliminados'));
+
+                    return view('polizas.validacion_cartera.resultado', compact('nuevos', 'eliminados'));
             }
 
             DB::statement("CALL insertar_temp_cartera_residencia(?, ?, ?, ?)", [auth()->user()->id, $request->Axo, $request->Mes, $residencia->Id]);
@@ -271,6 +273,7 @@ class ResidenciaController extends Controller
     {
 
         $residencia = Residencia::findOrFail($request->Residencia);
+
         $detalle = new DetalleResidencia();
         $detalle->FechaInicio = $request->FechaInicio;
         $detalle->FechaFinal = $request->FechaFinal;
