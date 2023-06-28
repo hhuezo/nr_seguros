@@ -239,51 +239,24 @@ class ResidenciaController extends Controller
 
             if ($request->Validar == "on") {
 
-                $eliminados = DB::table('poliza_residencia_cartera')
-                    ->select('poliza_residencia_cartera.NumeroReferencia', 'poliza_residencia_cartera.Dui', 'poliza_residencia_cartera.NombreCompleto', 'poliza_residencia_cartera.SumaAsegurada')
-                    ->leftJoin('poliza_residencia_temp_cartera', function ($join) use ($request, $residencia) {
-                        $join->on('poliza_residencia_cartera.NumeroReferencia', '=', 'poliza_residencia_temp_cartera.NumeroReferencia')
-                            ->orOn('poliza_residencia_cartera.Dui', '=', 'poliza_residencia_temp_cartera.Dui')
-                            ->orOn('poliza_residencia_cartera.NombreCompleto', '=', 'poliza_residencia_temp_cartera.NombreCompleto')
-                            ->where('poliza_residencia_temp_cartera.User', auth()->user()->id)
-                            ->where('poliza_residencia_temp_cartera.Axo', $request->Axo)
-                            ->where('poliza_residencia_temp_cartera.Mes', $request->Mes)
-                            ->where('poliza_residencia_temp_cartera.PolizaResidencia', $residencia->Id);
-                    })
-                    ->whereNull('poliza_residencia_temp_cartera.NumeroReferencia')
-                    ->where('poliza_residencia_cartera.Axo', $axo_evaluar)
-                    ->where('poliza_residencia_cartera.Mes', $mes_evaluar)
-                    ->where('poliza_residencia_cartera.PolizaResidencia', $residencia->Id)
-                    ->get();
+                $eliminados = DB::select('CALL lista_residencia_eliminados(?, ?, ?, ?, ?, ?)', [ $axo_evaluar, $mes_evaluar, $residencia->Id, auth()->user()->id, $request->Axo, $request->Mes]);
 
-                $nuevos = PolizaResidenciaTempCartera::select('poliza_residencia_temp_cartera.NumeroReferencia', 'poliza_residencia_temp_cartera.Dui', 'poliza_residencia_temp_cartera.NombreCompleto', 'poliza_residencia_temp_cartera.SumaAsegurada')
-                    ->leftJoin('poliza_residencia_cartera', function ($join) use ($axo_evaluar, $mes_evaluar, $residencia) {
-                        $join->on('poliza_residencia_temp_cartera.NumeroReferencia', '=', 'poliza_residencia_cartera.NumeroReferencia')
-                            ->orOn('poliza_residencia_temp_cartera.Dui', '=', 'poliza_residencia_cartera.Dui')
-                            ->orOn('poliza_residencia_temp_cartera.NombreCompleto', '=', 'poliza_residencia_cartera.NombreCompleto')
-                            ->where('poliza_residencia_cartera.Axo', $axo_evaluar)
-                            ->where('poliza_residencia_cartera.Mes', $mes_evaluar)
-                            ->where('poliza_residencia_cartera.PolizaResidencia', $residencia->Id);
-                    })
-                    ->whereNull('poliza_residencia_cartera.NumeroReferencia')
-                    ->where('poliza_residencia_temp_cartera.User', auth()->user()->id)
-                    ->where('poliza_residencia_temp_cartera.Axo', $request->Axo)
-                    ->where('poliza_residencia_temp_cartera.Mes', $request->Mes)
-                    ->where('poliza_residencia_temp_cartera.PolizaResidencia', $residencia->Id)
-                    ->get();
+                $nuevos = DB::select('CALL lista_residencia_nuevos(?, ?, ?, ?, ?, ?)', [ $axo_evaluar, $mes_evaluar, $residencia->Id, auth()->user()->id, $request->Axo, $request->Mes]);
 
                 return view('polizas.validacion_cartera.resultado', compact('nuevos', 'eliminados'));
             }
 
-            DB::unprepared('CALL insertar_temp_cartera_residencia();');
+            DB::statement("CALL insertar_temp_cartera_residencia(?, ?, ?, ?)", [auth()->user()->id, $request->Axo, $request->Mes, $residencia->Id]);
 
             $monto_cartera_total = PolizaResidenciaCartera::where('Axo', $request->Axo)
                 ->where('Mes', $request->Mes)
                 ->where('PolizaResidencia', $residencia->Id)->sum('SumaAsegurada');
+
             session(['MontoCartera' => $monto_cartera_total]);
             session(['FechaInicio' => $request->FechaInicio]);
             session(['FechaFinal' => $request->FechaFinal]);
-            $filePath = 'documentos/polizas/' . $residencia->NumeroPoliza .'-'.$nombreMes.'-'.$request->Axo.'.xlsx';
+
+            $filePath = 'documentos/polizas/' . $residencia->NumeroPoliza . '-' . $nombreMes . '-' . $request->Axo . '.xlsx';
             Storage::disk('public')->put($filePath, file_get_contents($archivo));
 
             alert()->success('El registro ha sido ingresado correctamente');

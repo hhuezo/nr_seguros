@@ -6,7 +6,7 @@
 
 
         @if (isset($nuevos))
-            @if ($nuevos->count() > 0)
+            @if (count($nuevos) > 0)
                 <div class="x_title">
                     <div class="col-md-6 col-sm-6 col-xs-12">
                         <h3>Nuevos créditos</h3>
@@ -47,7 +47,7 @@
 
 
         @if (isset($eliminados))
-            @if ($eliminados->count() > 0)
+            @if (count($eliminados) > 0)
                 <div class="x_title">
                     <div class="col-md-6 col-sm-6 col-xs-12">
                         <h3>Créditos Eliminados</h3>
