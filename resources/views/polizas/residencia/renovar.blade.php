@@ -6,7 +6,7 @@
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
 
             <div class="x_title">
-                <h2>RESI - Poliza de Residencia <small></small></h2>
+                <h2>RESI - Poliza de Residencia Renovar o Cancelar Poliza <small></small></h2>
                 <ul class="nav navbar-right panel_toolbox">
 
                 </ul>
@@ -28,7 +28,7 @@
                 @csrf
                 <div class="x_content" style="font-size: 12px;">
                     <br />
-                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 ">
                         <div class="form-group row">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Código</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
@@ -62,10 +62,25 @@
                                 <input class="form-control" name="Nit" id="Nit" type="text" value="{{$residencia->Nit }}" readonly>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Estatus</label>
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                            <select name="EstadoPoliza" id="EstadoPoliza" class="form-control" style="width: 100%" required >
+                            <option value="">Seleccione...</option>
+                                    @foreach ($estados_poliza as $obj)
+                                    
+                                    @if($obj->Id <> 1)
+                                    
+                                    <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                    @endif
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
 
 
                     </div>
-                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 " id="Renovado" style="display: show;">
                         <div class="form-group row">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">&nbsp;
                             </label>
@@ -105,64 +120,52 @@
                         <div class="form-group">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12">Limite individual</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input type="number" step="any" name="LimiteIndividual" value="{{ $residencia->LimiteIndividual }}" class="form-control">
+                                <input type="number" step="any" name="LimiteIndividual" id="LimiteIndividual" value="{{ $residencia->LimiteIndividual }}" class="form-control">
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Monto cartera</label>
-                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input type="number" step="any" name="MontoCartera" value="{{ $residencia->MontoCartera }}" class="form-control">
-                            </div>
-                        </div>
-
 
                         <div class="form-group">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12">Tasa %</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input type="number" step="any" name="Tasa" value="{{$residencia->Tasa }}" class="form-control">
+                                <input type="number" step="any" name="Tasa" value="{{$residencia->Tasa }}" class="form-control" id="Tasa">
                             </div>
                         </div>
-
-
-                    </div>
-
-                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
 
                         <div class="form-group row">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vigencia
                                 Desde</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="VigenciaDesde" type="date" value="{{ \Carbon\Carbon::parse($residencia->VigenciaDesde)->format('d/m/Y') }}">
+                                <input class="form-control" name="VigenciaDesde"  id="VigenciaDesde" type="date" value="{{ \Carbon\Carbon::parse($residencia->VigenciaDesde)->format('d/m/Y') }}">
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vigencia
                                 Hasta</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="VigenciaHasta" type="date" value="{{ \Carbon\Carbon::parse($residencia->VigenciaHasta)->format('d/m/Y') }}">
+                                <input class="form-control" name="VigenciaHasta" id="VigenciaHasta" type="date" value="{{ \Carbon\Carbon::parse($residencia->VigenciaHasta)->format('d/m/Y') }}">
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vendedor</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input type="text" value="{{$residencia->ejecutivos->Nombre}}" class="form-control" readonly>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Estatus</label>
-                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                            <select name="EstadoPoliza" class="form-control" style="width: 100%" disabled>
-                                    @foreach ($estados_poliza as $obj)
-                                    @if($obj->Id == 2)
-                                    <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                <select name="Ejecutivo" id="Ejecutivo" class="form-control select2" style="width: 100%" required>
+                                    <option value="">Seleccione...</option>
+                                    @foreach ($ejecutivo as $obj)
+                                    @if($obj->Id == $residencia->Ejecutivo)
+                                    <option value="{{ $obj->Id }}" selected>{{ $obj->Nombre }}</option>
+                                    @else
+                                    <option value="{{ $obj->Id }}" >{{ $obj->Nombre }}</option>
                                     @endif
                                     @endforeach
                                 </select>
                             </div>
                         </div>
+                        
 
 
                     </div>
+
+       
 
                     <br><br>
                     <div class="x_title">
@@ -196,82 +199,25 @@
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#MontoCartera').change(function() {
-            if (document.getElementById('LimiteGrupo').value < document.getElementById('MontoCartera').value) {
-                // alert()
-                alert('Su monto de cartera a superado al techo establecido en la poliza');
-            } else {
-
-                var monto = document.getElementById('MontoCartera').value;
-                var tasa = document.getElementById('Tasa').value;
-                if (document.getElementById('Anual').checked == true) {
-                    var tasaFinal = (tasa / 1000) / 12;
-                } else {
-                    var tasaFinal = tasa / 1000;
-                }
-                var sub = Number(monto) * Number(tasaFinal);
-                document.getElementById('PrimaCalculada').value = sub;
-                var bomberos = (monto * (0.04 / 12) / 1000); //valor de impuesto varia por gobierno
-                document.getElementById('ImpuestoBomberos').value = bomberos;
+        $("#EstadoPoliza").change(function(){
+            if(document.getElementById('EstadoPoliza').value != 2){
+                $('#LimiteGrupo').attr('required');
+                $('#LimiteIndividual').attr('required');
+                $('#Tasa').attr('required');
+                $('#VigenciaDesde').attr('required');
+                $('#VigenciaHasta').attr('required');
+                $('#Ejecutivo').attr('required');
+                $("#Renovado").hide();
+               
+            }else{
+                $('#LimiteGrupo').removeAttr('required');
+                $('#LimiteIndividual').removeAttr('required');
+                $('#Tasa').removeAttr('required');
+                $('#VigenciaDesde').removeAttr('required');
+                $('#VigenciaHasta').removeAttr('required');
+                $('#Ejecutivo').removeAttr('required');
+                $("#Renovado").show();
             }
-        })
-        $('#ExtPrima').change(function() {
-            var sub = document.getElementById('PrimaCalculada').value;
-            var extra = document.getElementById('ExtPrima').value;
-            var prima = Number(sub) + Number(extra);
-            document.getElementById('PrimaTotal').value = Number(prima);
-        })
-        $('#Descuento').change(function() {
-            var prima = document.getElementById('PrimaTotal').value;
-            var descuento = document.getElementById('Descuento').value;
-            var bomberos = document.getElementById('ImpuestoBomberos').value;
-            if (descuento == 0) {
-                var total = Number(prima);
-            } else {
-                var total = Number(prima * (descuento / 100));
-            }
-            document.getElementById('PrimaDescontada').value = total;
-            document.getElementById('Iva').value = total * 0.13;
-            document.getElementById('SubTotal').value = Number(total) + Number(bomberos);
-        })
-
-        $('#TasaComision').change(function() {
-            var comision = document.getElementById('TasaComision').value;
-            var total = document.getElementById('PrimaDescontada').value;
-
-            var valorDes = total * (comision / 100);
-            document.getElementById('ValorDescuento').value = Number(valorDes);
-            var IvaSobreComision = Number(valorDes) * 0.13;
-
-            document.getElementById('IvaSobreComision').value = Number(IvaSobreComision);
-            if (document.getElementById('Retencion').hasAttribute('readonly')) {
-                var Retencion = 0;
-            } else {
-                var Retencion = valorDes * 0.01;
-                document.getElementById('Retencion').value = Retencion;
-            }
-            var ValorCCF = Number(valorDes) + Number(IvaSobreComision) - Number(Retencion);
-            // alert(ValorCCF);
-            document.getElementById('ValorCCFE').value = Number(ValorCCF);
-            document.getElementById('ValorCCF').value = Number(ValorCCF);
-            var PrimaTotal = document.getElementById('PrimaTotal').value;
-            var APagar = Number(PrimaTotal) - Number(ValorCCF);
-            document.getElementById('APagar').value = APagar;
-        })
-
-        $("#habilitar").click(function() {
-            //  $("#btn_guardar").click(function() {
-            document.getElementById('ImpresionRecibo').removeAttribute('readonly');
-            document.getElementById('ImpresionRecibo').type = 'date';
-            document.getElementById('EnvioCartera').type = 'date';
-            document.getElementById('EnvioPago').type = 'date';
-            document.getElementById('PagoAplicado').type = 'date';
-            document.getElementById('SaldoA').type = 'date';
-            document.getElementById('ValorDescuento').value = 0;
-            document.getElementById('IvaSobreComision').value = 0;
-            document.getElementById('Retencion').value = 0;
-            document.getElementById('ValorCCFE').value = 0;
-
         })
     })
 

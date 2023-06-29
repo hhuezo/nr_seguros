@@ -19,7 +19,7 @@ class Cliente extends Model
         'Nit',
         'Dui',
         'Nombre',
-        'DireccionRecidencia',
+        'DireccionResidencia',
         'DireccionCorrespondencia',
         'TelefonoResidencia',
         'TelefonoOficina',
