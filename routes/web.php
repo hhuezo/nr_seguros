@@ -106,6 +106,8 @@ Route::get('poliza/vida/usuario/{id}',[VidaController::class, 'getUsuario']);
 Route::post('polizas/deuda/store_requisitos',[DeudaController::class, 'store_requisitos']);
 Route::get('polizas/deuda/get_requisitos',[DeudaController::class, 'get_requisitos']);
 Route::resource('polizas/deuda',DeudaController::class);
+Route::post('polizas/deuda/create_pago', [DeudaController::class,'create_pago']);
+
 
 
 //validación de cartera

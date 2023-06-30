@@ -387,7 +387,7 @@
                                                         <span aria-hidden="true">&times;</span>
                                                     </button>
                                                 </div>
-                                                <form id="FormArchivo" action="{{ url('polizas/residencia/create_pago') }}" method="POST" enctype="multipart/form-data" target="_blank">
+                                                <form id="FormArchivo" action="{{ url('polizas/deuda/create_pago') }}" method="POST" enctype="multipart/form-data" target="_blank">
                                                     @csrf
                                                     <div class="modal-body">
                                                         <div class="form-group row">
@@ -463,13 +463,14 @@
                                             </div>
                                             <div class="modal-body">
                                                 <div class="box-body row">
+                                                    <input type="hidden" name="ExcelURLDeuda" id="ExcelURLDeuda" value="{{ session('ExcelURLDeuda')  }}" class="form-control">
                                                     <input type="hidden" name="Deuda" id="Deuda" value="{{ $deuda->Id }}" class="form-control">
                                                     @csrf
                                                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
                                                         <div class="form-group row">
                                                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha Inicio</label>
                                                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                                <input class="form-control" name="FechaInicio" id="FechaInicio" type="date" required>
+                                                                <input class="form-control" name="FechaInicio" id="FechaInicio" type="date" value="{{ session('FechaInicioDeuda') }}" required>
                                                             </div>
                                                         </div>
 
@@ -478,7 +479,7 @@
                                                                 Cartera
                                                             </label>
                                                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                                <input class="form-control" name="MontoCartera" id="MontoCartera" type="number" step="any" value="{{ session('MontoCartera', 0) }}" required>
+                                                                <input class="form-control" name="MontoCartera" id="MontoCartera" type="number" step="any" value="{{ session('MontoCarteraDeuda', 0) }}" required>
                                                             </div>
                                                         </div>
                                                         <div class="form-group row">
@@ -536,7 +537,7 @@
                                                         <div class="form-group row">
                                                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha Final</label>
                                                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                                <input class="form-control" name="FechaFinal" id="FechaFinal" type="date" required>
+                                                                <input class="form-control" name="FechaFinal" id="FechaFinal" type="date" value="{{ session('FechaFinalDeuda') }}" required>
                                                             </div>
                                                         </div>
                                                         <input type="hidden" name="Bomberos" id="Bomberos" value="{{$bomberos}}">

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\polizas;
 
 use App\Http\Controllers\Controller;
+use App\Imports\PolizaDeudaTempCarteraImport;
 use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\Bombero;
 use App\Models\catalogo\Cliente;
@@ -18,9 +19,13 @@ use App\Models\polizas\DeudaCredito;
 use App\Models\polizas\DeudaDetalle;
 use App\Models\polizas\DeudaRequisitos;
 use App\Models\polizas\DeudaVida;
+use App\Models\polizas\PolizaDeudaCartera;
+use App\Models\temp\PolizaDeudaTempCartera;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DeudaController extends Controller
 {
@@ -31,6 +36,12 @@ class DeudaController extends Controller
      */
     public function index()
     {
+        $today = Carbon::now()->toDateString();
+
+        session(['MontoCarteraDeuda' => 0]);
+        session(['FechaInicioDeuda' => $today]);
+        session(['FechaFinalDeuda' => $today]);
+        session(['ExcelURLDeuda' => '']);
         $deuda = Deuda::get();
         return view('polizas.deuda.index', compact('deuda'));
     }
@@ -239,5 +250,72 @@ class DeudaController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function create_pago(Request $request)
+    {
+        /*session(['MontoCarteraDeuda' => 0]);
+        session(['FechaInicioDeuda' => $today]);
+        session(['FechaFinalDeuda' => $today]);
+        session(['ExcelURLDeuda' => '']);*/
+        $fecha = Carbon::create(null, $request->Mes, 1);
+        $nombreMes = $fecha->locale('es')->monthName;
+
+        $time = Carbon::now('America/El_Salvador');
+
+        $deuda= Deuda::findOrFail($request->Id);
+
+        if ($request->Mes == 1) {
+            $mes_evaluar = 12;
+            $axo_evaluar = $request->Axo - 1;
+        } else {
+            $mes_evaluar = $request->Mes - 1;
+            $axo_evaluar = $request->Axo;
+        }
+
+        try {
+            $archivo = $request->Archivo;
+            PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->delete();
+
+            //dd(Excel::toArray(new PolizaDeudaTempCarteraImport($request->Axo, $request->Mes, $deuda->Id, $request->FechaInicio, $request->FechaFinal), $archivo));
+            Excel::import(new PolizaDeudaTempCarteraImport($request->Axo, $request->Mes, $deuda->Id, $request->FechaInicio, $request->FechaFinal), $archivo);
+
+            $monto_cartera_total = PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->sum('SumaAsegurada');
+
+            if ($monto_cartera_total > $deuda->LimiteMaximo) {
+                alert()->error('Error, el saldo supera el Limite Maximo');
+                return back();
+            }
+
+            if ($request->Validar == "on") {
+
+                $eliminados = DB::select('CALL lista_deuda_eliminados(?, ?, ?, ?, ?, ?)', [ $axo_evaluar, $mes_evaluar, $deuda->Id, auth()->user()->id, $request->Axo, $request->Mes]);
+
+                $nuevos = DB::select('CALL lista_deuda_nuevos(?, ?, ?, ?, ?, ?)', [ $axo_evaluar, $mes_evaluar, $deuda->Id, auth()->user()->id, $request->Axo, $request->Mes]);
+
+                return view('polizas.validacion_cartera.resultado', compact('nuevos', 'eliminados'));
+            }
+
+            DB::statement("CALL insertar_temp_cartera_deuda(?, ?, ?, ?)", [auth()->user()->id, $request->Axo, $request->Mes, $deuda->Id]);
+
+            $monto_cartera_total = PolizaDeudaCartera::where('Axo', $request->Axo)
+                ->where('Mes', $request->Mes)
+                ->where('PolizaDeuda', $deuda->Id)->sum('SumaAsegurada');
+
+                session(['MontoCarteraDeuda' => $monto_cartera_total]);
+                session(['FechaInicioDeuda' => $request->FechaInicio]);
+                session(['FechaFinalDeuda' => $request->FechaFinal]);
+
+                $filePath = 'documentos/polizas/' . $deuda->NumeroPoliza . '-' . $nombreMes . '-' . $request->Axo . '-Deuda.xlsx';
+                Storage::disk('public')->put($filePath, file_get_contents($archivo));
+
+                session(['ExcelURLDeuda' => $filePath]);
+
+                alert()->success('El registro ha sido ingresado correctamente');
+                return back();
+        } catch (Throwable $e) {
+            print($e);
+            return false;
+        }
     }
 }
