@@ -42,11 +42,11 @@
                                 <td align="center">
 
                                     @can('edit users')
-                                        <a href="{{ url('polizas/residencia') }}/{{ $obj->Id }}/edit"
+                                        <a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}/edit"
                                             class="on-default edit-row">
                                             <i class="fa fa-pencil fa-lg"></i></a>
                                     @endcan
-                                    &nbsp;&nbsp;<a href="{{ url('polizas/residencia') }}/{{ $obj->Id }}/renovar"
+                                    &nbsp;&nbsp;<a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}/renovar"
                                             class="on-default edit-row"><i class="fa fa-refresh fa-lg"></i></a>
 
                                     &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}"

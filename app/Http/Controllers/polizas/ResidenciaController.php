@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
+use PDF;
 
 class ResidenciaController extends Controller
 {
@@ -306,24 +307,38 @@ class ResidenciaController extends Controller
     public function edit_pago(Request $request)
     {
         $detalle = DetalleResidencia::findOrFail($request->Id);
-        $detalle->APagar = $request->APagar;
-        $detalle->ImpresionRecibo = $request->ImpresionRecibo;
-        //dd($request->EnvioCartera .' 00:00:00');
-        if ($request->EnvioCartera) {
-            $detalle->EnvioCartera = $request->EnvioCartera;
-        }
-        if ($request->EnvioPago) {
-            $detalle->EnvioPago = $request->EnvioPago;
-        }
-        if ($request->PagoAplicado) {
-            $detalle->PagoAplicado = $request->PagoAplicado;
-        }
-        $detalle->Comentario = $request->Comentario;
 
-        /*$detalle->EnvioPago = $request->EnvioPago;
-        $detalle->PagoAplicado = $request->PagoAplicado;*/
-        $detalle->update();
-        alert()->success('El registro ha sido ingresado correctamente');
+        if ($detalle->SaldoA == null && $detalle->ImpresionRecibo == null) {
+            $detalle->SaldoA = $request->SaldoA;
+            $detalle->ImpresionRecibo = $request->ImpresionRecibo;
+            $detalle->Comentario = $request->Comentario;
+            $detalle->update();
+            $pdf = \PDF::loadView('polizas.residencia.recibo', compact('detalle'))->setWarnings(false)->setPaper('letter');
+            return $pdf->stream('Recibo.pdf');
+
+            return back();
+        } else {
+           
+            //dd($request->EnvioCartera .' 00:00:00');
+            if ($request->EnvioCartera) {
+                $detalle->EnvioCartera = $request->EnvioCartera;
+            }
+            if ($request->EnvioPago) {
+                $detalle->EnvioPago = $request->EnvioPago;
+            }
+            if ($request->PagoAplicado) {
+                $detalle->PagoAplicado = $request->PagoAplicado;
+            }
+            $detalle->Comentario = $request->Comentario;
+
+            /*$detalle->EnvioPago = $request->EnvioPago;
+            $detalle->PagoAplicado = $request->PagoAplicado;*/
+            $detalle->update();
+            alert()->success('El registro ha sido ingresado correctamente');
+        }
+
+
+
         return back();
     }
 
@@ -332,10 +347,6 @@ class ResidenciaController extends Controller
         return DetalleResidencia::findOrFail($id);
     }
 
-    public function impresion(Request $request)
-    {
-        dd("holi");
-    }
 
     public function renovar($id)
     {

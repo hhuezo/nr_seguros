@@ -35,7 +35,8 @@ class Deuda extends Model
         'FechaIngreso',
         'Activo',
         'Bomberos',
-        'Videuda'
+        'Videuda',
+        'LimiteMaximo'
     ];
 
     protected $guarded = [];

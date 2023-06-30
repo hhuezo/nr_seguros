@@ -232,8 +232,8 @@
                                     <td><i class="fa fa-pencil" onclick="modal_edit({{ $obj->Id }})"></i>
                                     </td>
                                     <td>{{ $obj->Tasa }}%</td>
-                                    <td>{{$obj->FechaInicio}}</td>
-                                    <td>{{$obj->FechaFinal}}</td>
+                                    <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
+                                    <td>{{\Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
                                     <td>{{ $obj->Descuento }}</td>
                                     <td>{{ $obj->APagar }}</td>
                                     <td>{{ $obj->ImpresionRecibo }}</td>
@@ -247,8 +247,8 @@
                                     <td><i class="fa fa-pencil" onclick="modal_edit({{ $obj->Id }})"></i>
                                     </td>
                                     <td>{{ $obj->Tasa }}%</td>
-                                    <td>{{$obj->FechaInicio}}</td>
-                                    <td>{{$obj->FechaFinal}}</td>
+                                    <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
+                                    <td>{{\Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
                                     <td>{{ $obj->Descuento }}</td>
                                     <td>{{ $obj->APagar }}</td>
                                     <td>{{ $obj->ImpresionRecibo }}</td>
@@ -258,12 +258,12 @@
                                     <td><a href="{{ $fileUrl }}">Descargar</a></td>
                                 </tr>
                                 @elseif(!$obj->PagoAplicado)
-                                <tr class="btn-danger">
+                                <tr class="success">
                                     <td><i class="fa fa-pencil" onclick="modal_edit({{ $obj->Id }})"></i>
                                     </td>
                                     <td>{{ $obj->Tasa }}%</td>
-                                    <td>{{$obj->FechaInicio}}</td>
-                                    <td>{{$obj->FechaFinal}}</td>
+                                    <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
+                                    <td>{{\Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
                                     <td>{{ $obj->Descuento }}</td>
                                     <td>{{ $obj->APagar }}</td>
                                     <td>{{ $obj->ImpresionRecibo }}</td>
@@ -390,7 +390,7 @@
                                                 <div class="form-group row">
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha Inicio</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input class="form-control" name="FechaInicio" id="FechaInicio" type="date"  value="{{ session('FechaInicio') }}" required>
+                                                        <input class="form-control" name="FechaInicio" id="FechaInicio" type="date" required>
                                                     </div>
                                                 </div>
 
@@ -457,7 +457,7 @@
                                                 <div class="form-group row">
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha Final</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input class="form-control" name="FechaFinal" id="FechaFinal"  value="{{ session('FechaFinal') }}" type="date" required>
+                                                        <input class="form-control" name="FechaFinal" id="FechaFinal" type="date" required>
                                                     </div>
                                                 </div>
                                                 <input type="hidden" name="Bomberos" id="Bomberos" value="{{$bomberos}}">
@@ -577,7 +577,7 @@
                 <div class="modal fade " id="modal_editar_pago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
                     <div class="modal-dialog modal-lg" role="document">
                         <div class="modal-content">
-                            <form method="POST" action="{{ url('polizas/vida/edit_pago') }}">
+                            <form method="POST" action="{{ url('polizas/residencia/edit_pago') }}">
                                 <div class="modal-header">
                                     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
                                         <h5 class="modal-title" id="exampleModalLabel">Pago</h5>
@@ -598,14 +598,14 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <div class="col-sm-9">
+                                            <div class="col-sm-12">
                                                 <label class="control-label">Impresión de Recibo</label>
                                                 <input type="date" name="ImpresionRecibo" id="ModalImpresionRecibo" value="{{date('Y-m-d')}}" class="form-control" readonly>
                                             </div>
-                                            <div class="col-sm-3">
+                                            <!-- <div class="col-sm-3">
                                                 <label class="control-label">&nbsp;</label>
                                                 <i class="btn btn-default fa fa-print form-control" id="btn_impresion"></i>
-                                            </div>
+                                            </div> -->
                                         </div>
 
                                         <div class="form-group">
@@ -796,33 +796,33 @@
 
         }
 
+        // $("#btn_impresion").click(function() {
+        //     //  var id = document.getElementById('ModalId').value;
+        //     // alert(document.getElementById('Asegurado').value);
+
+        //     var parametros = {
+        //         "Id": document.getElementById('ModalId').value,
+        //         "SaldoA": document.getElementById('ModalSaldoA').value,
+        //         "ImpresionRecibo": document.getElementById('ModalImpresionRecibo').value
+        //     };
+        //     $.ajax({
+        //         type: "get",
+        //         //ruta para obtener el horario del doctor
+        //         url: "{{ url('polizas/residencia/get_recibo') }}",
+        //         data: parametros,
+        //         success: function(data) {
+        //             console.log(data);
+
+        //         }
+        //     });
+
+        // })
+
 
     })
 
     function modal_edit(id) {
 
-
-        $("#btn_impresion").click(function() {
-            //  var id = document.getElementById('ModalId').value;
-            // alert(document.getElementById('Asegurado').value);
-
-            var parametros = {
-                "Id": document.getElementById('ModalId').value,
-                "SaldoA": document.getElementById('ModalSaldoA').value,
-                "ImpresionRecibo": document.getElementById('ModalImpresionRecibo').value
-            };
-            $.ajax({
-                type: "get",
-                //ruta para obtener el horario del doctor
-                url: "{{ url('polizas/residencia/get_recibo') }}",
-                data: parametros,
-                success: function(data) {
-                    console.log(data);
-
-                }
-            });
-
-        })
         // document.getElementById('ModalSaldoA').value = "";
         // document.getElementById('ModalImpresionRecibo').value = "";
         document.getElementById('ModalComentario').value = "";
@@ -846,8 +846,8 @@
             {
                 document.getElementById('ModalImpresionRecibo').value = data.ImpresionRecibo.substring(0, 10);
             }
-
-
+            
+            
             document.getElementById('ModalComentario').value = data.Comentario;
             if (data.EnvioCartera) {
                 document.getElementById('ModalEnvioCartera').value = data.EnvioCartera.substring(0, 10);
