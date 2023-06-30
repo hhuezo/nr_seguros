@@ -37,6 +37,7 @@ class ResidenciaController extends Controller
         session(['MontoCartera' => 0]);
         session(['FechaInicio' => $today]);
         session(['FechaFinal' => $today]);
+        session(['ExcelURL' => '']);
 
         $residencias = Residencia::where('Activo', 1)->get();
         return view('polizas.residencia.index', compact('residencias'));
@@ -214,7 +215,6 @@ class ResidenciaController extends Controller
             $axo_evaluar = $request->Axo;
         }
 
-       // dd("call poliza_residencia_validaciones(".$request->Id."," . auth()->user()->id . ",$mes_evaluar,$axo_evaluar)");
         try {
             $archivo = $request->Archivo;
             PolizaResidenciaTempCartera::where('User', '=', auth()->user()->id)->delete();
@@ -244,7 +244,6 @@ class ResidenciaController extends Controller
 
                 $nuevos = DB::select('CALL lista_residencia_nuevos(?, ?, ?, ?, ?, ?)', [ $axo_evaluar, $mes_evaluar, $residencia->Id, auth()->user()->id, $request->Axo, $request->Mes]);
 
-
                     return view('polizas.validacion_cartera.resultado', compact('nuevos', 'eliminados'));
             }
 
@@ -258,8 +257,10 @@ class ResidenciaController extends Controller
             session(['FechaInicio' => $request->FechaInicio]);
             session(['FechaFinal' => $request->FechaFinal]);
 
-            $filePath = 'documentos/polizas/' . $residencia->NumeroPoliza . '-' . $nombreMes . '-' . $request->Axo . '.xlsx';
+            $filePath = 'documentos/polizas/' . $residencia->NumeroPoliza . '-' . $nombreMes . '-' . $request->Axo . '-Residencia.xlsx';
             Storage::disk('public')->put($filePath, file_get_contents($archivo));
+
+            session(['ExcelURL' => $filePath]);
 
             alert()->success('El registro ha sido ingresado correctamente');
             return back();
@@ -296,6 +297,7 @@ class ResidenciaController extends Controller
         $detalle->ValorDescuento = $request->ValorDescuento;
         $detalle->TasaComision = $request->TasaComision;
         $detalle->PrimaDescontada = $request->PrimaDescontada;
+        $detalle->ExcelURL = $request->ExcelURL;
         $detalle->save();
         alert()->success('El registro de pago ha sido ingresado correctamente');
         return back();

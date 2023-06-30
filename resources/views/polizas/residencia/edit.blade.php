@@ -209,6 +209,9 @@
                                     <th>Excel Cartera</th>
                                 </tr>
                                 @foreach ($detalle as $obj)
+                                @php
+                                    $fileUrl = asset('storage/'.$obj->ExcelURL);
+                                @endphp
                                 @if(!$obj->ImpresionRecibo)
                                 <tr class="danger">
                                     <td><i class="fa fa-pencil" onclick="modal_edit({{ $obj->Id }})"></i>
@@ -222,7 +225,7 @@
                                     <td>{{ $obj->EnvioCartera }}</td>
                                     <td>{{ $obj->EnvioPago }}</td>
                                     <td>{{ $obj->PagoAplicado }}</td>
-                                    <td></td>
+                                    <td><a href="{{ $fileUrl }}">Descargar</a></td>
                                 </tr>
                                 @elseif(!$obj->EnvioCartera)
                                 <tr class="warning">
@@ -237,7 +240,7 @@
                                     <td>{{ $obj->EnvioCartera }}</td>
                                     <td>{{ $obj->EnvioPago }}</td>
                                     <td>{{ $obj->PagoAplicado }}</td>
-                                    <td></td>
+                                    <td><a href="{{ $fileUrl }}">Descargar</a></td>
                                 </tr>
                                 @elseif(!$obj->EnvioPago)
                                 <tr class="btn-info">
@@ -252,7 +255,7 @@
                                     <td>{{ $obj->EnvioCartera }}</td>
                                     <td>{{ $obj->EnvioPago }}</td>
                                     <td>{{ $obj->PagoAplicado }}</td>
-                                    <td></td>
+                                    <td><a href="{{ $fileUrl }}">Descargar</a></td>
                                 </tr>
                                 @elseif(!$obj->PagoAplicado)
                                 <tr class="btn-danger">
@@ -267,7 +270,7 @@
                                     <td>{{ $obj->EnvioCartera }}</td>
                                     <td>{{ $obj->EnvioPago }}</td>
                                     <td>{{ $obj->PagoAplicado }}</td>
-                                    <td></td>
+                                    <td><a href="{{ $fileUrl }}">Descargar</a></td>
 
                                 </tr>
                                 @endif
@@ -380,6 +383,7 @@
                                     </div>
                                     <div class="modal-body">
                                         <div class="box-body row">
+                                            <input type="hidden" name="ExcelURL" id="ExcelURL" value="{{ session('ExcelURL')  }}" class="form-control">
                                             <input type="hidden" name="Residencia" id="Residencia" value="{{ $residencia->Id }}" class="form-control">
                                             @csrf
                                             <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
