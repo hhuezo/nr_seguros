@@ -152,6 +152,12 @@
                                         <input type="text" value="{{$deuda->estadoPolizas->Nombre}}" class="form-control" readonly>
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12">Limite Maximo</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input type="number" step="any" name="LimiteMaximo" value="{{$deuda->LimiteMaximo }}" class="form-control" readonly>
+                                    </div>
+                                </div>
                                 <div class="form-group row">
 
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vida</label>
@@ -645,6 +651,7 @@
 
                             </div>
                             <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="creditos-tab">
+
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
 
@@ -661,8 +668,8 @@
                                             <table>
                                                 <tr>
                                                     <th>Tipo Cartera</th>
-                                                    <th>Tasa </th>
-                                                    <th></th>
+                                                    <th>Deuda</th>
+                                                    <th>Vico</th>
                                                     <th></th>
                                                 </tr>
                                                 <tr>

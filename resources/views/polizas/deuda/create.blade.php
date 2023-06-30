@@ -125,6 +125,12 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Limite Maximo</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="LimiteMaximo" type="number" step="any" value="{{ old('LimiteMaximo') }}">
+                                    </div>
+                                </div>
                                 <!-- radio button -->
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">&nbsp;

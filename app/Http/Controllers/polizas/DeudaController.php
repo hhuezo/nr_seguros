@@ -98,6 +98,7 @@ class DeudaController extends Controller
         } else {
             $deuda->Videuda = 0;
         }
+        $deuda->LimiteMaximo = $request->LimiteMaximo;
         $deuda->FechaIngreso = Carbon::now('America/El_Salvador');
         $deuda->Activo = 1;
         $deuda->save();
