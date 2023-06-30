@@ -38,7 +38,8 @@ class DetalleResidencia extends Model
         'TasaComision',
         'PrimaDescontada',
         'FechaInicio',
-        'FechaFinal'
+        'FechaFinal',
+        'ExcelURL'
     ];
 
     protected $guarded = [];
