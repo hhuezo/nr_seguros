@@ -23,7 +23,6 @@
                         <tr>
                             <th>Nombre</th>
                             <th>Aseguradora</th>
-                            <th>Monto Cartera</th>
                             <th>Vendedor</th>
                             <th>Estado</th>
                             <th>Opciones</th>
@@ -34,7 +33,6 @@
                             <tr>
                                 <td>{{ $obj->clientes->Nombre }}</td>
                                 <td>{{ $obj->aseguradoras->Nombre }}</td>
-                                <td>${{ number_format($obj->MontoCartera, 2, '.', ','); }}</td>
                                 <td>{{ $obj->ejecutivos->Nombre }}</td>
                                 <td>{{ $obj->estadoPolizas->Nombre}}</td>
                                 <td align="center">

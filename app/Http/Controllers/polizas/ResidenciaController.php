@@ -123,7 +123,7 @@ class ResidenciaController extends Controller
         $tipos_contribuyente = TipoContribuyente::get();
         $rutas = Ruta::where('Activo', '=', 1)->get();
         $ubicaciones_cobro = UbicacionCobro::where('Activo', '=', 1)->get();
-        $detalle = DetalleResidencia::where('Residencia', $residencia->Id)->get();
+        $detalle = DetalleResidencia::where('Residencia', $residencia->Id)->where('Activo', 1)->orderBy('Id', 'desc')->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
         $bombero = Bombero::where('Activo', 1)->first();
         if ($bombero) {
@@ -241,11 +241,11 @@ class ResidenciaController extends Controller
 
             if ($request->Validar == "on") {
 
-                $eliminados = DB::select('CALL lista_residencia_eliminados(?, ?, ?, ?, ?, ?)', [ $axo_evaluar, $mes_evaluar, $residencia->Id, auth()->user()->id, $request->Axo, $request->Mes]);
+                $eliminados = DB::select('CALL lista_residencia_eliminados(?, ?, ?, ?, ?, ?)', [$axo_evaluar, $mes_evaluar, $residencia->Id, auth()->user()->id, $request->Axo, $request->Mes]);
 
-                $nuevos = DB::select('CALL lista_residencia_nuevos(?, ?, ?, ?, ?, ?)', [ $axo_evaluar, $mes_evaluar, $residencia->Id, auth()->user()->id, $request->Axo, $request->Mes]);
+                $nuevos = DB::select('CALL lista_residencia_nuevos(?, ?, ?, ?, ?, ?)', [$axo_evaluar, $mes_evaluar, $residencia->Id, auth()->user()->id, $request->Axo, $request->Mes]);
 
-                    return view('polizas.validacion_cartera.resultado', compact('nuevos', 'eliminados'));
+                return view('polizas.validacion_cartera.resultado', compact('nuevos', 'eliminados'));
             }
 
             DB::statement("CALL insertar_temp_cartera_residencia(?, ?, ?, ?)", [auth()->user()->id, $request->Axo, $request->Mes, $residencia->Id]);
@@ -307,18 +307,19 @@ class ResidenciaController extends Controller
     public function edit_pago(Request $request)
     {
         $detalle = DetalleResidencia::findOrFail($request->Id);
+        $residencia = Residencia::findOrFail($detalle->Residencia);
 
         if ($detalle->SaldoA == null && $detalle->ImpresionRecibo == null) {
             $detalle->SaldoA = $request->SaldoA;
             $detalle->ImpresionRecibo = $request->ImpresionRecibo;
             $detalle->Comentario = $request->Comentario;
             $detalle->update();
-            $pdf = \PDF::loadView('polizas.residencia.recibo', compact('detalle'))->setWarnings(false)->setPaper('letter');
+            $pdf = \PDF::loadView('polizas.residencia.recibo', compact('detalle', 'residencia'))->setWarnings(false)->setPaper('letter');
             return $pdf->stream('Recibo.pdf');
 
             return back();
         } else {
-           
+
             //dd($request->EnvioCartera .' 00:00:00');
             if ($request->EnvioCartera) {
                 $detalle->EnvioCartera = $request->EnvioCartera;
@@ -369,6 +370,15 @@ class ResidenciaController extends Controller
         $residencia->update();
 
         alert()->success('La poliza fue renovada correctamente');
+        return back();
+    }
+
+    public function delete_pago($id)
+    {
+        $detalle = DetalleResidencia::findOrFail($id);
+        $detalle->Activo = 0;
+        $detalle->update();
+        alert()->success('El registro ha sido ingresado correctamente');
         return back();
     }
 }

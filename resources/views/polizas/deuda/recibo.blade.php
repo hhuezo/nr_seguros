@@ -8,19 +8,19 @@
 </head>
 
 <body>
-  <p style="text-align: center; width: 450px;">{{$residencia->aseguradoras->Nombre}}</p>
+  <p style="text-align: center; width: 450px;">{{$deuda->aseguradoras->Nombre}}</p>
   <br><br><br>
   <p style="text-align: left; width: 450px;">{{$detalle->APagar}} Fecha Inicio: {{$detalle->APagar}} <br>
-    {{$residencia->clientes->Nombre}} <br>
+    {{$deuda->clientes->Nombre}} <br>
     {{$detalle->ComentarioCobro}} <br>
     <br><br>
 
-    Poliza: {{$residencia->NumeroPoliza}} &nbsp; &nbsp; &nbsp; Fecha Vencimiento: {{$residencia->VigenciaHasta}} <br>
+    Poliza: {{$deuda->NumeroPoliza}} &nbsp; &nbsp; &nbsp; Fecha Vencimiento: {{$deuda->VigenciaHasta}} <br>
   </p>
   <p style="text-align: right; width: 450px;">
     Valor: {{$detalle->APagar}}
   </p>
-  <p style="text-align: left; width: 450px;"> Vigencia de: {{$residencia->VigenciaDesde}} a {{$residencia->VigenciaHasta}}
+  <p style="text-align: left; width: 450px;"> Vigencia de: {{$deuda->VigenciaDesde}} a {{$deuda->VigenciaHasta}}
     <br>
   </p>
   <p style="text-align: right; width: 450px;"> Valor: {{$detalle->APagar}}

@@ -39,7 +39,8 @@ class DetalleResidencia extends Model
         'PrimaDescontada',
         'FechaInicio',
         'FechaFinal',
-        'ExcelURL'
+        'ExcelURL',
+        'Activo'
     ];
 
     protected $guarded = [];

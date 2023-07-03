@@ -87,6 +87,7 @@ Route::get('polizas/residencia/get_pago/{id}', [ResidenciaController::class,'get
 Route::get('polizas/residencia/{id}/renovar',[ResidenciaController::class, 'renovar']);
 Route::get('polizas/residencia/{id}/cancelacion',[ResidenciaController::class, 'cancelacion']);
 Route::post('polizas/residencia/renovar/{id}',[ResidenciaController::class, 'renovarPoliza'])->name('residencia.renovarPoliza');
+Route::post('polizas/residencia/delete_pago/{id}', [ResidenciaController::class, 'delete_pago']);
 
 Route::resource('polizas/vida', VidaController::class);
 Route::post('polizas/vida/create_pago', [VidaController::class,'create_pago']);
@@ -107,6 +108,10 @@ Route::post('polizas/deuda/store_requisitos',[DeudaController::class, 'store_req
 Route::get('polizas/deuda/get_requisitos',[DeudaController::class, 'get_requisitos']);
 Route::resource('polizas/deuda',DeudaController::class);
 Route::post('polizas/deuda/create_pago', [DeudaController::class,'create_pago']);
+Route::post('polizas/deuda/agregar_pago', [DeudaController::class,'agregar_pago']);
+Route::get('polizas/deuda/get_pago/{id}', [DeudaController::class,'get_pago']);
+Route::post('polizas/deuda/edit_pago', [DeudaController::class,'edit_pago']);
+Route::post('polizas/deuda/delete_pago/{id}', [DeudaController::class, 'delete_pago']);
 
 
 

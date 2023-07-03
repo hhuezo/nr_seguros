@@ -47,9 +47,7 @@
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Asegurado</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                 <input type="text" value="{{$residencia->clientes->Nombre}}" class="form-control" readonly>
-
                             </div>
-
                         </div>
                         <div class="form-group row">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Nit</label>
@@ -57,13 +55,6 @@
                                 <input class="form-control" name="Nit" id="Nit" type="text" value="{{$residencia->Nit }}" readonly>
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Código</label>
-                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="Codigo" type="text" value="{{ $residencia->Codigo}}" readonly>
-                            </div>
-                        </div>
-
 
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
@@ -180,6 +171,9 @@
                     </li>
                     <li role="presentation" class=""><a href="#tab_content2" role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">Generar Pago</a>
                     </li>
+                    <li role="presentation" class=""><a href="#tab_content3" role="tab" id="creditos-tab" data-toggle="tab" aria-expanded="false">Calculo de Cartera {{$residencia->NumeroPoliza}}</a>
+                    </li>
+
 
 
                 </ul>
@@ -210,11 +204,12 @@
                                 </tr>
                                 @foreach ($detalle as $obj)
                                 @php
-                                    $fileUrl = asset('storage/'.$obj->ExcelURL);
+                                $fileUrl = asset('storage/'.$obj->ExcelURL);
                                 @endphp
                                 @if(!$obj->ImpresionRecibo)
                                 <tr class="danger">
                                     <td><i class="fa fa-pencil" onclick="modal_edit({{ $obj->Id }})"></i>
+                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
                                     </td>
                                     <td>{{ $obj->Tasa }}%</td>
                                     <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
@@ -225,11 +220,12 @@
                                     <td>{{ $obj->EnvioCartera }}</td>
                                     <td>{{ $obj->EnvioPago }}</td>
                                     <td>{{ $obj->PagoAplicado }}</td>
-                                    <td><a href="{{ $fileUrl }}">Descargar</a></td>
+                                    <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"></a></td>
                                 </tr>
                                 @elseif(!$obj->EnvioCartera)
                                 <tr class="warning">
                                     <td><i class="fa fa-pencil" onclick="modal_edit({{ $obj->Id }})"></i>
+                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
                                     </td>
                                     <td>{{ $obj->Tasa }}%</td>
                                     <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
@@ -240,11 +236,12 @@
                                     <td>{{ $obj->EnvioCartera }}</td>
                                     <td>{{ $obj->EnvioPago }}</td>
                                     <td>{{ $obj->PagoAplicado }}</td>
-                                    <td><a href="{{ $fileUrl }}">Descargar</a></td>
+                                    <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"></a></td>
                                 </tr>
                                 @elseif(!$obj->EnvioPago)
                                 <tr class="btn-info">
                                     <td><i class="fa fa-pencil" onclick="modal_edit({{ $obj->Id }})"></i>
+                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
                                     </td>
                                     <td>{{ $obj->Tasa }}%</td>
                                     <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
@@ -255,11 +252,12 @@
                                     <td>{{ $obj->EnvioCartera }}</td>
                                     <td>{{ $obj->EnvioPago }}</td>
                                     <td>{{ $obj->PagoAplicado }}</td>
-                                    <td><a href="{{ $fileUrl }}">Descargar</a></td>
+                                    <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"></a></td>
                                 </tr>
                                 @elseif(!$obj->PagoAplicado)
                                 <tr class="success">
                                     <td><i class="fa fa-pencil" onclick="modal_edit({{ $obj->Id }})"></i>
+                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
                                     </td>
                                     <td>{{ $obj->Tasa }}%</td>
                                     <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
@@ -270,10 +268,53 @@
                                     <td>{{ $obj->EnvioCartera }}</td>
                                     <td>{{ $obj->EnvioPago }}</td>
                                     <td>{{ $obj->PagoAplicado }}</td>
-                                    <td><a href="{{ $fileUrl }}">Descargar</a></td>
+                                    <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"> </a></td>
+
+                                </tr>
+                                @else
+                                <tr>
+                                    <td><i class="fa fa-pencil" onclick="modal_edit({{ $obj->Id }})"></i>
+                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
+                                    </td>
+                                    <td>{{ $obj->Tasa }}%</td>
+                                    <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
+                                    <td>{{\Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
+                                    <td>{{ $obj->Descuento }}</td>
+                                    <td>{{ $obj->APagar }}</td>
+                                    <td>{{ $obj->ImpresionRecibo }}</td>
+                                    <td>{{ $obj->EnvioCartera }}</td>
+                                    <td>{{ $obj->EnvioPago }}</td>
+                                    <td>{{ $obj->PagoAplicado }}</td>
+                                    <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"> </a></td>
 
                                 </tr>
                                 @endif
+                                <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-{{ $obj->Id }}">
+
+                                    <form method="POST" action="{{ url('polizas/residencia/delete_pago', $obj->Id) }}">
+                                        @method('delete')
+                                        @csrf
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">×</span>
+                                                    </button>
+                                                    <h4 class="modal-title">Eliminar Registro</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>Confirme si desea Eliminar el Registro</p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                                    <button type="submit" class="btn btn-primary">Confirmar</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+
+                                </div>
+
                                 @endforeach
                             </table>
 
@@ -571,9 +612,78 @@
                         </div>
 
                     </div>
+                    <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="creditos-tab">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
+
+                                <div class="x_title">
+                                    <h4>&nbsp;&nbsp; Calculo de Cartera {{$residencia->clientes->Nombre}}<small></small>
+                                    </h4>
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+                                    &nbsp;
+                                </div>
+                                <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                                    <table class="table table-striped jambo_table bulk_action">
+                                        <thead>
+                                            <tr>
+                                                <th>{{$residencia->aseguradoras->Nombre}} <br>
+                                                    {{$residencia->clientes->Nombre}} <br>
+                                                    N° Poliza: {{$residencia->NumeroPoliza}} <br>
+                                                    Vigencia: {{$residencia->VigenciaDesde}} al {{$residencia->VigenciaHasta}}
+                                                </th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tr>
+                                            <td>Tasa @if($residencia->Mensual == 1) Mensual @else Anual @endif Millar :</td>
+                                            <td>{{$residencia->Tasa}} %</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2"> <strong>Base Calculo de la Prima </strong> </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Monto Cartera</td>
+                                            <td><input type="text" id="MontoCartera2" class="form-group"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Resultado 1</td>
+                                            <td><input type="text" id="Resultado" class="form-group"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Prima Calculada</td>
+                                            <td><input type="text" id="PrimaCalculada2" class="form-group"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Impuesto Bomberos</td>
+                                            <td><input type="text" id="Bomberos2" class="form-group"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>SubTotal (Base de Iva)</td>
+                                            <td><input type="text" id="SubTotal2" class="form-group"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>13% Iva s/SubTotal</td>
+                                            <td><input type="text" id="Iva2" class="form-group"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Valor CCF por Comision</td>
+                                            <td><input type="text" id="ValorCCF2" class="form-group"></td>
+                                        </tr>
+                                        <tfoot>
+                                            <tr>
+                                                <td>Prima Neta Por Pagar</td>
+                                                <td><input type="text" id="APagar2" class="form-group"></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
                 <div class="modal fade " id="modal_editar_pago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
                     <div class="modal-dialog modal-lg" role="document">
                         <div class="modal-content">
@@ -796,29 +906,6 @@
 
         }
 
-        // $("#btn_impresion").click(function() {
-        //     //  var id = document.getElementById('ModalId').value;
-        //     // alert(document.getElementById('Asegurado').value);
-
-        //     var parametros = {
-        //         "Id": document.getElementById('ModalId').value,
-        //         "SaldoA": document.getElementById('ModalSaldoA').value,
-        //         "ImpresionRecibo": document.getElementById('ModalImpresionRecibo').value
-        //     };
-        //     $.ajax({
-        //         type: "get",
-        //         //ruta para obtener el horario del doctor
-        //         url: "{{ url('polizas/residencia/get_recibo') }}",
-        //         data: parametros,
-        //         success: function(data) {
-        //             console.log(data);
-
-        //         }
-        //     });
-
-        // })
-
-
     })
 
     function modal_edit(id) {
@@ -837,20 +924,21 @@
 
 
             console.log(data);
-            if(data.SaldoA != null)
-            {
+            if (data.SaldoA != null) {
                 document.getElementById('ModalSaldoA').value = data.SaldoA.substring(0, 10);
             }
 
-            if(data.ImpresionRecibo != null)
-            {
+            if (data.ImpresionRecibo != null) {
                 document.getElementById('ModalImpresionRecibo').value = data.ImpresionRecibo.substring(0, 10);
+                $("#ModalEnvioCartera").removeAttr("readonly");
             }
+
 
 
             document.getElementById('ModalComentario').value = data.Comentario;
             if (data.EnvioCartera) {
                 document.getElementById('ModalEnvioCartera').value = data.EnvioCartera.substring(0, 10);
+                $("#ModalEnvioCartera").prop("readonly", true);
             } else {
                 $("#ModalEnvioPago").prop("readonly", true);
                 $("#ModalPagoAplicado").prop("readonly", true);
@@ -859,20 +947,23 @@
 
             if (data.EnvioPago) {
                 document.getElementById('ModalEnvioPago').value = data.EnvioPago.substring(0, 10);
+                $("#ModalEnvioPago").prop("readonly", true);
             } else {
-                $("#ModalEnvioCartera").prop("readonly", true);
+                //  $("#ModalEnvioCartera").prop("readonly", true);
                 $("#ModalPagoAplicado").prop("readonly", true);
             }
 
             if (data.PagoAplicado) {
                 document.getElementById('ModalPagoAplicado').value = data.PagoAplicado.substring(0, 10);
+
                 $("#ModalEnvioCartera").prop("readonly", true);
                 $("#ModalEnvioPago").prop("readonly", true);
                 $("#ModalPagoAplicado").prop("readonly", true);
-            } else {
-                $("#ModalEnvioCartera").prop("readonly", true);
-                $("#ModalEnvioPago").prop("readonly", true);
             }
+            // // else {
+            //     $("#ModalEnvioCartera").prop("readonly", true);
+            //     $("#ModalEnvioPago").prop("readonly", true);
+            // }
 
 
 

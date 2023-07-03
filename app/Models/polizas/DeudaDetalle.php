@@ -16,7 +16,10 @@ class DeudaDetalle extends Model
 
 
     protected $fillable = [
+        'FechaInicio',
+        'FechaFinal',
         'Deuda',
+        'MontoCartera',
         'Tasa',
         'SaldoCapital',
         'MontoNominal',
@@ -30,6 +33,9 @@ class DeudaDetalle extends Model
         'ExtraPrima',
         'ValorCCF',
         'APagar',
+        'SaldoA',
+        'PrimaTotal',
+        'Iva',
         'ValorDescuento',
         'ValorDescuentoEspecial',
         'Comision',

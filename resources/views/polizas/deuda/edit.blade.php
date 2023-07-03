@@ -261,7 +261,7 @@
                             </li>
                             <li role="presentation" class=""><a href="#tab_content2" role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">Generar Pago</a>
                             </li>
-                            <li role="presentation" class=""><a href="#tab_content3" role="tab" id="creditos-tab" data-toggle="tab" aria-expanded="false">Lineas de Creditos</a>
+                            <li role="presentation" class=""><a href="#tab_content3" role="tab" id="creditos-tab" data-toggle="tab" aria-expanded="false">Calculo de Cartera {{$deuda->NumeroPoliza}}</a>
                             </li>
 
 
@@ -292,9 +292,14 @@
                                             <th>Excel Cartera</th>
                                         </tr>
                                         @foreach ($detalle as $obj)
+                                        @php
+                                        $fileUrl = asset('storage/'.$obj->ExcelURLDeuda);
+                                        @endphp
                                         @if(!$obj->ImpresionRecibo)
                                         <tr class="danger">
-                                            <td><i class="fa fa-pencil" onclick="modal_edit({{ $obj->Id }})"></i>
+                                            <td>
+                                                <i class="fa fa-pencil" onclick="modal_edit({{ $obj->Id }})"></i>
+                                                <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
                                             </td>
                                             <td>{{ $obj->Tasa }}%</td>
                                             <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
@@ -305,11 +310,12 @@
                                             <td>{{ $obj->EnvioCartera }}</td>
                                             <td>{{ $obj->EnvioPago }}</td>
                                             <td>{{ $obj->PagoAplicado }}</td>
-                                            <td></td>
+                                            <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"></a></td>
                                         </tr>
                                         @elseif(!$obj->EnvioCartera)
                                         <tr class="warning">
                                             <td><i class="fa fa-pencil" onclick="modal_edit({{ $obj->Id }})"></i>
+                                                <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
                                             </td>
                                             <td>{{ $obj->Tasa }}%</td>
                                             <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
@@ -320,11 +326,12 @@
                                             <td>{{ $obj->EnvioCartera }}</td>
                                             <td>{{ $obj->EnvioPago }}</td>
                                             <td>{{ $obj->PagoAplicado }}</td>
-                                            <td></td>
+                                            <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"></a></td>
                                         </tr>
                                         @elseif(!$obj->EnvioPago)
                                         <tr class="btn-info">
                                             <td><i class="fa fa-pencil" onclick="modal_edit({{ $obj->Id }})"></i>
+                                                <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
                                             </td>
                                             <td>{{ $obj->Tasa }}%</td>
                                             <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
@@ -335,11 +342,12 @@
                                             <td>{{ $obj->EnvioCartera }}</td>
                                             <td>{{ $obj->EnvioPago }}</td>
                                             <td>{{ $obj->PagoAplicado }}</td>
-                                            <td></td>
+                                            <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"></a></td>
                                         </tr>
                                         @elseif(!$obj->PagoAplicado)
                                         <tr class="success">
                                             <td><i class="fa fa-pencil" onclick="modal_edit({{ $obj->Id }})"></i>
+                                                <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
                                             </td>
                                             <td>{{ $obj->Tasa }}%</td>
                                             <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
@@ -350,10 +358,52 @@
                                             <td>{{ $obj->EnvioCartera }}</td>
                                             <td>{{ $obj->EnvioPago }}</td>
                                             <td>{{ $obj->PagoAplicado }}</td>
-                                            <td></td>
+                                            <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"></a></td>
+
+                                        </tr>
+                                        @else
+                                        <tr>
+                                            <td><i class="fa fa-pencil" onclick="modal_edit({{ $obj->Id }})"></i>
+                                                <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
+                                            </td>
+                                            <td>{{ $obj->Tasa }}%</td>
+                                            <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
+                                            <td>{{\Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
+                                            <td>{{ $obj->Descuento }}</td>
+                                            <td>{{ $obj->APagar }}</td>
+                                            <td>{{ $obj->ImpresionRecibo }}</td>
+                                            <td>{{ $obj->EnvioCartera }}</td>
+                                            <td>{{ $obj->EnvioPago }}</td>
+                                            <td>{{ $obj->PagoAplicado }}</td>
+                                            <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"></a></td>
 
                                         </tr>
                                         @endif
+                                        <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-{{ $obj->Id }}">
+
+                                            <form method="POST" action="{{ url('polizas/deuda/delete_pago', $obj->Id) }}">
+                                                @method('delete')
+                                                @csrf
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">×</span>
+                                                            </button>
+                                                            <h4 class="modal-title">Eliminar Registro</h4>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Confirme si desea Eliminar el Registro</p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                                            <button type="submit" class="btn btn-primary">Confirmar</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+
+                                        </div>
                                         @endforeach
                                     </table>
 
@@ -654,74 +704,70 @@
                             <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="creditos-tab">
 
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
 
                                         <div class="x_title">
-                                            <h2> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<small></small></h2>
-                                            <div class="clearfix"></div>
-                                        </div>
-                                        <div class="x_title">
-                                            <h4>&nbsp;&nbsp; Declaración de Tipos de Carteras<small></small>
+                                            <h4>&nbsp;&nbsp; Calculo de Cartera {{$deuda->clientes->Nombre}}<small></small>
                                             </h4>
                                             <div class="clearfix"></div>
                                         </div>
-                                        <div>
-                                            <table>
+                                        <div class="">
+                                            <table class="table table-striped jambo_table bulk_action">
                                                 <tr>
                                                     <th>Tipo Cartera</th>
-                                                    <th>Deuda</th>
-                                                    <th>Vico</th>
-                                                    <th></th>
+                                                    <th>Deuda {{$deuda->NumeroPoliza}}</th>
+                                                    <th>Vico {{$videuda->NumeroPoliza}}</th>
+
+                                                </tr>
+                                                @php($carteraAsegurada = 0)
+                                                @php($totalUsuarios = 0)
+                                                @foreach($creditos as $obj)
+                                                <tr>
+                                                    <td>{{$obj->tipoCarteras->Nombre}}</td>
+                                                    <td><input type="text" value="{{$obj->SumaAsegurada}}" class="form-group" id="SumaAsegurada-{{$obj->Id}}"></td>
+                                                    <td><input type="text" value="{{$videuda->NumeroUsuarios}}" class="form-group" id="NumeroUsuarios-{{$obj->Id}}"></td>
+
+                                                </tr>
+                                                @php($carteraAsegurada = $carteraAsegurada + $obj->SumaAsegurada)
+                                                @php($totalUsuarios = $totalUsuarios + $videuda->NumeroUsuarios)
+                                                @endforeach
+                                                <tr>
+                                                    <td>Cartera Asegurada VIDE</td>
+                                                    <td><input type="text" value="{{$carteraAsegurada}}" class="form-group" id="CarteraAsegurada"></td>
+                                                    <td><input type="text" value="{{$totalUsuarios}}" class="form-group" id="TotalUsuarios"></td>
                                                 </tr>
                                                 <tr>
+                                                    <td>Suma Uniforme por Usuario</td>
                                                     <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
+                                                    <td><input type="text" value="{{$videuda->SumaUniforme}}" id="SumaUniforme" class="form-group"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Tasa Millar @if($deuda->Mensual == 1) Mensual @else Anual @endif</td>
+                                                    <td><input type="text" value="{{$deuda->Tasa}}" class="form-group" id="TasaDeuda" readonly></td>
+                                                    <td><input type="text" value="{{$videuda->Tasa}}" class="form-group" id="TasaVideuda" readonly></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>SubTotal</td>
+                                                    <td><input type="text" class="form-group" id="SubTotalDeuda"></td>
+                                                    <td><input type="text" class="form-group" id="SubTotalVideuda"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Extra Primas</td>
+                                                    <td><input type="text" value="" class="form-group" id="TasaDeuda"></td>
+                                                    <td><input type="text" value="" class="form-group" id="TasaVideuda"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Primas a Cobrar</td>
+                                                    <td><input type="text" value="" class="form-group" id="PrimaBrutaDeuda"></td>
+                                                    <td><input type="text" value="" class="form-group" id="PrimaBrutaVideuda"></td>
                                                 </tr>
                                             </table>
                                         </div>
-
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo
-                                                Cartera 1</label>
-                                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                                <select name="TipoCartera1" class="form-control select2" style="width: 100%" required>
-                                                    @foreach ($tipoCartera as $obj)
-                                                    <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa
-                                                ‰ 1</label>
-                                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="TasaCartera1" id="TasaCartera1" type="text" value="{{ old('TasaCartera1') }}">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo
-                                                Cartera 2</label>
-                                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                                <select name="TipoCartera2" class="form-control select2" style="width: 100%" required>
-                                                    @foreach ($tipoCartera as $obj)
-                                                    <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa
-                                                ‰ 2</label>
-                                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                                <input class="form-control" name="TasaCartera2" id="TasaCartera2" type="text" value="{{ old('TasaCartera2') }}">
-                                            </div>
-                                        </div>
-
                                     </div>
 
                                 </div>
+
                             </div>
 
                         </div>
@@ -730,6 +776,7 @@
                             <div class="modal-dialog modal-lg" role="document">
                                 <div class="modal-content">
                                     <form method="POST" action="{{ url('polizas/deuda/edit_pago') }}">
+                                        @csrf
                                         <div class="modal-header">
                                             <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
                                                 <h5 class="modal-title" id="exampleModalLabel">Pago</h5>
@@ -740,7 +787,7 @@
                                         </div>
                                         <div class="modal-body">
                                             <div class="box-body">
-                                                @csrf
+
                                                 <input type="hidden" name="Id" id="ModalId" class="form-control">
                                                 <div class="form-group">
                                                     <div class="col-sm-12">
@@ -1007,7 +1054,8 @@
 
 
 
-        $.get("{{ url('polizas/residencia/get_pago') }}" + '/' + id, function(data) {
+        $.get("{{ url('polizas/deuda/get_pago') }}" + '/' + id, function(data) {
+
 
 
             console.log(data);
@@ -1017,12 +1065,15 @@
 
             if (data.ImpresionRecibo != null) {
                 document.getElementById('ModalImpresionRecibo').value = data.ImpresionRecibo.substring(0, 10);
+                $("#ModalEnvioCartera").removeAttr("readonly");
             }
+
 
 
             document.getElementById('ModalComentario').value = data.Comentario;
             if (data.EnvioCartera) {
                 document.getElementById('ModalEnvioCartera').value = data.EnvioCartera.substring(0, 10);
+                $("#ModalEnvioCartera").prop("readonly", true);
             } else {
                 $("#ModalEnvioPago").prop("readonly", true);
                 $("#ModalPagoAplicado").prop("readonly", true);
@@ -1031,20 +1082,23 @@
 
             if (data.EnvioPago) {
                 document.getElementById('ModalEnvioPago').value = data.EnvioPago.substring(0, 10);
+                $("#ModalEnvioPago").prop("readonly", true);
             } else {
-                $("#ModalEnvioCartera").prop("readonly", true);
+                //  $("#ModalEnvioCartera").prop("readonly", true);
                 $("#ModalPagoAplicado").prop("readonly", true);
             }
 
             if (data.PagoAplicado) {
                 document.getElementById('ModalPagoAplicado').value = data.PagoAplicado.substring(0, 10);
+
                 $("#ModalEnvioCartera").prop("readonly", true);
                 $("#ModalEnvioPago").prop("readonly", true);
                 $("#ModalPagoAplicado").prop("readonly", true);
-            } else {
-                $("#ModalEnvioCartera").prop("readonly", true);
-                $("#ModalEnvioPago").prop("readonly", true);
             }
+            // // else {
+            //     $("#ModalEnvioCartera").prop("readonly", true);
+            //     $("#ModalEnvioPago").prop("readonly", true);
+            // }
 
 
 

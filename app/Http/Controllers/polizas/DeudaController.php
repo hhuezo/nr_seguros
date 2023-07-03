@@ -82,6 +82,38 @@ class DeudaController extends Controller
         ));
     }
 
+    public function agregar_pago(Request $request)
+    {
+
+        $deuda = Deuda::findOrFail($request->Deuda);
+
+        $detalle = new DeudaDetalle();
+        $detalle->FechaInicio = $request->FechaInicio;
+        $detalle->FechaFinal = $request->FechaFinal;
+        $detalle->MontoCartera = $request->MontoCartera;
+        $detalle->Deuda = $request->Deuda;
+        $detalle->Tasa = $request->Tasa;
+        $detalle->PrimaTotal = $request->PrimaTotal;
+        $detalle->Descuento = $request->Descuento;
+        $detalle->Iva = $request->Iva;
+        $detalle->ValorCCF = $request->ValorCCF;
+        $detalle->APagar = $request->APagar;
+        $detalle->Comentario = $request->Comentario;
+       // $detalle->DescuentoIva = $request->DescuentoIva; //checked
+        $detalle->Comision = $request->Comision;
+        $detalle->IvaSobreComision = $request->IvaSobreComision;
+        $detalle->Retencion = $request->Retencion;  
+        $detalle->ExtraPrima = $request->ExtraPrima;
+        $detalle->ImpuestoBomberos = $request->ImpuestoBomberos;
+        $detalle->ValorDescuento = $request->ValorDescuento;
+        $detalle->TasaComision = $request->TasaComision;
+        $detalle->PrimaDescontada = $request->PrimaDescontada;
+        $detalle->ExcelURL = $request->ExcelURL;
+        $detalle->save();
+        alert()->success('El registro de pago ha sido ingresado correctamente');
+        return back();
+    }
+
     public function store(Request $request)
     {
         //dd($request->Vida);
@@ -136,6 +168,53 @@ class DeudaController extends Controller
 
         DeudaRequisitos::whereIn('Id', [$request->Requisitos])->update(['Poliza' => $deuda->Id]);
         alert()->success('El registro de poliza ha sido ingresado correctamente');
+        return back();
+    }
+
+    public function get_pago($id)
+    {
+        return DeudaDetalle::findOrFail($id);
+    }
+
+    public function edit_pago(Request $request)
+    {
+        
+        $detalle = DeudaDetalle::findOrFail($request->Id);
+        //dd($detalle);
+        
+        $deuda = Deuda::findOrFail($detalle->Deuda);
+        
+        if ($detalle->SaldoA == null && $detalle->ImpresionRecibo == null) {
+            $detalle->SaldoA = $request->SaldoA;
+            $detalle->ImpresionRecibo = $request->ImpresionRecibo;
+            $detalle->Comentario = $request->Comentario;
+            $detalle->update();
+            $pdf = \PDF::loadView('polizas.deuda.recibo', compact('detalle','deuda'))->setWarnings(false)->setPaper('letter');
+            return $pdf->stream('Recibo.pdf');
+
+            return back();
+        } else {
+           
+            //dd($request->EnvioCartera .' 00:00:00');
+            if ($request->EnvioCartera) {
+                $detalle->EnvioCartera = $request->EnvioCartera;
+            }
+            if ($request->EnvioPago) {
+                $detalle->EnvioPago = $request->EnvioPago;
+            }
+            if ($request->PagoAplicado) {
+                $detalle->PagoAplicado = $request->PagoAplicado;
+            }
+            $detalle->Comentario = $request->Comentario;
+
+            /*$detalle->EnvioPago = $request->EnvioPago;
+            $detalle->PagoAplicado = $request->PagoAplicado;*/
+            $detalle->update();
+            alert()->success('El registro ha sido ingresado correctamente');
+        }
+
+
+
         return back();
     }
 
@@ -317,5 +396,13 @@ class DeudaController extends Controller
             print($e);
             return false;
         }
+    }
+    public function delete_pago($id)
+    {
+        $detalle = DeudaDetalle::findOrFail($id);
+        $detalle->Activo = 0;
+        $detalle->update();
+        alert()->success('El registro ha sido ingresado correctamente');
+        return back();
     }
 }
