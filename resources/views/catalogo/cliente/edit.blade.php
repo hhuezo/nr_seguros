@@ -22,304 +22,561 @@
                     </div>
                 @endif
 
+                <div class="" role="tabpanel" data-example-id="togglable-tabs">
+                    <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
+                        <li role="presentation" class="{{ session('tab1') == 1 ? 'active' : '' }}"><a href="#cliente" id="home-tab" role="tab"
+                                data-toggle="tab" aria-expanded="true">Cliente</a>
 
-                <form method="POST" action="{{ route('cliente.update', $cliente->Id) }}">
-                    @method('PUT')
-                    @csrf
+                        </li>
+                        <li role="presentation" class="{{ session('tab1') == 2 ? 'active' : '' }}"><a href="#redes" role="tab" id="profile-tab"
+                                data-toggle="tab" aria-expanded="false">Redes sociales</a>
+                        </li>
+                    </ul>
 
-                    <div class="x_content">
-                        <br />
 
-                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo
-                                    persona</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <select name="TipoPersona" id="TipoPersona" class="form-control">
-                                        <option value="1" {{ $cliente->TipoPersona == 1 ? 'selected' : '' }}>Natural
-                                        </option>
-                                        <option value="2" {{ $cliente->TipoPersona == 2 ? 'selected' : '' }}>Jurídica
-                                        </option>
-                                    </select>
+                    <div id="myTabContent2" class="tab-content">
+                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 1 ? 'active in' : '' }} " id="cliente" aria-labelledby="home-tab">
+
+
+                            <form method="POST" action="{{ route('cliente.update', $cliente->Id) }}">
+                                @method('PUT')
+                                @csrf
+
+                                <div class="x_content">
+                                    <br />
+
+                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo
+                                                persona</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <select name="TipoPersona" id="TipoPersona" class="form-control">
+                                                    <option value="1"
+                                                        {{ $cliente->TipoPersona == 1 ? 'selected' : '' }}>Natural
+                                                    </option>
+                                                    <option value="2"
+                                                        {{ $cliente->TipoPersona == 2 ? 'selected' : '' }}>Jurídica
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">NIT</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <input class="form-control" value="{{ $cliente->Nit }}" name="Nit"
+                                                    data-inputmask="'mask': ['9999-999999-999-9']" data-mask type="text"
+                                                    autofocus="true">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Dui</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <input class="form-control" value="{{ $cliente->Dui }}" name="Dui"
+                                                    data-inputmask="'mask': ['99999999-9']" data-mask type="text"
+                                                    autofocus="true">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Nombre</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <input class="form-control" name="Nombre" value="{{ $cliente->Nombre }}"
+                                                    type="text">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Registro
+                                                fiscal</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <input class="form-control" name="RegistroFiscal"
+                                                    value="{{ $cliente->RegistroFiscal }}" type="text">
+                                            </div>
+                                        </div>
+
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
+                                                nacimiento</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <input class="form-control" name="FechaNacimiento"
+                                                    value="{{ $cliente->FechaNacimiento }}" type="date">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Estado
+                                                familiar</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <select class="form-control" name="EstadoFamiliar">
+                                                    <option value="0"
+                                                        {{ $cliente->EstadoFamiliar == 0 ? 'selected' : '' }}>No
+                                                        Aplica</option>
+                                                    <option value="1"
+                                                        {{ $cliente->EstadoFamiliar == 1 ? 'selected' : '' }}>
+                                                        Soltero</option>
+                                                    <option value="2"
+                                                        {{ $cliente->EstadoFamiliar == 2 ? 'selected' : '' }}>
+                                                        Casado
+                                                    </option>
+                                                    <option value="3"
+                                                        {{ $cliente->EstadoFamiliar == 3 ? 'selected' : '' }}>
+                                                        Divorciado</option>
+                                                    <option value="4"
+                                                        {{ $cliente->EstadoFamiliar == 4 ? 'selected' : '' }}>Viudo
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Numero
+                                                dependientes</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <input class="form-control" name="NumeroDependientes"
+                                                    value="{{ $cliente->NumeroDependientes }}" type="number">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Ocupación</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <input class="form-control" name="Ocupacion"
+                                                    value="{{ $cliente->Ocupacion }}" type="text">
+                                            </div>
+                                        </div>
+
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Dirección
+                                                residencia</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <textarea class="form-control" name="DireccionResidencia">{{ $cliente->DireccionResidencia }}</textarea>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Teléfono
+                                                residencia</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <input class="form-control" name="TelefonoResidencia"
+                                                    value="{{ $cliente->TelefonoResidencia }}"
+                                                    data-inputmask="'mask': ['9999-9999']" data-mask type="text">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Dirección
+                                                correspondencia</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <textarea class="form-control" name="DireccionCorrespondencia">{{ $cliente->DireccionCorrespondencia }}</textarea>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Teléfono
+                                                oficina</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <input class="form-control" name="TelefonoOficina"
+                                                    value="{{ $cliente->TelefonoOficina }}"
+                                                    data-inputmask="'mask': ['9999-9999']" data-mask type="text">
+                                            </div>
+                                        </div>
+
+
+
+                                    </div>
+
+
+                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Teléfono
+                                                celular</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <input class="form-control" name="TelefonoCelular"
+                                                    value="{{ $cliente->TelefonoCelular }}"
+                                                    data-inputmask="'mask': ['9999-9999']" data-mask type="text">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Correo
+                                                principal</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <input class="form-control" name="CorreoPrincipal"
+                                                    value="{{ $cliente->CorreoPrincipal }}" type="email">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Correo
+                                                secundario</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <input class="form-control" name="CorreoSecundario"
+                                                    value="{{ $cliente->CorreoSecundario }}" type="email">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
+                                                vinculación</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <input class="form-control" name="FechaVinculacion"
+                                                    value="{{ $cliente->FechaVinculacion }}" type="date">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
+                                                baja</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <input class="form-control" name="FechaBaja"
+                                                    value="{{ $cliente->FechaBaja }}" type="date">
+                                            </div>
+                                        </div>
+
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Responsable
+                                                pago</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <input class="form-control" name="ResponsablePago"
+                                                    value="{{ $cliente->ResponsablePago }}" type="text">
+                                            </div>
+                                        </div>
+
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Ubicación de
+                                                cobro</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <select name="UbicacionCobro" class="form-control" style="width: 100%">
+                                                    @foreach ($ubicaciones_cobro as $obj)
+                                                        <option value="{{ $obj->Id }}"
+                                                            {{ $cliente->UbicacionCobro == $obj->Id ? 'selected' : '' }}>
+                                                            {{ $obj->Nombre }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Forma
+                                                pago</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <select name="FormaPago" class="form-control" style="width: 100%">
+                                                    @foreach ($formas_pago as $obj)
+                                                        <option value="{{ $obj->Id }}"
+                                                            {{ $cliente->FormaPago == $obj->Id ? 'selected' : '' }}>
+                                                            {{ $obj->Nombre }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Estado</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <select name="Estado" class="form-control" style="width: 100%">
+                                                    @foreach ($cliente_estados as $obj)
+                                                        <option value="{{ $obj->Id }}"
+                                                            {{ $cliente->Estado == $obj->Id ? 'selected' : '' }}>
+                                                            {{ $obj->Nombre }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Género</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <select name="Genero" class="form-control">
+                                                    <option value="1" {{ $cliente->Genero == 1 ? 'selected' : '' }}>
+                                                        Masculino
+                                                    </option>
+                                                    <option value="2" {{ $cliente->Genero == 2 ? 'selected' : '' }}>
+                                                        Femenino
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo
+                                                contribuyente</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <select name="TipoContribuyente" class="form-control"
+                                                    style="width: 100%">
+                                                    @foreach ($tipos_contribuyente as $obj)
+                                                        <option value="{{ $obj->Id }}"
+                                                            {{ $cliente->TipoContribuyente == $obj->Id ? 'selected' : '' }}>
+                                                            {{ $obj->Nombre }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Referencia</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <input class="form-control" name="Referencia"
+                                                    value="{{ $cliente->Referencia }}" type="text">
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+
+
+
                                 </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">NIT</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" value="{{ $cliente->Nit }}" name="Nit"
-                                        data-inputmask="'mask': ['9999-999999-999-9']" data-mask type="text"
-                                        autofocus="true">
+
+                                <div class="form-group" align="center">
+                                    <button class="btn btn-success" type="submit">Modificar</button>
+                                    <a href="{{ url('catalogo/cliente/') }}"><button class="btn btn-primary"
+                                            type="button">Cancelar</button></a>
                                 </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Dui</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" value="{{ $cliente->Dui }}" name="Dui"
-                                        data-inputmask="'mask': ['99999999-9']" data-mask type="text" autofocus="true">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Nombre</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="Nombre" value="{{ $cliente->Nombre }}"
-                                        type="text">
-                                </div>
-                            </div>
 
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Registro
-                                    fiscal</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="RegistroFiscal" value="{{ $cliente->RegistroFiscal }}"
-                                        type="text">
-                                </div>
-                            </div>
-
-
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
-                                    nacimiento</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="FechaNacimiento"
-                                        value="{{ $cliente->FechaNacimiento }}" type="date">
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Estado
-                                    familiar</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <select class="form-control" name="EstadoFamiliar">
-                                        <option value="0" {{ $cliente->EstadoFamiliar == 0 ? 'selected' : '' }}>No
-                                            Aplica</option>
-                                        <option value="1" {{ $cliente->EstadoFamiliar == 1 ? 'selected' : '' }}>
-                                            Soltero</option>
-                                        <option value="2" {{ $cliente->EstadoFamiliar == 2 ? 'selected' : '' }}>Casado
-                                        </option>
-                                        <option value="3" {{ $cliente->EstadoFamiliar == 3 ? 'selected' : '' }}>
-                                            Divorciado</option>
-                                        <option value="4" {{ $cliente->EstadoFamiliar == 4 ? 'selected' : '' }}>Viudo
-                                        </option>
-                                    </select>
-                                </div>
-                            </div>
-
-
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Numero
-                                    dependientes</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="NumeroDependientes"
-                                        value="{{ $cliente->NumeroDependientes }}" type="number">
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Ocupación</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="Ocupacion" value="{{ $cliente->Ocupacion }}"
-                                        type="text">
-                                </div>
-                            </div>
-
-
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Dirección
-                                    residencia</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <textarea class="form-control" name="DireccionResidencia">{{ $cliente->DireccionResidencia }}</textarea>
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Teléfono
-                                    residencia</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="TelefonoResidencia"
-                                        value="{{ $cliente->TelefonoResidencia }}" data-inputmask="'mask': ['9999-9999']"
-                                        data-mask type="text">
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Dirección
-                                    correspondencia</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <textarea class="form-control" name="DireccionCorrespondencia">{{ $cliente->DireccionCorrespondencia }}</textarea>
-                                </div>
-                            </div>
-
-
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Teléfono
-                                    oficina</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="TelefonoOficina"
-                                        value="{{ $cliente->TelefonoOficina }}" data-inputmask="'mask': ['9999-9999']"
-                                        data-mask type="text">
-                                </div>
-                            </div>
-
+                            </form>
 
 
                         </div>
+                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 2 ? 'active in' : '' }}" id="redes" aria-labelledby="home-tab">
+                            <form method="POST" action="{{ url('catalogo/cliente/red_social') }}">
+
+                                @csrf
+
+                                <div class="x_content">
+                                    <br />
+                                    <input type="hidden" name="Id" value="{{$cliente->Id}}">
+                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Contacto facebook</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <input class="form-control" value="{{ $cliente->Facebook }}"
+                                                    name="Facebook">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Actividades creativas</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <input class="form-control" value="{{ $cliente->ActividadesCreativas }}"
+                                                    name="ActividadesCreativas" type="text">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Estilo vida</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <input class="form-control" value="{{ $cliente->EstiloVida }}"
+                                                    name="EstiloVida" type="text">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Sitio web</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <input class="form-control" name="SitioWeb"
+                                                    value="{{ $cliente->SitioWeb }}" type="text">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Necesidad proteccion</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <select name="NecesidadProteccion" class="form-control" style="width: 100%">
+                                                    @foreach ($necesidades as $obj)
+                                                        <option value="{{ $obj->Id }}"
+                                                            {{ $cliente->NecesidadProteccion == $obj->Id ? 'selected' : '' }}>
+                                                            {{ $obj->Nombre }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Dispositivo personal preferido</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <div class="">
+													<label>
+														<input type="checkbox" name="Laptop" value="1" class="js-switch" {{ $cliente->Laptop == 1 ? 'checked' : '' }} /> Laptop
+													</label>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;
+
+                                                    <label>
+														<input type="checkbox" name="PC" value="1" class="js-switch" {{ $cliente->PC == 1 ? 'checked' : '' }}  /> PC
+													</label>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                                   
+                                                    <label>
+														<input type="checkbox" name="Tablet" value="1" class="js-switch" {{ $cliente->Tablet == 1 ? 'checked' : '' }}/> Tablet
+													</label>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                                    <br>
+                                                    <label>
+														<input type="checkbox" name="SmartWatch" value="1" class="js-switch" {{ $cliente->SmartWatch == 1 ? 'checked' : '' }}  /> SmartWatch
+													</label>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                                    <label>
+														<input type="checkbox" name="DispositivosOtros" value="1" class="js-switch"  {{ $cliente->DispositivosOtros == 1 ? 'checked' : '' }} /> Otros dispositivos
+													</label>
+												</div>
+                                           
+                                            </div>
+                                        </div>
 
 
-                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                      
+                                    </div>
 
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Teléfono
-                                    celular</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="TelefonoCelular"
-                                        value="{{ $cliente->TelefonoCelular }}" data-inputmask="'mask': ['9999-9999']"
-                                        data-mask type="text">
+
+                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Le gusta informarse</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <select name="Informarse" class="form-control" style="width: 100%">
+                                                    @foreach ($informarse as $obj)
+                                                        <option value="{{ $obj->Id }}"
+                                                            {{ $cliente->Informarse == $obj->Id ? 'selected' : '' }}>
+                                                            {{ $obj->Nombre }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Contacto instagram</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <input class="form-control" value="{{ $cliente->Instagram }}" name="Instagram">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Tiene mascota?</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <label>
+                                                    <input type="checkbox" name="TieneMascota" value="1" class="js-switch" {{ $cliente->TieneMascota == 1 ? 'checked' : '' }} /> 
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Motivo eleccion</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <select name="MotivoEleccion" class="form-control" style="width: 100%">
+                                                    @foreach ($motivo_eleccion as $obj)
+                                                        <option value="{{ $obj->Id }}"
+                                                            {{ $cliente->MotivoEleccion == $obj->Id ? 'selected' : '' }}>
+                                                            {{ $obj->Nombre }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                       
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Preferencia compra</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <select name="PreferenciaCompra" class="form-control" style="width: 100%">
+                                                    @foreach ($preferencia_compra as $obj)
+                                                        <option value="{{ $obj->Id }}"
+                                                            {{ $cliente->PreferenciaCompra == $obj->Id ? 'selected' : '' }}>
+                                                            {{ $obj->Nombre }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                    
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Compra habitualmente</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <div class="">
+													<label>
+														<input type="checkbox" name="Efectivo" value="1" class="js-switch" {{ $cliente->Efectivo == 1 ? 'checked' : '' }}/> Efectivo
+													</label>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                                   
+                                                    <label>
+														<input type="checkbox" name="TarjetaCredito" value="1" class="js-switch" {{ $cliente->TarjetaCredito == 1 ? 'checked' : '' }} /> Tarjeta credito
+													</label>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                                    <br>
+                                                    <label>
+														<input type="checkbox" name="App" value="1" class="js-switch" {{ $cliente->App == 1 ? 'checked' : '' }} /> App
+													</label>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                                    <label>
+														<input type="checkbox" name="MonederoEletronico" value="1" class="js-switch" {{ $cliente->MonederoEletronico == 1 ? 'checked' : '' }} /> Monedero eletronico
+													</label>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                                    <label>
+														<input type="checkbox" name="CompraOtros" value="1" class="js-switch" {{ $cliente->CompraOtros == 1 ? 'checked' : '' }} /> Otros
+													</label>
+												</div>
+                                           
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+
+
+
                                 </div>
-                            </div>
 
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Correo
-                                    principal</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="CorreoPrincipal"
-                                        value="{{ $cliente->CorreoPrincipal }}" type="email">
+                                <div class="form-group" align="center">
+                                    <button class="btn btn-success" type="submit">Modificar</button>
+                                    <a href="{{ url('catalogo/cliente/') }}"><button class="btn btn-primary"
+                                            type="button">Cancelar</button></a>
                                 </div>
-                            </div>
 
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Correo
-                                    secundario</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="CorreoSecundario"
-                                        value="{{ $cliente->CorreoSecundario }}" type="email">
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
-                                    vinculación</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="FechaVinculacion"
-                                        value="{{ $cliente->FechaVinculacion }}" type="date">
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
-                                    baja</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="FechaBaja" value="{{ $cliente->FechaBaja }}"
-                                        type="date">
-                                </div>
-                            </div>
-
-
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Responsable
-                                    pago</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="ResponsablePago"
-                                        value="{{ $cliente->ResponsablePago }}" type="text">
-                                </div>
-                            </div>
-
-
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Ubicación de
-                                    cobro</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <select name="UbicacionCobro" class="form-control" style="width: 100%">
-                                        @foreach ($ubicaciones_cobro as $obj)
-                                            <option value="{{ $obj->Id }}"
-                                                {{ $cliente->UbicacionCobro == $obj->Id ? 'selected' : '' }}>
-                                                {{ $obj->Nombre }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
-
-
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Forma
-                                    pago</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <select name="FormaPago" class="form-control" style="width: 100%">
-                                        @foreach ($formas_pago as $obj)
-                                            <option value="{{ $obj->Id }}"
-                                                {{ $cliente->FormaPago == $obj->Id ? 'selected' : '' }}>
-                                                {{ $obj->Nombre }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Estado</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <select name="Estado" class="form-control" style="width: 100%">
-                                        @foreach ($cliente_estados as $obj)
-                                            <option value="{{ $obj->Id }}"
-                                                {{ $cliente->Estado == $obj->Id ? 'selected' : '' }}>{{ $obj->Nombre }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Género</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <select name="Genero" class="form-control">
-                                        <option value="1" {{ $cliente->Genero == 1 ? 'selected' : '' }}>Masculino
-                                        </option>
-                                        <option value="2" {{ $cliente->Genero == 2 ? 'selected' : '' }}>Femenino
-                                        </option>
-                                    </select>
-                                </div>
-                            </div>
-
-
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo
-                                    contribuyente</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <select name="TipoContribuyente" class="form-control" style="width: 100%">
-                                        @foreach ($tipos_contribuyente as $obj)
-                                            <option value="{{ $obj->Id }}"
-                                                {{ $cliente->TipoContribuyente == $obj->Id ? 'selected' : '' }}>
-                                                {{ $obj->Nombre }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
-
-
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12"
-                                    align="right">Referencia</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="Referencia" value="{{ $cliente->Referencia }}"
-                                        type="text">
-                                </div>
-                            </div>
-
-
+                            </form>
                         </div>
-
-
-
-
                     </div>
+                </div>
 
-                    <div class="form-group" align="center">
-                        <button class="btn btn-success" type="submit">Modificar</button>
-                        <a href="{{ url('catalogo/cliente/') }}"><button class="btn btn-primary"
-                                type="button">Cancelar</button></a>
-                    </div>
 
-                </form>
 
 
 
@@ -338,19 +595,19 @@
                         <div class="x_content">
                             <div class="" role="tabpanel" data-example-id="togglable-tabs">
                                 <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-                                    <li role="presentation" class="active"><a href="#tab_content1" id="home-tab"
+                                    <li role="presentation" class="{{ session('tab2') == 1 ? 'active' : '' }}"><a href="#tab_content1" id="home-tab"
                                             role="tab" data-toggle="tab" aria-expanded="true">Tarjetas de credito</a>
 
                                     </li>
-                                    <li role="presentation" class=""><a href="#tab_content2" role="tab"
+                                    <li role="presentation" class="{{ session('tab2') == 2 ? 'active' : '' }}"><a href="#tab_content2" role="tab"
                                             id="profile-tab" data-toggle="tab" aria-expanded="false">Contactos</a>
                                     </li>
 
-                                    <li role="presentation" class=""><a href="#tab_content3" role="tab"
+                                    <li role="presentation" class="{{ session('tab2') == 3 ? 'active' : '' }}"><a href="#tab_content3" role="tab"
                                             id="uniforme-tab" data-toggle="tab" aria-expanded="false">Habitos consumo</a>
                                     </li>
 
-                                    <li role="presentation" class=""><a href="#tab_content4" role="tab"
+                                    <li role="presentation" class="{{ session('tab2') == 4 ? 'active' : '' }}"><a href="#tab_content4" role="tab"
                                             id="profile-tab" data-toggle="tab"
                                             aria-expanded="false">Retroalimentacion</a>
                                     </li>
@@ -358,7 +615,7 @@
 
                                 </ul>
                                 <div class="tab-content" id="myTabContent">
-                                    <div role="tabpanel" class="tab-pane fade active in" id="tab_content1"
+                                    <div role="tabpanel" class="tab-pane fade {{ session('tab2') == 1 ? 'active in' : '' }}" id="tab_content1"
                                         aria-labelledby="home-tab">
 
                                         <div class="col-12" style="text-align: right;">
@@ -394,7 +651,7 @@
                                         </table>
 
                                     </div>
-                                    <div role="tabpanel" class="tab-pane fade" id="tab_content2"
+                                    <div role="tabpanel" class="tab-pane fade {{ session('tab2') == 2 ? 'active in' : '' }}" id="tab_content2"
                                         aria-labelledby="profile-tab">
                                         <div class="col-12" style="text-align: right;">
                                             <button class="btn btn-primary" data-toggle="modal"
@@ -441,7 +698,7 @@
 
 
                                     </div>
-                                    <div role="tabpanel" class="tab-pane fade" id="tab_content3"
+                                    <div role="tabpanel" class="tab-pane fade {{ session('tab2') == 3 ? 'active in' : '' }}" id="tab_content3"
                                         aria-labelledby="uniforme-tab">
 
                                         <div class="col-12" style="text-align: right;">
@@ -480,7 +737,7 @@
 
                                     </div>
 
-                                    <div role="tabpanel" class="tab-pane fade" id="tab_content4"
+                                    <div role="tabpanel" class="tab-pane fade {{ session('tab2') == 4 ? 'active in' : '' }}"  id="tab_content4"
                                         aria-labelledby="uniforme-tab">
                                         <div class="col-12" style="text-align: right;">
                                             <button class="btn btn-primary" data-toggle="modal"
@@ -808,27 +1065,27 @@
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         Valores agregados
-                                        <input type="text" name="ValoresAgregados"  class="form-control" required>
+                                        <input type="text" name="ValoresAgregados" class="form-control" required>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         Competidores
-                                        <input type="text" name="Competidores"  class="form-control" required>
+                                        <input type="text" name="Competidores" class="form-control" required>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         Referidos
-                                        <input type="text" name="Referidos"  class="form-control" required>
+                                        <input type="text" name="Referidos" class="form-control" required>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         Que quisiera?
-                                        <input type="text" name="QueQuisiera"  class="form-control" required>
+                                        <input type="text" name="QueQuisiera" class="form-control" required>
                                     </div>
                                 </div>
 

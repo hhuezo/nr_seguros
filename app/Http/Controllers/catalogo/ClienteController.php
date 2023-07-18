@@ -7,6 +7,10 @@ use App\Models\catalogo\Cliente;
 use App\Models\catalogo\ClienteContactoFrecuente;
 use App\Models\catalogo\ClienteEstado;
 use App\Models\catalogo\ClienteHabitoConsumo;
+use App\Models\catalogo\ClienteInformarse;
+use App\Models\catalogo\ClienteMotivoEleccion;
+use App\Models\catalogo\ClienteNecesidadProteccion;
+use App\Models\catalogo\ClientePrefereciaCompra;
 use App\Models\catalogo\ClienteRetroalimentacion;
 use App\Models\catalogo\ClienteTarjetaCredito;
 use App\Models\catalogo\FormaPago;
@@ -22,20 +26,26 @@ class ClienteController extends Controller
 
     public function index()
     {
+        session(['tab1' => '1']);
+        session(['tab2' => '1']);
         $clientes = Cliente::get();
-        return view('catalogo.cliente.index',compact( 'clientes'));
+        return view('catalogo.cliente.index', compact('clientes'));
     }
 
     public function create()
     {
         //alert()->success('El registro ha sido agregado correctamente');
         $tipos_contribuyente = TipoContribuyente::get();
-        $ubicaciones_cobro = UbicacionCobro::where('Activo','=',1)->get();
-        $formas_pago = FormaPago::where('Activo','=',1)->get();
+        $ubicaciones_cobro = UbicacionCobro::where('Activo', '=', 1)->get();
+        $formas_pago = FormaPago::where('Activo', '=', 1)->get();
         $cliente_estados = ClienteEstado::get();
 
-        return view('catalogo.cliente.create',compact( 'tipos_contribuyente','formas_pago','ubicaciones_cobro'
-        ,'cliente_estados'));
+        return view('catalogo.cliente.create', compact(
+            'tipos_contribuyente',
+            'formas_pago',
+            'ubicaciones_cobro',
+            'cliente_estados'
+        ));
     }
 
     public function store(Request $request)
@@ -73,6 +83,9 @@ class ClienteController extends Controller
         $cliente->UsuarioIngreso = auth()->user()->id;
         $cliente->save();
 
+        session(['tab1' => '1']);
+        session(['tab2' => '1']);
+
         alert()->success('El registro ha sido creado correctamente');
 
         return redirect('catalogo/cliente/' . $cliente->id . '/edit');
@@ -82,8 +95,8 @@ class ClienteController extends Controller
 
     public function cliente_create(Request $request)
     {
-      //  dd("holi");
-       $time = Carbon::now();
+        //  dd("holi");
+        $time = Carbon::now();
 
         $cliente = new  Cliente();
         $cliente->Nit = $request->get('Nit');
@@ -109,27 +122,42 @@ class ClienteController extends Controller
         $cliente->UsuarioCreacion = auth()->user()->id;
         $cliente->save();
 
-        return Cliente::where('Activo','=',1)->get();
+        return Cliente::where('Activo', '=', 1)->get();
     }
 
     public function edit($id)
     {
         $cliente = Cliente::findOrFail($id);
         $tipos_contribuyente = TipoContribuyente::get();
-        $ubicaciones_cobro = UbicacionCobro::where('Activo','=',1)->get();
-        $formas_pago = FormaPago::where('Activo','=',1)->get();
+        $ubicaciones_cobro = UbicacionCobro::where('Activo', '=', 1)->get();
+        $formas_pago = FormaPago::where('Activo', '=', 1)->get();
         $cliente_estados = ClienteEstado::get();
 
         //contactos
-        $contactos = ClienteContactoFrecuente::where('Cliente','=',$id)->get();
-        $tarjetas = ClienteTarjetaCredito::where('Cliente','=',$id)->get();
-        $habitos = ClienteHabitoConsumo::where('Cliente','=',$id)->get();  
-        $retroalimentacion = ClienteRetroalimentacion::where('Cliente','=',$id)->get(); 
+        $contactos = ClienteContactoFrecuente::where('Cliente', '=', $id)->get();
+        $tarjetas = ClienteTarjetaCredito::where('Cliente', '=', $id)->get();
+        $habitos = ClienteHabitoConsumo::where('Cliente', '=', $id)->get();
+        $retroalimentacion = ClienteRetroalimentacion::where('Cliente', '=', $id)->get();
+        $necesidades = ClienteNecesidadProteccion::get();
+        $informarse = ClienteInformarse::get();
+        $motivo_eleccion = ClienteMotivoEleccion::get();
+        $preferencia_compra = ClientePrefereciaCompra::get();
 
-        return view('catalogo.cliente.edit',compact( 'cliente','tipos_contribuyente','formas_pago',
-        'ubicaciones_cobro','cliente_estados','contactos'
-        ,'tarjetas','habitos','retroalimentacion'));
-
+        return view('catalogo.cliente.edit', compact(
+            'cliente',
+            'tipos_contribuyente',
+            'formas_pago',
+            'ubicaciones_cobro',
+            'cliente_estados',
+            'contactos',
+            'tarjetas',
+            'habitos',
+            'retroalimentacion',
+            'necesidades',
+            'informarse',
+            'motivo_eleccion',
+            'preferencia_compra'
+        ));
     }
 
     public function update(Request $request, $id)
@@ -162,11 +190,44 @@ class ClienteController extends Controller
         $cliente->Referencia = $request->get('Referencia');
         $cliente->update();
 
+        session(['tab1' => '1']);
+
         alert()->success('El registro ha sido modificado correctamente');
         return back();
     }
 
 
+    public function red_social(Request $request)
+    {
+        $cliente = Cliente::findOrFail($request->Id);
+        $cliente->Facebook = $request->get('Facebook');
+        $cliente->ActividadesCreativas = $request->get('ActividadesCreativas');
+        $cliente->EstiloVida = $request->get('EstiloVida');
+        $cliente->SitioWeb = $request->get('SitioWeb');
+        $cliente->NecesidadProteccion = $request->get('NecesidadProteccion');
+        $cliente->Laptop = $request->get('Laptop');
+        $cliente->PC = $request->get('PC');
+        $cliente->Tablet = $request->get('Tablet');
+        $cliente->SmartWatch = $request->get('SmartWatch');
+        $cliente->DispositivosOtros = $request->get('DispositivosOtros');
+        $cliente->Informarse = $request->get('Informarse');
+        $cliente->Instagram = $request->get('Instagram');
+        $cliente->TieneMascota = $request->get('TieneMascota');
+        $cliente->MotivoEleccion = $request->get('MotivoEleccion');
+        $cliente->PreferenciaCompra = $request->get('PreferenciaCompra');
+        $cliente->Efectivo = $request->get('Efectivo');
+        $cliente->TarjetaCredito = $request->get('TarjetaCredito');
+        $cliente->App = $request->get('App');
+        $cliente->MonederoEletronico = $request->get('MonederoEletronico');
+        $cliente->CompraOtros = $request->get('CompraOtros');
+        $cliente->update();
+
+        session(['tab1' => '2']);
+
+        alert()->success('El registro ha sido modificado correctamente');
+        return back();
+        
+    }
     public function add_contacto(Request $request)
     {
         $contacto = new ClienteContactoFrecuente();
@@ -178,14 +239,18 @@ class ClienteController extends Controller
         $contacto->LugarTrabajo = $request->LugarTrabajo;
         $contacto->save();
         alert()->success('El registro ha sido creado correctamente');
+
+        session(['tab2' => '2']);
         return back();
     }
 
     public function delete_contacto(Request $request)
     {
-        $contacto = ClienteContactoFrecuente::findOrFail($request->Id);       
+        $contacto = ClienteContactoFrecuente::findOrFail($request->Id);
         $contacto->delete();
         alert()->error('El registro ha sido eliminado correctamente');
+
+        session(['tab2' => '2']);
         return back();
     }
 
@@ -199,15 +264,19 @@ class ClienteController extends Controller
         $contacto->PolizaVinculada = $request->PolizaVinculada;
         $contacto->save();
         alert()->success('El registro ha sido creado correctamente');
+
+        session(['tab2' => '1']);
         return back();
     }
 
     public function delete_tarjeta(Request $request)
     {
-        $tarjeta = ClienteTarjetaCredito::findOrFail($request->Id);     
+        $tarjeta = ClienteTarjetaCredito::findOrFail($request->Id);
         //dd($tarjeta) ;
         $tarjeta->delete();
         alert()->error('El registro ha sido eliminado correctamente');
+
+        session(['tab2' => '1']);
         return back();
     }
 
@@ -224,15 +293,19 @@ class ClienteController extends Controller
         $habito->NivelEducativo = $request->NivelEducativo;
         $habito->save();
         alert()->success('El registro ha sido creado correctamente');
+
+        session(['tab2' => '3']);
         return back();
     }
 
     public function delete_habito(Request $request)
     {
-        $habito = ClienteHabitoConsumo::findOrFail($request->Id);     
+        $habito = ClienteHabitoConsumo::findOrFail($request->Id);
         //dd($tarjeta) ;
         $habito->delete();
         alert()->error('El registro ha sido eliminado correctamente');
+
+        session(['tab2' => '3']);
         return back();
     }
 
@@ -246,24 +319,28 @@ class ClienteController extends Controller
         $retroalimentacion->Referidos = $request->Referidos;
         $retroalimentacion->QueQuisiera = $request->QueQuisiera;
         $retroalimentacion->save();
+        session(['tab2' => '4']);
         alert()->success('El registro ha sido creado correctamente');
         return back();
     }
 
     public function delete_retroalimentacion(Request $request)
     {
-        $retroalimentacion = ClienteRetroalimentacion::findOrFail($request->Id);     
+        $retroalimentacion = ClienteRetroalimentacion::findOrFail($request->Id);
         //dd($tarjeta) ;
         $retroalimentacion->delete();
         alert()->error('El registro ha sido eliminado correctamente');
+
+        session(['tab2' => '4']);
         return back();
     }
-    
+
 
     public function destroy($id)
     {
         Cliente::findOrFail($id)->update(['Activo' => 0]);
         alert()->error('El registro ha sido desactivado correctamente');
+
         return back();
     }
 }
