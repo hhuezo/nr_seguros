@@ -66,6 +66,16 @@ Route::resource('catalogo/tipo_cartera', TipoCarteraController::class);
 Route::resource('catalogo/tipo_negocio', TipoNegocioController::class);
 Route::resource('catalogo/tipo_poliza', TipoPolizaController::class);
 Route::resource('catalogo/ubicacion_cobro', UbicacionCobroController::class);
+
+Route::post('catalogo/cliente/add_contacto', [ClienteController::class,'add_contacto']);
+Route::post('catalogo/cliente/delete_contacto', [ClienteController::class,'delete_contacto']);
+Route::post('catalogo/cliente/add_tarjeta', [ClienteController::class,'add_tarjeta']);
+Route::post('catalogo/cliente/delete_tarjeta', [ClienteController::class,'delete_tarjeta']);
+Route::post('catalogo/cliente/add_habito', [ClienteController::class,'add_habito']);
+Route::post('catalogo/cliente/delete_habito', [ClienteController::class,'delete_habito']);
+Route::post('catalogo/cliente/add_retroalimentacion', [ClienteController::class,'add_retroalimentacion']);
+Route::post('catalogo/cliente/delete_retroalimentacion', [ClienteController::class,'delete_retroalimentacion']);
+Route::resource('catalogo/cliente', ClienteController::class);
 Route::resource('catalogo/cliente', ClienteController::class);
 Route::get('catalogo/cliente_create', [ClienteController::class, 'cliente_create']);
 Route::resource('catalogo/negocio', NegocioController::class);

@@ -62,6 +62,50 @@
                             </div>
 
                             <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Registro fiscal</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="RegistroFiscal" type="text">
+                                </div>
+                            </div>
+
+
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha nacimiento</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="FechaNacimiento" type="date">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Estado familiar</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <select class="form-control" name="EstadoFamiliar" >
+                                        <option value="0">No Aplica</option>
+                                        <option value="1">Soltero</option>
+                                        <option value="2">Casado</option>
+                                        <option value="3">Divorciado</option>
+                                        <option value="4">Viudo</option>
+                                    </select>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Numero dependientes</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="NumeroDependientes" type="number">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Ocupación</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="Ocupacion" type="text">
+                                </div>
+                            </div>
+
+
+                            <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Dirección
                                     residencia</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
@@ -69,13 +113,6 @@
                                 </div>
                             </div>
 
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Dirección
-                                    correspondecia</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <textarea class="form-control" name="DireccionCorrespondencia"></textarea>
-                                </div>
-                            </div>
                             <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Teléfono
                                     residencia</label>
@@ -85,12 +122,28 @@
                             </div>
 
                             <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Dirección
+                                    correspondencia</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <textarea class="form-control" name="DireccionCorrespondencia"></textarea>
+                                </div>
+                            </div>
+                          
+
+                            <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Teléfono
                                     oficina</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                     <input class="form-control" name="TelefonoOficina" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
                                 </div>
                             </div>
+
+                            
+
+                        </div>
+
+
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
 
                             <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Teléfono
@@ -102,32 +155,36 @@
 
                             <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Correo
-                                    electrónico</label>
+                                    principal</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="Correo" type="email">
+                                    <input class="form-control" name="CorreoPrincipal" type="email">
                                 </div>
                             </div>
 
-                        </div>
-
-
-
-
-
-
-
-
-                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                             <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Ruta</label>
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Correo secundario</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <select name="Ruta" class="form-control select2" style="width: 100%">
-                                        @foreach ($rutas as $obj)
-                                        <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
-                                        @endforeach
-                                    </select>
+                                    <input class="form-control" name="CorreoSecundario" type="email">
                                 </div>
                             </div>
+
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
+                                    vinculación</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="FechaVinculacion"  type="date">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
+                                    baja</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="FechaBaja"  type="date">
+                                </div>
+                            </div>
+
+                         
                             <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Responsable
                                     pago</label>
@@ -135,6 +192,54 @@
                                     <input class="form-control" name="ResponsablePago" type="text">
                                 </div>
                             </div>
+
+
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Ubicación de
+                                    cobro</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <select name="UbicacionCobro" class="form-control" style="width: 100%">
+                                        @foreach ($ubicaciones_cobro as $obj)
+                                        <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+
+
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Forma pago</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <select name="FormaPago" class="form-control" style="width: 100%">
+                                        @foreach ($formas_pago as $obj)
+                                        <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Estado</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <select name="Estado" class="form-control" style="width: 100%">
+                                        @foreach ($cliente_estados as $obj)
+                                        <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Género</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <select name="Genero" class="form-control">
+                                        <option value="1">Masculino</option>
+                                        <option value="2">Femenino</option>
+                                    </select>
+                                </div>
+                            </div>
+
 
                             <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo
@@ -148,55 +253,14 @@
                                 </div>
                             </div>
 
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Ubicación de
-                                    cobro</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <select name="UbicacionCobro" class="form-control" style="width: 100%">
-                                        @foreach ($ubicaciones_cobro as $obj)
-                                        <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Contacto</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="Contacto" type="text">
-                                </div>
-                            </div>
+
 
                             <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Referencia</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                     <input class="form-control" name="Referencia" type="text">
                                 </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Número
-                                    tarjeta</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="NumeroTarjeta" data-inputmask="'mask': ['9999-9999-9999-9999']" data-mask type="text">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
-                                    vencimiento</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="FechaVencimiento" data-inputmask="'mask': ['99/99']" data-mask type="text">
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Género</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <select name="Genero" class="form-control">
-                                        <option value="1">Masculino</option>
-                                        <option value="2">Femenino</option>
-                                    </select>
-                                </div>
-                            </div>
+                            </div>                          
 
 
                         </div>

@@ -42,10 +42,10 @@ class Cliente extends Model
 
     protected $guarded = [];
 
-    public function ruta()
+    /*public function ruta()
     {
         return $this->belongsTo('App\Models\catalogo\Ruta', 'Ruta', 'Id');
-    }
+    }*/
 
     public function tipo_contribuyente()
     {
