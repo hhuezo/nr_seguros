@@ -72,10 +72,10 @@
 
                                 <li><a><i class="fa fa-folder"></i> Catálogos<span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
-                                        <li><a href="{{ url('catalogo/cliente') }}">Clientes</a></li>
+                                     
                                         <li><a href="{{ url('catalogo/bombero') }}">Impuesto Bomberos</a></li>
-                                        <li><a href="{{ url('catalogo/negocio') }}">Negocio</a></li>
-                                        <li><a href="{{ url('catalogo/aseguradoras') }}">Aseguradora</a></li>
+                                        
+                                        
                                         <li><a href="{{ url('catalogo/ejecutivos') }}">Ejecutivo</a></li>
                                         <li><a href="{{ url('catalogo/estado_polizas') }}">Estado Poliza</a></li>
                                         <li><a href="{{ url('catalogo/estado_venta') }}">Estado Venta</a></li>
@@ -86,6 +86,22 @@
                                         <li><a href="{{ url('catalogo/tipo_poliza') }}">Tipo Poliza (ramo)</a></li>
                                         <li><a href="{{ url('catalogo/area_comercial')}}">Area Comercial</a></li>
                                         <li><a href="{{ url('catalogo/ubicacion_cobro') }}">Ubicacion Cobro</a></li>
+                                    </ul>
+                                </li>
+                                <li><a><i class="fa fa-user"></i> Cliente <span class="fa fa-chevron-down"></span></a>
+                                    <ul class="nav child_menu">
+                                    <li><a href="{{ url('catalogo/cliente') }}">Clientes</a></li>
+                                    </ul>
+                                </li>
+
+                                <li><a><i class="fa fa-solid fa-briefcase"></i> Cotizaciones <span class="fa fa-chevron-down"></span></a>
+                                    <ul class="nav child_menu">
+                                    <li><a href="{{ url('catalogo/negocio') }}">Negocio</a></li>
+                                    </ul>
+                                </li>
+                                <li><a><i class="fa fa-shield"></i> Aseguradoras <span class="fa fa-chevron-down"></span></a>
+                                    <ul class="nav child_menu">
+                                    <li><a href="{{ url('catalogo/aseguradoras') }}">Aseguradora</a></li>
                                     </ul>
                                 </li>
 
