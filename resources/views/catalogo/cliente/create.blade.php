@@ -35,7 +35,7 @@
                             <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo persona</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <select name="TipoPersona" id="TipoPersona" class="form-control">
+                                    <select name="TipoPersona" id="TipoPersona" class="form-control" required>
                                         <option value="">Seleccione ...</option>
                                         <option value="1">Natural</option>
                                         <option value="2">Jurídica</option>
@@ -55,12 +55,41 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Nombre</label>
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Registro fiscal</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="RegistroFiscal" type="text">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Nombre o Razon Social</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                     <input class="form-control" name="Nombre" type="text">
                                 </div>
                             </div>
-
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha nacimiento</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="FechaNacimiento" type="date">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Estado familiar</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="EstadoFamiliar" type="text">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Numero dependientes</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="NumeroDependientes" type="text">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Ocupacion</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="Ocupacion" type="text">
+                                </div>
+                            </div>
                             <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Dirección
                                     residencia</label>
@@ -68,7 +97,6 @@
                                     <textarea class="form-control" name="DireccionResidencia"></textarea>
                                 </div>
                             </div>
-
                             <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Dirección
                                     correspondecia</label>
@@ -80,9 +108,15 @@
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Teléfono
                                     residencia</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="TelefonoResidencia" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
+                                    <input class="form-control" name="TelefonoRecidencia" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
                                 </div>
                             </div>
+
+                        </div>
+
+
+
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
 
                             <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Teléfono
@@ -91,7 +125,6 @@
                                     <input class="form-control" name="TelefonoOficina" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
                                 </div>
                             </div>
-
                             <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Teléfono
                                     celular</label>
@@ -99,40 +132,51 @@
                                     <input class="form-control" name="TelefonoCelular" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
                                 </div>
                             </div>
-
                             <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Correo
-                                    electrónico</label>
+                                    electrónico principal</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="Correo" type="email">
+                                    <input class="form-control" name="CorreoPrincipal" type="email">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Correo
+                                    electrónico secundario</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="CorreoSecundario" type="email">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha Vinculacion</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="FechaVinculacion" type="date">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha Baja</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="FechaBaja" type="date">
                                 </div>
                             </div>
 
-                        </div>
-
-
-
-
-
-
-
-
-                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                             <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Ruta</label>
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Estado</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <select name="Ruta" class="form-control select2" style="width: 100%">
-                                        @foreach ($rutas as $obj)
-                                        <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                    <select name="Estado" class="form-control select2" style="width: 100%">
+                                        @foreach ($cliente_estados as $obj)
+                                        <option value="{{ $obj->id }}">{{ $obj->nombre }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                             </div>
+
                             <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Responsable
-                                    pago</label>
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Género</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="ResponsablePago" type="text">
+                                    <select name="Genero" class="form-control">
+                                        <option value="1">Masculino</option>
+                                        <option value="2">Femenino</option>
+                                    </select>
                                 </div>
                             </div>
 
@@ -149,6 +193,22 @@
                             </div>
 
                             <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Referencia</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="Referencia" type="text">
+                                </div>
+                            </div>
+
+
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Responsable Pago</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="ResponsablePago" type="text">
+                                </div>
+                            </div>
+
+
+                            <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Ubicación de
                                     cobro</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
@@ -159,45 +219,6 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Contacto</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="Contacto" type="text">
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Referencia</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="Referencia" type="text">
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Número
-                                    tarjeta</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="NumeroTarjeta" data-inputmask="'mask': ['9999-9999-9999-9999']" data-mask type="text">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
-                                    vencimiento</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="FechaVencimiento" data-inputmask="'mask': ['99/99']" data-mask type="text">
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Género</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <select name="Genero" class="form-control">
-                                        <option value="1">Masculino</option>
-                                        <option value="2">Femenino</option>
-                                    </select>
-                                </div>
-                            </div>
-
 
                         </div>
 
@@ -222,8 +243,8 @@
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#TipoPersona').change(function(){
-           // if()
+        $('#TipoPersona').change(function() {
+            // if()
         })
 
     })
