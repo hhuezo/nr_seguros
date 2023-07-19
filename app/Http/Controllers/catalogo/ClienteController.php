@@ -88,7 +88,7 @@ class ClienteController extends Controller
 
         alert()->success('El registro ha sido creado correctamente');
 
-        return redirect('catalogo/cliente/' . $cliente->id . '/edit');
+        return redirect('catalogo/cliente/' . $cliente->Id . '/edit');
 
         //return back();
     }
