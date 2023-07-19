@@ -5,10 +5,10 @@ namespace App\Models\catalogo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ClienteEstado extends Model
+class ClienteMotivoEleccion extends Model
 {
     use HasFactory;
-    protected $table = 'cliente_estado';
+    protected $table = 'cliente_motivo_eleccion';
 
     protected $primaryKey = 'Id';
 
@@ -16,10 +16,8 @@ class ClienteEstado extends Model
 
 
     protected $fillable = [
-
         'Nombre',
         'Activo'
-
     ];
 
     protected $guarded = [];
