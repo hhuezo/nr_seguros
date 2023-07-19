@@ -273,6 +273,7 @@ class DeudaController extends Controller
         $rutas = Ruta::where('Activo', '=', 1)->get();
         $ubicaciones_cobro =  UbicacionCobro::where('Activo', '=', 1)->get();
         $bombero = Bombero::where('Activo', 1)->first();
+        
         if ($bombero) {
             $bomberos = $bombero->Valor;
         } else {
@@ -284,8 +285,8 @@ class DeudaController extends Controller
         $estadoPoliza = EstadoPoliza::where('Activo', 1)->get();
         $tipoCobro = TipoCobro::where('Activo', 1)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
-        $detalle = DeudaDetalle::where('Deuda', $deuda->Id)->get();
-
+        $detalle = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo',1)->orderBy('Id','desc')->get();
+        $ultimo_pago = DeudaDetalle::where('Deuda',$deuda->Id)->where('Activo',1)->orderBy('Id','desc')->first();
         $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
 
         return view('polizas.deuda.edit', compact(
@@ -304,7 +305,8 @@ class DeudaController extends Controller
             'tipos_contribuyente',
             'rutas',
             'ubicaciones_cobro',
-            'bomberos'
+            'bomberos',
+            'ultimo_pago'
         ));
     }
 

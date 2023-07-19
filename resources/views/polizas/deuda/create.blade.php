@@ -61,7 +61,7 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-md-1 col-lg-1 col-sm-12 col-xs-12"><i onclick="modal_cliente();" class="fa fa-plus fa-lg" style="padding-top: 60%;"></i></div>
+                                    <!-- <div class="col-md-1 col-lg-1 col-sm-12 col-xs-12"><i onclick="modal_cliente();" class="fa fa-plus fa-lg" style="padding-top: 60%;"></i></div> -->
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Nit</label>
@@ -188,93 +188,33 @@
                                     <div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
                                         <input name="Vida" id="Vida" type="checkbox" class="js-switch" />
                                     </div>
-                                    <input type="hidden" id="DataRequisitos" name="Requisitos">
+                                    <br>
                                 </div>
-                            </div>
-                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-
-                                    <div class="x_title">
-                                        <h2> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<small></small></h2>
-                                        <div class="clearfix"></div>
-                                    </div>
-                                    <div class="x_title">
-                                        <h4>&nbsp;&nbsp; Declaracion de Tipos de Carteras<small></small>
-                                        </h4>
-                                        <div class="clearfix"></div>
-                                    </div>
-
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo
-                                            Cartera 1</label>
-                                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                            <select name="TipoCartera1" class="form-control select2" style="width: 100%" required>
-                                                @foreach ($tipoCartera as $obj)
-                                                <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa
-                                            ‰ 1</label>
-                                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                            <input class="form-control" name="TasaCartera1" id="TasaCartera1" type="text" value="{{ old('TasaCartera1') }}">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo
-                                            Cartera 2</label>
-                                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                            <select name="TipoCartera2" class="form-control select2" style="width: 100%" required>
-                                                @foreach ($tipoCartera as $obj)
-                                                <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa
-                                            ‰ 2</label>
-                                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                            <input class="form-control" name="TasaCartera2" id="TasaCartera2" type="text" value="{{ old('TasaCartera2') }}">
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <div id="poliza_vida" style="display: none;" class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-
-                                    <div class="x_title">
-                                        <h2> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<small></small></h2>
-                                        <div class="clearfix"></div>
-                                    </div>
-                                    <div class="x_title">
-                                        <h4>&nbsp;&nbsp; Poliza de Vida Colectivo<small></small>
-                                        </h4>
-                                        <div class="clearfix"></div>
-                                    </div>
-                                    <div class="form-group row">
+                                <div class="form-group row">
+                                    <div id="poliza_vida" style="display: none;">
                                         <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Número de Póliza</label>
-                                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                             <input class="form-control" name="NumeroPolizaVida" id="NumeroPolizaVida" type="text" value="{{ old('NumeroPolizaVida') }}">
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Suma
-                                            Uniforme por Usuario</label>
-                                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                            <input class="form-control" name="SumaUniforme" id="SumaUniforme" type="text" value="{{ old('SumaUniforme') }}">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa
-                                            ‰</label>
-                                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                            <input class="form-control" name="TasaVida" id="TasaVida" type="text" value="{{ old('TasaVida') }}">
-                                        </div>
-                                    </div>
-
+                                    <input type="hidden" id="DataRequisitos" name="Requisitos">
+                                    <input type="hidden" id="DataCreditos" name="Creditos">
                                 </div>
+                            </div>
+                            <div class="col-lg-12 col-md-12 ">
+                               
+                                    <div class="x_panel">
+                                        <div class="x_title">
+                                            <h2> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;Declaracion de Lineas de Credito<small></small></h2>
+                                            <div class="float-right" style="text-align: right;"> <button type="button" onclick="modal_creditos()" class="btn btn-primary"><i class="fa fa-plus"></i></button></div>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                        <div class="x_content">
+                                            <div class="table-responsive" id="divCreditos">
+                                            </div>
+                                        </div>
+                                    </div>
+                                
                             </div>
 
                             <br><br>
@@ -328,6 +268,7 @@
 
 @include('catalogo.cliente.modal_poliza')
 @include('polizas.deuda.modal_requisitos')
+@include('polizas.deuda.modal_creditos')
 
 
 @include('sweetalert::alert')
@@ -399,6 +340,10 @@
 
     function modal_requisitos() {
         $('#modal_requisitos').modal('show');
+    }
+
+    function modal_creditos() {
+        $('#modal_creditos').modal('show');
     }
 </script>
 @endsection

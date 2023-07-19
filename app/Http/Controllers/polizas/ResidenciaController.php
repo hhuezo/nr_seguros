@@ -124,6 +124,8 @@ class ResidenciaController extends Controller
         $rutas = Ruta::where('Activo', '=', 1)->get();
         $ubicaciones_cobro = UbicacionCobro::where('Activo', '=', 1)->get();
         $detalle = DetalleResidencia::where('Residencia', $residencia->Id)->where('Activo', 1)->orderBy('Id', 'desc')->get();
+        $ultimo_pago = DetalleResidencia::where('Residencia', $residencia->Id)->where('Activo', 1)->orderBy('Id', 'desc')->first();
+       // dd($ultimo_pago);
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
         $bombero = Bombero::where('Activo', 1)->first();
         if ($bombero) {
@@ -145,7 +147,8 @@ class ResidenciaController extends Controller
             'rutas',
             'ubicaciones_cobro',
             'bomberos',
-            'meses'
+            'meses',
+            'ultimo_pago'
         ));
     }
 

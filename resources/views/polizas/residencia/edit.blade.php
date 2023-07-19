@@ -642,42 +642,40 @@
                                             <td>{{$residencia->Tasa}} %</td>
                                         </tr>
                                         <tr>
-                                            <td colspan="2"> <strong>Base Calculo de la Prima </strong> </td>
+                                            <td colspan="2"><center><strong>Base Calculo de la Prima </strong></center>  </td>
                                         </tr>
                                         <tr>
                                             <td>Monto Cartera</td>
-                                            <td><input type="text" id="MontoCartera2" class="form-group"></td>
+                                            <td><input type="text" id="MontoCartera2" value="@if($ultimo_pago) {{$ultimo_pago->MontoCartera}} @else 0 @endif" readonly class="form-group"></td>
                                         </tr>
-                                        <tr>
+                                        <!-- <tr>
                                             <td>Resultado 1</td>
-                                            <td><input type="text" id="Resultado" class="form-group"></td>
-                                        </tr>
+                                            <td><input type="text" id="Resultado2" value="@if($ultimo_pago) {{$ultimo_pago->MontoCartera}} @else 0 @endif"   class="form-group"></td>
+                                        </tr> -->
                                         <tr>
                                             <td>Prima Calculada</td>
-                                            <td><input type="text" id="PrimaCalculada2" class="form-group"></td>
+                                            <td><input type="text" id="PrimaCalculada2" value="@if($ultimo_pago) {{$ultimo_pago->MontoCartera * $ultimo_pago->Tasa}} @else 0 @endif" readonly class="form-group"></td>
                                         </tr>
                                         <tr>
                                             <td>Impuesto Bomberos</td>
-                                            <td><input type="text" id="Bomberos2" class="form-group"></td>
+                                            <td><input type="text" id="Bomberos2" value="@if($ultimo_pago) {{$ultimo_pago->ImpuestoBomberos}} @else 0 @endif" readonly class="form-group"></td>
                                         </tr>
                                         <tr>
                                             <td>SubTotal (Base de Iva)</td>
-                                            <td><input type="text" id="SubTotal2" class="form-group"></td>
+                                            <td><input type="text" id="SubTotal2" readonly value="@if($ultimo_pago) {{($ultimo_pago->MontoCartera * $ultimo_pago->Tasa) + $ultimo_pago->ImpuestoBomberos}} @else 0 @endif" class="form-group"></td>
                                         </tr>
                                         <tr>
                                             <td>13% Iva s/SubTotal</td>
-                                            <td><input type="text" id="Iva2" class="form-group"></td>
+                                            <td><input type="text" id="Iva2" value="@if($ultimo_pago) {{$ultimo_pago->Iva}} @else 0 @endif" readonly class="form-group"></td>
                                         </tr>
                                         <tr>
                                             <td>Valor CCF por Comision</td>
-                                            <td><input type="text" id="ValorCCF2" class="form-group"></td>
+                                            <td><input type="text" id="ValorCCF2" value="@if($ultimo_pago) {{$ultimo_pago->ValorCCF}} @else 0 @endif" readonly class="form-group"></td>
                                         </tr>
-                                        <tfoot>
-                                            <tr>
-                                                <td>Prima Neta Por Pagar</td>
-                                                <td><input type="text" id="APagar2" class="form-group"></td>
-                                            </tr>
-                                        </tfoot>
+                                        <tr>
+                                            <td>Prima Neta Por Pagar</td>
+                                            <td><input type="text" id="APagar2" value="@if($ultimo_pago) {{$ultimo_pago->APagar}} @else 0 @endif" readonly class="form-group"></td>
+                                        </tr>
                                     </table>
                                 </div>
                             </div>

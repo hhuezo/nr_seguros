@@ -178,20 +178,6 @@
                                         <input class="form-control" name="NumeroPolizaVida" id="NumeroPolizaVida" type="text" value="{{ $videuda->NumeroPoliza }}" readonly>
                                     </div>
                                 </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Suma
-                                        Uniforme por Usuario</label>
-                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="SumaUniforme" id="SumaUniforme" type="text" value="{{ $videuda->SumaUniforme }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa
-                                        ‰</label>
-                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="TasaVida" id="TasaVida" type="text" value="{{ $videuda->Tasa }}" readonly>
-                                    </div>
-                                </div>
                             </div>
                             <div class="col-md-12 col-sm-12  ">
                                 <div class="x_panel">

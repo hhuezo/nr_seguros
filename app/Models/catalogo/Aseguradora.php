@@ -31,4 +31,9 @@ class Aseguradora extends Model
     ];
 
     protected $guarded = [];
+
+    public function aseguradora_has_cartera(){
+        return $this->belongsToMany(TipoCartera::class, 'aseguradora_has_cartera', 'aseguradora_id', 'cartera_id');
+    }
+    
 }
