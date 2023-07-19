@@ -4,6 +4,7 @@ namespace App\Http\Controllers\catalogo;
 
 use App\Http\Controllers\Controller;
 use App\Models\catalogo\Cliente;
+
 use App\Models\catalogo\ClienteContactoFrecuente;
 use App\Models\catalogo\ClienteEstado;
 use App\Models\catalogo\ClienteHabitoConsumo;
@@ -14,9 +15,13 @@ use App\Models\catalogo\ClientePrefereciaCompra;
 use App\Models\catalogo\ClienteRetroalimentacion;
 use App\Models\catalogo\ClienteTarjetaCredito;
 use App\Models\catalogo\FormaPago;
+
 use App\Models\catalogo\Ruta;
 use App\Models\catalogo\TipoContribuyente;
 use App\Models\catalogo\UbicacionCobro;
+use App\Models\polizas\Deuda;
+use App\Models\polizas\Residencia;
+use App\Models\polizas\Vida;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -34,8 +39,9 @@ class ClienteController extends Controller
 
     public function create()
     {
-        //alert()->success('El registro ha sido agregado correctamente');
+
         $tipos_contribuyente = TipoContribuyente::get();
+
         $ubicaciones_cobro = UbicacionCobro::where('Activo', '=', 1)->get();
         $formas_pago = FormaPago::where('Activo', '=', 1)->get();
         $cliente_estados = ClienteEstado::get();
@@ -46,6 +52,7 @@ class ClienteController extends Controller
             'ubicaciones_cobro',
             'cliente_estados'
         ));
+
     }
 
     public function store(Request $request)
@@ -56,23 +63,33 @@ class ClienteController extends Controller
         $cliente = new Cliente();
         $cliente->Nit = $request->get('Nit');
         $cliente->Dui = $request->get('Dui');
-        $cliente->Nombre = $request->get('Nombre');
+
         $cliente->RegistroFiscal = $request->get('RegistroFiscal');
+        $cliente->Nombre = $request->get('Nombre');
+
+        $cliente->RegistroFiscal = $request->get('RegistroFiscal');
+
         $cliente->FechaNacimiento = $request->get('FechaNacimiento');
         $cliente->EstadoFamiliar = $request->get('EstadoFamiliar');
         $cliente->NumeroDependientes = $request->get('NumeroDependientes');
         $cliente->Ocupacion = $request->get('Ocupacion');
         $cliente->DireccionResidencia = $request->get('DireccionResidencia');
         $cliente->DireccionCorrespondencia = $request->get('DireccionCorrespondencia');
-        $cliente->TelefonoResidencia = $request->get('TelefonoResidencia');
+        $cliente->TelefonoRecidencia = $request->get('TelefonoRecidencia');
+
         $cliente->TelefonoOficina = $request->get('TelefonoOficina');
         $cliente->TelefonoCelular = $request->get('TelefonoCelular');
         $cliente->CorreoPrincipal = $request->get('CorreoPrincipal');
         $cliente->CorreoSecundario = $request->get('CorreoSecundario');
         $cliente->FechaVinculacion = $request->get('FechaVinculacion');
         $cliente->FechaBaja = $request->get('FechaBaja');
+
+        //$cliente->Ruta = $request->get('Ruta');
+
+
         $cliente->ResponsablePago = $request->get('ResponsablePago');
         $cliente->UbicacionCobro = $request->get('UbicacionCobro');
+
         $cliente->FormaPago = $request->get('FormaPago');
         $cliente->Estado = $request->get('Estado');
         $cliente->TipoPersona = $request->get('TipoPersona');
@@ -81,6 +98,17 @@ class ClienteController extends Controller
         $cliente->Referencia = $request->get('Referencia');
         $cliente->FechaIngreso = $time->toDateTimeString();
         $cliente->UsuarioIngreso = auth()->user()->id;
+
+        // //$cliente->Contacto = $request->get('Contacto');
+        $cliente->Referencia = $request->get('Referencia');
+        //$cliente->NumeroTarjeta = $request->get('NumeroTarjeta');
+        //$cliente->FechaVencimiento = $request->get('FechaVencimiento');
+        $cliente->Estado = $request->get('Estado');
+        $cliente->Genero = $request->get('Genero');
+        $cliente->TipoPersona = $request->get('TipoPersona');
+        $cliente->FechaIngreso = $time->toDateTimeString();
+        $cliente->UsuarioIngreso = auth()->user()->id;
+
         $cliente->save();
 
         session(['tab1' => '1']);
@@ -88,7 +116,9 @@ class ClienteController extends Controller
 
         alert()->success('El registro ha sido creado correctamente');
 
+
         return redirect('catalogo/cliente/' . $cliente->id . '/edit');
+
 
         //return back();
     }
@@ -129,6 +159,7 @@ class ClienteController extends Controller
     {
         $cliente = Cliente::findOrFail($id);
         $tipos_contribuyente = TipoContribuyente::get();
+
         $ubicaciones_cobro = UbicacionCobro::where('Activo', '=', 1)->get();
         $formas_pago = FormaPago::where('Activo', '=', 1)->get();
         $cliente_estados = ClienteEstado::get();
@@ -142,6 +173,7 @@ class ClienteController extends Controller
         $informarse = ClienteInformarse::get();
         $motivo_eleccion = ClienteMotivoEleccion::get();
         $preferencia_compra = ClientePrefereciaCompra::get();
+
 
         return view('catalogo.cliente.edit', compact(
             'cliente',

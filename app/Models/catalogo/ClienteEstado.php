@@ -16,8 +16,10 @@ class ClienteEstado extends Model
 
 
     protected $fillable = [
+
         'Nombre',
         'Activo'
+
     ];
 
     protected $guarded = [];

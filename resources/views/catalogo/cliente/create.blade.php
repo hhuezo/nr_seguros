@@ -35,7 +35,7 @@
                             <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo persona</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <select name="TipoPersona" id="TipoPersona" class="form-control">
+                                    <select name="TipoPersona" id="TipoPersona" class="form-control" required>
                                         <option value="">Seleccione ...</option>
                                         <option value="1">Natural</option>
                                         <option value="2">Jurídica</option>
@@ -55,18 +55,48 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Nombre</label>
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Registro fiscal</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="RegistroFiscal" type="text">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Nombre o Razon Social</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                     <input class="form-control" name="Nombre" type="text">
                                 </div>
                             </div>
-
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha nacimiento</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="FechaNacimiento" type="date">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Estado familiar</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="EstadoFamiliar" type="text">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Numero dependientes</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="NumeroDependientes" type="text">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Ocupacion</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="Ocupacion" type="text">
+                                </div>
+                            </div>
                             <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Registro fiscal</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                     <input class="form-control" name="RegistroFiscal" type="text">
                                 </div>
                             </div>
+
 
 
                             <div class="form-group row">
@@ -105,6 +135,7 @@
                             </div>
 
 
+
                             <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Dirección
                                     residencia</label>
@@ -117,9 +148,15 @@
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Teléfono
                                     residencia</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="TelefonoResidencia" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
+                                    <input class="form-control" name="TelefonoRecidencia" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
                                 </div>
                             </div>
+
+                        </div>
+
+
+
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
 
                             <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Dirección
@@ -138,12 +175,14 @@
                                 </div>
                             </div>
 
+
                             
 
                         </div>
 
 
                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+
 
                             <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Teléfono
@@ -152,14 +191,16 @@
                                     <input class="form-control" name="TelefonoCelular" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
                                 </div>
                             </div>
-
                             <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Correo
-                                    principal</label>
+
+                                    electrónico principal</label>
+
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                     <input class="form-control" name="CorreoPrincipal" type="email">
                                 </div>
                             </div>
+
 
                             <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Correo secundario</label>
@@ -173,10 +214,18 @@
                                     vinculación</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                     <input class="form-control" name="FechaVinculacion"  type="date">
+
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Correo
+                                    electrónico secundario</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="CorreoSecundario" type="email">
+
                                 </div>
                             </div>
 
                             <div class="form-group row">
+
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
                                     baja</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
@@ -190,21 +239,32 @@
                                     pago</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                     <input class="form-control" name="ResponsablePago" type="text">
+
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha Vinculacion</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="FechaVinculacion" type="date">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha Baja</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="FechaBaja" type="date">
+
                                 </div>
                             </div>
 
 
                             <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Ubicación de
-                                    cobro</label>
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Estado</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <select name="UbicacionCobro" class="form-control" style="width: 100%">
-                                        @foreach ($ubicaciones_cobro as $obj)
-                                        <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                    <select name="Estado" class="form-control select2" style="width: 100%">
+                                        @foreach ($cliente_estados as $obj)
+                                        <option value="{{ $obj->id }}">{{ $obj->nombre }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                             </div>
+
 
 
 
@@ -215,20 +275,6 @@
                                         @foreach ($formas_pago as $obj)
                                         <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
                                         @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Estado</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <select name="Estado" class="form-control" style="width: 100%">
-                                        @foreach ($cliente_estados as $obj)
-                                        <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
 
                             <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Género</label>
@@ -237,6 +283,41 @@
                                         <option value="1">Masculino</option>
                                         <option value="2">Femenino</option>
                                     </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Estado</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <select name="Estado" class="form-control" style="width: 100%">
+                                        @foreach ($cliente_estados as $obj)
+
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo
+                                    contribuyente</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <select name="TipoContribuyente" class="form-control" style="width: 100%">
+                                        @foreach ($tipos_contribuyente as $obj)
+
+                                        <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Género</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <select name="Genero" class="form-control">
+                                        <option value="1">Masculino</option>
+                                        <option value="2">Femenino</option>
+                                    </select>
+
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Referencia</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="Referencia" type="text">
+
                                 </div>
                             </div>
 
@@ -250,8 +331,14 @@
                                         <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
                                         @endforeach
                                     </select>
+
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Responsable Pago</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <input class="form-control" name="ResponsablePago" type="text">
+
                                 </div>
                             </div>
+
 
 
 
@@ -259,9 +346,19 @@
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Referencia</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                     <input class="form-control" name="Referencia" type="text">
+
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Ubicación de
+                                    cobro</label>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <select name="UbicacionCobro" class="form-control" style="width: 100%">
+                                        @foreach ($ubicaciones_cobro as $obj)
+                                        <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                        @endforeach
+                                    </select>
+
                                 </div>
                             </div>                          
-
 
                         </div>
 
@@ -286,8 +383,8 @@
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#TipoPersona').change(function(){
-           // if()
+        $('#TipoPersona').change(function() {
+            // if()
         })
 
     })
