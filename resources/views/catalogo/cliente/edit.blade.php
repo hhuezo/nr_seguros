@@ -33,21 +33,7 @@
                         </li>
                     </ul>
 
-                <div class="" role="tabpanel" data-example-id="togglable-tabs">
-                    <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-                        <li role="presentation" class="{{ session('tab1') == 1 ? 'active' : '' }}"><a href="#cliente" id="home-tab" role="tab"
-                                data-toggle="tab" aria-expanded="true">Cliente</a>
 
-                        </li>
-                        <li role="presentation" class="{{ session('tab1') == 2 ? 'active' : '' }}"><a href="#redes" role="tab" id="profile-tab"
-                                data-toggle="tab" aria-expanded="false">Redes sociales</a>
-                        </li>
-                    </ul>
-
-<<<<<<< HEAD
-
-=======
->>>>>>> d2c6c5f (merge cliente)
                     <div id="myTabContent2" class="tab-content">
                         <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 1 ? 'active in' : '' }} " id="cliente" aria-labelledby="home-tab">
 
@@ -1174,12 +1160,4 @@
             }
         </script>
 
-<<<<<<< HEAD
     @endsection
-=======
-<<<<<<< HEAD
-    @endsection
-=======
-    @endsection
->>>>>>> d2c6c5f (merge cliente)
->>>>>>> 2309414 (merge cliente)

@@ -162,10 +162,6 @@
                             </div>
 
                             <div class="form-group row">
-<<<<<<< HEAD
-=======
-
->>>>>>> 2309414 (merge cliente)
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Correo secundario</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                     <input class="form-control" name="CorreoSecundario" type="email">
