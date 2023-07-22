@@ -21,6 +21,7 @@
                 <table id="datatable" class="table table-striped table-bordered">
                     <thead>
                         <tr>
+                            <th>Id</th>
                             <th>Nombre</th>
                             <th>NIT</th>
                             <th>DUI</th>
@@ -32,6 +33,7 @@
                     <tbody>
                         @foreach ($clientes as $obj)
                             <tr>
+                                <td>{{ $obj->Id }}</td>
                                 <td>{{ $obj->Nombre }}</td>
                                 <td>{{ $obj->Nit }}</td>
                                 <td>{{ $obj->Dui }}</td>
