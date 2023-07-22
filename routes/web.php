@@ -73,6 +73,7 @@ Route::post('catalogo/cliente/edit_contacto', [ClienteController::class,'edit_co
 Route::post('catalogo/cliente/add_tarjeta', [ClienteController::class,'add_tarjeta']);
 Route::post('catalogo/cliente/delete_tarjeta', [ClienteController::class,'delete_tarjeta']);
 Route::post('catalogo/cliente/add_habito', [ClienteController::class,'add_habito']);
+Route::post('catalogo/cliente/edit_habito', [ClienteController::class,'edit_habito']);
 Route::post('catalogo/cliente/delete_habito', [ClienteController::class,'delete_habito']);
 Route::post('catalogo/cliente/add_retroalimentacion', [ClienteController::class,'add_retroalimentacion']);
 Route::post('catalogo/cliente/delete_retroalimentacion', [ClienteController::class,'delete_retroalimentacion']);

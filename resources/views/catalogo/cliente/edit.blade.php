@@ -744,16 +744,16 @@
                                                             <td>{{ $obj->LugarTrabajo }}</td>
                                                             <td>
                                                                 <i class="fa fa-pencil fa-lg"
-                                                                onclick="modal_edit_contacto({{ $obj->Id }},'{{$obj->Cargo}}','{{$obj->Nombre}}','{{$obj->Telefono}}','{{$obj->Email}}','{{$obj->LugarTrabajo}}')"
-                                                                data-target="#modal-edit-contacto"
-                                                                data-toggle="modal"></i>
+                                                                    onclick="modal_edit_contacto({{ $obj->Id }},'{{ $obj->Cargo }}','{{ $obj->Nombre }}','{{ $obj->Telefono }}','{{ $obj->Email }}','{{ $obj->LugarTrabajo }}')"
+                                                                    data-target="#modal-edit-contacto"
+                                                                    data-toggle="modal"></i>
                                                                 &nbsp;&nbsp;
                                                                 <i class="fa fa-trash fa-lg"
                                                                     onclick="modal_delete_contacto({{ $obj->Id }})"
                                                                     data-target="#modal-delete-contacto"
                                                                     data-toggle="modal"></i>
-                                                                    
-                                                                   
+
+
                                                             </td>
                                                         </tr>
                                                     @endforeach
@@ -801,7 +801,7 @@
                                                         <th>Ingreso promedio</th>
                                                         <th>Gasto mensual seguro</th>
                                                         <th>NivelEducativo</th>
-                                                        <th><i class="fa fa-trash fa-lg"></i> </th>
+                                                        <th>Acciones</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -811,7 +811,13 @@
                                                             <td>${{ $obj->IngresoPromedio }}</td>
                                                             <td>${{ $obj->GastoMensualSeguro }}</td>
                                                             <td>{{ $obj->NivelEducativo }}</td>
-                                                            <td><i class="fa fa-trash fa-lg"
+                                                            <td>
+                                                                <i class="fa fa-pencil fa-lg"
+                                                                    onclick="modal_edit_habito({{ $obj->Id }},'{{ $obj->ActividadEconomica }}','{{ $obj->IngresoPromedio }}','{{ $obj->GastoMensualSeguro }}','{{ $obj->NivelEducativo }}')"
+                                                                    data-target="#modal-edit-habito"
+                                                                    data-toggle="modal"></i>
+                                                                &nbsp;&nbsp;
+                                                                <i class="fa fa-trash fa-lg"
                                                                     onclick="modal_delete_habito({{ $obj->Id }})"
                                                                     data-target="#modal-delete-habito"
                                                                     data-toggle="modal"></i>
@@ -986,7 +992,7 @@
         </div>
 
 
-         {{-- modales contactos --}}
+        {{-- modales contactos --}}
         <div class="col-12">
             <div class="modal fade bs-modal-nuevo-contacto" tabindex="-1" role="dialog" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
@@ -1056,7 +1062,8 @@
         </div>
 
         <div class="col-12">
-            <div class="modal fade modal-edit-contacto" tabindex="-1" role="dialog" aria-hidden="true" id="modal-edit-contacto">
+            <div class="modal fade modal-edit-contacto" tabindex="-1" role="dialog" aria-hidden="true"
+                id="modal-edit-contacto">
                 <div class="modal-dialog modal-lg">
                     <form method="POST" action="{{ url('catalogo/cliente/edit_contacto') }}">
                         @csrf
@@ -1071,7 +1078,8 @@
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         Nombre
-                                        <input type="text" name="Nombre" id="ModalContactoNombre" class="form-control" required>
+                                        <input type="text" name="Nombre" id="ModalContactoNombre"
+                                            class="form-control" required>
                                     </div>
                                 </div>
 
@@ -1090,21 +1098,24 @@
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         Telefono
-                                        <input type="text" name="Telefono" id="ModalContactoTelefono" data-inputmask="'mask': ['9999-9999']"
-                                            data-mask class="form-control" required>
+                                        <input type="text" name="Telefono" id="ModalContactoTelefono"
+                                            data-inputmask="'mask': ['9999-9999']" data-mask class="form-control"
+                                            required>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         Email
-                                        <input type="email" required name="Email" id="ModalContactoEmail" class="form-control" >
+                                        <input type="email" required name="Email" id="ModalContactoEmail"
+                                            class="form-control">
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         Lugar trabajo
-                                        <input type="text" name="LugarTrabajo" id="ModalContactoLugarTrabajo" class="form-control" required >
+                                        <input type="text" name="LugarTrabajo" id="ModalContactoLugarTrabajo"
+                                            class="form-control" required>
                                     </div>
                                 </div>
 
@@ -1152,6 +1163,7 @@
             </div>
         </div>
 
+        {{-- modales habito --}}
         <div class="col-12">
             <div class="modal fade bs-modal-nuevo-habito" tabindex="-1" role="dialog" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
@@ -1232,6 +1244,64 @@
                         </div>
                     </div>
                 </form>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="modal fade modal-edit-habito" id="modal-edit-habito" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <form method="POST" action="{{ url('catalogo/cliente/edit_habito') }}">
+                        @csrf
+                        <div class="modal-content">
+
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="myModalLabel">Editar habito</h4>
+                                <input type="hidden" name="Id" id="ModalHabitoId" class="form-control">
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" name="Cliente" value="{{ $cliente->Id }}" class="form-control">
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        Actividad economica
+                                        <input type="text" name="ActividadEconomica"
+                                            id="ModalHabitoActividadEconomica" class="form-control" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        Ingreso promedio
+                                        <input type="number" name="IngresoPromedio" id="ModalHabitoIngresoPromedio"
+                                            step="0.001" min="0" class="form-control" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        Gasto mensual seguro
+                                        <input type="number" step="0.001" min="0" name="GastoMensualSeguro"
+                                            id="ModalHabitoGastoMensualSeguro" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        Nivel educativo
+                                        <input type="text" name="NivelEducativo" id="ModalHabitoNivelEducativo"
+                                            class="form-control" required>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div>&nbsp; </div>
+                            <div class="clearfix"></div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                            </div>
+
+                    </form>
+
+                </div>
             </div>
         </div>
 
@@ -1336,7 +1406,7 @@
                 //$('#modal_borrar_documento').modal('show');
             }
 
-            function modal_edit_contacto(id,cargo,nombre,telefono,email,lugar) {
+            function modal_edit_contacto(id, cargo, nombre, telefono, email, lugar) {
                 document.getElementById('ModalContactoId').value = id;
                 document.getElementById('ModalContactoCargo').value = cargo;
                 document.getElementById('ModalContactoNombre').value = nombre;
@@ -1355,6 +1425,18 @@
                 document.getElementById('IdHabito').value = id;
                 //$('#modal_borrar_documento').modal('show');
             }
+
+            function modal_edit_habito(id, actividad, ingreso, gasto, nivel) {
+                //alert(ingreso);
+                document.getElementById('ModalHabitoId').value = id;
+                document.getElementById('ModalHabitoActividadEconomica').value = actividad;
+                document.getElementById('ModalHabitoIngresoPromedio').value = ingreso;
+                document.getElementById('ModalHabitoGastoMensualSeguro').value = gasto;
+                document.getElementById('ModalHabitoNivelEducativo').value = nivel;
+                //$('#modal_borrar_documento').modal('show');
+            }
+
+            //{{ $obj->Id }},'{{ $obj->ActividadEconomica }}','{{ $obj->IngresoPromedio }}','{{ $obj->GastoMensualSeguro }}','{{ $obj->NivelEducativo }}'
 
             function modal_delete_retroalimentacion(id) {
                 document.getElementById('IdRetroalimentacion').value = id;

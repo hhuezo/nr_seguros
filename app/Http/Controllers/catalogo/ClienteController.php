@@ -407,6 +407,23 @@ class ClienteController extends Controller
         return back();
     }
 
+    public function edit_habito(Request $request)
+    {
+        $habito = ClienteHabitoConsumo::findOrFail($request->Id);
+        $habito->Cliente = $request->Cliente;
+        $habito->ActividadEconomica = $request->ActividadEconomica;
+        $habito->IngresoPromedio = $request->IngresoPromedio;
+        $habito->GastoMensualSeguro = $request->GastoMensualSeguro;
+        $habito->NivelEducativo = $request->NivelEducativo;
+        $habito->save();
+        alert()->success('El registro ha sido modificado correctamente');
+
+        session(['tab2' => '2']);
+        return back();
+    }
+
+    
+
     public function delete_habito(Request $request)
     {
         $habito = ClienteHabitoConsumo::findOrFail($request->Id);
