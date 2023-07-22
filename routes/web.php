@@ -76,6 +76,7 @@ Route::post('catalogo/cliente/delete_habito', [ClienteController::class,'delete_
 Route::post('catalogo/cliente/add_retroalimentacion', [ClienteController::class,'add_retroalimentacion']);
 Route::post('catalogo/cliente/delete_retroalimentacion', [ClienteController::class,'delete_retroalimentacion']);
 Route::post('catalogo/cliente/red_social', [ClienteController::class,'red_social']);
+Route::post('catalogo/cliente/active/{id}', [ClienteController::class,'active']);
 Route::resource('catalogo/cliente', ClienteController::class);
 Route::resource('catalogo/cliente', ClienteController::class);
 Route::get('catalogo/cliente_create', [ClienteController::class, 'cliente_create']);

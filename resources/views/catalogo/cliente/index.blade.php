@@ -53,12 +53,19 @@
 
 
                                     @can('delete users')
-                                        &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}"
-                                            data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
+                                            @if ($obj->Activo == 1)
+                                            &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}"
+                                                data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
+                                            @else
+                                            &nbsp;&nbsp;<a href="" data-target="#modal-active-{{ $obj->Id }}"
+                                                data-toggle="modal"><i class="fa fa-check-square fa-lg"></i></a>
+                                            @endif                                     
+                                          
                                     @endcan
                                 </td>
                             </tr>
                             @include('catalogo.cliente.modal')
+                            @include('catalogo.cliente.active')
                         @endforeach
                     </tbody>
                 </table>
