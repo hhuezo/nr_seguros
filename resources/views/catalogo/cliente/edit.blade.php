@@ -39,10 +39,7 @@
 
 
                     <div id="myTabContent2" class="tab-content">
-                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 1 ? 'active in' : '' }} "
-                            id="cliente" aria-labelledby="home-tab">
-
-
+                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 1 ? 'active in' : '' }} "  id="cliente" aria-labelledby="home-tab">
                             <form method="POST" action="{{ route('cliente.update', $cliente->Id) }}">
                                 @method('PUT')
                                 @csrf
@@ -720,7 +717,7 @@
                                                 Nuevo</button>
                                         </div>
                                         @if ($contactos->count() > 0)
-                                        <br>
+                                            <br>
                                             <table class="table table-striped table-bordered">
                                                 <thead>
                                                     <tr>
@@ -783,7 +780,7 @@
                                         </div>
 
                                         @if ($habitos->count() > 0)
-                                        <br>
+                                            <br>
                                             <table class="table table-striped table-bordered">
                                                 <thead>
                                                     <tr>
@@ -837,7 +834,7 @@
                                         </div>
 
                                         @if ($retroalimentacion->count() > 0)
-                                        <br>
+                                            <br>
                                             <table class="table table-striped table-bordered">
                                                 <thead>
                                                     <tr>

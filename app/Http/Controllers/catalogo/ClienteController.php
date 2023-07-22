@@ -215,6 +215,43 @@ class ClienteController extends Controller
 
     public function update(Request $request, $id)
     {
+
+        $messages = [
+            'Dui.min' => 'El formato de DUI es incorrecto',
+            'Dui.unique' => 'El DUI ya existe en la base de datos',
+            'Nit.min' => 'El formato de NIT es incorrecto',
+            'Nit.unique' => 'El NIT ya existe en la base de datos',
+        ];
+
+        $request->merge(['Dui' => $this->string_replace($request->get('Dui'))]);
+        $request->merge(['Nit' => $this->string_replace($request->get('Nit'))]);
+
+        $request->validate([
+            'Nombre' => 'required',
+        ], $messages);
+
+        $count_dui = Cliente::where('Dui','=',$request->get('Dui'))->where('Id','<>',$id)->count();
+        $count_nit = Cliente::where('Nit','=',$request->get('Nit'))->where('Id','<>',$id)->count();
+
+        if ($request->get('TipoPersona') ==1) {
+            $request->validate([
+                'Dui' => 'required',
+            ], $messages);
+        }
+
+        if ($request->get('Dui') != null && $count_dui > 0) {
+            $request->validate([
+                'Dui' => 'min:10|unique:cliente',
+            ], $messages);
+        }
+
+        if ($request->get('Nit') != null && $count_nit > 0) {
+            $request->validate([
+                'Nit' => 'min:17|unique:cliente',
+            ], $messages);
+        }
+
+
         $cliente = Cliente::findOrFail($id);
         $cliente->Nit = $request->get('Nit');
         $cliente->Dui = $request->get('Dui');
