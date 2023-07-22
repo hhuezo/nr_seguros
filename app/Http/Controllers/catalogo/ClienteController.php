@@ -4,6 +4,7 @@ namespace App\Http\Controllers\catalogo;
 
 use App\Http\Controllers\Controller;
 use App\Models\catalogo\Cliente;
+use App\Models\catalogo\ClienteContactoCargo;
 use App\Models\catalogo\ClienteContactoFrecuente;
 use App\Models\catalogo\ClienteEstado;
 use App\Models\catalogo\ClienteHabitoConsumo;
@@ -188,6 +189,8 @@ class ClienteController extends Controller
         $informarse = ClienteInformarse::get();
         $motivo_eleccion = ClienteMotivoEleccion::get();
         $preferencia_compra = ClientePrefereciaCompra::get();
+        $cliente_contacto_cargos = ClienteContactoCargo::get();
+
 
         return view('catalogo.cliente.edit', compact(
             'cliente',
@@ -202,7 +205,8 @@ class ClienteController extends Controller
             'necesidades',
             'informarse',
             'motivo_eleccion',
-            'preferencia_compra'
+            'preferencia_compra',
+            'cliente_contacto_cargos'
         ));
     }
 

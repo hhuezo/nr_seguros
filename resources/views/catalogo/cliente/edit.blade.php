@@ -39,7 +39,8 @@
 
 
                     <div id="myTabContent2" class="tab-content">
-                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 1 ? 'active in' : '' }} "  id="cliente" aria-labelledby="home-tab">
+                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 1 ? 'active in' : '' }} "
+                            id="cliente" aria-labelledby="home-tab">
                             <form method="POST" action="{{ route('cliente.update', $cliente->Id) }}">
                                 @method('PUT')
                                 @csrf
@@ -726,14 +727,18 @@
                                                         <th>Telefono</th>
                                                         <th>Email</th>
                                                         <th>Lugar trabajo</th>
-                                                        <th><i class="fa fa-trash fa-lg"></i> </th>
+                                                        <th>Acciones</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     @foreach ($contactos as $obj)
                                                         <tr>
                                                             <td>{{ $obj->Nombre }}</td>
-                                                            <td>{{ $obj->Cargo }}</td>
+                                                            @if ($obj->cargo)
+                                                                <td>{{ $obj->cargo->Nombre }}</td>
+                                                            @else
+                                                                <td></td>
+                                                            @endif
                                                             <td>{{ $obj->Telefono }}</td>
                                                             <td>{{ $obj->Email }}</td>
                                                             <td>{{ $obj->LugarTrabajo }}</td>
@@ -994,7 +999,12 @@
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         Cargo
-                                        <input type="text" class="form-control" required name="Cargo">
+                                        <select name="Cargo" class="form-control" required>
+                                            @foreach ($cliente_contacto_cargos as $cargo)
+                                                <option value="{{ $cargo->Id }}">{{ $cargo->Nombre }}</option>
+                                            @endforeach
+
+                                        </select>
                                     </div>
                                 </div>
 
