@@ -99,11 +99,20 @@
 
 
                                         <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
-                                                nacimiento</label>
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha nacimiento</label>
                                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                                 <input class="form-control" name="FechaNacimiento"
                                                     value="{{ $cliente->FechaNacimiento }}" type="date">
+                                            </div>
+                                        </div>
+
+
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <input class="form-control" 
+                                                    value="{{ $cliente->Edad }}" type="text" readonly>
                                             </div>
                                         </div>
 
@@ -183,6 +192,12 @@
                                         </div>
 
 
+                                    </div>
+
+
+                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+
+
                                         <div class="form-group row">
                                             <label class="control-label col-md-3 col-sm-12 col-xs-12"
                                                 align="right">Teléfono
@@ -193,13 +208,6 @@
                                                     data-inputmask="'mask': ['9999-9999']" data-mask type="text">
                                             </div>
                                         </div>
-
-
-
-                                    </div>
-
-
-                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
 
                                         <div class="form-group row">
                                             <label class="control-label col-md-3 col-sm-12 col-xs-12"

@@ -128,6 +128,14 @@ class ClienteController extends Controller
     public function edit($id)
     {
         $cliente = Cliente::findOrFail($id);
+        if($cliente->FechaNacimiento)
+        {
+            $cliente->Edad = $this-> getAge($cliente->FechaNacimiento);
+        }
+        else{
+            $cliente->Edad = "";
+        }
+        
         $tipos_contribuyente = TipoContribuyente::get();
         $ubicaciones_cobro = UbicacionCobro::where('Activo', '=', 1)->get();
         $formas_pago = FormaPago::where('Activo', '=', 1)->get();
@@ -158,6 +166,13 @@ class ClienteController extends Controller
             'motivo_eleccion',
             'preferencia_compra'
         ));
+    }
+
+    public function getAge($date)
+    {
+        $now = Carbon::now();
+        $age = Carbon::parse($date)->age;
+        return $age;
     }
 
     public function update(Request $request, $id)
