@@ -48,8 +48,48 @@ class ClienteController extends Controller
         ));
     }
 
+    public function string_replace($string)
+    {
+        return str_replace("_", "", $string);
+    }
+
     public function store(Request $request)
     {
+        $messages = [
+            'Dui.min' => 'El formato de DUI es incorrecto',
+            'Dui.unique' => 'El DUI ya existe en la base de datos',
+            'Nit.min' => 'El formato de NIT es incorrecto',
+            'Nit.unique' => 'El NIT ya existe en la base de datos',
+        ];
+
+        $request->merge(['Dui' => $this->string_replace($request->get('Dui'))]);
+        $request->merge(['Nit' => $this->string_replace($request->get('Nit'))]);
+
+        $request->validate([
+            'Nombre' => 'required',
+        ], $messages);
+
+        if ($request->get('TipoPersona') ==1) {
+            $request->validate([
+                'Dui' => 'required',
+            ], $messages);
+        }
+
+        if ($request->get('Dui') != null) {
+            $request->validate([
+                'Dui' => 'min:10|unique:cliente',
+            ], $messages);
+        }
+
+        if ($request->get('Nit') != null) {
+            $request->validate([
+                'Nit' => 'min:17|unique:cliente',
+            ], $messages);
+        }
+
+
+    
+
 
         $time = Carbon::now();
 
@@ -88,9 +128,9 @@ class ClienteController extends Controller
 
         alert()->success('El registro ha sido creado correctamente');
 
-        return redirect('catalogo/cliente/' . $cliente->id . '/edit');
+        return redirect('catalogo/cliente/' . $cliente->Id . '/edit');
 
-        //return back();
+       // return back();
     }
 
     public function cliente_create(Request $request)
@@ -128,14 +168,12 @@ class ClienteController extends Controller
     public function edit($id)
     {
         $cliente = Cliente::findOrFail($id);
-        if($cliente->FechaNacimiento)
-        {
-            $cliente->Edad = $this-> getAge($cliente->FechaNacimiento);
-        }
-        else{
+        if ($cliente->FechaNacimiento) {
+            $cliente->Edad = $this->getAge($cliente->FechaNacimiento);
+        } else {
             $cliente->Edad = "";
         }
-        
+
         $tipos_contribuyente = TipoContribuyente::get();
         $ubicaciones_cobro = UbicacionCobro::where('Activo', '=', 1)->get();
         $formas_pago = FormaPago::where('Activo', '=', 1)->get();
@@ -241,7 +279,6 @@ class ClienteController extends Controller
 
         alert()->success('El registro ha sido modificado correctamente');
         return back();
-        
     }
     public function add_contacto(Request $request)
     {
