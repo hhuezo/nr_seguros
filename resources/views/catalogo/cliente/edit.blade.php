@@ -24,18 +24,23 @@
 
                 <div class="" role="tabpanel" data-example-id="togglable-tabs">
                     <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-                        <li role="presentation" class="{{ session('tab1') == 1 ? 'active' : '' }}"><a href="#cliente" id="home-tab" role="tab"
-                                data-toggle="tab" aria-expanded="true">Cliente</a>
+                        <li role="presentation" class="{{ session('tab1') == 1 ? 'active' : '' }}"><a href="#cliente"
+                                id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Cliente</a>
 
                         </li>
-                        <li role="presentation" class="{{ session('tab1') == 2 ? 'active' : '' }}"><a href="#redes" role="tab" id="profile-tab"
-                                data-toggle="tab" aria-expanded="false">Redes sociales</a>
+                        <li role="presentation" class="{{ session('tab1') == 2 ? 'active' : '' }}"><a href="#redes"
+                                role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">Redes sociales</a>
+                        </li>
+
+                        <li role="presentation" class="{{ session('tab1') == 3 ? 'active' : '' }}"><a href="#pago"
+                                role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">Métodos de pago</a>
                         </li>
                     </ul>
 
 
                     <div id="myTabContent2" class="tab-content">
-                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 1 ? 'active in' : '' }} " id="cliente" aria-labelledby="home-tab">
+                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 1 ? 'active in' : '' }} "
+                            id="cliente" aria-labelledby="home-tab">
 
 
                             <form method="POST" action="{{ route('cliente.update', $cliente->Id) }}">
@@ -99,7 +104,8 @@
 
 
                                         <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha nacimiento</label>
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
+                                                nacimiento</label>
                                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                                 <input class="form-control" name="FechaNacimiento"
                                                     value="{{ $cliente->FechaNacimiento }}" type="date">
@@ -109,15 +115,17 @@
 
 
                                         <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad</label>
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Edad</label>
                                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" 
-                                                    value="{{ $cliente->Edad }}" type="text" readonly>
+                                                <input class="form-control" value="{{ $cliente->Edad }}" type="text"
+                                                    readonly>
                                             </div>
                                         </div>
 
                                         <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Estado
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Estado
                                                 familiar</label>
                                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                                 <select class="form-control" name="EstadoFamiliar">
@@ -376,14 +384,15 @@
 
 
                         </div>
-                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 2 ? 'active in' : '' }}" id="redes" aria-labelledby="home-tab">
+                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 2 ? 'active in' : '' }}"
+                            id="redes" aria-labelledby="home-tab">
                             <form method="POST" action="{{ url('catalogo/cliente/red_social') }}">
 
                                 @csrf
 
                                 <div class="x_content">
                                     <br />
-                                    <input type="hidden" name="Id" value="{{$cliente->Id}}">
+                                    <input type="hidden" name="Id" value="{{ $cliente->Id }}">
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                         <div class="form-group row">
                                             <label class="control-label col-md-3 col-sm-12 col-xs-12"
@@ -410,8 +419,8 @@
                                             </div>
                                         </div>
                                         <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
-                                                align="right">Sitio web</label>
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Sitio
+                                                web</label>
                                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                                 <input class="form-control" name="SitioWeb"
                                                     value="{{ $cliente->SitioWeb }}" type="text">
@@ -422,7 +431,8 @@
                                             <label class="control-label col-md-3 col-sm-12 col-xs-12"
                                                 align="right">Necesidad proteccion</label>
                                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <select name="NecesidadProteccion" class="form-control" style="width: 100%">
+                                                <select name="NecesidadProteccion" class="form-control"
+                                                    style="width: 100%">
                                                     @foreach ($necesidades as $obj)
                                                         <option value="{{ $obj->Id }}"
                                                             {{ $cliente->NecesidadProteccion == $obj->Id ? 'selected' : '' }}>
@@ -437,43 +447,54 @@
                                                 align="right">Dispositivo personal preferido</label>
                                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                                 <div class="">
-													<label>
-														<input type="checkbox" name="Laptop" value="1" class="js-switch" {{ $cliente->Laptop == 1 ? 'checked' : '' }} /> Laptop
-													</label>
+                                                    <label>
+                                                        <input type="checkbox" name="Laptop" value="1"
+                                                            class="js-switch"
+                                                            {{ $cliente->Laptop == 1 ? 'checked' : '' }} /> Laptop
+                                                    </label>
                                                     &nbsp;&nbsp;&nbsp;&nbsp;
 
                                                     <label>
-														<input type="checkbox" name="PC" value="1" class="js-switch" {{ $cliente->PC == 1 ? 'checked' : '' }}  /> PC
-													</label>
+                                                        <input type="checkbox" name="PC" value="1"
+                                                            class="js-switch" {{ $cliente->PC == 1 ? 'checked' : '' }} />
+                                                        PC
+                                                    </label>
                                                     &nbsp;&nbsp;&nbsp;&nbsp;
-                                                   
+
                                                     <label>
-														<input type="checkbox" name="Tablet" value="1" class="js-switch" {{ $cliente->Tablet == 1 ? 'checked' : '' }}/> Tablet
-													</label>
+                                                        <input type="checkbox" name="Tablet" value="1"
+                                                            class="js-switch"
+                                                            {{ $cliente->Tablet == 1 ? 'checked' : '' }} /> Tablet
+                                                    </label>
                                                     &nbsp;&nbsp;&nbsp;&nbsp;
                                                     <br>
                                                     <label>
-														<input type="checkbox" name="SmartWatch" value="1" class="js-switch" {{ $cliente->SmartWatch == 1 ? 'checked' : '' }}  /> SmartWatch
-													</label>
+                                                        <input type="checkbox" name="SmartWatch" value="1"
+                                                            class="js-switch"
+                                                            {{ $cliente->SmartWatch == 1 ? 'checked' : '' }} /> SmartWatch
+                                                    </label>
                                                     &nbsp;&nbsp;&nbsp;&nbsp;
                                                     <label>
-														<input type="checkbox" name="DispositivosOtros" value="1" class="js-switch"  {{ $cliente->DispositivosOtros == 1 ? 'checked' : '' }} /> Otros dispositivos
-													</label>
-												</div>
-                                           
+                                                        <input type="checkbox" name="DispositivosOtros" value="1"
+                                                            class="js-switch"
+                                                            {{ $cliente->DispositivosOtros == 1 ? 'checked' : '' }} />
+                                                        Otros dispositivos
+                                                    </label>
+                                                </div>
+
                                             </div>
                                         </div>
 
 
-                                      
+
                                     </div>
 
 
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
 
                                         <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
-                                                align="right">Le gusta informarse</label>
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Le
+                                                gusta informarse</label>
                                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                                 <select name="Informarse" class="form-control" style="width: 100%">
                                                     @foreach ($informarse as $obj)
@@ -489,16 +510,19 @@
                                             <label class="control-label col-md-3 col-sm-12 col-xs-12"
                                                 align="right">Contacto instagram</label>
                                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input class="form-control" value="{{ $cliente->Instagram }}" name="Instagram">
+                                                <input class="form-control" value="{{ $cliente->Instagram }}"
+                                                    name="Instagram">
                                             </div>
                                         </div>
 
                                         <div class="form-group row">
-                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
-                                                align="right">Tiene mascota?</label>
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tiene
+                                                mascota?</label>
                                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                                 <label>
-                                                    <input type="checkbox" name="TieneMascota" value="1" class="js-switch" {{ $cliente->TieneMascota == 1 ? 'checked' : '' }} /> 
+                                                    <input type="checkbox" name="TieneMascota" value="1"
+                                                        class="js-switch"
+                                                        {{ $cliente->TieneMascota == 1 ? 'checked' : '' }} />
                                                 </label>
                                             </div>
                                         </div>
@@ -517,12 +541,13 @@
                                             </div>
                                         </div>
 
-                                       
+
                                         <div class="form-group row">
                                             <label class="control-label col-md-3 col-sm-12 col-xs-12"
                                                 align="right">Preferencia compra</label>
                                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <select name="PreferenciaCompra" class="form-control" style="width: 100%">
+                                                <select name="PreferenciaCompra" class="form-control"
+                                                    style="width: 100%">
                                                     @foreach ($preferencia_compra as $obj)
                                                         <option value="{{ $obj->Id }}"
                                                             {{ $cliente->PreferenciaCompra == $obj->Id ? 'selected' : '' }}>
@@ -532,36 +557,48 @@
                                             </div>
                                         </div>
 
-                                    
+
 
                                         <div class="form-group row">
                                             <label class="control-label col-md-3 col-sm-12 col-xs-12"
                                                 align="right">Compra habitualmente</label>
                                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                                 <div class="">
-													<label>
-														<input type="checkbox" name="Efectivo" value="1" class="js-switch" {{ $cliente->Efectivo == 1 ? 'checked' : '' }}/> Efectivo
-													</label>
-                                                    &nbsp;&nbsp;&nbsp;&nbsp;
-                                                   
                                                     <label>
-														<input type="checkbox" name="TarjetaCredito" value="1" class="js-switch" {{ $cliente->TarjetaCredito == 1 ? 'checked' : '' }} /> Tarjeta credito
-													</label>
+                                                        <input type="checkbox" name="Efectivo" value="1"
+                                                            class="js-switch"
+                                                            {{ $cliente->Efectivo == 1 ? 'checked' : '' }} /> Efectivo
+                                                    </label>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;
+
+                                                    <label>
+                                                        <input type="checkbox" name="TarjetaCredito" value="1"
+                                                            class="js-switch"
+                                                            {{ $cliente->TarjetaCredito == 1 ? 'checked' : '' }} /> Tarjeta
+                                                        credito
+                                                    </label>
                                                     &nbsp;&nbsp;&nbsp;&nbsp;
                                                     <br>
                                                     <label>
-														<input type="checkbox" name="App" value="1" class="js-switch" {{ $cliente->App == 1 ? 'checked' : '' }} /> App
-													</label>
+                                                        <input type="checkbox" name="App" value="1"
+                                                            class="js-switch" {{ $cliente->App == 1 ? 'checked' : '' }} />
+                                                        App
+                                                    </label>
                                                     &nbsp;&nbsp;&nbsp;&nbsp;
                                                     <label>
-														<input type="checkbox" name="MonederoEletronico" value="1" class="js-switch" {{ $cliente->MonederoEletronico == 1 ? 'checked' : '' }} /> Monedero eletronico
-													</label>
+                                                        <input type="checkbox" name="MonederoEletronico" value="1"
+                                                            class="js-switch"
+                                                            {{ $cliente->MonederoEletronico == 1 ? 'checked' : '' }} />
+                                                        Monedero eletronico
+                                                    </label>
                                                     &nbsp;&nbsp;&nbsp;&nbsp;
                                                     <label>
-														<input type="checkbox" name="CompraOtros" value="1" class="js-switch" {{ $cliente->CompraOtros == 1 ? 'checked' : '' }} /> Otros
-													</label>
-												</div>
-                                           
+                                                        <input type="checkbox" name="CompraOtros" value="1"
+                                                            class="js-switch"
+                                                            {{ $cliente->CompraOtros == 1 ? 'checked' : '' }} /> Otros
+                                                    </label>
+                                                </div>
+
                                             </div>
                                         </div>
 
@@ -581,6 +618,57 @@
 
                             </form>
                         </div>
+
+
+                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 3 ? 'active in' : '' }}"
+                            id="pago" aria-labelledby="home-tab">
+
+                            <div class="col-12" style="text-align: right;">
+                                <button class="btn btn-primary" data-toggle="modal"
+                                    data-target=".bs-modal-nuevo-tarjeta"><i class="fa fa-plus fa-lg"></i>
+                                    Nuevo</button>
+                            </div>
+
+                            @if ($tarjetas->count() > 0)
+                                <table class="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Numero tarjeta</th>
+                                            <th>Fecha vencimiento</th>
+                                            <th>Poliza vinculada</th>
+
+                                            <th><i class="fa fa-trash fa-lg"></i> </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($tarjetas as $obj)
+                                            <tr>
+                                                <td>{{ $obj->NumeroTarjeta }}</td>
+                                                <td>{{ $obj->FechaVencimiento }}</td>
+                                                <td>{{ $obj->PolizaVinculada }}</td>
+                                                <td><i class="fa fa-trash fa-lg"
+                                                        onclick="modal_delete_tarjeta({{ $obj->Id }})"
+                                                        data-target="#modal-delete-tarjeta" data-toggle="modal"></i>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            @else
+                                <div style="height: 300px">
+                                    <br>
+                                    <div class="alert alert-danger alert-dismissible " role="alert">
+                                        <button type="button" class="close" data-dismiss="alert"
+                                            aria-label="Close"><span aria-hidden="true">×</span>
+                                        </button>
+                                        <strong>Sin datos que mostrar.</strong>
+                                    </div>
+                                </div>
+                            @endif
+
+
+
+                        </div>
                     </div>
                 </div>
 
@@ -591,7 +679,7 @@
 
 
 
-
+                {{-- tabs inferiores --}}
 
                 <div class="col-md-12 col-sm-12  ">
                     <div class="x_panel">
@@ -603,98 +691,76 @@
                         <div class="x_content">
                             <div class="" role="tabpanel" data-example-id="togglable-tabs">
                                 <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-                                    <li role="presentation" class="{{ session('tab2') == 1 ? 'active' : '' }}"><a href="#tab_content1" id="home-tab"
-                                            role="tab" data-toggle="tab" aria-expanded="true">Tarjetas de credito</a>
 
-                                    </li>
-                                    <li role="presentation" class="{{ session('tab2') == 2 ? 'active' : '' }}"><a href="#tab_content2" role="tab"
-                                            id="profile-tab" data-toggle="tab" aria-expanded="false">Contactos</a>
+                                    <li role="presentation" class="{{ session('tab2') == 1 ? 'active' : '' }}"><a
+                                            href="#tab_content2" role="tab" id="profile-tab" data-toggle="tab"
+                                            aria-expanded="false">Contactos</a>
                                     </li>
 
-                                    <li role="presentation" class="{{ session('tab2') == 3 ? 'active' : '' }}"><a href="#tab_content3" role="tab"
-                                            id="uniforme-tab" data-toggle="tab" aria-expanded="false">Habitos consumo</a>
+                                    <li role="presentation" class="{{ session('tab2') == 2 ? 'active' : '' }}"><a
+                                            href="#tab_content3" role="tab" id="uniforme-tab" data-toggle="tab"
+                                            aria-expanded="false">Habitos consumo</a>
                                     </li>
 
-                                    <li role="presentation" class="{{ session('tab2') == 4 ? 'active' : '' }}"><a href="#tab_content4" role="tab"
-                                            id="profile-tab" data-toggle="tab"
+                                    <li role="presentation" class="{{ session('tab2') == 3 ? 'active' : '' }}"><a
+                                            href="#tab_content4" role="tab" id="profile-tab" data-toggle="tab"
                                             aria-expanded="false">Retroalimentacion</a>
                                     </li>
 
 
                                 </ul>
                                 <div class="tab-content" id="myTabContent">
-                                    <div role="tabpanel" class="tab-pane fade {{ session('tab2') == 1 ? 'active in' : '' }}" id="tab_content1"
-                                        aria-labelledby="home-tab">
 
-                                        <div class="col-12" style="text-align: right;">
-                                            <button class="btn btn-primary" data-toggle="modal"
-                                                data-target=".bs-modal-nuevo-tarjeta"><i class="fa fa-plus fa-lg"></i>
-                                                Nuevo</button>
-                                        </div>
-
-                                        <table class="table table-striped table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th>Numero tarjeta</th>
-                                                    <th>Fecha vencimiento</th>
-                                                    <th>Poliza vinculada</th>
-
-                                                    <th><i class="fa fa-trash fa-lg"></i> </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($tarjetas as $obj)
-                                                    <tr>
-                                                        <td>{{ $obj->NumeroTarjeta }}</td>
-                                                        <td>{{ $obj->FechaVencimiento }}</td>
-                                                        <td>{{ $obj->PolizaVinculada }}</td>
-                                                        <td><i class="fa fa-trash fa-lg"
-                                                                onclick="modal_delete_tarjeta({{ $obj->Id }})"
-                                                                data-target="#modal-delete-tarjeta"
-                                                                data-toggle="modal"></i>
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-
-                                    </div>
-                                    <div role="tabpanel" class="tab-pane fade {{ session('tab2') == 2 ? 'active in' : '' }}" id="tab_content2"
-                                        aria-labelledby="profile-tab">
+                                    <div role="tabpanel"
+                                        class="tab-pane fade {{ session('tab2') == 1 ? 'active in' : '' }}"
+                                        id="tab_content2" aria-labelledby="profile-tab">
                                         <div class="col-12" style="text-align: right;">
                                             <button class="btn btn-primary" data-toggle="modal"
                                                 data-target=".bs-modal-nuevo-contacto"><i class="fa fa-plus fa-lg"></i>
                                                 Nuevo</button>
                                         </div>
-
-                                        <table class="table table-striped table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th>Nombre</th>
-                                                    <th>Cargo</th>
-                                                    <th>Telefono</th>
-                                                    <th>Email</th>
-                                                    <th>Lugar trabajo</th>
-                                                    <th><i class="fa fa-trash fa-lg"></i> </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($contactos as $obj)
+                                        @if ($contactos->count() > 0)
+                                        <br>
+                                            <table class="table table-striped table-bordered">
+                                                <thead>
                                                     <tr>
-                                                        <td>{{ $obj->Nombre }}</td>
-                                                        <td>{{ $obj->Cargo }}</td>
-                                                        <td>{{ $obj->Telefono }}</td>
-                                                        <td>{{ $obj->Email }}</td>
-                                                        <td>{{ $obj->LugarTrabajo }}</td>
-                                                        <td><i class="fa fa-trash fa-lg"
-                                                                onclick="modal_delete_contacto({{ $obj->Id }})"
-                                                                data-target="#modal-delete-contacto"
-                                                                data-toggle="modal"></i>
-                                                        </td>
+                                                        <th>Nombre</th>
+                                                        <th>Cargo</th>
+                                                        <th>Telefono</th>
+                                                        <th>Email</th>
+                                                        <th>Lugar trabajo</th>
+                                                        <th><i class="fa fa-trash fa-lg"></i> </th>
                                                     </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($contactos as $obj)
+                                                        <tr>
+                                                            <td>{{ $obj->Nombre }}</td>
+                                                            <td>{{ $obj->Cargo }}</td>
+                                                            <td>{{ $obj->Telefono }}</td>
+                                                            <td>{{ $obj->Email }}</td>
+                                                            <td>{{ $obj->LugarTrabajo }}</td>
+                                                            <td><i class="fa fa-trash fa-lg"
+                                                                    onclick="modal_delete_contacto({{ $obj->Id }})"
+                                                                    data-target="#modal-delete-contacto"
+                                                                    data-toggle="modal"></i>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        @else
+                                            <div style="height: 200px">
+                                                <br>
+                                                <div class="alert alert-danger alert-dismissible " role="alert">
+                                                    <button type="button" class="close" data-dismiss="alert"
+                                                        aria-label="Close"><span aria-hidden="true">×</span>
+                                                    </button>
+                                                    <strong>Sin datos que mostrar.</strong>
+                                                </div>
+                                            </div>
+                                        @endif
+
 
 
 
@@ -706,8 +772,9 @@
 
 
                                     </div>
-                                    <div role="tabpanel" class="tab-pane fade {{ session('tab2') == 3 ? 'active in' : '' }}" id="tab_content3"
-                                        aria-labelledby="uniforme-tab">
+                                    <div role="tabpanel"
+                                        class="tab-pane fade {{ session('tab2') == 2 ? 'active in' : '' }}"
+                                        id="tab_content3" aria-labelledby="uniforme-tab">
 
                                         <div class="col-12" style="text-align: right;">
                                             <button class="btn btn-primary" data-toggle="modal"
@@ -715,38 +782,53 @@
                                                 Nuevo</button>
                                         </div>
 
-
-                                        <table class="table table-striped table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th>Actividad economica</th>
-                                                    <th>Ingreso promedio</th>
-                                                    <th>Gasto mensual seguro</th>
-                                                    <th>NivelEducativo</th>
-                                                    <th><i class="fa fa-trash fa-lg"></i> </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($habitos as $obj)
+                                        @if ($habitos->count() > 0)
+                                        <br>
+                                            <table class="table table-striped table-bordered">
+                                                <thead>
                                                     <tr>
-                                                        <td>{{ $obj->ActividadEconomica }}</td>
-                                                        <td>${{ $obj->IngresoPromedio }}</td>
-                                                        <td>${{ $obj->GastoMensualSeguro }}</td>
-                                                        <td>{{ $obj->NivelEducativo }}</td>
-                                                        <td><i class="fa fa-trash fa-lg"
-                                                                onclick="modal_delete_habito({{ $obj->Id }})"
-                                                                data-target="#modal-delete-habito"
-                                                                data-toggle="modal"></i>
-                                                        </td>
+                                                        <th>Actividad economica</th>
+                                                        <th>Ingreso promedio</th>
+                                                        <th>Gasto mensual seguro</th>
+                                                        <th>NivelEducativo</th>
+                                                        <th><i class="fa fa-trash fa-lg"></i> </th>
                                                     </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($habitos as $obj)
+                                                        <tr>
+                                                            <td>{{ $obj->ActividadEconomica }}</td>
+                                                            <td>${{ $obj->IngresoPromedio }}</td>
+                                                            <td>${{ $obj->GastoMensualSeguro }}</td>
+                                                            <td>{{ $obj->NivelEducativo }}</td>
+                                                            <td><i class="fa fa-trash fa-lg"
+                                                                    onclick="modal_delete_habito({{ $obj->Id }})"
+                                                                    data-target="#modal-delete-habito"
+                                                                    data-toggle="modal"></i>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        @else
+                                            <div style="height: 200px">
+                                                <br>
+                                                <div class="alert alert-danger alert-dismissible " role="alert">
+                                                    <button type="button" class="close" data-dismiss="alert"
+                                                        aria-label="Close"><span aria-hidden="true">×</span>
+                                                    </button>
+                                                    <strong>Sin datos que mostrar.</strong>
+                                                </div>
+                                            </div>
+                                        @endif
+
+
 
                                     </div>
 
-                                    <div role="tabpanel" class="tab-pane fade {{ session('tab2') == 4 ? 'active in' : '' }}"  id="tab_content4"
-                                        aria-labelledby="uniforme-tab">
+                                    <div role="tabpanel"
+                                        class="tab-pane fade {{ session('tab2') == 3 ? 'active in' : '' }}"
+                                        id="tab_content4" aria-labelledby="uniforme-tab">
                                         <div class="col-12" style="text-align: right;">
                                             <button class="btn btn-primary" data-toggle="modal"
                                                 data-target=".bs-modal-nuevo-retroalimentacion"><i
@@ -754,35 +836,49 @@
                                                 Nuevo</button>
                                         </div>
 
-
-                                        <table class="table table-striped table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th>Producto</th>
-                                                    <th>Valores agregados</th>
-                                                    <th>Competidores</th>
-                                                    <th>Referidos</th>
-                                                    <th>Que quisiera?</th>
-                                                    <th><i class="fa fa-trash fa-lg"></i> </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($retroalimentacion as $obj)
+                                        @if ($retroalimentacion->count() > 0)
+                                        <br>
+                                            <table class="table table-striped table-bordered">
+                                                <thead>
                                                     <tr>
-                                                        <td>{{ $obj->Producto }}</td>
-                                                        <td>{{ $obj->ValoresAgregados }}</td>
-                                                        <td>{{ $obj->Competidores }}</td>
-                                                        <td>{{ $obj->Referidos }}</td>
-                                                        <td>{{ $obj->QueQuisiera }}</td>
-                                                        <td><i class="fa fa-trash fa-lg"
-                                                                onclick="modal_delete_retroalimentacion({{ $obj->Id }})"
-                                                                data-target="#modal-delete-retroalimentacion"
-                                                                data-toggle="modal"></i>
-                                                        </td>
+                                                        <th>Producto</th>
+                                                        <th>Valores agregados</th>
+                                                        <th>Competidores</th>
+                                                        <th>Referidos</th>
+                                                        <th>Que quisiera?</th>
+                                                        <th><i class="fa fa-trash fa-lg"></i> </th>
                                                     </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($retroalimentacion as $obj)
+                                                        <tr>
+                                                            <td>{{ $obj->Producto }}</td>
+                                                            <td>{{ $obj->ValoresAgregados }}</td>
+                                                            <td>{{ $obj->Competidores }}</td>
+                                                            <td>{{ $obj->Referidos }}</td>
+                                                            <td>{{ $obj->QueQuisiera }}</td>
+                                                            <td><i class="fa fa-trash fa-lg"
+                                                                    onclick="modal_delete_retroalimentacion({{ $obj->Id }})"
+                                                                    data-target="#modal-delete-retroalimentacion"
+                                                                    data-toggle="modal"></i>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        @else
+                                            <div style="height: 200px">
+                                                <br>
+                                                <div class="alert alert-danger alert-dismissible " role="alert">
+                                                    <button type="button" class="close" data-dismiss="alert"
+                                                        aria-label="Close"><span aria-hidden="true">×</span>
+                                                    </button>
+                                                    <strong>Sin datos que mostrar.</strong>
+                                                </div>
+                                            </div>
+                                        @endif
+
+
 
 
                                     </div>
@@ -797,6 +893,8 @@
 
         </div>
 
+
+        {{-- ventanas modales --}}
         <div class="col-12">
             <div class="modal fade bs-modal-nuevo-tarjeta" tabindex="-1" role="dialog" aria-hidden="true">
                 <div class="modal-dialog modal-lg">

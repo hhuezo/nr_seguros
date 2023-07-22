@@ -255,7 +255,7 @@ class ClienteController extends Controller
         $contacto->save();
         alert()->success('El registro ha sido creado correctamente');
 
-        session(['tab2' => '2']);
+        session(['tab2' => '1']);
         return back();
     }
 
@@ -265,7 +265,7 @@ class ClienteController extends Controller
         $contacto->delete();
         alert()->error('El registro ha sido eliminado correctamente');
 
-        session(['tab2' => '2']);
+        session(['tab2' => '1']);
         return back();
     }
 
@@ -280,7 +280,7 @@ class ClienteController extends Controller
         $contacto->save();
         alert()->success('El registro ha sido creado correctamente');
 
-        session(['tab2' => '1']);
+        session(['tab1' => '3']);
         return back();
     }
 
@@ -291,7 +291,7 @@ class ClienteController extends Controller
         $tarjeta->delete();
         alert()->error('El registro ha sido eliminado correctamente');
 
-        session(['tab2' => '1']);
+        session(['tab1' => '3']);
         return back();
     }
 
@@ -309,7 +309,7 @@ class ClienteController extends Controller
         $habito->save();
         alert()->success('El registro ha sido creado correctamente');
 
-        session(['tab2' => '3']);
+        session(['tab2' => '2']);
         return back();
     }
 
@@ -320,7 +320,7 @@ class ClienteController extends Controller
         $habito->delete();
         alert()->error('El registro ha sido eliminado correctamente');
 
-        session(['tab2' => '3']);
+        session(['tab2' => '2']);
         return back();
     }
 
@@ -334,7 +334,7 @@ class ClienteController extends Controller
         $retroalimentacion->Referidos = $request->Referidos;
         $retroalimentacion->QueQuisiera = $request->QueQuisiera;
         $retroalimentacion->save();
-        session(['tab2' => '4']);
+        session(['tab2' => '3']);
         alert()->success('El registro ha sido creado correctamente');
         return back();
     }
@@ -346,7 +346,7 @@ class ClienteController extends Controller
         $retroalimentacion->delete();
         alert()->error('El registro ha sido eliminado correctamente');
 
-        session(['tab2' => '4']);
+        session(['tab2' => '3']);
         return back();
     }
 
