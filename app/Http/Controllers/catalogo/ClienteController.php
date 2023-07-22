@@ -20,6 +20,7 @@ use App\Models\catalogo\UbicacionCobro;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\Validator;
 
 class ClienteController extends Controller
 {
@@ -52,6 +53,17 @@ class ClienteController extends Controller
     {
 
         $time = Carbon::now();
+
+
+        $messages = [
+            'Dui.unique' => 'El DUI ya existe en los registros',
+            'Nit.unique' => 'El NIT ya existe en los registros',
+        ];
+
+        $request->validate([
+            'Dui' => 'unique',
+            'Nit' => 'unique',
+        ], $messages);
 
         $cliente = new Cliente();
         $cliente->Nit = $request->get('Nit');
