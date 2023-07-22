@@ -742,10 +742,18 @@
                                                             <td>{{ $obj->Telefono }}</td>
                                                             <td>{{ $obj->Email }}</td>
                                                             <td>{{ $obj->LugarTrabajo }}</td>
-                                                            <td><i class="fa fa-trash fa-lg"
+                                                            <td>
+                                                                <i class="fa fa-pencil fa-lg"
+                                                                onclick="modal_edit_contacto({{ $obj->Id }},'{{$obj->Cargo}}','{{$obj->Nombre}}','{{$obj->Telefono}}','{{$obj->Email}}','{{$obj->LugarTrabajo}}')"
+                                                                data-target="#modal-edit-contacto"
+                                                                data-toggle="modal"></i>
+                                                                &nbsp;&nbsp;
+                                                                <i class="fa fa-trash fa-lg"
                                                                     onclick="modal_delete_contacto({{ $obj->Id }})"
                                                                     data-target="#modal-delete-contacto"
                                                                     data-toggle="modal"></i>
+                                                                    
+                                                                   
                                                             </td>
                                                         </tr>
                                                     @endforeach
@@ -977,6 +985,8 @@
             </div>
         </div>
 
+
+         {{-- modales contactos --}}
         <div class="col-12">
             <div class="modal fade bs-modal-nuevo-contacto" tabindex="-1" role="dialog" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
@@ -1026,6 +1036,75 @@
                                     <div class="col-sm-12">
                                         Lugar trabajo
                                         <input type="text" class="form-control" required name="LugarTrabajo">
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                            <div>&nbsp; </div>
+                            <div class="clearfix"></div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                            </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="modal fade modal-edit-contacto" tabindex="-1" role="dialog" aria-hidden="true" id="modal-edit-contacto">
+                <div class="modal-dialog modal-lg">
+                    <form method="POST" action="{{ url('catalogo/cliente/edit_contacto') }}">
+                        @csrf
+                        <div class="modal-content">
+
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="myModalLabel">Editar contacto</h4>
+                                <input type="hidden" name="Id" id="ModalContactoId" class="form-control" required>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" name="Cliente" value="{{ $cliente->Id }}" class="form-control">
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        Nombre
+                                        <input type="text" name="Nombre" id="ModalContactoNombre" class="form-control" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        Cargo
+                                        <select name="Cargo" id="ModalContactoCargo" class="form-control" required>
+                                            @foreach ($cliente_contacto_cargos as $cargo)
+                                                <option value="{{ $cargo->Id }}">{{ $cargo->Nombre }}</option>
+                                            @endforeach
+
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        Telefono
+                                        <input type="text" name="Telefono" id="ModalContactoTelefono" data-inputmask="'mask': ['9999-9999']"
+                                            data-mask class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        Email
+                                        <input type="email" required name="Email" id="ModalContactoEmail" class="form-control" >
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        Lugar trabajo
+                                        <input type="text" name="LugarTrabajo" id="ModalContactoLugarTrabajo" class="form-control" required >
                                     </div>
                                 </div>
 
@@ -1257,9 +1336,19 @@
                 //$('#modal_borrar_documento').modal('show');
             }
 
+            function modal_edit_contacto(id,cargo,nombre,telefono,email,lugar) {
+                document.getElementById('ModalContactoId').value = id;
+                document.getElementById('ModalContactoCargo').value = cargo;
+                document.getElementById('ModalContactoNombre').value = nombre;
+                document.getElementById('ModalContactoTelefono').value = telefono;
+                document.getElementById('ModalContactoEmail').value = email;
+                document.getElementById('ModalContactoLugarTrabajo').value = lugar;
+                //$('#modal_borrar_documento').modal('show');
+            }
+
             function modal_delete_contacto(id) {
                 document.getElementById('IdContacto').value = id;
-                //$('#modal_borrar_documento').modal('show');
+                $('#modal_borrar_documento').modal('show');
             }
 
             function modal_delete_habito(id) {

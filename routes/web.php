@@ -69,6 +69,7 @@ Route::resource('catalogo/ubicacion_cobro', UbicacionCobroController::class);
 
 Route::post('catalogo/cliente/add_contacto', [ClienteController::class,'add_contacto']);
 Route::post('catalogo/cliente/delete_contacto', [ClienteController::class,'delete_contacto']);
+Route::post('catalogo/cliente/edit_contacto', [ClienteController::class,'edit_contacto']);
 Route::post('catalogo/cliente/add_tarjeta', [ClienteController::class,'add_tarjeta']);
 Route::post('catalogo/cliente/delete_tarjeta', [ClienteController::class,'delete_tarjeta']);
 Route::post('catalogo/cliente/add_habito', [ClienteController::class,'add_habito']);

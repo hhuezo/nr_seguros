@@ -337,6 +337,22 @@ class ClienteController extends Controller
         return back();
     }
 
+    public function edit_contacto(Request $request)
+    {
+        $contacto = ClienteContactoFrecuente::findOrFail($request->Id);
+        $contacto->Cliente = $request->Cliente;
+        $contacto->Nombre = $request->Nombre;
+        $contacto->Cargo = $request->Cargo;
+        $contacto->Telefono = $request->Telefono;
+        $contacto->Email = $request->Email;
+        $contacto->LugarTrabajo = $request->LugarTrabajo;
+        $contacto->save();
+        alert()->success('El registro ha sido modificado correctamente');
+
+        session(['tab2' => '1']);
+        return back();
+    }
+    
     public function delete_contacto(Request $request)
     {
         $contacto = ClienteContactoFrecuente::findOrFail($request->Id);
