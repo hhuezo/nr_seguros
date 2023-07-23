@@ -29,7 +29,8 @@
 
                         </li>
                         <li role="presentation" class="{{ session('tab1') == 2 ? 'active' : '' }}"><a href="#redes"
-                                role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">Necesidades y gustos</a>
+                                role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">Necesidades y
+                                gustos</a>
                         </li>
 
                         <li role="presentation" class="{{ session('tab1') == 3 ? 'active' : '' }}"><a href="#pago"
@@ -606,9 +607,11 @@
 
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="form-group">
-                                            <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: left;">¿Que información desea recibir frecuentemente?</label>
+                                            <label class="control-label col-md-12 col-sm-12 col-xs-12"
+                                                style="text-align: left;">¿Que información desea recibir
+                                                frecuentemente?</label>
                                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                <textarea name="Informacion" class="form-control">{{$cliente->Informacion}}</textarea>
+                                                <textarea name="Informacion" class="form-control">{{ $cliente->Informacion }}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -638,20 +641,27 @@
                                 <table class="table table-striped table-bordered">
                                     <thead>
                                         <tr>
+                                            <th>Metodo pago</th>
                                             <th>Numero tarjeta</th>
                                             <th>Fecha vencimiento</th>
                                             <th>Poliza vinculada</th>
 
-                                            <th><i class="fa fa-trash fa-lg"></i> </th>
+                                            <th>Acciones </th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach ($tarjetas as $obj)
                                             <tr>
+                                                <td>{{ $obj->MetodoPago }}</td>
                                                 <td>{{ $obj->NumeroTarjeta }}</td>
                                                 <td>{{ $obj->FechaVencimiento }}</td>
                                                 <td>{{ $obj->PolizaVinculada }}</td>
-                                                <td><i class="fa fa-trash fa-lg"
+                                                <td>
+                                                    <i class="fa fa-pencil fa-lg"
+                                                        onclick="modal_edit_tarjeta({{ $obj->Id }},'{{ $obj->MetodoPago }}','{{ $obj->NumeroTarjeta }}','{{ $obj->FechaVencimiento }}','{{ $obj->PolizaVinculada }}')"
+                                                        data-target="#modal-edit-tarjeta" data-toggle="modal"></i>
+                                                    &nbsp;&nbsp;
+                                                    <i class="fa fa-trash fa-lg"
                                                         onclick="modal_delete_tarjeta({{ $obj->Id }})"
                                                         data-target="#modal-delete-tarjeta" data-toggle="modal"></i>
                                                 </td>
@@ -948,10 +958,15 @@
                                 <input type="hidden" name="Cliente" value="{{ $cliente->Id }}" class="form-control">
                                 <div class="form-group">
                                     <div class="col-sm-12">
+                                        Metodo pago
+                                        <input type="text" name="MetodoPago" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
                                         NumeroTarjeta
-                                        <input type="text" class="form-control"
-                                            data-inputmask="'mask': ['9999-9999-9999-9999']" data-mask required
-                                            name="NumeroTarjeta">
+                                        <input type="text" name="NumeroTarjeta" id="tarjeta" class="form-control"
+                                            data-inputmask="'mask': ['9999-9999-9999-9999']" data-mask>
                                     </div>
                                 </div>
 
@@ -1011,6 +1026,65 @@
                         </div>
                     </div>
                 </form>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="modal fade modal-edit-tarjeta" id="modal-edit-tarjeta" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <form method="POST" action="{{ url('catalogo/cliente/edit_tarjeta') }}">
+                        @csrf
+                        <div class="modal-content">
+
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="myModalLabel">Editar tarjeta</h4>
+                            </div>
+                            <div class="modal-body">
+                                <input type="text" name="Id" id="ModalTarjetaId" class="form-control">
+                                <input type="hidden" name="Cliente" value="{{ $cliente->Id }}" class="form-control">
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        Metodo pago
+                                        <input type="text" name="MetodoPago" id="ModalMetodoPago" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        NumeroTarjeta
+                                        <input type="text" name="NumeroTarjeta" id="ModalNumeroTarjeta" class="form-control"
+                                            data-inputmask="'mask': ['9999-9999-9999-9999']" data-mask>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        Fecha vencimiento
+                                        <input type="text" name="FechaVencimiento" id="ModalFechaVencimiento" class="form-control" data-inputmask="'mask': ['99/99']"
+                                            data-mask required >
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        Poliza vinculada
+                                        <input type="text" name="PolizaVinculada" id="ModalPolizaVinculada" class="form-control" required>
+                                    </div>
+                                </div>
+
+
+
+
+                            </div>
+                            <div>&nbsp; </div>
+                            <div class="clearfix"></div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                            </div>
+
+                    </form>
+
+                </div>
             </div>
         </div>
 
@@ -1425,7 +1499,8 @@
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         Producto de NR
-                                        <input type="text" name="Producto" id="ModalRetroProducto" required class="form-control">
+                                        <input type="text" name="Producto" id="ModalRetroProducto" required
+                                            class="form-control">
                                     </div>
                                 </div>
 
@@ -1434,30 +1509,31 @@
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         Valores agregados
-                                        <input type="text" name="ValoresAgregados" id="ModalRetroValoresAgregados" class="form-control"
-                                            required>
+                                        <input type="text" name="ValoresAgregados" id="ModalRetroValoresAgregados"
+                                            class="form-control" required>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         Competidores
-                                        <input type="text" name="Competidores" id="ModalRetroCompetidores" class="form-control"
-                                            required>
+                                        <input type="text" name="Competidores" id="ModalRetroCompetidores"
+                                            class="form-control" required>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         Referidos
-                                        <input type="text" name="Referidos" id="ModalRetroReferidos" class="form-control" required>
+                                        <input type="text" name="Referidos" id="ModalRetroReferidos"
+                                            class="form-control" required>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         Que quisiera?
-                                        <input type="text" name="QueQuisiera" id="ModalRetroQueQuisiera"  class="form-control"
-                                            required>
+                                        <input type="text" name="QueQuisiera" id="ModalRetroQueQuisiera"
+                                            class="form-control" required>
                                     </div>
                                 </div>
 
@@ -1527,6 +1603,16 @@
 
             });
 
+
+            function modal_edit_tarjeta(id, metodo, numero, fecha, poliza) {
+                document.getElementById('ModalTarjetaId').value = id;
+                document.getElementById('ModalMetodoPago').value = metodo;
+                document.getElementById('ModalNumeroTarjeta').value = numero;
+                document.getElementById('ModalFechaVencimiento').value = fecha;
+                document.getElementById('ModalPolizaVinculada').value = poliza;              
+                                                    
+            }
+
             function modal_delete_tarjeta(id) {
                 document.getElementById('IdTarjeta').value = id;
                 //$('#modal_borrar_documento').modal('show');
@@ -1567,8 +1653,8 @@
                 //$('#modal_borrar_documento').modal('show');
             }
 
-            function modal_edit_retroalimentacion(id, producto, valores, competidores, referidos,quisiera,servicio) {
-      
+            function modal_edit_retroalimentacion(id, producto, valores, competidores, referidos, quisiera, servicio) {
+
                 document.getElementById('ModalRetroId').value = id;
                 document.getElementById('ModalRetroProducto').value = producto;
                 document.getElementById('ModalRetroValoresAgregados').value = valores;
@@ -1580,10 +1666,7 @@
                 //$('#modal_borrar_documento').modal('show');
             }
 
-            //onclick="modal_edit_retroalimentacion({{ $obj->Id }},'{{ $obj->Producto }}','{{ $obj->ValoresAgregados }}',
-            //'{{ $obj->Competidores }}','{{ $obj->Referidos }}','{{ $obj->QueQuisiera }}','{{ $obj->ServicioCliente }}')"
 
-                                                                    
             function check_stars(id) {
                 //console.log("id: " + id);
                 document.getElementById('ServicioCliente').value = id;
@@ -1612,6 +1695,11 @@
                     }
                 }
                 $('#modal_stars').html(string_star);
+            }
+
+            function format_tarjeta() {
+                var tarjeta = document.getElementById("tarjeta").value;
+                console.log(tarjeta);
             }
         </script>
 

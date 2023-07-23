@@ -71,6 +71,7 @@ Route::post('catalogo/cliente/delete_contacto', [ClienteController::class,'delet
 Route::post('catalogo/cliente/edit_contacto', [ClienteController::class,'edit_contacto']);
 Route::post('catalogo/cliente/add_tarjeta', [ClienteController::class,'add_tarjeta']);
 Route::post('catalogo/cliente/delete_tarjeta', [ClienteController::class,'delete_tarjeta']);
+Route::post('catalogo/cliente/edit_tarjeta', [ClienteController::class,'edit_tarjeta']);
 Route::post('catalogo/cliente/add_habito', [ClienteController::class,'add_habito']);
 Route::post('catalogo/cliente/edit_habito', [ClienteController::class,'edit_habito']);
 Route::post('catalogo/cliente/delete_habito', [ClienteController::class,'delete_habito']);

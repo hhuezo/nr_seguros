@@ -367,12 +367,13 @@ class ClienteController extends Controller
 
     public function add_tarjeta(Request $request)
     {
-        $contacto = new ClienteTarjetaCredito();
-        $contacto->Cliente = $request->Cliente;
-        $contacto->NumeroTarjeta = $request->NumeroTarjeta;
-        $contacto->FechaVencimiento = $request->FechaVencimiento;
-        $contacto->PolizaVinculada = $request->PolizaVinculada;
-        $contacto->save();
+        $tarjeta = new ClienteTarjetaCredito();
+        $tarjeta->Cliente = $request->Cliente;
+        $tarjeta->NumeroTarjeta = $request->NumeroTarjeta;
+        $tarjeta->FechaVencimiento = $request->FechaVencimiento;
+        $tarjeta->PolizaVinculada = $request->PolizaVinculada;
+        $tarjeta->MetodoPago = $request->MetodoPago;
+        $tarjeta->save();
         alert()->success('El registro ha sido creado correctamente');
 
         session(['tab1' => '3']);
@@ -390,8 +391,22 @@ class ClienteController extends Controller
         return back();
     }
 
+    public function edit_tarjeta(Request $request)
+    {
+        $tarjeta = ClienteTarjetaCredito::findOrFail($request->Id);
+        $tarjeta->Cliente = $request->Cliente;
+        $tarjeta->NumeroTarjeta = $request->NumeroTarjeta;
+        $tarjeta->FechaVencimiento = $request->FechaVencimiento;
+        $tarjeta->PolizaVinculada = $request->PolizaVinculada;
+        $tarjeta->MetodoPago = $request->MetodoPago;
+        $tarjeta->save();
+        alert()->success('El registro ha sido creado correctamente');
 
+        session(['tab1' => '3']);
+        return back();
+    }
 
+    
 
     public function add_habito(Request $request)
     {
