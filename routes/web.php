@@ -69,13 +69,17 @@ Route::resource('catalogo/ubicacion_cobro', UbicacionCobroController::class);
 
 Route::post('catalogo/cliente/add_contacto', [ClienteController::class,'add_contacto']);
 Route::post('catalogo/cliente/delete_contacto', [ClienteController::class,'delete_contacto']);
+Route::post('catalogo/cliente/edit_contacto', [ClienteController::class,'edit_contacto']);
 Route::post('catalogo/cliente/add_tarjeta', [ClienteController::class,'add_tarjeta']);
 Route::post('catalogo/cliente/delete_tarjeta', [ClienteController::class,'delete_tarjeta']);
 Route::post('catalogo/cliente/add_habito', [ClienteController::class,'add_habito']);
+Route::post('catalogo/cliente/edit_habito', [ClienteController::class,'edit_habito']);
 Route::post('catalogo/cliente/delete_habito', [ClienteController::class,'delete_habito']);
 Route::post('catalogo/cliente/add_retroalimentacion', [ClienteController::class,'add_retroalimentacion']);
 Route::post('catalogo/cliente/delete_retroalimentacion', [ClienteController::class,'delete_retroalimentacion']);
+Route::post('catalogo/cliente/edit_retroalimentacion', [ClienteController::class,'edit_retroalimentacion']);
 Route::post('catalogo/cliente/red_social', [ClienteController::class,'red_social']);
+Route::post('catalogo/cliente/active/{id}', [ClienteController::class,'active']);
 Route::resource('catalogo/cliente', ClienteController::class);
 Route::resource('catalogo/cliente', ClienteController::class);
 Route::get('catalogo/cliente_create', [ClienteController::class, 'cliente_create']);

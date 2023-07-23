@@ -21,6 +21,7 @@
                 <table id="datatable" class="table table-striped table-bordered">
                     <thead>
                         <tr>
+                            <th>Id</th>
                             <th>Nombre</th>
                             <th>NIT</th>
                             <th>DUI</th>
@@ -32,6 +33,7 @@
                     <tbody>
                         @foreach ($clientes as $obj)
                             <tr>
+                                <td>{{ $obj->Id }}</td>
                                 <td>{{ $obj->Nombre }}</td>
                                 <td>{{ $obj->Nit }}</td>
                                 <td>{{ $obj->Dui }}</td>
@@ -51,12 +53,19 @@
 
 
                                     @can('delete users')
-                                        &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}"
-                                            data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
+                                            @if ($obj->Activo == 1)
+                                            &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}"
+                                                data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
+                                            @else
+                                            &nbsp;&nbsp;<a href="" data-target="#modal-active-{{ $obj->Id }}"
+                                                data-toggle="modal"><i class="fa fa-check-square fa-lg"></i></a>
+                                            @endif                                     
+                                          
                                     @endcan
                                 </td>
                             </tr>
                             @include('catalogo.cliente.modal')
+                            @include('catalogo.cliente.active')
                         @endforeach
                     </tbody>
                 </table>

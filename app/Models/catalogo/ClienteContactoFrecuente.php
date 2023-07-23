@@ -26,4 +26,9 @@ class ClienteContactoFrecuente extends Model
     ];
 
     protected $guarded = [];
+
+    public function cargo()
+    {
+        return $this->belongsTo(ClienteContactoCargo::class, 'Cargo', 'Id');
+    }
 }

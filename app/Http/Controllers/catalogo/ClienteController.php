@@ -4,6 +4,7 @@ namespace App\Http\Controllers\catalogo;
 
 use App\Http\Controllers\Controller;
 use App\Models\catalogo\Cliente;
+use App\Models\catalogo\ClienteContactoCargo;
 use App\Models\catalogo\ClienteContactoFrecuente;
 use App\Models\catalogo\ClienteEstado;
 use App\Models\catalogo\ClienteHabitoConsumo;
@@ -48,8 +49,48 @@ class ClienteController extends Controller
         ));
     }
 
+    public function string_replace($string)
+    {
+        return str_replace("_", "", $string);
+    }
+
     public function store(Request $request)
     {
+        $messages = [
+            'Dui.min' => 'El formato de DUI es incorrecto',
+            'Dui.unique' => 'El DUI ya existe en la base de datos',
+            'Nit.min' => 'El formato de NIT es incorrecto',
+            'Nit.unique' => 'El NIT ya existe en la base de datos',
+        ];
+
+        $request->merge(['Dui' => $this->string_replace($request->get('Dui'))]);
+        $request->merge(['Nit' => $this->string_replace($request->get('Nit'))]);
+
+        $request->validate([
+            'Nombre' => 'required',
+        ], $messages);
+
+        if ($request->get('TipoPersona') ==1) {
+            $request->validate([
+                'Dui' => 'required',
+            ], $messages);
+        }
+
+        if ($request->get('Dui') != null) {
+            $request->validate([
+                'Dui' => 'min:10|unique:cliente',
+            ], $messages);
+        }
+
+        if ($request->get('Nit') != null) {
+            $request->validate([
+                'Nit' => 'min:17|unique:cliente',
+            ], $messages);
+        }
+
+
+    
+
 
         $time = Carbon::now();
 
@@ -90,7 +131,7 @@ class ClienteController extends Controller
 
         return redirect('catalogo/cliente/' . $cliente->Id . '/edit');
 
-        //return back();
+       // return back();
     }
 
     public function cliente_create(Request $request)
@@ -128,6 +169,12 @@ class ClienteController extends Controller
     public function edit($id)
     {
         $cliente = Cliente::findOrFail($id);
+        if ($cliente->FechaNacimiento) {
+            $cliente->Edad = $this->getAge($cliente->FechaNacimiento);
+        } else {
+            $cliente->Edad = "";
+        }
+
         $tipos_contribuyente = TipoContribuyente::get();
         $ubicaciones_cobro = UbicacionCobro::where('Activo', '=', 1)->get();
         $formas_pago = FormaPago::where('Activo', '=', 1)->get();
@@ -142,6 +189,8 @@ class ClienteController extends Controller
         $informarse = ClienteInformarse::get();
         $motivo_eleccion = ClienteMotivoEleccion::get();
         $preferencia_compra = ClientePrefereciaCompra::get();
+        $cliente_contacto_cargos = ClienteContactoCargo::get();
+
 
         return view('catalogo.cliente.edit', compact(
             'cliente',
@@ -156,12 +205,57 @@ class ClienteController extends Controller
             'necesidades',
             'informarse',
             'motivo_eleccion',
-            'preferencia_compra'
+            'preferencia_compra',
+            'cliente_contacto_cargos'
         ));
+    }
+
+    public function getAge($date)
+    {
+        $now = Carbon::now();
+        $age = Carbon::parse($date)->age;
+        return $age;
     }
 
     public function update(Request $request, $id)
     {
+
+        $messages = [
+            'Dui.min' => 'El formato de DUI es incorrecto',
+            'Dui.unique' => 'El DUI ya existe en la base de datos',
+            'Nit.min' => 'El formato de NIT es incorrecto',
+            'Nit.unique' => 'El NIT ya existe en la base de datos',
+        ];
+
+        $request->merge(['Dui' => $this->string_replace($request->get('Dui'))]);
+        $request->merge(['Nit' => $this->string_replace($request->get('Nit'))]);
+
+        $request->validate([
+            'Nombre' => 'required',
+        ], $messages);
+
+        $count_dui = Cliente::where('Dui','=',$request->get('Dui'))->where('Id','<>',$id)->count();
+        $count_nit = Cliente::where('Nit','=',$request->get('Nit'))->where('Id','<>',$id)->count();
+
+        if ($request->get('TipoPersona') ==1) {
+            $request->validate([
+                'Dui' => 'required',
+            ], $messages);
+        }
+
+        if ($request->get('Dui') != null && $count_dui > 0) {
+            $request->validate([
+                'Dui' => 'min:10|unique:cliente',
+            ], $messages);
+        }
+
+        if ($request->get('Nit') != null && $count_nit > 0) {
+            $request->validate([
+                'Nit' => 'min:17|unique:cliente',
+            ], $messages);
+        }
+
+
         $cliente = Cliente::findOrFail($id);
         $cliente->Nit = $request->get('Nit');
         $cliente->Dui = $request->get('Dui');
@@ -220,13 +314,13 @@ class ClienteController extends Controller
         $cliente->App = $request->get('App');
         $cliente->MonederoEletronico = $request->get('MonederoEletronico');
         $cliente->CompraOtros = $request->get('CompraOtros');
+        $cliente->Informacion = $request->get('Informacion');
         $cliente->update();
 
         session(['tab1' => '2']);
 
         alert()->success('El registro ha sido modificado correctamente');
         return back();
-        
     }
     public function add_contacto(Request $request)
     {
@@ -240,17 +334,33 @@ class ClienteController extends Controller
         $contacto->save();
         alert()->success('El registro ha sido creado correctamente');
 
-        session(['tab2' => '2']);
+        session(['tab2' => '1']);
         return back();
     }
 
+    public function edit_contacto(Request $request)
+    {
+        $contacto = ClienteContactoFrecuente::findOrFail($request->Id);
+        $contacto->Cliente = $request->Cliente;
+        $contacto->Nombre = $request->Nombre;
+        $contacto->Cargo = $request->Cargo;
+        $contacto->Telefono = $request->Telefono;
+        $contacto->Email = $request->Email;
+        $contacto->LugarTrabajo = $request->LugarTrabajo;
+        $contacto->save();
+        alert()->success('El registro ha sido modificado correctamente');
+
+        session(['tab2' => '1']);
+        return back();
+    }
+    
     public function delete_contacto(Request $request)
     {
         $contacto = ClienteContactoFrecuente::findOrFail($request->Id);
         $contacto->delete();
         alert()->error('El registro ha sido eliminado correctamente');
 
-        session(['tab2' => '2']);
+        session(['tab2' => '1']);
         return back();
     }
 
@@ -265,7 +375,7 @@ class ClienteController extends Controller
         $contacto->save();
         alert()->success('El registro ha sido creado correctamente');
 
-        session(['tab2' => '1']);
+        session(['tab1' => '3']);
         return back();
     }
 
@@ -276,7 +386,7 @@ class ClienteController extends Controller
         $tarjeta->delete();
         alert()->error('El registro ha sido eliminado correctamente');
 
-        session(['tab2' => '1']);
+        session(['tab1' => '3']);
         return back();
     }
 
@@ -294,9 +404,26 @@ class ClienteController extends Controller
         $habito->save();
         alert()->success('El registro ha sido creado correctamente');
 
-        session(['tab2' => '3']);
+        session(['tab2' => '2']);
         return back();
     }
+
+    public function edit_habito(Request $request)
+    {
+        $habito = ClienteHabitoConsumo::findOrFail($request->Id);
+        $habito->Cliente = $request->Cliente;
+        $habito->ActividadEconomica = $request->ActividadEconomica;
+        $habito->IngresoPromedio = $request->IngresoPromedio;
+        $habito->GastoMensualSeguro = $request->GastoMensualSeguro;
+        $habito->NivelEducativo = $request->NivelEducativo;
+        $habito->save();
+        alert()->success('El registro ha sido modificado correctamente');
+
+        session(['tab2' => '2']);
+        return back();
+    }
+
+    
 
     public function delete_habito(Request $request)
     {
@@ -305,7 +432,7 @@ class ClienteController extends Controller
         $habito->delete();
         alert()->error('El registro ha sido eliminado correctamente');
 
-        session(['tab2' => '3']);
+        session(['tab2' => '2']);
         return back();
     }
 
@@ -318,9 +445,26 @@ class ClienteController extends Controller
         $retroalimentacion->Competidores = $request->Competidores;
         $retroalimentacion->Referidos = $request->Referidos;
         $retroalimentacion->QueQuisiera = $request->QueQuisiera;
+        $retroalimentacion->ServicioCliente = $request->ServicioCliente;        
         $retroalimentacion->save();
-        session(['tab2' => '4']);
+        session(['tab2' => '3']);
         alert()->success('El registro ha sido creado correctamente');
+        return back();
+    }
+
+    public function edit_retroalimentacion(Request $request)
+    {
+        $retroalimentacion = ClienteRetroalimentacion::findOrFail($request->Id);
+        $retroalimentacion->Cliente = $request->Cliente;
+        $retroalimentacion->Producto = $request->Producto;
+        $retroalimentacion->ValoresAgregados = $request->ValoresAgregados;
+        $retroalimentacion->Competidores = $request->Competidores;
+        $retroalimentacion->Referidos = $request->Referidos;
+        $retroalimentacion->QueQuisiera = $request->QueQuisiera;
+        $retroalimentacion->ServicioCliente = $request->ServicioCliente;        
+        $retroalimentacion->update();
+        session(['tab2' => '3']);
+        alert()->success('El registro ha sido modificado correctamente');
         return back();
     }
 
@@ -331,7 +475,7 @@ class ClienteController extends Controller
         $retroalimentacion->delete();
         alert()->error('El registro ha sido eliminado correctamente');
 
-        session(['tab2' => '4']);
+        session(['tab2' => '3']);
         return back();
     }
 
@@ -339,7 +483,15 @@ class ClienteController extends Controller
     public function destroy($id)
     {
         Cliente::findOrFail($id)->update(['Activo' => 0]);
-        alert()->error('El registro ha sido desactivado correctamente');
+        alert()->info('El registro ha sido desactivado correctamente');
+
+        return back();
+    }
+
+    public function active($id)
+    {
+        Cliente::findOrFail($id)->update(['Activo' => 1]);
+        alert()->success('El registro ha sido activado correctamente');
 
         return back();
     }
