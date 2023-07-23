@@ -862,7 +862,8 @@
                                                         <th>Competidores</th>
                                                         <th>Referidos</th>
                                                         <th>Que quisiera?</th>
-                                                        <th><i class="fa fa-trash fa-lg"></i> </th>
+                                                        <th>Servicio al cliente</th>
+                                                        <th>Acciones </th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -873,7 +874,22 @@
                                                             <td>{{ $obj->Competidores }}</td>
                                                             <td>{{ $obj->Referidos }}</td>
                                                             <td>{{ $obj->QueQuisiera }}</td>
-                                                            <td><i class="fa fa-trash fa-lg"
+                                                            <td>
+                                                                @for ($i = 1; $i < 6; $i++)
+                                                                    @if ($i <= $obj->ServicioCliente)
+                                                                        <i class="fa fa-star fa-lg"></i>
+                                                                    @else
+                                                                        <i class="fa fa-star-o fa-lg"></i>
+                                                                    @endif
+                                                                @endfor
+                                                            </td>
+                                                            <td>
+                                                                <i class="fa fa-pencil fa-lg"
+                                                                    onclick="modal_edit_retroalimentacion({{ $obj->Id }},'{{ $obj->Producto }}','{{ $obj->ValoresAgregados }}','{{ $obj->Competidores }}','{{ $obj->Referidos }}','{{ $obj->QueQuisiera }}','{{ $obj->ServicioCliente }}')"
+                                                                    data-target="#modal-edit-retroalimentacion"
+                                                                    data-toggle="modal"></i>
+                                                                &nbsp;&nbsp;
+                                                                <i class="fa fa-trash fa-lg"
                                                                     onclick="modal_delete_retroalimentacion({{ $obj->Id }})"
                                                                     data-target="#modal-delete-retroalimentacion"
                                                                     data-toggle="modal"></i>
@@ -1248,7 +1264,8 @@
         </div>
 
         <div class="col-12">
-            <div class="modal fade modal-edit-habito" id="modal-edit-habito" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal fade modal-edit-habito" id="modal-edit-habito" tabindex="-1" role="dialog"
+                aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <form method="POST" action="{{ url('catalogo/cliente/edit_habito') }}">
                         @csrf
@@ -1304,7 +1321,7 @@
                 </div>
             </div>
         </div>
-
+        {{-- modales retroalimentacion --}}
         <div class="col-12">
             <div class="modal fade bs-modal-nuevo-retroalimentacion" tabindex="-1" role="dialog" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
@@ -1319,10 +1336,12 @@
                                 <input type="hidden" name="Cliente" value="{{ $cliente->Id }}" class="form-control">
                                 <div class="form-group">
                                     <div class="col-sm-12">
-                                        Producto
-                                        <input type="text" name="Producto" class="form-control" required>
+                                        Producto de NR
+                                        <input type="text" name="Producto" required class="form-control">
                                     </div>
                                 </div>
+
+
 
                                 <div class="form-group">
                                     <div class="col-sm-12">
@@ -1348,6 +1367,106 @@
                                     <div class="col-sm-12">
                                         Que quisiera?
                                         <input type="text" name="QueQuisiera" class="form-control" required>
+                                    </div>
+                                </div>
+
+                                <input type="hidden" name="ServicioCliente" id="ServicioCliente" value="0"
+                                    class="form-control" required>
+
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        Servicio al ciente <br>
+                                        <div id="stars">
+                                            <i class="fa fa-star-o fa-2x" onclick="check_stars(1)"></i>
+                                            <i class="fa fa-star-o fa-2x" onclick="check_stars(2)"></i>
+                                            <i class="fa fa-star-o fa-2x" onclick="check_stars(3)"></i>
+                                            <i class="fa fa-star-o fa-2x" onclick="check_stars(4)"></i>
+                                            <i class="fa fa-star-o fa-2x" onclick="check_stars(5)"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div>&nbsp; </div>
+                            <div class="clearfix"></div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                            </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-12">
+            <div class="modal fade modal-edit-retroalimentacion" id="modal-edit-retroalimentacion" tabindex="-1"
+                role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <form method="POST" action="{{ url('catalogo/cliente/edit_retroalimentacion') }}">
+                        @csrf
+                        <div class="modal-content">
+
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="myModalLabel">Editar retroalimentacion</h4>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" name="Cliente" value="{{ $cliente->Id }}" class="form-control">
+                                <input type="hidden" name="Id" id="ModalRetroId" class="form-control">
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        Producto de NR
+                                        <input type="text" name="Producto" id="ModalRetroProducto" required class="form-control">
+                                    </div>
+                                </div>
+
+
+
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        Valores agregados
+                                        <input type="text" name="ValoresAgregados" id="ModalRetroValoresAgregados" class="form-control"
+                                            required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        Competidores
+                                        <input type="text" name="Competidores" id="ModalRetroCompetidores" class="form-control"
+                                            required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        Referidos
+                                        <input type="text" name="Referidos" id="ModalRetroReferidos" class="form-control" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        Que quisiera?
+                                        <input type="text" name="QueQuisiera" id="ModalRetroQueQuisiera"  class="form-control"
+                                            required>
+                                    </div>
+                                </div>
+
+                                <input type="hidden" name="ServicioCliente" id="ModalRetroServicioCliente"
+                                    class="form-control" required>
+
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        Servicio al ciente <br>
+                                        <div id="modal_stars">
+                                            <i class="fa fa-star-o fa-2x" onclick="modal_check_stars(1)"></i>
+                                            <i class="fa fa-star-o fa-2x" onclick="modal_check_stars(2)"></i>
+                                            <i class="fa fa-star-o fa-2x" onclick="modal_check_stars(3)"></i>
+                                            <i class="fa fa-star-o fa-2x" onclick="modal_check_stars(4)"></i>
+                                            <i class="fa fa-star-o fa-2x" onclick="modal_check_stars(5)"></i>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -1436,11 +1555,56 @@
                 //$('#modal_borrar_documento').modal('show');
             }
 
-            //{{ $obj->Id }},'{{ $obj->ActividadEconomica }}','{{ $obj->IngresoPromedio }}','{{ $obj->GastoMensualSeguro }}','{{ $obj->NivelEducativo }}'
-
             function modal_delete_retroalimentacion(id) {
                 document.getElementById('IdRetroalimentacion').value = id;
                 //$('#modal_borrar_documento').modal('show');
+            }
+
+            function modal_edit_retroalimentacion(id, producto, valores, competidores, referidos,quisiera,servicio) {
+      
+                document.getElementById('ModalRetroId').value = id;
+                document.getElementById('ModalRetroProducto').value = producto;
+                document.getElementById('ModalRetroValoresAgregados').value = valores;
+                document.getElementById('ModalRetroCompetidores').value = competidores;
+                document.getElementById('ModalRetroReferidos').value = referidos;
+                document.getElementById('ModalRetroQueQuisiera').value = quisiera;
+                document.getElementById('ModalRetroServicioCliente').value = servicio;
+                modal_check_stars(servicio);
+                //$('#modal_borrar_documento').modal('show');
+            }
+
+            //onclick="modal_edit_retroalimentacion({{ $obj->Id }},'{{ $obj->Producto }}','{{ $obj->ValoresAgregados }}',
+            //'{{ $obj->Competidores }}','{{ $obj->Referidos }}','{{ $obj->QueQuisiera }}','{{ $obj->ServicioCliente }}')"
+
+                                                                    
+            function check_stars(id) {
+                //console.log("id: " + id);
+                document.getElementById('ServicioCliente').value = id;
+
+                string_star = "";
+                for (i = 1; i < 6; i++) {
+                    if (i <= id) {
+                        string_star = string_star + '<i class="fa fa-star fa-2x" onclick="check_stars(' + i + ')"></i>';
+                    } else {
+                        string_star = string_star + '<i class="fa fa-star-o fa-2x" onclick="check_stars(' + i + ')"></i>';
+                    }
+                }
+                $('#stars').html(string_star);
+            }
+
+            function modal_check_stars(id) {
+                //console.log("id: " + id);
+                document.getElementById('ModalRetroServicioCliente').value = id;
+
+                string_star = "";
+                for (i = 1; i < 6; i++) {
+                    if (i <= id) {
+                        string_star = string_star + '<i class="fa fa-star fa-2x" onclick="modal_check_stars(' + i + ')"></i>';
+                    } else {
+                        string_star = string_star + '<i class="fa fa-star-o fa-2x" onclick="modal_check_stars(' + i + ')"></i>';
+                    }
+                }
+                $('#modal_stars').html(string_star);
             }
         </script>
 

@@ -444,9 +444,26 @@ class ClienteController extends Controller
         $retroalimentacion->Competidores = $request->Competidores;
         $retroalimentacion->Referidos = $request->Referidos;
         $retroalimentacion->QueQuisiera = $request->QueQuisiera;
+        $retroalimentacion->ServicioCliente = $request->ServicioCliente;        
         $retroalimentacion->save();
         session(['tab2' => '3']);
         alert()->success('El registro ha sido creado correctamente');
+        return back();
+    }
+
+    public function edit_retroalimentacion(Request $request)
+    {
+        $retroalimentacion = ClienteRetroalimentacion::findOrFail($request->Id);
+        $retroalimentacion->Cliente = $request->Cliente;
+        $retroalimentacion->Producto = $request->Producto;
+        $retroalimentacion->ValoresAgregados = $request->ValoresAgregados;
+        $retroalimentacion->Competidores = $request->Competidores;
+        $retroalimentacion->Referidos = $request->Referidos;
+        $retroalimentacion->QueQuisiera = $request->QueQuisiera;
+        $retroalimentacion->ServicioCliente = $request->ServicioCliente;        
+        $retroalimentacion->update();
+        session(['tab2' => '3']);
+        alert()->success('El registro ha sido modificado correctamente');
         return back();
     }
 
