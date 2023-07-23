@@ -20,9 +20,8 @@ use App\Http\Controllers\catalogo\TipoCobroController;
 use App\Http\Controllers\polizas\DeudaController;
 use App\Http\Controllers\polizas\VidaController;
 use App\Http\Controllers\polizas\ResidenciaController;
-use App\Models\polizas\Residencia;
 use App\Http\Controllers\polizas\ValidacionCarteraController;
-use App\Models\polizas\VidaUsuario;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -72,6 +71,7 @@ Route::post('catalogo/cliente/delete_contacto', [ClienteController::class,'delet
 Route::post('catalogo/cliente/edit_contacto', [ClienteController::class,'edit_contacto']);
 Route::post('catalogo/cliente/add_tarjeta', [ClienteController::class,'add_tarjeta']);
 Route::post('catalogo/cliente/delete_tarjeta', [ClienteController::class,'delete_tarjeta']);
+Route::post('catalogo/cliente/edit_tarjeta', [ClienteController::class,'edit_tarjeta']);
 Route::post('catalogo/cliente/add_habito', [ClienteController::class,'add_habito']);
 Route::post('catalogo/cliente/edit_habito', [ClienteController::class,'edit_habito']);
 Route::post('catalogo/cliente/delete_habito', [ClienteController::class,'delete_habito']);
@@ -89,6 +89,7 @@ Route::resource('catalogo/tipo_cobro', TipoCobroController::class);
 Route::resource('catalogo/area_comercial',AreaComercialController::class);
 Route::resource('catalogo/bombero',BomberoController::class);
 Route::get('catalogo/negocios/consultar', [NegocioController::class, 'consultar']);
+Route::get('get_municipio/{id}', [ClienteController::class, 'get_municipio']);
 
 
 //pólizas

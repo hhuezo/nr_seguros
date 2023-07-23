@@ -26,6 +26,7 @@
                             <th>NIT</th>
                             <th>DUI</th>
                             <th>Contacto</th>
+                            <th>Estado</th>
                             <th>Activo</th>
                             <th>Opciones</th>
                         </tr>
@@ -38,6 +39,11 @@
                                 <td>{{ $obj->Nit }}</td>
                                 <td>{{ $obj->Dui }}</td>
                                 <td>{{ $obj->Contacto }}</td>
+                                @if ($obj->estado)
+                                <td>{{ $obj->estado->Nombre }}</td>
+                                @else
+                                <td></td>
+                                @endif
                                 @if ($obj->Activo == 1)
                                     <td align="center"><input type="checkbox" checked></td>
                                 @else

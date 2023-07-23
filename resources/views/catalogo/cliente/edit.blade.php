@@ -29,11 +29,26 @@
 
                         </li>
                         <li role="presentation" class="{{ session('tab1') == 2 ? 'active' : '' }}"><a href="#redes"
-                                role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">Necesidades y gustos</a>
+                                role="tab" id="profile-necesidad" data-toggle="tab" aria-expanded="false">Necesidades y
+                                gustos</a>
                         </li>
 
                         <li role="presentation" class="{{ session('tab1') == 3 ? 'active' : '' }}"><a href="#pago"
-                                role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">Métodos de pago</a>
+                                role="tab" id="profile-metodo" data-toggle="tab" aria-expanded="false">Métodos de
+                                pago</a>
+                        </li>
+
+                        <li role="presentation" class="{{ session('tab1') == 4 ? 'active' : '' }}"><a href="#contacto"
+                                role="tab" id="profile-contacto" data-toggle="tab" aria-expanded="false">Contactos</a>
+                        </li>
+
+                        <li role="presentation" class="{{ session('tab1') == 5 ? 'active' : '' }}"><a href="#habito"
+                                role="tab" id="profile-habito" data-toggle="tab" aria-expanded="false">Hábitos de
+                                consumo</a>
+                        </li>
+                        <li role="presentation" class="{{ session('tab1') == 6 ? 'active' : '' }}"><a
+                                href="#retroalimentacion" role="tab" id="profile-habito" data-toggle="tab"
+                                aria-expanded="false">Retroalimentación</a>
                         </li>
                     </ul>
 
@@ -197,13 +212,6 @@
                                             </div>
                                         </div>
 
-
-                                    </div>
-
-
-                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-
-
                                         <div class="form-group row">
                                             <label class="control-label col-md-3 col-sm-12 col-xs-12"
                                                 align="right">Teléfono
@@ -214,6 +222,15 @@
                                                     data-inputmask="'mask': ['9999-9999']" data-mask type="text">
                                             </div>
                                         </div>
+
+
+                                    </div>
+
+
+                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+
+
+
 
                                         <div class="form-group row">
                                             <label class="control-label col-md-3 col-sm-12 col-xs-12"
@@ -309,6 +326,37 @@
 
                                         <div class="form-group row">
                                             <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Departamento</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <select id="Departamento" class="form-control" style="width: 100%">
+                                                    @foreach ($departamentos as $obj)
+                                                        <option value="{{ $obj->Id }}"
+                                                            {{ $departamento_actual == $obj->Id ? 'selected' : '' }}>
+                                                            {{ $obj->Nombre }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Municipio</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <select name="Municipio" id="Municipio" required
+                                                    class="form-control select2" style="width: 100%">
+                                                    @foreach ($municipios as $obj)
+                                                        <option value="{{ $obj->Id }}"
+                                                            {{ $cliente->Municipio == $obj->Id ? 'selected' : '' }}>
+                                                            {{ $obj->Nombre }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
                                                 align="right">Estado</label>
                                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                                 <select name="Estado" class="form-control" style="width: 100%">
@@ -373,7 +421,7 @@
                                 </div>
 
                                 <div class="form-group" align="center">
-                                    <button class="btn btn-success" type="submit">Modificar</button>
+                                    <button class="btn btn-success" type="submit">Aceptar</button>
                                     <a href="{{ url('catalogo/cliente/') }}"><button class="btn btn-primary"
                                             type="button">Cancelar</button></a>
                                 </div>
@@ -606,9 +654,11 @@
 
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="form-group">
-                                            <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: left;">¿Que información desea recibir frecuentemente?</label>
+                                            <label class="control-label col-md-12 col-sm-12 col-xs-12"
+                                                style="text-align: left;">¿Que información desea recibir
+                                                frecuentemente?</label>
                                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                <textarea name="Informacion" class="form-control">{{$cliente->Informacion}}</textarea>
+                                                <textarea name="Informacion" class="form-control">{{ $cliente->Informacion }}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -616,7 +666,7 @@
                                 </div>
 
                                 <div class="form-group" align="center">
-                                    <button class="btn btn-success" type="submit">Modificar</button>
+                                    <button class="btn btn-success" type="submit">Aceptar</button>
                                     <a href="{{ url('catalogo/cliente/') }}"><button class="btn btn-primary"
                                             type="button">Cancelar</button></a>
                                 </div>
@@ -638,20 +688,31 @@
                                 <table class="table table-striped table-bordered">
                                     <thead>
                                         <tr>
+                                            <th>Metodo pago</th>
                                             <th>Numero tarjeta</th>
                                             <th>Fecha vencimiento</th>
                                             <th>Poliza vinculada</th>
 
-                                            <th><i class="fa fa-trash fa-lg"></i> </th>
+                                            <th>Acciones </th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach ($tarjetas as $obj)
                                             <tr>
+                                                @if ($obj->MetodoPago)
+                                                    <td>{{ $obj->metodo_pago->Nombre }}</td>
+                                                @else
+                                                    <td></td>
+                                                @endif
                                                 <td>{{ $obj->NumeroTarjeta }}</td>
                                                 <td>{{ $obj->FechaVencimiento }}</td>
                                                 <td>{{ $obj->PolizaVinculada }}</td>
-                                                <td><i class="fa fa-trash fa-lg"
+                                                <td>
+                                                    <i class="fa fa-pencil fa-lg"
+                                                        onclick="modal_edit_tarjeta({{ $obj->Id }},'{{ $obj->MetodoPago }}','{{ $obj->NumeroTarjeta }}','{{ $obj->FechaVencimiento }}','{{ $obj->PolizaVinculada }}')"
+                                                        data-target="#modal-edit-tarjeta" data-toggle="modal"></i>
+                                                    &nbsp;&nbsp;
+                                                    <i class="fa fa-trash fa-lg"
                                                         onclick="modal_delete_tarjeta({{ $obj->Id }})"
                                                         data-target="#modal-delete-tarjeta" data-toggle="modal"></i>
                                                 </td>
@@ -674,259 +735,189 @@
 
 
                         </div>
-                    </div>
-                </div>
+
+                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 4 ? 'active in' : '' }}"                            id="contacto" aria-labelledby="home-tab">
+
+                            <div class="col-12" style="text-align: right;">
+                                <button class="btn btn-primary" data-toggle="modal"
+                                    data-target=".bs-modal-nuevo-contacto"><i class="fa fa-plus fa-lg"></i>
+                                    Nuevo</button>
+                            </div>
+                            @if ($contactos->count() > 0)
+                                <br>
+                                <table class="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Cargo</th>
+                                            <th>Telefono</th>
+                                            <th>Email</th>
+                                            <th>Lugar trabajo</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($contactos as $obj)
+                                            <tr>
+                                                <td>{{ $obj->Nombre }}</td>
+                                                @if ($obj->cargo)
+                                                    <td>{{ $obj->cargo->Nombre }}</td>
+                                                @else
+                                                    <td></td>
+                                                @endif
+                                                <td>{{ $obj->Telefono }}</td>
+                                                <td>{{ $obj->Email }}</td>
+                                                <td>{{ $obj->LugarTrabajo }}</td>
+                                                <td>
+                                                    <i class="fa fa-pencil fa-lg"
+                                                        onclick="modal_edit_contacto({{ $obj->Id }},'{{ $obj->Cargo }}','{{ $obj->Nombre }}','{{ $obj->Telefono }}','{{ $obj->Email }}','{{ $obj->LugarTrabajo }}')"
+                                                        data-target="#modal-edit-contacto" data-toggle="modal"></i>
+                                                    &nbsp;&nbsp;
+                                                    <i class="fa fa-trash fa-lg"
+                                                        onclick="modal_delete_contacto({{ $obj->Id }})"
+                                                        data-target="#modal-delete-contacto" data-toggle="modal"></i>
 
 
-
-
-
-
-
-
-                {{-- tabs inferiores --}}
-
-                <div class="col-md-12 col-sm-12  ">
-                    <div class="x_panel">
-                        <div class="x_title">
-                            <h2><i class="fa fa-bars"></i> </h2>
-
-                            <div class="clearfix"></div>
-                        </div>
-                        <div class="x_content">
-                            <div class="" role="tabpanel" data-example-id="togglable-tabs">
-                                <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-
-                                    <li role="presentation" class="{{ session('tab2') == 1 ? 'active' : '' }}"><a
-                                            href="#tab_content2" role="tab" id="profile-tab" data-toggle="tab"
-                                            aria-expanded="false">Contactos</a>
-                                    </li>
-
-                                    <li role="presentation" class="{{ session('tab2') == 2 ? 'active' : '' }}"><a
-                                            href="#tab_content3" role="tab" id="uniforme-tab" data-toggle="tab"
-                                            aria-expanded="false">Habitos consumo</a>
-                                    </li>
-
-                                    <li role="presentation" class="{{ session('tab2') == 3 ? 'active' : '' }}"><a
-                                            href="#tab_content4" role="tab" id="profile-tab" data-toggle="tab"
-                                            aria-expanded="false">Retroalimentacion</a>
-                                    </li>
-
-
-                                </ul>
-                                <div class="tab-content" id="myTabContent">
-
-                                    <div role="tabpanel"
-                                        class="tab-pane fade {{ session('tab2') == 1 ? 'active in' : '' }}"
-                                        id="tab_content2" aria-labelledby="profile-tab">
-                                        <div class="col-12" style="text-align: right;">
-                                            <button class="btn btn-primary" data-toggle="modal"
-                                                data-target=".bs-modal-nuevo-contacto"><i class="fa fa-plus fa-lg"></i>
-                                                Nuevo</button>
-                                        </div>
-                                        @if ($contactos->count() > 0)
-                                            <br>
-                                            <table class="table table-striped table-bordered">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Nombre</th>
-                                                        <th>Cargo</th>
-                                                        <th>Telefono</th>
-                                                        <th>Email</th>
-                                                        <th>Lugar trabajo</th>
-                                                        <th>Acciones</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach ($contactos as $obj)
-                                                        <tr>
-                                                            <td>{{ $obj->Nombre }}</td>
-                                                            @if ($obj->cargo)
-                                                                <td>{{ $obj->cargo->Nombre }}</td>
-                                                            @else
-                                                                <td></td>
-                                                            @endif
-                                                            <td>{{ $obj->Telefono }}</td>
-                                                            <td>{{ $obj->Email }}</td>
-                                                            <td>{{ $obj->LugarTrabajo }}</td>
-                                                            <td>
-                                                                <i class="fa fa-pencil fa-lg"
-                                                                    onclick="modal_edit_contacto({{ $obj->Id }},'{{ $obj->Cargo }}','{{ $obj->Nombre }}','{{ $obj->Telefono }}','{{ $obj->Email }}','{{ $obj->LugarTrabajo }}')"
-                                                                    data-target="#modal-edit-contacto"
-                                                                    data-toggle="modal"></i>
-                                                                &nbsp;&nbsp;
-                                                                <i class="fa fa-trash fa-lg"
-                                                                    onclick="modal_delete_contacto({{ $obj->Id }})"
-                                                                    data-target="#modal-delete-contacto"
-                                                                    data-toggle="modal"></i>
-
-
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                        @else
-                                            <div style="height: 200px">
-                                                <br>
-                                                <div class="alert alert-danger alert-dismissible " role="alert">
-                                                    <button type="button" class="close" data-dismiss="alert"
-                                                        aria-label="Close"><span aria-hidden="true">×</span>
-                                                    </button>
-                                                    <strong>Sin datos que mostrar.</strong>
-                                                </div>
-                                            </div>
-                                        @endif
-
-
-
-
-
-
-
-
-
-
-
-                                    </div>
-                                    <div role="tabpanel"
-                                        class="tab-pane fade {{ session('tab2') == 2 ? 'active in' : '' }}"
-                                        id="tab_content3" aria-labelledby="uniforme-tab">
-
-                                        <div class="col-12" style="text-align: right;">
-                                            <button class="btn btn-primary" data-toggle="modal"
-                                                data-target=".bs-modal-nuevo-habito"><i class="fa fa-plus fa-lg"></i>
-                                                Nuevo</button>
-                                        </div>
-
-                                        @if ($habitos->count() > 0)
-                                            <br>
-                                            <table class="table table-striped table-bordered">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Actividad economica</th>
-                                                        <th>Ingreso promedio</th>
-                                                        <th>Gasto mensual seguro</th>
-                                                        <th>NivelEducativo</th>
-                                                        <th>Acciones</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach ($habitos as $obj)
-                                                        <tr>
-                                                            <td>{{ $obj->ActividadEconomica }}</td>
-                                                            <td>${{ $obj->IngresoPromedio }}</td>
-                                                            <td>${{ $obj->GastoMensualSeguro }}</td>
-                                                            <td>{{ $obj->NivelEducativo }}</td>
-                                                            <td>
-                                                                <i class="fa fa-pencil fa-lg"
-                                                                    onclick="modal_edit_habito({{ $obj->Id }},'{{ $obj->ActividadEconomica }}','{{ $obj->IngresoPromedio }}','{{ $obj->GastoMensualSeguro }}','{{ $obj->NivelEducativo }}')"
-                                                                    data-target="#modal-edit-habito"
-                                                                    data-toggle="modal"></i>
-                                                                &nbsp;&nbsp;
-                                                                <i class="fa fa-trash fa-lg"
-                                                                    onclick="modal_delete_habito({{ $obj->Id }})"
-                                                                    data-target="#modal-delete-habito"
-                                                                    data-toggle="modal"></i>
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                        @else
-                                            <div style="height: 200px">
-                                                <br>
-                                                <div class="alert alert-danger alert-dismissible " role="alert">
-                                                    <button type="button" class="close" data-dismiss="alert"
-                                                        aria-label="Close"><span aria-hidden="true">×</span>
-                                                    </button>
-                                                    <strong>Sin datos que mostrar.</strong>
-                                                </div>
-                                            </div>
-                                        @endif
-
-
-
-                                    </div>
-
-                                    <div role="tabpanel"
-                                        class="tab-pane fade {{ session('tab2') == 3 ? 'active in' : '' }}"
-                                        id="tab_content4" aria-labelledby="uniforme-tab">
-                                        <div class="col-12" style="text-align: right;">
-                                            <button class="btn btn-primary" data-toggle="modal"
-                                                data-target=".bs-modal-nuevo-retroalimentacion"><i
-                                                    class="fa fa-plus fa-lg"></i>
-                                                Nuevo</button>
-                                        </div>
-
-                                        @if ($retroalimentacion->count() > 0)
-                                            <br>
-                                            <table class="table table-striped table-bordered">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Producto</th>
-                                                        <th>Valores agregados</th>
-                                                        <th>Competidores</th>
-                                                        <th>Referidos</th>
-                                                        <th>Que quisiera?</th>
-                                                        <th>Servicio al cliente</th>
-                                                        <th>Acciones </th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach ($retroalimentacion as $obj)
-                                                        <tr>
-                                                            <td>{{ $obj->Producto }}</td>
-                                                            <td>{{ $obj->ValoresAgregados }}</td>
-                                                            <td>{{ $obj->Competidores }}</td>
-                                                            <td>{{ $obj->Referidos }}</td>
-                                                            <td>{{ $obj->QueQuisiera }}</td>
-                                                            <td>
-                                                                @for ($i = 1; $i < 6; $i++)
-                                                                    @if ($i <= $obj->ServicioCliente)
-                                                                        <i class="fa fa-star fa-lg"></i>
-                                                                    @else
-                                                                        <i class="fa fa-star-o fa-lg"></i>
-                                                                    @endif
-                                                                @endfor
-                                                            </td>
-                                                            <td>
-                                                                <i class="fa fa-pencil fa-lg"
-                                                                    onclick="modal_edit_retroalimentacion({{ $obj->Id }},'{{ $obj->Producto }}','{{ $obj->ValoresAgregados }}','{{ $obj->Competidores }}','{{ $obj->Referidos }}','{{ $obj->QueQuisiera }}','{{ $obj->ServicioCliente }}')"
-                                                                    data-target="#modal-edit-retroalimentacion"
-                                                                    data-toggle="modal"></i>
-                                                                &nbsp;&nbsp;
-                                                                <i class="fa fa-trash fa-lg"
-                                                                    onclick="modal_delete_retroalimentacion({{ $obj->Id }})"
-                                                                    data-target="#modal-delete-retroalimentacion"
-                                                                    data-toggle="modal"></i>
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                        @else
-                                            <div style="height: 200px">
-                                                <br>
-                                                <div class="alert alert-danger alert-dismissible " role="alert">
-                                                    <button type="button" class="close" data-dismiss="alert"
-                                                        aria-label="Close"><span aria-hidden="true">×</span>
-                                                    </button>
-                                                    <strong>Sin datos que mostrar.</strong>
-                                                </div>
-                                            </div>
-                                        @endif
-
-
-
-
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            @else
+                                <div style="height: 200px">
+                                    <br>
+                                    <div class="alert alert-danger alert-dismissible " role="alert">
+                                        <button type="button" class="close" data-dismiss="alert"
+                                            aria-label="Close"><span aria-hidden="true">×</span>
+                                        </button>
+                                        <strong>Sin datos que mostrar.</strong>
                                     </div>
                                 </div>
+                            @endif
+                        </div>
+
+                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 5 ? 'active in' : '' }}"
+                            id="habito" aria-labelledby="home-tab">
+                            <div class="col-12" style="text-align: right;">
+                                <button class="btn btn-primary" data-toggle="modal"
+                                    data-target=".bs-modal-nuevo-habito"><i class="fa fa-plus fa-lg"></i>
+                                    Nuevo</button>
                             </div>
+
+                            @if ($habitos->count() > 0)
+                                <br>
+                                <table class="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Actividad economica</th>
+                                            <th>Ingreso promedio</th>
+                                            <th>Gasto mensual seguro</th>
+                                            <th>NivelEducativo</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($habitos as $obj)
+                                            <tr>
+                                                <td>{{ $obj->ActividadEconomica }}</td>
+                                                <td>${{ $obj->IngresoPromedio }}</td>
+                                                <td>${{ $obj->GastoMensualSeguro }}</td>
+                                                <td>{{ $obj->NivelEducativo }}</td>
+                                                <td>
+                                                    <i class="fa fa-pencil fa-lg"
+                                                        onclick="modal_edit_habito({{ $obj->Id }},'{{ $obj->ActividadEconomica }}','{{ $obj->IngresoPromedio }}','{{ $obj->GastoMensualSeguro }}','{{ $obj->NivelEducativo }}')"
+                                                        data-target="#modal-edit-habito" data-toggle="modal"></i>
+                                                    &nbsp;&nbsp;
+                                                    <i class="fa fa-trash fa-lg"
+                                                        onclick="modal_delete_habito({{ $obj->Id }})"
+                                                        data-target="#modal-delete-habito" data-toggle="modal"></i>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            @else
+                                <div style="height: 200px">
+                                    <br>
+                                    <div class="alert alert-danger alert-dismissible " role="alert">
+                                        <button type="button" class="close" data-dismiss="alert"
+                                            aria-label="Close"><span aria-hidden="true">×</span>
+                                        </button>
+                                        <strong>Sin datos que mostrar.</strong>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+
+                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 6 ? 'active in' : '' }}"
+                            id="retroalimentacion" aria-labelledby="home-tab">
+                            <div class="col-12" style="text-align: right;">
+                                <button class="btn btn-primary" data-toggle="modal"
+                                    data-target=".bs-modal-nuevo-retroalimentacion"><i class="fa fa-plus fa-lg"></i>
+                                    Nuevo</button>
+                            </div>
+
+                            @if ($retroalimentacion->count() > 0)
+                                <br>
+                                <table class="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th>Valores agregados</th>
+                                            <th>Competidores</th>
+                                            <th>Referidos</th>
+                                            <th>Que quisiera?</th>
+                                            <th>Servicio al cliente</th>
+                                            <th>Acciones </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($retroalimentacion as $obj)
+                                            <tr>
+                                                <td>{{ $obj->Producto }}</td>
+                                                <td>{{ $obj->ValoresAgregados }}</td>
+                                                <td>{{ $obj->Competidores }}</td>
+                                                <td>{{ $obj->Referidos }}</td>
+                                                <td>{{ $obj->QueQuisiera }}</td>
+                                                <td>
+                                                    @for ($i = 1; $i < 6; $i++)
+                                                        @if ($i <= $obj->ServicioCliente)
+                                                            <i class="fa fa-star fa-lg"></i>
+                                                        @else
+                                                            <i class="fa fa-star-o fa-lg"></i>
+                                                        @endif
+                                                    @endfor
+                                                </td>
+                                                <td>
+                                                    <i class="fa fa-pencil fa-lg"
+                                                        onclick="modal_edit_retroalimentacion({{ $obj->Id }},'{{ $obj->Producto }}','{{ $obj->ValoresAgregados }}','{{ $obj->Competidores }}','{{ $obj->Referidos }}','{{ $obj->QueQuisiera }}','{{ $obj->ServicioCliente }}')"
+                                                        data-target="#modal-edit-retroalimentacion"
+                                                        data-toggle="modal"></i>
+                                                    &nbsp;&nbsp;
+                                                    <i class="fa fa-trash fa-lg"
+                                                        onclick="modal_delete_retroalimentacion({{ $obj->Id }})"
+                                                        data-target="#modal-delete-retroalimentacion"
+                                                        data-toggle="modal"></i>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            @else
+                                <div style="height: 200px">
+                                    <br>
+                                    <div class="alert alert-danger alert-dismissible " role="alert">
+                                        <button type="button" class="close" data-dismiss="alert"
+                                            aria-label="Close"><span aria-hidden="true">×</span>
+                                        </button>
+                                        <strong>Sin datos que mostrar.</strong>
+                                    </div>
+                                </div>
+                            @endif
+
                         </div>
                     </div>
                 </div>
-
 
             </div>
 
@@ -948,10 +939,19 @@
                                 <input type="hidden" name="Cliente" value="{{ $cliente->Id }}" class="form-control">
                                 <div class="form-group">
                                     <div class="col-sm-12">
+                                        Metodo pago
+                                        <select name="MetodoPago" class="form-control">
+                                            @foreach ($metodos_pago as $obj)
+                                                <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
                                         NumeroTarjeta
-                                        <input type="text" class="form-control"
-                                            data-inputmask="'mask': ['9999-9999-9999-9999']" data-mask required
-                                            name="NumeroTarjeta">
+                                        <input type="text" name="NumeroTarjeta" id="tarjeta" class="form-control"
+                                            data-inputmask="'mask': ['9999-9999-9999-9999']" data-mask>
                                     </div>
                                 </div>
 
@@ -1011,6 +1011,74 @@
                         </div>
                     </div>
                 </form>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="modal fade modal-edit-tarjeta" id="modal-edit-tarjeta" tabindex="-1" role="dialog"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <form method="POST" action="{{ url('catalogo/cliente/edit_tarjeta') }}">
+                        @csrf
+                        <div class="modal-content">
+
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="myModalLabel">Editar tarjeta</h4>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" name="Id" id="ModalTarjetaId" class="form-control">
+                                <input type="hidden" name="Cliente" value="{{ $cliente->Id }}" class="form-control">
+
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        Metodo pago
+                                        <select name="MetodoPago" id="ModalMetodoPago" class="form-control">
+                                            @foreach ($metodos_pago as $obj)
+                                                <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                              
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        NumeroTarjeta
+                                        <input type="text" name="NumeroTarjeta" id="ModalNumeroTarjeta"
+                                            class="form-control" data-inputmask="'mask': ['9999-9999-9999-9999']"
+                                            data-mask>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        Fecha vencimiento
+                                        <input type="text" name="FechaVencimiento" id="ModalFechaVencimiento"
+                                            class="form-control" data-inputmask="'mask': ['99/99']" data-mask required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        Poliza vinculada
+                                        <input type="text" name="PolizaVinculada" id="ModalPolizaVinculada"
+                                            class="form-control" required>
+                                    </div>
+                                </div>
+
+
+
+
+                            </div>
+                            <div>&nbsp; </div>
+                            <div class="clearfix"></div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                            </div>
+
+                    </form>
+
+                </div>
             </div>
         </div>
 
@@ -1420,12 +1488,14 @@
                                 <h4 class="modal-title" id="myModalLabel">Editar retroalimentacion</h4>
                             </div>
                             <div class="modal-body">
-                                <input type="hidden" name="Cliente" value="{{ $cliente->Id }}" class="form-control">
+                                <input type="hidden" name="Cliente" value="{{ $cliente->Id }}"
+                                    class="form-control">
                                 <input type="hidden" name="Id" id="ModalRetroId" class="form-control">
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         Producto de NR
-                                        <input type="text" name="Producto" id="ModalRetroProducto" required class="form-control">
+                                        <input type="text" name="Producto" id="ModalRetroProducto" required
+                                            class="form-control">
                                     </div>
                                 </div>
 
@@ -1434,30 +1504,31 @@
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         Valores agregados
-                                        <input type="text" name="ValoresAgregados" id="ModalRetroValoresAgregados" class="form-control"
-                                            required>
+                                        <input type="text" name="ValoresAgregados" id="ModalRetroValoresAgregados"
+                                            class="form-control" required>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         Competidores
-                                        <input type="text" name="Competidores" id="ModalRetroCompetidores" class="form-control"
-                                            required>
+                                        <input type="text" name="Competidores" id="ModalRetroCompetidores"
+                                            class="form-control" required>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         Referidos
-                                        <input type="text" name="Referidos" id="ModalRetroReferidos" class="form-control" required>
+                                        <input type="text" name="Referidos" id="ModalRetroReferidos"
+                                            class="form-control" required>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         Que quisiera?
-                                        <input type="text" name="QueQuisiera" id="ModalRetroQueQuisiera"  class="form-control"
-                                            required>
+                                        <input type="text" name="QueQuisiera" id="ModalRetroQueQuisiera"
+                                            class="form-control" required>
                                     </div>
                                 </div>
 
@@ -1527,6 +1598,16 @@
 
             });
 
+
+            function modal_edit_tarjeta(id, metodo, numero, fecha, poliza) {
+                document.getElementById('ModalTarjetaId').value = id;
+                document.getElementById('ModalMetodoPago').value = metodo;
+                document.getElementById('ModalNumeroTarjeta').value = numero;
+                document.getElementById('ModalFechaVencimiento').value = fecha;
+                document.getElementById('ModalPolizaVinculada').value = poliza;
+
+            }
+
             function modal_delete_tarjeta(id) {
                 document.getElementById('IdTarjeta').value = id;
                 //$('#modal_borrar_documento').modal('show');
@@ -1567,8 +1648,8 @@
                 //$('#modal_borrar_documento').modal('show');
             }
 
-            function modal_edit_retroalimentacion(id, producto, valores, competidores, referidos,quisiera,servicio) {
-      
+            function modal_edit_retroalimentacion(id, producto, valores, competidores, referidos, quisiera, servicio) {
+
                 document.getElementById('ModalRetroId').value = id;
                 document.getElementById('ModalRetroProducto').value = producto;
                 document.getElementById('ModalRetroValoresAgregados').value = valores;
@@ -1580,10 +1661,7 @@
                 //$('#modal_borrar_documento').modal('show');
             }
 
-            //onclick="modal_edit_retroalimentacion({{ $obj->Id }},'{{ $obj->Producto }}','{{ $obj->ValoresAgregados }}',
-            //'{{ $obj->Competidores }}','{{ $obj->Referidos }}','{{ $obj->QueQuisiera }}','{{ $obj->ServicioCliente }}')"
 
-                                                                    
             function check_stars(id) {
                 //console.log("id: " + id);
                 document.getElementById('ServicioCliente').value = id;
@@ -1612,6 +1690,11 @@
                     }
                 }
                 $('#modal_stars').html(string_star);
+            }
+
+            function format_tarjeta() {
+                var tarjeta = document.getElementById("tarjeta").value;
+                console.log(tarjeta);
             }
         </script>
 

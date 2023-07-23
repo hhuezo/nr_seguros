@@ -9,12 +9,15 @@ use App\Models\catalogo\ClienteContactoFrecuente;
 use App\Models\catalogo\ClienteEstado;
 use App\Models\catalogo\ClienteHabitoConsumo;
 use App\Models\catalogo\ClienteInformarse;
+use App\Models\catalogo\ClienteMetodoPago;
 use App\Models\catalogo\ClienteMotivoEleccion;
 use App\Models\catalogo\ClienteNecesidadProteccion;
 use App\Models\catalogo\ClientePrefereciaCompra;
 use App\Models\catalogo\ClienteRetroalimentacion;
 use App\Models\catalogo\ClienteTarjetaCredito;
+use App\Models\catalogo\Departamento;
 use App\Models\catalogo\FormaPago;
+use App\Models\catalogo\Municipio;
 use App\Models\catalogo\Ruta;
 use App\Models\catalogo\TipoContribuyente;
 use App\Models\catalogo\UbicacionCobro;
@@ -40,15 +43,24 @@ class ClienteController extends Controller
         $ubicaciones_cobro = UbicacionCobro::where('Activo', '=', 1)->get();
         $formas_pago = FormaPago::where('Activo', '=', 1)->get();
         $cliente_estados = ClienteEstado::get();
+        $departamentos = Departamento::get();
+        $municipios = Municipio::get();
 
         return view('catalogo.cliente.create', compact(
             'tipos_contribuyente',
             'formas_pago',
             'ubicaciones_cobro',
-            'cliente_estados'
+            'cliente_estados',
+            'departamentos',
+            'municipios'
         ));
     }
 
+    public function get_municipio($id)
+    {
+        return Municipio::where('Departamento','=',$id)->get();
+    }
+    
     public function string_replace($string)
     {
         return str_replace("_", "", $string);
@@ -120,6 +132,7 @@ class ClienteController extends Controller
         $cliente->Genero = $request->get('Genero');
         $cliente->TipoContribuyente = $request->get('TipoContribuyente');
         $cliente->Referencia = $request->get('Referencia');
+        $cliente->Municipio = $request->get('Municipio');
         $cliente->FechaIngreso = $time->toDateTimeString();
         $cliente->UsuarioIngreso = auth()->user()->id;
         $cliente->save();
@@ -190,6 +203,19 @@ class ClienteController extends Controller
         $motivo_eleccion = ClienteMotivoEleccion::get();
         $preferencia_compra = ClientePrefereciaCompra::get();
         $cliente_contacto_cargos = ClienteContactoCargo::get();
+        $metodos_pago = ClienteMetodoPago::where('Activo','=',1)->get();
+
+        $departamentos = Departamento::get();
+        $departamento_actual = 0;
+        if($cliente->Municipio)
+        {
+            $municipios = Municipio::where('Departamento','=',$cliente->municipio->Departamento)->get();
+            $departamento_actual = $cliente->municipio->Departamento;
+        }
+        else{
+            $municipios = Municipio::get();
+        }
+        
 
 
         return view('catalogo.cliente.edit', compact(
@@ -206,7 +232,12 @@ class ClienteController extends Controller
             'informarse',
             'motivo_eleccion',
             'preferencia_compra',
-            'cliente_contacto_cargos'
+            'cliente_contacto_cargos',
+            'departamentos',
+            'municipios',
+            'departamento_actual',
+            'metodos_pago'
+
         ));
     }
 
@@ -282,6 +313,7 @@ class ClienteController extends Controller
         $cliente->Genero = $request->get('Genero');
         $cliente->TipoContribuyente = $request->get('TipoContribuyente');
         $cliente->Referencia = $request->get('Referencia');
+        $cliente->Municipio = $request->get('Municipio');
         $cliente->update();
 
         session(['tab1' => '1']);
@@ -334,7 +366,7 @@ class ClienteController extends Controller
         $contacto->save();
         alert()->success('El registro ha sido creado correctamente');
 
-        session(['tab2' => '1']);
+        session(['tab1' => '4']);
         return back();
     }
 
@@ -350,7 +382,7 @@ class ClienteController extends Controller
         $contacto->save();
         alert()->success('El registro ha sido modificado correctamente');
 
-        session(['tab2' => '1']);
+        session(['tab1' => '4']);
         return back();
     }
     
@@ -360,19 +392,20 @@ class ClienteController extends Controller
         $contacto->delete();
         alert()->error('El registro ha sido eliminado correctamente');
 
-        session(['tab2' => '1']);
+        session(['tab1' => '4']);
         return back();
     }
 
 
     public function add_tarjeta(Request $request)
     {
-        $contacto = new ClienteTarjetaCredito();
-        $contacto->Cliente = $request->Cliente;
-        $contacto->NumeroTarjeta = $request->NumeroTarjeta;
-        $contacto->FechaVencimiento = $request->FechaVencimiento;
-        $contacto->PolizaVinculada = $request->PolizaVinculada;
-        $contacto->save();
+        $tarjeta = new ClienteTarjetaCredito();
+        $tarjeta->Cliente = $request->Cliente;
+        $tarjeta->NumeroTarjeta = $request->NumeroTarjeta;
+        $tarjeta->FechaVencimiento = $request->FechaVencimiento;
+        $tarjeta->PolizaVinculada = $request->PolizaVinculada;
+        $tarjeta->MetodoPago = $request->MetodoPago;
+        $tarjeta->save();
         alert()->success('El registro ha sido creado correctamente');
 
         session(['tab1' => '3']);
@@ -390,8 +423,22 @@ class ClienteController extends Controller
         return back();
     }
 
+    public function edit_tarjeta(Request $request)
+    {
+        $tarjeta = ClienteTarjetaCredito::findOrFail($request->Id);
+        $tarjeta->Cliente = $request->Cliente;
+        $tarjeta->NumeroTarjeta = $request->NumeroTarjeta;
+        $tarjeta->FechaVencimiento = $request->FechaVencimiento;
+        $tarjeta->PolizaVinculada = $request->PolizaVinculada;
+        $tarjeta->MetodoPago = $request->MetodoPago;
+        $tarjeta->save();
+        alert()->success('El registro ha sido creado correctamente');
 
+        session(['tab1' => '3']);
+        return back();
+    }
 
+    
 
     public function add_habito(Request $request)
     {
@@ -404,7 +451,7 @@ class ClienteController extends Controller
         $habito->save();
         alert()->success('El registro ha sido creado correctamente');
 
-        session(['tab2' => '2']);
+        session(['tab1' => '5']);
         return back();
     }
 
@@ -419,7 +466,7 @@ class ClienteController extends Controller
         $habito->save();
         alert()->success('El registro ha sido modificado correctamente');
 
-        session(['tab2' => '2']);
+        session(['tab1' => '5']);
         return back();
     }
 
@@ -432,7 +479,7 @@ class ClienteController extends Controller
         $habito->delete();
         alert()->error('El registro ha sido eliminado correctamente');
 
-        session(['tab2' => '2']);
+        session(['tab1' => '5']);
         return back();
     }
 
@@ -447,7 +494,7 @@ class ClienteController extends Controller
         $retroalimentacion->QueQuisiera = $request->QueQuisiera;
         $retroalimentacion->ServicioCliente = $request->ServicioCliente;        
         $retroalimentacion->save();
-        session(['tab2' => '3']);
+        session(['tab1' => '6']);
         alert()->success('El registro ha sido creado correctamente');
         return back();
     }
@@ -463,7 +510,7 @@ class ClienteController extends Controller
         $retroalimentacion->QueQuisiera = $request->QueQuisiera;
         $retroalimentacion->ServicioCliente = $request->ServicioCliente;        
         $retroalimentacion->update();
-        session(['tab2' => '3']);
+        session(['tab1' => '6']);
         alert()->success('El registro ha sido modificado correctamente');
         return back();
     }
@@ -475,7 +522,7 @@ class ClienteController extends Controller
         $retroalimentacion->delete();
         alert()->error('El registro ha sido eliminado correctamente');
 
-        session(['tab2' => '3']);
+        session(['tab1' => '6']);
         return back();
     }
 
