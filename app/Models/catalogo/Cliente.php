@@ -37,7 +37,8 @@ class Cliente extends Model
         'TipoPersona',
         'Activo',
         'FechaCreacion',
-        'UsuarioCreacion'
+        'UsuarioCreacion',
+        'Municipio'
     ];
 
     protected $guarded = [];
@@ -55,5 +56,10 @@ class Cliente extends Model
     public function ubicacion_cobro()
     {
         return $this->belongsTo('App\Models\catalogo\UbicacionCobro', 'UbicacionCobro', 'Id');
+    }
+
+    public function municipio()
+    {
+        return $this->belongsTo(Municipio::class, 'Municipio', 'Id');
     }
 }

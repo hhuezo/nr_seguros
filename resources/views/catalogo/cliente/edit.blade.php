@@ -198,13 +198,6 @@
                                             </div>
                                         </div>
 
-
-                                    </div>
-
-
-                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-
-
                                         <div class="form-group row">
                                             <label class="control-label col-md-3 col-sm-12 col-xs-12"
                                                 align="right">Teléfono
@@ -215,6 +208,15 @@
                                                     data-inputmask="'mask': ['9999-9999']" data-mask type="text">
                                             </div>
                                         </div>
+
+
+                                    </div>
+
+
+                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+
+
+                                    
 
                                         <div class="form-group row">
                                             <label class="control-label col-md-3 col-sm-12 col-xs-12"
@@ -303,6 +305,35 @@
                                                         <option value="{{ $obj->Id }}"
                                                             {{ $cliente->FormaPago == $obj->Id ? 'selected' : '' }}>
                                                             {{ $obj->Nombre }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Departamento</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <select id="Departamento" class="form-control" style="width: 100%">
+                                                    @foreach ($departamentos as $obj)
+                                                        <option value="{{ $obj->Id }}"
+                                                            {{ $departamento_actual == $obj->Id ? 'selected' : '' }}>
+                                                            {{ $obj->Nombre }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+        
+                                        <div class="form-group row">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                                align="right">Municipio</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <select name="Municipio" id="Municipio" required class="form-control select2" style="width: 100%">
+                                                    @foreach ($municipios as $obj)
+                                                        <option value="{{ $obj->Id }}"
+                                                            {{ $cliente->Municipio == $obj->Id ? 'selected' : '' }}>{{ $obj->Nombre }}
+                                                        </option>
                                                     @endforeach
                                                 </select>
                                             </div>

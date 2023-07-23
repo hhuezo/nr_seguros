@@ -14,7 +14,9 @@ use App\Models\catalogo\ClienteNecesidadProteccion;
 use App\Models\catalogo\ClientePrefereciaCompra;
 use App\Models\catalogo\ClienteRetroalimentacion;
 use App\Models\catalogo\ClienteTarjetaCredito;
+use App\Models\catalogo\Departamento;
 use App\Models\catalogo\FormaPago;
+use App\Models\catalogo\Municipio;
 use App\Models\catalogo\Ruta;
 use App\Models\catalogo\TipoContribuyente;
 use App\Models\catalogo\UbicacionCobro;
@@ -40,15 +42,24 @@ class ClienteController extends Controller
         $ubicaciones_cobro = UbicacionCobro::where('Activo', '=', 1)->get();
         $formas_pago = FormaPago::where('Activo', '=', 1)->get();
         $cliente_estados = ClienteEstado::get();
+        $departamentos = Departamento::get();
+        $municipios = Municipio::get();
 
         return view('catalogo.cliente.create', compact(
             'tipos_contribuyente',
             'formas_pago',
             'ubicaciones_cobro',
-            'cliente_estados'
+            'cliente_estados',
+            'departamentos',
+            'municipios'
         ));
     }
 
+    public function get_municipio($id)
+    {
+        return Municipio::where('Departamento','=',$id)->get();
+    }
+    
     public function string_replace($string)
     {
         return str_replace("_", "", $string);
@@ -120,6 +131,7 @@ class ClienteController extends Controller
         $cliente->Genero = $request->get('Genero');
         $cliente->TipoContribuyente = $request->get('TipoContribuyente');
         $cliente->Referencia = $request->get('Referencia');
+        $cliente->Municipio = $request->get('Municipio');
         $cliente->FechaIngreso = $time->toDateTimeString();
         $cliente->UsuarioIngreso = auth()->user()->id;
         $cliente->save();
@@ -191,6 +203,18 @@ class ClienteController extends Controller
         $preferencia_compra = ClientePrefereciaCompra::get();
         $cliente_contacto_cargos = ClienteContactoCargo::get();
 
+        $departamentos = Departamento::get();
+        $departamento_actual = 0;
+        if($cliente->Municipio)
+        {
+            $municipios = Municipio::where('Departamento','=',$cliente->municipio->Departamento)->get();
+            $departamento_actual = $cliente->municipio->Departamento;
+        }
+        else{
+            $municipios = Municipio::get();
+        }
+        
+
 
         return view('catalogo.cliente.edit', compact(
             'cliente',
@@ -206,7 +230,11 @@ class ClienteController extends Controller
             'informarse',
             'motivo_eleccion',
             'preferencia_compra',
-            'cliente_contacto_cargos'
+            'cliente_contacto_cargos',
+            'departamentos',
+            'municipios',
+            'departamento_actual'
+
         ));
     }
 
@@ -282,6 +310,7 @@ class ClienteController extends Controller
         $cliente->Genero = $request->get('Genero');
         $cliente->TipoContribuyente = $request->get('TipoContribuyente');
         $cliente->Referencia = $request->get('Referencia');
+        $cliente->Municipio = $request->get('Municipio');
         $cliente->update();
 
         session(['tab1' => '1']);

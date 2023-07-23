@@ -89,6 +89,7 @@ Route::resource('catalogo/tipo_cobro', TipoCobroController::class);
 Route::resource('catalogo/area_comercial',AreaComercialController::class);
 Route::resource('catalogo/bombero',BomberoController::class);
 Route::get('catalogo/negocios/consultar', [NegocioController::class, 'consultar']);
+Route::get('get_municipio/{id}', [ClienteController::class, 'get_municipio']);
 
 
 //pólizas
