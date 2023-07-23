@@ -20,9 +20,8 @@ use App\Http\Controllers\catalogo\TipoCobroController;
 use App\Http\Controllers\polizas\DeudaController;
 use App\Http\Controllers\polizas\VidaController;
 use App\Http\Controllers\polizas\ResidenciaController;
-use App\Models\polizas\Residencia;
 use App\Http\Controllers\polizas\ValidacionCarteraController;
-use App\Models\polizas\VidaUsuario;
+
 
 /*
 |--------------------------------------------------------------------------
