@@ -314,6 +314,7 @@ class ClienteController extends Controller
         $cliente->App = $request->get('App');
         $cliente->MonederoEletronico = $request->get('MonederoEletronico');
         $cliente->CompraOtros = $request->get('CompraOtros');
+        $cliente->Informacion = $request->get('Informacion');
         $cliente->update();
 
         session(['tab1' => '2']);

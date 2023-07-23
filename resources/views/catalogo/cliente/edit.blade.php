@@ -29,7 +29,7 @@
 
                         </li>
                         <li role="presentation" class="{{ session('tab1') == 2 ? 'active' : '' }}"><a href="#redes"
-                                role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">Redes sociales</a>
+                                role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">Necesidades y gustos</a>
                         </li>
 
                         <li role="presentation" class="{{ session('tab1') == 3 ? 'active' : '' }}"><a href="#pago"
@@ -604,7 +604,14 @@
                                     </div>
 
 
-
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: left;">¿Que información desea recibir frecuentemente?</label>
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                <textarea name="Informacion" class="form-control">{{$cliente->Informacion}}</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
 
                                 </div>
 
