@@ -9,6 +9,7 @@ use App\Models\catalogo\ClienteContactoFrecuente;
 use App\Models\catalogo\ClienteEstado;
 use App\Models\catalogo\ClienteHabitoConsumo;
 use App\Models\catalogo\ClienteInformarse;
+use App\Models\catalogo\ClienteMetodoPago;
 use App\Models\catalogo\ClienteMotivoEleccion;
 use App\Models\catalogo\ClienteNecesidadProteccion;
 use App\Models\catalogo\ClientePrefereciaCompra;
@@ -202,6 +203,7 @@ class ClienteController extends Controller
         $motivo_eleccion = ClienteMotivoEleccion::get();
         $preferencia_compra = ClientePrefereciaCompra::get();
         $cliente_contacto_cargos = ClienteContactoCargo::get();
+        $metodos_pago = ClienteMetodoPago::where('Activo','=',1)->get();
 
         $departamentos = Departamento::get();
         $departamento_actual = 0;
@@ -233,7 +235,8 @@ class ClienteController extends Controller
             'cliente_contacto_cargos',
             'departamentos',
             'municipios',
-            'departamento_actual'
+            'departamento_actual',
+            'metodos_pago'
 
         ));
     }

@@ -34,25 +34,28 @@
                         </li>
 
                         <li role="presentation" class="{{ session('tab1') == 3 ? 'active' : '' }}"><a href="#pago"
-                                role="tab" id="profile-metodo" data-toggle="tab" aria-expanded="false">Métodos de pago</a>
+                                role="tab" id="profile-metodo" data-toggle="tab" aria-expanded="false">Métodos de
+                                pago</a>
                         </li>
 
                         <li role="presentation" class="{{ session('tab1') == 4 ? 'active' : '' }}"><a href="#contacto"
-                             role="tab" id="profile-contacto" data-toggle="tab" aria-expanded="false">Contactos</a>
+                                role="tab" id="profile-contacto" data-toggle="tab" aria-expanded="false">Contactos</a>
                         </li>
 
-                        <li role="presentation" class="{{ session('tab1') == 5 ? 'active' : '' }}"><a href="#habito" 
-                            role="tab" id="profile-habito" data-toggle="tab" aria-expanded="false">Hábitos de
+                        <li role="presentation" class="{{ session('tab1') == 5 ? 'active' : '' }}"><a href="#habito"
+                                role="tab" id="profile-habito" data-toggle="tab" aria-expanded="false">Hábitos de
                                 consumo</a>
                         </li>
-                        <li role="presentation" class="{{ session('tab1') == 6 ? 'active' : '' }}"><a href="#retroalimentacion" 
-                            role="tab" id="profile-habito" data-toggle="tab" aria-expanded="false">Retroalimentación</a>
+                        <li role="presentation" class="{{ session('tab1') == 6 ? 'active' : '' }}"><a
+                                href="#retroalimentacion" role="tab" id="profile-habito" data-toggle="tab"
+                                aria-expanded="false">Retroalimentación</a>
                         </li>
                     </ul>
 
 
                     <div id="myTabContent2" class="tab-content">
-                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 1 ? 'active in' : '' }} "     id="cliente" aria-labelledby="home-tab">
+                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 1 ? 'active in' : '' }} "
+                            id="cliente" aria-labelledby="home-tab">
                             <form method="POST" action="{{ route('cliente.update', $cliente->Id) }}">
                                 @method('PUT')
                                 @csrf
@@ -427,7 +430,8 @@
 
 
                         </div>
-                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 2 ? 'active in' : '' }}"   id="redes" aria-labelledby="home-tab">
+                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 2 ? 'active in' : '' }}"
+                            id="redes" aria-labelledby="home-tab">
                             <form method="POST" action="{{ url('catalogo/cliente/red_social') }}">
 
                                 @csrf
@@ -671,7 +675,8 @@
                         </div>
 
 
-                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 3 ? 'active in' : '' }}"  id="pago" aria-labelledby="home-tab">
+                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 3 ? 'active in' : '' }}"
+                            id="pago" aria-labelledby="home-tab">
 
                             <div class="col-12" style="text-align: right;">
                                 <button class="btn btn-primary" data-toggle="modal"
@@ -694,7 +699,11 @@
                                     <tbody>
                                         @foreach ($tarjetas as $obj)
                                             <tr>
-                                                <td>{{ $obj->MetodoPago }}</td>
+                                                @if ($obj->MetodoPago)
+                                                    <td>{{ $obj->metodo_pago->Nombre }}</td>
+                                                @else
+                                                    <td></td>
+                                                @endif
                                                 <td>{{ $obj->NumeroTarjeta }}</td>
                                                 <td>{{ $obj->FechaVencimiento }}</td>
                                                 <td>{{ $obj->PolizaVinculada }}</td>
@@ -727,7 +736,7 @@
 
                         </div>
 
-                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 4 ? 'active in' : '' }}"  id="contacto" aria-labelledby="home-tab">
+                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 4 ? 'active in' : '' }}"                            id="contacto" aria-labelledby="home-tab">
 
                             <div class="col-12" style="text-align: right;">
                                 <button class="btn btn-primary" data-toggle="modal"
@@ -787,7 +796,8 @@
                             @endif
                         </div>
 
-                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 5 ? 'active in' : '' }}"  id="habito" aria-labelledby="home-tab">
+                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 5 ? 'active in' : '' }}"
+                            id="habito" aria-labelledby="home-tab">
                             <div class="col-12" style="text-align: right;">
                                 <button class="btn btn-primary" data-toggle="modal"
                                     data-target=".bs-modal-nuevo-habito"><i class="fa fa-plus fa-lg"></i>
@@ -839,11 +849,11 @@
                             @endif
                         </div>
 
-                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 6 ? 'active in' : '' }}"  id="retroalimentacion" aria-labelledby="home-tab">
+                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 6 ? 'active in' : '' }}"
+                            id="retroalimentacion" aria-labelledby="home-tab">
                             <div class="col-12" style="text-align: right;">
                                 <button class="btn btn-primary" data-toggle="modal"
-                                    data-target=".bs-modal-nuevo-retroalimentacion"><i
-                                        class="fa fa-plus fa-lg"></i>
+                                    data-target=".bs-modal-nuevo-retroalimentacion"><i class="fa fa-plus fa-lg"></i>
                                     Nuevo</button>
                             </div>
 
@@ -930,7 +940,11 @@
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         Metodo pago
-                                        <input type="text" name="MetodoPago" class="form-control">
+                                        <select name="MetodoPago" class="form-control">
+                                            @foreach ($metodos_pago as $obj)
+                                                <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -1012,15 +1026,20 @@
                                 <h4 class="modal-title" id="myModalLabel">Editar tarjeta</h4>
                             </div>
                             <div class="modal-body">
-                                <input type="text" name="Id" id="ModalTarjetaId" class="form-control">
+                                <input type="hidden" name="Id" id="ModalTarjetaId" class="form-control">
                                 <input type="hidden" name="Cliente" value="{{ $cliente->Id }}" class="form-control">
+
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         Metodo pago
-                                        <input type="text" name="MetodoPago" id="ModalMetodoPago"
-                                            class="form-control">
+                                        <select name="MetodoPago" id="ModalMetodoPago" class="form-control">
+                                            @foreach ($metodos_pago as $obj)
+                                                <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
+                              
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         NumeroTarjeta
@@ -1379,8 +1398,7 @@
         </div>
         {{-- modales retroalimentacion --}}
         <div class="col-12">
-            <div class="modal fade bs-modal-nuevo-retroalimentacion" tabindex="-1" role="dialog"
-                aria-hidden="true">
+            <div class="modal fade bs-modal-nuevo-retroalimentacion" tabindex="-1" role="dialog" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <form method="POST" action="{{ url('catalogo/cliente/add_retroalimentacion') }}">
                         @csrf
@@ -1390,8 +1408,7 @@
                                 <h4 class="modal-title" id="myModalLabel">Retroalimentacion</h4>
                             </div>
                             <div class="modal-body">
-                                <input type="hidden" name="Cliente" value="{{ $cliente->Id }}"
-                                    class="form-control">
+                                <input type="hidden" name="Cliente" value="{{ $cliente->Id }}" class="form-control">
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         Producto de NR

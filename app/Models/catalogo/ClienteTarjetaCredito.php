@@ -19,8 +19,14 @@ class ClienteTarjetaCredito extends Model
         'Cliente',
         'NumeroTarjeta',
         'FechaVencimiento',
-        'PolizaVinculada'
+        'PolizaVinculada',
+        'MetodoPago'
     ];
 
     protected $guarded = [];
+
+    public function metodo_pago()
+    {
+        return $this->belongsTo(ClienteMetodoPago::class, 'MetodoPago', 'Id');
+    }
 }
