@@ -136,18 +136,30 @@
                                 <label class="control-label col-md-12col-sm-12 col-xs-12" style="text-align: left;">Inicio de Vigencia </label>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <input type="date" name="InicioVigencia" id="InicioVigencia" value="{{ old('InicioVigencia') }}" class="form-control" required autofocus="true">
-                                </div>
+                                </div>  
 
                             </div>
-
-
-                            <div class="form-group">
-                                <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: left;">Observación</label>
+                            <div class="form-group row">
+                                <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: left;">Estado Venta</label>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <textarea name="Observacion" rows="3" class="form-control"></textarea>
+                                    <select name="Ejecutivo" class="form-control select2" style="width: 100%" required>
+                                        <option value="">Seleccione...</option>
+                                        @foreach ($estados_venta as $obj)
+                                        <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
 
+
+
+
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: left;">Observación</label>
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <textarea name="Observacion" rows="3" class="form-control"></textarea>
+                            </div>
                         </div>
 
 
@@ -183,7 +195,7 @@
         </div>
         @include('sweetalert::alert')
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     </div>
 </div>
@@ -194,7 +206,7 @@
     function mostrar() {
         if (document.getElementById('TipoPersona').value == '') {
             // Swal.Fire('Tipo de Persona', 'Debe seleccionar el Tipo Persona', 'success');
-          //  alert('');
+            //  alert('');
             Swal.fire({
                 title: 'Error!',
                 text: 'Debe seleccionar el Tipo Persona',
@@ -362,7 +374,7 @@
 
     function modal_aseguradora() {
         if (document.getElementById('NecesidadProteccion').value == '' || document.getElementById('TipoPlan').value == '') {
-         ///   alert('Debe seleccionar el Tipo Persona');
+            ///   alert('Debe seleccionar el Tipo Persona');
             Swal.fire({
                 title: 'Error!',
                 text: 'Debe seleccionar el Tipo Persona',
@@ -422,7 +434,7 @@
                 $("#FechaNacimientos").show();
                 $("#Generos").show();
             } else if (necesidad == 13 && plan == 2) { //accidentes  y colectivo
-                
+
                 $("#Cantidads").show();
             } else if (necesidad == 1 && plan == 1) { //autos e individual
                 $("#Marcas").show();
