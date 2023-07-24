@@ -57,6 +57,9 @@ Route::resource('usuario', UserController::class);*/
 
 //catalogos
 Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::post('catalogo/aseguradora/add_contacto', [AseguradoraController::class,'add_contacto']);
+Route::post('catalogo/aseguradora/delete_contacto', [AseguradoraController::class,'delete_contacto']);
+Route::post('catalogo/aseguradora/edit_contacto', [AseguradoraController::class,'edit_contacto']);
 Route::resource('catalogo/aseguradoras', AseguradoraController::class);
 Route::resource('catalogo/ejecutivos', EjecutivoController::class);
 Route::resource('catalogo/estado_polizas', EstadoPolizaController::class);

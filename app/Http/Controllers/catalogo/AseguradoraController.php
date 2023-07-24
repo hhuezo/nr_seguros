@@ -4,6 +4,8 @@ namespace App\Http\Controllers\catalogo;
 
 use App\Http\Controllers\Controller;
 use App\Models\catalogo\Aseguradora;
+use App\Models\catalogo\AseguradoraCargo;
+use App\Models\catalogo\AseguradoraContacto;
 use App\Models\catalogo\TipoContribuyente;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -72,6 +74,8 @@ class AseguradoraController extends Controller
         $aseguradora->Activo = 1;
         $aseguradora->save();
 
+        session(['tab1' => '1']);
+
         alert()->success('El registro ha sido creado correctamente');
         return redirect('catalogo/aseguradoras/' . $aseguradora->Id . '/edit');
         //return Redirect::to('catalogo/aseguradoras/create');
@@ -86,21 +90,38 @@ class AseguradoraController extends Controller
     {
         $aseguradora = Aseguradora::findOrFail($id);
         $tipo_contribuyente = TipoContribuyente::get();
-        return view('catalogo/aseguradora/edit', compact('aseguradora','tipo_contribuyente'));
+        $contactos = AseguradoraContacto::where('Aseguradora','=',$id)->get();
+        $cargos = AseguradoraCargo::where('Activo','=',1)->get();
+        return view('catalogo/aseguradora/edit', compact('aseguradora','tipo_contribuyente','contactos','cargos'));
     }
 
     public function update(Request $request, $id)
     {
 
+        $count_nombre = Aseguradora::where('Nombre','=',$request->Nombre)->where('Id','<>',$id)->count();
+        $count_nit = Aseguradora::where('Nit','=',$request->Nit)->where('Id','<>',$id)->count();
+
         $messages = [
             'Nombre.required' => 'El campo nombre es requerido',
+            'Nombre.unique' => 'El nombre ya existe',
+            'Nit.required' => 'El campo NIT es requerido',
+            'Nit.unique' => 'El Nit ya existe',
         ];
 
+        if($count_nombre > 0)
+        {
+            $request->validate([   
+                'Nombre' => 'required|unique:aseguradora',               
+            ], $messages);
+        }
 
-
-        $request->validate([
-            'Nombre' => 'required',
-        ], $messages);
+        if($count_nit > 0)
+        {
+            $request->validate([   
+                'Nit' => 'required|unique:aseguradora',
+            ], $messages);
+        }
+    
 
         $aseguradora = Aseguradora::findOrFail($id);
         $aseguradora->Nombre = $request->Nombre;
@@ -115,23 +136,58 @@ class AseguradoraController extends Controller
         $aseguradora->TelefonoFijo = $request->TelefonoFijo;
         $aseguradora->TelefonoWhatsapp = $request->TelefonoWhatsapp;
         $aseguradora->update();
-
+        session(['tab1' => '1']);
         alert()->success('El registro ha sido creado correctamente');
         return back();
         //return Redirect::to('catalogo/aseguradoras/' . $id . 'edit');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         $aseguradora = Aseguradora::findOrFail($id)->update(['Activo' => 0]);
         alert()->error('El registro ha sido desactivado correctamente');
         return back();
         //return Redirect::to('catalogo/aseguradoras');
+    }
+
+
+    public function add_contacto(Request $request)
+    {
+        $contacto = new AseguradoraContacto();
+        $contacto->Aseguradora = $request->Aseguradora;
+        $contacto->Nombre = $request->Nombre;
+        $contacto->Cargo = $request->Cargo;
+        $contacto->Telefono = $request->Telefono;
+        $contacto->Email = $request->Email;
+        $contacto->save();
+        alert()->success('El registro ha sido creado correctamente');
+
+        session(['tab1' => '2']);
+        return back();
+    }
+
+    public function edit_contacto(Request $request)
+    {
+        $contacto = AseguradoraContacto::findOrFail($request->Id);
+        $contacto->Aseguradora = $request->Aseguradora;
+        $contacto->Nombre = $request->Nombre;
+        $contacto->Cargo = $request->Cargo;
+        $contacto->Telefono = $request->Telefono;
+        $contacto->Email = $request->Email;
+        $contacto->save();
+        alert()->success('El registro ha sido modificado correctamente');
+
+        session(['tab1' => '2']);
+        return back();
+    }
+    
+    public function delete_contacto(Request $request)
+    {
+        $contacto = AseguradoraContacto::findOrFail($request->Id);
+        $contacto->delete();
+        alert()->error('El registro ha sido eliminado correctamente');
+
+        session(['tab1' => '2']);
+        return back();
     }
 }
