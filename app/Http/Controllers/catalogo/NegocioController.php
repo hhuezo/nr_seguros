@@ -59,11 +59,33 @@ class NegocioController extends Controller
     {
         $time = Carbon::now();
         //diferenciar al tipo de cliente
-        $cliente = new Cliente();
-
+        if ($request->TipoPersona == 1) {  //cliente natural
+            $cliente = Cliente::where('Dui', $request->Dui)->first();
+            $estado = 2;
+        } else {
+            $cliente = Cliente::where('Nit', $request->NitEmpresa)->first();
+            $estado = 2;
+        }
+        if (!$cliente) {
+            $cliente = new Cliente();
+            $cliente->TipoPersona = $request->TipoPersona;
+            if ($request->TipoPersona == 1) {
+                $cliente->Dui = $request->Dui;
+                $cliente->Nit = $request->Nit;
+            } else {
+                $cliente->Dui = $request->DuiRepresentante;
+                $cliente->Nit = $request->NitEmpresas;
+            }
+            $cliente->Nombre = $request->Nombre;
+            $cliente->FormaPago = $request->FormaPago;
+            $cliente->save();
+            $estado = 1;
+        }
         $negocio = new Negocio();
-        $negocio->Asegurado = $request->Asegurado;
-        $negocio->Aseguradora = $request->Aseguradora;
+        $negocio->NecesidadProteccion = $request->NecesidadProteccion;
+        $negocio->InicioVigencia = $request->InicioVigencia;
+        $negocio->TipoPlan = $request->TipoPlan;
+        $negocio->Asegurado = $cliente->Id;
         $negocio->FechaVenta = $request->FechaVenta;
         $negocio->TipoPoliza = $request->TipoPoliza;
         $negocio->InicioVigencia = $request->InicioVigencia;
@@ -71,11 +93,37 @@ class NegocioController extends Controller
         $negocio->Prima = $request->Prima;
         $negocio->Observacion = $request->Observacion;
         $negocio->TipoNegocio = $request->TipoNegocio;
-        $negocio->EstadoVenta = $request->EstadoVenta;
+        if ($estado == 1) {
+            $negocio->EstadoVenta = 1;  //nuevo
+        } else {
+            $negocio->EstadoVenta = 2;  //reingreso
+        }
         $negocio->Ejecutivo = $request->Ejecutivo;
         $negocio->FechaIngreso = $time->toDateTimeString();
         $negocio->UsuarioIngreso = auth()->user()->id;
         $negocio->save();
+
+        if($request->NecesidadProteccion == 1){ //auto
+            NegocioAuto::whereIn('Id',[$request->Aseguradora])->update(['Negocio', $negocio->Id]);
+        }else if ($request->NecesidadProteccion == 2){  //incendio 
+            NegocioIncendio::whereIn('Id',[$request->Aseguradora])->update(['Negocio', $negocio->Id]);
+        }else if($request->NecesidadProteccion == 3){ 
+            NegocioDineroValores::whereIn('Id',[$request->Aseguradora])->update(['Negocio', $negocio->Id]);
+        }else if($request->NecesidadProteccion == 4 || $request->NecesidadProteccion == 6){
+            NegocioOtros::whereIn('Id',[$request->Aseguradora])->update(['Negocio', $negocio->Id]);
+        }else if($request->NecesidadProteccion == 7){
+            NegocioEquipoElectronico::whereIn('Id',[$request->Aseguradora])->update(['Negocio', $negocio->Id]);
+        }else if($request->NecesidadProteccion == 8){
+            NegocioRoboHurto::whereIn('Id',[$request->Aseguradora])->update(['Negocio', $negocio->Id]);
+        }else if($request->NecesidadProteccion == 10){
+            NegocioGastosMedicos::whereIn('Id',[$request->Aseguradora])->update(['Negocio', $negocio->Id]);
+        }else if($request->NecesidadProteccion == 11){
+            NegocioVida::whereIn('Id',[$request->Aseguradora])->update(['Negocio', $negocio->Id]);
+        }else if($request->NecesidadProteccion == 13){
+            NegocioAccidente::whereIn('Id',[$request->Aseguradora])->update(['Negocio', $negocio->Id]);
+        }else if($request->NecesidadProteccion == 7){
+            NegocioVideDeuda::whereIn('Id',[$request->Aseguradora])->update(['Negocio', $negocio->Id]);
+        }
 
         alert()->success('El registro ha sido creado correctamente');
         return back();
@@ -198,8 +246,7 @@ class NegocioController extends Controller
             $vida->SesionBeneficios = $request->SesionBeneficio;
             $vida->Coberturas = $request->Cobertura;
             $vida->save();
-
-        }elseif ($request->NecesidadProteccion == 14){
+        } elseif ($request->NecesidadProteccion == 14) {
             $videuda = new NegocioVideDeuda();
             $videuda->Aseguradora = $request->Aseguradora;
             $videuda->SumaAsegurada = $request->SumaAsegurada;
