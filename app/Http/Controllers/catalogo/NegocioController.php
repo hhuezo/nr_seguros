@@ -5,12 +5,30 @@ namespace App\Http\Controllers\catalogo;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\catalogo\Aseguradora;
+use App\Models\catalogo\Cliente;
 use App\Models\catalogo\Ejecutivo;
 use App\Models\catalogo\EstadoVenta;
+use App\Models\catalogo\FormaPago;
+use App\Models\catalogo\Genero;
+use App\Models\catalogo\NecesidadProteccion;
 use App\Models\catalogo\Negocio;
+use App\Models\catalogo\NegocioAccidente;
+use App\Models\catalogo\NegocioAuto;
+use App\Models\catalogo\NegocioDineroValores;
+use App\Models\catalogo\NegocioEquipoElectronico;
+use App\Models\catalogo\NegocioGastosMedicos;
+use App\Models\catalogo\NegocioIncendio;
+use App\Models\catalogo\NegocioOtros;
+use App\Models\catalogo\NegocioRoboHurto;
+use App\Models\catalogo\NegocioVida;
+use App\Models\catalogo\NegocioVideDeuda;
+use App\Models\catalogo\NegocioVideDeudaCobertura;
+use App\Models\catalogo\Parentesco;
+use App\Models\catalogo\TipoCartera;
 use App\Models\catalogo\TipoNegocio;
 use App\Models\catalogo\TipoPoliza;
 use Carbon\Carbon;
+use GuzzleHttp\Client;
 
 class NegocioController extends Controller
 {
@@ -18,23 +36,30 @@ class NegocioController extends Controller
     public function index()
     {
         $negocios = Negocio::get();
-        return view('catalogo.negocio.index', compact('negocios')  );
+        return view('catalogo.negocio.index', compact('negocios'));
     }
 
     public function create()
     {
-        $aseguradoras = Aseguradora::where('Activo','=',1)->get();
-        $tipos_poliza = TipoPoliza::where('Activo','=',1)->get();
-        $tipos_negocio = TipoNegocio::where('Activo','=',1)->get();
-        $estados_venta = EstadoVenta::where('Activo','=',1)->get();
-        $ejecutivos = Ejecutivo::where('Activo','=',1)->get();
-        return view('catalogo.negocio.create', compact('aseguradoras','tipos_poliza','tipos_negocio','estados_venta','ejecutivos'));
-        
+        $aseguradoras = Aseguradora::where('Activo', '=', 1)->get();
+        $tipos_poliza = TipoPoliza::where('Activo', '=', 1)->get();
+        $tipos_negocio = TipoNegocio::where('Activo', '=', 1)->get();
+        $estados_venta = EstadoVenta::where('Activo', '=', 1)->get();
+        $ejecutivos = Ejecutivo::where('Activo', '=', 1)->get();
+        $necesidad_proteccion = NecesidadProteccion::where('Activo', 1)->get();
+        $forma_pago = FormaPago::where('Activo', 1)->get();
+        $genero = Genero::where('Activo', 1)->get();
+        $cobertura = NegocioVideDeudaCobertura::where('Activo', 1)->get();
+        $tipo_cartera = TipoCartera::where('Activo', 1)->get();
+        $parentesco = Parentesco::where('Activo', 1)->get();
+        return view('catalogo.negocio.create', compact('parentesco', 'tipo_cartera', 'cobertura', 'genero', 'forma_pago', 'aseguradoras', 'tipos_poliza', 'tipos_negocio', 'estados_venta', 'ejecutivos', 'necesidad_proteccion'));
     }
 
     public function store(Request $request)
     {
         $time = Carbon::now();
+        //diferenciar al tipo de cliente
+        $cliente = new Cliente();
 
         $negocio = new Negocio();
         $negocio->Asegurado = $request->Asegurado;
@@ -48,7 +73,7 @@ class NegocioController extends Controller
         $negocio->TipoNegocio = $request->TipoNegocio;
         $negocio->EstadoVenta = $request->EstadoVenta;
         $negocio->Ejecutivo = $request->Ejecutivo;
-        $negocio->FechaIngreso = $time->toDateTimeString(); 
+        $negocio->FechaIngreso = $time->toDateTimeString();
         $negocio->UsuarioIngreso = auth()->user()->id;
         $negocio->save();
 
@@ -56,28 +81,167 @@ class NegocioController extends Controller
         return back();
     }
 
+    public function store_aseguradora(Request $request)
+    {
+        //dividir los campos por tablas 
+        if ($request->NecesidadProteccion == 1) {
+            $auto = new NegocioAuto();
+            $auto->Aseguradora = $request->Aseguradora;
+            $auto->SumaAsegurada = $request->SumaAsegurada;
+            $auto->Marca = $request->Marca;
+            $auto->Modelo = $request->Modelo;
+            $auto->Axo = $request->Axo;
+            $auto->Placa = $request->Placa;
+            $auto->Cantidad = $request->Cantidad;
+            $auto->save();
+        } else if ($request->NecesidadProteccion == 2) {
+            $incendio = new NegocioIncendio();
+            $incendio->Direccion = $request->Direccion;
+            $incendio->Giro = $request->Giro;
+            $incendio->ValorConstruccion = $request->ValorConstruccion;
+            $incendio->ValorContenido = $request->ValorContenido;
+            $incendio->Aseguradora = $request->Aseguradora;
+            $incendio->SumaAsegurada = $request->SumaAsegurada;
+            $incendio->save();
+        } else if ($request->NecesidadProteccion == 3) {
+            $dinero = new NegocioDineroValores();
+            $dinero->Aseguradora = $request->Aseguradora;
+            $dinero->SumaAsegurada = $request->SumaAsegurada;
+            $dinero->save();
+        } else if ($request->NecesidadProteccion == 4 || $request->NecesidadProteccion == 6) {
+            $otros = new NegocioOtros();
+            $otros->Aseguradora = $request->Aseguradora;
+            $otros->SumaAsegurada = $request->SumaAsegurada;
+            $otros->save();
+        } else if ($request->NecesidadProteccion == 7) {
+            $equipo = new NegocioEquipoElectronico();
+            $equipo->Aseguradora = $request->Aseguradora;
+            $equipo->SumaAsegurada = $request->SumaAsegurada;
+            $equipo->save();
+        } else if ($request->NecesidadProteccion == 8) {
+            $robo = new NegocioRoboHurto();
+            $robo->Aseguradora = $request->Aseguradora;
+            $robo->SumaAsegurada = $request->SumaAsegurada;
+            $robo->save();
+        } else if ($request->NecesidadProteccion == 13) {
+            $accidente = new NegocioAccidente();
+            $accidente->Aseguradora = $request->Aseguradora;
+            $accidente->SumaAsegurada = $request->SumaAsegurada;
+            $accidente->FechaNacimiento = $request->FechaNacimiento;
+            $accidente->Cantidad = $request->Cantidad;
+            $accidente->Genero = $request->Genero;
+            $accidente->save();
+        } elseif ($request->NecesidadProteccion == 10) {
+            if ($request->TipoPlan == 1) {
+                $gastos = new NegocioGastosMedicos();
+                $gastos->Aseguradora = $request->Aseguradora;
+                $gastos->SumaAsegurada = $request->SumaAsegurada;
+                $gastos->FechaNacimiento = $request->FechaNacimiento;
+                $gastos->Genero = $request->Genero;
+                if ($request->Vida == 'checked') {
+                    $gastos->Vida = 1;
+                } else {
+                    $gastos->Vida = 0;
+                }
+                if ($request->Dental == 'checked') {
+                    $gastos->Dental = 1;
+                } else {
+                    $gastos->Dental = 0;
+                }
+                $gastos->save();
+            } else if ($request->TipoPlan == 2) {
+                $gastos = new NegocioGastosMedicos();
+                $gastos->Aseguradora = $request->Aseguradora;
+                $gastos->SumaAsegurada = $request->SumaAsegurada;
+                $gastos->CantidadPersonas = $request->CantidadPersona;
+                $gastos->Contributivo = $request->Contributivo;
+                $gastos->MaximoVitalicio = $request->MaximoVitalicio;
+                $gastos->CantidadTitulares = $request->CantidadTitulares;
+                $gastos->save();
+            } else if ($request->TipoPlan == 3) {
+                $gastos = new NegocioGastosMedicos();
+                $gastos->Aseguradora = $request->Aseguradora;
+                $gastos->SumaAsegurada = $request->SumaAsegurada;
+                $gastos->save();
+                //guarda los familiares de gastos medicos 
+            }
+        } elseif ($request->NecesidadProteccion == 11) {
+            $vida = new NegocioVida();
+            $vida->Aseguradora = $request->Aseguradora;
+            $vida->SumaAsegurada = $request->SumaAsegurada;
+            $vida->FechaNacimiento = $request->FechaNacimiento;
+            $vida->Genero = $request->Genero;
+            if ($request->Fumador == 'checked') {
+                $vida->Fumador = 1;
+            } else {
+                $vida->Fumador = 0;
+            }
+            if ($request->InvalidezParcial == 'checked') {
+                $vida->InvalidezParcial = 1;
+            } else {
+                $vida->InvalidezParcial = 0;
+            }
+            if ($request->InvalidezTotal == 'checked') {
+                $vida->InvalidezTotal = 1;
+            } else {
+                $vida->InvalidezTotal = 0;
+            }
+            if ($request->GastosFunerarios == 'checked') {
+                $vida->GastosFunerarios = 1;
+            } else {
+                $vida->GastosFunerarios = 0;
+            }
+            $vida->EnfermedadesGraves = $request->EnfermedadesGraves;
+            $vida->Termino = $request->Termino;
+            $vida->Ahorro = $request->Ahorro;
+            $vida->Plazo = $request->Plazo;
+            $vida->SesionBeneficios = $request->SesionBeneficio;
+            $vida->Coberturas = $request->Cobertura;
+            $vida->save();
+
+        }elseif ($request->NecesidadProteccion == 14){
+            $videuda = new NegocioVideDeuda();
+            $videuda->Aseguradora = $request->Aseguradora;
+            $videuda->SumaAsegurada = $request->SumaAsegurada;
+            $videuda->Coberturas = $request->Cobertura;
+            $videuda->TipoCartera = $request->TipoCartera;
+            $videuda->save();
+        }
+    }
+    public function get_aseguradora(Request $request)
+    {
+
+        //buscar en las tablas de negocios
+        $sql =  "select * from poliza_deuda_requisitos where id in ($request->Requisitos)";
+        $requisitos =  DB::select($sql);
+
+        return view('polizas.deuda.requisitos', compact('requisitos'));
+    }
+
+
     public function show($id)
     {
-        $ejecutivo = Ejecutivo::where('Activo','1')->get();
+        $ejecutivo = Ejecutivo::where('Activo', '1')->get();
         return view('catalogo.negocio.show', compact('ejecutivo'));
     }
 
-    public function consultar(Request $request){
-        $negocio = Negocio::with('aseguradora')->whereBetween('FechaVenta',[$request->FechaInicio, $request->FechaFinal])->get();
+    public function consultar(Request $request)
+    {
+        $negocio = Negocio::with('aseguradora')->whereBetween('FechaVenta', [$request->FechaInicio, $request->FechaFinal])->get();
         //dd($negocio);
-        return view('catalogo.negocio.consulta', compact('negocio')); 
+        return view('catalogo.negocio.consulta', compact('negocio'));
     }
 
     public function edit($id)
     {
-        $negocio = Negocio::findOrFail($id); 
-        $aseguradoras = Aseguradora::where('Activo','=',1)->get();
-        $tipos_poliza = TipoPoliza::where('Activo','=',1)->get();
-        $tipos_negocio = TipoNegocio::where('Activo','=',1)->get();
-        $estados_venta = EstadoVenta::where('Activo','=',1)->get();
-        $ejecutivos = Ejecutivo::where('Activo','=',1)->get();
+        $negocio = Negocio::findOrFail($id);
+        $aseguradoras = Aseguradora::where('Activo', '=', 1)->get();
+        $tipos_poliza = TipoPoliza::where('Activo', '=', 1)->get();
+        $tipos_negocio = TipoNegocio::where('Activo', '=', 1)->get();
+        $estados_venta = EstadoVenta::where('Activo', '=', 1)->get();
+        $ejecutivos = Ejecutivo::where('Activo', '=', 1)->get();
 
-        return view('catalogo.negocio.edit', compact('negocio','aseguradoras','tipos_poliza','tipos_negocio','estados_venta','ejecutivos') );
+        return view('catalogo.negocio.edit', compact('negocio', 'aseguradoras', 'tipos_poliza', 'tipos_negocio', 'estados_venta', 'ejecutivos'));
     }
 
     public function update(Request $request, $id)
@@ -96,13 +260,133 @@ class NegocioController extends Controller
         $negocio->Ejecutivo = $request->Ejecutivo;
         $negocio->update();
         alert()->success('El registro ha sido modificado correctamente');
-        return back(); 
+        return back();
     }
 
     public function destroy($id)
     {
-        Negocio::findOrFail($id)->update(['Activo' => 0]);       
+        Negocio::findOrFail($id)->update(['Activo' => 0]);
         alert()->error('El registro ha sido desactivado correctamente');
-        return back(); 
+        return back();
+    }
+
+    public function getCliente(Request $request)
+    {
+        //obtener el cliente
+        if ($request->tipoPersona == 1) {
+            $cliente = Cliente::where('Dui', $request->Dui)->first();
+        } else {
+            $cliente = Cliente::where('Nit', $request->Nit)->first();
+        }
+        if ($cliente) {
+?>
+            <script>
+                document.getElementById('Dui').style.backgroundColor = '#ff3f33';
+                document.getElementById('Dui').style.color = '#ffffff';
+                document.getElementById('Nombre').value = <?php echo json_encode($cliente->Nombre); ?>;
+                document.getElementById('FormaPago').value = <?php echo json_encode($cliente->formas_pago); ?>;
+            </script>
+        <?php
+
+        } else {
+        ?>
+            <script>
+                document.getElementById('Dui').style.backgroundColor = '';
+                document.getElementById('Dui').style.color = '';
+                document.getElementById('Nombre').value = "";
+                document.getElementById('FormaPago').value = "";
+            </script>
+<?php
+        }
+        /*
+        $programacion = Programacion::with('formaPago')->where('Referencia', '=', $request->get('Referencia'))->first();
+        if ($programacion) {
+            if ($programacion->Estado == 5) { //abierto
+                $cerrada = 'NO';
+                $liquidada = 'NO';
+            } elseif ($programacion->Estado == 6) {   //cerrada
+                $cerrada = 'SI';
+                $liquidada = 'NO';
+            } else {    //liquidada
+                $cerrada = 'SI';
+                $liquidada = 'SI';
+            }
+            switch ($programacion->Cetia) {
+                case (2):       // santa ana
+                    $SiglasUfi = 'LVSA';
+                    break;
+                case (4):     //paracentral
+                    $SiglasUfi = 'LVSP';
+                    break;
+                case (5):        //usulutan
+                    $SiglasUfi = 'LVUSU';
+                    break;
+                case (6):    //san miguel
+                    $SiglasUfi = 'LVSM';
+                    break;
+                default:      //oficina central o cetia II
+                    $SiglasUfi = 'LVRCO';
+            }
+
+            if ($programacion->Reintegrada == 1) {
+                $reintegrada = 'SI';
+            } else {
+                $reintegrada = 'NO';
+            }
+
+            if (!$programacion->FechaCheque) {
+                $programacion->FechaCheque = '';
+            }
+
+            if (!$programacion->FechaRemesa) {
+                $programacion->FechaRemesa = '';
+            }
+            if (!$programacion->FechaRemesa1) {
+                $programacion->FechaRemesa1 = '';
+            }
+            if (!$programacion->FechaContable) {
+                if ($programacion->Cetia == 1) {
+                    //oficina central
+                    $periodoContable = PeriodoContable::where('Cetia', '=', 1)->where('Activo', '=', 1)->first();
+                    $programacion->FechaContable = $periodoContable->Fecha;
+                } else {
+                    //cetias
+                    $periodoContable = PeriodoContable::where('Cetia', '=', 2)->where('Activo', '=', 1)->first();
+                    $programacion->FechaContable = $periodoContable->Fecha;
+                }
+            }
+            $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+            //    dd($programacion);
+
+?>
+            <script>
+                document.getElementById('cerrada').value = '<?php echo $cerrada; ?>';
+                document.getElementById('FormaPagoSiglas').value = '<?php echo $programacion->formaPago->Codigo; ?>';
+                document.getElementById('FormaPago').value = '<?php echo $programacion->formaPago->Nombre; ?>';
+                document.getElementById('Cetia').value = '<?php echo $programacion->cetia->Nombre; ?>';
+                document.getElementById('Periodo').value = 'del <?php echo date('d/m/Y', strtotime($programacion->FechaInicio)) . ' al ' . date('d/m/Y', strtotime($programacion->FechaFinal)); ?>';
+                document.getElementById('SiglasUfi').value = '<?php echo $SiglasUfi; ?>-';
+                document.getElementById('Axo').value = '-<?php echo date('Y'); ?>';
+                document.getElementById('ReferenciaUfi').value = '<?php echo $programacion->ReferenciaUfi; ?>';
+                document.getElementById('NumeroCheque').value = '<?php echo $programacion->NoCheque; ?>';
+                document.getElementById('NoFolio').value = '<?php echo $programacion->NoFolio; ?>';
+                document.getElementById('CantidadRemesa').value = '<?php echo $programacion->CantidadRemesa; ?>';
+                document.getElementById('NoFolio1').value = '<?php echo $programacion->NoFolio1; ?>';
+                document.getElementById('CantidadRemesa1').value = '<?php echo $programacion->CantidadRemesa1; ?>';
+                document.getElementById('Liquidada').value = '<?php echo $liquidada; ?>';
+                document.getElementById('Reintegrada').value = '<?php echo $reintegrada; ?>';
+                document.getElementById('MesPeriodo').value = '<?php echo $meses[date('n', strtotime($programacion->FechaContable))]; ?>';
+                document.getElementById('AxoPeriodo').value = '<?php echo date('Y', strtotime($programacion->FechaContable)); ?>';
+                document.getElementById('FechaCheque').value = '<?php echo date('d/m/Y', strtotime($programacion->FechaCheque)); ?>';
+                document.getElementById('FechaRemesa1').value = '<?php echo date('d/m/Y', strtotime($programacion->FechaRemesa)); ?>';
+                document.getElementById('FechaRemesa').value = '<?php echo date('d/m/Y', strtotime($programacion->FechaRemesa1)); ?>';
+            </script>
+<?php
+        } else {
+
+            return response()->json(['mensaje' => 'la referencia ufi no existe', 'title' => 'Error!', 'icon' => 'error', 'showConfirmButton' => 'true']);
+        }
+        */
     }
 }

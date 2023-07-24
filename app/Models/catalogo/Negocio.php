@@ -17,28 +17,22 @@ class Negocio extends Model
 
     protected $fillable = [
         'Asegurado',
-        'Aseguradora',
         'FechaVenta',
-        'TipoPoliza',
+        'NecesidadProteccion',
         'InicioVigencia',
         'Observacion',
         'TipoNegocio',
+        'TipoPlan',
         'EstadoVenta',
         'Ejecutivo',
         'Activo',
-        'SumaAsegurada',
-        'Prima',
         'FechaIngreso',
-        'UsuarioIngreso',
-        'NumCuotas'
+        'UsuarioIngreso'
     ];
 
     protected $guarded = [];
 
-    public function aseguradora()
-    {
-        return $this->belongsTo('App\Models\catalogo\Aseguradora', 'Aseguradora', 'Id');
-    }
+
 
     public function tipo_poliza()
     {
