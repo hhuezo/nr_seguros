@@ -4,9 +4,9 @@ namespace App\Http\Controllers\catalogo;
 
 use App\Http\Controllers\Controller;
 use App\Models\catalogo\Aseguradora;
+use App\Models\catalogo\TipoContribuyente;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
-use RealRashid\SweetAlert\Facades\Alert;
 
 class AseguradoraController extends Controller
 {
@@ -28,7 +28,8 @@ class AseguradoraController extends Controller
      */
     public function create()
     {
-        return view('catalogo.aseguradora.create');
+        $tipo_contribuyente = TipoContribuyente::get();
+        return view('catalogo.aseguradora.create', compact('tipo_contribuyente'));
     }
 
     /**
@@ -39,68 +40,55 @@ class AseguradoraController extends Controller
      */
     public function store(Request $request)
     {
-
-
         $messages = [
             'Nombre.required' => 'El campo nombre es requerido',
-            'Nombre.unique' => 'El registro ya existe',
+            'Nombre.unique' => 'El nombre ya existe',
+            'Nit.required' => 'El campo NIT es requerido',
+            'Nit.unique' => 'El Nit ya existe',
         ];
 
 
 
         $request->validate([   
             'Nombre' => 'required|unique:aseguradora',
+            'Nit' => 'required|unique:aseguradora',
         ], $messages);
 
+        $max = Aseguradora::max('Codigo');
 
         $aseguradora = new Aseguradora();
         $aseguradora->Nombre = $request->Nombre;
-        $aseguradora->Codigo = $request->Codigo;
-        $aseguradora->Telefono = $request->Telefono;
-        $aseguradora->Contacto = $request->Contacto;
-        $aseguradora->Direccion = $request->Direccion;
-        $aseguradora->PaginaWeb = $request->PaginaWeb;
-        $aseguradora->Fax = $request->Fax;
+        $aseguradora->Codigo = $max + 1;
         $aseguradora->Nit = $request->Nit;
         $aseguradora->RegistroFiscal = $request->RegistroFiscal;
         $aseguradora->Abreviatura = $request->Abreviatura;
-        $aseguradora->Correo = $request->Correo;
+        $aseguradora->FechaVinculacion = $request->FechaVinculacion;
+        $aseguradora->TipoContribuyente = $request->TipoContribuyente;
+        $aseguradora->PaginaWeb = $request->PaginaWeb;
+        $aseguradora->FechaConstitucion = $request->FechaConstitucion;
+        $aseguradora->Direccion = $request->Direccion;
+        $aseguradora->TelefonoFijo = $request->TelefonoFijo;
+        $aseguradora->TelefonoWhatsapp = $request->TelefonoWhatsapp;
+        $aseguradora->Activo = 1;
         $aseguradora->save();
 
         alert()->success('El registro ha sido creado correctamente');
-        return Redirect::to('catalogo/aseguradoras/create');
+        return redirect('catalogo/aseguradoras/' . $aseguradora->Id . '/edit');
+        //return Redirect::to('catalogo/aseguradoras/create');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         $aseguradora = Aseguradora::findOrFail($id);
-        return view('catalogo/aseguradora/edit', compact('aseguradora'));
+        $tipo_contribuyente = TipoContribuyente::get();
+        return view('catalogo/aseguradora/edit', compact('aseguradora','tipo_contribuyente'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
 
@@ -116,16 +104,16 @@ class AseguradoraController extends Controller
 
         $aseguradora = Aseguradora::findOrFail($id);
         $aseguradora->Nombre = $request->Nombre;
-        $aseguradora->Codigo = $request->Codigo;
-        $aseguradora->Telefono = $request->Telefono;
-        $aseguradora->Contacto = $request->Contacto;
-        $aseguradora->Direccion = $request->Direccion;
-        $aseguradora->PaginaWeb = $request->PaginaWeb;
-        $aseguradora->Fax = $request->Fax;
         $aseguradora->Nit = $request->Nit;
         $aseguradora->RegistroFiscal = $request->RegistroFiscal;
         $aseguradora->Abreviatura = $request->Abreviatura;
-        $aseguradora->Correo = $request->Correo;
+        $aseguradora->FechaVinculacion = $request->FechaVinculacion;
+        $aseguradora->TipoContribuyente = $request->TipoContribuyente;
+        $aseguradora->PaginaWeb = $request->PaginaWeb;
+        $aseguradora->FechaConstitucion = $request->FechaConstitucion;
+        $aseguradora->Direccion = $request->Direccion;
+        $aseguradora->TelefonoFijo = $request->TelefonoFijo;
+        $aseguradora->TelefonoWhatsapp = $request->TelefonoWhatsapp;
         $aseguradora->update();
 
         alert()->success('El registro ha sido creado correctamente');
