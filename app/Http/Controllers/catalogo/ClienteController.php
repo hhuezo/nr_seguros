@@ -126,7 +126,7 @@ class ClienteController extends Controller
         $cliente->FechaBaja = $request->get('FechaBaja');
         $cliente->ResponsablePago = $request->get('ResponsablePago');
         $cliente->UbicacionCobro = $request->get('UbicacionCobro');
-        $cliente->FormaPago = $request->get('FormaPago');
+        //$cliente->FormaPago = $request->get('FormaPago');
         $cliente->Estado = $request->get('Estado');
         $cliente->TipoPersona = $request->get('TipoPersona');
         $cliente->Genero = $request->get('Genero');
@@ -307,7 +307,7 @@ class ClienteController extends Controller
         $cliente->FechaBaja = $request->get('FechaBaja');
         $cliente->ResponsablePago = $request->get('ResponsablePago');
         $cliente->UbicacionCobro = $request->get('UbicacionCobro');
-        $cliente->FormaPago = $request->get('FormaPago');
+        //$cliente->FormaPago = $request->get('FormaPago');
         $cliente->Estado = $request->get('Estado');
         $cliente->TipoPersona = $request->get('TipoPersona');
         $cliente->Genero = $request->get('Genero');
