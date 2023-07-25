@@ -14,11 +14,11 @@
     <tbody>
         @foreach ($aseguradora as $obj)
         <tr class="even pointer">
-            <td>{{$obj->Aseguradora}}</td>
-            <td>{{$obj->NecesidadProteccion}}</td>
-            <td>{{$obj->SumaAsegurada}}</td>
+            <td>{{$obj['Aseguradora']}}</td>
+            <td>{{$obj['NecesidadProteccion']}}</td>
+            <td>{{$obj['SumaAsegurada']}}</td>
             <td>Num Cuotas</td>
-            <td>{{$obj->Prima}}</td>
+            <td>{{$obj['Prima']}}</td>
             <td></td>
         </tr>
         @endforeach
