@@ -86,10 +86,10 @@ Route::post('catalogo/cliente/active/{id}', [ClienteController::class,'active'])
 Route::resource('catalogo/cliente', ClienteController::class);
 Route::resource('catalogo/cliente', ClienteController::class);
 Route::get('catalogo/cliente_create', [ClienteController::class, 'cliente_create']);
+Route::get('catalogo/negocio/get_aseguradora',[NegocioController::class,'get_aseguradoras']);
 Route::resource('catalogo/negocio', NegocioController::class);
 Route::resource('catalogo/ruta',RutaController::class);
 Route::get('negocio/getCliente',[NegocioController::class, 'getCliente']);
-Route::get('catalogo/negocios/get_aseguradora',[NegocioController::class,'get_aseguradora']);
 Route::get('catalogo/negocios/store_aseguradora',[NegocioController::class,'store_aseguradora']);
 Route::resource('catalogo/tipo_cobro', TipoCobroController::class);
 Route::resource('catalogo/area_comercial',AreaComercialController::class);

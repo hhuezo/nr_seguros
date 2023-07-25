@@ -22,7 +22,8 @@ class NegocioVideDeuda extends Model
         'TipoCartera',
         'Traslado',
         'Coberturas',
-        'Aseguradora'
+        'Aseguradora',
+        'Prima'
     ];
 
     protected $guarded = [];

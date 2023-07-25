@@ -19,7 +19,8 @@ class NegocioOtros extends Model
         'Estado',
         'SumaAsegurada',
         'Negocio',
-        'Aseguradora'
+        'Aseguradora',
+        'Prima'
     ];
 
     protected $guarded = [];

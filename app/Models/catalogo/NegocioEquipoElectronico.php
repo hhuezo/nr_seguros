@@ -20,7 +20,8 @@ class NegocioEquipoElectronico extends Model
         'SumaAsegurada',
         'Negocio',
         'Coberturas',
-        'Aseguradora'
+        'Aseguradora',
+        'Prima'
     ];
 
     protected $guarded = [];

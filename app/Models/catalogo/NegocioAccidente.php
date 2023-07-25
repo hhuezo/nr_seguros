@@ -22,7 +22,8 @@ class NegocioAccidente extends Model
         'Estado',
         'FechaNacimiento',
         'Cantidad',
-        'SumaAsegurada'
+        'SumaAsegurada',
+        'Prima'
     ];
 
     protected $guarded = [];

@@ -26,6 +26,13 @@
                                 </div>
                             </div>
                             <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" style="text-align: left;">Prima </label>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <input type="number" name="Prima" id="Prima" value="{{ old('Prima') }}" class="form-control" required autofocus="true" step='0.01'>
+                                </div>
+
+                            </div>
+                            <div class="form-group">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" style="text-align: left;">Suma Asegurada </label>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <input type="number" name="SumaAsegurada" id="SumaAsegurada" value="{{ old('SumaAsegurada') }}" class="form-control" required autofocus="true" step='0.01'>
@@ -283,11 +290,8 @@
                                         @endforeach
                                     </select>
                                 </div>
-
                             </div>
-
                         </div>
-
                     </div>
                 </div>
                 <br>
@@ -309,6 +313,7 @@
     $("#btn_modal").click(function() {
         var parametros = {
             "_token": "{{ csrf_token() }}",
+            "Prima": document.getElementById('Prima').value,
             "NecesidadProteccion": document.getElementById('ModalNecesidad').value,
             "TipoPlan": document.getElementById('ModalTipoPlan').value,
             "Aseguradora": document.getElementById('Aseguradora').value,
@@ -356,15 +361,23 @@
                         'DataAseguradora').value + "," + data;
                 }
                 $('#modal_aseguradora').modal('hide');
-                get_requisitos();
+                Swal.fire({
+                    title: 'Exito!',
+                    text: 'Su asegurada fue agregada a la cotizacion',
+                    icon: 'success',
+                    confirmButtonText: 'Aceptar',
+                    timer: 1500
+                })
+                get_aseguradoras();
             }
         });
     });
 
-    function get_requisitos() {
+    function get_aseguradoras() {
         var parametros = {
-            "Aseguradora": document.getElementById('DataAseguradora').value,
+            "ModalAseguradora": document.getElementById('DataAseguradora').value,
         };
+        console.log(parametros);
         $.ajax({
             type: "get",
             url: "{{ url('catalogo/negocio/get_aseguradora') }}",
