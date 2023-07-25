@@ -32,8 +32,9 @@ class Aseguradora extends Model
 
     protected $guarded = [];
 
-    public function aseguradora_has_cartera(){
-        return $this->belongsToMany(TipoCartera::class, 'aseguradora_has_cartera', 'aseguradora_id', 'cartera_id');
+
+    public function aseguradora_has_tipo_poliza(){
+        return $this->belongsToMany(TipoPoliza::class, 'aseguradora_has_tipo_poliza', 'aseguradora_id', 'tipo_poliza_id');
     }
     
 }

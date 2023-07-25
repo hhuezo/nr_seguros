@@ -7,6 +7,7 @@ use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\AseguradoraCargo;
 use App\Models\catalogo\AseguradoraContacto;
 use App\Models\catalogo\TipoContribuyente;
+use App\Models\catalogo\TipoPoliza;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 
@@ -92,7 +93,14 @@ class AseguradoraController extends Controller
         $tipo_contribuyente = TipoContribuyente::get();
         $contactos = AseguradoraContacto::where('Aseguradora','=',$id)->get();
         $cargos = AseguradoraCargo::where('Activo','=',1)->get();
-        return view('catalogo/aseguradora/edit', compact('aseguradora','tipo_contribuyente','contactos','cargos'));
+        $tipos_poliza = TipoPoliza::get();
+        $tipos_poliza_actual =  $aseguradora->aseguradora_has_tipo_poliza;
+        if(!session('tab1'))
+        {
+            session(['tab1' => '1']);
+        }
+        return view('catalogo/aseguradora/edit', compact('aseguradora','tipo_contribuyente','contactos',
+        'cargos','tipos_poliza','tipos_poliza_actual'));
     }
 
     public function update(Request $request, $id)
@@ -190,4 +198,26 @@ class AseguradoraController extends Controller
         session(['tab1' => '2']);
         return back();
     }
+
+    public function attach_tipo_poliza(Request $request)
+    {
+        $aseguradora = Aseguradora::findOrFail($request->aseguradora_id);
+        $aseguradora->aseguradora_has_tipo_poliza()->attach($request->tipo_poliza_id);
+        alert()->success('El registro ha sido agregado correctamente');
+
+        session(['tab1' => '3']);
+        return back();
+    }
+
+    public function detach_tipo_poliza(Request $request)
+    {
+        $aseguradora = Aseguradora::findOrFail($request->aseguradora_id);
+        $aseguradora->aseguradora_has_tipo_poliza()->detach($request->tipo_poliza_id);
+        alert()->info('El registro ha sido eliminado correctamente');
+
+        session(['tab1' => '3']);
+        return back();
+    }
+
+    
 }
