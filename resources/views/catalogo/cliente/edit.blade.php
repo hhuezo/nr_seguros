@@ -310,7 +310,7 @@
 
 
 
-                                        <div class="form-group row">
+                                        {{-- <div class="form-group row">
                                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Forma
                                                 pago</label>
                                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
@@ -322,7 +322,7 @@
                                                     @endforeach
                                                 </select>
                                             </div>
-                                        </div>
+                                        </div> --}}
 
                                         <div class="form-group row">
                                             <label class="control-label col-md-3 col-sm-12 col-xs-12"
@@ -933,7 +933,7 @@
                         <div class="modal-content">
 
                             <div class="modal-header">
-                                <h4 class="modal-title" id="myModalLabel">Nueva tarjeta</h4>
+                                <h4 class="modal-title" id="myModalLabel">Nuevo método de pago</h4>
                             </div>
                             <div class="modal-body">
                                 <input type="hidden" name="Cliente" value="{{ $cliente->Id }}" class="form-control">
