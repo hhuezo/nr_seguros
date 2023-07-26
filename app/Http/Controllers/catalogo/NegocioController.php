@@ -281,93 +281,96 @@ class NegocioController extends Controller
     public function get_aseguradoras(Request $request)
     {
         $aseguradora = array();
-        $auto = NegocioAuto::whereIn('Id', [$request->ModalAseguradora])->get();
+        $string = $request->ModalAseguradora;
+        $id = explode(",", $string);
+        $auto = NegocioAuto::whereIn('Id', $id)->get();
+
         if ($auto) {
             foreach ($auto as $obj) {
                 array_push($aseguradora, array(
                     'Aseguradora' => $obj->aseguradora->Nombre, 'NecesidadProteccion' => 'Auto', 'SumaAsegurada' => $obj->SumaAsegurada,
-                    'Prima' => $obj->Prima
+                    'Prima' => $obj->Prima ,'Id' => $obj->Id
                 ));
             }
         } else {
-            $incendio = NegocioIncendio::whereIn('Id', [$request->ModalAseguradora])->get();
+            $incendio = NegocioIncendio::whereIn('Id', $id)->get();
             if ($incendio) {
                 foreach ($incendio as $obj) {
                     array_push($aseguradora, array(
                         'Aseguradora' => $obj->aseguradora->Nombre, 'NecesidadProteccion' => 'Incendio', 'SumaAsegurada' => $obj->SumaAsegurada,
-                        'Prima' => $obj->Prima
+                        'Prima' => $obj->Prima ,'Id' => $obj->Id
                     ));
                 }
             } else {
-                $dinero = NegocioDineroValores::whereIn('Id', [$request->ModalAseguradora])->get();
+                $dinero = NegocioDineroValores::whereIn('Id', $id)->get();
                 if ($dinero) {
                     foreach ($dinero as $obj) {
                         array_push($aseguradora, array(
                             'Aseguradora' => $obj->aseguradora->Nombre, 'NecesidadProteccion' => 'Dinero y Valores', 'SumaAsegurada' => $obj->SumaAsegurada,
-                            'Prima' => $obj->Prima
+                            'Prima' => $obj->Prima ,'Id' => $obj->Id
                         ));
                     }
                 } else {
-                    $otros = NegocioOtros::whereIn('Id', [$request->ModalAseguradora])->get();
+                    $otros = NegocioOtros::whereIn('Id', $id)->get();
                     if ($otros) {
                         foreach ($otros as $obj) {
                             array_push($aseguradora, array(
                                 'Aseguradora' => $obj->aseguradora->Nombre, 'NecesidadProteccion' => 'Otros', 'SumaAsegurada' => $obj->SumaAsegurada,
-                                'Prima' => $obj->Prima
+                                'Prima' => $obj->Prima ,'Id' => $obj->Id
                             ));
                         }
                     } else {
-                        $equipo = NegocioEquipoElectronico::whereIn('Id', [$request->ModalAseguradora])->get();
+                        $equipo = NegocioEquipoElectronico::whereIn('Id', $id)->get();
                         if ($equipo) {
                             foreach ($equipo as $obj) {
                                 array_push($aseguradora, array(
                                     'Aseguradora' => $obj->aseguradora->Nombre, 'NecesidadProteccion' => 'Equipo Electronico', 'SumaAsegurada' => $obj->SumaAsegurada,
-                                    'Prima' => $obj->Prima
+                                    'Prima' => $obj->Prima ,'Id' => $obj->Id
                                 ));
                             }
                         } else {
-                            $robo = NegocioRoboHurto::whereIn('Id', [$request->ModalAseguradora])->get();
+                            $robo = NegocioRoboHurto::whereIn('Id', $id)->get();
                             if ($robo) {
                                 foreach ($robo as $obj) {
                                     array_push($aseguradora, array(
                                         'Aseguradora' => $obj->aseguradora->Nombre, 'NecesidadProteccion' => 'Robo y Hurto', 'SumaAsegurada' => $obj->SumaAsegurada,
-                                        'Prima' => $obj->Prima
+                                        'Prima' => $obj->Prima ,'Id' => $obj->Id
                                     ));
                                 }
                             } else {
-                                $accidente = NegocioAccidente::whereIn('Id', [$request->ModalAseguradora])->get();
+                                $accidente = NegocioAccidente::whereIn('Id', $id)->get();
                                 if ($accidente) {
                                     foreach ($accidente as $obj) {
                                         array_push($aseguradora, array(
                                             'Aseguradora' => $obj->aseguradora->Nombre, 'NecesidadProteccion' => 'Accidentes Personales', 'SumaAsegurada' => $obj->SumaAsegurada,
-                                            'Prima' => $obj->Prima
+                                            'Prima' => $obj->Prima ,'Id' => $obj->Id
                                         ));
                                     }
                                 } else {
-                                    $gastos = NegocioGastosMedicos::whereIn('Id', [$request->ModalAseguradora])->get();
+                                    $gastos = NegocioGastosMedicos::whereIn('Id', $id)->get();
                                     if ($gastos) {
                                         foreach ($gastos as $obj) {
                                             array_push($aseguradora, array(
                                                 'Aseguradora' => $obj->aseguradora->Nombre, 'NecesidadProteccion' => 'Gastos Medicos', 'SumaAsegurada' => $obj->SumaAsegurada,
-                                                'Prima' => $obj->Prima
+                                                'Prima' => $obj->Prima ,'Id' => $obj->Id
                                             ));
                                         }
                                     } else {
-                                        $vida = NegocioVida::whereIn('Id', [$request->ModalAseguradora])->get();
+                                        $vida = NegocioVida::whereIn('Id', $id)->get();
                                         if ($vida) {
                                             foreach ($vida as $obj) {
                                                 array_push($aseguradora, array(
                                                     'Aseguradora' => $obj->aseguradora->Nombre, 'NecesidadProteccion' => 'Vida', 'SumaAsegurada' => $obj->SumaAsegurada,
-                                                    'Prima' => $obj->Prima
+                                                    'Prima' => $obj->Prima ,'Id' => $obj->Id
                                                 ));
                                             }
                                         } else {
-                                            $videuda = NegocioVideDeuda::whereIn('Id', [$request->ModalAseguradora])->get();
+                                            $videuda = NegocioVideDeuda::whereIn('Id', $id)->get();
                                             if ($videuda) {
                                                 foreach ($videuda as $obj) {
                                                     array_push($aseguradora, array(
                                                         'Aseguradora' => $obj->aseguradora->Nombre, 'NecesidadProteccion' => 'Vida Deuda', 'SumaAsegurada' => $obj->SumaAsegurada,
-                                                        'Prima' => $obj->Prima
+                                                        'Prima' => $obj->Prima ,'Id' => $obj->Id
                                                     ));
                                                 }
                                             }
