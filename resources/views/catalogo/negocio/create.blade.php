@@ -174,7 +174,7 @@
 
                     </div>
 
-                    <input type="text" id="DataAseguradora" name="Aseguradoras">
+                    <input type="hidden" id="DataAseguradora" name="Aseguradoras">
 
 
 
