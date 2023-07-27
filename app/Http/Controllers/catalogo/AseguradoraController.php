@@ -94,7 +94,7 @@ class AseguradoraController extends Controller
         $necesidades_proteccion_actual =  $aseguradora->aseguradora_has_necesidad;
         if(!session('tab1'))
         {
-            session(['tab1' => '3']);
+            session(['tab1' => '1']);
         }
         return view('catalogo/aseguradora/edit', compact('aseguradora','tipo_contribuyente','contactos',
         'cargos','tipos_poliza','necesidades_proteccion_actual','necesidades_proteccion'));
