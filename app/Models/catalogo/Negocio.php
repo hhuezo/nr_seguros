@@ -27,8 +27,7 @@ class Negocio extends Model
         'Ejecutivo',
         'Activo',
         'FechaIngreso',
-        'UsuarioIngreso',
-        'NumCuotas'
+        'UsuarioIngreso'
     ];
 
     protected $guarded = [];

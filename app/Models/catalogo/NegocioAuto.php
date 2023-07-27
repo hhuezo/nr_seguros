@@ -25,8 +25,10 @@ class NegocioAuto extends Model
         'Placa',
         'Activo',
         'Negocio',
+
         'Aseguradora',
         'Prima'
+
     ];
 
     protected $guarded = [];

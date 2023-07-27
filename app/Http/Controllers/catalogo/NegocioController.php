@@ -93,7 +93,9 @@ class NegocioController extends Controller
         $negocio->Prima = $request->Prima;
         $negocio->Observacion = $request->Observacion;
         $negocio->TipoNegocio = $request->TipoNegocio;
+
         $negocio->NumCuotas = $request->NumCuotas;
+
         if ($estado == 1) {
             $negocio->EstadoVenta = 1;  //nuevo
         } else {
@@ -103,6 +105,7 @@ class NegocioController extends Controller
         $negocio->FechaIngreso = $time->toDateTimeString();
         $negocio->UsuarioIngreso = auth()->user()->id;
         $negocio->save();
+
 
         if ($request->NecesidadProteccion == 1) { //auto
             NegocioAuto::whereIn('Id', [$request->Aseguradoras])->update(['Negocio', $negocio->Id]);
@@ -123,7 +126,7 @@ class NegocioController extends Controller
         } else if ($request->NecesidadProteccion == 13) {
             NegocioAccidente::whereIn('Id', [$request->Aseguradoras])->update(['Negocio', $negocio->Id]);
         } else if ($request->NecesidadProteccion == 7) {
-            NegocioVideDeuda::whereIn('Id', [$request->Aseguradoras])->update(['Negocio', $negocio->Id]);
+
         }
 
         alert()->success('El registro ha sido creado correctamente');
@@ -141,10 +144,12 @@ class NegocioController extends Controller
             $auto->Modelo = $request->Modelo;
             $auto->Axo = $request->Axo;
             $auto->Placa = $request->Placa;
+
             $auto->Prima = $request->Prima;
             $auto->Cantidad = $request->Cantidad;
             $auto->save();
             return $auto->Id;
+
         } else if ($request->NecesidadProteccion == 2) {
             $incendio = new NegocioIncendio();
             $incendio->Direccion = $request->Direccion;
@@ -156,34 +161,43 @@ class NegocioController extends Controller
             $incendio->Prima = $request->Prima;
             $incendio->save();
             return $incendio->Id;
+
         } else if ($request->NecesidadProteccion == 3) {
             $dinero = new NegocioDineroValores();
             $dinero->Aseguradora = $request->Aseguradora;
             $dinero->SumaAsegurada = $request->SumaAsegurada;
+
             $dinero->Prima = $request->Prima;
             $dinero->save();
             return $dinero->Id;
+
         } else if ($request->NecesidadProteccion == 4 || $request->NecesidadProteccion == 6) {
             $otros = new NegocioOtros();
             $otros->Aseguradora = $request->Aseguradora;
             $otros->SumaAsegurada = $request->SumaAsegurada;
+
             $otros->Prima = $request->Prima;
             $otros->save();
             return $otros->Id;
+
         } else if ($request->NecesidadProteccion == 7) {
             $equipo = new NegocioEquipoElectronico();
             $equipo->Aseguradora = $request->Aseguradora;
             $equipo->SumaAsegurada = $request->SumaAsegurada;
+
             $equipo->Prima = $request->Prima;
             $equipo->save();
             return $equipo->Id;
+
         } else if ($request->NecesidadProteccion == 8) {
             $robo = new NegocioRoboHurto();
             $robo->Aseguradora = $request->Aseguradora;
             $robo->SumaAsegurada = $request->SumaAsegurada;
+
             $robo->Prima = $request->Prima;
             $robo->save();
             return $robo->Id;
+
         } else if ($request->NecesidadProteccion == 13) {
             $accidente = new NegocioAccidente();
             $accidente->Aseguradora = $request->Aseguradora;
@@ -194,6 +208,7 @@ class NegocioController extends Controller
             $accidente->Prima = $request->Prima;
             $accidente->save();
             return $accidente->Id;
+
         } elseif ($request->NecesidadProteccion == 10) {
             if ($request->TipoPlan == 1) {
                 $gastos = new NegocioGastosMedicos();
@@ -211,7 +226,9 @@ class NegocioController extends Controller
                 } else {
                     $gastos->Dental = 0;
                 }
+
                 $gastos->Prima = $request->Prima;
+
                 $gastos->save();
             } else if ($request->TipoPlan == 2) {
                 $gastos = new NegocioGastosMedicos();
@@ -226,11 +243,13 @@ class NegocioController extends Controller
                 $gastos = new NegocioGastosMedicos();
                 $gastos->Aseguradora = $request->Aseguradora;
                 $gastos->SumaAsegurada = $request->SumaAsegurada;
+
                 $gastos->Prima = $request->Prima;
                 $gastos->save();
                 //guarda los familiares de gastos medicos 
             }
             return $gastos->Id;
+
         } elseif ($request->NecesidadProteccion == 11) {
             $vida = new NegocioVida();
             $vida->Aseguradora = $request->Aseguradora;
@@ -263,15 +282,18 @@ class NegocioController extends Controller
             $vida->Plazo = $request->Plazo;
             $vida->SesionBeneficios = $request->SesionBeneficio;
             $vida->Coberturas = $request->Cobertura;
+
             $vida->Prima = $request->Prima;
             $vida->save();
             return $vida->Id;
+
         } elseif ($request->NecesidadProteccion == 14) {
             $videuda = new NegocioVideDeuda();
             $videuda->Aseguradora = $request->Aseguradora;
             $videuda->SumaAsegurada = $request->SumaAsegurada;
             $videuda->Coberturas = $request->Cobertura;
             $videuda->TipoCartera = $request->TipoCartera;
+
             $videuda->Prima = $request->Prima;
             $videuda->save();
             return $videuda->Id;
@@ -386,21 +408,26 @@ class NegocioController extends Controller
 
         return view('catalogo/negocio/aseguradoras', compact('aseguradora'));
         //return view('polizas.deuda.requisitos', compact('requisitos'));
+
     }
 
 
     public function show($id)
     {
+
         dd("holi show");
         // $ejecutivo = Ejecutivo::where('Activo', '1')->get();
         // return view('catalogo.negocio.show', compact('ejecutivo'));
+
     }
 
     public function consultar(Request $request)
     {
+
         // $negocio = Negocio::with('aseguradora')->whereBetween('FechaVenta', [$request->FechaInicio, $request->FechaFinal])->get();
         // dd($negocio);
         // return view('catalogo.negocio.consulta', compact('negocio'));
+
     }
 
     public function edit($id)

@@ -22,4 +22,6 @@ class TipoPoliza extends Model
 
     protected $guarded = [];
 
+
+
 }

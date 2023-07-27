@@ -23,8 +23,10 @@ class NegocioIncendio extends Model
         'Activo',
         'Negocio',
         'Estado',
+
         'Aseguradora',
         'Prima'
+
     ];
 
     protected $guarded = [];

@@ -19,6 +19,7 @@ class NegocioOtros extends Model
         'Estado',
         'SumaAsegurada',
         'Negocio',
+
         'Aseguradora',
         'Prima'
     ];

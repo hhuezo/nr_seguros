@@ -30,8 +30,10 @@ class NegocioVida extends Model
         'SesionBeneficios',
         'Estado',
         'Coberturas',
+
         'Aseguradora',
         'Prima'
+
     ];
 
     protected $guarded = [];

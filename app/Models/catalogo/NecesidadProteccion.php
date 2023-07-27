@@ -17,8 +17,20 @@ class NecesidadProteccion extends Model
 
     protected $fillable = [
         'Nombre',
-        'Activo'
+
+        'Activo',
+        'TipoPoliza'
     ];
 
     protected $guarded = [];
+
+    public function necesidad_has_aseguradora(){
+        return $this->belongsToMany(Aseguradora::class, 'aseguradora_has_necesidad_proteccion', 'necesidad_proteccion_id', 'aseguradora_id');
+    }
+
+    public function tipo_poliza()
+    {
+        return $this->belongsTo(TipoPoliza::class, 'TipoPoliza', 'Id');
+    }
+
 }

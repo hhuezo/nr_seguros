@@ -32,6 +32,11 @@
                                 role="tab" id="profile-necesidad" data-toggle="tab" aria-expanded="false">Contactos
                                 frecuentes</a>
                         </li>
+
+                        <li role="presentation" class="{{ session('tab1') == 3 ? 'active' : '' }}"><a href="#necesidad"
+                                role="tab" id="profile-necesidad" data-toggle="tab"
+                                aria-expanded="false">Necesidades</a>
+                        </li>
                     </ul>
 
 
@@ -231,6 +236,106 @@
                             @endif
                         </div>
 
+                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 3 ? 'active in' : '' }}"
+                            id="necesidad" aria-labelledby="home-tab">
+
+
+
+                            <div class="x_content">
+                                <br />
+                                <form method="POST"
+                                    action="{{ url('catalogo/aseguradora/attach_necesidad_proteccion') }}">
+
+                                    @csrf
+                                    <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12 "></div>
+                                    <div class="col-lg-8 col-md-9 col-sm-12 col-xs-12 ">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Tipo póliza</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <input type="hidden" name="aseguradora_id"
+                                                    value="{{ $aseguradora->Id }}">
+                                                <select name="tipo_poliza_id" id="TipoPoliza" class="form-control">
+                                                    @foreach ($tipos_poliza as $obj)
+                                                        <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Necesidad de
+                                                protección</label>
+                                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                                <select name="necesidad_proteccion_id" id="NecesidadProteccion"
+                                                    class="form-control select2" style="width: 100%">
+                                                    @foreach ($necesidades_proteccion as $obj)
+                                                        <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+
+                                        </div>
+
+
+                                        <div class="form-group" align="center" style="text-align: right;">
+                                            <button class="btn btn-success" type="submit">Guardar</button>
+                                        </div>
+
+
+                                    </div>
+
+                                </form>
+
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 "></div>
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 ">
+                                @if ($necesidades_proteccion_actual->count() > 0)
+                                    <br>
+                                    <table class="table table-striped table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Tipo</th>
+                                                <th>Necesidad de proteccion</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($necesidades_proteccion_actual as $obj)
+                                                <tr>
+                                                    @if ($obj->tipo_poliza)
+                                                        <td>{{ $obj->tipo_poliza->Nombre }}</td>
+                                                    @else
+                                                        <td></td>
+                                                    @endif
+                                                    <td>{{ $obj->Nombre }}</td>
+
+                                                    <td>
+                                                        &nbsp;&nbsp;
+                                                        <i class="fa fa-trash fa-lg"
+                                                            onclick="modal_delete_necesidad({{ $obj->Id }})"
+                                                            data-target="#modal-delete-necesidad" data-toggle="modal"></i>
+
+
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                @else
+                                    <div style="height: 200px">
+                                        <br>
+                                        <div class="alert alert-danger alert-dismissible " role="alert">
+                                            <button type="button" class="close" data-dismiss="alert"
+                                                aria-label="Close"><span aria-hidden="true">×</span>
+                                            </button>
+                                            <strong>Sin datos que mostrar.</strong>
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+
                     </div>
 
 
@@ -357,7 +462,7 @@
                                             <input type="email" required name="Email" id="ModalContactoEmail"
                                                 class="form-control">
                                         </div>
-                                    </div>                             
+                                    </div>
 
                                 </div>
                                 <div>&nbsp; </div>
@@ -402,6 +507,35 @@
             </div>
 
 
+            <div class="col-12">
+                <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
+                    id="modal-delete-necesidad">
+
+                    <form method="POST" action="{{ url('catalogo/aseguradora/detach_necesidad_proteccion') }}">
+                        @csrf
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                    <input type="hidden" name="necesidad_proteccion_id" id="IdNecesidadProteccion">
+                                    <input type="hidden" name="aseguradora_id" value="{{ $aseguradora->Id }}">
+                                    <h4 class="modal-title">Eliminar Registro</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Confirme si desea Eliminar el Registro</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                    <button type="submit" class="btn btn-primary">Confirmar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
         </div>
 
         <!-- jQuery -->
@@ -426,6 +560,29 @@
                 document.getElementById('IdContacto').value = id;
                 $('#modal_borrar_documento').modal('show');
             }
+
+            function modal_delete_necesidad(id) {
+                document.getElementById('IdNecesidadProteccion').value = id;
+                //$('#modal_borrar_documento').modal('show');
+            }
+
+            $("#TipoPoliza").change(function() {
+
+                var TipoPoliza = $(this).val();
+
+                $.get("{{ url('catalogo/aseguradora/get_necesidad') }}" + '/' + TipoPoliza, function(data) {
+
+                    //console.log(data);
+                    var _select = ''
+                    for (var i = 0; i < data.length; i++)
+                        _select += '<option value="' + data[i].Id + '"  >' + data[i].Nombre +
+                        '</option>';
+
+                    $("#NecesidadProteccion").html(_select);
+
+                });
+
+            });
         </script>
     </div>
     @include('sweetalert::alert')

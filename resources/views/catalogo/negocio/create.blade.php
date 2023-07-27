@@ -111,6 +111,7 @@
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <select name="TipoPlan" id="TipoPlan" class="form-control" style="width: 100%;" required>
 
+
                                     </select>
                                 </div>
                             </div>
@@ -125,6 +126,7 @@
                                 <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: left;">Numero de Cuotas </label>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <input type="number" name="NumCoutas" id="NumCoutas" value="{{ old('NumCoutas') }}" class="form-control" required autofocus="true">
+
                                 </div>
                             </div>
 
@@ -171,7 +173,9 @@
 
 
                     </div>
+
                     <input type="text" id="DataAseguradora" name="Aseguradoras">
+
 
 
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -399,6 +403,7 @@
             var necesidad = document.getElementById('NecesidadProteccion').value;
             var plan = document.getElementById('TipoPlan').value;
             var dependientes = document.getElementById('CantidadDependiente').value;
+
             document.getElementById('SumaAsegurada').value = 0;
             document.getElementById('Prima').value = '';
             document.getElementById('FechaNacimiento').value = '';
@@ -433,6 +438,7 @@
             document.getElementById('ParentescoFamiliar').value = '';
             document.getElementById('VidaFamiliar').value = '';
             document.getElementById('DentalFamiliar').value = '';
+
             $("#FechaNacimientos").hide();
             $("#Generos").hide();
             $("#Cantidads").hide();
@@ -503,11 +509,13 @@
                 //     $("#FechaNacimientosFamiliar" + i).show();
                 //     $("#GenerosFamiliar" + i).show();
                 // }
+
                 $("#FechaNacimientosFamiliar").show();
                 $("#GenerosFamiliar").show();
                 $("#ParentescosFamiliar").show();
                 $("#VidasFamiliar").show();
                 $("#DentalsFamiliar").show();
+
             } else if (necesidad == 11 && plan == 1) { //vida y individual
                 $("#FechaNacimientos").show();
                 $("#Generos").show();
