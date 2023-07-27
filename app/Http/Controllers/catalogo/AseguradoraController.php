@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\AseguradoraCargo;
 use App\Models\catalogo\AseguradoraContacto;
+use App\Models\catalogo\NecesidadProteccion;
 use App\Models\catalogo\TipoContribuyente;
 use App\Models\catalogo\TipoPoliza;
 use Illuminate\Http\Request;
@@ -35,12 +36,7 @@ class AseguradoraController extends Controller
         return view('catalogo.aseguradora.create', compact('tipo_contribuyente'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
     public function store(Request $request)
     {
         $messages = [
@@ -94,13 +90,14 @@ class AseguradoraController extends Controller
         $contactos = AseguradoraContacto::where('Aseguradora','=',$id)->get();
         $cargos = AseguradoraCargo::where('Activo','=',1)->get();
         $tipos_poliza = TipoPoliza::get();
-        $tipos_poliza_actual =  $aseguradora->aseguradora_has_tipo_poliza;
+        $necesidades_proteccion = NecesidadProteccion::where('TipoPoliza','=',1)->get();
+        $necesidades_proteccion_actual =  $aseguradora->aseguradora_has_necesidad;
         if(!session('tab1'))
         {
-            session(['tab1' => '1']);
+            session(['tab1' => '3']);
         }
         return view('catalogo/aseguradora/edit', compact('aseguradora','tipo_contribuyente','contactos',
-        'cargos','tipos_poliza','tipos_poliza_actual'));
+        'cargos','tipos_poliza','necesidades_proteccion_actual','necesidades_proteccion'));
     }
 
     public function update(Request $request, $id)
@@ -199,24 +196,29 @@ class AseguradoraController extends Controller
         return back();
     }
 
-    public function attach_tipo_poliza(Request $request)
+    public function attach_necesidad_proteccion(Request $request)
     {
         $aseguradora = Aseguradora::findOrFail($request->aseguradora_id);
-        $aseguradora->aseguradora_has_tipo_poliza()->attach($request->tipo_poliza_id);
+        $aseguradora->aseguradora_has_necesidad()->attach($request->necesidad_proteccion_id);
         alert()->success('El registro ha sido agregado correctamente');
 
         session(['tab1' => '3']);
         return back();
     }
 
-    public function detach_tipo_poliza(Request $request)
+    public function detach_necesidad_proteccion(Request $request)
     {
         $aseguradora = Aseguradora::findOrFail($request->aseguradora_id);
-        $aseguradora->aseguradora_has_tipo_poliza()->detach($request->tipo_poliza_id);
+        $aseguradora->aseguradora_has_necesidad()->detach($request->necesidad_proteccion_id);
         alert()->info('El registro ha sido eliminado correctamente');
 
         session(['tab1' => '3']);
         return back();
+    }
+
+    public function get_necesidad($id)
+    {
+        return NecesidadProteccion::where('TipoPoliza','=',$id)->get();
     }
 
     
