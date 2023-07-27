@@ -93,6 +93,9 @@ class NegocioController extends Controller
         $negocio->Prima = $request->Prima;
         $negocio->Observacion = $request->Observacion;
         $negocio->TipoNegocio = $request->TipoNegocio;
+
+        $negocio->NumCuotas = $request->NumCuotas;
+
         if ($estado == 1) {
             $negocio->EstadoVenta = 1;  //nuevo
         } else {
@@ -103,26 +106,27 @@ class NegocioController extends Controller
         $negocio->UsuarioIngreso = auth()->user()->id;
         $negocio->save();
 
-        if($request->NecesidadProteccion == 1){ //auto
-            NegocioAuto::whereIn('Id',[$request->Aseguradora])->update(['Negocio', $negocio->Id]);
-        }else if ($request->NecesidadProteccion == 2){  //incendio 
-            NegocioIncendio::whereIn('Id',[$request->Aseguradora])->update(['Negocio', $negocio->Id]);
-        }else if($request->NecesidadProteccion == 3){ 
-            NegocioDineroValores::whereIn('Id',[$request->Aseguradora])->update(['Negocio', $negocio->Id]);
-        }else if($request->NecesidadProteccion == 4 || $request->NecesidadProteccion == 6){
-            NegocioOtros::whereIn('Id',[$request->Aseguradora])->update(['Negocio', $negocio->Id]);
-        }else if($request->NecesidadProteccion == 7){
-            NegocioEquipoElectronico::whereIn('Id',[$request->Aseguradora])->update(['Negocio', $negocio->Id]);
-        }else if($request->NecesidadProteccion == 8){
-            NegocioRoboHurto::whereIn('Id',[$request->Aseguradora])->update(['Negocio', $negocio->Id]);
-        }else if($request->NecesidadProteccion == 10){
-            NegocioGastosMedicos::whereIn('Id',[$request->Aseguradora])->update(['Negocio', $negocio->Id]);
-        }else if($request->NecesidadProteccion == 11){
-            NegocioVida::whereIn('Id',[$request->Aseguradora])->update(['Negocio', $negocio->Id]);
-        }else if($request->NecesidadProteccion == 13){
-            NegocioAccidente::whereIn('Id',[$request->Aseguradora])->update(['Negocio', $negocio->Id]);
-        }else if($request->NecesidadProteccion == 7){
-            NegocioVideDeuda::whereIn('Id',[$request->Aseguradora])->update(['Negocio', $negocio->Id]);
+
+        if ($request->NecesidadProteccion == 1) { //auto
+            NegocioAuto::whereIn('Id', [$request->Aseguradoras])->update(['Negocio', $negocio->Id]);
+        } else if ($request->NecesidadProteccion == 2) {  //incendio 
+            NegocioIncendio::whereIn('Id', [$request->Aseguradoras])->update(['Negocio', $negocio->Id]);
+        } else if ($request->NecesidadProteccion == 3) {
+            NegocioDineroValores::whereIn('Id', [$request->Aseguradoras])->update(['Negocio', $negocio->Id]);
+        } else if ($request->NecesidadProteccion == 4 || $request->NecesidadProteccion == 6) {
+            NegocioOtros::whereIn('Id', [$request->Aseguradoras])->update(['Negocio', $negocio->Id]);
+        } else if ($request->NecesidadProteccion == 7) {
+            NegocioEquipoElectronico::whereIn('Id', [$request->Aseguradoras])->update(['Negocio', $negocio->Id]);
+        } else if ($request->NecesidadProteccion == 8) {
+            NegocioRoboHurto::whereIn('Id', [$request->Aseguradoras])->update(['Negocio', $negocio->Id]);
+        } else if ($request->NecesidadProteccion == 10) {
+            NegocioGastosMedicos::whereIn('Id', [$request->Aseguradoras])->update(['Negocio', $negocio->Id]);
+        } else if ($request->NecesidadProteccion == 11) {
+            NegocioVida::whereIn('Id', [$request->Aseguradoras])->update(['Negocio', $negocio->Id]);
+        } else if ($request->NecesidadProteccion == 13) {
+            NegocioAccidente::whereIn('Id', [$request->Aseguradoras])->update(['Negocio', $negocio->Id]);
+        } else if ($request->NecesidadProteccion == 7) {
+
         }
 
         alert()->success('El registro ha sido creado correctamente');
@@ -140,8 +144,12 @@ class NegocioController extends Controller
             $auto->Modelo = $request->Modelo;
             $auto->Axo = $request->Axo;
             $auto->Placa = $request->Placa;
+
+            $auto->Prima = $request->Prima;
             $auto->Cantidad = $request->Cantidad;
             $auto->save();
+            return $auto->Id;
+
         } else if ($request->NecesidadProteccion == 2) {
             $incendio = new NegocioIncendio();
             $incendio->Direccion = $request->Direccion;
@@ -150,27 +158,46 @@ class NegocioController extends Controller
             $incendio->ValorContenido = $request->ValorContenido;
             $incendio->Aseguradora = $request->Aseguradora;
             $incendio->SumaAsegurada = $request->SumaAsegurada;
+            $incendio->Prima = $request->Prima;
             $incendio->save();
+            return $incendio->Id;
+
         } else if ($request->NecesidadProteccion == 3) {
             $dinero = new NegocioDineroValores();
             $dinero->Aseguradora = $request->Aseguradora;
             $dinero->SumaAsegurada = $request->SumaAsegurada;
+
+            $dinero->Prima = $request->Prima;
             $dinero->save();
+            return $dinero->Id;
+
         } else if ($request->NecesidadProteccion == 4 || $request->NecesidadProteccion == 6) {
             $otros = new NegocioOtros();
             $otros->Aseguradora = $request->Aseguradora;
             $otros->SumaAsegurada = $request->SumaAsegurada;
+
+            $otros->Prima = $request->Prima;
             $otros->save();
+            return $otros->Id;
+
         } else if ($request->NecesidadProteccion == 7) {
             $equipo = new NegocioEquipoElectronico();
             $equipo->Aseguradora = $request->Aseguradora;
             $equipo->SumaAsegurada = $request->SumaAsegurada;
+
+            $equipo->Prima = $request->Prima;
             $equipo->save();
+            return $equipo->Id;
+
         } else if ($request->NecesidadProteccion == 8) {
             $robo = new NegocioRoboHurto();
             $robo->Aseguradora = $request->Aseguradora;
             $robo->SumaAsegurada = $request->SumaAsegurada;
+
+            $robo->Prima = $request->Prima;
             $robo->save();
+            return $robo->Id;
+
         } else if ($request->NecesidadProteccion == 13) {
             $accidente = new NegocioAccidente();
             $accidente->Aseguradora = $request->Aseguradora;
@@ -178,7 +205,10 @@ class NegocioController extends Controller
             $accidente->FechaNacimiento = $request->FechaNacimiento;
             $accidente->Cantidad = $request->Cantidad;
             $accidente->Genero = $request->Genero;
+            $accidente->Prima = $request->Prima;
             $accidente->save();
+            return $accidente->Id;
+
         } elseif ($request->NecesidadProteccion == 10) {
             if ($request->TipoPlan == 1) {
                 $gastos = new NegocioGastosMedicos();
@@ -196,6 +226,9 @@ class NegocioController extends Controller
                 } else {
                     $gastos->Dental = 0;
                 }
+
+                $gastos->Prima = $request->Prima;
+
                 $gastos->save();
             } else if ($request->TipoPlan == 2) {
                 $gastos = new NegocioGastosMedicos();
@@ -210,9 +243,13 @@ class NegocioController extends Controller
                 $gastos = new NegocioGastosMedicos();
                 $gastos->Aseguradora = $request->Aseguradora;
                 $gastos->SumaAsegurada = $request->SumaAsegurada;
+
+                $gastos->Prima = $request->Prima;
                 $gastos->save();
                 //guarda los familiares de gastos medicos 
             }
+            return $gastos->Id;
+
         } elseif ($request->NecesidadProteccion == 11) {
             $vida = new NegocioVida();
             $vida->Aseguradora = $request->Aseguradora;
@@ -245,38 +282,152 @@ class NegocioController extends Controller
             $vida->Plazo = $request->Plazo;
             $vida->SesionBeneficios = $request->SesionBeneficio;
             $vida->Coberturas = $request->Cobertura;
+
+            $vida->Prima = $request->Prima;
             $vida->save();
+            return $vida->Id;
+
         } elseif ($request->NecesidadProteccion == 14) {
             $videuda = new NegocioVideDeuda();
             $videuda->Aseguradora = $request->Aseguradora;
             $videuda->SumaAsegurada = $request->SumaAsegurada;
             $videuda->Coberturas = $request->Cobertura;
             $videuda->TipoCartera = $request->TipoCartera;
+
+            $videuda->Prima = $request->Prima;
             $videuda->save();
+            return $videuda->Id;
         }
     }
-    public function get_aseguradora(Request $request)
+    
+    public function get_aseguradoras(Request $request)
     {
+        $aseguradora = array();
+        $string = $request->ModalAseguradora;
+        $id = explode(",", $string);
+        $auto = NegocioAuto::whereIn('Id', $id)->get();
 
-        //buscar en las tablas de negocios
-        $sql =  "select * from poliza_deuda_requisitos where id in ($request->Requisitos)";
-        $requisitos =  DB::select($sql);
+        if ($auto) {
+            foreach ($auto as $obj) {
+                array_push($aseguradora, array(
+                    'Aseguradora' => $obj->aseguradora->Nombre, 'NecesidadProteccion' => 'Auto', 'SumaAsegurada' => $obj->SumaAsegurada,
+                    'Prima' => $obj->Prima ,'Id' => $obj->Id
+                ));
+            }
+        } else {
+            $incendio = NegocioIncendio::whereIn('Id', $id)->get();
+            if ($incendio) {
+                foreach ($incendio as $obj) {
+                    array_push($aseguradora, array(
+                        'Aseguradora' => $obj->aseguradora->Nombre, 'NecesidadProteccion' => 'Incendio', 'SumaAsegurada' => $obj->SumaAsegurada,
+                        'Prima' => $obj->Prima ,'Id' => $obj->Id
+                    ));
+                }
+            } else {
+                $dinero = NegocioDineroValores::whereIn('Id', $id)->get();
+                if ($dinero) {
+                    foreach ($dinero as $obj) {
+                        array_push($aseguradora, array(
+                            'Aseguradora' => $obj->aseguradora->Nombre, 'NecesidadProteccion' => 'Dinero y Valores', 'SumaAsegurada' => $obj->SumaAsegurada,
+                            'Prima' => $obj->Prima ,'Id' => $obj->Id
+                        ));
+                    }
+                } else {
+                    $otros = NegocioOtros::whereIn('Id', $id)->get();
+                    if ($otros) {
+                        foreach ($otros as $obj) {
+                            array_push($aseguradora, array(
+                                'Aseguradora' => $obj->aseguradora->Nombre, 'NecesidadProteccion' => 'Otros', 'SumaAsegurada' => $obj->SumaAsegurada,
+                                'Prima' => $obj->Prima ,'Id' => $obj->Id
+                            ));
+                        }
+                    } else {
+                        $equipo = NegocioEquipoElectronico::whereIn('Id', $id)->get();
+                        if ($equipo) {
+                            foreach ($equipo as $obj) {
+                                array_push($aseguradora, array(
+                                    'Aseguradora' => $obj->aseguradora->Nombre, 'NecesidadProteccion' => 'Equipo Electronico', 'SumaAsegurada' => $obj->SumaAsegurada,
+                                    'Prima' => $obj->Prima ,'Id' => $obj->Id
+                                ));
+                            }
+                        } else {
+                            $robo = NegocioRoboHurto::whereIn('Id', $id)->get();
+                            if ($robo) {
+                                foreach ($robo as $obj) {
+                                    array_push($aseguradora, array(
+                                        'Aseguradora' => $obj->aseguradora->Nombre, 'NecesidadProteccion' => 'Robo y Hurto', 'SumaAsegurada' => $obj->SumaAsegurada,
+                                        'Prima' => $obj->Prima ,'Id' => $obj->Id
+                                    ));
+                                }
+                            } else {
+                                $accidente = NegocioAccidente::whereIn('Id', $id)->get();
+                                if ($accidente) {
+                                    foreach ($accidente as $obj) {
+                                        array_push($aseguradora, array(
+                                            'Aseguradora' => $obj->aseguradora->Nombre, 'NecesidadProteccion' => 'Accidentes Personales', 'SumaAsegurada' => $obj->SumaAsegurada,
+                                            'Prima' => $obj->Prima ,'Id' => $obj->Id
+                                        ));
+                                    }
+                                } else {
+                                    $gastos = NegocioGastosMedicos::whereIn('Id', $id)->get();
+                                    if ($gastos) {
+                                        foreach ($gastos as $obj) {
+                                            array_push($aseguradora, array(
+                                                'Aseguradora' => $obj->aseguradora->Nombre, 'NecesidadProteccion' => 'Gastos Medicos', 'SumaAsegurada' => $obj->SumaAsegurada,
+                                                'Prima' => $obj->Prima ,'Id' => $obj->Id
+                                            ));
+                                        }
+                                    } else {
+                                        $vida = NegocioVida::whereIn('Id', $id)->get();
+                                        if ($vida) {
+                                            foreach ($vida as $obj) {
+                                                array_push($aseguradora, array(
+                                                    'Aseguradora' => $obj->aseguradora->Nombre, 'NecesidadProteccion' => 'Vida', 'SumaAsegurada' => $obj->SumaAsegurada,
+                                                    'Prima' => $obj->Prima ,'Id' => $obj->Id
+                                                ));
+                                            }
+                                        } else {
+                                            $videuda = NegocioVideDeuda::whereIn('Id', $id)->get();
+                                            if ($videuda) {
+                                                foreach ($videuda as $obj) {
+                                                    array_push($aseguradora, array(
+                                                        'Aseguradora' => $obj->aseguradora->Nombre, 'NecesidadProteccion' => 'Vida Deuda', 'SumaAsegurada' => $obj->SumaAsegurada,
+                                                        'Prima' => $obj->Prima ,'Id' => $obj->Id
+                                                    ));
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-        return view('polizas.deuda.requisitos', compact('requisitos'));
+        return view('catalogo/negocio/aseguradoras', compact('aseguradora'));
+        //return view('polizas.deuda.requisitos', compact('requisitos'));
+
     }
 
 
     public function show($id)
     {
-        $ejecutivo = Ejecutivo::where('Activo', '1')->get();
-        return view('catalogo.negocio.show', compact('ejecutivo'));
+
+        dd("holi show");
+        // $ejecutivo = Ejecutivo::where('Activo', '1')->get();
+        // return view('catalogo.negocio.show', compact('ejecutivo'));
+
     }
 
     public function consultar(Request $request)
     {
-        $negocio = Negocio::with('aseguradora')->whereBetween('FechaVenta', [$request->FechaInicio, $request->FechaFinal])->get();
-        //dd($negocio);
-        return view('catalogo.negocio.consulta', compact('negocio'));
+
+        // $negocio = Negocio::with('aseguradora')->whereBetween('FechaVenta', [$request->FechaInicio, $request->FechaFinal])->get();
+        // dd($negocio);
+        // return view('catalogo.negocio.consulta', compact('negocio'));
+
     }
 
     public function edit($id)

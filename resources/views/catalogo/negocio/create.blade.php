@@ -111,6 +111,7 @@
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <select name="TipoPlan" id="TipoPlan" class="form-control" style="width: 100%;" required>
 
+
                                     </select>
                                 </div>
                             </div>
@@ -118,6 +119,14 @@
                                 <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: left;">Cantidad de Personas </label>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <input type="number" name="CantidadDependiente" id="CantidadDependiente" value="{{ old('CantidadDependiente') }}" class="form-control" required autofocus="true">
+                                </div>
+                            </div>
+
+                            <div class="form-group" >
+                                <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: left;">Numero de Cuotas </label>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <input type="number" name="NumCoutas" id="NumCoutas" value="{{ old('NumCoutas') }}" class="form-control" required autofocus="true">
+
                                 </div>
                             </div>
 
@@ -164,7 +173,9 @@
 
 
                     </div>
-                    <input type="text" id="DataAseguradora" name="Aseguradora">
+
+                    <input type="text" id="DataAseguradora" name="Aseguradoras">
+
 
 
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -393,6 +404,41 @@
             var plan = document.getElementById('TipoPlan').value;
             var dependientes = document.getElementById('CantidadDependiente').value;
 
+            document.getElementById('SumaAsegurada').value = 0;
+            document.getElementById('Prima').value = '';
+            document.getElementById('FechaNacimiento').value = '';
+            document.getElementById('Cantidad').value = '';
+            document.getElementById('Marca').value = '';
+            document.getElementById('Modelo').value = '';
+            document.getElementById('Axo').value = '';
+            document.getElementById('Placa').value = '';
+            document.getElementById('Direccion').value = '';
+            document.getElementById('Giro').value = '';
+            document.getElementById('ValorConstruccion').value = '';
+            document.getElementById('ValorContenido').value = '';
+            document.getElementById('Vida').value = '';
+            document.getElementById('Dental').value = '';
+            document.getElementById('CantidadPersona').value = '';
+            document.getElementById('Contributivo').value = '';
+            document.getElementById('MaximoVitalicio').value = '';
+            document.getElementById('CantidadTitulares').value = '';
+            document.getElementById('Fumador').value = '';
+            document.getElementById('InvalidezParcial').value = '';
+            document.getElementById('InvalidezTotal').value = '';
+            document.getElementById('GastosFunerario').value = '';
+            document.getElementById('EnfermedadesGrave').value = '';
+            document.getElementById('Termino').value = '';
+            document.getElementById('Ahorro').value = '';
+            document.getElementById('Plazo').value = '';
+            document.getElementById('SesionBeneficio').value = '';
+            document.getElementById('Cobertura').value = '';
+            document.getElementById('TipoCartera').value = '';
+            document.getElementById('FechaNacimientoFamiliar').value = '';
+            document.getElementById('GeneroFamiliar').value = '';
+            document.getElementById('ParentescoFamiliar').value = '';
+            document.getElementById('VidaFamiliar').value = '';
+            document.getElementById('DentalFamiliar').value = '';
+
             $("#FechaNacimientos").hide();
             $("#Generos").hide();
             $("#Cantidads").hide();
@@ -463,11 +509,13 @@
                 //     $("#FechaNacimientosFamiliar" + i).show();
                 //     $("#GenerosFamiliar" + i).show();
                 // }
-                $("#FechaNacimientosFamiliar").hide();
-                $("#GenerosFamiliar").hide();
-                $("#ParentescosFamiliar").hide();
-                $("#VidasFamiliar").hide();
-                $("#DentalsFamiliar").hide();
+
+                $("#FechaNacimientosFamiliar").show();
+                $("#GenerosFamiliar").show();
+                $("#ParentescosFamiliar").show();
+                $("#VidasFamiliar").show();
+                $("#DentalsFamiliar").show();
+
             } else if (necesidad == 11 && plan == 1) { //vida y individual
                 $("#FechaNacimientos").show();
                 $("#Generos").show();

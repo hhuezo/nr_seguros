@@ -28,7 +28,10 @@ class NegocioGastosMedicos extends Model
         'CantidadPersonas',
         'Contributivo',
         'CantidadDependientes',
-        'Aseguradora'
+
+        'Aseguradora',
+        'Prima'
+
     ];
 
     protected $guarded = [];

@@ -19,7 +19,10 @@ class NegocioRoboHurto extends Model
         'Estado',
         'SumaAsegurada',
         'Negocio',
-        'Aseguradora'
+
+        'Aseguradora',
+        'Prima'
+
     ];
 
     protected $guarded = [];

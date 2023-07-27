@@ -17,6 +17,7 @@ class NecesidadProteccion extends Model
 
     protected $fillable = [
         'Nombre',
+
         'Activo',
         'TipoPoliza'
     ];
@@ -31,4 +32,5 @@ class NecesidadProteccion extends Model
     {
         return $this->belongsTo(TipoPoliza::class, 'TipoPoliza', 'Id');
     }
+
 }

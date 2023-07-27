@@ -60,7 +60,7 @@
                         @endif
                         <td align="center">
 
-                            @can('edit users')
+                            @can('edit userss')
                             <a href="{{ url('catalogo/negocio') }}/{{ $obj->Id }}/edit" class="on-default edit-row">
                                 <i class="fa fa-pencil fa-lg"></i></a>
                             @endcan
