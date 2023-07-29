@@ -7,18 +7,19 @@ use App\Models\catalogo\AreaComercial;
 use App\Models\catalogo\Ejecutivo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
-use RealRashid\SweetAlert\Facades\Alert;
 
 class EjecutivoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    public function __construct()
+    {
+          $this->middleware('auth');
+          session(['tab_menu' => 'ejecutivo']);
+    }
+
     public function index()
     {
-        $ejecutivo = Ejecutivo::with('areaComercial')->get();
+        $identificador_carrito = session('idCarrito');
+        $ejecutivo = Ejecutivo::where('Activo','=',1)->get();
         return view('catalogo.ejecutivo.index',compact('ejecutivo'));
     }
 
@@ -29,6 +30,7 @@ class EjecutivoController extends Controller
      */
     public function create()
     {
+        session(['tab_menu' => 'ejecutivo']);
         $area_comercial = AreaComercial::where('Activo',1)->get();
         return view('catalogo.ejecutivo.create', compact('area_comercial'));
     }
@@ -46,7 +48,7 @@ class EjecutivoController extends Controller
         ];
 
         $request->validate([
-            'Nombre' => 'required|unique:ejecutivo',
+            'Nombre' => 'required',
         ], $messages);
 
 

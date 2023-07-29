@@ -21,24 +21,25 @@
                 <table id="datatable" class="table table-striped table-bordered">
                     <thead>
                         <tr>
-                            <th>Nombre</th>
                             <th>Codigo</th>
+                            <th>Nombre</th>
                             <th>Telefono</th>
-                            <th>Activo</th>
+                            <th>Area comercial</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($ejecutivo as $obj)
                             <tr>
-                                <td>{{ $obj->Nombre }}</td>
                                 <td>{{ $obj->Codigo }}</td>
+                                <td>{{ $obj->Nombre }}</td>
                                 <td>{{ $obj->Telefono }}</td>
-                                @if ($obj->Activo == 1)
-                                    <td align="center"><input type="checkbox" checked></td>
+                                @if ($obj->areaComercial)
+                                    <td>{{ $obj->areaComercial->Nombre }}</td>
                                 @else
-                                    <td align="center"><input type="checkbox"></td>
+                                    <td></td>
                                 @endif
+
                                 <td align="center">
                                     @can('edit users')
                                         <a href="{{ url('catalogo/ejecutivos') }}/{{ $obj->Id }}/edit"
