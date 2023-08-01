@@ -6,7 +6,7 @@
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
 
             <div class="x_title">
-                <h2>Nueva Ejecutivo <small></small></h2>
+                <h2>Nuevo ejecutivo <small></small></h2>
                 <ul class="nav navbar-right panel_toolbox">
 
                 </ul>
@@ -37,7 +37,7 @@
                         <div class="form-group">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12">Código</label>
                             <div class="col-lg-6 col-md-9 col-sm-12 col-xs-12">
-                                <input type="text" name="Codigo" value="{{old('Codigo')}}" class="form-control">
+                                <input type="text" name="Codigo" value="{{old('Codigo')}}" required class="form-control">
                             </div>
 
                         </div>
@@ -51,8 +51,8 @@
                         </div>
                         <div class="form-group">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12">Ejecutivo</label>
-                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <select name="AreaComercial" class="form-control select2" style="width: 100%">
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                <select name="AreaComercial" class="form-control select2" required style="width: 100%">
                                     @foreach ($area_comercial as $obj)
                                     <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
                                     @endforeach
