@@ -19,26 +19,54 @@ class Cliente extends Model
         'Nit',
         'Dui',
         'Nombre',
+        'RegistroFiscal',
+        'FechaNacimiento',
+        'EstadoFamiliar',
+        'NumeroDependientes',
+        'Ocupacion',
         'DireccionResidencia',
         'DireccionCorrespondencia',
         'TelefonoResidencia',
         'TelefonoOficina',
         'TelefonoCelular',
-        'Correo',
-        'Ruta',
+        'CorreoPrincipal',
+        'CorreoSecundario',
+        'FechaVinculacion',
+        'FechaBaja',
         'ResponsablePago',
-        'TipoContribuyente',
         'UbicacionCobro',
-        'Contacto',
-        'Referencia',
-        'NumeroTarjeta',
-        'FechaVencimiento',
-        'Genero',
+        'FormaPago',
+        'Estado',
         'TipoPersona',
+        'Genero',
+        'TipoContribuyente',
+        'Referencia',
+        'FechaIngreso',
+        'UsuarioIngreso',
+        'Facebook',
+        'ActividadesCreativas',
+        'EstiloVida',
+        'SitioWeb',
+        'NecesidadProteccion',
+        'Laptop',
+        'PC',
+        'Tablet',
+        'SmartWatch',
+        'DispositivosOtros',
+        'Informarse',
+        'Instagram',
+        'TieneMascota',
+        'MotivoEleccion',
+        'PreferenciaCompra',
+        'Efectivo',
+        'TarjetaCredito',
+        'App',
+        'MonederoEletronico',
+        'CompraOtros',
         'Activo',
-        'FechaCreacion',
-        'UsuarioCreacion',
-        'Municipio'
+        'Informacion',
+        'Municipio',
+        'Distrito'
     ];
 
     protected $guarded = [];
@@ -58,9 +86,9 @@ class Cliente extends Model
         return $this->belongsTo('App\Models\catalogo\UbicacionCobro', 'UbicacionCobro', 'Id');
     }
 
-    public function municipio()
+    public function distrito()
     {
-        return $this->belongsTo(Municipio::class, 'Municipio', 'Id');
+        return $this->belongsTo(Distrito::class, 'Distrito', 'Id');
     }
 
     public function estado()
