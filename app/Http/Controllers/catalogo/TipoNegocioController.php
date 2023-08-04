@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\catalogo;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\TipoNegocioFormRequest;
 use App\Models\catalogo\TipoNegocio;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -18,7 +19,7 @@ class TipoNegocioController extends Controller
      */
     public function index()
     {
-        $tipo_negocio = TipoNegocio::all();
+        $tipo_negocio = TipoNegocio::where('Activo',1)->get();
         return view('catalogo.tipo_negocio.index', compact('tipo_negocio'));
     }
 
@@ -38,7 +39,7 @@ class TipoNegocioController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(TipoNegocioFormRequest $request)
     {
         $tipo_negocio = new TipoNegocio();
         $tipo_negocio->Nombre = $request->Nombre;
@@ -46,7 +47,7 @@ class TipoNegocioController extends Controller
         $tipo_negocio->save();
 
         alert()->success('El registro ha sido agregado correctamente');
-        return redirect(TipoNegocio::index());
+        return back();
     }
 
     /**
@@ -79,14 +80,14 @@ class TipoNegocioController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(TipoNegocioFormRequest $request, $id)
     {
         $tipo_negocio = TipoNegocio::findOrFail($id);
         $tipo_negocio->Nombre = $request->Nombre;
         $tipo_negocio->update();
 
-        
-        alert()->success('El registro ha sido creado correctamente');
+
+        alert()->success('El registro ha sido modificado correctamente');
         return Redirect::to('catalogo/tipo_negocio');
     }
 

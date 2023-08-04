@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\catalogo;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\EstadoPolizaFormRequest;
 use App\Models\catalogo\EstadoPoliza;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -17,7 +18,7 @@ class EstadoPolizaController extends Controller
      */
     public function index()
     {
-        $estado_poliza = EstadoPoliza::all();
+        $estado_poliza = EstadoPoliza::where('Activo',1)->get();
         return view('catalogo.estado_poliza.index', compact('estado_poliza'));
     }
 
@@ -37,16 +38,16 @@ class EstadoPolizaController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(EstadoPolizaFormRequest $request)
     {
         $estado_poliza = new EstadoPoliza();
         $estado_poliza->Nombre = $request->Nombre;
         $estado_poliza->Activo = 1;
         $estado_poliza->save();
 
-        
+
         alert()->success('El registro ha sido creado correctamente');
-        return Redirect::to('catalogo/estado_poliza/create');
+        return Redirect::to('catalogo/estado_polizas/create');
 
     }
 
@@ -80,15 +81,15 @@ class EstadoPolizaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(EstadoPolizaFormRequest $request, $id)
     {
         $estado_poliza = EstadoPoliza::findOrFail($id);
         $estado_poliza->Nombre = $request->Nombre;
         $estado_poliza->update();
 
-        
-        alert()->success('El registro ha sido creado correctamente');
-        return Redirect::to('catalogo/estado_poliza');
+
+        alert()->success('El registro ha sido modificado correctamente');
+        return Redirect::to('catalogo/estado_polizas');
     }
 
     /**

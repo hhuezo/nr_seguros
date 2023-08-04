@@ -1,12 +1,13 @@
 @extends ('welcome')
 @section('contenido')
-<script src="{{ asset('vendors/sweetalert/sweetalert.min.js') }}"></script>
+@include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
 <div class="x_panel">
     <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
 
             <div class="x_title">
-                <h2>Nuevo ejecutivo <small></small></h2>
+                <h2>Nuevo Ejecutivo <small></small></h2>
+
                 <ul class="nav navbar-right panel_toolbox">
 
                 </ul>
@@ -50,9 +51,11 @@
 
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Ejecutivo</label>
-                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                <select name="AreaComercial" class="form-control select2" required style="width: 100%">
+
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Área Comercial</label>
+                            <div class="col-lg-6 col-md-9 col-sm-12 col-xs-12">
+                                <select name="AreaComercial" class="form-control select2" style="width: 100%">
+
                                     @foreach ($area_comercial as $obj)
                                     <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
                                     @endforeach

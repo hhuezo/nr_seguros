@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\catalogo;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AreaComercialFormRequest;
 use App\Models\catalogo\AreaComercial;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -16,7 +17,7 @@ class AreaComercialController extends Controller
      */
     public function index()
     {
-        $area_comercial = AreaComercial::all();
+        $area_comercial = AreaComercial::where('Activo',1)->get();
         return view('catalogo.area_comercial.index', compact('area_comercial'));
     }
 
@@ -36,14 +37,14 @@ class AreaComercialController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(AreaComercialFormRequest $request)
     {
         $area_comercial = new AreaComercial();
         $area_comercial->Nombre = $request->Nombre;
         $area_comercial->Activo = 1;
         $area_comercial->save();
 
-        
+
         alert()->success('El registro ha sido creado correctamente');
         return Redirect::to('catalogo/area_comercial/create');
 
@@ -79,14 +80,14 @@ class AreaComercialController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(AreaComercialFormRequest $request, $id)
     {
         $area_comercial = AreaComercial::findOrFail($id);
         $area_comercial->Nombre = $request->Nombre;
         $area_comercial->update();
 
-        
-        alert()->success('El registro ha sido creado correctamente');
+
+        alert()->success('El registro ha sido modificado correctamente');
         return Redirect::to('catalogo/area_comercial');
     }
 

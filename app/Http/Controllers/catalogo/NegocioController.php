@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\catalogo;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\Cliente;
+use App\Models\catalogo\ClienteEstado;
 use App\Models\catalogo\Ejecutivo;
 use App\Models\catalogo\EstadoVenta;
 use App\Models\catalogo\FormaPago;
@@ -28,19 +28,20 @@ use App\Models\catalogo\TipoCartera;
 use App\Models\catalogo\TipoNegocio;
 use App\Models\catalogo\TipoPoliza;
 use Carbon\Carbon;
-use GuzzleHttp\Client;
+use Illuminate\Http\Request;
 
 class NegocioController extends Controller
 {
 
     public function index()
     {
-        $negocios = Negocio::get();
+        $negocios = Negocio::where('Activo', 1)->get();
         return view('catalogo.negocio.index', compact('negocios'));
     }
 
     public function create()
     {
+        session(['tab1' => 1]);
         $aseguradoras = Aseguradora::where('Activo', '=', 1)->get();
         $tipos_poliza = TipoPoliza::where('Activo', '=', 1)->get();
         $tipos_negocio = TipoNegocio::where('Activo', '=', 1)->get();
@@ -52,79 +53,78 @@ class NegocioController extends Controller
         $cobertura = NegocioVideDeudaCobertura::where('Activo', 1)->get();
         $tipo_cartera = TipoCartera::where('Activo', 1)->get();
         $parentesco = Parentesco::where('Activo', 1)->get();
-        return view('catalogo.negocio.create', compact('parentesco', 'tipo_cartera', 'cobertura', 'genero', 'forma_pago', 'aseguradoras', 'tipos_poliza', 'tipos_negocio', 'estados_venta', 'ejecutivos', 'necesidad_proteccion'));
+        $cliente_estado = ClienteEstado::get();
+
+        return view('catalogo.negocio.create', compact('cliente_estado', 'parentesco', 'tipo_cartera', 'cobertura', 'genero', 'forma_pago', 'aseguradoras', 'tipos_poliza', 'tipos_negocio', 'estados_venta', 'ejecutivos', 'necesidad_proteccion'));
     }
 
     public function store(Request $request)
     {
         $time = Carbon::now();
         //diferenciar al tipo de cliente
-        if ($request->TipoPersona == 1) {  //cliente natural
+        if ($request->TipoPersona == 1) { //cliente natural
             $cliente = Cliente::where('Dui', $request->Dui)->first();
-            $estado = 2;
         } else {
             $cliente = Cliente::where('Nit', $request->NitEmpresa)->first();
-            $estado = 2;
         }
         if (!$cliente) {
             $cliente = new Cliente();
             $cliente->TipoPersona = $request->TipoPersona;
             if ($request->TipoPersona == 1) {
                 $cliente->Dui = $request->Dui;
-                $cliente->Nit = $request->Nit;
             } else {
-                $cliente->Dui = $request->DuiRepresentante;
                 $cliente->Nit = $request->NitEmpresas;
             }
-            $cliente->Nombre = $request->Nombre;
+            $cliente->Nombre = $request->NombreCliente;
             $cliente->FormaPago = $request->FormaPago;
+            $cliente->Estado = 1;
+            $cliente->CorreoPrincipal=$request->Email;
+
             $cliente->save();
-            $estado = 1;
         }
         $negocio = new Negocio();
         $negocio->NecesidadProteccion = $request->NecesidadProteccion;
         $negocio->InicioVigencia = $request->InicioVigencia;
-        $negocio->TipoPlan = $request->TipoPlan;
+        $negocio->TipoNecesidad = $request->TipoNecesidad;
         $negocio->Asegurado = $cliente->Id;
         $negocio->FechaVenta = $request->FechaVenta;
         $negocio->TipoPoliza = $request->TipoPoliza;
-        $negocio->InicioVigencia = $request->InicioVigencia;
         $negocio->SumaAsegurada = $request->SumaAsegurada;
         $negocio->Prima = $request->Prima;
         $negocio->Observacion = $request->Observacion;
         $negocio->TipoNegocio = $request->TipoNegocio;
-
         $negocio->NumCuotas = $request->NumCuotas;
-
-        if ($estado == 1) {
-            $negocio->EstadoVenta = 1;  //nuevo
-        } else {
-            $negocio->EstadoVenta = 2;  //reingreso
-        }
+        $negocio->EstadoVenta = $request->EstadoVenta;
         $negocio->Ejecutivo = $request->Ejecutivo;
         $negocio->FechaIngreso = $time->toDateTimeString();
         $negocio->UsuarioIngreso = auth()->user()->id;
+        $negocio->NumeroPoliza=$request->NumeroPoliza;
+        $negocio->PlanTipoProducto=$request->PlanTipoProducto;
+        $negocio->DepartamentoAtiende=$request->DepartamentoAtiende;
+        $negocio->MetodoPago=$request->MetodoPago;
         $negocio->save();
 
+        $string = $request->ModalAseguradora;
+        $id = explode(",", $string);
 
         if ($request->NecesidadProteccion == 1) { //auto
-            NegocioAuto::whereIn('Id', [$request->Aseguradoras])->update(['Negocio', $negocio->Id]);
-        } else if ($request->NecesidadProteccion == 2) {  //incendio 
-            NegocioIncendio::whereIn('Id', [$request->Aseguradoras])->update(['Negocio', $negocio->Id]);
+            NegocioAuto::whereIn('Id', $id)->update(['Negocio', $negocio->Id]);
+        } else if ($request->NecesidadProteccion == 2) { //incendio
+            NegocioIncendio::whereIn('Id', $id)->update(['Negocio', $negocio->Id]);
         } else if ($request->NecesidadProteccion == 3) {
-            NegocioDineroValores::whereIn('Id', [$request->Aseguradoras])->update(['Negocio', $negocio->Id]);
+            NegocioDineroValores::whereIn('Id', $id)->update(['Negocio', $negocio->Id]);
         } else if ($request->NecesidadProteccion == 4 || $request->NecesidadProteccion == 6) {
-            NegocioOtros::whereIn('Id', [$request->Aseguradoras])->update(['Negocio', $negocio->Id]);
+            NegocioOtros::whereIn('Id', $id)->update(['Negocio', $negocio->Id]);
         } else if ($request->NecesidadProteccion == 7) {
-            NegocioEquipoElectronico::whereIn('Id', [$request->Aseguradoras])->update(['Negocio', $negocio->Id]);
+            NegocioEquipoElectronico::whereIn('Id', $id)->update(['Negocio', $negocio->Id]);
         } else if ($request->NecesidadProteccion == 8) {
-            NegocioRoboHurto::whereIn('Id', [$request->Aseguradoras])->update(['Negocio', $negocio->Id]);
+            NegocioRoboHurto::whereIn('Id', $id)->update(['Negocio', $negocio->Id]);
         } else if ($request->NecesidadProteccion == 10) {
-            NegocioGastosMedicos::whereIn('Id', [$request->Aseguradoras])->update(['Negocio', $negocio->Id]);
+            NegocioGastosMedicos::whereIn('Id', $id)->update(['Negocio', $negocio->Id]);
         } else if ($request->NecesidadProteccion == 11) {
-            NegocioVida::whereIn('Id', [$request->Aseguradoras])->update(['Negocio', $negocio->Id]);
+            NegocioVida::whereIn('Id', $id)->update(['Negocio', $negocio->Id]);
         } else if ($request->NecesidadProteccion == 13) {
-            NegocioAccidente::whereIn('Id', [$request->Aseguradoras])->update(['Negocio', $negocio->Id]);
+            NegocioAccidente::whereIn('Id', $id)->update(['Negocio', $negocio->Id]);
         } else if ($request->NecesidadProteccion == 7) {
 
         }
@@ -135,7 +135,7 @@ class NegocioController extends Controller
 
     public function store_aseguradora(Request $request)
     {
-        //dividir los campos por tablas 
+        //dividir los campos por tablas
         if ($request->NecesidadProteccion == 1) {
             $auto = new NegocioAuto();
             $auto->Aseguradora = $request->Aseguradora;
@@ -246,7 +246,7 @@ class NegocioController extends Controller
 
                 $gastos->Prima = $request->Prima;
                 $gastos->save();
-                //guarda los familiares de gastos medicos 
+                //guarda los familiares de gastos medicos
             }
             return $gastos->Id;
 
@@ -299,7 +299,7 @@ class NegocioController extends Controller
             return $videuda->Id;
         }
     }
-    
+
     public function get_aseguradoras(Request $request)
     {
         $aseguradora = array();
@@ -311,7 +311,7 @@ class NegocioController extends Controller
             foreach ($auto as $obj) {
                 array_push($aseguradora, array(
                     'Aseguradora' => $obj->aseguradora->Nombre, 'NecesidadProteccion' => 'Auto', 'SumaAsegurada' => $obj->SumaAsegurada,
-                    'Prima' => $obj->Prima ,'Id' => $obj->Id
+                    'Prima' => $obj->Prima, 'Id' => $obj->Id,
                 ));
             }
         } else {
@@ -320,7 +320,7 @@ class NegocioController extends Controller
                 foreach ($incendio as $obj) {
                     array_push($aseguradora, array(
                         'Aseguradora' => $obj->aseguradora->Nombre, 'NecesidadProteccion' => 'Incendio', 'SumaAsegurada' => $obj->SumaAsegurada,
-                        'Prima' => $obj->Prima ,'Id' => $obj->Id
+                        'Prima' => $obj->Prima, 'Id' => $obj->Id,
                     ));
                 }
             } else {
@@ -329,7 +329,7 @@ class NegocioController extends Controller
                     foreach ($dinero as $obj) {
                         array_push($aseguradora, array(
                             'Aseguradora' => $obj->aseguradora->Nombre, 'NecesidadProteccion' => 'Dinero y Valores', 'SumaAsegurada' => $obj->SumaAsegurada,
-                            'Prima' => $obj->Prima ,'Id' => $obj->Id
+                            'Prima' => $obj->Prima, 'Id' => $obj->Id,
                         ));
                     }
                 } else {
@@ -338,7 +338,7 @@ class NegocioController extends Controller
                         foreach ($otros as $obj) {
                             array_push($aseguradora, array(
                                 'Aseguradora' => $obj->aseguradora->Nombre, 'NecesidadProteccion' => 'Otros', 'SumaAsegurada' => $obj->SumaAsegurada,
-                                'Prima' => $obj->Prima ,'Id' => $obj->Id
+                                'Prima' => $obj->Prima, 'Id' => $obj->Id,
                             ));
                         }
                     } else {
@@ -347,7 +347,7 @@ class NegocioController extends Controller
                             foreach ($equipo as $obj) {
                                 array_push($aseguradora, array(
                                     'Aseguradora' => $obj->aseguradora->Nombre, 'NecesidadProteccion' => 'Equipo Electronico', 'SumaAsegurada' => $obj->SumaAsegurada,
-                                    'Prima' => $obj->Prima ,'Id' => $obj->Id
+                                    'Prima' => $obj->Prima, 'Id' => $obj->Id,
                                 ));
                             }
                         } else {
@@ -356,7 +356,7 @@ class NegocioController extends Controller
                                 foreach ($robo as $obj) {
                                     array_push($aseguradora, array(
                                         'Aseguradora' => $obj->aseguradora->Nombre, 'NecesidadProteccion' => 'Robo y Hurto', 'SumaAsegurada' => $obj->SumaAsegurada,
-                                        'Prima' => $obj->Prima ,'Id' => $obj->Id
+                                        'Prima' => $obj->Prima, 'Id' => $obj->Id,
                                     ));
                                 }
                             } else {
@@ -365,7 +365,7 @@ class NegocioController extends Controller
                                     foreach ($accidente as $obj) {
                                         array_push($aseguradora, array(
                                             'Aseguradora' => $obj->aseguradora->Nombre, 'NecesidadProteccion' => 'Accidentes Personales', 'SumaAsegurada' => $obj->SumaAsegurada,
-                                            'Prima' => $obj->Prima ,'Id' => $obj->Id
+                                            'Prima' => $obj->Prima, 'Id' => $obj->Id,
                                         ));
                                     }
                                 } else {
@@ -374,7 +374,7 @@ class NegocioController extends Controller
                                         foreach ($gastos as $obj) {
                                             array_push($aseguradora, array(
                                                 'Aseguradora' => $obj->aseguradora->Nombre, 'NecesidadProteccion' => 'Gastos Medicos', 'SumaAsegurada' => $obj->SumaAsegurada,
-                                                'Prima' => $obj->Prima ,'Id' => $obj->Id
+                                                'Prima' => $obj->Prima, 'Id' => $obj->Id,
                                             ));
                                         }
                                     } else {
@@ -383,7 +383,7 @@ class NegocioController extends Controller
                                             foreach ($vida as $obj) {
                                                 array_push($aseguradora, array(
                                                     'Aseguradora' => $obj->aseguradora->Nombre, 'NecesidadProteccion' => 'Vida', 'SumaAsegurada' => $obj->SumaAsegurada,
-                                                    'Prima' => $obj->Prima ,'Id' => $obj->Id
+                                                    'Prima' => $obj->Prima, 'Id' => $obj->Id,
                                                 ));
                                             }
                                         } else {
@@ -392,7 +392,7 @@ class NegocioController extends Controller
                                                 foreach ($videuda as $obj) {
                                                     array_push($aseguradora, array(
                                                         'Aseguradora' => $obj->aseguradora->Nombre, 'NecesidadProteccion' => 'Vida Deuda', 'SumaAsegurada' => $obj->SumaAsegurada,
-                                                        'Prima' => $obj->Prima ,'Id' => $obj->Id
+                                                        'Prima' => $obj->Prima, 'Id' => $obj->Id,
                                                     ));
                                                 }
                                             }
@@ -410,7 +410,6 @@ class NegocioController extends Controller
         //return view('polizas.deuda.requisitos', compact('requisitos'));
 
     }
-
 
     public function show($id)
     {
@@ -477,114 +476,122 @@ class NegocioController extends Controller
             $cliente = Cliente::where('Nit', $request->Nit)->first();
         }
         if ($cliente) {
-?>
+            ?>
             <script>
                 document.getElementById('Dui').style.backgroundColor = '#ff3f33';
                 document.getElementById('Dui').style.color = '#ffffff';
-                document.getElementById('Nombre').value = <?php echo json_encode($cliente->Nombre); ?>;
-                document.getElementById('FormaPago').value = <?php echo json_encode($cliente->formas_pago); ?>;
+                document.getElementById('NitEmpresa').style.backgroundColor = '#ff3f33';
+                document.getElementById('NitEmpresa').style.color = '#ffffff';
+                document.getElementById('NombreCliente').value = <?php echo json_encode($cliente->Nombre); ?>;
+                document.getElementById('Email').value = <?php echo json_encode($cliente->CorreoPrincipal); ?>;
+
+                //document.getElementById('FormaPago').value = <?php echo json_encode($cliente->formas_pago); ?>;
             </script>
         <?php
 
         } else {
-        ?>
+            ?>
             <script>
                 document.getElementById('Dui').style.backgroundColor = '';
                 document.getElementById('Dui').style.color = '';
-                document.getElementById('Nombre').value = "";
-                document.getElementById('FormaPago').value = "";
+                document.getElementById('NitEmpresa').style.backgroundColor = '';
+                document.getElementById('NitEmpresa').style.color = '';
+                document.getElementById('NombreCliente').value = "";
+                document.getElementById('Email').value = "";
+
+               // document.getElementById('FormaPago').value = "";
             </script>
 <?php
-        }
+}
         /*
-        $programacion = Programacion::with('formaPago')->where('Referencia', '=', $request->get('Referencia'))->first();
-        if ($programacion) {
-            if ($programacion->Estado == 5) { //abierto
-                $cerrada = 'NO';
-                $liquidada = 'NO';
-            } elseif ($programacion->Estado == 6) {   //cerrada
-                $cerrada = 'SI';
-                $liquidada = 'NO';
-            } else {    //liquidada
-                $cerrada = 'SI';
-                $liquidada = 'SI';
-            }
-            switch ($programacion->Cetia) {
-                case (2):       // santa ana
-                    $SiglasUfi = 'LVSA';
-                    break;
-                case (4):     //paracentral
-                    $SiglasUfi = 'LVSP';
-                    break;
-                case (5):        //usulutan
-                    $SiglasUfi = 'LVUSU';
-                    break;
-                case (6):    //san miguel
-                    $SiglasUfi = 'LVSM';
-                    break;
-                default:      //oficina central o cetia II
-                    $SiglasUfi = 'LVRCO';
-            }
+    $programacion = Programacion::with('formaPago')->where('Referencia', '=', $request->get('Referencia'))->first();
+    if ($programacion) {
+    if ($programacion->Estado == 5) { //abierto
+    $cerrada = 'NO';
+    $liquidada = 'NO';
+    } elseif ($programacion->Estado == 6) {   //cerrada
+    $cerrada = 'SI';
+    $liquidada = 'NO';
+    } else {    //liquidada
+    $cerrada = 'SI';
+    $liquidada = 'SI';
+    }
+    switch ($programacion->Cetia) {
+    case (2):       // santa ana
+    $SiglasUfi = 'LVSA';
+    break;
+    case (4):     //paracentral
+    $SiglasUfi = 'LVSP';
+    break;
+    case (5):        //usulutan
+    $SiglasUfi = 'LVUSU';
+    break;
+    case (6):    //san miguel
+    $SiglasUfi = 'LVSM';
+    break;
+    default:      //oficina central o cetia II
+    $SiglasUfi = 'LVRCO';
+    }
 
-            if ($programacion->Reintegrada == 1) {
-                $reintegrada = 'SI';
-            } else {
-                $reintegrada = 'NO';
-            }
+    if ($programacion->Reintegrada == 1) {
+    $reintegrada = 'SI';
+    } else {
+    $reintegrada = 'NO';
+    }
 
-            if (!$programacion->FechaCheque) {
-                $programacion->FechaCheque = '';
-            }
+    if (!$programacion->FechaCheque) {
+    $programacion->FechaCheque = '';
+    }
 
-            if (!$programacion->FechaRemesa) {
-                $programacion->FechaRemesa = '';
-            }
-            if (!$programacion->FechaRemesa1) {
-                $programacion->FechaRemesa1 = '';
-            }
-            if (!$programacion->FechaContable) {
-                if ($programacion->Cetia == 1) {
-                    //oficina central
-                    $periodoContable = PeriodoContable::where('Cetia', '=', 1)->where('Activo', '=', 1)->first();
-                    $programacion->FechaContable = $periodoContable->Fecha;
-                } else {
-                    //cetias
-                    $periodoContable = PeriodoContable::where('Cetia', '=', 2)->where('Activo', '=', 1)->first();
-                    $programacion->FechaContable = $periodoContable->Fecha;
-                }
-            }
-            $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    if (!$programacion->FechaRemesa) {
+    $programacion->FechaRemesa = '';
+    }
+    if (!$programacion->FechaRemesa1) {
+    $programacion->FechaRemesa1 = '';
+    }
+    if (!$programacion->FechaContable) {
+    if ($programacion->Cetia == 1) {
+    //oficina central
+    $periodoContable = PeriodoContable::where('Cetia', '=', 1)->where('Activo', '=', 1)->first();
+    $programacion->FechaContable = $periodoContable->Fecha;
+    } else {
+    //cetias
+    $periodoContable = PeriodoContable::where('Cetia', '=', 2)->where('Activo', '=', 1)->first();
+    $programacion->FechaContable = $periodoContable->Fecha;
+    }
+    }
+    $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
-            //    dd($programacion);
+    //    dd($programacion);
 
-?>
-            <script>
-                document.getElementById('cerrada').value = '<?php echo $cerrada; ?>';
-                document.getElementById('FormaPagoSiglas').value = '<?php echo $programacion->formaPago->Codigo; ?>';
-                document.getElementById('FormaPago').value = '<?php echo $programacion->formaPago->Nombre; ?>';
-                document.getElementById('Cetia').value = '<?php echo $programacion->cetia->Nombre; ?>';
-                document.getElementById('Periodo').value = 'del <?php echo date('d/m/Y', strtotime($programacion->FechaInicio)) . ' al ' . date('d/m/Y', strtotime($programacion->FechaFinal)); ?>';
-                document.getElementById('SiglasUfi').value = '<?php echo $SiglasUfi; ?>-';
-                document.getElementById('Axo').value = '-<?php echo date('Y'); ?>';
-                document.getElementById('ReferenciaUfi').value = '<?php echo $programacion->ReferenciaUfi; ?>';
-                document.getElementById('NumeroCheque').value = '<?php echo $programacion->NoCheque; ?>';
-                document.getElementById('NoFolio').value = '<?php echo $programacion->NoFolio; ?>';
-                document.getElementById('CantidadRemesa').value = '<?php echo $programacion->CantidadRemesa; ?>';
-                document.getElementById('NoFolio1').value = '<?php echo $programacion->NoFolio1; ?>';
-                document.getElementById('CantidadRemesa1').value = '<?php echo $programacion->CantidadRemesa1; ?>';
-                document.getElementById('Liquidada').value = '<?php echo $liquidada; ?>';
-                document.getElementById('Reintegrada').value = '<?php echo $reintegrada; ?>';
-                document.getElementById('MesPeriodo').value = '<?php echo $meses[date('n', strtotime($programacion->FechaContable))]; ?>';
-                document.getElementById('AxoPeriodo').value = '<?php echo date('Y', strtotime($programacion->FechaContable)); ?>';
-                document.getElementById('FechaCheque').value = '<?php echo date('d/m/Y', strtotime($programacion->FechaCheque)); ?>';
-                document.getElementById('FechaRemesa1').value = '<?php echo date('d/m/Y', strtotime($programacion->FechaRemesa)); ?>';
-                document.getElementById('FechaRemesa').value = '<?php echo date('d/m/Y', strtotime($programacion->FechaRemesa1)); ?>';
-            </script>
-<?php
-        } else {
+    ?>
+    <script>
+    document.getElementById('cerrada').value = '<?php echo $cerrada; ?>';
+    document.getElementById('FormaPagoSiglas').value = '<?php echo $programacion->formaPago->Codigo; ?>';
+    document.getElementById('FormaPago').value = '<?php echo $programacion->formaPago->Nombre; ?>';
+    document.getElementById('Cetia').value = '<?php echo $programacion->cetia->Nombre; ?>';
+    document.getElementById('Periodo').value = 'del <?php echo date('d/m/Y', strtotime($programacion->FechaInicio)) . ' al ' . date('d/m/Y', strtotime($programacion->FechaFinal)); ?>';
+    document.getElementById('SiglasUfi').value = '<?php echo $SiglasUfi; ?>-';
+    document.getElementById('Axo').value = '-<?php echo date('Y'); ?>';
+    document.getElementById('ReferenciaUfi').value = '<?php echo $programacion->ReferenciaUfi; ?>';
+    document.getElementById('NumeroCheque').value = '<?php echo $programacion->NoCheque; ?>';
+    document.getElementById('NoFolio').value = '<?php echo $programacion->NoFolio; ?>';
+    document.getElementById('CantidadRemesa').value = '<?php echo $programacion->CantidadRemesa; ?>';
+    document.getElementById('NoFolio1').value = '<?php echo $programacion->NoFolio1; ?>';
+    document.getElementById('CantidadRemesa1').value = '<?php echo $programacion->CantidadRemesa1; ?>';
+    document.getElementById('Liquidada').value = '<?php echo $liquidada; ?>';
+    document.getElementById('Reintegrada').value = '<?php echo $reintegrada; ?>';
+    document.getElementById('MesPeriodo').value = '<?php echo $meses[date('n', strtotime($programacion->FechaContable))]; ?>';
+    document.getElementById('AxoPeriodo').value = '<?php echo date('Y', strtotime($programacion->FechaContable)); ?>';
+    document.getElementById('FechaCheque').value = '<?php echo date('d/m/Y', strtotime($programacion->FechaCheque)); ?>';
+    document.getElementById('FechaRemesa1').value = '<?php echo date('d/m/Y', strtotime($programacion->FechaRemesa)); ?>';
+    document.getElementById('FechaRemesa').value = '<?php echo date('d/m/Y', strtotime($programacion->FechaRemesa1)); ?>';
+    </script>
+    <?php
+    } else {
 
-            return response()->json(['mensaje' => 'la referencia ufi no existe', 'title' => 'Error!', 'icon' => 'error', 'showConfirmButton' => 'true']);
-        }
-        */
+    return response()->json(['mensaje' => 'la referencia ufi no existe', 'title' => 'Error!', 'icon' => 'error', 'showConfirmButton' => 'true']);
+    }
+     */
     }
 }

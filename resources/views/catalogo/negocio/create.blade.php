@@ -21,13 +21,12 @@
                         </ul>
                     </div>
                 @endif
-
-
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="" role="tabpanel" data-example-id="togglable-tabs">
                         <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-                            <li role="presentation" class="{{ session('tab1') == 1 ? 'active' : '' }}">
-                                <a href="#cliente" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Datos Negocio</a>
+                            <li role="presentation" class="{{ session('tab1') == 1 ? 'active' : '' }}"><a href="#cliente"
+                                    id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Datos Negocio</a>
+
                             </li>
                             <li role="presentation" class="{{ session('tab1') == 2 ? 'active' : '' }}"><a href="#redes"
                                     role="tab" id="profile-necesidad" data-toggle="tab"
@@ -52,73 +51,102 @@
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="row">
                                                 <div class="col-lg-4">
-                                                    <label for="BuscarCliente" class="form-label">Código Cliente</label>
-                                                    <input type="text" class="form-control" id="NombreCliente"
-                                                        name="NombreCliente" placeholder="Ingrese codigo de cliente">
+                                                    <label for="IdCliente" class="form-label">Código Cliente</label>
+                                                    <input type="text" class="form-control" name="IdCliente"
+                                                        id="IdCliente" placeholder="Ingrese codigo de cliente">
                                                 </div><!-- /.col-lg-6 -->
                                                 <div class="col-md-4">
-                                                    <label for="Nombre" class="form-label">Nombre</label>
-                                                    <input class="form-control" type="text" value="" id="Nombre"
-                                                        name="Nombre">
+                                                    <label for="NombreCliente" class="form-label">Nombre del cliente</label>
+                                                    <input class="form-control" type="text" value=""
+                                                        name="NombreCliente" id="NombreCliente">
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <label for="Nombre" class="form-label">Tipo Cliente</label>
+                                                    <label for="TipoPersona" class="form-label">Tipo Cliente</label>
                                                     <select name="TipoPersona" id="TipoPersona" class="form-control">
                                                         <option value="" selected disabled>Seleccione ...</option>
                                                         <option value="1">Natural</option>
-                                                        <option value="2">Juridica</option>
+                                                        <option value="2">Juridico</option>
                                                     </select>
                                                 </div>
 
                                             </div>
                                             <div class="row" style="margin-top: 12px!important;">
+
                                                 <div class="col-md-4">
-                                                    <label for="Estado" class="form-label">Estado Cliente</label>
-                                                    <select name="EstadoCliente" id="EstadoCliente"
+                                                    <label for="Dui" class="form-label">DUI </label>
+                                                    <input type="text" name="Dui" id="Dui"
+                                                        value="{{ old('Dui') }}" data-inputmask="'mask': ['99999999-9']"
+                                                        onkeyup="mostrar();" class="form-control" required
+                                                        autofocus="true">
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <label for="NitEmpresa" class="form-label">NIT Empresa </label>
+                                                    <input type="text" name="NitEmpresa" id="NitEmpresa"
+                                                        value="{{ old('NitEmpresa') }}"
+                                                        data-inputmask="'mask': ['9999-999999-999-9']" onkeyup="mostrar();"  class="form-control"
+                                                        required autofocus="true">
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="Email" class="form-label">Email</label>
+                                                    <input type="email" class="form-control" name="Email"
+                                                        id="Email">
+                                                </div>
+                                            </div>
+                                            <div class="row" style="margin-top: 12px!important;">
+                                                <div class="col-md-4">
+                                                    <label for="EstadoCliente" class="form-label">Estado Cliente</label>
+                                                    <select disabled name="EstadoCliente" id="EstadoCliente"
                                                         class="form-control select2">
                                                         <option value="" selected disabled> Seleccione...</option>
-                                                        <option value="1">Pospecto</option>
-                                                        <option value="2">Cliente</option>
+                                                        @foreach ($cliente_estado as $obj)
+                                                            <option value="{{ $obj->Id }}">{{ $obj->Nombre }}
+                                                            </option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label for="Ejecutivo" class="form-label">Ejecutivo</label>
-                                                    <select name="Ejecutivo" class="form-control select2"
+                                                    <select name="Ejecutivo" id="Ejecutivo" class="form-control select2"
                                                         style="width: 100%" required>
                                                         <option value="" selected disabled>Seleccione...</option>
                                                         @foreach ($ejecutivos as $obj)
-                                                            <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                                            <option value="{{ $obj->Id }}">{{ $obj->Nombre }}
+                                                            </option>
                                                         @endforeach
                                                     </select>
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label for="EstadoVenta" class="form-label">Estado Venta</label>
-                                                    <select name="EstadoVenta" class="form-control select2"
-                                                        style="width: 100%" required>
+                                                    <select name="EstadoVenta" id="EstadoVenta"
+                                                        class="form-control select2" style="width: 100%" required>
                                                         <option value="" disabled selected>Seleccione...</option>
                                                         @foreach ($estados_venta as $obj)
-                                                            <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                                            <option value="{{ $obj->Id }}">{{ $obj->Nombre }}
+                                                            </option>
                                                         @endforeach
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="row" style="padding-top: 15px !important;">
                                                 <div class="col-md-4">
-                                                    <label for="Ejecutivo" class="form-label">Ramo</label>
-                                                    <select name="Ejecutivo" class="form-control select2"
-                                                        style="width: 100%" required>
+                                                    <label for="TipoPoliza" class="form-label">Ramo</label>
+                                                    <select name="TipoPoliza" id="TipoPoliza"
+                                                        class="form-control select2" style="width: 100%" required>
                                                         <option value="" selected disabled>Seleccione...</option>
-                                                        <option value="">Daños</option>
-                                                        <option value="">Vida</option>
+                                                        @foreach ($tipos_poliza as $obj)
+                                                            <option value="{{ $obj->Id }}">{{ $obj->Nombre }}
+                                                            </option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <label for="Nombre" class="form-label">Número de póliza</label>
+                                                    <label for="NumeroPoliza" class="form-label">Número de póliza</label>
                                                     <input class="form-control" type="text" value=""
-                                                        id="Nombre" name="Nombre">
+                                                        name="NumeroPoliza" id="NumeroPoliza">
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <label for="Nombre" class="form-label">Necesidad de
+                                                    <label for="NecesidadProteccion" class="form-label">Necesidad de
                                                         protección</label>
                                                     <select name="NecesidadProteccion" id="NecesidadProteccion"
                                                         class="form-control select2" style="width: 100%;" required>
@@ -132,30 +160,30 @@
                                             </div>
                                             <div class="row" style="padding-top: 15px !important;">
                                                 <div class="col-md-4">
-                                                    <label for="Estado" class="form-label">Tipo de Necesidad (consultar
+                                                    <label for="TipoNecesidad" class="form-label">Tipo de Necesidad
+                                                        (consultar
                                                         nombre)</label>
-                                                    <select name="TipoPlan" id="TipoPlan" class="form-control select2"
-                                                        style="width: 100%" required>
+                                                    <select name="TipoNecesidad" id="TipoNecesidad"
+                                                        class="form-control select2" style="width: 100%" required>
                                                         <option value="" selected disabled>Seleccione...</option>
-                                                        <option value="">Individual</option>
-                                                        <option value="">Colectivo</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <label for="SumaAsegurada" class="form-label">Plan / Tipo de
+                                                    <label for="PlanTipoProducto" class="form-label">Plan / Tipo de
                                                         producto</label>
-                                                    <input type="text" class="form-control" id="planProducto"
-                                                        name="planProducto" placeholder="Ingrese el plan">
+                                                    <input type="text" class="form-control" id="PlanTipoProducto"
+                                                        name="PlanTipoProducto" placeholder="Ingrese el plan">
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <label for="Estado" class="form-label">Tipo de negocio</label>
+                                                    <label for="TipoNegocio" class="form-label">Tipo de negocio</label>
                                                     <select name="TipoNegocio" id="TipoNegocio"
                                                         class="form-control select2" style="width: 100%" required>
                                                         <option value="" selected disabled>Seleccione...</option>
                                                         <option value="">Nuevo</option>
-                                                        <option value="">Aumento Suma</option>
-                                                        <option value="">Aumento Tarifa</option>
-                                                        <option value="">Incorporación</option>
+                                                        @foreach ($tipos_negocio as $obj)
+                                                            <option value="{{ $obj->Id }}">{{ $obj->Nombre }}
+                                                            </option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
 
@@ -168,14 +196,23 @@
                                                     <select name="DepartamentoAtiende" id="DepartamentoAtiende"
                                                         class="form-control select2" style="width: 100%" required>
                                                         <option value="" selected disabled>Seleccione...</option>
-                                                        <option value="">OPS AUTOMOTOR</option>
-                                                        <option value="">OPS DAÑOS</option>
-                                                        <option value="">OPS VIDA</option>
+                                                        <option value="1">OPS AUTOMOTOR</option>
+                                                        <option value="2">OPS DAÑOS</option>
+                                                        <option value="3">OPS VIDA</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <label for="DepartamentoAtiende" class="form-label">Método de
+                                                    <label for="MetodoPago" class="form-label">Método de
                                                         pago</label>
+                                                    <select name="MetodoPago" id="MetodoPago"
+                                                        class="form-control select2" style="width: 100%" required>
+                                                        <option value="" selected disabled>Seleccione...</option>
+
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="FormaPago" class="form-label">Forma de
+                                                        Pago</label>
                                                     <select name="FormaPago" id="FormaPago" class="form-control select2"
                                                         style="width: 100%" required>
                                                         <option value="" selected disabled>Seleccione...</option>
@@ -183,18 +220,6 @@
                                                             <option value="{{ $obj->Id }}">{{ $obj->Nombre }}
                                                             </option>
                                                         @endforeach
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <label for="DepartamentoAtiende" class="form-label">Forma de
-                                                        Pago</label>
-                                                    <select name="DepartamentoAtiende" id="DepartamentoAtiende"
-                                                        class="form-control select2" style="width: 100%" required>
-                                                        <option value="" selected disabled>Seleccione...</option>
-                                                        <option value="">Anual</option>
-                                                        <option value="">Semestral</option>
-                                                        <option value="">Trimestral</option>
-                                                        <option value="">Mensual</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -205,21 +230,17 @@
                                                         class="form-control" name="FechaVenta" id="FechaVenta">
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <label for="FechaVenta" class="form-label">Inicio Vigencia</label>
+                                                    <label for="InicioVigencia" class="form-label">Inicio Vigencia</label>
                                                     <input type="date" pattern="\d{2}\s\w+\s\d{4}"
-                                                        class="form-control" name="FechaVenta" id="FechaVenta">
+                                                        class="form-control" name="InicioVigencia" id="InicioVigencia">
                                                 </div>
-                                                <div class="col-md-4">
-                                                    <label for="FechaVenta" class="form-label">Email</label>
-                                                    <input type="email" class="form-control" name="Email"
-                                                        id="Email">
-                                                </div>
+
                                             </div>
                                             <div class="row" style="padding-top: 15px !important;">
                                                 <div class="col-md-12">
-                                                    <label for="FechaVenta" class="form-label">Observaciones o
+                                                    <label for="Observacion" class="form-label">Observaciones o
                                                         anotaciones</label>
-                                                    <textarea name="Observacion" rows="3" class="form-control"></textarea>
+                                                    <textarea name="Observacion" id="Observacion" rows="3" class="form-control"></textarea>
 
                                                 </div>
                                             </div>
@@ -481,7 +502,7 @@
                             timer: 1500
                         })
                     } else {
-                        if (event.keyCode === 13) {
+
                             var Dui = document.getElementById('Dui').value;
                             var Nit = document.getElementById('NitEmpresa').value;
                             var tipoPersona = document.getElementById('TipoPersona').value;
@@ -497,16 +518,17 @@
                                 data: parametros,
                                 success: function(data) {
                                     console.log(data);
-                                    $('#Nombre').html(data);
-                                    var formaPagoData = JSON.parse(data);
+                                    $('#NombreCliente').html(data);
+                                    $('#Email').html(data);
+                                    //var formaPagoData = JSON.parse(data);
 
-                                    var _select = '';
+                                   /* var _select = '';
                                     _select += '<option value="' + formaPagoData.Id + '" selected>' + formaPagoData
                                         .Nombre + '</option>';
-                                    $("#FormaPago").html(_select);
+                                    $("#FormaPago").html(_select);*/
                                 }
                             });
-                        }
+
                     }
 
                 }
@@ -602,25 +624,25 @@
                     $("#TipoPersona").change(function() {
 
                         if (document.getElementById('TipoPersona').value == 2) {
-                            $('#DuiRepresentantes').show();
+                           // $('#DuiRepresentantes').show();
                             $('#Duis').hide();
                             $('#NitEmpresas').show();
                             $('#Nits').hide();
                             $('#Homolo').hide();
                             document.getElementById('Dui').removeAttribute('required');
-                            document.getElementById('DuiRepresentantes').setAttribute('required', true);
-                            document.getElementById('Nit').removeAttribute('required');
+                           // document.getElementById('DuiRepresentantes').setAttribute('required', true);
+                           // document.getElementById('Nit').removeAttribute('required');
                             document.getElementById('NitEmpresa').setAttribute('required', true);
                         } else {
-                            $('#DuiRepresentantes').hide();
+                            //$('#DuiRepresentantes').hide();
                             $('#Duis').show();
                             $('#NitEmpresas').hide();
                             $('#Nits').show();
                             $('#Homolo').show();
-                            document.getElementById('DuiRepresentantes').removeAttribute('required');
+                            //document.getElementById('DuiRepresentantes').removeAttribute('required');
                             document.getElementById('Dui').setAttribute('required', true);
                             document.getElementById('NitEmpresa').removeAttribute('required');
-                            document.getElementById('Nit').setAttribute('required', true);
+                            //document.getElementById('Nit').setAttribute('required', true);
                         }
                     })
                     $("#Homologado").change(function() {
@@ -629,7 +651,7 @@
                             $('#Nit').prop('readonly', true);
                             $("#Nit").removeAttr("data-inputmask");
                             $("#Nit").attr("data-inputmask", "{'mask': '99999999-9'}");
-                            document.getElementById('Nit').value = document.getElementById('Dui').value;
+                            //document.getElementById('Nit').value = document.getElementById('Dui').value;
 
                             // document.getElementById('Nit').removeAttribute("data-mask");
 

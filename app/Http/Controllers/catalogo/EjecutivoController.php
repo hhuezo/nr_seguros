@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\catalogo;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\EjecutivoFormRequest;
 use App\Models\catalogo\AreaComercial;
 use App\Models\catalogo\Ejecutivo;
 use Illuminate\Http\Request;
@@ -18,8 +19,10 @@ class EjecutivoController extends Controller
 
     public function index()
     {
+
+        $ejecutivo = Ejecutivo::with('areaComercial')->where('Activo',1)->get();
         $identificador_carrito = session('idCarrito');
-        $ejecutivo = Ejecutivo::where('Activo','=',1)->get();
+
         return view('catalogo.ejecutivo.index',compact('ejecutivo'));
     }
 
@@ -41,16 +44,8 @@ class EjecutivoController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(EjecutivoFormRequest $request)
     {
-        $messages = [
-            'Nombre.required' => 'El campo nombre es requerido',
-        ];
-
-        $request->validate([
-            'Nombre' => 'required',
-        ], $messages);
-
 
         $ejecutivo = new Ejecutivo();
         $ejecutivo->Nombre = $request->Nombre;
@@ -61,7 +56,7 @@ class EjecutivoController extends Controller
         $ejecutivo->save();
 
         alert()->success('El registro ha sido creado correctamente');
-        return Redirect::to('catalogo/ejecutivo/create');
+        return back();
     }
 
     /**
@@ -95,7 +90,7 @@ class EjecutivoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(EjecutivoFormRequest $request, $id)
     {
         $ejecutivo = Ejecutivo::findOrFail($id);
         $ejecutivo->Nombre = $request->Nombre;
@@ -106,7 +101,7 @@ class EjecutivoController extends Controller
 
         alert()->success('El registro ha sido modificado correctamente');
         return back();
-        
+
     }
 
     /**

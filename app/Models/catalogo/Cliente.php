@@ -64,8 +64,7 @@ class Cliente extends Model
         'MonederoEletronico',
         'CompraOtros',
         'Activo',
-        'Informacion',
-        'Municipio',
+        'Informacion',     
         'Distrito'
     ];
 

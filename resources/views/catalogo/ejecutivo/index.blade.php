@@ -21,10 +21,11 @@
                 <table id="datatable" class="table table-striped table-bordered">
                     <thead>
                         <tr>
-                            <th>Codigo</th>
+
                             <th>Nombre</th>
-                            <th>Telefono</th>
-                            <th>Area comercial</th>
+                            <th>Código</th>
+                            <th>Teléfono</th>
+                            <th>Area Comercial</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
@@ -34,11 +35,13 @@
                                 <td>{{ $obj->Codigo }}</td>
                                 <td>{{ $obj->Nombre }}</td>
                                 <td>{{ $obj->Telefono }}</td>
+
                                 @if ($obj->areaComercial)
                                     <td>{{ $obj->areaComercial->Nombre }}</td>
                                 @else
                                     <td></td>
                                 @endif
+
 
                                 <td align="center">
                                     @can('edit users')

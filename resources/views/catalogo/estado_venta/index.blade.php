@@ -22,7 +22,6 @@
                     <thead>
                         <tr>
                             <th>Nombre</th>
-                            <th>Activo</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
@@ -30,11 +29,6 @@
                         @foreach ($estado_venta as $obj)
                             <tr>
                                 <td>{{ $obj->Nombre }}</td>
-                                @if ($obj->Activo == 1)
-                                    <td align="center"><input type="checkbox" checked></td>
-                                @else
-                                    <td align="center"><input type="checkbox"></td>
-                                @endif
                                 <td align="center">
 
                                     @can('edit users')

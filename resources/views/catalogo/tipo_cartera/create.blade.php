@@ -39,9 +39,9 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo de Poliza</label>
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo de Póliza</label>
                             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                <select name="Poliza" class="form-control select2" id="TipoCobro" style="width: 100%" required>
+                                <select name="Poliza" class="form-control select2" id="Poliza" style="width: 100%" required>
                                     <option value="">Seleccione...</option>
                                     <option value="1">Vida</option>
                                     <option value="2">Deuda</option>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\catalogo;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\EstadoVentaFormRequest;
 use App\Models\catalogo\EstadoVenta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -16,7 +17,7 @@ class EstadoVentaController extends Controller
      */
     public function index()
     {
-        $estado_venta = EstadoVenta::all();
+        $estado_venta = EstadoVenta::where('Activo',1)->get();
         return view('catalogo.estado_venta.index', compact('estado_venta'));
     }
 
@@ -36,14 +37,14 @@ class EstadoVentaController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(EstadoVentaFormRequest $request)
     {
         $estado_venta = new EstadoVenta();
         $estado_venta->Nombre = $request->Nombre;
         $estado_venta->Activo = 1;
         $estado_venta->save();
 
-        
+
         alert()->success('El registro ha sido creado correctamente');
         return Redirect::to('catalogo/estado_venta/create');
 
@@ -79,14 +80,14 @@ class EstadoVentaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(EstadoVentaFormRequest $request, $id)
     {
         $estado_venta = EstadoVenta::findOrFail($id);
         $estado_venta->Nombre = $request->Nombre;
         $estado_venta->update();
 
-        
-        alert()->success('El registro ha sido creado correctamente');
+
+        alert()->success('El registro ha sido modificado correctamente');
         return Redirect::to('catalogo/estado_venta');
     }
 

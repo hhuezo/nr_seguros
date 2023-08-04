@@ -7,7 +7,9 @@
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
 
             <div class="x_title">
-                <h2>Modificar ejecutivo <small></small></h2>
+
+                <h2>Editar Ejecutivo <small></small></h2>
+
                 <ul class="nav navbar-right panel_toolbox">
 
                 </ul>
@@ -52,12 +54,12 @@
 
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Ejecutivo</label>
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Área Comercial</label>
                             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                 <select name="AreaComercial" class="form-control select2" style="width: 100%">
                                     @foreach ($area_comercial as $obj)
                                     <option value="{{$obj->Id}}" {{$ejecutivo->AreaComercial == $obj->Id ? 'selected ="selected"' : ''}}>
-                                    
+
                                         {{ $obj->Nombre }}
                                     </option>
                                     @endforeach
@@ -65,7 +67,7 @@
                             </div>
                         </div>
 
-                       
+
                     </div>
 
 

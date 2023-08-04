@@ -34,7 +34,7 @@
 
 
                         <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Valor</label>
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Porcentaje de Impuesto</label>
                             <div class="col-lg-6 col-md-9 col-sm-12 col-xs-12">
                                 <input class="form-control" name="Valor" type="text" value="{{$bombero->Valor}}" >
                             </div>

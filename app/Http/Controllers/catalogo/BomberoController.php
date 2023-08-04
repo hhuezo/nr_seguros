@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\catalogo;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\BomberoFormRequest;
 use App\Models\catalogo\Bombero;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -16,7 +17,7 @@ class BomberoController extends Controller
      */
     public function index()
     {
-        $bombero = Bombero::all();
+        $bombero = Bombero::orderBy('Activo', 'asc')->get();
         return view('catalogo.bombero.index', compact('bombero'));
     }
 
@@ -36,18 +37,19 @@ class BomberoController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(BomberoFormRequest $request)
     {
+
+        $validatedData = $request->validated();
         $bombero_ultimo = Bombero::where('Activo', 1)->first();
         if ($bombero_ultimo) {
             $bombero_ultimo->Activo = 0;
             $bombero_ultimo->update();
         }
         $bombero = new Bombero();
-        $bombero->Valor = $request->Valor;
+        $bombero->Valor = $validatedData['Valor'];
         $bombero->Activo = 1;
         $bombero->save();
-
 
         alert()->success('El registro ha sido creado correctamente');
         return Redirect::to('catalogo/bombero/create');
@@ -83,14 +85,13 @@ class BomberoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(BomberoFormRequest $request, $id)
     {
         $bombero = Bombero::findOrFail($id);
         $bombero->Valor = $request->Valor;
         $bombero->update();
 
-
-        alert()->success('El registro ha sido creado correctamente');
+        alert()->success('El registro ha sido modificado correctamente');
         return Redirect::to('catalogo/bombero');
     }
 
@@ -102,8 +103,21 @@ class BomberoController extends Controller
      */
     public function destroy($id)
     {
-        $bombero = Bombero::findOrFail($id)->update(['Activo' => 0]);
-        alert()->error('El registro ha sido desactivado correctamente');
+        $bombero = Bombero::findOrFail($id);
+        if ($bombero->Activo == 1) {
+            $bombero->update(['Activo' => 0]);
+            alert()->error('El registro ha sido desactivado correctamente');
+
+        } else {
+            $bombero_ultimo = Bombero::where('Activo', 1)->first();
+            if ($bombero_ultimo) {
+                $bombero_ultimo->Activo = 0;
+                $bombero_ultimo->update();
+            }
+            $bombero->update(['Activo' => 1]);
+            alert()->success('El registro ha sido activado correctamente');
+
+        }
         return back();
     }
 }

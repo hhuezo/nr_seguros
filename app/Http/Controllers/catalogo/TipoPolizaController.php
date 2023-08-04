@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\catalogo;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\TipoPolizaFormRequest;
 use App\Models\catalogo\TipoPoliza;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -16,7 +17,7 @@ class TipoPolizaController extends Controller
      */
     public function index()
     {
-        $tipo_poliza = TipoPoliza::all();
+        $tipo_poliza = TipoPoliza::where('Activo',1)->get();
         return view('catalogo.tipo_poliza.index', compact('tipo_poliza'));
     }
 
@@ -36,14 +37,14 @@ class TipoPolizaController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(TipoPolizaFormRequest $request)
     {
         $tipo_poliza = new TipoPoliza();
         $tipo_poliza->Nombre = $request->Nombre;
         $tipo_poliza->Activo = 1;
         $tipo_poliza->save();
 
-        
+
         alert()->success('El registro ha sido creado correctamente');
         return Redirect::to('catalogo/tipo_poliza/create');
 
@@ -79,14 +80,14 @@ class TipoPolizaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(TipoPolizaFormRequest $request, $id)
     {
         $tipo_poliza = TipoPoliza::findOrFail($id);
         $tipo_poliza->Nombre = $request->Nombre;
         $tipo_poliza->update();
 
-        
-        alert()->success('El registro ha sido creado correctamente');
+
+        alert()->success('El registro ha sido modificado correctamente');
         return Redirect::to('catalogo/tipo_poliza');
     }
 
