@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\catalogo;
 
 use App\Http\Controllers\Controller;
+use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\Cliente;
 use App\Models\catalogo\ClienteContactoCargo;
 use App\Models\catalogo\ClienteContactoFrecuente;
@@ -16,8 +17,10 @@ use App\Models\catalogo\ClientePrefereciaCompra;
 use App\Models\catalogo\ClienteRetroalimentacion;
 use App\Models\catalogo\ClienteTarjetaCredito;
 use App\Models\catalogo\Departamento;
+use App\Models\catalogo\Distrito;
 use App\Models\catalogo\FormaPago;
 use App\Models\catalogo\Municipio;
+use App\Models\catalogo\NecesidadProteccion;
 use App\Models\catalogo\Ruta;
 use App\Models\catalogo\TipoContribuyente;
 use App\Models\catalogo\UbicacionCobro;
@@ -45,6 +48,7 @@ class ClienteController extends Controller
         $cliente_estados = ClienteEstado::get();
         $departamentos = Departamento::get();
         $municipios = Municipio::get();
+        $distritos = Distrito::get();
 
         return view('catalogo.cliente.create', compact(
             'tipos_contribuyente',
@@ -52,13 +56,19 @@ class ClienteController extends Controller
             'ubicaciones_cobro',
             'cliente_estados',
             'departamentos',
-            'municipios'
+            'municipios',
+            'distritos'
         ));
     }
 
     public function get_municipio($id)
     {
         return Municipio::where('Departamento','=',$id)->get();
+    }
+
+    public function get_distrito($id)
+    {
+        return Distrito::where('Municipio','=',$id)->get();
     }
     
     public function string_replace($string)
@@ -132,7 +142,7 @@ class ClienteController extends Controller
         $cliente->Genero = $request->get('Genero');
         $cliente->TipoContribuyente = $request->get('TipoContribuyente');
         $cliente->Referencia = $request->get('Referencia');
-        $cliente->Municipio = $request->get('Municipio');
+        $cliente->Distrito = $request->get('Distrito');
         $cliente->FechaIngreso = $time->toDateTimeString();
         $cliente->UsuarioIngreso = auth()->user()->id;
         $cliente->save();
@@ -198,7 +208,7 @@ class ClienteController extends Controller
         $tarjetas = ClienteTarjetaCredito::where('Cliente', '=', $id)->get();
         $habitos = ClienteHabitoConsumo::where('Cliente', '=', $id)->get();
         $retroalimentacion = ClienteRetroalimentacion::where('Cliente', '=', $id)->get();
-        $necesidades = ClienteNecesidadProteccion::get();
+        $necesidades = NecesidadProteccion::get();
         $informarse = ClienteInformarse::get();
         $motivo_eleccion = ClienteMotivoEleccion::get();
         $preferencia_compra = ClientePrefereciaCompra::get();
@@ -206,15 +216,20 @@ class ClienteController extends Controller
         $metodos_pago = ClienteMetodoPago::where('Activo','=',1)->get();
 
         $departamentos = Departamento::get();
+        $municipios = Municipio::get();
+        $municipio_actual = 0;
         $departamento_actual = 0;
-        if($cliente->Municipio)
+     //  dd($cliente->Distrito);
+        if($cliente->Distrito)
         {
-            $municipios = Municipio::where('Departamento','=',$cliente->municipio->Departamento)->get();
-            $departamento_actual = $cliente->municipio->Departamento;
+            $distritos = Distrito::where('Municipio','=',$cliente->distrito->Municipio)->get();
+            $municipio_actual = $cliente->distrito->Municipio;
+            $departamento_actual = $cliente->distrito->municipio->Departamento;
         }
         else{
-            $municipios = Municipio::get();
+            $distritos = Distrito::get();
         }
+        $aseguradoras = Aseguradora::where('Activo',1)->get();
         
 
 
@@ -233,10 +248,13 @@ class ClienteController extends Controller
             'motivo_eleccion',
             'preferencia_compra',
             'cliente_contacto_cargos',
+            'municipio_actual',
             'departamentos',
             'municipios',
+            'distritos',
             'departamento_actual',
-            'metodos_pago'
+            'metodos_pago',
+            'aseguradoras'
 
         ));
     }
@@ -334,6 +352,7 @@ class ClienteController extends Controller
         $cliente->Laptop = $request->get('Laptop');
         $cliente->PC = $request->get('PC');
         $cliente->Tablet = $request->get('Tablet');
+        $cliente->Smartphone = $request->get('Smartphone');
         $cliente->SmartWatch = $request->get('SmartWatch');
         $cliente->DispositivosOtros = $request->get('DispositivosOtros');
         $cliente->Informarse = $request->get('Informarse');
@@ -341,6 +360,7 @@ class ClienteController extends Controller
         $cliente->TieneMascota = $request->get('TieneMascota');
         $cliente->MotivoEleccion = $request->get('MotivoEleccion');
         $cliente->PreferenciaCompra = $request->get('PreferenciaCompra');
+        $cliente->AseguradoraPreferencia = $request->get('AseguradoraPreferencia');
         $cliente->Efectivo = $request->get('Efectivo');
         $cliente->TarjetaCredito = $request->get('TarjetaCredito');
         $cliente->App = $request->get('App');
@@ -541,5 +561,29 @@ class ClienteController extends Controller
         alert()->success('El registro ha sido activado correctamente');
 
         return back();
+    }
+
+    public function addCargo(Request $request){
+        $cargo = new ClienteContactoCargo();
+        $cargo->Nombre = $request->get('Nombre');
+        $cargo->Activo = '1';
+        $cargo->save();
+        return ClienteContactoCargo::where('Activo','=',1)->get();
+    }
+
+    public function addMotivo(Request $request){
+        $motivo = new ClienteMotivoEleccion();
+        $motivo->Nombre = $request->get('Nombre');
+        $motivo->Activo = '1';
+        $motivo->save();
+        return ClienteMotivoEleccion::where('Activo','=',1)->get();
+    }
+
+    public function addPreferencia(Request $request){
+        $preferencia = new ClientePrefereciaCompra();
+        $preferencia->Nombre = $request->get('Nombre');
+        $preferencia->Activo = '1';
+        $preferencia->save();
+        return ClientePrefereciaCompra::where('Activo','=',1)->get();
     }
 }

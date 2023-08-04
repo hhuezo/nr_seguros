@@ -64,8 +64,8 @@ class Cliente extends Model
         'MonederoEletronico',
         'CompraOtros',
         'Activo',
-        'Informacion',
-        'Municipio'
+        'Informacion',     
+        'Distrito'
     ];
 
     protected $guarded = [];
@@ -85,9 +85,9 @@ class Cliente extends Model
         return $this->belongsTo('App\Models\catalogo\UbicacionCobro', 'UbicacionCobro', 'Id');
     }
 
-    public function municipio()
+    public function distrito()
     {
-        return $this->belongsTo(Municipio::class, 'Municipio', 'Id');
+        return $this->belongsTo(Distrito::class, 'Distrito', 'Id');
     }
 
     public function estado()

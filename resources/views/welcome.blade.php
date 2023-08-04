@@ -77,8 +77,14 @@
                                         <li><a href="{{ url('catalogo/bombero') }}">Impuesto Bomberos</a></li>
 
 
+
                                         <li><a href="{{ url('catalogo/ejecutivos') }}">Ejecutivo</a></li>
                                         <li><a href="{{ url('catalogo/estado_polizas') }}">Estado Póliza</a></li>
+
+                                        
+                                        
+                                        <li style="display: {{ session('tab_menu') == "ejecutivo" ? 'block' : '' }}" ><a href="{{ url('catalogo/ejecutivos') }}">Ejecutivo {{session('tab_menu')}}</a></li>
+
                                         <li><a href="{{ url('catalogo/estado_venta') }}">Estado Venta</a></li>
                                         <li><a href="{{ url('catalogo/tipo_cartera') }}">Tipo Cartera</a></li>
                                         <li><a href="{{ url('catalogo/tipo_negocio') }}">Tipo Negocio</a></li>
