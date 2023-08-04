@@ -21,13 +21,20 @@ class Negocio extends Model
         'NecesidadProteccion',
         'InicioVigencia',
         'Observacion',
-        'TipoNegocio',
-        'TipoPlan',
-        'EstadoVenta',
         'Ejecutivo',
         'Activo',
         'FechaIngreso',
-        'UsuarioIngreso'
+        'UsuarioIngreso',
+        'EstadoVenta',
+        'NumCoutas',
+        'Prima',
+        'TipoPoliza',
+        'TipoNecesidad',
+        'NumeroPoliza',
+        'PlanTipoProducto',
+        'TipoNegocio',
+        'DepartamentoAtiende',
+        'MetodoPago',
     ];
 
     protected $guarded = [];

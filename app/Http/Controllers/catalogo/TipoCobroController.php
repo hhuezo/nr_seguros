@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\catalogo;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\TipoCobroFormRequest;
 use App\Models\catalogo\TipoCobro;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -16,7 +17,7 @@ class TipoCobroController extends Controller
      */
     public function index()
     {
-        $tipo_cobro = TipoCobro::all();
+        $tipo_cobro = TipoCobro::where('Activo',1)->get();
         return view('catalogo.tipo_cobro.index', compact('tipo_cobro'));
     }
 
@@ -36,14 +37,14 @@ class TipoCobroController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(TipoCobroFormRequest $request)
     {
         $tipo_cobro = new TipoCobro();
         $tipo_cobro->Nombre = $request->Nombre;
         $tipo_cobro->Activo = 1;
         $tipo_cobro->save();
 
-        
+
         alert()->success('El registro ha sido creado correctamente');
         return Redirect::to('catalogo/tipo_cobro/create');
 
@@ -79,14 +80,14 @@ class TipoCobroController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(TipoCobroFormRequest $request, $id)
     {
         $tipo_cobro = TipoCobro::findOrFail($id);
         $tipo_cobro->Nombre = $request->Nombre;
         $tipo_cobro->update();
 
-        
-        alert()->success('El registro ha sido creado correctamente');
+
+        alert()->success('El registro ha sido modificado correctamente');
         return Redirect::to('catalogo/tipo_cobro');
     }
 

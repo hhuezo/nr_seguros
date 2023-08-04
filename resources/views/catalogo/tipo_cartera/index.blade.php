@@ -23,8 +23,7 @@
                         <tr>
                             <th style="display: none;"></th>
                             <th>Nombre</th>
-                            <th>Activo</th>
-                            <th>Poliza</th>
+                            <th>Póliza</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
@@ -33,11 +32,6 @@
                             <tr>
                                 <td style="display: none;"></td>
                                 <td>{{ $obj->Nombre }}</td>
-                                @if ($obj->Activo == 1)
-                                    <td align="center"><input type="checkbox" checked></td>
-                                @else
-                                    <td align="center"><input type="checkbox"></td>
-                                @endif
                                 <td>
                                     @if($obj->Poliza == 1)
                                     Vida

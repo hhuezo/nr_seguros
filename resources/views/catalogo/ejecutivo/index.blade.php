@@ -22,9 +22,8 @@
                     <thead>
                         <tr>
                             <th>Nombre</th>
-                            <th>Codigo</th>
-                            <th>Telefono</th>
-                            <th>Activo</th>
+                            <th>Código</th>
+                            <th>Teléfono</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
@@ -34,11 +33,7 @@
                                 <td>{{ $obj->Nombre }}</td>
                                 <td>{{ $obj->Codigo }}</td>
                                 <td>{{ $obj->Telefono }}</td>
-                                @if ($obj->Activo == 1)
-                                    <td align="center"><input type="checkbox" checked></td>
-                                @else
-                                    <td align="center"><input type="checkbox"></td>
-                                @endif
+
                                 <td align="center">
                                     @can('edit users')
                                         <a href="{{ url('catalogo/ejecutivos') }}/{{ $obj->Id }}/edit"

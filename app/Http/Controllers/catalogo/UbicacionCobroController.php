@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\catalogo;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UbicacionCobroFormRequest;
 use App\Models\catalogo\UbicacionCobro;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -16,7 +17,7 @@ class UbicacionCobroController extends Controller
      */
     public function index()
     {
-        $ubicacion_cobro = UbicacionCobro::all();
+        $ubicacion_cobro = UbicacionCobro::where('Activo',1)->get();
         return view('catalogo.ubicacion_cobro.index', compact('ubicacion_cobro'));
     }
 
@@ -36,7 +37,7 @@ class UbicacionCobroController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(UbicacionCobroFormRequest $request)
     {
         $ubicacion_cobro = new UbicacionCobro();
         $ubicacion_cobro->Nombre = $request->Nombre;
@@ -44,7 +45,7 @@ class UbicacionCobroController extends Controller
         $ubicacion_cobro->save();
 
         alert()->success('El registro ha sido agregado correctamente');
-        return redirect(UbicacionCobro::index());
+        return back();
     }
 
     /**
@@ -77,14 +78,14 @@ class UbicacionCobroController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UbicacionCobroFormRequest $request, $id)
     {
         $ubicacion_cobro = UbicacionCobro::findOrFail($id);
         $ubicacion_cobro->Nombre = $request->Nombre;
         $ubicacion_cobro->update();
 
-        
-        alert()->success('El registro ha sido creado correctamente');
+
+        alert()->success('El registro ha sido modificado correctamente');
         return Redirect::to('catalogo/ubicacion_cobro');
     }
 

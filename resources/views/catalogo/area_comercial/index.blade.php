@@ -5,7 +5,7 @@
         @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
         <div class="x_title">
             <div class="col-md-6 col-sm-6 col-xs-12">
-                <h3>Estado de Venta </h3>
+                <h3>Área Comercial </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
                 <a href="{{ url('catalogo/area_comercial/create/') }}"><button class="btn btn-info float-right"> <i
@@ -22,7 +22,6 @@
                     <thead>
                         <tr>
                             <th>Nombre</th>
-                            <th>Activo</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
@@ -30,11 +29,6 @@
                         @foreach ($area_comercial as $obj)
                             <tr>
                                 <td>{{ $obj->Nombre }}</td>
-                                @if ($obj->Activo == 1)
-                                    <td align="center"><input type="checkbox" checked></td>
-                                @else
-                                    <td align="center"><input type="checkbox"></td>
-                                @endif
                                 <td align="center">
 
                                     @can('edit users')

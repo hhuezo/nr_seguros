@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\catalogo;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\TipoCarteraFormRequest;
 use App\Models\catalogo\TipoCartera;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -16,7 +17,7 @@ class TipoCarteraController extends Controller
      */
     public function index()
     {
-        $tipo_cartera = TipoCartera::orderBy('Poliza')->get();
+        $tipo_cartera = TipoCartera::orderBy('Poliza')->where('Activo',1)->get();
         return view('catalogo.tipo_cartera.index', compact('tipo_cartera'));
     }
 
@@ -36,7 +37,7 @@ class TipoCarteraController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(TipoCarteraFormRequest $request)
     {
         $tipo_cartera = new TipoCartera();
         $tipo_cartera->Nombre = $request->Nombre;
@@ -45,7 +46,7 @@ class TipoCarteraController extends Controller
         $tipo_cartera->save();
 
         alert()->success('El registro ha sido agregado correctamente');
-        return redirect(TipoCartera::index());
+        return back();
     }
 
     /**
@@ -78,15 +79,15 @@ class TipoCarteraController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(TipoCarteraFormRequest $request, $id)
     {
         $tipo_cartera = TipoCartera::findOrFail($id);
         $tipo_cartera->Nombre = $request->Nombre;
         $tipo_cartera->Poliza = $request->Poliza;
         $tipo_cartera->update();
 
-        
-        alert()->success('El registro ha sido creado correctamente');
+
+        alert()->success('El registro ha sido modificado correctamente');
         return Redirect::to('catalogo/tipo_cartera');
     }
 

@@ -26,7 +26,6 @@
                         <th>Fecha venta</th>
                         <th>Inicio vigencia</th>
                         <th>Observaciones</th>
-                        <th>Activo</th>
                         <th>Opciones</th>
                     </tr>
                 </thead>
@@ -53,11 +52,6 @@
                         @endif
 
                         <td align="center"><a href="" data-target="#modal-observacion-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-eye fa-lg"></i></a></td>
-                        @if ($obj->Activo == 1)
-                        <td align="center"><input type="checkbox" checked></td>
-                        @else
-                        <td align="center"><input type="checkbox"></td>
-                        @endif
                         <td align="center">
 
                             @can('edit userss')
