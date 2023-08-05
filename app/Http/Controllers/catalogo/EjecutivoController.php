@@ -56,7 +56,7 @@ class EjecutivoController extends Controller
         $ejecutivo->save();
 
         alert()->success('El registro ha sido creado correctamente');
-        return back();
+        return Redirect::to('catalogo/ejecutivos');
     }
 
     /**
@@ -100,7 +100,7 @@ class EjecutivoController extends Controller
         $ejecutivo->update();
 
         alert()->success('El registro ha sido modificado correctamente');
-        return back();
+        return Redirect::to('catalogo/ejecutivos');
 
     }
 

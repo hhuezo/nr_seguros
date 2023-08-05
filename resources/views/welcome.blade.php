@@ -81,15 +81,13 @@
                                         <li><a href="{{ url('catalogo/ejecutivos') }}">Ejecutivo</a></li>
                                         <li><a href="{{ url('catalogo/estado_polizas') }}">Estado Póliza</a></li>
 
-                                        
-                                        
-                                        <li style="display: {{ session('tab_menu') == "ejecutivo" ? 'block' : '' }}" ><a href="{{ url('catalogo/ejecutivos') }}">Ejecutivo {{session('tab_menu')}}</a></li>
+
+
 
                                         <li><a href="{{ url('catalogo/estado_venta') }}">Estado Venta</a></li>
                                         <li><a href="{{ url('catalogo/tipo_cartera') }}">Tipo Cartera</a></li>
                                         <li><a href="{{ url('catalogo/tipo_negocio') }}">Tipo Negocio</a></li>
                                         <li><a href="{{ url('catalogo/tipo_cobro') }}">Tipo Cobro</a></li>
-                                        <li><a href="{{ url('catalogo/ruta') }}">Ruta</a></li>
                                         <li><a href="{{ url('catalogo/tipo_poliza') }}">Tipo Póliza (ramo)</a></li>
                                         <li><a href="{{ url('catalogo/area_comercial')}}">Área Comercial</a></li>
                                         <li><a href="{{ url('catalogo/ubicacion_cobro') }}">Ubicación Cobro</a></li>

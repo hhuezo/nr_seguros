@@ -22,8 +22,8 @@
                     <thead>
                         <tr>
 
-                            <th>Nombre</th>
                             <th>Código</th>
+                            <th>Nombre</th>
                             <th>Teléfono</th>
                             <th>Area Comercial</th>
                             <th>Opciones</th>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\Cliente;
 use App\Models\catalogo\ClienteEstado;
+use App\Models\catalogo\ClienteTarjetaCredito;
 use App\Models\catalogo\Ejecutivo;
 use App\Models\catalogo\EstadoVenta;
 use App\Models\catalogo\FormaPago;
@@ -130,7 +131,8 @@ class NegocioController extends Controller
         }
 
         alert()->success('El registro ha sido creado correctamente');
-        return back();
+        return Redirect::to('catalogo/negocio');
+
     }
 
     public function store_aseguradora(Request $request)
@@ -457,7 +459,8 @@ class NegocioController extends Controller
         $negocio->Ejecutivo = $request->Ejecutivo;
         $negocio->update();
         alert()->success('El registro ha sido modificado correctamente');
-        return back();
+        return Redirect::to('catalogo/negocio');
+
     }
 
     public function destroy($id)
@@ -467,42 +470,39 @@ class NegocioController extends Controller
         return back();
     }
 
+    function censorCreditCard($cardNumber,$visibleDigits) {
+        //$visibleDigits = 4; // Number of visible digits at the end
+        $cleanedCardNumber = preg_replace('/[^0-9]/', '', $cardNumber);
+        $censoredCardNumber = '****-****-****-' . substr($cleanedCardNumber, -$visibleDigits);
+        return $censoredCardNumber;
+    }
+
+
     public function getCliente(Request $request)
     {
         //obtener el cliente
-        if ($request->tipoPersona == 1) {
-            $cliente = Cliente::where('Dui', $request->Dui)->first();
-        } else {
-            $cliente = Cliente::where('Nit', $request->Nit)->first();
+        if($request->IdCliente!=null){
+            $cliente = Cliente::where('Id', $request->IdCliente)->first();
+        }else{
+            if ($request->tipoPersona == 1) {
+                $cliente = Cliente::where('Dui', $request->Dui)->first();
+            } else {
+                $cliente = Cliente::where('Nit', $request->Nit)->first();
+            }
         }
-        if ($cliente) {
-            ?>
-            <script>
-                document.getElementById('Dui').style.backgroundColor = '#ff3f33';
-                document.getElementById('Dui').style.color = '#ffffff';
-                document.getElementById('NitEmpresa').style.backgroundColor = '#ff3f33';
-                document.getElementById('NitEmpresa').style.color = '#ffffff';
-                document.getElementById('NombreCliente').value = <?php echo json_encode($cliente->Nombre); ?>;
-                document.getElementById('Email').value = <?php echo json_encode($cliente->CorreoPrincipal); ?>;
 
-                //document.getElementById('FormaPago').value = <?php echo json_encode($cliente->formas_pago); ?>;
-            </script>
-        <?php
+        if($cliente){
+            $metodo_pago=ClienteTarjetaCredito::where('Cliente',$cliente->Id)->get();
+            foreach ($metodo_pago as $tarjetas) {
+                $censoredCardNumber = self::censorCreditCard($tarjetas->NumeroTarjeta,4);
+                $tarjetas->NumeroTarjeta = $censoredCardNumber;
+            }
+        }else{
+            $metodo_pago=null;
+        }
+        return response()->json(['cliente' => $cliente,'metodo_pago'=>$metodo_pago]);
+    }
 
-        } else {
-            ?>
-            <script>
-                document.getElementById('Dui').style.backgroundColor = '';
-                document.getElementById('Dui').style.color = '';
-                document.getElementById('NitEmpresa').style.backgroundColor = '';
-                document.getElementById('NitEmpresa').style.color = '';
-                document.getElementById('NombreCliente').value = "";
-                document.getElementById('Email').value = "";
-
-               // document.getElementById('FormaPago').value = "";
-            </script>
-<?php
-}
         /*
     $programacion = Programacion::with('formaPago')->where('Referencia', '=', $request->get('Referencia'))->first();
     if ($programacion) {
@@ -593,5 +593,5 @@ class NegocioController extends Controller
     return response()->json(['mensaje' => 'la referencia ufi no existe', 'title' => 'Error!', 'icon' => 'error', 'showConfirmButton' => 'true']);
     }
      */
-    }
+
 }

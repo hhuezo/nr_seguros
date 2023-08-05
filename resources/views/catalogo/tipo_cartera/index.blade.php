@@ -23,7 +23,7 @@
                         <tr>
                             <th style="display: none;"></th>
                             <th>Nombre</th>
-                            <th>Póliza</th>
+                            <th>Ramo</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
