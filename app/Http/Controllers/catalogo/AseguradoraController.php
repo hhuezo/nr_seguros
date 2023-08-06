@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\AseguradoraCargo;
 use App\Models\catalogo\AseguradoraContacto;
+use App\Models\catalogo\Departamento;
+use App\Models\catalogo\Distrito;
+use App\Models\catalogo\Municipio;
 use App\Models\catalogo\NecesidadProteccion;
 use App\Models\catalogo\TipoContribuyente;
 use App\Models\catalogo\TipoPoliza;
@@ -21,7 +24,7 @@ class AseguradoraController extends Controller
      */
     public function index()
     {
-        $aseguradora = Aseguradora::all();
+        $aseguradora = Aseguradora::where('Activo', '=', 1)->get();
         return view('catalogo.aseguradora.index', compact('aseguradora'));
     }
 
@@ -32,8 +35,15 @@ class AseguradoraController extends Controller
      */
     public function create()
     {
+        $departamentos = Departamento::get();
+        $municipios = Municipio::get();
+        $distritos = Distrito::get();
+        $ultimoId = Aseguradora::where('Activo', '=', 1)->orderByDesc('Id')->first();
+        if (!$ultimoId) {
+            $ultimoId = 1;
+        }
         $tipo_contribuyente = TipoContribuyente::get();
-        return view('catalogo.aseguradora.create', compact('tipo_contribuyente'));
+        return view('catalogo.aseguradora.create', compact('ultimoId', 'tipo_contribuyente', 'departamentos', 'municipios', 'distritos'));
     }
 
 
@@ -48,7 +58,7 @@ class AseguradoraController extends Controller
 
 
 
-        $request->validate([   
+        $request->validate([
             'Nombre' => 'required|unique:aseguradora',
             'Nit' => 'required|unique:aseguradora',
         ], $messages);
@@ -68,6 +78,7 @@ class AseguradoraController extends Controller
         $aseguradora->Direccion = $request->Direccion;
         $aseguradora->TelefonoFijo = $request->TelefonoFijo;
         $aseguradora->TelefonoWhatsapp = $request->TelefonoWhatsapp;
+        $aseguradora->Distrito = $request->Distrito;
         $aseguradora->Activo = 1;
         $aseguradora->save();
 
@@ -87,24 +98,47 @@ class AseguradoraController extends Controller
     {
         $aseguradora = Aseguradora::findOrFail($id);
         $tipo_contribuyente = TipoContribuyente::get();
-        $contactos = AseguradoraContacto::where('Aseguradora','=',$id)->get();
-        $cargos = AseguradoraCargo::where('Activo','=',1)->get();
+        $contactos = AseguradoraContacto::where('Aseguradora', '=', $id)->get();
+        $cargos = AseguradoraCargo::where('Activo', '=', 1)->get();
         $tipos_poliza = TipoPoliza::get();
-        $necesidades_proteccion = NecesidadProteccion::where('TipoPoliza','=',1)->get();
+        $departamentos = Departamento::get();
+        $municipios = Municipio::get();
+        $municipio_actual = 0;
+        $departamento_actual = 0;
+        //  dd($cliente->Distrito);
+        if ($aseguradora->Distrito) {
+            $distritos = Distrito::where('Municipio', '=', $aseguradora->distrito->Municipio)->get();
+            $municipio_actual = $aseguradora->distrito->Municipio;
+            $departamento_actual = $aseguradora->distrito->municipio->Departamento;
+        } else {
+            $distritos = Distrito::get();
+        }
+        $necesidades_proteccion = NecesidadProteccion::where('TipoPoliza', '=', 1)->get();
         $necesidades_proteccion_actual =  $aseguradora->aseguradora_has_necesidad;
-        if(!session('tab1'))
-        {
+        if (!session('tab1')) {
             session(['tab1' => '1']);
         }
-        return view('catalogo/aseguradora/edit', compact('aseguradora','tipo_contribuyente','contactos',
-        'cargos','tipos_poliza','necesidades_proteccion_actual','necesidades_proteccion'));
+        return view('catalogo/aseguradora/edit', compact(
+            'municipio_actual',
+            'departamentos',
+            'municipios',
+            'distritos',
+            'departamento_actual',
+            'aseguradora',
+            'tipo_contribuyente',
+            'contactos',
+            'cargos',
+            'tipos_poliza',
+            'necesidades_proteccion_actual',
+            'necesidades_proteccion'
+        ));
     }
 
     public function update(Request $request, $id)
     {
 
-        $count_nombre = Aseguradora::where('Nombre','=',$request->Nombre)->where('Id','<>',$id)->count();
-        $count_nit = Aseguradora::where('Nit','=',$request->Nit)->where('Id','<>',$id)->count();
+        $count_nombre = Aseguradora::where('Nombre', '=', $request->Nombre)->where('Id', '<>', $id)->count();
+        $count_nit = Aseguradora::where('Nit', '=', $request->Nit)->where('Id', '<>', $id)->count();
 
         $messages = [
             'Nombre.required' => 'El campo nombre es requerido',
@@ -113,20 +147,18 @@ class AseguradoraController extends Controller
             'Nit.unique' => 'El Nit ya existe',
         ];
 
-        if($count_nombre > 0)
-        {
-            $request->validate([   
-                'Nombre' => 'required|unique:aseguradora',               
+        if ($count_nombre > 0) {
+            $request->validate([
+                'Nombre' => 'required|unique:aseguradora',
             ], $messages);
         }
 
-        if($count_nit > 0)
-        {
-            $request->validate([   
+        if ($count_nit > 0) {
+            $request->validate([
                 'Nit' => 'required|unique:aseguradora',
             ], $messages);
         }
-    
+
 
         $aseguradora = Aseguradora::findOrFail($id);
         $aseguradora->Nombre = $request->Nombre;
@@ -140,6 +172,7 @@ class AseguradoraController extends Controller
         $aseguradora->Direccion = $request->Direccion;
         $aseguradora->TelefonoFijo = $request->TelefonoFijo;
         $aseguradora->TelefonoWhatsapp = $request->TelefonoWhatsapp;
+        $aseguradora->Distrito = $request->Distrito;
         $aseguradora->update();
         session(['tab1' => '1']);
         alert()->success('El registro ha sido creado correctamente');
@@ -153,6 +186,15 @@ class AseguradoraController extends Controller
         alert()->error('El registro ha sido desactivado correctamente');
         return back();
         //return Redirect::to('catalogo/aseguradoras');
+    }
+
+    public function addCargo(Request $request)
+    {
+        $cargo = new AseguradoraCargo();
+        $cargo->Nombre = $request->get('Nombre');
+        $cargo->Activo = '1';
+        $cargo->save();
+        return AseguradoraCargo::where('Activo', '=', 1)->get();
     }
 
 
@@ -185,7 +227,7 @@ class AseguradoraController extends Controller
         session(['tab1' => '2']);
         return back();
     }
-    
+
     public function delete_contacto(Request $request)
     {
         $contacto = AseguradoraContacto::findOrFail($request->Id);
@@ -218,8 +260,6 @@ class AseguradoraController extends Controller
 
     public function get_necesidad($id)
     {
-        return NecesidadProteccion::where('TipoPoliza','=',$id)->get();
+        return NecesidadProteccion::where('TipoPoliza', '=', $id)->get();
     }
-
-    
 }

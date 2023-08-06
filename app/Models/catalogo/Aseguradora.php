@@ -36,5 +36,11 @@ class Aseguradora extends Model
     public function aseguradora_has_necesidad(){
         return $this->belongsToMany(NecesidadProteccion::class, 'aseguradora_has_necesidad_proteccion', 'aseguradora_id', 'necesidad_proteccion_id');
     }
+
+    public function distrito()
+    {
+        return $this->belongsTo(Distrito::class, 'Distrito', 'Id');
+    }
+
     
 }

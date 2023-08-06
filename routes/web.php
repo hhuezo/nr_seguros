@@ -21,7 +21,7 @@ use App\Http\Controllers\polizas\DeudaController;
 use App\Http\Controllers\polizas\VidaController;
 use App\Http\Controllers\polizas\ResidenciaController;
 use App\Http\Controllers\polizas\ValidacionCarteraController;
-
+use App\Models\catalogo\Aseguradora;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,6 +60,7 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::post('catalogo/aseguradora/add_contacto', [AseguradoraController::class,'add_contacto']);
 Route::post('catalogo/aseguradora/delete_contacto', [AseguradoraController::class,'delete_contacto']);
 Route::post('catalogo/aseguradora/edit_contacto', [AseguradoraController::class,'edit_contacto']);
+Route::get('catalogo/aseguradora/addCargo',[AseguradoraController::class, 'addCargo']);
 Route::post('catalogo/aseguradora/attach_necesidad_proteccion', [AseguradoraController::class,'attach_necesidad_proteccion']);
 Route::post('catalogo/aseguradora/detach_necesidad_proteccion', [AseguradoraController::class,'detach_necesidad_proteccion']);
 Route::get('catalogo/aseguradora/get_necesidad/{id}', [AseguradoraController::class,'get_necesidad']);
