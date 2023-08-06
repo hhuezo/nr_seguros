@@ -21,13 +21,10 @@
                 <table id="datatable" class="table table-striped table-bordered">
                     <thead>
                         <tr>
-                            <th>Id</th>
-                            <th>Nombre</th>
-                            <th>NIT</th>
-                            <th>DUI</th>
-                            <th>Contacto</th>
+                            <th>Codigo de cliente</th>
+                            <th>Nombre o Razón Social</th>
+                            <th>Telefono Principal</th>
                             <th>Estado</th>
-                            <th>Activo</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
@@ -36,18 +33,11 @@
                             <tr>
                                 <td>{{ $obj->Id }}</td>
                                 <td>{{ $obj->Nombre }}</td>
-                                <td>{{ $obj->Nit }}</td>
-                                <td>{{ $obj->Dui }}</td>
-                                <td>{{ $obj->Contacto }}</td>
+                                <td>{{ $obj->TelefonoCelular }}</td>
                                 @if ($obj->estado)
                                 <td>{{ $obj->estado->Nombre }}</td>
                                 @else
                                 <td></td>
-                                @endif
-                                @if ($obj->Activo == 1)
-                                    <td align="center"><input type="checkbox" checked></td>
-                                @else
-                                    <td align="center"><input type="checkbox"></td>
                                 @endif
                                 <td align="center">
 

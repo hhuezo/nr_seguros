@@ -63,14 +63,14 @@ class ClienteController extends Controller
 
     public function get_municipio($id)
     {
-        return Municipio::where('Departamento','=',$id)->get();
+        return Municipio::where('Departamento', '=', $id)->get();
     }
 
     public function get_distrito($id)
     {
-        return Distrito::where('Municipio','=',$id)->get();
+        return Distrito::where('Municipio', '=', $id)->get();
     }
-    
+
     public function string_replace($string)
     {
         return str_replace("_", "", $string);
@@ -81,8 +81,8 @@ class ClienteController extends Controller
         $messages = [
             'Dui.min' => 'El formato de DUI es incorrecto',
             'Dui.unique' => 'El DUI ya existe en la base de datos',
-            'Nit.min' => 'El formato de NIT es incorrecto',
-            'Nit.unique' => 'El NIT ya existe en la base de datos',
+            // 'Nit.min' => 'El formato de NIT es incorrecto',
+            // 'Nit.unique' => 'El NIT ya existe en la base de datos',
         ];
 
         $request->merge(['Dui' => $this->string_replace($request->get('Dui'))]);
@@ -92,7 +92,7 @@ class ClienteController extends Controller
             'Nombre' => 'required',
         ], $messages);
 
-        if ($request->get('TipoPersona') ==1) {
+        if ($request->get('TipoPersona') == 1) {
             $request->validate([
                 'Dui' => 'required',
             ], $messages);
@@ -103,15 +103,17 @@ class ClienteController extends Controller
                 'Dui' => 'min:10|unique:cliente',
             ], $messages);
         }
-
-        if ($request->get('Nit') != null) {
-            $request->validate([
-                'Nit' => 'min:17|unique:cliente',
-            ], $messages);
+        if ($request->TipoPersona <> 1) {
+            if ($request->get('Nit') != null) {
+                $request->validate([
+                    'Nit' => 'min:17|unique:cliente',
+                ], $messages);
+            }
         }
 
 
-    
+
+
 
 
         $time = Carbon::now();
@@ -143,6 +145,7 @@ class ClienteController extends Controller
         $cliente->TipoContribuyente = $request->get('TipoContribuyente');
         $cliente->Referencia = $request->get('Referencia');
         $cliente->Distrito = $request->get('Distrito');
+        $cliente->Comentarios = $request->get('Comentarios');
         $cliente->FechaIngreso = $time->toDateTimeString();
         $cliente->UsuarioIngreso = auth()->user()->id;
         $cliente->save();
@@ -154,7 +157,7 @@ class ClienteController extends Controller
 
         return redirect('catalogo/cliente/' . $cliente->Id . '/edit');
 
-       // return back();
+        // return back();
     }
 
     public function cliente_create(Request $request)
@@ -192,6 +195,7 @@ class ClienteController extends Controller
     public function edit($id)
     {
         $cliente = Cliente::findOrFail($id);
+      //  dd($cliente->Smartphone);
         if ($cliente->FechaNacimiento) {
             $cliente->Edad = $this->getAge($cliente->FechaNacimiento);
         } else {
@@ -213,24 +217,22 @@ class ClienteController extends Controller
         $motivo_eleccion = ClienteMotivoEleccion::get();
         $preferencia_compra = ClientePrefereciaCompra::get();
         $cliente_contacto_cargos = ClienteContactoCargo::get();
-        $metodos_pago = ClienteMetodoPago::where('Activo','=',1)->get();
+        $metodos_pago = ClienteMetodoPago::where('Activo', '=', 1)->get();
 
         $departamentos = Departamento::get();
         $municipios = Municipio::get();
         $municipio_actual = 0;
         $departamento_actual = 0;
-     //  dd($cliente->Distrito);
-        if($cliente->Distrito)
-        {
-            $distritos = Distrito::where('Municipio','=',$cliente->distrito->Municipio)->get();
+        //  dd($cliente->Distrito);
+        if ($cliente->Distrito) {
+            $distritos = Distrito::where('Municipio', '=', $cliente->distrito->Municipio)->get();
             $municipio_actual = $cliente->distrito->Municipio;
             $departamento_actual = $cliente->distrito->municipio->Departamento;
-        }
-        else{
+        } else {
             $distritos = Distrito::get();
         }
-        $aseguradoras = Aseguradora::where('Activo',1)->get();
-        
+        $aseguradoras = Aseguradora::where('Activo', 1)->get();
+
 
 
         return view('catalogo.cliente.edit', compact(
@@ -283,10 +285,10 @@ class ClienteController extends Controller
             'Nombre' => 'required',
         ], $messages);
 
-        $count_dui = Cliente::where('Dui','=',$request->get('Dui'))->where('Id','<>',$id)->count();
-        $count_nit = Cliente::where('Nit','=',$request->get('Nit'))->where('Id','<>',$id)->count();
+        $count_dui = Cliente::where('Dui', '=', $request->get('Dui'))->where('Id', '<>', $id)->count();
+        $count_nit = Cliente::where('Nit', '=', $request->get('Nit'))->where('Id', '<>', $id)->count();
 
-        if ($request->get('TipoPersona') ==1) {
+        if ($request->get('TipoPersona') == 1) {
             $request->validate([
                 'Dui' => 'required',
             ], $messages);
@@ -329,9 +331,10 @@ class ClienteController extends Controller
         $cliente->Estado = $request->get('Estado');
         $cliente->TipoPersona = $request->get('TipoPersona');
         $cliente->Genero = $request->get('Genero');
+        $cliente->Comentarios = $request->get('Comentarios');
         $cliente->TipoContribuyente = $request->get('TipoContribuyente');
         $cliente->Referencia = $request->get('Referencia');
-        $cliente->Municipio = $request->get('Municipio');
+        $cliente->Distrito = $request->get('Distrito');
         $cliente->update();
 
         session(['tab1' => '1']);
@@ -405,7 +408,7 @@ class ClienteController extends Controller
         session(['tab1' => '4']);
         return back();
     }
-    
+
     public function delete_contacto(Request $request)
     {
         $contacto = ClienteContactoFrecuente::findOrFail($request->Id);
@@ -450,7 +453,7 @@ class ClienteController extends Controller
         $tarjeta->NumeroTarjeta = $request->NumeroTarjeta;
         $tarjeta->FechaVencimiento = $request->FechaVencimiento;
         $tarjeta->PolizaVinculada = $request->PolizaVinculada;
-        $tarjeta->MetodoPago = $request->MetodoPago;
+    //    $tarjeta->MetodoPago = $request->MetodoPago;
         $tarjeta->save();
         alert()->success('El registro ha sido creado correctamente');
 
@@ -458,7 +461,7 @@ class ClienteController extends Controller
         return back();
     }
 
-    
+
 
     public function add_habito(Request $request)
     {
@@ -490,7 +493,7 @@ class ClienteController extends Controller
         return back();
     }
 
-    
+
 
     public function delete_habito(Request $request)
     {
@@ -512,7 +515,7 @@ class ClienteController extends Controller
         $retroalimentacion->Competidores = $request->Competidores;
         $retroalimentacion->Referidos = $request->Referidos;
         $retroalimentacion->QueQuisiera = $request->QueQuisiera;
-        $retroalimentacion->ServicioCliente = $request->ServicioCliente;        
+        $retroalimentacion->ServicioCliente = $request->ServicioCliente;
         $retroalimentacion->save();
         session(['tab1' => '6']);
         alert()->success('El registro ha sido creado correctamente');
@@ -528,7 +531,7 @@ class ClienteController extends Controller
         $retroalimentacion->Competidores = $request->Competidores;
         $retroalimentacion->Referidos = $request->Referidos;
         $retroalimentacion->QueQuisiera = $request->QueQuisiera;
-        $retroalimentacion->ServicioCliente = $request->ServicioCliente;        
+        $retroalimentacion->ServicioCliente = $request->ServicioCliente;
         $retroalimentacion->update();
         session(['tab1' => '6']);
         alert()->success('El registro ha sido modificado correctamente');
@@ -563,27 +566,30 @@ class ClienteController extends Controller
         return back();
     }
 
-    public function addCargo(Request $request){
+    public function addCargo(Request $request)
+    {
         $cargo = new ClienteContactoCargo();
         $cargo->Nombre = $request->get('Nombre');
         $cargo->Activo = '1';
         $cargo->save();
-        return ClienteContactoCargo::where('Activo','=',1)->get();
+        return ClienteContactoCargo::where('Activo', '=', 1)->get();
     }
 
-    public function addMotivo(Request $request){
+    public function addMotivo(Request $request)
+    {
         $motivo = new ClienteMotivoEleccion();
         $motivo->Nombre = $request->get('Nombre');
         $motivo->Activo = '1';
         $motivo->save();
-        return ClienteMotivoEleccion::where('Activo','=',1)->get();
+        return ClienteMotivoEleccion::where('Activo', '=', 1)->get();
     }
 
-    public function addPreferencia(Request $request){
+    public function addPreferencia(Request $request)
+    {
         $preferencia = new ClientePrefereciaCompra();
         $preferencia->Nombre = $request->get('Nombre');
         $preferencia->Activo = '1';
         $preferencia->save();
-        return ClientePrefereciaCompra::where('Activo','=',1)->get();
+        return ClientePrefereciaCompra::where('Activo', '=', 1)->get();
     }
 }
