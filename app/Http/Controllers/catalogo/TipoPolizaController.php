@@ -46,7 +46,7 @@ class TipoPolizaController extends Controller
 
 
         alert()->success('El registro ha sido creado correctamente');
-        return Redirect::to('catalogo/tipo_poliza/create');
+        return Redirect::to('catalogo/tipo_poliza');
 
     }
 

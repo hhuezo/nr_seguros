@@ -53,7 +53,7 @@
                                                 <div class="col-lg-4">
                                                     <label for="IdCliente" class="form-label">Código Cliente</label>
                                                     <input type="text" class="form-control" name="IdCliente"
-                                                        id="IdCliente" placeholder="Ingrese codigo de cliente">
+                                                        id="IdCliente" placeholder="Ingrese codigo de cliente" onkeyup="mostrarId();">
                                                 </div><!-- /.col-lg-6 -->
                                                 <div class="col-md-4">
                                                     <label for="NombreCliente" class="form-label">Nombre del cliente</label>
@@ -62,7 +62,8 @@
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label for="TipoPersona" class="form-label">Tipo Cliente</label>
-                                                    <select name="TipoPersona" id="TipoPersona" class="form-control">
+                                                    <select name="TipoPersona" id="TipoPersona" class="form-control"
+                                                        onchange="identificadorCliente();">
                                                         <option value="" selected disabled>Seleccione ...</option>
                                                         <option value="1">Natural</option>
                                                         <option value="2">Juridico</option>
@@ -72,20 +73,19 @@
                                             </div>
                                             <div class="row" style="margin-top: 12px!important;">
 
-                                                <div class="col-md-4">
+                                                <div id="divDui" class="col-md-4">
                                                     <label for="Dui" class="form-label">DUI </label>
                                                     <input type="text" name="Dui" id="Dui"
                                                         value="{{ old('Dui') }}" data-inputmask="'mask': ['99999999-9']"
-                                                        onkeyup="mostrar();" class="form-control" required
-                                                        autofocus="true">
+                                                        onkeyup="mostrar();" class="form-control" required autofocus="true">
                                                 </div>
 
-                                                <div class="col-md-4">
+                                                <div id="divNit" class="col-md-4">
                                                     <label for="NitEmpresa" class="form-label">NIT Empresa </label>
                                                     <input type="text" name="NitEmpresa" id="NitEmpresa"
                                                         value="{{ old('NitEmpresa') }}"
-                                                        data-inputmask="'mask': ['9999-999999-999-9']" onkeyup="mostrar();"  class="form-control"
-                                                        required autofocus="true">
+                                                        data-inputmask="'mask': ['9999-999999-999-9']" onkeyup="mostrar();"
+                                                        class="form-control" required autofocus="true">
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label for="Email" class="form-label">Email</label>
@@ -96,7 +96,7 @@
                                             <div class="row" style="margin-top: 12px!important;">
                                                 <div class="col-md-4">
                                                     <label for="EstadoCliente" class="form-label">Estado Cliente</label>
-                                                    <select disabled name="EstadoCliente" id="EstadoCliente"
+                                                    <select name="EstadoCliente" id="EstadoCliente"
                                                         class="form-control select2">
                                                         <option value="" selected disabled> Seleccione...</option>
                                                         @foreach ($cliente_estado as $obj)
@@ -490,10 +490,79 @@
 
             <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
             <script type="text/javascript">
+                function borrarDatosCliente() {
+                    $('#NombreCliente').val('');
+                    $('#Email').val('');
+                    $("#EstadoCliente").val('').trigger("change");
+                    $("#FormaPago").val('').trigger("change");
+                    $("#divDui").removeClass("has-error");
+                    $("#divNit").removeClass("has-error");
+                    $("#MetodoPago").find("option:not(:first-child)").remove();
+                    $("#MetodoPago").val(null).trigger("change"); // Clear and update the Select2 element
+                }
+
+                function identificadorCliente() {
+                    $('#Dui').val('');
+                    $('#NitEmpresa').val('');
+                    $('#IdCliente').val('');
+                    borrarDatosCliente();
+                    if ($('#TipoPersona').val() == 1) {
+                        $('#divDui').show();
+                        $('#divNit').hide();
+                    } else {
+                        $('#divDui').hide();
+                        $('#divNit').show();
+                    }
+                }
+
+                function mostrarId() {
+                    let IdCliente = $('#IdCliente').val();
+                    let parametros = {
+                        "IdCliente": IdCliente,
+                    };
+                    $.ajax({
+                        type: "get",
+                        url: "{{ URL::to('negocio/getCliente') }}",
+                        data: parametros,
+                        success: function(data) {
+                            console.log(data /*data.metodo_pago[0]*/ );
+                            $('#Dui').val('');
+                            $('#NitEmpresa').val('');
+                            $("#TipoPersona option[value='']").prop("selected", true);
+                            borrarDatosCliente();
+                            if (data.cliente !== null) {
+                                $('#Dui').val(data.cliente.Dui);
+                                $('#NitEmpresa').val(data.cliente.Nit);
+                                $('#NombreCliente').val(data.cliente.Nombre);
+                                $('#Email').val(data.cliente.CorreoPrincipal);
+                                $("#TipoPersona option[value='"+data.cliente.TipoPersona+"']").prop("selected", true);
+                                $("#EstadoCliente").val(data.cliente.Estado).trigger("change");
+                                $("#FormaPago").val(data.cliente.FormaPago).trigger("change");
+                                $("#divDui").addClass("has-error");
+                                $("#divNit").addClass("has-error");
+                                if ($('#TipoPersona').val() == 1) {
+                                    $('#divDui').show();
+                                    $('#divNit').hide();
+                                } else {
+                                    $('#divDui').hide();
+                                    $('#divNit').show();
+                                }
+
+                                $.each(data.metodo_pago, function(index, datos) {
+                                    $("#MetodoPago").append(new Option(datos.NumeroTarjeta, datos.Id, false,
+                                        false));
+                                });
+                                $("#MetodoPago").trigger("change"); // Trigger change event to refresh Select2
+                            }
+                        }
+                    });
+
+
+
+                }
+
                 function mostrar() {
-                    if (document.getElementById('TipoPersona').value === '') {
-                        // Swal.Fire('Tipo de Persona', 'Debe seleccionar el Tipo Persona', 'success');
-                        //  alert('');
+                    if ($('#TipoPersona').val() === null) {
                         Swal.fire({
                             title: 'Error!',
                             text: 'Debe seleccionar el Tipo Persona',
@@ -501,38 +570,52 @@
                             confirmButtonText: 'Aceptar',
                             timer: 1500
                         })
+                        $('#Dui').val('');
+                        $('#NitEmpresa').val('');
                     } else {
+                        let Dui = $('#Dui').val();
+                        let Nit = $('#NitEmpresa').val();
+                        let tipoPersona = $('#TipoPersona').val();
+                        let parametros = {
+                            "IdCliente": null,
+                            "Dui": Dui,
+                            "Nit": Nit,
+                            "tipoPersona": tipoPersona
+                        };
 
-                            var Dui = document.getElementById('Dui').value;
-                            var Nit = document.getElementById('NitEmpresa').value;
-                            var tipoPersona = document.getElementById('TipoPersona').value;
-                            var parametros = {
-                                "Dui": Dui,
-                                "Nit": Nit,
-                                "tipoPersona": tipoPersona
-                            };
+                        $.ajax({
+                            type: "get",
+                            url: "{{ URL::to('negocio/getCliente') }}",
+                            data: parametros,
+                            success: function(data) {
+                                console.log(data /*data.metodo_pago[0]*/ );
+                                $('#IdCliente').val('');
+                                borrarDatosCliente();
+                                if (data.cliente !== null) {
+                                    $('#IdCliente').val(data.cliente.Id);
+                                    $('#NombreCliente').val(data.cliente.Nombre);
+                                    $('#Email').val(data.cliente.CorreoPrincipal);
+                                    //este funciona sin select2//$("#EstadoCliente option[value='"+data.cliente.Estado+"']").prop("selected", true);
+                                    $("#EstadoCliente").val(data.cliente.Estado).trigger("change");
+                                    $("#FormaPago").val(data.cliente.FormaPago).trigger("change");
+                                    $("#divDui").addClass("has-error");
+                                    $("#divNit").addClass("has-error");
 
-                            $.ajax({
-                                type: "get",
-                                url: "{{ URL::to('negocio/getCliente') }}",
-                                data: parametros,
-                                success: function(data) {
-                                    console.log(data);
-                                    $('#NombreCliente').html(data);
-                                    $('#Email').html(data);
-                                    //var formaPagoData = JSON.parse(data);
-
-                                   /* var _select = '';
-                                    _select += '<option value="' + formaPagoData.Id + '" selected>' + formaPagoData
-                                        .Nombre + '</option>';
-                                    $("#FormaPago").html(_select);*/
+                                    $.each(data.metodo_pago, function(index, datos) {
+                                        $("#MetodoPago").append(new Option(datos.NumeroTarjeta, datos.Id, false,
+                                            false));
+                                    });
+                                    $("#MetodoPago").trigger("change"); // Trigger change event to refresh Select2
                                 }
-                            });
+                            }
+                        });
 
                     }
 
                 }
                 $(document).ready(function() {
+                    $('#divNit').hide();
+
                     $("#NecesidadProteccion").change(function() {
                         if (document.getElementById('NecesidadProteccion').value == 10) {
                             var select = $("#TipoPlan");
@@ -624,14 +707,14 @@
                     $("#TipoPersona").change(function() {
 
                         if (document.getElementById('TipoPersona').value == 2) {
-                           // $('#DuiRepresentantes').show();
+                            // $('#DuiRepresentantes').show();
                             $('#Duis').hide();
                             $('#NitEmpresas').show();
                             $('#Nits').hide();
                             $('#Homolo').hide();
                             document.getElementById('Dui').removeAttribute('required');
-                           // document.getElementById('DuiRepresentantes').setAttribute('required', true);
-                           // document.getElementById('Nit').removeAttribute('required');
+                            // document.getElementById('DuiRepresentantes').setAttribute('required', true);
+                            // document.getElementById('Nit').removeAttribute('required');
                             document.getElementById('NitEmpresa').setAttribute('required', true);
                         } else {
                             //$('#DuiRepresentantes').hide();

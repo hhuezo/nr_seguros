@@ -46,7 +46,7 @@ class TipoCarteraController extends Controller
         $tipo_cartera->save();
 
         alert()->success('El registro ha sido agregado correctamente');
-        return back();
+        return Redirect::to('catalogo/tipo_cartera');
     }
 
     /**
