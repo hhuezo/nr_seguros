@@ -90,11 +90,8 @@ class NegocioController extends Controller
         $negocio->Asegurado = $cliente->Id;
         $negocio->FechaVenta = $request->FechaVenta;
         $negocio->TipoPoliza = $request->TipoPoliza;
-        $negocio->SumaAsegurada = $request->SumaAsegurada;
-        $negocio->Prima = $request->Prima;
         $negocio->Observacion = $request->Observacion;
         $negocio->TipoNegocio = $request->TipoNegocio;
-        $negocio->NumCuotas = $request->NumCuotas;
         $negocio->EstadoVenta = $request->EstadoVenta;
         $negocio->Ejecutivo = $request->Ejecutivo;
         $negocio->FechaIngreso = $time->toDateTimeString();
@@ -103,6 +100,7 @@ class NegocioController extends Controller
         $negocio->PlanTipoProducto=$request->PlanTipoProducto;
         $negocio->DepartamentoAtiende=$request->DepartamentoAtiende;
         $negocio->MetodoPago=$request->MetodoPago;
+        $negocio->Activo=1;
         $negocio->save();
 
         $string = $request->ModalAseguradora;

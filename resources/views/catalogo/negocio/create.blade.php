@@ -77,7 +77,7 @@
                                                     <label for="Dui" class="form-label">DUI </label>
                                                     <input type="text" name="Dui" id="Dui"
                                                         value="{{ old('Dui') }}" data-inputmask="'mask': ['99999999-9']"
-                                                        onkeyup="mostrar();" class="form-control" required autofocus="true">
+                                                        onkeyup="mostrar();" class="form-control" >
                                                 </div>
 
                                                 <div id="divNit" class="col-md-4">
@@ -85,7 +85,7 @@
                                                     <input type="text" name="NitEmpresa" id="NitEmpresa"
                                                         value="{{ old('NitEmpresa') }}"
                                                         data-inputmask="'mask': ['9999-999999-999-9']" onkeyup="mostrar();"
-                                                        class="form-control" required autofocus="true">
+                                                        class="form-control" ">
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label for="Email" class="form-label">Email</label>
@@ -96,7 +96,7 @@
                                             <div class="row" style="margin-top: 12px!important;">
                                                 <div class="col-md-4">
                                                     <label for="EstadoCliente" class="form-label">Estado Cliente</label>
-                                                    <select name="EstadoCliente" id="EstadoCliente"
+                                                    <select disabled name="EstadoCliente" id="EstadoCliente"
                                                         class="form-control select2">
                                                         <option value="" selected disabled> Seleccione...</option>
                                                         @foreach ($cliente_estado as $obj)
@@ -353,7 +353,7 @@
                                             {{--                            <div class="form-group row"> --}}
                                             {{--                                <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: left;">Tipo de Plan</label> --}}
                                             {{--                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"> --}}
-                                            {{--                                    <select name="TipoPlan" id="TipoPlan" class="form-control" style="width: 100%;" required> --}}
+                                            {{--                                    <select name="TipoNecesidad" id="TipoNecesidad" class="form-control" style="width: 100%;" required> --}}
 
 
                                             {{--                                    </select> --}}
@@ -493,7 +493,7 @@
                 function borrarDatosCliente() {
                     $('#NombreCliente').val('');
                     $('#Email').val('');
-                    $("#EstadoCliente").val('').trigger("change");
+                    $("#EstadoCliente").val(3).trigger("change");
                     $("#FormaPago").val('').trigger("change");
                     $("#divDui").removeClass("has-error");
                     $("#divNit").removeClass("has-error");
@@ -615,10 +615,12 @@
                 }
                 $(document).ready(function() {
                     $('#divNit').hide();
+                    $("#EstadoCliente").val(3).trigger("change");
+
 
                     $("#NecesidadProteccion").change(function() {
                         if (document.getElementById('NecesidadProteccion').value == 10) {
-                            var select = $("#TipoPlan");
+                            var select = $("#TipoNecesidad");
 
                             // Array con las opciones
                             var opciones = [{
@@ -636,7 +638,7 @@
                                 // Agregar más opciones si es necesario
                             ];
                         } else if (document.getElementById('NecesidadProteccion').value == 11) {
-                            var select = $("#TipoPlan");
+                            var select = $("#TipoNecesidad");
 
                             // Array con las opciones
                             var opciones = [{
@@ -657,7 +659,7 @@
                             .getElementById('NecesidadProteccion').value == 2 ||
                             document.getElementById('NecesidadProteccion').value == 5 || document.getElementById(
                                 'NecesidadProteccion').value == 13) {
-                            var select = $("#TipoPlan");
+                            var select = $("#TipoNecesidad");
 
                             // Array con las opciones
                             var opciones = [{
@@ -671,7 +673,7 @@
                                 // Agregar más opciones si es necesario
                             ];
                         } else {
-                            var select = $("#TipoPlan");
+                            var select = $("#TipoNecesidad");
 
                             // Array con las opciones
                             var opciones = [{
@@ -695,9 +697,9 @@
 
                     })
 
-                    $("#TipoPlan").change(function() {
+                    $("#TipoNecesidad").change(function() {
                         if (document.getElementById('NecesidadProteccion').value == 10 && document.getElementById(
-                                'TipoPlan').value == 3) {
+                                'TipoNecesidad').value == 3) {
                             $("#CantidadDependientes").show();
                         } else {
                             $("#CantidadDependientes").hide();
@@ -749,7 +751,7 @@
                 })
 
                 function modal_aseguradora() {
-                    if (document.getElementById('NecesidadProteccion').value == '' || document.getElementById('TipoPlan').value ==
+                    if (document.getElementById('NecesidadProteccion').value == '' || document.getElementById('TipoNecesidad').value ==
                         '') {
                         ///   alert('Debe seleccionar el Tipo Persona');
                         Swal.fire({
@@ -761,13 +763,13 @@
                         })
                     } else {
                         document.getElementById('ModalNecesidad').value = document.getElementById('NecesidadProteccion').value;
-                        document.getElementById('ModalTipoPlan').value = document.getElementById('TipoPlan').value;
+                        document.getElementById('ModalTipoNecesidad').value = document.getElementById('TipoNecesidad').value;
                         //  document.getElementById('ModalDepedientes').value = document.getElementById('CantidadDependiente').value;
 
 
 
                         var necesidad = document.getElementById('NecesidadProteccion').value;
-                        var plan = document.getElementById('TipoPlan').value;
+                        var plan = document.getElementById('TipoNecesidad').value;
                         var dependientes = document.getElementById('CantidadDependiente').value;
 
                         document.getElementById('SumaAsegurada').value = 0;
