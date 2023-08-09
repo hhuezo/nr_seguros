@@ -46,7 +46,7 @@ class EstadoVentaController extends Controller
 
 
         alert()->success('El registro ha sido creado correctamente');
-        return Redirect::to('catalogo/estado_venta/create');
+        return Redirect::to('catalogo/estado_venta');
 
     }
 

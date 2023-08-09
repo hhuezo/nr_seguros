@@ -57,7 +57,11 @@ class ResidenciaController extends Controller
         if ($bombero) {
             $bomberos = $bombero->Valor;
         } else {
-            $bomberos = $bombero->Valor;
+            $bomberos = 0;
+        }
+        $ultimo = Residencia::where('Activo', 1)->orderByDesc('Id')->first();
+        if (!$ultimo) {
+            $ultimo = 1;
         }
         $cliente = Cliente::where('Activo', 1)->get();
         $tipos_contribuyente = TipoContribuyente::get();
@@ -72,7 +76,8 @@ class ResidenciaController extends Controller
             'tipos_contribuyente',
             'rutas',
             'ubicaciones_cobro',
-            'bomberos'
+            'bomberos',
+            'ultimo'
         ));
     }
 
@@ -84,6 +89,28 @@ class ResidenciaController extends Controller
      */
     public function store(Request $request)
     {
+
+        $messages = [
+            'NumeroPoliza.required' => 'El Número de poliza es requerido',
+            'LimiteGrupo.required' => 'El Límite Grupal es requerido',
+            'LimiteIndividual.required' => 'El Límite Individual es requerido',
+            'Tasa.required' => 'El valor de la Tasa es requerido',
+            'TasaDescuento.required' => 'El valor de la Tasa de Descuento es requerido',
+            'TasaComision.required' => 'El valor de la Tas de Comisión es requerido',
+
+        ];
+
+        $request->validate([
+            'LimiteGrupo' => 'required',
+            'LimiteIndividual' => 'required',
+            'NumeroPoliza' => 'required',
+            'Tasa' => 'required',
+            'TasaDescuento' => 'required',
+            'TasaComision' => 'required'
+
+        ], $messages);
+
+
         $residencia = new Residencia();
         $residencia->Numero = 1;
         $residencia->NumeroPoliza = $request->NumeroPoliza;
@@ -105,7 +132,7 @@ class ResidenciaController extends Controller
         $residencia->save();
 
         alert()->success('El registro ha sido creado correctamente');
-        return Redirect::to('polizas/residencia/create');
+        return Redirect::to('polizas/residencia/' . $residencia->Id . '/edit');
     }
 
     /*
@@ -125,13 +152,13 @@ class ResidenciaController extends Controller
         $ubicaciones_cobro = UbicacionCobro::where('Activo', '=', 1)->get();
         $detalle = DetalleResidencia::where('Residencia', $residencia->Id)->where('Activo', 1)->orderBy('Id', 'desc')->get();
         $ultimo_pago = DetalleResidencia::where('Residencia', $residencia->Id)->where('Activo', 1)->orderBy('Id', 'desc')->first();
-       // dd($ultimo_pago);
+        // dd($ultimo_pago);
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
         $bombero = Bombero::where('Activo', 1)->first();
         if ($bombero) {
             $bomberos = $bombero->Valor;
         } else {
-            $bomberos = $bombero->Valor;
+            $bomberos = 0;
         }
 
         $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
@@ -161,7 +188,45 @@ class ResidenciaController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $messages = [
+            'NumeroPoliza.required' => 'El Número de poliza es requerido',
+            'LimiteGrupo.required' => 'El Límite Grupal es requerido',
+            'LimiteIndividual.required' => 'El Límite Individual es requerido',
+            'Tasa.required' => 'El valor de la Tasa es requerido',
+            'TasaDescuento.required' => 'El valor de la Tasa de Descuento es requerido',
+            'TasaComision.required' => 'El valor de la Tas de Comisión es requerido',
+
+        ];
+
+        $request->validate([
+            'LimiteGrupo' => 'required',
+            'LimiteIndividual' => 'required',
+            'NumeroPoliza' => 'required',
+            'Tasa' => 'required',
+            'TasaDescuento' => 'required',
+            'TasaComision' => 'required'
+
+        ], $messages);
+
         $residencia = Residencia::findOrFail($id);
+        $residencia->NumeroPoliza = $request->NumeroPoliza;
+        $residencia->Codigo = $request->Codigo;
+        $residencia->Aseguradora = $request->Aseguradora;
+        $residencia->Asegurado = $request->Asegurado;
+        $residencia->EstadoPoliza = $request->EstadoPoliza;
+        $residencia->VigenciaDesde = $request->VigenciaDesde;
+        $residencia->VigenciaHasta = $request->VigenciaHasta;
+        $residencia->LimiteGrupo = $request->LimiteGrupo;
+        $residencia->LimiteIndividual = $request->LimiteIndividual;
+        $residencia->Tasa = $request->Tasa;
+        $residencia->Ejecutivo = $request->Ejecutivo;
+        $residencia->TasaDescuento = $request->TasaDescuento;
+        $residencia->Nit = $request->Nit;
+        $residencia->Activo = 1;
+        $residencia->Mensual = $request->tipoTasa;
+        $residencia->Comision = $request->TasaComision;
+        $residencia->update();
+
         $detalles = new DetalleResidencia();
         $detalles->MontoCartera = $request->MontoCartera;
         $detalles->Tasa = $request->Tasa;

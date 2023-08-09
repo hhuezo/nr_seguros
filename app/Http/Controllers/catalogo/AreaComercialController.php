@@ -46,7 +46,7 @@ class AreaComercialController extends Controller
 
 
         alert()->success('El registro ha sido creado correctamente');
-        return Redirect::to('catalogo/area_comercial/create');
+        return Redirect::to('catalogo/area_comercial');
 
     }
 

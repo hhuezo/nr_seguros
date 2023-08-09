@@ -52,7 +52,7 @@ class BomberoController extends Controller
         $bombero->save();
 
         alert()->success('El registro ha sido creado correctamente');
-        return Redirect::to('catalogo/bombero/create');
+        return Redirect::to('catalogo/bombero');
     }
 
     /**

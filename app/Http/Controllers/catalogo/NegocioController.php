@@ -30,6 +30,7 @@ use App\Models\catalogo\TipoNegocio;
 use App\Models\catalogo\TipoPoliza;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class NegocioController extends Controller
 {

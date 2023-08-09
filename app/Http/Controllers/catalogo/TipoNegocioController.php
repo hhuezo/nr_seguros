@@ -47,7 +47,7 @@ class TipoNegocioController extends Controller
         $tipo_negocio->save();
 
         alert()->success('El registro ha sido agregado correctamente');
-        return back();
+        return Redirect::to('catalogo/tipo_negocio');
     }
 
     /**

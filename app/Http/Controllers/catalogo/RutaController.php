@@ -46,7 +46,7 @@ class RutaController extends Controller
 
         
         alert()->success('El registro ha sido creado correctamente');
-        return Redirect::to('catalogo/ruta/create');
+        return Redirect::to('catalogo/ruta');
 
     }
 
