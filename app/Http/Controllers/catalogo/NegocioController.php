@@ -15,6 +15,7 @@ use App\Models\catalogo\NecesidadProteccion;
 use App\Models\catalogo\Negocio;
 use App\Models\catalogo\NegocioAccidente;
 use App\Models\catalogo\NegocioAuto;
+use App\Models\catalogo\NegocioContacto;
 use App\Models\catalogo\NegocioDineroValores;
 use App\Models\catalogo\NegocioEquipoElectronico;
 use App\Models\catalogo\NegocioGastosMedicos;
@@ -30,6 +31,7 @@ use App\Models\catalogo\TipoNegocio;
 use App\Models\catalogo\TipoPoliza;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class NegocioController extends Controller
 {
@@ -61,6 +63,7 @@ class NegocioController extends Controller
 
     public function store(Request $request)
     {
+
         $time = Carbon::now();
         //diferenciar al tipo de cliente
         if ($request->TipoPersona == 1) { //cliente natural
@@ -82,6 +85,11 @@ class NegocioController extends Controller
             $cliente->CorreoPrincipal=$request->Email;
 
             $cliente->save();
+        }else{
+            if ($cliente->Estado==2) {
+                $cliente->Estado=3;
+                $cliente->update();
+            }
         }
         $negocio = new Negocio();
         $negocio->NecesidadProteccion = $request->NecesidadProteccion;
@@ -103,10 +111,25 @@ class NegocioController extends Controller
         $negocio->Activo=1;
         $negocio->save();
 
+        //guarda los registros del negocio que estan en el localstore
+        $datosLocalStorage = $request->input('datos_localstorage');
+        $coleccionDatosLocalStorage = collect(json_decode($datosLocalStorage));
+        //dd($coleccionDatos);
+
+        foreach($coleccionDatosLocalStorage as $obj){
+            $RegistroNegocio= new NegocioContacto();
+            $RegistroNegocio->negocio=$negocio->Id;
+            $RegistroNegocio->Contacto=$obj->Contacto;
+            $RegistroNegocio->DescripcionOperacion=$obj->DescripcionOperacion;
+            $RegistroNegocio->TelefonoContacto=$obj->TelefonoContacto;
+            $RegistroNegocio->ObservacionContacto=$obj->ObservacionContacto;
+            $RegistroNegocio->save();
+        }
+
         $string = $request->ModalAseguradora;
         $id = explode(",", $string);
 
-        if ($request->NecesidadProteccion == 1) { //auto
+       /* if ($request->NecesidadProteccion == 1) { //auto
             NegocioAuto::whereIn('Id', $id)->update(['Negocio', $negocio->Id]);
         } else if ($request->NecesidadProteccion == 2) { //incendio
             NegocioIncendio::whereIn('Id', $id)->update(['Negocio', $negocio->Id]);
@@ -126,10 +149,10 @@ class NegocioController extends Controller
             NegocioAccidente::whereIn('Id', $id)->update(['Negocio', $negocio->Id]);
         } else if ($request->NecesidadProteccion == 7) {
 
-        }
+        }*/
 
         alert()->success('El registro ha sido creado correctamente');
-        return Redirect::to('catalogo/negocio');
+        return Redirect::to('catalogo/negocio')->with('Eliminar', 1);
 
     }
 
@@ -210,7 +233,7 @@ class NegocioController extends Controller
             return $accidente->Id;
 
         } elseif ($request->NecesidadProteccion == 10) {
-            if ($request->TipoPlan == 1) {
+            if ($request->TipoNecesidad == 1) {
                 $gastos = new NegocioGastosMedicos();
                 $gastos->Aseguradora = $request->Aseguradora;
                 $gastos->SumaAsegurada = $request->SumaAsegurada;
@@ -230,7 +253,7 @@ class NegocioController extends Controller
                 $gastos->Prima = $request->Prima;
 
                 $gastos->save();
-            } else if ($request->TipoPlan == 2) {
+            } else if ($request->TipoNecesidad == 2) {
                 $gastos = new NegocioGastosMedicos();
                 $gastos->Aseguradora = $request->Aseguradora;
                 $gastos->SumaAsegurada = $request->SumaAsegurada;
@@ -239,7 +262,7 @@ class NegocioController extends Controller
                 $gastos->MaximoVitalicio = $request->MaximoVitalicio;
                 $gastos->CantidadTitulares = $request->CantidadTitulares;
                 $gastos->save();
-            } else if ($request->TipoPlan == 3) {
+            } else if ($request->TipoNecesidad == 3) {
                 $gastos = new NegocioGastosMedicos();
                 $gastos->Aseguradora = $request->Aseguradora;
                 $gastos->SumaAsegurada = $request->SumaAsegurada;

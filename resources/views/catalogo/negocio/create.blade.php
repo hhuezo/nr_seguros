@@ -47,17 +47,20 @@
                                         <input type="hidden" name="CantidadDependiente" id="CantidadDependiente"
                                             value="{{ old('CantidadDependiente') }}" class="form-control" required
                                             autofocus="true">
+                                        <input type="hidden" name="datos_localstorage" id="datos_localstorage">
+
 
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="row">
                                                 <div class="col-lg-4">
                                                     <label for="IdCliente" class="form-label">Código Cliente</label>
                                                     <input type="text" class="form-control" name="IdCliente"
-                                                        id="IdCliente" placeholder="Ingrese codigo de cliente" onkeyup="mostrarId();">
+                                                        id="IdCliente" placeholder="Ingrese codigo de cliente"
+                                                        onkeyup="mostrarId();">
                                                 </div><!-- /.col-lg-6 -->
                                                 <div class="col-md-4">
                                                     <label for="NombreCliente" class="form-label">Nombre del cliente</label>
-                                                    <input class="form-control" type="text" value=""
+                                                    <input class="form-control validarCredenciales" type="text" value=""
                                                         name="NombreCliente" id="NombreCliente">
                                                 </div>
                                                 <div class="col-md-4">
@@ -77,7 +80,7 @@
                                                     <label for="Dui" class="form-label">DUI </label>
                                                     <input type="text" name="Dui" id="Dui"
                                                         value="{{ old('Dui') }}" data-inputmask="'mask': ['99999999-9']"
-                                                        onkeyup="mostrar();" class="form-control" >
+                                                        onkeyup="mostrar();" class="form-control">
                                                 </div>
 
                                                 <div id="divNit" class="col-md-4">
@@ -86,48 +89,47 @@
                                                         value="{{ old('NitEmpresa') }}"
                                                         data-inputmask="'mask': ['9999-999999-999-9']" onkeyup="mostrar();"
                                                         class="form-control" ">
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <label for="Email" class="form-label">Email</label>
-                                                    <input type="email" class="form-control" name="Email"
-                                                        id="Email">
-                                                </div>
-                                            </div>
-                                            <div class="row" style="margin-top: 12px!important;">
-                                                <div class="col-md-4">
-                                                    <label for="EstadoCliente" class="form-label">Estado Cliente</label>
-                                                    <select disabled name="EstadoCliente" id="EstadoCliente"
-                                                        class="form-control select2">
-                                                        <option value="" selected disabled> Seleccione...</option>
-                                                        @foreach ($cliente_estado as $obj)
-                                                            <option value="{{ $obj->Id }}">{{ $obj->Nombre }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <label for="Ejecutivo" class="form-label">Ejecutivo</label>
-                                                    <select name="Ejecutivo" id="Ejecutivo" class="form-control select2"
-                                                        style="width: 100%" required>
-                                                        <option value="" selected disabled>Seleccione...</option>
-                                                        @foreach ($ejecutivos as $obj)
-                                                            <option value="{{ $obj->Id }}">{{ $obj->Nombre }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <label for="EstadoVenta" class="form-label">Estado Venta</label>
-                                                    <select name="EstadoVenta" id="EstadoVenta"
-                                                        class="form-control select2" style="width: 100%" required>
-                                                        <option value="" disabled selected>Seleccione...</option>
-                                                        @foreach ($estados_venta as $obj)
-                                                            <option value="{{ $obj->Id }}">{{ $obj->Nombre }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <label for="Email" class="form-label">Email</label>
+                                                                    <input type="email" class="form-control validarCredenciales" name="Email"
+                                                                        id="Email">
+                                                                </div>
+                                                            </div>
+                                                            <div class="row" style="margin-top: 12px!important;">
+                                                                <div class="col-md-4">
+                                                                    <label for="EstadoCliente" class="form-label">Estado Cliente</label>
+                                                                    <select disabled name="EstadoCliente" id="EstadoCliente"
+                                                                        class="form-control select2">
+                                                                        <option value="" selected disabled> Seleccione...</option>
+                                                                            @foreach ($cliente_estado as $obj)
+                                                                                <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                                                            @endforeach
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <label for="Ejecutivo" class="form-label">Ejecutivo</label>
+                                                                    <select name="Ejecutivo" id="Ejecutivo" class="form-control select2"
+                                                                        style="width: 100%" required>
+                                                                        <option value="" selected disabled>Seleccione...</option>
+                                                                        @foreach ($ejecutivos as $obj)
+                                                                            <option value="{{ $obj->Id }}">{{ $obj->Nombre }}
+                                                                            </option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <label for="EstadoVenta" class="form-label">Estado Venta</label>
+                                                                    <select name="EstadoVenta" id="EstadoVenta"
+                                                                        class="form-control select2" style="width: 100%" required>
+                                                                        <option value="" disabled selected>Seleccione...</option>
+                                                                        @foreach ($estados_venta as $obj)
+                                                                            <option value="{{ $obj->Id }}">{{ $obj->Nombre }}
+                                                                            </option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </div>
                                             <div class="row" style="padding-top: 15px !important;">
                                                 <div class="col-md-4">
                                                     <label for="TipoPoliza" class="form-label">Ramo</label>
@@ -179,7 +181,6 @@
                                                     <select name="TipoNegocio" id="TipoNegocio"
                                                         class="form-control select2" style="width: 100%" required>
                                                         <option value="" selected disabled>Seleccione...</option>
-                                                        <option value="">Nuevo</option>
                                                         @foreach ($tipos_negocio as $obj)
                                                             <option value="{{ $obj->Id }}">{{ $obj->Nombre }}
                                                             </option>
@@ -211,15 +212,15 @@
                                                     </select>
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <label for="FormaPago" class="form-label">Forma de
-                                                        Pago</label>
+                                                    <label for="FormaPago" class="form-label">Periodo de Pago (Forma de
+                                                        Pago)</label>
                                                     <select name="FormaPago" id="FormaPago" class="form-control select2"
                                                         style="width: 100%" required>
                                                         <option value="" selected disabled>Seleccione...</option>
-                                                        @foreach ($forma_pago as $obj)
-                                                            <option value="{{ $obj->Id }}">{{ $obj->Nombre }}
-                                                            </option>
-                                                        @endforeach
+                                                        <option value="">Anual</option>
+                                                        <option value="">Semestral</option>
+                                                        <option value="">Trimestral</option>
+                                                        <option value="">Mensual</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -271,145 +272,6 @@
                                                 </div>
                                             </div>
 
-                                            {{--                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 "> --}}
-                                            {{--                            <div class="form-group"> --}}
-                                            {{--                                <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: left;">Tipo Persona </label> --}}
-                                            {{--                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"> --}}
-                                            {{--                                    <select name="TipoPersona" id="TipoPersona" class="form-control"> --}}
-                                            {{--                                        <option value="">Seleccione ...</option> --}}
-                                            {{--                                        <option value="1">Natural</option> --}}
-                                            {{--                                        <option value="2">Juridica</option> --}}
-                                            {{--                                    </select> --}}
-                                            {{--                                </div> --}}
-                                            {{--                            </div> --}}
-                                            {{--                            <div class="form-group" style="display: show;" id='Duis'> --}}
-                                            {{--                                <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: left;">DUI </label> --}}
-                                            {{--                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"> --}}
-                                            {{--                                    <input type="text" name="Dui" id="Dui" value="{{ old('Dui') }}" data-inputmask="'mask': ['99999999-9']" onkeydown="mostrar();" class="form-control" required autofocus="true"> --}}
-                                            {{--                                </div> --}}
-                                            {{--                            </div> --}}
-                                            {{--                            <div class="form-group" style="display: none;" id='DuiRepresentantes'> --}}
-                                            {{--                                <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: left;">DUI (Representante) </label> --}}
-                                            {{--                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"> --}}
-                                            {{--                                    <input type="text" name="DuiRepresentante" id="DuiRepresentante" value="{{ old('DuiRepresentante') }}" onkeydown="mostrar();" data-inputmask="'mask': ['99999999-9']" class="form-control" autofocus="true"> --}}
-                                            {{--                                </div> --}}
-                                            {{--                            </div> --}}
-                                            {{--                            <div class="form-group row" id="Homolo" style="display: show;"> --}}
-
-                                            {{--                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Homologado</label> --}}
-                                            {{--                                <div class="col-lg-7 col-md-7 col-sm-12 col-xs-12"> --}}
-                                            {{--                                    <input name="Homologado" id="Homologado" type="checkbox" class="js-switch" /> --}}
-                                            {{--                                </div> --}}
-                                            {{--                            </div> --}}
-                                            {{--                            <div class="form-group" style="display: show;" id="Nits"> --}}
-                                            {{--                                <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: left;">NIT </label> --}}
-                                            {{--                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"> --}}
-                                            {{--                                    <input type="text" name="Nit" id="Nit" value="{{ old('Nit') }}" class="form-control" required autofocus="true"> --}}
-                                            {{--                                </div> --}}
-
-                                            {{--                            </div> --}}
-                                            {{--                            <div class="form-group" style="display: none;" id='NitEmpresas'> --}}
-                                            {{--                                <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: left;">NIT Empresa </label> --}}
-                                            {{--                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"> --}}
-                                            {{--                                    <input type="text" name="NitEmpresa" id="NitEmpresa" value="{{ old('NitEmpresa') }}" data-inputmask="'mask': ['9999-999999-999-9']" class="form-control" required autofocus="true"> --}}
-                                            {{--                                </div> --}}
-
-                                            {{--                            </div> --}}
-
-
-                                            {{--                            <div class="form-group"> --}}
-                                            {{--                                <label class="control-label col-md-12col-sm-12 col-xs-12" style="text-align: left;">Nombre </label> --}}
-                                            {{--                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"> --}}
-                                            {{--                                    <input type="text" name="Nombre" id="Nombre" value="{{ old('Nombre') }}" class="form-control" required autofocus="true"> --}}
-                                            {{--                                </div> --}}
-
-                                            {{--                            </div> --}}
-                                            {{--                            <div class="form-group"> --}}
-                                            {{--                                <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: left;">Forma de Pago </label> --}}
-                                            {{--                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"> --}}
-                                            {{--                                    <select name="FormaPago" id="FormaPago" class="form-control" style="width: 100%" required> --}}
-                                            {{--                                        <option value="">Seleccione...</option> --}}
-                                            {{--                                        @foreach ($forma_pago as $obj) --}}
-                                            {{--                                        <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option> --}}
-                                            {{--                                        @endforeach --}}
-                                            {{--                                    </select> --}}
-                                            {{--                                </div> --}}
-                                            {{--                            </div> --}}
-
-                                            {{--                        </div> --}}
-                                            {{--                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 "> --}}
-                                            {{--                            <div class="form-group row"> --}}
-                                            {{--                                <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: left;">Necesidad de Protección</label> --}}
-                                            {{--                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"> --}}
-                                            {{--                                    <select name="NecesidadProteccion" id="NecesidadProteccion" class="form-control select2" style="width: 100%;" required> --}}
-                                            {{--                                        <option value="">Seleccione...</option> --}}
-                                            {{--                                        @foreach ($necesidad_proteccion as $obj) --}}
-                                            {{--                                        <option value="{{$obj->Id}}">{{$obj->Nombre}}</option> --}}
-                                            {{--                                        @endforeach --}}
-                                            {{--                                    </select> --}}
-                                            {{--                                </div> --}}
-                                            {{--                            </div> --}}
-
-                                            {{--                            <div class="form-group row"> --}}
-                                            {{--                                <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: left;">Tipo de Plan</label> --}}
-                                            {{--                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"> --}}
-                                            {{--                                    <select name="TipoNecesidad" id="TipoNecesidad" class="form-control" style="width: 100%;" required> --}}
-
-
-                                            {{--                                    </select> --}}
-                                            {{--                                </div> --}}
-                                            {{--                            </div> --}}
-                                            {{--                            <div class="form-group" id="CantidadDependientes" style="display: none;"> --}}
-                                            {{--                                <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: left;">Cantidad de Personas </label> --}}
-                                            {{--                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"> --}}
-                                            {{--                                    <input type="number" name="CantidadDependiente" id="CantidadDependiente" value="{{ old('CantidadDependiente') }}" class="form-control" required autofocus="true"> --}}
-                                            {{--                                </div> --}}
-                                            {{--                            </div> --}}
-
-                                            {{--                            <div class="form-group" > --}}
-                                            {{--                                <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: left;">Numero de Cuotas </label> --}}
-                                            {{--                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"> --}}
-                                            {{--                                    <input type="number" name="NumCoutas" id="NumCoutas" value="{{ old('NumCoutas') }}" class="form-control" required autofocus="true"> --}}
-
-                                            {{--                                </div> --}}
-                                            {{--                            </div> --}}
-
-                                            {{--                            <div class="form-group row"> --}}
-                                            {{--                                <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: left;">Vendedor</label> --}}
-                                            {{--                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"> --}}
-                                            {{--                                    <select name="Ejecutivo" class="form-control select2" style="width: 100%" required> --}}
-                                            {{--                                        <option value="">Seleccione...</option> --}}
-                                            {{--                                        @foreach ($ejecutivos as $obj) --}}
-                                            {{--                                        <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option> --}}
-                                            {{--                                        @endforeach --}}
-                                            {{--                                    </select> --}}
-                                            {{--                                </div> --}}
-                                            {{--                            </div> --}}
-                                            {{--                            <div class="form-group"> --}}
-                                            {{--                                <label class="control-label col-md-12col-sm-12 col-xs-12" style="text-align: left;">Inicio de Vigencia </label> --}}
-                                            {{--                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"> --}}
-                                            {{--                                    <input type="date" name="InicioVigencia" id="InicioVigencia" value="{{ old('InicioVigencia') }}" class="form-control" required autofocus="true"> --}}
-                                            {{--                                </div> --}}
-
-                                            {{--                            </div> --}}
-                                            {{--                            <div class="form-group row"> --}}
-                                            {{--                                <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: left;">Estado Venta</label> --}}
-                                            {{--                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"> --}}
-                                            {{--                                    <select name="Ejecutivo" class="form-control select2" style="width: 100%" required> --}}
-                                            {{--                                        <option value="">Seleccione...</option> --}}
-                                            {{--                                        @foreach ($estados_venta as $obj) --}}
-                                            {{--                                        <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option> --}}
-                                            {{--                                        @endforeach --}}
-                                            {{--                                    </select> --}}
-                                            {{--                                </div> --}}
-                                            {{--                            </div> --}}
-
-
-
-
-                                            {{--                        </div> --}}
-
-
                                         </div>
 
 
@@ -433,7 +295,7 @@
 
                                         <div class="x_title">
                                             <div class="float-right" style="text-align: right;">
-                                                <button type="button" onclick="modal_aseguradora()"
+                                                <button type="button" onclick="modal_informacion_negocio()"
                                                     class="btn btn-info"><i class="fa fa-plus"></i> Nuevo Registro
                                                 </button>
                                             </div>
@@ -448,27 +310,11 @@
                                                             <th scope="col">Descripción de la operación</th>
                                                             <th scope="col">Telefonos de contacto</th>
                                                             <th scope="col">Observaciones</th>
+                                                            <th scope="col">Opciones</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <th scope="row">1</th>
-                                                            <td>Mark</td>
-                                                            <td>Otto</td>
-                                                            <td>@mdo</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">2</th>
-                                                            <td>Jacob</td>
-                                                            <td>Thornton</td>
-                                                            <td>@fat</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">3</th>
-                                                            <td>Larry</td>
-                                                            <td>the Bird</td>
-                                                            <td>@twitter</td>
-                                                        </tr>
+                                                    <tbody id="tablaCuerpo">
+
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -487,9 +333,43 @@
             </div>
 
             @include('catalogo.negocio.modal_aseguradora')
+            @include('catalogo.negocio.informacion_negocio')
+            @include('catalogo.negocio.informacion_negocio_edit')
+
+
 
             <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
             <script type="text/javascript">
+                $(".validarCredenciales").on("input", function() {
+                    let Dui = $('#Dui').val();
+                    let NitEmpresa = $('#NitEmpresa').val();
+                    let campo = '';
+                    if ($('#TipoPersona').val() !== null) {
+                                if ($('#TipoPersona').val() === '1') {
+                                    campo = 'DUI';
+                                } else {
+                                    campo = 'NIT Empresa';
+                                }
+
+                                if (Dui.length !== 10 && NitEmpresa.length !== 17) {
+                                    Swal.fire({
+                                        title: 'Error!',
+                                        text: 'Debe de rellenar el campo de ' + campo +
+                                            ' antes de continuar con los demás campos',
+                                        icon: 'error',
+                                        confirmButtonText: 'Aceptar'
+                                    })
+                                }
+                    }else{
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Debe seleccionar el Tipo Persona',
+                            icon: 'error',
+                            confirmButtonText: 'Aceptar'
+                        })
+                    }
+                            });
+
                 function borrarDatosCliente() {
                     $('#NombreCliente').val('');
                     $('#Email').val('');
@@ -535,7 +415,7 @@
                                 $('#NitEmpresa').val(data.cliente.Nit);
                                 $('#NombreCliente').val(data.cliente.Nombre);
                                 $('#Email').val(data.cliente.CorreoPrincipal);
-                                $("#TipoPersona option[value='"+data.cliente.TipoPersona+"']").prop("selected", true);
+                                $("#TipoPersona option[value='" + data.cliente.TipoPersona + "']").prop("selected",true);
                                 $("#EstadoCliente").val(data.cliente.Estado).trigger("change");
                                 $("#FormaPago").val(data.cliente.FormaPago).trigger("change");
                                 $("#divDui").addClass("has-error");
@@ -751,8 +631,8 @@
                 })
 
                 function modal_aseguradora() {
-                    if (document.getElementById('NecesidadProteccion').value == '' || document.getElementById('TipoNecesidad').value ==
-                        '') {
+                    if (document.getElementById('NecesidadProteccion').value == '' || document.getElementById('TipoNecesidad').value =='')
+                    {
                         ///   alert('Debe seleccionar el Tipo Persona');
                         Swal.fire({
                             title: 'Error!',
@@ -907,6 +787,22 @@
                         }
                         $('#modal_aseguradora').modal('show');
                     }
+
+                }
+
+                function modal_informacion_negocio() {
+
+                    ///   alert('Debe seleccionar el Tipo Persona');
+                    /*   Swal.fire({
+                           title: 'Error!',
+                           text: 'Seleccione la necesidad y el plan para continuar ',
+                           icon: 'info',
+                           confirmButtonText: 'Aceptar',
+                           timer: 3500
+                       })*/
+
+                    $('#modal_informacion_negocio').modal('show');
+
 
                 }
             </script>

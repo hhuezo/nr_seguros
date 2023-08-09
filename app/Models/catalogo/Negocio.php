@@ -55,4 +55,9 @@ class Negocio extends Model
     {
         return $this->belongsTo('App\Models\catalogo\Cliente', 'Asegurado', 'Id');
     }
+
+    public function contactos()
+    {
+        return $this->hasMany(NegocioContacto::class, 'negocio');
+    }
 }
