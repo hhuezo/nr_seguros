@@ -40,10 +40,6 @@
                                 <form action="{{ url('catalogo/negocio') }}" method="POST" class="forms-sample">
                                     @csrf
                                     <div class="x_content">
-                                        {{--                    <div> --}}
-                                        {{--                        <h4>Prospecto del cliente</h4> --}}
-                                        {{--                    </div> --}}
-                                        {{--                    <h5>Prospecto de Cliente<small></small></h5> --}}
                                         <input type="hidden" name="CantidadDependiente" id="CantidadDependiente"
                                             value="{{ old('CantidadDependiente') }}" class="form-control" required
                                             autofocus="true">
@@ -60,8 +56,8 @@
                                                 </div><!-- /.col-lg-6 -->
                                                 <div class="col-md-4">
                                                     <label for="NombreCliente" class="form-label">Nombre del cliente</label>
-                                                    <input class="form-control validarCredenciales" type="text" value=""
-                                                        name="NombreCliente" id="NombreCliente">
+                                                    <input class="form-control validarCredenciales" type="text"
+                                                        value="" name="NombreCliente" id="NombreCliente">
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label for="TipoPersona" class="form-label">Tipo Cliente</label>
@@ -81,6 +77,8 @@
                                                     <input type="text" name="Dui" id="Dui"
                                                         value="{{ old('Dui') }}" data-inputmask="'mask': ['99999999-9']"
                                                         onkeyup="mostrar();" class="form-control">
+                                                    <span id="helpBlockDuiNit" class="help-block">Este cliente ya
+                                                        existe.</span>
                                                 </div>
 
                                                 <div id="divNit" class="col-md-4">
@@ -89,47 +87,45 @@
                                                         value="{{ old('NitEmpresa') }}"
                                                         data-inputmask="'mask': ['9999-999999-999-9']" onkeyup="mostrar();"
                                                         class="form-control" ">
-                                                                </div>
-                                                                <div class="col-md-4">
-                                                                    <label for="Email" class="form-label">Email</label>
-                                                                    <input type="email" class="form-control validarCredenciales" name="Email"
-                                                                        id="Email">
-                                                                </div>
-                                                            </div>
-                                                            <div class="row" style="margin-top: 12px!important;">
-                                                                <div class="col-md-4">
-                                                                    <label for="EstadoCliente" class="form-label">Estado Cliente</label>
-                                                                    <select disabled name="EstadoCliente" id="EstadoCliente"
-                                                                        class="form-control select2">
-                                                                        <option value="" selected disabled> Seleccione...</option>
-                                                                            @foreach ($cliente_estado as $obj)
-                                                                                <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
-                                                                            @endforeach
-                                                                    </select>
-                                                                </div>
-                                                                <div class="col-md-4">
-                                                                    <label for="Ejecutivo" class="form-label">Ejecutivo</label>
-                                                                    <select name="Ejecutivo" id="Ejecutivo" class="form-control select2"
-                                                                        style="width: 100%" required>
-                                                                        <option value="" selected disabled>Seleccione...</option>
-                                                                        @foreach ($ejecutivos as $obj)
-                                                                            <option value="{{ $obj->Id }}">{{ $obj->Nombre }}
-                                                                            </option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                </div>
-                                                                <div class="col-md-4">
-                                                                    <label for="EstadoVenta" class="form-label">Estado Venta</label>
-                                                                    <select name="EstadoVenta" id="EstadoVenta"
-                                                                        class="form-control select2" style="width: 100%" required>
-                                                                        <option value="" disabled selected>Seleccione...</option>
-                                                                        @foreach ($estados_venta as $obj)
-                                                                            <option value="{{ $obj->Id }}">{{ $obj->Nombre }}
-                                                                            </option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                </div>
-                                                            </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label for="Email" class="form-label">Email</label>
+                                                        <input type="email" class="form-control validarCredenciales" name="Email" id="Email">
+                                                    </div>
+                                                </div>
+                                            <div class="row" style="margin-top: 12px!important;">
+                                                <div class="col-md-4">
+                                                    <label for="EstadoCliente" class="form-label">Estado Cliente</label>
+                                                    <select disabled name="EstadoCliente" id="EstadoCliente" class="form-control select2">
+                                                        <option value="" selected disabled> Seleccione...</option>
+                                                        @foreach ($cliente_estado as $obj)
+                                                            <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="Ejecutivo" class="form-label">Ejecutivo</label>
+                                                    <select name="Ejecutivo" id="Ejecutivo" class="form-control select2"
+                                                        style="width: 100%" required>
+                                                        <option value="" selected disabled>Seleccione...</option>
+                                                        @foreach ($ejecutivos as $obj)
+                                                            <option value="{{ $obj->Id }}">{{ $obj->Nombre }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="EstadoVenta" class="form-label">Estado Venta</label>
+                                                    <select name="EstadoVenta" id="EstadoVenta"
+                                                        class="form-control select2" style="width: 100%" required>
+                                                        <option value="" disabled selected>Seleccione...</option>
+                                                        @foreach ($estados_venta as $obj)
+                                                            <option value="{{ $obj->Id }}">{{ $obj->Nombre }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
                                             <div class="row" style="padding-top: 15px !important;">
                                                 <div class="col-md-4">
                                                     <label for="TipoPoliza" class="form-label">Ramo</label>
@@ -187,8 +183,6 @@
                                                         @endforeach
                                                     </select>
                                                 </div>
-
-
                                             </div>
                                             <div class="row" style="padding-top: 15px !important;">
                                                 <div class="col-md-4">
@@ -341,34 +335,38 @@
             <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
             <script type="text/javascript">
                 $(".validarCredenciales").on("input", function() {
-                    let Dui = $('#Dui').val();
-                    let NitEmpresa = $('#NitEmpresa').val();
+                    let Dui = $('#Dui').val().replace(/[^\d]/g, '');
+                    let NitEmpresa = $('#NitEmpresa').val().replace(/[^\d]/g, '');
                     let campo = '';
                     if ($('#TipoPersona').val() !== null) {
-                                if ($('#TipoPersona').val() === '1') {
-                                    campo = 'DUI';
-                                } else {
-                                    campo = 'NIT Empresa';
-                                }
+                        if ($('#TipoPersona').val() === '1') {
+                            campo = 'DUI';
+                        } else {
+                            campo = 'NIT Empresa';
+                        }
 
-                                if (Dui.length !== 10 && NitEmpresa.length !== 17) {
-                                    Swal.fire({
-                                        title: 'Error!',
-                                        text: 'Debe de rellenar el campo de ' + campo +
-                                            ' antes de continuar con los demás campos',
-                                        icon: 'error',
-                                        confirmButtonText: 'Aceptar'
-                                    })
-                                }
-                    }else{
+                        if (Dui.length !== 9 && NitEmpresa.length !== 14) {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'Debe de rellenar el campo de ' + campo +
+                                    ' antes de continuar con los demás campos',
+                                icon: 'error',
+                                confirmButtonText: 'Aceptar'
+                            })
+                            $('#NombreCliente').val('');
+                            $('#Email').val('');
+                        }
+                    } else {
                         Swal.fire({
                             title: 'Error!',
                             text: 'Debe seleccionar el Tipo Persona',
                             icon: 'error',
                             confirmButtonText: 'Aceptar'
                         })
+                        $('#NombreCliente').val('');
+                        $('#Email').val('');
                     }
-                            });
+                });
 
                 function borrarDatosCliente() {
                     $('#NombreCliente').val('');
@@ -379,6 +377,8 @@
                     $("#divNit").removeClass("has-error");
                     $("#MetodoPago").find("option:not(:first-child)").remove();
                     $("#MetodoPago").val(null).trigger("change"); // Clear and update the Select2 element
+                    $('#helpBlockDuiNit').hide();
+
                 }
 
                 function identificadorCliente() {
@@ -415,11 +415,13 @@
                                 $('#NitEmpresa').val(data.cliente.Nit);
                                 $('#NombreCliente').val(data.cliente.Nombre);
                                 $('#Email').val(data.cliente.CorreoPrincipal);
-                                $("#TipoPersona option[value='" + data.cliente.TipoPersona + "']").prop("selected",true);
+                                $("#TipoPersona option[value='" + data.cliente.TipoPersona + "']").prop("selected",
+                                    true);
                                 $("#EstadoCliente").val(data.cliente.Estado).trigger("change");
                                 $("#FormaPago").val(data.cliente.FormaPago).trigger("change");
                                 $("#divDui").addClass("has-error");
                                 $("#divNit").addClass("has-error");
+                                $('#helpBlockDuiNit').show();
                                 if ($('#TipoPersona').val() == 1) {
                                     $('#divDui').show();
                                     $('#divNit').hide();
@@ -480,6 +482,7 @@
                                     $("#FormaPago").val(data.cliente.FormaPago).trigger("change");
                                     $("#divDui").addClass("has-error");
                                     $("#divNit").addClass("has-error");
+                                    $('#helpBlockDuiNit').show();
 
                                     $.each(data.metodo_pago, function(index, datos) {
                                         $("#MetodoPago").append(new Option(datos.NumeroTarjeta, datos.Id, false,
@@ -495,6 +498,7 @@
                 }
                 $(document).ready(function() {
                     $('#divNit').hide();
+                    $('#helpBlockDuiNit').hide();
                     $("#EstadoCliente").val(3).trigger("change");
 
 
@@ -631,8 +635,8 @@
                 })
 
                 function modal_aseguradora() {
-                    if (document.getElementById('NecesidadProteccion').value == '' || document.getElementById('TipoNecesidad').value =='')
-                    {
+                    if (document.getElementById('NecesidadProteccion').value == '' || document.getElementById('TipoNecesidad')
+                        .value == '') {
                         ///   alert('Debe seleccionar el Tipo Persona');
                         Swal.fire({
                             title: 'Error!',
