@@ -45,7 +45,7 @@ class UbicacionCobroController extends Controller
         $ubicacion_cobro->save();
 
         alert()->success('El registro ha sido agregado correctamente');
-        return back();
+        return Redirect::to('catalogo/ubicacion_cobro');
     }
 
     /**

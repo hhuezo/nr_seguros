@@ -75,15 +75,8 @@
                                     <ul class="nav child_menu">
 
                                         <li><a href="{{ url('catalogo/bombero') }}">Impuesto Bomberos</a></li>
-
-
-
                                         <li><a href="{{ url('catalogo/ejecutivos') }}">Ejecutivo</a></li>
                                         <li><a href="{{ url('catalogo/estado_polizas') }}">Estado Póliza</a></li>
-
-
-
-
                                         <li><a href="{{ url('catalogo/estado_venta') }}">Estado Venta</a></li>
                                         <li><a href="{{ url('catalogo/tipo_cartera') }}">Tipo Cartera</a></li>
                                         <li><a href="{{ url('catalogo/tipo_negocio') }}">Tipo Negocio</a></li>
@@ -91,6 +84,8 @@
                                         <li><a href="{{ url('catalogo/tipo_poliza') }}">Tipo Póliza (ramo)</a></li>
                                         <li><a href="{{ url('catalogo/area_comercial')}}">Área Comercial</a></li>
                                         <li><a href="{{ url('catalogo/ubicacion_cobro') }}">Ubicación Cobro</a></li>
+                                        <li><a href="{{ url('catalogo/necesidad_proteccion') }}">Necesidad de Protección</a></li>
+                                        
                                     </ul>
                                 </li>
                                 <li><a><i class="fa fa-user"></i> Cliente <span class="fa fa-chevron-down"></span></a>
@@ -107,6 +102,8 @@
                                 <li><a><i class="fa fa-shield"></i> Aseguradoras <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                     <li><a href="{{ url('catalogo/aseguradoras') }}">Aseguradora</a></li>
+                                    <li><a href="{{ url('catalogo/necesidad_aseguradora') }}">Asignar Necesidad de Protección <br>
+                                    Aseguradora</a></li>
                                     </ul>
                                 </li>
 

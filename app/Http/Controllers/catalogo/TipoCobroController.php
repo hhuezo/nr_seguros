@@ -46,7 +46,7 @@ class TipoCobroController extends Controller
 
 
         alert()->success('El registro ha sido creado correctamente');
-        return Redirect::to('catalogo/tipo_cobro/create');
+        return Redirect::to('catalogo/tipo_cobro');
 
     }
 

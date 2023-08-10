@@ -5,10 +5,10 @@
         @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
         <div class="x_title">
             <div class="col-md-6 col-sm-6 col-xs-12">
-                <h3>Polizas de Residencia </h3>
+                <h3>Necesidad de Protección </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
-                <a href="{{ url('polizas/residencia/create/') }}"><button class="btn btn-info float-right"> <i
+                <a href="{{ url('catalogo/necesidad_proteccion/create/') }}"><button class="btn btn-info float-right"> <i
                             class="fa fa-plus"></i> Nuevo</button></a>
             </div>
             <div class="clearfix"></div>
@@ -21,42 +21,34 @@
                 <table id="datatable" class="table table-striped table-bordered">
                     <thead>
                         <tr>
-                            <th>Asegurado</th>
-                            <th>Aseguradora</th>
-                            <th>Vendedor</th>
-                            <th>Estado</th>
+                            <th>Nombre</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($residencias as $obj)
+                        @foreach ($necesidad_proteccion as $obj)
                             <tr>
-                                @if($obj->Asegurado)
-                                <td>{{ $obj->clientes->Nombre }}</td>
-                                @else
-                                <td></td>
-                                @endif
-                                <td>{{ $obj->aseguradoras->Nombre }}</td>
-                                <td>{{ $obj->ejecutivos->Nombre }}</td>
-                                <td>{{ $obj->estadoPolizas->Nombre}}</td>
+                                <td>{{ $obj->Nombre }}</td>
                                 <td align="center">
+
                                     @can('edit users')
-                                        <a href="{{ url('polizas/residencia') }}/{{ $obj->Id }}/edit"
+                                        <a href="{{ url('catalogo/necesidad_proteccion') }}/{{ $obj->Id }}/edit"
                                             class="on-default edit-row">
                                             <i class="fa fa-pencil fa-lg"></i></a>
                                     @endcan
-                                    &nbsp;&nbsp;<a href="{{ url('polizas/residencia') }}/{{ $obj->Id }}/renovar"
-                                            class="on-default edit-row"><i class="fa fa-refresh fa-lg"></i></a>
+
+
                                     @can('delete users')
                                         &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}"
                                             data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
                                     @endcan
                                 </td>
                             </tr>
-                            @include('polizas.residencia.modal')
+                            @include('catalogo.necesidad_proteccion.modal')
                         @endforeach
                     </tbody>
                 </table>
+
             </div>
         </div>
     </div>

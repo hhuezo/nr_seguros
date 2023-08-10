@@ -3,13 +3,12 @@
 namespace App\Http\Controllers\catalogo;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\EstadoPolizaFormRequest;
-use App\Models\catalogo\EstadoPoliza;
+use App\Http\Requests\NecesidadProteccionFormRequest;
+use App\Models\catalogo\NecesidadProteccion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
-use RealRashid\SweetAlert\Facades\Alert;
 
-class EstadoPolizaController extends Controller
+class NecesidadProteccionController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,8 +17,8 @@ class EstadoPolizaController extends Controller
      */
     public function index()
     {
-        $estado_poliza = EstadoPoliza::where('Activo',1)->get();
-        return view('catalogo.estado_poliza.index', compact('estado_poliza'));
+        $necesidad_proteccion = NecesidadProteccion::where('Activo',1)->get();
+        return view('catalogo.necesidad_proteccion.index', compact('necesidad_proteccion'));
     }
 
     /**
@@ -29,7 +28,7 @@ class EstadoPolizaController extends Controller
      */
     public function create()
     {
-        return view('catalogo.estado_poliza.create');
+        return view('catalogo.necesidad_proteccion.create');
     }
 
     /**
@@ -38,16 +37,16 @@ class EstadoPolizaController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(EstadoPolizaFormRequest $request)
+    public function store(NecesidadProteccionFormRequest $request)
     {
-        $estado_poliza = new EstadoPoliza();
-        $estado_poliza->Nombre = $request->Nombre;
-        $estado_poliza->Activo = 1;
-        $estado_poliza->save();
+        $necesidad_proteccion = new NecesidadProteccion();
+        $necesidad_proteccion->Nombre = $request->Nombre;
+        $necesidad_proteccion->Activo = 1;
+        $necesidad_proteccion->save();
 
 
         alert()->success('El registro ha sido creado correctamente');
-        return Redirect::to('catalogo/estado_polizas');
+        return Redirect::to('catalogo/necesidad_proteccion');
 
     }
 
@@ -70,8 +69,8 @@ class EstadoPolizaController extends Controller
      */
     public function edit($id)
     {
-        $estado_poliza = EstadoPoliza::findOrFail($id);
-        return view('catalogo.estado_poliza.edit', compact('estado_poliza'));
+        $necesidad_proteccion = NecesidadProteccion::findOrFail($id);
+        return view('catalogo.necesidad_proteccion.edit', compact('necesidad_proteccion'));
     }
 
     /**
@@ -81,15 +80,15 @@ class EstadoPolizaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(EstadoPolizaFormRequest $request, $id)
+    public function update(NecesidadProteccionFormRequest $request, $id)
     {
-        $estado_poliza = EstadoPoliza::findOrFail($id);
-        $estado_poliza->Nombre = $request->Nombre;
-        $estado_poliza->update();
+        $necesidad_proteccion = NecesidadProteccion::findOrFail($id);
+        $necesidad_proteccion->Nombre = $request->Nombre;
+        $necesidad_proteccion->update();
 
 
         alert()->success('El registro ha sido modificado correctamente');
-        return Redirect::to('catalogo/estado_polizas');
+        return Redirect::to('catalogo/necesidad_proteccion');
     }
 
     /**
@@ -100,7 +99,7 @@ class EstadoPolizaController extends Controller
      */
     public function destroy($id)
     {
-        $estado_poliza = EstadoPoliza::findOrFail($id)->update(['Activo' => 0]);
+        $necesidad_proteccion = NecesidadProteccion::findOrFail($id)->update(['Activo' => 0]);
         alert()->error('El registro ha sido desactivado correctamente');
         return back();
     }

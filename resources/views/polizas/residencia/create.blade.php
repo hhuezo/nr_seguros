@@ -34,10 +34,16 @@
                             </div>
                         </div>
                         <div class="form-group row">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Código</label>
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <input class="form-control" name="Codigo"  type="text" value="{{ ($ultimo->Id)+1 }}" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Aseguradora</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                 <select name="Aseguradora" class="form-control select2" style="width: 100%" required>
-                                    <option value="">Seleccione...</option>
+                                    <option value="" selected disabled>Seleccione...</option>
                                     @foreach ($aseguradoras as $obj)
                                     <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
                                     @endforeach
@@ -46,9 +52,9 @@
                         </div>
                         <div class="form-group row">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Asegurado</label>
-                            <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                 <select name="Asegurado" id="Asegurado" class="form-control select2" style="width: 100%" required>
-                                    <option value="">Seleccione...</option>
+                                    <option value="" disabled  selected >Seleccione...</option>
                                     @foreach ($cliente as $obj)
                                     <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
                                     @endforeach
@@ -57,7 +63,7 @@
                             <!-- <div class="col-md-1 col-lg-1 col-sm-12 col-xs-12"><i onclick="modal_cliente();" class="fa fa-plus fa-lg" style="padding-top: 60%;"></i></div> -->
                         </div>
                         <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Nit</label>
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">NIT</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                 <input class="form-control" name="Nit" id="Nit" type="text" value="{{ old('Nit') }}" readonly>
                             </div>
@@ -77,10 +83,10 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vendedor</label>
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Ejecutivo</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                 <select name="Ejecutivo" class="form-control select2" style="width: 100%" required>
-                                    <option value="">Seleccione...</option>
+                                    <option value="" disabled selected>Seleccione...</option>
                                     @foreach ($ejecutivo as $obj)
                                     <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
                                     @endforeach
@@ -91,19 +97,17 @@
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 ">
                         <input type="hidden" name="Bomberos" id="Bomberos" value="{{$bomberos}}">
-
-
                         <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Limite grupo</label>
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Límite de Grupo</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input type="number" step="any" name="LimiteGrupo" id="LimiteGrupo" value="{{ old('LimiteGrupo') }}" class="form-control">
+                                <input type="number" step="any" name="LimiteGrupo" id="LimiteGrupo" value="{{ old('LimiteGrupo') }}" class="form-control" required>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Limite individual</label>
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Límite Individual</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input type="number" step="any" name="LimiteIndividual" id="LimiteIndividual" value="{{ old('LimiteIndividual') }}" class="form-control">
+                                <input type="number" step="any" name="LimiteIndividual" id="LimiteIndividual" value="{{ old('LimiteIndividual') }}" class="form-control" required>
                             </div>
                         </div>
                         <!-- radio button -->
@@ -133,26 +137,26 @@
                         <div class="form-group">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12">Tasa %</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input type="number" step="any" name="Tasa" id="Tasa" value="{{ old('Tasa') }}" class="form-control">
+                                <input type="number" step="any" name="Tasa" id="Tasa" value="{{ old('Tasa') }}" class="form-control" required>
                             </div>
                         </div>
 
                         <div class="form-group row">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa de Descuento %</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="TasaDescuento" type="number" step="any" id="TasaDescuento">
+                                <input class="form-control" name="TasaDescuento" type="number" step="any" id="TasaDescuento" required>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Comision %</label>
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa de Comisión %</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any">
+                                <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" required>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12">Estatus</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <select name="EstadoPoliza" class="form-control" style="width: 100%">
+                                <select name="EstadoPoliza" class="form-control" style="width: 100%" required>
                                     @foreach ($estados_poliza as $obj)
                                     @if($obj->Id == 1)
                                     <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>

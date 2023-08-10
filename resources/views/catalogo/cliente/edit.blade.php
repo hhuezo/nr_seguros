@@ -70,17 +70,10 @@ $annos->y;
                                         <div class="col-lg-4">
                                             <label for="TipoPersona" class="form-label">Tipo Persona</label>
                                             <select name="TipoPersona" id="TipoPersona" onchange="validaciones.cboTipoPersona(this.value)" class="form-control">
-                                                <option value="" disabled selected> Seleccione ...</option>
-                                                @if($cliente->TipoPersona == 1)
-                                                <option value="1" selected>Natural </option>
-                                                @else
-                                                <option value="2">Jurídica </option>
-                                                @endif
-                                                @if($cliente->TipoPersona == 2)
-                                                <option value="1">Natural </option>
-                                                @else
-                                                <option value="2" selected>Jurídica </option>
-                                                @endif
+                                                <option value="1" {{ $cliente->TipoPersona == 1 ? 'selected' : '' }}>Natural
+                                                </option>
+                                                <option value="2" {{ $cliente->TipoPersona == 2 ? 'selected' : '' }}>Jurídica
+                                                </option>
                                             </select>
                                         </div>
                                         <div class="col-lg-4">
@@ -151,7 +144,7 @@ $annos->y;
 
                                         <div class="col-md-4">
                                             <label for="FechaNacimiento" class="form-label">Fecha Nacimiento</label>
-                                            <input class="form-control" name="FechaNacimiento" value="{{ $cliente->FechaNacimiento }}" type="date">
+                                            <input class="form-control" name="FechaNacimiento" id="FechaNacimiento" value="{{ $cliente->FechaNacimiento }}" type="date">
                                         </div>
 
 
@@ -369,37 +362,37 @@ $annos->y;
                                         </select>
                                     </div>
                                     <div class="form-group row">
-                                        <label class="control-label ">Dispositivo personal preferido, Numerar en orden de preferencia</label>
+                                        <label class="control-label ">Dispositivo personal preferido, Numerar en orden de preferencia del 1 al 6</label>
                                         <br>
 
                                         <div class="col-md-4">
                                             <label class="control-label ">Smartphones</label>
 
-                                            <input class="form-control" name="Smartphone" value="@if($cliente->Smartphone <> 0){{ $cliente->Smartphone }} @endif" type="number" required maxlength="1" min="0" Max="6">
+                                            <input class="form-control" name="Smartphone" value="@if($cliente->Smartphone <> 0){{$cliente->Smartphone}}@endif" type="number" required maxlength="1" min="0" Max="6">
 
                                             <label class="control-label ">Laptop</label>
 
-                                            <input class="form-control" name="Laptop" value="@if($cliente->Laptop <> 0){{ $cliente->Laptop }} @endif" type="number" required maxlength="1" min="0" Max="6">
+                                            <input class="form-control" name="Laptop" value="@if($cliente->Laptop <> 0){{$cliente->Laptop}}@endif" type="number" required maxlength="1" min="0" Max="6">
 
                                         </div>
                                         <div class="col-md-4">
                                             <label class="control-label ">PC</label>
 
-                                            <input class="form-control" name="PC" value="@if($cliente->PC <> 0){{ $cliente->PC }} @endif" type="number" required maxlength="1" min="0" Max="6">
+                                            <input class="form-control" name="PC" value="@if($cliente->PC <> 0){{$cliente->PC}}@endif" type="number" required maxlength="1" min="0" Max="6">
 
                                             <label class="control-label ">Tablet</label>
 
-                                            <input class="form-control" name="Tablet" value="@if($cliente->Tablet <> 0){{ $cliente->Tablet }} @endif" type="number" required maxlength="1" min="0" Max="6">
+                                            <input class="form-control" name="Tablet" value="@if($cliente->Tablet <> 0){{$cliente->Tablet}}@endif" type="number" required maxlength="1" min="0" Max="6">
 
                                         </div>
                                         <div class="col-md-4">
                                             <label class="control-label ">SmartWatch</label>
 
-                                            <input class="form-control" name="SmartWatch" value="@if($cliente->SmartWatch <> 0){{ $cliente->SmartWatch }} @endif" type="number" required maxlength="1" min="0" Max="6">
+                                            <input class="form-control" name="SmartWatch" value="@if($cliente->SmartWatch <> 0){{$cliente->SmartWatch}}@endif" type="number" required maxlength="1" min="0" Max="6">
 
                                             <label class="control-label ">Otros Dispositivos</label>
 
-                                            <input class="form-control" name="DispositivosOtros" value="@if($cliente->DispositivosOtros <> 0){{ $cliente->DispositivosOtros }} @endif" required type="number" maxlength="1" min="0" Max="6">
+                                            <input class="form-control" name="DispositivosOtros" value="@if($cliente->DispositivosOtros <> 0){{$cliente->DispositivosOtros}}@endif" required type="number" maxlength="1" min="0" Max="6">
 
                                         </div>
 
@@ -640,7 +633,7 @@ $annos->y;
                                     <th>Actividad economica</th>
                                     <th>Ingreso promedio</th>
                                     <th>Porción de ingresos que gasta en seguros mensual</th>
-                                    <th>NivelEducativo</th>
+                                    <th>Nivel Educativo</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -740,7 +733,7 @@ $annos->y;
 </div>
 
 
-{{-- ventanas modales --}}
+{{-- ventanas modales metodo de pago--}}
 <div class="col-12">
     <div class="modal fade bs-modal-nuevo-tarjeta" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -844,7 +837,7 @@ $annos->y;
                         <div class="form-group">
                             <div class="col-sm-6">
                                 Metodo pago
-                                <select name="MetodoPago" id="ModalMetodoPago" class="form-control">
+                                <select name="MetodoPago" id="ModalMetodoPago" class="form-control" disabled>
                                     @foreach ($metodos_pago as $obj)
                                     <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
                                     @endforeach
@@ -862,7 +855,7 @@ $annos->y;
                         <div class="form-group">
                             <div class="col-sm-6">
                                 Fecha vencimiento
-                                <input type="text" name="FechaVencimiento" id="ModalFechaVencimiento" class="form-control" data-inputmask="'mask': ['99/99']" data-mask required>
+                                <input type="text" name="FechaVencimiento" id="ModalFechaVencimiento" class="form-control" data-inputmask="'mask': ['99/99']" data-mask>
                             </div>
                         </div>
 
@@ -890,7 +883,6 @@ $annos->y;
     </div>
 </div>
 
-
 {{-- modales contactos --}}
 <div class="col-12">
     <div class="modal fade bs-modal-nuevo-contacto" tabindex="-1" role="dialog" aria-hidden="true">
@@ -904,7 +896,7 @@ $annos->y;
                     </div>
                     <div class="modal-body">
                         <input type="hidden" name="Cliente" value="{{ $cliente->Id }}" class="form-control">
-                        <div class="form-group" >
+                        <div class="form-group">
                             <div class="col-sm-6">
                                 Nombre
                                 <input type="text" name="Nombre" class="form-control" required>
@@ -924,10 +916,10 @@ $annos->y;
                             </div>
                             <div class="col-sm-2">
                                 Nuevo Cargo
-                                <span class="fa fa-plus" onclick="addCargo();"></span> 
+                                <span class="fa fa-plus" onclick="addCargo();"></span>
                             </div>
                         </div>
-                        
+
 
 
                         <div class="form-group">
@@ -1274,7 +1266,6 @@ $annos->y;
     </div>
 </div>
 
-
 <div class="col-12">
     <div class="modal fade modal-edit-retroalimentacion" id="modal-edit-retroalimentacion" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -1289,7 +1280,7 @@ $annos->y;
                         <input type="hidden" name="Cliente" value="{{ $cliente->Id }}" class="form-control">
                         <input type="hidden" name="Id" id="ModalRetroId" class="form-control">
                         <div class="form-group">
-                            <div class="col-sm-12">
+                            <div class="col-sm-6">
                                 Producto de NR
                                 <input type="text" name="Producto" id="ModalRetroProducto" required class="form-control">
                             </div>
@@ -1332,7 +1323,7 @@ $annos->y;
 
                         <input type="hidden" name="ServicioCliente" id="ModalRetroServicioCliente" class="form-control" required>
                         <div class="form-group">
-                            <div class="col-sm-6">
+                            <div class="col-sm-12">
                                 Referidos
                                 <input type="text" name="Referidos" id="ModalRetroReferidos" class="form-control" required>
                             </div>
@@ -1385,14 +1376,16 @@ $annos->y;
 
 <script type="text/javascript">
     function addCargo() {
-            $('#modal_addCargo').modal('show');
-        }
-        function addMotivo() {
-            $('#modal_addMotivo').modal('show');
-        }
-        function addPreferencia() {
-            $('#modal_addPreferencia').modal('show');
-        }
+        $('#modal_addCargo').modal('show');
+    }
+
+    function addMotivo() {
+        $('#modal_addMotivo').modal('show');
+    }
+
+    function addPreferencia() {
+        $('#modal_addPreferencia').modal('show');
+    }
     $(document).ready(function() {
 
         $('#FechaNacimiento').on('change', function() {
@@ -1493,16 +1486,21 @@ $annos->y;
         },
         cambiarEstado() {
             console.log("se activo la funcion");
-            if (document.getElementById('Homologado').checked) {
-                console.log("asignamos");
-                let dui = document.getElementById("Dui").value,
-                    nit = document.getElementById("Nit");
-                nit.value = dui;
-                nit.disabled = true;
 
+            if (document.getElementById('Homologado').checked) {
+                $('#Nit').prop('readonly', true);
+                $('#Nit').inputmask('remove');
+                $('#Nit').inputmask({
+                    'mask': '99999999-9'
+                });
+                $('#Nit').val($('#Dui').val());
             } else {
-                document.getElementById("Nit").disabled = false;
-                document.getElementById("Nit").value = "";
+                $('#Nit').prop('readonly', false);
+                $('#Nit').inputmask('remove');
+                $('#Nit').inputmask({
+                    'mask': '9999-999999-999-9'
+                });
+                $('#Nit').val('');
             }
         }
     }
@@ -1514,7 +1512,13 @@ $annos->y;
         document.getElementById('ModalNumeroTarjeta').value = numero;
         document.getElementById('ModalFechaVencimiento').value = fecha;
         document.getElementById('ModalPolizaVinculada').value = poliza;
-
+        if (metodo != 2) {
+            document.getElementById('ModalNumeroTarjeta').setAttribute('disabled',true);
+            document.getElementById('ModalFechaVencimiento').setAttribute('disabled',true);
+        } else {
+            document.getElementById('ModalNumeroTarjeta').setAttribute('disabled',false);
+            document.getElementById('ModalFechaVencimiento').setAttribute('disabled',false);
+        }
     }
 
     function modal_delete_tarjeta(id) {
