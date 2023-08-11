@@ -129,7 +129,7 @@ class NegocioController extends Controller
         $string = $request->ModalAseguradora;
         $id = explode(",", $string);
 
-        if ($request->NecesidadProteccion == 1) { //auto
+        /*if ($request->NecesidadProteccion == 1) { //auto
             NegocioAuto::whereIn('Id', $id)->update(['Negocio', $negocio->Id]);
         } else if ($request->NecesidadProteccion == 2) { //incendio
             NegocioIncendio::whereIn('Id', $id)->update(['Negocio', $negocio->Id]);
@@ -149,7 +149,7 @@ class NegocioController extends Controller
             NegocioAccidente::whereIn('Id', $id)->update(['Negocio', $negocio->Id]);
         } else if ($request->NecesidadProteccion == 7) {
 
-        }
+        }*/
 
         alert()->success('El registro ha sido creado correctamente');
         return Redirect::to('catalogo/negocio')->with('Eliminar', 1);
