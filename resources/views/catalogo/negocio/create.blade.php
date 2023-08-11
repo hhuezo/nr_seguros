@@ -417,7 +417,11 @@
                                 $('#Email').val(data.cliente.CorreoPrincipal);
                                 $("#TipoPersona option[value='" + data.cliente.TipoPersona + "']").prop("selected",
                                     true);
-                                $("#EstadoCliente").val(data.cliente.Estado).trigger("change");
+                                    if (data.cliente.Estado===2) {
+                                        $("#EstadoCliente").val(3).trigger("change");
+                                    }else{
+                                        $("#EstadoCliente").val(data.cliente.Estado).trigger("change");
+                                    }
                                 $("#FormaPago").val(data.cliente.FormaPago).trigger("change");
                                 $("#divDui").addClass("has-error");
                                 $("#divNit").addClass("has-error");
@@ -478,7 +482,12 @@
                                     $('#NombreCliente').val(data.cliente.Nombre);
                                     $('#Email').val(data.cliente.CorreoPrincipal);
                                     //este funciona sin select2//$("#EstadoCliente option[value='"+data.cliente.Estado+"']").prop("selected", true);
-                                    $("#EstadoCliente").val(data.cliente.Estado).trigger("change");
+                                    if (data.cliente.Estado===2) {
+                                        $("#EstadoCliente").val(3).trigger("change");
+                                    }else{
+                                        $("#EstadoCliente").val(data.cliente.Estado).trigger("change");
+                                    }
+
                                     $("#FormaPago").val(data.cliente.FormaPago).trigger("change");
                                     $("#divDui").addClass("has-error");
                                     $("#divNit").addClass("has-error");
