@@ -14,7 +14,7 @@
                     <div class="box-body">
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <input type="hidden" id="ModalNecesidad" name="ModalNecesidad">
-                            <input type="hidden" id="ModalTipoPlan" name="ModalTipoPlan">
+                            <input type="hidden" id="ModalTipoNecesidad" name="ModalTipoNecesidad">
                             <div class="form-group ">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" style="text-align: left;">Aseguradora</label>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -320,7 +320,7 @@
 
             "Prima": document.getElementById('Prima').value,
             "NecesidadProteccion": document.getElementById('ModalNecesidad').value,
-            "TipoPlan": document.getElementById('ModalTipoPlan').value,
+            "TipoNecesidad": document.getElementById('ModalTipoNecesidad').value,
             "Aseguradora": document.getElementById('Aseguradora').value,
             "SumaAsegurada": document.getElementById('SumaAsegurada').value,
             "FechaNacimiento": document.getElementById('FechaNacimiento').value,
