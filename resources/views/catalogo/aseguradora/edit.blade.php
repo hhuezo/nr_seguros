@@ -33,6 +33,9 @@
 
                     <!-- <li role="presentation" class="{{ session('tab1') == 3 ? 'active' : '' }}"><a href="#necesidad" role="tab" id="profile-necesidad" data-toggle="tab" aria-expanded="false">Necesidades</a>
                     </li> -->
+                    <li role="presentation" class="{{ session('tab1') == 4 ? 'active' : '' }}"><a href="#documentacion" role="tab" id="profile" data-toggle="tab" aria-expanded="false">Documentación</a>
+                    </li>
+
                 </ul>
 
 
@@ -288,6 +291,78 @@
                                 </div>
                             </div>
                             @endif
+                        </div>
+                    </div>
+
+                    <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 4 ? 'active in' : '' }}" id="documentacion" aria-labelledby="home-tab">
+                        <form id="FormArchivo" action="{{ url('catalogo/aseguradora/documento') }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <input type="hidden" value="{{$aseguradora->Id}}" name="Aseguradora">
+                            <div >
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Archivo</label>
+                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="Archivo" type="file" required>
+                                    </div>
+                                </div>
+                                <br>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div align="center">
+                                <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-primary">Aceptar</button>
+                            </div>
+                        </form>
+                        <br>
+                        <div class="col-md-12">
+                            <div class="col-md-3"> &nbsp;</div>
+                            <div class="col-md-6">
+                                <table class=" table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th style="width: 25%;">Opciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($documentos as $obj)
+                                        <tr>
+                                            <td>{{$obj->Nombre}}</td>
+                                            <td>
+                                                <i class="fa fa-trash fa-lg" data-target="#modal-delete-documento-{{ $obj->Id }}" data-toggle="modal"></i>
+                                            </td>
+                                        </tr>
+                                        <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-documento-{{ $obj->Id }}">
+
+                                            <form method="POST" action="{{ url('catalogo/aseguradora/documento_eliminar', $obj->Id) }}">
+                                                @method('post')
+                                                @csrf
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">×</span>
+                                                            </button>
+                                                            <h4 class="modal-title">Eliminar Registros {{$obj->Id}}</h4>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Confirme si desea Eliminar el Registro</p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                                            <button type="submit" class="btn btn-primary">Confirmar</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+
+                                        </div>
+
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+
                         </div>
                     </div>
 

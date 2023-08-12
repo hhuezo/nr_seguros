@@ -93,6 +93,10 @@ Route::post('catalogo/cliente/red_social', [ClienteController::class,'red_social
 Route::post('catalogo/cliente/active/{id}', [ClienteController::class,'active']);
 Route::get('catalogo/cliente/addCargo',[ClienteController::class, 'addCargo']);
 Route::get('catalogo/cliente/addMotivo',[ClienteController::class, 'addMotivo']);
+Route::post('catalogo/cliente/documento',[ClienteController::class,'agregar_documento']);
+Route::post('catalogo/cliente/documento_eliminar/{id}',[ClienteController::class,'eliminar_documento']);
+Route::post('catalogo/aseguradora/documento',[AseguradoraController::class,'agregar_documento']);
+Route::post('catalogo/aseguradora/documento_eliminar/{id}',[AseguradoraController::class,'eliminar_documento']);
 Route::get('catalogo/cliente/addPreferencia',[ClienteController::class, 'addPreferencia']);
 Route::resource('catalogo/cliente', ClienteController::class);
 Route::resource('catalogo/cliente', ClienteController::class);

@@ -7,6 +7,7 @@ use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\Cliente;
 use App\Models\catalogo\ClienteContactoCargo;
 use App\Models\catalogo\ClienteContactoFrecuente;
+use App\Models\catalogo\ClienteDocumento;
 use App\Models\catalogo\ClienteEstado;
 use App\Models\catalogo\ClienteHabitoConsumo;
 use App\Models\catalogo\ClienteInformarse;
@@ -26,6 +27,7 @@ use App\Models\catalogo\TipoContribuyente;
 use App\Models\catalogo\UbicacionCobro;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class ClienteController extends Controller
@@ -195,12 +197,14 @@ class ClienteController extends Controller
     public function edit($id)
     {
         $cliente = Cliente::findOrFail($id);
-      //  dd($cliente->Smartphone);
+        //  dd($cliente->Smartphone);
         if ($cliente->FechaNacimiento) {
             $cliente->Edad = $this->getAge($cliente->FechaNacimiento);
         } else {
             $cliente->Edad = "";
         }
+
+        $documentos = ClienteDocumento::where('Cliente', $id)->where('Activo',1)->get();
 
         $tipos_contribuyente = TipoContribuyente::get();
         $ubicaciones_cobro = UbicacionCobro::where('Activo', '=', 1)->get();
@@ -256,7 +260,8 @@ class ClienteController extends Controller
             'distritos',
             'departamento_actual',
             'metodos_pago',
-            'aseguradoras'
+            'aseguradoras',
+            'documentos'
 
         ));
     }
@@ -453,13 +458,46 @@ class ClienteController extends Controller
         $tarjeta->NumeroTarjeta = $request->NumeroTarjeta;
         $tarjeta->FechaVencimiento = $request->FechaVencimiento;
         $tarjeta->PolizaVinculada = $request->PolizaVinculada;
-    //    $tarjeta->MetodoPago = $request->MetodoPago;
+        //    $tarjeta->MetodoPago = $request->MetodoPago;
         $tarjeta->save();
         alert()->success('El registro ha sido creado correctamente');
 
         session(['tab1' => '3']);
         return back();
     }
+
+
+    public function agregar_documento(Request $request)
+    {
+
+        $archivo = $request->file('Archivo');
+
+       
+        $documento = new ClienteDocumento();
+        $documento->Cliente = $request->input('Cliente'); 
+        $documento->Nombre = $archivo->getClientOriginalName(); 
+        $documento->Activo = 1;
+        $documento->save();
+ 
+        $filePath = 'documentos/cliente/' . $archivo->getClientOriginalName();
+
+        Storage::disk('public')->put($filePath, file_get_contents($archivo));
+        alert()->success('El registro ha sido creado correctamente');
+        session(['tab1' => '7']);
+        return back();
+    }
+
+
+    public function eliminar_documento($id){
+        $documento = ClienteDocumento::findOrFail($id);
+        $documento->Activo = 0;
+        $documento->save();
+ 
+        alert()->success('El registro ha sido eliminado correctamente');
+        session(['tab1' => '7']);
+        return back();
+    }
+
 
 
 
