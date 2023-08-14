@@ -895,52 +895,88 @@ $annos->y;
                         <h4 class="modal-title" id="myModalLabel">Nuevo Contacto</h4>
                     </div>
                     <div class="modal-body">
-                        <input type="hidden" name="Cliente" value="{{ $cliente->Id }}" class="form-control">
-                        <div class="form-group">
-                            <div class="col-sm-6">
-                                Nombre
+                        <div class="row" style="padding-bottom: 15px;">
+                            <div class="col-md-6">
+                                <input type="hidden" name="Cliente" value="{{ $cliente->Id }}" class="form-control">
+                                <label for="Nombre" class="form-label">Nombre </label>
                                 <input type="text" name="Nombre" class="form-control" required>
                             </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-sm-4">
-                                Cargo
+                            <div class="col-md-4">
+                                <label for="Cargo" class="form-label">Cargo </label>
                                 <select name="Cargo" id="Cargo" class="form-control" required>
                                     @foreach ($cliente_contacto_cargos as $cargo)
-                                    <option value="{{ $cargo->Id }}">{{ $cargo->Nombre }}</option>
+                                        <option value="{{ $cargo->Id }}">{{ $cargo->Nombre }}</option>
                                     @endforeach
 
                                 </select>
-
                             </div>
-                            <div class="col-sm-2">
-                                Nuevo Cargo
-                                <span class="fa fa-plus" onclick="addCargo();"></span>
+                            <div class="col-md-2">
+                                <label for="addCargo" class="form-label" onclick="addCargo();">Nuevo Cargo  <span class="fa fa-plus" id="addCargo" ></span> </label>
+
                             </div>
                         </div>
-
-
-
-                        <div class="form-group">
-                            <div class="col-sm-6">
-                                Teléfono
+                        <div class="row" style="padding-bottom: 15px;">
+                            <div class="col-md-4">
+                                <label for="Telefono" class="form-label">Teléfono </label>
                                 <input type="text" name="Telefono" data-inputmask="'mask': ['9999-9999']" data-mask class="form-control" required>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-sm-6">
-                                Email
+                            <div class="col-md-4">
+                                <label for="Email" class="form-label">Email </label>
                                 <input type="email" class="form-control" required name="Email">
                             </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-sm-6">
-                                Lugar Trabajo
+                            <div class="col-md-4">
+                                <label for="LugarTrabajo" class="form-label">Lugar de Trabajo </label>
                                 <input type="text" class="form-control" required name="LugarTrabajo">
                             </div>
+
                         </div>
+
+{{--                        <input type="hidden" name="Cliente" value="{{ $cliente->Id }}" class="form-control">--}}
+{{--                        <div class="form-group">--}}
+{{--                            <div class="col-sm-6">--}}
+{{--                                Nombre--}}
+{{--                                <input type="text" name="Nombre" class="form-control" required>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+
+{{--                        <div class="form-group">--}}
+{{--                            <div class="col-sm-4">--}}
+{{--                                Cargo--}}
+{{--                                <select name="Cargo" id="Cargo" class="form-control" required>--}}
+{{--                                    @foreach ($cliente_contacto_cargos as $cargo)--}}
+{{--                                    <option value="{{ $cargo->Id }}">{{ $cargo->Nombre }}</option>--}}
+{{--                                    @endforeach--}}
+
+{{--                                </select>--}}
+
+{{--                            </div>--}}
+{{--                            <div class="col-sm-2">--}}
+{{--                                Nuevo Cargo--}}
+{{--                                <span class="fa fa-plus" onclick="addCargo();"></span>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+
+
+
+{{--                        <div class="form-group">--}}
+{{--                            <div class="col-sm-6">--}}
+{{--                                Teléfono--}}
+{{--                                <input type="text" name="Telefono" data-inputmask="'mask': ['9999-9999']" data-mask class="form-control" required>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                        <div class="form-group">--}}
+{{--                            <div class="col-sm-6">--}}
+{{--                                Email--}}
+{{--                                <input type="email" class="form-control" required name="Email">--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+
+{{--                        <div class="form-group">--}}
+{{--                            <div class="col-sm-6">--}}
+{{--                                Lugar Trabajo--}}
+{{--                                <input type="text" class="form-control" required name="LugarTrabajo">--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
 
 
 
