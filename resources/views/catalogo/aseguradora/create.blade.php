@@ -25,63 +25,78 @@
                 @csrf
                 <div class="x_content">
                     <br />
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label class="control-label ">Código</label>
+                            <input type="text" name="Nombre" value="{{($ultimoId->Id) +1}}" class="form-control" readonly autofocus="true">
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="control-label">Tipo Contribuyente</label>
+                            <select name="TipoContribuyente" class="form-control">
+                                @foreach ($tipo_contribuyente as $obj)
+                                <option value="{{$obj->Id}}" {{ old('TipoContribuyente') == $obj->Id ? 'selected' : '' }}>{{$obj->Nombre}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row" style="padding-top: 15px!important;">
+                        <div class="col-sm-6">
+                            <label class="control-label ">Nit Empresa</label>
+                            <input type="text" name="Nit" value="{{old('Nit')}}" class="form-control" data-inputmask="'mask': ['9999-999999-999-9']">
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="control-label ">Página Web</label>
+                            <input type="text" name="PaginaWeb" value="{{old('PaginaWeb')}}" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row" style="padding-top: 15px!important;">
+                        <div class="col-sm-6">
+                            <label class="control-label ">Registro fiscal</label>
+                            <input type="text" name="RegistroFiscal" value="{{old('RegistroFiscal')}}" class="form-control">
+                        </div>
 
-                    <div class="col-sm-4">
-                        <label class="control-label ">Código</label>
-                        <input type="text" name="Nombre" value="{{($ultimoId->Id) +1}}" class="form-control" readonly autofocus="true">
-                    </div>
-                    <div class="col-sm-4">
-                        <label class="control-label">Tipo Contribuyente</label>
-                        <select name="TipoContribuyente" class="form-control">
-                            @foreach ($tipo_contribuyente as $obj)
-                            <option value="{{$obj->Id}}" {{ old('TipoContribuyente') == $obj->Id ? 'selected' : '' }}>{{$obj->Nombre}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-sm-4">
-                        <label class="control-label ">Nit Empresa</label>
-                        <input type="text" name="Nit" value="{{old('Nit')}}" class="form-control" data-inputmask="'mask': ['9999-999999-999-9']">
-                    </div>
-                    <div class="col-sm-4">
-                        <label class="control-label ">Registro fiscal</label>
-                        <input type="text" name="RegistroFiscal" value="{{old('RegistroFiscal')}}" class="form-control">
-                    </div>
-                    <div class="col-sm-4">
-                        <label class="control-label ">Página Web</label>
-                        <input type="text" name="PaginaWeb" value="{{old('PaginaWeb')}}" class="form-control">
-                    </div>
-
-
-                    <div class="col-sm-4">
-                        <label class="control-label">Fecha constitución</label>
-                        <input type="date" name="FechaConstitucion" value="{{old('FechaConstitucion')}}" class="form-control">
-                    </div>
-                    <div class="col-sm-4">
-                        <label class="control-label ">Nombre o Razon Social</label>
-                        <input type="text" name="Nombre" value="{{old('Nombre')}}" class="form-control" required autofocus="true">
-                    </div>
-
-                    <div class="col-sm-4">
-                        <label class="control-label ">Abreviatura</label>
-                        <input type="text" name="Abreviatura" value="{{old('Abreviatura')}}" class="form-control">
+                        <div class="col-sm-6">
+                            <label class="control-label">Fecha constitución</label>
+                            <input type="date" name="FechaConstitucion" value="{{old('FechaConstitucion')}}" class="form-control">
+                        </div>
                     </div>
 
-                    <div class="col-sm-4">
-                        <label class="control-label ">Fecha vinculación</label>
-                        <input type="date" name="FechaVinculacion" value="{{old('FechaVinculacion')}}" class="form-control">
-                    </div>
-                    <div class="col-sm-4">
-                        <label class="control-label">Teléfono fijo de asistencia</label>
-                        <input type="text" name="TelefonoFijo" value="{{old('TelefonoFijo')}}" class="form-control" data-inputmask="'mask': ['9999-9999']">
+                    <div class="row" style="padding-top: 15px!important;">
+                        <div class="col-sm-6">
+                            <label class="control-label ">Nombre o Razon Social</label>
+                            <input type="text" name="Nombre" value="{{old('Nombre')}}" class="form-control" required autofocus="true">
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="control-label">Dirección</label>
+                            <textarea name="Direccion" rows="1" class="form-control">{{old('Direccion')}}</textarea>
+                        </div>
                     </div>
 
-                    <div class="col-sm-4">
-                        <label class="control-label ">Teléfono whatsapp asistencia</label>
-                        <input type="text" name="TelefonoWhatsapp" value="{{old('TelefonoWhatsapp')}}" class="form-control" data-inputmask="'mask': ['9999-9999']">
+                    <div class="row" style="padding-top: 15px!important;">
+                        <div class="col-sm-6">
+                            <label class="control-label ">Abreviatura</label>
+                            <input type="text" name="Abreviatura" value="{{old('Abreviatura')}}" class="form-control">
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="control-label">Teléfono fijo de asistencia</label>
+                            <input type="text" name="TelefonoFijo" value="{{old('TelefonoFijo')}}" class="form-control" data-inputmask="'mask': ['9999-9999']">
+                        </div>
                     </div>
-                    
-                    <div class="row col-sm-12" style="padding-top: 15px!important;">
-                        <div class="col-sm-4">
+
+                    <div class="row" style="padding-top: 15px!important;">
+
+                        <div class="col-sm-6">
+                            <label class="control-label ">Fecha vinculación</label>
+                            <input type="date" name="FechaVinculacion" value="{{old('FechaVinculacion')}}" class="form-control">
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="control-label ">Teléfono whatsapp asistencia</label>
+                            <input type="text" name="TelefonoWhatsapp" value="{{old('TelefonoWhatsapp')}}" class="form-control" data-inputmask="'mask': ['9999-9999']">
+                        </div>
+                    </div>
+
+                    <div class="row" style="padding-top: 15px!important;">
+                        <div class="col-sm-6">
                             <label for="DireccionResidencia" class="form-label">Departamento</label>
                             <select id="Departamento" class="form-control select2" style="width: 100%">
                                 @foreach ($departamentos as $obj)
@@ -90,7 +105,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-6">
                             <label for="DireccionResidencia" class="form-label">Municipio</label>
                             <select name="Municipio" id="Municipio" required class="form-control select2" style="width: 100%">
                                 @foreach ($municipios as $obj)
@@ -99,7 +114,9 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-sm-4">
+                    </div>
+                    <div class="row" style="padding-top: 15px!important;">
+                        <div class="col-sm-6">
                             <label for="DireccionResidencia" class="form-label">Distrito</label>
                             <select id="Distrito" name="Distrito" class="form-control select2" style="width: 100%">
                                 @foreach ($distritos as $obj)
@@ -109,10 +126,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-sm-12">
-                        <label class="control-label">Dirección</label>
-                        <textarea name="Direccion" rows="3" class="form-control">{{old('Direccion')}}</textarea>
-                    </div>
+
                 </div>
                 <div class="form-group" align="center">
                     <button class="btn btn-success" type="submit">Guardar</button>

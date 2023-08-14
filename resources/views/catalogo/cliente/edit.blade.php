@@ -49,8 +49,8 @@ $annos->y;
                     </li>
                     <li role="presentation" class="{{ session('tab1') == 6 ? 'active' : '' }}"><a href="#retroalimentacion" role="tab" id="profile-habito" data-toggle="tab" aria-expanded="false">Retroalimentación de NR</a>
                     </li>
-
-
+                    <li role="presentation" class="{{ session('tab1') == 7 ? 'active' : '' }}"><a href="#documentacion" role="tab" id="profile" data-toggle="tab" aria-expanded="false">Documentación</a>
+                    </li>
 
 
                 </ul>
@@ -67,28 +67,11 @@ $annos->y;
 
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="row">
-                                        <div class="col-lg-4">
-                                            <label for="TipoPersona" class="form-label">Tipo Persona</label>
-                                            <select name="TipoPersona" id="TipoPersona" onchange="validaciones.cboTipoPersona(this.value)" class="form-control">
-                                                <option value="1" {{ $cliente->TipoPersona == 1 ? 'selected' : '' }}>Natural
-                                                </option>
-                                                <option value="2" {{ $cliente->TipoPersona == 2 ? 'selected' : '' }}>Jurídica
-                                                </option>
-                                            </select>
+                                        <div class="col-lg-6">
+                                            <label for="Nombre" class="form-label">NIT</label>
+                                            <input class="form-control" name="Nit" id="Nit" value="{{ $cliente->Nit }}" @if($cliente->TipoPersona == 1 && ($cliente->Dui == $cliente->Nit)) data-inputmask="'mask': ['99999999-9']" disabled @else data-inputmask="'mask': ['9999-999999-999-9']" @endif data-mask type="text">
                                         </div>
-                                        <div class="col-lg-4">
-                                            <label for="Nombre" class="form-label">Tipo Contribuyente</label>
-                                            <select name="TipoContribuyente" id="TipoContribuyente" class="form-control" onchange="validaciones.cboTipoContribuyente(this.value)" style="width: 100%">
-                                                <option value="" disabled selected>Seleccione ...</option>
-                                                @foreach ($tipos_contribuyente as $obj)
-                                                <option value="{{ $obj->Id }}" {{ $cliente->TipoContribuyente == $obj->Id ? 'selected' : '' }}>
-                                                    {{ $obj->Nombre }}
-                                                </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-
-                                        <div class="col-lg-4">
+                                        <div class="col-lg-6">
                                             <label for="Genero" class="form-label">Estado Cliente</label>
                                             <select name="Estado" class="form-control" style="width: 100%">
                                                 @foreach ($cliente_estados as $obj)
@@ -100,11 +83,7 @@ $annos->y;
 
                                     </div>
                                     <div class="row" style="padding-top: 15px!important;">
-                                        <div class="col-lg-4">
-                                            <label for="Nombre" class="form-label">Nombre o Razón Social</label>
-                                            <input class="form-control" id="Nombre" name="Nombre" value="{{ $cliente->Nombre }}" type="text">
-                                        </div>
-                                        <div class="col-lg-4">
+                                        <div class="col-lg-6">
                                             <div class="row">
                                                 <div class="col-md-8">
                                                     <label for="Nombre" class="form-label">DUI</label>
@@ -118,18 +97,22 @@ $annos->y;
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-4">
-                                            <label for="Nombre" class="form-label">NIT</label>
-                                            <input class="form-control" name="Nit" id="Nit" value="{{ $cliente->Nit }}" @if($cliente->TipoPersona == 1 && ($cliente->Dui == $cliente->Nit)) data-inputmask="'mask': ['99999999-9']" disabled @else data-inputmask="'mask': ['9999-999999-999-9']" @endif data-mask type="text">
+                                        <div class="col-lg-6">
+                                            <label for="TipoPersona" class="form-label">Tipo Persona</label>
+                                            <select name="TipoPersona" id="TipoPersona" onchange="validaciones.cboTipoPersona(this.value)" class="form-control">
+                                                <option value="1" {{ $cliente->TipoPersona == 1 ? 'selected' : '' }}>Natural
+                                                </option>
+                                                <option value="2" {{ $cliente->TipoPersona == 2 ? 'selected' : '' }}>Jurídica
+                                                </option>
+                                            </select>
                                         </div>
-
                                     </div>
                                     <div class="row" style="padding-top: 15px!important;">
-                                        <div class="col-lg-4">
+                                        <div class="col-lg-6">
                                             <label for="Nombre" class="form-label">Registro Fiscal</label>
                                             <input class="form-control" name="RegistroFiscal" id="RegistroFiscal" value="{{ $cliente->RegistroFiscal}}" type="text">
                                         </div>
-                                        <div class="col-lg-4">
+                                        <div class="col-lg-6">
                                             <label for="Genero" class="form-label">Género</label>
                                             <select name="Genero" id="Genero" class="form-control">
                                                 <option value="" selected disabled>Seleccione ...</option>
@@ -141,20 +124,43 @@ $annos->y;
                                                 </option>
                                             </select>
                                         </div>
-
-                                        <div class="col-md-4">
+                                    </div>
+                                    <div class="row" style="padding-top: 15px!important;">
+                                        <div class="col-lg-6">
+                                            <label for="Nombre" class="form-label">Nombre o Razón Social</label>
+                                            <input class="form-control" id="Nombre" name="Nombre" value="{{ $cliente->Nombre }}" type="text">
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <label for="Nombre" class="form-label">Tipo Contribuyente</label>
+                                            <select name="TipoContribuyente" id="TipoContribuyente" class="form-control" onchange="validaciones.cboTipoContribuyente(this.value)" style="width: 100%">
+                                                <option value="" disabled selected>Seleccione ...</option>
+                                                @foreach ($tipos_contribuyente as $obj)
+                                                <option value="{{ $obj->Id }}" {{ $cliente->TipoContribuyente == $obj->Id ? 'selected' : '' }}>
+                                                    {{ $obj->Nombre }}
+                                                </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row" style="padding-top: 15px!important;">
+                                        <div class="col-md-6">
                                             <label for="FechaNacimiento" class="form-label">Fecha Nacimiento</label>
                                             <input class="form-control" name="FechaNacimiento" id="FechaNacimiento" value="{{ $cliente->FechaNacimiento }}" type="date">
                                         </div>
-
-
+                                        <div class="col-md-6">
+                                            <label for="Referencia" class="form-label">Vinculado al Grupo o Referencia</label>
+                                            <input class="form-control" name="Referencia" id="Referencia" value="{{ $cliente->Referencia }}" type="text">
+                                        </div>
                                     </div>
+
                                     <div class="row" style="padding-top: 15px!important;">
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <label for="FechaNacimiento" class="form-label">Edad</label>
                                             <input class="form-control" id="EdadCalculada" value="<?php echo $annos->y; ?>" type="text" disabled>
                                         </div>
-                                        <div class="col-lg-4">
+                                    </div>
+                                    <div class="row" style="padding-top: 15px!important;">
+                                        <div class="col-lg-6">
                                             <label for="Genero" class="form-label">Estado Familiar</label>
                                             <select class="form-control" name="EstadoFamiliar">
                                                 <option value="0" {{ $cliente->EstadoFamiliar == 0 ? 'selected' : '' }}>No Aplica
@@ -170,37 +176,23 @@ $annos->y;
                                                 </option>
                                             </select>
                                         </div>
-                                        <div class="col-lg-4">
+                                    </div>
+                                    <div class="row" style="padding-top: 15px!important;">
+                                        <div class="col-lg-6">
                                             <label for="NumeroDependientes" class="form-label">Número Dependientes</label>
                                             <input class="form-control" name="NumeroDependientes" id="NumeroDependientes" value="{{ $cliente->NumeroDependientes }}" type="number">
                                         </div>
-
-
-                                    </div>
-
-                                    <div class="row" style="padding-top: 15px!important;">
-                                        <div class="col-lg-4">
-                                            <label for="Genero" class="form-label">Ocupación</label>
-                                            <input class="form-control" id="Ocupacion" name="Ocupacion" value="{{ $cliente->Ocupacion }}" type="text">
-                                        </div>
-
-                                        <div class="col-md-4">
-                                            <label for="FechaVinculacion" class="form-label">Fecha Vinculación</label>
-                                            <input class="form-control" name="FechaVinculacion" value="{{ $cliente->FechaVinculacion }}" type="date">
-                                        </div>
-
-                                        <div class="col-md-4">
-                                            <label for="Referencia" class="form-label">Vinculado al Grupo o Referencia</label>
-                                            <input class="form-control" name="Referencia" id="Referencia" value="{{ $cliente->Referencia }}" type="text">
-                                        </div>
-
-                                    </div>
-                                    <div class="row" style="padding-top: 15px!important;">
-                                        <div class="col-lg-4">
+                                        <div class="col-lg-6">
                                             <label for="Genero" class="form-label">Responsable de Pago</label>
                                             <input class="form-control" id="ResponsablePago" name="ResponsablePago" value="{{ $cliente->ResponsablePago }}" type="text">
                                         </div>
-                                        <div class="col-lg-4">
+                                    </div>
+                                    <div class="row" style="padding-top: 15px!important;">
+                                        <div class="col-lg-6">
+                                            <label for="Genero" class="form-label">Ocupación</label>
+                                            <input class="form-control" id="Ocupacion" name="Ocupacion" value="{{ $cliente->Ocupacion }}" type="text">
+                                        </div>
+                                        <div class="col-lg-6">
                                             <label for="Genero" class="form-label">Ubicación de cobro</label>
                                             <select name="UbicacionCobro" class="form-control" style="width: 100%">
                                                 <option value="" selected disabled>Seleccione ...</option>
@@ -211,61 +203,11 @@ $annos->y;
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-md-4">
-                                            <label for="FechaVinculacion" class="form-label">Fecha Baja Cliente</label>
-                                            <input class="form-control" name="FechaBaja" value="{{ $cliente->FechaBaja }}" type="date">
-                                        </div>
-                                    </div>
-
-
-                                    <div class="row" style="padding-top: 17px!important;">
-                                        <h4>Información de Contacto</h4>
-                                        <hr>
-                                    </div>
-                                    <div class="row" style="padding-top: 15px!important;">
-                                        <div class="col-md-4">
-                                            <label for="Referencia" class="form-label">Teléfono Principal</label>
-                                            <input class="form-control" name="TelefonoCelular" value="{{ $cliente->TelefonoCelular }}" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label for="Referencia" class="form-label">Teléfono Oficina</label>
-                                            <input class="form-control" name="TelefonoOficina" value="{{ $cliente->TelefonoOficina }}" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label for="Referencia" class="form-label">Teléfono Residencia</label>
-                                            <input class="form-control" name="TelefonoResidencia" value="{{ $cliente->TelefonoResidencia }}" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
-                                        </div>
-                                    </div>
-                                    <div class="row" style="padding-top: 15px!important;">
-                                        <div class="col-md-4">
-                                            <label for="CorreoPrincipal" class="form-label">Correo Principal</label>
-                                            <input class="form-control" name="CorreoPrincipal" value="{{ $cliente->CorreoPrincipal }}" type="email">
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label for="CorreoPrincipal" class="form-label">Correo Secundario</label>
-                                            <input class="form-control" name="CorreoSecundario" value="{{ $cliente->CorreoSecundario }}" type="email">
-                                        </div>
-
                                     </div>
                                     <div class="row" style="padding-top: 15px!important;">
                                         <div class="col-md-6">
-                                            <label for="DireccionResidencia" class="form-label">Dirección Residencia</label>
-                                            <textarea class="form-control" name="DireccionResidencia">{{ $cliente->DireccionResidencia }}</textarea>
                                         </div>
                                         <div class="col-md-6">
-                                            <label for="DireccionResidencia" class="form-label">Dirección
-                                                Correspondencia</label>
-                                            <textarea class="form-control" name="DireccionCorrespondencia">{{ $cliente->DireccionCorrespondencia }}</textarea>
-                                        </div>
-                                    </div>
-
-                                    <div class="row" style="padding-top: 17px!important;">
-                                        <h4>Ruta de Cobro</h4>
-                                        <hr>
-                                    </div>
-
-                                    <div class="row" style="padding-top: 15px!important;">
-                                        <div class="col-md-4">
                                             <label for="DireccionResidencia" class="form-label">Departamento</label>
                                             <select id="Departamento" class="form-control" style="width: 100%">
                                                 @foreach ($departamentos as $obj)
@@ -275,7 +217,14 @@ $annos->y;
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-md-4">
+
+                                    </div>
+                                    <div class="row" style="padding-top: 15px!important;">
+                                        <div class="col-md-6">
+                                            <label for="DireccionResidencia" class="form-label">Dirección Residencia</label>
+                                            <textarea class="form-control" name="DireccionResidencia">{{ $cliente->DireccionResidencia }}</textarea>
+                                        </div>
+                                        <div class="col-md-6">
                                             <label for="DireccionResidencia" class="form-label">Municipio</label>
                                             <select name="Municipio" id="Municipio" class="form-control select2" style="width: 100%">
                                                 @foreach ($municipios as $obj)
@@ -285,7 +234,15 @@ $annos->y;
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-md-4">
+
+                                    </div>
+                                    <div class="row" style="padding-top: 15px!important;">
+                                        <div class="col-md-6">
+                                            <label for="DireccionResidencia" class="form-label">Dirección
+                                                Correspondencia</label>
+                                            <textarea class="form-control" name="DireccionCorrespondencia">{{ $cliente->DireccionCorrespondencia }}</textarea>
+                                        </div>
+                                        <div class="col-md-6">
                                             <label for="DireccionResidencia" class="form-label">Distrito</label>
                                             <select id="Distrito" name="Distrito" required class="form-control select2" style="width: 100%">
                                                 @foreach ($distritos as $obj)
@@ -295,6 +252,49 @@ $annos->y;
                                             </select>
                                         </div>
                                     </div>
+                                    <div class="row" style="padding-top: 15px!important;">
+                                        <div class="col-md-6">
+                                            <label for="Referencia" class="form-label">Teléfono Principal</label>
+                                            <input class="form-control" name="TelefonoCelular" value="{{ $cliente->TelefonoCelular }}" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
+                                        </div>
+                                    </div>
+                                    <div class="row" style="padding-top: 15px!important;">
+                                        <div class="col-md-6">
+                                            <label for="Referencia" class="form-label">Teléfono Residencia</label>
+                                            <input class="form-control" name="TelefonoResidencia" value="{{ $cliente->TelefonoResidencia }}" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
+                                        </div>
+                                    </div>
+                                    <div class="row" style="padding-top: 15px!important;">
+                                        <div class="col-md-6">
+                                            <label for="Referencia" class="form-label">Teléfono Oficina</label>
+                                            <input class="form-control" name="TelefonoOficina" value="{{ $cliente->TelefonoOficina }}" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
+                                        </div>
+                                    </div>
+                                    <div class="row" style="padding-top: 15px!important;">
+                                        <div class="col-md-6">
+                                            <label for="CorreoPrincipal" class="form-label">Correo Principal</label>
+                                            <input class="form-control" name="CorreoPrincipal" value="{{ $cliente->CorreoPrincipal }}" type="email">
+                                        </div>
+                                    </div>
+                                    <div class="row" style="padding-top: 15px!important;">
+                                        <div class="col-md-6">
+                                            <label for="CorreoPrincipal" class="form-label">Correo Secundario</label>
+                                            <input class="form-control" name="CorreoSecundario" value="{{ $cliente->CorreoSecundario }}" type="email">
+                                        </div>
+                                    </div>
+                                    <div class="row" style="padding-top: 15px!important;">
+                                        <div class="col-md-6">
+                                            <label for="FechaVinculacion" class="form-label">Fecha Vinculación</label>
+                                            <input class="form-control" name="FechaVinculacion" value="{{ $cliente->FechaVinculacion }}" type="date">
+                                        </div>
+                                    </div>
+                                    <div class="row" style="padding-top: 15px!important;">
+                                        <div class="col-md-6">
+                                            <label for="FechaVinculacion" class="form-label">Fecha Baja Cliente</label>
+                                            <input class="form-control" name="FechaBaja" value="{{ $cliente->FechaBaja }}" type="date">
+                                        </div>
+                                    </div>
+
                                     <div class="row" style="padding-top: 15px!important;">
                                         <div class="col-md-12">
                                             <label for="Comentarios" class="form-label">Comentarios</label>
@@ -721,6 +721,78 @@ $annos->y;
                         </div>
                         @endif
 
+                    </div>
+
+                    <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 7 ? 'active in' : '' }}" id="documentacion" aria-labelledby="home-tab">
+                        <form id="FormArchivo" action="{{ url('catalogo/cliente/documento') }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <input type="hidden" value="{{$cliente->Id}}" name="Cliente">
+                            <div >
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Archivo</label>
+                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="Archivo" type="file" required>
+                                    </div>
+                                </div>
+                                <br>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div align="center">
+                                <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-primary">Aceptar</button>
+                            </div>
+                        </form>
+                        <br>
+                        <div class="col-md-12">
+                            <div class="col-md-3"> &nbsp;</div>
+                            <div class="col-md-6">
+                                <table class=" table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th style="width: 25%;">Opciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($documentos as $obj)
+                                        <tr>
+                                            <td>{{$obj->Nombre}}</td>
+                                            <td>
+                                                <i class="fa fa-trash fa-lg" data-target="#modal-delete-documento-{{ $obj->Id }}" data-toggle="modal"></i>
+                                            </td>
+                                        </tr>
+                                        <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-documento-{{ $obj->Id }}">
+
+                                            <form method="POST" action="{{ url('catalogo/cliente/documento_eliminar', $obj->Id) }}">
+                                                @method('post')
+                                                @csrf
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">×</span>
+                                                            </button>
+                                                            <h4 class="modal-title">Eliminar Registros {{$obj->Id}}</h4>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Confirme si desea Eliminar el Registro</p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                                            <button type="submit" class="btn btn-primary">Confirmar</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+
+                                        </div>
+
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
                 <br>
@@ -1549,11 +1621,11 @@ $annos->y;
         document.getElementById('ModalFechaVencimiento').value = fecha;
         document.getElementById('ModalPolizaVinculada').value = poliza;
         if (metodo != 2) {
-            document.getElementById('ModalNumeroTarjeta').setAttribute('disabled',true);
-            document.getElementById('ModalFechaVencimiento').setAttribute('disabled',true);
+            document.getElementById('ModalNumeroTarjeta').setAttribute('disabled', true);
+            document.getElementById('ModalFechaVencimiento').setAttribute('disabled', true);
         } else {
-            document.getElementById('ModalNumeroTarjeta').setAttribute('disabled',false);
-            document.getElementById('ModalFechaVencimiento').setAttribute('disabled',false);
+            document.getElementById('ModalNumeroTarjeta').setAttribute('disabled', false);
+            document.getElementById('ModalFechaVencimiento').setAttribute('disabled', false);
         }
     }
 

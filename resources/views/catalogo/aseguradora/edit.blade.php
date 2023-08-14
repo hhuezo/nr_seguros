@@ -33,6 +33,9 @@
 
                     <!-- <li role="presentation" class="{{ session('tab1') == 3 ? 'active' : '' }}"><a href="#necesidad" role="tab" id="profile-necesidad" data-toggle="tab" aria-expanded="false">Necesidades</a>
                     </li> -->
+                    <li role="presentation" class="{{ session('tab1') == 4 ? 'active' : '' }}"><a href="#documentacion" role="tab" id="profile" data-toggle="tab" aria-expanded="false">Documentación</a>
+                    </li>
+
                 </ul>
 
 
@@ -45,65 +48,75 @@
 
                             <div class="x_content">
                                 <br />
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <label class="control-label ">Código</label>
+                                        <input type="text" name="Nombre" value="{{$aseguradora->Id}}" class="form-control" readonly autofocus="true">
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label class="control-label">Tipo Contribuyente</label>
+                                        <select name="TipoContribuyente" class="form-control">
+                                            @foreach ($tipo_contribuyente as $obj)
+                                            <option value="{{ $obj->Id }}" {{ $aseguradora->TipoContribuyente == $obj->Id ? 'selected' : '' }}>
+                                                {{ $obj->Nombre }}
+                                            </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row" style="padding-top: 15px!important;">
+                                    <div class="col-sm-6">
+                                        <label class="control-label ">Nit Empresa</label>
+                                        <input type="text" name="Nit" value="{{ $aseguradora->Nit }}" class="form-control" data-inputmask="'mask': ['9999-999999-999-9']">
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label class="control-label ">Página Web</label>
+                                        <input type="text" name="PaginaWeb" value="{{ $aseguradora->PaginaWeb }}" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="row" style="padding-top: 15px!important;">
+                                    <div class="col-sm-6">
+                                        <label class="control-label ">Registro fiscal</label>
+                                        <input type="text" name="RegistroFiscal" value="{{ $aseguradora->RegistroFiscal }}" class="form-control">
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label class="control-label">Fecha constitución</label>
+                                        <input type="date" name="FechaConstitucion" value="{{ $aseguradora->FechaConstitucion }}" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="row" style="padding-top: 15px!important;">
+                                    <div class="col-sm-6">
+                                        <label class="control-label ">Nombre o Razón Social</label>
+                                        <input type="text" name="Nombre" value="{{ $aseguradora->Nombre }}" class="form-control" required autofocus="true">
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label class="control-label">Dirección</label>
+                                        <textarea name="Direccion" rows="1" class="form-control">{{ $aseguradora->Direccion }}</textarea>
+                                    </div>
+                                </div>
+                                <div class="row" style="padding-top: 15px!important;">
+                                    <div class="col-sm-6">
+                                        <label class="control-label ">Abreviatura</label>
+                                        <input type="text" name="Abreviatura" value="{{ $aseguradora->Abreviatura }}" class="form-control">
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label class="control-label">Teléfono fijo de asistencia</label>
+                                        <input type="text" name="TelefonoFijo" value="{{ $aseguradora->TelefonoFijo }}" class="form-control" data-inputmask="'mask': ['9999-9999']">
+                                    </div>
+                                </div>
+                                <div class="row" style="padding-top: 15px!important;">
+                                    <div class="col-sm-6">
+                                        <label class="control-label ">Fecha vinculación</label>
+                                        <input type="date" name="FechaVinculacion" value="{{ $aseguradora->FechaVinculacion }}" class="form-control">
+                                    </div>
 
-                                <div class="col-sm-4">
-                                    <label class="control-label ">Código</label>
-                                    <input type="text" name="Nombre" value="{{$aseguradora->Id}}" class="form-control" readonly autofocus="true">
+                                    <div class="col-sm-6">
+                                        <label class="control-label ">Teléfono whatsapp asistencia</label>
+                                        <input type="text" name="TelefonoWhatsapp" value="{{ $aseguradora->TelefonoWhatsapp }}" class="form-control" data-inputmask="'mask': ['9999-9999']">
+                                    </div>
                                 </div>
-                                <div class="col-sm-4">
-                                    <label class="control-label">Tipo Contribuyente</label>
-                                    <select name="TipoContribuyente" class="form-control">
-                                        @foreach ($tipo_contribuyente as $obj)
-                                        <option value="{{ $obj->Id }}" {{ $aseguradora->TipoContribuyente == $obj->Id ? 'selected' : '' }}>
-                                            {{ $obj->Nombre }}
-                                        </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-sm-4">
-                                    <label class="control-label ">Nit Empresa</label>
-                                    <input type="text" name="Nit" value="{{ $aseguradora->Nit }}" class="form-control" data-inputmask="'mask': ['9999-999999-999-9']">
-                                </div>
-                                <div class="col-sm-4">
-                                    <label class="control-label ">Registro fiscal</label>
-                                    <input type="text" name="RegistroFiscal" value="{{ $aseguradora->RegistroFiscal }}" class="form-control">
-                                </div>
-                                <div class="col-sm-4">
-                                    <label class="control-label ">Página Web</label>
-                                    <input type="text" name="PaginaWeb" value="{{ $aseguradora->PaginaWeb }}" class="form-control">
-                                </div>
-
-
-                                <div class="col-sm-4">
-                                    <label class="control-label">Fecha constitución</label>
-                                    <input type="date" name="FechaConstitucion" value="{{ $aseguradora->FechaConstitucion }}" class="form-control">
-                                </div>
-                                <div class="col-sm-4">
-                                    <label class="control-label ">Nombre o Razón Social</label>
-                                    <input type="text" name="Nombre" value="{{ $aseguradora->Nombre }}" class="form-control" required autofocus="true">
-                                </div>
-
-                                <div class="col-sm-4">
-                                    <label class="control-label ">Abreviatura</label>
-                                    <input type="text" name="Abreviatura" value="{{ $aseguradora->Abreviatura }}" class="form-control">
-                                </div>
-
-                                <div class="col-sm-4">
-                                    <label class="control-label ">Fecha vinculación</label>
-                                    <input type="date" name="FechaVinculacion" value="{{ $aseguradora->FechaVinculacion }}" class="form-control">
-                                </div>
-                                <div class="col-sm-4">
-                                    <label class="control-label">Teléfono fijo de asistencia</label>
-                                    <input type="text" name="TelefonoFijo" value="{{ $aseguradora->TelefonoFijo }}" class="form-control" data-inputmask="'mask': ['9999-9999']">
-                                </div>
-
-                                <div class="col-sm-4">
-                                    <label class="control-label ">Teléfono whatsapp asistencia</label>
-                                    <input type="text" name="TelefonoWhatsapp" value="{{ $aseguradora->TelefonoWhatsapp }}" class="form-control" data-inputmask="'mask': ['9999-9999']">
-                                </div>
-
-                                <div class="row col-sm-12" style="padding-top: 15px!important;">
-                                    <div class="col-md-4">
+                                <div class="row" style="padding-top: 15px!important;">
+                                    <div class="col-md-6">
                                         <label for="DireccionResidencia" class="form-label">Departamento</label>
                                         <select id="Departamento" class="form-control" style="width: 100%">
                                             @foreach ($departamentos as $obj)
@@ -113,7 +126,7 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <label for="DireccionResidencia" class="form-label">Municipio</label>
                                         <select name="Municipio" id="Municipio" class="form-control select2" style="width: 100%">
                                             @foreach ($municipios as $obj)
@@ -123,7 +136,9 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-md-4">
+                                </div>
+                                <div class="row" style="padding-top: 15px!important;">
+                                    <div class="col-md-6">
                                         <label for="DireccionResidencia" class="form-label">Distrito</label>
                                         <select id="Distrito" name="Distrito" required class="form-control select2" style="width: 100%">
                                             @foreach ($distritos as $obj)
@@ -133,10 +148,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-sm-12">
-                                    <label class="control-label">Dirección</label>
-                                    <textarea name="Direccion" rows="3" class="form-control">{{ $aseguradora->Direccion }}</textarea>
-                                </div>
+
                             </div>
 
                             <div class="form-group" align="center">
@@ -158,8 +170,8 @@
                             <thead>
                                 <tr>
                                     <th>Nombre</th>
-                                    <th>Cargo</th>
-                                    <th>Telefono</th>
+                                    <th>Cargo/Función</th>
+                                    <th>Teléfonos Contacto</th>
                                     <th>Email</th>
                                     <th>Acciones</th>
                                 </tr>
@@ -288,6 +300,78 @@
                                 </div>
                             </div>
                             @endif
+                        </div>
+                    </div>
+
+                    <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 4 ? 'active in' : '' }}" id="documentacion" aria-labelledby="home-tab">
+                        <form id="FormArchivo" action="{{ url('catalogo/aseguradora/documento') }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <input type="hidden" value="{{$aseguradora->Id}}" name="Aseguradora">
+                            <div >
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Archivo</label>
+                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                        <input class="form-control" name="Archivo" type="file" required>
+                                    </div>
+                                </div>
+                                <br>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div align="center">
+                                <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-primary">Aceptar</button>
+                            </div>
+                        </form>
+                        <br>
+                        <div class="col-md-12">
+                            <div class="col-md-3"> &nbsp;</div>
+                            <div class="col-md-6">
+                                <table class=" table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th style="width: 25%;">Opciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($documentos as $obj)
+                                        <tr>
+                                            <td>{{$obj->Nombre}}</td>
+                                            <td>
+                                                <i class="fa fa-trash fa-lg" data-target="#modal-delete-documento-{{ $obj->Id }}" data-toggle="modal"></i>
+                                            </td>
+                                        </tr>
+                                        <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-documento-{{ $obj->Id }}">
+
+                                            <form method="POST" action="{{ url('catalogo/aseguradora/documento_eliminar', $obj->Id) }}">
+                                                @method('post')
+                                                @csrf
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">×</span>
+                                                            </button>
+                                                            <h4 class="modal-title">Eliminar Registros {{$obj->Id}}</h4>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Confirme si desea Eliminar el Registro</p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                                            <button type="submit" class="btn btn-primary">Confirmar</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+
+                                        </div>
+
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+
                         </div>
                     </div>
 

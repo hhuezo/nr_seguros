@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\AseguradoraCargo;
 use App\Models\catalogo\AseguradoraContacto;
+use App\Models\catalogo\AseguradoraDocumento;
 use App\Models\catalogo\Departamento;
 use App\Models\catalogo\Distrito;
 use App\Models\catalogo\Municipio;
@@ -14,6 +15,7 @@ use App\Models\catalogo\TipoContribuyente;
 use App\Models\catalogo\TipoPoliza;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 
 class AseguradoraController extends Controller
 {
@@ -35,6 +37,8 @@ class AseguradoraController extends Controller
      */
     public function create()
     {
+
+        session(['tab1' => '1']);
         $departamentos = Departamento::get();
         $municipios = Municipio::get();
         $distritos = Distrito::get();
@@ -45,6 +49,41 @@ class AseguradoraController extends Controller
         $tipo_contribuyente = TipoContribuyente::get();
         return view('catalogo.aseguradora.create', compact('ultimoId', 'tipo_contribuyente', 'departamentos', 'municipios', 'distritos'));
     }
+
+
+    public function agregar_documento(Request $request)
+    {
+
+        $archivo = $request->file('Archivo');
+
+
+        $documento = new AseguradoraDocumento();
+        $documento->Aseguradora = $request->input('Aseguradora');
+        $documento->Nombre = $archivo->getClientOriginalName();
+        $documento->Activo = 1;
+        $documento->save();
+
+        $filePath = 'documentos/cliente/' . $archivo->getClientOriginalName();
+
+        Storage::disk('public')->put($filePath, file_get_contents($archivo));
+        alert()->success('El registro ha sido creado correctamente');
+        session(['tab1' => '4']);
+        return back();
+    }
+
+
+    public function eliminar_documento($id)
+    {
+        $documento = AseguradoraDocumento::findOrFail($id);
+        $documento->Activo = 0;
+        $documento->save();
+
+        alert()->success('El registro ha sido eliminado correctamente');
+        session(['tab1' => '4']);
+        return back();
+    }
+
+
 
 
     public function store(Request $request)
@@ -105,6 +144,7 @@ class AseguradoraController extends Controller
         $municipios = Municipio::get();
         $municipio_actual = 0;
         $departamento_actual = 0;
+        $documentos = AseguradoraDocumento::where('Aseguradora', $id)->where('Activo',1)->get();
         //  dd($cliente->Distrito);
         if ($aseguradora->Distrito) {
             $distritos = Distrito::where('Municipio', '=', $aseguradora->distrito->Municipio)->get();
@@ -130,7 +170,8 @@ class AseguradoraController extends Controller
             'cargos',
             'tipos_poliza',
             'necesidades_proteccion_actual',
-            'necesidades_proteccion'
+            'necesidades_proteccion',
+            'documentos'
         ));
     }
 
