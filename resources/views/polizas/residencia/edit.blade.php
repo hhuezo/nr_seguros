@@ -51,33 +51,84 @@
                             @csrf
                             <div class="x_content" style="font-size: 12px;">
                                 <br />
-                                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
-
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Número de Póliza</label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            <input class="form-control" name="NumeroPoliza" type="text" value="{{ $residencia->NumeroPoliza }}" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Aseguradora</label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            <input type="text" value="{{$residencia->aseguradoras->Nombre}}" class="form-control" readonly>
-
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Asegurado</label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            <input type="text" value="{{$residencia->clientes->Nombre}}" class="form-control" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Nit</label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            <input class="form-control" name="Nit" id="Nit" type="text" value="{{$residencia->Nit }}" readonly>
-                                        </div>
-                                    </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Número de Póliza</label>
+                                    <input class="form-control" name="NumeroPoliza" type="text" value="{{ $residencia->NumeroPoliza }}" readonly>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Nit</label>
+                                    <input class="form-control" name="Nit" id="Nit" type="text" value="{{$residencia->Nit }}" readonly>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Código</label>
+                                    <input class="form-control" name="Codigo" id="Codigo" type="text" value="{{$residencia->Id }}" readonly>
+                                </div>
+                                <div class="col-sm-8">
+                                    <label class="control-label">Aseguradora</label>
+                                    <input type="text" value="{{$residencia->aseguradoras->Nombre}}" class="form-control" readonly>
+                                </div>
+                                <div class="col-sm-8">
+                                    <label class="control-label">Asegurado</label>
+                                    <input type="text" value="{{$residencia->clientes->Nombre}}" class="form-control" readonly>
+                                </div>
+                                <div class="col-md-12">
+                                    &nbsp;
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Vigencia Desde</label>
+                                    <input class="form-control" name="VigenciaDesde" type="text" value="{{ \Carbon\Carbon::parse($residencia->VigenciaDesde)->format('d/m/Y') }}" readonly>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Vigencia Hasta</label>
+                                    <input class="form-control" name="VigenciaHasta" type="text" value="{{ \Carbon\Carbon::parse($residencia->VigenciaHasta)->format('d/m/Y') }}" readonly>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Estatus</label>
+                                    <input type="text" value="{{$residencia->estadoPolizas->Nombre}}" class="form-control" readonly>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Vendedor</label>
+                                    <input type="text" value="{{$residencia->ejecutivos->Nombre}}" class="form-control" readonly>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Descuento de Rentabilidad %</label>
+                                    <input type="number" step="any" name="TasaDescuento" value="{{$residencia->TasaDescuento }}" class="form-control" readonly>
+                                </div>
+                                <div class="col-md-12">
+                                    &nbsp;
+                                </div>
+                                <div class="col-sm-4">
+                                    &nbsp;
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Descuento de IVA</label>
+                                    <input class="form-control" name="DescuentoIva" type="checkbox" id="DescuentoIva" disabled @if($residencia->DescuentoIva == 1) checked @endif>
+                                </div>
+                                <div class="col-md-12">
+                                    &nbsp;
+                                </div>
+                                <div class="col-sm-4">
+                                    <input type="hidden" name="Bomberos" id="Bomberos" value="{{$bomberos}}">
+                                    <label class="control-label">Límite grupo</label>
+                                    <input type="number" step="any" name="LimiteGrupo" id="LimiteGrupo" value="{{ $residencia->LimiteGrupo }}" class="form-control" readonly>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Límite individual</label>
+                                    <input type="number" step="any" name="LimiteIndividual" value="{{ $residencia->LimiteIndividual }}" class="form-control" readonly>
+                                </div>
+                                <div class="col-md-12">
+                                    &nbsp;
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Tasa %</label>
+                                    <input type="number" step="any" name="Tasa" value="{{$residencia->Tasa }}" class="form-control" readonly>
+                                </div>
+                                <div class="col-md-12">
+                                    &nbsp;
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Tasa de Comisión %</label>
+                                    <input type="number" step="any" name="Comision" value="{{$residencia->Comision }}" class="form-control" readonly>
 
                                 </div>
                                 <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
@@ -109,74 +160,13 @@
 
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12">Límite grupo</label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            <input type="number" step="any" name="LimiteGrupo" id="LimiteGrupo" value="{{ $residencia->LimiteGrupo }}" class="form-control" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12">Límite individual</label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            <input type="number" step="any" name="LimiteIndividual" value="{{ $residencia->LimiteIndividual }}" class="form-control" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12">Tasa %</label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            <input type="number" step="any" name="Tasa" value="{{$residencia->Tasa }}" class="form-control" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12">Tasa de Descuento %</label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            <input type="number" step="any" name="TasaDescuento" value="{{$residencia->TasaDescuento }}" class="form-control" readonly>
-                                        </div>
-                                    </div>
-
-
                                 </div>
 
-                                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
-                                    <div class="form-group">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12">Tasa de Comisión %</label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            <input type="number" step="any" name="Comision" value="{{$residencia->Comision }}" class="form-control" readonly>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vigencia
-                                            Desde</label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            <input class="form-control" name="VigenciaDesde" type="text" value="{{ \Carbon\Carbon::parse($residencia->VigenciaDesde)->format('d/m/Y') }}" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vigencia
-                                            Hasta</label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            <input class="form-control" name="VigenciaHasta" type="text" value="{{ \Carbon\Carbon::parse($residencia->VigenciaHasta)->format('d/m/Y') }}" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vendedor</label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            <input type="text" value="{{$residencia->ejecutivos->Nombre}}" class="form-control" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12">Estatus</label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            <input type="text" value="{{$residencia->estadoPolizas->Nombre}}" class="form-control" readonly>
-                                        </div>
-                                    </div>
-                                </div>
                                 <br>
                                 &nbsp;
                                 <br>
                                 <!-- agregar rol de fatima -->
-                                <div class="form-group" align="center">
+                                <div class="form-group col-md-12" align="center">
                                     <button class="btn btn-success" type="submit" disabled>Modificar</button>
                                     <a href="{{ url('polizas/residencia/create') }}"><button class="btn btn-primary" type="button">Cancelar</button></a>
                                 </div>
