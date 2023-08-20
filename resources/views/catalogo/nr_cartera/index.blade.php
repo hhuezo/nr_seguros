@@ -5,10 +5,10 @@
     @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
     <div class="x_title">
         <div class="col-md-6 col-sm-6 col-xs-12">
-            <h3>Listado de aseguradoras </h3>
+            <h3>Tipo de Cartera NR </h3>
         </div>
         <div class="col-md-6 col-sm-6 col-xs-12" align="right">
-            <a href="{{ url('catalogo/aseguradoras/create/') }}"><button class="btn btn-info float-right"> <i class="fa fa-plus"></i> Nuevo</button></a>
+            <a href="{{ url('catalogo/nr_cartera/create/') }}"><button class="btn btn-info float-right"> <i class="fa fa-plus"></i> Nuevo</button></a>
         </div>
         <div class="clearfix"></div>
     </div>
@@ -20,29 +20,18 @@
             <table id="datatable" class="table table-striped table-bordered">
                 <thead>
                     <tr>
-                        <th>Código de Aseguradora</th>
-                        <th>Abreviatura</th>
-                        <th>Nombre o Razón Social</th>
-                        <th>Fecha Constitución</th>
-                        <th>Fecha Vinculación</th>
-                        <th>Teléfono</th>
+                        <th>Nombre</th>
                         <th>Opciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($aseguradora as $obj)
+                    @foreach ($nr_cartera as $obj)
                     <tr>
-                        <td>{{ $obj->Id }}</td>
-                        <td>{{ $obj->Abreviatura }}</td>
-                        <td>{{$obj->Nombre}}</td>
-                        <td>{{ \Carbon\Carbon::parse($obj->FechaConstitucion)->format('d/m/Y') }}</td>
-                        <td>{{ \Carbon\Carbon::parse($obj->FechaVinculacion)->format('d/m/Y') }}</td>
-                        <td>{{ $obj->TelefonoFijo }}</td>
-
+                        <td>{{ $obj->Nombre }}</td>
                         <td align="center">
 
                             @can('edit users')
-                            <a href="{{ url('catalogo/aseguradoras') }}/{{ $obj->Id }}/edit" class="on-default edit-row">
+                            <a href="{{ url('catalogo/nr_cartera') }}/{{ $obj->Id }}/edit" class="on-default edit-row">
                                 <i class="fa fa-pencil fa-lg"></i></a>
                             @endcan
 
@@ -52,7 +41,7 @@
                             @endcan
                         </td>
                     </tr>
-                    @include('catalogo.aseguradora.modal')
+                    @include('catalogo.nr_cartera.modal')
                     @endforeach
                 </tbody>
             </table>
