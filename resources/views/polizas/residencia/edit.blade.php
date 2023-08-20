@@ -168,7 +168,7 @@
                                 <!-- agregar rol de fatima -->
                                 <div class="form-group col-md-12" align="center">
                                     <button class="btn btn-success" type="submit" disabled>Modificar</button>
-                                    <a href="{{ url('polizas/residencia/create') }}"><button class="btn btn-primary" type="button">Cancelar</button></a>
+                                    <a href="{{ url('polizas/residencia') }}"><button class="btn btn-primary" type="button">Cancelar</button></a>
                                 </div>
                                 <!-- fin -->
                             </div>
@@ -645,6 +645,10 @@
                                             <td>Monto Cartera</td>
                                             <td><input type="text" id="MontoCartera2" value="@if($ultimo_pago) {{$ultimo_pago->MontoCartera}} @else 0 @endif" readonly class="form-group"></td>
                                         </tr>
+                                        <tr>
+                                            <td>Tasa por millar</td>
+                                            <td><input type="text" id="TasaMillar2" value="@if($ultimo_pago) {{($residencia->Tasa/1000)/12}} @else 0 @endif" readonly class="form-group"></td>
+                                        </tr>
                                         <!-- <tr>
                                             <td>Resultado 1</td>
                                             <td><input type="text" id="Resultado2" value="@if($ultimo_pago) {{$ultimo_pago->MontoCartera}} @else 0 @endif"   class="form-group"></td>
@@ -652,6 +656,14 @@
                                         <tr>
                                             <td>Prima Calculada</td>
                                             <td><input type="text" id="PrimaCalculada2" value="@if($ultimo_pago) {{$ultimo_pago->MontoCartera * $ultimo_pago->Tasa}} @else 0 @endif" readonly class="form-group"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>(-) Descuento Rentabilidad 7.5%</td>
+                                            <td><input type="text" id="DescuentoRentabilidad2" value="@if($ultimo_pago) {{($ultimo_pago->MontoCartera * $ultimo_pago->Tasa)*0.075}} @else 0 @endif" readonly class="form-group"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>(=) Prima Descontada</td>
+                                            <td><input type="text" id="PrimaDescontada2" value="" readonly class="form-group"></td>
                                         </tr>
                                         <tr>
                                             <td>Impuesto Bomberos</td>
@@ -762,6 +774,8 @@
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function() {
+        $('#PrimaDescontada2').val($('#PrimaCalculada2').val()-$('#DescuentoRentabilidad2').val());
+
         $('#Validar').on('change', function() {
             if ($(this).is(':checked')) {
                 $('#FormArchivo').prop('target', '_blank');
