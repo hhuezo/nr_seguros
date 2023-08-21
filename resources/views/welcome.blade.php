@@ -79,6 +79,7 @@
                                         <li><a href="{{ url('catalogo/estado_polizas') }}">Estado Póliza</a></li>
                                         <li><a href="{{ url('catalogo/estado_venta') }}">Estado Venta</a></li>
                                         <li><a href="{{ url('catalogo/tipo_cartera') }}">Tipo Cartera</a></li>
+                                        <li><a href="{{ url('catalogo/nr_cartera') }}">Tipo Cartera Nr</a></li>
                                         <li><a href="{{ url('catalogo/tipo_negocio') }}">Tipo Negocio</a></li>
                                         <li><a href="{{ url('catalogo/tipo_cobro') }}">Tipo Cobro</a></li>
                                         <li><a href="{{ url('catalogo/tipo_poliza') }}">Tipo Póliza (ramo)</a></li>

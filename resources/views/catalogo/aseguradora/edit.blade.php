@@ -8,7 +8,7 @@
             <div class="x_title">
                 <h2>Modificar aseguradora <small></small></h2>
                 <ul class="nav navbar-right panel_toolbox">
-
+                    <a href="{{url('catalogo/aseguradoras')}}" class="btn btn-info fa fa-undo " style="color: white"></a>
                 </ul>
                 <div class="clearfix"></div>
             </div>
@@ -307,7 +307,7 @@
                         <form id="FormArchivo" action="{{ url('catalogo/aseguradora/documento') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <input type="hidden" value="{{$aseguradora->Id}}" name="Aseguradora">
-                            <div >
+                            <div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Archivo</label>
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">

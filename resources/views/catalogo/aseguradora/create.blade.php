@@ -8,7 +8,7 @@
             <div class="x_title">
                 <h2>Nueva aseguradora <small></small></h2>
                 <ul class="nav navbar-right panel_toolbox">
-
+                    <a href="{{url('catalogo/aseguradoras')}}" class="btn btn-info fa fa-undo " style="color: white" ></a>
                 </ul>
                 <div class="clearfix"></div>
             </div>
