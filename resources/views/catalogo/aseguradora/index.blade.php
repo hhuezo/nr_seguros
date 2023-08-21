@@ -20,10 +20,11 @@
             <table id="datatable" class="table table-striped table-bordered">
                 <thead>
                     <tr>
-                        <th>Código de Aseguradora</th>
-                        <th>Abreviatura</th>
+                        <th>ID</th>
                         <th>Nombre o Razón Social</th>
-                        <th>Teléfono</th>
+                        <th>NIT</th>
+                        <th>Teléfono Canal Comercial</th>
+                        <th>Contacto Canal Comercial</th>
                         <th>Opciones</th>
                     </tr>
                 </thead>
@@ -31,9 +32,10 @@
                     @foreach ($aseguradora as $obj)
                     <tr>
                         <td>{{ $obj->Id }}</td>
-                        <td>{{ $obj->Abreviatura }}</td>
                         <td>{{$obj->Nombre}}</td>
+                        <td>{{ $obj->Nit }}</td>
                         <td>{{ $obj->TelefonoFijo }}</td>
+                        <td>{{ $obj->TelefonoWhatsapp }}</td>
 
                         <td align="center">
 

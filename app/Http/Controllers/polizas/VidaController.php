@@ -28,6 +28,12 @@ use Throwable;
 
 class VidaController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index()
     {
         $vida = Vida::all();

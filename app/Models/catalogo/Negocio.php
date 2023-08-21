@@ -60,4 +60,10 @@ class Negocio extends Model
     {
         return $this->hasMany(NegocioContacto::class, 'negocio');
     }
+
+    public function departamentosNR()
+    {
+        return $this->belongsTo(DepartamentoNR::class, 'DepartamentoAtiende', 'Id');
+    }
+
 }

@@ -29,6 +29,11 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class DeudaController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -102,7 +107,7 @@ class DeudaController extends Controller
        // $detalle->DescuentoIva = $request->DescuentoIva; //checked
         $detalle->Comision = $request->Comision;
         $detalle->IvaSobreComision = $request->IvaSobreComision;
-        $detalle->Retencion = $request->Retencion;  
+        $detalle->Retencion = $request->Retencion;
         $detalle->ExtraPrima = $request->ExtraPrima;
         $detalle->ImpuestoBomberos = $request->ImpuestoBomberos;
         $detalle->ValorDescuento = $request->ValorDescuento;
@@ -178,12 +183,12 @@ class DeudaController extends Controller
 
     public function edit_pago(Request $request)
     {
-        
+
         $detalle = DeudaDetalle::findOrFail($request->Id);
         //dd($detalle);
-        
+
         $deuda = Deuda::findOrFail($detalle->Deuda);
-        
+
         if ($detalle->SaldoA == null && $detalle->ImpresionRecibo == null) {
             $detalle->SaldoA = $request->SaldoA;
             $detalle->ImpresionRecibo = $request->ImpresionRecibo;
@@ -194,7 +199,7 @@ class DeudaController extends Controller
 
             return back();
         } else {
-           
+
             //dd($request->EnvioCartera .' 00:00:00');
             if ($request->EnvioCartera) {
                 $detalle->EnvioCartera = $request->EnvioCartera;
@@ -273,7 +278,7 @@ class DeudaController extends Controller
         $rutas = Ruta::where('Activo', '=', 1)->get();
         $ubicaciones_cobro =  UbicacionCobro::where('Activo', '=', 1)->get();
         $bombero = Bombero::where('Activo', 1)->first();
-        
+
         if ($bombero) {
             $bomberos = $bombero->Valor;
         } else {
