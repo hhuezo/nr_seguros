@@ -36,6 +36,11 @@ use Illuminate\Support\Facades\Redirect;
 class NegocioController extends Controller
 {
 
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index()
     {
         $negocios = Negocio::where('Activo', 1)->get();

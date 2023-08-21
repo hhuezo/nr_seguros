@@ -86,7 +86,9 @@
                                         <li><a href="{{ url('catalogo/area_comercial')}}">Área Comercial</a></li>
                                         <li><a href="{{ url('catalogo/ubicacion_cobro') }}">Ubicación Cobro</a></li>
                                         <li><a href="{{ url('catalogo/necesidad_proteccion') }}">Necesidad de Protección</a></li>
-                                        
+                                        <li><a href="{{ url('catalogo/departamento_nr') }}">Departamentos NR</a></li>
+
+
                                     </ul>
                                 </li>
                                 <li><a><i class="fa fa-user"></i> Cliente <span class="fa fa-chevron-down"></span></a>

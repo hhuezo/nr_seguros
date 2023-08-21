@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Redirect;
 
 class RutaController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
         /**
      * Display a listing of the resource.
      *
@@ -44,7 +48,7 @@ class RutaController extends Controller
         $ruta->Activo = 1;
         $ruta->save();
 
-        
+
         alert()->success('El registro ha sido creado correctamente');
         return Redirect::to('catalogo/ruta');
 
@@ -87,7 +91,7 @@ class RutaController extends Controller
         $ruta->Nombre = $request->Nombre;
         $ruta->update();
 
-        
+
         alert()->success('El registro ha sido creado correctamente');
         return Redirect::to('catalogo/ruta');
     }

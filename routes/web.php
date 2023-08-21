@@ -8,6 +8,7 @@ use App\Http\Controllers\catalogo\ClienteController;
 use App\Http\Controllers\catalogo\AseguradoraController;
 use App\Http\Controllers\catalogo\AsignacionNecesidadAseguradoraController;
 use App\Http\Controllers\catalogo\BomberoController;
+use App\Http\Controllers\catalogo\DepartamentoNRController;
 use App\Http\Controllers\catalogo\EjecutivoController;
 use App\Http\Controllers\catalogo\EstadoPolizaController;
 use App\Http\Controllers\catalogo\EstadoVentaController;
@@ -78,6 +79,8 @@ Route::resource('catalogo/tipo_poliza', TipoPolizaController::class);
 Route::resource('catalogo/ubicacion_cobro', UbicacionCobroController::class);
 Route::resource('catalogo/necesidad_proteccion', NecesidadProteccionController::class);
 Route::resource('catalogo/necesidad_aseguradora',AsignacionNecesidadAseguradoraController::class);
+Route::resource('catalogo/departamento_nr', DepartamentoNRController::class);
+
 
 Route::post('catalogo/cliente/add_contacto', [ClienteController::class,'add_contacto']);
 Route::post('catalogo/cliente/delete_contacto', [ClienteController::class,'delete_contacto']);

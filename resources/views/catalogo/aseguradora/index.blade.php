@@ -20,12 +20,13 @@
             <table id="datatable" class="table table-striped table-bordered">
                 <thead>
                     <tr>
-                        <th>Código de Aseguradora</th>
-                        <th>Abreviatura</th>
+                        <th>ID</th>
                         <th>Nombre o Razón Social</th>
+                        <th>NIT</th>
                         <th>Fecha Constitución</th>
                         <th>Fecha Vinculación</th>
-                        <th>Teléfono</th>
+                        <th>Teléfono Canal Comercial</th>
+                        <th>Contacto Canal Comercial</th>
                         <th>Opciones</th>
                     </tr>
                 </thead>
@@ -33,19 +34,18 @@
                     @foreach ($aseguradora as $obj)
                     <tr>
                         <td>{{ $obj->Id }}</td>
-                        <td>{{ $obj->Abreviatura }}</td>
                         <td>{{$obj->Nombre}}</td>
+                        <td>{{ $obj->Nit }}</td>
                         <td>{{ \Carbon\Carbon::parse($obj->FechaConstitucion)->format('d/m/Y') }}</td>
                         <td>{{ \Carbon\Carbon::parse($obj->FechaVinculacion)->format('d/m/Y') }}</td>
                         <td>{{ $obj->TelefonoFijo }}</td>
+                        <td>{{ $obj->TelefonoWhatsapp}}</td>
 
                         <td align="center">
-
                             @can('edit users')
                             <a href="{{ url('catalogo/aseguradoras') }}/{{ $obj->Id }}/edit" class="on-default edit-row">
                                 <i class="fa fa-pencil fa-lg"></i></a>
                             @endcan
-
 
                             @can('delete users')
                             &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
@@ -62,3 +62,4 @@
 </div>
 @include('sweetalert::alert')
 @endsection
+
