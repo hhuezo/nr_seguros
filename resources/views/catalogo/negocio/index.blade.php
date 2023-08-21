@@ -23,20 +23,36 @@
                 <table id="datatable" class="table table-striped table-bordered">
                     <thead>
                         <tr>
-                            <th>Asegurado</th>
+                            <th>Id Cotización</th>
+                            <th>Nombre Asegurado</th>
                             <th>Aseguradora</th>
-                            <th>Fecha venta</th>
-                            <th>Inicio vigencia</th>
-                            <th>Observaciones</th>
+                            <th>Email</th>
+                            <th>Estado Cliente</th>
+                            <th>Fecha de Venta</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($negocios as $obj)
                             <tr>
-                                <td>{{ $obj->Asegurado }}</td>
+                                <td>{{$obj->Id}}</td>
+                                @if ($obj->clientes)
+                                    <td>{{ $obj->clientes->Nombre }}</td>
+                                @else
+                                    <td></td>
+                                @endif
                                 @if ($obj->Aseguradora)
                                     <td>{{ $obj->aseguradora->Nombre }}</td>
+                                @else
+                                    <td></td>
+                                @endif
+                                @if ($obj->clientes)
+                                    <td>{{ $obj->clientes->CorreoPrincipal }}</td>
+                                @else
+                                    <td></td>
+                                @endif
+                                @if ($obj->clientes)
+                                    <td>{{ $obj->clientes->estado->Nombre }}</td>
                                 @else
                                     <td></td>
                                 @endif
@@ -46,13 +62,6 @@
                                 @else
                                     <td></td>
                                 @endif
-
-                                @if ($obj->InicioVigencia)
-                                    <td>{{ date('d/m/Y', strtotime($obj->InicioVigencia)) }}</td>
-                                @else
-                                    <td></td>
-                                @endif
-
                                 <td align="center"><a href="" data-target="#modal-observacion-{{ $obj->Id }}"
                                         data-toggle="modal"><i class="fa fa-eye fa-lg"></i></a></td>
                                 <td align="center">
