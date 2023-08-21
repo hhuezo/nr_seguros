@@ -63,8 +63,7 @@
                                     <td></td>
                                 @endif
                                 <td align="center"><a href="" data-target="#modal-observacion-{{ $obj->Id }}"
-                                        data-toggle="modal"><i class="fa fa-eye fa-lg"></i></a></td>
-                                <td align="center">
+                                        data-toggle="modal"><i class="fa fa-eye fa-lg"></i></a>
 
                                     @can('edit userss')
                                         <a href="{{ url('catalogo/negocio') }}/{{ $obj->Id }}/edit"
