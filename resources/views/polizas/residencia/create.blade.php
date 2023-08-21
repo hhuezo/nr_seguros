@@ -116,14 +116,14 @@
                     </div>
                     <div class="col-sm-4">
                         <label class="control-label">Tasa %</label>
-                        <input type="number" step="any" name="Tasa" id="Tasa" value="{{ old('Tasa') }}" class="form-control" required>
+                        <input type="number" step="any" name="Tasa" id="Tasa" value="{{ old('Tasa') }}" class="form-control" required min="0" max="100">
                     </div>
                     <div class="col-md-12">
                         &nbsp;
                     </div>
                     <div class="col-sm-4">
                         <label class="control-label">Tasa de Comisión %</label>
-                        <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" required>
+                        <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" required min="0" max="100">
                     </div>
 
                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
@@ -174,7 +174,30 @@
     $(document).ready(function() {
 
 
+        $("#Tasa").change(function(){
+         
+            if(document.getElementById('Tasa').value <= 1 || document.getElementById('Tasa').value >= 100){
+                document.getElementById('Tasa').value = '';
+                swal('La tasa no debe ser menor a 0 ni mayor de 100');
+            }
+        })
 
+        $("#TasaComision").change(function(){
+         
+            if(document.getElementById('TasaComision').value <= 1 || document.getElementById('TasaComision').value >= 100){
+                document.getElementById('TasaComision').value = '';
+                swal('La tasa de comision no debe ser menor a 0 ni mayor de 100');
+            }
+        })
+
+        $("#TasaDescuento").change(function(){
+         
+            if(document.getElementById('TasaDescuento').value <= 1 || document.getElementById('TasaDescuento').value >= 100){
+                document.getElementById('TasaDescuento').value = '';
+                swal('El descuento de rentabilidad no debe ser menor a 0 ni mayor de 100');
+            }
+        })
+        
         $("#Asegurado").change(function() {
             // alert(document.getElementById('Asegurado').value);
             $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');

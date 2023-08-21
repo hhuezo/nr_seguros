@@ -211,10 +211,10 @@
                                     <td>{{\Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
                                     <td>{{ $obj->Descuento }}</td>
                                     <td>{{ $obj->APagar }}</td>
-                                    <td>{{ $obj->ImpresionRecibo }}</td>
-                                    <td>{{ $obj->EnvioCartera }}</td>
-                                    <td>{{ $obj->EnvioPago }}</td>
-                                    <td>{{ $obj->PagoAplicado }}</td>
+                                    <td>{{\Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}</td>
+                                    <td>{{\Carbon\Carbon::parse($obj->EnvioCartera)->format('d/m/Y') }}</td>
+                                    <td>{{\Carbon\Carbon::parse($obj->EnvioPago)->format('d/m/Y') }}</td>
+                                    <td>{{\Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') }}</td>
                                     <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"></a></td>
                                 </tr>
                                 @elseif(!$obj->EnvioCartera)
@@ -227,10 +227,10 @@
                                     <td>{{\Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
                                     <td>{{ $obj->Descuento }}</td>
                                     <td>{{ $obj->APagar }}</td>
-                                    <td>{{ $obj->ImpresionRecibo }}</td>
-                                    <td>{{ $obj->EnvioCartera }}</td>
-                                    <td>{{ $obj->EnvioPago }}</td>
-                                    <td>{{ $obj->PagoAplicado }}</td>
+                                    <td>{{\Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}</td>
+                                    <td>{{\Carbon\Carbon::parse($obj->EnvioCartera)->format('d/m/Y') }}</td>
+                                    <td>{{\Carbon\Carbon::parse($obj->EnvioPago)->format('d/m/Y') }}</td>
+                                    <td>{{\Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') }}</td>
                                     <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"></a></td>
                                 </tr>
                                 @elseif(!$obj->EnvioPago)
@@ -243,10 +243,10 @@
                                     <td>{{\Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
                                     <td>{{ $obj->Descuento }}</td>
                                     <td>{{ $obj->APagar }}</td>
-                                    <td>{{ $obj->ImpresionRecibo }}</td>
-                                    <td>{{ $obj->EnvioCartera }}</td>
-                                    <td>{{ $obj->EnvioPago }}</td>
-                                    <td>{{ $obj->PagoAplicado }}</td>
+                                    <td>{{\Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}</td>
+                                    <td>{{\Carbon\Carbon::parse($obj->EnvioCartera)->format('d/m/Y') }}</td>
+                                    <td>{{\Carbon\Carbon::parse($obj->EnvioPago)->format('d/m/Y') }}</td>
+                                    <td>{{\Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') }}</td>
                                     <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"></a></td>
                                 </tr>
                                 @elseif(!$obj->PagoAplicado)
@@ -259,10 +259,10 @@
                                     <td>{{\Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
                                     <td>{{ $obj->Descuento }}</td>
                                     <td>{{ $obj->APagar }}</td>
-                                    <td>{{ $obj->ImpresionRecibo }}</td>
-                                    <td>{{ $obj->EnvioCartera }}</td>
-                                    <td>{{ $obj->EnvioPago }}</td>
-                                    <td>{{ $obj->PagoAplicado }}</td>
+                                    <td>{{\Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}</td>
+                                    <td>{{\Carbon\Carbon::parse($obj->EnvioCartera)->format('d/m/Y') }}</td>
+                                    <td>{{\Carbon\Carbon::parse($obj->EnvioPago)->format('d/m/Y') }}</td>
+                                    <td>{{\Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') }}</td>
                                     <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"> </a></td>
 
                                 </tr>
@@ -276,10 +276,10 @@
                                     <td>{{\Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
                                     <td>{{ $obj->Descuento }}</td>
                                     <td>{{ $obj->APagar }}</td>
-                                    <td>{{ $obj->ImpresionRecibo }}</td>
-                                    <td>{{ $obj->EnvioCartera }}</td>
-                                    <td>{{ $obj->EnvioPago }}</td>
-                                    <td>{{ $obj->PagoAplicado }}</td>
+                                    <td>{{\Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}</td>
+                                    <td>{{\Carbon\Carbon::parse($obj->EnvioCartera)->format('d/m/Y') }}</td>
+                                    <td>{{\Carbon\Carbon::parse($obj->EnvioPago)->format('d/m/Y') }}</td>
+                                    <td>{{\Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') }}</td>
                                     <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"> </a></td>
 
                                 </tr>
@@ -627,7 +627,7 @@
                                                 <th>{{$residencia->aseguradoras->Nombre}} <br>
                                                     {{$residencia->clientes->Nombre}} <br>
                                                     N° Poliza: {{$residencia->NumeroPoliza}} <br>
-                                                    Vigencia: {{$residencia->VigenciaDesde}} al {{$residencia->VigenciaHasta}}
+                                                    Vigencia: {{ \Carbon\Carbon::parse($residencia->VigenciaDesde)->format('d/m/Y') }} al {{ \Carbon\Carbon::parse($residencia->VigenciaHasta)->format('d/m/Y') }}
                                                 </th>
                                                 <th></th>
                                             </tr>
@@ -658,8 +658,8 @@
                                             <td><input type="text" id="PrimaCalculada2" value="@if($ultimo_pago) {{$ultimo_pago->MontoCartera * $ultimo_pago->Tasa}} @else 0 @endif" readonly class="form-group"></td>
                                         </tr>
                                         <tr>
-                                            <td>(-) Descuento Rentabilidad 7.5%</td>
-                                            <td><input type="text" id="DescuentoRentabilidad2" value="@if($ultimo_pago) {{($ultimo_pago->MontoCartera * $ultimo_pago->Tasa)*0.075}} @else 0 @endif" readonly class="form-group"></td>
+                                            <td>(-) Descuento Rentabilidad {{$obj->Descuento}}%</td>
+                                            <td><input type="text" id="DescuentoRentabilidad2" value="@if($ultimo_pago) {{($ultimo_pago->MontoCartera * $ultimo_pago->Tasa)*$obj->Descuento}} @else 0 @endif" readonly class="form-group"></td>
                                         </tr>
                                         <tr>
                                             <td>(=) Prima Descontada</td>
@@ -774,6 +774,8 @@
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function() {
+
+
         $('#PrimaDescontada2').val($('#PrimaCalculada2').val()-$('#DescuentoRentabilidad2').val());
 
         $('#Validar').on('change', function() {
