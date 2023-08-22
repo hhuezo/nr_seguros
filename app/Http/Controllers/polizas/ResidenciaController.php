@@ -89,7 +89,6 @@ class ResidenciaController extends Controller
      */
     public function store(Request $request)
     {
-
         $messages = [
             'NumeroPoliza.required' => 'El Número de poliza es requerido',
             'LimiteGrupo.required' => 'El Límite Grupal es requerido',
@@ -127,6 +126,11 @@ class ResidenciaController extends Controller
         $residencia->TasaDescuento = $request->TasaDescuento;
         $residencia->Nit = $request->Nit;
         $residencia->Activo = 1;
+        if($request->DescuentoIva == 'on'){
+            $residencia->DescuentoIva = 1;
+        }else{
+            $residencia->DescuentoIva = 0;
+        }
         $residencia->Mensual = $request->tipoTasa;
         $residencia->Comision = $request->TasaComision;
         $residencia->save();

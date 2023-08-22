@@ -60,15 +60,6 @@
                     @include('catalogo.cliente.active')
                     @endforeach
                 </tbody>
-                <tfoot>
-                    <tr>
-                        <th>Código de Cliente</th>
-                        <th>Nombre o Razón Social</th>
-                        <th>Telefono Principal</th>
-                        <th>Estado</th>
-                        <th>Opciones</th>
-                    </tr>
-                </tfoot>
             </table>
 
         </div>

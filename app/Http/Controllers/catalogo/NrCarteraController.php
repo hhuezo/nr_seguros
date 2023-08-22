@@ -3,27 +3,21 @@
 namespace App\Http\Controllers\catalogo;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\AreaComercialFormRequest;
-use App\Models\catalogo\AreaComercial;
+use App\Models\catalogo\NrCartera;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 
-class AreaComercialController extends Controller
+class NrCarteraController extends Controller
 {
-
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-   /**
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        $area_comercial = AreaComercial::where('Activo',1)->get();
-        return view('catalogo.area_comercial.index', compact('area_comercial'));
+        $nr_cartera = NrCartera::where('Activo',1)->get();
+        return view('catalogo.nr_cartera.index',compact('nr_cartera'));
     }
 
     /**
@@ -33,7 +27,7 @@ class AreaComercialController extends Controller
      */
     public function create()
     {
-        return view('catalogo.area_comercial.create');
+        return view('catalogo.nr_cartera.create');
     }
 
     /**
@@ -42,17 +36,15 @@ class AreaComercialController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(AreaComercialFormRequest $request)
+    public function store(Request $request)
     {
-        $area_comercial = new AreaComercial();
-        $area_comercial->Nombre = $request->Nombre;
-        $area_comercial->Activo = 1;
-        $area_comercial->save();
-
+        $cartera = new NrCartera();
+        $cartera->Nombre = $request->Nombre;
+        $cartera->Activo = 1;
+        $cartera->save();
 
         alert()->success('El registro ha sido creado correctamente');
-        return Redirect::to('catalogo/area_comercial');
-
+        return Redirect::to('catalogo/nr_seguros');
     }
 
     /**
@@ -74,8 +66,9 @@ class AreaComercialController extends Controller
      */
     public function edit($id)
     {
-        $area_comercial = AreaComercial::findOrFail($id);
-        return view('catalogo.area_comercial.edit', compact('area_comercial'));
+        $cartera = NrCartera::findOrFail($id);
+        
+        return view('catalogo.nr_cartera.edit', compact('cartera'));
     }
 
     /**
@@ -85,15 +78,17 @@ class AreaComercialController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(AreaComercialFormRequest $request, $id)
+    public function update(Request $request, $id)
     {
-        $area_comercial = AreaComercial::findOrFail($id);
-        $area_comercial->Nombre = $request->Nombre;
-        $area_comercial->update();
+        $cartera = NrCartera::findOrFail($id);
+        $cartera->Nombre = $request->Nombre;
+        $cartera->update();
 
 
         alert()->success('El registro ha sido modificado correctamente');
-        return Redirect::to('catalogo/area_comercial');
+        return Redirect::to('catalogo/nr_cartera');
+    
+
     }
 
     /**
@@ -104,8 +99,11 @@ class AreaComercialController extends Controller
      */
     public function destroy($id)
     {
-        $area_comercial = AreaComercial::findOrFail($id)->update(['Activo' => 0]);
-        alert()->error('El registro ha sido desactivado correctamente');
-        return back();
+        $cartera = NrCartera::findOrFail($id);
+        $cartera->Activo = 0;
+        $cartera->update();
+
+        alert()->success('El registro ha sido eliminado correctamente');
+        return Redirect::to('catalogo/nr_cartera');
     }
 }

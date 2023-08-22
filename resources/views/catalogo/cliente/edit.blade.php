@@ -144,7 +144,7 @@ $annos->y;
                                     </div>
                                     <div class="row" style="padding-top: 15px!important;">
                                         <div class="col-md-6">
-                                            <label for="FechaNacimiento" class="form-label">Fecha Nacimiento</label>
+                                            <label for="FechaNacimiento" class="form-label">Fecha Nacimiento o Fundación Sociedad</label>
                                             <input class="form-control" name="FechaNacimiento" id="FechaNacimiento" value="{{ $cliente->FechaNacimiento }}" type="date">
                                         </div>
                                         <div class="col-md-6">
@@ -253,6 +253,10 @@ $annos->y;
                                         </div>
                                     </div>
                                     <div class="row" style="padding-top: 15px!important;">
+                                        <div class="col-md-6">
+                                            <label for="Referencia" class="form-label">Teléfono Principal</label>
+                                            <input class="form-control" name="TelefonoCelular" value="{{ $cliente->TelefonoCelular }}" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
+                                        </div>
                                         <div class="col-md-6">
                                             <label for="Referencia" class="form-label">Teléfono Principal</label>
                                             <input class="form-control" name="TelefonoCelular" value="{{ $cliente->TelefonoCelular }}" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
@@ -755,8 +759,10 @@ $annos->y;
                                     </thead>
                                     <tbody>
                                         @foreach($documentos as $obj)
+                                        @php($file = asset('storage/documentos/cliente/'.$obj->Nombre))
                                         <tr>
-                                            <td>{{$obj->Nombre}}</td>
+                                            <td><a href="{{ $file }}" class="btn btn-info" align="center">{{$obj->Nombre}}</a></td> 
+                                            
                                             <td>
                                                 <i class="fa fa-trash fa-lg" data-target="#modal-delete-documento-{{ $obj->Id }}" data-toggle="modal"></i>
                                             </td>

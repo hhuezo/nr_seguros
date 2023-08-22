@@ -86,7 +86,9 @@
                                                     <input type="text" name="NitEmpresa" id="NitEmpresa"
                                                         value="{{ old('NitEmpresa') }}"
                                                         data-inputmask="'mask': ['9999-999999-999-9']" onkeyup="mostrar();"
-                                                        class="form-control" ">
+                                                        class="form-control" >
+                                                        <span id="helpBlockDuiNit2" class="help-block">Este cliente ya
+                                                            existe.</span>
                                                     </div>
                                                     <div class="col-md-4">
                                                         <label for="Email" class="form-label">Email</label>
@@ -378,6 +380,8 @@
                     $("#MetodoPago").find("option:not(:first-child)").remove();
                     $("#MetodoPago").val(null).trigger("change"); // Clear and update the Select2 element
                     $('#helpBlockDuiNit').hide();
+                    $('#helpBlockDuiNit2').hide();
+
 
                 }
 
@@ -426,6 +430,7 @@
                                 $("#divDui").addClass("has-error");
                                 $("#divNit").addClass("has-error");
                                 $('#helpBlockDuiNit').show();
+                                $('#helpBlockDuiNit2').show();
                                 if ($('#TipoPersona').val() == 1) {
                                     $('#divDui').show();
                                     $('#divNit').hide();
@@ -492,6 +497,7 @@
                                     $("#divDui").addClass("has-error");
                                     $("#divNit").addClass("has-error");
                                     $('#helpBlockDuiNit').show();
+                                    $('#helpBlockDuiNit2').show();
 
                                     $.each(data.metodo_pago, function(index, datos) {
                                         $("#MetodoPago").append(new Option(datos.NumeroTarjeta, datos.Id, false,
@@ -508,6 +514,7 @@
                 $(document).ready(function() {
                     $('#divNit').hide();
                     $('#helpBlockDuiNit').hide();
+                    $('#helpBlockDuiNit2').hide();
                     $("#EstadoCliente").val(3).trigger("change");
 
 

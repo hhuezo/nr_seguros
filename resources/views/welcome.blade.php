@@ -79,13 +79,16 @@
                                         <li><a href="{{ url('catalogo/estado_polizas') }}">Estado Póliza</a></li>
                                         <li><a href="{{ url('catalogo/estado_venta') }}">Estado Venta</a></li>
                                         <li><a href="{{ url('catalogo/tipo_cartera') }}">Tipo Cartera</a></li>
+                                        <li><a href="{{ url('catalogo/nr_cartera') }}">Tipo Cartera Nr</a></li>
                                         <li><a href="{{ url('catalogo/tipo_negocio') }}">Tipo Negocio</a></li>
                                         <li><a href="{{ url('catalogo/tipo_cobro') }}">Tipo Cobro</a></li>
                                         <li><a href="{{ url('catalogo/tipo_poliza') }}">Tipo Póliza (ramo)</a></li>
                                         <li><a href="{{ url('catalogo/area_comercial')}}">Área Comercial</a></li>
                                         <li><a href="{{ url('catalogo/ubicacion_cobro') }}">Ubicación Cobro</a></li>
                                         <li><a href="{{ url('catalogo/necesidad_proteccion') }}">Necesidad de Protección</a></li>
-                                        
+                                        <li><a href="{{ url('catalogo/departamento_nr') }}">Departamentos NR</a></li>
+
+
                                     </ul>
                                 </li>
                                 <li><a><i class="fa fa-user"></i> Cliente <span class="fa fa-chevron-down"></span></a>

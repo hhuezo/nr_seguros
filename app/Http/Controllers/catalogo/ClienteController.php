@@ -33,6 +33,11 @@ use RealRashid\SweetAlert\Facades\Alert;
 class ClienteController extends Controller
 {
 
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index()
     {
         session(['tab1' => '1']);
@@ -472,13 +477,13 @@ class ClienteController extends Controller
 
         $archivo = $request->file('Archivo');
 
-       
+
         $documento = new ClienteDocumento();
-        $documento->Cliente = $request->input('Cliente'); 
-        $documento->Nombre = $archivo->getClientOriginalName(); 
+        $documento->Cliente = $request->input('Cliente');
+        $documento->Nombre = $archivo->getClientOriginalName();
         $documento->Activo = 1;
         $documento->save();
- 
+
         $filePath = 'documentos/cliente/' . $archivo->getClientOriginalName();
 
         Storage::disk('public')->put($filePath, file_get_contents($archivo));
@@ -492,7 +497,7 @@ class ClienteController extends Controller
         $documento = ClienteDocumento::findOrFail($id);
         $documento->Activo = 0;
         $documento->save();
- 
+
         alert()->success('El registro ha sido eliminado correctamente');
         session(['tab1' => '7']);
         return back();
