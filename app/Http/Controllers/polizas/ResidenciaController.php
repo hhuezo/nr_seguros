@@ -157,6 +157,11 @@ class ResidenciaController extends Controller
         $detalle = DetalleResidencia::where('Residencia', $residencia->Id)->where('Activo', 1)->orderBy('Id', 'desc')->get();
         $ultimo_pago = DetalleResidencia::where('Residencia', $residencia->Id)->where('Activo', 1)->orderBy('Id', 'desc')->first();
         // dd($ultimo_pago);
+        if($residencia->Mensual == 1){
+            $valorTasa = $residencia->Tasa/1000;
+        }else{
+            $valorTasa = $residencia->Tasa/1000/12;
+        }
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
         $bombero = Bombero::where('Activo', 1)->first();
         if ($bombero) {
@@ -172,6 +177,7 @@ class ResidenciaController extends Controller
             'ejecutivo',
             'detalle',
             'cliente',
+            'valorTasa',
             'aseguradoras',
             'estados_poliza',
             'tipos_contribuyente',

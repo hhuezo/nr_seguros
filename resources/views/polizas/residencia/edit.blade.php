@@ -611,7 +611,7 @@
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
-
+                          
                                 <div class="x_title">
                                     <h4>&nbsp;&nbsp; Calculo de Cartera {{$residencia->clientes->Nombre}}<small></small>
                                     </h4>
@@ -627,7 +627,9 @@
                                                 <th>{{$residencia->aseguradoras->Nombre}} <br>
                                                     {{$residencia->clientes->Nombre}} <br>
                                                     N° Poliza: {{$residencia->NumeroPoliza}} <br>
-                                                    Vigencia: {{ \Carbon\Carbon::parse($residencia->VigenciaDesde)->format('d/m/Y') }} al {{ \Carbon\Carbon::parse($residencia->VigenciaHasta)->format('d/m/Y') }}
+                                                    Vigencia: {{ \Carbon\Carbon::parse($residencia->VigenciaDesde)->format('d/m/Y') }} al {{ \Carbon\Carbon::parse($residencia->VigenciaHasta)->format('d/m/Y') }} <br>
+                                                    Calculo para el periodo de: <br>
+                                                    @if($ultimo_pago) {{ \Carbon\Carbon::parse($ultimo_pago->FechaInicio)->format('d/m/Y') }} al {{ \Carbon\Carbon::parse($ultimo_pago->FechaFinal)->format('d/m/Y') }}@endif
                                                 </th>
                                                 <th></th>
                                             </tr>
@@ -642,24 +644,25 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td>Monto Cartera</td>
-                                            <td><input type="text" id="MontoCartera2" value="@if($ultimo_pago) {{$ultimo_pago->MontoCartera}} @else 0 @endif" readonly class="form-group"></td>
+                                     
+                                            <td> Monto Cartera</td>
+                                            <td><input type="text" style="display: none;" id="MontoCartera2" value="@if($ultimo_pago) {{$ultimo_pago->MontoCartera}} @else 0 @endif" readonly class="form-group"></td>
                                         </tr>
                                         <tr>
                                             <td>Tasa por millar</td>
-                                            <td><input type="text" id="TasaMillar2" value="@if($ultimo_pago) {{($residencia->Tasa/1000)/12}} @else 0 @endif" readonly class="form-group"></td>
+                                            <td><input type="text" id="TasaMillar2" value="@if($ultimo_pago) {{$valorTasa}} @else 0 @endif" readonly class="form-group"></td>
                                         </tr>
                                         <!-- <tr>
                                             <td>Resultado 1</td>
                                             <td><input type="text" id="Resultado2" value="@if($ultimo_pago) {{$ultimo_pago->MontoCartera}} @else 0 @endif"   class="form-group"></td>
                                         </tr> -->
                                         <tr>
-                                            <td>Prima Calculada</td>
-                                            <td><input type="text" id="PrimaCalculada2" value="@if($ultimo_pago) {{$ultimo_pago->MontoCartera * $ultimo_pago->Tasa}} @else 0 @endif" readonly class="form-group"></td>
+                                            <td>Prima Calculada </td>
+                                            <td><input type="text"  id="PrimaCalculada2" value="@if($ultimo_pago) {{$ultimo_pago->MontoCartera * $valorTasa}} @else 0 @endif" readonly class="form-group"></td>
                                         </tr>
                                         <tr>
-                                            <td>(-) Descuento Rentabilidad {{$obj->Descuento}}%</td>
-                                            <td><input type="text" id="DescuentoRentabilidad2" value="@if($ultimo_pago) {{($ultimo_pago->MontoCartera * $ultimo_pago->Tasa)*$obj->Descuento}} @else 0 @endif" readonly class="form-group"></td>
+                                            <td>(-) Descuento Rentabilidad {{$residencia->TasaDescuento}}%</td>
+                                            <td><input type="text" id="DescuentoRentabilidad2" value="@if($ultimo_pago) {{($ultimo_pago->MontoCartera * $valorTasa) * ($residencia->TasaDescuento/100)}} @else 0 @endif" readonly class="form-group"></td>
                                         </tr>
                                         <tr>
                                             <td>(=) Prima Descontada</td>
@@ -671,7 +674,7 @@
                                         </tr>
                                         <tr>
                                             <td>SubTotal (Base de Iva)</td>
-                                            <td><input type="text" id="SubTotal2" readonly value="@if($ultimo_pago) {{($ultimo_pago->MontoCartera * $ultimo_pago->Tasa) + $ultimo_pago->ImpuestoBomberos}} @else 0 @endif" class="form-group"></td>
+                                            <td><input type="text" id="SubTotal2" readonly value="@if($ultimo_pago) {{($ultimo_pago->MontoCartera * $valorTasa) + $ultimo_pago->ImpuestoBomberos}} @else 0 @endif" class="form-group"></td>
                                         </tr>
                                         <tr>
                                             <td>13% Iva s/SubTotal</td>
@@ -682,7 +685,7 @@
                                             <td><input type="text" id="ValorCCF2" value="@if($ultimo_pago) {{$ultimo_pago->ValorCCF}} @else 0 @endif" readonly class="form-group"></td>
                                         </tr>
                                         <tr>
-                                            <td>Prima Neta Por Pagar</td>
+                                            <td>Prima Neta Por Pagar @if($ultimo_pago) {{ \Carbon\Carbon::parse($ultimo_pago->FechaInicio)->format('d/m/Y') }} al {{ \Carbon\Carbon::parse($ultimo_pago->FechaFinal)->format('d/m/Y') }}@endif</td>
                                             <td><input type="text" id="APagar2" value="@if($ultimo_pago) {{$ultimo_pago->APagar}} @else 0 @endif" readonly class="form-group"></td>
                                         </tr>
                                     </table>

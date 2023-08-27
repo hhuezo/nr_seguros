@@ -87,7 +87,7 @@
                     </div>
                     <div class="col-sm-4">
                         <label class="control-label">Descuento de Rentabilidad %</label>
-                        <input class="form-control" name="TasaDescuento" type="number" step="any" id="TasaDescuento" required>
+                        <input class="form-control" name="TasaDescuento" type="number" step="any" id="TasaDescuento" required min="0">
                     </div>
                     <div class="col-md-12">
                         &nbsp;
@@ -144,7 +144,7 @@
                             </div>
                         </div>
                     </div>
-               
+
 
                     <div class="x_title">
                         <h2> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<small></small></h2>
@@ -154,7 +154,7 @@
                 </div>
 
                 <div class="form-group" align="center">
-                    <button class="btn btn-success" type="submit">Guardar</button>
+                    <button class="btn btn-success" type="submit" id="btn-guardar">Guardar</button>
                     <a href="{{ url('polizas/residencia/') }}"><button class="btn btn-primary" type="button">Cancelar</button></a>
                 </div>
 
@@ -172,32 +172,35 @@
 <script type="text/javascript">
     // func
     $(document).ready(function() {
+        $("#btn_guardar").on('click', function() {
+            $("#btn_guardar").prop('disabled');
+        });
 
 
-        $("#Tasa").change(function(){
-         
-            if(document.getElementById('Tasa').value <= 1 || document.getElementById('Tasa').value >= 100){
+        $("#Tasa").change(function() {
+
+            if (document.getElementById('Tasa').value <= 1 || document.getElementById('Tasa').value >= 100) {
                 document.getElementById('Tasa').value = '';
                 swal('La tasa no debe ser menor a 0 ni mayor de 100');
             }
         })
 
-        $("#TasaComision").change(function(){
-         
-            if(document.getElementById('TasaComision').value <= 1 || document.getElementById('TasaComision').value >= 100){
+        $("#TasaComision").change(function() {
+
+            if (document.getElementById('TasaComision').value <= 1 || document.getElementById('TasaComision').value >= 100) {
                 document.getElementById('TasaComision').value = '';
                 swal('La tasa de comision no debe ser menor a 0 ni mayor de 100');
             }
         })
 
-        $("#TasaDescuento").change(function(){
-         
-            if(document.getElementById('TasaDescuento').value <= 1 || document.getElementById('TasaDescuento').value >= 100){
+        $("#TasaDescuento").change(function() {
+
+            if (document.getElementById('TasaDescuento').value <= 1 || document.getElementById('TasaDescuento').value >= 100) {
                 document.getElementById('TasaDescuento').value = '';
                 swal('El descuento de rentabilidad no debe ser menor a 0 ni mayor de 100');
             }
         })
-        
+
         $("#Asegurado").change(function() {
             // alert(document.getElementById('Asegurado').value);
             $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
