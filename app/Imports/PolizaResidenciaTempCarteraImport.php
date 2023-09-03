@@ -7,6 +7,8 @@ use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 
+
+
 class PolizaResidenciaTempCarteraImport implements ToModel, WithStartRow, SkipsEmptyRows
 {
     /**
@@ -25,13 +27,14 @@ class PolizaResidenciaTempCarteraImport implements ToModel, WithStartRow, SkipsE
     private $PolizaResidencia;
 
 
-    public function __construct($Axo,$Mes,$PolizaResidencia,$FechaInicio,$FechaFinal)
+    public function __construct($Axo,$Mes,$PolizaResidencia,$FechaInicio,$FechaFinal, $archivo)
     {
         $this->Axo = $Axo;
         $this->Mes = $Mes;
         $this->PolizaResidencia = $PolizaResidencia;
         $this->FechaInicio = $FechaInicio;
         $this->FechaFinal = $FechaFinal;
+        $this->archivo = $archivo;
     }
 
     public function model(array $row)

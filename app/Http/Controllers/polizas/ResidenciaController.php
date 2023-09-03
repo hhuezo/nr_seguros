@@ -23,9 +23,15 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use PDF;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+
 
 class ResidenciaController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -298,8 +304,18 @@ class ResidenciaController extends Controller
             $archivo = $request->Archivo;
             PolizaResidenciaTempCartera::where('User', '=', auth()->user()->id)->delete();
             //PolizaResidenciaTempCartera::truncate();
-            //dd(Excel::toArray(new PolizaResidenciaTempCarteraImport($request->Axo,$request->Mes,$request->PolizaResidencia), $archivo));
-            Excel::import(new PolizaResidenciaTempCarteraImport($request->Axo, $request->Mes, $residencia->Id, $request->FechaInicio, $request->FechaFinal), $archivo);
+            //dd(Excel::toArray(new PolizaResidenciaTempCarteraImport($request->Axo, $request->Mes, $residencia->Id, $request->FechaInicio, $request->FechaFinal), $archivo));
+
+                   // Add your merged cell detection logic here
+         $spreadsheet = IOFactory::load( $archivo);
+         $worksheet = $spreadsheet->getActiveSheet();
+        // Use $worksheet->getMergeCells() to get merged cells and compare with the current cell
+        if(count($worksheet->getMergeCells())){
+            alert()->error('El Documento NO puede tener celdas combinadas');
+            return back();
+        }
+
+            Excel::import(new PolizaResidenciaTempCarteraImport($request->Axo, $request->Mes, $residencia->Id, $request->FechaInicio, $request->FechaFinal, $archivo), $archivo);
 
             $monto_cartera_total = PolizaResidenciaTempCartera::where('User', '=', auth()->user()->id)->sum('SumaAsegurada');
 
@@ -317,14 +333,14 @@ class ResidenciaController extends Controller
                 return view('polizas.validacion_cartera.resultado', compact('asegurados_limite_individual'));
             }
 
-            if ($request->Validar == "on") {
+           /* if ($request->Validar == "on") {
 
                 $eliminados = DB::select('CALL lista_residencia_eliminados(?, ?, ?, ?, ?, ?)', [$axo_evaluar, $mes_evaluar, $residencia->Id, auth()->user()->id, $request->Axo, $request->Mes]);
 
                 $nuevos = DB::select('CALL lista_residencia_nuevos(?, ?, ?, ?, ?, ?)', [$axo_evaluar, $mes_evaluar, $residencia->Id, auth()->user()->id, $request->Axo, $request->Mes]);
 
                 return view('polizas.validacion_cartera.resultado', compact('nuevos', 'eliminados'));
-            }
+            }*/
 
             DB::statement("CALL insertar_temp_cartera_residencia(?, ?, ?, ?)", [auth()->user()->id, $request->Axo, $request->Mes, $residencia->Id]);
 
