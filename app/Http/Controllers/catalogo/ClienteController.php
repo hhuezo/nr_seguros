@@ -40,7 +40,6 @@ class ClienteController extends Controller
 
     public function index()
     {
-        session(['tab1' => '1']);
         session(['tab2' => '1']);
         $clientes = Cliente::get();
         return view('catalogo.cliente.index', compact('clientes'));

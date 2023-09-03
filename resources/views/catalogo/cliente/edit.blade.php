@@ -16,7 +16,8 @@ $annos->y;
             <div class="x_title">
                 <h2>Cliente <small></small></h2>
                 <ul class="nav navbar-right panel_toolbox">
-
+             
+                    <a href="{{url('catalogo/cliente')}}" class="btn btn-info fa fa-undo " style="color: white"></a>
                 </ul>
                 <div class="clearfix"></div>
             </div>
@@ -761,11 +762,8 @@ $annos->y;
                                         @foreach($documentos as $obj)
                                         @php($file = asset('storage/documentos/cliente/'.$obj->Nombre))
                                         <tr>
-                                            <td><a href="{{ $file }}" class="btn btn-info" align="center">{{$obj->Nombre}}</a></td> 
-                                            
-                                            <td>
-                                                <i class="fa fa-trash fa-lg" data-target="#modal-delete-documento-{{ $obj->Id }}" data-toggle="modal"></i>
-                                            </td>
+                                            <td><a href="{{ $file }}" class="btn btn-default" align="center"><i class="fa fa-download"></i> {{$obj->Nombre}}</a></td> 
+                                            <td> <i class="fa fa-trash fa-lg" data-target="#modal-delete-documento-{{ $obj->Id }}" data-toggle="modal"></i> </td>
                                         </tr>
                                         <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-documento-{{ $obj->Id }}">
 
