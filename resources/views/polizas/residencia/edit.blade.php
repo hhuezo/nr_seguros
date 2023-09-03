@@ -343,7 +343,7 @@
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
-                                        <form id="FormArchivo" action="{{ url('polizas/residencia/create_pago') }}" method="POST" enctype="multipart/form-data" target="_blank">
+                                        <form id="FormArchivo" action="{{ url('polizas/residencia/create_pago') }}" method="POST" enctype="multipart/form-data">
                                             @csrf
                                             <div class="modal-body">
                                                 <div class="form-group row">
@@ -392,12 +392,14 @@
                                                 </div>
 
                                             </div>
-                                            <div class="form-group row">
+
+                                           <!-- <div class="form-group row">
                                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Validar</label>
                                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                                     <input name="Validar" id="Validar" type="checkbox" checked class="js-switch" />
                                                 </div>
-                                            </div>
+                                            </div> -->
+
                                             <div class="clearfix"></div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
@@ -611,7 +613,7 @@
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
-                          
+
                                 <div class="x_title">
                                     <h4>&nbsp;&nbsp; Calculo de Cartera {{$residencia->clientes->Nombre}}<small></small>
                                     </h4>
@@ -644,7 +646,7 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                     
+
                                             <td> Monto Cartera</td>
                                             <td><input type="text" style="display: none;" id="MontoCartera2" value="@if($ultimo_pago) {{$ultimo_pago->MontoCartera}} @else 0 @endif" readonly class="form-group"></td>
                                         </tr>
