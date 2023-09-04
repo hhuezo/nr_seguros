@@ -306,16 +306,16 @@ class ResidenciaController extends Controller
             //PolizaResidenciaTempCartera::truncate();
             //dd(Excel::toArray(new PolizaResidenciaTempCarteraImport($request->Axo, $request->Mes, $residencia->Id, $request->FechaInicio, $request->FechaFinal), $archivo));
 
-                   // Add your merged cell detection logic here
          $spreadsheet = IOFactory::load( $archivo);
          $worksheet = $spreadsheet->getActiveSheet();
-        // Use $worksheet->getMergeCells() to get merged cells and compare with the current cell
+        // $worksheet->getMergeCells() Se verifica si existen celdas combinadas
         if(count($worksheet->getMergeCells())){
-            alert()->error('El Documento NO puede tener celdas combinadas');
+
+            alert()->error('El Documento NO puede tener celdas combinadas, por favor separe las siguientes celdas: '.implode(', ',$worksheet->getMergeCells()))->autoClose(100000);
             return back();
         }
 
-            Excel::import(new PolizaResidenciaTempCarteraImport($request->Axo, $request->Mes, $residencia->Id, $request->FechaInicio, $request->FechaFinal, $archivo), $archivo);
+            Excel::import(new PolizaResidenciaTempCarteraImport($request->Axo, $request->Mes, $residencia->Id, $request->FechaInicio, $request->FechaFinal), $archivo);
 
             $monto_cartera_total = PolizaResidenciaTempCartera::where('User', '=', auth()->user()->id)->sum('SumaAsegurada');
 
