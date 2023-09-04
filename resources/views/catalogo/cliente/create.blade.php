@@ -54,7 +54,7 @@
                                     <div class="col-md-4">
                                         <div class="form-group row" id="Homolo">
                                             <label for="Nombre" class="form-label">¿Homologado?</label><br>
-                                            <input name="Homologado" id="Homologado" type="checkbox" onchange="validaciones.cambiarEstado()" class="js-switch" />
+                                            <input name="Homologado" id="Homologado" type="checkbox" onchange="validaciones.cambiarEstado()" />
                                         </div>
                                     </div>
                                 </div>
@@ -62,7 +62,6 @@
                             <div class="col-lg-6">
                                 <label for="TipoPersona" class="form-label">Tipo Persona</label>
                                 <select name="TipoPersona" id="TipoPersona" onchange="validaciones.cboTipoPersona(this.value)" class="form-control">
-                                    <option value="" disabled selected> Seleccione ...</option>
                                     <option value="1" {{ old('TipoPersona') == 1 ? 'selected' : '' }}>Natural
                                     </option>
                                     <option value="2" {{ old('TipoPersona') == 2 ? 'selected' : '' }}>Jurídica
@@ -107,7 +106,7 @@
                         </div>
                         <div class="row" style="padding-top: 15px!important;">
                             <div class="col-md-6">
-                                <label for="FechaNacimiento" class="form-label">Fecha Nacimiento</label>
+                                <label for="FechaNacimiento" class="form-label">Fecha de Nacimiento ó Fundación</label>
                                 <input class="form-control" name="FechaNacimiento" id="FechaNacimiento" value="{{ old('FechaNacimiento') }}" type="date">
                             </div>
                             <div class="col-md-6">
@@ -124,7 +123,8 @@
                         <div class="row" style="padding-top: 15px!important;">
                             <div class="col-lg-6">
                                 <label for="Genero" class="form-label">Estado Familiar</label>
-                                <select class="form-control" name="EstadoFamiliar">
+                                <select class="form-control" name="EstadoFamiliar" id="EstadoFamiliar">
+                                    <option value="" selected disabled>Seleccione ...</option>
                                     <option value="0" {{ old('TipoPersona') == 0 ? 'selected' : '' }}>No Aplica
                                     </option>
                                     <option value="1" {{ old('TipoPersona') == 1 ? 'selected' : '' }}>Soltero
@@ -296,6 +296,13 @@
 <script type="text/javascript">
     $(document).ready(function() {
 
+        let homologadoCheck=$('#Homologado');
+        let switchery = new Switchery(homologadoCheck[0]);
+
+        $("#TipoPersona").change(function() {
+        tipo_persona(switchery);
+    });
+
         $('#FechaNacimiento').on('change', function() {
             var fecha_nacimiento = new Date($(this).val());
             var fecha_actual = new Date();
@@ -387,6 +394,42 @@
                 $('#Nit').val('');
             }
         }
+    }
+
+    function tipo_persona(switchery) {
+            let dui=$('#Dui');
+            let nit=$('#Nit');
+            let tipoPersona=$('#TipoPersona');
+            let homologado=$('#Homologado');
+            let genero=$('#Genero');
+            let estadoFamiliar=$('#EstadoFamiliar');
+            if (tipoPersona.val()==='2') {
+                dui.prop('readonly', true);
+                dui.val('');
+                switchery.disable();
+                if (homologado.prop('checked')) {
+                    switchery.setPosition(true);// Cambia a estado seleccionado
+                }
+                nit.val('');
+                nit.prop('readonly', false);
+                nit.inputmask('remove');
+                nit.inputmask({
+                    'mask': '9999-999999-999-9'
+                });
+                genero.val('3');
+                estadoFamiliar.val('0');
+                /*genero.prop('readonly', true);
+                estadoFamiliar.prop('readonly', true);*/
+            } else {
+                dui.prop('readonly', false);
+                switchery.enable(); // Cambia a estado seleccionado
+                genero.find('option:selected').prop('selected', false);
+                genero.val(null);
+                estadoFamiliar.find('option:selected').prop('selected', false);
+                estadoFamiliar.val(null);
+                /*genero.prop('readonly', false);
+                estadoFamiliar.prop('readonly', false);*/
+            }
     }
 </script>
 @endsection

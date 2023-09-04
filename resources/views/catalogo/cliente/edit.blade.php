@@ -16,7 +16,7 @@ $annos->y;
             <div class="x_title">
                 <h2>Cliente <small></small></h2>
                 <ul class="nav navbar-right panel_toolbox">
-             
+
                     <a href="{{url('catalogo/cliente')}}" class="btn btn-info fa fa-undo " style="color: white"></a>
                 </ul>
                 <div class="clearfix"></div>
@@ -39,7 +39,7 @@ $annos->y;
                     <li role="presentation" class="{{ session('tab1') == 3 ? 'active' : '' }}"><a href="#pago" role="tab" id="profile-metodo" data-toggle="tab" aria-expanded="false">Métodos de
                             pago</a>
                     </li>
-                    <li role="presentation" class="{{ session('tab1') == 4 ? 'active' : '' }}"><a href="#contacto" role="tab" id="profile-contacto" data-toggle="tab" aria-expanded="false">Contactos Frecuentes</a>
+                    <li role="presentation" class="{{ session('tab1') == 4 ? 'active' : '' }}"><a href="#contacto" role="tab" id="profile-contacto" data-toggle="tab" aria-expanded="false">Libreta de Contactos</a>
                     </li>
 
                     <li role="presentation" class="{{ session('tab1') == 2 ? 'active' : '' }}"><a href="#redes" role="tab" id="profile-necesidad" data-toggle="tab" aria-expanded="false">Necesidades, Preferencias y
@@ -70,7 +70,7 @@ $annos->y;
                                     <div class="row">
                                         <div class="col-lg-6">
                                             <label for="Nombre" class="form-label">NIT</label>
-                                            <input class="form-control" name="Nit" id="Nit" value="{{ $cliente->Nit }}" @if($cliente->TipoPersona == 1 && ($cliente->Dui == $cliente->Nit)) data-inputmask="'mask': ['99999999-9']" disabled @else data-inputmask="'mask': ['9999-999999-999-9']" @endif data-mask type="text">
+                                            <input class="form-control" name="Nit" id="Nit" value="{{ $cliente->Nit }}" @if($cliente->TipoPersona == 1 && ($cliente->Dui == $cliente->Nit)) data-inputmask="'mask': ['99999999-9']" readonly @else data-inputmask="'mask': ['9999-999999-999-9']" @endif data-mask type="text">
                                         </div>
                                         <div class="col-lg-6">
                                             <label for="Genero" class="form-label">Estado Cliente</label>
@@ -93,7 +93,7 @@ $annos->y;
                                                 <div class="col-md-4">
                                                     <div class="form-group row" id="Homolo">
                                                         <label for="Nombre" class="form-label">¿Homologado?</label><br>
-                                                        <input name="Homologado" id="Homologado" type="checkbox" onchange="validaciones.cambiarEstado()" class="js-switch" @if($cliente->TipoPersona == 1 && ($cliente->Dui == $cliente->Nit)) checked @else @endif />
+                                                        <input name="Homologado" id="Homologado" type="checkbox" onchange="validaciones.cambiarEstado()"  @if($cliente->TipoPersona == 1 && ($cliente->Dui == $cliente->Nit)) checked @else @endif />
                                                     </div>
                                                 </div>
                                             </div>
@@ -163,7 +163,8 @@ $annos->y;
                                     <div class="row" style="padding-top: 15px!important;">
                                         <div class="col-lg-6">
                                             <label for="Genero" class="form-label">Estado Familiar</label>
-                                            <select class="form-control" name="EstadoFamiliar">
+                                            <select class="form-control" name="EstadoFamiliar" id="EstadoFamiliar">
+                                                <option value="" selected disabled>Seleccione ...</option>
                                                 <option value="0" {{ $cliente->EstadoFamiliar == 0 ? 'selected' : '' }}>No Aplica
                                                 </option>
                                                 <option value="1" {{ $cliente->EstadoFamiliar == 1 ? 'selected' : '' }}>Soltero
@@ -762,7 +763,7 @@ $annos->y;
                                         @foreach($documentos as $obj)
                                         @php($file = asset('storage/documentos/cliente/'.$obj->Nombre))
                                         <tr>
-                                            <td><a href="{{ $file }}" class="btn btn-default" align="center"><i class="fa fa-download"></i> {{$obj->Nombre}}</a></td> 
+                                            <td><a href="{{ $file }}" class="btn btn-default" align="center"><i class="fa fa-download"></i> {{$obj->Nombre}}</a></td>
                                             <td> <i class="fa fa-trash fa-lg" data-target="#modal-delete-documento-{{ $obj->Id }}" data-toggle="modal"></i> </td>
                                         </tr>
                                         <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-documento-{{ $obj->Id }}">
@@ -1464,6 +1465,13 @@ $annos->y;
     }
     $(document).ready(function() {
 
+        let homologadoCheck=$('#Homologado');
+        let switchery = new Switchery(homologadoCheck[0]);
+
+        $("#TipoPersona").change(function() {
+        tipo_persona(switchery);
+    });
+
         $('#FechaNacimiento').on('change', function() {
             var fecha_nacimiento = new Date($(this).val());
             var fecha_actual = new Date();
@@ -1685,6 +1693,46 @@ $annos->y;
         var tarjeta = document.getElementById("tarjeta").value;
         console.log(tarjeta);
     }
+
+
+
+    function tipo_persona(switchery) {
+        let dui=$('#Dui');
+        let nit=$('#Nit');
+        let tipoPersona=$('#TipoPersona');
+        let homologado=$('#Homologado');
+        let genero=$('#Genero');
+        let estadoFamiliar=$('#EstadoFamiliar');
+        if (tipoPersona.val()==='2') {
+            dui.prop('readonly', true);
+            dui.val('');
+            switchery.disable();
+            if (homologado.prop('checked')) {
+                switchery.setPosition(true);// Cambia a estado seleccionado
+            }
+            nit.val('');
+            nit.prop('readonly', false);
+            nit.inputmask('remove');
+            nit.inputmask({
+                'mask': '9999-999999-999-9'
+            });
+            genero.val('3');
+            estadoFamiliar.val('0');
+            /*genero.prop('readonly', true);
+            estadoFamiliar.prop('readonly', true);*/
+        } else {
+            dui.prop('readonly', false);
+            switchery.enable(); // Cambia a estado seleccionado
+            genero.find('option:selected').prop('selected', false);
+            genero.val(null);
+            estadoFamiliar.find('option:selected').prop('selected', false);
+            estadoFamiliar.val(null);
+             /*genero.prop('readonly', false);
+            estadoFamiliar.prop('readonly', false);*/
+        }
+    }
+
+
 </script>
 
 @endsection
