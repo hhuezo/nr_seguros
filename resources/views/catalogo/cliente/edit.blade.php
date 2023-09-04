@@ -9,6 +9,28 @@ $annos = $hoy->diff($cumpleanos);
 $annos->y;
 
 ?>
+
+<style>
+    /* Estilo para el cuadro que contiene los campos */
+    .campo-container {
+        border: 1px solid #333;
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+    /* Estilo para los campos individuales */
+    .campo {
+        margin-bottom: 10px;
+    }
+
+    /* Estilo para el título "Ruta de Cobro" */
+    .titulo {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+</style>
+
 <div class="x_panel">
     <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
@@ -17,7 +39,7 @@ $annos->y;
                 <h2>Cliente <small></small></h2>
                 <ul class="nav navbar-right panel_toolbox">
 
-                    <a href="{{url('catalogo/cliente')}}" class="btn btn-info fa fa-undo " style="color: white"></a>
+                    <a href="{{url('catalogo/cliente')}}" class="btn btn-info fa fa-undo " style="color: white"> Atrás</a>
                 </ul>
                 <div class="clearfix"></div>
             </div>
@@ -65,251 +87,236 @@ $annos->y;
 
                             <div class="x_content">
                                 <br />
-
-                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="container">
                                     <div class="row">
-                                        <div class="col-lg-6">
-                                            <label for="Nombre" class="form-label">NIT</label>
-                                            <input class="form-control" name="Nit" id="Nit" value="{{ $cliente->Nit }}" @if($cliente->TipoPersona == 1 && ($cliente->Dui == $cliente->Nit)) data-inputmask="'mask': ['99999999-9']" readonly @else data-inputmask="'mask': ['9999-999999-999-9']" @endif data-mask type="text">
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <label for="Genero" class="form-label">Estado Cliente</label>
-                                            <select name="Estado" class="form-control" style="width: 100%">
-                                                @foreach ($cliente_estados as $obj)
-                                                <option value="{{ $obj->Id }}" {{ $cliente->Estado == $obj->Id ? 'selected' : '' }}>{{ $obj->Nombre }}
-                                                </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
+                                        <!-- Columna Izquierda (6 unidades) -->
+                                        <div class="col-md-6">
 
-                                    </div>
-                                    <div class="row" style="padding-top: 15px!important;">
-                                        <div class="col-lg-6">
-                                            <div class="row">
-                                                <div class="col-md-8">
-                                                    <label for="Nombre" class="form-label">DUI</label>
-                                                    <input class="form-control" name="Dui" id="Dui" value="{{ $cliente->Dui}}" data-inputmask="'mask': ['99999999-9']" data-mask type="text">
+                                                <!-- Campos para la columna izquierda -->
+                                                <div class="form-group">
+                                                    <label for="Nombre" class="form-label">NIT</label>
+                                                    <input class="form-control" name="Nit" id="Nit" value="{{ $cliente->Nit }}" @if($cliente->TipoPersona == 1 && ($cliente->Dui == $cliente->Nit)) data-inputmask="'mask': ['99999999-9']" readonly @else data-inputmask="'mask': ['9999-999999-999-9']" @endif data-mask type="text">
                                                 </div>
-                                                <div class="col-md-4">
-                                                    <div class="form-group row" id="Homolo">
-                                                        <label for="Nombre" class="form-label">¿Homologado?</label><br>
-                                                        <input name="Homologado" id="Homologado" type="checkbox" onchange="validaciones.cambiarEstado()"  @if($cliente->TipoPersona == 1 && ($cliente->Dui == $cliente->Nit)) checked @else @endif />
+
+                                                <div class="form-group">
+                                                    <div class="row">
+                                                        <div class="col-md-8">
+                                                            <label for="Nombre" class="form-label">DUI</label>
+                                                            <input class="form-control" name="Dui" id="Dui" value="{{ $cliente->Dui}}" data-inputmask="'mask': ['99999999-9']" data-mask type="text">
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group row" id="Homolo">
+                                                                <label for="Nombre" class="form-label">¿Homologado?</label><br>
+                                                                <input name="Homologado" id="Homologado" type="checkbox" onchange="validaciones.cambiarEstado()"  @if($cliente->TipoPersona == 1 && ($cliente->Dui == $cliente->Nit)) checked @else @endif />
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
+                                                    <div class="form-group">
+                                                        <label for="Nombre" class="form-label">Registro Fiscal</label>
+                                                        <input class="form-control" name="RegistroFiscal" id="RegistroFiscal" value="{{ $cliente->RegistroFiscal}}" type="text">
+                                                    </div>
+                                            <div class="form-group">
+                                                <label for="Nombre" class="form-label">Nombre o Razón Social</label>
+                                                <input class="form-control" id="Nombre" name="Nombre" value="{{ $cliente->Nombre }}" type="text">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="FechaNacimiento" class="form-label">Fecha Nacimiento o Fundación Sociedad</label>
+                                                <input class="form-control" name="FechaNacimiento" id="FechaNacimiento" value="{{ $cliente->FechaNacimiento }}" type="date">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="FechaNacimiento" class="form-label">Edad</label>
+                                                <input class="form-control" id="EdadCalculada" value="<?php echo $annos->y; ?>" type="text" disabled>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="Genero" class="form-label">Estado Familiar</label>
+                                                <select class="form-control" name="EstadoFamiliar" id="EstadoFamiliar">
+                                                    <option value="" selected disabled>Seleccione ...</option>
+                                                    <option value="0" {{ $cliente->EstadoFamiliar == 0 ? 'selected' : '' }}>No Aplica
+                                                    </option>
+                                                    <option value="1" {{ $cliente->EstadoFamiliar == 1 ? 'selected' : '' }}>Soltero
+                                                    </option>
+                                                    <option value="2" {{ $cliente->EstadoFamiliar == 2 ? 'selected' : '' }}>Casado
+                                                    </option>
+                                                    <option value="3" {{ $cliente->EstadoFamiliar == 3 ? 'selected' : '' }}>
+                                                        Divorciado
+                                                    </option>
+                                                    <option value="4" {{ $cliente->EstadoFamiliar == 4 ? 'selected' : '' }}>Viudo
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="NumeroDependientes" class="form-label">Número Dependientes</label>
+                                                <input class="form-control" name="NumeroDependientes" id="NumeroDependientes" value="{{ $cliente->NumeroDependientes }}" type="number">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="Genero" class="form-label">Ocupación</label>
+                                                <input class="form-control" id="Ocupacion" name="Ocupacion" value="{{ $cliente->Ocupacion }}" type="text">
+                                            </div>
+                                            <div class="form-group" style="padding-bottom: 38px;">
+
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="DireccionResidencia" class="form-label">Dirección Residencia</label>
+                                                <textarea class="form-control" name="DireccionResidencia">{{ $cliente->DireccionResidencia }}</textarea>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="DireccionResidencia" class="form-label">Dirección Correspondencia</label>
+                                                <textarea class="form-control" name="DireccionCorrespondencia">{{ $cliente->DireccionCorrespondencia }}</textarea>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="Referencia" class="form-label">Teléfono Principal Contacto </label>
+                                                <input class="form-control" name="TelefonoCelular" value="{{ $cliente->TelefonoCelular }}" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="Referencia" class="form-label">Teléfono Residencia</label>
+                                                <input class="form-control" name="TelefonoResidencia" value="{{ $cliente->TelefonoResidencia }}" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="Referencia" class="form-label">Teléfono Oficina</label>
+                                                <input class="form-control" name="TelefonoOficina" value="{{ $cliente->TelefonoOficina }}" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="CorreoPrincipal" class="form-label">Correo Principal</label>
+                                                <input class="form-control" name="CorreoPrincipal" value="{{ $cliente->CorreoPrincipal }}" type="email">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="CorreoPrincipal" class="form-label">Correo Secundario</label>
+                                                <input class="form-control" name="CorreoSecundario" value="{{ $cliente->CorreoSecundario }}" type="email">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="FechaVinculacion" class="form-label">Fecha Vinculación</label>
+                                                <input class="form-control" name="FechaVinculacion" value="{{ $cliente->FechaVinculacion }}" type="date">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="FechaVinculacion" class="form-label">Fecha Baja Cliente</label>
+                                                <input class="form-control" name="FechaBaja" value="{{ $cliente->FechaBaja }}" type="date">
+                                            </div>
+                                            <div class="form-group">
+
                                             </div>
                                         </div>
-                                        <div class="col-lg-6">
-                                            <label for="TipoPersona" class="form-label">Tipo Persona</label>
-                                            <select name="TipoPersona" id="TipoPersona" onchange="validaciones.cboTipoPersona(this.value)" class="form-control">
-                                                <option value="1" {{ $cliente->TipoPersona == 1 ? 'selected' : '' }}>Natural
-                                                </option>
-                                                <option value="2" {{ $cliente->TipoPersona == 2 ? 'selected' : '' }}>Jurídica
-                                                </option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="row" style="padding-top: 15px!important;">
-                                        <div class="col-lg-6">
-                                            <label for="Nombre" class="form-label">Registro Fiscal</label>
-                                            <input class="form-control" name="RegistroFiscal" id="RegistroFiscal" value="{{ $cliente->RegistroFiscal}}" type="text">
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <label for="Genero" class="form-label">Género</label>
-                                            <select name="Genero" id="Genero" class="form-control">
-                                                <option value="" selected disabled>Seleccione ...</option>
-                                                <option value="1" {{ $cliente->Genero == 1 ? 'selected' : '' }}>Masculino
-                                                </option>
-                                                <option value="2" {{ $cliente->Genero == 2 ? 'selected' : '' }}>Femenino
-                                                </option>
-                                                <option value="3" {{ $cliente->Genero == 3 ? 'selected' : '' }}>No Aplica
-                                                </option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="row" style="padding-top: 15px!important;">
-                                        <div class="col-lg-6">
-                                            <label for="Nombre" class="form-label">Nombre o Razón Social</label>
-                                            <input class="form-control" id="Nombre" name="Nombre" value="{{ $cliente->Nombre }}" type="text">
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <label for="Nombre" class="form-label">Tipo Contribuyente</label>
-                                            <select name="TipoContribuyente" id="TipoContribuyente" class="form-control" onchange="validaciones.cboTipoContribuyente(this.value)" style="width: 100%">
-                                                <option value="" disabled selected>Seleccione ...</option>
-                                                @foreach ($tipos_contribuyente as $obj)
-                                                <option value="{{ $obj->Id }}" {{ $cliente->TipoContribuyente == $obj->Id ? 'selected' : '' }}>
-                                                    {{ $obj->Nombre }}
-                                                </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="row" style="padding-top: 15px!important;">
-                                        <div class="col-md-6">
-                                            <label for="FechaNacimiento" class="form-label">Fecha Nacimiento o Fundación Sociedad</label>
-                                            <input class="form-control" name="FechaNacimiento" id="FechaNacimiento" value="{{ $cliente->FechaNacimiento }}" type="date">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="Referencia" class="form-label">Vinculado al Grupo o Referencia</label>
-                                            <input class="form-control" name="Referencia" id="Referencia" value="{{ $cliente->Referencia }}" type="text">
-                                        </div>
-                                    </div>
 
-                                    <div class="row" style="padding-top: 15px!important;">
+                                        <!-- Columna Derecha (6 unidades) -->
                                         <div class="col-md-6">
-                                            <label for="FechaNacimiento" class="form-label">Edad</label>
-                                            <input class="form-control" id="EdadCalculada" value="<?php echo $annos->y; ?>" type="text" disabled>
-                                        </div>
-                                    </div>
-                                    <div class="row" style="padding-top: 15px!important;">
-                                        <div class="col-lg-6">
-                                            <label for="Genero" class="form-label">Estado Familiar</label>
-                                            <select class="form-control" name="EstadoFamiliar" id="EstadoFamiliar">
-                                                <option value="" selected disabled>Seleccione ...</option>
-                                                <option value="0" {{ $cliente->EstadoFamiliar == 0 ? 'selected' : '' }}>No Aplica
-                                                </option>
-                                                <option value="1" {{ $cliente->EstadoFamiliar == 1 ? 'selected' : '' }}>Soltero
-                                                </option>
-                                                <option value="2" {{ $cliente->EstadoFamiliar == 2 ? 'selected' : '' }}>Casado
-                                                </option>
-                                                <option value="3" {{ $cliente->EstadoFamiliar == 3 ? 'selected' : '' }}>
-                                                    Divorciado
-                                                </option>
-                                                <option value="4" {{ $cliente->EstadoFamiliar == 4 ? 'selected' : '' }}>Viudo
-                                                </option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="row" style="padding-top: 15px!important;">
-                                        <div class="col-lg-6">
-                                            <label for="NumeroDependientes" class="form-label">Número Dependientes</label>
-                                            <input class="form-control" name="NumeroDependientes" id="NumeroDependientes" value="{{ $cliente->NumeroDependientes }}" type="number">
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <label for="Genero" class="form-label">Responsable de Pago</label>
-                                            <input class="form-control" id="ResponsablePago" name="ResponsablePago" value="{{ $cliente->ResponsablePago }}" type="text">
-                                        </div>
-                                    </div>
-                                    <div class="row" style="padding-top: 15px!important;">
-                                        <div class="col-lg-6">
-                                            <label for="Genero" class="form-label">Ocupación</label>
-                                            <input class="form-control" id="Ocupacion" name="Ocupacion" value="{{ $cliente->Ocupacion }}" type="text">
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <label for="Genero" class="form-label">Ubicación de cobro</label>
-                                            <select name="UbicacionCobro" class="form-control" style="width: 100%">
-                                                <option value="" selected disabled>Seleccione ...</option>
-                                                @foreach ($ubicaciones_cobro as $obj)
-                                                <option value="{{ $obj->Id }}" {{ $cliente->UbicacionCobro == $obj->Id ? 'selected' : '' }}>
-                                                    {{ $obj->Nombre }}
-                                                </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="row" style="padding-top: 15px!important;">
-                                        <div class="col-md-6">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="DireccionResidencia" class="form-label">Departamento</label>
-                                            <select id="Departamento" class="form-control" style="width: 100%">
-                                                @foreach ($departamentos as $obj)
-                                                <option value="{{ $obj->Id }}" {{ $departamento_actual == $obj->Id ? 'selected' : '' }}>
-                                                    {{ $obj->Nombre }}
-                                                </option>
-                                                @endforeach
-                                            </select>
+                                                <!-- Campos para la columna derecha -->
+                                                <div class="form-group">
+                                                    <label for="Genero" class="form-label">Estado Cliente</label>
+                                                    <select name="Estado" class="form-control" style="width: 100%">
+                                                        @foreach ($cliente_estados as $obj)
+                                                            <option value="{{ $obj->Id }}" {{ $cliente->Estado == $obj->Id ? 'selected' : '' }}>{{ $obj->Nombre }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="TipoPersona" class="form-label">Tipo Persona</label>
+                                                    <select name="TipoPersona" id="TipoPersona" onchange="validaciones.cboTipoPersona(this.value)" class="form-control">
+                                                        <option value="1" {{ $cliente->TipoPersona == 1 ? 'selected' : '' }}>Natural
+                                                        </option>
+                                                        <option value="2" {{ $cliente->TipoPersona == 2 ? 'selected' : '' }}>Jurídica
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="Genero" class="form-label">Género</label>
+                                                    <select name="Genero" id="Genero" class="form-control">
+                                                        <option value="" selected disabled>Seleccione ...</option>
+                                                        <option value="1" {{ $cliente->Genero == 1 ? 'selected' : '' }}>Masculino
+                                                        </option>
+                                                        <option value="2" {{ $cliente->Genero == 2 ? 'selected' : '' }}>Femenino
+                                                        </option>
+                                                        <option value="3" {{ $cliente->Genero == 3 ? 'selected' : '' }}>No Aplica
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            <div class="form-group">
+                                                <label for="Nombre" class="form-label">Tipo Contribuyente</label>
+                                                <select name="TipoContribuyente" id="TipoContribuyente" class="form-control" onchange="validaciones.cboTipoContribuyente(this.value)" style="width: 100%">
+                                                    <option value="" disabled selected>Seleccione ...</option>
+                                                    @foreach ($tipos_contribuyente as $obj)
+                                                        <option value="{{ $obj->Id }}" {{ $cliente->TipoContribuyente == $obj->Id ? 'selected' : '' }}>
+                                                            {{ $obj->Nombre }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="form-group" style="padding-bottom: 90px!important;">
+                                                <label for="Referencia" class="form-label">Vinculado al Grupo o Referencia</label>
+                                                <input class="form-control" name="Referencia" id="Referencia" value="{{ $cliente->Referencia }}" type="text">
+                                            </div>
+
+                                            <div class="campo-container">
+                                                <div class="titulo">Formas de pago</div>
+                                              <div class="form-group">
+                                                  <label for="Genero" class="form-label">Responsable de Pago</label>
+                                                  <input class="form-control" id="ResponsablePago" name="ResponsablePago" value="{{ $cliente->ResponsablePago }}" type="text">
+                                              </div>
+                                              <div class="form-group">
+                                                  <label for="Genero" class="form-label">Ubicación de cobro</label>
+                                                  <select name="UbicacionCobro" class="form-control" style="width: 100%">
+                                                      <option value="" selected disabled>Seleccione ...</option>
+                                                      @foreach ($ubicaciones_cobro as $obj)
+                                                          <option value="{{ $obj->Id }}" {{ $cliente->UbicacionCobro == $obj->Id ? 'selected' : '' }}>
+                                                              {{ $obj->Nombre }}
+                                                          </option>
+                                                      @endforeach
+                                                  </select>
+                                              </div>
+                                                <div class="campo-container">
+                                                    <div class="titulo">
+                                                        Ruta
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="DireccionResidencia" class="form-label">Departamento</label>
+                                                        <select id="Departamento" class="form-control" style="width: 100%">
+                                                            @foreach ($departamentos as $obj)
+                                                                <option value="{{ $obj->Id }}" {{ $departamento_actual == $obj->Id ? 'selected' : '' }}>
+                                                                    {{ $obj->Nombre }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="DireccionResidencia" class="form-label">Municipio</label>
+                                                        <select name="Municipio" id="Municipio" class="form-control select2" style="width: 100%">
+                                                            @foreach ($municipios as $obj)
+                                                                <option value="{{ $obj->Id }}" {{ $municipio_actual == $obj->Id ? 'selected' : '' }}>
+                                                                    {{ $obj->Nombre }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="DireccionResidencia" class="form-label">Distrito</label>
+                                                        <select id="Distrito" name="Distrito" required class="form-control select2" style="width: 100%">
+                                                            @foreach ($distritos as $obj)
+                                                                <option value="{{ $obj->Id }}" {{ $cliente->Distrito == $obj->Id ? 'selected' : '' }}>{{ $obj->Nombre }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+
                                         </div>
 
-                                    </div>
-                                    <div class="row" style="padding-top: 15px!important;">
-                                        <div class="col-md-6">
-                                            <label for="DireccionResidencia" class="form-label">Dirección Residencia</label>
-                                            <textarea class="form-control" name="DireccionResidencia">{{ $cliente->DireccionResidencia }}</textarea>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="DireccionResidencia" class="form-label">Municipio</label>
-                                            <select name="Municipio" id="Municipio" class="form-control select2" style="width: 100%">
-                                                @foreach ($municipios as $obj)
-                                                <option value="{{ $obj->Id }}" {{ $municipio_actual == $obj->Id ? 'selected' : '' }}>
-                                                    {{ $obj->Nombre }}
-                                                </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-
-                                    </div>
-                                    <div class="row" style="padding-top: 15px!important;">
-                                        <div class="col-md-6">
-                                            <label for="DireccionResidencia" class="form-label">Dirección
-                                                Correspondencia</label>
-                                            <textarea class="form-control" name="DireccionCorrespondencia">{{ $cliente->DireccionCorrespondencia }}</textarea>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="DireccionResidencia" class="form-label">Distrito</label>
-                                            <select id="Distrito" name="Distrito" required class="form-control select2" style="width: 100%">
-                                                @foreach ($distritos as $obj)
-                                                <option value="{{ $obj->Id }}" {{ $cliente->Distrito == $obj->Id ? 'selected' : '' }}>{{ $obj->Nombre }}
-                                                </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="row" style="padding-top: 15px!important;">
-                                        <div class="col-md-6">
-                                            <label for="Referencia" class="form-label">Teléfono Principal</label>
-                                            <input class="form-control" name="TelefonoCelular" value="{{ $cliente->TelefonoCelular }}" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="Referencia" class="form-label">Teléfono Principal</label>
-                                            <input class="form-control" name="TelefonoCelular" value="{{ $cliente->TelefonoCelular }}" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
-                                        </div>
-                                    </div>
-                                    <div class="row" style="padding-top: 15px!important;">
-                                        <div class="col-md-6">
-                                            <label for="Referencia" class="form-label">Teléfono Residencia</label>
-                                            <input class="form-control" name="TelefonoResidencia" value="{{ $cliente->TelefonoResidencia }}" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
-                                        </div>
-                                    </div>
-                                    <div class="row" style="padding-top: 15px!important;">
-                                        <div class="col-md-6">
-                                            <label for="Referencia" class="form-label">Teléfono Oficina</label>
-                                            <input class="form-control" name="TelefonoOficina" value="{{ $cliente->TelefonoOficina }}" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
-                                        </div>
-                                    </div>
-                                    <div class="row" style="padding-top: 15px!important;">
-                                        <div class="col-md-6">
-                                            <label for="CorreoPrincipal" class="form-label">Correo Principal</label>
-                                            <input class="form-control" name="CorreoPrincipal" value="{{ $cliente->CorreoPrincipal }}" type="email">
-                                        </div>
-                                    </div>
-                                    <div class="row" style="padding-top: 15px!important;">
-                                        <div class="col-md-6">
-                                            <label for="CorreoPrincipal" class="form-label">Correo Secundario</label>
-                                            <input class="form-control" name="CorreoSecundario" value="{{ $cliente->CorreoSecundario }}" type="email">
-                                        </div>
-                                    </div>
-                                    <div class="row" style="padding-top: 15px!important;">
-                                        <div class="col-md-6">
-                                            <label for="FechaVinculacion" class="form-label">Fecha Vinculación</label>
-                                            <input class="form-control" name="FechaVinculacion" value="{{ $cliente->FechaVinculacion }}" type="date">
-                                        </div>
-                                    </div>
-                                    <div class="row" style="padding-top: 15px!important;">
-                                        <div class="col-md-6">
-                                            <label for="FechaVinculacion" class="form-label">Fecha Baja Cliente</label>
-                                            <input class="form-control" name="FechaBaja" value="{{ $cliente->FechaBaja }}" type="date">
-                                        </div>
-                                    </div>
-
-                                    <div class="row" style="padding-top: 15px!important;">
                                         <div class="col-md-12">
-                                            <label for="Comentarios" class="form-label">Comentarios</label>
-                                            <textarea class="form-control" name="Comentarios">{{ $cliente->Comentarios }}</textarea>
+                                            <div class="form-group">
+                                                <label for="Comentarios" class="form-label">Comentarios</label>
+                                                <textarea class="form-control"
+                                                          name="Comentarios">{{ $cliente->Comentarios }}</textarea>
+
+                                            </div>
                                         </div>
                                     </div>
-
 
                                 </div>
+
+
 
 
 
@@ -482,7 +489,7 @@ $annos->y;
 
                                             <label>
                                                 <input type="checkbox" name="TarjetaCredito" value="1" class="js-switch" {{ $cliente->TarjetaCredito == 1 ? 'checked' : '' }} /> Tarjeta
-                                                credito
+                                                crédito
                                             </label>
                                             &nbsp;&nbsp;&nbsp;&nbsp;
                                             <br>
@@ -493,7 +500,7 @@ $annos->y;
                                             &nbsp;&nbsp;&nbsp;&nbsp;
                                             <label>
                                                 <input type="checkbox" name="MonederoEletronico" class="js-switch" value="1" {{ $cliente->MonederoEletronico == 1 ? 'checked' : '' }} />
-                                                Monedero eletronico
+                                                Monedero eletrónico
                                             </label>
                                             &nbsp;&nbsp;&nbsp;&nbsp;
                                             <label>
@@ -682,11 +689,11 @@ $annos->y;
                         <table class="table table-striped table-bordered">
                             <thead>
                                 <tr>
-                                    <th>Producto</th>
-                                    <th>Valores agregados</th>
+                                    <th>Producto de NR</th>
+                                    <th>Valores Agregados</th>
                                     <th>Competidores</th>
                                     <th>Referidos</th>
-                                    <th>Que quisiera?</th>
+                                    <th>¿Que quisiera de NR?</th>
                                     <th>Servicio al cliente</th>
                                     <th>Acciones </th>
                                 </tr>
@@ -823,50 +830,48 @@ $annos->y;
                     </div>
                     <div class="modal-body">
                         <input type="hidden" name="Cliente" value="{{ $cliente->Id }}" class="form-control">
-                        <div class="form-group">
+                        <div class="row">
                             <div class="col-sm-6">
-                                Método Pago
-                                <select name="MetodoPago" class="form-control" id="MetodoPago">
-                                    @foreach ($metodos_pago as $obj)
-                                    <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
-                                    @endforeach
-                                </select>
+                                <div class="form-group">
+                                    Método Pago
+                                    <select name="MetodoPago" class="form-control" id="MetodoPago">
+                                        @foreach ($metodos_pago as $obj)
+                                            <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    Número Tarjeta
+                                    <input type="text" name="NumeroTarjeta" id="tarjeta" class="form-control"
+                                           data-inputmask="'mask': ['9999-9999-9999-9999']" disabled data-mask>
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="row">
                             <div class="col-sm-6">
-                                Número Tarjeta
-                                <input type="text" name="NumeroTarjeta" id="tarjeta" class="form-control" data-inputmask="'mask': ['9999-9999-9999-9999']" disabled data-mask>
+                                <div class="form-group">
+                                    Fecha Vencimiento
+                                    <input type="text" id="vencimiento" class="form-control"
+                                           data-inputmask="'mask': ['99/99']" data-mask disabled
+                                           name="FechaVencimiento">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    Póliza Vinculada
+                                    <input type="text" name="PolizaVinculada" class="form-control" required>
+                                </div>
                             </div>
                         </div>
-
-                        <div class="form-group">
-                            <div class="col-sm-6">
-                                Fecha Vencimiento
-                                <input type="text" id="vencimiento" class="form-control" data-inputmask="'mask': ['99/99']" data-mask disabled name="FechaVencimiento">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-sm-6">
-                                Póliza Vinculada
-                                <input type="text" name="PolizaVinculada" class="form-control" required>
-                            </div>
-                        </div>
-
-
-
-
                     </div>
-                    <div>&nbsp; </div>
                     <div class="clearfix"></div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                         <button type="submit" class="btn btn-primary">Guardar</button>
                     </div>
-
             </form>
-
         </div>
     </div>
 </div>
@@ -910,52 +915,50 @@ $annos->y;
                     <div class="modal-body">
                         <input type="hidden" name="Id" id="ModalTarjetaId" class="form-control">
                         <input type="hidden" name="Cliente" value="{{ $cliente->Id }}" class="form-control">
-
-                        <div class="form-group">
+                        <div class="row">
                             <div class="col-sm-6">
-                                Metodo pago
-                                <select name="MetodoPago" id="ModalMetodoPago" class="form-control" disabled>
-                                    @foreach ($metodos_pago as $obj)
-                                    <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
-                                    @endforeach
-                                </select>
+                                <div class="form-group">
+                                    Metodo pago
+                                    <select name="MetodoPago" id="ModalMetodoPago" class="form-control" disabled>
+                                        @foreach ($metodos_pago as $obj)
+                                            <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    NumeroTarjeta
+                                    <input type="text" name="NumeroTarjeta" id="ModalNumeroTarjeta" class="form-control"
+                                           data-inputmask="'mask': ['9999-9999-9999-9999']" data-mask>
+                                </div>
                             </div>
                         </div>
-
-                        <div class="form-group">
+                        <div class="row">
                             <div class="col-sm-6">
-                                NumeroTarjeta
-                                <input type="text" name="NumeroTarjeta" id="ModalNumeroTarjeta" class="form-control" data-inputmask="'mask': ['9999-9999-9999-9999']" data-mask>
+                                <div class="form-group">
+
+                                    Fecha vencimiento
+                                    <input type="text" name="FechaVencimiento" id="ModalFechaVencimiento"
+                                           class="form-control" data-inputmask="'mask': ['99/99']" data-mask>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+
+                                    Poliza vinculada
+                                    <input type="text" name="PolizaVinculada" id="ModalPolizaVinculada"
+                                           class="form-control" required>
+                                </div>
                             </div>
                         </div>
-
-                        <div class="form-group">
-                            <div class="col-sm-6">
-                                Fecha vencimiento
-                                <input type="text" name="FechaVencimiento" id="ModalFechaVencimiento" class="form-control" data-inputmask="'mask': ['99/99']" data-mask>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-sm-6">
-                                Poliza vinculada
-                                <input type="text" name="PolizaVinculada" id="ModalPolizaVinculada" class="form-control" required>
-                            </div>
-                        </div>
-
-
-
-
                     </div>
-                    <div>&nbsp; </div>
                     <div class="clearfix"></div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                         <button type="submit" class="btn btn-primary">Guardar</button>
                     </div>
-
             </form>
-
         </div>
     </div>
 </div>
@@ -1179,43 +1182,44 @@ $annos->y;
                     </div>
                     <div class="modal-body">
                         <input type="hidden" name="Cliente" value="{{ $cliente->Id }}" class="form-control">
-                        <div class="form-group">
+                        <div class="row">
                             <div class="col-sm-6">
-                                Actividad Económica
-                                <input type="text" name="ActividadEconomica" class="form-control" required>
+                                <div class="form-group">
+                                    Actividad Económica
+                                    <input type="text" name="ActividadEconomica" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    Ingreso Promedio
+                                    <input type="number" step="0.001" min="0" class="form-control" required
+                                           name="IngresoPromedio">
+                                </div>
                             </div>
                         </div>
-
-                        <div class="form-group">
+                        <div class="row">
                             <div class="col-sm-6">
-                                Ingreso Promedio
-                                <input type="number" step="0.001" min="0" class="form-control" required name="IngresoPromedio">
+                                <div class="form-group">
+                                    Porción de ingresos que gasta en seguros mensual
+                                    <input type="number" step="0.001" min="0" name="GastoMensualSeguro"
+                                           class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    Nivel Educativo
+                                    <input type="text" name="NivelEducativo" class="form-control" required>
+                                </div>
                             </div>
                         </div>
-
-                        <div class="form-group">
-                            <div class="col-sm-6">
-                                Porción de ingresos que gasta en seguros mensual
-                                <input type="number" step="0.001" min="0" name="GastoMensualSeguro" class="form-control" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-sm-6">
-                                Nivel Educativo
-                                <input type="text" name="NivelEducativo" class="form-control" required>
-                            </div>
-                        </div>
-
                     </div>
-                    <div>&nbsp; </div>
+
                     <div class="clearfix"></div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                         <button type="submit" class="btn btn-primary">Guardar</button>
                     </div>
-
             </form>
-
         </div>
     </div>
 </div>
@@ -1260,43 +1264,45 @@ $annos->y;
                     </div>
                     <div class="modal-body">
                         <input type="hidden" name="Cliente" value="{{ $cliente->Id }}" class="form-control">
-                        <div class="form-group">
+                        <div class="row">
                             <div class="col-sm-6">
-                                Actividad Económica
-                                <input type="text" name="ActividadEconomica" id="ModalHabitoActividadEconomica" class="form-control" required>
+                                <div class="form-group">
+                                    Actividad Económica
+                                    <input type="text" name="ActividadEconomica" id="ModalHabitoActividadEconomica"
+                                           class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    Ingreso Promedio
+                                    <input type="number" name="IngresoPromedio" id="ModalHabitoIngresoPromedio"
+                                           step="0.001" min="0" class="form-control" required>
+                                </div>
                             </div>
                         </div>
-
-                        <div class="form-group">
+                        <div class="row">
                             <div class="col-sm-6">
-                                Ingreso Promedio
-                                <input type="number" name="IngresoPromedio" id="ModalHabitoIngresoPromedio" step="0.001" min="0" class="form-control" required>
+                                <div class="form-group">
+                                    Porción de ingresos que gasta en seguros mensual
+                                    <input type="number" step="0.001" min="0" name="GastoMensualSeguro"
+                                           id="ModalHabitoGastoMensualSeguro" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    Nivel Educativo
+                                    <input type="text" name="NivelEducativo" id="ModalHabitoNivelEducativo"
+                                           class="form-control" required>
+                                </div>
                             </div>
                         </div>
-
-                        <div class="form-group">
-                            <div class="col-sm-6">
-                                Porción de ingresos que gasta en seguros mensual
-                                <input type="number" step="0.001" min="0" name="GastoMensualSeguro" id="ModalHabitoGastoMensualSeguro" class="form-control" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-sm-6">
-                                Nivel Educativo
-                                <input type="text" name="NivelEducativo" id="ModalHabitoNivelEducativo" class="form-control" required>
-                            </div>
-                        </div>
-
                     </div>
-                    <div>&nbsp; </div>
                     <div class="clearfix"></div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                         <button type="submit" class="btn btn-primary">Guardar</button>
                     </div>
-
             </form>
-
         </div>
     </div>
 </div>
@@ -1309,64 +1315,64 @@ $annos->y;
                 <div class="modal-content">
 
                     <div class="modal-header">
-                        <h4 class="modal-title" id="myModalLabel">Retroalimentacion</h4>
+                        <h4 class="modal-title" id="myModalLabel">Retroalimentaciónn</h4>
                     </div>
                     <div class="modal-body">
                         <input type="hidden" name="Cliente" value="{{ $cliente->Id }}" class="form-control">
-                        <div class="form-group">
+                        <input type="hidden" name="ServicioCliente" id="ServicioCliente" value="0" class="form-control" required>
+
+                        <div class="row">
                             <div class="col-sm-6">
-                                Producto de NR
-                                <input type="text" name="Producto" required class="form-control">
+                            <div class="form-group">
+                                    Producto de NR
+                                    <input type="text" name="Producto" required class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                            <div class="form-group">
+                                    Servicio al ciente <br>
+                                    <div id="stars">
+                                        <i class="fa fa-star-o fa-2x" style="padding-right: 5px;" onclick="check_stars(1)"></i>
+                                        <i class="fa fa-star-o fa-2x" style="padding-right: 5px;" onclick="check_stars(2)"></i>
+                                        <i class="fa fa-star-o fa-2x" style="padding-right: 5px;" onclick="check_stars(3)"></i>
+                                        <i class="fa fa-star-o fa-2x" style="padding-right: 5px;" onclick="check_stars(4)"></i>
+                                        <i class="fa fa-star-o fa-2x" style="padding-right: 5px;" onclick="check_stars(5)"></i>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="row">
                             <div class="col-sm-6">
-                                Servicio al ciente <br>
-                                <div id="stars">
-                                    <i class="fa fa-star-o fa-2x" onclick="check_stars(1)"></i>
-                                    <i class="fa fa-star-o fa-2x" onclick="check_stars(2)"></i>
-                                    <i class="fa fa-star-o fa-2x" onclick="check_stars(3)"></i>
-                                    <i class="fa fa-star-o fa-2x" onclick="check_stars(4)"></i>
-                                    <i class="fa fa-star-o fa-2x" onclick="check_stars(5)"></i>
+                                <div class="form-group">
+                                    Valores agregados
+                                    <input type="text" name="ValoresAgregados" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    Competidores
+                                    <input type="text" name="Competidores" class="form-control" required>
                                 </div>
                             </div>
                         </div>
 
-
-                        <div class="form-group">
-                            <div class="col-sm-6">
-                                Valores agregados
-                                <input type="text" name="ValoresAgregados" class="form-control" required>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-sm-6">
-                                Competidores
-                                <input type="text" name="Competidores" class="form-control" required>
-                            </div>
-                        </div>
-
-
-                        <div class="form-group">
-                            <div class="col-sm-6">
-                                Que quisiera de Nr?
-                                <input type="text" name="QueQuisiera" class="form-control" required>
-                            </div>
-                        </div>
-
-                        <input type="hidden" name="ServicioCliente" id="ServicioCliente" value="0" class="form-control" required>
-
-                        <div class="form-group">
+                        <div class="row">
                             <div class="col-sm-12">
-                                Referidos
-                                <input type="text" name="Referidos" class="form-control" required>
+                                <div class="form-group">
+                                    ¿Que quisiera de NR?
+                                    <input type="text" name="QueQuisiera" class="form-control" required>
+                                </div>
                             </div>
                         </div>
-
-
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    Referidos
+                                    <input type="text" name="Referidos" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div>&nbsp; </div>
                     <div class="clearfix"></div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -1392,67 +1398,64 @@ $annos->y;
                     <div class="modal-body">
                         <input type="hidden" name="Cliente" value="{{ $cliente->Id }}" class="form-control">
                         <input type="hidden" name="Id" id="ModalRetroId" class="form-control">
-                        <div class="form-group">
+                        <input type="hidden" name="ServicioCliente" id="ModalRetroServicioCliente" class="form-control" required>
+                        <div class="row">
                             <div class="col-sm-6">
-                                Producto de NR
-                                <input type="text" name="Producto" id="ModalRetroProducto" required class="form-control">
+                                <div class="form-group">
+                                    Producto de NR
+                                    <input type="text" name="Producto" id="ModalRetroProducto" required class="form-control">
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
                             <div class="col-sm-6">
-                                Servicio al ciente <br>
-                                <div id="modal_stars">
-                                    <i class="fa fa-star-o fa-2x" onclick="modal_check_stars(1)"></i>
-                                    <i class="fa fa-star-o fa-2x" onclick="modal_check_stars(2)"></i>
-                                    <i class="fa fa-star-o fa-2x" onclick="modal_check_stars(3)"></i>
-                                    <i class="fa fa-star-o fa-2x" onclick="modal_check_stars(4)"></i>
-                                    <i class="fa fa-star-o fa-2x" onclick="modal_check_stars(5)"></i>
+                                <div class="form-group">
+                                    Servicio al ciente <br>
+                                    <div id="modal_stars">
+                                        <i class="fa fa-star-o fa-2x" onclick="modal_check_stars(1)"></i>
+                                        <i class="fa fa-star-o fa-2x" onclick="modal_check_stars(2)"></i>
+                                        <i class="fa fa-star-o fa-2x" onclick="modal_check_stars(3)"></i>
+                                        <i class="fa fa-star-o fa-2x" onclick="modal_check_stars(4)"></i>
+                                        <i class="fa fa-star-o fa-2x" onclick="modal_check_stars(5)"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
-
-                        <div class="form-group">
+                        <div class="row">
                             <div class="col-sm-6">
-                                Valores agregados
-                                <input type="text" name="ValoresAgregados" id="ModalRetroValoresAgregados" class="form-control" required>
+                                <div class="form-group">
+                                    Valores agregados
+                                    <input type="text" name="ValoresAgregados" id="ModalRetroValoresAgregados" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    Competidores
+                                    <input type="text" name="Competidores" id="ModalRetroCompetidores" class="form-control" required>
+                                </div>
                             </div>
                         </div>
-
-                        <div class="form-group">
-                            <div class="col-sm-6">
-                                Competidores
-                                <input type="text" name="Competidores" id="ModalRetroCompetidores" class="form-control" required>
-                            </div>
-                        </div>
-
-
-                        <div class="form-group">
-                            <div class="col-sm-6">
-                                Que quisiera de NR?
-                                <input type="text" name="QueQuisiera" id="ModalRetroQueQuisiera" class="form-control" required>
-                            </div>
-                        </div>
-
-                        <input type="hidden" name="ServicioCliente" id="ModalRetroServicioCliente" class="form-control" required>
-                        <div class="form-group">
+                        <div class="row">
                             <div class="col-sm-12">
-                                Referidos
-                                <input type="text" name="Referidos" id="ModalRetroReferidos" class="form-control" required>
+                                <div class="form-group">
+                                    ¿Que quisiera de NR?
+                                    <input type="text" name="QueQuisiera" id="ModalRetroQueQuisiera" class="form-control" required>
+                                </div>
                             </div>
                         </div>
-
-
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    Referidos
+                                    <input type="text" name="Referidos" id="ModalRetroReferidos" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div>&nbsp; </div>
                     <div class="clearfix"></div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                         <button type="submit" class="btn btn-primary">Guardar</button>
                     </div>
-
             </form>
-
         </div>
     </div>
 </div>
@@ -1702,9 +1705,9 @@ $annos->y;
         string_star = "";
         for (i = 1; i < 6; i++) {
             if (i <= id) {
-                string_star = string_star + '<i class="fa fa-star fa-2x" onclick="check_stars(' + i + ')"></i>';
+                string_star = string_star + '<i class="fa fa-star fa-2x" style="padding-right: 5px;" onclick="check_stars(' + i + ')"></i>';
             } else {
-                string_star = string_star + '<i class="fa fa-star-o fa-2x" onclick="check_stars(' + i + ')"></i>';
+                string_star = string_star + '<i class="fa fa-star-o fa-2x" style="padding-right: 5px;" onclick="check_stars(' + i + ')"></i>';
             }
         }
         $('#stars').html(string_star);
@@ -1717,9 +1720,9 @@ $annos->y;
         string_star = "";
         for (i = 1; i < 6; i++) {
             if (i <= id) {
-                string_star = string_star + '<i class="fa fa-star fa-2x" onclick="modal_check_stars(' + i + ')"></i>';
+                string_star = string_star + '<i class="fa fa-star fa-2x" style="padding-right: 5px;" onclick="modal_check_stars(' + i + ')"></i>';
             } else {
-                string_star = string_star + '<i class="fa fa-star-o fa-2x" onclick="modal_check_stars(' + i + ')"></i>';
+                string_star = string_star + '<i class="fa fa-star-o fa-2x" style="padding-right: 5px;" onclick="modal_check_stars(' + i + ')"></i>';
             }
         }
         $('#modal_stars').html(string_star);
