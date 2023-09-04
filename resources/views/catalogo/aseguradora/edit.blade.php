@@ -324,21 +324,22 @@
                         </form>
                         <br>
                         <div class="col-md-12">
-                            <div class="col-md-3"> &nbsp;</div>
-                            <div class="col-md-6">
+                            <div class="col-md-2"> &nbsp;</div>
+                            <div class="col-md-8">
                                 <table class=" table table-striped table-bordered">
                                     <thead>
                                         <tr>
                                             <th>Nombre</th>
-                                            <th style="width: 25%;">Opciones</th>
+                                            <th style="width: 25%;" style="text-align: center;" >Opciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach($documentos as $obj)
+                                        @php($file = asset('storage/documentos/aseguradoras/'.$obj->Nombre))
                                         <tr>
-                                            <td>{{$obj->Nombre}}</td>
-                                            <td>
-                                                <i class="fa fa-trash fa-lg" data-target="#modal-delete-documento-{{ $obj->Id }}" data-toggle="modal"></i>
+                                            <td><a href="{{ $file }}" class="btn btn-default" align="center" target="_blank"><i class="fa fa-download"></i>&nbsp; {{$obj->Nombre}}</a></td> 
+                                            <td style="text-align: center;" valign="center">
+                                                <i class="fa fa-trash fa-lg" data-target="#modal-delete-documento-{{ $obj->Id }}" data-toggle="modal" ></i>
                                             </td>
                                         </tr>
                                         <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-documento-{{ $obj->Id }}">
