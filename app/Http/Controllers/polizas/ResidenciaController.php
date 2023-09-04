@@ -23,9 +23,15 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use PDF;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+
 
 class ResidenciaController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -157,6 +163,11 @@ class ResidenciaController extends Controller
         $detalle = DetalleResidencia::where('Residencia', $residencia->Id)->where('Activo', 1)->orderBy('Id', 'desc')->get();
         $ultimo_pago = DetalleResidencia::where('Residencia', $residencia->Id)->where('Activo', 1)->orderBy('Id', 'desc')->first();
         // dd($ultimo_pago);
+        if($residencia->Mensual == 1){
+            $valorTasa = $residencia->Tasa/1000;
+        }else{
+            $valorTasa = $residencia->Tasa/1000/12;
+        }
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
         $bombero = Bombero::where('Activo', 1)->first();
         if ($bombero) {
@@ -172,6 +183,7 @@ class ResidenciaController extends Controller
             'ejecutivo',
             'detalle',
             'cliente',
+            'valorTasa',
             'aseguradoras',
             'estados_poliza',
             'tipos_contribuyente',
@@ -292,7 +304,17 @@ class ResidenciaController extends Controller
             $archivo = $request->Archivo;
             PolizaResidenciaTempCartera::where('User', '=', auth()->user()->id)->delete();
             //PolizaResidenciaTempCartera::truncate();
-            //dd(Excel::toArray(new PolizaResidenciaTempCarteraImport($request->Axo,$request->Mes,$request->PolizaResidencia), $archivo));
+            //dd(Excel::toArray(new PolizaResidenciaTempCarteraImport($request->Axo, $request->Mes, $residencia->Id, $request->FechaInicio, $request->FechaFinal), $archivo));
+
+         $spreadsheet = IOFactory::load( $archivo);
+         $worksheet = $spreadsheet->getActiveSheet();
+        // $worksheet->getMergeCells() Se verifica si existen celdas combinadas
+        if(count($worksheet->getMergeCells())){
+
+            alert()->error('El Documento NO puede tener celdas combinadas, por favor separe las siguientes celdas: '.implode(', ',$worksheet->getMergeCells()))->autoClose(100000);
+            return back();
+        }
+
             Excel::import(new PolizaResidenciaTempCarteraImport($request->Axo, $request->Mes, $residencia->Id, $request->FechaInicio, $request->FechaFinal), $archivo);
 
             $monto_cartera_total = PolizaResidenciaTempCartera::where('User', '=', auth()->user()->id)->sum('SumaAsegurada');
@@ -311,14 +333,14 @@ class ResidenciaController extends Controller
                 return view('polizas.validacion_cartera.resultado', compact('asegurados_limite_individual'));
             }
 
-            if ($request->Validar == "on") {
+           /* if ($request->Validar == "on") {
 
                 $eliminados = DB::select('CALL lista_residencia_eliminados(?, ?, ?, ?, ?, ?)', [$axo_evaluar, $mes_evaluar, $residencia->Id, auth()->user()->id, $request->Axo, $request->Mes]);
 
                 $nuevos = DB::select('CALL lista_residencia_nuevos(?, ?, ?, ?, ?, ?)', [$axo_evaluar, $mes_evaluar, $residencia->Id, auth()->user()->id, $request->Axo, $request->Mes]);
 
                 return view('polizas.validacion_cartera.resultado', compact('nuevos', 'eliminados'));
-            }
+            }*/
 
             DB::statement("CALL insertar_temp_cartera_residencia(?, ?, ?, ?)", [auth()->user()->id, $request->Axo, $request->Mes, $residencia->Id]);
 

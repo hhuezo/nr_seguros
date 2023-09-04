@@ -7,6 +7,8 @@ use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 
+
+
 class PolizaResidenciaTempCarteraImport implements ToModel, WithStartRow, SkipsEmptyRows
 {
     /**
@@ -32,6 +34,7 @@ class PolizaResidenciaTempCarteraImport implements ToModel, WithStartRow, SkipsE
         $this->PolizaResidencia = $PolizaResidencia;
         $this->FechaInicio = $FechaInicio;
         $this->FechaFinal = $FechaFinal;
+
     }
 
     public function model(array $row)

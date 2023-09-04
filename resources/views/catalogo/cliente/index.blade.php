@@ -17,13 +17,16 @@
     <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
-            <table id="datatable_clientes" class="table table-striped table-bordered">
+            <table id="datatable" class="table table-striped table-bordered">
                 <thead>
                     <tr>
-                        <th>Código de Cliente</th>
-                        <th>Nombre o Razón Social</th>
-                        <th>Telefono Principal</th>
-                        <th>Estado</th>
+                        <th>ID</th>
+                        <th>Nombre o <br> Razón Social</th>
+                        <th>DUI/NIT</th>
+                        <th>Dirección de <br>Correspondencia</th>
+                        <th>Teléfono Principal</th>
+                        <th>Correo Electrónico <br>Principal</th>
+                        <th>Vinculado al Grupo o Referencia</th>
                         <th>Opciones</th>
                     </tr>
                 </thead>
@@ -32,20 +35,22 @@
                     <tr>
                         <td>{{ $obj->Id }}</td>
                         <td>{{ $obj->Nombre }}</td>
-                        <td>{{ $obj->TelefonoCelular }}</td>
-                        @if ($obj->estado)
-                        <td>{{ $obj->estado->Nombre }}</td>
+                        @if($obj->TipoPersona == 1)
+                        <td>{{$obj->Dui}}</td>
                         @else
-                        <td></td>
+                        <td>{{$obj->Nit}}</td>
                         @endif
+                        <td>{{$obj->DireccionCorrespondencia}}</td>
+                        <td>{{ $obj->TelefonoCelular }}</td>
+                        <td>{{$obj->CorreoPrincipal}}</td>
+                        <td>{{$obj->Referencia}}</td>
+
                         <td align="center">
 
                             @can('edit users')
                             <a href="{{ url('catalogo/cliente') }}/{{ $obj->Id }}/edit" class="on-default edit-row">
                                 <i class="fa fa-pencil fa-lg"></i></a>
                             @endcan
-
-
                             @can('delete users')
                             @if ($obj->Activo == 1)
                             &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
@@ -66,42 +71,72 @@
     </div>
 </div>
 @include('sweetalert::alert')
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/fixedheader/3.2.3/js/dataTables.fixedHeader.min.js"></script>
 <script>
-    new DataTable('#datatable_clientes', {
-        initComplete: function() {
-            this.api()
-                .columns()
-                .every(function() {
-                    let column = this;
+    $(document).ready(function() {
+        // Setup - add a text input to each footer cell
+        $('#example thead tr')
+            .clone(true)
+            .addClass('filters')
+            .appendTo('#example thead');
 
-                    // Create select element
-                    let select = document.createElement('select');
+        var table = $('#example').DataTable({
+            orderCellsTop: true,
+            fixedHeader: true,
+            initComplete: function() {
+                var api = this.api();
 
-                    // Add option for all values
-                    select.add(new Option('All'));
+                // For each column
+                api
+                    .columns()
+                    .eq(0)
+                    .each(function(colIdx) {
+                        // Set the header cell to contain the input element
+                        var cell = $('.filters th').eq(
+                            $(api.column(colIdx).header()).index()
+                        );
+                        var title = $(cell).text();
+                        $(cell).html('<input type="text" placeholder="' + title + '" />');
 
-                    // Apply listener for user change in value
-                    select.addEventListener('change', function() {
-                        var val = DataTable.util.escapeRegex(select.value);
+                        // On every keypress in this input
+                        $(
+                                'input',
+                                $('.filters th').eq($(api.column(colIdx).header()).index())
+                            )
+                            .off('keyup change')
+                            .on('change', function(e) {
+                                // Get the search value
+                                $(this).attr('title', $(this).val());
+                                var regexr = '({search})'; //$(this).parents('th').find('select').val();
 
-                        column
-                            .search(val ? '^' + val + '$' : '', true, false)
-                            .draw();
+                                var cursorPosition = this.selectionStart;
+                                // Search the column for that value
+                                api
+                                    .column(colIdx)
+                                    .search(
+                                        this.value != '' ?
+                                        regexr.replace('{search}', '(((' + this.value + ')))') :
+                                        '',
+                                        this.value != '',
+                                        this.value == ''
+                                    )
+                                    .draw();
+                            })
+                            .on('keyup', function(e) {
+                                e.stopPropagation();
+
+                                $(this).trigger('change');
+                                $(this)
+                                    .focus()[0]
+                                    .setSelectionRange(cursorPosition, cursorPosition);
+                            });
                     });
-
-                    // Add list of unique options
-                    column
-                        .data()
-                        .unique()
-                        .sort()
-                        .each(function(d, j) {
-                            select.add(new Option(d));
-                        });
-
-                    // Replace the footer with the select element
-                    column.footer().replaceChildren(select);
-                });
-        }
+            },
+        });
     });
 </script>
+
+
 @endsection

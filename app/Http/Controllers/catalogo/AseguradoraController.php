@@ -68,7 +68,7 @@ class AseguradoraController extends Controller
         $documento->Activo = 1;
         $documento->save();
 
-        $filePath = 'documentos/cliente/' . $archivo->getClientOriginalName();
+        $filePath = 'documentos/aseguradoras/' . $archivo->getClientOriginalName();
 
         Storage::disk('public')->put($filePath, file_get_contents($archivo));
         alert()->success('El registro ha sido creado correctamente');
