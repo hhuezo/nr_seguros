@@ -64,8 +64,11 @@ class Cliente extends Model
         'MonederoEletronico',
         'CompraOtros',
         'Activo',
-        'Informacion',     
-        'Distrito'
+        'Informacion',
+        'Distrito',
+        'TelefonoCelular2',
+        'BancoPrefencia',
+        'CuentasDevolucionPrimas'
     ];
 
     protected $guarded = [];
