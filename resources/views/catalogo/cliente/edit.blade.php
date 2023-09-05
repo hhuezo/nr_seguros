@@ -55,24 +55,24 @@ $annos->y;
 
             <div class="" role="tabpanel" data-example-id="togglable-tabs">
                 <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-                    <li role="presentation" class="{{ session('tab1') == 1 ? 'active' : '' }}"><a href="#cliente" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Cliente</a>
+                    <li role="presentation" class="active"><a href="#cliente" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Cliente</a>
 
                     </li>
-                    <li role="presentation" class="{{ session('tab1') == 3 ? 'active' : '' }}"><a href="#pago" role="tab" id="profile-metodo" data-toggle="tab" aria-expanded="false">Métodos de
+                    <li role="presentation"><a href="#pago" role="tab" id="profile-metodo" data-toggle="tab" aria-expanded="false">Métodos de
                             pago</a>
                     </li>
-                    <li role="presentation" class="{{ session('tab1') == 4 ? 'active' : '' }}"><a href="#contacto" role="tab" id="profile-contacto" data-toggle="tab" aria-expanded="false">Libreta de Contactos</a>
+                    <li role="presentation"><a href="#contacto" role="tab" id="profile-contacto" data-toggle="tab" aria-expanded="false">Libreta de Contactos</a>
                     </li>
 
-                    <li role="presentation" class="{{ session('tab1') == 2 ? 'active' : '' }}"><a href="#redes" role="tab" id="profile-necesidad" data-toggle="tab" aria-expanded="false">Necesidades, Preferencias y
+                    <li role="presentation"><a href="#redes" role="tab" id="profile-necesidad" data-toggle="tab" aria-expanded="false">Necesidades, Preferencias y
                             Gustos</a>
                     </li>
-                    <li role="presentation" class="{{ session('tab1') == 5 ? 'active' : '' }}"><a href="#habito" role="tab" id="profile-habito" data-toggle="tab" aria-expanded="false">Hábitos de
+                    <li role="presentation"><a href="#habito" role="tab" id="profile-habito" data-toggle="tab" aria-expanded="false">Hábitos de
                             Consumo</a>
                     </li>
-                    <li role="presentation" class="{{ session('tab1') == 6 ? 'active' : '' }}"><a href="#retroalimentacion" role="tab" id="profile-habito" data-toggle="tab" aria-expanded="false">Retroalimentación de NR</a>
+                    <li role="presentation"><a href="#retroalimentacion" role="tab" id="profile-habito" data-toggle="tab" aria-expanded="false">Retroalimentación de NR</a>
                     </li>
-                    <li role="presentation" class="{{ session('tab1') == 7 ? 'active' : '' }}"><a href="#documentacion" role="tab" id="profile" data-toggle="tab" aria-expanded="false">Documentación</a>
+                    <li role="presentation"><a href="#documentacion" role="tab" id="profile" data-toggle="tab" aria-expanded="false">Documentación</a>
                     </li>
 
 
@@ -80,7 +80,7 @@ $annos->y;
 
 
                 <div id="myTabContent2" class="tab-content">
-                    <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 1 ? 'active in' : '' }} " id="cliente" aria-labelledby="home-tab">
+                    <div role="tabpanel" class="tab-pane fade active in" id="cliente" aria-labelledby="home-tab">
                         <form method="POST" action="{{ route('cliente.update', $cliente->Id) }}">
                             @method('PUT')
                             @csrf
@@ -333,7 +333,7 @@ $annos->y;
 
                     </div>
 
-                    <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 2 ? 'active in' : '' }}" id="redes" aria-labelledby="home-tab">
+                    <div role="tabpanel" class="tab-pane fade" id="redes" aria-labelledby="home-tab">
                         <form method="POST" action="{{ url('catalogo/cliente/red_social') }}">
                             @csrf
                             <div class="x_content">
@@ -525,7 +525,7 @@ $annos->y;
                             </div>
                         </form>
                     </div>
-                    <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 3 ? 'active in' : '' }}" id="pago" aria-labelledby="home-tab">
+                    <div role="tabpanel" class="tab-pane fade" id="pago" aria-labelledby="home-tab">
 
                         <div class="col-12" style="text-align: right;">
                             <button class="btn btn-primary" data-toggle="modal" data-target=".bs-modal-nuevo-tarjeta"><i class="fa fa-plus fa-lg"></i>
@@ -578,7 +578,7 @@ $annos->y;
 
                     </div>
 
-                    <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 4 ? 'active in' : '' }}" id="contacto" aria-labelledby="home-tab">
+                    <div role="tabpanel" class="tab-pane fade" id="contacto" aria-labelledby="home-tab">
 
                         <div class="col-12" style="text-align: right;">
                             <button class="btn btn-primary" data-toggle="modal" data-target=".bs-modal-nuevo-contacto"><i class="fa fa-plus fa-lg"></i>
@@ -632,7 +632,7 @@ $annos->y;
                         @endif
                     </div>
 
-                    <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 5 ? 'active in' : '' }}" id="habito" aria-labelledby="home-tab">
+                    <div role="tabpanel" class="tab-pane fade" id="habito" aria-labelledby="home-tab">
                         <div class="col-12" style="text-align: right;">
                             <button class="btn btn-primary" data-toggle="modal" data-target=".bs-modal-nuevo-habito"><i class="fa fa-plus fa-lg"></i>
                                 Nuevo</button>
@@ -678,7 +678,7 @@ $annos->y;
                         @endif
                     </div>
 
-                    <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 6 ? 'active in' : '' }}" id="retroalimentacion" aria-labelledby="home-tab">
+                    <div role="tabpanel" class="tab-pane fade" id="retroalimentacion" aria-labelledby="home-tab">
                         <div class="col-12" style="text-align: right;">
                             <button class="btn btn-primary" data-toggle="modal" data-target=".bs-modal-nuevo-retroalimentacion"><i class="fa fa-plus fa-lg"></i>
                                 Nuevo</button>
@@ -736,7 +736,7 @@ $annos->y;
 
                     </div>
 
-                    <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 7 ? 'active in' : '' }}" id="documentacion" aria-labelledby="home-tab">
+                    <div role="tabpanel" class="tab-pane fade" id="documentacion" aria-labelledby="home-tab">
                         <form id="FormArchivo" action="{{ url('catalogo/cliente/documento') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <input type="hidden" value="{{$cliente->Id}}" name="Cliente">
