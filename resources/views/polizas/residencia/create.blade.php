@@ -1,6 +1,8 @@
 @extends ('welcome')
 @section('contenido')
 <script src="{{ asset('vendors/sweetalert/sweetalert.min.js') }}"></script>
+
+
 <div class="x_panel">
     <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
@@ -61,10 +63,12 @@
                     <div class="col-sm-4">
                         <label class="control-label">Vigencia Desde</label>
                         <input class="form-control" name="VigenciaDesde" type="date" value="{{ old('VigenciaDesde') }}">
+{{--                        <input class="form-control formatoFecha"  name="VigenciaDesde" placeholder="dd/mm/yyyy" type="text" value="{{ old('VigenciaDesde') }}">--}}
                     </div>
                     <div class="col-sm-4">
                         <label class="control-label">Vigencia Hasta</label>
-                        <input class="form-control" name="VigenciaHasta" type="date" value="{{ old('VigenciaHasta') }}">
+                        <input class="form-control" name="VigenciaHasta" type="date" placeholder="dd/mm/yyyy"  value="{{ old('VigenciaHasta') }}">
+{{--                        <input class="form-control formatoFecha" name="VigenciaHasta" type="text" placeholder="dd/mm/yyyy"  value="{{ old('VigenciaHasta') }}">--}}
                     </div>
                     <div class="col-sm-4">
                         <label class="control-label">Estatus</label>
@@ -169,6 +173,7 @@
 
 <!-- jQuery -->
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
+
 <script type="text/javascript">
     // func
     $(document).ready(function() {

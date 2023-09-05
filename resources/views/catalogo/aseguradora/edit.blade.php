@@ -8,7 +8,7 @@
             <div class="x_title">
                 <h2>Modificar aseguradora <small></small></h2>
                 <ul class="nav navbar-right panel_toolbox">
-                    <a href="{{url('catalogo/aseguradoras')}}" class="btn btn-info fa fa-undo " style="color: white"></a>
+                    <a href="{{url('catalogo/aseguradoras')}}" class="btn btn-info fa fa-undo " style="color: white"> Atrás</a>
                 </ul>
                 <div class="clearfix"></div>
             </div>
@@ -337,7 +337,7 @@
                                         @foreach($documentos as $obj)
                                         @php($file = asset('storage/documentos/aseguradoras/'.$obj->Nombre))
                                         <tr>
-                                            <td><a href="{{ $file }}" class="btn btn-default" align="center" target="_blank"><i class="fa fa-download"></i>&nbsp; {{$obj->Nombre}}</a></td> 
+                                            <td><a href="{{ $file }}" class="btn btn-default" align="center" target="_blank"><i class="fa fa-download"></i>&nbsp; {{$obj->Nombre}}</a></td>
                                             <td style="text-align: center;" valign="center">
                                                 <i class="fa fa-trash fa-lg" data-target="#modal-delete-documento-{{ $obj->Id }}" data-toggle="modal" ></i>
                                             </td>

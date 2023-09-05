@@ -23,6 +23,7 @@
 
     <!-- Custom Theme Style -->
     <link href="{{ asset('build/css/custom.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
     <style>
         @media (min-width: 768px) .form-horizontal .control-label {
@@ -213,12 +214,21 @@
     <!-- mascara de entrada -->
     <script src="{{ asset('vendors/input-mask/jquery.inputmask.js') }}"></script>
 
-
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
 
 </body>
 <script>
     $(function() {
+
+        //clase para dar formato a las fechas
+        $(".formatoFecha").datepicker({
+            dateFormat: 'dd/mm/yy', // Formato de fecha dd-mm-yyyy
+            changeYear: true,
+            yearRange: 'c-100:c+100', // Rango de años permitidos
+            showButtonPanel: true,
+        });
+
         //Initialize Select2 Elements
         $('.select2').select2()
         //Dui
