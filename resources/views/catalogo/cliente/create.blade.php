@@ -29,7 +29,7 @@
             <div class="x_title">
                 <h2>Registro de Cliente <small></small></h2>
                 <ul class="nav navbar-right panel_toolbox">
-                <a href="{{url('catalogo/cliente')}}" class="btn btn-info fa fa-undo " style="color: white"> Atrás</a>
+                <a href="{{url('catalogo/cliente')}}" class="btn btn-info fa fa-undo" style="color: white"> Atrás</a>
                 </ul>
                 <div class="clearfix"></div>
             </div>
@@ -131,6 +131,10 @@
                                 <div class="form-group">
                                     <label for="Referencia" class="form-label">Teléfono Oficina</label>
                                     <input class="form-control" name="TelefonoOficina" value="{{ old('TelefonoOficina') }}" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
+                                </div>
+                                <div class="form-group">
+                                    <label for="TelefonoCelular2" class="form-label">Teléfono Celular</label>
+                                    <input class="form-control" name="TelefonoCelular2" value="{{ old('TelefonoCelular2') }}" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
                                 </div>
                                 <div class="form-group">
                                     <label for="CorreoPrincipal" class="form-label">Correo Principal</label>
@@ -247,6 +251,14 @@
                                                     </option>
                                                 @endforeach
                                             </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="BancoPrefencia" class="form-label">Banco de su Preferencia</label>
+                                            <input class="form-control" name="BancoPrefencia" value="{{ old('BancoPrefencia') }}"  type="text">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="CuentasDevolucionPrimas" class="form-label">Cuentas para devolución de Primas</label>
+                                            <input class="form-control" name="CuentasDevolucionPrimas" value="{{ old('CuentasDevolucionPrimas') }}"  type="text">
                                         </div>
                                     </div>
                                 </div>

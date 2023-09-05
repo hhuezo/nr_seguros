@@ -403,16 +403,16 @@ class ResidenciaController extends Controller
         $detalle = DetalleResidencia::findOrFail($request->Id);
         $residencia = Residencia::findOrFail($detalle->Residencia);
 
-        if ($detalle->SaldoA == null && $detalle->ImpresionRecibo == null) {
-            $detalle->SaldoA = $request->SaldoA;
-            $detalle->ImpresionRecibo = $request->ImpresionRecibo;
-            $detalle->Comentario = $request->Comentario;
-            $detalle->update();
-            $pdf = \PDF::loadView('polizas.residencia.recibo', compact('detalle', 'residencia'))->setWarnings(false)->setPaper('letter');
-            return $pdf->stream('Recibo.pdf');
+        // if ($detalle->SaldoA == null && $detalle->ImpresionRecibo == null) {
+        //     $detalle->SaldoA = $request->SaldoA;
+        //     $detalle->ImpresionRecibo = $request->ImpresionRecibo;
+        //     $detalle->Comentario = $request->Comentario;
+        //     $detalle->update();
+        //     $pdf = \PDF::loadView('polizas.residencia.recibo', compact('detalle', 'residencia'))->setWarnings(false)->setPaper('letter');
+        //     return $pdf->stream('Recibo.pdf');
 
-            return back();
-        } else {
+        //     return back();
+        // } else {
 
             //dd($request->EnvioCartera .' 00:00:00');
             if ($request->EnvioCartera) {
@@ -430,11 +430,25 @@ class ResidenciaController extends Controller
             $detalle->PagoAplicado = $request->PagoAplicado;*/
             $detalle->update();
             alert()->success('El registro ha sido ingresado correctamente');
-        }
+     //   }
 
 
 
         return back();
+    }
+
+    public function recibo_pago($id,Request $request){
+        $detalle = DetalleResidencia::findOrFail($id);
+        $residencia = Residencia::findOrFail($detalle->Residencia);
+
+            $detalle->SaldoA = $request->SaldoA;
+            $detalle->ImpresionRecibo = $request->ImpresionRecibo;
+            $detalle->Comentario = $request->Comentario;
+            $detalle->update();
+            $pdf = \PDF::loadView('polizas.residencia.recibo', compact('detalle', 'residencia'))->setWarnings(false)->setPaper('letter');
+            return $pdf->stream('Recibo.pdf');
+
+            return back();
     }
 
     public function get_pago($id)

@@ -66,11 +66,11 @@
                         <div class="menu_section">
                             <h3>NR Seguros</h3>
                             <ul class="nav side-menu">
-                                <li><a><i class="fa fa-users"></i> Seguridad <span class="fa fa-chevron-down"></span></a>
+                                <!-- <li><a><i class="fa fa-users"></i> Seguridad <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li><a href="{{ url('usuario/') }}">Usuario</a></li>
                                     </ul>
-                                </li>
+                                </li> -->
 
                                 <li><a><i class="fa fa-folder"></i> Catálogos<span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
@@ -79,14 +79,14 @@
                                         <li><a href="{{ url('catalogo/ejecutivos') }}">Ejecutivo</a></li>
                                         <li><a href="{{ url('catalogo/estado_polizas') }}">Estado Póliza</a></li>
                                         <li><a href="{{ url('catalogo/estado_venta') }}">Estado Venta</a></li>
-                                        <li><a href="{{ url('catalogo/tipo_cartera') }}">Tipo Cartera</a></li>
-                                        <li><a href="{{ url('catalogo/nr_cartera') }}">Tipo Cartera Nr</a></li>
+                                        <li><a href="{{ url('catalogo/tipo_cartera') }}">Tipo Cartera (Deuda)</a></li>
+                                        <li><a href="{{ url('catalogo/nr_cartera') }}">Tipo Cartera NR </a></li>
                                         <li><a href="{{ url('catalogo/tipo_negocio') }}">Tipo Negocio</a></li>
                                         <li><a href="{{ url('catalogo/tipo_cobro') }}">Tipo Cobro</a></li>
                                         <li><a href="{{ url('catalogo/tipo_poliza') }}">Tipo Póliza (ramo)</a></li>
                                         <li><a href="{{ url('catalogo/area_comercial')}}">Área Comercial</a></li>
                                         <li><a href="{{ url('catalogo/ubicacion_cobro') }}">Ubicación Cobro</a></li>
-                                        <li><a href="{{ url('catalogo/necesidad_proteccion') }}">Necesidad de Protección</a></li>
+                                        <li><a href="{{ url('catalogo/necesidad_proteccion') }}">Ramos</a></li>
                                         <li><a href="{{ url('catalogo/departamento_nr') }}">Departamentos NR</a></li>
 
 
@@ -98,42 +98,42 @@
                                     </ul>
                                 </li>
 
-                                <li><a><i class="fa fa-solid fa-briefcase"></i> Cotizaciones <span class="fa fa-chevron-down"></span></a>
+                                <!-- <li><a><i class="fa fa-solid fa-briefcase"></i> Cotizaciones <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                     <li><a href="{{ url('catalogo/negocio') }}">Negocio</a></li>
                                     </ul>
-                                </li>
+                                </li> -->
                                 <li><a><i class="fa fa-shield"></i> Aseguradoras <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                     <li><a href="{{ url('catalogo/aseguradoras') }}">Aseguradora</a></li>
-                                    <li><a href="{{ url('catalogo/necesidad_aseguradora') }}">Asignar Necesidad de Protección <br>
-                                    Aseguradora</a></li>
+                                    <!-- <li><a href="{{ url('catalogo/necesidad_aseguradora') }}">Asignar Necesidad de Protección <br>
+                                    Aseguradora</a></li> -->
                                     </ul>
                                 </li>
 
                                 <li><a><i class="fa fa-folder-open"></i> Pólizas<span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li><a href="{{ url('polizas/residencia') }}">Residencias</a></li>
-                                        <!-- <li><a href="{{ url('polizas/vida')}}">Vida</a></li> -->
-                                        <li><a href="{{ url('polizas/deuda')}}">Deuda</a></li>
+                                        <!-- <li><a href="{{ url('polizas/vida')}}">Vida</a></li> 
+                                        <li><a href="{{ url('polizas/deuda')}}">Deuda</a></li>-->
                                     </ul>
                                 </li>
 
-                                <li><a><i class="fa fa-file-pdf-o"></i> Reportes<span class="fa fa-chevron-down"></span></a>
+                                <!-- <li><a><i class="fa fa-file-pdf-o"></i> Reportes<span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
 
                                         <li><a href="{{ url('reportes/corte_caja') }}">Cortes de caja</a></li>
 
                                     </ul>
-                                </li>
+                                </li> -->
 
-                                <li><a><i class="fa fa-suitcase"></i> Validación<span class="fa fa-chevron-down"></span></a>
+                                <!-- <li><a><i class="fa fa-suitcase"></i> Validación<span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
 
                                         <li><a href="{{ url('polizas/validacion_cartera') }}">Validación de cartera</a></li>
 
                                     </ul>
-                                </li>
+                                </li> -->
                             </ul>
                         </div>
                         <!-- sidebar menu -->

@@ -183,7 +183,7 @@
 
                         <div>
                             <br>
-                            <table class="table table-striped table-bordered">
+                            <table class="table">
                                 <tr>
                                     <th><br><i class="fa fa-pencil"></i></th>
                                     <th>Tasa</th>
@@ -203,7 +203,9 @@
                                 @endphp
                                 @if(!$obj->ImpresionRecibo)
                                 <tr class="danger">
-                                    <td><i class="fa fa-pencil" onclick="modal_edit({{ $obj->Id }})"></i>
+                                    <td> &nbsp;&nbsp;<a href="" data-target="#modal-recibo-{{ $obj->Id }}"
+                                            data-toggle="modal"><i class="fa fa-pencil fa-lg"></i></a>
+
                                         <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
                                     </td>
                                     <td>{{ $obj->Tasa }}%</td>
@@ -217,6 +219,35 @@
                                     <td>{{\Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') }}</td>
                                     <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"></a></td>
                                 </tr>
+                                <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-recibo-{{ $obj->Id }}">
+
+                                    <form method="POST" action="{{ url('poliza/residencia/recibo', $obj->Id) }}" target="_blank">
+                                       
+                                        @csrf
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">×</span>
+                                                    </button>
+                                                    <h4 class="modal-title">Generar Recibo de la poliza</h4>
+                                                    <input type="date" value="{{ date('Y-m-d') }}" readonly name="ImpresionRecibo" class="form-control">
+                                                    <input type="date" value="{{ date('Y-m-d') }}" readonly name="SaldoA" class="form-control">
+                                                    <input type="hidden" value="{{$residencia->Id}}" name="Residencia" class="form-control">
+                                                    <textarea name="Comentario" cols="30" rows="10" class="form-control"></textarea>
+                                                </div>
+                                                <div class="modal-body">
+                                                    
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                                    <button type="submit" class="btn btn-primary" id="btn_confirmar_recibo">Confirmar</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+
+                                </div>
                                 @elseif(!$obj->EnvioCartera)
                                 <tr class="warning">
                                     <td><i class="fa fa-pencil" onclick="modal_edit({{ $obj->Id }})"></i>
@@ -393,7 +424,7 @@
 
                                             </div>
 
-                                           <!-- <div class="form-group row">
+                                            <!-- <div class="form-group row">
                                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Validar</label>
                                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                                     <input name="Validar" id="Validar" type="checkbox" checked class="js-switch" />
@@ -441,7 +472,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
-                                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa %</label>
+                                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa de Rentabilidad %</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                                         <input type="number" step="any" name="Tasa" id="Tasa" value="{{$residencia->Tasa}}" class="form-control" readonly>
                                                     </div>
@@ -471,7 +502,7 @@
                                                 <div class="form-group row">
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa de Descuento %</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input class="form-control" name="TasaDescuento" type="number" step="any" id="TasaDescuento" value="{{$residencia->TasaDescuento}}">
+                                                        <input class="form-control" name="TasaDescuento" type="number" step="any" id="TasaDescuento" value="{{$residencia->TasaDescuento}}" readonly>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
@@ -556,7 +587,7 @@
                                                 <div class="form-group row">
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Comision %</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" value="{{$residencia->Comision}}">
+                                                        <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" value="{{$residencia->Comision}}" readonly>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
@@ -660,7 +691,7 @@
                                         </tr> -->
                                         <tr>
                                             <td>Prima Calculada </td>
-                                            <td><input type="text"  id="PrimaCalculada2" value="@if($ultimo_pago) {{$ultimo_pago->MontoCartera * $valorTasa}} @else 0 @endif" readonly class="form-group"></td>
+                                            <td><input type="text" id="PrimaCalculada2" value="@if($ultimo_pago) {{$ultimo_pago->MontoCartera * $valorTasa}} @else 0 @endif" readonly class="form-group"></td>
                                         </tr>
                                         <tr>
                                             <td>(-) Descuento Rentabilidad {{$residencia->TasaDescuento}}%</td>
@@ -781,7 +812,7 @@
     $(document).ready(function() {
 
 
-        $('#PrimaDescontada2').val($('#PrimaCalculada2').val()-$('#DescuentoRentabilidad2').val());
+        $('#PrimaDescontada2').val($('#PrimaCalculada2').val() - $('#DescuentoRentabilidad2').val());
 
         $('#Validar').on('change', function() {
             if ($(this).is(':checked')) {
@@ -790,6 +821,11 @@
                 $('#FormArchivo').removeAttr('target')
             }
         });
+
+        $("#btn_confirmar_recibo").onclick(function(){
+           window.location.reload();
+            
+        })
 
         calculoPrimaCalculada();
         calculoPrimaTotal();
