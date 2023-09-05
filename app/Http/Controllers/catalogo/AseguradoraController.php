@@ -93,19 +93,33 @@ class AseguradoraController extends Controller
 
     public function store(Request $request)
     {
-        $messages = [
-            'Nombre.required' => 'El campo nombre es requerido',
-            'Nombre.unique' => 'El nombre ya existe',
-            'Nit.required' => 'El campo NIT es requerido',
-            'Nit.unique' => 'El Nit ya existe',
-        ];
+        $nombre = Aseguradora::where('Nombre','=',$request->Nombre)->where('Activo','=',1)->first();
+        if($nombre){
+            $messages = [
+                'Nombre.required' => 'El campo nombre es requerido',
+                'Nit.required' => 'El campo NIT es requerido',
+                'Nit.unique' => 'El Nit ya existe',
+            ];
+    
+            $request->validate([
+                'Nombre' => 'required:aseguradora',
+                'Nit' => 'required|unique:aseguradora',
+            ], $messages);
+        }else{
 
-
-
-        $request->validate([
-            'Nombre' => 'required|unique:aseguradora',
-            'Nit' => 'required|unique:aseguradora',
-        ], $messages);
+            $messages = [
+                'Nombre.required' => 'El campo nombre es requerido',
+                'Nombre.unique' => 'El nombre ya existe',
+                'Nit.required' => 'El campo NIT es requerido',
+                'Nit.unique' => 'El Nit ya existe',
+            ];
+    
+            $request->validate([
+                'Nombre' => 'required|unique:aseguradora',
+                'Nit' => 'required|unique:aseguradora',
+            ], $messages);
+        }
+        
 
         $max = Aseguradora::max('Codigo');
 

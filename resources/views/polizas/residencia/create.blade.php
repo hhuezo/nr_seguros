@@ -101,7 +101,7 @@
                     </div>
                     <div class="col-sm-4">
                         <label class="control-label">Descuento de IVA</label>
-                        <input class="form-control" name="DescuentoIva" type="checkbox" id="DescuentoIva" required>
+                        <input class="form-control" name="DescuentoIva" type="checkbox" id="DescuentoIva" >
                     </div>
                     <div class="col-md-12">
                         &nbsp;
@@ -184,7 +184,7 @@
 
         $("#Tasa").change(function() {
 
-            if (document.getElementById('Tasa').value <= 1 || document.getElementById('Tasa').value >= 100) {
+            if (document.getElementById('Tasa').value < 0 || document.getElementById('Tasa').value > 100) {
                 document.getElementById('Tasa').value = '';
                 swal('La tasa no debe ser menor a 0 ni mayor de 100');
             }
@@ -192,7 +192,7 @@
 
         $("#TasaComision").change(function() {
 
-            if (document.getElementById('TasaComision').value <= 1 || document.getElementById('TasaComision').value >= 100) {
+            if (document.getElementById('TasaComision').value < 0 || document.getElementById('TasaComision').value > 100) {
                 document.getElementById('TasaComision').value = '';
                 swal('La tasa de comision no debe ser menor a 0 ni mayor de 100');
             }
@@ -200,7 +200,7 @@
 
         $("#TasaDescuento").change(function() {
 
-            if (document.getElementById('TasaDescuento').value <= 1 || document.getElementById('TasaDescuento').value >= 100) {
+            if (document.getElementById('TasaDescuento').value < 0 || document.getElementById('TasaDescuento').value > 100) {
                 document.getElementById('TasaDescuento').value = '';
                 swal('El descuento de rentabilidad no debe ser menor a 0 ni mayor de 100');
             }
@@ -231,6 +231,13 @@
             });
         });
 
+        $('#LimiteIndividual').change(function(){
+            if(document.getElementById('LimiteIndividual').value >= document.getElementById('LimiteGrupo').value){
+                document.getElementById('LimiteIndividual').value = '';
+                swal('El limite individual super al limite grupal');
+            }
+        })
+
 
 
 
@@ -238,9 +245,7 @@
 
     });
 
-    function modal_cliente() {
-        $('#modal_cliente').modal('show');
-    }
+
 </script>
 
 

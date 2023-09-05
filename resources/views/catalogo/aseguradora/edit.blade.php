@@ -612,8 +612,43 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+        $("#Departamento").change(function() {
+            // var para la Departamento
+            var Departamento = $(this).val();
 
+            //funcionpara las municipios
+            $.get("{{ url('get_municipio') }}" + '/' + Departamento, function(data) {
+                //esta el la peticion get, la cual se divide en tres partes. ruta,variables y funcion
+                console.log(data);
+                var _select = '<option value="">Seleccione...</option>'
+                for (var i = 0; i < data.length; i++)
+                    _select += '<option value="' + data[i].Id + '"  >' + data[i].Nombre +
+                    '</option>';
+                $("#Municipio").html(_select);
+            });
+
+
+        });
+
+        $("#Municipio").change(function() {
+            // var para la Departamento
+            var Municipio = $(this).val();
+
+            //funcionpara las distritos
+            $.get("{{ url('get_distrito') }}" + '/' + Municipio, function(data) {
+                //esta el la peticion get, la cual se divide en tres partes. ruta,variables y funcion
+                console.log(data);
+                var _select = '<option value="" >Seleccione...</option>'
+                for (var i = 0; i < data.length; i++)
+                    _select += '<option value="' + data[i].Id + '"  >' + data[i].Nombre +
+                    '</option>';
+                $("#Distrito").html(_select);
+            });
+
+
+        });
     });
+   
 
     function addCargo() {
         $('#modal_addCargo').modal('show');
@@ -683,6 +718,7 @@
         });
 
     });
+    
 </script>
 </div>
 @include('sweetalert::alert')

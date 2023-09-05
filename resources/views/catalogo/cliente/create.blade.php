@@ -29,7 +29,7 @@
             <div class="x_title">
                 <h2>Registro de Cliente <small></small></h2>
                 <ul class="nav navbar-right panel_toolbox">
-                <a href="{{url('catalogo/cliente')}}" class="btn btn-info fa fa-undo " style="color: white"> Atrás</a>
+                <a href="{{url('catalogo/cliente')}}" class="btn btn-info fa fa-undo" style="color: white"> Atrás</a>
                 </ul>
                 <div class="clearfix"></div>
             </div>

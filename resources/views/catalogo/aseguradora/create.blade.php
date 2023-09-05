@@ -8,7 +8,7 @@
             <div class="x_title">
                 <h2>Nueva aseguradora <small></small></h2>
                 <ul class="nav navbar-right panel_toolbox">
-                    <a href="{{url('catalogo/aseguradoras')}}" class="btn btn-info fa fa-undo " style="color: white" ></a>
+                    <a href="{{url('catalogo/aseguradoras')}}" class="btn btn-info fa fa-undo " style="color: white" >Atrás</a>
                 </ul>
                 <div class="clearfix"></div>
             </div>
@@ -149,7 +149,7 @@
             $.get("{{ url('get_municipio') }}" + '/' + Departamento, function(data) {
                 //esta el la peticion get, la cual se divide en tres partes. ruta,variables y funcion
                 console.log(data);
-                var _select = ''
+                var _select = '<option value="">Seleccione...</option>'
                 for (var i = 0; i < data.length; i++)
                     _select += '<option value="' + data[i].Id + '"  >' + data[i].Nombre +
                     '</option>';
@@ -167,7 +167,7 @@
             $.get("{{ url('get_distrito') }}" + '/' + Municipio, function(data) {
                 //esta el la peticion get, la cual se divide en tres partes. ruta,variables y funcion
                 console.log(data);
-                var _select = ''
+                var _select = '<option value="" >Seleccione...</option>'
                 for (var i = 0; i < data.length; i++)
                     _select += '<option value="' + data[i].Id + '"  >' + data[i].Nombre +
                     '</option>';
