@@ -177,6 +177,10 @@ $annos->y;
                                                 <input class="form-control" name="TelefonoOficina" value="{{ $cliente->TelefonoOficina }}" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
                                             </div>
                                             <div class="form-group">
+                                                <label for="TelefonoCelular2" class="form-label">Teléfono Celular</label>
+                                                <input class="form-control" name="TelefonoCelular2" value="{{ $cliente->TelefonoCelular2 }}" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
+                                            </div>
+                                            <div class="form-group">
                                                 <label for="CorreoPrincipal" class="form-label">Correo Principal</label>
                                                 <input class="form-control" name="CorreoPrincipal" value="{{ $cliente->CorreoPrincipal }}" type="email">
                                             </div>
@@ -296,6 +300,14 @@ $annos->y;
                                                                 </option>
                                                             @endforeach
                                                         </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="BancoPrefencia" class="form-label">Banco de su Preferencia</label>
+                                                        <input class="form-control" name="BancoPrefencia" value="{{ $cliente->BancoPrefencia }}"  type="text">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="CuentasDevolucionPrimas" class="form-label">Cuentas para devolución de Primas</label>
+                                                        <input class="form-control" name="CuentasDevolucionPrimas" value="{{ $cliente->CuentasDevolucionPrimas }}"  type="text">
                                                     </div>
                                                 </div>
 

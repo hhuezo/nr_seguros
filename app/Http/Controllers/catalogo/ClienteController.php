@@ -154,6 +154,9 @@ class ClienteController extends Controller
         $cliente->Comentarios = $request->get('Comentarios');
         $cliente->FechaIngreso = $time->toDateTimeString();
         $cliente->UsuarioIngreso = auth()->user()->id;
+        $cliente->TelefonoCelular2 = $request->get('TelefonoCelular2');
+        $cliente->BancoPrefencia = $request->get('BancoPrefencia');
+        $cliente->CuentasDevolucionPrimas = $request->get('CuentasDevolucionPrimas');
         $cliente->save();
 
         session(['tab1' => '1']);
@@ -193,6 +196,9 @@ class ClienteController extends Controller
         $cliente->TipoPersona = $request->get('TipoPersona');
         $cliente->FechaCreacion = $time->toDateTimeString();
         $cliente->UsuarioCreacion = auth()->user()->id;
+        $cliente->TelefonoCelular2 = $request->get('TelefonoCelular2');
+        $cliente->BancoPrefencia = $request->get('BancoPrefencia');
+        $cliente->CuentasDevolucionPrimas = $request->get('CuentasDevolucionPrimas');
         $cliente->save();
 
         return Cliente::where('Activo', '=', 1)->get();
@@ -344,6 +350,9 @@ class ClienteController extends Controller
         $cliente->TipoContribuyente = $request->get('TipoContribuyente');
         $cliente->Referencia = $request->get('Referencia');
         $cliente->Distrito = $request->get('Distrito');
+        $cliente->TelefonoCelular2 = $request->get('TelefonoCelular2');
+        $cliente->BancoPrefencia = $request->get('BancoPrefencia');
+        $cliente->CuentasDevolucionPrimas = $request->get('CuentasDevolucionPrimas');
         $cliente->update();
 
         session(['tab1' => '1']);
