@@ -199,7 +199,7 @@
                                 </tr>
                                 @foreach ($detalle as $obj)
                                 @php
-                                $fileUrl = asset('storage/'.$obj->ExcelURL);
+                                $fileUrl = asset($obj->ExcelURL);
                                 @endphp
                                 @if(!$obj->ImpresionRecibo)
                                 <tr class="danger">

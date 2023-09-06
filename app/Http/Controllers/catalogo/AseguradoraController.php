@@ -157,6 +157,7 @@ class AseguradoraController extends Controller
 
     public function edit($id)
     {
+        session(['tab1' => '1']);
         $aseguradora = Aseguradora::findOrFail($id);
         $tipo_contribuyente = TipoContribuyente::get();
         $contactos = AseguradoraContacto::where('Aseguradora', '=', $id)->get();

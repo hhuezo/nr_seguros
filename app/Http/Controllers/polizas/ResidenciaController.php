@@ -132,9 +132,9 @@ class ResidenciaController extends Controller
         $residencia->TasaDescuento = $request->TasaDescuento;
         $residencia->Nit = $request->Nit;
         $residencia->Activo = 1;
-        if($request->DescuentoIva == 'on'){
+        if ($request->DescuentoIva == 'on') {
             $residencia->DescuentoIva = 1;
-        }else{
+        } else {
             $residencia->DescuentoIva = 0;
         }
         $residencia->Mensual = $request->tipoTasa;
@@ -163,10 +163,10 @@ class ResidenciaController extends Controller
         $detalle = DetalleResidencia::where('Residencia', $residencia->Id)->where('Activo', 1)->orderBy('Id', 'desc')->get();
         $ultimo_pago = DetalleResidencia::where('Residencia', $residencia->Id)->where('Activo', 1)->orderBy('Id', 'desc')->first();
         // dd($ultimo_pago);
-        if($residencia->Mensual == 1){
-            $valorTasa = $residencia->Tasa/1000;
-        }else{
-            $valorTasa = $residencia->Tasa/1000/12;
+        if ($residencia->Mensual == 1) {
+            $valorTasa = $residencia->Tasa / 1000;
+        } else {
+            $valorTasa = $residencia->Tasa / 1000 / 12;
         }
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
         $bombero = Bombero::where('Activo', 1)->first();
@@ -306,14 +306,14 @@ class ResidenciaController extends Controller
             //PolizaResidenciaTempCartera::truncate();
             //dd(Excel::toArray(new PolizaResidenciaTempCarteraImport($request->Axo, $request->Mes, $residencia->Id, $request->FechaInicio, $request->FechaFinal), $archivo));
 
-         $spreadsheet = IOFactory::load( $archivo);
-         $worksheet = $spreadsheet->getActiveSheet();
-        // $worksheet->getMergeCells() Se verifica si existen celdas combinadas
-        if(count($worksheet->getMergeCells())){
+            $spreadsheet = IOFactory::load($archivo);
+            $worksheet = $spreadsheet->getActiveSheet();
+            // $worksheet->getMergeCells() Se verifica si existen celdas combinadas
+            if (count($worksheet->getMergeCells())) {
 
-            alert()->error('El Documento NO puede tener celdas combinadas, por favor separe las siguientes celdas: '.implode(', ',$worksheet->getMergeCells()))->autoClose(100000);
-            return back();
-        }
+                alert()->error('El Documento NO puede tener celdas combinadas, por favor separe las siguientes celdas: ' . implode(', ', $worksheet->getMergeCells()))->autoClose(100000);
+                return back();
+            }
 
             Excel::import(new PolizaResidenciaTempCarteraImport($request->Axo, $request->Mes, $residencia->Id, $request->FechaInicio, $request->FechaFinal), $archivo);
 
@@ -333,7 +333,7 @@ class ResidenciaController extends Controller
                 return view('polizas.validacion_cartera.resultado', compact('asegurados_limite_individual'));
             }
 
-           /* if ($request->Validar == "on") {
+            /* if ($request->Validar == "on") {
 
                 $eliminados = DB::select('CALL lista_residencia_eliminados(?, ?, ?, ?, ?, ?)', [$axo_evaluar, $mes_evaluar, $residencia->Id, auth()->user()->id, $request->Axo, $request->Mes]);
 
@@ -351,9 +351,11 @@ class ResidenciaController extends Controller
             session(['MontoCartera' => $monto_cartera_total]);
             session(['FechaInicio' => $request->FechaInicio]);
             session(['FechaFinal' => $request->FechaFinal]);
+            $idA = uniqid();
+            $filePath = 'documentos/polizas/' . $idA . $residencia->NumeroPoliza . '-' . $nombreMes . '-' . $request->Axo . '-Residencia.xlsx';
 
-            $filePath = 'documentos/polizas/' . $residencia->NumeroPoliza . '-' . $nombreMes . '-' . $request->Axo . '-Residencia.xlsx';
-            Storage::disk('public')->put($filePath, file_get_contents($archivo));
+            $archivo->move(public_path("documentos/polizas/"), $filePath);
+            // Storage::disk('public')->put($filePath, file_get_contents($archivo));
 
             session(['ExcelURL' => $filePath]);
 
@@ -414,41 +416,42 @@ class ResidenciaController extends Controller
         //     return back();
         // } else {
 
-            //dd($request->EnvioCartera .' 00:00:00');
-            if ($request->EnvioCartera) {
-                $detalle->EnvioCartera = $request->EnvioCartera;
-            }
-            if ($request->EnvioPago) {
-                $detalle->EnvioPago = $request->EnvioPago;
-            }
-            if ($request->PagoAplicado) {
-                $detalle->PagoAplicado = $request->PagoAplicado;
-            }
-            $detalle->Comentario = $request->Comentario;
+        //dd($request->EnvioCartera .' 00:00:00');
+        if ($request->EnvioCartera) {
+            $detalle->EnvioCartera = $request->EnvioCartera;
+        }
+        if ($request->EnvioPago) {
+            $detalle->EnvioPago = $request->EnvioPago;
+        }
+        if ($request->PagoAplicado) {
+            $detalle->PagoAplicado = $request->PagoAplicado;
+        }
+        $detalle->Comentario = $request->Comentario;
 
-            /*$detalle->EnvioPago = $request->EnvioPago;
+        /*$detalle->EnvioPago = $request->EnvioPago;
             $detalle->PagoAplicado = $request->PagoAplicado;*/
-            $detalle->update();
-            alert()->success('El registro ha sido ingresado correctamente');
-     //   }
+        $detalle->update();
+        alert()->success('El registro ha sido ingresado correctamente');
+        //   }
 
 
 
         return back();
     }
 
-    public function recibo_pago($id,Request $request){
+    public function recibo_pago($id, Request $request)
+    {
         $detalle = DetalleResidencia::findOrFail($id);
         $residencia = Residencia::findOrFail($detalle->Residencia);
 
-            $detalle->SaldoA = $request->SaldoA;
-            $detalle->ImpresionRecibo = $request->ImpresionRecibo;
-            $detalle->Comentario = $request->Comentario;
-            $detalle->update();
-            $pdf = \PDF::loadView('polizas.residencia.recibo', compact('detalle', 'residencia'))->setWarnings(false)->setPaper('letter');
-            return $pdf->stream('Recibo.pdf');
+        $detalle->SaldoA = $request->SaldoA;
+        $detalle->ImpresionRecibo = $request->ImpresionRecibo;
+        $detalle->Comentario = $request->Comentario;
+        $detalle->update();
+        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('detalle', 'residencia'))->setWarnings(false)->setPaper('letter');
+        return $pdf->stream('Recibo.pdf');
 
-            return back();
+        return back();
     }
 
     public function get_pago($id)
