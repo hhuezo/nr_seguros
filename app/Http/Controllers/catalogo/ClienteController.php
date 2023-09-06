@@ -483,7 +483,7 @@ class ClienteController extends Controller
     public function agregar_documento(Request $request)
     {
 
-        $archivo = $request->file('Archivo');
+        $archivo = $request->file('Archivo'); 
 
 
         $documento = new ClienteDocumento();
