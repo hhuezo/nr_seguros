@@ -822,7 +822,7 @@
             }
         });
 
-        $("#btn_confirmar_recibo").onclick(function(){
+        $("#btn_confirmar_recibo").click(function(){
            window.location.reload();
             
         })
