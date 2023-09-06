@@ -19,6 +19,7 @@ class AseguradoraDocumento extends Model
 
         'Cliente',
         'Nombre',
+        'NombreOriginal',
         'Activo'
 
     ];
