@@ -10,6 +10,7 @@
             <div class="x_title">
                 <h2>RESI - Seguro de residencias <small></small></h2>
                 <ul class="nav navbar-right panel_toolbox">
+                <a href="{{url('polizas/residencia')}}" class="btn btn-info fa fa-undo " style="color: white"> Atrás</a>
                 </ul>
                 <div class="clearfix"></div>
             </div>
