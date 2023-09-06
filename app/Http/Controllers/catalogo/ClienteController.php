@@ -494,6 +494,7 @@ class ClienteController extends Controller
         $documento = new ClienteDocumento();
         $documento->Cliente = $request->input('Cliente');
         $documento->Nombre = $filePath;
+        $documento->NombreOriginal = $archivo->getClientOriginalName();
         $documento->Activo = 1;
         $documento->save();
 
