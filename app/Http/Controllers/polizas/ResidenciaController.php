@@ -141,7 +141,7 @@ class ResidenciaController extends Controller
         $residencia->Comision = $request->TasaComision;
         $residencia->save();
 
-        alert()->success('El registro ha sido creado correctamente');
+        alert()->success('El registro ha sido creado correctamente')->showConfirmButton('Aceptar', '#3085d6');
         return Redirect::to('polizas/residencia/' . $residencia->Id . '/edit');
     }
 
@@ -279,7 +279,7 @@ class ResidenciaController extends Controller
         $residencia = Residencia::findOrFail($id);
         $residencia->Activo = 0;
         $residencia->update();
-        alert()->success('El registro ha sido creado correctamente');
+        alert()->success('El registro ha sido creado correctamente')->showConfirmButton('Aceptar', '#3085d6');
         return Redirect::to('polizas/residencia');
     }
 
@@ -311,7 +311,7 @@ class ResidenciaController extends Controller
             // $worksheet->getMergeCells() Se verifica si existen celdas combinadas
             if (count($worksheet->getMergeCells())) {
 
-                alert()->error('El Documento NO puede tener celdas combinadas, por favor separe las siguientes celdas: ' . implode(', ', $worksheet->getMergeCells()))->autoClose(100000);
+                alert()->error('El Documento NO puede tener celdas combinadas, por favor separe las siguientes celdas: ' . implode(', ', $worksheet->getMergeCells()))->showConfirmButton('Aceptar', '#3085d6');
                 return back();
             }
 
@@ -324,12 +324,12 @@ class ResidenciaController extends Controller
                 ->get();
 
             if ($monto_cartera_total > $residencia->LimiteGrupo) {
-                alert()->error('Error, el saldo supera el limite de grupo');
+                alert()->error('Error, el saldo supera el limite de grupo.<br> Limite de grupo: $'.number_format($residencia->LimiteGrupo, 2, '.', ','). '<br>Saldo total de la cartera: $'.number_format($monto_cartera_total, 2, '.', ','))->showConfirmButton('Aceptar', '#3085d6');
                 return back();
             }
 
             if ($asegurados_limite_individual->count() > 0) {
-                alert()->error('Error, Hay polizas que superan el limte individual');
+                alert()->error('Error, Hay polizas que superan el limte individual')->showConfirmButton('Aceptar', '#3085d6');
                 return view('polizas.validacion_cartera.resultado', compact('asegurados_limite_individual'));
             }
 
@@ -359,7 +359,7 @@ class ResidenciaController extends Controller
 
             session(['ExcelURL' => $filePath]);
 
-            alert()->success('El registro ha sido ingresado correctamente');
+            alert()->success('El registro ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
             return back();
         } catch (Throwable $e) {
             print($e);
@@ -396,7 +396,7 @@ class ResidenciaController extends Controller
         $detalle->PrimaDescontada = $request->PrimaDescontada;
         $detalle->ExcelURL = $request->ExcelURL;
         $detalle->save();
-        alert()->success('El registro de pago ha sido ingresado correctamente');
+        alert()->success('El registro de pago ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
         return back();
     }
 
@@ -431,7 +431,7 @@ class ResidenciaController extends Controller
         /*$detalle->EnvioPago = $request->EnvioPago;
             $detalle->PagoAplicado = $request->PagoAplicado;*/
         $detalle->update();
-        alert()->success('El registro ha sido ingresado correctamente');
+        alert()->success('El registro ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
         //   }
 
 
@@ -480,7 +480,7 @@ class ResidenciaController extends Controller
         $residencia->Tasa = $request->Tasa;
         $residencia->update();
 
-        alert()->success('La poliza fue renovada correctamente');
+        alert()->success('La poliza fue renovada correctamente')->showConfirmButton('Aceptar', '#3085d6');
         return back();
     }
 
@@ -489,7 +489,7 @@ class ResidenciaController extends Controller
         $detalle = DetalleResidencia::findOrFail($id);
         $detalle->Activo = 0;
         $detalle->update();
-        alert()->success('El registro ha sido ingresado correctamente');
+        alert()->success('El registro ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
         return back();
     }
 }
