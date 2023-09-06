@@ -780,9 +780,9 @@ $annos->y;
                                     </thead>
                                     <tbody>
                                         @foreach($documentos as $obj)
-                                        @php($file = asset('storage/documentos/cliente/'.$obj->Nombre))
+                                        
                                         <tr>
-                                            <td><a href="{{ $file }}" class="btn btn-default" align="center"><i class="fa fa-download"></i> {{$obj->Nombre}}</a></td>
+                                            <td><a href="{{ asset('documentos/cliente') }}/{{$obj->Nombre}}" class="btn btn-default" align="center"><i class="fa fa-download"></i> {{$obj->Nombre}}</a></td>
                                             <td> <i class="fa fa-trash fa-lg" data-target="#modal-delete-documento-{{ $obj->Id }}" data-toggle="modal"></i> </td>
                                         </tr>
                                         <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-documento-{{ $obj->Id }}">
