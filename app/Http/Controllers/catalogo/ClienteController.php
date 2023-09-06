@@ -214,7 +214,7 @@ class ClienteController extends Controller
             $cliente->Edad = "";
         }
 
-        $documentos = ClienteDocumento::where('Cliente', $id)->where('Activo',1)->get();
+        $documentos = ClienteDocumento::where('Cliente', $id)->where('Activo', 1)->get();
 
         $tipos_contribuyente = TipoContribuyente::get();
         $ubicaciones_cobro = UbicacionCobro::where('Activo', '=', 1)->get();
@@ -486,22 +486,30 @@ class ClienteController extends Controller
         $archivo = $request->file('Archivo'); 
 
 
+
+        $id = uniqid();
+        $filePath =  $id . $archivo->getClientOriginalName();
+        $archivo->move(public_path("documentos/cliente/"), $filePath);
+
         $documento = new ClienteDocumento();
         $documento->Cliente = $request->input('Cliente');
-        $documento->Nombre = $archivo->getClientOriginalName();
+        $documento->Nombre = $filePath;
         $documento->Activo = 1;
         $documento->save();
 
-        $filePath = 'documentos/cliente/' . $archivo->getClientOriginalName();
 
-        Storage::disk('public')->put($filePath, file_get_contents($archivo));
+
+
+
+        // Storage::disk('public')->put($filePath, file_get_contents($archivo));
         alert()->success('El registro ha sido creado correctamente');
         session(['tab1' => '7']);
         return back();
     }
 
 
-    public function eliminar_documento($id){
+    public function eliminar_documento($id)
+    {
         $documento = ClienteDocumento::findOrFail($id);
         $documento->Activo = 0;
         $documento->save();
