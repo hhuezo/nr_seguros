@@ -44,7 +44,7 @@ class NrCarteraController extends Controller
         $cartera->save();
 
         alert()->success('El registro ha sido creado correctamente');
-        return Redirect::to('catalogo/nr_seguros');
+        return Redirect::to('catalogo/nr_cartera');
     }
 
     /**
@@ -66,9 +66,9 @@ class NrCarteraController extends Controller
      */
     public function edit($id)
     {
-        $cartera = NrCartera::findOrFail($id);
+        $nr_cartera = NrCartera::findOrFail($id);
         
-        return view('catalogo.nr_cartera.edit', compact('cartera'));
+        return view('catalogo.nr_cartera.edit', compact('nr_cartera'));
     }
 
     /**
