@@ -205,45 +205,34 @@ class ResidenciaController extends Controller
     public function update(Request $request, $id)
     {
         $messages = [
-            'NumeroPoliza.required' => 'El Número de poliza es requerido',
+       
             'LimiteGrupo.required' => 'El Límite Grupal es requerido',
             'LimiteIndividual.required' => 'El Límite Individual es requerido',
             'Tasa.required' => 'El valor de la Tasa es requerido',
-            'TasaDescuento.required' => 'El valor de la Tasa de Descuento es requerido',
-            'TasaComision.required' => 'El valor de la Tas de Comisión es requerido',
+            'Comision.required' => 'El valor de la Tas de Comisión es requerido',
 
         ];
 
         $request->validate([
             'LimiteGrupo' => 'required',
             'LimiteIndividual' => 'required',
-            'NumeroPoliza' => 'required',
             'Tasa' => 'required',
-            'TasaDescuento' => 'required',
-            'TasaComision' => 'required'
+            'Comision' => 'required'
 
         ], $messages);
 
         $residencia = Residencia::findOrFail($id);
-        $residencia->NumeroPoliza = $request->NumeroPoliza;
-        $residencia->Codigo = $request->Codigo;
-        $residencia->Aseguradora = $request->Aseguradora;
-        $residencia->Asegurado = $request->Asegurado;
-        $residencia->EstadoPoliza = $request->EstadoPoliza;
-        $residencia->VigenciaDesde = $request->VigenciaDesde;
-        $residencia->VigenciaHasta = $request->VigenciaHasta;
         $residencia->LimiteGrupo = $request->LimiteGrupo;
         $residencia->LimiteIndividual = $request->LimiteIndividual;
         $residencia->Tasa = $request->Tasa;
-        $residencia->Ejecutivo = $request->Ejecutivo;
-        $residencia->TasaDescuento = $request->TasaDescuento;
         $residencia->Nit = $request->Nit;
         $residencia->Activo = 1;
         $residencia->Mensual = $request->tipoTasa;
-        $residencia->Comision = $request->TasaComision;
+        $residencia->Comision = $request->Comision;
         $residencia->Modificar = 0;
         $residencia->update();
 
+    /*    
         $detalles = new DetalleResidencia();
         $detalles->MontoCartera = $request->MontoCartera;
         $detalles->Tasa = $request->Tasa;
@@ -264,6 +253,7 @@ class ResidenciaController extends Controller
         $detalles->EnvioPago = $request->EnvioPago;
         $detalles->Residencia = $residencia->Id;
         $detalles->save();
+        */
 
         return back();
     }

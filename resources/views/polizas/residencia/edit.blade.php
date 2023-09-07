@@ -109,7 +109,7 @@
                                 </div>
                                 <div class="col-sm-4">
                                     <input type="hidden" name="Bomberos" id="Bomberos" value="{{$bomberos}}">
-                                    <label class="control-label">Límite grupo</label>
+                                    <label class="control-label">Límite grupo  $</label>
                                     @if($residencia->Modificar == 1)
                                     <input type="number" step="0.01" name="LimiteGrupo" id="LimiteGrupo" value="{{ $residencia->LimiteGrupo }}" class="form-control">
                                     @else
@@ -118,12 +118,14 @@
 
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label">Límite individual</label>
-                                    @if($residencia->Modificar == 1)
-                                    <input type="number" step="0.01" name="LimiteGrupo" id="LimiteGrupo" value="{{ $residencia->LimiteIndividual }}" class="form-control">
-                                    @else
-                                    <input type="text" step="any" name="LimiteGrupo" id="LimiteGrupo" value="{{number_format($residencia->LimiteIndividual,2, '.',',')}}" class="form-control" readonly>
-                                    @endif
+                                    <label class="control-label">Límite Individual $</label>
+                                 
+                                        @if($residencia->Modificar == 1)
+                                        <input type="number" step="0.01" name="LimiteIndividual" id="LimiteIndividual" value="{{ $residencia->LimiteIndividual }}" class="form-control">
+                                        @else
+                                        <input type="text" step="any" name="LimiteIndividual" id="LimiteIndividual" value="{{number_format($residencia->LimiteIndividual,2, '.',',')}}" class="form-control" readonly>
+                                        @endif
+                                  
                                 </div>
                                 <div class="col-md-12">
                                     &nbsp;
@@ -221,7 +223,7 @@
                                     <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
                                     <td>{{ $obj->Descuento }}</td>
-                                    <td>{{ $obj->APagar }}</td>
+                                    <td>${{number_format($obj->APagar,2, '.',',')}}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->EnvioCartera)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->EnvioPago)->format('d/m/Y') }}</td>
@@ -284,7 +286,7 @@
                                     <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
                                     <td>{{ $obj->Descuento }}</td>
-                                    <td>{{ $obj->APagar }}</td>
+                                    <td>${{number_format($obj->APagar,2, '.',',')}}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->EnvioCartera)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->EnvioPago)->format('d/m/Y') }}</td>
@@ -300,7 +302,7 @@
                                     <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
                                     <td>{{ $obj->Descuento }}</td>
-                                    <td>{{ $obj->APagar }}</td>
+                                    <td>${{number_format($obj->APagar,2, '.',',')}}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->EnvioCartera)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->EnvioPago)->format('d/m/Y') }}</td>
@@ -316,7 +318,7 @@
                                     <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
                                     <td>{{ $obj->Descuento }}</td>
-                                    <td>{{ $obj->APagar }}</td>
+                                    <td>${{number_format($obj->APagar,2, '.',',')}}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->EnvioCartera)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->EnvioPago)->format('d/m/Y') }}</td>
@@ -333,7 +335,7 @@
                                     <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
                                     <td>{{ $obj->Descuento }}</td>
-                                    <td>{{ $obj->APagar }}</td>
+                                    <td>${{number_format($obj->APagar,2, '.',',')}}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->EnvioCartera)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->EnvioPago)->format('d/m/Y') }}</td>
