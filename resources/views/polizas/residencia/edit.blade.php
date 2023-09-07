@@ -8,7 +8,7 @@
             <div class="x_title">
                 <h2>RESI - Poliza de Residencia <small></small></h2>
                 <ul class="nav navbar-right panel_toolbox">
-                <a href="{{url('polizas/residencia')}}" class="btn btn-info fa fa-undo " style="color: white"> Atrás</a>
+                    <a href="{{url('polizas/residencia')}}" class="btn btn-info fa fa-undo " style="color: white"> Atrás</a>
                 </ul>
                 <div class="clearfix"></div>
             </div>
@@ -92,7 +92,7 @@
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label">Descuento de Rentabilidad %</label>
-                                    <input type="number" step="any" name="TasaDescuento" value="{{$residencia->TasaDescuento }}" class="form-control" readonly>
+                                    <input type="number" step="any" name="TasaDescuento" value="{{$residencia->TasaDescuento }}" class="form-control" @if($residencia->Modificar == 0) readonly @endif >
                                 </div>
                                 <div class="col-md-12">
                                     &nbsp;
@@ -102,7 +102,7 @@
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label">Descuento de IVA</label>
-                                    <input class="form-control" name="DescuentoIva" type="checkbox" id="DescuentoIva" disabled @if($residencia->DescuentoIva == 1) checked @endif>
+                                    <input class="form-control" name="DescuentoIva" type="checkbox" id="DescuentoIva" @if($residencia->Modificar == 0) disabled @endif @if($residencia->DescuentoIva == 1) checked @endif>
                                 </div>
                                 <div class="col-md-12">
                                     &nbsp;
@@ -110,25 +110,34 @@
                                 <div class="col-sm-4">
                                     <input type="hidden" name="Bomberos" id="Bomberos" value="{{$bomberos}}">
                                     <label class="control-label">Límite grupo</label>
-                                    <input type="number" step="any" name="LimiteGrupo" id="LimiteGrupo" value="{{ $residencia->LimiteGrupo }}" class="form-control" readonly>
+                                    @if($residencia->Modificar == 1)
+                                    <input type="number" step="0.01" name="LimiteGrupo" id="LimiteGrupo" value="{{ $residencia->LimiteGrupo }}" class="form-control">
+                                    @else
+                                    <input type="text" step="any" name="LimiteGrupo" id="LimiteGrupo" value="{{number_format($residencia->LimiteGrupo,2, '.',',')}}" class="form-control" readonly>
+                                    @endif
+
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label">Límite individual</label>
-                                    <input type="number" step="any" name="LimiteIndividual" value="{{ $residencia->LimiteIndividual }}" class="form-control" readonly>
+                                    @if($residencia->Modificar == 1)
+                                    <input type="number" step="0.01" name="LimiteGrupo" id="LimiteGrupo" value="{{ $residencia->LimiteIndividual }}" class="form-control">
+                                    @else
+                                    <input type="text" step="any" name="LimiteGrupo" id="LimiteGrupo" value="{{number_format($residencia->LimiteIndividual,2, '.',',')}}" class="form-control" readonly>
+                                    @endif
                                 </div>
                                 <div class="col-md-12">
                                     &nbsp;
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label">Tasa %</label>
-                                    <input type="number" step="any" name="Tasa" value="{{$residencia->Tasa }}" class="form-control" readonly>
+                                    <input type="number" step="any" name="Tasa" value="{{$residencia->Tasa }}" class="form-control" @if($residencia->Modificar == 0) readonly @endif>
                                 </div>
                                 <div class="col-md-12">
                                     &nbsp;
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label">Tasa de Comisión %</label>
-                                    <input type="number" step="any" name="Comision" value="{{$residencia->Comision }}" class="form-control" readonly>
+                                    <input type="number" step="any" name="Comision" value="{{$residencia->Comision }}" class="form-control" @if($residencia->Modificar == 0) readonly @endif>
 
                                 </div>
                                 <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
@@ -138,22 +147,22 @@
                                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                             @if ($residencia->Mensual == 1)
                                             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                                <input type="radio" name="tipoTasa" id="Mensual" value="1" checked disabled>
+                                                <input type="radio" name="tipoTasa" id="Mensual" value="1" checked @if($residencia->Modificar == 0) disabled @endif>
                                                 <label class="control-label">Tasa ‰ Millar Mensual</label>
                                             </div>
 
                                             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                                <input type="radio" name="tipoTasa" id="Anual" value="0" disabled>
+                                                <input type="radio" name="tipoTasa" id="Anual" value="0" @if($residencia->Modificar == 0) disabled @endif>
                                                 <label class="control-label">Tasa ‰ Millar Anual</label>
                                             </div>
                                             @else
                                             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                                <input type="radio" name="tipoTasa" id="Mensual" value="1" disabled>
+                                                <input type="radio" name="tipoTasa" id="Mensual" value="1" @if($residencia->Modificar == 0) disabled @endif>
                                                 <label class="control-label">Tasa ‰ Millar Mensual</label>
                                             </div>
 
                                             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                                <input type="radio" name="tipoTasa" id="Anual" value="0" checked disabled>
+                                                <input type="radio" name="tipoTasa" id="Anual" value="0" checked @if($residencia->Modificar == 0) disabled @endif>
                                                 <label class="control-label">Tasa ‰ Millar Anual</label>
                                             </div>
                                             @endif
@@ -167,7 +176,8 @@
                                 <br>
                                 <!-- agregar rol de fatima -->
                                 <div class="form-group col-md-12" align="center">
-                                    <button class="btn btn-success" type="submit" disabled>Modificar</button>
+
+                                    <button class="btn btn-success" type="submit" @if($residencia->Modificar == 0) disabled @endif >Modificar</button>
                                     <a href="{{ url('polizas/residencia') }}"><button class="btn btn-primary" type="button">Cancelar</button></a>
                                 </div>
                                 <!-- fin -->
@@ -203,8 +213,7 @@
                                 @endphp
                                 @if(!$obj->ImpresionRecibo)
                                 <tr class="danger">
-                                    <td> &nbsp;&nbsp;<a href="" data-target="#modal-recibo-{{ $obj->Id }}"
-                                            data-toggle="modal"><i class="fa fa-pencil fa-lg"></i></a>
+                                    <td> &nbsp;&nbsp;<a href="" data-target="#modal-recibo-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-pencil fa-lg"></i></a>
 
                                         <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
                                     </td>
@@ -222,7 +231,7 @@
                                 <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-recibo-{{ $obj->Id }}">
 
                                     <form method="POST" action="{{ url('poliza/residencia/recibo', $obj->Id) }}" target="_blank">
-                                       
+
                                         @csrf
                                         <div class="modal-dialog">
                                             <div class="modal-content">
@@ -231,17 +240,35 @@
                                                         <span aria-hidden="true">×</span>
                                                     </button>
                                                     <h4 class="modal-title">Generar Recibo de la poliza</h4>
-                                                    <input type="date" value="{{ date('Y-m-d') }}" readonly name="ImpresionRecibo" class="form-control">
-                                                    <input type="date" value="{{ date('Y-m-d') }}" readonly name="SaldoA" class="form-control">
-                                                    <input type="hidden" value="{{$residencia->Id}}" name="Residencia" class="form-control">
-                                                    <textarea name="Comentario" cols="30" rows="10" class="form-control"></textarea>
-                                                </div>
-                                                <div class="modal-body">
-                                                    
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                                                    <button type="submit" class="btn btn-primary" id="btn_confirmar_recibo">Confirmar</button>
+
+                                                    <div class="modal-body">
+                                                        <input type="hidden" value="{{$residencia->Id}}" name="Residencia" class="form-control">
+                                                        <div class="form-group">
+                                                            <div class="col-sm-12">
+                                                                <label class="control-label">Saldo a</label>
+                                                                <input type="date" name="SaldoA" id="ModalSaldoA" class="form-control" value="{{date('Y-m-d')}}" readonly>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <div class="col-sm-12">
+                                                                <label class="control-label">Impresión de Recibo</label>
+                                                                <input type="date" name="ImpresionRecibo" id="ModalImpresionRecibo" value="{{date('Y-m-d')}}" class="form-control" readonly>
+                                                            </div>
+                                                            <textarea name="Comentario" cols="30" rows="10" class="form-control"></textarea>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div class="col-sm-12">
+                                                                <label class="control-label">Comentario</label>
+                                                                <textarea class="form-control" rows="4" name="Comentario" id="ModalComentario"></textarea>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                                        <button type="submit" class="btn btn-primary" id="btn_confirmar_recibo">Confirmar</button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -361,7 +388,7 @@
                                 <div class="clearfix"></div>
                             </div>-->
                             <ul class="nav navbar-right panel_toolbox">
-                                <div class="btn btn-info float-right" data-toggle="modal" data-target="#modal_pago">Nuevo</div>
+                                <div class="btn btn-info float-right" data-toggle="modal" data-target="#modal_pago">Nuevo Pago</div>
                             </ul>
                             <div class="modal fade bs-example-modal-lg" id="modal_pago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
                                 <div class="modal-dialog" role="document">
@@ -447,7 +474,7 @@
                                             <h5 class="modal-title" id="exampleModalLabel">Nuevo pago</h5>
                                         </div>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
+                                            <span aria-hidden="true"></span>
                                         </button>
                                     </div>
                                     <div class="modal-body">
@@ -822,9 +849,9 @@
             }
         });
 
-        $("#btn_confirmar_recibo").click(function(){
-           window.location.reload();
-            
+        $("#btn_confirmar_recibo").click(function() {
+            window.location.reload();
+
         })
 
         calculoPrimaCalculada();

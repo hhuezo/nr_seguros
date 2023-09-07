@@ -241,6 +241,7 @@ class ResidenciaController extends Controller
         $residencia->Activo = 1;
         $residencia->Mensual = $request->tipoTasa;
         $residencia->Comision = $request->TasaComision;
+        $residencia->Modificar = 0;
         $residencia->update();
 
         $detalles = new DetalleResidencia();
@@ -267,6 +268,20 @@ class ResidenciaController extends Controller
         return back();
     }
 
+    public function active_edit($id){
+        $residencia = Residencia::findOrfail($id);
+        $residencia->Modificar = 1;
+        $residencia->update();
+        alert()->success('El activado la modificacion correctamente');
+        return back();
+    }
+    public function desactive_edit($id){
+        $residencia = Residencia::findOrfail($id);
+        $residencia->Modificar = 0;
+        $residencia->update();
+        alert()->success('El activado la modificacion correctamente');
+        return back();
+    }
     /**
      * Remove the specified resource from storage.
      *
