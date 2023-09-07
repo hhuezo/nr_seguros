@@ -330,7 +330,8 @@ class ResidenciaController extends Controller
 
             if ($asegurados_limite_individual->count() > 0) {
                 alert()->error('Error, Hay polizas que superan el limte individual')->showConfirmButton('Aceptar', '#3085d6');
-                return view('polizas.validacion_cartera.resultado', compact('asegurados_limite_individual'));
+                $idPolizaResidencia=$residencia->Id;
+                return view('polizas.validacion_cartera.resultado', compact('asegurados_limite_individual','idPolizaResidencia'));
             }
 
             /* if ($request->Validar == "on") {

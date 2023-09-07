@@ -10,8 +10,10 @@
                 <div class="x_title">
                     <div class="col-md-6 col-sm-6 col-xs-12">
                         <h3>Nuevos créditos</h3>
+
+                        <div class="clearfix"></div>
                     </div>
-                    <div class="clearfix"></div>
+
                 </div>
 
 
@@ -90,8 +92,15 @@
             <div class="x_title">
                 <div class="col-md-6 col-sm-6 col-xs-12">
                     <h3>Personas que sobre pasan el limite individual </h3>
+
+
                 </div>
+                <ul class="nav navbar-right panel_toolbox">
+
+                    <a href="{{url('polizas/residencia/' . $idPolizaResidencia . '/edit')}}" class="btn btn-info fa fa-undo " style="color: white"> Atrás</a>
+                </ul>
                 <div class="clearfix"></div>
+
             </div>
 
 
