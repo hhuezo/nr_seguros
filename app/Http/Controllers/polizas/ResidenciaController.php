@@ -479,7 +479,8 @@ class ResidenciaController extends Controller
     {
         $residencia = Residencia::findOrFail($id);
         $estados_poliza = EstadoPoliza::where('Activo', 1)->get();
-        return view('polizas.residencia.renovar', compact('residencia', 'estados_poliza'));
+        $ejecutivo = Ejecutivo::where('Activo','=',1)->get();
+        return view('polizas.residencia.renovar', compact('residencia', 'estados_poliza','ejecutivo'));
     }
 
     public function renovarPoliza(Request $request, $id)
@@ -491,8 +492,9 @@ class ResidenciaController extends Controller
         $residencia->VigenciaHasta = $request->VigenciaHasta;
         $residencia->LimiteGrupo = $request->LimiteGrupo;
         $residencia->LimiteIndividual = $request->LimiteIndividual;
-        $residencia->MontoCartera = $request->MontoCartera;
+       // $residencia->MontoCartera = $request->MontoCartera;
         $residencia->Tasa = $request->Tasa;
+        $residencia->Ejecutivo = $request->Ejecutivo;
         $residencia->update();
 
         alert()->success('La poliza fue renovada correctamente')->showConfirmButton('Aceptar', '#3085d6');
