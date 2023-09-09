@@ -1,6 +1,6 @@
-@extends ('menu')
+@extends ('welcome')
 @section('contenido')
-    <script src="{{ asset('vendors/sweetalert/sweetalert.min.js') }}"></script>
+    @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
 
     <div class="x_panel">
         <div class="clearfix"></div>
@@ -26,25 +26,25 @@
                     </div>
                 @endif
 
-                {!! Form::model($role, ['method' => 'PATCH', 'route' => ['role.update', $role->id]]) !!}
-                {{ Form::token() }}
-                <br />
+                <form method="POST" action="{{ route('rol.update', $role->id) }}">
+                    @method('PUT')
+                    @csrf
+                    <br />
 
 
-                <div class="form-group">
-                    <label class="col-sm-3 control-label">Nombre</label>
-                    <div class="col-md-6 col-sm-6 col-xs-12">
-                        <input type="text" name="name" class="form-control" value="{{ $role->name }}">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Nombre</label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <input type="text" name="name" required class="form-control" value="{{ $role->name }}">
+                        </div>
                     </div>
-                </div>
 
-                <div class="form-group" align="center">
-                    <button class="btn btn-primary" type="submit">Guardar</button>
-                    <a href="{{ url('seguridad/role') }}"><button type="button"
-                            class="btn btn-danger">Cancelar</button></a>
-                </div>
+                    <div class="form-group" align="center">
+                        <button class="btn btn-primary" type="submit">Guardar</button>
+                        <a href="{{ url('rol') }}"><button type="button" class="btn btn-danger">Cancelar</button></a>
+                    </div>
 
-                {!! Form::close() !!}
+                </form>
 
 
 
@@ -68,8 +68,8 @@
             </div>
 
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
-                <form method="POST" action="{{ url('seguridad/roles/add_permisos') }}">
-                    {{ Form::token() }}
+                <form method="POST" action="{{ url('role/permission_link') }}">
+                    @csrf
 
 
                     <input type="hidden" name="Rol" value="{{ $role->id }}">
@@ -97,15 +97,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($permisos_actuales as $obj)
-                            <tr>
-                                <td align="center">{{ $obj->id }}</td>
-                                <td>{{ $obj->name }}</td>
-                                <td align="center">
-                                    <i class="fa fa-trash" onclick="delete_permiso(<?php echo $obj->id; ?>);"></i>
-                                </td>
-                            </tr>
-                        @endforeach
+                        @if ($permisos_actuales)
+                            @foreach ($permisos_actuales as $obj)
+                                <tr>
+                                    <td align="center">{{ $obj->id }}</td>
+                                    <td>{{ $obj->name }}</td>
+                                    <td align="center">
+                                        <i class="fa fa-trash" onclick="delete_permiso(<?php echo $obj->id; ?>);"></i>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @endif
+
                     </tbody>
                 </table>
 
@@ -125,8 +128,8 @@
                 aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
-                        <form action="{{ url('seguridad/roles/delete_permisos') }}" method="POST">
-                            {{ Form::token() }}
+                        <form action="{{ url('role/permission_unlink') }}" method="POST">
+                            @csrf
                             <div class="modal-header">
                                 <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
                                     <h5 class="modal-title" id="exampleModalLabel">Eliminar</h5>
@@ -135,7 +138,7 @@
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-                            <input type="hidden"  name="Rol" value="{{ $role->id }}">
+                            <input type="hidden" name="Rol" value="{{ $role->id }}">
                             <input type="hidden" id="permiso" name="Permiso">
 
                             <div class="modal-body">
@@ -172,8 +175,6 @@
 
     </div>
 
-
-    @include('sweet::alert')
 
     <!-- jQuery -->
     <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>

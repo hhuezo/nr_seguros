@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Permission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use Spatie\Permission\Models\Permission as ModelsPermission;
+use Spatie\Permission\Models\Role;
 
 class PermissionController extends Controller
 {
@@ -28,10 +30,6 @@ class PermissionController extends Controller
     }
     public function store(Request $request)
     {
-        /* $permission = new Permission;
-        $permission->name = $request->get('name');
-        $permission->guard_name = "web";
-        $permission->save();*/
         $permission = Permission::create(['name' => $request->get('name')]);
         alert()->success('El registro ha sido agregado correctamente');
         return Redirect::to('permission/create');

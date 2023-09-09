@@ -71,6 +71,7 @@
                                     <ul class="nav child_menu">
                                         <li><a href="{{ url('usuario/') }}">Usuario</a></li>
                                         <li><a href="{{ url('permission/') }}">Permisos</a></li>
+                                        <li><a href="{{ url('rol/') }}">Roles</a></li>
                                     </ul>
                                 </li>
 

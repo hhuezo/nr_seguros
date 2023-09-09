@@ -26,6 +26,7 @@ use App\Http\Controllers\polizas\VidaController;
 use App\Http\Controllers\polizas\ResidenciaController;
 use App\Http\Controllers\polizas\ValidacionCarteraController;
 use App\Http\Controllers\seguridad\PermissionController;
+use App\Http\Controllers\seguridad\RoleController;
 use App\Models\catalogo\Aseguradora;
 
 /*
@@ -54,8 +55,8 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::resource('permission', PermissionController::class);
 Route::post('permission/unlink', [PermissionController::class, 'unlink']);
 Route::post('permission/link', [PermissionController::class, 'link']);
-Route::post('role/unlink', [UserController::class, 'unlink']);
-Route::post('role/link', [UserController::class, 'link']);
+Route::post('role/permission_unlink', [RoleController::class, 'permission_unlink']);
+Route::post('role/permission_link', [RoleController::class, 'permission_link']);
 Route::resource('rol', RoleController::class);
 Route::resource('usuario', UserController::class);
 
