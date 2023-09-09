@@ -8,8 +8,8 @@
                 <h3>Listado de usuarios </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
-                <a href="{{ url('usuario/create') }}"><button class="btn btn-info float-right"> <i
-                            class="fa fa-plus"></i> Nuevo</button></a>
+                <a href="{{ url('usuario/create') }}"><button class="btn btn-info float-right"> <i class="fa fa-plus"></i>
+                        Nuevo</button></a>
             </div>
             <div class="clearfix"></div>
         </div>
@@ -24,7 +24,7 @@
                             <th>Id</th>
                             <th>Nombre</th>
                             <th>Correo</th>
-                            <th>Activo</th>
+
                             <th>Opciones</th>
                         </tr>
                     </thead>
@@ -34,24 +34,19 @@
                                 <td align="center">{{ $obj->id }}</td>
                                 <td>{{ $obj->name }}</td>
                                 <td>{{ $obj->email }}</td>
-                                @if ($obj->activo == 1)
-                                    <td align="center"><input type="checkbox" checked></td>
-                                @else
-                                    <td align="center"><input type="checkbox"></td>
-                                @endif
+
                                 <td align="center">
 
                                     @can('edit users')
-                                    <a href="{{ url('user') }}/{{ $obj->id }}/edit"
-                                        class="on-default edit-row">
-                                        <i class="fa fa-pencil fa-lg"></i></a>
+                                        <a href="{{ url('usuario') }}/{{ $obj->id }}/edit" class="on-default edit-row">
+                                            <i class="fa fa-pencil fa-lg"></i></a>
                                     @endcan
 
 
                                     <!-- @can('delete users')
-                                        &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->id }}"
-                                            data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
-                                    @endcan -->
+        &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->id }}"
+                                                                            data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
+    @endcan -->
                                 </td>
                             </tr>
                             @include('seguridad.user.modal')
@@ -60,6 +55,6 @@
                 </table>
 
             </div>
-           </div>
+        </div>
     </div>
 @endsection

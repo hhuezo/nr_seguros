@@ -52,9 +52,10 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 
 //security
+
+Route::post('usuario/rol_link', [UserController::class, 'rol_link']);
+Route::post('usuario/rol_unlink', [UserController::class, 'rol_unlink']);
 Route::resource('permission', PermissionController::class);
-Route::post('permission/unlink', [PermissionController::class, 'unlink']);
-Route::post('permission/link', [PermissionController::class, 'link']);
 Route::post('role/permission_unlink', [RoleController::class, 'permission_unlink']);
 Route::post('role/permission_link', [RoleController::class, 'permission_link']);
 Route::resource('rol', RoleController::class);
