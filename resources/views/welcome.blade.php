@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="{{ asset('vendors/select2/select2.min.css') }}">
 
     <!-- Switchery -->
-	<link href="{{ asset('vendors/switchery/dist/switchery.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendors/switchery/dist/switchery.min.css') }}" rel="stylesheet">
 
     <!-- Custom Theme Style -->
     <link href="{{ asset('build/css/custom.min.css') }}" rel="stylesheet">
@@ -66,13 +66,17 @@
                         <div class="menu_section">
                             <h3>NR Seguros</h3>
                             <ul class="nav side-menu">
-                                <!-- <li><a><i class="fa fa-users"></i> Seguridad <span class="fa fa-chevron-down"></span></a>
+                                <li><a><i class="fa fa-users"></i> Seguridad <span
+                                            class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li><a href="{{ url('usuario/') }}">Usuario</a></li>
+                                        <li><a href="{{ url('permission/') }}">Permisos</a></li>
+                                        <li><a href="{{ url('rol/') }}">Roles</a></li>
                                     </ul>
-                                </li> -->
+                                </li>
 
-                                <li><a><i class="fa fa-folder"></i> Catálogos<span class="fa fa-chevron-down"></span></a>
+                                <li><a><i class="fa fa-folder"></i> Catálogos<span
+                                            class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
 
                                         <li><a href="{{ url('catalogo/bombero') }}">Impuesto Bomberos</a></li>
@@ -84,7 +88,7 @@
                                         <li><a href="{{ url('catalogo/tipo_negocio') }}">Tipo Negocio</a></li>
                                         <li><a href="{{ url('catalogo/tipo_cobro') }}">Tipo Cobro</a></li>
                                         <li><a href="{{ url('catalogo/tipo_poliza') }}">Tipo Póliza (ramo)</a></li>
-                                        <li><a href="{{ url('catalogo/area_comercial')}}">Área Comercial</a></li>
+                                        <li><a href="{{ url('catalogo/area_comercial') }}">Área Comercial</a></li>
                                         <li><a href="{{ url('catalogo/ubicacion_cobro') }}">Ubicación Cobro</a></li>
                                         <li><a href="{{ url('catalogo/necesidad_proteccion') }}">Ramos</a></li>
                                         <li><a href="{{ url('catalogo/departamento_nr') }}">Departamentos NR</a></li>
@@ -94,7 +98,7 @@
                                 </li>
                                 <li><a><i class="fa fa-user"></i> Cliente <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
-                                    <li><a href="{{ url('catalogo/cliente') }}">Clientes</a></li>
+                                        <li><a href="{{ url('catalogo/cliente') }}">Clientes</a></li>
                                     </ul>
                                 </li>
 
@@ -103,19 +107,21 @@
                                     <li><a href="{{ url('catalogo/negocio') }}">Negocio</a></li>
                                     </ul>
                                 </li> -->
-                                <li><a><i class="fa fa-shield"></i> Aseguradoras <span class="fa fa-chevron-down"></span></a>
+                                <li><a><i class="fa fa-shield"></i> Aseguradoras <span
+                                            class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
-                                    <li><a href="{{ url('catalogo/aseguradoras') }}">Aseguradora</a></li>
-                                    <!-- <li><a href="{{ url('catalogo/necesidad_aseguradora') }}">Asignar Necesidad de Protección <br>
+                                        <li><a href="{{ url('catalogo/aseguradoras') }}">Aseguradora</a></li>
+                                        <!-- <li><a href="{{ url('catalogo/necesidad_aseguradora') }}">Asignar Necesidad de Protección <br>
                                     Aseguradora</a></li> -->
                                     </ul>
                                 </li>
 
-                                <li><a><i class="fa fa-folder-open"></i> Pólizas<span class="fa fa-chevron-down"></span></a>
+                                <li><a><i class="fa fa-folder-open"></i> Pólizas<span
+                                            class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li><a href="{{ url('polizas/residencia') }}">Residencias</a></li>
-                                        <!-- <li><a href="{{ url('polizas/vida')}}">Vida</a></li> 
-                                        <li><a href="{{ url('polizas/deuda')}}">Deuda</a></li>-->
+                                        <!-- <li><a href="{{ url('polizas/vida') }}">Vida</a></li>
+                                        <li><a href="{{ url('polizas/deuda') }}">Deuda</a></li>-->
                                     </ul>
                                 </li>
 
@@ -153,15 +159,18 @@
 
                         <ul class="nav navbar-nav navbar-right">
                             <li class="">
-                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                    <img src="{{ asset('img/usuario.jpg') }}" alt="">{{ auth()->user()->name }}
+                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown"
+                                    aria-expanded="false">
+                                    <img src="{{ asset('img/usuario.jpg') }}"
+                                        alt="">{{ auth()->user()->name }}
                                     <span class=" fa fa-angle-down"></span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-usermenu pull-right">
 
 
 
-                                    <li> <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
+                                    <li> <a class="dropdown-item" href="{{ route('logout') }}"
+                                            onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
                                             {{ __('Salir') }}
                                         </a>
@@ -169,7 +178,8 @@
                                 </ul>
                             </li>
 
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                style="display: none;">
                                 @csrf
                             </form>
                         </ul>
@@ -179,9 +189,10 @@
             <!-- /top navigation -->
 
             <!-- page content -->
-            <div class="right_col" role="main" style=" background-repeat: no-repeat; background-size: 30% ; background-position-x:right ; background-position-y:bottom ;">
+            <div class="right_col" role="main"
+                style=" background-repeat: no-repeat; background-size: 30% ; background-position-x:right ; background-position-y:bottom ;">
 
-                @yield('contenido') <div class="x_content" ></div>
+                @yield('contenido') <div class="x_content"></div>
 
             </div>
             <!-- /page content -->
@@ -203,8 +214,8 @@
     <script src="{{ asset('vendors/datatables.net/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('vendors/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
 
-           	<!-- Switchery -->
-	<script src="{{ asset('vendors/switchery/dist/switchery.min.js') }}"></script>
+    <!-- Switchery -->
+    <script src="{{ asset('vendors/switchery/dist/switchery.min.js') }}"></script>
 
     <!-- Select2 -->
     <script src="{{ asset('vendors/select2/select2.min.js') }}"></script>

@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -25,65 +27,64 @@ class UserController extends Controller
         return view('seguridad.user.create', ['roles' => $roles]);
     }
 
-    public function link(Request $request)
+    public function rol_link(Request $request)
     {
-        $user = User::findOrFail($request->get('user'));
-        $role = Role::findOrFail($request->get('role'));
+        $user = User::findOrFail($request->get('Usuario'));
+        $role = Role::findOrFail($request->get('Rol'));
         $user->assignRole($role->id);
-        Alert::success('', 'Record saved');
+        alert()->success('El registro ha sido agregado correctamente');
         return back();
     }
 
-    public function unlink(Request $request)
+    public function rol_unlink(Request $request)
     {
-        $user = User::findOrFail($request->get('user'));
-        $role = Role::findOrFail($request->get('role'));
+        $user = User::findOrFail($request->get('Usuario'));
+        $role = Role::findOrFail($request->get('Rol'));
         $user->removeRole($role->id);
-        Alert::success('', 'Record saved');
+        alert()->error('El registro ha sido eliminado correctamente');
         return back();
     }
 
     public function store(Request $request)
     {
-        $count = User::where('email', '=', $request->get('email'))->count();
 
+        $count = User::where('email', '=', $request->get('email'))->count();
         if ($count > 0) {
-            Alert::error('', 'the mail already exists');
+            alert()->error('El correo ingresado ya existe');
         } else if (Str::length($request->get('password')) < 8) {
-            Alert::error('', 'password must be at least 8 characters');
+            alert()->error('La contraseña debe tener al menos 8 caracteres');
         } else {
             $user = new User();
             $user->name = $request->get('name');
             $user->email = $request->get('email');
             $user->password = Hash::make($request->password);
             $user->save();
+            alert()->error('El registro ha sido eliminado correctamente');
         }
+
         return back();
     }
 
-    public function show($id)
-    {
-        //
-    }
+
 
 
     public function edit($id)
     {
         $user = User::findOrFail($id);
-        $current_roles = $user->user_has_role;
+        $user_has_rol = $user->user_has_role;
         $roles = Role::get();
-        return view('seguridad.user.edit', ['user' => $user,'roles' => $roles,'current_roles' => $current_roles]);
+        return view('seguridad.user.edit', ['usuario' => $user, 'roles' => $roles, 'user_has_rol' => $user_has_rol]);
     }
 
 
     public function update(Request $request, $id)
     {
-        $count = User::where('email', '=', $request->get('email'))->where('id','<>',$id)->count();
+        $count = User::where('email', '=', $request->get('email'))->where('id', '<>', $id)->count();
 
         if ($count > 0) {
-            Alert::error('', 'the mail already exists');
-        } else if (Str::length($request->get('password')) < 8) {
-            Alert::error('', 'password must be at least 8 characters');
+            alert()->error('El correo ingresado ya existe');
+        } else if ($request->get('password') != "" && Str::length($request->get('password')) < 8) {
+            alert()->error('La contraseña debe tener al menos 8 caracteres');
         } else {
             $user = User::findOrFail($id);
             $user->name = $request->get('name');
@@ -92,7 +93,7 @@ class UserController extends Controller
                 $user->password = Hash::make($request->password);
             }
             $user->update();
-            Alert::success('', 'Record saved');
+            alert()->success('El registro ha sido agregado correctamente');
         }
         return back();
     }
@@ -100,9 +101,9 @@ class UserController extends Controller
 
     public function destroy($id)
     {
-        $user = User::findOrFail($id);
-        $user->delete();
-        Alert::error('', 'Record delete');
-        return back();
+        // $user = User::findOrFail($id);
+        // $user->delete();
+        // Alert::error('', 'Record delete');
+        // return back();
     }
 }
