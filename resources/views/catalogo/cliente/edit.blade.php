@@ -13,7 +13,7 @@ $annos->y;
 <style>
     /* Estilo para el cuadro que contiene los campos */
     .campo-container {
-        border: 1px solid #333;
+        border: 1px solid #c0ccda;
         padding: 10px;
         border-radius: 10px;
     }
@@ -301,14 +301,14 @@ $annos->y;
                                                             @endforeach
                                                         </select>
                                                     </div>
-                                                    <div class="form-group">
-                                                        <label for="BancoPrefencia" class="form-label">Banco de su Preferencia</label>
-                                                        <input class="form-control" name="BancoPrefencia" value="{{ $cliente->BancoPrefencia }}"  type="text">
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="CuentasDevolucionPrimas" class="form-label">Cuentas para devolución de Primas</label>
-                                                        <input class="form-control" name="CuentasDevolucionPrimas" value="{{ $cliente->CuentasDevolucionPrimas }}"  type="text">
-                                                    </div>
+                                                </div>
+                                                <div class="form-group" style="padding-top: 10px!important;">
+                                                    <label for="BancoPrefencia" class="form-label">Banco de su Preferencia</label>
+                                                    <input class="form-control" name="BancoPrefencia" value="{{ $cliente->BancoPrefencia }}"  type="text">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="CuentasDevolucionPrimas" class="form-label">Cuentas para devolución de Primas</label>
+                                                    <input class="form-control" name="CuentasDevolucionPrimas" value="{{ $cliente->CuentasDevolucionPrimas }}"  type="text">
                                                 </div>
 
                                             </div>
