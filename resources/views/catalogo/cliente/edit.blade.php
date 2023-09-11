@@ -1,6 +1,7 @@
 @extends ('welcome')
 @section('contenido')
 @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
+
 <?php
 
 $cumpleanos = new DateTime($cliente->FechaNacimiento);
@@ -545,9 +546,10 @@ $annos->y;
                         </div>
 
                         @if ($tarjetas->count() > 0)
-                        <table class="table table-striped table-bordered">
+                        <table id="MetodosPagoTable" class="table table-striped table-bordered">
                             <thead>
                                 <tr>
+                                    <th>Id</th>
                                     <th>Método Pago</th>
                                     <th>Número Tarjeta</th>
                                     <th>Fecha Vencimiento</th>
@@ -558,16 +560,19 @@ $annos->y;
                             <tbody>
                                 @foreach ($tarjetas as $obj)
                                 <tr>
+                                    <td>{{ $obj->Id }}</td>
                                     @if ($obj->MetodoPago)
                                     <td>{{ $obj->metodo_pago->Nombre }}</td>
                                     @else
                                     <td></td>
                                     @endif
-                                    <td>{{ $obj->NumeroTarjeta }}</td>
-                                    <td>{{ $obj->FechaVencimiento }}</td>
+                                    <td>{{ 'XXXX-XXXX-XXXX-' . substr($obj->NumeroTarjeta, -4); }}</td>
+                                    <td>XX/XX</td>
                                     <td>{{ $obj->PolizaVinculada }}</td>
                                     <td>
-                                        <i class="fa fa-pencil fa-lg" onclick="modal_edit_tarjeta({{ $obj->Id }},'{{ $obj->MetodoPago }}','{{ $obj->NumeroTarjeta }}','{{ $obj->FechaVencimiento }}','{{ $obj->PolizaVinculada }}')" data-target="#modal-edit-tarjeta" data-toggle="modal"></i>
+                                        <i class="fa fa-eye-slash fa-lg" onclick="auntenticar_usuario_metodos_pago({{$loop->index}})" ></i>
+                                        &nbsp;&nbsp;
+                                        <i class="fa fa-pencil fa-lg" onclick="modal_edit_tarjeta({{ $obj->Id }},'{{ $obj->MetodoPago }}','{{ 'XXXX-XXXX-XXXX-' . substr($obj->NumeroTarjeta, -4) }}','XX/XX','{{ $obj->PolizaVinculada }}')" data-target="#modal-edit-tarjeta" data-toggle="modal"></i>
                                         &nbsp;&nbsp;
                                         <i class="fa fa-trash fa-lg" onclick="modal_delete_tarjeta({{ $obj->Id }})" data-target="#modal-delete-tarjeta" data-toggle="modal"></i>
                                     </td>
@@ -780,7 +785,7 @@ $annos->y;
                                     </thead>
                                     <tbody>
                                         @foreach($documentos as $obj)
-                                        
+
                                         <tr>
                                             <td><a href="{{ asset('documentos/cliente') }}/{{$obj->Nombre}}" class="btn btn-default" align="center" target="_blank"><i class="fa fa-download"></i> {{$obj->NombreOriginal}}</a></td>
                                             <td> <i class="fa fa-trash fa-lg" data-target="#modal-delete-documento-{{ $obj->Id }}" data-toggle="modal"></i> </td>
@@ -942,7 +947,7 @@ $annos->y;
                                 <div class="form-group">
                                     NumeroTarjeta
                                     <input type="text" name="NumeroTarjeta" id="ModalNumeroTarjeta" class="form-control"
-                                           data-inputmask="'mask': ['9999-9999-9999-9999']" data-mask>
+                                           >
                                 </div>
                             </div>
                         </div>
@@ -952,7 +957,7 @@ $annos->y;
 
                                     Fecha vencimiento
                                     <input type="text" name="FechaVencimiento" id="ModalFechaVencimiento"
-                                           class="form-control" data-inputmask="'mask': ['99/99']" data-mask>
+                                           class="form-control" >
                                 </div>
                             </div>
                             <div class="col-sm-6">
@@ -1496,6 +1501,8 @@ $annos->y;
                 </div>
             </div>
         </form>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     </div>
 </div>
 @include('catalogo.cliente.addCargo')
@@ -1745,7 +1752,123 @@ $annos->y;
         console.log(tarjeta);
     }
 
+    function auntenticar_usuario_metodos_pago(numeroFila){
+        Swal.fire({
+            title: 'Verifica que eres tú',
+            html:
+                '<input id="verificarInput1" class="swal2-input" placeholder="Email">' +
+                '<input id="verificarInput2" type="password" class="swal2-input" placeholder="Contraseña">',
+            showCancelButton: true,
+            confirmButtonText: 'Enviar',
+            cancelButtonText: 'Cancelar',
+            focusConfirm: false,
+            preConfirm: () => {
+                let verificarInput1 = Swal.getPopup().querySelector('#verificarInput1').value;
+                let verificarInput2 = Swal.getPopup().querySelector('#verificarInput2').value;
 
+                if (!verificarInput1 || !verificarInput2) {
+                Swal.showValidationMessage('Por favor, completa ambos campos');
+                }
+
+                return { verificarInput1, verificarInput2 };
+            }
+            }).then((result) => {
+            if (result.isConfirmed) {
+                let { verificarInput1, verificarInput2 } = result.value;
+                //console.log('Usuario:', verificarInput1);
+                //console.log('Contraseña:', verificarInput2);
+
+                let parametros = {
+                        "email": verificarInput1,
+                        "password": verificarInput2,
+                    };
+                $.ajax({
+                    url: "{{ url('catalogo/cliente/verificarCredenciales', '') }}",
+                    type: 'GET',
+                    data: parametros,
+                    success: function (response) {
+                        // Las credenciales son válidas, puedes mostrar los datos sensibles
+                        console.log(response.mensaje);
+                        // Realiza las acciones necesarias para mostrar los datos sensibles
+                        info_sensible(numeroFila);
+
+                    },
+                    error: function (error) {
+                        // Las credenciales son incorrectas, muestra un mensaje de error
+                        console.error(error.responseJSON.mensaje);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Credenciales erróneas',
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    }
+                });
+            }
+    });
+
+    }
+
+    function info_sensible(numeroFila) {
+        let fila = $("#MetodosPagoTable tbody tr").eq(numeroFila);
+        let boton_ojo=fila.find("td:nth-child(6)").find("i:eq(0)");
+        let boton_editar=fila.find("td:nth-child(6)").find("i:eq(1)");
+        let id_metodo_pago=fila.find("td:nth-child(1)");
+        let numero_tarjeta_credito=fila.find("td:nth-child(3)");
+        let fecha_vencimiento_tarjeta=fila.find("td:nth-child(4)");
+        let poliza_vinculada_tarjeta=fila.find('td:nth-child(5)');
+
+        datos_tarjeta(id_metodo_pago.text(), function(datosRecibidos) {
+            // Aquí puedes trabajar con los datosRecibidos
+            //console.log(datosRecibidos);
+        numero_tarjeta_credito.text(datosRecibidos.NumeroTarjeta);
+        fecha_vencimiento_tarjeta.text(datosRecibidos.FechaVencimiento);
+        boton_ojo.attr("class", "fa fa-eye fa-lg");
+        boton_ojo.attr("onclick", "censurar_info_sensible("+numeroFila+")");
+        boton_editar.attr("onclick","modal_edit_tarjeta("+id_metodo_pago.text()+",'2','"+numero_tarjeta_credito.text()+"','"+fecha_vencimiento_tarjeta.text()+"','"+poliza_vinculada_tarjeta.text()+"')");
+        });
+
+    }
+
+    function censurar_info_sensible(numeroFila){
+        let fila = $("#MetodosPagoTable tbody tr").eq(numeroFila);
+        let boton_ojo=fila.find("td:nth-child(6)").find("i:eq(0)");
+        let boton_editar=fila.find("td:nth-child(6)").find("i:eq(1)");
+        let id_metodo_pago=fila.find("td:nth-child(1)");
+        let numero_tarjeta_credito=fila.find("td:nth-child(3)");
+        let fecha_vencimiento_tarjeta=fila.find("td:nth-child(4)");
+        let poliza_vinculada_tarjeta=fila.find('td:nth-child(5)');
+
+        numero_tarjeta_credito.text('XXXX-XXXX-XXXX-'+numero_tarjeta_credito.text().slice(-4));
+        fecha_vencimiento_tarjeta.text('XX/XX');
+
+        boton_ojo.attr("class", "fa fa-eye-slash fa-lg");
+        boton_ojo.attr("onclick", "auntenticar_usuario_metodos_pago("+numeroFila+")");
+        boton_editar.attr("onclick","modal_edit_tarjeta("+id_metodo_pago.text()+",'2','"+numero_tarjeta_credito.text()+"','"+fecha_vencimiento_tarjeta.text()+"','"+poliza_vinculada_tarjeta.text()+"')");
+
+    }
+
+    function datos_tarjeta(id_registro_metodo_pago,callback) {
+        let parametros = {
+                        "id_registro_metodo_pago": id_registro_metodo_pago,
+                    };
+        $.ajax({
+                url: "{{ url('catalogo/cliente/getMetodoPago', '') }}",
+                type: 'GET',
+                data: parametros,
+                success: function(response) {
+                    // Handle successful response
+                    //console.log(response.datosRecibidos);
+                    callback(response.datosRecibidos);
+
+                },
+                error: function(error) {
+                    // Handle error
+                    console.error(error);
+                    callback(0);
+                }
+            });
+    }
 
     function tipo_persona(switchery) {
         let dui=$('#Dui');
