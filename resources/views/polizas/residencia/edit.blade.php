@@ -92,7 +92,10 @@
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label">Descuento de Rentabilidad %</label>
-                                    <input type="number" step="any" name="TasaDescuento" value="{{$residencia->TasaDescuento }}" class="form-control" @if($residencia->Modificar == 0) readonly @endif >
+                                    <div class="form-group has-feedback">
+                                        <input type="number" step="any" name="TasaDescuento" value="{{$residencia->TasaDescuento }}" class="form-control" style="padding-left: 15%;" @if($residencia->Modificar == 0) readonly @endif >
+                                        <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
+                                    </div>
                                 </div>
                                 <div class="col-md-12">
                                     &nbsp;
@@ -109,38 +112,46 @@
                                 </div>
                                 <div class="col-sm-4">
                                     <input type="hidden" name="Bomberos" id="Bomberos" value="{{$bomberos}}">
-                                    <label class="control-label">Límite grupo  $</label>
-                                    @if($residencia->Modificar == 1)
-                                    <input type="number" step="0.01" name="LimiteGrupo" id="LimiteGrupo" value="{{ $residencia->LimiteGrupo }}" class="form-control">
-                                    @else
-                                    <input type="text" step="any" name="LimiteGrupo" id="LimiteGrupo" value="{{number_format($residencia->LimiteGrupo,2, '.',',')}}" class="form-control" readonly>
-                                    @endif
-
+                                    <label class="control-label">Límite grupo $</label>
+                                    <div class="form-group has-feedback">
+                                        @if($residencia->Modificar == 1)
+                                        <input style="text-align: right;" type="number" step="0.01" name="LimiteGrupo" id="LimiteGrupo" value="{{ $residencia->LimiteGrupo }}" class="form-control">
+                                        @else
+                                        <input type="text" step="any" style="text-align: right;" name="LimiteGrupo" id="LimiteGrupo" value="{{number_format($residencia->LimiteGrupo,2, '.',',')}}" class="form-control" readonly>
+                                        @endif
+                                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                    </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label">Límite Individual $</label>
-                                 
+                                    <div class="form-group has-feedback">
                                         @if($residencia->Modificar == 1)
-                                        <input type="number" step="0.01" name="LimiteIndividual" id="LimiteIndividual" value="{{ $residencia->LimiteIndividual }}" class="form-control">
+                                        <input type="number" style="text-align: right;" step="0.01" name="LimiteIndividual" id="LimiteIndividual" value="{{ $residencia->LimiteIndividual }}" class="form-control">
                                         @else
-                                        <input type="text" step="any" name="LimiteIndividual" id="LimiteIndividual" value="{{number_format($residencia->LimiteIndividual,2, '.',',')}}" class="form-control" readonly>
+                                        <input type="text" step="any" style="text-align: right;" name="LimiteIndividual" id="LimiteIndividual" value="{{number_format($residencia->LimiteIndividual,2, '.',',')}}" class="form-control" readonly>
                                         @endif
-                                  
+                                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                    </div>
                                 </div>
                                 <div class="col-md-12">
                                     &nbsp;
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label">Tasa %</label>
-                                    <input type="number" step="any" name="Tasa" value="{{$residencia->Tasa }}" class="form-control" @if($residencia->Modificar == 0) readonly @endif>
+                                    <div class="form-group has-feedback">
+                                        <input type="number" style="padding-left: 15%;" step="any" name="Tasa" value="{{$residencia->Tasa }}" class="form-control" @if($residencia->Modificar == 0) readonly @endif>
+                                        <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
+                                    </div>
                                 </div>
                                 <div class="col-md-12">
                                     &nbsp;
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label">Tasa de Comisión %</label>
-                                    <input type="number" step="any" name="Comision" value="{{$residencia->Comision }}" class="form-control" @if($residencia->Modificar == 0) readonly @endif>
-
+                                    <div class="form-group has-feedback">
+                                        <input type="number" style="padding-left: 15%;" step="any" name="Comision" value="{{$residencia->Comision }}" class="form-control" @if($residencia->Modificar == 0) readonly @endif>
+                                        <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
+                                    </div>
                                 </div>
                                 <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
                                     <div class="form-group row">
@@ -222,8 +233,8 @@
                                     <td>{{ $obj->Tasa }}%</td>
                                     <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
-                                    <td>{{ $obj->Descuento }}</td>
-                                    <td>${{number_format($obj->APagar,2, '.',',')}}</td>
+                                    <td>$ {{number_format($obj->Descuento,2,'.',',') }}</td>
+                                    <td>$ {{number_format($obj->APagar,2, '.',',')}}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->EnvioCartera)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->EnvioPago)->format('d/m/Y') }}</td>
@@ -285,8 +296,8 @@
                                     <td>{{ $obj->Tasa }}%</td>
                                     <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
-                                    <td>{{ $obj->Descuento }}</td>
-                                    <td>${{number_format($obj->APagar,2, '.',',')}}</td>
+                                    <td>$ {{number_format($obj->Descuento,2,'.',',') }}</td>
+                                    <td>$ {{number_format($obj->APagar,2, '.',',')}}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->EnvioCartera)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->EnvioPago)->format('d/m/Y') }}</td>
@@ -301,8 +312,8 @@
                                     <td>{{ $obj->Tasa }}%</td>
                                     <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
-                                    <td>{{ $obj->Descuento }}</td>
-                                    <td>${{number_format($obj->APagar,2, '.',',')}}</td>
+                                    <td>$ {{number_format($obj->Descuento,2,'.',',') }}</td>
+                                    <td>$ {{number_format($obj->APagar,2, '.',',')}}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->EnvioCartera)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->EnvioPago)->format('d/m/Y') }}</td>
@@ -317,8 +328,8 @@
                                     <td>{{ $obj->Tasa }}%</td>
                                     <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
-                                    <td>{{ $obj->Descuento }}</td>
-                                    <td>${{number_format($obj->APagar,2, '.',',')}}</td>
+                                    <td>$ {{number_format($obj->Descuento,2,'.',',') }}</td>
+                                    <td>$ {{number_format($obj->APagar,2, '.',',')}}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->EnvioCartera)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->EnvioPago)->format('d/m/Y') }}</td>
@@ -334,8 +345,8 @@
                                     <td>{{ $obj->Tasa }}%</td>
                                     <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
-                                    <td>{{ $obj->Descuento }}</td>
-                                    <td>${{number_format($obj->APagar,2, '.',',')}}</td>
+                                    <td>$ {{number_format($obj->Descuento,2,'.',',') }}</td>
+                                    <td>$ {{number_format($obj->APagar,2, '.',',')}}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->EnvioCartera)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->EnvioPago)->format('d/m/Y') }}</td>
@@ -493,30 +504,55 @@
                                                 </div>
 
                                                 <div class="form-group row">
-                                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Monto
-                                                        Cartera
+                                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Monto Cartera
                                                     </label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input class="form-control" name="MontoCartera" id="MontoCartera" type="number" step="any" value="{{ session('MontoCartera', 0) }}" required>
+                                                        <div class="form-group has-feedback">
+                                                            <input class="form-control" name="MontoCartera" id="MontoCartera" type="number" step="any" style="text-align: right;" value="{{ number_format(session('MontoCartera', 0),2,'.',',') }}" required>
+                                                            <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                        </div>
+
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa de Rentabilidad %</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input type="number" step="any" name="Tasa" id="Tasa" value="{{$residencia->Tasa}}" class="form-control" readonly>
+
+                                                        <div class="form-group has-feedback">
+                                                            <input type="number" step="any" style="padding-left: 25%;" name="Tasa" id="Tasa" value="{{$residencia->Tasa}}" class="form-control" readonly>
+                                                            <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Prueba Decimales</label>
+                                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+
+                                                        <div class="form-group has-feedback">
+                                                            <input type="number" step="any" readonly  id="PruebaDecimales" class="form-control" style="text-align: right;">
+                                                            <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Prima Calculada</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input type="number" step="any" name="PrimaCalculada" id="PrimaCalculada" class="form-control">
+
+                                                        <div class="form-group has-feedback">
+                                                            <input type="number" step="any" name="PrimaCalculada" id="PrimaCalculada" class="form-control" style="text-align: right;">
+                                                            <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Extra
                                                         Prima</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input class="form-control" name="ExtraPrima" type="number" step="any" id="ExtPrima">
+
+                                                        <div class="form-group has-feedback">
+                                                            <input class="form-control" name="ExtraPrima" type="number" step="any" id="ExtPrima" style="text-align: right;">
+                                                            <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                        </div>
                                                     </div>
                                                 </div>
 
@@ -524,27 +560,43 @@
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">
                                                         Prima Total</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input class="form-control" name="PrimaTotal" type="number" step="any" id="PrimaTotal" value="{{ old('PrimaToal') }}">
+
+                                                        <div class="form-group has-feedback">
+                                                            <input class="form-control" name="PrimaTotal" type="number" step="any" id="PrimaTotal" style="text-align: right;">
+                                                            <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                        </div>
                                                     </div>
                                                 </div>
 
                                                 <div class="form-group row">
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa de Descuento %</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input class="form-control" name="TasaDescuento" type="number" step="any" id="TasaDescuento" value="{{$residencia->TasaDescuento}}" readonly>
+
+                                                        <div class="form-group has-feedback">
+                                                            <input class="form-control" name="TasaDescuento" type="number" step="any" id="TasaDescuento" style="padding-left: 25%;" value="{{$residencia->TasaDescuento}}" readonly>
+                                                            <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Descuento</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input class="form-control" name="Descuento" type="number" step="any" id="Descuento" value="{{ old('Descuento') }}">
+
+                                                        <div class="form-group has-feedback">
+                                                            <input class="form-control" name="Descuento" type="number" step="any" id="Descuento" style="text-align: right;">
+                                                            <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">
                                                         Prima Descontada</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input class="form-control" name="PrimaDescontada" type="number" step="any" id="PrimaDescontada" value="{{ old('PrimaDescontada') }}">
+
+                                                        <div class="form-group has-feedback">
+                                                            <input class="form-control" name="PrimaDescontada" type="number" step="any" id="PrimaDescontada" style="text-align: right;">
+                                                            <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                        </div>
                                                     </div>
                                                 </div>
 
@@ -562,32 +614,52 @@
                                                 <div class="form-group row">
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Impuestos bomberos</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input type="number" step="any" name="ImpuestoBomberos" id="ImpuestoBomberos" value="{{ old('ImpuestosBomberos') }}" class="form-control" readonly>
+
+                                                        <div class="form-group has-feedback">
+                                                            <input type="number" step="any" name="ImpuestoBomberos" id="ImpuestoBomberos" class="form-control" readonly style="text-align: right;">
+                                                            <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Gastos emisión</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input type="number" step="any" name="GastosEmision" id="GastosEmision" value="0" class="form-control">
+
+                                                        <div class="form-group has-feedback">
+                                                            <input type="number" step="any" name="GastosEmision" id="GastosEmision" value="0" class="form-control" style="text-align: right;">
+                                                            <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Otros</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input type="number" step="any" name="Otros" id="Otros" value="0" class="form-control">
+
+                                                        <div class="form-group has-feedback">
+                                                            <input type="number" step="any" name="Otros" id="Otros" value="0" class="form-control" style="text-align: right;">
+                                                            <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                        </div>
                                                     </div>
                                                 </div>
 
                                                 <div class="form-group row">
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Sub Total</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input type="number" step="any" name="SubTotal" id="SubTotal" class="form-control">
+
+                                                        <div class="form-group has-feedback">
+                                                            <input type="number" step="any" name="SubTotal" id="SubTotal" class="form-control" style="text-align: right;">
+                                                            <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">IVA</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input type="number" step="any" name="Iva" id="Iva" value="{{ old('Iva') }}" class="form-control">
+
+                                                        <div class="form-group has-feedback">
+                                                            <input type="number" step="any" name="Iva" id="Iva" class="form-control" style="text-align: right;">
+                                                            <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                        </div>
                                                     </div>
                                                 </div>
 
@@ -595,15 +667,24 @@
                                                 <div class="form-group row">
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Menos valor CCF de comision</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input type="number" step="any" name="Comision" id="ValorCCF" value="{{ old('Comision') }}" class="form-control">
+
+                                                        <div class="form-group has-feedback">
+                                                            <input type="number" step="any" name="Comision" id="ValorCCF" class="form-control" style="text-align: right;">
+                                                            <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                        </div>
                                                     </div>
                                                     <!-- <a href="" data-target="#modal-calculator" data-toggle="modal" class="col-md-1 control-label" style="text-align: center;"><span class="fa fa-calculator fa-lg"></span></a> -->
+
                                                 </div>
 
                                                 <div class="form-group row">
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">A pagar</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input type="number" step="any" name="APagar" id="APagar" value="{{ old('APagar') }}" class="form-control">
+                                                    
+                                                        <div class="form-group has-feedback">
+                                                            <input type="number" step="any" name="APagar" id="APagar" class="form-control" style="text-align: right;">
+                                                            <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -616,21 +697,33 @@
                                                 <div class="form-group row">
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Comision %</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" value="{{$residencia->Comision}}" readonly>
+                                                        
+                                                        <div class="form-group has-feedback">
+                                                            <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" style="padding-left: 25%;" value="{{$residencia->Comision}}" readonly>
+                                                            <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Valor
                                                         Desc</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input class="form-control" name="ValorDescuento" id="ValorDescuento" type="number" step="any">
+                                                        
+                                                        <div class="form-group has-feedback">
+                                                            <input class="form-control" name="ValorDescuento" id="ValorDescuento" type="number" step="any" style="text-align: right;">
+                                                            <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">mas 13%
                                                         IVA sobre comisión</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input class="form-control" name="IvaSobreComision" id="IvaSobreComision" type="number" step="any">
+                                                        
+                                                        <div class="form-group has-feedback">
+                                                            <input class="form-control" name="IvaSobreComision" id="IvaSobreComision" type="number" step="any" style="text-align: right;">
+                                                            <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                        </div>
                                                     </div>
                                                 </div>
 
@@ -638,7 +731,11 @@
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">menos 1%
                                                         Retención</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input class="form-control" name="Retencion" id="Retencion" type="number" step="any" @if($residencia->clientes->TipoContribuyente == 1) readonly @endif>
+                                                        
+                                                        <div class="form-group has-feedback">
+                                                        <input class="form-control" name="Retencion" id="Retencion" type="number" step="any" style="text-align: right;" @if($residencia->clientes->TipoContribuyente == 1) readonly @endif >    
+                                                            <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                        </div>
                                                     </div>
                                                 </div>
 
@@ -646,7 +743,11 @@
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Valor CCF
                                                         Comisión</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input class="form-control" name="ValorCCF" id="ValorCCFE" type="number" step="any">
+                                                        
+                                                        <div class="form-group has-feedback">
+                                                        <input class="form-control" name="ValorCCF" id="ValorCCFE" type="number" step="any" style="text-align: right;">
+                                                            <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
@@ -698,7 +799,13 @@
                                         </thead>
                                         <tr>
                                             <td>Tasa @if($residencia->Mensual == 1) Mensual @else Anual @endif Millar :</td>
-                                            <td>{{$residencia->Tasa}} %</td>
+                                            <td>
+                                                <div class="col-md-9 col-sm-9 form-group has-feedback">
+                                                    <input type="text" class="form-control has-feedback-left" value="@if($ultimo_pago) {{number_format($residencia->Tasa,2,'.',',')}} @else 0 @endif" readonly>
+                                                    <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
+                                                </div>
+
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td colspan="2">
@@ -708,11 +815,21 @@
                                         <tr>
 
                                             <td> Monto Cartera</td>
-                                            <td><input type="text" style="display: none;" id="MontoCartera2" value="@if($ultimo_pago) {{$ultimo_pago->MontoCartera}} @else 0 @endif" readonly class="form-group"></td>
+                                            <td>
+                                                <div class="col-md-9 col-sm-9  form-group has-feedback">
+                                                    <input type="text" class="form-control has-feedback-left" style="text-align: right;" id="MontoCartera2" value="@if($ultimo_pago) {{number_format($ultimo_pago->MontoCartera,2,'.',',')}} @else 0 @endif" readonly>
+                                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                </div>
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td>Tasa por millar</td>
-                                            <td><input type="text" id="TasaMillar2" value="@if($ultimo_pago) {{$valorTasa}} @else 0 @endif" readonly class="form-group"></td>
+                                            <td>
+                                                <div class="col-md-9 col-sm-9  form-group has-feedback">
+                                                    <input type="text" class="form-control has-feedback-left" style="text-align: right;" id="TasaMillar2" value="@if($ultimo_pago) {{$valorTasa}} @else 0 @endif" readonly>
+                                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                </div>
+                                            </td>
                                         </tr>
                                         <!-- <tr>
                                             <td>Resultado 1</td>
@@ -720,35 +837,115 @@
                                         </tr> -->
                                         <tr>
                                             <td>Prima Calculada </td>
-                                            <td><input type="text" id="PrimaCalculada2" value="@if($ultimo_pago) {{$ultimo_pago->MontoCartera * $valorTasa}} @else 0 @endif" readonly class="form-group"></td>
+                                            <td>
+                                                <div class="col-md-9 col-sm-9  form-group has-feedback">
+                                                    <input type="text" class="form-control has-feedback-left" style="text-align: right;" id="PrimaCalculada2" value="@if($ultimo_pago) {{number_format(($ultimo_pago->MontoCartera * $valorTasa),2,'.',',')}} @else 0 @endif" readonly>
+                                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                </div>
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td>(-) Descuento Rentabilidad {{$residencia->TasaDescuento}}%</td>
-                                            <td><input type="text" id="DescuentoRentabilidad2" value="@if($ultimo_pago) {{($ultimo_pago->MontoCartera * $valorTasa) * ($residencia->TasaDescuento/100)}} @else 0 @endif" readonly class="form-group"></td>
+                                            <td>
+                                                <div class="col-md-9 col-sm-9  form-group has-feedback">
+                                                    <input type="text" class="form-control has-feedback-left" style="text-align: right;" id="DescuentoRentabilidad2" value="@if($ultimo_pago) {{number_format((($ultimo_pago->MontoCartera * $valorTasa) * ($residencia->TasaDescuento/100)),2,'.',',')}} @else 0 @endif" readonly>
+                                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                </div>
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td>(=) Prima Descontada</td>
-                                            <td><input type="text" id="PrimaDescontada2" value="" readonly class="form-group"></td>
+                                            <td>
+                                                <div class="col-md-9 col-sm-9  form-group has-feedback">
+                                                    <input type="text" class="form-control has-feedback-left" style="text-align: right;" value="@if($ultimo_pago) {{number_format(($ultimo_pago->MontoCartera * $valorTasa) - (($ultimo_pago->MontoCartera * $valorTasa) * ($residencia->TasaDescuento/100)),2,'.',',')}} @else 0 @endif" readonly>
+                                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                </div>
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td>Impuesto Bomberos</td>
-                                            <td><input type="text" id="Bomberos2" value="@if($ultimo_pago) {{$ultimo_pago->ImpuestoBomberos}} @else 0 @endif" readonly class="form-group"></td>
+                                            <td>
+
+                                                <div class="col-md-9 col-sm-9  form-group has-feedback">
+                                                    <input type="text" class="form-control has-feedback-left" style="text-align: right;" value="@if($ultimo_pago) {{number_format(($ultimo_pago->ImpuestoBomberos),2,'.',',')}} @else 0 @endif" readonly>
+                                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                </div>
+
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td>SubTotal (Base de Iva)</td>
-                                            <td><input type="text" id="SubTotal2" readonly value="@if($ultimo_pago) {{($ultimo_pago->MontoCartera * $valorTasa) + $ultimo_pago->ImpuestoBomberos}} @else 0 @endif" class="form-group"></td>
+                                            <td>
+
+                                                <div class="col-md-9 col-sm-9  form-group has-feedback">
+                                                    <input type="text" class="form-control has-feedback-left" style="text-align: right;" value="@if($ultimo_pago) {{number_format((($ultimo_pago->MontoCartera * $valorTasa) + $ultimo_pago->ImpuestoBomberos),2,'.',',')}} @else 0 @endif" readonly>
+                                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                </div>
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td>13% Iva s/SubTotal</td>
-                                            <td><input type="text" id="Iva2" value="@if($ultimo_pago) {{$ultimo_pago->Iva}} @else 0 @endif" readonly class="form-group"></td>
+                                            <td>
+                                                <div class="col-md-9 col-sm-9  form-group has-feedback">
+                                                    <input type="text" class="form-control has-feedback-left" style="text-align: right;" value="@if($ultimo_pago) {{number_format(($ultimo_pago->Iva),2,'.',',')}} @else 0 @endif" readonly>
+                                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Comisión</td>
+                                            <td>
+                                                <div class="col-md-9 col-sm-9  form-group has-feedback">
+                                                    <input type="text" class="form-control has-feedback-left" style="padding-left: 25%;" value="@if($ultimo_pago) {{$ultimo_pago->TasaComision}} @else 0 @endif" readonly>
+                                                    <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Valor por Comisión</td>
+                                            <td>
+                                                <div class="col-md-9 col-sm-9  form-group has-feedback">
+                                                    <input type="text" class="form-control has-feedback-left" style="text-align: right;" value="@if($ultimo_pago) {{number_format(( $ultimo_pago->Comision ),2,'.',',')}} @else 0 @endif" readonly>
+                                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Más 13% IVA sobre comisión</td>
+                                            <td>
+                                                <div class="col-md-9 col-sm-9  form-group has-feedback">
+                                                    <input type="text" class="form-control has-feedback-left" style="text-align: right;" value="@if($ultimo_pago) {{number_format(($ultimo_pago->IvaSobreComision),2,'.',',')}} @else 0 @endif" readonly>
+                                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Menos 1% Retención</td>
+                                            <td>
+                                                <div class="col-md-9 col-sm-9  form-group has-feedback">
+                                                    <input type="text" class="form-control has-feedback-left" style="text-align: right;" value="@if($ultimo_pago) {{number_format(($ultimo_pago->Retencion),2,'.',',')}} @else 0 @endif" readonly>
+                                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                </div>
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td>Valor CCF por Comision</td>
-                                            <td><input type="text" id="ValorCCF2" value="@if($ultimo_pago) {{$ultimo_pago->ValorCCF}} @else 0 @endif" readonly class="form-group"></td>
+                                            <td>
+                                                <div class="col-md-9 col-sm-9  form-group has-feedback">
+                                                    <input type="text" class="form-control has-feedback-left" style="text-align: right;" value="@if($ultimo_pago) {{number_format(($ultimo_pago->ValorCCF),2,'.',',')}} @else 0 @endif" readonly>
+                                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                </div>
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td>Prima Neta Por Pagar @if($ultimo_pago) {{ \Carbon\Carbon::parse($ultimo_pago->FechaInicio)->format('d/m/Y') }} al {{ \Carbon\Carbon::parse($ultimo_pago->FechaFinal)->format('d/m/Y') }}@endif</td>
-                                            <td><input type="text" id="APagar2" value="@if($ultimo_pago) {{$ultimo_pago->APagar}} @else 0 @endif" readonly class="form-group"></td>
+                                            <td>
+
+                                                <div class="col-md-9 col-sm-9  form-group has-feedback">
+                                                    <input type="text" class="form-control has-feedback-left" style="text-align: right;" value="@if($ultimo_pago) {{number_format(($ultimo_pago->APagar),2,'.',',')}} @else 0 @endif" readonly>
+                                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                </div>
+                                            </td>
                                         </tr>
                                     </table>
                                 </div>
@@ -892,8 +1089,9 @@
             } else {
                 var tasaFinal = tasa / 1000;
             }
-            var sub = Number(monto) * Number(tasaFinal);
-            document.getElementById('PrimaCalculada').value = sub;
+            var sub = parseFloat(monto) * parseFloat(tasaFinal);
+            document.getElementById('PruebaDecimales').value = sub;
+            document.getElementById('PrimaCalculada').value = sub.toLocaleString('sv-SV', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(',','.').replace(/[^\d,.-]/g, '');
             //  var bomberos = (monto * (0.04 / 12) / 1000); //valor de impuesto varia por gobierno
             // document.getElementById('ImpuestoBomberos').value = bomberos;
 
