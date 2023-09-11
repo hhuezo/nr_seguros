@@ -10,6 +10,7 @@
             <div class="x_title">
                 <h2>RESI - Seguro de residencias <small></small></h2>
                 <ul class="nav navbar-right panel_toolbox">
+                    <a href="{{url('polizas/residencia')}}" class="btn btn-info fa fa-undo " style="color: white"> Atrás</a>
                 </ul>
                 <div class="clearfix"></div>
             </div>
@@ -62,6 +63,7 @@
                     </div>
                     <div class="col-sm-4">
                         <label class="control-label">Vigencia Desde</label>
+<<<<<<< HEAD
 {{--                        <input class="form-control" name="VigenciaDesde" type="date" value="{{ old('VigenciaDesde') }}">--}}
                         <input class="form-control formatoFecha"  name="VigenciaDesde" placeholder="dd/mm/yyyy" type="text" value="{{ old('VigenciaDesde') }}">
                     </div>
@@ -69,6 +71,15 @@
                         <label class="control-label">Vigencia Hasta</label>
 {{--                        <input class="form-control" name="VigenciaHasta" type="date" placeholder="dd/mm/yyyy"  value="{{ old('VigenciaHasta') }}">--}}
                         <input class="form-control formatoFecha" name="VigenciaHasta" type="text" placeholder="dd/mm/yyyy"  value="{{ old('VigenciaHasta') }}">
+=======
+                        <input class="form-control" name="VigenciaDesde" type="date" value="{{ old('VigenciaDesde') }}">
+
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="control-label">Vigencia Hasta</label>
+                        <input class="form-control" name="VigenciaHasta" type="date" placeholder="dd/mm/yyyy" value="{{ old('VigenciaHasta') }}">
+
+>>>>>>> 804fbeb0240d62523137d3b1bcf2b498a046a505
                     </div>
                     <div class="col-sm-4">
                         <label class="control-label">Estatus</label>
@@ -91,7 +102,11 @@
                     </div>
                     <div class="col-sm-4">
                         <label class="control-label">Descuento de Rentabilidad %</label>
-                        <input class="form-control" name="TasaDescuento" type="number" step="any" id="TasaDescuento" required min="0">
+
+                        <div class="form-group has-feedback">
+                            <input class="form-control" name="TasaDescuento" style="padding-left: 15%;" type="number" step="any" id="TasaDescuento" required min="0">
+                            <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                        </div>
                     </div>
                     <div class="col-md-12">
                         &nbsp;
@@ -101,7 +116,7 @@
                     </div>
                     <div class="col-sm-4">
                         <label class="control-label">Descuento de IVA</label>
-                        <input class="form-control" name="DescuentoIva" type="checkbox" id="DescuentoIva" >
+                        <input class="form-control" name="DescuentoIva" type="checkbox" id="DescuentoIva">
                     </div>
                     <div class="col-md-12">
                         &nbsp;
@@ -109,25 +124,37 @@
                     <div class="col-sm-4">
                         <input type="hidden" name="Bomberos" id="Bomberos" value="{{$bomberos}}">
                         <label class="control-label">Límite de Grupo</label>
-                        <input type="number" step="any" name="LimiteGrupo" id="LimiteGrupo" value="{{ old('LimiteGrupo') }}" class="form-control" required>
+                        <div class=" form-group has-feedback">
+                            <input type="number" step="any" name="LimiteGrupo" style="padding-left: 15%;" id="LimiteGrupo" value="{{ old('LimiteGrupo') }}" class="form-control" required>
+                            <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                        </div>
                     </div>
                     <div class="col-sm-4">
                         <label class="control-label">Límite Individual</label>
-                        <input type="number" step="any" name="LimiteIndividual" id="LimiteIndividual" value="{{ old('LimiteIndividual') }}" class="form-control" required>
+                        <div class=" form-group has-feedback">
+                            <input type="number" step="any" name="LimiteIndividual" id="LimiteIndividual" style="padding-left: 15%;" value="{{ old('LimiteIndividual') }}" class="form-control" required>
+                            <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                        </div>
                     </div>
                     <div class="col-md-12">
                         &nbsp;
                     </div>
                     <div class="col-sm-4">
                         <label class="control-label">Tasa %</label>
-                        <input type="number" step="any" name="Tasa" id="Tasa" value="{{ old('Tasa') }}" class="form-control" required min="0" max="100">
+                        <div class=" form-group has-feedback">
+                            <input type="number" step="any" name="Tasa" id="Tasa" value="{{ old('Tasa') }}" class="form-control" style="padding-left: 15%;" required min="0" max="100">
+                            <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
+                        </div>
                     </div>
                     <div class="col-md-12">
                         &nbsp;
                     </div>
                     <div class="col-sm-4">
                         <label class="control-label">Tasa de Comisión %</label>
-                        <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" required min="0" max="100">
+                        <div class=" form-group has-feedback">
+                            <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" style="padding-left: 15%;" required min="0" max="100">
+                            <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
+                        </div>
                     </div>
 
                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
@@ -231,8 +258,8 @@
             });
         });
 
-        $('#LimiteIndividual').change(function(){
-            if(document.getElementById('LimiteIndividual').value >= document.getElementById('LimiteGrupo').value){
+        $('#LimiteIndividual').change(function() {
+            if (document.getElementById('LimiteIndividual').value >= document.getElementById('LimiteGrupo').value) {
                 document.getElementById('LimiteIndividual').value = '';
                 swal('El limite individual super al limite grupal');
             }
@@ -244,8 +271,6 @@
 
 
     });
-
-
 </script>
 
 

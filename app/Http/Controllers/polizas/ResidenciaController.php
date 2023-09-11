@@ -132,16 +132,16 @@ class ResidenciaController extends Controller
         $residencia->TasaDescuento = $request->TasaDescuento;
         $residencia->Nit = $request->Nit;
         $residencia->Activo = 1;
-        if($request->DescuentoIva == 'on'){
+        if ($request->DescuentoIva == 'on') {
             $residencia->DescuentoIva = 1;
-        }else{
+        } else {
             $residencia->DescuentoIva = 0;
         }
         $residencia->Mensual = $request->tipoTasa;
         $residencia->Comision = $request->TasaComision;
         $residencia->save();
 
-        alert()->success('El registro ha sido creado correctamente');
+        alert()->success('El registro ha sido creado correctamente')->showConfirmButton('Aceptar', '#3085d6');
         return Redirect::to('polizas/residencia/' . $residencia->Id . '/edit');
     }
 
@@ -163,10 +163,10 @@ class ResidenciaController extends Controller
         $detalle = DetalleResidencia::where('Residencia', $residencia->Id)->where('Activo', 1)->orderBy('Id', 'desc')->get();
         $ultimo_pago = DetalleResidencia::where('Residencia', $residencia->Id)->where('Activo', 1)->orderBy('Id', 'desc')->first();
         // dd($ultimo_pago);
-        if($residencia->Mensual == 1){
-            $valorTasa = $residencia->Tasa/1000;
-        }else{
-            $valorTasa = $residencia->Tasa/1000/12;
+        if ($residencia->Mensual == 1) {
+            $valorTasa = $residencia->Tasa / 1000;
+        } else {
+            $valorTasa = $residencia->Tasa / 1000 / 12;
         }
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
         $bombero = Bombero::where('Activo', 1)->first();
@@ -205,44 +205,34 @@ class ResidenciaController extends Controller
     public function update(Request $request, $id)
     {
         $messages = [
-            'NumeroPoliza.required' => 'El Número de poliza es requerido',
+       
             'LimiteGrupo.required' => 'El Límite Grupal es requerido',
             'LimiteIndividual.required' => 'El Límite Individual es requerido',
             'Tasa.required' => 'El valor de la Tasa es requerido',
-            'TasaDescuento.required' => 'El valor de la Tasa de Descuento es requerido',
-            'TasaComision.required' => 'El valor de la Tas de Comisión es requerido',
+            'Comision.required' => 'El valor de la Tas de Comisión es requerido',
 
         ];
 
         $request->validate([
             'LimiteGrupo' => 'required',
             'LimiteIndividual' => 'required',
-            'NumeroPoliza' => 'required',
             'Tasa' => 'required',
-            'TasaDescuento' => 'required',
-            'TasaComision' => 'required'
+            'Comision' => 'required'
 
         ], $messages);
 
         $residencia = Residencia::findOrFail($id);
-        $residencia->NumeroPoliza = $request->NumeroPoliza;
-        $residencia->Codigo = $request->Codigo;
-        $residencia->Aseguradora = $request->Aseguradora;
-        $residencia->Asegurado = $request->Asegurado;
-        $residencia->EstadoPoliza = $request->EstadoPoliza;
-        $residencia->VigenciaDesde = $request->VigenciaDesde;
-        $residencia->VigenciaHasta = $request->VigenciaHasta;
         $residencia->LimiteGrupo = $request->LimiteGrupo;
         $residencia->LimiteIndividual = $request->LimiteIndividual;
         $residencia->Tasa = $request->Tasa;
-        $residencia->Ejecutivo = $request->Ejecutivo;
-        $residencia->TasaDescuento = $request->TasaDescuento;
         $residencia->Nit = $request->Nit;
         $residencia->Activo = 1;
         $residencia->Mensual = $request->tipoTasa;
-        $residencia->Comision = $request->TasaComision;
+        $residencia->Comision = $request->Comision;
+        $residencia->Modificar = 0;
         $residencia->update();
 
+    /*    
         $detalles = new DetalleResidencia();
         $detalles->MontoCartera = $request->MontoCartera;
         $detalles->Tasa = $request->Tasa;
@@ -263,10 +253,25 @@ class ResidenciaController extends Controller
         $detalles->EnvioPago = $request->EnvioPago;
         $detalles->Residencia = $residencia->Id;
         $detalles->save();
+        */
 
         return back();
     }
 
+    public function active_edit($id){
+        $residencia = Residencia::findOrfail($id);
+        $residencia->Modificar = 1;
+        $residencia->update();
+        alert()->success('El activado la modificacion correctamente');
+        return back();
+    }
+    public function desactive_edit($id){
+        $residencia = Residencia::findOrfail($id);
+        $residencia->Modificar = 0;
+        $residencia->update();
+        alert()->success('El activado la modificacion correctamente');
+        return back();
+    }
     /**
      * Remove the specified resource from storage.
      *
@@ -279,7 +284,7 @@ class ResidenciaController extends Controller
         $residencia = Residencia::findOrFail($id);
         $residencia->Activo = 0;
         $residencia->update();
-        alert()->success('El registro ha sido creado correctamente');
+        alert()->success('El registro ha sido creado correctamente')->showConfirmButton('Aceptar', '#3085d6');
         return Redirect::to('polizas/residencia');
     }
 
@@ -306,14 +311,14 @@ class ResidenciaController extends Controller
             //PolizaResidenciaTempCartera::truncate();
             //dd(Excel::toArray(new PolizaResidenciaTempCarteraImport($request->Axo, $request->Mes, $residencia->Id, $request->FechaInicio, $request->FechaFinal), $archivo));
 
-         $spreadsheet = IOFactory::load( $archivo);
-         $worksheet = $spreadsheet->getActiveSheet();
-        // $worksheet->getMergeCells() Se verifica si existen celdas combinadas
-        if(count($worksheet->getMergeCells())){
+            $spreadsheet = IOFactory::load($archivo);
+            $worksheet = $spreadsheet->getActiveSheet();
+            // $worksheet->getMergeCells() Se verifica si existen celdas combinadas
+            if (count($worksheet->getMergeCells())) {
 
-            alert()->error('El Documento NO puede tener celdas combinadas, por favor separe las siguientes celdas: '.implode(', ',$worksheet->getMergeCells()))->autoClose(100000);
-            return back();
-        }
+                alert()->error('El Documento NO puede tener celdas combinadas, por favor separe las siguientes celdas: ' . implode(', ', $worksheet->getMergeCells()))->showConfirmButton('Aceptar', '#3085d6');
+                return back();
+            }
 
             Excel::import(new PolizaResidenciaTempCarteraImport($request->Axo, $request->Mes, $residencia->Id, $request->FechaInicio, $request->FechaFinal), $archivo);
 
@@ -324,16 +329,17 @@ class ResidenciaController extends Controller
                 ->get();
 
             if ($monto_cartera_total > $residencia->LimiteGrupo) {
-                alert()->error('Error, el saldo supera el limite de grupo');
+                alert()->error('Error, el saldo supera el limite de grupo.<br> Limite de grupo: $'.number_format($residencia->LimiteGrupo, 2, '.', ','). '<br>Saldo total de la cartera: $'.number_format($monto_cartera_total, 2, '.', ','))->showConfirmButton('Aceptar', '#3085d6');
                 return back();
             }
 
             if ($asegurados_limite_individual->count() > 0) {
-                alert()->error('Error, Hay polizas que superan el limte individual');
-                return view('polizas.validacion_cartera.resultado', compact('asegurados_limite_individual'));
+                alert()->error('Error, Hay polizas que superan el limte individual')->showConfirmButton('Aceptar', '#3085d6');
+                $idPolizaResidencia=$residencia->Id;
+                return view('polizas.validacion_cartera.resultado', compact('asegurados_limite_individual','idPolizaResidencia'));
             }
 
-           /* if ($request->Validar == "on") {
+            /* if ($request->Validar == "on") {
 
                 $eliminados = DB::select('CALL lista_residencia_eliminados(?, ?, ?, ?, ?, ?)', [$axo_evaluar, $mes_evaluar, $residencia->Id, auth()->user()->id, $request->Axo, $request->Mes]);
 
@@ -351,13 +357,15 @@ class ResidenciaController extends Controller
             session(['MontoCartera' => $monto_cartera_total]);
             session(['FechaInicio' => $request->FechaInicio]);
             session(['FechaFinal' => $request->FechaFinal]);
+            $idA = uniqid();
+            $filePath = 'documentos/polizas/' . $idA . $residencia->NumeroPoliza . '-' . $nombreMes . '-' . $request->Axo . '-Residencia.xlsx';
 
-            $filePath = 'documentos/polizas/' . $residencia->NumeroPoliza . '-' . $nombreMes . '-' . $request->Axo . '-Residencia.xlsx';
-            Storage::disk('public')->put($filePath, file_get_contents($archivo));
+            $archivo->move(public_path("documentos/polizas/"), $filePath);
+            // Storage::disk('public')->put($filePath, file_get_contents($archivo));
 
             session(['ExcelURL' => $filePath]);
 
-            alert()->success('El registro ha sido ingresado correctamente');
+            alert()->success('El registro ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
             return back();
         } catch (Throwable $e) {
             print($e);
@@ -394,7 +402,7 @@ class ResidenciaController extends Controller
         $detalle->PrimaDescontada = $request->PrimaDescontada;
         $detalle->ExcelURL = $request->ExcelURL;
         $detalle->save();
-        alert()->success('El registro de pago ha sido ingresado correctamente');
+        alert()->success('El registro de pago ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
         return back();
     }
 
@@ -414,41 +422,42 @@ class ResidenciaController extends Controller
         //     return back();
         // } else {
 
-            //dd($request->EnvioCartera .' 00:00:00');
-            if ($request->EnvioCartera) {
-                $detalle->EnvioCartera = $request->EnvioCartera;
-            }
-            if ($request->EnvioPago) {
-                $detalle->EnvioPago = $request->EnvioPago;
-            }
-            if ($request->PagoAplicado) {
-                $detalle->PagoAplicado = $request->PagoAplicado;
-            }
-            $detalle->Comentario = $request->Comentario;
+        //dd($request->EnvioCartera .' 00:00:00');
+        if ($request->EnvioCartera) {
+            $detalle->EnvioCartera = $request->EnvioCartera;
+        }
+        if ($request->EnvioPago) {
+            $detalle->EnvioPago = $request->EnvioPago;
+        }
+        if ($request->PagoAplicado) {
+            $detalle->PagoAplicado = $request->PagoAplicado;
+        }
+        $detalle->Comentario = $request->Comentario;
 
-            /*$detalle->EnvioPago = $request->EnvioPago;
+        /*$detalle->EnvioPago = $request->EnvioPago;
             $detalle->PagoAplicado = $request->PagoAplicado;*/
-            $detalle->update();
-            alert()->success('El registro ha sido ingresado correctamente');
-     //   }
+        $detalle->update();
+        alert()->success('El registro ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
+        //   }
 
 
 
         return back();
     }
 
-    public function recibo_pago($id,Request $request){
+    public function recibo_pago($id, Request $request)
+    {
         $detalle = DetalleResidencia::findOrFail($id);
         $residencia = Residencia::findOrFail($detalle->Residencia);
 
-            $detalle->SaldoA = $request->SaldoA;
-            $detalle->ImpresionRecibo = $request->ImpresionRecibo;
-            $detalle->Comentario = $request->Comentario;
-            $detalle->update();
-            $pdf = \PDF::loadView('polizas.residencia.recibo', compact('detalle', 'residencia'))->setWarnings(false)->setPaper('letter');
-            return $pdf->stream('Recibo.pdf');
+        $detalle->SaldoA = $request->SaldoA;
+        $detalle->ImpresionRecibo = $request->ImpresionRecibo;
+        $detalle->Comentario = $request->Comentario;
+        $detalle->update();
+        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('detalle', 'residencia'))->setWarnings(false)->setPaper('letter');
+        return $pdf->stream('Recibo.pdf');
 
-            return back();
+        return back();
     }
 
     public function get_pago($id)
@@ -461,7 +470,8 @@ class ResidenciaController extends Controller
     {
         $residencia = Residencia::findOrFail($id);
         $estados_poliza = EstadoPoliza::where('Activo', 1)->get();
-        return view('polizas.residencia.renovar', compact('residencia', 'estados_poliza'));
+        $ejecutivo = Ejecutivo::where('Activo','=',1)->get();
+        return view('polizas.residencia.renovar', compact('residencia', 'estados_poliza','ejecutivo'));
     }
 
     public function renovarPoliza(Request $request, $id)
@@ -473,11 +483,12 @@ class ResidenciaController extends Controller
         $residencia->VigenciaHasta = $request->VigenciaHasta;
         $residencia->LimiteGrupo = $request->LimiteGrupo;
         $residencia->LimiteIndividual = $request->LimiteIndividual;
-        $residencia->MontoCartera = $request->MontoCartera;
+       // $residencia->MontoCartera = $request->MontoCartera;
         $residencia->Tasa = $request->Tasa;
+        $residencia->Ejecutivo = $request->Ejecutivo;
         $residencia->update();
 
-        alert()->success('La poliza fue renovada correctamente');
+        alert()->success('La poliza fue renovada correctamente')->showConfirmButton('Aceptar', '#3085d6');
         return back();
     }
 
@@ -486,7 +497,7 @@ class ResidenciaController extends Controller
         $detalle = DetalleResidencia::findOrFail($id);
         $detalle->Activo = 0;
         $detalle->update();
-        alert()->success('El registro ha sido ingresado correctamente');
+        alert()->success('El registro ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
         return back();
     }
 }

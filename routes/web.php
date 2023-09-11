@@ -25,6 +25,8 @@ use App\Http\Controllers\polizas\DeudaController;
 use App\Http\Controllers\polizas\VidaController;
 use App\Http\Controllers\polizas\ResidenciaController;
 use App\Http\Controllers\polizas\ValidacionCarteraController;
+use App\Http\Controllers\seguridad\PermissionController;
+use App\Http\Controllers\seguridad\RoleController;
 use App\Models\catalogo\Aseguradora;
 
 /*
@@ -48,26 +50,27 @@ Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-/*
+
 //security
+
+Route::post('usuario/rol_link', [UserController::class, 'rol_link']);
+Route::post('usuario/rol_unlink', [UserController::class, 'rol_unlink']);
 Route::resource('permission', PermissionController::class);
-Route::post('permission/unlink', [PermissionController::class, 'unlink']);
-Route::post('permission/link', [PermissionController::class, 'link']);
-Route::post('role/unlink', [UserController::class, 'unlink']);
-Route::post('role/link', [UserController::class, 'link']);
+Route::post('role/permission_unlink', [RoleController::class, 'permission_unlink']);
+Route::post('role/permission_link', [RoleController::class, 'permission_link']);
 Route::resource('rol', RoleController::class);
-Route::resource('usuario', UserController::class);*/
+Route::resource('usuario', UserController::class);
 
 
 //catalogos
 Route::get('/home', [HomeController::class, 'index'])->name('home');
-Route::post('catalogo/aseguradora/add_contacto', [AseguradoraController::class,'add_contacto']);
-Route::post('catalogo/aseguradora/delete_contacto', [AseguradoraController::class,'delete_contacto']);
-Route::post('catalogo/aseguradora/edit_contacto', [AseguradoraController::class,'edit_contacto']);
-Route::get('catalogo/aseguradora/addCargo',[AseguradoraController::class, 'addCargo']);
-Route::post('catalogo/aseguradora/attach_necesidad_proteccion', [AseguradoraController::class,'attach_necesidad_proteccion']);
-Route::post('catalogo/aseguradora/detach_necesidad_proteccion', [AseguradoraController::class,'detach_necesidad_proteccion']);
-Route::get('catalogo/aseguradora/get_necesidad/{id}', [AseguradoraController::class,'get_necesidad']);
+Route::post('catalogo/aseguradora/add_contacto', [AseguradoraController::class, 'add_contacto']);
+Route::post('catalogo/aseguradora/delete_contacto', [AseguradoraController::class, 'delete_contacto']);
+Route::post('catalogo/aseguradora/edit_contacto', [AseguradoraController::class, 'edit_contacto']);
+Route::get('catalogo/aseguradora/addCargo', [AseguradoraController::class, 'addCargo']);
+Route::post('catalogo/aseguradora/attach_necesidad_proteccion', [AseguradoraController::class, 'attach_necesidad_proteccion']);
+Route::post('catalogo/aseguradora/detach_necesidad_proteccion', [AseguradoraController::class, 'detach_necesidad_proteccion']);
+Route::get('catalogo/aseguradora/get_necesidad/{id}', [AseguradoraController::class, 'get_necesidad']);
 Route::resource('catalogo/aseguradoras', AseguradoraController::class);
 Route::resource('catalogo/ejecutivos', EjecutivoController::class);
 Route::resource('catalogo/estado_polizas', EstadoPolizaController::class);
@@ -78,90 +81,88 @@ Route::resource('catalogo/tipo_negocio', TipoNegocioController::class);
 Route::resource('catalogo/tipo_poliza', TipoPolizaController::class);
 Route::resource('catalogo/ubicacion_cobro', UbicacionCobroController::class);
 Route::resource('catalogo/necesidad_proteccion', NecesidadProteccionController::class);
-Route::resource('catalogo/necesidad_aseguradora',AsignacionNecesidadAseguradoraController::class);
+Route::resource('catalogo/necesidad_aseguradora', AsignacionNecesidadAseguradoraController::class);
 Route::resource('catalogo/departamento_nr', DepartamentoNRController::class);
 
 
-Route::post('catalogo/cliente/add_contacto', [ClienteController::class,'add_contacto']);
-Route::post('catalogo/cliente/delete_contacto', [ClienteController::class,'delete_contacto']);
-Route::post('catalogo/cliente/edit_contacto', [ClienteController::class,'edit_contacto']);
-Route::post('catalogo/cliente/add_tarjeta', [ClienteController::class,'add_tarjeta']);
-Route::post('catalogo/cliente/delete_tarjeta', [ClienteController::class,'delete_tarjeta']);
-Route::post('catalogo/cliente/edit_tarjeta', [ClienteController::class,'edit_tarjeta']);
-Route::post('catalogo/cliente/add_habito', [ClienteController::class,'add_habito']);
-Route::post('catalogo/cliente/edit_habito', [ClienteController::class,'edit_habito']);
-Route::post('catalogo/cliente/delete_habito', [ClienteController::class,'delete_habito']);
-Route::post('catalogo/cliente/add_retroalimentacion', [ClienteController::class,'add_retroalimentacion']);
-Route::post('catalogo/cliente/delete_retroalimentacion', [ClienteController::class,'delete_retroalimentacion']);
-Route::post('catalogo/cliente/edit_retroalimentacion', [ClienteController::class,'edit_retroalimentacion']);
-Route::post('catalogo/cliente/red_social', [ClienteController::class,'red_social']);
-Route::post('catalogo/cliente/active/{id}', [ClienteController::class,'active']);
-Route::get('catalogo/cliente/addCargo',[ClienteController::class, 'addCargo']);
-Route::get('catalogo/cliente/addMotivo',[ClienteController::class, 'addMotivo']);
-Route::post('catalogo/cliente/documento',[ClienteController::class,'agregar_documento']);
-Route::post('catalogo/cliente/documento_eliminar/{id}',[ClienteController::class,'eliminar_documento']);
-Route::post('catalogo/aseguradora/documento',[AseguradoraController::class,'agregar_documento']);
-Route::post('catalogo/aseguradora/documento_eliminar/{id}',[AseguradoraController::class,'eliminar_documento']);
-Route::get('catalogo/cliente/addPreferencia',[ClienteController::class, 'addPreferencia']);
+Route::post('catalogo/cliente/add_contacto', [ClienteController::class, 'add_contacto']);
+Route::post('catalogo/cliente/delete_contacto', [ClienteController::class, 'delete_contacto']);
+Route::post('catalogo/cliente/edit_contacto', [ClienteController::class, 'edit_contacto']);
+Route::post('catalogo/cliente/add_tarjeta', [ClienteController::class, 'add_tarjeta']);
+Route::post('catalogo/cliente/delete_tarjeta', [ClienteController::class, 'delete_tarjeta']);
+Route::post('catalogo/cliente/edit_tarjeta', [ClienteController::class, 'edit_tarjeta']);
+Route::post('catalogo/cliente/add_habito', [ClienteController::class, 'add_habito']);
+Route::post('catalogo/cliente/edit_habito', [ClienteController::class, 'edit_habito']);
+Route::post('catalogo/cliente/delete_habito', [ClienteController::class, 'delete_habito']);
+Route::post('catalogo/cliente/add_retroalimentacion', [ClienteController::class, 'add_retroalimentacion']);
+Route::post('catalogo/cliente/delete_retroalimentacion', [ClienteController::class, 'delete_retroalimentacion']);
+Route::post('catalogo/cliente/edit_retroalimentacion', [ClienteController::class, 'edit_retroalimentacion']);
+Route::post('catalogo/cliente/red_social', [ClienteController::class, 'red_social']);
+Route::post('catalogo/cliente/active/{id}', [ClienteController::class, 'active']);
+Route::get('catalogo/cliente/addCargo', [ClienteController::class, 'addCargo']);
+Route::get('catalogo/cliente/addMotivo', [ClienteController::class, 'addMotivo']);
+Route::post('catalogo/cliente/documento', [ClienteController::class, 'agregar_documento']);
+Route::post('catalogo/cliente/documento_eliminar/{id}', [ClienteController::class, 'eliminar_documento']);
+Route::post('catalogo/aseguradora/documento', [AseguradoraController::class, 'agregar_documento']);
+Route::post('catalogo/aseguradora/documento_eliminar/{id}', [AseguradoraController::class, 'eliminar_documento']);
+Route::get('catalogo/cliente/addPreferencia', [ClienteController::class, 'addPreferencia']);
 Route::resource('catalogo/cliente', ClienteController::class);
 Route::resource('catalogo/cliente', ClienteController::class);
 Route::get('catalogo/cliente_create', [ClienteController::class, 'cliente_create']);
-Route::get('catalogo/negocio/get_aseguradora',[NegocioController::class,'get_aseguradoras']);
+Route::get('catalogo/negocio/get_aseguradora', [NegocioController::class, 'get_aseguradoras']);
 Route::resource('catalogo/negocio', NegocioController::class);
-Route::resource('catalogo/ruta',RutaController::class);
-Route::get('negocio/getCliente',[NegocioController::class, 'getCliente']);
-Route::get('catalogo/negocios/store_aseguradora',[NegocioController::class,'store_aseguradora']);
+Route::resource('catalogo/ruta', RutaController::class);
+Route::get('negocio/getCliente', [NegocioController::class, 'getCliente']);
+Route::get('catalogo/negocios/store_aseguradora', [NegocioController::class, 'store_aseguradora']);
 Route::resource('catalogo/tipo_cobro', TipoCobroController::class);
-Route::resource('catalogo/area_comercial',AreaComercialController::class);
-Route::resource('catalogo/bombero',BomberoController::class);
+Route::resource('catalogo/area_comercial', AreaComercialController::class);
+Route::resource('catalogo/bombero', BomberoController::class);
 Route::get('catalogo/negocios/consultar', [NegocioController::class, 'consultar']);
 Route::get('get_municipio/{id}', [ClienteController::class, 'get_municipio']);
 Route::get('get_distrito/{id}', [ClienteController::class, 'get_distrito']);
 
 
 //pólizas
-Route::get('polizas/residencia/get_recibo',[ResidenciaController::class,'impresion']);
+Route::get('polizas/residencia/get_recibo', [ResidenciaController::class, 'impresion']);
 Route::resource('polizas/residencia', ResidenciaController::class);
-Route::post('polizas/residencia/create_pago', [ResidenciaController::class,'create_pago']);
-Route::post('polizas/residencia/agregar_pago', [ResidenciaController::class,'agregar_pago']);
-Route::post('polizas/residencia/edit_pago', [ResidenciaController::class,'edit_pago']);
-Route::post('poliza/residencia/recibo/{id}',[ResidenciaController::class,'recibo_pago']);
-Route::get('polizas/residencia/get_recibo',[ResidenciaController::class,'impresion']);
-Route::get('polizas/residencia/get_pago/{id}', [ResidenciaController::class,'get_pago']);
-Route::get('polizas/residencia/{id}/renovar',[ResidenciaController::class, 'renovar']);
-Route::get('polizas/residencia/{id}/cancelacion',[ResidenciaController::class, 'cancelacion']);
-Route::post('polizas/residencia/renovar/{id}',[ResidenciaController::class, 'renovarPoliza'])->name('residencia.renovarPoliza');
+Route::post('polizas/residencia/create_pago', [ResidenciaController::class, 'create_pago']);
+Route::post('polizas/residencia/agregar_pago', [ResidenciaController::class, 'agregar_pago']);
+Route::post('polizas/residencia/edit_pago', [ResidenciaController::class, 'edit_pago']);
+Route::post('poliza/residencia/recibo/{id}', [ResidenciaController::class, 'recibo_pago']);
+Route::post('poliza/residencia/active/{id}', [ResidenciaController::class, 'active_edit']);
+Route::post('poliza/residencia/desactive/{id}', [ResidenciaController::class, 'desactive_edit']);
+Route::get('polizas/residencia/get_recibo', [ResidenciaController::class, 'impresion']);
+Route::get('polizas/residencia/get_pago/{id}', [ResidenciaController::class, 'get_pago']);
+Route::get('polizas/residencia/{id}/renovar', [ResidenciaController::class, 'renovar']);
+Route::get('polizas/residencia/{id}/cancelacion', [ResidenciaController::class, 'cancelacion']);
+Route::post('polizas/residencia/renovar/{id}', [ResidenciaController::class, 'renovarPoliza'])->name('residencia.renovarPoliza');
 Route::post('polizas/residencia/delete_pago/{id}', [ResidenciaController::class, 'delete_pago']);
 
 Route::resource('polizas/vida', VidaController::class);
-Route::post('polizas/vida/create_pago', [VidaController::class,'create_pago']);
-Route::post('polizas/vida/edit_pago', [VidaController::class,'edit_pago']);
-Route::get('polizas/vida/get_pago/{id}', [VidaController::class,'get_pago']);
+Route::post('polizas/vida/create_pago', [VidaController::class, 'create_pago']);
+Route::post('polizas/vida/edit_pago', [VidaController::class, 'edit_pago']);
+Route::get('polizas/vida/get_pago/{id}', [VidaController::class, 'get_pago']);
 Route::get('get_cliente', [VidaController::class, 'get_cliente']);
-Route::get('polizas/vida/{id}/renovar',[VidaController::class, 'renovar']);
-Route::post('polizas/vida/renovar/{id}',[VidaController::class, 'renovarPoliza'])->name('vida.renovarPoliza');
+Route::get('polizas/vida/{id}/renovar', [VidaController::class, 'renovar']);
+Route::post('polizas/vida/renovar/{id}', [VidaController::class, 'renovarPoliza'])->name('vida.renovarPoliza');
 
-Route::post('poliza/vida/usuario_edit',[VidaController::class, 'editarUsuario']);
-Route::post('poliza/vida/usuario_delete',[VidaController::class,'eliminarUsuario']);
+Route::post('poliza/vida/usuario_edit', [VidaController::class, 'editarUsuario']);
+Route::post('poliza/vida/usuario_delete', [VidaController::class, 'eliminarUsuario']);
 
 
-Route::get('poliza/vida/usuario_create',[VidaController::class, 'agregarUsuario']);
-Route::get('poliza/vida/usuario/{id}',[VidaController::class, 'getUsuario']);
+Route::get('poliza/vida/usuario_create', [VidaController::class, 'agregarUsuario']);
+Route::get('poliza/vida/usuario/{id}', [VidaController::class, 'getUsuario']);
 
-Route::post('polizas/deuda/store_requisitos',[DeudaController::class, 'store_requisitos']);
-Route::get('polizas/deuda/get_requisitos',[DeudaController::class, 'get_requisitos']);
-Route::resource('polizas/deuda',DeudaController::class);
-Route::post('polizas/deuda/create_pago', [DeudaController::class,'create_pago']);
-Route::post('polizas/deuda/agregar_pago', [DeudaController::class,'agregar_pago']);
-Route::get('polizas/deuda/get_pago/{id}', [DeudaController::class,'get_pago']);
-Route::post('polizas/deuda/edit_pago', [DeudaController::class,'edit_pago']);
+Route::post('polizas/deuda/store_requisitos', [DeudaController::class, 'store_requisitos']);
+Route::get('polizas/deuda/get_requisitos', [DeudaController::class, 'get_requisitos']);
+Route::resource('polizas/deuda', DeudaController::class);
+Route::post('polizas/deuda/create_pago', [DeudaController::class, 'create_pago']);
+Route::post('polizas/deuda/agregar_pago', [DeudaController::class, 'agregar_pago']);
+Route::get('polizas/deuda/get_pago/{id}', [DeudaController::class, 'get_pago']);
+Route::post('polizas/deuda/edit_pago', [DeudaController::class, 'edit_pago']);
 Route::post('polizas/deuda/delete_pago/{id}', [DeudaController::class, 'delete_pago']);
 
 
 
 //validación de cartera
 Route::resource('polizas/validacion_cartera', ValidacionCarteraController::class);
-
-
-
-

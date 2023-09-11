@@ -58,19 +58,22 @@ class AseguradoraController extends Controller
 
     public function agregar_documento(Request $request)
     {
-
-        $archivo = $request->file('Archivo');
+        $archivo = $request->file('Archivo'); 
+        
+        $id = uniqid();
+        $filePath =  $id . $archivo->getClientOriginalName();
+        $archivo->move(public_path("documentos/aseguradoras/"), $filePath);
 
 
         $documento = new AseguradoraDocumento();
         $documento->Aseguradora = $request->input('Aseguradora');
-        $documento->Nombre = $archivo->getClientOriginalName();
+        $documento->Nombre = $filePath;
+        $documento->NombreOriginal = $archivo->getClientOriginalName();
         $documento->Activo = 1;
         $documento->save();
 
         $filePath = 'documentos/aseguradoras/' . $archivo->getClientOriginalName();
 
-        Storage::disk('public')->put($filePath, file_get_contents($archivo));
         alert()->success('El registro ha sido creado correctamente');
         session(['tab1' => '4']);
         return back();
@@ -154,6 +157,7 @@ class AseguradoraController extends Controller
 
     public function edit($id)
     {
+        session(['tab1' => '1']);
         $aseguradora = Aseguradora::findOrFail($id);
         $tipo_contribuyente = TipoContribuyente::get();
         $contactos = AseguradoraContacto::where('Aseguradora', '=', $id)->get();

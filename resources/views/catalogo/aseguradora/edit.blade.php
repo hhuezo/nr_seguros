@@ -335,9 +335,9 @@
                                     </thead>
                                     <tbody>
                                         @foreach($documentos as $obj)
-                                        @php($file = asset('storage/documentos/aseguradoras/'.$obj->Nombre))
+                                     
                                         <tr>
-                                            <td><a href="{{ $file }}" class="btn btn-default" align="center" target="_blank"><i class="fa fa-download"></i>&nbsp; {{$obj->Nombre}}</a></td>
+                                            <td><a href="{{ asset('documentos/aseguradoras') }}/{{$obj->Nombre}}" class="btn btn-default" align="center" target="_blank"><i class="fa fa-download"></i>&nbsp; {{$obj->NombreOriginal}}</a></td>
                                             <td style="text-align: center;" valign="center">
                                                 <i class="fa fa-trash fa-lg" data-target="#modal-delete-documento-{{ $obj->Id }}" data-toggle="modal" ></i>
                                             </td>

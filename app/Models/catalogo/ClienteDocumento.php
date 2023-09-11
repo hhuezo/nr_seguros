@@ -19,6 +19,7 @@ class ClienteDocumento extends Model
 
         'Cliente',
         'Nombre',
+        'NombreOriginal',
         'Activo'
 
     ];

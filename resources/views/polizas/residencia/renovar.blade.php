@@ -8,7 +8,7 @@
             <div class="x_title">
                 <h2>RESI - Poliza de Residencia Renovar o Cancelar Poliza <small></small></h2>
                 <ul class="nav navbar-right panel_toolbox">
-
+                <a href="{{url('polizas/residencia')}}" class="btn btn-info fa fa-undo " style="color: white"> Atrás</a>
                 </ul>
                 <div class="clearfix"></div>
             </div>
@@ -36,7 +36,7 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right" style="margin-top: -3%;">Número de Póliza</label>
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right" >Número de Póliza</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                 <input class="form-control" name="NumeroPoliza" type="text" value="{{ $residencia->NumeroPoliza }}" readonly>
                             </div>
