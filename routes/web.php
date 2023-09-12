@@ -106,8 +106,6 @@ Route::post('catalogo/cliente/documento_eliminar/{id}', [ClienteController::clas
 Route::post('catalogo/aseguradora/documento', [AseguradoraController::class, 'agregar_documento']);
 Route::post('catalogo/aseguradora/documento_eliminar/{id}', [AseguradoraController::class, 'eliminar_documento']);
 Route::get('catalogo/cliente/addPreferencia', [ClienteController::class, 'addPreferencia']);
-Route::resource('catalogo/cliente', ClienteController::class);
-Route::resource('catalogo/cliente', ClienteController::class);
 Route::get('catalogo/cliente_create', [ClienteController::class, 'cliente_create']);
 Route::get('catalogo/negocio/get_aseguradora', [NegocioController::class, 'get_aseguradoras']);
 Route::resource('catalogo/negocio', NegocioController::class);
@@ -120,6 +118,12 @@ Route::resource('catalogo/bombero', BomberoController::class);
 Route::get('catalogo/negocios/consultar', [NegocioController::class, 'consultar']);
 Route::get('get_municipio/{id}', [ClienteController::class, 'get_municipio']);
 Route::get('get_distrito/{id}', [ClienteController::class, 'get_distrito']);
+
+Route::get('catalogo/cliente/getMetodoPago', [ClienteController::class, 'getMetodoPago']);
+Route::get('catalogo/cliente/verificarCredenciales', [ClienteController::class, 'verificarCredenciales']);
+
+Route::resource('catalogo/cliente', ClienteController::class);//el resource va siempre de ultimo o ocurre problema con metodo controller::show()
+
 
 
 //pólizas
