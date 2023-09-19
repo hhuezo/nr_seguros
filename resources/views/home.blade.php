@@ -97,6 +97,10 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
+    let fechas = obtenerPrimerYUltimoDiaDelMes();
+        $("#FechaInicioDetalle").val(fechas.primerDia);
+        $("#FechaFinalDetalle").val(fechas.primerDiaSiguienteMes);
+        generarPrimaGeneral();
 
     $("#tablaPrimas").hide();
     $("#btnPrimaGeneral").on("click", function() {
@@ -104,6 +108,21 @@ $(document).ready(function() {
     });
 
 });
+  // Función para obtener el primer día y el último día del mes actual
+  function obtenerPrimerYUltimoDiaDelMes() {
+            let fechaActual = new Date();
+            let primerDiaDelMes = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), 1);
+            let ultimoDiaDelMes = new Date(fechaActual.getFullYear(), fechaActual.getMonth() + 1, 0);
+            let primerDiaSiguienteMes = new Date(fechaActual.getFullYear(), fechaActual.getMonth() + 1, 1);
+            return {
+                primerDia: primerDiaDelMes.toISOString().slice(0, 10),
+                diaActual: fechaActual.toISOString().slice(0, 10),
+                ultimoDia: ultimoDiaDelMes.toISOString().slice(0, 10),
+                primerDiaSiguienteMes: primerDiaSiguienteMes.toISOString().slice(0, 10)
+            };
+        }
+
+
 function generarPrimaGeneral() {
     let parametros = {
                         "FechaInicioDetalle": $('#FechaInicioDetalle').val(),
