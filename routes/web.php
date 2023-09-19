@@ -49,6 +49,8 @@ Route::get('/', [HomeController::class, 'index']);
 Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::get('/home/getPrimaGeneral', [HomeController::class, 'getPrimaGeneral']);
+
 
 
 //security
