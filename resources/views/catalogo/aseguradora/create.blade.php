@@ -125,8 +125,12 @@
                                 @endforeach
                             </select>
                         </div>
+                        <div class="col-sm-6">
+                            <label for="DireccionResidencia" class="form-label">Calculo Diario</label>
+                            <input type="checkbox" name="Diario" id="Diario" class="form-control" >
+                        </div>
                     </div>
-
+                    
                 </div>
                 <div class="form-group" align="center">
                     <button class="btn btn-success" type="submit">Guardar</button>

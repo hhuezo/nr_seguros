@@ -122,7 +122,6 @@ class AseguradoraController extends Controller
                 'Nit' => 'required|unique:aseguradora',
             ], $messages);
         }
-        
 
         $max = Aseguradora::max('Codigo');
 
@@ -141,6 +140,11 @@ class AseguradoraController extends Controller
         $aseguradora->TelefonoWhatsapp = $request->TelefonoWhatsapp;
         $aseguradora->Distrito = $request->Distrito;
         $aseguradora->Activo = 1;
+        if($request->get('Diario') == 'on'){
+            $aseguradora->Diario = 1;
+        }else{
+            $aseguradora->Diario = 0;
+        }
         $aseguradora->save();
 
         session(['tab1' => '1']);
@@ -237,6 +241,11 @@ class AseguradoraController extends Controller
         $aseguradora->TelefonoFijo = $request->TelefonoFijo;
         $aseguradora->TelefonoWhatsapp = $request->TelefonoWhatsapp;
         $aseguradora->Distrito = $request->Distrito;
+        if($request->get('Diario') == 'on'){
+            $aseguradora->Diario = 1;
+        }else{
+            $aseguradora->Diario = 0;
+        }
         $aseguradora->update();
         session(['tab1' => '1']);
         alert()->success('El registro ha sido creado correctamente');
