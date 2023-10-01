@@ -34,7 +34,7 @@ class HomeController extends Controller
         if ($datosRecibidos->count()>0) {
             return response()->json(['datosRecibidos' => $datosRecibidos], 200);
         } else {
-            return response()->json(['$datosRecibidos' => $datosRecibidos], 404);
+            return response()->json(['datosRecibidos' => $datosRecibidos], 404);
         }
     }
 
