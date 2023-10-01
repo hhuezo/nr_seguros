@@ -16,6 +16,7 @@ class PolizaResidenciaCartera extends Model
 
     protected $fillable = [
         'Dui',
+        'Nit',
         'Pasaporte',
         'CarnetResidencia',
         'Nacionalidad',
@@ -39,6 +40,7 @@ class PolizaResidenciaCartera extends Model
         'Mes',
         'PolizaResidencia',
         'FechaInicio',
-        'FechaFinal'
+        'FechaFinal',
+        'IdUnicoCartera'
     ];
 }
