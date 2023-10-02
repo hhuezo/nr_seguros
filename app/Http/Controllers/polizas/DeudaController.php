@@ -65,7 +65,7 @@ class DeudaController extends Controller
         if ($bombero) {
             $bomberos = $bombero->Valor;
         } else {
-            $bomberos = $bombero->Valor;
+            $bomberos = 0;
         }
         $aseguradora = Aseguradora::where('Activo', 1)->get();
         $cliente = Cliente::where('Activo', 1)->get();

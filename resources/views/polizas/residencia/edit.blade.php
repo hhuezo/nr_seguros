@@ -39,6 +39,8 @@
                     </li>
                     <li role="presentation" class=""><a href="#tab_content3" role="tab" id="creditos-tab" data-toggle="tab" aria-expanded="false">Calculo de Cartera {{$residencia->NumeroPoliza}}</a>
                     </li>
+                    <li role="presentation" class=""><a href="#tab_content5" role="tab" id="recibos-tab" data-toggle="tab" aria-expanded="false">Recibos</a>
+                    </li>
 
 
 
@@ -366,7 +368,7 @@
                                 <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-{{ $obj->Id }}">
 
                                     <form method="POST" action="{{ url('polizas/residencia/delete_pago', $obj->Id) }}">
-                                        @method('delete')
+                                        @method('POST')
                                         @csrf
                                         <div class="modal-dialog">
                                             <div class="modal-content">
@@ -516,7 +518,7 @@
                                                     </label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                                         <div class="form-group has-feedback">
-                                                            <input class="form-control" name="MontoCartera" id="MontoCartera" type="number" step="any" style="text-align: right;" value="{{ number_format(session('MontoCartera', 0),2,'.',',') }}" required>
+                                                            <input class="form-control" name="MontoCartera" id="MontoCartera" type="number" step="any" style="text-align: right;" value="{{ session('MontoCartera', 0) }}" required>
                                                             <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                                                         </div>
 
@@ -960,6 +962,48 @@
                             </div>
                         </div>
                     </div>
+                    <div role="tabpanel" class="tab-pane fade" id="tab_content5" aria-labelledby="recibos-tab">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+
+                                <div class="x_title">
+                                    <h4>&nbsp;&nbsp; Recibos<small></small>
+                                    </h4>
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+                                    &nbsp;
+                                </div>
+                                <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                                    <table  width="100%" class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Impresión <br> de Recibo</th>
+                                                <th>Saldo A</th>
+                                                <th>Fecha Inicio</th>
+                                                <th>Fecha Final</th>
+                                                <th><i class="fa fa-filef"></i>Opciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($detalle as $obj)
+                                            @if($obj->ImpresionRecibo <> null)
+                                            <tr>
+                                                <td>{{\Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}  </td>
+                                                <td> {{\Carbon\Carbon::parse($obj->SaldoA)->format('d/m/Y') }}</td>
+                                                <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
+                                                <td> {{\Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
+                                                <td><a href="{{url('poliza/residencia/get_recibo')}}/{{$obj->Id}}" target="_blank" class="btn btn-info">Generar Recibo</a></td>
+                                            </tr>
+                                            @endif
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal fade " id="modal_editar_pago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
                     <div class="modal-dialog modal-lg" role="document">
@@ -1108,7 +1152,7 @@
             // Determine the number of days between two dates  
             var dias_mes = (millisBetween / (1000 * 3600 * 24)) + 1;
 
-            ///alert(dias_axo);
+            //alert(dias_axo);
             //alert(dias_mes);
 
             var tasa = document.getElementById('Tasa').value;
@@ -1123,7 +1167,7 @@
             } else {
                 var sub = parseFloat(monto) * parseFloat(tasaFinal);
             }
-           // alert(sub);
+            // alert(sub);
             document.getElementById('PruebaDecimales').value = sub;
             document.getElementById('PrimaCalculada').value = sub.toLocaleString('sv-SV', {
                 minimumFractionDigits: 2,
@@ -1161,7 +1205,7 @@
         function calculoDescuento() {
             var tasa = document.getElementById('TasaDescuento').value;
             var primaTotal = document.getElementById('PrimaTotal').value;
-            if (tasa < 1) {
+            if (tasa < 0) {
                 document.getElementById('Descuento').value = tasa * primaTotal;
             } else {
                 document.getElementById('Descuento').value = (tasa / 100) * primaTotal;
