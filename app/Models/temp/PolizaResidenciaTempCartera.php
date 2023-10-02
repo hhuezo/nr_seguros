@@ -16,6 +16,7 @@ class PolizaResidenciaTempCartera extends Model
 
     protected $fillable = [
         'Dui',
+        'Nit',
         'Pasaporte',
         'CarnetResidencia',
         'Nacionalidad',

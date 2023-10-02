@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use PDF;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use Illuminate\Support\Str;
 
 
 class ResidenciaController extends Controller
@@ -206,6 +207,7 @@ class ResidenciaController extends Controller
     {
         $messages = [
 
+
             'LimiteGrupo.required' => 'El Límite Grupal es requerido',
             'LimiteIndividual.required' => 'El Límite Individual es requerido',
             'Tasa.required' => 'El valor de la Tasa es requerido',
@@ -232,7 +234,7 @@ class ResidenciaController extends Controller
         $residencia->Modificar = 0;
         $residencia->update();
 
-        /*    
+    /*    
         $detalles = new DetalleResidencia();
         $detalles->MontoCartera = $request->MontoCartera;
         $detalles->Tasa = $request->Tasa;
@@ -294,7 +296,7 @@ class ResidenciaController extends Controller
     {
         $fecha = Carbon::create(null, $request->Mes, 1);
         $nombreMes = $fecha->locale('es')->monthName;
-
+        $idUnicoCartera=Str::random(40);
         $time = Carbon::now('America/El_Salvador');
 
         $residencia = Residencia::findOrFail($request->Id);
@@ -350,12 +352,15 @@ class ResidenciaController extends Controller
                 return view('polizas.validacion_cartera.resultado', compact('nuevos', 'eliminados'));
             }*/
 
-            DB::statement("CALL insertar_temp_cartera_residencia(?, ?, ?, ?)", [auth()->user()->id, $request->Axo, $request->Mes, $residencia->Id]);
+            DB::statement("CALL insertar_temp_cartera_residencia(?, ?, ?, ?, ?)", [auth()->user()->id, $request->Axo, $request->Mes, $residencia->Id,$idUnicoCartera]);
 
             $monto_cartera_total = PolizaResidenciaCartera::where('Axo', $request->Axo)
                 ->where('Mes', $request->Mes)
-                ->where('PolizaResidencia', $residencia->Id)->sum('SumaAsegurada');
+                ->where('PolizaResidencia', $residencia->Id)
+                ->where('User', auth()->user()->id)
+                ->where('IdUnicoCartera', $idUnicoCartera)->sum('SumaAsegurada');
 
+            session(['idUnicoCartera' => $idUnicoCartera]);
             session(['MontoCartera' => $monto_cartera_total]);
             session(['FechaInicio' => $request->FechaInicio]);
             session(['FechaFinal' => $request->FechaFinal]);
