@@ -64,10 +64,10 @@
                     <!-- sidebar menu -->
                     <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
                         <div class="menu_section">
-                            <h3>NR Seguros</h3>
+                           <h3>NR Seguros</h3>
                             <ul class="nav side-menu">
-                                <li><a><i class="fa fa-users"></i> Seguridad <span
-                                            class="fa fa-chevron-down"></span></a>
+                                <li><a href="{{ url('/') }}"><i class="fa fa-bar-chart"></i>Control de Primas General</a></li>
+                                <li><a><i class="fa fa-users"></i> Seguridad <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li><a href="{{ url('usuario/') }}">Usuario</a></li>
                                         <li><a href="{{ url('permission/') }}">Permisos</a></li>
@@ -120,8 +120,8 @@
                                             class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li><a href="{{ url('polizas/residencia') }}">Residencias</a></li>
-                                        <!-- <li><a href="{{ url('polizas/vida') }}">Vida</a></li>
-                                        <li><a href="{{ url('polizas/deuda') }}">Deuda</a></li>-->
+                                        <!-- <li><a href="{{ url('polizas/vida') }}">Vida</a></li>-->
+                                        <li><a href="{{ url('polizas/deuda') }}">Deuda</a></li>
                                     </ul>
                                 </li>
 

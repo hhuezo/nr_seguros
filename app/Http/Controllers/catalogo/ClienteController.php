@@ -276,6 +276,25 @@ class ClienteController extends Controller
         ));
     }
 
+    public function getMetodoPago(Request $request)
+    {
+        $datosRecibidos = ClienteTarjetaCredito::where('Id', '=', $request->id_registro_metodo_pago)->first();
+        return response()->json(['datosRecibidos' => $datosRecibidos]);
+    }
+
+    public function verificarCredenciales(Request $request) {
+        $credenciales = $request->only('email', 'password');
+
+        if (auth()->attempt($credenciales)) {
+            // Las credenciales son válidas
+            return response()->json(['mensaje' => '1'], 200);
+        } else {
+            // Las credenciales son incorrectas
+            return response()->json(['mensaje' => '0'], 401);
+        }
+    }
+
+
     public function getAge($date)
     {
         $now = Carbon::now();
@@ -467,9 +486,9 @@ class ClienteController extends Controller
     public function edit_tarjeta(Request $request)
     {
         $tarjeta = ClienteTarjetaCredito::findOrFail($request->Id);
-        $tarjeta->Cliente = $request->Cliente;
-        $tarjeta->NumeroTarjeta = $request->NumeroTarjeta;
-        $tarjeta->FechaVencimiento = $request->FechaVencimiento;
+        //$tarjeta->Cliente = $request->Cliente;
+        //$tarjeta->NumeroTarjeta = $request->NumeroTarjeta;
+        //$tarjeta->FechaVencimiento = $request->FechaVencimiento;
         $tarjeta->PolizaVinculada = $request->PolizaVinculada;
         //    $tarjeta->MetodoPago = $request->MetodoPago;
         $tarjeta->save();
@@ -483,7 +502,7 @@ class ClienteController extends Controller
     public function agregar_documento(Request $request)
     {
 
-        $archivo = $request->file('Archivo'); 
+        $archivo = $request->file('Archivo');
 
 
 

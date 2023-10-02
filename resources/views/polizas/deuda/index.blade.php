@@ -30,7 +30,11 @@
                 <tbody>
                     @foreach ($deuda as $obj)
                     <tr>
+                        @if($obj->Cliente)
                         <td>{{ $obj->clientes->Nombre }}</td>
+                        @else
+                        <td></td>
+                        @endif
                         <td>{{ $obj->aseguradoras->Nombre }}</td>
                         <td>{{ $obj->ejecutivos->Nombre }}</td>
                         @if ($obj->Activo == 1)

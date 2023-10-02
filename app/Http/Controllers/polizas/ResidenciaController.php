@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use PDF;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use Illuminate\Support\Str;
 
 
 class ResidenciaController extends Controller
@@ -205,7 +206,8 @@ class ResidenciaController extends Controller
     public function update(Request $request, $id)
     {
         $messages = [
-       
+
+
             'LimiteGrupo.required' => 'El Límite Grupal es requerido',
             'LimiteIndividual.required' => 'El Límite Individual es requerido',
             'Tasa.required' => 'El valor de la Tasa es requerido',
@@ -258,14 +260,16 @@ class ResidenciaController extends Controller
         return back();
     }
 
-    public function active_edit($id){
+    public function active_edit($id)
+    {
         $residencia = Residencia::findOrfail($id);
         $residencia->Modificar = 1;
         $residencia->update();
         alert()->success('El activado la modificacion correctamente');
         return back();
     }
-    public function desactive_edit($id){
+    public function desactive_edit($id)
+    {
         $residencia = Residencia::findOrfail($id);
         $residencia->Modificar = 0;
         $residencia->update();
@@ -292,7 +296,7 @@ class ResidenciaController extends Controller
     {
         $fecha = Carbon::create(null, $request->Mes, 1);
         $nombreMes = $fecha->locale('es')->monthName;
-
+        $idUnicoCartera=Str::random(40);
         $time = Carbon::now('America/El_Salvador');
 
         $residencia = Residencia::findOrFail($request->Id);
@@ -329,14 +333,14 @@ class ResidenciaController extends Controller
                 ->get();
 
             if ($monto_cartera_total > $residencia->LimiteGrupo) {
-                alert()->error('Error, el saldo supera el limite de grupo.<br> Limite de grupo: $'.number_format($residencia->LimiteGrupo, 2, '.', ','). '<br>Saldo total de la cartera: $'.number_format($monto_cartera_total, 2, '.', ','))->showConfirmButton('Aceptar', '#3085d6');
+                alert()->error('Error, el saldo supera el limite de grupo.<br> Limite de grupo: $' . number_format($residencia->LimiteGrupo, 2, '.', ',') . '<br>Saldo total de la cartera: $' . number_format($monto_cartera_total, 2, '.', ','))->showConfirmButton('Aceptar', '#3085d6');
                 return back();
             }
 
             if ($asegurados_limite_individual->count() > 0) {
                 alert()->error('Error, Hay polizas que superan el limte individual')->showConfirmButton('Aceptar', '#3085d6');
-                $idPolizaResidencia=$residencia->Id;
-                return view('polizas.validacion_cartera.resultado', compact('asegurados_limite_individual','idPolizaResidencia'));
+                $idPolizaResidencia = $residencia->Id;
+                return view('polizas.validacion_cartera.resultado', compact('asegurados_limite_individual', 'idPolizaResidencia'));
             }
 
             /* if ($request->Validar == "on") {
@@ -348,12 +352,15 @@ class ResidenciaController extends Controller
                 return view('polizas.validacion_cartera.resultado', compact('nuevos', 'eliminados'));
             }*/
 
-            DB::statement("CALL insertar_temp_cartera_residencia(?, ?, ?, ?)", [auth()->user()->id, $request->Axo, $request->Mes, $residencia->Id]);
+            DB::statement("CALL insertar_temp_cartera_residencia(?, ?, ?, ?, ?)", [auth()->user()->id, $request->Axo, $request->Mes, $residencia->Id,$idUnicoCartera]);
 
             $monto_cartera_total = PolizaResidenciaCartera::where('Axo', $request->Axo)
                 ->where('Mes', $request->Mes)
-                ->where('PolizaResidencia', $residencia->Id)->sum('SumaAsegurada');
+                ->where('PolizaResidencia', $residencia->Id)
+                ->where('User', auth()->user()->id)
+                ->where('IdUnicoCartera', $idUnicoCartera)->sum('SumaAsegurada');
 
+            session(['idUnicoCartera' => $idUnicoCartera]);
             session(['MontoCartera' => $monto_cartera_total]);
             session(['FechaInicio' => $request->FechaInicio]);
             session(['FechaFinal' => $request->FechaFinal]);
@@ -396,6 +403,8 @@ class ResidenciaController extends Controller
         $detalle->Retencion = $request->Retencion;
         $detalle->Residencia = $request->Residencia;
         $detalle->ExtraPrima = $request->ExtraPrima;
+        $detalle->GastosEmision = $request->GastosEmision;
+        $detalle->Otros = $request->Otros;
         $detalle->ImpuestoBomberos = $request->ImpuestoBomberos;
         $detalle->ValorDescuento = $request->ValorDescuento;
         $detalle->TasaComision = $request->TasaComision;
@@ -449,15 +458,30 @@ class ResidenciaController extends Controller
     {
         $detalle = DetalleResidencia::findOrFail($id);
         $residencia = Residencia::findOrFail($detalle->Residencia);
-
+        $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
         $detalle->SaldoA = $request->SaldoA;
         $detalle->ImpresionRecibo = $request->ImpresionRecibo;
         $detalle->Comentario = $request->Comentario;
         $detalle->update();
-        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('detalle', 'residencia'))->setWarnings(false)->setPaper('letter');
+        $calculo = $this->monto($residencia, $detalle);
+        
+        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('detalle', 'residencia', 'meses','calculo'))->setWarnings(false)->setPaper('letter');
         return $pdf->stream('Recibo.pdf');
 
-        return back();
+        //  return back();
+    }
+
+    public function get_recibo($id)
+    {
+        $detalle = DetalleResidencia::findOrFail($id);
+
+        $residencia = Residencia::findOrFail($detalle->Residencia);
+        $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        $calculo = $this->monto($residencia, $detalle);
+       // dd($calculo);
+        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('detalle', 'residencia', 'meses','calculo'))->setWarnings(false)->setPaper('letter');
+        //  dd($detalle);
+        return $pdf->stream('Recibos.pdf');
     }
 
     public function get_pago($id)
@@ -465,13 +489,88 @@ class ResidenciaController extends Controller
         return DetalleResidencia::findOrFail($id);
     }
 
+    public function monto($residencia, $detalle)
+    {
+        $calculo = array();
+        $bomberos = Bombero::where('Activo',1)->first();
+        $monto = $detalle->MontoCartera;
+        $desde = Carbon::parse($residencia->VigenciaDesde);
+        $hasta = Carbon::parse($residencia->VigenciaHasta);
+        $inicio = Carbon::parse($detalle->FechaInicio);
+        $final = Carbon::parse($detalle->FechaFinal);
+        $tasa = $residencia->Tasa;
+        $dias_axo = $desde->diffInDays($hasta);
+        $dias_mes = $final->diffInDays($inicio);
+
+        if($residencia->Mensual == 0){
+            $tasaFinal = ($tasa / 1000) /12;
+        }else{
+            $tasaFinal = $tasa / 1000;
+        }
+  
+        if($residencia->aseguradoras->Diario == 1){
+            $prima_calculada = (($monto * $tasaFinal) / $dias_axo) * $dias_mes;
+        }else{
+            $prima_calculada = $monto * $tasaFinal;
+        }
+
+        array_push($calculo,$prima_calculada);  // prima calculada
+
+        $prima_total = $prima_calculada + $detalle->ExtraPrima;
+        $tasa_descuento = $residencia->TasaDescuento;
+        if($tasa_descuento < 0){
+            $descuento = $tasa_descuento * $prima_total;
+        }else{
+            $descuento = ($tasa_descuento / 100 * $prima_total);
+        }
+
+        array_push($calculo, $descuento); // descuento rentabilidad
+
+        $prima_descontada = $prima_total - $descuento;
+
+        array_push($calculo, $prima_descontada);   //prima descontada 
+        if($bomberos){
+            $calculo_bomberos = $monto * ($bomberos->Valor /100);
+        }else{
+            $calculo_bomberos = 0;
+        }
+
+        array_push($calculo, $calculo_bomberos); //calculo de bomberos
+       
+        $sub = $prima_descontada - $calculo_bomberos;
+
+        array_push($calculo, $sub);   //calculo_subtotal
+
+        $iva = $sub * 0.13;
+        array_push($calculo,$iva);  //calculo iva
+
+        $ccf = $prima_descontada * ($residencia->Comision /100);
+        array_push($calculo, $ccf);   //valor ccf
+
+        $iva_ccf = $ccf * 0.13; 
+        array_push($calculo, $iva_ccf); // iva ccf
+
+        $total_ccf = $ccf + $iva_ccf;
+        array_push($calculo, $total_ccf);  //total ccf
+
+        $a_pagar = $sub + $iva - $total_ccf;
+        array_push ($calculo, $a_pagar);   //calculo a pagar
+
+        $facturar = $sub + $iva;
+        array_push ($calculo, $facturar);   //calculo a facturar
+    
+        return $calculo;
+
+
+    }
+
 
     public function renovar($id)
     {
         $residencia = Residencia::findOrFail($id);
         $estados_poliza = EstadoPoliza::where('Activo', 1)->get();
-        $ejecutivo = Ejecutivo::where('Activo','=',1)->get();
-        return view('polizas.residencia.renovar', compact('residencia', 'estados_poliza','ejecutivo'));
+        $ejecutivo = Ejecutivo::where('Activo', '=', 1)->get();
+        return view('polizas.residencia.renovar', compact('residencia', 'estados_poliza', 'ejecutivo'));
     }
 
     public function renovarPoliza(Request $request, $id)
@@ -483,7 +582,7 @@ class ResidenciaController extends Controller
         $residencia->VigenciaHasta = $request->VigenciaHasta;
         $residencia->LimiteGrupo = $request->LimiteGrupo;
         $residencia->LimiteIndividual = $request->LimiteIndividual;
-       // $residencia->MontoCartera = $request->MontoCartera;
+        // $residencia->MontoCartera = $request->MontoCartera;
         $residencia->Tasa = $request->Tasa;
         $residencia->Ejecutivo = $request->Ejecutivo;
         $residencia->update();

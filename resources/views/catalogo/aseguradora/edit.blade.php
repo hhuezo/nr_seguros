@@ -147,6 +147,10 @@
                                             @endforeach
                                         </select>
                                     </div>
+                                    <div class="col-sm-6">
+                                        <label for="DireccionResidencia" class="form-label">Calculo Diario</label>
+                                        <input type="checkbox" name="Diario" id="Diario" class="form-control" @if($aseguradora->Diario == 1) checked @endif>
+                                    </div>
                                 </div>
 
                             </div>
@@ -330,16 +334,16 @@
                                     <thead>
                                         <tr>
                                             <th>Nombre</th>
-                                            <th style="width: 25%;" style="text-align: center;" >Opciones</th>
+                                            <th style="width: 25%;" style="text-align: center;">Opciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach($documentos as $obj)
-                                     
+
                                         <tr>
                                             <td><a href="{{ asset('documentos/aseguradoras') }}/{{$obj->Nombre}}" class="btn btn-default" align="center" target="_blank"><i class="fa fa-download"></i>&nbsp; {{$obj->NombreOriginal}}</a></td>
                                             <td style="text-align: center;" valign="center">
-                                                <i class="fa fa-trash fa-lg" data-target="#modal-delete-documento-{{ $obj->Id }}" data-toggle="modal" ></i>
+                                                <i class="fa fa-trash fa-lg" data-target="#modal-delete-documento-{{ $obj->Id }}" data-toggle="modal"></i>
                                             </td>
                                         </tr>
                                         <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-documento-{{ $obj->Id }}">
@@ -648,7 +652,7 @@
 
         });
     });
-   
+
 
     function addCargo() {
         $('#modal_addCargo').modal('show');
@@ -718,7 +722,6 @@
         });
 
     });
-    
 </script>
 </div>
 @include('sweetalert::alert')

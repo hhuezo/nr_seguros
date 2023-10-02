@@ -39,6 +39,8 @@
                     </li>
                     <li role="presentation" class=""><a href="#tab_content3" role="tab" id="creditos-tab" data-toggle="tab" aria-expanded="false">Calculo de Cartera {{$residencia->NumeroPoliza}}</a>
                     </li>
+                    <li role="presentation" class=""><a href="#tab_content5" role="tab" id="recibos-tab" data-toggle="tab" aria-expanded="false">Recibos</a>
+                    </li>
 
 
 
@@ -67,6 +69,11 @@
                                     <label class="control-label">Aseguradora</label>
                                     <input type="text" value="{{$residencia->aseguradoras->Nombre}}" class="form-control" readonly>
                                 </div>
+                                <div class="col-md-4">
+                                    <label class="control-label">Calculo Diario</label>
+                                    <input type="checkbox" id="Diario" class="form-control" readonly @if($residencia->aseguradoras->Diario ==1) checked @endif disabled>
+
+                                </div>
                                 <div class="col-sm-8">
                                     <label class="control-label">Asegurado</label>
                                     <input type="text" value="{{$residencia->clientes->Nombre}}" class="form-control" readonly>
@@ -76,11 +83,11 @@
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label">Vigencia Desde</label>
-                                    <input class="form-control" name="VigenciaDesde" type="text" value="{{ \Carbon\Carbon::parse($residencia->VigenciaDesde)->format('d/m/Y') }}" readonly>
+                                    <input class="form-control" name="VigenciaDesde" id="VigenciaDesde" type="text" value="{{ \Carbon\Carbon::parse($residencia->VigenciaDesde)->format('d/m/Y') }}" readonly>
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label">Vigencia Hasta</label>
-                                    <input class="form-control" name="VigenciaHasta" type="text" value="{{ \Carbon\Carbon::parse($residencia->VigenciaHasta)->format('d/m/Y') }}" readonly>
+                                    <input class="form-control" name="VigenciaHasta" id="VigenciaHasta" type="text" value="{{ \Carbon\Carbon::parse($residencia->VigenciaHasta)->format('d/m/Y') }}" readonly>
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label">Estatus</label>
@@ -208,7 +215,6 @@
                             <br>
                             <table class="table">
                                 <tr>
-                                    <th><br><i class="fa fa-pencil"></i></th>
                                     <th>Tasa</th>
                                     <th>Fecha Inicio</th>
                                     <th>Fecha Final</th>
@@ -218,7 +224,7 @@
                                     <th>Envio de Cartera</th>
                                     <th>Envio de Pago</th>
                                     <th>Pago Aplicado</th>
-                                    <th>Excel Cartera</th>
+                                    <th>Opciones</th>
                                 </tr>
                                 @foreach ($detalle as $obj)
                                 @php
@@ -226,10 +232,7 @@
                                 @endphp
                                 @if(!$obj->ImpresionRecibo)
                                 <tr class="danger">
-                                    <td> &nbsp;&nbsp;<a href="" data-target="#modal-recibo-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-pencil fa-lg"></i></a>
 
-                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
-                                    </td>
                                     <td>{{ $obj->Tasa }}%</td>
                                     <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
@@ -239,7 +242,10 @@
                                     <td>{{\Carbon\Carbon::parse($obj->EnvioCartera)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->EnvioPago)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') }}</td>
-                                    <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"></a></td>
+                                    <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"></a>
+                                        &nbsp;&nbsp;<a href="" data-target="#modal-recibo-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-pencil fa-lg"></i></a>
+                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
+                                    </td>
                                 </tr>
                                 <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-recibo-{{ $obj->Id }}">
 
@@ -290,9 +296,7 @@
                                 </div>
                                 @elseif(!$obj->EnvioCartera)
                                 <tr class="warning">
-                                    <td><i class="fa fa-pencil" onclick="modal_edit({{ $obj->Id }})"></i>
-                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
-                                    </td>
+
                                     <td>{{ $obj->Tasa }}%</td>
                                     <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
@@ -302,13 +306,14 @@
                                     <td>{{\Carbon\Carbon::parse($obj->EnvioCartera)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->EnvioPago)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') }}</td>
-                                    <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"></a></td>
+                                    <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"></a>&nbsp;&nbsp;<i class="fa fa-pencil fa-lg" onclick="modal_edit({{ $obj->Id }})"></i> &nbsp;&nbsp;
+                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
+                                    </td>
                                 </tr>
                                 @elseif(!$obj->EnvioPago)
                                 <tr class="btn-info">
-                                    <td><i class="fa fa-pencil" onclick="modal_edit({{ $obj->Id }})"></i>
-                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
-                                    </td>
+
+
                                     <td>{{ $obj->Tasa }}%</td>
                                     <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
@@ -318,13 +323,13 @@
                                     <td>{{\Carbon\Carbon::parse($obj->EnvioCartera)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->EnvioPago)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') }}</td>
-                                    <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"></a></td>
+                                    <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"></a>&nbsp;&nbsp;
+                                        <i class="fa fa-pencil fa-lg" onclick="modal_edit({{ $obj->Id }})"></i> &nbsp;&nbsp;
+                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
+                                    </td>
                                 </tr>
                                 @elseif(!$obj->PagoAplicado)
                                 <tr class="success">
-                                    <td><i class="fa fa-pencil" onclick="modal_edit({{ $obj->Id }})"></i>
-                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
-                                    </td>
                                     <td>{{ $obj->Tasa }}%</td>
                                     <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
@@ -334,14 +339,16 @@
                                     <td>{{\Carbon\Carbon::parse($obj->EnvioCartera)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->EnvioPago)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') }}</td>
-                                    <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"> </a></td>
+                                    <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"> </a>&nbsp;&nbsp;
+                                        <i class="fa fa-pencil fa-lg" onclick="modal_edit({{ $obj->Id }})"></i> &nbsp;&nbsp;
+                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
+
+                                    </td>
 
                                 </tr>
                                 @else
                                 <tr>
-                                    <td><i class="fa fa-pencil" onclick="modal_edit({{ $obj->Id }})"></i>
-                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
-                                    </td>
+
                                     <td>{{ $obj->Tasa }}%</td>
                                     <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
@@ -351,14 +358,17 @@
                                     <td>{{\Carbon\Carbon::parse($obj->EnvioCartera)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->EnvioPago)->format('d/m/Y') }}</td>
                                     <td>{{\Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') }}</td>
-                                    <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"> </a></td>
+                                    <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"> </a>&nbsp;&nbsp;
+                                        <i class="fa fa-pencil fa-lg" onclick="modal_edit({{ $obj->Id }})"></i>&nbsp;&nbsp;
+                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
+                                    </td>
 
                                 </tr>
                                 @endif
                                 <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-{{ $obj->Id }}">
 
                                     <form method="POST" action="{{ url('polizas/residencia/delete_pago', $obj->Id) }}">
-                                        @method('delete')
+                                        @method('POST')
                                         @csrf
                                         <div class="modal-dialog">
                                             <div class="modal-content">
@@ -508,7 +518,7 @@
                                                     </label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                                         <div class="form-group has-feedback">
-                                                            <input class="form-control" name="MontoCartera" id="MontoCartera" type="number" step="any" style="text-align: right;" value="{{ number_format(session('MontoCartera', 0),2,'.',',') }}" required>
+                                                            <input class="form-control" name="MontoCartera" id="MontoCartera" type="number" step="any" style="text-align: right;" value="{{ session('MontoCartera', 0) }}" required>
                                                             <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                                                         </div>
 
@@ -529,7 +539,7 @@
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
 
                                                         <div class="form-group has-feedback">
-                                                            <input type="number" step="any" readonly  id="PruebaDecimales" class="form-control" style="text-align: right;">
+                                                            <input type="number" step="any" readonly id="PruebaDecimales" class="form-control" style="text-align: right;">
                                                             <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                                                         </div>
                                                     </div>
@@ -680,7 +690,7 @@
                                                 <div class="form-group row">
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">A pagar</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    
+
                                                         <div class="form-group has-feedback">
                                                             <input type="number" step="any" name="APagar" id="APagar" class="form-control" style="text-align: right;">
                                                             <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
@@ -697,7 +707,7 @@
                                                 <div class="form-group row">
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Comision %</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        
+
                                                         <div class="form-group has-feedback">
                                                             <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" style="padding-left: 25%;" value="{{$residencia->Comision}}" readonly>
                                                             <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
@@ -708,7 +718,7 @@
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Valor
                                                         Desc</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        
+
                                                         <div class="form-group has-feedback">
                                                             <input class="form-control" name="ValorDescuento" id="ValorDescuento" type="number" step="any" style="text-align: right;">
                                                             <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
@@ -719,7 +729,7 @@
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">mas 13%
                                                         IVA sobre comisión</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        
+
                                                         <div class="form-group has-feedback">
                                                             <input class="form-control" name="IvaSobreComision" id="IvaSobreComision" type="number" step="any" style="text-align: right;">
                                                             <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
@@ -731,9 +741,9 @@
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">menos 1%
                                                         Retención</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        
+
                                                         <div class="form-group has-feedback">
-                                                        <input class="form-control" name="Retencion" id="Retencion" type="number" step="any" style="text-align: right;" @if($residencia->clientes->TipoContribuyente == 1) readonly @endif >    
+                                                            <input class="form-control" name="Retencion" id="Retencion" type="number" step="any" style="text-align: right;" @if($residencia->clientes->TipoContribuyente == 1) readonly @endif >
                                                             <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                                                         </div>
                                                     </div>
@@ -743,9 +753,9 @@
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Valor CCF
                                                         Comisión</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        
+
                                                         <div class="form-group has-feedback">
-                                                        <input class="form-control" name="ValorCCF" id="ValorCCFE" type="number" step="any" style="text-align: right;">
+                                                            <input class="form-control" name="ValorCCF" id="ValorCCFE" type="number" step="any" style="text-align: right;">
                                                             <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                                                         </div>
                                                     </div>
@@ -929,7 +939,7 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td>Valor CCF por Comision</td>
+                                            <td>Valor CCF por Comisión</td>
                                             <td>
                                                 <div class="col-md-9 col-sm-9  form-group has-feedback">
                                                     <input type="text" class="form-control has-feedback-left" style="text-align: right;" value="@if($ultimo_pago) {{number_format(($ultimo_pago->ValorCCF),2,'.',',')}} @else 0 @endif" readonly>
@@ -947,6 +957,48 @@
                                                 </div>
                                             </td>
                                         </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="tab_content5" aria-labelledby="recibos-tab">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+
+                                <div class="x_title">
+                                    <h4>&nbsp;&nbsp; Recibos<small></small>
+                                    </h4>
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+                                    &nbsp;
+                                </div>
+                                <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                                    <table  width="100%" class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Impresión <br> de Recibo</th>
+                                                <th>Saldo A</th>
+                                                <th>Fecha Inicio</th>
+                                                <th>Fecha Final</th>
+                                                <th><i class="fa fa-filef"></i>Opciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($detalle as $obj)
+                                            @if($obj->ImpresionRecibo <> null)
+                                            <tr>
+                                                <td>{{\Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}  </td>
+                                                <td> {{\Carbon\Carbon::parse($obj->SaldoA)->format('d/m/Y') }}</td>
+                                                <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
+                                                <td> {{\Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
+                                                <td><a href="{{url('poliza/residencia/get_recibo')}}/{{$obj->Id}}" target="_blank" class="btn btn-info">Generar Recibo</a></td>
+                                            </tr>
+                                            @endif
+                                            @endforeach
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>
@@ -1083,6 +1135,26 @@
 
         function calculoPrimaCalculada() {
             var monto = document.getElementById('MontoCartera').value;
+            var desde = new Date(document.getElementById('VigenciaDesde').value);
+            var hasta = new Date(document.getElementById('VigenciaHasta').value);
+
+            // Determine the time difference between two dates     
+            var millisBetween = hasta.getTime() - desde.getTime();
+
+            // Determine the number of days between two dates  
+            var dias_axo = (millisBetween / (1000 * 3600 * 24)) + 1;
+
+            var inicio = new Date(document.getElementById('FechaInicio').value);
+            var final = new Date(document.getElementById('FechaFinal').value);
+
+            var millisBetween = final.getTime() - inicio.getTime();
+
+            // Determine the number of days between two dates  
+            var dias_mes = (millisBetween / (1000 * 3600 * 24)) + 1;
+
+            //alert(dias_axo);
+            //alert(dias_mes);
+
             var tasa = document.getElementById('Tasa').value;
             if (document.getElementById('Anual').checked == true) {
                 var tasaFinal = (tasa / 1000) / 12;
@@ -1090,8 +1162,17 @@
                 var tasaFinal = tasa / 1000;
             }
             var sub = parseFloat(monto) * parseFloat(tasaFinal);
+            if (document.getElementById('Diario').value == 1) {
+                var sub = ((parseFloat(monto) * parseFloat(tasaFinal)) / dias_axo) * dias_mes;
+            } else {
+                var sub = parseFloat(monto) * parseFloat(tasaFinal);
+            }
+            // alert(sub);
             document.getElementById('PruebaDecimales').value = sub;
-            document.getElementById('PrimaCalculada').value = sub.toLocaleString('sv-SV', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(',','.').replace(/[^\d,.-]/g, '');
+            document.getElementById('PrimaCalculada').value = sub.toLocaleString('sv-SV', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).replace(',', '.').replace(/[^\d,.-]/g, '');
             //  var bomberos = (monto * (0.04 / 12) / 1000); //valor de impuesto varia por gobierno
             // document.getElementById('ImpuestoBomberos').value = bomberos;
 
@@ -1124,7 +1205,7 @@
         function calculoDescuento() {
             var tasa = document.getElementById('TasaDescuento').value;
             var primaTotal = document.getElementById('PrimaTotal').value;
-            if (tasa < 1) {
+            if (tasa < 0) {
                 document.getElementById('Descuento').value = tasa * primaTotal;
             } else {
                 document.getElementById('Descuento').value = (tasa / 100) * primaTotal;

@@ -49,6 +49,8 @@ Route::get('/', [HomeController::class, 'index']);
 Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::get('/home/getPrimaGeneral', [HomeController::class, 'getPrimaGeneral']);
+
 
 
 //security
@@ -106,8 +108,6 @@ Route::post('catalogo/cliente/documento_eliminar/{id}', [ClienteController::clas
 Route::post('catalogo/aseguradora/documento', [AseguradoraController::class, 'agregar_documento']);
 Route::post('catalogo/aseguradora/documento_eliminar/{id}', [AseguradoraController::class, 'eliminar_documento']);
 Route::get('catalogo/cliente/addPreferencia', [ClienteController::class, 'addPreferencia']);
-Route::resource('catalogo/cliente', ClienteController::class);
-Route::resource('catalogo/cliente', ClienteController::class);
 Route::get('catalogo/cliente_create', [ClienteController::class, 'cliente_create']);
 Route::get('catalogo/negocio/get_aseguradora', [NegocioController::class, 'get_aseguradoras']);
 Route::resource('catalogo/negocio', NegocioController::class);
@@ -121,6 +121,12 @@ Route::get('catalogo/negocios/consultar', [NegocioController::class, 'consultar'
 Route::get('get_municipio/{id}', [ClienteController::class, 'get_municipio']);
 Route::get('get_distrito/{id}', [ClienteController::class, 'get_distrito']);
 
+Route::get('catalogo/cliente/getMetodoPago', [ClienteController::class, 'getMetodoPago']);
+Route::get('catalogo/cliente/verificarCredenciales', [ClienteController::class, 'verificarCredenciales']);
+
+Route::resource('catalogo/cliente', ClienteController::class);//el resource va siempre de ultimo o ocurre problema con metodo controller::show()
+
+
 
 //pólizas
 Route::get('polizas/residencia/get_recibo', [ResidenciaController::class, 'impresion']);
@@ -129,6 +135,7 @@ Route::post('polizas/residencia/create_pago', [ResidenciaController::class, 'cre
 Route::post('polizas/residencia/agregar_pago', [ResidenciaController::class, 'agregar_pago']);
 Route::post('polizas/residencia/edit_pago', [ResidenciaController::class, 'edit_pago']);
 Route::post('poliza/residencia/recibo/{id}', [ResidenciaController::class, 'recibo_pago']);
+Route::get('poliza/residencia/get_recibo/{id}', [ResidenciaController::class, 'get_recibo']);
 Route::post('poliza/residencia/active/{id}', [ResidenciaController::class, 'active_edit']);
 Route::post('poliza/residencia/desactive/{id}', [ResidenciaController::class, 'desactive_edit']);
 Route::get('polizas/residencia/get_recibo', [ResidenciaController::class, 'impresion']);

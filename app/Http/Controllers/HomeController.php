@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\polizas\ViewControlPrimasGeneral;
 use Illuminate\Http\Request;
+
 
 class HomeController extends Controller
 {
@@ -25,4 +27,15 @@ class HomeController extends Controller
     {
         return view('home');
     }
+
+    public function getPrimaGeneral(Request $request)
+    {
+        $datosRecibidos = ViewControlPrimasGeneral::where('RepeticionRegistro', '=', 1)->where('FechaInicioDetalle', '>=', $request->FechaInicioDetalle)->where('FechaFinalDetalle', '<=',  $request->FechaFinalDetalle)->get();
+        if ($datosRecibidos->count()>0) {
+            return response()->json(['datosRecibidos' => $datosRecibidos], 200);
+        } else {
+            return response()->json(['datosRecibidos' => $datosRecibidos], 404);
+        }
+    }
+
 }
