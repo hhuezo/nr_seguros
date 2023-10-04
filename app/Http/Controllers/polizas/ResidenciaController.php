@@ -411,6 +411,7 @@ class ResidenciaController extends Controller
         $detalle->PrimaDescontada = $request->PrimaDescontada;
         $detalle->ExcelURL = $request->ExcelURL;
         $detalle->save();
+        session(['MontoCartera' => 0]);
         alert()->success('El registro de pago ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
         return back();
     }
