@@ -63,23 +63,11 @@
                     </div>
                     <div class="col-sm-4">
                         <label class="control-label">Vigencia Desde</label>
-<<<<<<< HEAD
-{{--                        <input class="form-control" name="VigenciaDesde" type="date" value="{{ old('VigenciaDesde') }}">--}}
-                        <input class="form-control formatoFecha"  name="VigenciaDesde" placeholder="dd/mm/yyyy" type="text" value="{{ old('VigenciaDesde') }}">
-                    </div>
-                    <div class="col-sm-4">
-                        <label class="control-label">Vigencia Hasta</label>
-{{--                        <input class="form-control" name="VigenciaHasta" type="date" placeholder="dd/mm/yyyy"  value="{{ old('VigenciaHasta') }}">--}}
-                        <input class="form-control formatoFecha" name="VigenciaHasta" type="text" placeholder="dd/mm/yyyy"  value="{{ old('VigenciaHasta') }}">
-=======
                         <input class="form-control" name="VigenciaDesde" type="date" value="{{ old('VigenciaDesde') }}">
-
                     </div>
                     <div class="col-sm-4">
                         <label class="control-label">Vigencia Hasta</label>
-                        <input class="form-control" name="VigenciaHasta" type="date" placeholder="dd/mm/yyyy" value="{{ old('VigenciaHasta') }}">
-
->>>>>>> 804fbeb0240d62523137d3b1bcf2b498a046a505
+                        <input class="form-control" name="VigenciaHasta" type="date" placeholder="dd/mm/yyyy"  value="{{ old('VigenciaHasta') }}">
                     </div>
                     <div class="col-sm-4">
                         <label class="control-label">Estatus</label>
