@@ -234,7 +234,7 @@ class ResidenciaController extends Controller
         $residencia->Modificar = 0;
         $residencia->update();
 
-    /*    
+    /*
         $detalles = new DetalleResidencia();
         $detalles->MontoCartera = $request->MontoCartera;
         $detalles->Tasa = $request->Tasa;
@@ -464,7 +464,7 @@ class ResidenciaController extends Controller
         $detalle->Comentario = $request->Comentario;
         $detalle->update();
         $calculo = $this->monto($residencia, $detalle);
-        
+
         $pdf = \PDF::loadView('polizas.residencia.recibo', compact('detalle', 'residencia', 'meses','calculo'))->setWarnings(false)->setPaper('letter');
         return $pdf->stream('Recibo.pdf');
 
@@ -507,7 +507,7 @@ class ResidenciaController extends Controller
         }else{
             $tasaFinal = $tasa / 1000;
         }
-  
+
         if($residencia->aseguradoras->Diario == 1){
             $prima_calculada = (($monto * $tasaFinal) / $dias_axo) * $dias_mes;
         }else{
@@ -528,7 +528,7 @@ class ResidenciaController extends Controller
 
         $prima_descontada = $prima_total - $descuento;
 
-        array_push($calculo, $prima_descontada);   //prima descontada 
+        array_push($calculo, $prima_descontada);   //prima descontada
         if($bomberos){
             $calculo_bomberos = $monto * ($bomberos->Valor /100);
         }else{
@@ -536,7 +536,7 @@ class ResidenciaController extends Controller
         }
 
         array_push($calculo, $calculo_bomberos); //calculo de bomberos
-       
+
         $sub = $prima_descontada - $calculo_bomberos;
 
         array_push($calculo, $sub);   //calculo_subtotal
@@ -547,7 +547,7 @@ class ResidenciaController extends Controller
         $ccf = $prima_descontada * ($residencia->Comision /100);
         array_push($calculo, $ccf);   //valor ccf
 
-        $iva_ccf = $ccf * 0.13; 
+        $iva_ccf = $ccf * 0.13;
         array_push($calculo, $iva_ccf); // iva ccf
 
         $total_ccf = $ccf + $iva_ccf;
@@ -558,7 +558,7 @@ class ResidenciaController extends Controller
 
         $facturar = $sub + $iva;
         array_push ($calculo, $facturar);   //calculo a facturar
-    
+
         return $calculo;
 
 

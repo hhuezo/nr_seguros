@@ -1138,22 +1138,29 @@
             var desde = new Date(document.getElementById('VigenciaDesde').value );
             var hasta = new Date(document.getElementById('VigenciaHasta').value );
 
-            // Determine the time difference between two dates     
+            // Determine the time difference between two dates
             var millisBetween = hasta.getTime() - desde.getTime();
 
-            // Determine the number of days between two dates  
+            // Determine the number of days between two dates
             var dias_axo = (millisBetween / (1000 * 3600 * 24));
+            console.log("dias del año: "+dias_axo)
 
-            var inicio = new Date(document.getElementById('FechaInicio').value += 'T00:00:00');
-            var final = new Date(document.getElementById('FechaFinal').value += 'T23:59:59' );
+            // var inicio = new Date(document.getElementById('FechaInicio').value += 'T00:00:00');
+            // var final = new Date(document.getElementById('FechaFinal').value += 'T23:59:59' );
+            var inicio = new Date(document.getElementById('FechaInicio').value);
+            var final = new Date(document.getElementById('FechaFinal').value);
+            inicio.setHours(0, 0, 0, 0);
+            final.setHours(0, 0, 0, 0);
+            console.log("inicio"+ inicio)
+            console.log("final"+ final)
 
             var millisBetween = final.getTime() - inicio.getTime();
 
-            // Determine the number of days between two dates  
+            // Determine the number of days between two dates
             var dias_mes = Math.round(millisBetween / (1000 * 3600 * 24));
 
             // alert(dias_axo);
-            alert(dias_mes);
+            //alert(dias_mes);
 
             var tasa = document.getElementById('Tasa').value;
             if (document.getElementById('Anual').checked == true) {
