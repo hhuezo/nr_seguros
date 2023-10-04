@@ -83,11 +83,11 @@
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label">Vigencia Desde</label>
-                                    <input class="form-control" name="VigenciaDesde" id="VigenciaDesde" type="text" value="{{ \Carbon\Carbon::parse($residencia->VigenciaDesde)->format('d/m/Y') }}" readonly>
+                                    <input class="form-control" name="VigenciaDesde" id="VigenciaDesde" type="text" value="{{ date(('d/m/Y'), strtotime($residencia->VigenciaDesde))}}" readonly>
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label">Vigencia Hasta</label>
-                                    <input class="form-control" name="VigenciaHasta" id="VigenciaHasta" type="text" value="{{ \Carbon\Carbon::parse($residencia->VigenciaHasta)->format('d/m/Y') }}" readonly>
+                                    <input class="form-control" name="VigenciaHasta" id="VigenciaHasta" type="text" value="{{ date(('d/m/Y'), strtotime($residencia->VigenciaHasta))}}" readonly>
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label">Estatus</label>
@@ -484,7 +484,7 @@
                                             <div class="clearfix"></div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
-                                                <button type="submit" class="btn btn-primary">Aceptar</button>
+                                                <button type="submit" class="btn btn-primary">Guardar Pago</button>
                                             </div>
                                         </form>
                                     </div>
@@ -1135,25 +1135,25 @@
 
         function calculoPrimaCalculada() {
             var monto = document.getElementById('MontoCartera').value;
-            var desde = new Date(document.getElementById('VigenciaDesde').value);
-            var hasta = new Date(document.getElementById('VigenciaHasta').value);
+            var desde = new Date(document.getElementById('VigenciaDesde').value );
+            var hasta = new Date(document.getElementById('VigenciaHasta').value );
 
             // Determine the time difference between two dates     
             var millisBetween = hasta.getTime() - desde.getTime();
 
             // Determine the number of days between two dates  
-            var dias_axo = (millisBetween / (1000 * 3600 * 24)) + 1;
+            var dias_axo = (millisBetween / (1000 * 3600 * 24));
 
-            var inicio = new Date(document.getElementById('FechaInicio').value);
-            var final = new Date(document.getElementById('FechaFinal').value);
+            var inicio = new Date(document.getElementById('FechaInicio').value += 'T00:00:00');
+            var final = new Date(document.getElementById('FechaFinal').value += 'T23:59:59' );
 
             var millisBetween = final.getTime() - inicio.getTime();
 
             // Determine the number of days between two dates  
-            var dias_mes = (millisBetween / (1000 * 3600 * 24)) + 1;
+            var dias_mes = Math.round(millisBetween / (1000 * 3600 * 24));
 
-            //alert(dias_axo);
-            //alert(dias_mes);
+            // alert(dias_axo);
+            alert(dias_mes);
 
             var tasa = document.getElementById('Tasa').value;
             if (document.getElementById('Anual').checked == true) {
@@ -1162,7 +1162,7 @@
                 var tasaFinal = tasa / 1000;
             }
             var sub = parseFloat(monto) * parseFloat(tasaFinal);
-            if (document.getElementById('Diario').value == 1) {
+            if (document.getElementById('Diario').checked == true) {
                 var sub = ((parseFloat(monto) * parseFloat(tasaFinal)) / dias_axo) * dias_mes;
             } else {
                 var sub = parseFloat(monto) * parseFloat(tasaFinal);
