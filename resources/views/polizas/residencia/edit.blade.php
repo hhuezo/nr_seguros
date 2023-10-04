@@ -484,7 +484,7 @@
                                             <div class="clearfix"></div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
-                                                <button type="submit" class="btn btn-primary">Aceptar</button>
+                                                <button type="submit" class="btn btn-primary">Guardar Pago</button>
                                             </div>
                                         </form>
                                     </div>
@@ -1162,7 +1162,7 @@
                 var tasaFinal = tasa / 1000;
             }
             var sub = parseFloat(monto) * parseFloat(tasaFinal);
-            if (document.getElementById('Diario').value == 1) {
+            if (document.getElementById('Diario').checked == true) {
                 var sub = ((parseFloat(monto) * parseFloat(tasaFinal)) / dias_axo) * dias_mes;
             } else {
                 var sub = parseFloat(monto) * parseFloat(tasaFinal);
