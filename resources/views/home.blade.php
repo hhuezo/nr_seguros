@@ -57,8 +57,8 @@
 
                 <div class="row">
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-
-                        <table id="tablaPrimas"  class="table table-striped table-bordered">
+                        {{-- id="tablaPrimas" --}}
+                        <table  id="tablaPrimas" class="table table-striped table-bordered">
                             <thead>
                                 <tr>
                                     <th>Asegurado</th>
@@ -229,5 +229,22 @@ function cargarTabla(datosRecibidos) {
             tablaCuerpo.append(fila);
  });
 }
+
+
+
+
+$(document).ready(function() {
+    $('#tablaPrimas').DataTable({
+      // Desactiva la ordenación
+      "ordering": false,
+      // Desactiva la paginación
+      "paging": false,
+      "searching": false, 
+    });
+  });
+
 </script>
+
+
+
 @endsection
