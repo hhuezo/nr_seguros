@@ -24,7 +24,7 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
         Estimado (a)(o)(es):
       </td>
       <td style="width: 25%;">
-        <img src="" alt="logo" width="65">
+        <img src="{{ public_path('img/logo.jpg') }}" alt="logo" width="165">
         <br>
         <p style="border: 1 solid #000; text-align: center;">Aviso de Cobro: <br>
           AC 000001 2023</p> <!--  falta agregar el numero del aviso de cobro -->
@@ -167,17 +167,17 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
 
       <td>
         <p style="text-align: justify;">Es importante que posee 30 dias adiciones despues de la fecha de vencimiento para el pago de sus primas,
-          caso contrario la compañía de seguros no se hará responsable por la cobertura del bien asegurado en caso de un reclamo 
+          caso contrario la compañía de seguros no se hará responsable por la cobertura del bien asegurado en caso de un reclamo
           <br>
-          Ademas hacemos de su conocimiento que en caso que usted no pueda presentarse a la compañía de seguros a realizar 
-          los pagos de las cuotas de su póliza puede hacerlo a travez de nuestra empresa, comunicandose a  nuestras oficinas a 
-          los telefonos 2521-3700 ó 7601-2895 para programar el dia y la hora en la cual nuestra área de mensajería se hará presente 
-          al lugar convenido a retirar los cheques o dinero en efectivo por el pago de sus seguros eniandole posteriormente, la 
-          factura o comprobante de crédito fiscal emitido y cancelado por la compañia aseguradora.										
+          Ademas hacemos de su conocimiento que en caso que usted no pueda presentarse a la compañía de seguros a realizar
+          los pagos de las cuotas de su póliza puede hacerlo a travez de nuestra empresa, comunicandose a  nuestras oficinas a
+          los telefonos 2521-3700 ó 7601-2895 para programar el dia y la hora en la cual nuestra área de mensajería se hará presente
+          al lugar convenido a retirar los cheques o dinero en efectivo por el pago de sus seguros eniandole posteriormente, la
+          factura o comprobante de crédito fiscal emitido y cancelado por la compañia aseguradora.
 
           <br>
-          Esperando lo anterior sea de satisfacción, nos ponemos a sus apreciables órdenes por cualqueir consulta adicional al respecto.														
-										
+          Esperando lo anterior sea de satisfacción, nos ponemos a sus apreciables órdenes por cualqueir consulta adicional al respecto.
+
 
         </p>
       </td>
@@ -205,7 +205,7 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
 
   </table>
   <br><br>
- 
+
   <br><br>
   <table style="width: 100%;">
     <tr>
