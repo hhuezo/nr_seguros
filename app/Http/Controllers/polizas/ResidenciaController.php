@@ -188,7 +188,7 @@ class ResidenciaController extends Controller
         }
 
         $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
-        session(['MontoCartera' => 4333345.345324]);
+        session(['MontoCartera' => 0]);
 
         return view('polizas.residencia.edit', compact(
             'residencia',
