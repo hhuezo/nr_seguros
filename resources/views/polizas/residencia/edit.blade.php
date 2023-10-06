@@ -67,7 +67,7 @@
                                 </div>
                                 <div class="col-sm-8">
                                     <label class="control-label">Aseguradora</label>
-                                    <input type="text" value="{{$residencia->aseguradoras->Nombre}}" class="form-control" readonly>
+                                    <input type="text" value="{{$residencia->aseguradoras->Nombre}}" class="form-control" id="NombreAseguradora" readonly>
                                 </div>
                                 <div class="col-md-4">
                                     <label class="control-label">Calculo Diario</label>
@@ -484,7 +484,7 @@
                                             <div class="clearfix"></div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
-                                                <button type="submit" class="btn btn-primary">Guardar Pago</button>
+                                                <button type="submit" class="btn btn-primary">Subir Cartera</button>
                                             </div>
                                         </form>
                                     </div>
@@ -518,7 +518,8 @@
                                                     </label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                                         <div class="form-group has-feedback">
-                                                            <input class="form-control" name="MontoCartera" id="MontoCartera" type="number" step="any" style="text-align: right;" value="{{ session('MontoCartera', 0) }}" required>
+                                                            <input class="form-control" name="MontoCartera" onblur="show_MontoCartera()" id="MontoCartera" type="number" step="any" style="text-align: right; display: none;" value="{{ session('MontoCartera', 0) }}" required>
+                                                            <input class="form-control" name="MontoCartera" id="MontoCarteraView" type="text" step="any" style="text-align: right;" value="{{ number_format(session('MontoCartera', 0),2,'.',',') }}" required>
                                                             <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                                                         </div>
 
@@ -770,9 +771,9 @@
 
                                         </div>
                                         <div class="clearfix"></div>
-                                        <div class="modal-footer" align="center">
+                                        <div align="center">
                                             <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
-                                            <button type="submit" class="btn btn-primary">Aceptar</button>
+                                            <button type="submit" class="btn btn-primary">Aplicar Pago</button>
                                         </div>
                                     </div>
                                 </form>
@@ -976,7 +977,7 @@
                                     &nbsp;
                                 </div>
                                 <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
-                                    <table  width="100%" class="table">
+                                    <table width="100%" class="table">
                                         <thead>
                                             <tr>
                                                 <th>Impresión <br> de Recibo</th>
@@ -989,15 +990,15 @@
                                         <tbody>
                                             @foreach($detalle as $obj)
                                             @if($obj->ImpresionRecibo <> null)
-                                            <tr>
-                                                <td>{{\Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}  </td>
-                                                <td> {{\Carbon\Carbon::parse($obj->SaldoA)->format('d/m/Y') }}</td>
-                                                <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
-                                                <td> {{\Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
-                                                <td><a href="{{url('poliza/residencia/get_recibo')}}/{{$obj->Id}}" target="_blank" class="btn btn-info">Generar Recibo</a></td>
-                                            </tr>
-                                            @endif
-                                            @endforeach
+                                                <tr>
+                                                    <td>{{\Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }} </td>
+                                                    <td> {{\Carbon\Carbon::parse($obj->SaldoA)->format('d/m/Y') }}</td>
+                                                    <td>{{\Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
+                                                    <td> {{\Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
+                                                    <td><a href="{{url('poliza/residencia/get_recibo')}}/{{$obj->Id}}" target="_blank" class="btn btn-info">Generar Recibo</a></td>
+                                                </tr>
+                                                @endif
+                                                @endforeach
                                         </tbody>
                                     </table>
                                 </div>
@@ -1087,7 +1088,29 @@
 @include('sweetalert::alert')
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
+    function show_MontoCartera() {
+       document.getElementById('MontoCarteraView').value = (document.getElementById("MontoCartera").value).toLocaleString('sv-SV', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).replace(',', '.').replace(/[^\d,.-]/g, '');;
+        $("#MontoCarteraView").show();
+        $("#MontoCartera").hide();
+       
+    }
     $(document).ready(function() {
+
+        $("#MontoCarteraView").on('focus', function() {
+            $("#MontoCarteraView").hide();
+            $("#MontoCartera").show();
+        })
+
+
+
+        // $("#MontoCartera").on('blur', function() {
+        //     alert('');
+        //     $("#MontoCartera").show();
+        //     $("#MontoCarteraView").hide();
+        // })
 
 
         $('#PrimaDescontada2').val($('#PrimaCalculada2').val() - $('#DescuentoRentabilidad2').val());
@@ -1135,15 +1158,15 @@
 
         function calculoPrimaCalculada() {
             var monto = document.getElementById('MontoCartera').value;
-            var desde = new Date(document.getElementById('VigenciaDesde').value );
-            var hasta = new Date(document.getElementById('VigenciaHasta').value );
-
+            var desde = new Date(document.getElementById('VigenciaDesde').value);
+            var hasta = new Date(document.getElementById('VigenciaHasta').value);
+            var aseguradora = document.getElementById('NombreAseguradora').value;
             // Determine the time difference between two dates
             var millisBetween = hasta.getTime() - desde.getTime();
 
             // Determine the number of days between two dates
             var dias_axo = (millisBetween / (1000 * 3600 * 24));
-            console.log("dias del año: "+dias_axo)
+            console.log("dias del año: " + dias_axo)
 
             // var inicio = new Date(document.getElementById('FechaInicio').value += 'T00:00:00');
             // var final = new Date(document.getElementById('FechaFinal').value += 'T23:59:59' );
@@ -1151,8 +1174,8 @@
             var final = new Date(document.getElementById('FechaFinal').value);
             inicio.setHours(0, 0, 0, 0);
             final.setHours(0, 0, 0, 0);
-            console.log("inicio"+ inicio)
-            console.log("final"+ final)
+            console.log("inicio" + inicio)
+            console.log("final" + final)
 
             var millisBetween = final.getTime() - inicio.getTime();
 
@@ -1161,13 +1184,26 @@
 
             // alert(dias_axo);
             //alert(dias_mes);
+            if (aseguradora.search('fede')) { // busca la aseguradora de fedecredito
+
+                if (document.getElementById('Anual').checked == true) { //pendiente de confirmacion
+                    var tasaFinal = (tasa / 1000); /// 12
+                } else {
+                    var tasaFinal = tasa / 1000;
+                }
+
+            } else {
+
+                if (document.getElementById('Anual').checked == true) {
+                    var tasaFinal = (tasa / 1000);
+                } else {
+                    var tasaFinal = tasa / 1000 / 12;
+                }
+
+            }
 
             var tasa = document.getElementById('Tasa').value;
-            if (document.getElementById('Anual').checked == true) {
-                var tasaFinal = (tasa / 1000) / 12;
-            } else {
-                var tasaFinal = tasa / 1000;
-            }
+
             var sub = parseFloat(monto) * parseFloat(tasaFinal);
             if (document.getElementById('Diario').checked == true) {
                 var sub = ((parseFloat(monto) * parseFloat(tasaFinal)) / dias_axo) * dias_mes;

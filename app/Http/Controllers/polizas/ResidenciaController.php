@@ -58,7 +58,7 @@ class ResidenciaController extends Controller
      */
     public function create()
     {
-        $aseguradoras = Aseguradora::where('Activo', '=', 1)->get();
+        $aseguradoras = Aseguradora::where('Nombre', 'like', '%fede%')->orWhere('Nombre', 'like', '%sisa%')->get();
         $estados_poliza = EstadoPoliza::where('Activo', '=', 1)->get();
         $bombero = Bombero::where('Activo', 1)->first();
         if ($bombero) {
@@ -155,7 +155,7 @@ class ResidenciaController extends Controller
     public function edit($id)
     {
         $residencia = Residencia::findOrFail($id);
-        $aseguradoras = Aseguradora::where('Activo', '=', 1)->get();
+        $aseguradoras = Aseguradora::where('Nombre', 'like', '%fede%')->orWhere('Nombre', 'like', '%sisa%')->get();
         $estados_poliza = EstadoPoliza::where('Activo', '=', 1)->get();
         $cliente = Cliente::where('Activo', 1)->get();
         $tipos_contribuyente = TipoContribuyente::get();
@@ -164,11 +164,21 @@ class ResidenciaController extends Controller
         $detalle = DetalleResidencia::where('Residencia', $residencia->Id)->where('Activo', 1)->orderBy('Id', 'desc')->get();
         $ultimo_pago = DetalleResidencia::where('Residencia', $residencia->Id)->where('Activo', 1)->orderBy('Id', 'desc')->first();
         // dd($ultimo_pago);
-        if ($residencia->Mensual == 1) {
-            $valorTasa = $residencia->Tasa / 1000;
+
+        if (strpos($residencia->aseguradoras->Nombre, 'FEDE') === false) {
+            if ($residencia->Mensual == 1) {
+                $valorTasa = $residencia->Tasa / 1000/12;
+            } else {
+                $valorTasa = $residencia->Tasa / 1000;
+            }
         } else {
-            $valorTasa = $residencia->Tasa / 1000 / 12;
+            if ($residencia->Mensual == 1) {   //modificar al confirmar
+                $valorTasa = $residencia->Tasa / 1000;
+            } else {
+                $valorTasa = $residencia->Tasa / 1000;
+            }
         }
+
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
         $bombero = Bombero::where('Activo', 1)->first();
         if ($bombero) {
@@ -178,6 +188,7 @@ class ResidenciaController extends Controller
         }
 
         $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
+        session(['MontoCartera' => 4333345.345324]);
 
         return view('polizas.residencia.edit', compact(
             'residencia',
@@ -234,7 +245,7 @@ class ResidenciaController extends Controller
         $residencia->Modificar = 0;
         $residencia->update();
 
-    /*
+        /*
         $detalles = new DetalleResidencia();
         $detalles->MontoCartera = $request->MontoCartera;
         $detalles->Tasa = $request->Tasa;
@@ -296,7 +307,7 @@ class ResidenciaController extends Controller
     {
         $fecha = Carbon::create(null, $request->Mes, 1);
         $nombreMes = $fecha->locale('es')->monthName;
-        $idUnicoCartera=Str::random(40);
+        $idUnicoCartera = Str::random(40);
         $time = Carbon::now('America/El_Salvador');
 
         $residencia = Residencia::findOrFail($request->Id);
@@ -352,7 +363,7 @@ class ResidenciaController extends Controller
                 return view('polizas.validacion_cartera.resultado', compact('nuevos', 'eliminados'));
             }*/
 
-            DB::statement("CALL insertar_temp_cartera_residencia(?, ?, ?, ?, ?)", [auth()->user()->id, $request->Axo, $request->Mes, $residencia->Id,$idUnicoCartera]);
+            DB::statement("CALL insertar_temp_cartera_residencia(?, ?, ?, ?, ?)", [auth()->user()->id, $request->Axo, $request->Mes, $residencia->Id, $idUnicoCartera]);
 
             $monto_cartera_total = PolizaResidenciaCartera::where('Axo', $request->Axo)
                 ->where('Mes', $request->Mes)
@@ -466,7 +477,7 @@ class ResidenciaController extends Controller
         $detalle->update();
         $calculo = $this->monto($residencia, $detalle);
 
-        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('detalle', 'residencia', 'meses','calculo'))->setWarnings(false)->setPaper('letter');
+        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('detalle', 'residencia', 'meses', 'calculo'))->setWarnings(false)->setPaper('letter');
         return $pdf->stream('Recibo.pdf');
 
         //  return back();
@@ -479,8 +490,8 @@ class ResidenciaController extends Controller
         $residencia = Residencia::findOrFail($detalle->Residencia);
         $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
         $calculo = $this->monto($residencia, $detalle);
-       // dd($calculo);
-        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('detalle', 'residencia', 'meses','calculo'))->setWarnings(false)->setPaper('letter');
+        // dd($calculo);
+        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('detalle', 'residencia', 'meses', 'calculo'))->setWarnings(false)->setPaper('letter');
         //  dd($detalle);
         return $pdf->stream('Recibos.pdf');
     }
@@ -493,7 +504,7 @@ class ResidenciaController extends Controller
     public function monto($residencia, $detalle)
     {
         $calculo = array();
-        $bomberos = Bombero::where('Activo',1)->first();
+        $bomberos = Bombero::where('Activo', 1)->first();
         $monto = $detalle->MontoCartera;
         $desde = Carbon::parse($residencia->VigenciaDesde);
         $hasta = Carbon::parse($residencia->VigenciaHasta);
@@ -503,25 +514,41 @@ class ResidenciaController extends Controller
         $dias_axo = $desde->diffInDays($hasta);
         $dias_mes = $final->diffInDays($inicio);
 
-        if($residencia->Mensual == 0){
-            $tasaFinal = ($tasa / 1000) /12;
-        }else{
-            $tasaFinal = $tasa / 1000;
+
+
+        if (strpos($residencia->aseguradoras->Nombre, 'FEDE') === false) {
+            // dd("SISA");
+
+            if ($residencia->Mensual == 0) {
+                $tasaFinal = ($tasa / 1000) / !2;
+            } else {
+                $tasaFinal = $tasa / 1000;
+            }
+        } else {
+            //dd('FEDE');
+
+            if ($residencia->Mensual == 0) {    //falta confirmacion de tasa anual
+                $tasaFinal = ($tasa / 1000); // / 12;
+            } else {
+                $tasaFinal = $tasa / 1000;
+            }
         }
 
-        if($residencia->aseguradoras->Diario == 1){
+
+
+        if ($residencia->aseguradoras->Diario == 1) {
             $prima_calculada = (($monto * $tasaFinal) / $dias_axo) * $dias_mes;
-        }else{
+        } else {
             $prima_calculada = $monto * $tasaFinal;
         }
 
-        array_push($calculo,$prima_calculada);  // prima calculada
+        array_push($calculo, $prima_calculada);  // prima calculada
 
         $prima_total = $prima_calculada + $detalle->ExtraPrima;
         $tasa_descuento = $residencia->TasaDescuento;
-        if($tasa_descuento < 0){
+        if ($tasa_descuento < 0) {
             $descuento = $tasa_descuento * $prima_total;
-        }else{
+        } else {
             $descuento = ($tasa_descuento / 100 * $prima_total);
         }
 
@@ -530,9 +557,9 @@ class ResidenciaController extends Controller
         $prima_descontada = $prima_total - $descuento;
 
         array_push($calculo, $prima_descontada);   //prima descontada
-        if($bomberos){
-            $calculo_bomberos = $monto * ($bomberos->Valor /100);
-        }else{
+        if ($bomberos) {
+            $calculo_bomberos = $monto * ($bomberos->Valor / 100);
+        } else {
             $calculo_bomberos = 0;
         }
 
@@ -543,9 +570,9 @@ class ResidenciaController extends Controller
         array_push($calculo, $sub);   //calculo_subtotal
 
         $iva = $sub * 0.13;
-        array_push($calculo,$iva);  //calculo iva
+        array_push($calculo, $iva);  //calculo iva
 
-        $ccf = $prima_descontada * ($residencia->Comision /100);
+        $ccf = $prima_descontada * ($residencia->Comision / 100);
         array_push($calculo, $ccf);   //valor ccf
 
         $iva_ccf = $ccf * 0.13;
@@ -555,14 +582,12 @@ class ResidenciaController extends Controller
         array_push($calculo, $total_ccf);  //total ccf
 
         $a_pagar = $sub + $iva - $total_ccf;
-        array_push ($calculo, $a_pagar);   //calculo a pagar
+        array_push($calculo, $a_pagar);   //calculo a pagar
 
         $facturar = $sub + $iva;
-        array_push ($calculo, $facturar);   //calculo a facturar
+        array_push($calculo, $facturar);   //calculo a facturar
 
         return $calculo;
-
-
     }
 
 

@@ -9,6 +9,7 @@
 @php
 $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
 @endphp
+
 <body>
   <table style="width: 100%;">
     <tr>
@@ -23,9 +24,9 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
         Estimado (a)(o)(es):
       </td>
       <td style="width: 25%;">
-        <img src="" alt="logo">
+        <img src="" alt="logo" width="65">
         <br>
-        <p style="border: 1 solid #000;">Aviso de Cobro: <br>
+        <p style="border: 1 solid #000; text-align: center;">Aviso de Cobro: <br>
           AC 000001 2023</p> <!--  falta agregar el numero del aviso de cobro -->
       </td>
     </tr>
@@ -141,6 +142,7 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
       <th>Fecha Inicio</th>
       <th>Fecha Final</th>
       <th>Prima Neta (Sin Impuestos)</th>
+      <th>IVA</th>
       <th>Gastos Emisión</th>
       <th>Gastos Fracciona.</th>
       <th>Total a facturar</th>
@@ -150,56 +152,60 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
       <td></td>
       <td>{{ \Carbon\Carbon::parse($residencia->FechaInicio)->format('d/m/Y') }}</td>
       <td>{{ \Carbon\Carbon::parse($residencia->FechaFinal)->format('d/m/Y') }}</td>
-      <td style="text-align: right;">${{number_format($calculo[9],2,'.',',')}}</td>
+      <td style="text-align: right;">${{number_format($calculo[4],2,'.',',')}}</td>
+      <td style="text-align: right;">${{number_format($calculo[5],2,'.',',')}}</td>
       <td style="text-align: right;">${{number_format($detalle->GastosEmision,2,'.',',')}}</td>
       <td style="text-align: right;">${{number_format($detalle->Otros,2,'.',',')}}</td>
-      <td style="text-align: right;">${{number_format($calculo[10],2,'.',',')}}</td>
+      <td style="text-align: right;">${{number_format(($calculo[4] + $calculo[5] + $detalle->GastosEmision + $detalle->Otros),2,'.',',')}}</td>
     </tr>
   </table>
   <br><br>
 
-  <table border="1" cellspacing="0" style="width: 100%;">
+  <table border="0" cellspacing="0" style="width: 100%;">
+
     <tr>
-      <td>Observaciones:
-        <p>
+
+      <td>
+        <p style="text-align: justify;">Es importante que posee 30 dias adiciones despues de la fecha de vencimiento para el pago de sus primas,
+          caso contrario la compañía de seguros no se hará responsable por la cobertura del bien asegurado en caso de un reclamo 
+          <br>
+          Ademas hacemos de su conocimiento que en caso que usted no pueda presentarse a la compañía de seguros a realizar 
+          los pagos de las cuotas de su póliza puede hacerlo a travez de nuestra empresa, comunicandose a  nuestras oficinas a 
+          los telefonos 2521-3700 ó 7601-2895 para programar el dia y la hora en la cual nuestra área de mensajería se hará presente 
+          al lugar convenido a retirar los cheques o dinero en efectivo por el pago de sus seguros eniandole posteriormente, la 
+          factura o comprobante de crédito fiscal emitido y cancelado por la compañia aseguradora.										
+
+          <br>
+          Esperando lo anterior sea de satisfacción, nos ponemos a sus apreciables órdenes por cualqueir consulta adicional al respecto.														
+										
 
         </p>
-
       </td>
     </tr>
   </table>
-  <table border="1" cellspacing="0" style="width: 50%;">
-    <tr>
-      <th>Vigencia Desde</th>
-      <th>Vigencia Hasta</th>
-    </tr>
-    <tr>
-      <td>{{ \Carbon\Carbon::parse($residencia->VigenciaDesde)->format('d/M/Y') }}</td>
-      <td>{{ \Carbon\Carbon::parse($residencia->VigenciaHasta)->format('d/M/Y') }}</td>
-    </tr>
-  </table>
   <br><br>
 
-  <table border="1" cellspacing="0" style="width: 40%;">
+  <table border="0" cellspacing="0" style="width: 40%;" align="right">
     <tr>
-      <td>Fecha Inicio</td>
-      <td>Fecha Final</td>
+      <td style="text-align: right;">Firma cliente	</td>
+      <td>_______________________</td>
     </tr>
-    <tr>
-      <td>{{ \Carbon\Carbon::parse($residencia->FechaInicio)->format('d/M/Y') }}</td>
-      <td>{{ \Carbon\Carbon::parse($residencia->FechaFinal)->format('d/M/Y') }}</td>
+    <tr style="text-align: right;">
+      <td>Nombre cliente	</td><td>_______________________</td>
     </tr>
+    <tr style="text-align: right;">
+      <td>Fecha Recibido	</td><td>_______________________</td>
+    </tr>
+    <tr style="text-align: right;">
+      <td>Elaborado por:</td><td>_______________________</td>
+    </tr>
+    <tr style="text-align: right;">
+      <td>Fecha</td><td>_______________________</td>
+    </tr>
+
   </table>
   <br><br>
-  <table style="width: 100%;">
-    <tr>
-      <td style="border: 1 solid #000;">Prima neta por pagar</td>
-      <td style="border: 1 solid #000;">${{number_format($calculo[9],2,'.',',')}}</td>
-      <td></td>
-      <td style="border: 1 solid #000;">Prima a pagar</td>
-      <td style="border: 1 solid #000;">${{number_format($calculo[9],2,'.',',')}}</td>
-    </tr>
-  </table>
+ 
   <br><br>
   <table style="width: 100%;">
     <tr>
