@@ -79,6 +79,8 @@
                                         <label class="control-label">Aseguradora</label>
                                         <input type="text" value="{{ $residencia->aseguradoras->Nombre }}"
                                             class="form-control" id="NombreAseguradora" readonly>
+                                            <input type="hidden" value="{{ $residencia->aseguradoras->Id }}" id="IdAseguradora"
+                                            readonly>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="control-label">Calculo Diario</label>
@@ -1488,7 +1490,7 @@
                 var monto = document.getElementById('MontoCartera').value;
                 var desde = new Date(document.getElementById('VigenciaDesde').value);
                 var hasta = new Date(document.getElementById('VigenciaHasta').value);
-                var aseguradora = document.getElementById('NombreAseguradora').value;
+                var aseguradora = document.getElementById('IdAseguradora').value;
                 // Determine the time difference between two dates
                 var millisBetween = hasta.getTime() - desde.getTime();
 
@@ -1513,7 +1515,8 @@
                 // alert(dias_axo);
                 //alert(dias_mes);
                 var tasa = document.getElementById('Tasa').value;
-                if (aseguradora.search('fede')) { // busca la aseguradora de fedecredito
+              //  alert(aseguradora);
+                if (aseguradora == 3) { // busca la aseguradora de fedecredito, revisar el id de fedecredito
 
                     if (document.getElementById('Anual').checked == true) { //pendiente de confirmacion
                         var tasaFinal = (tasa / 1000); /// 12
@@ -1521,16 +1524,16 @@
                         var tasaFinal = tasa / 1000;
                     }
 
-                } else {
-
+                } else { // sisa
                     if (document.getElementById('Anual').checked == true) {
                         var tasaFinal = (tasa / 1000);
                     } else {
-                        var tasaFinal = tasa / 1000 / 12;
+                        var tasaFinal = (tasa / 1000) / 12;
                     }
 
                 }
 
+                console.log('tasa Final:',tasaFinal);
 
                 var sub = parseFloat(monto) * parseFloat(tasaFinal);
                 if (document.getElementById('Diario').checked == true) {
