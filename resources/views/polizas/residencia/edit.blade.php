@@ -645,7 +645,7 @@
                                                                     type="number" step="any"
                                                                     style="text-align: right; display: none;"
                                                                     value="{{ session('MontoCartera', 0) }}" required>
-                                                                <input class="form-control" name="MontoCartera"
+                                                                <input class="form-control"
                                                                     id="MontoCarteraView" type="text" step="any"
                                                                     style="text-align: right;"
                                                                     value="{{ number_format(session('MontoCartera', 0), 2, '.', ',') }}"
