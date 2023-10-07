@@ -656,7 +656,7 @@
                                                     </div>
                                                     <div class="form-group row">
                                                         <label class="control-label col-md-3 col-sm-12 col-xs-12"
-                                                            align="right">Tasa de Rentabilidad %</label>
+                                                            align="right">Tasa %</label>
                                                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
 
                                                             <div class="form-group has-feedback">
@@ -919,8 +919,7 @@
                                                     </div>
                                                     <div class="form-group row">
                                                         <label class="control-label col-md-3 col-sm-12 col-xs-12"
-                                                            align="right">Valor
-                                                            Desc</label>
+                                                            align="right">Comision</label>
                                                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
 
                                                             <div class="form-group has-feedback">
@@ -934,8 +933,7 @@
                                                     </div>
                                                     <div class="form-group row">
                                                         <label class="control-label col-md-3 col-sm-12 col-xs-12"
-                                                            align="right">mas 13%
-                                                            IVA sobre comisión</label>
+                                                            align="right">mas 13% IVA </label>
                                                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
 
                                                             <div class="form-group has-feedback">
@@ -951,7 +949,7 @@
                                                     <div class="form-group row">
                                                         <label class="control-label col-md-3 col-sm-12 col-xs-12"
                                                             align="right">menos 1%
-                                                            Retención</label>
+                                                            Ret</label>
                                                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
 
                                                             <div class="form-group has-feedback">
@@ -1514,6 +1512,7 @@
 
                 // alert(dias_axo);
                 //alert(dias_mes);
+                var tasa = document.getElementById('Tasa').value;
                 if (aseguradora.search('fede')) { // busca la aseguradora de fedecredito
 
                     if (document.getElementById('Anual').checked == true) { //pendiente de confirmacion
@@ -1532,7 +1531,6 @@
 
                 }
 
-                var tasa = document.getElementById('Tasa').value;
 
                 var sub = parseFloat(monto) * parseFloat(tasaFinal);
                 if (document.getElementById('Diario').checked == true) {
