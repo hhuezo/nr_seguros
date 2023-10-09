@@ -402,24 +402,25 @@ class ResidenciaController extends Controller
         $detalle->MontoCartera = $request->MontoCartera;
         $detalle->Residencia = $request->Residencia;
         $detalle->Tasa = $request->Tasa;
-        $detalle->PrimaTotal = $request->PrimaTotal;
+        $detalle->PrimaCalculada = $request->PrimaCalculada;
         $detalle->Descuento = $request->Descuento;
+        $detalle->PrimaDescontada = $request->PrimaDescontada;
+        $detalle->ImpuestoBomberos = $request->ImpuestoBomberos;
+        $detalle->GastosEmision = $request->GastosEmision;
+        $detalle->Otros = $request->Otros;
+        $detalle->SubTotal = $request->SubTotal;
         $detalle->Iva = $request->Iva;
-        $detalle->ValorCCF = $request->ValorCCF;
-        $detalle->APagar = $request->APagar;
-        $detalle->Comentario = $request->Comentario;
-        $detalle->DescuentoIva = $request->DescuentoIva; //checked
+        $detalle->TasaComision = $request->TasaComision;
         $detalle->Comision = $request->Comision;
         $detalle->IvaSobreComision = $request->IvaSobreComision;
         $detalle->Retencion = $request->Retencion;
-        $detalle->Residencia = $request->Residencia;
-        $detalle->ExtraPrima = $request->ExtraPrima;
-        $detalle->GastosEmision = $request->GastosEmision;
-        $detalle->Otros = $request->Otros;
-        $detalle->ImpuestoBomberos = $request->ImpuestoBomberos;
-        $detalle->ValorDescuento = $request->ValorDescuento;
-        $detalle->TasaComision = $request->TasaComision;
-        $detalle->PrimaDescontada = $request->PrimaDescontada;
+        $detalle->ValorCCF = $request->ValorCCF;
+        $detalle->Comentario = $request->Comentario;
+        $detalle->APagar = $request->APagar;
+
+        $detalle->PrimaTotal = $request->PrimaTotal;  
+        $detalle->DescuentoIva = $request->DescuentoIva; //checked
+        $detalle->ExtraPrima = $request->ExtraPrima;        
         $detalle->ExcelURL = $request->ExcelURL;
         $detalle->save();
         session(['MontoCartera' => 0]);
@@ -446,14 +447,17 @@ class ResidenciaController extends Controller
         //dd($request->EnvioCartera .' 00:00:00');
         if ($request->EnvioCartera) {
             $detalle->EnvioCartera = $request->EnvioCartera;
+            $detalle->ComCartera = $request->Comentario;
         }
         if ($request->EnvioPago) {
             $detalle->EnvioPago = $request->EnvioPago;
+            $detalle->ComPago = $request->Comentario;
         }
         if ($request->PagoAplicado) {
             $detalle->PagoAplicado = $request->PagoAplicado;
+            $detalle->ComAplicado = $request->Comentario;
         }
-        $detalle->Comentario = $request->Comentario;
+        
 
         /*$detalle->EnvioPago = $request->EnvioPago;
             $detalle->PagoAplicado = $request->PagoAplicado;*/
@@ -473,11 +477,13 @@ class ResidenciaController extends Controller
         $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
         $detalle->SaldoA = $request->SaldoA;
         $detalle->ImpresionRecibo = $request->ImpresionRecibo;
-        $detalle->Comentario = $request->Comentario;
+        $detalle->Referencia = $request->Referencia;
+        $detalle->Anexo = $request->Anexo;
+        $detalle->NumeroCorrelativo = $request->NumeroCorrelativo;
         $detalle->update();
-        $calculo = $this->monto($residencia, $detalle);
+        //$calculo = $this->monto($residencia, $detalle);
 
-        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('detalle', 'residencia', 'meses', 'calculo'))->setWarnings(false)->setPaper('letter');
+        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('detalle', 'residencia', 'meses'))->setWarnings(false)->setPaper('letter');
         return $pdf->stream('Recibo.pdf');
 
         //  return back();

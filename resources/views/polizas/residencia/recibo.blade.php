@@ -5,6 +5,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Recibo</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 12px;
+    }
+  </style>
 </head>
 @php
 $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
@@ -32,7 +38,7 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
     </tr>
   </table>
   <table border="1" cellspacing="0" style="width: 100%;">
-    <tr>
+    <tr style="background-color: lightgrey;">
       <td colspan="2">Compañia aseguradora</td>
       <td colspan="2">Producto de seguros</td>
     </tr>
@@ -40,7 +46,7 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
       <td colspan="2">{{$residencia->aseguradoras->Nombre}}</td>
       <td colspan="2">Productos</td>
     </tr>
-    <tr>
+    <tr style="background-color: lightgrey;">
       <td>Numero de Poliza</td>
       <td>Vigencia Inicial</td>
       <td>Vigencia Final</td>
@@ -48,16 +54,16 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
     </tr>
     <tr>
       <td>{{$residencia->NumeroPoliza}}</td>
-      <td>{{ \Carbon\Carbon::parse($residencia->VigenciaDesde)->format('d/m/Y') }}</td>
-      <td>{{ \Carbon\Carbon::parse($residencia->VigenciaHasta)->format('d/m/Y') }}</td>
-      <td></td>
+      <td>{{ \Carbon\Carbon::parse($detalle->FechaInicio)->format('d/m/Y') }}</td>
+      <td>{{ \Carbon\Carbon::parse($detalle->FechaFinal)->format('d/m/Y') }}</td>
+      <td>{{$detalle->Anexo}}</td>
     </tr>
     <tr>
-      <td colspan="2">Referencia</td>
-      <td colspan="2">Agregar referencia</td>
+      <td colspan="2" style="background-color: lightgrey;">Referencia</td>
+      <td colspan="2">{{$detalle->Referencia}}</td>
     </tr>
     <tr>
-      <td colspan="2">Factura (s) a Nombre de</td>
+      <td colspan="2" style="background-color: lightgrey;">Factura (s) a Nombre de</td>
       <td colspan="2">{{$residencia->clientes->Nombre}} </td>
     </tr>
   </table>
@@ -74,35 +80,35 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
         <table border="1" cellspacing="0">
           <tr>
             <td style="width: 65%;">Prima Calculada</td>
-            <td style="width: 35%; text-align: right;">${{number_format($calculo[0],2,'.',',')}}</td>
+            <td style="width: 35%; text-align: right;">${{number_format($detalle->PrimaCalculada,2,'.',',')}}</td>
           </tr>
           <tr>
             <td>(-) Descuento rentabilidad ({{$residencia->Tasa}}%)</td>
-            <td style="width: 35%; text-align: right;">${{number_format($calculo[1],2,'.',',')}}</td>
+            <td style="width: 35%; text-align: right;">${{number_format($detalle->Descuento,2,'.',',')}}</td>
           </tr>
           <tr>
             <td>(=) Prima descontada</td>
-            <td style="width: 35%; text-align: right;">${{number_format($calculo[2],2,'.',',')}}</td>
+            <td style="width: 35%; text-align: right;">${{number_format($detalle->PrimaDescontada,2,'.',',')}}</td>
           </tr>
           <tr>
             <td>(+) impuesto bomberos</td>
-            <td style="width: 35%; text-align: right;">${{number_format($calculo[3],2,'.',',')}}</td>
+            <td style="width: 35%; text-align: right;">${{number_format($detalle->ImpuestoBomberos,2,'.',',')}}</td>
           </tr>
           <tr>
             <td>Sub Total</td>
-            <td style="width: 35%; text-align: right;"> ${{number_format($calculo[4],2,'.',',')}}</td>
+            <td style="width: 35%; text-align: right;"> ${{number_format($detalle->SubTotal,2,'.',',')}}</td>
           </tr>
           <tr>
             <td>13% IVA S/Sub Total</td>
-            <td style="width: 35%; text-align: right;">${{number_format($calculo[5],2,'.',',')}}</td>
+            <td style="width: 35%; text-align: right;">${{number_format($detalle->Iva,2,'.',',')}}</td>
           </tr>
           <tr>
             <td>(-) Estructura CCF de Comisión</td>
-            <td style="width: 35%; text-align: right;">${{number_format($calculo[8],2,'.',',')}}</td>
+            <td style="width: 35%; text-align: right;">${{number_format($detalle->ValorCCF,2,'.',',')}}</td>
           </tr>
           <tr>
             <td>Prima neta por pagar</td>
-            <td style="width: 35%; text-align: right;">${{number_format($calculo[9],2,'.',',')}}</td>
+            <td style="width: 35%; text-align: right;">${{number_format($detalle->APagar,2,'.',',')}}</td>
           </tr>
         </table>
       </td>
@@ -119,15 +125,15 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
           </tr>
           <tr>
             <td>Valor de la comisión</td>
-            <td style="width: 35%; text-align: right;">${{number_format($calculo[6],2,'.',',')}}</td>
+            <td style="width: 35%; text-align: right;">${{number_format($detalle->Comision,2,'.',',')}}</td>
           </tr>
           <tr>
             <td>(+) 13% IVA</td>
-            <td style="width: 35%; text-align: right;">${{number_format($calculo[7],2,'.',',')}}</td>
+            <td style="width: 35%; text-align: right;">${{number_format($detalle->IvaSobreComision,2,'.',',')}}</td>
           </tr>
           <tr>
             <td>Valor del CCF por Comisión</td>
-            <td style="width: 35%; text-align: right;">${{number_format($calculo[8],2,'.',',')}}</td>
+            <td style="width: 35%; text-align: right;">${{number_format($detalle->ValorCCF,2,'.',',')}}</td>
           </tr>
 
         </table>
@@ -136,7 +142,7 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
   </table>
   <br><br>
   <table border="1" cellspacing="0" style="width: 100%;">
-    <tr>
+    <tr style="background-color: lightgrey;">
       <th>Cuota</th>
       <th>Número Correlativo</th>
       <th>Fecha Inicio</th>
@@ -144,39 +150,40 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
       <th>Prima Neta (Sin Impuestos)</th>
       <th>IVA</th>
       <th>Gastos Emisión</th>
-      <th>Gastos Fracciona.</th>
+      <th>Otros</th>
       <th>Total a facturar</th>
     </tr>
     <tr>
       <td></td>
-      <td></td>
-      <td>{{ \Carbon\Carbon::parse($residencia->FechaInicio)->format('d/m/Y') }}</td>
-      <td>{{ \Carbon\Carbon::parse($residencia->FechaFinal)->format('d/m/Y') }}</td>
-      <td style="text-align: right;">${{number_format($calculo[4],2,'.',',')}}</td>
-      <td style="text-align: right;">${{number_format($calculo[5],2,'.',',')}}</td>
+      <td>{{$detalle->NumeroCorrelativo}}</td>
+      <td>{{ \Carbon\Carbon::parse($detalle->FechaInicio)->format('d/m/Y') }}</td>
+      <td>{{ \Carbon\Carbon::parse($detalle->FechaFinal)->format('d/m/Y') }}</td>
+      <td style="text-align: right;">${{number_format($detalle->SubTotal,2,'.',',')}}</td>
+      <td style="text-align: right;">${{number_format($detalle->Iva,2,'.',',')}}</td>
       <td style="text-align: right;">${{number_format($detalle->GastosEmision,2,'.',',')}}</td>
       <td style="text-align: right;">${{number_format($detalle->Otros,2,'.',',')}}</td>
-      <td style="text-align: right;">${{number_format(($calculo[4] + $calculo[5] + $detalle->GastosEmision + $detalle->Otros),2,'.',',')}}</td>
+      <td style="text-align: right;">${{number_format(($detalle->SubTotal + $detalle->Iva + $detalle->GastosEmision + $detalle->Otros),2,'.',',')}}</td>
     </tr>
   </table>
-  <br><br>
+  <br>
 
   <table border="0" cellspacing="0" style="width: 100%;">
 
     <tr>
 
       <td>
-        <p style="text-align: justify;">Es importante que posee 30 dias adiciones despues de la fecha de vencimiento para el pago de sus primas,
-          caso contrario la compañía de seguros no se hará responsable por la cobertura del bien asegurado en caso de un reclamo
+        <p style="text-align: justify;">Es importante que posee 30 días adiciones después de la fecha de
+          vencimiento para el pago de sus primas, caso contrario la compañía de seguros no se hará responsable
+          por la cobertura del bien asegurado en caso de un reclamo.
           <br>
-          Ademas hacemos de su conocimiento que en caso que usted no pueda presentarse a la compañía de seguros a realizar
-          los pagos de las cuotas de su póliza puede hacerlo a travez de nuestra empresa, comunicandose a  nuestras oficinas a
-          los telefonos 2521-3700 ó 7601-2895 para programar el dia y la hora en la cual nuestra área de mensajería se hará presente
-          al lugar convenido a retirar los cheques o dinero en efectivo por el pago de sus seguros eniandole posteriormente, la
-          factura o comprobante de crédito fiscal emitido y cancelado por la compañia aseguradora.
+          Además hacemos de su conocimiento que en caso que usted no pueda presentarse a la compañía de seguros a realizar los pagos de 
+          las cuotas de su póliza puede hacerlo a través de nuestra empresa, comunicándose a nuestras oficinas a los teléfonos 2521-3700 o 7601-2895 
+          para programar el día y la hora en la cual nuestra área de mensajería se hará presente al lugar convenido a retirar los cheques o 
+          dinero en efectivo por el pago de sus seguros enviándole posteriormente, la factura o comprobante de crédito fiscal emitido y 
+          cancelado por la compañía aseguradora. 
 
           <br>
-          Esperando lo anterior sea de satisfacción, nos ponemos a sus apreciables órdenes por cualqueir consulta adicional al respecto.
+          Esperando lo anterior sea de satisfacción, nos ponemos a sus apreciables órdenes por cualquier consulta adicional al respecto.
 
 
         </p>
@@ -186,28 +193,32 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
   <br><br>
 
   <table border="0" cellspacing="0" style="width: 40%;" align="right">
-    <tr>
-      <td style="text-align: right;">Firma cliente	</td>
+    <tr style="text-align: right;">
+      <td>Firma cliente </td>
       <td>_______________________</td>
     </tr>
     <tr style="text-align: right;">
-      <td>Nombre cliente	</td><td>_______________________</td>
+      <td>Nombre cliente </td>
+      <td>_______________________</td>
     </tr>
     <tr style="text-align: right;">
-      <td>Fecha Recibido	</td><td>_______________________</td>
+      <td>Fecha Recibido </td>
+      <td>_______________________</td>
     </tr>
     <tr style="text-align: right;">
-      <td>Elaborado por:</td><td>_______________________</td>
+      <td>Elaborado por:</td>
+      <td>_______________________</td>
     </tr>
     <tr style="text-align: right;">
-      <td>Fecha</td><td>_______________________</td>
+      <td>Fecha</td>
+      <td>_______________________</td>
     </tr>
 
   </table>
   <br><br>
 
   <br><br>
-  <table style="width: 100%;">
+  <table style="width: 100%; text-align: center;">
     <tr>
       <td>
         NR Seguros, S.A. de C.V
