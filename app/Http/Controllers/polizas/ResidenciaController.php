@@ -46,6 +46,7 @@ class ResidenciaController extends Controller
         session(['FechaInicio' => $today]);
         session(['FechaFinal' => $today]);
         session(['ExcelURL' => '']);
+        session(['tab' => 1]);
 
         $residencias = Residencia::where('Activo', 1)->get();
         return view('polizas.residencia.index', compact('residencias'));
@@ -154,6 +155,7 @@ class ResidenciaController extends Controller
 
     public function edit($id)
     {
+       // session(['tab' => 1]);
         $residencia = Residencia::findOrFail($id);
         $aseguradoras = Aseguradora::where('Nombre', 'like', '%fede%')->orWhere('Nombre', 'like', '%sisa%')->get();
         $estados_poliza = EstadoPoliza::where('Activo', '=', 1)->get();
@@ -268,7 +270,7 @@ class ResidenciaController extends Controller
         $detalles->Residencia = $residencia->Id;
         $detalles->save();
         */
-
+        session(['tab' => 1]);
         return back();
     }
 
@@ -306,6 +308,7 @@ class ResidenciaController extends Controller
 
     public function create_pago(Request $request)
     {
+        session(['tab' => 2]);
         $fecha = Carbon::create(null, $request->Mes, 1);
         $nombreMes = $fecha->locale('es')->monthName;
         $idUnicoCartera = Str::random(40);
@@ -385,7 +388,10 @@ class ResidenciaController extends Controller
             session(['ExcelURL' => $filePath]);
 
             alert()->success('El registro ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
-            return back();
+
+
+           return back();
+
         } catch (Throwable $e) {
             print($e);
             return false;
@@ -437,6 +443,7 @@ class ResidenciaController extends Controller
 
     public function edit_pago(Request $request)
     {
+        session(['tab' => 4]);
         $detalle = DetalleResidencia::findOrFail($request->Id);
         $residencia = Residencia::findOrFail($detalle->Residencia);
 
@@ -479,6 +486,7 @@ class ResidenciaController extends Controller
 
     public function recibo_pago($id, Request $request)
     {
+        session(['tab' => 4]);
         $detalle = DetalleResidencia::findOrFail($id);
         $residencia = Residencia::findOrFail($detalle->Residencia);
         $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
