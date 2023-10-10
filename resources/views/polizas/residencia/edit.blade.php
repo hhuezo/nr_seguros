@@ -627,7 +627,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="form-group row" style="margin-top:-3%;">
+                                                <div class="form-group row" style="margin-top:-5%;">
                                                     <label class="control-label" align="right">(-) Descuento Rentabilidad {{ $residencia->TasaDescuento }} %</label>
 
 
@@ -637,7 +637,7 @@
                                                     </div>
 
                                                 </div>
-                                                <div class="form-group row" style="margin-top:-3%;">
+                                                <div class="form-group row" style="margin-top:-5%;">
                                                     <label class="control-label" align="right">
                                                         (=) Prima Descontada</label>
                                                     <div class="form-group has-feedback">
@@ -646,8 +646,8 @@
                                                     </div>
                                                 </div>
                                                 <input type="hidden" name="Bomberos" id="Bomberos" value="{{ $bomberos }}">
-                                                <div class="form-group row" style="margin-top:-3%;">
-                                                    <label class="control-label" align="right">más Impuestos Bomberos</label>
+                                                <div class="form-group row" style="margin-top:-5%;">
+                                                    <label class="control-label" align="right">Más Impuestos Bomberos</label>
 
 
                                                     <div class="form-group has-feedback">
@@ -656,7 +656,7 @@
                                                     </div>
 
                                                 </div>
-                                                <div class="form-group row" style="margin-top:-3%;">
+                                                <div class="form-group row" style="margin-top:-5%;">
                                                     <label class="control-label" align="right">Gastos emisión</label>
 
 
@@ -666,7 +666,7 @@
 
                                                     </div>
                                                 </div>
-                                                <div class="form-group row" style="margin-top:-3%;">
+                                                <div class="form-group row" style="margin-top:-5%;">
                                                     <label class="control-label" align="right">Otros</label>
 
 
@@ -675,14 +675,14 @@
                                                         <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                                                     </div>
                                                 </div>
-                                                <div class="form-group row" style="margin-top:-3%;">
+                                                <div class="form-group row" style="margin-top:-5%;">
                                                     <label class="control-label" align="right">Sub Total</label>
                                                     <div class="form-group has-feedback">
                                                         <input type="number" step="any" name="SubTotal" id="SubTotal" class="form-control" style="text-align: right;">
                                                         <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                                                     </div>
                                                 </div>
-                                                <div class="form-group row" style="margin-top:-3%;">
+                                                <div class="form-group row" style="margin-top:-5%;">
                                                     <label class="control-label" align="right">13% IVA</label>
                                                     <div class="form-group has-feedback">
                                                         <input type="number" step="any" name="Iva" id="Iva" class="form-control" style="text-align: right;">
@@ -691,7 +691,7 @@
                                                 </div>
 
 
-                                                <div class="form-group row">
+                                                <div class="form-group row" style="margin-top:-5%;">
                                                     <label class="control-label" align="right">Menos valor CCF de comision</label>
 
 
@@ -703,7 +703,7 @@
 
                                                 </div>
 
-                                                <div class="form-group row">
+                                                <div class="form-group row" style="margin-top:-5%;">
                                                     <label class="control-label" align="right">A pagar</label>
 
 
@@ -795,11 +795,32 @@
                                             </div>
 
                                         </div>
+                                        <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-aplicar">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">×</span>
+                                                        </button>
+                                                        <h4 class="modal-title">Eliminar Registro</h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>Confirme si desea Eliminar el Registro</p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                                        <button id="boton_pago" class="btn btn-primary">Confirmar Pago</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="clearfix"></div>
                                         <div align="center">
                                             <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
-                                            <button type="submit" class="btn btn-primary">Aplicar Pago</button>
+                                            <a  class="btn btn-primary" data-target="#modal-aplicar" data-toggle="modal" onclick="aplicarpago()">Aplicar Pago</a>
                                         </div>
+
+
                                     </div>
                                 </form>
                             </div>
@@ -850,8 +871,8 @@
                             </div>
                             <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
                                 <table class="table table-striped jambo_table bulk_action" style="font-size: 13px;">
-                                    <tr>
-                                        <td>Tasa @if ($residencia->Mensual == 1)
+                                    <tr >
+                                        <td >Tasa @if ($residencia->Mensual == 1)
                                             Mensual
                                             @else
                                             Anual
@@ -896,7 +917,7 @@
                                         <td>Prima Calculada </td>
                                         <td>
                                             <div class="col-md-9 col-sm-9  form-group has-feedback">
-                                                <input type="text" class="form-control has-feedback-left" style="text-align: right;" id="PrimaCalculada2" value="@if ($ultimo_pago) {{ number_format($ultimo_pago->MontoCartera * $valorTasa, 2, '.', ',') }} @else 0 @endif" readonly>
+                                                <input type="text" class="form-control has-feedback-left" style="text-align: right;" id="PrimaCalculada2" value="@if ($ultimo_pago) {{ number_format($ultimo_pago->PrimaCalculada, 2, '.', ',') }} @else 0 @endif" readonly>
                                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                                             </div>
                                         </td>
@@ -905,7 +926,7 @@
                                         <td>(-) Descuento Rentabilidad {{ $residencia->TasaDescuento }}%</td>
                                         <td>
                                             <div class="col-md-9 col-sm-9  form-group has-feedback">
-                                                <input type="text" class="form-control has-feedback-left" style="text-align: right;" id="DescuentoRentabilidad2" value="@if ($ultimo_pago) {{ number_format($ultimo_pago->MontoCartera * $valorTasa * ($residencia->TasaDescuento / 100), 2, '.', ',') }} @else 0 @endif" readonly>
+                                                <input type="text" class="form-control has-feedback-left" style="text-align: right;" id="DescuentoRentabilidad2" value="@if ($ultimo_pago) {{ number_format($ultimo_pago->Descuento, 2, '.', ',') }} @else 0 @endif" readonly>
                                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                                             </div>
                                         </td>
@@ -914,7 +935,7 @@
                                         <td>(=) Prima Descontada</td>
                                         <td>
                                             <div class="col-md-9 col-sm-9  form-group has-feedback">
-                                                <input type="text" class="form-control has-feedback-left" style="text-align: right;" value="@if ($ultimo_pago) {{ number_format($ultimo_pago->MontoCartera * $valorTasa - $ultimo_pago->MontoCartera * $valorTasa * ($residencia->TasaDescuento / 100), 2, '.', ',') }} @else 0 @endif" readonly>
+                                                <input type="text" class="form-control has-feedback-left" style="text-align: right;" value="@if ($ultimo_pago) {{ number_format($ultimo_pago->PrimaDescontada, 2, '.', ',') }} @else 0 @endif" readonly>
                                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                                             </div>
                                         </td>
@@ -931,17 +952,17 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>SubTotal (Base de Iva)</td>
+                                        <td>SubTotal</td>
                                         <td>
 
                                             <div class="col-md-9 col-sm-9  form-group has-feedback">
-                                                <input type="text" class="form-control has-feedback-left" style="text-align: right;" value="@if ($ultimo_pago) {{ number_format($ultimo_pago->MontoCartera * $valorTasa + $ultimo_pago->ImpuestoBomberos, 2, '.', ',') }} @else 0 @endif" readonly>
+                                                <input type="text" class="form-control has-feedback-left" style="text-align: right;" value="@if ($ultimo_pago) {{ number_format($ultimo_pago->SubTotal, 2, '.', ',') }} @else 0 @endif" readonly>
                                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                                             </div>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>13% Iva s/SubTotal</td>
+                                        <td>13% IVA</td>
                                         <td>
                                             <div class="col-md-9 col-sm-9  form-group has-feedback">
                                                 <input type="text" class="form-control has-feedback-left" style="text-align: right;" value="@if ($ultimo_pago) {{ number_format($ultimo_pago->Iva, 2, '.', ',') }} @else 0 @endif" readonly>
@@ -1188,6 +1209,10 @@
         $("#MontoCartera").hide();
 
     }
+
+    function aplicarpago() {
+        document.getElementById('boton_pago').type = "submit";
+    }
     $(document).ready(function() {
 
         $("#MontoCarteraView").on('focus', function() {
@@ -1281,16 +1306,16 @@
             if (aseguradora == 3) { // busca la aseguradora de fedecredito, revisar el id de fedecredito
 
                 if (document.getElementById('Anual').checked == true) { //pendiente de confirmacion
-                    var tasaFinal = tasa / 1000; /// 12
+                    var tasaFinal = Math.round((tasa / 1000) * 1e8) / 1e8; /// 12
                 } else {
-                    var tasaFinal = tasa / 1000;
+                    var tasaFinal = Math.round((tasa / 1000) * 1e8) / 1e8;
                 }
 
             } else { // sisa
                 if (document.getElementById('Anual').checked == true) {
-                    var tasaFinal = (tasa / 1000) / 12;
+                    var tasaFinal = Math.round(((tasa / 1000) / 12) * 1e8) / 1e8;
                 } else {
-                    var tasaFinal = (tasa / 1000) / 12;
+                    var tasaFinal = Math.round(((tasa / 1000) / 12) * 1e8) / 1e8;
                 }
 
             }

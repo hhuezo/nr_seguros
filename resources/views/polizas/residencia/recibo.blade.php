@@ -16,7 +16,7 @@
 $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
 @endphp
 
-<body>
+<body style="margin-top: -10%;">
   <table style="width: 100%;">
     <tr>
       <td>

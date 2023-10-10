@@ -167,17 +167,18 @@ class ResidenciaController extends Controller
 
         if (strpos($residencia->aseguradoras->Nombre, 'FEDE') === false) {
             if ($residencia->Mensual == 1) {
-                $valorTasa = $residencia->Tasa / 1000/12;
+                $valorTasa = round($residencia->Tasa / 1000 / 12, 8);
             } else {
-                $valorTasa = $residencia->Tasa / 1000;
+                $valorTasa = round($residencia->Tasa / 1000 / 12, 8);
             }
         } else {
             if ($residencia->Mensual == 1) {   //modificar al confirmar
-                $valorTasa = $residencia->Tasa / 1000;
+                $valorTasa = round($residencia->Tasa / 1000, 8);
             } else {
-                $valorTasa = $residencia->Tasa / 1000;
+                $valorTasa = round($residencia->Tasa / 1000, 8);
             }
         }
+
 
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
         $bombero = Bombero::where('Activo', 1)->first();
@@ -188,7 +189,7 @@ class ResidenciaController extends Controller
         }
 
         $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
-       // session(['MontoCartera' => 0]);
+        // session(['MontoCartera' => 0]);
 
         return view('polizas.residencia.edit', compact(
             'residencia',
@@ -396,35 +397,41 @@ class ResidenciaController extends Controller
 
         $residencia = Residencia::findOrFail($request->Residencia);
 
-        $detalle = new DetalleResidencia();
-        $detalle->FechaInicio = $request->FechaInicio;
-        $detalle->FechaFinal = $request->FechaFinal;
-        $detalle->MontoCartera = $request->MontoCartera;
-        $detalle->Residencia = $request->Residencia;
-        $detalle->Tasa = $request->Tasa;
-        $detalle->PrimaCalculada = $request->PrimaCalculada;
-        $detalle->Descuento = $request->Descuento;
-        $detalle->PrimaDescontada = $request->PrimaDescontada;
-        $detalle->ImpuestoBomberos = $request->ImpuestoBomberos;
-        $detalle->GastosEmision = $request->GastosEmision;
-        $detalle->Otros = $request->Otros;
-        $detalle->SubTotal = $request->SubTotal;
-        $detalle->Iva = $request->Iva;
-        $detalle->TasaComision = $request->TasaComision;
-        $detalle->Comision = $request->Comision;
-        $detalle->IvaSobreComision = $request->IvaSobreComision;
-        $detalle->Retencion = $request->Retencion;
-        $detalle->ValorCCF = $request->ValorCCF;
-        $detalle->Comentario = $request->Comentario;
-        $detalle->APagar = $request->APagar;
+        if (!$request->ExcelURL) {
+            alert()->error('No se puede generar el pago, falta subir cartera')->showConfirmButton('Aceptar', '#3085d6');
 
-        $detalle->PrimaTotal = $request->PrimaTotal;  
-        $detalle->DescuentoIva = $request->DescuentoIva; //checked
-        $detalle->ExtraPrima = $request->ExtraPrima;        
-        $detalle->ExcelURL = $request->ExcelURL;
-        $detalle->save();
-        session(['MontoCartera' => 0]);
-        alert()->success('El registro de pago ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
+        } else {
+
+            $detalle = new DetalleResidencia();
+            $detalle->FechaInicio = $request->FechaInicio;
+            $detalle->FechaFinal = $request->FechaFinal;
+            $detalle->MontoCartera = $request->MontoCartera;
+            $detalle->Residencia = $request->Residencia;
+            $detalle->Tasa = $request->Tasa;
+            $detalle->PrimaCalculada = $request->PrimaCalculada;
+            $detalle->Descuento = $request->Descuento;
+            $detalle->PrimaDescontada = $request->PrimaDescontada;
+            $detalle->ImpuestoBomberos = $request->ImpuestoBomberos;
+            $detalle->GastosEmision = $request->GastosEmision;
+            $detalle->Otros = $request->Otros;
+            $detalle->SubTotal = $request->SubTotal;
+            $detalle->Iva = $request->Iva;
+            $detalle->TasaComision = $request->TasaComision;
+            $detalle->Comision = $request->Comision;
+            $detalle->IvaSobreComision = $request->IvaSobreComision;
+            $detalle->Retencion = $request->Retencion;
+            $detalle->ValorCCF = $request->ValorCCF;
+            $detalle->Comentario = $request->Comentario;
+            $detalle->APagar = $request->APagar;
+
+            $detalle->PrimaTotal = $request->PrimaTotal;
+            $detalle->DescuentoIva = $request->DescuentoIva; //checked
+            $detalle->ExtraPrima = $request->ExtraPrima;
+            $detalle->ExcelURL = $request->ExcelURL;
+            $detalle->save();
+            session(['MontoCartera' => 0]);
+            alert()->success('El registro de pago ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
+        }
         return back();
     }
 
@@ -457,7 +464,7 @@ class ResidenciaController extends Controller
             $detalle->PagoAplicado = $request->PagoAplicado;
             $detalle->ComAplicado = $request->Comentario;
         }
-        
+
 
         /*$detalle->EnvioPago = $request->EnvioPago;
             $detalle->PagoAplicado = $request->PagoAplicado;*/
