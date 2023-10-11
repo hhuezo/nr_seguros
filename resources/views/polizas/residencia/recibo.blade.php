@@ -33,7 +33,7 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
         <img src="{{ public_path('img/logo.jpg') }}" alt="logo" width="165">
         <br>
         <p style="border: 1 solid #000; text-align: center;">Aviso de Cobro: <br>
-          AC 000001 2023</p> <!--  falta agregar el numero del aviso de cobro -->
+          AC {{ str_pad($detalle->NumeroRecibo,6,"0",STR_PAD_LEFT)}} {{date('Y')}}</p> <!--  falta agregar el numero del aviso de cobro -->
       </td>
     </tr>
   </table>

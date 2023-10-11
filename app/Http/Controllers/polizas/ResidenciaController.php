@@ -7,6 +7,7 @@ use App\Imports\PolizaResidenciaTempCarteraImport;
 use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\Bombero;
 use App\Models\catalogo\Cliente;
+use App\Models\catalogo\DatosGenerales;
 use App\Models\catalogo\Ejecutivo;
 use App\Models\catalogo\EstadoPoliza;
 use App\Models\catalogo\Ruta;
@@ -403,6 +404,7 @@ class ResidenciaController extends Controller
 
         $residencia = Residencia::findOrFail($request->Residencia);
 
+        $recibo = DatosGenerales::orderByDesc('Id_recibo')->first();
         if (!$request->ExcelURL) {
             alert()->error('No se puede generar el pago, falta subir cartera')->showConfirmButton('Aceptar', '#3085d6');
 
@@ -434,7 +436,11 @@ class ResidenciaController extends Controller
             $detalle->DescuentoIva = $request->DescuentoIva; //checked
             $detalle->ExtraPrima = $request->ExtraPrima;
             $detalle->ExcelURL = $request->ExcelURL;
+            $detalle->NumeroRecibo = ($recibo->Id_recibo) +1;
             $detalle->save();
+
+            $recibo->Id_recibo = ($recibo->Id_recibo) +1;
+            $recibo->update();
             session(['MontoCartera' => 0]);
             alert()->success('El registro de pago ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
         }
