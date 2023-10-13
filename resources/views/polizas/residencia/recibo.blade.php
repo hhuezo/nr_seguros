@@ -78,8 +78,12 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
     <tr>
       <td style="width: 45%;">
         <table border="1" cellspacing="0">
+        <tr>
+            <td style="width: 65%;">Monto de Cartera</td>
+            <td style="width: 35%; text-align: right;">${{number_format($detalle->MontoCartera,2,'.',',')}}</td>
+          </tr>
           <tr>
-            <td style="width: 65%;">Prima Calculada</td>
+            <td style="width: 65%;">Prima</td>
             <td style="width: 35%; text-align: right;">${{number_format($detalle->PrimaCalculada,2,'.',',')}}</td>
           </tr>
           <tr>
@@ -99,16 +103,20 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
             <td style="width: 35%; text-align: right;"> ${{number_format($detalle->SubTotal,2,'.',',')}}</td>
           </tr>
           <tr>
-            <td>13% IVA S/Sub Total</td>
+            <td>13% IVA</td>
             <td style="width: 35%; text-align: right;">${{number_format($detalle->Iva,2,'.',',')}}</td>
+          </tr>
+          <tr>
+            <td>Total Factura</td>
+            <td style="width: 35%; text-align: right;">${{number_format(($detalle->SubTotal+$detalle->Iva),2,'.',',')}}</td>
           </tr>
           <tr>
             <td>(-) Estructura CCF de Comisión</td>
             <td style="width: 35%; text-align: right;">${{number_format($detalle->ValorCCF,2,'.',',')}}</td>
           </tr>
           <tr>
-            <td>Prima neta por pagar</td>
-            <td style="width: 35%; text-align: right;">${{number_format($detalle->APagar,2,'.',',')}}</td>
+            <td><b>Prima total a pagar</b></td>
+            <td style="width: 35%; text-align: right;"><b>${{number_format($detalle->APagar,2,'.',',')}}</b></td>
           </tr>
         </table>
       </td>
@@ -145,23 +153,29 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
     <tr style="background-color: lightgrey;">
       <th>Cuota</th>
       <th>Número Correlativo</th>
-      <th>Fecha Inicio</th>
-      <th>Fecha Final</th>
-      <th>Prima Neta (Sin Impuestos)</th>
-      <th>IVA</th>
+      <th>Fecha de Pago</th>
+      <th>Prima Neta</th>
       <th>Gastos Emisión</th>
       <th>Otros</th>
+      <th>IVA</th>
       <th>Total a facturar</th>
     </tr>
     <tr>
       <td></td>
       <td>{{$detalle->NumeroCorrelativo}}</td>
       <td>{{ \Carbon\Carbon::parse($detalle->FechaInicio)->format('d/m/Y') }}</td>
-      <td>{{ \Carbon\Carbon::parse($detalle->FechaFinal)->format('d/m/Y') }}</td>
       <td style="text-align: right;">${{number_format($detalle->SubTotal,2,'.',',')}}</td>
-      <td style="text-align: right;">${{number_format($detalle->Iva,2,'.',',')}}</td>
       <td style="text-align: right;">${{number_format($detalle->GastosEmision,2,'.',',')}}</td>
       <td style="text-align: right;">${{number_format($detalle->Otros,2,'.',',')}}</td>
+      <td style="text-align: right;">${{number_format($detalle->Iva,2,'.',',')}}</td>
+      <td style="text-align: right;">${{number_format(($detalle->SubTotal + $detalle->Iva + $detalle->GastosEmision + $detalle->Otros),2,'.',',')}}</td>
+    </tr>
+    <tr>
+      <td colspan="3" align="center">TOTAL </td>
+      <td style="text-align: right;">${{number_format($detalle->SubTotal,2,'.',',')}}</td>
+      <td></td>
+      <td></td>
+      <td style="text-align: right;">${{number_format($detalle->Iva,2,'.',',')}}</td>
       <td style="text-align: right;">${{number_format(($detalle->SubTotal + $detalle->Iva + $detalle->GastosEmision + $detalle->Otros),2,'.',',')}}</td>
     </tr>
   </table>
