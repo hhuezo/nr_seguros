@@ -1332,16 +1332,16 @@
             if (aseguradora == 3) { // busca la aseguradora de fedecredito, revisar el id de fedecredito
 
                 if (document.getElementById('Anual').checked == true) { //pendiente de confirmacion
-                    var tasaFinal = Math.round((tasa / 1000) * 1e8) / 1e8; /// 12
+                    var tasaFinal = tasa / 1000; /// 12
                 } else {
-                    var tasaFinal = Math.round((tasa / 1000) * 1e8) / 1e8;
+                    var tasaFinal = tasa / 1000;
                 }
 
             } else { // sisa
                 if (document.getElementById('Anual').checked == true) {
-                    var tasaFinal = Math.round(((tasa / 1000) / 12) * 1e8) / 1e8;
+                    var tasaFinal = (tasa / 1000) / 12;
                 } else {
-                    var tasaFinal = Math.round(((tasa / 1000) / 12) * 1e8) / 1e8;
+                    var tasaFinal = (tasa / 1000) / 12;
                 }
 
             }
