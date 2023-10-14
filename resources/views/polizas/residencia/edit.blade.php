@@ -659,7 +659,7 @@
                                                 </div>
                                                 <input type="hidden" name="Bomberos" id="Bomberos" value="{{ $bomberos }}">
                                                 <div class="form-group row" style="margin-top:-5%;">
-                                                    <label class="control-label" align="right">Más Impuestos
+                                                    <label class="control-label" align="right">(+) Impuestos
                                                         Bomberos</label>
 
 
@@ -728,7 +728,7 @@
                                                 </div>
 
                                                 <div class="form-group row" style="margin-top:-5%;">
-                                                    <label class="control-label" align="right">Total a Facturar</label>
+                                                    <label class="control-label" align="right">Total Factura</label>
 
 
                                                     <div class="form-group has-feedback">
@@ -758,7 +758,7 @@
                                                     <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: center;">Estructura CCF de comisión</label>
                                                 </div>
                                                 <div class="form-group row">
-                                                    <label class="control-label" align="right">Comision %</label>
+                                                    <label class="control-label" align="right">% Comisión</label>
 
 
                                                     <div class="form-group has-feedback">
@@ -768,7 +768,7 @@
 
                                                 </div>
                                                 <div class="form-group row">
-                                                    <label class="control-label" align="right" style="margin-top:-4%;">Comision</label>
+                                                    <label class="control-label" align="right" style="margin-top:-4%;">% Comisión</label>
 
 
                                                     <div class="form-group has-feedback">
@@ -778,7 +778,7 @@
 
                                                 </div>
                                                 <div class="form-group row" style="margin-top:-4%;">
-                                                    <label class="control-label" align="right">mas 13% IVA </label>
+                                                    <label class="control-label" align="right">(+) 13% IVA </label>
 
 
                                                     <div class="form-group has-feedback">
@@ -789,7 +789,7 @@
                                                 </div>
 
                                                 <div class="form-group row" style="margin-top:-4%;">
-                                                    <label class="control-label" align="right">menos 1% Ret</label>
+                                                    <label class="control-label" align="right">Menos 1% Ret</label>
 
 
                                                     <div class="form-group has-feedback">
@@ -912,7 +912,7 @@
                                     </tr>
                                     <tr>
                                         <td colspan="2">
-                                            <center><strong>Base Calculo de la Prima </strong></center>
+                                            <center><strong>Base Cálculo de la Prima </strong></center>
                                         </td>
                                     </tr>
                                     <tr>
@@ -966,7 +966,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Impuesto Bomberos</td>
+                                        <td>(+)Impuesto Bomberos</td>
                                         <td>
 
                                             <div class="col-md-9 col-sm-9  form-group has-feedback">
@@ -996,7 +996,16 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Valor CCF por Comisión</td>
+                                        <td>Total Factura</td>
+                                        <td>
+                                            <div class="col-md-9 col-sm-9  form-group has-feedback">
+                                                <input type="text" class="form-control has-feedback-left" style="text-align: right;" value="@if ($ultimo_pago) {{ number_format($ultimo_pago->SubTotal + $ultimo_pago->Iva, 2, '.', ',') }} @else 0 @endif" readonly>
+                                                <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>(-) Estructura CCF de Comisión</td>
                                         <td>
                                             <div class="col-md-9 col-sm-9  form-group has-feedback">
                                                 <input type="text" class="form-control has-feedback-left" style="text-align: right;" value="@if ($ultimo_pago) {{ number_format($ultimo_pago->ValorCCF, 2, '.', ',') }} @else 0 @endif" readonly>
@@ -1005,7 +1014,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Prima Neta Por Pagar @if ($ultimo_pago)
+                                        <td>Prima total a Pagar @if ($ultimo_pago)
                                             <br>
                                             {{ \Carbon\Carbon::parse($ultimo_pago->FechaInicio)->format('d/m/Y') }}
                                             al
@@ -1332,16 +1341,16 @@
             if (aseguradora == 3) { // busca la aseguradora de fedecredito, revisar el id de fedecredito
 
                 if (document.getElementById('Anual').checked == true) { //pendiente de confirmacion
-                    var tasaFinal = Math.round((tasa / 1000) * 1e8) / 1e8; /// 12
+                    var tasaFinal = (tasa / 1000); /// 12
                 } else {
-                    var tasaFinal = Math.round((tasa / 1000) * 1e8) / 1e8;
+                    var tasaFinal =(tasa / 1000);
                 }
 
             } else { // sisa
                 if (document.getElementById('Anual').checked == true) {
-                    var tasaFinal = Math.round(((tasa / 1000) / 12) * 1e8) / 1e8;
+                    var tasaFinal = (tasa / 1000) / 12;
                 } else {
-                    var tasaFinal = Math.round(((tasa / 1000) / 12) * 1e8) / 1e8;
+                    var tasaFinal = (tasa / 1000) / 12;
                 }
 
             }
