@@ -113,9 +113,9 @@
                                     <td>{{$loop->iteration}}</td>
                                     <td>{{ $obj->Nombre }}</td>
                                     @if ($obj->Tarificacion)
-                                    <td>Millar</td>
+                                    <td>Si</td>
                                     @else
-                                    <td>Porcentual</td>
+                                    <td>No</td>
                                     @endif
                                     @if ($obj->Descuento)
                                     <td>Si</td>
@@ -333,8 +333,8 @@
                                 <div class="col-sm-6">
                                     Tarificación
                                     <select name="Tarificacion" id="Tarificacion" class="form-control" required>
-                                        <option value="0" {{ old('Tarificacion') == "0" ? 'selected' : '' }}>Porcentual</option>
-                                        <option value="1" {{ old('Tarificacion') == "1" ? 'selected' : '' }}>Millar</option>
+                                        <option value="0" {{ old('Tarificacion') == "0" ? 'selected' : '' }}>No</option>
+                                        <option value="1" {{ old('Tarificacion') == "1" ? 'selected' : '' }}>Si</option>
                                     </select>
                                 </div>
                             </div>
@@ -397,8 +397,8 @@
                                 <div class="col-sm-6">
                                     Tarificación
                                     <select name="Tarificacion" id="ModalCoberturaTarificacion" class="form-control" required>
-                                        <option value="0" {{ old('Tarificacion') == "0" ? 'selected' : '' }}>Porcentual</option>
-                                        <option value="1" {{ old('Tarificacion') == "1" ? 'selected' : '' }}>Millar</option>
+                                        <option value="0" {{ old('Tarificacion') == "0" ? 'selected' : '' }}>No</option>
+                                        <option value="1" {{ old('Tarificacion') == "1" ? 'selected' : '' }}>Si</option>
                                     </select>
                                 </div>
                             </div>

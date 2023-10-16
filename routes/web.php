@@ -19,6 +19,7 @@ use App\Http\Controllers\catalogo\TipoPolizaController;
 use App\Http\Controllers\catalogo\UbicacionCobroController;
 use App\Http\Controllers\catalogo\NegocioController;
 use App\Http\Controllers\catalogo\NrCarteraController;
+use App\Http\Controllers\catalogo\PlanController;
 use App\Http\Controllers\catalogo\ProductoController;
 use App\Http\Controllers\catalogo\RutaController;
 use App\Http\Controllers\catalogo\TipoCobroController;
@@ -94,6 +95,11 @@ Route::post('catalogo/producto/delete_cobertura', [ProductoController::class, 'd
 Route::post('catalogo/producto/add_dato_tecnico', [ProductoController::class, 'add_dato_tecnico']);
 Route::post('catalogo/producto/edit_dato_tecnico', [ProductoController::class, 'edit_dato_tecnico']);
 Route::post('catalogo/producto/delete_dato_tecnico', [ProductoController::class, 'delete_dato_tecnico']);
+
+Route::get('catalogo/plan/getCoberturas', [PlanController::class, 'getCoberturas']);
+Route::post('catalogo/plan/edit_cobertura_detalle', [PlanController::class, 'edit_cobertura_detalle']);
+Route::resource('catalogo/plan', PlanController::class);
+
 
 
 

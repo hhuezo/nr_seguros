@@ -35,6 +35,6 @@ class Producto extends Model
 
     public function planes()
     {
-        return $this->hasMany(Plan::class, 'producto', 'Id');
+        return $this->hasMany(Plan::class, 'Producto', 'Id');
     }
 }

@@ -20,6 +20,12 @@ class Cobertura extends Model
 
     public function planesCoberturaDetalles()
     {
-        return $this->hasMany(planesCoberturaDetalle::class, 'Cobertura', 'Id');
+        return $this->hasMany(PlanCoberturaDetalle::class, 'Cobertura', 'Id');
+    }
+
+    public function planes()
+    {
+        return $this->belongsToMany(Plan::class, 'plan_cobertura_detalle', 'Cobertura', 'Plan')
+            ->withPivot(['SumaAsegurada', 'Tasa', 'Prima', 'Activo']);
     }
 }
