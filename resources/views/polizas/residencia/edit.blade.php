@@ -48,6 +48,8 @@
                     </li>
                     <li role="presentation" class=""><a href="#tab_content5" role="tab" id="recibos-tab" data-toggle="tab" aria-expanded="false">Avisos de Cobro</a>
                     </li>
+                    <li role="presentation" class=""><a href="#tab_content6" role="tab" id="comen-tab" data-toggle="tab" aria-expanded="false">Comentarios</a>
+                    </li>
                 </ul>
 
                 <div id="myTabContent" class="tab-content">
@@ -221,37 +223,74 @@
                             <br>
                             <table class="table">
                                 <tr>
-                                    <th>Tasa</th>
-                                    <th>Fecha Inicio</th>
-                                    <th>Fecha Final</th>
-                                    <th>Descuento</th>
-                                    <th>A Pagar</th>
-                                    <th>Impresion de Recibo</th>
-                                    <th>Envio de Cartera</th>
-                                    <th>Envio de Pago</th>
-                                    <th>Pago Aplicado</th>
-                                    <th>Opciones</th>
+                                    <th style="text-align: center;">Poliza</th>
+                                    <th style="text-align: center;">Fecha Inicio <br> Vigencia</th>
+                                    <th style="text-align: center;">Fecha Final <br> Vigencia</th>
+                                    <th style="text-align: center;">Cuota</th>
+                                    <th style="text-align: center;">Correlativo</th>
+                                    <th style="text-align: center;">Fecha de <br> Vencimiento</th>
+                                    <th style="text-align: center;">Fecha de <br> Aplicación de pago</th>
+                                    <th style="text-align: center;">Valor (US$)</th>
+                                    <th style="text-align: center;">Estatus</th>
+                                    <th style="text-align: center;">Opciones</th>
                                 </tr>
+                                @php
+                                $total = 0;
+                                @endphp
                                 @foreach ($detalle as $obj)
                                 @php
                                 $fileUrl = asset($obj->ExcelURL);
                                 @endphp
-                                @if (!$obj->ImpresionRecibo)
-                                <tr class="danger">
 
-                                    <td>{{ $obj->Tasa }}%</td>
+                                <tr>
+                                    <td>{{ $residencia->NumeroPoliza }}</td>
                                     <td>{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
                                     <td>{{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
-                                    <td>$ {{ number_format($obj->Descuento, 2, '.', ',') }}</td>
-                                    <td>$ {{ number_format($obj->APagar, 2, '.', ',') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}
-                                    </td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->EnvioCartera)->format('d/m/Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->EnvioPago)->format('d/m/Y') }}</td>
+                                    <td>01/01</td>
+                                    @if($obj->Correlativo)
+                                    <td>{{$obj->Correlativo}}</td>
+                                    @else
+                                    <td></td>
+                                    @endif
+                                    <td>{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }} </td>
+                                    @if($obj->PagoAplicado)
                                     <td>{{ \Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') }}</td>
-                                    <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"></a>
-                                        &nbsp;&nbsp;<a href="" data-target="#modal-recibo-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-pencil fa-lg"></i></a>
-                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
+                                    @else
+                                    <td></td>
+                                    @endif
+                                    @if($obj->Activo == 0)
+                                    <td style="text-align: right;">$0.00</td>
+                                    @else
+                                    <td style="text-align: right;">$ {{ number_format($obj->APagar, 2, '.', ',') }}
+                                        @php
+                                        $total = $total + $obj->APagar;
+                                        @endphp
+                                    </td>
+                                    @endif
+                                    @if($obj->Activo == 0)
+                                    <td>Anulado</td>
+                                    @elseif(!$obj->PagoAplicado)
+                                    <td>Pendiente</td>
+                                    @elseif($obj->PagoAplicado)
+                                    <td>Pagado</td>
+                                    @else
+                                    <td></td>
+                                    @endif
+                                    <td>
+                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a> &nbsp;&nbsp;
+                                        <a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"></a>&nbsp;&nbsp;
+                                        <a href="{{ $fileUrl }}" class="fa fa-eye" align="center"></a>
+
+
+                                        &nbsp;&nbsp;
+                                        @if($obj->Activo == 0)
+
+                                        @elseif(!$obj->ImpresionRecibo)
+                                        <a href="" data-target="#modal-recibo-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-pencil fa-lg"></i></a>&nbsp;&nbsp;
+                                        @else
+                                        <a href="" onclick="modal_edit({{ $obj->Id }})"><i class="fa fa-pencil fa-lg"></i> </a>&nbsp;&nbsp;
+                                        @endif
+
                                     </td>
                                 </tr>
                                 <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-recibo-{{ $obj->Id }}">
@@ -315,81 +354,7 @@
                                     </form>
 
                                 </div>
-                                @elseif(!$obj->EnvioCartera)
-                                <tr class="warning">
 
-                                    <td>{{ $obj->Tasa }}%</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
-                                    <td>$ {{ number_format($obj->Descuento, 2, '.', ',') }}</td>
-                                    <td>$ {{ number_format($obj->APagar, 2, '.', ',') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}
-                                    </td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->EnvioCartera)->format('d/m/Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->EnvioPago)->format('d/m/Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') }}</td>
-                                    <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"></a>&nbsp;&nbsp;<i class="fa fa-pencil fa-lg" onclick="modal_edit({{ $obj->Id }})"></i> &nbsp;&nbsp;
-                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
-                                    </td>
-                                </tr>
-                                @elseif(!$obj->EnvioPago)
-                                <tr class="btn-info">
-
-
-                                    <td>{{ $obj->Tasa }}%</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
-                                    <td>$ {{ number_format($obj->Descuento, 2, '.', ',') }}</td>
-                                    <td>$ {{ number_format($obj->APagar, 2, '.', ',') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}
-                                    </td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->EnvioCartera)->format('d/m/Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->EnvioPago)->format('d/m/Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') }}</td>
-                                    <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"></a>&nbsp;&nbsp;
-                                        <i class="fa fa-pencil fa-lg" onclick="modal_edit({{ $obj->Id }})"></i> &nbsp;&nbsp;
-                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
-                                    </td>
-                                </tr>
-                                @elseif(!$obj->PagoAplicado)
-                                <tr class="success">
-                                    <td>{{ $obj->Tasa }}%</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
-                                    <td>$ {{ number_format($obj->Descuento, 2, '.', ',') }}</td>
-                                    <td>$ {{ number_format($obj->APagar, 2, '.', ',') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}
-                                    </td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->EnvioCartera)->format('d/m/Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->EnvioPago)->format('d/m/Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') }}</td>
-                                    <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"> </a>&nbsp;&nbsp;
-                                        <i class="fa fa-pencil fa-lg" onclick="modal_edit({{ $obj->Id }})"></i> &nbsp;&nbsp;
-                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
-
-                                    </td>
-
-                                </tr>
-                                @else
-                                <tr>
-
-                                    <td>{{ $obj->Tasa }}%</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
-                                    <td>$ {{ number_format($obj->Descuento, 2, '.', ',') }}</td>
-                                    <td>$ {{ number_format($obj->APagar, 2, '.', ',') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}
-                                    </td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->EnvioCartera)->format('d/m/Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->EnvioPago)->format('d/m/Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') }}</td>
-                                    <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"> </a>&nbsp;&nbsp;
-                                        <i class="fa fa-pencil fa-lg" onclick="modal_edit({{ $obj->Id }})"></i>&nbsp;&nbsp;
-                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
-                                    </td>
-
-                                </tr>
-                                @endif
                                 <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-{{ $obj->Id }}">
 
                                     <form method="POST" action="{{ url('polizas/residencia/delete_pago', $obj->Id) }}">
@@ -415,7 +380,13 @@
                                     </form>
 
                                 </div>
+
                                 @endforeach
+                                <tr>
+                                    <td colspan="3" style="text-align: right;"><b>Total de Poliza:</b> </td>
+                                    <td colspan="5" style="text-align: right;"><b>${{number_format($total, 2, '.', ',')}}</b> </td>
+                                    <td colspan="2"></td>
+                                </tr>
                             </table>
 
                         </div>
@@ -1125,6 +1096,71 @@
                             </div>
                         </div>
                     </div>
+                    <div role="tabpanel" class="tab-pane fade" id="tab_content6" aria-labelledby="comen-tab">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+
+                                <div class="x_title">
+                                    <h4>&nbsp;&nbsp; Comentarios<small></small>
+                                    </h4>
+                                    <div class="clearfix" align="right"><button class="btn btn-primary" onclick="add_comment();"><i class="fa fa-plus"></i> Agregar <br> Comentario</button></div>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+                                    &nbsp;
+                                </div>
+                                <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                                    <table width="100%" class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Comentario</th>
+                                                <th>Usuario</th>
+                                                <th>Fecha Ingreso</th>
+                                                <th><i class="fa fa-filef"></i>Opciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($comentarios as $obj)
+                                            <tr>
+                                                <td>{{$obj->Comentario}}</td>
+                                                <td> {{ $obj->Usuario}}</td>
+                                                <td>{{ \Carbon\Carbon::parse($obj->FechaIngreso)->format('d/m/Y') }}</td>
+                                                <td><a href="" data-target="#modal-delete-comentario-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
+                                                </td>
+                                            </tr>
+                                            <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-comentario-{{ $obj->Id }}">
+
+                                                <form method="POST" action="{{ url('polizas/residencia/eliminar_comentario') }}">
+                                                    @method('POST')
+                                                    @csrf
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">×</span>
+                                                                </button>
+                                                                <h4 class="modal-title">Eliminar Registro</h4>
+                                                                <input type="hidden" name="IdComment" value="{{$obj->Id}}">
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p>Confirme si desea Eliminar el Registro</p>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                                                <button type="submit" class="btn btn-primary">Confirmar</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+
+                                            </div>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal fade " id="modal_editar_pago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
                     <div class="modal-dialog modal-lg" role="document">
@@ -1200,6 +1236,44 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="modal fade " id="modal_agregar_comentario" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <form method="POST" action="{{ url('polizas/residencia/agregar_comentario') }}">
+                                <div class="modal-header">
+                                    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                                        <h5 class="modal-title" id="exampleModalLabel">Agregar Comentario</h5>
+                                    </div>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="box-body">
+                                        @csrf
+                                        <input type="hidden" name="ResidenciaComment" value="{{$residencia->Id}}" class="form-control">
+
+                                        <div class="form-group">
+                                            <div class="col-sm-12">
+                                                <label class="control-label">Comentario</label>
+                                                <textarea class="form-control" rows="4" name="Comentario"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+                                    <button type="submit" class="btn btn-primary">Aceptar</button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
 
         </div>
@@ -1222,6 +1296,11 @@
         });
 
         return numeroFormateado;
+    }
+
+    function add_comment() {
+
+        $("#modal_agregar_comentario").modal('show');
     }
 
 
@@ -1439,7 +1518,7 @@
             var APagar = Number(PrimaTotal) - Number(ccfe) + Number(iva);
             document.getElementById('APagar').value = APagar.toFixed(2);
             document.getElementById('APagar').style.backgroundColor = 'yellow';
-            document.getElementById('Facturar').value = (Number(PrimaTotal)+ Number(iva)).toFixed(2);
+            document.getElementById('Facturar').value = (Number(PrimaTotal) + Number(iva)).toFixed(2);
         })
 
         $('#ValorCCF').change(function() {
@@ -1450,7 +1529,7 @@
             var APagar = Number(PrimaTotal) - Number(ccf) + Number(iva);
             document.getElementById('APagar').value = APagar.toFixed(2);
             document.getElementById('APagar').style.backgroundColor = 'yellow';
-            document.getElementById('Facturar').value = (Number(PrimaTotal)+ Number(iva)).toFixed(2);
+            document.getElementById('Facturar').value = (Number(PrimaTotal) + Number(iva)).toFixed(2);
         })
 
 

@@ -144,6 +144,8 @@ Route::get('polizas/residencia/{id}/renovar', [ResidenciaController::class, 'ren
 Route::get('polizas/residencia/{id}/cancelacion', [ResidenciaController::class, 'cancelacion']);
 Route::post('polizas/residencia/renovar/{id}', [ResidenciaController::class, 'renovarPoliza'])->name('residencia.renovarPoliza');
 Route::post('polizas/residencia/delete_pago/{id}', [ResidenciaController::class, 'delete_pago']);
+Route::post('polizas/residencia/agregar_comentario',[ResidenciaController::class,'agregar_comentario']);
+Route::post('polizas/residencia/eliminar_comentario',[ResidenciaController::class,'eliminar_comentario']);
 
 Route::resource('polizas/vida', VidaController::class);
 Route::post('polizas/vida/create_pago', [VidaController::class, 'create_pago']);
