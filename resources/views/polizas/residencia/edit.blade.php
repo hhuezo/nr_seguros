@@ -39,14 +39,14 @@
                 <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
                     <li role="presentation" class="{{session('tab') == 1 ? 'active':''}}"><a href="#tab_content4" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Datos de Póliza</a>
                     </li>
-                    <li role="presentation" class="{{session('tab') == 2 ? 'active':''}} "><a href="#tab_content2" role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">Generar Pago</a>
+                    <li role="presentation" class="{{session('tab') == 2 ? 'active':''}} "><a href="#tab_content2" role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">Generar Cartera</a>
                     </li>
                     <li role="presentation" class=""><a href="#tab_content3" role="tab" id="creditos-tab" data-toggle="tab" aria-expanded="false">Hoja de Calculo
                             {{ $residencia->NumeroPoliza }}</a>
                     </li>
-                    <li role="presentation" class="{{session('tab') == 4 ? 'active':''}}"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Estados de Pagos</a>
+                    <li role="presentation" class="{{session('tab') == 4 ? 'active':''}}"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Generar Cobro</a>
                     </li>
-                    <li role="presentation" class=""><a href="#tab_content5" role="tab" id="recibos-tab" data-toggle="tab" aria-expanded="false">Avisos de Cobro</a>
+                    <li role="presentation" class=""><a href="#tab_content5" role="tab" id="recibos-tab" data-toggle="tab" aria-expanded="false">Ver Avisos</a>
                     </li>
                     <li role="presentation" class=""><a href="#tab_content6" role="tab" id="comen-tab" data-toggle="tab" aria-expanded="false">Comentarios</a>
                     </li>
@@ -407,14 +407,14 @@
                                             </div>-->
                             <ul class="nav navbar-right panel_toolbox">
                                 <div class="btn btn-info float-right" data-toggle="modal" data-target="#modal_pago">
-                                    Nuevo Pago</div>
+                                    Generar Cobro</div>
                             </ul>
                             <div class="modal fade bs-example-modal-lg" id="modal_pago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
-                                                <h5 class="modal-title" id="exampleModalLabel">Nuevo pago</h5>
+                                                <h5 class="modal-title" id="exampleModalLabel">Generar Cobro</h5>
                                             </div>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
