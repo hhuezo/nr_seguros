@@ -175,7 +175,7 @@
                                 <div class="form-group row">
                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Número de Póliza</label>
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="NumeroPolizaVida" id="NumeroPolizaVida" type="text" value="{{ $videuda->NumeroPoliza }}" readonly>
+                                       
                                     </div>
                                 </div>
                             </div>
@@ -703,7 +703,7 @@
                                                 <tr>
                                                     <th>Tipo Cartera</th>
                                                     <th>Deuda {{$deuda->NumeroPoliza}}</th>
-                                                    <th>Vico {{$videuda->NumeroPoliza}}</th>
+                                                    
 
                                                 </tr>
                                                 @php($carteraAsegurada = 0)

@@ -104,11 +104,11 @@
                                     </ul>
                                 </li>
 
-                                <!-- <li><a><i class="fa fa-solid fa-briefcase"></i> Cotizaciones <span class="fa fa-chevron-down"></span></a>
+                                <li><a><i class="fa fa-solid fa-briefcase"></i> Cotizaciones <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                     <li><a href="{{ url('catalogo/negocio') }}">Negocio</a></li>
                                     </ul>
-                                </li> -->
+                                </li>
                                 <li><a><i class="fa fa-shield"></i> Aseguradoras <span
                                             class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
