@@ -1,6 +1,7 @@
 @extends ('welcome')
 @section('contenido')
 @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
+<script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
 <div class="x_panel">
     <style>
         .ocultar {
@@ -44,7 +45,7 @@
                     <li role="presentation" class=""><a href="#tab_content3" role="tab" id="creditos-tab" data-toggle="tab" aria-expanded="false">Hoja de Calculo
                             {{ $residencia->NumeroPoliza }}</a>
                     </li>
-                    <li role="presentation" class="{{session('tab') == 4 ? 'active':''}}"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Generar Cobro</a>
+                    <li role="presentation" class="{{session('tab') == 4 ? 'active':''}}"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Estados de Cobro</a>
                     </li>
                     <li role="presentation" class=""><a href="#tab_content5" role="tab" id="recibos-tab" data-toggle="tab" aria-expanded="false">Ver Avisos</a>
                     </li>
@@ -221,7 +222,7 @@
 
                         <div>
                             <br>
-                            <table class="table">
+                            <table id="cobros" width="100%" class="table">
                                 <tr>
                                     <th style="text-align: center;">Poliza</th>
                                     <th style="text-align: center;">Fecha Inicio <br> Vigencia</th>
@@ -234,15 +235,13 @@
                                     <th style="text-align: center;">Estatus</th>
                                     <th style="text-align: center;">Opciones</th>
                                 </tr>
-                                @php
-                                $total = 0;
-                                @endphp
-                                @foreach ($detalle as $obj)
-                                @php
-                                $fileUrl = asset($obj->ExcelURL);
-                                @endphp
 
+                                @foreach ($detalle as $obj)
                                 <tr>
+                                    @php
+                                    $fileUrl = asset($obj->ExcelURL);
+                                    $total = 0;
+                                    @endphp
                                     <td>{{ $residencia->NumeroPoliza }}</td>
                                     <td>{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
                                     <td>{{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
@@ -276,110 +275,27 @@
                                     @else
                                     <td></td>
                                     @endif
-                                    <td>
-                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a> &nbsp;&nbsp;
-                                        <a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"></a>&nbsp;&nbsp;
-                                        <a href="{{ $fileUrl }}" class="fa fa-eye" align="center"></a>
-
-
-                                        &nbsp;&nbsp;
+                                    <td align="center">
                                         @if($obj->Activo == 0)
 
                                         @elseif(!$obj->ImpresionRecibo)
-                                        <a href="" data-target="#modal-recibo-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-pencil fa-lg"></i></a>&nbsp;&nbsp;
+                                        <a href="" data-target="#modal-recibo-{{ $obj->Id }}" title="Generar Recibo" data-toggle="modal"><iconify-icon icon="tabler:file-dollar" style="color: #5a738e" width="24"></iconify-icon></a>
                                         @else
-                                        <a href="" onclick="modal_edit({{ $obj->Id }})"><i class="fa fa-pencil fa-lg"></i> </a>&nbsp;&nbsp;
+                                        <i class="fa fa-pencil fa-lg" onclick="modal_edit({{ $obj->Id }})" title="Fechas de Cobro"></i>
+                                        @endif
+                                        &nbsp;&nbsp;
+                                        <a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center" title="Descargar Cartera"></a>&nbsp;&nbsp;
+                                        <i data-target="#modal-view-{{ $obj->Id }}" data-toggle="modal" class="fa fa-eye" align="center" title="Ver Detalles"></i>&nbsp;&nbsp;
+                                        @if($obj->Activo == 1)
+                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal" title="Anular Cartera"><i class="fa fa-trash fa-lg"></i></a> &nbsp;&nbsp;
                                         @endif
 
+
+
                                     </td>
+
                                 </tr>
-                                <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-recibo-{{ $obj->Id }}">
-
-                                    <form method="POST" action="{{ url('poliza/residencia/recibo', $obj->Id) }}">
-
-                                        @csrf
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">×</span>
-                                                    </button>
-                                                    <h4 class="modal-title">Generar Recibo de la poliza</h4>
-
-                                                    <div class="modal-body">
-                                                        <input type="hidden" value="{{ $residencia->Id }}" name="Residencia" class="form-control">
-                                                        <div class="form-group">
-                                                            <div class="col-sm-12">
-                                                                <label class="control-label">Saldo a</label>
-                                                                <input type="date" name="SaldoA" id="ModalSaldoA" class="form-control" value="{{ date('Y-m-d') }}" readonly>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="form-group">
-                                                            <div class="col-sm-12">
-                                                                <label class="control-label">Impresión de
-                                                                    Recibo</label>
-                                                                <input type="date" name="ImpresionRecibo" id="ModalImpresionRecibo" value="{{ date('Y-m-d') }}" class="form-control" readonly>
-                                                            </div>
-
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <div class="col-sm-12">
-                                                                <label class="control-label">Numero
-                                                                    Correlativo</label>
-                                                                <input type="text" class="form-control" name="NumeroCorrelativo">
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <div class="col-sm-12">
-                                                                <label class="control-label">Anexo</label>
-                                                                <textarea class="form-control" rows="4" name="Anexo"></textarea>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <div class="col-sm-12">
-                                                                <label class="control-label">Referencia</label>
-                                                                <input type="text" class="form-control" name="Referencia">
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                                                        <button type="submit" class="btn btn-primary" id="btn_confirmar_recibo">Confirmar</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
-
-                                </div>
-
-                                <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-{{ $obj->Id }}">
-
-                                    <form method="POST" action="{{ url('polizas/residencia/delete_pago', $obj->Id) }}">
-                                        @method('POST')
-                                        @csrf
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">×</span>
-                                                    </button>
-                                                    <h4 class="modal-title">Eliminar Registro</h4>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <p>Confirme si desea Eliminar el Registro</p>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                                                    <button type="submit" class="btn btn-primary">Confirmar</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
-
-                                </div>
+                                @include('polizas.residencia.modal_edit')
 
                                 @endforeach
                                 <tr>
@@ -407,14 +323,14 @@
                                             </div>-->
                             <ul class="nav navbar-right panel_toolbox">
                                 <div class="btn btn-info float-right" data-toggle="modal" data-target="#modal_pago">
-                                    Generar Cobro</div>
+                                    Subir Archivo <br> Excel</div>
                             </ul>
                             <div class="modal fade bs-example-modal-lg" id="modal_pago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
-                                                <h5 class="modal-title" id="exampleModalLabel">Generar Cobro</h5>
+                                                <h5 class="modal-title" id="exampleModalLabel">Subir archivo Excel</h5>
                                             </div>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
@@ -813,7 +729,7 @@
                                         <div class="clearfix"></div>
                                         <div align="center">
                                             <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
-                                            <a class="btn btn-primary" data-target="#modal-aplicar" data-toggle="modal" onclick="aplicarpago()">Aplicar Pago</a>
+                                            <a class="btn btn-primary" data-target="#modal-aplicar" data-toggle="modal" onclick="aplicarpago()">Generar Cobro</a>
                                         </div>
 
 
@@ -1055,7 +971,7 @@
 
 
                                 <div class="x_title">
-                                    <h4>&nbsp;&nbsp; Recibos<small></small>
+                                    <h4>&nbsp;&nbsp; Avisos de Cobro<small></small>
                                     </h4>
                                     <div class="clearfix"></div>
                                 </div>
@@ -1063,13 +979,15 @@
                                     &nbsp;
                                 </div>
                                 <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
-                                    <table width="100%" class="table">
+                                    <table width="100%" class="table" id="avisos">
                                         <thead>
                                             <tr>
-                                                <th>Impresión <br> de Recibo</th>
-                                                <th>Saldo A</th>
+                                                <th>Aviso de Cobro N</th>
+                                                <th>N Correlativo</th>
+                                                <th>Fecha de <br> Impresión de Recibo</th>
                                                 <th>Fecha Inicio</th>
                                                 <th>Fecha Final</th>
+                                                <th>Estados</th>
                                                 <th><i class="fa fa-filef"></i>Opciones</th>
                                             </tr>
                                         </thead>
@@ -1077,16 +995,28 @@
                                             @foreach ($detalle as $obj)
                                             @if ($obj->ImpresionRecibo != null)
                                             <tr>
+                                                <td>{{$obj->NumeroRecibo}}</td>
+                                                <td>{{$obj->NumeroCorrelativo}}</td>
                                                 <td>{{ \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}
-                                                </td>
-                                                <td> {{ \Carbon\Carbon::parse($obj->SaldoA)->format('d/m/Y') }}
                                                 </td>
                                                 <td>{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}
                                                 </td>
                                                 <td> {{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}
                                                 </td>
-                                                <td><a href="{{ url('poliza/residencia/get_recibo') }}/{{ $obj->Id }}" target="_blank" class="btn btn-info">Generar
-                                                        Recibo</a></td>
+                                                @if($obj->Activo == 0)
+                                                <td>Anulado</td>
+                                                @elseif($obj->ImpresionRecibo)
+                                                <td>Emitido</td>
+                                                @elseif($obj->PagoAplicado)
+                                                <td>Pagado</td>
+                                                @else
+                                                <td></td>
+                                                @endif
+                                                <td>
+                                                    @if($obj->Activo <> 0)
+                                                        <a href="{{ url('poliza/residencia/get_recibo') }}/{{ $obj->Id }}" target="_blank" class="btn btn-info">Reimprimir</a>
+                                                        @endif
+                                                </td>
                                             </tr>
                                             @endif
                                             @endforeach
@@ -1110,7 +1040,7 @@
                                     &nbsp;
                                 </div>
                                 <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
-                                    <table width="100%" class="table">
+                                    <table width="100%" class="table" id="comentarios">
                                         <thead>
                                             <tr>
                                                 <th>Comentario</th>
@@ -1123,7 +1053,7 @@
                                             @foreach ($comentarios as $obj)
                                             <tr>
                                                 <td>{{$obj->Comentario}}</td>
-                                                <td> {{ $obj->Usuario}}</td>
+                                                <td> {{ $obj->usuarios->name}}</td>
                                                 <td>{{ \Carbon\Carbon::parse($obj->FechaIngreso)->format('d/m/Y') }}</td>
                                                 <td><a href="" data-target="#modal-delete-comentario-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
                                                 </td>
@@ -1282,6 +1212,18 @@
 @include('sweetalert::alert')
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
+    $(document).ready(function() {
+        $('#comentarios').DataTable();
+        $('#avisos').DataTable();
+        //    $('#cobros').DataTable();
+
+        $('#cobros').DataTable({
+            "paging": true,
+            "ordering": true,
+            "info": true,
+        });
+    });
+
     function formatearNumero(numero) {
         // Verificar si el número es válido
         if (isNaN(numero)) {

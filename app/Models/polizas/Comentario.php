@@ -2,6 +2,7 @@
 
 namespace App\Models\polizas;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -30,6 +31,10 @@ class Comentario extends Model
 
     public function deuda(){
         return $this->belongsTo(Deuda::class, 'Deuda', 'Id');
+    }
+
+    public function usuarios(){
+        return $this->belongsTo(User::class, 'Usuario','id');
     }
 
 }

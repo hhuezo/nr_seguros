@@ -179,7 +179,7 @@ class ResidenciaController extends Controller
 
     public function edit($id)
     {
-       // session(['tab' => 1]);
+        session(['tab' => 1]);
         $residencia = Residencia::findOrFail($id);
         $aseguradoras = Aseguradora::where('Nombre', 'like', '%fede%')->orWhere('Nombre', 'like', '%sisa%')->get();
         $estados_poliza = EstadoPoliza::where('Activo', '=', 1)->get();
