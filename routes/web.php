@@ -100,6 +100,8 @@ Route::get('catalogo/plan/getCoberturas', [PlanController::class, 'getCoberturas
 Route::post('catalogo/plan/edit_cobertura_detalle', [PlanController::class, 'edit_cobertura_detalle']);
 Route::resource('catalogo/plan', PlanController::class);
 
+Route::get('negocio/getCliente', [NegocioController::class, 'getCliente']);
+Route::resource('catalogo/negocio', NegocioController::class);
 
 
 
@@ -125,15 +127,11 @@ Route::post('catalogo/aseguradora/documento', [AseguradoraController::class, 'ag
 Route::post('catalogo/aseguradora/documento_eliminar/{id}', [AseguradoraController::class, 'eliminar_documento']);
 Route::get('catalogo/cliente/addPreferencia', [ClienteController::class, 'addPreferencia']);
 Route::get('catalogo/cliente_create', [ClienteController::class, 'cliente_create']);
-Route::get('catalogo/negocio/get_aseguradora', [NegocioController::class, 'get_aseguradoras']);
-Route::resource('catalogo/negocio', NegocioController::class);
 Route::resource('catalogo/ruta', RutaController::class);
-Route::get('negocio/getCliente', [NegocioController::class, 'getCliente']);
-Route::get('catalogo/negocios/store_aseguradora', [NegocioController::class, 'store_aseguradora']);
+
 Route::resource('catalogo/tipo_cobro', TipoCobroController::class);
 Route::resource('catalogo/area_comercial', AreaComercialController::class);
 Route::resource('catalogo/bombero', BomberoController::class);
-Route::get('catalogo/negocios/consultar', [NegocioController::class, 'consultar']);
 Route::get('get_municipio/{id}', [ClienteController::class, 'get_municipio']);
 Route::get('get_distrito/{id}', [ClienteController::class, 'get_distrito']);
 
