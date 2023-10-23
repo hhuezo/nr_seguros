@@ -155,11 +155,17 @@ class ResidenciaController extends Controller
     //
     }*/
 
-    public function agregar_comentario(Request $request){
+    public function agregar_comentario(Request $request)
+    {
         $time = Carbon::now('America/El_Salvador');
         $comen = new Comentario();
         $comen->Comentario = $request->Comentario;
         $comen->Activo = 1;
+        if ($request->TipoComentario == '') {
+            $comen->DetalleResidencia = '';
+        } else {
+            $comen->DetalleResidencia == $request->TipoComentario;
+        }
         $comen->Usuario = auth()->user()->id;
         $comen->FechaIngreso = $time;
         $comen->Residencia = $request->ResidenciaComment;
@@ -168,8 +174,9 @@ class ResidenciaController extends Controller
         return Redirect::to('polizas/residencia/' . $request->ResidenciaComment . '/edit');
     }
 
-    public function eliminar_comentario(Request $request){
-        
+    public function eliminar_comentario(Request $request)
+    {
+
         $comen = Comentario::findOrFail($request->IdComment);
         $comen->Activo = 0;
         $comen->update();
@@ -189,7 +196,7 @@ class ResidenciaController extends Controller
         $ubicaciones_cobro = UbicacionCobro::where('Activo', '=', 1)->get();
         $detalle = DetalleResidencia::where('Residencia', $residencia->Id)->orderBy('Id', 'desc')->get();
         $ultimo_pago = DetalleResidencia::where('Residencia', $residencia->Id)->where('Activo', 1)->orderBy('Id', 'desc')->first();
-        $comentarios = Comentario::where('Residencia','=',$id)->where('Activo',1)->get();
+        $comentarios = Comentario::where('Residencia', '=', $id)->where('Activo', 1)->get();
         // dd($ultimo_pago);
 
         if (strpos($residencia->aseguradoras->Nombre, 'FEDE') === false) {
@@ -416,8 +423,7 @@ class ResidenciaController extends Controller
             alert()->success('El registro ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
 
 
-           return back();
-
+            return back();
         } catch (Throwable $e) {
             print($e);
             return false;
@@ -433,7 +439,6 @@ class ResidenciaController extends Controller
         $recibo = DatosGenerales::orderByDesc('Id_recibo')->first();
         if (!$request->ExcelURL) {
             alert()->error('No se puede generar el pago, falta subir cartera')->showConfirmButton('Aceptar', '#3085d6');
-
         } else {
 
             $detalle = new DetalleResidencia();
@@ -462,7 +467,7 @@ class ResidenciaController extends Controller
             $detalle->DescuentoIva = $request->DescuentoIva; //checked
             $detalle->ExtraPrima = $request->ExtraPrima;
             $detalle->ExcelURL = $request->ExcelURL;
-            $detalle->NumeroRecibo = ($recibo->Id_recibo) +1;
+            $detalle->NumeroRecibo = ($recibo->Id_recibo) + 1;
             $detalle->Usuario = auth()->user()->id;
             $detalle->FechaIngreso = $time->format('Y-m-d');
             $detalle->save();
@@ -475,9 +480,9 @@ class ResidenciaController extends Controller
             $comen->Residencia = $request->Residencia;
             $comen->DetalleResidencia = $detalle->Id;
             $comen->save();
-    
 
-            $recibo->Id_recibo = ($recibo->Id_recibo) +1;
+
+            $recibo->Id_recibo = ($recibo->Id_recibo) + 1;
             $recibo->update();
             session(['MontoCartera' => 0]);
             alert()->success('El registro de pago ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');

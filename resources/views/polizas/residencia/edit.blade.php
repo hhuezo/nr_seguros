@@ -1186,6 +1186,17 @@
 
                                         <div class="form-group">
                                             <div class="col-sm-12">
+                                                <label class="control-label">Tipo de Comentario</label>
+                                                <select name="TipoComentario" id="TipoComentario" class="form-control">
+                                                    <option value="">Sobre Poliza</option>
+                                                    @foreach($detalle as $det)
+                                                    <option value="{{$det->Id}}">Sobre Cobro de {{ \Carbon\Carbon::parse($det->FechaInicio)->format('d/m/Y') }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-12">
                                                 <label class="control-label">Comentario</label>
                                                 <textarea class="form-control" rows="4" name="Comentario"></textarea>
                                             </div>
