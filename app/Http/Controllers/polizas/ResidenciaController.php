@@ -13,6 +13,7 @@ use App\Models\catalogo\EstadoPoliza;
 use App\Models\catalogo\Ruta;
 use App\Models\catalogo\TipoContribuyente;
 use App\Models\catalogo\UbicacionCobro;
+use App\Models\polizas\Comentario;
 use App\Models\polizas\DetalleResidencia;
 use App\Models\polizas\PolizaResidenciaCartera;
 use App\Models\polizas\Residencia;
@@ -154,9 +155,38 @@ class ResidenciaController extends Controller
     //
     }*/
 
+    public function agregar_comentario(Request $request)
+    {
+        $time = Carbon::now('America/El_Salvador');
+        $comen = new Comentario();
+        $comen->Comentario = $request->Comentario;
+        $comen->Activo = 1;
+        if ($request->TipoComentario == '') {
+            $comen->DetalleResidencia = '';
+        } else {
+            $comen->DetalleResidencia == $request->TipoComentario;
+        }
+        $comen->Usuario = auth()->user()->id;
+        $comen->FechaIngreso = $time;
+        $comen->Residencia = $request->ResidenciaComment;
+        $comen->save();
+        alert()->success('El registro del comentario ha sido creado correctamente')->showConfirmButton('Aceptar', '#3085d6');
+        return Redirect::to('polizas/residencia/' . $request->ResidenciaComment . '/edit');
+    }
+
+    public function eliminar_comentario(Request $request)
+    {
+
+        $comen = Comentario::findOrFail($request->IdComment);
+        $comen->Activo = 0;
+        $comen->update();
+        alert()->success('El registro del comentario ha sido elimando correctamente')->showConfirmButton('Aceptar', '#3085d6');
+        return Redirect::to('polizas/residencia/' . $comen->Residencia . '/edit');
+    }
+
     public function edit($id)
     {
-       // session(['tab' => 1]);
+        session(['tab' => 1]);
         $residencia = Residencia::findOrFail($id);
         $aseguradoras = Aseguradora::where('Nombre', 'like', '%fede%')->orWhere('Nombre', 'like', '%sisa%')->get();
         $estados_poliza = EstadoPoliza::where('Activo', '=', 1)->get();
@@ -164,8 +194,9 @@ class ResidenciaController extends Controller
         $tipos_contribuyente = TipoContribuyente::get();
         $rutas = Ruta::where('Activo', '=', 1)->get();
         $ubicaciones_cobro = UbicacionCobro::where('Activo', '=', 1)->get();
-        $detalle = DetalleResidencia::where('Residencia', $residencia->Id)->where('Activo', 1)->orderBy('Id', 'desc')->get();
+        $detalle = DetalleResidencia::where('Residencia', $residencia->Id)->orderBy('Id', 'desc')->get();
         $ultimo_pago = DetalleResidencia::where('Residencia', $residencia->Id)->where('Activo', 1)->orderBy('Id', 'desc')->first();
+        $comentarios = Comentario::where('Residencia', '=', $id)->where('Activo', 1)->get();
         // dd($ultimo_pago);
 
         if (strpos($residencia->aseguradoras->Nombre, 'FEDE') === false) {
@@ -207,7 +238,8 @@ class ResidenciaController extends Controller
             'ubicaciones_cobro',
             'bomberos',
             'meses',
-            'ultimo_pago'
+            'ultimo_pago',
+            'comentarios'
         ));
     }
 
@@ -391,8 +423,7 @@ class ResidenciaController extends Controller
             alert()->success('El registro ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
 
 
-           return back();
-
+            return back();
         } catch (Throwable $e) {
             print($e);
             return false;
@@ -403,11 +434,11 @@ class ResidenciaController extends Controller
     {
 
         $residencia = Residencia::findOrFail($request->Residencia);
+        $time = Carbon::now('America/El_Salvador');
 
         $recibo = DatosGenerales::orderByDesc('Id_recibo')->first();
         if (!$request->ExcelURL) {
             alert()->error('No se puede generar el pago, falta subir cartera')->showConfirmButton('Aceptar', '#3085d6');
-
         } else {
 
             $detalle = new DetalleResidencia();
@@ -436,10 +467,22 @@ class ResidenciaController extends Controller
             $detalle->DescuentoIva = $request->DescuentoIva; //checked
             $detalle->ExtraPrima = $request->ExtraPrima;
             $detalle->ExcelURL = $request->ExcelURL;
-            $detalle->NumeroRecibo = ($recibo->Id_recibo) +1;
+            $detalle->NumeroRecibo = ($recibo->Id_recibo) + 1;
+            $detalle->Usuario = auth()->user()->id;
+            $detalle->FechaIngreso = $time->format('Y-m-d');
             $detalle->save();
 
-            $recibo->Id_recibo = ($recibo->Id_recibo) +1;
+            $comen = new Comentario();
+            $comen->Comentario = 'Se agrego el pago de la cartera';
+            $comen->Activo = 1;
+            $comen->Usuario = auth()->user()->id;
+            $comen->FechaIngreso = $time;
+            $comen->Residencia = $request->Residencia;
+            $comen->DetalleResidencia = $detalle->Id;
+            $comen->save();
+
+
+            $recibo->Id_recibo = ($recibo->Id_recibo) + 1;
             $recibo->update();
             session(['MontoCartera' => 0]);
             alert()->success('El registro de pago ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
@@ -452,6 +495,7 @@ class ResidenciaController extends Controller
         session(['tab' => 4]);
         $detalle = DetalleResidencia::findOrFail($request->Id);
         $residencia = Residencia::findOrFail($detalle->Residencia);
+        $time = Carbon::now('America/El_Salvador');
 
         // if ($detalle->SaldoA == null && $detalle->ImpresionRecibo == null) {
         //     $detalle->SaldoA = $request->SaldoA;
@@ -477,6 +521,15 @@ class ResidenciaController extends Controller
             $detalle->PagoAplicado = $request->PagoAplicado;
             $detalle->ComAplicado = $request->Comentario;
         }
+
+        $comen = new Comentario();
+        $comen->Comentario = $request->Comentario;
+        $comen->Activo = 1;
+        $comen->Usuario = auth()->user()->id;
+        $comen->FechaIngreso = $time;
+        $comen->Residencia = $detalle->Residencia;
+        $comen->DetalleResidencia = $detalle->Id;
+        $comen->save();
 
 
         /*$detalle->EnvioPago = $request->EnvioPago;

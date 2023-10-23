@@ -1,6 +1,7 @@
 @extends ('welcome')
 @section('contenido')
 @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
+<script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
 <div class="x_panel">
     <style>
         .ocultar {
@@ -39,14 +40,16 @@
                 <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
                     <li role="presentation" class="{{session('tab') == 1 ? 'active':''}}"><a href="#tab_content4" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Datos de Póliza</a>
                     </li>
-                    <li role="presentation" class="{{session('tab') == 2 ? 'active':''}} "><a href="#tab_content2" role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">Generar Pago</a>
+                    <li role="presentation" class="{{session('tab') == 2 ? 'active':''}} "><a href="#tab_content2" role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">Generar Cartera</a>
                     </li>
                     <li role="presentation" class=""><a href="#tab_content3" role="tab" id="creditos-tab" data-toggle="tab" aria-expanded="false">Hoja de Calculo
                             {{ $residencia->NumeroPoliza }}</a>
                     </li>
-                    <li role="presentation" class="{{session('tab') == 4 ? 'active':''}}"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Estados de Pagos</a>
+                    <li role="presentation" class="{{session('tab') == 4 ? 'active':''}}"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Estados de Cobro</a>
                     </li>
-                    <li role="presentation" class=""><a href="#tab_content5" role="tab" id="recibos-tab" data-toggle="tab" aria-expanded="false">Avisos de Cobro</a>
+                    <li role="presentation" class=""><a href="#tab_content5" role="tab" id="recibos-tab" data-toggle="tab" aria-expanded="false">Ver Avisos</a>
+                    </li>
+                    <li role="presentation" class=""><a href="#tab_content6" role="tab" id="comen-tab" data-toggle="tab" aria-expanded="false">Comentarios</a>
                     </li>
                 </ul>
 
@@ -219,203 +222,87 @@
 
                         <div>
                             <br>
-                            <table class="table">
+                            <table id="cobros" width="100%" class="table">
                                 <tr>
-                                    <th>Tasa</th>
-                                    <th>Fecha Inicio</th>
-                                    <th>Fecha Final</th>
-                                    <th>Descuento</th>
-                                    <th>A Pagar</th>
-                                    <th>Impresion de Recibo</th>
-                                    <th>Envio de Cartera</th>
-                                    <th>Envio de Pago</th>
-                                    <th>Pago Aplicado</th>
-                                    <th>Opciones</th>
+                                    <th style="text-align: center;">Poliza</th>
+                                    <th style="text-align: center;">Fecha Inicio <br> Vigencia</th>
+                                    <th style="text-align: center;">Fecha Final <br> Vigencia</th>
+                                    <th style="text-align: center;">Cuota</th>
+                                    <th style="text-align: center;">Correlativo</th>
+                                    <th style="text-align: center;">Fecha de <br> Vencimiento</th>
+                                    <th style="text-align: center;">Fecha de <br> Aplicación de pago</th>
+                                    <th style="text-align: center;">Valor (US$)</th>
+                                    <th style="text-align: center;">Estatus</th>
+                                    <th style="text-align: center;">Opciones</th>
                                 </tr>
+
                                 @foreach ($detalle as $obj)
-                                @php
-                                $fileUrl = asset($obj->ExcelURL);
-                                @endphp
-                                @if (!$obj->ImpresionRecibo)
-                                <tr class="danger">
-
-                                    <td>{{ $obj->Tasa }}%</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
-                                    <td>$ {{ number_format($obj->Descuento, 2, '.', ',') }}</td>
-                                    <td>$ {{ number_format($obj->APagar, 2, '.', ',') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}
-                                    </td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->EnvioCartera)->format('d/m/Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->EnvioPago)->format('d/m/Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') }}</td>
-                                    <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"></a>
-                                        &nbsp;&nbsp;<a href="" data-target="#modal-recibo-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-pencil fa-lg"></i></a>
-                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
-                                    </td>
-                                </tr>
-                                <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-recibo-{{ $obj->Id }}">
-
-                                    <form method="POST" action="{{ url('poliza/residencia/recibo', $obj->Id) }}">
-
-                                        @csrf
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">×</span>
-                                                    </button>
-                                                    <h4 class="modal-title">Generar Recibo de la poliza</h4>
-
-                                                    <div class="modal-body">
-                                                        <input type="hidden" value="{{ $residencia->Id }}" name="Residencia" class="form-control">
-                                                        <div class="form-group">
-                                                            <div class="col-sm-12">
-                                                                <label class="control-label">Saldo a</label>
-                                                                <input type="date" name="SaldoA" id="ModalSaldoA" class="form-control" value="{{ date('Y-m-d') }}" readonly>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="form-group">
-                                                            <div class="col-sm-12">
-                                                                <label class="control-label">Impresión de
-                                                                    Recibo</label>
-                                                                <input type="date" name="ImpresionRecibo" id="ModalImpresionRecibo" value="{{ date('Y-m-d') }}" class="form-control" readonly>
-                                                            </div>
-
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <div class="col-sm-12">
-                                                                <label class="control-label">Numero
-                                                                    Correlativo</label>
-                                                                <input type="text" class="form-control" name="NumeroCorrelativo">
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <div class="col-sm-12">
-                                                                <label class="control-label">Anexo</label>
-                                                                <textarea class="form-control" rows="4" name="Anexo"></textarea>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <div class="col-sm-12">
-                                                                <label class="control-label">Referencia</label>
-                                                                <input type="text" class="form-control" name="Referencia">
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                                                        <button type="submit" class="btn btn-primary" id="btn_confirmar_recibo">Confirmar</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
-
-                                </div>
-                                @elseif(!$obj->EnvioCartera)
-                                <tr class="warning">
-
-                                    <td>{{ $obj->Tasa }}%</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
-                                    <td>$ {{ number_format($obj->Descuento, 2, '.', ',') }}</td>
-                                    <td>$ {{ number_format($obj->APagar, 2, '.', ',') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}
-                                    </td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->EnvioCartera)->format('d/m/Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->EnvioPago)->format('d/m/Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') }}</td>
-                                    <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"></a>&nbsp;&nbsp;<i class="fa fa-pencil fa-lg" onclick="modal_edit({{ $obj->Id }})"></i> &nbsp;&nbsp;
-                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
-                                    </td>
-                                </tr>
-                                @elseif(!$obj->EnvioPago)
-                                <tr class="btn-info">
-
-
-                                    <td>{{ $obj->Tasa }}%</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
-                                    <td>$ {{ number_format($obj->Descuento, 2, '.', ',') }}</td>
-                                    <td>$ {{ number_format($obj->APagar, 2, '.', ',') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}
-                                    </td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->EnvioCartera)->format('d/m/Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->EnvioPago)->format('d/m/Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') }}</td>
-                                    <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"></a>&nbsp;&nbsp;
-                                        <i class="fa fa-pencil fa-lg" onclick="modal_edit({{ $obj->Id }})"></i> &nbsp;&nbsp;
-                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
-                                    </td>
-                                </tr>
-                                @elseif(!$obj->PagoAplicado)
-                                <tr class="success">
-                                    <td>{{ $obj->Tasa }}%</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
-                                    <td>$ {{ number_format($obj->Descuento, 2, '.', ',') }}</td>
-                                    <td>$ {{ number_format($obj->APagar, 2, '.', ',') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}
-                                    </td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->EnvioCartera)->format('d/m/Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->EnvioPago)->format('d/m/Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') }}</td>
-                                    <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"> </a>&nbsp;&nbsp;
-                                        <i class="fa fa-pencil fa-lg" onclick="modal_edit({{ $obj->Id }})"></i> &nbsp;&nbsp;
-                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
-
-                                    </td>
-
-                                </tr>
-                                @else
                                 <tr>
-
-                                    <td>{{ $obj->Tasa }}%</td>
+                                    @php
+                                    $fileUrl = asset($obj->ExcelURL);
+                                    $total = 0;
+                                    @endphp
+                                    <td>{{ $residencia->NumeroPoliza }}</td>
                                     <td>{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
                                     <td>{{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
-                                    <td>$ {{ number_format($obj->Descuento, 2, '.', ',') }}</td>
-                                    <td>$ {{ number_format($obj->APagar, 2, '.', ',') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}
-                                    </td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->EnvioCartera)->format('d/m/Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->EnvioPago)->format('d/m/Y') }}</td>
+                                    <td>01/01</td>
+                                    @if($obj->Correlativo)
+                                    <td>{{$obj->Correlativo}}</td>
+                                    @else
+                                    <td></td>
+                                    @endif
+                                    <td>{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }} </td>
+                                    @if($obj->PagoAplicado)
                                     <td>{{ \Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') }}</td>
-                                    <td><a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center"> </a>&nbsp;&nbsp;
-                                        <i class="fa fa-pencil fa-lg" onclick="modal_edit({{ $obj->Id }})"></i>&nbsp;&nbsp;
-                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
+                                    @else
+                                    <td></td>
+                                    @endif
+                                    @if($obj->Activo == 0)
+                                    <td style="text-align: right;">$0.00</td>
+                                    @else
+                                    <td style="text-align: right;">$ {{ number_format($obj->APagar, 2, '.', ',') }}
+                                        @php
+                                        $total = $total + $obj->APagar;
+                                        @endphp
+                                    </td>
+                                    @endif
+                                    @if($obj->Activo == 0)
+                                    <td>Anulado</td>
+                                    @elseif(!$obj->PagoAplicado)
+                                    <td>Pendiente</td>
+                                    @elseif($obj->PagoAplicado)
+                                    <td>Pagado</td>
+                                    @else
+                                    <td></td>
+                                    @endif
+                                    <td align="center">
+                                        @if($obj->Activo == 0)
+
+                                        @elseif(!$obj->ImpresionRecibo)
+                                        <a href="" data-target="#modal-recibo-{{ $obj->Id }}" title="Generar Recibo" data-toggle="modal"><iconify-icon icon="tabler:file-dollar" style="color: #5a738e" width="24"></iconify-icon></a>
+                                        @else
+                                        <i class="fa fa-pencil fa-lg" onclick="modal_edit({{ $obj->Id }})" title="Fechas de Cobro"></i>
+                                        @endif
+                                        &nbsp;&nbsp;
+                                        <a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center" title="Descargar Cartera"></a>&nbsp;&nbsp;
+                                        <i data-target="#modal-view-{{ $obj->Id }}" data-toggle="modal" class="fa fa-eye" align="center" title="Ver Detalles"></i>&nbsp;&nbsp;
+                                        @if($obj->Activo == 1)
+                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal" title="Anular Cartera"><i class="fa fa-trash fa-lg"></i></a> &nbsp;&nbsp;
+                                        @endif
+
+
+
                                     </td>
 
                                 </tr>
-                                @endif
-                                <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-{{ $obj->Id }}">
+                                @include('polizas.residencia.modal_edit')
 
-                                    <form method="POST" action="{{ url('polizas/residencia/delete_pago', $obj->Id) }}">
-                                        @method('POST')
-                                        @csrf
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">×</span>
-                                                    </button>
-                                                    <h4 class="modal-title">Eliminar Registro</h4>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <p>Confirme si desea Eliminar el Registro</p>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                                                    <button type="submit" class="btn btn-primary">Confirmar</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
-
-                                </div>
                                 @endforeach
+                                <tr>
+                                    <td colspan="3" style="text-align: right;"><b>Total de Poliza:</b> </td>
+                                    <td colspan="5" style="text-align: right;"><b>${{number_format($total, 2, '.', ',')}}</b> </td>
+                                    <td colspan="2"></td>
+                                </tr>
                             </table>
 
                         </div>
@@ -436,14 +323,14 @@
                                             </div>-->
                             <ul class="nav navbar-right panel_toolbox">
                                 <div class="btn btn-info float-right" data-toggle="modal" data-target="#modal_pago">
-                                    Nuevo Pago</div>
+                                    Subir Archivo <br> Excel</div>
                             </ul>
                             <div class="modal fade bs-example-modal-lg" id="modal_pago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
-                                                <h5 class="modal-title" id="exampleModalLabel">Nuevo pago</h5>
+                                                <h5 class="modal-title" id="exampleModalLabel">Subir archivo Excel</h5>
                                             </div>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
@@ -842,7 +729,7 @@
                                         <div class="clearfix"></div>
                                         <div align="center">
                                             <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
-                                            <a class="btn btn-primary" data-target="#modal-aplicar" data-toggle="modal" onclick="aplicarpago()">Aplicar Pago</a>
+                                            <a class="btn btn-primary" data-target="#modal-aplicar" data-toggle="modal" onclick="aplicarpago()">Generar Cobro</a>
                                         </div>
 
 
@@ -1093,7 +980,7 @@
 
 
                                 <div class="x_title">
-                                    <h4>&nbsp;&nbsp; Recibos<small></small>
+                                    <h4>&nbsp;&nbsp; Avisos de Cobro<small></small>
                                     </h4>
                                     <div class="clearfix"></div>
                                 </div>
@@ -1101,13 +988,15 @@
                                     &nbsp;
                                 </div>
                                 <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
-                                    <table width="100%" class="table">
+                                    <table width="100%" class="table" id="avisos">
                                         <thead>
                                             <tr>
-                                                <th>Impresión <br> de Recibo</th>
-                                                <th>Saldo A</th>
+                                                <th>Aviso de Cobro N</th>
+                                                <th>N Correlativo</th>
+                                                <th>Fecha de <br> Impresión de Recibo</th>
                                                 <th>Fecha Inicio</th>
                                                 <th>Fecha Final</th>
+                                                <th>Estados</th>
                                                 <th><i class="fa fa-filef"></i>Opciones</th>
                                             </tr>
                                         </thead>
@@ -1115,18 +1004,95 @@
                                             @foreach ($detalle as $obj)
                                             @if ($obj->ImpresionRecibo != null)
                                             <tr>
+                                                <td>{{$obj->NumeroRecibo}}</td>
+                                                <td>{{$obj->NumeroCorrelativo}}</td>
                                                 <td>{{ \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}
-                                                </td>
-                                                <td> {{ \Carbon\Carbon::parse($obj->SaldoA)->format('d/m/Y') }}
                                                 </td>
                                                 <td>{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}
                                                 </td>
                                                 <td> {{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}
                                                 </td>
-                                                <td><a href="{{ url('poliza/residencia/get_recibo') }}/{{ $obj->Id }}" target="_blank" class="btn btn-info">Generar
-                                                        Recibo</a></td>
+                                                @if($obj->Activo == 0)
+                                                <td>Anulado</td>
+                                                @elseif($obj->ImpresionRecibo)
+                                                <td>Emitido</td>
+                                                @elseif($obj->PagoAplicado)
+                                                <td>Pagado</td>
+                                                @else
+                                                <td></td>
+                                                @endif
+                                                <td>
+                                                    @if($obj->Activo <> 0)
+                                                        <a href="{{ url('poliza/residencia/get_recibo') }}/{{ $obj->Id }}" target="_blank" class="btn btn-info">Reimprimir</a>
+                                                        @endif
+                                                </td>
                                             </tr>
                                             @endif
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="tab_content6" aria-labelledby="comen-tab">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+
+                                <div class="x_title">
+                                    <h4>&nbsp;&nbsp; Comentarios<small></small>
+                                    </h4>
+                                    <div class="clearfix" align="right"><button class="btn btn-primary" onclick="add_comment();"><i class="fa fa-plus"></i> Agregar <br> Comentario</button></div>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+                                    &nbsp;
+                                </div>
+                                <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                                    <table width="100%" class="table" id="comentarios">
+                                        <thead>
+                                            <tr>
+                                                <th>Comentario</th>
+                                                <th>Usuario</th>
+                                                <th>Fecha Ingreso</th>
+                                                <th><i class="fa fa-filef"></i>Opciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($comentarios as $obj)
+                                            <tr>
+                                                <td>{{$obj->Comentario}}</td>
+                                                <td> {{ $obj->usuarios->name}}</td>
+                                                <td>{{ \Carbon\Carbon::parse($obj->FechaIngreso)->format('d/m/Y') }}</td>
+                                                <td><a href="" data-target="#modal-delete-comentario-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
+                                                </td>
+                                            </tr>
+                                            <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-comentario-{{ $obj->Id }}">
+
+                                                <form method="POST" action="{{ url('polizas/residencia/eliminar_comentario') }}">
+                                                    @method('POST')
+                                                    @csrf
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">×</span>
+                                                                </button>
+                                                                <h4 class="modal-title">Eliminar Registro</h4>
+                                                                <input type="hidden" name="IdComment" value="{{$obj->Id}}">
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p>Confirme si desea Eliminar el Registro</p>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                                                <button type="submit" class="btn btn-primary">Confirmar</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+
+                                            </div>
                                             @endforeach
                                         </tbody>
                                     </table>
@@ -1209,6 +1175,55 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="modal fade " id="modal_agregar_comentario" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <form method="POST" action="{{ url('polizas/residencia/agregar_comentario') }}">
+                                <div class="modal-header">
+                                    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                                        <h5 class="modal-title" id="exampleModalLabel">Agregar Comentario</h5>
+                                    </div>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="box-body">
+                                        @csrf
+                                        <input type="hidden" name="ResidenciaComment" value="{{$residencia->Id}}" class="form-control">
+
+                                        <div class="form-group">
+                                            <div class="col-sm-12">
+                                                <label class="control-label">Tipo de Comentario</label>
+                                                <select name="TipoComentario" id="TipoComentario" class="form-control">
+                                                    <option value="">Sobre Poliza</option>
+                                                    @foreach($detalle as $det)
+                                                    <option value="{{$det->Id}}">Sobre Cobro de {{ \Carbon\Carbon::parse($det->FechaInicio)->format('d/m/Y') }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-12">
+                                                <label class="control-label">Comentario</label>
+                                                <textarea class="form-control" rows="4" name="Comentario"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+                                    <button type="submit" class="btn btn-primary">Aceptar</button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
 
         </div>
@@ -1217,6 +1232,18 @@
 @include('sweetalert::alert')
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
+    $(document).ready(function() {
+        $('#comentarios').DataTable();
+        $('#avisos').DataTable();
+        //    $('#cobros').DataTable();
+
+        $('#cobros').DataTable({
+            "paging": true,
+            "ordering": true,
+            "info": true,
+        });
+    });
+
     function formatearNumero(numero) {
         // Verificar si el número es válido
         if (isNaN(numero)) {
@@ -1231,6 +1258,11 @@
         });
 
         return numeroFormateado;
+    }
+
+    function add_comment() {
+
+        $("#modal_agregar_comentario").modal('show');
     }
 
 
@@ -1448,7 +1480,7 @@
             var APagar = Number(PrimaTotal) - Number(ccfe) + Number(iva);
             document.getElementById('APagar').value = APagar.toFixed(2);
             document.getElementById('APagar').style.backgroundColor = 'yellow';
-            document.getElementById('Facturar').value = (Number(PrimaTotal)+ Number(iva)).toFixed(2);
+            document.getElementById('Facturar').value = (Number(PrimaTotal) + Number(iva)).toFixed(2);
         })
 
         $('#ValorCCF').change(function() {
@@ -1459,7 +1491,7 @@
             var APagar = Number(PrimaTotal) - Number(ccf) + Number(iva);
             document.getElementById('APagar').value = APagar.toFixed(2);
             document.getElementById('APagar').style.backgroundColor = 'yellow';
-            document.getElementById('Facturar').value = (Number(PrimaTotal)+ Number(iva)).toFixed(2);
+            document.getElementById('Facturar').value = (Number(PrimaTotal) + Number(iva)).toFixed(2);
         })
 
 
