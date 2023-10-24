@@ -12,7 +12,7 @@
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
 
             <div class="x_title">
-                <h2>RESI - Poliza de Residencia <small></small></h2>
+                <h2>RESI - Póliza de Residencia <small></small></h2>
                 <ul class="nav navbar-right panel_toolbox">
                     <a href="{{ url('polizas/residencia') }}" class="btn btn-info fa fa-undo " style="color: white">
                         Atrás</a>
@@ -42,7 +42,7 @@
                     </li>
                     <li role="presentation" class="{{session('tab') == 2 ? 'active':''}} "><a href="#tab_content2" role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">Generar Cartera</a>
                     </li>
-                    <li role="presentation" class=""><a href="#tab_content3" role="tab" id="creditos-tab" data-toggle="tab" aria-expanded="false">Hoja de Calculo
+                    <li role="presentation" class=""><a href="#tab_content3" role="tab" id="creditos-tab" data-toggle="tab" aria-expanded="false">Hoja de Cálculo
                             {{ $residencia->NumeroPoliza }}</a>
                     </li>
                     <li role="presentation" class="{{session('tab') == 4 ? 'active':''}}"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Estados de Cobro</a>
@@ -78,7 +78,7 @@
                                     <input type="hidden" value="{{ $residencia->aseguradoras->Id }}" id="IdAseguradora" readonly>
                                 </div>
                                 <div class="col-md-4 ocultar">
-                                    <label class="control-label">Calculo Diario</label>
+                                    <label class="control-label">Cálculo Diario</label>
                                     <input type="checkbox" id="Diario" class="form-control" readonly @if ($residencia->aseguradoras->Diario == 1) checked @endif disabled>
 
                                 </div>
@@ -222,9 +222,10 @@
 
                         <div>
                             <br>
-                            <table id="cobros" width="100%" class="table">
+                            <table id="tblCobros" width="100%" class="table table-striped">
+                                <thead>
                                 <tr>
-                                    <th style="text-align: center;">Poliza</th>
+                                    <th style="text-align: center;">Póliza</th>
                                     <th style="text-align: center;">Fecha Inicio <br> Vigencia</th>
                                     <th style="text-align: center;">Fecha Final <br> Vigencia</th>
                                     <th style="text-align: center;">Cuota</th>
@@ -235,25 +236,28 @@
                                     <th style="text-align: center;">Estatus</th>
                                     <th style="text-align: center;">Opciones</th>
                                 </tr>
-
-                                @foreach ($detalle as $obj)
-                                <tr>
-                                    @php
-                                    $fileUrl = asset($obj->ExcelURL);
+                                </thead>
+                                @php
                                     $total = 0;
+                                @endphp
+                                <tbody>
+                                  @foreach ($detalle as $obj)
+                                  <tr>
+                                      @php
+                                      $fileUrl = asset($obj->ExcelURL);
                                     @endphp
-                                    <td>{{ $residencia->NumeroPoliza }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
-                                    <td>01/01</td>
+                                    <td  style="text-align: center;">{{ $residencia->NumeroPoliza }}</td>
+                                    <td  style="text-align: center;">{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
+                                    <td  style="text-align: center;">{{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
+                                    <td  style="text-align: center;">01/01</td>
                                     @if($obj->Correlativo)
-                                    <td>{{$obj->Correlativo}}</td>
+                                    <td  style="text-align: center;">{{$obj->Correlativo}}</td>
                                     @else
                                     <td></td>
                                     @endif
-                                    <td>{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }} </td>
+                                    <td  style="text-align: center;">{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }} </td>
                                     @if($obj->PagoAplicado)
-                                    <td>{{ \Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') }}</td>
+                                    <td  style="text-align: center;">{{ \Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') }}</td>
                                     @else
                                     <td></td>
                                     @endif
@@ -262,26 +266,26 @@
                                     @else
                                     <td style="text-align: right;">$ {{ number_format($obj->APagar, 2, '.', ',') }}
                                         @php
-                                        $total = $total + $obj->APagar;
+                                            $total += $obj->APagar;
                                         @endphp
                                     </td>
                                     @endif
                                     @if($obj->Activo == 0)
-                                    <td>Anulado</td>
+                                    <td  style="text-align: center;">Anulado</td>
                                     @elseif(!$obj->PagoAplicado)
-                                    <td>Pendiente</td>
+                                    <td  style="text-align: center;">Pendiente</td>
                                     @elseif($obj->PagoAplicado)
-                                    <td>Pagado</td>
+                                    <td  style="text-align: center;">Pagado</td>
                                     @else
-                                    <td></td>
+                                    <td  style="text-align: center;"></td>
                                     @endif
-                                    <td align="center">
+                                    <td style="text-align: center;">
                                         @if($obj->Activo == 0)
 
                                         @elseif(!$obj->ImpresionRecibo)
-                                        <a href="" data-target="#modal-recibo-{{ $obj->Id }}" title="Generar Recibo" data-toggle="modal"><iconify-icon icon="tabler:file-dollar" style="color: #5a738e" width="24"></iconify-icon></a>
+                                        <a href="" target="_blank" data-target="#modal-recibo-{{ $obj->Id }}" title="Generar Recibo" data-toggle="modal"><i class="fa fa-file-text-o" aria-hidden="true"></i></a>
                                         @else
-                                        <i class="fa fa-pencil fa-lg" onclick="modal_edit({{ $obj->Id }})" title="Fechas de Cobro"></i>
+                                        <i class="fa fa-pencil fa-lg" onclick="modal_edit({{ $obj->Id }})" title="Actualizar Fechas de Cobro"></i>
                                         @endif
                                         &nbsp;&nbsp;
                                         <a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center" title="Descargar Cartera"></a>&nbsp;&nbsp;
@@ -295,16 +299,15 @@
                                     </td>
 
                                 </tr>
-                                @include('polizas.residencia.modal_edit')
-
                                 @endforeach
-                                <tr>
-                                    <td colspan="3" style="text-align: right;"><b>Total de Poliza:</b> </td>
-                                    <td colspan="5" style="text-align: right;"><b>${{number_format($total, 2, '.', ',')}}</b> </td>
-                                    <td colspan="2"></td>
-                                </tr>
+                                </tbody>
+                                <tfoot>
+                                <td colspan="3" style="text-align: right;"><b>Total de Poliza:</b> </td>
+                                <td colspan="5" style="text-align: right;"><b>${{number_format($total, 2, '.', ',')}}</b> </td>
+                                <td colspan="2"></td>
+                                </tfoot>
                             </table>
-
+                            @include('polizas.residencia.modal_edit')
                         </div>
 
 
@@ -323,7 +326,7 @@
                                             </div>-->
                             <ul class="nav navbar-right panel_toolbox">
                                 <div class="btn btn-info float-right" data-toggle="modal" data-target="#modal_pago">
-                                    Subir Archivo <br> Excel</div>
+                                    Subir Archivo Excel</div>
                             </ul>
                             <div class="modal fade bs-example-modal-lg" id="modal_pago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
                                 <div class="modal-dialog" role="document">
@@ -546,7 +549,7 @@
                                                 </div>
                                                 <input type="hidden" name="Bomberos" id="Bomberos" value="{{ $bomberos }}">
                                                 <div class="form-group row" style="margin-top:-5%;">
-                                                    <label class="control-label" align="right">Más Impuestos
+                                                    <label class="control-label" align="right">(+) Impuestos
                                                         Bomberos</label>
 
 
@@ -615,7 +618,7 @@
                                                 </div>
 
                                                 <div class="form-group row" style="margin-top:-5%;">
-                                                    <label class="control-label" align="right">Total a Facturar</label>
+                                                    <label class="control-label" align="right">Total Factura</label>
 
 
                                                     <div class="form-group has-feedback">
@@ -645,7 +648,7 @@
                                                     <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: center;">Estructura CCF de comisión</label>
                                                 </div>
                                                 <div class="form-group row">
-                                                    <label class="control-label" align="right">Comision %</label>
+                                                    <label class="control-label" align="right">% Comisión</label>
 
 
                                                     <div class="form-group has-feedback">
@@ -655,7 +658,7 @@
 
                                                 </div>
                                                 <div class="form-group row">
-                                                    <label class="control-label" align="right" style="margin-top:-4%;">Comision</label>
+                                                    <label class="control-label" align="right" style="margin-top:-4%;">% Comisión</label>
 
 
                                                     <div class="form-group has-feedback">
@@ -665,7 +668,7 @@
 
                                                 </div>
                                                 <div class="form-group row" style="margin-top:-4%;">
-                                                    <label class="control-label" align="right">mas 13% IVA </label>
+                                                    <label class="control-label" align="right">(+) 13% IVA </label>
 
 
                                                     <div class="form-group has-feedback">
@@ -676,7 +679,7 @@
                                                 </div>
 
                                                 <div class="form-group row" style="margin-top:-4%;">
-                                                    <label class="control-label" align="right">menos 1% Ret</label>
+                                                    <label class="control-label" align="right">Menos 1% Ret</label>
 
 
                                                     <div class="form-group has-feedback">
@@ -742,7 +745,7 @@
                     <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="creditos-tab">
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <div class="x_title">
-                                <h4>&nbsp;&nbsp; Calculo de Cartera
+                                <h4>&nbsp;&nbsp; Cálculo de Cartera
                                     {{ $residencia->clientes->Nombre }}<small></small>
                                 </h4>
                                 <div class="clearfix"></div>
@@ -756,13 +759,13 @@
                                         <tr>
                                             <th>{{ $residencia->aseguradoras->Nombre }} <br>
                                                 {{ $residencia->clientes->Nombre }} <br>
-                                                N° Poliza: {{ $residencia->NumeroPoliza }} <br>
+                                                N° Póliza: {{ $residencia->NumeroPoliza }} <br>
                                                 Vigencia:
                                                 {{ \Carbon\Carbon::parse($residencia->VigenciaDesde)->format('d/m/Y') }}
                                                 al
                                                 {{ \Carbon\Carbon::parse($residencia->VigenciaHasta)->format('d/m/Y') }}
                                                 <br>
-                                                Calculo para el periodo de: <br>
+                                                Cálculo para el periodo de: <br>
                                                 @if ($ultimo_pago)
                                                 {{ \Carbon\Carbon::parse($ultimo_pago->FechaInicio)->format('d/m/Y') }}
                                                 al
@@ -799,7 +802,7 @@
                                     </tr>
                                     <tr>
                                         <td colspan="2">
-                                            <center><strong>Base Calculo de la Prima </strong></center>
+                                            <center><strong>Base Cálculo de la Prima </strong></center>
                                         </td>
                                     </tr>
                                     <tr>
@@ -853,7 +856,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Impuesto Bomberos</td>
+                                        <td>(+)Impuesto Bomberos</td>
                                         <td>
 
                                             <div class="col-md-9 col-sm-9  form-group has-feedback">
@@ -883,7 +886,16 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Valor CCF por Comisión</td>
+                                        <td>Total Factura</td>
+                                        <td>
+                                            <div class="col-md-9 col-sm-9  form-group has-feedback">
+                                                <input type="text" class="form-control has-feedback-left" style="text-align: right;" value="@if ($ultimo_pago) {{ number_format($ultimo_pago->SubTotal + $ultimo_pago->Iva, 2, '.', ',') }} @else 0 @endif" readonly>
+                                                <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>(-) Estructura CCF de Comisión</td>
                                         <td>
                                             <div class="col-md-9 col-sm-9  form-group has-feedback">
                                                 <input type="text" class="form-control has-feedback-left" style="text-align: right;" value="@if ($ultimo_pago) {{ number_format($ultimo_pago->ValorCCF, 2, '.', ',') }} @else 0 @endif" readonly>
@@ -892,7 +904,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Prima Neta Por Pagar @if ($ultimo_pago)
+                                        <td>Prima total a Pagar @if ($ultimo_pago)
                                             <br>
                                             {{ \Carbon\Carbon::parse($ultimo_pago->FechaInicio)->format('d/m/Y') }}
                                             al
@@ -975,16 +987,13 @@
                                     </h4>
                                     <div class="clearfix"></div>
                                 </div>
-                                <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
-                                    &nbsp;
-                                </div>
-                                <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
-                                    <table width="100%" class="table" id="avisos">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <table width="100%" class="table table-striped" id="avisos">
                                         <thead>
                                             <tr>
-                                                <th>Aviso de Cobro N</th>
-                                                <th>N Correlativo</th>
-                                                <th>Fecha de <br> Impresión de Recibo</th>
+                                                <th>N° Aviso</th>
+                                                <th>N° Correlativo</th>
+                                                <th>Fecha Impresión Aviso</th>
                                                 <th>Fecha Inicio</th>
                                                 <th>Fecha Final</th>
                                                 <th>Estados</th>
@@ -1034,13 +1043,11 @@
                                 <div class="x_title">
                                     <h4>&nbsp;&nbsp; Comentarios<small></small>
                                     </h4>
-                                    <div class="clearfix" align="right"><button class="btn btn-primary" onclick="add_comment();"><i class="fa fa-plus"></i> Agregar <br> Comentario</button></div>
+                                    <div class="clearfix" align="right"><button class="btn btn-primary" onclick="add_comment();"><i class="fa fa-plus"></i> Agregar Comentario</button></div>
                                 </div>
-                                <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
-                                    &nbsp;
-                                </div>
-                                <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
-                                    <table width="100%" class="table" id="comentarios">
+                                <br>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <table width="100%" class="table table-striped" id="comentarios">
                                         <thead>
                                             <tr>
                                                 <th>Comentario</th>
@@ -1188,7 +1195,7 @@
                                             <div class="col-sm-12">
                                                 <label class="control-label">Tipo de Comentario</label>
                                                 <select name="TipoComentario" id="TipoComentario" class="form-control">
-                                                    <option value="">Sobre Poliza</option>
+                                                    <option value="">Sobre Póliza</option>
                                                     @foreach($detalle as $det)
                                                     <option value="{{$det->Id}}">Sobre Cobro de {{ \Carbon\Carbon::parse($det->FechaInicio)->format('d/m/Y') }}</option>
                                                     @endforeach
@@ -1233,6 +1240,7 @@
             "ordering": true,
             "info": true,
         });
+        $("#tblCobros").DataTable();
     });
 
     function formatearNumero(numero) {
@@ -1311,7 +1319,7 @@
         $('#MontoCartera').change(function() {
             if (document.getElementById('LimiteGrupo').value < document.getElementById('MontoCartera')
                 .value) {
-                swal('Su monto de cartera a superado al techo establecido en la poliza');
+                swal('Su monto de cartera a superado al techo establecido en la póliza');
             } else {
                 calculoPrimaCalculada();
                 calculoPrimaTotal();
@@ -1364,9 +1372,9 @@
             if (aseguradora == 3) { // busca la aseguradora de fedecredito, revisar el id de fedecredito
 
                 if (document.getElementById('Anual').checked == true) { //pendiente de confirmacion
-                    var tasaFinal = tasa / 1000; /// 12
+                    var tasaFinal = (tasa / 1000); /// 12
                 } else {
-                    var tasaFinal = tasa / 1000;
+                    var tasaFinal =(tasa / 1000);
                 }
 
             } else { // sisa
