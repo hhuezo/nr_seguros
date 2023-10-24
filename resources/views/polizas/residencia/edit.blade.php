@@ -250,8 +250,8 @@
                                     <td  style="text-align: center;">{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
                                     <td  style="text-align: center;">{{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
                                     <td  style="text-align: center;">01/01</td>
-                                    @if($obj->Correlativo)
-                                    <td  style="text-align: center;">{{$obj->Correlativo}}</td>
+                                    @if($obj->NumeroCorrelativo)
+                                    <td  style="text-align: center;">{{$obj->NumeroCorrelativo}}</td>
                                     @else
                                     <td></td>
                                     @endif
@@ -1051,6 +1051,7 @@
                                         <thead>
                                             <tr>
                                                 <th>Comentario</th>
+                                                <th>Tipo de <br> Comentario</th>
                                                 <th>Usuario</th>
                                                 <th>Fecha Ingreso</th>
                                                 <th><i class="fa fa-filef"></i>Opciones</th>
@@ -1060,6 +1061,11 @@
                                             @foreach ($comentarios as $obj)
                                             <tr>
                                                 <td>{{$obj->Comentario}}</td>
+                                                @if($obj->DetalleResidencia)
+                                                <td>Detalle del Cobro del {{\Carbon\Carbon::parse($obj->FechaIngreso)->format('d/m/Y')}}</td>
+                                                @else
+                                                <td>Póliza</td>
+                                                @endif
                                                 <td> {{ $obj->usuarios->name}}</td>
                                                 <td>{{ \Carbon\Carbon::parse($obj->FechaIngreso)->format('d/m/Y') }}</td>
                                                 <td><a href="" data-target="#modal-delete-comentario-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
@@ -1225,7 +1231,7 @@
             </div>
 
         </div>
-    </div>
+    </div>tblCobros
 </div>
 @include('sweetalert::alert')
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
