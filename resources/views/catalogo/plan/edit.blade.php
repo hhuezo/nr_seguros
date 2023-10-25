@@ -119,15 +119,15 @@
                                     </div>
                                     <div class="col-sm-6">
                                         Suma Asegurada
-                                        <input type="number" name="SumaAsegurada" id="ModalCoberturaSumaAsegurada" class="form-control" required>
+                                        <input type="number" name="SumaAsegurada" id="ModalCoberturaSumaAsegurada" step="0.01" class="form-control" required>
                                     </div>
                                     <div class="col-sm-6">
                                        Tasa
-                                        <input type="number" name="Tasa" id="ModalCoberturaTasa" class="form-control" required>
+                                        <input type="number" name="Tasa" id="ModalCoberturaTasa" step="0.01" class="form-control" required>
                                     </div>
                                     <div class="col-sm-6">
                                         Prima
-                                        <input type="number" name="Prima" id="ModalCoberturaPrima" class="form-control" required>
+                                        <input type="number" name="Prima" id="ModalCoberturaPrima" step="0.01" class="form-control" required>
                                     </div>
                                 </div>
                             </div>

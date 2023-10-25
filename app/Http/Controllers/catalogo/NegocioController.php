@@ -8,6 +8,7 @@ use App\Models\catalogo\Cliente;
 use App\Models\catalogo\ClienteEstado;
 use App\Models\catalogo\ClienteTarjetaCredito;
 use App\Models\catalogo\Cotizacion;
+use App\Models\catalogo\DatosTecnicos;
 use App\Models\catalogo\DepartamentoNR;
 use App\Models\catalogo\Ejecutivo;
 use App\Models\catalogo\EstadoVenta;
@@ -29,6 +30,8 @@ use App\Models\catalogo\NegocioVideDeuda;
 use App\Models\catalogo\NegocioVideDeudaCobertura;
 use App\Models\catalogo\NrCartera;
 use App\Models\catalogo\Parentesco;
+use App\Models\catalogo\Plan;
+use App\Models\catalogo\Producto;
 use App\Models\catalogo\TipoCartera;
 use App\Models\catalogo\TipoNegocio;
 use App\Models\catalogo\TipoPoliza;
@@ -238,6 +241,23 @@ class NegocioController extends Controller
             $metodo_pago=null;
         }
         return response()->json(['cliente' => $cliente,'metodo_pago'=>$metodo_pago]);
+    }
+
+    public function getProducto(Request $request)
+    {
+        //obtener el producto
+        $productos= Producto::where('NecesidadProteccion',$request->Ramo)->get();
+
+        return response()->json(['datosRecibidos' => $productos]);
+    }
+
+    public function getPlan(Request $request)
+    {
+        //obtener el producto
+        $planes= Plan::where('Producto',$request->Producto)->get();
+        $datos_tecnicos= DatosTecnicos::where('Producto',$request->Producto)->get();
+
+        return response()->json(['datosRecibidos' => $planes,'datos_tecnicos'=>$datos_tecnicos]);
     }
 
 }

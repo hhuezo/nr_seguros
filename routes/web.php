@@ -101,6 +101,9 @@ Route::post('catalogo/plan/edit_cobertura_detalle', [PlanController::class, 'edi
 Route::resource('catalogo/plan', PlanController::class);
 
 Route::get('negocio/getCliente', [NegocioController::class, 'getCliente']);
+Route::get('negocio/getProducto', [NegocioController::class, 'getProducto']);
+Route::get('negocio/getPlan', [NegocioController::class, 'getPlan']);
+
 Route::resource('catalogo/negocio', NegocioController::class);
 
 

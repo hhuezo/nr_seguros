@@ -307,6 +307,75 @@
 
     </div>
 
+      {{-- modales cotizaciones --}}
+
+      {{-- modal ingreso de cotización --}}
+
+      <div class="col-12">
+        <div class="modal fade bs-modal-nuevo-cotizacion" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <form method="POST" action="{{ url('catalogo/negocio/add_cotizacion') }}">
+                    @csrf
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="myModalLabel">Nueva cotización</h4>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" name="Negocio" value="{{$negocio->Id}}" class="form-control">
+
+                            <div class="col-md-6">
+                                <label for="Producto" class="form-label">Producto</label>
+                                <select name="Producto" id="Producto"
+                                    class="form-control select2" style="width: 100%" required>
+                                    <option value="" disabled selected>Seleccione...</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="Plan" class="form-label">Plan</label>
+                                <select name="ProdPlanucto" id="Plan"
+                                    class="form-control select2" style="width: 100%" required>
+                                    <option value="" disabled selected>Seleccione...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6" style="margin-top: 12px!important;">
+                                <label for="SumaAsegurada" class="form-label">Suma Asegurada</label>
+                                <input class="form-control" type="number"
+                                value="" name="SumaAsegurada" id="SumaAsegurada">
+                            </div>
+                            <div class="col-md-6" style="margin-top: 12px!important;">
+                                <label for="PrimaNetaMensual" class="form-label">Prima Neta Mensual</label>
+                                <input class="form-control" type="number"
+                                value="" name="PrimaNetaMensual" id="PrimaNetaMensual">
+                            </div>
+                            <br>
+                            <div class="col-md-12" style="margin-top: 12px!important;">
+                                <label for="Observacion" class="form-label">Observaciones o
+                                    comentarios</label>
+                                <textarea name="Observacion" id="Observacion" rows="3" class="form-control"></textarea>
+
+                            </div>
+                            <div>&nbsp; </div>
+                            <div >
+                                <h4>Datos Técnicos requeridos para el plan</h4>
+                                <hr>
+                            </div>
+                        </div>
+                        <div>&nbsp; </div>
+                        <div class="clearfix"></div>
+                        <br>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
     @include('sweetalert::alert')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <!-- jQuery -->
@@ -435,11 +504,88 @@
         }
 
     }
+
+    function borrarProductos() {
+        //$("#FormaPago").val('').trigger("change");
+
+        $("#Producto").find("option:not(:first-child)").remove();
+        $("#Producto").val(null).trigger("change"); // Clear and update the Select2 element
+        $("#Plan").find("option:not(:first-child)").remove();
+        $("#Plan").val(null).trigger("change");
+    }
+
+    function borrarPlanes() {
+        //$("#FormaPago").val('').trigger("change");
+        $("#Plan").find("option:not(:first-child)").remove();
+        $("#Plan").val(null).trigger("change");
+    }
+
+    function getProducto() {
+
+            let Ramo = $('#NecesidadProteccion').val();
+            let parametros = {
+                "Ramo": Ramo
+            };
+
+            $.ajax({
+                type: "get",
+                url: "{{ URL::to('negocio/getProducto') }}",
+                data: parametros,
+                success: function(response) {
+                    console.log(response /*data.metodo_pago[0]*/ );
+                    borrarProductos();
+                    if (response.datosRecibidos !== null) {
+
+                        $.each(response.datosRecibidos, function(index, datos) {
+                            $("#Producto").append(new Option(datos.Nombre, datos.Id, false,
+                                false));
+                        });
+                        $("#Producto").trigger("change"); // Trigger change event to refresh Select2
+                    }
+                }
+            });
+    }
+
+
+    function getPlan() {
+
+        let Producto = $('#Producto').val();
+        let parametros = {
+            "Producto": Producto
+        };
+
+        $.ajax({
+            type: "get",
+            url: "{{ URL::to('negocio/getPlan') }}",
+            data: parametros,
+            success: function(response) {
+                console.log(response /*data.metodo_pago[0]*/ );
+                borrarPlanes();
+                if (response.datosRecibidos !== null) {
+
+                    $.each(response.datosRecibidos, function(index, datos) {
+                        $("#Plan").append(new Option(datos.Nombre, datos.Id, false,
+                            false));
+                    });
+                    $("#Plan").trigger("change"); // Trigger change event to refresh Select2
+                }
+            }
+        });
+    }
+
     $(document).ready(function() {
         $('#divNit').hide();
         $('#helpBlockDuiNit').hide();
         $('#helpBlockDuiNit2').hide();
         $("#EstadoCliente").val(3).trigger("change");
+        getProducto();
+        $("#NecesidadProteccion").change(function() {
+            getProducto();
+        });
+
+        $("#Producto").change(function() {
+            getPlan();
+        });
 
         $("#TipoPersona").change(function() {
 
