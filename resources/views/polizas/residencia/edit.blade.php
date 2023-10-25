@@ -221,6 +221,9 @@
                         </div>
 
                         <div>
+                            @if ($detalle->count() > 0)
+
+                            @endif
                             <br>
                             <table id="tblCobros" width="100%" class="table table-striped">
                                 <thead>
@@ -299,6 +302,7 @@
                                     </td>
 
                                 </tr>
+                                @include('polizas.residencia.modal_edit')
                                 @endforeach
                                 </tbody>
                                 <tfoot>
@@ -307,7 +311,7 @@
                                 <td colspan="2"></td>
                                 </tfoot>
                             </table>
-                            @include('polizas.residencia.modal_edit')
+
                         </div>
 
 
