@@ -45,7 +45,7 @@
                         <select name="Aseguradora" class="form-control select2" style="width: 100%" required>
                             <option value="" selected disabled>Seleccione...</option>
                             @foreach ($aseguradoras as $obj)
-                            <option value="{{ $obj->Id }}">{{$obj->Id}} {{ $obj->Nombre }}</option>
+                            <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
                             @endforeach
                         </select>
                     </div>
