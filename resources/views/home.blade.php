@@ -143,12 +143,12 @@ function generarPrimaGeneral() {
 
                         // Las credenciales son incorrectas, muestra un mensaje de error
                         console.error(error.responseJSON.datosRecibidos);
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'No existe ningún registro en el intervalo de fechas seleccionado',
-                        icon: 'error',
-                        confirmButtonText: 'Aceptar'
-                    });
+                    // Swal.fire({
+                    //     title: 'Error!',
+                    //     text: 'No existe ningún registro en el intervalo de fechas seleccionado',
+                    //     icon: 'error',
+                    //     confirmButtonText: 'Aceptar'
+                    // });
                     }
                 });
 }
