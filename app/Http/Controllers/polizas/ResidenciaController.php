@@ -61,7 +61,7 @@ class ResidenciaController extends Controller
      */
     public function create()
     {
-        $aseguradoras = Aseguradora::where('Nombre', 'like', '%fede%')->orWhere('Nombre', 'like', '%sisa%')->where('Activo','=', 1)->get();
+        $aseguradoras = Aseguradora::where('Activo','=', 1)->where('Nombre', 'like', '%fede%')->orWhere('Nombre', 'like', '%sisa%')->get();
         $estados_poliza = EstadoPoliza::where('Activo', '=', 1)->get();
         $bombero = Bombero::where('Activo', 1)->first();
         if ($bombero) {
