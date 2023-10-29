@@ -161,7 +161,7 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
       <th>Total a facturar</th>
     </tr>
     <tr>
-      <td></td>
+      <td style="text-align: center;">01/01</td>
       <td>{{$detalle->NumeroCorrelativo}}</td>
       <td>{{ \Carbon\Carbon::parse($detalle->FechaInicio)->format('d/m/Y') }}</td>
       <td style="text-align: right;">${{number_format($detalle->SubTotal,2,'.',',')}}</td>
@@ -221,11 +221,11 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
     </tr>
     <tr style="text-align: right;">
       <td>Elaborado por:</td>
-      <td>_______________________</td>
+      <td>{{$detalle->usuarios->name}}</td>
     </tr>
     <tr style="text-align: right;">
       <td>Fecha</td>
-      <td>_______________________</td>
+      <td>{{date('d/m/Y')}}</td>
     </tr>
 
   </table>

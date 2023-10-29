@@ -41,7 +41,7 @@ class ClienteController extends Controller
     public function index()
     {
         session(['tab2' => '1']);
-        $clientes = Cliente::get();
+        $clientes = Cliente::where('Activo',1)->get();
         return view('catalogo.cliente.index', compact('clientes'));
     }
 

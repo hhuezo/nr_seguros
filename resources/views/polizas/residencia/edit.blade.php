@@ -91,11 +91,13 @@
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label">Vigencia Desde</label>
-                                    <input class="form-control" name="VigenciaDesde" id="VigenciaDesde" type="text" value="{{ date('d/m/Y', strtotime($residencia->VigenciaDesde)) }}" readonly>
+                                    <input class="form-control" name="VigenciaDesde" type="text" value="{{ date('d/m/Y', strtotime($residencia->VigenciaDesde)) }}" readonly>
+                                    <input type="hidden" id="VigenciaDesde" value="{{ $residencia->VigenciaDesde }}">
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label">Vigencia Hasta</label>
-                                    <input class="form-control" name="VigenciaHasta" id="VigenciaHasta" type="text" value="{{ date('d/m/Y', strtotime($residencia->VigenciaHasta)) }}" readonly>
+                                    <input class="form-control" name="VigenciaHasta"  type="text" value="{{ date('d/m/Y', strtotime($residencia->VigenciaHasta)) }}" readonly>
+                                    <input type="hidden" id="VigenciaHasta" value="{{ $residencia->VigenciaHasta }}">
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label">Estatus</label>
@@ -1351,14 +1353,19 @@
 
         function calculoPrimaCalculada() {
             var monto = document.getElementById('MontoCartera').value;
+            //console.log(document.getElementById('VigenciaDesde').value);
             var desde = new Date(document.getElementById('VigenciaDesde').value);
             var hasta = new Date(document.getElementById('VigenciaHasta').value);
+            var hoy = new Date();
+            console.log(hoy);
+            
             var aseguradora = document.getElementById('IdAseguradora').value;
             // Determine the time difference between two dates
             var millisBetween = hasta.getTime() - desde.getTime();
 
             // Determine the number of days between two dates
             var dias_axo = (millisBetween / (1000 * 3600 * 24));
+            console.log(desde, hasta);
             console.log("dias del año: " + dias_axo)
 
             // var inicio = new Date(document.getElementById('FechaInicio').value += 'T00:00:00');

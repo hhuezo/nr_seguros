@@ -44,4 +44,8 @@ class DetalleResidencia extends Model
     ];
 
     protected $guarded = [];
+
+    public function usuarios(){
+        return $this->belongsTo('App\Models\User', 'Usuario', 'id');
+    }
 }
