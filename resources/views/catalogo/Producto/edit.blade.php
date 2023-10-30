@@ -481,7 +481,7 @@
 
     function modal_delete_dato_tecnico(id) {
         $('#IdDatoTecnico').val(id);
-        $('#modal_borrar_ato_tecnico').modal('show');
+        //$('#modal_borrar_ato_tecnico').modal('show');
     }
 
     function modal_edit_cobertura(Id, Nombre, Tarificacion, Descuento,Iva) {

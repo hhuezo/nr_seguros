@@ -132,7 +132,7 @@
                                         </div>-->
                                         <div class="col-md-6">
                                             <label for="NecesidadProteccion" class="form-label">Ramo</label>
-                                            <select name="NecesidadProteccion" id="NecesidadProteccion"
+                                            <select @if($cotizaciones->count()>0) disabled @endif name="NecesidadProteccion" id="NecesidadProteccion"
                                                 class="form-control select2" style="width: 100%;" required>
                                                 <option value="">Seleccione...</option>
                                                 @foreach ($necesidad_proteccion as $obj)
@@ -263,11 +263,13 @@
                                     <td>{{$loop->iteration}}</td>
                                     <td>{{ $obj->planes->productos->Nombre }}</td>
                                     <td>{{ $obj->planes->Nombre }}</td>
-                                    <td>{{ $obj->SumaAsegurada }}</td>
-                                    <td>{{ $obj->PrimaNetaAnual }}</td>
-                                    <td>{{ $obj->Aceptado }}</td>
+                                    <td>${{ number_format($obj->SumaAsegurada, 2, '.', ',') }}</td>
+                                    <td>${{ number_format($obj->PrimaNetaAnual, 2, '.', ',') }}</td>
+                                    <td align="center"> <input onclick="cotizacionAprobada({{ $obj->Id }},{{$negocio->Id}})" class="grupoCheckBoxAceptado" type="checkbox" @if ($obj->Aceptado) checked @endif></td>
                                     <td>
-
+                                        <i class="fa fa-pencil fa-lg" onclick="modal_edit_cotizacion({{ $obj->Id }},'{{ $obj->planes->productos->Nombre }}','{{ $obj->planes->Nombre }}','{{ $obj->SumaAsegurada }}','{{ $obj->PrimaNetaAnual }}','{{ $obj->Observaciones }}','{{ $obj->DatosTecnicos }}','{{$obj->planes->productos->datosTecnicos}}')" data-target="#modal-edit-cotizacion" data-toggle="modal"></i>
+                                        &nbsp;&nbsp;
+                                        <i class="fa fa-trash fa-lg" onclick="modal_delete_cotizacion({{ $obj->Id }})" data-target="#modal-delete-cotizacion" data-toggle="modal"></i>
 
                                     </td>
                                 </tr>
@@ -334,7 +336,7 @@
 
                             <div class="col-md-6">
                                 <label for="Plan" class="form-label">Plan</label>
-                                <select name="ProdPlanucto" id="Plan"
+                                <select name="Plan" id="Plan"
                                     class="form-control select2" style="width: 100%" required>
                                     <option value="" disabled selected>Seleccione...</option>
                                 </select>
@@ -342,24 +344,27 @@
                             <div class="col-md-6" style="margin-top: 12px!important;">
                                 <label for="SumaAsegurada" class="form-label">Suma Asegurada</label>
                                 <input class="form-control" type="number"
-                                value="" name="SumaAsegurada" id="SumaAsegurada">
+                                value="" name="SumaAsegurada" step="0.01" id="SumaAsegurada">
                             </div>
                             <div class="col-md-6" style="margin-top: 12px!important;">
-                                <label for="PrimaNetaMensual" class="form-label">Prima Neta Mensual</label>
-                                <input class="form-control" type="number"
-                                value="" name="PrimaNetaMensual" id="PrimaNetaMensual">
+                                <label for="PrimaNetaAnual" class="form-label">Prima Neta Anual</label>
+                                <input class="form-control" step="0.01" type="number"
+                                value="" name="PrimaNetaAnual" id="PrimaNetaAnual">
                             </div>
                             <br>
                             <div class="col-md-12" style="margin-top: 12px!important;">
                                 <label for="Observacion" class="form-label">Observaciones o
                                     comentarios</label>
-                                <textarea name="Observacion" id="Observacion" rows="3" class="form-control"></textarea>
+                                <textarea name="Observaciones" id="Observaciones" rows="3" class="form-control"></textarea>
 
                             </div>
                             <div>&nbsp; </div>
                             <div >
                                 <h4>Datos Técnicos requeridos para el plan</h4>
                                 <hr>
+                            </div>
+                            <div id="datosTecnicosForm">
+
                             </div>
                         </div>
                         <div>&nbsp; </div>
@@ -375,6 +380,107 @@
             </div>
         </div>
     </div>
+
+
+       {{-- modal de modificación de cotización --}}
+       <div class="col-12">
+        <div class="modal fade bs-modal-edit-cotizacion" tabindex="-1" role="dialog" aria-hidden="true" id="modal-edit-cotizacion">
+            <div class="modal-dialog modal-lg">
+                <form method="POST" action="{{ url('catalogo/negocio/edit_cotizacion') }}">
+                    @csrf
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="myModalLabel">Modificación cotización</h4>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" name="Negocio" value="{{$negocio->Id}}" class="form-control">
+                            <input type="hidden" name="Id" id="ModalCotizacionId" class="form-control" required>
+
+
+                            <div class="col-md-6">
+                                <label for="Producto" class="form-label">Producto</label>
+                                <select disabled name="Producto" id="ModalCotizacionProducto"
+                                    class="form-control select2" style="width: 100%" required>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label disabled for="Plan" class="form-label">Plan</label>
+                                <select disabled name="Plan" id="ModalCotizacionPlan"
+                                    class="form-control select2" style="width: 100%" required>
+                                </select>
+                            </div>
+                            <div class="col-md-6" style="margin-top: 12px!important;">
+                                <label for="SumaAsegurada" class="form-label">Suma Asegurada</label>
+                                <input class="form-control" type="number"
+                                value="" name="SumaAsegurada" step="0.01" id="ModalCotizacionSumaAsegurada">
+                            </div>
+                            <div class="col-md-6" style="margin-top: 12px!important;">
+                                <label for="PrimaNetaAnual" class="form-label">Prima Neta Anual</label>
+                                <input class="form-control" step="0.01" type="number"
+                                value="" name="PrimaNetaAnual" id="ModalCotizacionPrimaNetaAnual">
+                            </div>
+                            <br>
+                            <div class="col-md-12" style="margin-top: 12px!important;">
+                                <label for="Observacion" class="form-label">Observaciones o
+                                    comentarios</label>
+                                <textarea name="Observaciones" id="ModalCotizacionObservaciones" rows="3" class="form-control"></textarea>
+
+                            </div>
+                            <div>&nbsp; </div>
+                            <div >
+                                <h4>Datos Técnicos requeridos para el plan</h4>
+                                <hr>
+                            </div>
+                            <div id="ModalCotizaciondatosTecnicosForm">
+
+                            </div>
+                        </div>
+                        <div>&nbsp; </div>
+                        <div class="clearfix"></div>
+                        <br>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    {{-- eliminar cotización --}}
+
+    <div class="col-12">
+        <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-cotizacion">
+
+            <form method="POST" action="{{ url('catalogo/negocio/delete_cotizacion') }}">
+                @csrf
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                            <input type="hidden" name="Id" id="IdCotizacion">
+                            <h4 class="modal-title">Eliminar Cotización</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p>Confirme si desea Eliminar el Registro</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 
     @include('sweetalert::alert')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -472,7 +578,7 @@
                 url: "{{ URL::to('negocio/getCliente') }}",
                 data: parametros,
                 success: function(data) {
-                    console.log(data /*data.metodo_pago[0]*/ );
+                    //console.log(data /*data.metodo_pago[0]*/ );
                     $('#IdCliente').val('');
                     borrarDatosCliente();
                     if (data.cliente !== null) {
@@ -532,7 +638,7 @@
                 url: "{{ URL::to('negocio/getProducto') }}",
                 data: parametros,
                 success: function(response) {
-                    console.log(response /*data.metodo_pago[0]*/ );
+                    //console.log(response /*data.metodo_pago[0]*/ );
                     borrarProductos();
                     if (response.datosRecibidos !== null) {
 
@@ -541,6 +647,7 @@
                                 false));
                         });
                         $("#Producto").trigger("change"); // Trigger change event to refresh Select2
+
                     }
                 }
             });
@@ -559,7 +666,7 @@
             url: "{{ URL::to('negocio/getPlan') }}",
             data: parametros,
             success: function(response) {
-                console.log(response /*data.metodo_pago[0]*/ );
+                //console.log(response /*data.metodo_pago[0]*/ );
                 borrarPlanes();
                 if (response.datosRecibidos !== null) {
 
@@ -568,9 +675,90 @@
                             false));
                     });
                     $("#Plan").trigger("change"); // Trigger change event to refresh Select2
+                    // Selecciona el contenedor donde deseas agregar los inputs
+                    let contenedor = $("#datosTecnicosForm");
+                    contenedor.empty();
+                        // Recorre el array de datos
+                        $.each(response.datos_tecnicos, function(index, dato) {
+                            // Crea un div con las clases y estilos necesarios
+                            let div = $("<div>", { class: "col-md-6", style: "margin-top: 12px!important;" });
+
+                            // Crea una etiqueta <label> y un input <input>
+                                let label = $("<label>", { for: dato.Id, class: "form-label", text: dato.Nombre });
+                                let input = $("<input>", { class: "form-control", type: "text", value: "", name: dato.Id, id: dato.Id ,placeholder: dato.Descripcion,required: true});
+
+                            // Agrega la etiqueta y el input al div
+                            div.append(label, input);
+
+                            // Agrega el div al contenedor
+                            contenedor.append(div);
+                        });
                 }
             }
         });
+    }
+    function modal_edit_cotizacion(Id, NombreProducto, NombrePlan,SumaAsegurada,PrimaNetaAnual,Observaciones,DatosTecnicos,productoDatosTecnicos) {
+
+        $("#ModalCotizacionProducto option").remove();
+        $("#ModalCotizacionPlan option").remove();
+        $("#ModalCotizacionProducto").val(null).trigger("change");
+        $("#ModalCotizacionPlan").val(null).trigger("change");
+
+        $("#ModalCotizacionProducto").append(new Option(NombreProducto, '', false,false));
+        $("#ModalCotizacionProducto").trigger("change");
+        $("#ModalCotizacionPlan").append(new Option(NombrePlan, '', false,false));
+        $("#ModalCotizacionPlan").trigger("change");
+
+        $('#ModalCotizacionId').val(Id);
+        $('#ModalCotizacionSumaAsegurada').val(SumaAsegurada);
+        $('#ModalCotizacionPrimaNetaAnual').val(PrimaNetaAnual);
+        $('#ModalCotizacionObservaciones').val(Observaciones);
+
+        DatosTecnicos=JSON.parse(DatosTecnicos);
+        productoDatosTecnicos=JSON.parse(productoDatosTecnicos);
+
+        //console.log(DatosTecnicos);
+        //console.log(productoDatosTecnicos);
+
+        let contenedor = $("#ModalCotizaciondatosTecnicosForm");
+                    contenedor.empty();
+                        // Recorre el array de datos
+                        $.each(productoDatosTecnicos, function(index, dato) {
+                            // Crea un div con las clases y estilos necesarios
+                            let div = $("<div>", { class: "col-md-6", style: "margin-top: 12px!important;" });
+
+                            // Crea una etiqueta <label> y un input <input>
+                                let label = $("<label>", { for: dato.Id, class: "form-label", text: dato.Nombre });
+                                let input = $("<input>", { class: "form-control", type: "text", value: DatosTecnicos[dato.Id], name: dato.Id, id: dato.Id ,placeholder: dato.Descripcion,required: true});
+
+                            // Agrega la etiqueta y el input al div
+                            div.append(label, input);
+
+                            // Agrega el div al contenedor
+                            contenedor.append(div);
+                        });
+    }
+
+    function cotizacionAprobada(Id,Negocio) {
+        //console.log(Id);
+            let parametros = {
+                "CotizacionId": Id,
+                "Negocio": Negocio
+            };
+
+            $.ajax({
+                type: "get",
+                url: "{{ URL::to('negocio/elegirCotizacion') }}",
+                data: parametros,
+                success: function(response) {
+                    //console.log(response /*data.metodo_pago[0]*/ );
+
+                }
+            });
+    }
+
+    function modal_delete_cotizacion(id) {
+        $('#IdCotizacion').val(id);
     }
 
     $(document).ready(function() {
@@ -612,6 +800,11 @@
             }
         })
 
+        $('.grupoCheckBoxAceptado').change(function() {
+      if ($(this).is(':checked')) {
+        $('.grupoCheckBoxAceptado').not(this).prop('checked', false);
+      }
+     });
     })
 
 </script>

@@ -155,6 +155,8 @@ class NegocioController extends Controller
     public function update(Request $request, $id)
     {
         $negocio = Negocio::findOrFail($id);
+        $cotizaciones= Cotizacion::where('Negocio', $id)->where('Activo', 1)->get();
+
         //diferenciar al tipo de cliente
         if ($request->TipoPersona == 1) { //cliente natural
             $cliente = Cliente::where('Dui', $request->Dui)->first();
@@ -184,7 +186,9 @@ class NegocioController extends Controller
         $negocio->TipoCarteraNr = $request->TipoCarteraNr;
         $negocio->NumCoutas = $request->NumCoutas;
         $negocio->PeriodoPago = $request->FormaPago;
-        $negocio->NecesidadProteccion = $request->NecesidadProteccion;
+        if ($cotizaciones->count()==0) {
+            $negocio->NecesidadProteccion = $request->NecesidadProteccion;
+        }
         $negocio->InicioVigencia = $request->InicioVigencia;
         $negocio->Cliente = $cliente->Id;
         $negocio->FechaVenta = $request->FechaVenta;
@@ -259,5 +263,89 @@ class NegocioController extends Controller
 
         return response()->json(['datosRecibidos' => $planes,'datos_tecnicos'=>$datos_tecnicos]);
     }
+
+    public function add_cotizacion(Request $request){
+
+        $data = $request->input();
+        $jsonObject = [];
+
+        foreach ($data as $key => $value) {
+            if (is_numeric($key)) {
+                $jsonObject[$key] = $value;
+            }
+        }
+        $jsonObject=json_encode($jsonObject);
+        //dd( $data,$jsonObject);
+
+        $cotizacion = new Cotizacion();
+        $cotizacion->Negocio = $data['Negocio'];
+        $cotizacion->Plan = $data['Plan'];
+        $cotizacion->SumaAsegurada = $data['SumaAsegurada'];
+        $cotizacion->PrimaNetaAnual = $data['PrimaNetaAnual'];
+        $cotizacion->Observaciones = $data['Observaciones'];
+        $cotizacion->DatosTecnicos =  $jsonObject;
+        $cotizacion->Aceptado = 0;
+        $cotizacion->Activo  = 1 ;
+        $cotizacion->save();
+
+        $negocio = Negocio::findOrFail($data['Negocio']);
+
+        if($negocio->NecesidadProteccion!= $cotizacion->planes->productos->NecesidadProteccion){
+            $negocio->update(['NecesidadProteccion' => $cotizacion->planes->productos->NecesidadProteccion]);
+        }
+
+        alert()->success('El registro ha sido creado correctamente');
+
+        session(['tab2' => '1']);
+        return back();
+    }
+
+    public function edit_cotizacion(Request $request){
+        $cotizacion = Cotizacion::findOrFail($request->Id);
+
+        $data = $request->input();
+        $jsonObject = [];
+
+        foreach ($data as $key => $value) {
+            if (is_numeric($key)) {
+                $jsonObject[$key] = $value;
+            }
+        }
+        $jsonObject=json_encode($jsonObject);
+        //dd($cotizacion, $data,$jsonObject);
+
+        $cotizacion->SumaAsegurada = $data['SumaAsegurada'];
+        $cotizacion->PrimaNetaAnual = $data['PrimaNetaAnual'];
+        $cotizacion->Observaciones = $data['Observaciones'];
+        $cotizacion->DatosTecnicos =  $jsonObject;
+
+
+        $cotizacion->update();
+
+
+        alert()->success('El registro ha sido modificado correctamente');
+
+        session(['tab2' => '1']);
+        return back();
+    }
+
+    public function elegirCotizacion(Request $request){
+        $cotizaciones= Cotizacion::where('Negocio',$request->Negocio)->where('Aceptado',1)->first();
+        if ($cotizaciones) {
+            $cotizaciones->update(['Aceptado' => 0]);
+        }
+        Cotizacion::findOrFail($request->CotizacionId)->update(['Aceptado' => 1]);
+
+        return response()->json(['exito' => 1]);
+    }
+
+    public function delete_cotizacion(Request $request){
+        Cotizacion::findOrFail($request->Id)->update(['Activo' => 0]);
+        alert()->error('El registro ha sido eliminado correctamente');
+
+        session(['tab2' => '1']);
+        return back();
+    }
+
 
 }

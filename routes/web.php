@@ -103,7 +103,11 @@ Route::resource('catalogo/plan', PlanController::class);
 Route::get('negocio/getCliente', [NegocioController::class, 'getCliente']);
 Route::get('negocio/getProducto', [NegocioController::class, 'getProducto']);
 Route::get('negocio/getPlan', [NegocioController::class, 'getPlan']);
+Route::get('negocio/elegirCotizacion', [NegocioController::class, 'elegirCotizacion']);
 
+Route::post('catalogo/negocio/add_cotizacion', [NegocioController::class, 'add_cotizacion']);
+Route::post('catalogo/negocio/edit_cotizacion', [NegocioController::class, 'edit_cotizacion']);
+Route::post('catalogo/negocio/delete_cotizacion', [NegocioController::class, 'delete_cotizacion']);
 Route::resource('catalogo/negocio', NegocioController::class);
 
 
