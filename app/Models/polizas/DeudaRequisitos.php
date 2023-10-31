@@ -22,14 +22,7 @@ class DeudaRequisitos extends Model
         'EdadFinal',
         'MontoInicial',
         'MontoFinal',
-        'EdadInicial2',
-        'EdadFinal2',
-        'MontoInicial2',
-        'MontoFinal2',
-        'EdadInicial3',
-        'EdadFinal3',
-        'MontoInicial3',
-        'MontoFinal3'
+    
     ];
 
     protected $guarded = [];

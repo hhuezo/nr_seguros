@@ -58,6 +58,15 @@ class DeudaController extends Controller
      */
     public function create()
     {
+
+        $ultimos = Deuda::where('Activo', 1)->orderByDesc('Id')->first();
+        
+        if (!$ultimos) {
+            $ultimo = 1;
+        }else{
+            $ultimo = $ultimos->Id +1;
+        }
+        
         $tipos_contribuyente =  TipoContribuyente::get();
         $rutas = Ruta::where('Activo', '=', 1)->get();
         $ubicaciones_cobro =  UbicacionCobro::where('Activo', '=', 1)->get();
@@ -83,7 +92,7 @@ class DeudaController extends Controller
             'tipos_contribuyente',
             'rutas',
             'ubicaciones_cobro',
-            'bomberos'
+            'bomberos','ultimo'
         ));
     }
 
@@ -136,44 +145,20 @@ class DeudaController extends Controller
         $deuda->ClausulasEspeciales = $request->ClausulasEspeciales;
         $deuda->Concepto = $request->Concepto;
         $deuda->EstadoPoliza = $request->EstadoPoliza;
-        $deuda->Descuento = $request->TasaDescuento;
-        $deuda->Comision = $request->TasaComision;
+        $deuda->Descuento = $request->Descuento;
+        $deuda->TasaComision = $request->TasaComision;
         $deuda->FechaIngreso = $request->FechaIngreso;
-        $deuda->Activo = $request->Activo;
-        $deuda->Bomberos = $request->Bomberos;
-        if ($request->Vida == 'on') {
-            $deuda->Videuda = 1;
-        } else {
-            $deuda->Videuda = 0;
-        }
-        $deuda->LimiteMaximo = $request->LimiteMaximo;
-        $deuda->FechaIngreso = Carbon::now('America/El_Salvador');
         $deuda->Activo = 1;
+        $deuda->Vida = $request->Vida;
+        $deuda->Mensual = $request->tipoTasa;
+        $deuda->FechaIngreso = Carbon::now('America/El_Salvador');
         $deuda->save();
 
-        $creditos = new DeudaCredito();
-        $creditos->Deuda = $deuda->Id;
-        $creditos->TipoCartera = $request->TipoCartera1;
-        $creditos->Tasa = $request->TasaCartera1;
-        $creditos->save();
-
-        $creditos = new DeudaCredito();
-        $creditos->Deuda = $deuda->Id;
-        $creditos->TipoCartera = $request->TipoCartera2;
-        $creditos->Tasa = $request->TasaCartera2;
-        $creditos->save();
-
-        $videuda = new DeudaVida();
-        $videuda->NumeroPoliza = $request->NumeroPolizaVida;
-        $videuda->Deuda = $deuda->Id;
-        $videuda->SumaUniforme = $request->SumaUniforme;
-        $videuda->Tasa = $request->TasaVida;
-        $videuda->Activo = 1;
-        $videuda->save();
-
-        DeudaRequisitos::whereIn('Id', [$request->Requisitos])->update(['Poliza' => $deuda->Id]);
+     
         alert()->success('El registro de poliza ha sido ingresado correctamente');
-        return back();
+      //  return view('polizas.deuda.create_edit',compact('deuda','tab','aseguradora','cliente','estadoPoliza','ejecutivo') );  //enviar show
+
+        return redirect('polizas/deuda/'.$deuda->Id);
     }
 
     public function get_pago($id)
@@ -259,7 +244,100 @@ class DeudaController extends Controller
      */
     public function show($id)
     {
-        //
+        $deuda = Deuda::findOrFail($id);
+        $tab = 2;
+        $aseguradora = Aseguradora::where('Activo', 1)->get();
+        $cliente = Cliente::where('Activo', 1)->get();
+        $tipoCartera = TipoCartera::where('Activo', 1)->where('Poliza', 2)->get();  //deuda
+        $estadoPoliza = EstadoPoliza::where('Activo', 1)->get();
+        $tipoCobro = TipoCobro::where('Activo', 1)->get();
+        $ejecutivo = Ejecutivo::where('Activo', 1)->get();
+        $creditos = DeudaCredito::where('Activo',1)->get();
+        return view('polizas.deuda.show', compact('tab','deuda','aseguradora','cliente','estadoPoliza','ejecutivo','creditos'));
+    }
+
+    public function datos_asegurabilidad(Request $request){
+        $asegurabilidad = new DeudaRequisitos();
+        $asegurabilidad->Deuda = $request->Deuda;
+        $asegurabilidad->Requisito = $request->Requisito;
+        $asegurabilidad->EdadInicial = $request->EdadInicial;
+        $asegurabilidad->EdadFinal = $request->EdadFinal;
+        $asegurabilidad->MontoInicial = $request->MontoInicial;
+        $asegurabilidad->MontoFinal = $request->MontoFinal;
+        $asegurabilidad->save();
+
+        $asegurabilidad = new DeudaRequisitos();
+        $asegurabilidad->Deuda = $request->Deuda;
+        $asegurabilidad->Requisito = $request->Requisito2;
+        $asegurabilidad->EdadInicial = $request->EdadInicial2;
+        $asegurabilidad->EdadFinal = $request->EdadFinal2;
+        $asegurabilidad->MontoInicial = $request->MontoInicial2;
+        $asegurabilidad->MontoFinal = $request->MontoFinal2;
+        $asegurabilidad->save();
+
+        $asegurabilidad = new DeudaRequisitos();
+        $asegurabilidad->Deuda = $request->Deuda;
+        $asegurabilidad->Requisito = $request->Requisito3;
+        $asegurabilidad->EdadInicial = $request->EdadInicial3;
+        $asegurabilidad->EdadFinal = $request->EdadFinal3;
+        $asegurabilidad->MontoInicial = $request->MontoInicial3;
+        $asegurabilidad->MontoFinal = $request->MontoFinal3;
+        $asegurabilidad->save();
+        alert()->success('El registro de poliza ha sido ingresado correctamente');  
+          return redirect('polizas/deuda/'.$request->Deuda);
+        
+    }
+
+    public function actualizar(Request $request){
+
+        $deuda = Deuda::findOrFail($request->Deuda);
+        $deuda->NumeroPoliza = $request->NumeroPoliza;
+        $deuda->Nit = $request->Nit;
+        $deuda->Codigo = $request->Codigo;
+        $deuda->Asegurado = $request->Asegurado;
+        $deuda->Aseguradora = $request->Aseguradora;
+        $deuda->Ejecutivo = $request->Ejecutivo;
+        $deuda->VigenciaDesde = $request->VigenciaDesde;
+        $deuda->VigenciaHasta = $request->VigenciaHasta;
+        $deuda->Tasa = $request->Tasa;
+        $deuda->Beneficios = $request->Beneficios;
+        $deuda->ClausulasEspeciales = $request->ClausulasEspeciales;
+        $deuda->Concepto = $request->Concepto;
+        $deuda->EstadoPoliza = $request->EstadoPoliza;
+        $deuda->Descuento = $request->Descuento;
+        $deuda->TasaComision = $request->TasaComision;
+        $deuda->FechaIngreso = $request->FechaIngreso;
+        $deuda->Activo = 1;
+        $deuda->Vida = $request->Vida;
+        $deuda->Mensual = $request->tipoTasa;
+        $deuda->FechaIngreso = Carbon::now('America/El_Salvador');
+        $deuda->update();
+
+        alert()->success('El registro de poliza ha sido ingresado correctamente');  
+          return redirect('polizas/deuda/'.$deuda->Id);
+
+        
+    }
+
+    public function agregar_credito(Request $request){
+        $credito = new DeudaCredito();
+        $credito->Deuda = $request->Deuda;
+        $credito->FechaDesde = $request->FechaDesde; 
+        $credito->FechaHasta = $request->FechaHasta;
+        $credito->MontoDesde = $request->MontoDesde;
+        $credito->MontoHasta = $request->MontoHasta;
+        $credito->EdadDesde = $request->EdadDesde;
+        $credito->EdadHasta = $request->EdadHasta;
+        $credito->TasaFecha = $request->TasaFecha;
+        $credito->TasaMonto = $request->TasaMonto;
+        $credito->TasaEdad  = $request->TasaEdad;
+        $credito->Activo   = 1;
+        $credito->Usuario = auth()->user()->id; 
+        $credito->save();
+
+        alert()->success('El registro de poliza ha sido ingresado correctamente');  
+          return redirect('polizas/deuda/'.$request->Deuda);
+
     }
 
     /**

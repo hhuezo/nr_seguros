@@ -30,37 +30,42 @@
                 <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
                     <li role="presentation" class="active"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Datos de Póliza</a>
                     </li>
-                    <li role="presentation" class=" "><a onclick="noGuardardo();" >Tasa diferencia</a>
+                    <li role="presentation" class=" "><a   >Declaracion de Lineas de Credito</a>
                     </li>
-                    <li role="presentation" class=""><a onclick="noGuardardo();" >Requisitos  Minimos de Asegurabilidad  </a>
+                    <li role="presentation" class=""><a  >Requisitos  Minimos de Asegurabilidad  </a>
                     </li>
-                   
+                    <li role="presentation" class=""><a  >Tasa diferenciada  </a>
+                    </li>
                
                 </ul>
 
                 <div id="myTabContent" class="tab-content">
-                    <div role="tabpanel" class="tab-pane fade active in"  id="tab_content1" aria-labelledby="home-tab">
-                        <form action="{{ url('polizas/deuda') }}" method="POST">
+                    <div role="tabpanel" class="tab-pane fade {{$tab == 2 ? 'active in':''}}"  id="tab_content1" aria-labelledby="home-tab">
+                        <form action="{{ url('polizas/deuda/actualizar/') }}{{$deuda->Id}}" method="POST">
                             @csrf
                             <div class="x_content" style="font-size: 12px;">
                                 <div class="col-sm-4">
                                     <label class="control-label" align="right">Número de Póliza</label>
-                                    <input class="form-control" name="NumeroPoliza" id="NumeroPoliza" type="text" value="{{ old('NumeroPoliza') }}" required>
+                                    <input class="form-control" name="NumeroPoliza" id="NumeroPoliza" type="text" value="{{ $deuda->NumeroPoliza }}" required>
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label" align="right">Nit</label>
-                                    <input class="form-control" name="Nit" id="Nit" type="text" value="{{ old('Nit') }}" readonly>
+                                    <input class="form-control" name="Nit" id="Nit" type="text" value="{{ $deuda->Nit }}" readonly>
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label" align="right">Código</label>
-                                    <input class="form-control" name="Codigo"  type="text" value="{{ $ultimo }}" readonly>
+                                    <input class="form-control" name="Codigo"  type="text" value="{{ $deuda->Codigo}}" readonly>
                                 </div>
                                 <div class="col-sm-8">
                                     <label class="control-label" align="right">Aseguradora</label>
                                     <select name="Aseguradora" class="form-control select2" style="width: 100%" required>
                                         <option value="">Seleccione...</option>
                                         @foreach ($aseguradora as $obj)
+                                        @if($obj->Id  == $deuda->Aseguradora)
+                                        <option value="{{ $obj->Id }}" selected>{{ $obj->Nombre }}</option>
+                                        @else
                                         <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                        @endif
                                         @endforeach
                                     </select>
                                 </div>
@@ -69,7 +74,11 @@
                                     <select name="Asegurado" id="Asegurado" class="form-control select2" style="width: 100%" required>
                                         <option value="">Seleccione...</option>
                                         @foreach ($cliente as $obj)
+                                        @if($obj->Id == $deuda->Asegurado)
+                                        <option value="{{ $obj->Id }}" selected>{{ $obj->Nombre }}</option>
+                                        @else
                                         <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                        @endif
                                         @endforeach
                                     </select>
                                 </div>
@@ -78,15 +87,15 @@
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label" align="right">Vigencia Desde</label>
-                                    <input class="form-control" name="VigenciaDesde" type="date" value="{{ old('VigenciaDesde') }}" required>
+                                    <input class="form-control" name="VigenciaDesde" type="date" value="{{ $deuda->VigenciaDesde }}" required>
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label" align="right">Vigencia Hasta</label>
-                                    <input class="form-control" name="VigenciaHasta" type="date" value="{{ old('VigenciaHasta') }}" required>
+                                    <input class="form-control" name="VigenciaHasta" type="date" value="{{ $deuda->VigenciaHasta }}" required>
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label" align="right">Estatus</label>
-                                    <select name="EstadoPoliza" class="form-control select2" style="width: 100%" required>
+                                    <select name="EstadoPoliza" class="form-control select2" style="width: 100%" >
                                         @foreach ($estadoPoliza as $obj)
                                         @if ($obj->Id == 1)
                                         <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
@@ -99,13 +108,17 @@
                                     <select name="Ejecutivo" class="form-control select2" style="width: 100%" required>
                                         <option value="">Seleccione...</option>
                                         @foreach ($ejecutivo as $obj)
+                                        @if ($obj->Id == $deuda->Ejecutivo)
+                                        <option value="{{ $obj->Id }}" selected>{{ $obj->Nombre }}</option>
+                                        @else
                                         <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                        @endif
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label" align="right">Descuento de Rentabilidad %</label>
-                                    <input class="form-control" name="Descuento" type="number" step="any" id="Descuento" value="{{ old('Descuento') }}" required>
+                                    <input class="form-control" name="Descuento" type="number" step="any" id="Descuento" value="{{ $deuda->Descuento }}" required>
                                 </div>
                                 <div class="col-sm-4">
                                     &nbsp;
@@ -116,26 +129,25 @@
 
                                 <div class="col-sm-4">
                                     <label class="control-label " align="right">Clausulas Especiales</label>
-                                    <textarea class="form-control" name="ClausulasEspeciales" row="3" col="4" value="{{ old('ClausulasEspeciales') }}"> </textarea>
+                                    <textarea class="form-control" name="ClausulasEspeciales" row="3" col="4" value="{{ $deuda->ClausulasEspeciales }}"> </textarea>
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label" align="right">Beneficios Adicionales</label>
-                                    <textarea class="form-control" name="Beneficios" row="3" col="4" value="{{ old('Beneficios') }}"> </textarea>
+                                    <textarea class="form-control" name="BeneficiosAdicionales" row="3" col="4" value="{{ $deuda->BeneficiosAdeicionales }}"> </textarea>
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label" align="right">Concepto</label>
-                                    <textarea class="form-control" name="Concepto" row="3" col="4" value="{{ old('Concepto') }}" required> </textarea>
+                                    <textarea class="form-control" name="Concepto" row="3" col="4" value="{{ $deuda->Concepto}}" required> </textarea>
                                 </div>
-                               
                                 <div class="col-sm-4">
                                     <br>
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                        <input type="radio" name="tipoTasa" id="Mensual" value="1" checked>
+                                        <input type="radio" name="tipoTasa" id="Mensual" value="1" {{$deuda->Mensual == 1 ? 'checked': ''}} >
                                         <label class="control-label">Tasa ‰ Millar Mensual</label>
                                     </div>
 
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                        <input type="radio" name="tipoTasa" id="Anual" value="0">
+                                        <input type="radio" name="tipoTasa" id="Anual" value="0" {{$deuda->Mensual == 0 ? 'checked': ''}}>
                                         <label class="control-label">Tasa ‰ Millar Anual</label>
                                     </div>
                                 </div>
@@ -144,7 +156,7 @@
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label" align="right">Tasa ‰ </label>
-                                    <input class="form-control" name="Tasa" type="number" id="Tasa" step="any" value="{{ old('Tasa') }}" required>
+                                    <input class="form-control" name="Tasa" type="number" id="Tasa" step="any" value="{{ $deuda->Tasa }}" required>
                                 </div>
                                 <div class="col-sm-4" align="center">
                                     <br>
@@ -156,7 +168,7 @@
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label" align="right">Tasa de Comision %</label>
-                                    <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" value="{{ old('TasaComision') }}">
+                                    <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" value="{{ $deuda->TasaComision }}">
                                 </div>
                                 <div class="col-sm-4" id="poliza_vida" style="display: none;">
                                    
@@ -195,9 +207,7 @@
     <!-- jQuery -->
     <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
     <script type="text/javascript">
-        function noGuardardo(){
-            Swal.fire('Debe guardar los datos inicial de la poliza');
-        }
+       
         $(document).ready(function() {
             $("#Vida").change(function() {
                 if (document.getElementById('Vida').checked == true) {
@@ -207,6 +217,23 @@
                 }
             })
 
+
+            $("#Anual").change(function() {
+                var monto = document.getElementById('MontoCartera').value;
+                var tasa = document.getElementById('Tasa').value;
+                var tasaFinal = (tasa / 1000) / 12;
+                var sub = Number(monto) * Number(tasaFinal);
+                document.getElementById('SubTotal').value = sub;
+                calculoPrimaRepartida();
+            })
+            $("#Mensual").change(function() {
+                var monto = document.getElementById('MontoCartera').value;
+                var tasa = document.getElementById('Tasa').value;
+                var tasaFinal = tasa / 1000;
+                var sub = Number(monto) * Number(tasaFinal);
+                document.getElementById('SubTotal').value = sub;
+                calculoPrimaRepartida();
+            })
 
 
 

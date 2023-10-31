@@ -180,6 +180,7 @@ Route::post('polizas/residencia/delete_pago/{id}', [ResidenciaController::class,
 Route::post('polizas/residencia/agregar_comentario',[ResidenciaController::class,'agregar_comentario']);
 Route::post('polizas/residencia/eliminar_comentario',[ResidenciaController::class,'eliminar_comentario']);
 
+
 Route::resource('polizas/vida', VidaController::class);
 Route::post('polizas/vida/create_pago', [VidaController::class, 'create_pago']);
 Route::post('polizas/vida/edit_pago', [VidaController::class, 'edit_pago']);
@@ -203,6 +204,9 @@ Route::post('polizas/deuda/agregar_pago', [DeudaController::class, 'agregar_pago
 Route::get('polizas/deuda/get_pago/{id}', [DeudaController::class, 'get_pago']);
 Route::post('polizas/deuda/edit_pago', [DeudaController::class, 'edit_pago']);
 Route::post('polizas/deuda/delete_pago/{id}', [DeudaController::class, 'delete_pago']);
+Route::post('polizas/deuda/actualizar',[DeudaController::class ,'actualizar']);     
+Route::post('agregar_credito',[DeudaController::class, 'agregar_credito']);
+Route::post('datos_asegurabilidad',[DeudaController::class,'datos_asegurabilidad']);
 
 
 
