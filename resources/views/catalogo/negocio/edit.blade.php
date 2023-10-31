@@ -75,9 +75,13 @@
                                     </div>
                                     <div class="row" style="margin-top: 12px!important;">
                                         <div class="col-md-6">
-                                            <label for="NombreCliente" class="form-label">Nombre del cliente O Prospecto</label>
-                                            <input class="form-control validarCredenciales" type="text"
-                                            value="{{$negocio->clientes->Nombre}}" name="NombreCliente" id="NombreCliente">
+                                            <label for="TipoPersona" class="form-label">Tipo Cliente</label>
+                                            <select name="TipoPersona" id="TipoPersona" class="form-control"
+                                                onchange="identificadorCliente();">
+                                                <option value="" selected disabled>Seleccione ...</option>
+                                                <option value="1" {{ $negocio->clientes->TipoPersona == 1 ? 'selected' : '' }}>Natural</option>
+                                                <option value="2" {{ $negocio->clientes->TipoPersona == 2 ? 'selected' : '' }}>Juridico</option>
+                                            </select>
                                         </div>
                                         <div id="divDui" class="col-md-6">
                                             <label for="Dui" class="form-label">DUI </label>
@@ -87,7 +91,6 @@
                                             <span id="helpBlockDuiNit" class="help-block">Este cliente ya
                                                 existe.</span>
                                         </div>
-
                                         <div id="divNit" class="col-md-6">
                                             <label for="NitEmpresa" class="form-label">NIT Empresa </label>
                                             <input type="text" name="NitEmpresa" id="NitEmpresa"
@@ -100,14 +103,11 @@
                                     </div>
                                     <div class="row" style="margin-top: 12px!important;">
                                         <div class="col-md-6">
-                                            <label for="TipoPersona" class="form-label">Tipo Cliente</label>
-                                            <select name="TipoPersona" id="TipoPersona" class="form-control"
-                                                onchange="identificadorCliente();">
-                                                <option value="" selected disabled>Seleccione ...</option>
-                                                <option value="1" {{ $negocio->clientes->TipoPersona == 1 ? 'selected' : '' }}>Natural</option>
-                                                <option value="2" {{ $negocio->clientes->TipoPersona == 2 ? 'selected' : '' }}>Juridico</option>
-                                            </select>
+                                            <label for="NombreCliente" class="form-label">Nombre del cliente O Prospecto</label>
+                                            <input class="form-control validarCredenciales" type="text"
+                                            value="{{$negocio->clientes->Nombre}}" name="NombreCliente" id="NombreCliente">
                                         </div>
+
                                         <div style="display: none;" class="col-md-4">
                                             <label for="Email" class="form-label">Email</label>
                                             <input type="email" class="form-control validarCredenciales" name="Email" id="Email" value="{{$negocio->clientes->CorreoPrincipal}}">
@@ -289,7 +289,50 @@
                     </div>
 
                     <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 2 ? 'active in' : '' }}" id="informacion_negocio" aria-labelledby="home-tab">
-
+                        <div class="col-12" style="text-align: right;">
+                            <button class="btn btn-primary" data-toggle="modal" data-target=".bs-modal-nuevo-informacion_negocio"><i class="fa fa-plus fa-lg"></i>
+                                Nuevo Contacto</button>
+                        </div>
+                        @if ($contactosNegocio->count() > 0)
+                        <br>
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>N</th>
+                                    <th>Contacto</th>
+                                    <th>Descripción de la Operación</th>
+                                    <th>Teléfonos Contacto</th>
+                                    <th>Observaciones</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($contactosNegocio as $obj)
+                                <tr>
+                                    <td>{{$loop->iteration}}</td>
+                                    <td>{{ $obj->Contacto }}</td>
+                                    <td>{{ $obj->DescripcionOperacion }}</td>
+                                    <td>{{ $obj->TelefonoContacto }}</td>
+                                    <td>{{ $obj->ObservacionContacto }}</td>
+                                    <td>
+                                        <i class="fa fa-pencil fa-lg" onclick="modal_edit_informacion_negocio({{ $obj->id }},'{{ $obj->Contacto }}','{{ $obj->DescripcionOperacion }}','{{ $obj->TelefonoContacto }}','{{ $obj->ObservacionContacto }}')" data-target="#modal-edit-informacion_negocio" data-toggle="modal"></i>
+                                        &nbsp;&nbsp;
+                                        <i class="fa fa-trash fa-lg" onclick="modal_delete_informacion_negocio({{ $obj->id }})" data-target="#modal-delete-informacion_negocio" data-toggle="modal"></i>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        @else
+                        <div style="height: 200px">
+                            <br>
+                            <div class="alert alert-danger alert-dismissible " role="alert">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
+                                </button>
+                                <strong>Sin datos que mostrar.</strong>
+                            </div>
+                        </div>
+                        @endif
                     </div>
 
                     <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 3 ? 'active in' : '' }}" id="archivos" aria-labelledby="home-tab">
@@ -479,6 +522,54 @@
             </form>
         </div>
     </div>
+
+    {{-- modales informacion_negocio --}}
+        {{-- ingresar informacion_negocio --}}
+        <div class="col-12">
+            <div class="modal fade bs-modal-nuevo-informacion_negocio" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <form method="POST" action="{{ url('catalogo/producto/add_informacion_negocio') }}">
+                        @csrf
+                        <div class="modal-content">
+
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="myModalLabel">Nuevo Contacto</h4>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" name="Producto" value="{{$negocio->Id}}" class="form-control">
+                                <div class="form-group">
+                                    <div class="col-md-6" >
+                                        <label for="Contacto" class="form-label">Contacto</label>
+                                        <input type="text" name="Contacto" id="Contacto" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6" >
+                                        <label for="DescripcionOperacion" class="form-label">Descripción de la Operación</label>
+                                        <input type="text" name="DescripcionOperacion" id="DescripcionOperacion" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6" style="margin-top: 12px!important;">
+                                        <label for="Contacto" class="form-label">Teléfono de Contacto</label>
+                                        <input type="text" name="TelefonoContacto" id="TelefonoContacto" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6" style="margin-top: 12px!important;">
+                                        <label for="Contacto" class="form-label">Observación del Contacto</label>
+                                        <textarea class="form-control" name="ObservacionContacto" id="ObservacionContacto"></textarea>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div>&nbsp; </div>
+                            <div class="clearfix"></div>
+                            <br>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                            </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
 </div>
 
 
@@ -710,8 +801,8 @@
         $("#ModalCotizacionPlan").trigger("change");
 
         $('#ModalCotizacionId').val(Id);
-        $('#ModalCotizacionSumaAsegurada').val(SumaAsegurada);
-        $('#ModalCotizacionPrimaNetaAnual').val(PrimaNetaAnual);
+        $('#ModalCotizacionSumaAsegurada').val(Number(SumaAsegurada).toFixed(2));
+        $('#ModalCotizacionPrimaNetaAnual').val(Number(PrimaNetaAnual).toFixed(2));
         $('#ModalCotizacionObservaciones').val(Observaciones);
 
         DatosTecnicos=JSON.parse(DatosTecnicos);

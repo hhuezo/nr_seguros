@@ -148,8 +148,9 @@ class NegocioController extends Controller
         $cliente_estado = ClienteEstado::get();
         $departamentosnr= DepartamentoNR::where('Activo', 1)->get();
         $cotizaciones= Cotizacion::where('Negocio', $negocio->Id)->where('Activo', 1)->get();
+        $contactosNegocio= NegocioContacto::where('negocio', $negocio->Id)->where('Activo', 1)->get();
 
-        return view('catalogo.negocio.edit', compact('cotizaciones','negocio','departamentosnr','carteras','cliente_estado', 'tipos_negocio', 'estados_venta', 'ejecutivos', 'necesidad_proteccion'));
+        return view('catalogo.negocio.edit', compact('contactosNegocio','cotizaciones','negocio','departamentosnr','carteras','cliente_estado', 'tipos_negocio', 'estados_venta', 'ejecutivos', 'necesidad_proteccion'));
     }
 
     public function update(Request $request, $id)
@@ -229,9 +230,9 @@ class NegocioController extends Controller
             $cliente = Cliente::where('Id', $request->IdCliente)->first();
         }else{
             if ($request->tipoPersona == 1) {
-                $cliente = Cliente::where('Dui', $request->Dui)->first();
+                $cliente = Cliente::where('Dui', $request->Dui)->where('TipoPersona', $request->tipoPersona)->first();
             } else {
-                $cliente = Cliente::where('Nit', $request->Nit)->first();
+                $cliente = Cliente::where('Nit', $request->Nit)->where('TipoPersona', $request->tipoPersona)->first();
             }
         }
 

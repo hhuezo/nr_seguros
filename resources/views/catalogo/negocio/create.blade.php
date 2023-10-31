@@ -52,9 +52,13 @@
                             </div>
                             <div class="row" style="margin-top: 12px!important;">
                                 <div class="col-md-6">
-                                    <label for="NombreCliente" class="form-label">Nombre del cliente O Prospecto</label>
-                                    <input class="form-control validarCredenciales" type="text"
-                                        value="" name="NombreCliente" id="NombreCliente">
+                                    <label for="TipoPersona" class="form-label">Tipo Cliente</label>
+                                    <select name="TipoPersona" id="TipoPersona" class="form-control"
+                                        onchange="identificadorCliente();">
+                                        <option value="" selected disabled>Seleccione ...</option>
+                                        <option value="1">Natural</option>
+                                        <option value="2">Juridico</option>
+                                    </select>
                                 </div>
                                 <div id="divDui" class="col-md-6">
                                     <label for="Dui" class="form-label">DUI </label>
@@ -76,14 +80,11 @@
                                 </div>
                             </div>
                             <div class="row" style="margin-top: 12px!important;">
+
                                 <div class="col-md-6">
-                                    <label for="TipoPersona" class="form-label">Tipo Cliente</label>
-                                    <select name="TipoPersona" id="TipoPersona" class="form-control"
-                                        onchange="identificadorCliente();">
-                                        <option value="" selected disabled>Seleccione ...</option>
-                                        <option value="1">Natural</option>
-                                        <option value="2">Juridico</option>
-                                    </select>
+                                    <label for="NombreCliente" class="form-label">Nombre del cliente O Prospecto</label>
+                                    <input class="form-control validarCredenciales" type="text"
+                                        value="" name="NombreCliente" id="NombreCliente">
                                 </div>
                                 <div style="display: none;" class="col-md-4">
                                     <label for="Email" class="form-label">Email</label>

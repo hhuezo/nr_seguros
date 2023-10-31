@@ -158,9 +158,9 @@
     function modal_edit_cobertura(Id,Nombre,SumaAsegurada, Tasa, Prima) {
         $('#ModalCoberturaId').val(Id);
         $('#ModalCoberturaNombre').val(Nombre);
-        $('#ModalCoberturaSumaAsegurada').val(SumaAsegurada);
-        $('#ModalCoberturaTasa').val(Tasa);
-        $('#ModalCoberturaPrima').val(Prima);
+        $('#ModalCoberturaSumaAsegurada').val(Number(SumaAsegurada).toFixed(2));
+        $('#ModalCoberturaTasa').val(Number(Tasa).toFixed(3));
+        $('#ModalCoberturaPrima').val(Number(Prima).toFixed(2));
     }
 
 
