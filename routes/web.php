@@ -19,6 +19,8 @@ use App\Http\Controllers\catalogo\TipoPolizaController;
 use App\Http\Controllers\catalogo\UbicacionCobroController;
 use App\Http\Controllers\catalogo\NegocioController;
 use App\Http\Controllers\catalogo\NrCarteraController;
+use App\Http\Controllers\catalogo\PlanController;
+use App\Http\Controllers\catalogo\ProductoController;
 use App\Http\Controllers\catalogo\RutaController;
 use App\Http\Controllers\catalogo\TipoCobroController;
 use App\Http\Controllers\polizas\DeudaController;
@@ -86,6 +88,29 @@ Route::resource('catalogo/necesidad_proteccion', NecesidadProteccionController::
 Route::resource('catalogo/necesidad_aseguradora', AsignacionNecesidadAseguradoraController::class);
 Route::resource('catalogo/departamento_nr', DepartamentoNRController::class);
 
+Route::resource('catalogo/producto', ProductoController::class);
+Route::post('catalogo/producto/add_cobertura', [ProductoController::class, 'add_cobertura']);
+Route::post('catalogo/producto/edit_cobertura', [ProductoController::class, 'edit_cobertura']);
+Route::post('catalogo/producto/delete_cobertura', [ProductoController::class, 'delete_cobertura']);
+Route::post('catalogo/producto/add_dato_tecnico', [ProductoController::class, 'add_dato_tecnico']);
+Route::post('catalogo/producto/edit_dato_tecnico', [ProductoController::class, 'edit_dato_tecnico']);
+Route::post('catalogo/producto/delete_dato_tecnico', [ProductoController::class, 'delete_dato_tecnico']);
+
+Route::get('catalogo/plan/getCoberturas', [PlanController::class, 'getCoberturas']);
+Route::post('catalogo/plan/edit_cobertura_detalle', [PlanController::class, 'edit_cobertura_detalle']);
+Route::resource('catalogo/plan', PlanController::class);
+
+Route::get('negocio/getCliente', [NegocioController::class, 'getCliente']);
+Route::get('negocio/getProducto', [NegocioController::class, 'getProducto']);
+Route::get('negocio/getPlan', [NegocioController::class, 'getPlan']);
+Route::get('negocio/elegirCotizacion', [NegocioController::class, 'elegirCotizacion']);
+
+Route::post('catalogo/negocio/add_cotizacion', [NegocioController::class, 'add_cotizacion']);
+Route::post('catalogo/negocio/edit_cotizacion', [NegocioController::class, 'edit_cotizacion']);
+Route::post('catalogo/negocio/delete_cotizacion', [NegocioController::class, 'delete_cotizacion']);
+Route::resource('catalogo/negocio', NegocioController::class);
+
+
 
 Route::post('catalogo/cliente/add_contacto', [ClienteController::class, 'add_contacto']);
 Route::post('catalogo/cliente/delete_contacto', [ClienteController::class, 'delete_contacto']);
@@ -109,15 +134,11 @@ Route::post('catalogo/aseguradora/documento', [AseguradoraController::class, 'ag
 Route::post('catalogo/aseguradora/documento_eliminar/{id}', [AseguradoraController::class, 'eliminar_documento']);
 Route::get('catalogo/cliente/addPreferencia', [ClienteController::class, 'addPreferencia']);
 Route::get('catalogo/cliente_create', [ClienteController::class, 'cliente_create']);
-Route::get('catalogo/negocio/get_aseguradora', [NegocioController::class, 'get_aseguradoras']);
-Route::resource('catalogo/negocio', NegocioController::class);
 Route::resource('catalogo/ruta', RutaController::class);
-Route::get('negocio/getCliente', [NegocioController::class, 'getCliente']);
-Route::get('catalogo/negocios/store_aseguradora', [NegocioController::class, 'store_aseguradora']);
+
 Route::resource('catalogo/tipo_cobro', TipoCobroController::class);
 Route::resource('catalogo/area_comercial', AreaComercialController::class);
 Route::resource('catalogo/bombero', BomberoController::class);
-Route::get('catalogo/negocios/consultar', [NegocioController::class, 'consultar']);
 Route::get('get_municipio/{id}', [ClienteController::class, 'get_municipio']);
 Route::get('get_distrito/{id}', [ClienteController::class, 'get_distrito']);
 

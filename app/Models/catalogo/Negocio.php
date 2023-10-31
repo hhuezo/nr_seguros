@@ -16,54 +16,71 @@ class Negocio extends Model
 
 
     protected $fillable = [
-        'Asegurado',
-        'FechaVenta',
+        'TipoCarteraNr',
+        'EstadoVenta',
+        'Cliente',
         'NecesidadProteccion',
-        'InicioVigencia',
-        'Observacion',
         'Ejecutivo',
+        'TipoNegocio',
+        'FechaVenta',
+        'NumeroPoliza',
+        'InicioVigencia',
+        'PeriodoPago',
+        'DepartamentoNr',
+        'NumCoutas',
+        'Observacion',
         'Activo',
         'FechaIngreso',
         'UsuarioIngreso',
-        'EstadoVenta',
-        'NumCoutas',
-        'Prima',
-        'TipoPoliza',
-        'TipoNecesidad',
-        'NumeroPoliza',
-        'PlanTipoProducto',
-        'TipoNegocio',
-        'DepartamentoAtiende',
-        'MetodoPago',
     ];
 
     protected $guarded = [];
 
 
 
-    public function tipo_poliza()
+    public function usuarioIngreso()
     {
-        return $this->belongsTo('App\Models\catalogo\TipoPoliza', 'TipoPoliza', 'Id');
+        return $this->belongsTo(User::class, 'UsuarioIngreso');
     }
 
-    public function ejecutivos()
+    public function tipoCarteraNr()
     {
-        return $this->belongsTo('App\Models\catalogo\Ejecutivo', 'Ejecutivo', 'Id');
+        return $this->belongsTo(TipoCarteraNr::class, 'TipoCarteraNr');
+    }
+
+    public function estadoVenta()
+    {
+        return $this->belongsTo(EstadoVenta::class, 'EstadoVenta');
     }
 
     public function clientes()
     {
-        return $this->belongsTo('App\Models\catalogo\Cliente', 'Asegurado', 'Id');
+        return $this->belongsTo(Cliente::class, 'Cliente');
     }
 
-    public function contactos()
+    public function necesidadProteccion()
     {
-        return $this->hasMany(NegocioContacto::class, 'negocio');
+        return $this->belongsTo(NecesidadProteccion::class, 'NecesidadProteccion');
     }
 
-    public function departamentosNR()
+    public function ejecutivos()
     {
-        return $this->belongsTo(DepartamentoNR::class, 'DepartamentoAtiende', 'Id');
+        return $this->belongsTo(Ejecutivo::class, 'Ejecutivo');
+    }
+
+    public function tipoNegocio()
+    {
+        return $this->belongsTo(TipoNegocio::class, 'TipoNegocio');
+    }
+
+    public function departamentoNr()
+    {
+        return $this->belongsTo(DepartamentoNr::class, 'DepartamentoNr');
+    }
+
+    public function cotizaciones()
+    {
+        return $this->hasMany(Cotizacion::class, 'Negocio', 'Id');
     }
 
 }

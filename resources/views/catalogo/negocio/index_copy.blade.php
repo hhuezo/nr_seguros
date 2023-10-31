@@ -60,9 +60,10 @@
                                 @else
                                     <td></td>
                                 @endif
-                                <td align="center">
+                                <td align="center"><a href="" data-target="#modal-observacion-{{ $obj->Id }}"
+                                        data-toggle="modal"><i class="fa fa-eye fa-lg"></i></a>
 
-                                    @can('edit users')
+                                    @can('edit userss')
                                         <a href="{{ url('catalogo/negocio') }}/{{ $obj->Id }}/edit"
                                             class="on-default edit-row">
                                             <i class="fa fa-pencil fa-lg"></i></a>
@@ -76,6 +77,7 @@
                                 </td>
                             </tr>
                             @include('catalogo.negocio.modal')
+                            @include('catalogo.negocio.observacion')
                         @endforeach
                     </tbody>
                 </table>
@@ -84,4 +86,11 @@
         </div>
     </div>
     @include('sweetalert::alert')
+    <script>
+        let Eliminar = {{ session('Eliminar') ?? 'null' }};
+        console.log(Eliminar);
+        if (Eliminar === 1) {
+            localStorage.clear();
+        }
+    </script>
 @endsection
