@@ -49,7 +49,17 @@
                     <div class="container">
                         <div class="row">
                             <!-- Columna Izquierda (6 unidades) -->
+
                             <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="TipoPersona" class="form-label">Tipo Persona</label>
+                                    <select name="TipoPersona" id="TipoPersona" onchange="validaciones.cboTipoPersona(this.value)" class="form-control">
+                                        <option value="1" {{ old('TipoPersona') == 1 ? 'selected' : '' }}>Natural
+                                        </option>
+                                        <option value="2" {{ old('TipoPersona') == 2 ? 'selected' : '' }}>Jurídica
+                                        </option>
+                                    </select>
+                                </div>
                                 <div class="form-group">
                                     <label for="Nombre" class="form-label">NIT</label>
                                     <input class="form-control" name="Nit" id="Nit" value="{{ old('Nit') }}" data-inputmask="'mask': ['9999-999999-999-9']" data-mask type="text">
@@ -165,15 +175,6 @@
                                             <option value="{{ $obj->Id }}" {{ old('Estado') == $obj->Id ? 'selected' : '' }}>{{ $obj->Nombre }}
                                             </option>
                                         @endforeach
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="TipoPersona" class="form-label">Tipo Persona</label>
-                                    <select name="TipoPersona" id="TipoPersona" onchange="validaciones.cboTipoPersona(this.value)" class="form-control">
-                                        <option value="1" {{ old('TipoPersona') == 1 ? 'selected' : '' }}>Natural
-                                        </option>
-                                        <option value="2" {{ old('TipoPersona') == 2 ? 'selected' : '' }}>Jurídica
-                                        </option>
                                     </select>
                                 </div>
                                 <div class="form-group">
