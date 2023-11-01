@@ -234,10 +234,10 @@
 
                         if (Dui.length !== 9 && NitEmpresa.length !== 14) {
                             Swal.fire({
-                                title: 'Error!',
+                                title: 'Advertencia',
                                 text: 'Debe de rellenar el campo de ' + campo +
                                     ' antes de continuar con los demás campos',
-                                icon: 'error',
+                                icon: 'warning',
                                 confirmButtonText: 'Aceptar'
                             })
                             $('#NombreCliente').val('');
@@ -245,9 +245,9 @@
                         }
                     } else {
                         Swal.fire({
-                            title: 'Error!',
+                            title: 'Advertencia',
                             text: 'Debe seleccionar el Tipo Persona',
-                            icon: 'error',
+                            icon: 'warning',
                             confirmButtonText: 'Aceptar'
                         })
                         $('#NombreCliente').val('');
@@ -287,11 +287,11 @@
                 function mostrar() {
                     if ($('#TipoPersona').val() === null) {
                         Swal.fire({
-                            title: 'Error!',
+                            title: 'Advertencia',
                             text: 'Debe seleccionar el Tipo Persona',
-                            icon: 'error',
+                            icon: 'warning',
                             confirmButtonText: 'Aceptar',
-                            timer: 1500
+                            timer: 3500
                         })
                         $('#Dui').val('');
                         $('#NitEmpresa').val('');

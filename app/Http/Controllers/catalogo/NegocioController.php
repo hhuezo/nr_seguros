@@ -20,8 +20,10 @@ use App\Models\catalogo\NegocioAccidente;
 use App\Models\catalogo\NegocioAuto;
 use App\Models\catalogo\NegocioContacto;
 use App\Models\catalogo\NegocioDineroValores;
+use App\Models\catalogo\NegocioDocumento;
 use App\Models\catalogo\NegocioEquipoElectronico;
 use App\Models\catalogo\NegocioGastosMedicos;
+use App\Models\catalogo\NegocioGestiones;
 use App\Models\catalogo\NegocioIncendio;
 use App\Models\catalogo\NegocioOtros;
 use App\Models\catalogo\NegocioRoboHurto;
@@ -149,8 +151,10 @@ class NegocioController extends Controller
         $departamentosnr= DepartamentoNR::where('Activo', 1)->get();
         $cotizaciones= Cotizacion::where('Negocio', $negocio->Id)->where('Activo', 1)->get();
         $contactosNegocio= NegocioContacto::where('negocio', $negocio->Id)->where('Activo', 1)->get();
+        $documentos = NegocioDocumento::where('Negocio', $negocio->Id)->where('Activo',1)->get();
+        $gestiones=NegocioGestiones::where('Negocio', $negocio->Id)->where('Activo',1)->get();
 
-        return view('catalogo.negocio.edit', compact('contactosNegocio','cotizaciones','negocio','departamentosnr','carteras','cliente_estado', 'tipos_negocio', 'estados_venta', 'ejecutivos', 'necesidad_proteccion'));
+        return view('catalogo.negocio.edit', compact('gestiones','documentos','contactosNegocio','cotizaciones','negocio','departamentosnr','carteras','cliente_estado', 'tipos_negocio', 'estados_venta', 'ejecutivos', 'necesidad_proteccion'));
     }
 
     public function update(Request $request, $id)
@@ -348,5 +352,113 @@ class NegocioController extends Controller
         return back();
     }
 
+    public function add_informacion_negocio(Request $request){
+        $informacion_negocio = new NegocioContacto();
+        $informacion_negocio->negocio = $request->Negocio;
+        $informacion_negocio->Contacto = $request->Contacto;
+        $informacion_negocio->DescripcionOperacion  = $request->DescripcionOperacion ;
+        $informacion_negocio->TelefonoContacto  = $request->TelefonoContacto ;
+        $informacion_negocio->ObservacionContacto  = $request->ObservacionContacto ;
+        $informacion_negocio->Activo  = 1 ;
+
+        $informacion_negocio->save();
+        alert()->success('El registro ha sido creado correctamente');
+
+        session(['tab2' => '2']);
+        return back();
+    }
+
+    public function edit_informacion_negocio(Request $request){
+        $informacion_negocio = NegocioContacto::findOrFail($request->Id);
+
+        $informacion_negocio->Contacto = $request->Contacto;
+        $informacion_negocio->DescripcionOperacion  = $request->DescripcionOperacion ;
+        $informacion_negocio->TelefonoContacto  = $request->TelefonoContacto ;
+        $informacion_negocio->ObservacionContacto  = $request->ObservacionContacto ;
+        $informacion_negocio->update();
+        alert()->success('El registro ha sido modificado correctamente');
+
+        session(['tab2' => '2']);
+        return back();
+    }
+
+    public function delete_informacion_negocio(Request $request){
+        NegocioContacto::findOrFail($request->Id)->update(['Activo' => 0]);
+        alert()->error('El registro ha sido eliminado correctamente');
+
+        session(['tab2' => '2']);
+        return back();
+    }
+
+    public function agregar_documento(Request $request)
+    {
+        $archivo = $request->file('Archivo');
+
+        $id = uniqid();
+        $filePath =  $id . $archivo->getClientOriginalName();
+        $archivo->move(public_path("documentos/negocios/"), $filePath);
+
+
+        $documento = new NegocioDocumento();
+        $documento->Negocio = $request->input('Negocio');
+        $documento->Nombre = $filePath;
+        $documento->NombreOriginal = $archivo->getClientOriginalName();
+        $documento->Activo = 1;
+        $documento->save();
+
+        $filePath = 'documentos/negocios/' . $archivo->getClientOriginalName();
+
+        alert()->success('El registro ha sido creado correctamente');
+        session(['tab2' => '3']);
+        return back();
+    }
+
+
+    public function eliminar_documento($id)
+    {
+        $documento = NegocioDocumento::findOrFail($id);
+        $documento->Activo = 0;
+        $documento->save();
+
+        alert()->success('El registro ha sido eliminado correctamente');
+        session(['tab2' => '3']);
+        return back();
+    }
+
+    public function add_gestion(Request $request){
+        $gestion = new NegocioGestiones();
+        $gestion->Negocio = $request->Negocio;
+        $gestion->DescripcionActividad = $request->DescripcionActividad;
+        $gestion->Usuario  = auth()->user()->id;
+        $gestion->FechaHora  = Carbon::now();
+        $gestion->Activo  = 1 ;
+
+        $gestion->save();
+        alert()->success('El registro ha sido creado correctamente');
+
+        session(['tab2' => '4']);
+        return back();
+    }
+
+    public function edit_gestion(Request $request){
+        $gestion = NegocioGestiones::findOrFail($request->Id);
+
+        $gestion->DescripcionActividad = $request->DescripcionActividad;
+        $gestion->Usuario  = auth()->user()->id;
+        $gestion->FechaHora  = Carbon::now();
+        $gestion->update();
+        alert()->success('El registro ha sido modificado correctamente');
+
+        session(['tab2' => '4']);
+        return back();
+    }
+
+    public function delete_gestion(Request $request){
+        NegocioGestiones::findOrFail($request->Id)->update(['Activo' => 0]);
+        alert()->error('El registro ha sido eliminado correctamente');
+
+        session(['tab2' => '4']);
+        return back();
+    }
 
 }

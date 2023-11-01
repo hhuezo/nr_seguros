@@ -108,6 +108,17 @@ Route::get('negocio/elegirCotizacion', [NegocioController::class, 'elegirCotizac
 Route::post('catalogo/negocio/add_cotizacion', [NegocioController::class, 'add_cotizacion']);
 Route::post('catalogo/negocio/edit_cotizacion', [NegocioController::class, 'edit_cotizacion']);
 Route::post('catalogo/negocio/delete_cotizacion', [NegocioController::class, 'delete_cotizacion']);
+Route::post('catalogo/negocio/add_informacion_negocio', [NegocioController::class, 'add_informacion_negocio']);
+Route::post('catalogo/negocio/edit_informacion_negocio', [NegocioController::class, 'edit_informacion_negocio']);
+Route::post('catalogo/negocio/delete_informacion_negocio', [NegocioController::class, 'delete_informacion_negocio']);
+Route::post('catalogo/negocio/documento', [NegocioController::class, 'agregar_documento']);
+Route::post('catalogo/negocio/documento_eliminar/{id}', [NegocioController::class, 'eliminar_documento']);
+Route::post('catalogo/negocio/add_gestion', [NegocioController::class, 'add_gestion']);
+Route::post('catalogo/negocio/edit_gestion', [NegocioController::class, 'edit_gestion']);
+Route::post('catalogo/negocio/delete_gestion', [NegocioController::class, 'delete_gestion']);
+
+
+
 Route::resource('catalogo/negocio', NegocioController::class);
 
 
