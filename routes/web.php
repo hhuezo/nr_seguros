@@ -88,13 +88,14 @@ Route::resource('catalogo/necesidad_proteccion', NecesidadProteccionController::
 Route::resource('catalogo/necesidad_aseguradora', AsignacionNecesidadAseguradoraController::class);
 Route::resource('catalogo/departamento_nr', DepartamentoNRController::class);
 
-Route::resource('catalogo/producto', ProductoController::class);
 Route::post('catalogo/producto/add_cobertura', [ProductoController::class, 'add_cobertura']);
 Route::post('catalogo/producto/edit_cobertura', [ProductoController::class, 'edit_cobertura']);
 Route::post('catalogo/producto/delete_cobertura', [ProductoController::class, 'delete_cobertura']);
 Route::post('catalogo/producto/add_dato_tecnico', [ProductoController::class, 'add_dato_tecnico']);
 Route::post('catalogo/producto/edit_dato_tecnico', [ProductoController::class, 'edit_dato_tecnico']);
 Route::post('catalogo/producto/delete_dato_tecnico', [ProductoController::class, 'delete_dato_tecnico']);
+Route::resource('catalogo/producto', ProductoController::class);
+
 
 Route::get('catalogo/plan/getCoberturas', [PlanController::class, 'getCoberturas']);
 Route::post('catalogo/plan/edit_cobertura_detalle', [PlanController::class, 'edit_cobertura_detalle']);
