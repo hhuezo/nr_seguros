@@ -44,7 +44,7 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
     </tr>
     <tr>
       <td colspan="2">{{$residencia->aseguradoras->Nombre}}</td>
-      <td colspan="2">Productos</td>
+      <td colspan="2">@if($residencia->Plan) {{$residencia->planes->productos->Nombre}}@endif</td>
     </tr>
     <tr style="background-color: lightgrey;">
       <td>Numero de Poliza</td>
@@ -87,7 +87,7 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
             <td style="width: 35%; text-align: right;">${{number_format($detalle->PrimaCalculada,2,'.',',')}}</td>
           </tr>
           <tr>
-            <td>(-) Descuento rentabilidad ({{$residencia->Tasa}}%)</td>
+            <td>(-) Tasa de rentabilidad ({{$residencia->TasaDescuento}}%)</td>
             <td style="width: 35%; text-align: right;">${{number_format($detalle->Descuento,2,'.',',')}}</td>
           </tr>
           <tr>
@@ -225,7 +225,7 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
     </tr>
     <tr style="text-align: right;">
       <td>Fecha</td>
-      <td>{{date('d/m/Y')}}</td>
+      <td>{{date('d/m/Y hh:mm:ss')}}</td>
     </tr>
 
   </table>
@@ -238,6 +238,7 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
         NR Seguros, S.A. de C.V
         <br>
         Colonia San Ernesto, pasaje San Carlos #154, sobre el bulevar de los Herores, San Salvador.
+        Oficina escalón: 11 Calle poniente entre 79 y 81 avenida norte #3 Colonia Escalón.
 
       </td>
     </tr>

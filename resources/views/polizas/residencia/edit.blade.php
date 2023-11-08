@@ -120,11 +120,11 @@
                                 <div class="col-sm-4">
                                     &nbsp;
                                 </div>
-                                <div class="col-sm-4">
+                                <!-- <div class="col-sm-4">
                                     <label class="control-label">Descuento de IVA</label>
                                     <input class="form-control" name="DescuentoIva" type="checkbox" id="DescuentoIva" @if ($residencia->Modificar == 0) disabled @endif
                                     @if ($residencia->DescuentoIva == 1) checked @endif>
-                                </div>
+                                </div> -->
                                 <div class="col-md-12">
                                     &nbsp;
                                 </div>
@@ -793,11 +793,15 @@
                             <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
                                 <table class="table table-striped jambo_table bulk_action" style="font-size: 13px;">
                                     <tr>
-                                        <td>Tasa @if ($residencia->Mensual == 1)
+                                        <td>
+                                            <!-- Tasa @if ($residencia->Mensual == 1)
                                             Mensual
                                             @else
                                             Anual
-                                            @endif Millar :</td>
+                                            @endif Millar : -->
+                                            
+                                            
+                                            Tasa Anual %. </td>
                                         <td>
                                             <div class="col-md-9 col-sm-9 form-group has-feedback">
                                                 <input type="text" class="form-control has-feedback-left" value="@if ($ultimo_pago) {{ number_format($residencia->Tasa, 2, '.', ',') }} @else 0 @endif" readonly>
@@ -1329,8 +1333,10 @@
         calculoCCF();
 
         $('#MontoCartera').change(function() {
-            if (document.getElementById('LimiteGrupo').value < document.getElementById('MontoCartera')
-                .value) {
+            var monto = Number(document.getElementById('MontoCartera').value);
+            var grupal = Number(document.getElementById('LimiteGrupo').value);
+            if (grupal < monto) {
+           
                 swal('Su monto de cartera a superado al techo establecido en la póliza');
             } else {
                 calculoPrimaCalculada();
