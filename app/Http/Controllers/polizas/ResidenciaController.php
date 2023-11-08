@@ -63,7 +63,7 @@ class ResidenciaController extends Controller
      */
     public function create()
     {
-        $aseguradoras = Aseguradora::where('Activo','=', 1)->where('Nombre', 'like', '%fede%')->orWhere('Nombre', 'like', '%seguros e inversiones%')->get();
+        $aseguradoras = Aseguradora::where('Activo', '=', 1)->where('Nombre', 'like', '%fede%')->orWhere('Nombre', 'like', '%seguros e inversiones%')->get();
         $estados_poliza = EstadoPoliza::where('Activo', '=', 1)->get();
         $bombero = Bombero::where('Activo', 1)->first();
         if ($bombero) {
@@ -204,7 +204,15 @@ class ResidenciaController extends Controller
         $detalle = DetalleResidencia::where('Residencia', $residencia->Id)->orderBy('Id', 'desc')->get();
         $ultimo_pago = DetalleResidencia::where('Residencia', $residencia->Id)->where('Activo', 1)->orderBy('Id', 'desc')->first();
         $comentarios = Comentario::where('Residencia', '=', $id)->where('Activo', 1)->get();
-        // dd($ultimo_pago);
+
+        $ultimo_pago_fecha_final = null;
+        if ($ultimo_pago) {
+            $fecha_inicial = Carbon::parse($ultimo_pago->FechaFinal);
+            $fecha_final_temp = $fecha_inicial->addMonth();
+            $ultimo_pago_fecha_final = $fecha_final_temp->format('Y-m-d');
+        }
+
+        //dd($ultimo_pago);
 
         if (strpos($residencia->aseguradoras->Nombre, 'FEDE') === false) {
             if ($residencia->Mensual == 1) {
@@ -246,6 +254,7 @@ class ResidenciaController extends Controller
             'bomberos',
             'meses',
             'ultimo_pago',
+            'ultimo_pago_fecha_final',
             'comentarios'
         ));
     }
