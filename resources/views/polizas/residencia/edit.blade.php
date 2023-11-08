@@ -77,6 +77,14 @@
                                     <input type="text" value="{{ $residencia->aseguradoras->Nombre }}" class="form-control" id="NombreAseguradora" readonly>
                                     <input type="hidden" value="{{ $residencia->aseguradoras->Id }}" id="IdAseguradora" readonly>
                                 </div>
+                                <div class="col-sm-2">
+                                    <label class="control-label">Producto</label>
+                                    <input type="text" value="{{ $residencia->planes->productos->Nombre }}" class="form-control" readonly>
+                                </div>
+                                <div class="col-sm-2">
+                                    <label class="control-label">Plan</label>
+                                    <input type="text" value="{{ $residencia->planes->Nombre }}" class="form-control" readonly>
+                                </div> 
                                 <div class="col-md-4 ocultar">
                                     <label class="control-label">Cálculo Diario</label>
                                     <input type="checkbox" id="Diario" class="form-control" readonly @if ($residencia->aseguradoras->Diario == 1) checked @endif disabled>

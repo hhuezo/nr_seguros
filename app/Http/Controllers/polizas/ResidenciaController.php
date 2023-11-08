@@ -105,6 +105,7 @@ class ResidenciaController extends Controller
      */
     public function store(Request $request)
     {
+      //  dd($request->Planes);
         $messages = [
             'NumeroPoliza.required' => 'El Número de poliza es requerido',
             'LimiteGrupo.required' => 'El Límite Grupal es requerido',
