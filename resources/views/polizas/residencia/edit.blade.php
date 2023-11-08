@@ -381,14 +381,14 @@
                                                         inicio</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                                         <input class="form-control" name="Id" value="{{ $residencia->Id }}" type="hidden" required>
-                                                        <input class="form-control" name="FechaInicio" type="date" required>
+                                                        <input class="form-control" type="date" name="FechaInicio" value="{{$ultimo_pago ?  date('Y-m-d', strtotime($ultimo_pago->FechaFinal)) : '' }}" {{$ultimo_pago ? 'readonly':''}}   required>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
                                                         final</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input class="form-control" name="FechaFinal" type="date" required>
+                                                        <input class="form-control" name="FechaFinal" value="{{$ultimo_pago_fecha_final ? $ultimo_pago_fecha_final:''}}" type="date" required>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
@@ -1358,7 +1358,7 @@
             var hasta = new Date(document.getElementById('VigenciaHasta').value);
             var hoy = new Date();
             console.log(hoy);
-            
+
             var aseguradora = document.getElementById('IdAseguradora').value;
             // Determine the time difference between two dates
             var millisBetween = hasta.getTime() - desde.getTime();
