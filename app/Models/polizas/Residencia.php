@@ -60,7 +60,7 @@ class Residencia extends Model
         return $this->belongsTo('App\Models\catalogo\EstadoPoliza', 'EstadoPoliza', 'Id');
     }
 
-    public function planes (){
+    public function planes(){
         return $this->belongsTo('App\Models\catalogo\Plan', 'Plan', 'Id');
     }
 

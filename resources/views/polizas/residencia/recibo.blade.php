@@ -225,7 +225,7 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
     </tr>
     <tr style="text-align: right;">
       <td>Fecha</td>
-      <td>{{date('d/m/Y hh:mm:ss')}}</td>
+      <td>{{date('d/m/Y h:m:s')}}</td>
     </tr>
 
   </table>
@@ -237,7 +237,7 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
       <td>
         NR Seguros, S.A. de C.V
         <br>
-        Colonia San Ernesto, pasaje San Carlos #154, sobre el bulevar de los Herores, San Salvador.
+        Colonia San Ernesto, pasaje San Carlos #154, sobre el bulevar de los Herores, San Salvador. <br>
         Oficina escalón: 11 Calle poniente entre 79 y 81 avenida norte #3 Colonia Escalón.
 
       </td>
