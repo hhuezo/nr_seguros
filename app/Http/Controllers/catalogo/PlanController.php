@@ -53,6 +53,14 @@ class PlanController extends Controller
     {
         //
     }
+    public function get_producto($id){
+        return Producto::where('Aseguradora', '=', $id)->get();
+    }
+
+    public function get_plan($id){
+        return Plan::where('Producto', '=', $id)->get();
+    }
+
 
     public function edit($id)
     {

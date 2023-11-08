@@ -121,7 +121,8 @@ Route::post('catalogo/negocio/delete_gestion', [NegocioController::class, 'delet
 
 
 Route::resource('catalogo/negocio', NegocioController::class);
-
+Route::get('get_producto/{id}',[PlanController::class , 'get_producto']);
+Route::get('get_plan/{id}',[PlanController::class , 'get_plan']);
 
 
 Route::post('catalogo/cliente/add_contacto', [ClienteController::class, 'add_contacto']);

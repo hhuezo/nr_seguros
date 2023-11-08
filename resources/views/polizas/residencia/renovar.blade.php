@@ -219,6 +219,14 @@
                 $("#Renovado").show();
             }
         })
+        $('#LimiteIndividual').change(function() {
+            var individual = Number(document.getElementById('LimiteIndividual').value);
+            var grupal = Number(document.getElementById('LimiteGrupo').value);
+            if (individual >= grupal) {
+                document.getElementById('LimiteIndividual').value = '';
+                swal('El limite individual supera al limite grupal');
+            }
+        })
     })
 
     function modal_edit(id) {

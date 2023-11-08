@@ -10,6 +10,8 @@ use App\Models\catalogo\Cliente;
 use App\Models\catalogo\DatosGenerales;
 use App\Models\catalogo\Ejecutivo;
 use App\Models\catalogo\EstadoPoliza;
+use App\Models\catalogo\Plan;
+use App\Models\catalogo\Producto;
 use App\Models\catalogo\Ruta;
 use App\Models\catalogo\TipoContribuyente;
 use App\Models\catalogo\UbicacionCobro;
@@ -61,7 +63,7 @@ class ResidenciaController extends Controller
      */
     public function create()
     {
-        $aseguradoras = Aseguradora::where('Activo', '=', 1)->where('Nombre', 'like', '%fede%')->orWhere('Nombre', 'like', '%sisa%')->get();
+        $aseguradoras = Aseguradora::where('Activo','=', 1)->where('Nombre', 'like', '%fede%')->orWhere('Nombre', 'like', '%seguros e inversiones%')->get();
         $estados_poliza = EstadoPoliza::where('Activo', '=', 1)->get();
         $bombero = Bombero::where('Activo', 1)->first();
         if ($bombero) {
@@ -78,8 +80,12 @@ class ResidenciaController extends Controller
         $rutas = Ruta::where('Activo', '=', 1)->get();
         $ubicaciones_cobro = UbicacionCobro::where('Activo', '=', 1)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
+        $productos = Producto::where('Activo',1)->get();
+        $planes = Plan::where('Activo',1)->get();
         return view('polizas.residencia.create', compact(
             'ejecutivo',
+            'productos',
+            'planes',
             'cliente',
             'aseguradoras',
             'estados_poliza',
@@ -142,6 +148,7 @@ class ResidenciaController extends Controller
             $residencia->DescuentoIva = 0;
         }
         $residencia->Mensual = $request->tipoTasa;
+        $residencia->Plan = $request->Planes;
         $residencia->Comision = $request->TasaComision;
         $residencia->save();
 
