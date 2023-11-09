@@ -697,7 +697,7 @@
 
 
                                                     <div class="form-group has-feedback">
-                                                        <input class="form-control" name="Retencion" id="Retencion" type="number" step="any" style="text-align: right;" @if ($residencia->clientes->TipoContribuyente == 1) readonly @endif>
+                                                        <input class="form-control" name="Retencion" id="Retencion" type="number" step="any" style="text-align: right;" @if ($residencia->clientes->TipoContribuyente == 1 || $residencia->clientes->TipoContribuyente == 4) readonly @endif>
                                                         <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                                                     </div>
 

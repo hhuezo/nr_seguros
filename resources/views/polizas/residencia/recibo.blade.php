@@ -225,7 +225,7 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
     </tr>
     <tr style="text-align: right;">
       <td>Fecha</td>
-      <td>{{date('d/m/Y h:m:s')}}</td>
+      <td>{{date('d/m/Y h:m:s A')}}</td>
     </tr>
 
   </table>
