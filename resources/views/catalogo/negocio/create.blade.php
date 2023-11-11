@@ -344,6 +344,10 @@
 
                 }
                 $(document).ready(function() {
+                    $("#opcionNegocio").addClass("current-page");
+                    $("#botonMenuNegocio").addClass("active");
+                    $("#menuNegocio").css("display", "block");
+
                     $('#divNit').hide();
                     $('#helpBlockDuiNit').hide();
                     $('#helpBlockDuiNit2').hide();
