@@ -239,7 +239,7 @@ $(document).ready(function() {
       "ordering": false,
       // Desactiva la paginación
       "paging": false,
-      "searching": false, 
+      "searching": false,
     });
   });
 
