@@ -42,13 +42,32 @@
 
                     <div class="col-sm-8">
                         <label class="control-label">Aseguradora</label>
-                        <select name="Aseguradora" class="form-control select2" style="width: 100%" required>
+                        <select name="Aseguradora" id="Aseguradora" class="form-control select2" style="width: 100%" required>
                             <option value="" selected disabled>Seleccione...</option>
                             @foreach ($aseguradoras as $obj)
                             <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
                             @endforeach
                         </select>
                     </div>
+                    <div class="col-sm-2">
+                        <label class="control-label">Productos</label>
+                        <select name="Productos" id="Productos" class="form-control select2" style="width: 100%" >
+                            <option value="" selected disabled>Seleccione...</option>
+                            @foreach ($productos as $obj)
+                            <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-sm-2">
+                        <label class="control-label">Planes</label>
+                        <select name="Planes" id="Planes" class="form-control select2" style="width: 100%" >
+                            <option value="" selected disabled>Seleccione...</option>
+                            @foreach ($planes as $obj)
+                            <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                 
                     <div class="col-sm-8">
                         <label class="control-label">Asegurado</label>
                         <select name="Asegurado" id="Asegurado" class="form-control select2" style="width: 100%" required>
@@ -67,7 +86,7 @@
                     </div>
                     <div class="col-sm-4">
                         <label class="control-label">Vigencia Hasta</label>
-                        <input class="form-control" name="VigenciaHasta" type="date" placeholder="dd/mm/yyyy"  value="{{ old('VigenciaHasta') }}">
+                        <input class="form-control" name="VigenciaHasta" type="date" placeholder="dd/mm/yyyy" value="{{ old('VigenciaHasta') }}">
                     </div>
                     <div class="col-sm-4">
                         <label class="control-label">Estatus</label>
@@ -93,7 +112,7 @@
 
                         <div class="form-group has-feedback">
                             <input class="form-control" name="TasaDescuento" style="padding-left: 15%;" type="number" step="any" id="TasaDescuento" required min="0">
-                            <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                            <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
                         </div>
                     </div>
                     <div class="col-md-12">
@@ -102,10 +121,10 @@
                     <div class="col-sm-4">
                         &nbsp;
                     </div>
-                    <div class="col-sm-4">
+                    <!-- <div class="col-sm-4">
                         <label class="control-label">Descuento de IVA</label>
                         <input class="form-control" name="DescuentoIva" type="checkbox" id="DescuentoIva">
-                    </div>
+                    </div> -->
                     <div class="col-md-12">
                         &nbsp;
                     </div>
@@ -192,6 +211,41 @@
 <script type="text/javascript">
     // func
     $(document).ready(function() {
+        $("#Aseguradora").change(function() {
+            $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
+            // var para la Departamento
+            var Aseguradora = $(this).val();
+
+            //funcionpara las distritos
+            $.get("{{ url('get_producto') }}" + '/' + Aseguradora, function(data) {
+                //esta el la peticion get, la cual se divide en tres partes. ruta,variables y funcion
+                console.log(data);
+                var _select = '<option value=""> Seleccione </option>';
+                for (var i = 0; i < data.length; i++)
+                    _select += '<option value="' + data[i].Id + '"  >' + data[i].Nombre +
+                    '</option>';
+                $("#Productos").html(_select);
+            });
+        })
+
+        $("#Productos").change(function() {
+            $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
+            // var para la Departamento
+            var Productos = $(this).val();
+
+            //funcionpara las distritos
+            $.get("{{ url('get_plan') }}" + '/' + Productos, function(data) {
+                //esta el la peticion get, la cual se divide en tres partes. ruta,variables y funcion
+                console.log(data);
+                var _select = '<option value=""> Seleccione </option>';
+                for (var i = 0; i < data.length; i++)
+                    _select += '<option value="' + data[i].Id + '"  >' + data[i].Nombre +
+                    '</option>';
+                $("#Planes").html(_select);
+            });
+        })
+
+
         $("#btn_guardar").on('click', function() {
             $("#btn_guardar").prop('disabled');
         });
@@ -247,9 +301,11 @@
         });
 
         $('#LimiteIndividual').change(function() {
-            if (document.getElementById('LimiteIndividual').value >= document.getElementById('LimiteGrupo').value) {
+            var individual = Number(document.getElementById('LimiteIndividual').value);
+            var grupal = Number(document.getElementById('LimiteGrupo').value);
+            if (individual >= grupal) {
                 document.getElementById('LimiteIndividual').value = '';
-                swal('El limite individual super al limite grupal');
+                swal('El limite individual supera al limite grupal');
             }
         })
 

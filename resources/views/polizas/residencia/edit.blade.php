@@ -77,6 +77,14 @@
                                     <input type="text" value="{{ $residencia->aseguradoras->Nombre }}" class="form-control" id="NombreAseguradora" readonly>
                                     <input type="hidden" value="{{ $residencia->aseguradoras->Id }}" id="IdAseguradora" readonly>
                                 </div>
+                                <div class="col-sm-2">
+                                    <label class="control-label">Producto</label>
+                                    <input type="text" value="{{ $residencia->planes->productos->Nombre }}" class="form-control" readonly>
+                                </div>
+                                <div class="col-sm-2">
+                                    <label class="control-label">Plan</label>
+                                    <input type="text" value="{{ $residencia->planes->Nombre }}" class="form-control" readonly>
+                                </div> 
                                 <div class="col-md-4 ocultar">
                                     <label class="control-label">Cálculo Diario</label>
                                     <input type="checkbox" id="Diario" class="form-control" readonly @if ($residencia->aseguradoras->Diario == 1) checked @endif disabled>
@@ -120,11 +128,11 @@
                                 <div class="col-sm-4">
                                     &nbsp;
                                 </div>
-                                <div class="col-sm-4">
+                                <!-- <div class="col-sm-4">
                                     <label class="control-label">Descuento de IVA</label>
                                     <input class="form-control" name="DescuentoIva" type="checkbox" id="DescuentoIva" @if ($residencia->Modificar == 0) disabled @endif
                                     @if ($residencia->DescuentoIva == 1) checked @endif>
-                                </div>
+                                </div> -->
                                 <div class="col-md-12">
                                     &nbsp;
                                 </div>
@@ -381,14 +389,14 @@
                                                         inicio</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                                         <input class="form-control" name="Id" value="{{ $residencia->Id }}" type="hidden" required>
-                                                        <input class="form-control" name="FechaInicio" type="date" required>
+                                                        <input class="form-control" type="date" name="FechaInicio" value="{{$ultimo_pago ?  date('Y-m-d', strtotime($ultimo_pago->FechaFinal)) : '' }}" {{$ultimo_pago ? 'readonly':''}}   required>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
                                                     <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
                                                         final</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                        <input class="form-control" name="FechaFinal" type="date" required>
+                                                        <input class="form-control" name="FechaFinal" value="{{$ultimo_pago_fecha_final ? $ultimo_pago_fecha_final:''}}" type="date" required>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
@@ -689,7 +697,7 @@
 
 
                                                     <div class="form-group has-feedback">
-                                                        <input class="form-control" name="Retencion" id="Retencion" type="number" step="any" style="text-align: right;" @if ($residencia->clientes->TipoContribuyente == 1) readonly @endif>
+                                                        <input class="form-control" name="Retencion" id="Retencion" type="number" step="any" style="text-align: right;" @if ($residencia->clientes->TipoContribuyente == 1 || $residencia->clientes->TipoContribuyente == 4) readonly @endif>
                                                         <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                                                     </div>
 
@@ -793,11 +801,15 @@
                             <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
                                 <table class="table table-striped jambo_table bulk_action" style="font-size: 13px;">
                                     <tr>
-                                        <td>Tasa @if ($residencia->Mensual == 1)
+                                        <td>
+                                            <!-- Tasa @if ($residencia->Mensual == 1)
                                             Mensual
                                             @else
                                             Anual
-                                            @endif Millar :</td>
+                                            @endif Millar : -->
+                                            
+                                            
+                                            Tasa Anual %. </td>
                                         <td>
                                             <div class="col-md-9 col-sm-9 form-group has-feedback">
                                                 <input type="text" class="form-control has-feedback-left" value="@if ($ultimo_pago) {{ number_format($residencia->Tasa, 2, '.', ',') }} @else 0 @endif" readonly>
@@ -1329,8 +1341,10 @@
         calculoCCF();
 
         $('#MontoCartera').change(function() {
-            if (document.getElementById('LimiteGrupo').value < document.getElementById('MontoCartera')
-                .value) {
+            var monto = Number(document.getElementById('MontoCartera').value);
+            var grupal = Number(document.getElementById('LimiteGrupo').value);
+            if (grupal < monto) {
+           
                 swal('Su monto de cartera a superado al techo establecido en la póliza');
             } else {
                 calculoPrimaCalculada();
@@ -1358,7 +1372,7 @@
             var hasta = new Date(document.getElementById('VigenciaHasta').value);
             var hoy = new Date();
             console.log(hoy);
-            
+
             var aseguradora = document.getElementById('IdAseguradora').value;
             // Determine the time difference between two dates
             var millisBetween = hasta.getTime() - desde.getTime();
