@@ -301,6 +301,9 @@
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function() {
+        $("#opcionCliente").addClass("current-page");
+        $("#botonMenuCliente").addClass("active");
+        $("#menuCliente").css("display", "block");
 
         let homologadoCheck=$('#Homologado');
         let switchery = new Switchery(homologadoCheck[0]);
