@@ -278,9 +278,15 @@
                     if ($('#TipoPersona').val() == 1) {
                         $('#divDui').show();
                         $('#divNit').hide();
+                        $('#Dui').prop('required', true);
+                        $('#NitEmpresa').removeAttr('required');
+
                     } else {
                         $('#divDui').hide();
                         $('#divNit').show();
+                        $('#Dui').removeAttr('required');
+                        $('#NitEmpresa').prop('required', true);
+
                     }
                 }
 
@@ -352,32 +358,7 @@
                     $('#helpBlockDuiNit').hide();
                     $('#helpBlockDuiNit2').hide();
                     $("#EstadoCliente").val(3).trigger("change");
-
-                    $("#TipoPersona").change(function() {
-
-                        if (document.getElementById('TipoPersona').value == 2) {
-                            // $('#DuiRepresentantes').show();
-                            $('#Duis').hide();
-                            $('#NitEmpresas').show();
-                            $('#Nits').hide();
-                            $('#Homolo').hide();
-                            document.getElementById('Dui').removeAttribute('required');
-                            // document.getElementById('DuiRepresentantes').setAttribute('required', true);
-                            // document.getElementById('Nit').removeAttribute('required');
-                            document.getElementById('NitEmpresa').setAttribute('required', true);
-                        } else {
-                            //$('#DuiRepresentantes').hide();
-                            $('#Duis').show();
-                            $('#NitEmpresas').hide();
-                            $('#Nits').show();
-                            $('#Homolo').show();
-                            //document.getElementById('DuiRepresentantes').removeAttribute('required');
-                            document.getElementById('Dui').setAttribute('required', true);
-                            document.getElementById('NitEmpresa').removeAttribute('required');
-                            //document.getElementById('Nit').setAttribute('required', true);
-                        }
-                    })
-
+                    identificadorCliente();
                 })
 
             </script>

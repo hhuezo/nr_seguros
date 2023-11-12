@@ -125,11 +125,19 @@
 
     <script>
         $(document).ready(function() {
+            let opcionesFormato = {
+                style: 'decimal',
+                useGrouping: true,
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+                };
+
+            let formatter = new Intl.NumberFormat('es-SV', opcionesFormato);
+
             let miTabla = $('#datatableNegocio').DataTable({
                 /*select: {
                     style: 'single' // Puedes cambiar 'single' por 'multi' si deseas selección múltiple
                 }*/
-
                 footerCallback: function (row, data, start, end, display) {
                     var api = this.api();
 
@@ -160,7 +168,7 @@
 
                     // Update footer
                     $(api.column(6).footer()).html(
-                        '$' + pageTotal.toLocaleString() + ' ( $' + total.toLocaleString() + ' Total de cotizaciones)'
+                        '$' + formatter.format(pageTotal) /*+ ' ( $' +  formatter.format(total) + ' Total de cotizaciones)'*/
                     );
 
                     total = api
@@ -180,7 +188,7 @@
 
                     // Update footer
                     $(api.column(7).footer()).html(
-                        '$' + pageTotal.toLocaleString() + ' ( $' + total.toLocaleString() + ' Total de cotizaciones)'
+                        '$' + formatter.format(pageTotal) /*+ ' ( $' + ormatter.format(total) + ' Total de cotizaciones)'*/
                     );
                 }
             });
@@ -283,12 +291,12 @@
                 console.log('Prima Aceptado $' + sumaAceptado[1].toLocaleString());
                 console.log('Prima Anulado $' + sumaAnulado[1].toLocaleString());
                 console.log('Prima Pendiente $' + sumaPendiente[1].toLocaleString());*/
-                $("#totalPrimaAceptada").text("Total Prima Aceptada: $"+ sumaAceptado[0].toLocaleString());
-                $("#totalPrimaPendiente").text("Total Prima Pendiente: $" + sumaPendiente[0].toLocaleString());
-                $("#totalPrimaAnulada").text("Total Prima Anulada: $" + sumaAnulado[0].toLocaleString());
-                $("#totalSumaAseguradaAceptada").text("Total Suma Asegurada Aceptada: $" + sumaAceptado[1].toLocaleString());
-                $("#totalSumaAseguradaPendiente").text("Total Suma Asegurada Pendiente: $"+  sumaPendiente[1].toLocaleString());
-                $("#totalSumaAseguradaAnulada").text("Total Suma Asegurada Anulada: $" + sumaAnulado[1].toLocaleString());
+                $("#totalPrimaAceptada").text("Total Prima Aceptada: $"+  formatter.format(sumaAceptado[0]));
+                $("#totalPrimaPendiente").text("Total Prima Pendiente: $" +  formatter.format(sumaPendiente[0]));
+                $("#totalPrimaAnulada").text("Total Prima Anulada: $" + formatter.format(sumaAnulado[0]));
+                $("#totalSumaAseguradaAceptada").text("Total Suma Asegurada Aceptada: $" +  formatter.format(sumaAceptado[1]));
+                $("#totalSumaAseguradaPendiente").text("Total Suma Asegurada Pendiente: $"+   formatter.format(sumaPendiente[1]));
+                $("#totalSumaAseguradaAnulada").text("Total Suma Asegurada Anulada: $" +  formatter.format(sumaAnulado[1]));
 
                 }
 
