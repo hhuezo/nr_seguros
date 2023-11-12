@@ -46,7 +46,11 @@ Route::get('/', function () {
     return view('welcome');
 });*/
 
+
 Route::get('/', [HomeController::class, 'index']);
+
+Route::get('/public', [HomeController::class, 'redirectToLogin']);
+
 
 Auth::routes();
 
