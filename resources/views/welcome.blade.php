@@ -92,19 +92,21 @@
                                         <li><a href="{{ url('catalogo/ubicacion_cobro') }}">Ubicación Cobro</a></li>
                                         <li><a href="{{ url('catalogo/necesidad_proteccion') }}">Ramos</a></li>
                                         <li><a href="{{ url('catalogo/departamento_nr') }}">Departamentos NR</a></li>
+                                        <li><a href="{{ url('catalogo/producto') }}">Productos</a></li>
+                                        <li><a href="{{ url('catalogo/plan') }}">Planes</a></li>
 
 
                                     </ul>
                                 </li>
-                                <li><a><i class="fa fa-user"></i> Cliente <span class="fa fa-chevron-down"></span></a>
-                                    <ul class="nav child_menu">
-                                        <li><a href="{{ url('catalogo/cliente') }}">Clientes</a></li>
+                                <li id="botonMenuCliente"><a><i class="fa fa-user"></i> Cliente <span class="fa fa-chevron-down"></span></a>
+                                    <ul id="menuCliente" class="nav child_menu">
+                                        <li id="opcionCliente"><a href="{{ url('catalogo/cliente') }}">Clientes</a></li>
                                     </ul>
                                 </li>
 
-                                <li><a><i class="fa fa-solid fa-briefcase"></i> Cotizaciones <span class="fa fa-chevron-down"></span></a>
-                                    <ul class="nav child_menu">
-                                    <li><a href="{{ url('catalogo/negocio') }}">Negocio</a></li>
+                                <li id="botonMenuNegocio"><a><i class="fa fa-solid fa-briefcase"></i> Cotizaciones <span class="fa fa-chevron-down"></span></a>
+                                    <ul class="nav child_menu" id="menuNegocio">
+                                    <li id="opcionNegocio"><a href="{{ url('catalogo/negocio') }}">Negocio</a></li>
                                     </ul>
                                 </li>
                                 <li><a><i class="fa fa-shield"></i> Aseguradoras <span

@@ -10,6 +10,8 @@ use App\Models\catalogo\Cliente;
 use App\Models\catalogo\DatosGenerales;
 use App\Models\catalogo\Ejecutivo;
 use App\Models\catalogo\EstadoPoliza;
+use App\Models\catalogo\Plan;
+use App\Models\catalogo\Producto;
 use App\Models\catalogo\Ruta;
 use App\Models\catalogo\TipoContribuyente;
 use App\Models\catalogo\UbicacionCobro;
@@ -61,7 +63,7 @@ class ResidenciaController extends Controller
      */
     public function create()
     {
-        $aseguradoras = Aseguradora::where('Activo','=', 1)->where('Nombre', 'like', '%fede%')->orWhere('Nombre', 'like', '%sisa%')->get();
+        $aseguradoras = Aseguradora::where('Activo', '=', 1)->where('Nombre', 'like', '%fede%')->orWhere('Nombre', 'like', '%seguros e inversiones%')->get();
         $estados_poliza = EstadoPoliza::where('Activo', '=', 1)->get();
         $bombero = Bombero::where('Activo', 1)->first();
         if ($bombero) {
@@ -78,8 +80,12 @@ class ResidenciaController extends Controller
         $rutas = Ruta::where('Activo', '=', 1)->get();
         $ubicaciones_cobro = UbicacionCobro::where('Activo', '=', 1)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
+        $productos = Producto::where('Activo',1)->get();
+        $planes = Plan::where('Activo',1)->get();
         return view('polizas.residencia.create', compact(
             'ejecutivo',
+            'productos',
+            'planes',
             'cliente',
             'aseguradoras',
             'estados_poliza',
@@ -99,6 +105,7 @@ class ResidenciaController extends Controller
      */
     public function store(Request $request)
     {
+      //  dd($request->Planes);
         $messages = [
             'NumeroPoliza.required' => 'El Número de poliza es requerido',
             'LimiteGrupo.required' => 'El Límite Grupal es requerido',
@@ -142,6 +149,7 @@ class ResidenciaController extends Controller
             $residencia->DescuentoIva = 0;
         }
         $residencia->Mensual = $request->tipoTasa;
+        $residencia->Plan = $request->Planes;
         $residencia->Comision = $request->TasaComision;
         $residencia->save();
 
@@ -197,7 +205,15 @@ class ResidenciaController extends Controller
         $detalle = DetalleResidencia::where('Residencia', $residencia->Id)->orderBy('Id', 'desc')->get();
         $ultimo_pago = DetalleResidencia::where('Residencia', $residencia->Id)->where('Activo', 1)->orderBy('Id', 'desc')->first();
         $comentarios = Comentario::where('Residencia', '=', $id)->where('Activo', 1)->get();
-        // dd($ultimo_pago);
+
+        $ultimo_pago_fecha_final = null;
+        if ($ultimo_pago) {
+            $fecha_inicial = Carbon::parse($ultimo_pago->FechaFinal);
+            $fecha_final_temp = $fecha_inicial->addMonth();
+            $ultimo_pago_fecha_final = $fecha_final_temp->format('Y-m-d');
+        }
+
+        //dd($ultimo_pago);
 
         if (strpos($residencia->aseguradoras->Nombre, 'FEDE') === false) {
             if ($residencia->Mensual == 1) {
@@ -239,6 +255,7 @@ class ResidenciaController extends Controller
             'bomberos',
             'meses',
             'ultimo_pago',
+            'ultimo_pago_fecha_final',
             'comentarios'
         ));
     }
