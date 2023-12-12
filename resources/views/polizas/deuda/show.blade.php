@@ -105,7 +105,11 @@
                                     <select name="Productos" id="Productos" class="form-control select2" style="width: 100%">
                                         <option value="" selected disabled>Seleccione...</option>
                                         @foreach ($productos as $obj)
+                                        @if($obj->Id == $deuda->planes->Producto)
+                                        <option value="{{ $obj->Id }}" selected>{{ $obj->Nombre }}</option>
+                                        @else
                                         <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                        @endif
                                         @endforeach
                                     </select>
                                 </div>
@@ -114,7 +118,11 @@
                                     <select name="Planes" id="Planes" class="form-control select2" style="width: 100%">
                                         <option value="" selected disabled>Seleccione...</option>
                                         @foreach ($planes as $obj)
+                                        @if($obj->Id == $deuda->Plan)
+                                        <option value="{{ $obj->Id }}" selected>{{ $obj->Nombre }}</option>
+                                        @else
                                         <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                        @endif
                                         @endforeach
                                     </select>
                                 </div>
@@ -281,7 +289,7 @@
                                     </div>
                                     <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                                         <label class="control-label" align="center">Tasa Fecha</label>
-                                        <input type="number" step="0.01" class="form-control" name="TasaFecha" id="TasaFecha" />
+                                        <input type="number" step="0.000001" class="form-control" name="TasaFecha" id="TasaFecha" />
                                     </div>
                                 </div>
                             </div>
@@ -308,7 +316,7 @@
                                     </div>
                                     <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                                         <label class="control-label" align="center">Tasa Monto</label>
-                                        <input type="number" step="0.01" class="form-control" name="TasaMonto" id="TasaMonto" />
+                                        <input type="number" step="0.000001" class="form-control" name="TasaMonto" id="TasaMonto" />
                                     </div>
                                 </div>
                             </div>
@@ -336,7 +344,7 @@
                                     </div>
                                     <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                                         <label class="control-label" align="center">Tasa Edad</label>
-                                        <input type="number" step="0.01" class="form-control" name="TasaEdad" id="TasaEdad" />
+                                        <input type="number" step="0.000001" class="form-control" name="TasaEdad" id="TasaEdad" />
                                     </div>
                                 </div>
                             </div>
@@ -395,13 +403,13 @@
                                             @else
                                             <td></td>
                                             @endif
-                                            <td>{{$obj->TasaFecha}}</td>
-                                            <td>{{$obj->MontoDesde}}</td>
-                                            <td>{{$obj->MontoHasta}}</td>
-                                            <td>{{$obj->TasaMonto}}</td>
-                                            <td>{{$obj->EdadDesde}}</td>
-                                            <td>{{$obj->EdadHasta}}</td>
-                                            <td>{{$obj->TasaEdad}}</td>
+                                            <td>{{$obj->TasaFecha}} %</td>
+                                            <td>${{number_format($obj->MontoDesde,2,'.',',')}}</td>
+                                            <td>${{(number_format($obj->MontoHasta,2,'.',','))}}</td>
+                                            <td>{{$obj->TasaMonto}} %</td>
+                                            <td>{{$obj->EdadDesde}} años</td>
+                                            <td>{{$obj->EdadHasta}} años</td>
+                                            <td>{{$obj->TasaEdad}} %</td>
                                             <td><a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a></td>
                                         </tr>
                                         <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-{{ $obj->Id }}">
