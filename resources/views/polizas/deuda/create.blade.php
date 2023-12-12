@@ -57,7 +57,7 @@
                                 </div>
                                 <div class="col-sm-8">
                                     <label class="control-label" align="right">Aseguradora</label>
-                                    <select name="Aseguradora" class="form-control select2" style="width: 100%" required>
+                                    <select name="Aseguradora" id="Aseguradora" class="form-control select2" style="width: 100%" required>
                                         <option value="">Seleccione...</option>
                                         @foreach ($aseguradora as $obj)
                                         <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
@@ -181,6 +181,8 @@
                                 <div class="col-sm-4">
                                     <label class="control-label" align="right">Tasa de Comision %</label>
                                     <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" value="{{ old('TasaComision') }}">
+                                    <label class="control-label" align="right">Comision con Iva</label>
+                                    <input type="checkbox" name="IvaComision" id="IvaComision">
                                 </div>
                                 <div class="col-sm-4">
                                     <div id="poliza_vida" style="display: none;">

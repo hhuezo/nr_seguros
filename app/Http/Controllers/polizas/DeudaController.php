@@ -276,11 +276,12 @@ class DeudaController extends Controller
         $estadoPoliza = EstadoPoliza::where('Activo', 1)->get();
         $tipoCobro = TipoCobro::where('Activo', 1)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
-        $creditos = DeudaCredito::where('Activo', 1)->get();
+        $creditos = DeudaCredito::where('Activo', 1)->where('Deuda',$id)->get();
+        $requisitos = DeudaRequisitos::where('Activo',1)->where('Deuda',$id)->get();
         $saldos = SaldoMontos::where('Activo', 1)->get();
         $planes = Plan::where('Activo', 1)->get();
         $perfil = Perfil::where('Activo',1)->where('Aseguradora','=', $deuda->Aseguradora)->get();
-        return view('polizas.deuda.show', compact('planes','productos','perfil','saldos','tab', 'deuda', 'aseguradora', 'cliente', 'estadoPoliza', 'ejecutivo', 'creditos', 'tipoCartera'));
+        return view('polizas.deuda.show', compact('requisitos','planes','productos','perfil','saldos','tab', 'deuda', 'aseguradora', 'cliente', 'estadoPoliza', 'ejecutivo', 'creditos', 'tipoCartera'));
     }
 
     public function datos_asegurabilidad(Request $request)
