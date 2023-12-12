@@ -9,7 +9,11 @@ use App\Models\catalogo\Bombero;
 use App\Models\catalogo\Cliente;
 use App\Models\catalogo\Ejecutivo;
 use App\Models\catalogo\EstadoPoliza;
+use App\Models\catalogo\Perfil;
+use App\Models\catalogo\Plan;
+use App\Models\catalogo\Producto;
 use App\Models\catalogo\Ruta;
+use App\Models\catalogo\SaldoMontos;
 use App\Models\catalogo\TipoCartera;
 use App\Models\catalogo\TipoCobro;
 use App\Models\catalogo\TipoContribuyente;
@@ -60,13 +64,13 @@ class DeudaController extends Controller
     {
 
         $ultimos = Deuda::where('Activo', 1)->orderByDesc('Id')->first();
-        
+
         if (!$ultimos) {
             $ultimo = 1;
-        }else{
-            $ultimo = $ultimos->Id +1;
+        } else {
+            $ultimo = $ultimos->Id + 1;
         }
-        
+
         $tipos_contribuyente =  TipoContribuyente::get();
         $rutas = Ruta::where('Activo', '=', 1)->get();
         $ubicaciones_cobro =  UbicacionCobro::where('Activo', '=', 1)->get();
@@ -76,6 +80,8 @@ class DeudaController extends Controller
         } else {
             $bomberos = 0;
         }
+        $productos = Producto::where('Activo', 1)->get();
+        $planes = Plan::where('Activo', 1)->get();
         $aseguradora = Aseguradora::where('Activo', 1)->get();
         $cliente = Cliente::where('Activo', 1)->get();
         $tipoCartera = TipoCartera::where('Activo', 1)->where('Poliza', 2)->get();  //deuda
@@ -85,6 +91,8 @@ class DeudaController extends Controller
         return view('polizas.deuda.create', compact(
             'aseguradora',
             'cliente',
+            'productos',
+            'planes',
             'tipoCartera',
             'estadoPoliza',
             'tipoCobro',
@@ -92,7 +100,8 @@ class DeudaController extends Controller
             'tipos_contribuyente',
             'rutas',
             'ubicaciones_cobro',
-            'bomberos','ultimo'
+            'bomberos',
+            'ultimo'
         ));
     }
 
@@ -113,7 +122,7 @@ class DeudaController extends Controller
         $detalle->ValorCCF = $request->ValorCCF;
         $detalle->APagar = $request->APagar;
         $detalle->Comentario = $request->Comentario;
-       // $detalle->DescuentoIva = $request->DescuentoIva; //checked
+        // $detalle->DescuentoIva = $request->DescuentoIva; //checked
         $detalle->Comision = $request->Comision;
         $detalle->IvaSobreComision = $request->IvaSobreComision;
         $detalle->Retencion = $request->Retencion;
@@ -130,7 +139,7 @@ class DeudaController extends Controller
 
     public function store(Request $request)
     {
-        //dd($request->Vida);
+
         $deuda = new Deuda();
         $deuda->NumeroPoliza = $request->NumeroPoliza;
         $deuda->Nit = $request->Nit;
@@ -151,14 +160,15 @@ class DeudaController extends Controller
         $deuda->Activo = 1;
         $deuda->Vida = $request->Vida;
         $deuda->Mensual = $request->tipoTasa;
+        $deuda->Desempleo = $request->Desempleo;
         $deuda->FechaIngreso = Carbon::now('America/El_Salvador');
         $deuda->save();
 
-     
-        alert()->success('El registro de poliza ha sido ingresado correctamente');
-      //  return view('polizas.deuda.create_edit',compact('deuda','tab','aseguradora','cliente','estadoPoliza','ejecutivo') );  //enviar show
 
-        return redirect('polizas/deuda/'.$deuda->Id);
+        alert()->success('El registro de poliza ha sido ingresado correctamente');
+        //  return view('polizas.deuda.create_edit',compact('deuda','tab','aseguradora','cliente','estadoPoliza','ejecutivo') );  //enviar show
+
+        return redirect('polizas/deuda/' . $deuda->Id);
     }
 
     public function get_pago($id)
@@ -179,7 +189,7 @@ class DeudaController extends Controller
             $detalle->ImpresionRecibo = $request->ImpresionRecibo;
             $detalle->Comentario = $request->Comentario;
             $detalle->update();
-            $pdf = \PDF::loadView('polizas.deuda.recibo', compact('detalle','deuda'))->setWarnings(false)->setPaper('letter');
+            $pdf = \PDF::loadView('polizas.deuda.recibo', compact('detalle', 'deuda'))->setWarnings(false)->setPaper('letter');
             return $pdf->stream('Recibo.pdf');
 
             return back();
@@ -236,6 +246,19 @@ class DeudaController extends Controller
         return view('polizas.deuda.requisitos', compact('requisitos'));
     }
 
+    public function finalizar_configuracion(Request $request){
+        $deuda = Deuda::findOrFail($request->deuda);
+        if($deuda->Configuracion == 1){
+            $deuda->Configuracion = 0;
+        }else{
+            $deuda->Configuracion = 1;
+        }
+        $deuda->update();
+
+        alert()->success('El registro de poliza ha sido configurado correctamente');
+        return redirect('polizas/deuda/');
+    }
+
     /**
      * Display the specified resource.
      *
@@ -247,16 +270,21 @@ class DeudaController extends Controller
         $deuda = Deuda::findOrFail($id);
         $tab = 2;
         $aseguradora = Aseguradora::where('Activo', 1)->get();
+        $productos = Producto::where('Activo', 1)->get();
         $cliente = Cliente::where('Activo', 1)->get();
         $tipoCartera = TipoCartera::where('Activo', 1)->where('Poliza', 2)->get();  //deuda
         $estadoPoliza = EstadoPoliza::where('Activo', 1)->get();
         $tipoCobro = TipoCobro::where('Activo', 1)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
-        $creditos = DeudaCredito::where('Activo',1)->get();
-        return view('polizas.deuda.show', compact('tab','deuda','aseguradora','cliente','estadoPoliza','ejecutivo','creditos'));
+        $creditos = DeudaCredito::where('Activo', 1)->get();
+        $saldos = SaldoMontos::where('Activo', 1)->get();
+        $planes = Plan::where('Activo', 1)->get();
+        $perfil = Perfil::where('Activo',1)->where('Aseguradora','=', $deuda->Aseguradora)->get();
+        return view('polizas.deuda.show', compact('planes','productos','perfil','saldos','tab', 'deuda', 'aseguradora', 'cliente', 'estadoPoliza', 'ejecutivo', 'creditos', 'tipoCartera'));
     }
 
-    public function datos_asegurabilidad(Request $request){
+    public function datos_asegurabilidad(Request $request)
+    {
         $asegurabilidad = new DeudaRequisitos();
         $asegurabilidad->Deuda = $request->Deuda;
         $asegurabilidad->Requisito = $request->Requisito;
@@ -283,12 +311,12 @@ class DeudaController extends Controller
         $asegurabilidad->MontoInicial = $request->MontoInicial3;
         $asegurabilidad->MontoFinal = $request->MontoFinal3;
         $asegurabilidad->save();
-        alert()->success('El registro de poliza ha sido ingresado correctamente');  
-          return redirect('polizas/deuda/'.$request->Deuda);
-        
+        alert()->success('El registro de poliza ha sido ingresado correctamente');
+        return redirect('polizas/deuda/' . $request->Deuda);
     }
 
-    public function actualizar(Request $request){
+    public function actualizar(Request $request)
+    {
 
         $deuda = Deuda::findOrFail($request->Deuda);
         $deuda->NumeroPoliza = $request->NumeroPoliza;
@@ -313,16 +341,15 @@ class DeudaController extends Controller
         $deuda->FechaIngreso = Carbon::now('America/El_Salvador');
         $deuda->update();
 
-        alert()->success('El registro de poliza ha sido ingresado correctamente');  
-          return redirect('polizas/deuda/'.$deuda->Id);
-
-        
+        alert()->success('El registro de poliza ha sido ingresado correctamente');
+        return redirect('polizas/deuda/' . $deuda->Id);
     }
 
-    public function agregar_credito(Request $request){
+    public function agregar_credito(Request $request)
+    {
         $credito = new DeudaCredito();
         $credito->Deuda = $request->Deuda;
-        $credito->FechaDesde = $request->FechaDesde; 
+        $credito->FechaDesde = $request->FechaDesde;
         $credito->FechaHasta = $request->FechaHasta;
         $credito->MontoDesde = $request->MontoDesde;
         $credito->MontoHasta = $request->MontoHasta;
@@ -331,15 +358,24 @@ class DeudaController extends Controller
         $credito->TasaFecha = $request->TasaFecha;
         $credito->TasaMonto = $request->TasaMonto;
         $credito->TasaEdad  = $request->TasaEdad;
+        $credito->TipoCartera = $request->TipoCartera;
         $credito->Activo   = 1;
-        $credito->Usuario = auth()->user()->id; 
+        $credito->Usuario = auth()->user()->id;
         $credito->save();
 
-        alert()->success('El registro de poliza ha sido ingresado correctamente');  
-          return redirect('polizas/deuda/'.$request->Deuda);
-
+        alert()->success('El registro de poliza ha sido ingresado correctamente');
+        return redirect('polizas/deuda/' . $request->Deuda);
     }
 
+    public function eliminar_credito($id)
+    {
+        $credito = DeudaCredito::findOrFail($id);
+        $credito->Activo = 0;
+        $credito->update();
+
+        alert()->success('El registro de poliza ha sido ingresado correctamente');
+        return redirect('polizas/deuda/' . $credito->Deuda);
+    }
     /**
      * Show the form for editing the specified resource.
      *
@@ -350,7 +386,7 @@ class DeudaController extends Controller
     {
         $deuda = Deuda::findOrFail($id);
         $creditos = DeudaCredito::where('Deuda', $deuda->Id)->get();
-        $videuda = DeudaVida::where('Deuda',$deuda->Id)->first();
+        $videuda = DeudaVida::where('Deuda', $deuda->Id)->first();
         $requisitos = DeudaRequisitos::where('Poliza', $deuda->Id)->get();
         $tipos_contribuyente =  TipoContribuyente::get();
         $rutas = Ruta::where('Activo', '=', 1)->get();
@@ -368,8 +404,8 @@ class DeudaController extends Controller
         $estadoPoliza = EstadoPoliza::where('Activo', 1)->get();
         $tipoCobro = TipoCobro::where('Activo', 1)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
-        $detalle = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo',1)->orderBy('Id','desc')->get();
-        $ultimo_pago = DeudaDetalle::where('Deuda',$deuda->Id)->where('Activo',1)->orderBy('Id','desc')->first();
+        $detalle = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1)->orderBy('Id', 'desc')->get();
+        $ultimo_pago = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1)->orderBy('Id', 'desc')->first();
         $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
 
         return view('polizas.deuda.edit', compact(
@@ -427,7 +463,7 @@ class DeudaController extends Controller
 
         $time = Carbon::now('America/El_Salvador');
 
-        $deuda= Deuda::findOrFail($request->Id);
+        $deuda = Deuda::findOrFail($request->Id);
 
         if ($request->Mes == 1) {
             $mes_evaluar = 12;
@@ -453,9 +489,9 @@ class DeudaController extends Controller
 
             if ($request->Validar == "on") {
 
-                $eliminados = DB::select('CALL lista_deuda_eliminados(?, ?, ?, ?, ?, ?)', [ $axo_evaluar, $mes_evaluar, $deuda->Id, auth()->user()->id, $request->Axo, $request->Mes]);
+                $eliminados = DB::select('CALL lista_deuda_eliminados(?, ?, ?, ?, ?, ?)', [$axo_evaluar, $mes_evaluar, $deuda->Id, auth()->user()->id, $request->Axo, $request->Mes]);
 
-                $nuevos = DB::select('CALL lista_deuda_nuevos(?, ?, ?, ?, ?, ?)', [ $axo_evaluar, $mes_evaluar, $deuda->Id, auth()->user()->id, $request->Axo, $request->Mes]);
+                $nuevos = DB::select('CALL lista_deuda_nuevos(?, ?, ?, ?, ?, ?)', [$axo_evaluar, $mes_evaluar, $deuda->Id, auth()->user()->id, $request->Axo, $request->Mes]);
 
                 return view('polizas.validacion_cartera.resultado', compact('nuevos', 'eliminados'));
             }
@@ -466,17 +502,17 @@ class DeudaController extends Controller
                 ->where('Mes', $request->Mes)
                 ->where('PolizaDeuda', $deuda->Id)->sum('SumaAsegurada');
 
-                session(['MontoCarteraDeuda' => $monto_cartera_total]);
-                session(['FechaInicioDeuda' => $request->FechaInicio]);
-                session(['FechaFinalDeuda' => $request->FechaFinal]);
+            session(['MontoCarteraDeuda' => $monto_cartera_total]);
+            session(['FechaInicioDeuda' => $request->FechaInicio]);
+            session(['FechaFinalDeuda' => $request->FechaFinal]);
 
-                $filePath = 'documentos/polizas/' . $deuda->NumeroPoliza . '-' . $nombreMes . '-' . $request->Axo . '-Deuda.xlsx';
-                Storage::disk('public')->put($filePath, file_get_contents($archivo));
+            $filePath = 'documentos/polizas/' . $deuda->NumeroPoliza . '-' . $nombreMes . '-' . $request->Axo . '-Deuda.xlsx';
+            Storage::disk('public')->put($filePath, file_get_contents($archivo));
 
-                session(['ExcelURLDeuda' => $filePath]);
+            session(['ExcelURLDeuda' => $filePath]);
 
-                alert()->success('El registro ha sido ingresado correctamente');
-                return back();
+            alert()->success('El registro ha sido ingresado correctamente');
+            return back();
         } catch (Throwable $e) {
             print($e);
             return false;
