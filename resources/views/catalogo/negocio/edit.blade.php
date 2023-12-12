@@ -291,8 +291,8 @@
                                 @foreach ($cotizaciones as $obj)
                                 <tr>
                                     <td>{{$loop->iteration}}</td>
-                                    <td>{{ $obj->planes->productos->Nombre }}</td>
-                                    <td>{{ $obj->planes->Nombre }}</td>
+                                    <td>{{ $obj->planes->productos->Nombre ?? 'N/A' }}</td>
+                                    <td>{{ $obj->planes->Nombre ?? 'N/A'}}</td>
                                     <td>${{ number_format($obj->SumaAsegurada, 2, '.', ',') }}</td>
                                     <td>${{ number_format($obj->PrimaNetaAnual, 2, '.', ',') }}</td>
                                     <td align="center"> <input
@@ -301,7 +301,7 @@
                                         @endif></td>
                                     <td>
                                         <i class="fa fa-pencil fa-lg"
-                                            onclick="modal_edit_cotizacion({{ $obj->Id }},'{{ $obj->planes->productos->Nombre }}','{{ $obj->planes->Nombre }}','{{ $obj->SumaAsegurada }}','{{ $obj->PrimaNetaAnual }}','{{ $obj->Observaciones }}','{{ $obj->DatosTecnicos }}','{{$obj->planes->productos->datosTecnicos}}')"
+                                            onclick="modal_edit_cotizacion({{ $obj->Id }},'{{  $nombreProducto=$obj->planes->productos->Nombre ?? 'N/A' }}','{{ $obj->planes->Nombre ?? 'N/A' }}','{{ $obj->SumaAsegurada }}','{{ $obj->PrimaNetaAnual }}','{{ $obj->Observaciones }}','{{ $obj->DatosTecnicos }}','{{$obj->planes->productos->datosTecnicos ?? ''}}')"
                                             data-target="#modal-edit-cotizacion" data-toggle="modal"></i>
                                         &nbsp;&nbsp;
                                         <i class="fa fa-trash fa-lg" onclick="modal_delete_cotizacion({{ $obj->Id }})"
@@ -1010,9 +1010,15 @@
         if ($('#TipoPersona').val() == 1) {
             $('#divDui').show();
             $('#divNit').hide();
+            $('#Dui').prop('required', true);
+            $('#NitEmpresa').removeAttr('required');
+
         } else {
             $('#divDui').hide();
             $('#divNit').show();
+            $('#Dui').removeAttr('required');
+            $('#NitEmpresa').prop('required', true);
+
         }
     }
 
@@ -1247,7 +1253,28 @@
         $('#IdGestion').val(Id);
     }
 
+    function tipoPersona() {
+
+        if ($('#TipoPersona').val() == 1) {
+            $('#divDui').show();
+            $('#divNit').hide();
+            $('#Dui').prop('required', true);
+            $('#NitEmpresa').removeAttr('required');
+
+        } else {
+            $('#divDui').hide();
+            $('#divNit').show();
+            $('#Dui').removeAttr('required');
+            $('#NitEmpresa').prop('required', true);
+
+        }
+        }
+
     $(document).ready(function() {
+        $("#opcionNegocio").addClass("current-page");
+        $("#botonMenuNegocio").addClass("active");
+        $("#menuNegocio").css("display", "block");
+
         $('#divNit').hide();
         $('#helpBlockDuiNit').hide();
         $('#helpBlockDuiNit2').hide();
@@ -1261,30 +1288,11 @@
             getPlan();
         });
 
-        $("#TipoPersona").change(function() {
+        tipoPersona();
 
-            if (document.getElementById('TipoPersona').value == 2) {
-                // $('#DuiRepresentantes').show();
-                $('#Duis').hide();
-                $('#NitEmpresas').show();
-                $('#Nits').hide();
-                $('#Homolo').hide();
-                document.getElementById('Dui').removeAttribute('required');
-                // document.getElementById('DuiRepresentantes').setAttribute('required', true);
-                // document.getElementById('Nit').removeAttribute('required');
-                document.getElementById('NitEmpresa').setAttribute('required', true);
-            } else {
-                //$('#DuiRepresentantes').hide();
-                $('#Duis').show();
-                $('#NitEmpresas').hide();
-                $('#Nits').show();
-                $('#Homolo').show();
-                //document.getElementById('DuiRepresentantes').removeAttribute('required');
-                document.getElementById('Dui').setAttribute('required', true);
-                document.getElementById('NitEmpresa').removeAttribute('required');
-                //document.getElementById('Nit').setAttribute('required', true);
-            }
-        })
+        $("#TipoPersona").change(function() {
+            tipoPersona();
+        });
 
         $('.grupoCheckBoxAceptado').change(function() {
       if ($(this).is(':checked')) {

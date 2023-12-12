@@ -23,6 +23,11 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
+    public function redirectToLogin()
+    {
+        return redirect('/public/login');
+    }
+
     public function index()
     {
         return view('home');

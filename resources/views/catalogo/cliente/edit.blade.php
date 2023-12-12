@@ -1521,9 +1521,13 @@ $annos->y;
         $('#modal_addPreferencia').modal('show');
     }
     $(document).ready(function() {
+        $("#opcionCliente").addClass("current-page");
+        $("#botonMenuCliente").addClass("active");
+        $("#menuCliente").css("display", "block");
 
         let homologadoCheck=$('#Homologado');
         let switchery = new Switchery(homologadoCheck[0]);
+        tipo_persona_edit(switchery);
 
         $("#TipoPersona").change(function() {
         tipo_persona(switchery);
@@ -1870,39 +1874,75 @@ $annos->y;
     }
 
     function tipo_persona(switchery) {
-        let dui=$('#Dui');
-        let nit=$('#Nit');
-        let tipoPersona=$('#TipoPersona');
-        let homologado=$('#Homologado');
-        let genero=$('#Genero');
-        let estadoFamiliar=$('#EstadoFamiliar');
-        if (tipoPersona.val()==='2') {
-            dui.prop('readonly', true);
-            dui.val('');
-            switchery.disable();
-            if (homologado.prop('checked')) {
-                switchery.setPosition(true);// Cambia a estado seleccionado
+            let dui=$('#Dui');
+            let nit=$('#Nit');
+            let tipoPersona=$('#TipoPersona');
+            let homologado=$('#Homologado');
+            let genero=$('#Genero');
+            let estadoFamiliar=$('#EstadoFamiliar');
+            if (tipoPersona.val()==='2') {
+                dui.prop('readonly', true);
+                dui.val('');
+                switchery.disable();
+                if (homologado.prop('checked')) {
+                    switchery.setPosition(true);// Cambia a estado seleccionado
+                }
+                nit.val('');
+                nit.prop('readonly', false);
+                nit.inputmask('remove');
+                nit.inputmask({
+                    'mask': '9999-999999-999-9'
+                });
+                genero.val('3');
+                estadoFamiliar.val('0');
+                /*genero.prop('readonly', true);
+                estadoFamiliar.prop('readonly', true);*/
+            } else {
+                dui.prop('readonly', false);
+                switchery.enable(); // Cambia a estado seleccionado
+                genero.find('option:selected').prop('selected', false);
+                genero.val(null);
+                estadoFamiliar.find('option:selected').prop('selected', false);
+                estadoFamiliar.val(null);
+                /*genero.prop('readonly', false);
+                estadoFamiliar.prop('readonly', false);*/
             }
-            nit.val('');
-            nit.prop('readonly', false);
-            nit.inputmask('remove');
-            nit.inputmask({
-                'mask': '9999-999999-999-9'
-            });
-            genero.val('3');
-            estadoFamiliar.val('0');
-            /*genero.prop('readonly', true);
-            estadoFamiliar.prop('readonly', true);*/
-        } else {
-            dui.prop('readonly', false);
-            switchery.enable(); // Cambia a estado seleccionado
-            genero.find('option:selected').prop('selected', false);
-            genero.val(null);
-            estadoFamiliar.find('option:selected').prop('selected', false);
-            estadoFamiliar.val(null);
-             /*genero.prop('readonly', false);
-            estadoFamiliar.prop('readonly', false);*/
-        }
+    }
+
+    function tipo_persona_edit(switchery) {
+            let dui=$('#Dui');
+            let nit=$('#Nit');
+            let tipoPersona=$('#TipoPersona');
+            let homologado=$('#Homologado');
+            let genero=$('#Genero');
+            let estadoFamiliar=$('#EstadoFamiliar');
+            if (tipoPersona.val()==='2') {
+                dui.prop('readonly', true);
+                dui.val('');
+                switchery.disable();
+                if (homologado.prop('checked')) {
+                    switchery.setPosition(true);// Cambia a estado seleccionado
+                }
+                //nit.val('');
+                nit.prop('readonly', false);
+                nit.inputmask('remove');
+                nit.inputmask({
+                    'mask': '9999-999999-999-9'
+                });
+                genero.val('3');
+                estadoFamiliar.val('0');
+                /*genero.prop('readonly', true);
+                estadoFamiliar.prop('readonly', true);*/
+            } /*else {
+                dui.prop('readonly', false);
+                switchery.enable(); // Cambia a estado seleccionado
+                genero.find('option:selected').prop('selected', false);
+                genero.val(null);
+                estadoFamiliar.find('option:selected').prop('selected', false);
+                estadoFamiliar.val(null);
+                /*genero.prop('readonly', false);
+                estadoFamiliar.prop('readonly', false);
+            }*/
     }
 
 
