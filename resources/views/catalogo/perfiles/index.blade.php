@@ -44,7 +44,7 @@
                                         &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}"
                                             data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
                                     @endcan
-                                </td>
+                                </td>   
                             </tr>
                             @include('catalogo.perfiles.modal')
                         @endforeach

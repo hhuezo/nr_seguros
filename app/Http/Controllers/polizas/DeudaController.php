@@ -462,7 +462,7 @@ class DeudaController extends Controller
         $nombreMes = $fecha->locale('es')->monthName;
 
         $time = Carbon::now('America/El_Salvador');
-
+     
         $deuda = Deuda::findOrFail($request->Id);
 
         if ($request->Mes == 1) {
