@@ -17,7 +17,7 @@ class PerfilController extends Controller
     public function index()
     {
         $perfiles = Perfil::where('Activo',1)->get();
-        return view('catalogo.perfiles.index', compact('perfiles'));
+        return view('catalogo.perfiles.index', compact('perfiles'));   
     }
 
     /**

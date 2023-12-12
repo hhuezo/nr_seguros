@@ -50,7 +50,7 @@
                                 <textarea class="form-control" name="Descripcion" type="text" rows="10" >{{$perfil->Descripcion}} </textarea>
                             </div>
                         </div>
-
+     
 
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <div class="form-group" align="center">

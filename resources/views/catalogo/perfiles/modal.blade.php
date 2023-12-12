@@ -1,7 +1,7 @@
 <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
     id="modal-delete-{{ $obj->Id }}">
 
-    <form method="POST" action="{{ route('area_comercial.destroy', $obj->Id) }}">
+    <form method="POST" action="{{ route('perfiles.destroy', $obj->Id) }}">
         @method('delete')
         @csrf
         <div class="modal-dialog">
@@ -21,6 +21,6 @@
                 </div>
             </div>
         </div>
-    </form>
+    </form>   
 
 </div>

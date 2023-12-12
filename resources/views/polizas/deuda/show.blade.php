@@ -530,7 +530,7 @@
                             @if(isset($creditos))
                             <table>
                                 <thead>
-                                    @foreach($creditos as $obj)
+                                    @foreach($creditos as $obj)     
                                     <tr>
                                         <th></th>
                                         <th></th>
@@ -539,7 +539,7 @@
                                         <th></th>
                                         <th></th>
                                     </tr>
-                                    @endforeach
+                                    @endforeach      
                                 </thead>
                                 <tbody>
                                 @foreach($creditos as $obj)

@@ -154,7 +154,7 @@ Route::get('catalogo/cliente/addPreferencia', [ClienteController::class, 'addPre
 Route::get('catalogo/cliente_create', [ClienteController::class, 'cliente_create']);
 Route::resource('catalogo/ruta', RutaController::class);
 Route::resource('catalogo/perfiles',PerfilController::class);
-Route::post('finalizar_configuracion',[DeudaController::class, 'finalizar_configuracion']);
+Route::post('finalizar_configuracion',[DeudaController::class, 'finalizar_configuracion']);    
 
 Route::resource('catalogo/tipo_cobro', TipoCobroController::class);
 Route::resource('catalogo/area_comercial', AreaComercialController::class);
