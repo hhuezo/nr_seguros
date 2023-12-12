@@ -44,16 +44,20 @@
                         @endif
                         <td align="center">
 
-                            @can('edit users')
+                           @if($obj->Configuracion == 1)
                             <a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}/edit" class="on-default edit-row">
                                 <i class="fa fa-pencil fa-lg"></i></a>
-                            @endcan
+                            @else
+                            <a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}" class="on-default edit-row">
+                                <i class="fa fa-cog fa-lg"></i></a>
+                            @endif
+                            &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
                             @can('delete userss')
                             &nbsp;&nbsp;<a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}/renovar" class="on-default edit-row"><i class="fa fa-refresh fa-lg"></i></a>
                             
                             &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
 
-                            &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
+                            
                             @endcan
                         </td>
                     </tr>

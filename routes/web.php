@@ -19,6 +19,7 @@ use App\Http\Controllers\catalogo\TipoPolizaController;
 use App\Http\Controllers\catalogo\UbicacionCobroController;
 use App\Http\Controllers\catalogo\NegocioController;
 use App\Http\Controllers\catalogo\NrCarteraController;
+use App\Http\Controllers\catalogo\PerfilController;
 use App\Http\Controllers\catalogo\PlanController;
 use App\Http\Controllers\catalogo\ProductoController;
 use App\Http\Controllers\catalogo\RutaController;
@@ -152,6 +153,8 @@ Route::post('catalogo/aseguradora/documento_eliminar/{id}', [AseguradoraControll
 Route::get('catalogo/cliente/addPreferencia', [ClienteController::class, 'addPreferencia']);
 Route::get('catalogo/cliente_create', [ClienteController::class, 'cliente_create']);
 Route::resource('catalogo/ruta', RutaController::class);
+Route::resource('catalogo/perfiles',PerfilController::class);
+Route::post('finalizar_configuracion',[DeudaController::class, 'finalizar_configuracion']);
 
 Route::resource('catalogo/tipo_cobro', TipoCobroController::class);
 Route::resource('catalogo/area_comercial', AreaComercialController::class);
@@ -211,6 +214,7 @@ Route::post('polizas/deuda/edit_pago', [DeudaController::class, 'edit_pago']);
 Route::post('polizas/deuda/delete_pago/{id}', [DeudaController::class, 'delete_pago']);
 Route::post('polizas/deuda/actualizar',[DeudaController::class ,'actualizar']);     
 Route::post('agregar_credito',[DeudaController::class, 'agregar_credito']);
+Route::post('eliminar_credito/{id}',[DeudaController::class,'eliminar_credito']);
 Route::post('datos_asegurabilidad',[DeudaController::class,'datos_asegurabilidad']);
 
 
