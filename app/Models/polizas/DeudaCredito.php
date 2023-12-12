@@ -33,4 +33,8 @@ class DeudaCredito extends Model
         return $this->belongsTo('App\Models\polizas\Deuda', 'Deuda', 'Id');
     }
 
+    public function saldos(){
+        return $this->belongsTo('App\Models\catalogo\SaldoMontos', 'Saldos', 'Id');
+    }
+
 }

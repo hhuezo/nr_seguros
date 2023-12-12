@@ -11,9 +11,39 @@
                 <h2>Nuevo Poliza de Deuda &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; VIDE - Seguro por Deuda<small></small>
                 </h2>
                 <ul class="nav navbar-right panel_toolbox">
-
+                    @if($deuda->Configuracion == 0)
+                    <a href="" data-target="#modal-finalizar" data-toggle="modal" class="btn btn-success">Finalizar <br> Configuración</a>
+                    @else
+                    <a href="" data-target="#modal-finalizar" data-toggle="modal" class="btn btn-primary">Apertura <br> Configuración</a>
+                    @endif
                 </ul>
                 <div class="clearfix"></div>
+                <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-finalizar">
+
+                    <form method="POST" action="{{ url('finalizar_configuracion') }}">
+                        @method('POST')
+                        @csrf
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                    <input type="hidden" name="deuda" value="{{$deuda->Id}}">
+                                    <h4 class="modal-title">Finalizar Configuración</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Confirme si desea finalizar la configuración de la poliza</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                    <button type="submit" class="btn btn-primary">Confirmar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
             </div>
             @if (count($errors) > 0)
             <div class="alert alert-danger">
@@ -67,6 +97,24 @@
                                         @else
                                         <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
                                         @endif
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-sm-2">
+                                    <label class="control-label">Productos</label>
+                                    <select name="Productos" id="Productos" class="form-control select2" style="width: 100%">
+                                        <option value="" selected disabled>Seleccione...</option>
+                                        @foreach ($productos as $obj)
+                                        <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-sm-2">
+                                    <label class="control-label">Planes</label>
+                                    <select name="Planes" id="Planes" class="form-control select2" style="width: 100%">
+                                        <option value="" selected disabled>Seleccione...</option>
+                                        @foreach ($planes as $obj)
+                                        <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -164,6 +212,11 @@
                                     <label class="control-label" align="center">Vida</label>
                                     <input id="Vida" type="checkbox" class="js-switch" />
                                 </div>
+                                <div class="col-sm-4" align="center">
+                                    <br>
+                                    <label class="control-label" align="center">Desempleo</label>
+                                    <input id="Desempleo" type="checkbox" class="js-switch" />
+                                </div>
                                 <div class="col-sm-12">
                                     &nbsp;
                                 </div>
@@ -171,10 +224,19 @@
                                     <label class="control-label" align="right">Tasa de Comision %</label>
                                     <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" value="{{ $deuda->TasaComision }}">
                                 </div>
-                                <div class="col-sm-4" id="poliza_vida" style="display: none;">
+                                <div class="col-sm-4">
+                                    <div id="poliza_vida" style="display: none;">
+                                        <label class="control-label">Numero de Poliza Vida</label>
+                                        <input name="Vida" type="text" class="form-control" value="{{$deuda->Vida}}" />
+                                    </div>
 
-                                    <label class="control-label">Numero de Poliza Vida</label>
-                                    <input name="Vida" type="text" class="form-control" />
+                                </div>
+                                <div class="col-sm-4">
+                                    <div id="poliza_desempleo" style="display: none;">
+                                        <label class="control-label">Numero de Poliza Desempleo</label>
+                                        <input name="Desempleo" type="text" class="form-control" value="{{$deuda->Desempleo}}" />
+                                    </div>
+
                                 </div>
 
                             </div>
@@ -188,22 +250,18 @@
                             <br>
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div class="form-group" align="center">
-                                    <button type="submit" class="btn btn-success">Guardar y Continuar</button>
+                                    <button type="submit" class="btn btn-success" {{$deuda->Configuracion == 1 ? 'disabled':''}}>Guardar y Continuar</button>
                                     <a href="{{ url('poliza/vida') }}"><button type="button" class="btn btn-primary">Cancelar</button></a>
                                 </div>
                             </div>
                         </form>
                     </div>
-
                     <div role="tabpanel" class="tab-pane fade {{$tab == 2 ? 'active in':''}}" id="tab_content2" aria-labelledby="lineas-tab">
-                        <div class="x_title">
-                            <h4>&nbsp;&nbsp; Tasa Diferenciada<small></small>
-                            </h4>
-                            <!-- <div class="clearfix" align="right"><button class="btn btn-primary" onclick="add_rango()"><i class="fa fa-plus"></i> Agregar Rango</button></div> -->
+                        <div class="x_title"> &nbsp;
                         </div>
                         <form action="{{url('agregar_credito')}}" method="post">
-                            @csrf
                             <div class="col-lg-1 col-md-1 col-sm-12 col-xs-12">
+
                             </div>
                             <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12">
 
@@ -287,7 +345,7 @@
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <br><br>
                                 <div class="form-group" align="center">
-                                    <button type="submit" class="btn btn-success">Guardar y Continuar</button>
+                                    <button type="submit" class="btn btn-success" {{$deuda->Configuracion == 1 ? 'disabled':''}}>Guardar y Continuar</button>
                                     <a href="{{ url('poliza/vida') }}"><button type="button" class="btn btn-primary">Cancelar</button></a>
                                 </div>
                             </div>
@@ -300,6 +358,8 @@
                                 <table width="100%" class="table table-striped">
                                     <thead>
                                         <tr>
+                                            <th>Linea Carteras</th>
+                                            <th>Saldos y Montos</th>
                                             <th>Fecha Desde</th>
                                             <th>Fecha Hasta</th>
                                             <th>Tasa Fechas</th>
@@ -309,23 +369,67 @@
                                             <th>Edad Desde</th>
                                             <th>Edad Hasta</th>
                                             <th>Tasa por Edad</th>
-                                            <th><i class="fa fa-filef"></i>Opciones</th>
+                                            <th>Opciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach($creditos as $obj)
                                         <tr>
-                                            <th>{{$obj->FechaDesde}}</th>
-                                            <th>{{$obj->FechaHasta}}</th>
-                                            <th>{{$obj->TasaFecha}}</th>
-                                            <th>{{$obj->MontoDesde}}</th>
-                                            <th>{{$obj->MontoHasta}}</th>
-                                            <th>{{$obj->TasaMonto}}</th>
-                                            <th>{{$obj->EdadDesde}}</th>
-                                            <th>{{$obj->EdadHasta}}</th>
-                                            <th>{{$obj->TasaEdad}}</th>
-                                            <th></th>
+                                            @if($obj->TipoCartera)
+                                            <td>{{$obj->tipoCarteras->Nombre}}</td>
+                                            @else
+                                            <td></td>
+                                            @endif
+                                            @if($obj->Saldos)
+                                            <td>{{$obj->saldos->Abreviatura}}</td>
+                                            @else
+                                            <td></td>
+                                            @endif
+                                            @isset($obj->FechaDesde)
+                                            <td>{{date('d/m/Y', strtotime($obj->FechaDesde))}}</td>
+                                            @else
+                                            <td></td>
+                                            @endif
+                                            @isset($obj->FechaHasta)
+                                            <td>{{date('d/m/Y', strtotime($obj->FechaHasta))}}</td>
+                                            @else
+                                            <td></td>
+                                            @endif
+                                            <td>{{$obj->TasaFecha}}</td>
+                                            <td>{{$obj->MontoDesde}}</td>
+                                            <td>{{$obj->MontoHasta}}</td>
+                                            <td>{{$obj->TasaMonto}}</td>
+                                            <td>{{$obj->EdadDesde}}</td>
+                                            <td>{{$obj->EdadHasta}}</td>
+                                            <td>{{$obj->TasaEdad}}</td>
+                                            <td><a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a></td>
                                         </tr>
+                                        <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-{{ $obj->Id }}">
+
+                                            <form method="POST" action="{{ url('eliminar_credito', $obj->Id) }}">
+                                                @method('POST')
+                                                @csrf
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">×</span>
+                                                            </button>
+                                                            <h4 class="modal-title">Eliminar Registro</h4>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Confirme si desea Eliminar el Registro</p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                                            <button type="submit" class="btn btn-primary">Confirmar</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+
+                                        </div>
+
                                         @endforeach
                                     </tbody>
                                 </table>
@@ -349,9 +453,14 @@
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="form-group row">
                                                 <input type="hidden" name="Deuda" value="{{$deuda->Deuda}}">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Requisitos</label>
+                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Perfiles</label>
                                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" id="Requisito" type="text" name="Requisito">
+                                                    <select name="Perfiles" id="Perfiles" class="form-control">
+                                                        @foreach($perfil as $obj)
+                                                        <option value="{{$obj->Id}}">{{$obj->Descripcion}}</option>
+                                                        @endforeach
+                                                    </select>
+
                                                 </div>
                                             </div>
                                             <div class="form-group row">
@@ -378,91 +487,48 @@
                                                     <input class="form-control" id="MontoFinal" step="0.01" type="number" name="MontoFinal">
                                                 </div>
                                             </div>
-                                            <div class="modal-header"></div>
-                                            <div>&nbsp;</div>
-                                            <strong>Activar</strong>&nbsp; <input id="Activar1" type="checkbox" class="js-switch" />
-                                            <div class="form-group row">
-                                                <input type="hidden" name="Deuda" value="{{$deuda->Deuda}}">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Requisitos</label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" id="Requisito2" type="text" name="Requisito2">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
 
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad
-                                                    inicial</label>
-                                                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                                    <input class="form-control" id="EdadInicial2" type="text" name="EdadInicial2">
-                                                </div>
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad
-                                                    final</label>
-                                                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                                    <input class="form-control" id="EdadFinal2" type="number" name="EdadFinal2">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Monto
-                                                    inicial</label>
-                                                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                                    <input class="form-control" id="MontoInicial2" step="0.01" type="number" name="MontoInicial2">
-                                                </div>
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Monto
-                                                    final</label>
-                                                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                                    <input class="form-control" id="MontoFinal2" step="0.01" type="number" name="MontoFinal2">
-                                                </div>
-                                            </div>
-
-
-                                            <div class="modal-header"></div>
-                                            <div>&nbsp;</div>
-                                            <strong>Activar</strong>&nbsp; <input id="Activar2" type="checkbox" class="js-switch" />
-                                            <div class="form-group row">
-                                                <input type="hidden" name="Deuda" value="{{$deuda->Deuda}}">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Requisitos</label>
-                                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <input class="form-control" id="Requisito3" type="text" name="Requisito3">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad
-                                                    inicial</label>
-                                                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                                    <input class="form-control" id="EdadInicial3" type="text" name="EdadInicial3">
-                                                </div>
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad
-                                                    final</label>
-                                                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                                    <input class="form-control" id="EdadFinal3" type="number" name="EdadFinal3">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Monto
-                                                    inicial</label>
-                                                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                                    <input class="form-control" id="MontoInicial3" step="0.01" type="number" name="MontoInicial3">
-                                                </div>
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Monto
-                                                    final</label>
-                                                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                                    <input class="form-control" id="MontoFinal3" step="0.01" type="number" name="MontoFinal3">
-                                                </div>
-                                            </div>
                                         </div>
-
-
-
                                     </div>
                                 </div>
                                 <div class="clearfix"></div>
                                 <br>
                                 <br>
                                 <div class="form-group" align="center">
-                                    <button type="submit" class="btn btn-success">Guardar y Continuar</button>
+                                    <button type="submit" class="btn btn-success" {{$deuda->Configuracion == 1 ? 'disabled':''}}>Guardar y Continuar</button>
                                     <a href="{{ url('poliza/vida') }}"><button type="button" class="btn btn-primary">Cancelar</button></a>
                                 </div>
                             </form>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            @if(isset($creditos))
+                            <table>
+                                <thead>
+                                    @foreach($creditos as $obj)     
+                                    <tr>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    @endforeach      
+                                </thead>
+                                <tbody>
+                                @foreach($creditos as $obj)
+                                    <tr>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -470,280 +536,333 @@
             </div>
         </div>
     </div>
+</div>
 
 
 
-    @include('sweetalert::alert')
+@include('sweetalert::alert')
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- jQuery -->
-    <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $("#fechas").change(function() {
-                if (document.getElementById('fechas').checked == true) {
-                    $('#fecha_otorgamiento').show();
+<!-- jQuery -->
+<script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#fechas").change(function() {
+            if (document.getElementById('fechas').checked == true) {
+                $('#fecha_otorgamiento').show();
 
-                } else {
-                    $('#fecha_otorgamiento').hide();
-                }
-            })
-
-            $("#montos").change(function() {
-                if (document.getElementById('montos').checked == true) {
-                    $('#monto_otorgamiento').show();
-
-                } else {
-                    $('#monto_otorgamiento').hide();
-                }
-            })
-            $("#edad").change(function() {
-                if (document.getElementById('edad').checked == true) {
-                    $('#edad_otorgamiento').show();
-
-                } else {
-                    $('#edad_otorgamiento').hide();
-                }
-            })
-
-            $("#montos").change(function() {
-                if (document.getElementById('montos').checked == true) {
-                    $('#monto_otorgamiento').show();
-
-                } else {
-                    $('#monto_otorgamiento').hide();
-                }
-            })
-
-
-            $("#Asegurado").change(function() {
-                // alert(document.getElementById('Asegurado').value);
-                $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
-                var parametros = {
-                    "Cliente": document.getElementById('Asegurado').value
-                };
-                $.ajax({
-                    type: "get",
-                    //ruta para obtener el horario del doctor
-                    url: "{{ url('get_cliente') }}",
-                    data: parametros,
-                    success: function(data) {
-                        console.log(data);
-                        document.getElementById('Nit').value = data.Nit;
-                        if (data.TipoContribuyente == 1) {
-                            document.getElementById('Retencion').setAttribute("readonly", true);
-                            document.getElementById('Retencion').value = 0;
-
-                        }
-
-
-                    }
-                });
-            });
-
-        });
-
-        function add_rango() {
-            $("#modal_rango").modal('show');
-        }
-
-        function modal_cliente() {
-            $('#modal_cliente').modal('show');
-        }
-
-        function modal_requisitos() {
-            $('#modal_requisitos').modal('show');
-        }
-
-        function modal_creditos() {
-            $('#modal_creditos').modal('show');
-        }
-    </script>
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $("#EdadInicial2").prop("disabled", true);
-            $("#EdadFinal2").prop("disabled", true);
-            $("#MontoInicial2").prop("disabled", true);
-            $("#MontoFinal2").prop("disabled", true);
-
-            $("#EdadInicial3").prop("disabled", true);
-            $("#EdadFinal3").prop("disabled", true);
-            $("#MontoInicial3").prop("disabled", true);
-            $("#MontoFinal3").prop("disabled", true);
-        });
-
-        $("#Activar1").change(function() {
-            if (document.getElementById('Activar1').checked == true && document.getElementById('EdadFinal').value ==
-                "" && document.getElementById('MontoFinal').value == "") {
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Debe llenar los datos anteriores',
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar',
-                    timer: 1500
-                });
-                document.getElementById('Activar1').checked = false;
             } else {
-                document.getElementById('EdadInicial2').value = parseInt(document.getElementById('EdadFinal')
-                    .value) + 1;
-                document.getElementById('MontoInicial2').value = parseFloat(document.getElementById('MontoFinal')
-                    .value) + 0.01;
-                if (document.getElementById('Activar1').checked == true) {
-                    $("#EdadInicial2").prop("disabled", false);
-                    $("#EdadFinal2").prop("disabled", false);
-                    $("#MontoInicial2").prop("disabled", false);
-                    $("#MontoFinal2").prop("disabled", false);
-                } else {
-                    $("#EdadInicial2").prop("disabled", true);
-                    $("#EdadFinal2").prop("disabled", true);
-                    $("#MontoInicial2").prop("disabled", true);
-                    $("#MontoFinal2").prop("disabled", true);
-
-                    document.getElementById('EdadInicial2').value = "";
-                    document.getElementById('EdadFinal2').value = "";
-                    document.getElementById('MontoInicial2').value = "";
-                    document.getElementById('MontoFinal2').value = "";
-
-                    document.getElementById('EdadInicial3').value = "";
-                    document.getElementById('EdadFinal3').value = "";
-                    document.getElementById('MontoInicial3').value = "";
-                    document.getElementById('MontoFinal3').value = "";
-                }
+                $('#fecha_otorgamiento').hide();
             }
+        })
 
-        });
+        $("#montos").change(function() {
+            if (document.getElementById('montos').checked == true) {
+                $('#monto_otorgamiento').show();
 
-        $("#Activar2").change(function() {
-            if (document.getElementById('Activar2').checked == true && document.getElementById(
-                    'EdadFinal2').value == "" &&
-                document.getElementById('MontoFinal2').value == "") {
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Debe llenar los datos anteriores',
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar',
-                    timer: 1500
-                });
-                document.getElementById('Activar2').checked = false;
             } else {
-                document.getElementById('EdadInicial3').value = parseInt(document.getElementById('EdadFinal2')
-                    .value) + 1;
-                document.getElementById('MontoInicial3').value = parseFloat(document.getElementById('MontoFinal2')
-                    .value) + 0.01;
-                if (document.getElementById('Activar2').checked == true) {
-                    $("#EdadInicial3").prop("disabled", false);
-                    $("#EdadFinal3").prop("disabled", false);
-                    $("#MontoInicial3").prop("disabled", false);
-                    $("#MontoFinal3").prop("disabled", false);
-                }
+                $('#monto_otorgamiento').hide();
             }
-        });
+        })
+        $("#edad").change(function() {
+            if (document.getElementById('edad').checked == true) {
+                $('#edad_otorgamiento').show();
 
-        $("#btn_modal_guardar").click(function() {
-            validar();
-        });
-
-        function validar() {
-            if (document.getElementById('Requisito').value.trim() == "") {
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'El campo requisitos es requerido',
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar',
-                    timer: 1500
-                })
-            } else if (document.getElementById('EdadFinal').value.trim() == "") {
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'El campo edad final es requerido',
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar',
-                    timer: 1500
-                })
-            } else if (document.getElementById('MontoInicial').value.trim() == "") {
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'El campo monto inicial es requerido',
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar',
-                    timer: 1500
-                })
-            } else if (document.getElementById('MontoFinal').value.trim() == "") {
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'El campo monto final es requerido',
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar',
-                    timer: 1500
-                })
-            } else if (document.getElementById('Activar1').checked == true &&
-                (document.getElementById('EdadInicial2').value.trim() == "" || document.getElementById('EdadFinal2').value
-                    .trim() == "" ||
-                    document.getElementById('MontoInicial2').value.trim() == "" || document.getElementById('MontoFinal2')
-                    .value.trim() == "")
-
-            ) {
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Debe llenar todos los campos',
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar',
-                    timer: 1500
-                })
-            } else if (document.getElementById('Activar2').checked == true &&
-                (document.getElementById('EdadInicial3').value.trim() == "" || document.getElementById('EdadFinal3').value
-                    .trim() == "" ||
-                    document.getElementById('MontoInicial3').value.trim() == "" || document.getElementById('MontoFinal3')
-                    .value.trim() == "")
-
-            ) {
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Debe llenar todos los campos',
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar',
-                    timer: 1500
-                })
             } else {
-                guardar();
+                $('#edad_otorgamiento').hide();
             }
-        }
+        })
 
-        function guardar() {
+        $("#montos").change(function() {
+            if (document.getElementById('montos').checked == true) {
+                $('#monto_otorgamiento').show();
+
+            } else {
+                $('#monto_otorgamiento').hide();
+            }
+        })
+
+
+        $("#Asegurado").change(function() {
+            // alert(document.getElementById('Asegurado').value);
+            $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
             var parametros = {
-                "_token": "{{ csrf_token() }}",
-                "Requisito": document.getElementById('Requisito').value,
-                "EdadInicial": document.getElementById('EdadInicial').value,
-                "EdadFinal": document.getElementById('EdadFinal').value,
-                "MontoInicial": document.getElementById('MontoInicial').value,
-                "MontoFinal": document.getElementById('MontoFinal').value,
-                "EdadInicial2": document.getElementById('EdadInicial2').value,
-                "EdadFinal2": document.getElementById('EdadFinal2').value,
-                "MontoInicial2": document.getElementById('MontoInicial2').value,
-                "MontoFinal2": document.getElementById('MontoFinal2').value,
-                "EdadInicial3": document.getElementById('EdadInicial3').value,
-                "EdadFinal3": document.getElementById('EdadFinal3').value,
-                "MontoInicial3": document.getElementById('MontoInicial3').value,
-                "MontoFinal3": document.getElementById('MontoFinal3').value
+                "Cliente": document.getElementById('Asegurado').value
             };
             $.ajax({
-                type: "post",
-                url: "{{ url('polizas/deuda/store_requisitos') }}",
+                type: "get",
+                //ruta para obtener el horario del doctor
+                url: "{{ url('get_cliente') }}",
                 data: parametros,
                 success: function(data) {
                     console.log(data);
-                    if (document.getElementById('DataRequisitos').value == "") {
-                        document.getElementById('DataRequisitos').value = data;
-                    } else {
-                        document.getElementById('DataRequisitos').value = document.getElementById(
-                            'DataRequisitos').value + "," + data;
+                    document.getElementById('Nit').value = data.Nit;
+                    if (data.TipoContribuyente == 1) {
+                        document.getElementById('Retencion').setAttribute("readonly", true);
+                        document.getElementById('Retencion').value = 0;
+
                     }
-                    $('#modal_requisitos').modal('hide');
-                    get_requisitos();
+
+
                 }
             });
+        });
+
+    });
+
+    function add_rango() {
+        $("#modal_rango").modal('show');
+    }
+
+    function modal_cliente() {
+        $('#modal_cliente').modal('show');
+    }
+
+    function modal_requisitos() {
+        $('#modal_requisitos').modal('show');
+    }
+
+    function modal_creditos() {
+        $('#modal_creditos').modal('show');
+    }
+</script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#EdadInicial2").prop("disabled", true);
+        $("#EdadFinal2").prop("disabled", true);
+        $("#MontoInicial2").prop("disabled", true);
+        $("#MontoFinal2").prop("disabled", true);
+
+        $("#EdadInicial3").prop("disabled", true);
+        $("#EdadFinal3").prop("disabled", true);
+        $("#MontoInicial3").prop("disabled", true);
+        $("#MontoFinal3").prop("disabled", true);
+        $("#Vida").change(function() {
+            if (document.getElementById('Vida').checked == true) {
+                $('#poliza_vida').show();
+            } else {
+                $('#poliza_vida').hide();
+            }
+        })
+
+        $("#Desempleo").change(function() {
+            if (document.getElementById('Desempleo').checked == true) {
+                $('#poliza_desempleo').show();
+            } else {
+                $('#poliza_desempleo').hide();
+            }
+        })
+
+
+
+
+        $("#Aseguradora").change(function() {
+            $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
+            // var para la Departamento
+            var Aseguradora = $(this).val();
+
+            //funcionpara las distritos
+            $.get("{{ url('get_producto') }}" + '/' + Aseguradora, function(data) {
+                //esta el la peticion get, la cual se divide en tres partes. ruta,variables y funcion
+                console.log(data);
+                var _select = '<option value=""> Seleccione </option>';
+                for (var i = 0; i < data.length; i++)
+                    _select += '<option value="' + data[i].Id + '"  >' + data[i].Nombre +
+                    '</option>';
+                $("#Productos").html(_select);
+            });
+        })
+
+        $("#Productos").change(function() {
+            $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
+            // var para la Departamento
+            var Productos = $(this).val();
+
+            //funcionpara las distritos
+            $.get("{{ url('get_plan') }}" + '/' + Productos, function(data) {
+                //esta el la peticion get, la cual se divide en tres partes. ruta,variables y funcion
+                console.log(data);
+                var _select = '<option value=""> Seleccione </option>';
+                for (var i = 0; i < data.length; i++)
+                    _select += '<option value="' + data[i].Id + '"  >' + data[i].Nombre +
+                    '</option>';
+                $("#Planes").html(_select);
+            });
+        })
+    });
+
+    $("#Activar1").change(function() {
+        if (document.getElementById('Activar1').checked == true && document.getElementById('EdadFinal').value ==
+            "" && document.getElementById('MontoFinal').value == "") {
+            Swal.fire({
+                title: 'Error!',
+                text: 'Debe llenar los datos anteriores',
+                icon: 'error',
+                confirmButtonText: 'Aceptar',
+                timer: 1500
+            });
+            document.getElementById('Activar1').checked = false;
+        } else {
+            document.getElementById('EdadInicial2').value = parseInt(document.getElementById('EdadFinal')
+                .value) + 1;
+            document.getElementById('MontoInicial2').value = parseFloat(document.getElementById('MontoFinal')
+                .value) + 0.01;
+            if (document.getElementById('Activar1').checked == true) {
+                $("#EdadInicial2").prop("disabled", false);
+                $("#EdadFinal2").prop("disabled", false);
+                $("#MontoInicial2").prop("disabled", false);
+                $("#MontoFinal2").prop("disabled", false);
+            } else {
+                $("#EdadInicial2").prop("disabled", true);
+                $("#EdadFinal2").prop("disabled", true);
+                $("#MontoInicial2").prop("disabled", true);
+                $("#MontoFinal2").prop("disabled", true);
+
+                document.getElementById('EdadInicial2').value = "";
+                document.getElementById('EdadFinal2').value = "";
+                document.getElementById('MontoInicial2').value = "";
+                document.getElementById('MontoFinal2').value = "";
+
+                document.getElementById('EdadInicial3').value = "";
+                document.getElementById('EdadFinal3').value = "";
+                document.getElementById('MontoInicial3').value = "";
+                document.getElementById('MontoFinal3').value = "";
+            }
         }
+
+    });
+
+    $("#Activar2").change(function() {
+        if (document.getElementById('Activar2').checked == true && document.getElementById(
+                'EdadFinal2').value == "" &&
+            document.getElementById('MontoFinal2').value == "") {
+            Swal.fire({
+                title: 'Error!',
+                text: 'Debe llenar los datos anteriores',
+                icon: 'error',
+                confirmButtonText: 'Aceptar',
+                timer: 1500
+            });
+            document.getElementById('Activar2').checked = false;
+        } else {
+            document.getElementById('EdadInicial3').value = parseInt(document.getElementById('EdadFinal2')
+                .value) + 1;
+            document.getElementById('MontoInicial3').value = parseFloat(document.getElementById('MontoFinal2')
+                .value) + 0.01;
+            if (document.getElementById('Activar2').checked == true) {
+                $("#EdadInicial3").prop("disabled", false);
+                $("#EdadFinal3").prop("disabled", false);
+                $("#MontoInicial3").prop("disabled", false);
+                $("#MontoFinal3").prop("disabled", false);
+            }
+        }
+    });
+
+    $("#btn_modal_guardar").click(function() {
+        validar();
+    });
+
+    function validar() {
+        if (document.getElementById('Requisito').value.trim() == "") {
+            Swal.fire({
+                title: 'Error!',
+                text: 'El campo requisitos es requerido',
+                icon: 'error',
+                confirmButtonText: 'Aceptar',
+                timer: 1500
+            })
+        } else if (document.getElementById('EdadFinal').value.trim() == "") {
+            Swal.fire({
+                title: 'Error!',
+                text: 'El campo edad final es requerido',
+                icon: 'error',
+                confirmButtonText: 'Aceptar',
+                timer: 1500
+            })
+        } else if (document.getElementById('MontoInicial').value.trim() == "") {
+            Swal.fire({
+                title: 'Error!',
+                text: 'El campo monto inicial es requerido',
+                icon: 'error',
+                confirmButtonText: 'Aceptar',
+                timer: 1500
+            })
+        } else if (document.getElementById('MontoFinal').value.trim() == "") {
+            Swal.fire({
+                title: 'Error!',
+                text: 'El campo monto final es requerido',
+                icon: 'error',
+                confirmButtonText: 'Aceptar',
+                timer: 1500
+            })
+        } else if (document.getElementById('Activar1').checked == true &&
+            (document.getElementById('EdadInicial2').value.trim() == "" || document.getElementById('EdadFinal2').value
+                .trim() == "" ||
+                document.getElementById('MontoInicial2').value.trim() == "" || document.getElementById('MontoFinal2')
+                .value.trim() == "")
+
+        ) {
+            Swal.fire({
+                title: 'Error!',
+                text: 'Debe llenar todos los campos',
+                icon: 'error',
+                confirmButtonText: 'Aceptar',
+                timer: 1500
+            })
+        } else if (document.getElementById('Activar2').checked == true &&
+            (document.getElementById('EdadInicial3').value.trim() == "" || document.getElementById('EdadFinal3').value
+                .trim() == "" ||
+                document.getElementById('MontoInicial3').value.trim() == "" || document.getElementById('MontoFinal3')
+                .value.trim() == "")
+
+        ) {
+            Swal.fire({
+                title: 'Error!',
+                text: 'Debe llenar todos los campos',
+                icon: 'error',
+                confirmButtonText: 'Aceptar',
+                timer: 1500
+            })
+        } else {
+            guardar();
+        }
+    }
+
+    function guardar() {
+        var parametros = {
+            "_token": "{{ csrf_token() }}",
+            "Requisito": document.getElementById('Requisito').value,
+            "EdadInicial": document.getElementById('EdadInicial').value,
+            "EdadFinal": document.getElementById('EdadFinal').value,
+            "MontoInicial": document.getElementById('MontoInicial').value,
+            "MontoFinal": document.getElementById('MontoFinal').value,
+            "EdadInicial2": document.getElementById('EdadInicial2').value,
+            "EdadFinal2": document.getElementById('EdadFinal2').value,
+            "MontoInicial2": document.getElementById('MontoInicial2').value,
+            "MontoFinal2": document.getElementById('MontoFinal2').value,
+            "EdadInicial3": document.getElementById('EdadInicial3').value,
+            "EdadFinal3": document.getElementById('EdadFinal3').value,
+            "MontoInicial3": document.getElementById('MontoInicial3').value,
+            "MontoFinal3": document.getElementById('MontoFinal3').value
+        };
+        $.ajax({
+            type: "post",
+            url: "{{ url('polizas/deuda/store_requisitos') }}",
+            data: parametros,
+            success: function(data) {
+                console.log(data);
+                if (document.getElementById('DataRequisitos').value == "") {
+                    document.getElementById('DataRequisitos').value = data;
+                } else {
+                    document.getElementById('DataRequisitos').value = document.getElementById(
+                        'DataRequisitos').value + "," + data;
+                }
+                $('#modal_requisitos').modal('hide');
+                get_requisitos();
+            }
+        });
+    }
 
         function get_requisitos() {
             var parametros = {

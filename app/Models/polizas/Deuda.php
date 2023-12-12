@@ -59,4 +59,8 @@ class Deuda extends Model
     {
         return $this->belongsTo('App\Models\catalogo\EstadoPoliza', 'EstadoPoliza', 'Id');
     }
+
+    public function planes(){
+        return $this->belongsTo('App\Models\catalogo\Plan', 'Plan', 'Id');
+    }
 }

@@ -30,16 +30,16 @@
                 <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
                     <li role="presentation" class="active"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Datos de Póliza</a>
                     </li>
-                    <li role="presentation" class=" "><a onclick="noGuardardo();" >Tasa diferencia</a>
+                    <li role="presentation" class=" "><a onclick="noGuardardo();">Tasa diferencia</a>
                     </li>
-                    <li role="presentation" class=""><a onclick="noGuardardo();" >Requisitos  Minimos de Asegurabilidad  </a>
+                    <li role="presentation" class=""><a onclick="noGuardardo();">Requisitos Minimos de Asegurabilidad </a>
                     </li>
-                   
-               
+
+
                 </ul>
 
                 <div id="myTabContent" class="tab-content">
-                    <div role="tabpanel" class="tab-pane fade active in"  id="tab_content1" aria-labelledby="home-tab">
+                    <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="home-tab">
                         <form action="{{ url('polizas/deuda') }}" method="POST">
                             @csrf
                             <div class="x_content" style="font-size: 12px;">
@@ -53,13 +53,31 @@
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label" align="right">Código</label>
-                                    <input class="form-control" name="Codigo"  type="text" value="{{ $ultimo }}" readonly>
+                                    <input class="form-control" name="Codigo" type="text" value="{{ $ultimo }}" readonly>
                                 </div>
                                 <div class="col-sm-8">
                                     <label class="control-label" align="right">Aseguradora</label>
                                     <select name="Aseguradora" class="form-control select2" style="width: 100%" required>
                                         <option value="">Seleccione...</option>
                                         @foreach ($aseguradora as $obj)
+                                        <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-sm-2">
+                                    <label class="control-label">Productos</label>
+                                    <select name="Productos" id="Productos" class="form-control select2" style="width: 100%">
+                                        <option value="" selected disabled>Seleccione...</option>
+                                        @foreach ($productos as $obj)
+                                        <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-sm-2">
+                                    <label class="control-label">Planes</label>
+                                    <select name="Planes" id="Planes" class="form-control select2" style="width: 100%">
+                                        <option value="" selected disabled>Seleccione...</option>
+                                        @foreach ($planes as $obj)
                                         <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
                                         @endforeach
                                     </select>
@@ -73,6 +91,7 @@
                                         @endforeach
                                     </select>
                                 </div>
+
                                 <div class="col-sm-12">
                                     &nbsp;
                                 </div>
@@ -126,7 +145,7 @@
                                     <label class="control-label" align="right">Concepto</label>
                                     <textarea class="form-control" name="Concepto" row="3" col="4" value="{{ old('Concepto') }}" required> </textarea>
                                 </div>
-                               
+
                                 <div class="col-sm-4">
                                     <br>
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -151,6 +170,11 @@
                                     <label class="control-label" align="center">Vida</label>
                                     <input id="Vida" type="checkbox" class="js-switch" />
                                 </div>
+                                <div class="col-sm-4" align="center">
+                                    <br>
+                                    <label class="control-label" align="center">Desempleo</label>
+                                    <input id="Desempleo" type="checkbox" class="js-switch" />
+                                </div>
                                 <div class="col-sm-12">
                                     &nbsp;
                                 </div>
@@ -158,10 +182,19 @@
                                     <label class="control-label" align="right">Tasa de Comision %</label>
                                     <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" value="{{ old('TasaComision') }}">
                                 </div>
-                                <div class="col-sm-4" id="poliza_vida" style="display: none;">
-                                   
-                                    <label class="control-label" >Numero de Poliza Vida</label>
-                                    <input name="Vida" type="text" class="form-control" />
+                                <div class="col-sm-4">
+                                    <div id="poliza_vida" style="display: none;">
+                                        <label class="control-label">Numero de Poliza Vida</label>
+                                        <input name="Vida" type="text" class="form-control" />
+                                    </div>
+
+                                </div>
+                                <div class="col-sm-4">
+                                    <div id="poliza_desempleo" style="display: none;">
+                                        <label class="control-label">Numero de Poliza Desempleo</label>
+                                        <input name="Desempleo" type="text" class="form-control" />
+                                    </div>
+
                                 </div>
 
                             </div>
@@ -171,7 +204,7 @@
                                 <h2> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<small></small></h2>
                                 <div class="clearfix"></div>
                             </div>
-                    
+
                             <br>
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div class="form-group" align="center">
@@ -186,67 +219,85 @@
             </div>
         </div>
     </div>
+</div>
 
 
-    @include('sweetalert::alert')
+@include('sweetalert::alert')
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- jQuery -->
-    <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
-    <script type="text/javascript">
-        function noGuardardo(){
-            Swal.fire('Debe guardar los datos inicial de la poliza');
-        }
-        $(document).ready(function() {
-            $("#Vida").change(function() {
-                if (document.getElementById('Vida').checked == true) {
-                    $('#poliza_vida').show();
-                } else {
-                    $('#poliza_vida').hide();
-                }
-            })
+<!-- jQuery -->
+<script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
+<script type="text/javascript">
+    function noGuardardo() {
+        Swal.fire('Debe guardar los datos inicial de la poliza');
+    }
+    $(document).ready(function() {
+        $("#Vida").change(function() {
+            if (document.getElementById('Vida').checked == true) {
+                $('#poliza_vida').show();
+            } else {
+                $('#poliza_vida').hide();
+            }
+        })
 
-
-
-
-            $("#Asegurado").change(function() {
-                // alert(document.getElementById('Asegurado').value);
-                $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
-                var parametros = {
-                    "Cliente": document.getElementById('Asegurado').value
-                };
-                $.ajax({
-                    type: "get",
-                    //ruta para obtener el horario del doctor
-                    url: "{{ url('get_cliente') }}",
-                    data: parametros,
-                    success: function(data) {
-                        console.log(data);
-                        document.getElementById('Nit').value = data.Nit;
-                        if (data.TipoContribuyente == 1) {
-                            document.getElementById('Retencion').setAttribute("readonly", true);
-                            document.getElementById('Retencion').value = 0;
-                            calculoCCF();
-                        }
+        $("#Desempleo").change(function() {
+            if (document.getElementById('Desempleo').checked == true) {
+                $('#poliza_desempleo').show();
+            } else {
+                $('#poliza_desempleo').hide();
+            }
+        })
 
 
-                    }
-                });
+
+
+        $("#Aseguradora").change(function() {
+            $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
+            // var para la Departamento
+            var Aseguradora = $(this).val();
+
+            //funcionpara las distritos
+            $.get("{{ url('get_producto') }}" + '/' + Aseguradora, function(data) {
+                //esta el la peticion get, la cual se divide en tres partes. ruta,variables y funcion
+                console.log(data);
+                var _select = '<option value=""> Seleccione </option>';
+                for (var i = 0; i < data.length; i++)
+                    _select += '<option value="' + data[i].Id + '"  >' + data[i].Nombre +
+                    '</option>';
+                $("#Productos").html(_select);
             });
+        })
 
-        });
+        $("#Productos").change(function() {
+            $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
+            // var para la Departamento
+            var Productos = $(this).val();
 
-        function modal_cliente() {
-            $('#modal_cliente').modal('show');
-        }
+            //funcionpara las distritos
+            $.get("{{ url('get_plan') }}" + '/' + Productos, function(data) {
+                //esta el la peticion get, la cual se divide en tres partes. ruta,variables y funcion
+                console.log(data);
+                var _select = '<option value=""> Seleccione </option>';
+                for (var i = 0; i < data.length; i++)
+                    _select += '<option value="' + data[i].Id + '"  >' + data[i].Nombre +
+                    '</option>';
+                $("#Planes").html(_select);
+            });
+        })
 
-        function modal_requisitos() {
-            $('#modal_requisitos').modal('show');
-        }
+    });
 
-        function modal_creditos() {
-            $('#modal_creditos').modal('show');
-        }
-    </script>
-    @endsection
+    function modal_cliente() {
+        $('#modal_cliente').modal('show');
+    }
+
+    function modal_requisitos() {
+        $('#modal_requisitos').modal('show');
+    }
+
+    function modal_creditos() {
+        $('#modal_creditos').modal('show');
+    }
+</script>
+@endsection

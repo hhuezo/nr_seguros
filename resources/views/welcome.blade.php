@@ -83,7 +83,7 @@
                                         <li><a href="{{ url('catalogo/ejecutivos') }}">Ejecutivo</a></li>
                                         <li><a href="{{ url('catalogo/estado_polizas') }}">Estado Póliza</a></li>
                                         <li><a href="{{ url('catalogo/estado_venta') }}">Estado Venta</a></li>
-                                        <li><a href="{{ url('catalogo/tipo_cartera') }}">Tipo Cartera (Deuda)</a></li>
+                                        <li><a href="{{ url('catalogo/tipo_cartera') }}">Tipo de Credito (Deuda)</a></li>
                                         <li><a href="{{ url('catalogo/nr_cartera') }}">Tipo Cartera NR </a></li>
                                         <li><a href="{{ url('catalogo/tipo_negocio') }}">Tipo Negocio</a></li>
                                         <li><a href="{{ url('catalogo/tipo_cobro') }}">Tipo Cobro</a></li>
@@ -91,6 +91,7 @@
                                         <li><a href="{{ url('catalogo/area_comercial') }}">Área Comercial</a></li>
                                         <li><a href="{{ url('catalogo/ubicacion_cobro') }}">Ubicación Cobro</a></li>
                                         <li><a href="{{ url('catalogo/necesidad_proteccion') }}">Ramos</a></li>
+                                        <li><a href="{{ url('catalogo/perfiles')}}">Perfiles</a></li>
                                         <li><a href="{{ url('catalogo/departamento_nr') }}">Departamentos NR</a></li>
                                         <li><a href="{{ url('catalogo/producto') }}">Productos</a></li>
                                         <li><a href="{{ url('catalogo/plan') }}">Planes</a></li>
