@@ -6,7 +6,6 @@
     <div class="clearfix"></div>
     <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
-
             <div class="x_title">
                 <h2>Nuevo Poliza de Deuda &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; VIDE - Seguro por Deuda<small></small>
                 </h2>
@@ -545,35 +544,17 @@
                                 </div>
                             </form>
                         </div>
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">{{$requisitos}}
-                            @if(isset($requisitos))
-                            <table>
-                                <thead>
-                                    @foreach($requisitos as $obj)
-                                    <tr>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                    </tr>
-                                    @endforeach
-                                </thead>
-                                <tbody>
-                                    @foreach($requisitos as $obj)
-                                    <tr>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <table class="table table-striped table-bordered">
+                                @for ($i = 0;$i<count($data);$i++) <tr style="width: 25%;">
+                                    @for ($j = 0;$j<count($data[0]);$j++) <td> {{$data[$i][$j]}}</td>
+                                        @endfor
+                                        </tr>
+
+                                        @endfor
+
                             </table>
-                            @endif
+
                         </div>
                     </div>
                 </div>
