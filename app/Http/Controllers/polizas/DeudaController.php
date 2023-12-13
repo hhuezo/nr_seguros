@@ -278,26 +278,45 @@ class DeudaController extends Controller
 
         $requisitos = DeudaRequisitos::where('Activo', 1)->where('Deuda', $id)->get();
 
-        $i = 1;
-        //formando las filas
-        $data[0][0] = "REQUISITOS";
-        foreach ($requisitos->unique('Perfil') as $requisito) {
-            $data[$i][0] = $requisito->perfil->Descripcion;
-            $i++;
-        }
-        //dd($data);
-
 
         //formando las columnas
         $uniqueRequisitos = $requisitos->unique(function ($item) {
             return $item->EdadInicial . '-' . $item->EdadFinal;
         });
 
+        // dd($uniqueRequisitos);
+
+        $num_columnas = count($uniqueRequisitos);
+
+        for ($fila = 0; $fila <= $num_columnas; $fila++) {
+            for ($columna = 0; $columna <= $num_columnas; $columna++) {
+
+                //echo $fila.' '.$columna.'<br>';
+                $data[$fila][$columna] = "0";
+                //echo $fila.' '.$columna.' '.$data[$fila][$columna].'<br>';
+
+            }
+        }
+
+
+        $i = 1;
+
+        //formando las filas
+        $data[0][0] = "REQUISITOS";
+        foreach ($requisitos->unique('Perfil') as $requisito) {
+            $data[$i][0] = $requisito->perfil->Descripcion;
+            $i++;
+        }
+
+
+
+
         $i = 1;
         foreach ($uniqueRequisitos as $requisito) {
             $data[0][$i] = 'DESDE ' . $requisito->EdadInicial . ' AÑOS HASTA ' . $requisito->EdadFinal . ' AÑOS';
             $i++;
         }
+
 
         $i = 1;
         foreach ($requisitos->unique('Perfil') as $requisito) {

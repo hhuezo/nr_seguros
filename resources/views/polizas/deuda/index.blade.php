@@ -20,31 +20,42 @@
             <table id="datatable" class="table table-striped table-bordered">
                 <thead>
                     <tr>
-                        <th>Nombre</th>
+                        <th>Numero Poliza</th>
+                        <th>Asegurado</th>
                         <th>Aseguradora</th>
-                        <th>Contacto</th>
                         <th>Vendedor</th>
+                        <th>Estado</th>
                         <th>Opciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($deuda as $obj)
                     <tr>
-                        @if($obj->Cliente)
+                        <td>{{ $obj->NumeroPoliza }}</td>
+                        @isset($obj->Asegurado)
                         <td>{{ $obj->clientes->Nombre }}</td>
                         @else
                         <td></td>
                         @endif
+                        @isset($obj->Aseguradora)
                         <td>{{ $obj->aseguradoras->Nombre }}</td>
-                        <td>{{ $obj->ejecutivos->Nombre }}</td>
-                        @if ($obj->Activo == 1)
-                        <td align="center"><input type="checkbox" checked></td>
                         @else
-                        <td align="center"><input type="checkbox"></td>
+                        <td></td>
                         @endif
+                        @isset($obj->Ejecutivo)
+                        <td>{{ $obj->ejecutivos->Nombre }}</td>
+                        @else
+                        <td></td>
+                        @endif   
+                        @isset($obj->EstadoPoliza)
+                        <td>{{ $obj->estadoPolizas->Nombre }}</td>
+                        @else
+                        <td></td>
+                        @endif
+                       
                         <td align="center">
 
-                           @if($obj->Configuracion == 1)
+                            @if($obj->Configuracion == 1)
                             <a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}/edit" class="on-default edit-row">
                                 <i class="fa fa-pencil fa-lg"></i></a>
                             @else
@@ -54,10 +65,10 @@
                             &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
                             @can('delete userss')
                             &nbsp;&nbsp;<a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}/renovar" class="on-default edit-row"><i class="fa fa-refresh fa-lg"></i></a>
-                            
+
                             &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
 
-                            
+
                             @endcan
                         </td>
                     </tr>

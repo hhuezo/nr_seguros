@@ -198,7 +198,7 @@
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label" align="right">Concepto</label>
-                                    <textarea class="form-control" name="Concepto" row="3" col="4" required>{{ $deuda->Concepto}}</textarea>
+                                    <textarea class="form-control" name="Concepto" row="3" col="4"  >{{ $deuda->Concepto}}</textarea>
                                 </div>
                                 <div class="col-sm-4 ocultar" style="display: none !important;">
                                     <br>
@@ -222,12 +222,12 @@
                                 <div class="col-sm-4" align="center">
                                     <br>
                                     <label class="control-label" align="center">Vida</label>
-                                    <input id="Vida" type="checkbox" class="js-switch" />
+                                    <input id="Vida" type="checkbox" class="js-switch"  {{$deuda->Vida <> '' ? 'checked': ''}} />
                                 </div>
                                 <div class="col-sm-4" align="center">
                                     <br>
                                     <label class="control-label" align="center">Desempleo</label>
-                                    <input id="Desempleo" type="checkbox" class="js-switch" />
+                                    <input id="Desempleo" type="checkbox" class="js-switch"  {{$deuda->Desempleo <> '' ? 'checked': ''}} />
                                 </div>
                                 <div class="col-sm-12">
                                     &nbsp;
@@ -238,17 +238,17 @@
                                 </div>
                                 <div class="col-sm-2"><br>
                                     <label class="control-label" align="right">¿IVA incluido?</label>
-                                    <input name="ComisionIva" id="ComisionIva" type="checkbox" class="js-switch">
+                                    <input name="ComisionIva" id="ComisionIva" type="checkbox" class="js-switch" {{$deuda->ComisionIva == 1 ? 'checked': ''}}>
                                 </div>
                                 <div class="col-sm-4">
-                                    <div id="poliza_vida" style="display: none;">
+                                    <div id="poliza_vida" style="display: {{$deuda->Vida <> '' ? 'block': 'none'}};">
                                         <label class="control-label">Numero de Poliza Vida</label>
                                         <input name="Vida" type="text" class="form-control" value="{{$deuda->Vida}}" />
                                     </div>
 
                                 </div>
                                 <div class="col-sm-4">
-                                    <div id="poliza_desempleo" style="display: none;">
+                                    <div id="poliza_desempleo" style="display:  {{$deuda->Desempleo <> '' ? 'block': 'none'}};">
                                         <label class="control-label">Numero de Poliza Desempleo</label>
                                         <input name="Desempleo" type="text" class="form-control" value="{{$deuda->Desempleo}}" />
                                     </div>
@@ -545,13 +545,15 @@
                             </form>
                         </div>
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <table class="table table-striped table-bordered">
-                                @for ($i = 0;$i<count($data);$i++) <tr style="width: 25%;">
-                                    @for ($j = 0;$j<count($data[0]);$j++) <td> {{$data[$i][$j]}}</td>
+                        <table class="table table-striped table-bordered">
+                                @for ($i = 0;$i<count($data);$i++)
+                                    <tr style="width: 25%;">
+                                        @for ($j = 0;$j<count($data[0]);$j++)
+                                        <td> {{$data[$i][$j] != 0 ? $data[$i][$j] : ''}}</td>
                                         @endfor
-                                        </tr>
+                                    </tr>
 
-                                        @endfor
+                                @endfor
 
                             </table>
 

@@ -48,14 +48,16 @@
                         <form action="{{ url('polizas/deuda') }}" method="POST">
                             @csrf
                             <div class="x_content" style="font-size: 12px;">
-                                <div class="col-sm-4">
-                                    <label class="control-label" align="right">Número de Póliza</label>
-                                    <input class="form-control" name="NumeroPoliza" id="NumeroPoliza" type="text" value="{{ old('NumeroPoliza') }}" required>
-                                </div>
-                                
-                                <div class="col-sm-4" style="display: none !important;">
-                                    <label class="control-label" align="right">Código</label>
-                                    <input class="form-control" name="Codigo" type="text" value="{{ $ultimo }}" readonly>
+                                <div class="col-sm-12 row">
+                                    <div class="col-sm-4 ">
+                                        <label class="control-label" align="right">Número de Póliza</label>
+                                        <input class="form-control" name="NumeroPoliza" id="NumeroPoliza" type="text" value="{{ old('NumeroPoliza') }}" required>
+                                    </div>
+
+                                    <div class="col-sm-4" style="display: none !important;">
+                                        <label class="control-label" align="right">Código</label>
+                                        <input class="form-control" name="Codigo" type="text" value="{{ $ultimo }}" readonly>
+                                    </div>
                                 </div>
                                 <div class="col-sm-8">
                                     <label class="control-label" align="right">Aseguradora</label>
@@ -152,7 +154,7 @@
                                     <textarea class="form-control" name="Concepto" row="3" col="4" value="{{ old('Concepto') }}" required> </textarea>
                                 </div>
 
-                                <div class="col-sm-4 ocultar" style="display: none !important;" >
+                                <div class="col-sm-4 ocultar" style="display: none !important;">
                                     <br>
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                         <input type="radio" name="tipoTasa" id="Mensual" value="1" checked>
@@ -186,7 +188,7 @@
                                 </div>
                                 <div class="col-sm-2">
                                     <label class="control-label" align="right">% Tasa de Comision </label>
-                                    <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" value="{{ $deuda->TasaComision }}">
+                                    <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any">
                                 </div>
                                 <div class="col-sm-2"><br>
                                     <label class="control-label" align="right">¿IVA incluido?</label>
@@ -259,7 +261,30 @@
             }
         })
 
+        $("#Asegurado").change(function() {
+            // alert(document.getElementById('Asegurado').value);
+            $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
+            var parametros = {
+                "Cliente": document.getElementById('Asegurado').value
+            };
+            $.ajax({
+                type: "get",
+                //ruta para obtener el horario del doctor
+                url: "{{ url('get_cliente') }}",
+                data: parametros,
+                success: function(data) {
+                    console.log(data);
+                    document.getElementById('Nit').value = data.Nit;
+                    // if (data.TipoContribuyente == 1) {
+                    //     document.getElementById('Retencion').setAttribute("readonly", true);
+                    //     document.getElementById('Retencion').value = 0;
+                    //     calculoCCF();
+                    // }
 
+
+                }
+            });
+        });
 
 
         $("#Aseguradora").change(function() {
