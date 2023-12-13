@@ -260,6 +260,7 @@
                         <div class="x_title"> &nbsp;
                         </div>
                         <form action="{{url('agregar_credito')}}" method="post">
+<<<<<<< HEAD
                             <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                                 <h4>&nbsp;&nbsp; Tasa Diferenciada<small></small>
                                 </h4>
@@ -287,6 +288,9 @@
                             </div>
 
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">&nbsp;</div>
+=======
+                            @csrf
+>>>>>>> 612a847 (Update show.blade.php)
                             <div class="col-lg-1 col-md-1 col-sm-12 col-xs-12">
 
                             </div>
@@ -466,6 +470,7 @@
                     <div role="tabpanel" class="tab-pane fade {{$tab == 3 ? 'active in':''}}" id="tab_content3" aria-labelledby="asegurabilidad-tab">
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <form action="{{ url('datos_asegurabilidad') }}" method="POST">
+                                @csrf
                                 <div class="modal-header">
                                     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
                                         <h5 class="modal-title" id="exampleModalLabel">Tabla de requisitos </h5>
@@ -756,6 +761,7 @@
                 document.getElementById('MontoFinal3').value = "";
             }
         }
+<<<<<<< HEAD
 
     });
 
@@ -906,3 +912,7 @@
     }
 </script>
 @endsection
+=======
+    </script>
+    @endsection
+>>>>>>> 612a847 (Update show.blade.php)
