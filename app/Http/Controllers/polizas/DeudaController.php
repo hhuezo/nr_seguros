@@ -279,37 +279,13 @@ class DeudaController extends Controller
         $requisitos = DeudaRequisitos::where('Activo', 1)->where('Deuda', $id)->get();
 
 
-        //formando las columnas
+        //formando encabezados
+        $data[0][0] = "REQUISITOS";
+
+        $i=1;
         $uniqueRequisitos = $requisitos->unique(function ($item) {
             return $item->EdadInicial . '-' . $item->EdadFinal;
         });
-
-        // dd($uniqueRequisitos);
-
-        $num_columnas = count($uniqueRequisitos);
-
-        for ($fila = 0; $fila <= $num_columnas; $fila++) {
-            for ($columna = 0; $columna <= $num_columnas; $columna++) {
-
-                //echo $fila.' '.$columna.'<br>';
-                $data[$fila][$columna] = "0";
-                //echo $fila.' '.$columna.' '.$data[$fila][$columna].'<br>';
-
-            }
-        }
-
-
-        $i = 1;
-
-        //formando las filas
-        $data[0][0] = "REQUISITOS";
-        foreach ($requisitos->unique('Perfil') as $requisito) {
-            $data[$i][0] = $requisito->perfil->Descripcion;
-            $i++;
-        }
-
-
-
 
         $i = 1;
         foreach ($uniqueRequisitos as $requisito) {
@@ -318,20 +294,33 @@ class DeudaController extends Controller
         }
 
 
+        $i=1;
+        foreach ($requisitos->unique('Perfil') as $requisito) {
+            $data[$i][0] = $requisito->perfil->Descripcion;
+            $j=1;
+            for($j=1;$j<count($data[0]);$j++)
+            {
+                $data[$i][$j] = "";
+            }
+            $i++;
+        }
+
         $i = 1;
         foreach ($requisitos->unique('Perfil') as $requisito) {
-
-            $j = 1;
             $records = DeudaRequisitos::where('Activo', 1)->where('Deuda', $id)->where('Perfil', $requisito->Perfil)->get();
 
-            foreach ($records as $record) {
-                $data[$i][$j] = 'Desde $' . $record->MontoInicial . ' HASTA $' . $record->MontoFinal;
-
-                $j++;
+            foreach($records as $record)
+            {
+                $valorBuscado = 'DESDE ' . $record->EdadInicial . ' AÑOS HASTA ' . $record->EdadFinal . ' AÑOS';
+                $columnaEncontrada = array_search($valorBuscado, $data[0]);
+                $data[$i][$columnaEncontrada] = 'Desde $' . $record->MontoInicial . ' HASTA $' . $record->MontoFinal;
             }
 
             $i++;
         }
+
+
+
         $deuda = Deuda::findOrFail($id);
         $tab = 2;
         $aseguradora = Aseguradora::where('Activo', 1)->get();

@@ -549,7 +549,7 @@
                                 @for ($i = 0;$i<count($data);$i++)
                                     <tr style="width: 25%;">
                                         @for ($j = 0;$j<count($data[0]);$j++)
-                                        <td> {{$data[$i][$j] != 0 ? $data[$i][$j] : ''}}</td>
+                                        <td> {{$data[$i][$j]}}</td>
                                         @endfor
                                     </tr>
 
