@@ -2,6 +2,7 @@
 
 namespace App\Models\polizas;
 
+use App\Models\catalogo\Perfil;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,21 +17,22 @@ class DeudaRequisitos extends Model
 
 
     protected $fillable = [
-        'Poliza',
-        'Requisito',
+        'Deuda',
+        'Perfil',
         'EdadInicial',
         'EdadFinal',
         'MontoInicial',
         'MontoFinal',
-    
+        'Activo'
+
     ];
 
     protected $guarded = [];
 
 
-    public function poliza()
+    public function perfil()
     {
-        return $this->belongsTo('App\Models\polizas\Deuda', 'Poliza', 'Id');
+        return $this->belongsTo(Perfil::class, 'Perfil', 'Id');
     }
 
 }

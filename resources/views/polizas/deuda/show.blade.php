@@ -6,6 +6,18 @@
     <div class="clearfix"></div>
     <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
+            <table>
+            @for ($i = 0;$i<count($data);$i++)
+
+            <tr>
+                @for ($j = 0;$j<count($data[0]);$j++)
+                    <td> {{$data[$i][$j]}}</td>
+                @endfor
+            </tr>
+
+            @endfor
+
+        </table>
 
             <div class="x_title">
                 <h2>Nuevo Poliza de Deuda &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; VIDE - Seguro por Deuda<small></small>

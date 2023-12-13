@@ -246,11 +246,12 @@ class DeudaController extends Controller
         return view('polizas.deuda.requisitos', compact('requisitos'));
     }
 
-    public function finalizar_configuracion(Request $request){
+    public function finalizar_configuracion(Request $request)
+    {
         $deuda = Deuda::findOrFail($request->deuda);
-        if($deuda->Configuracion == 1){
+        if ($deuda->Configuracion == 1) {
             $deuda->Configuracion = 0;
-        }else{
+        } else {
             $deuda->Configuracion = 1;
         }
         $deuda->update();
@@ -267,6 +268,47 @@ class DeudaController extends Controller
      */
     public function show($id)
     {
+
+        $requisitos = DeudaRequisitos::where('Activo', 1)->where('Deuda', $id)->get();
+
+        $i = 1;
+        //formando las filas
+        $data[0][0] = "REQUISITOS";
+        foreach ($requisitos->unique('Perfil') as $requisito) {
+            $data[$i][0] = $requisito->perfil->Descripcion;
+            $i++;
+        }
+        //dd($data);
+
+
+         //formando las columnas
+        $uniqueRequisitos = $requisitos->unique(function ($item) {
+            return $item->EdadInicial . '-' . $item->EdadFinal;
+        });
+
+        $i=1;
+        foreach ($uniqueRequisitos as $requisito) {
+            $data[0][$i] = 'DESDE '. $requisito->EdadInicial.' AÑOS HASTA '.$requisito->EdadFinal.' AÑOS';
+            $i++;
+        }
+
+        $i=1;
+        foreach ($requisitos->unique('Perfil') as $requisito) {
+
+            $j = 1;
+            $records = DeudaRequisitos::where('Activo', 1)->where('Deuda', $id)->where('Perfil', $requisito->Perfil)->get();
+
+            foreach ($records as $record)
+            {
+                $data[$i][$j] = 'Desde $'.$record->MontoInicial.' HASTA $'.$record->MontoFinal;
+
+                $j++;
+            }
+
+            $i++;
+        }
+
+
         $deuda = Deuda::findOrFail($id);
         $tab = 2;
         $aseguradora = Aseguradora::where('Activo', 1)->get();
@@ -276,12 +318,14 @@ class DeudaController extends Controller
         $estadoPoliza = EstadoPoliza::where('Activo', 1)->get();
         $tipoCobro = TipoCobro::where('Activo', 1)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
-        $creditos = DeudaCredito::where('Activo', 1)->where('Deuda',$id)->get();
-        $requisitos = DeudaRequisitos::where('Activo',1)->where('Deuda',$id)->get();
+        $creditos = DeudaCredito::where('Activo', 1)->where('Deuda', $id)->get();
+        $requisitos = DeudaRequisitos::where('Activo', 1)->where('Deuda', $id)->get();
         $saldos = SaldoMontos::where('Activo', 1)->get();
         $planes = Plan::where('Activo', 1)->get();
-        $perfil = Perfil::where('Activo',1)->where('Aseguradora','=', $deuda->Aseguradora)->get();
-        return view('polizas.deuda.show', compact('requisitos','planes','productos','perfil','saldos','tab', 'deuda', 'aseguradora', 'cliente', 'estadoPoliza', 'ejecutivo', 'creditos', 'tipoCartera'));
+        $perfil = Perfil::where('Activo', 1)->where('Aseguradora', '=', $deuda->Aseguradora)->get();
+
+
+        return view('polizas.deuda.show', compact('requisitos', 'planes', 'productos', 'perfil', 'saldos', 'tab', 'deuda', 'aseguradora', 'cliente', 'estadoPoliza', 'ejecutivo', 'creditos', 'tipoCartera','data'));
     }
 
     public function datos_asegurabilidad(Request $request)
@@ -463,7 +507,7 @@ class DeudaController extends Controller
         $nombreMes = $fecha->locale('es')->monthName;
 
         $time = Carbon::now('America/El_Salvador');
-     
+
         $deuda = Deuda::findOrFail($request->Id);
 
         if ($request->Mes == 1) {
