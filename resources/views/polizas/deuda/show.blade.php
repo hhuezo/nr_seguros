@@ -74,22 +74,23 @@
                             @csrf
 
                             <div class="x_content" style="font-size: 12px;">
-                                <div class="col-sm-4">
-                                    <input type="hidden" value="{{$deuda->Id}}" name="Deuda">
-                                    <label class="control-label" align="right">Número de Póliza</label>
-                                    <input class="form-control" name="NumeroPoliza" id="NumeroPoliza" type="text" value="{{ $deuda->NumeroPoliza }}" required>
-                                </div>
-                                <div class="col-sm-4">
-                                    <label class="control-label" align="right">Nit</label>
-                                    <input class="form-control" name="Nit" id="Nit" type="text" value="{{ $deuda->Nit }}" readonly>
-                                </div>
-                                <div class="col-sm-4">
-                                    <label class="control-label" align="right">Código</label>
-                                    <input class="form-control" name="Codigo" type="text" value="{{ $deuda->Codigo}}" readonly>
+                                <div class="col-sm-12 row">
+                                    <div class="col-sm-4">
+                                        <input type="hidden" value="{{$deuda->Id}}" name="Deuda">
+                                        <label class="control-label" align="right">Número de Póliza</label>
+                                        <input class="form-control" name="NumeroPoliza" id="NumeroPoliza" type="text" value="{{ $deuda->NumeroPoliza }}" required>
+                                    </div>
+
+                                    <div class="col-sm-4">&nbsp;</div>
+
+                                    <div class="col-sm-4" style="display: none !important;">
+                                        <label class="control-label" align="right">Código</label>
+                                        <input class="form-control" name="Codigo" type="text" value="{{ $deuda->Codigo}}" readonly>
+                                    </div>
                                 </div>
                                 <div class="col-sm-8">
                                     <label class="control-label" align="right">Aseguradora</label>
-                                    <select name="Aseguradora" class="form-control select2" style="width: 100%" required>
+                                    <select name="Aseguradora" id="Aseguradora" class="form-control select2" style="width: 100%" required>
                                         <option value="">Seleccione...</option>
                                         @foreach ($aseguradora as $obj)
                                         @if($obj->Id == $deuda->Aseguradora)
@@ -138,6 +139,10 @@
                                         @endif
                                         @endforeach
                                     </select>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label" align="right">Nit</label>
+                                    <input class="form-control" name="Nit" id="Nit" type="text" value="{{ $deuda->Nit }}" readonly>
                                 </div>
                                 <div class="col-sm-12">
                                     &nbsp;
@@ -196,7 +201,7 @@
                                     <label class="control-label" align="right">Concepto</label>
                                     <textarea class="form-control" name="Concepto" row="3" col="4" required>{{ $deuda->Concepto}}</textarea>
                                 </div>
-                                <div class="col-sm-4">
+                                <div class="col-sm-4 ocultar" style="display: none !important;">
                                     <br>
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                         <input type="radio" name="tipoTasa" id="Mensual" value="1" {{$deuda->Mensual == 1 ? 'checked': ''}}>
@@ -228,9 +233,13 @@
                                 <div class="col-sm-12">
                                     &nbsp;
                                 </div>
-                                <div class="col-sm-4">
-                                    <label class="control-label" align="right">Tasa de Comision %</label>
+                                <div class="col-sm-2">
+                                    <label class="control-label" align="right">% Tasa de Comision </label>
                                     <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" value="{{ $deuda->TasaComision }}">
+                                </div>
+                                <div class="col-sm-2"><br>
+                                    <label class="control-label" align="right">¿IVA incluido?</label>
+                                    <input name="ComisionIva" id="ComisionIva" type="checkbox" class="js-switch">
                                 </div>
                                 <div class="col-sm-4">
                                     <div id="poliza_vida" style="display: none;">
@@ -268,6 +277,34 @@
                         <div class="x_title"> &nbsp;
                         </div>
                         <form action="{{url('agregar_credito')}}" method="post">
+                            @csrf
+                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                                <h4>&nbsp;&nbsp; Tasa Diferenciada<small></small>
+                                </h4>
+                                <label style="font-size: 12px;">* Se pueden agregar n número de tasa diferenciada</label>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                <label class="control-label" align="center">Linea de Credito</label> <br>
+                                <select name="TipoCartera" id="TipoCartera" class="form-control" required>
+                                    @foreach($tipoCartera as $obj)
+                                    <option value="{{$obj->Id}}">{{$obj->Nombre}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                <label class="control-label" align="center">Saldos y Montos</label> <br>
+                                <select name="Saldos" id="Saldos" class="form-control" required>
+                                    @foreach($saldos as $obj)
+                                    <option value="{{$obj->Id}}">{{$obj->Abreviatura}} - {{$obj->Descripcion}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                                <h4>&nbsp;&nbsp;
+                                </h4>
+                            </div>
+
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">&nbsp;</div>
                             <div class="col-lg-1 col-md-1 col-sm-12 col-xs-12">
 
                             </div>
@@ -289,7 +326,7 @@
                                     </div>
                                     <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                                         <label class="control-label" align="center">Tasa Fecha</label>
-                                        <input type="number" step="0.000001" class="form-control" name="TasaFecha" id="TasaFecha" />
+                                        <input type="number" step="any" class="form-control" name="TasaFecha" id="TasaFecha" />
                                     </div>
                                 </div>
                             </div>
@@ -316,7 +353,7 @@
                                     </div>
                                     <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                                         <label class="control-label" align="center">Tasa Monto</label>
-                                        <input type="number" step="0.000001" class="form-control" name="TasaMonto" id="TasaMonto" />
+                                        <input type="number" step="any" class="form-control" name="TasaMonto" id="TasaMonto" />
                                     </div>
                                 </div>
                             </div>
@@ -344,7 +381,7 @@
                                     </div>
                                     <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                                         <label class="control-label" align="center">Tasa Edad</label>
-                                        <input type="number" step="0.000001" class="form-control" name="TasaEdad" id="TasaEdad" />
+                                        <input type="number" step="any" class="form-control" name="TasaEdad" id="TasaEdad" />
                                     </div>
                                 </div>
                             </div>
@@ -403,13 +440,13 @@
                                             @else
                                             <td></td>
                                             @endif
-                                            <td>{{$obj->TasaFecha}} %</td>
-                                            <td>${{number_format($obj->MontoDesde,2,'.',',')}}</td>
-                                            <td>${{(number_format($obj->MontoHasta,2,'.',','))}}</td>
-                                            <td>{{$obj->TasaMonto}} %</td>
-                                            <td>{{$obj->EdadDesde}} años</td>
-                                            <td>{{$obj->EdadHasta}} años</td>
-                                            <td>{{$obj->TasaEdad}} %</td>
+                                            <td>{{isset($obj->TasaFecha) ? $obj->TasaFecha.'%' :'' }} </td>
+                                            <td>{{isset($obj->MontoDesde) ? '$'.number_format($obj->MontoDesde,2,'.',',') : ''}}</td>
+                                            <td>{{isset($obj->MontoHasta) ? '$'.number_format($obj->MontoHasta,2,'.',',') : ''}}</td>
+                                            <td>{{isset($obj->TasaMonto) ? $obj->TasaMonto.'%' :'' }} </td>
+                                            <td>{{isset($obj->EdadDesde) ? $obj->EdadDesde.'años' : ''}}</td>
+                                            <td>{{isset($obj->EdadHasta) ? $obj->EdadHasta.'años' : ''}}</td>
+                                            <td>{{isset($obj->TasaEdad) ? $obj->TasaEdad.'%' :'' }} </td>
                                             <td><a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a></td>
                                         </tr>
                                         <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-{{ $obj->Id }}">
@@ -512,7 +549,7 @@
                             @if(isset($requisitos))
                             <table>
                                 <thead>
-                                    @foreach($requisitos as $obj)     
+                                    @foreach($requisitos as $obj)
                                     <tr>
                                         <th></th>
                                         <th></th>
@@ -521,10 +558,10 @@
                                         <th></th>
                                         <th></th>
                                     </tr>
-                                    @endforeach      
+                                    @endforeach
                                 </thead>
                                 <tbody>
-                                @foreach($requisitos as $obj)
+                                    @foreach($requisitos as $obj)
                                     <tr>
                                         <th></th>
                                         <th></th>
@@ -872,19 +909,19 @@
         });
     }
 
-        function get_requisitos() {
-            var parametros = {
-                "Requisitos": document.getElementById('DataRequisitos').value,
-            };
-            $.ajax({
-                type: "get",
-                url: "{{ url('polizas/deuda/get_requisitos') }}",
-                data: parametros,
-                success: function(data) {
-                    console.log(data);
-                    $('#divRequisitos').html(data);
-                }
-            });
-        }
-    </script>
-    @endsection
+    function get_requisitos() {
+        var parametros = {
+            "Requisitos": document.getElementById('DataRequisitos').value,
+        };
+        $.ajax({
+            type: "get",
+            url: "{{ url('polizas/deuda/get_requisitos') }}",
+            data: parametros,
+            success: function(data) {
+                console.log(data);
+                $('#divRequisitos').html(data);
+            }
+        });
+    }
+</script>
+@endsection

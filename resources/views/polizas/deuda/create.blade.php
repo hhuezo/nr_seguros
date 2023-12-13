@@ -2,6 +2,11 @@
 @section('contenido')
 @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+    .ocultar {
+        display: none;
+    }
+</style>
 <div class="x_panel">
     <div class="clearfix"></div>
     <div class="row">
@@ -47,11 +52,8 @@
                                     <label class="control-label" align="right">Número de Póliza</label>
                                     <input class="form-control" name="NumeroPoliza" id="NumeroPoliza" type="text" value="{{ old('NumeroPoliza') }}" required>
                                 </div>
-                                <div class="col-sm-4">
-                                    <label class="control-label" align="right">Nit</label>
-                                    <input class="form-control" name="Nit" id="Nit" type="text" value="{{ old('Nit') }}" readonly>
-                                </div>
-                                <div class="col-sm-4">
+                                
+                                <div class="col-sm-4" style="display: none !important;">
                                     <label class="control-label" align="right">Código</label>
                                     <input class="form-control" name="Codigo" type="text" value="{{ $ultimo }}" readonly>
                                 </div>
@@ -90,6 +92,10 @@
                                         <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
                                         @endforeach
                                     </select>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label" align="right">Nit</label>
+                                    <input class="form-control" name="Nit" id="Nit" type="text" value="{{ old('Nit') }}" readonly>
                                 </div>
 
                                 <div class="col-sm-12">
@@ -146,7 +152,7 @@
                                     <textarea class="form-control" name="Concepto" row="3" col="4" value="{{ old('Concepto') }}" required> </textarea>
                                 </div>
 
-                                <div class="col-sm-4">
+                                <div class="col-sm-4 ocultar" style="display: none !important;" >
                                     <br>
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                         <input type="radio" name="tipoTasa" id="Mensual" value="1" checked>
@@ -178,11 +184,13 @@
                                 <div class="col-sm-12">
                                     &nbsp;
                                 </div>
-                                <div class="col-sm-4">
-                                    <label class="control-label" align="right">Tasa de Comision %</label>
-                                    <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" value="{{ old('TasaComision') }}">
-                                    <label class="control-label" align="right">Comision con Iva</label>
-                                    <input type="checkbox" name="IvaComision" id="IvaComision">
+                                <div class="col-sm-2">
+                                    <label class="control-label" align="right">% Tasa de Comision </label>
+                                    <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" value="{{ $deuda->TasaComision }}">
+                                </div>
+                                <div class="col-sm-2"><br>
+                                    <label class="control-label" align="right">¿IVA incluido?</label>
+                                    <input name="ComisionIva" id="ComisionIva" type="checkbox" class="js-switch">
                                 </div>
                                 <div class="col-sm-4">
                                     <div id="poliza_vida" style="display: none;">

@@ -143,6 +143,7 @@ class DeudaController extends Controller
         $deuda = new Deuda();
         $deuda->NumeroPoliza = $request->NumeroPoliza;
         $deuda->Nit = $request->Nit;
+        $deuda->Plan = $request->Planes;
         $deuda->Codigo = $request->Codigo;
         $deuda->Asegurado = $request->Asegurado;
         $deuda->Aseguradora = $request->Aseguradora;
@@ -161,6 +162,12 @@ class DeudaController extends Controller
         $deuda->Vida = $request->Vida;
         $deuda->Mensual = $request->tipoTasa;
         $deuda->Desempleo = $request->Desempleo;
+        if($request->ComisionIva == 'on'){
+            $deuda->ComisionIva = 1;
+        }else{
+            $deuda->ComisionIva = 0;
+        }
+        $deuda->Usuario = auth()->user()->id;
         $deuda->FechaIngreso = Carbon::now('America/El_Salvador');
         $deuda->save();
 
@@ -246,11 +253,12 @@ class DeudaController extends Controller
         return view('polizas.deuda.requisitos', compact('requisitos'));
     }
 
-    public function finalizar_configuracion(Request $request){
+    public function finalizar_configuracion(Request $request)
+    {
         $deuda = Deuda::findOrFail($request->deuda);
-        if($deuda->Configuracion == 1){
+        if ($deuda->Configuracion == 1) {
             $deuda->Configuracion = 0;
-        }else{
+        } else {
             $deuda->Configuracion = 1;
         }
         $deuda->update();
@@ -276,12 +284,12 @@ class DeudaController extends Controller
         $estadoPoliza = EstadoPoliza::where('Activo', 1)->get();
         $tipoCobro = TipoCobro::where('Activo', 1)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
-        $creditos = DeudaCredito::where('Activo', 1)->where('Deuda',$id)->get();
-        $requisitos = DeudaRequisitos::where('Activo',1)->where('Deuda',$id)->get();
+        $creditos = DeudaCredito::where('Activo', 1)->where('Deuda', $id)->get();
+        $requisitos = DeudaRequisitos::where('Activo', 1)->where('Deuda', $id)->get();
         $saldos = SaldoMontos::where('Activo', 1)->get();
         $planes = Plan::where('Activo', 1)->get();
-        $perfil = Perfil::where('Activo',1)->where('Aseguradora','=', $deuda->Aseguradora)->get();
-        return view('polizas.deuda.show', compact('requisitos','planes','productos','perfil','saldos','tab', 'deuda', 'aseguradora', 'cliente', 'estadoPoliza', 'ejecutivo', 'creditos', 'tipoCartera'));
+        $perfil = Perfil::where('Activo', 1)->where('Aseguradora', '=', $deuda->Aseguradora)->get();
+        return view('polizas.deuda.show', compact('requisitos', 'planes', 'productos', 'perfil', 'saldos', 'tab', 'deuda', 'aseguradora', 'cliente', 'estadoPoliza', 'ejecutivo', 'creditos', 'tipoCartera'));
     }
 
     public function datos_asegurabilidad(Request $request)
@@ -304,6 +312,7 @@ class DeudaController extends Controller
 
         $deuda = Deuda::findOrFail($request->Deuda);
         $deuda->NumeroPoliza = $request->NumeroPoliza;
+        $deuda->Plan = $request->Planes;
         $deuda->Nit = $request->Nit;
         $deuda->Codigo = $request->Codigo;
         $deuda->Asegurado = $request->Asegurado;
@@ -321,8 +330,15 @@ class DeudaController extends Controller
         $deuda->FechaIngreso = $request->FechaIngreso;
         $deuda->Activo = 1;
         $deuda->Vida = $request->Vida;
+        $deuda->Desempleo = $request->Desempleo;
         $deuda->Mensual = $request->tipoTasa;
-        $deuda->FechaIngreso = Carbon::now('America/El_Salvador');
+        if($request->ComisionIva == 'on'){
+            $deuda->ComisionIva = 1;
+        }else{
+            $deuda->ComisionIva = 0;
+        }
+        $deuda->Usuario = auth()->user()->id;
+       // $deuda->FechaIngreso = Carbon::now('America/El_Salvador');
         $deuda->update();
 
         alert()->success('El registro de poliza ha sido ingresado correctamente');
@@ -333,6 +349,7 @@ class DeudaController extends Controller
     {
         $credito = new DeudaCredito();
         $credito->Deuda = $request->Deuda;
+        $credito->Saldos = $request->Saldos;
         $credito->FechaDesde = $request->FechaDesde;
         $credito->FechaHasta = $request->FechaHasta;
         $credito->MontoDesde = $request->MontoDesde;
@@ -446,7 +463,7 @@ class DeudaController extends Controller
         $nombreMes = $fecha->locale('es')->monthName;
 
         $time = Carbon::now('America/El_Salvador');
-     
+
         $deuda = Deuda::findOrFail($request->Id);
 
         if ($request->Mes == 1) {
