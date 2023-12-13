@@ -288,32 +288,15 @@ class DeudaController extends Controller
     {
         $asegurabilidad = new DeudaRequisitos();
         $asegurabilidad->Deuda = $request->Deuda;
-        $asegurabilidad->Requisito = $request->Requisito;
+        $asegurabilidad->Perfil = $request->Perfiles;
         $asegurabilidad->EdadInicial = $request->EdadInicial;
         $asegurabilidad->EdadFinal = $request->EdadFinal;
         $asegurabilidad->MontoInicial = $request->MontoInicial;
         $asegurabilidad->MontoFinal = $request->MontoFinal;
         $asegurabilidad->save();
-
-        $asegurabilidad = new DeudaRequisitos();
-        $asegurabilidad->Deuda = $request->Deuda;
-        $asegurabilidad->Requisito = $request->Requisito2;
-        $asegurabilidad->EdadInicial = $request->EdadInicial2;
-        $asegurabilidad->EdadFinal = $request->EdadFinal2;
-        $asegurabilidad->MontoInicial = $request->MontoInicial2;
-        $asegurabilidad->MontoFinal = $request->MontoFinal2;
-        $asegurabilidad->save();
-
-        $asegurabilidad = new DeudaRequisitos();
-        $asegurabilidad->Deuda = $request->Deuda;
-        $asegurabilidad->Requisito = $request->Requisito3;
-        $asegurabilidad->EdadInicial = $request->EdadInicial3;
-        $asegurabilidad->EdadFinal = $request->EdadFinal3;
-        $asegurabilidad->MontoInicial = $request->MontoInicial3;
-        $asegurabilidad->MontoFinal = $request->MontoFinal3;
-        $asegurabilidad->save();
+        $tab = 3;
         alert()->success('El registro de poliza ha sido ingresado correctamente');
-        return redirect('polizas/deuda/' . $request->Deuda);
+        return redirect('polizas/deuda/' . $request->Deuda)->with('tab');
     }
 
     public function actualizar(Request $request)

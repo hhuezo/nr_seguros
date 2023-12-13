@@ -460,7 +460,7 @@
                                     <div class="box-body">
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="form-group row">
-                                                <input type="hidden" name="Deuda" value="{{$deuda->Deuda}}">
+                                                <input type="hidden" name="Deuda" value="{{$deuda->Id}}">
                                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Perfiles</label>
                                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                                     <select name="Perfiles" id="Perfiles" class="form-control">
@@ -475,7 +475,7 @@
                                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad
                                                     inicial</label>
                                                 <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                                    <input class="form-control" id="EdadInicial" value="1" type="text" readonly name="EdadInicial">
+                                                    <input class="form-control" id="EdadInicial" value="1" type="text" name="EdadInicial">
                                                 </div>
                                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad
                                                     final</label>
@@ -508,11 +508,11 @@
                                 </div>
                             </form>
                         </div>
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            @if(isset($creditos))
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">{{$requisitos}}
+                            @if(isset($requisitos))
                             <table>
                                 <thead>
-                                    @foreach($creditos as $obj)     
+                                    @foreach($requisitos as $obj)     
                                     <tr>
                                         <th></th>
                                         <th></th>
@@ -524,7 +524,7 @@
                                     @endforeach      
                                 </thead>
                                 <tbody>
-                                @foreach($creditos as $obj)
+                                @foreach($requisitos as $obj)
                                     <tr>
                                         <th></th>
                                         <th></th>
