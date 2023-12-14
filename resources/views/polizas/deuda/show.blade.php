@@ -7,6 +7,7 @@
     <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
             <div class="x_title">
+                {{session('tab')}}
                 <h2>Nuevo Poliza de Deuda &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; VIDE - Seguro por Deuda<small></small>
                 </h2>
                 <ul class="nav navbar-right panel_toolbox">
@@ -57,18 +58,18 @@
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
             <div class="" role="tabpanel" data-example-id="togglable-tabs">
                 <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-                    <li role="presentation" class="{{$tab == 1 ? 'active':''}}"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Datos de Póliza</a>
+                    <li role="presentation" class="{{session('tab') == 1 ? 'active':''}}"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Datos de Póliza</a>
                     </li>
-                    <li role="presentation" class="{{$tab == 2 ? 'active':''}} "><a href="#tab_content2" id="lineas-tab" role="tab" data-toggle="tab" aria-expanded="true">Tasa diferencia</a>
+                    <li role="presentation" class="{{session('tab') == 2 ? 'active':''}} "><a href="#tab_content2" id="lineas-tab" role="tab" data-toggle="tab" aria-expanded="true">Tasa diferencia</a>
                     </li>
-                    <li role="presentation" class="{{$tab == 3 ? 'active':''}}"><a href="#tab_content3" id="asegurabilidad-tab" role="tab" data-toggle="tab" aria-expanded="true">Requisitos Minimos de Asegurabilidad </a>
+                    <li role="presentation" class="{{session('tab') == 3 ? 'active':''}}"><a href="#tab_content3" id="asegurabilidad-tab" role="tab" data-toggle="tab" aria-expanded="true">Requisitos Minimos de Asegurabilidad </a>
                     </li>
 
 
                 </ul>
 
                 <div id="myTabContent" class="tab-content">
-                    <div role="tabpanel" class="tab-pane fade {{$tab == 1 ? 'active in':''}}" id="tab_content1" aria-labelledby="home-tab">
+                    <div role="tabpanel" class="tab-pane fade {{session('tab') == 1 ? 'active in':''}}" id="tab_content1" aria-labelledby="home-tab">
                         <form action="{{ url('polizas/deuda/actualizar') }}" method="POST">
                             @csrf
 
@@ -272,7 +273,7 @@
                             </div>
                         </form>
                     </div>
-                    <div role="tabpanel" class="tab-pane fade {{$tab == 2 ? 'active in':''}}" id="tab_content2" aria-labelledby="lineas-tab">
+                    <div role="tabpanel" class="tab-pane fade {{session('tab') == 2 ? 'active in':''}}" id="tab_content2" aria-labelledby="lineas-tab">
                         <div class="x_title"> &nbsp;
                         </div>
                         <form action="{{url('agregar_credito')}}" method="post">
@@ -480,7 +481,7 @@
                             </div>
                         </div>
                     </div>
-                    <div role="tabpanel" class="tab-pane fade {{$tab == 3 ? 'active in':''}}" id="tab_content3" aria-labelledby="asegurabilidad-tab">
+                    <div role="tabpanel" class="tab-pane fade {{session('tab')== 3 ? 'active in':''}}" id="tab_content3" aria-labelledby="asegurabilidad-tab">
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <form action="{{ url('datos_asegurabilidad') }}" method="POST">
                                 @csrf

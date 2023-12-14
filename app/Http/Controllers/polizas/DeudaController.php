@@ -273,8 +273,12 @@ class DeudaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
+
+        if (!session()->has('tab')) {
+            session(['tab' => 2]);
+        }
 
         $requisitos = DeudaRequisitos::where('Activo', 1)->where('Deuda', $id)->get();
 
@@ -282,7 +286,7 @@ class DeudaController extends Controller
         //formando encabezados
         $data[0][0] = "REQUISITOS";
 
-        $i=1;
+        $i = 1;
         $uniqueRequisitos = $requisitos->unique(function ($item) {
             return $item->EdadInicial . '-' . $item->EdadFinal;
         });
@@ -294,12 +298,11 @@ class DeudaController extends Controller
         }
 
 
-        $i=1;
+        $i = 1;
         foreach ($requisitos->unique('Perfil') as $requisito) {
             $data[$i][0] = $requisito->perfil->Descripcion;
-            $j=1;
-            for($j=1;$j<count($data[0]);$j++)
-            {
+            $j = 1;
+            for ($j = 1; $j < count($data[0]); $j++) {
                 $data[$i][$j] = "";
             }
             $i++;
@@ -309,11 +312,10 @@ class DeudaController extends Controller
         foreach ($requisitos->unique('Perfil') as $requisito) {
             $records = DeudaRequisitos::where('Activo', 1)->where('Deuda', $id)->where('Perfil', $requisito->Perfil)->get();
 
-            foreach($records as $record)
-            {
+            foreach ($records as $record) {
                 $valorBuscado = 'DESDE ' . $record->EdadInicial . ' AÑOS HASTA ' . $record->EdadFinal . ' AÑOS';
                 $columnaEncontrada = array_search($valorBuscado, $data[0]);
-                $data[$i][$columnaEncontrada] = 'Desde $' . $record->MontoInicial . ' HASTA $' . $record->MontoFinal;
+                $data[$i][$columnaEncontrada] = 'Desde $' . number_format($record->MontoInicial, 2, '.', ',') . ' HASTA $' . number_format($record->MontoFinal, 2, '.', ',');
             }
 
             $i++;
@@ -322,7 +324,8 @@ class DeudaController extends Controller
 
 
         $deuda = Deuda::findOrFail($id);
-        $tab = 2;
+
+
         $aseguradora = Aseguradora::where('Activo', 1)->get();
         $productos = Producto::where('Activo', 1)->get();
         $cliente = Cliente::where('Activo', 1)->get();
@@ -331,11 +334,11 @@ class DeudaController extends Controller
         $tipoCobro = TipoCobro::where('Activo', 1)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
         $creditos = DeudaCredito::where('Activo', 1)->where('Deuda', $id)->get();
-      //  $requisitos = DeudaRequisitos::where('Activo', 1)->where('Deuda', $id)->get();
+        //  $requisitos = DeudaRequisitos::where('Activo', 1)->where('Deuda', $id)->get();
         $saldos = SaldoMontos::where('Activo', 1)->get();
         $planes = Plan::where('Activo', 1)->get();
         $perfil = Perfil::where('Activo', 1)->where('Aseguradora', '=', $deuda->Aseguradora)->get();
-        return view('polizas.deuda.show', compact('requisitos', 'planes', 'productos', 'perfil', 'saldos', 'tab', 'deuda', 'aseguradora', 'cliente', 'estadoPoliza', 'ejecutivo', 'creditos', 'tipoCartera','data'));
+        return view('polizas.deuda.show', compact('requisitos', 'planes', 'productos', 'perfil', 'saldos',  'deuda', 'aseguradora', 'cliente', 'estadoPoliza', 'ejecutivo', 'creditos', 'tipoCartera', 'data'));
     }
 
     public function datos_asegurabilidad(Request $request)
@@ -348,9 +351,9 @@ class DeudaController extends Controller
         $asegurabilidad->MontoInicial = $request->MontoInicial;
         $asegurabilidad->MontoFinal = $request->MontoFinal;
         $asegurabilidad->save();
-        $tab = 3;
+        session(['tab' => 3]);
         alert()->success('El registro de poliza ha sido ingresado correctamente');
-        return redirect('polizas/deuda/' . $request->Deuda)->with('tab');
+        return redirect('polizas/deuda/' . $request->Deuda);
     }
 
     public function actualizar(Request $request)
@@ -387,6 +390,8 @@ class DeudaController extends Controller
         // $deuda->FechaIngreso = Carbon::now('America/El_Salvador');
         $deuda->update();
 
+        session(['tab' => 1]);
+
         alert()->success('El registro de poliza ha sido ingresado correctamente');
         return redirect('polizas/deuda/' . $deuda->Id);
     }
@@ -410,6 +415,8 @@ class DeudaController extends Controller
         $credito->Usuario = auth()->user()->id;
         $credito->save();
 
+        session(['tab' => 2]);
+
         alert()->success('El registro de poliza ha sido ingresado correctamente');
         return redirect('polizas/deuda/' . $request->Deuda);
     }
@@ -419,7 +426,7 @@ class DeudaController extends Controller
         $credito = DeudaCredito::findOrFail($id);
         $credito->Activo = 0;
         $credito->update();
-
+        session(['tab' => 2]);
         alert()->success('El registro de poliza ha sido ingresado correctamente');
         return redirect('polizas/deuda/' . $credito->Deuda);
     }
