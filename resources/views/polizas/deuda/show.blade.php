@@ -7,7 +7,6 @@
     <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
             <div class="x_title">
-                {{session('tab')}}
                 <h2>Nuevo Poliza de Deuda &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; VIDE - Seguro por Deuda<small></small>
                 </h2>
                 <ul class="nav navbar-right panel_toolbox">
