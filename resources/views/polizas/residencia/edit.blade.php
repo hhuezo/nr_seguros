@@ -84,7 +84,7 @@
                                 <div class="col-sm-2">
                                     <label class="control-label">Plan</label>
                                     <input type="text" value="{{ $residencia->planes->Nombre }}" class="form-control" readonly>
-                                </div> 
+                                </div>
                                 <div class="col-md-4 ocultar">
                                     <label class="control-label">Cálculo Diario</label>
                                     <input type="checkbox" id="Diario" class="form-control" readonly @if ($residencia->aseguradoras->Diario == 1) checked @endif disabled>
@@ -104,7 +104,7 @@
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label">Vigencia Hasta</label>
-                                    <input class="form-control" name="VigenciaHasta"  type="text" value="{{ date('d/m/Y', strtotime($residencia->VigenciaHasta)) }}" readonly>
+                                    <input class="form-control" name="VigenciaHasta" type="text" value="{{ date('d/m/Y', strtotime($residencia->VigenciaHasta)) }}" readonly>
                                     <input type="hidden" id="VigenciaHasta" value="{{ $residencia->VigenciaHasta }}">
                                 </div>
                                 <div class="col-sm-4">
@@ -231,94 +231,91 @@
                         </div>
 
                         <div>
-                            @if ($detalle->count() > 0)
-
-                            @endif
                             <br>
                             <table id="tblCobros" width="100%" class="table table-striped">
                                 <thead>
-                                <tr>
-                                    <th style="text-align: center;">Póliza</th>
-                                    <th style="text-align: center;">Fecha Inicio <br> Vigencia</th>
-                                    <th style="text-align: center;">Fecha Final <br> Vigencia</th>
-                                    <th style="text-align: center;">Cuota</th>
-                                    <th style="text-align: center;">Correlativo</th>
-                                    <th style="text-align: center;">Fecha de <br> Vencimiento</th>
-                                    <th style="text-align: center;">Fecha de <br> Aplicación de pago</th>
-                                    <th style="text-align: center;">Valor (US$)</th>
-                                    <th style="text-align: center;">Estatus</th>
-                                    <th style="text-align: center;">Opciones</th>
-                                </tr>
+                                    <tr>
+                                        <th style="text-align: center;">Póliza</th>
+                                        <th style="text-align: center;">Fecha Inicio <br> Vigencia</th>
+                                        <th style="text-align: center;">Fecha Final <br> Vigencia</th>
+                                        <th style="text-align: center;">Cuota</th>
+                                        <th style="text-align: center;">Correlativo</th>
+                                        <th style="text-align: center;">Fecha de <br> Vencimiento</th>
+                                        <th style="text-align: center;">Fecha de <br> Aplicación de pago</th>
+                                        <th style="text-align: center;">Valor (US$)</th>
+                                        <th style="text-align: center;">Estatus</th>
+                                        <th style="text-align: center;">Opciones</th>
+                                    </tr>
                                 </thead>
                                 @php
-                                    $total = 0;
+                                $total = 0;
                                 @endphp
                                 <tbody>
-                                  @foreach ($detalle as $obj)
-                                  <tr>
-                                      @php
-                                      $fileUrl = asset($obj->ExcelURL);
-                                    @endphp
-                                    <td  style="text-align: center;">{{ $residencia->NumeroPoliza }}</td>
-                                    <td  style="text-align: center;">{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
-                                    <td  style="text-align: center;">{{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
-                                    <td  style="text-align: center;">01/01</td>
-                                    @if($obj->NumeroCorrelativo)
-                                    <td  style="text-align: center;">{{$obj->NumeroCorrelativo}}</td>
-                                    @else
-                                    <td></td>
-                                    @endif
-                                    <td  style="text-align: center;">{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }} </td>
-                                    @if($obj->PagoAplicado)
-                                    <td  style="text-align: center;">{{ \Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') }}</td>
-                                    @else
-                                    <td></td>
-                                    @endif
-                                    @if($obj->Activo == 0)
-                                    <td style="text-align: right;">$0.00</td>
-                                    @else
-                                    <td style="text-align: right;">$ {{ number_format($obj->APagar, 2, '.', ',') }}
+                                    @foreach ($detalle as $obj)
+                                    <tr>
                                         @php
-                                            $total += $obj->APagar;
+                                        $fileUrl = asset($obj->ExcelURL);
                                         @endphp
-                                    </td>
-                                    @endif
-                                    @if($obj->Activo == 0)
-                                    <td  style="text-align: center;">Anulado</td>
-                                    @elseif(!$obj->PagoAplicado)
-                                    <td  style="text-align: center;">Pendiente</td>
-                                    @elseif($obj->PagoAplicado)
-                                    <td  style="text-align: center;">Pagado</td>
-                                    @else
-                                    <td  style="text-align: center;"></td>
-                                    @endif
-                                    <td style="text-align: center;">
-                                        @if($obj->Activo == 0)
-
-                                        @elseif(!$obj->ImpresionRecibo)
-                                        <a href="" target="_blank" data-target="#modal-recibo-{{ $obj->Id }}" title="Generar Recibo" data-toggle="modal"><i class="fa fa-file-text-o" aria-hidden="true"></i></a>
+                                        <td style="text-align: center;">{{ $residencia->NumeroPoliza }}</td>
+                                        <td style="text-align: center;">{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
+                                        <td style="text-align: center;">{{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
+                                        <td style="text-align: center;">01/01</td>
+                                        @if($obj->NumeroCorrelativo)
+                                        <td style="text-align: center;">{{$obj->NumeroCorrelativo}}</td>
                                         @else
-                                        <i class="fa fa-pencil fa-lg" onclick="modal_edit({{ $obj->Id }})" title="Actualizar Fechas de Cobro"></i>
+                                        <td></td>
                                         @endif
-                                        &nbsp;&nbsp;
-                                        <a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center" title="Descargar Cartera"></a>&nbsp;&nbsp;
-                                        <i data-target="#modal-view-{{ $obj->Id }}" data-toggle="modal" class="fa fa-eye" align="center" title="Ver Detalles"></i>&nbsp;&nbsp;
-                                        @if($obj->Activo == 1)
-                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal" title="Anular Cartera"><i class="fa fa-trash fa-lg"></i></a> &nbsp;&nbsp;
+                                        <td style="text-align: center;">{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }} </td>
+                                        @if($obj->PagoAplicado)
+                                        <td style="text-align: center;">{{ \Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') }}</td>
+                                        @else
+                                        <td></td>
                                         @endif
+                                        @if($obj->Activo == 0)
+                                        <td style="text-align: right;">$0.00</td>
+                                        @else
+                                        <td style="text-align: right;">$ {{ number_format($obj->APagar, 2, '.', ',') }}
+                                            @php
+                                            $total += $obj->APagar;
+                                            @endphp
+                                        </td>
+                                        @endif
+                                        @if($obj->Activo == 0)
+                                        <td style="text-align: center;">Anulado</td>
+                                        @elseif(!$obj->PagoAplicado)
+                                        <td style="text-align: center;">Pendiente</td>
+                                        @elseif($obj->PagoAplicado)
+                                        <td style="text-align: center;">Pagado</td>
+                                        @else
+                                        <td style="text-align: center;"></td>
+                                        @endif
+                                        <td style="text-align: center;">
+                                            @if($obj->Activo == 0)
+
+                                            @elseif(!$obj->ImpresionRecibo)
+                                            <a href="" target="_blank" data-target="#modal-recibo-{{ $obj->Id }}" title="Generar Recibo" data-toggle="modal"><i class="fa fa-file-text-o" aria-hidden="true"></i></a>
+                                            @else
+                                            <i class="fa fa-pencil fa-lg" onclick="modal_edit({{ $obj->Id }})" title="Actualizar Fechas de Cobro"></i>
+                                            @endif
+                                            &nbsp;&nbsp;
+                                            <a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center" title="Descargar Cartera"></a>&nbsp;&nbsp;
+                                            <i data-target="#modal-view-{{ $obj->Id }}" data-toggle="modal" class="fa fa-eye" align="center" title="Ver Detalles"></i>&nbsp;&nbsp;
+                                            @if($obj->Activo == 1)
+                                            <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal" title="Anular Cartera"><i class="fa fa-trash fa-lg"></i></a> &nbsp;&nbsp;
+                                            @endif
 
 
 
-                                    </td>
+                                        </td>
 
-                                </tr>
-                                @include('polizas.residencia.modal_edit')
-                                @endforeach
+                                    </tr>
+                                    @include('polizas.residencia.modal_edit')
+                                    @endforeach
                                 </tbody>
                                 <tfoot>
-                                <td colspan="3" style="text-align: right;"><b>Total de Poliza:</b> </td>
-                                <td colspan="5" style="text-align: right;"><b>${{number_format($total, 2, '.', ',')}}</b> </td>
-                                <td colspan="2"></td>
+                                    <td colspan="3" style="text-align: right;"><b>Total de Poliza:</b> </td>
+                                    <td colspan="5" style="text-align: right;"><b>${{number_format($total, 2, '.', ',')}}</b> </td>
+                                    <td colspan="2"></td>
                                 </tfoot>
                             </table>
 
@@ -389,7 +386,7 @@
                                                         inicio</label>
                                                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                                         <input class="form-control" name="Id" value="{{ $residencia->Id }}" type="hidden" required>
-                                                        <input class="form-control" type="date" name="FechaInicio" value="{{$ultimo_pago ?  date('Y-m-d', strtotime($ultimo_pago->FechaFinal)) : '' }}" {{$ultimo_pago ? 'readonly':''}}   required>
+                                                        <input class="form-control" type="date" name="FechaInicio" value="{{$ultimo_pago ?  date('Y-m-d', strtotime($ultimo_pago->FechaFinal)) : '' }}" {{$ultimo_pago ? 'readonly':''}} required>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
@@ -807,9 +804,10 @@
                                             @else
                                             Anual
                                             @endif Millar : -->
-                                            
-                                            
-                                            Tasa Anual %. </td>
+
+
+                                            Tasa Anual %.
+                                        </td>
                                         <td>
                                             <div class="col-md-9 col-sm-9 form-group has-feedback">
                                                 <input type="text" class="form-control has-feedback-left" value="@if ($ultimo_pago) {{ number_format($residencia->Tasa, 2, '.', ',') }} @else 0 @endif" readonly>
@@ -1249,7 +1247,7 @@
             </div>
 
         </div>
-    </div>tblCobros
+    </div>
 </div>
 @include('sweetalert::alert')
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
@@ -1344,7 +1342,7 @@
             var monto = Number(document.getElementById('MontoCartera').value);
             var grupal = Number(document.getElementById('LimiteGrupo').value);
             if (grupal < monto) {
-           
+
                 swal('Su monto de cartera a superado al techo establecido en la póliza');
             } else {
                 calculoPrimaCalculada();
@@ -1405,7 +1403,7 @@
                 if (document.getElementById('Anual').checked == true) { //pendiente de confirmacion
                     var tasaFinal = (tasa / 1000); /// 12
                 } else {
-                    var tasaFinal =(tasa / 1000);
+                    var tasaFinal = (tasa / 1000);
                 }
 
             } else { // sisa

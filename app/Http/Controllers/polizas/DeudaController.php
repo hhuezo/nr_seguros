@@ -438,49 +438,71 @@ class DeudaController extends Controller
      */
     public function edit($id)
     {
+        //  dd("holi");
         $deuda = Deuda::findOrFail($id);
-        $creditos = DeudaCredito::where('Deuda', $deuda->Id)->get();
-        $videuda = DeudaVida::where('Deuda', $deuda->Id)->first();
-        $requisitos = DeudaRequisitos::where('Poliza', $deuda->Id)->get();
-        $tipos_contribuyente =  TipoContribuyente::get();
-        $rutas = Ruta::where('Activo', '=', 1)->get();
-        $ubicaciones_cobro =  UbicacionCobro::where('Activo', '=', 1)->get();
-        $bombero = Bombero::where('Activo', 1)->first();
-
-        if ($bombero) {
-            $bomberos = $bombero->Valor;
+        //   dd($deuda);
+        if ($deuda->Configuracion == 0) {
+            //  dd("si");
+            //  alert()->success('La configuracion no ha sido terminada');
+            session(['tab' => 1]);
+            return redirect('polizas/deuda/' . $deuda);
         } else {
-            $bomberos = 0;
-        }
-        $aseguradora = Aseguradora::where('Activo', 1)->get();
-        $cliente = Cliente::where('Activo', 1)->get();
-        $tipoCartera = TipoCartera::where('Activo', 1)->where('Poliza', 2)->get();  //deuda
-        $estadoPoliza = EstadoPoliza::where('Activo', 1)->get();
-        $tipoCobro = TipoCobro::where('Activo', 1)->get();
-        $ejecutivo = Ejecutivo::where('Activo', 1)->get();
-        $detalle = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1)->orderBy('Id', 'desc')->get();
-        $ultimo_pago = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1)->orderBy('Id', 'desc')->first();
-        $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
+            // dd("no");
+            $creditos = DeudaCredito::where('Deuda', $deuda->Id)->get();
+            $videuda = DeudaVida::where('Deuda', $deuda->Id)->first();
+            $requisitos = DeudaRequisitos::where('Deuda', $deuda->Id)->get();
+            $tipos_contribuyente =  TipoContribuyente::get();
+            $rutas = Ruta::where('Activo', '=', 1)->get();
+            $ubicaciones_cobro =  UbicacionCobro::where('Activo', '=', 1)->get();
+            $bombero = Bombero::where('Activo', 1)->first();
 
-        return view('polizas.deuda.edit', compact(
-            'meses',
-            'detalle',
-            'videuda',
-            'deuda',
-            'creditos',
-            'requisitos',
-            'aseguradora',
-            'cliente',
-            'tipoCartera',
-            'estadoPoliza',
-            'tipoCobro',
-            'ejecutivo',
-            'tipos_contribuyente',
-            'rutas',
-            'ubicaciones_cobro',
-            'bomberos',
-            'ultimo_pago'
-        ));
+            if ($bombero) {
+                $bomberos = $bombero->Valor;
+            } else {
+                $bomberos = 0;
+            }
+            $aseguradora = Aseguradora::where('Activo', 1)->get();
+            $cliente = Cliente::where('Activo', 1)->get();
+            $tipoCartera = TipoCartera::where('Activo', 1)->where('Poliza', 2)->get();  //deuda
+            $estadoPoliza = EstadoPoliza::where('Activo', 1)->get();
+            $tipoCobro = TipoCobro::where('Activo', 1)->get();
+            $ejecutivo = Ejecutivo::where('Activo', 1)->get();
+            $productos = Producto::where('Activo', 1)->get();
+            $planes = Plan::where('Activo',1)->get();
+            $detalle = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1)->orderBy('Id', 'desc')->get();
+            $ultimo_pago = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1)->orderBy('Id', 'desc')->first();
+            $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
+
+            $ultimo_pago_fecha_final = null;
+            if ($ultimo_pago) {
+                $fecha_inicial = Carbon::parse($ultimo_pago->FechaFinal);
+                $fecha_final_temp = $fecha_inicial->addMonth();
+                $ultimo_pago_fecha_final = $fecha_final_temp->format('Y-m-d');
+            }
+
+            return view('polizas.deuda.edit', compact(
+                'ultimo_pago_fecha_final',
+                'meses',
+                'detalle',
+                'videuda',
+                'deuda',
+                'creditos',
+                'requisitos',
+                'aseguradora',
+                'cliente',
+                'tipoCartera',
+                'estadoPoliza',
+                'tipoCobro',
+                'ejecutivo',
+                'tipos_contribuyente',
+                'rutas',
+                'ubicaciones_cobro',
+                'bomberos',
+                'ultimo_pago',
+                'productos',
+                'planes'
+            ));
+        }
     }
 
     /**
