@@ -51,11 +51,12 @@
 
                         <div id="myTabContent" class="tab-content">
                             <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="home-tab">
-                                @include('polizas.deuda.tab1')
+                                <div style="background-color: lightslategray;">
+                                    @include('polizas.deuda.tab1')
+                                </div>
                             </div>
                             <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="profile-tab">
                                 @include('polizas.deuda.tab2')
-
                             </div>
                             <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="creditos-tab">
 
@@ -103,6 +104,7 @@
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function() {
+        // alert(document.getElementById('ComisionIva').value);
         $('#comentarios').DataTable();
         $('#avisos').DataTable();
         //    $('#cobros').DataTable();
@@ -113,6 +115,23 @@
             "info": true,
         });
         $("#tblCobros").DataTable();
+
+        $("#Vida").change(function() {
+            if (document.getElementById('Vida').checked == true) {
+                $('#poliza_vida').show();
+            } else {
+                $('#poliza_vida').hide();
+            }
+        })
+
+        $("#Desempleo").change(function() {
+            if (document.getElementById('Desempleo').checked == true) {
+                $('#poliza_desempleo').show();
+            } else {
+                $('#poliza_desempleo').hide();
+            }
+        })
+
     });
 
     function formatearNumero(numero) {
@@ -195,11 +214,11 @@
 
             //     swal('Su monto de cartera a superado al techo establecido en la póliza');
             // } else {
-                calculoPrimaCalculada();
-                calculoPrimaTotal();
-                calculoDescuento();
-                calculoSubTotal();
-                calculoCCF();
+            calculoPrimaCalculada();
+            calculoPrimaTotal();
+            calculoDescuento();
+            calculoSubTotal();
+            calculoCCF();
             // }
 
 
@@ -271,7 +290,7 @@
             // if (document.getElementById('Diario').checked == true) {
             //     var sub = ((parseFloat(monto) * parseFloat(tasaFinal)) / dias_axo) * dias_mes;
             // } else {
-                var sub = parseFloat(monto) * parseFloat(tasaFinal);
+            var sub = parseFloat(monto) * parseFloat(tasaFinal);
             // }
             // alert(sub);
             document.getElementById('PruebaDecimales').value = sub;
@@ -378,8 +397,17 @@
             var total = document.getElementById('PrimaDescontada').value;
             var valorDes = total * (comision / 100);
             document.getElementById('Comision').value = Number(valorDes).toFixed(2);
-            var IvaSobreComision = Number(valorDes) * 0.13;
-            document.getElementById('IvaSobreComision').value = Number(IvaSobreComision).toFixed(2);
+            
+            
+            if(document.getElementById('ComisionIva').value == 0){
+              //  alert('si');
+              var IvaSobreComision = Number(valorDes) * 0.13;
+                document.getElementById('IvaSobreComision').value = Number(IvaSobreComision).toFixed(2);
+            }else{
+               // alert('no');
+               var IvaSobreComision = 0;
+                document.getElementById('IvaSobreComision').value = 0;
+            }
             if (document.getElementById('Retencion').hasAttribute('readonly')) {
                 var Retencion = 0;
             } else {

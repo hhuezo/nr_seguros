@@ -334,7 +334,7 @@
 
 
                             <div class="form-group has-feedback">
-                                <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" style="padding-left: 25%;" value="{{ $deuda->Comision }}" readonly>
+                                <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" style="padding-left: 25%;" value="{{ $deuda->TasaComision }}" readonly>
                                 <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
                             </div>
 

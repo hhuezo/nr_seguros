@@ -448,6 +448,47 @@ class DeudaController extends Controller
             return redirect('polizas/deuda/' . $deuda);
         } else {
             // dd("no");
+            $requisitos = DeudaRequisitos::where('Activo', 1)->where('Deuda', $id)->get();
+
+
+            //formando encabezados
+            $data[0][0] = "REQUISITOS";
+
+            $i = 1;
+            $uniqueRequisitos = $requisitos->unique(function ($item) {
+                return $item->EdadInicial . '-' . $item->EdadFinal;
+            });
+
+            $i = 1;
+            foreach ($uniqueRequisitos as $requisito) {
+                $data[0][$i] = 'DESDE ' . $requisito->EdadInicial . ' AÑOS HASTA ' . $requisito->EdadFinal . ' AÑOS';
+                $i++;
+            }
+
+
+            $i = 1;
+            foreach ($requisitos->unique('Perfil') as $requisito) {
+                $data[$i][0] = $requisito->perfil->Descripcion;
+                $j = 1;
+                for ($j = 1; $j < count($data[0]); $j++) {
+                    $data[$i][$j] = "";
+                }
+                $i++;
+            }
+
+            $i = 1;
+            foreach ($requisitos->unique('Perfil') as $requisito) {
+                $records = DeudaRequisitos::where('Activo', 1)->where('Deuda', $id)->where('Perfil', $requisito->Perfil)->get();
+
+                foreach ($records as $record) {
+                    $valorBuscado = 'DESDE ' . $record->EdadInicial . ' AÑOS HASTA ' . $record->EdadFinal . ' AÑOS';
+                    $columnaEncontrada = array_search($valorBuscado, $data[0]);
+                    $data[$i][$columnaEncontrada] = 'Desde $' . number_format($record->MontoInicial, 2, '.', ',') . ' HASTA $' . number_format($record->MontoFinal, 2, '.', ',');
+                }
+
+                $i++;
+            }
+
             $creditos = DeudaCredito::where('Deuda', $deuda->Id)->get();
             $videuda = DeudaVida::where('Deuda', $deuda->Id)->first();
             $requisitos = DeudaRequisitos::where('Deuda', $deuda->Id)->get();
@@ -468,7 +509,7 @@ class DeudaController extends Controller
             $tipoCobro = TipoCobro::where('Activo', 1)->get();
             $ejecutivo = Ejecutivo::where('Activo', 1)->get();
             $productos = Producto::where('Activo', 1)->get();
-            $planes = Plan::where('Activo',1)->get();
+            $planes = Plan::where('Activo', 1)->get();
             $detalle = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1)->orderBy('Id', 'desc')->get();
             $ultimo_pago = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1)->orderBy('Id', 'desc')->first();
             $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
@@ -500,7 +541,8 @@ class DeudaController extends Controller
                 'bomberos',
                 'ultimo_pago',
                 'productos',
-                'planes'
+                'planes',
+                'data'
             ));
         }
     }
