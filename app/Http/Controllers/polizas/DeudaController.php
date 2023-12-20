@@ -598,6 +598,8 @@ class DeudaController extends Controller
             // Define las reglas de validación para el formato 000000000
             $reglaFormato = '/^\d{14}$/';
 
+          
+
             return preg_match($reglaFormato, $documento) === 1;
         }
     }
@@ -653,19 +655,22 @@ class DeudaController extends Controller
             }
 
             // 3 error formato de nit
-            $validador_nit = $this->validarDocumento($obj->Nit, "nit");
+            // $validador_nit = $this->validarDocumento($obj->Nit, "nit");
 
-            if ($validador_nit == false) {
-                $obj->TipoError = 3;
-                $obj->update();
-            }
+            // if ($validador_nit == false) {
+            //     $obj->TipoError = 3;
+            //     $obj->update();
+            // }
             // 4 nombre o apellido
             if (trim($obj->PrimerApellido) == "" || trim($obj->PrimerNombre) == "") {
                 $obj->TipoError = 4;
                 $obj->update();
             }
         }
-        dd("aa");
+
+
+        $count_data_error = $cartera_temp->where('TipoError','<>',0)->count();
+        dd($count_data_error);
 
         // session(['MontoCarteraDeuda' => 0]);
         // session(['FechaInicioDeuda' => $today]);
