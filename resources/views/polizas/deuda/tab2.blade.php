@@ -13,7 +13,8 @@
         <div class="btn btn-info float-right" data-toggle="modal" data-target="#modal_pago">
             Subir Archivo Excel</div>
     </ul>
-    <div class="modal fade bs-example-modal-lg" id="modal_pago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
+    <div class="modal fade bs-example-modal-lg" id="modal_pago" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -24,16 +25,18 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form id="FormArchivo" action="{{ url('polizas/residencia/create_pago') }}" method="POST" enctype="multipart/form-data">
+                <form id="FormArchivo" action="{{ url('polizas/deuda/create_pago') }}" method="POST"
+                    enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Linea de Credito</label>
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Linea de
+                                Credito</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                 <select name="LineaCredito" class="form-control">
-                                    @foreach($creditos as $obj)
-                                    <option value="{{ $obj->id }}">{{ $obj->tipoCarteras->Nombre }}
-                                    </option>
+                                    @foreach ($creditos as $obj)
+                                        <option value="{{ $obj->id }}">{{ $obj->tipoCarteras->Nombre }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
@@ -43,9 +46,7 @@
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                 <select name="Axo" class="form-control">
                                     @for ($i = date('Y'); $i >= 2022; $i--)
-                                    <option value="{{ $i }}">
-                                        {{ $i }}
-                                    </option>
+                                        <option value="{{ $i }}"> {{ $i }}</option>
                                     @endfor
                                 </select>
                             </div>
@@ -54,15 +55,11 @@
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Mes</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                 <select name="Mes" class="form-control">
-                                    @for ($i = 1; $i < 12; $i++) @if (date('m')==$i) <option value="{{ $i }}" selected>
-                                        {{ $meses[$i] }}
-                                        </option>
-                                        @else
-                                        <option value="{{ $i }}">
+                                    @for ($i = 1; $i <= 12; $i++)
+                                        <option value="{{ $i }}" {{ date('m') == $i ? 'selected' : '' }}>
                                             {{ $meses[$i] }}
                                         </option>
-                                        @endif
-                                        @endfor
+                                    @endfor
                                 </select>
                             </div>
                         </div>
@@ -70,15 +67,20 @@
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
                                 inicio</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="Id" value="{{ $deuda->Id }}" type="hidden" required>
-                                <input class="form-control" type="date" name="FechaInicio" value="{{$ultimo_pago ?  date('Y-m-d', strtotime($ultimo_pago->FechaFinal)) : '' }}" {{$ultimo_pago ? 'readonly':''}} required>
+                                <input class="form-control" name="Id" value="{{ $deuda->Id }}" type="hidden"
+                                    required>
+                                <input class="form-control" type="date" name="FechaInicio"
+                                    value="{{ $ultimo_pago ? date('Y-m-d', strtotime($ultimo_pago->FechaFinal)) : date('Y-m-d', strtotime($primerDia)) }}"
+                                    {{ $ultimo_pago ? 'readonly' : '' }} required>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
                                 final</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="FechaFinal" value="{{$ultimo_pago_fecha_final ? $ultimo_pago_fecha_final:''}}" type="date" required>
+                                <input class="form-control" name="FechaFinal"
+                                    value="{{ $ultimo_pago_fecha_final ? $ultimo_pago_fecha_final : date('Y-m-d', strtotime($ultimoDia)) }}" type="date"
+                                    required>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -118,8 +120,10 @@
             </div>
             <div class="modal-body">
                 <div class="box-body row">
-                    <input type="hidden" name="ExcelURL" id="ExcelURL" value="{{ session('ExcelURL') }}" class="form-control">
-                    <input type="hidden" name="Deuda" id="Deuda" value="{{ $deuda->Id }}" class="form-control">
+                    <input type="hidden" name="ExcelURL" id="ExcelURL" value="{{ session('ExcelURL') }}"
+                        class="form-control">
+                    <input type="hidden" name="Deuda" id="Deuda" value="{{ $deuda->Id }}"
+                        class="form-control">
                     @csrf
                     <div class="col-lg-1 col-md-1 col-sm-12 col-xs-12 ">
 
@@ -129,15 +133,21 @@
                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
                         <label class="control-label" align="right">Fecha Inicio</label>
                         <div class="form-group row">
-                            <input class="form-control" name="FechaInicio" id="FechaInicio" type="date" value="{{ session('FechaInicio') }}" required>
+                            <input class="form-control" name="FechaInicio" id="FechaInicio" type="date"
+                                value="{{ session('FechaInicio') }}" required>
                         </div>
 
                         <div class="form-group row" style="margin-top:-3%;">
                             <label class="control-label" align="right">Monto Cartera </label>
 
                             <div class="form-group has-feedback">
-                                <input class="form-control" name="MontoCartera" onblur="show_MontoCartera()" id="MontoCartera" type="number" step="any" style="text-align: right; display: none;" value="{{ session('MontoCartera', 0) }}" required>
-                                <input class="form-control" id="MontoCarteraView" type="text" step="any" style="text-align: right;" value="{{ number_format(session('MontoCartera', 0), 2, '.', ',') }}" required>
+                                <input class="form-control" name="MontoCartera" onblur="show_MontoCartera()"
+                                    id="MontoCartera" type="number" step="any"
+                                    style="text-align: right; display: none;"
+                                    value="{{ session('MontoCartera', 0) }}" required>
+                                <input class="form-control" id="MontoCarteraView" type="text" step="any"
+                                    style="text-align: right;"
+                                    value="{{ number_format(session('MontoCartera', 0), 2, '.', ',') }}" required>
                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                             </div>
 
@@ -145,7 +155,8 @@
                         <div class="form-group row">
                             <label class="control-label" align="right">Tasa %</label>
                             <div class="form-group has-feedback">
-                                <input type="number" step="any" style="padding-left: 25%;" name="Tasa" id="Tasa" value="{{ $deuda->Tasa }}" class="form-control" readonly>
+                                <input type="number" step="any" style="padding-left: 25%;" name="Tasa"
+                                    id="Tasa" value="{{ $deuda->Tasa }}" class="form-control" readonly>
                                 <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
                             </div>
 
@@ -156,7 +167,8 @@
 
 
                             <div class="form-group has-feedback">
-                                <input type="number" step="any" style="text-align: right;" id="tasaFinal" class="form-control" readonly>
+                                <input type="number" step="any" style="text-align: right;" id="tasaFinal"
+                                    class="form-control" readonly>
                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                             </div>
 
@@ -167,7 +179,8 @@
 
 
                             <div class="form-group has-feedback">
-                                <input type="number" step="any" readonly id="PruebaDecimales" class="form-control" style="text-align: right;">
+                                <input type="number" step="any" readonly id="PruebaDecimales"
+                                    class="form-control" style="text-align: right;">
                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                             </div>
 
@@ -178,7 +191,8 @@
 
 
                             <div class="form-group has-feedback">
-                                <input type="number" step="any" name="PrimaCalculada" id="PrimaCalculada" class="form-control" style="text-align: right;">
+                                <input type="number" step="any" name="PrimaCalculada" id="PrimaCalculada"
+                                    class="form-control" style="text-align: right;">
                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                             </div>
 
@@ -189,7 +203,8 @@
 
 
                             <div class="form-group has-feedback">
-                                <input class="form-control" name="ExtraPrima" type="number" step="any" id="ExtPrima" style="text-align: right;">
+                                <input class="form-control" name="ExtraPrima" type="number" step="any"
+                                    id="ExtPrima" style="text-align: right;">
                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                             </div>
 
@@ -199,7 +214,8 @@
                             <label class="control-label" align="right">
                                 Prima Total</label>
                             <div class="form-group has-feedback">
-                                <input class="form-control" name="PrimaTotal" type="number" step="any" id="PrimaTotal" style="text-align: right;">
+                                <input class="form-control" name="PrimaTotal" type="number" step="any"
+                                    id="PrimaTotal" style="text-align: right;">
                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                             </div>
                         </div>
@@ -208,7 +224,9 @@
                             <label class="control-label" align="right">Tasa de Descuento %</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                 <div class="form-group has-feedback">
-                                    <input class="form-control" name="TasaDescuento" type="number" step="any" id="TasaDescuento" style="padding-left: 25%;" value="{{ $deuda->TasaDescuento }}" readonly>
+                                    <input class="form-control" name="TasaDescuento" type="number" step="any"
+                                        id="TasaDescuento" style="padding-left: 25%;"
+                                        value="{{ $deuda->TasaDescuento }}" readonly>
                                     <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
                                 </div>
                             </div>
@@ -219,7 +237,8 @@
 
 
                             <div class="form-group has-feedback">
-                                <input class="form-control" name="Descuento" type="number" step="any" id="Descuento" style="text-align: right;">
+                                <input class="form-control" name="Descuento" type="number" step="any"
+                                    id="Descuento" style="text-align: right;">
                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                             </div>
 
@@ -228,7 +247,8 @@
                             <label class="control-label" align="right">
                                 (=) Prima Descontada</label>
                             <div class="form-group has-feedback">
-                                <input class="form-control" name="PrimaDescontada" type="number" step="any" id="PrimaDescontada" style="text-align: right;">
+                                <input class="form-control" name="PrimaDescontada" type="number" step="any"
+                                    id="PrimaDescontada" style="text-align: right;">
                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                             </div>
                         </div>
@@ -239,7 +259,8 @@
 
 
                             <div class="form-group has-feedback">
-                                <input type="number" step="any" name="ImpuestoBomberos" id="ImpuestoBomberos" class="form-control" readonly style="text-align: right;">
+                                <input type="number" step="any" name="ImpuestoBomberos" id="ImpuestoBomberos"
+                                    class="form-control" readonly style="text-align: right;">
                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                             </div>
 
@@ -249,7 +270,8 @@
 
 
                             <div class="form-group has-feedback">
-                                <input type="number" step="any" name="GastosEmision" id="GastosEmision" value="0" class="form-control" style="text-align: right;">
+                                <input type="number" step="any" name="GastosEmision" id="GastosEmision"
+                                    value="0" class="form-control" style="text-align: right;">
                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
 
                             </div>
@@ -259,21 +281,24 @@
 
 
                             <div class="form-group has-feedback">
-                                <input type="number" step="any" name="Otros" id="Otros" value="0" class="form-control" style="text-align: right;">
+                                <input type="number" step="any" name="Otros" id="Otros" value="0"
+                                    class="form-control" style="text-align: right;">
                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                             </div>
                         </div>
                         <div class="form-group row" style="margin-top:-5%;">
                             <label class="control-label" align="right">Sub Total</label>
                             <div class="form-group has-feedback">
-                                <input type="number" step="any" name="SubTotal" id="SubTotal" class="form-control" style="text-align: right;">
+                                <input type="number" step="any" name="SubTotal" id="SubTotal"
+                                    class="form-control" style="text-align: right;">
                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                             </div>
                         </div>
                         <div class="form-group row" style="margin-top:-5%;">
                             <label class="control-label" align="right">13% IVA</label>
                             <div class="form-group has-feedback">
-                                <input type="number" step="any" name="Iva" id="Iva" class="form-control" style="text-align: right;">
+                                <input type="number" step="any" name="Iva" id="Iva"
+                                    class="form-control" style="text-align: right;">
                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                             </div>
                         </div>
@@ -285,7 +310,8 @@
 
 
                             <div class="form-group has-feedback">
-                                <input type="number" step="any" name="ValorCCF" id="ValorCCF" class="form-control" style="text-align: right;">
+                                <input type="number" step="any" name="ValorCCF" id="ValorCCF"
+                                    class="form-control" style="text-align: right;">
                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                             </div>
                             <!-- <a href="" data-target="#modal-calculator" data-toggle="modal" class="col-md-1 control-label" style="text-align: center;"><span class="fa fa-calculator fa-lg"></span></a> -->
@@ -297,7 +323,8 @@
 
 
                             <div class="form-group has-feedback">
-                                <input type="number" step="any" name="APagar" id="APagar" class="form-control" style="text-align: right;">
+                                <input type="number" step="any" name="APagar" id="APagar"
+                                    class="form-control" style="text-align: right;">
                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                             </div>
                         </div>
@@ -307,7 +334,8 @@
 
 
                             <div class="form-group has-feedback">
-                                <input type="number" step="any" name="Facturar" id="Facturar" class="form-control" style="text-align: right;">
+                                <input type="number" step="any" name="Facturar" id="Facturar"
+                                    class="form-control" style="text-align: right;">
                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                             </div>
                         </div>
@@ -323,18 +351,22 @@
 
                         <div class="form-group row">
                             <label class="control-label" align="right">Fecha Final</label>
-                            <input class="form-control" name="FechaFinal" id="FechaFinal" type="date" value="{{ session('FechaFinal') }}" required>
+                            <input class="form-control" name="FechaFinal" id="FechaFinal" type="date"
+                                value="{{ session('FechaFinal') }}" required>
                         </div>
                         <br>
                         <div class="form-group row">
-                            <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: center;">Estructura CCF de comisión</label>
+                            <label class="control-label col-md-12 col-sm-12 col-xs-12"
+                                style="text-align: center;">Estructura CCF de comisión</label>
                         </div>
                         <div class="form-group row">
                             <label class="control-label" align="right">% Comisión</label>
 
 
                             <div class="form-group has-feedback">
-                                <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" style="padding-left: 25%;" value="{{ $deuda->TasaComision }}" readonly>
+                                <input class="form-control" name="TasaComision" id="TasaComision" type="number"
+                                    step="any" style="padding-left: 25%;" value="{{ $deuda->TasaComision }}"
+                                    readonly>
                                 <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
                             </div>
 
@@ -344,7 +376,8 @@
 
 
                             <div class="form-group has-feedback">
-                                <input class="form-control" name="Comision" id="Comision" type="number" step="any" style="text-align: right;">
+                                <input class="form-control" name="Comision" id="Comision" type="number"
+                                    step="any" style="text-align: right;">
                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                             </div>
 
@@ -354,7 +387,8 @@
 
 
                             <div class="form-group has-feedback">
-                                <input class="form-control" name="IvaSobreComision" id="IvaSobreComision" type="number" step="any" style="text-align: right;">
+                                <input class="form-control" name="IvaSobreComision" id="IvaSobreComision"
+                                    type="number" step="any" style="text-align: right;">
                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                             </div>
 
@@ -365,7 +399,9 @@
 
 
                             <div class="form-group has-feedback">
-                                <input class="form-control" name="Retencion" id="Retencion" type="number" step="any" style="text-align: right;" @if ($deuda->clientes->TipoContribuyente == 1 || $deuda->clientes->TipoContribuyente == 4) readonly @endif>
+                                <input class="form-control" name="Retencion" id="Retencion" type="number"
+                                    step="any" style="text-align: right;"
+                                    @if ($deuda->clientes->TipoContribuyente == 1 || $deuda->clientes->TipoContribuyente == 4) readonly @endif>
                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                             </div>
 
@@ -377,7 +413,8 @@
 
 
                             <div class="form-group has-feedback">
-                                <input class="form-control" id="ValorCCFE" type="number" step="any" style="text-align: right;">
+                                <input class="form-control" id="ValorCCFE" type="number" step="any"
+                                    style="text-align: right;">
                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                             </div>
 
@@ -391,7 +428,8 @@
                     </div>
 
                 </div>
-                <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-aplicar">
+                <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
+                    id="modal-aplicar">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -414,7 +452,8 @@
                 <div class="clearfix"></div>
                 <div align="center">
                     <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
-                    <a class="btn btn-primary" data-target="#modal-aplicar" data-toggle="modal" onclick="aplicarpago()">Generar Cobro</a>
+                    <a class="btn btn-primary" data-target="#modal-aplicar" data-toggle="modal"
+                        onclick="aplicarpago()">Generar Cobro</a>
                 </div>
 
 
