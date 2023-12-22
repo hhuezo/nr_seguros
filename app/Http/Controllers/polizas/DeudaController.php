@@ -598,7 +598,7 @@ class DeudaController extends Controller
             // Define las reglas de validación para el formato 000000000
             $reglaFormato = '/^\d{14}$/';
 
-          
+
 
             return preg_match($reglaFormato, $documento) === 1;
         }
@@ -606,8 +606,9 @@ class DeudaController extends Controller
 
     public function create_pago(Request $request)
     {
+        dd("");
 
-        $fecha = Carbon::create(null, $request->Mes, 1);
+        /*- $fecha = Carbon::create(null, $request->Mes, 1);
         $nombreMes = $fecha->locale('es')->monthName;
 
         $time = Carbon::now('America/El_Salvador');
@@ -661,6 +662,8 @@ class DeudaController extends Controller
             //     $obj->TipoError = 3;
             //     $obj->update();
             // }
+
+
             // 4 nombre o apellido
             if (trim($obj->PrimerApellido) == "" || trim($obj->PrimerNombre) == "") {
                 $obj->TipoError = 4;
@@ -735,6 +738,8 @@ class DeudaController extends Controller
         //     print($e);
         //     return false;
         // }
+
+        */
     }
     public function delete_pago($id)
     {
