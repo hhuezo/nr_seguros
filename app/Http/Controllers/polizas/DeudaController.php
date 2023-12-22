@@ -613,7 +613,7 @@ class DeudaController extends Controller
 
         $poliza_id = $request->Id;
 
-        $result = DB::table('poliza_deuda_temp_cartera')
+        $nuevos_registros = DB::table('poliza_deuda_temp_cartera')
         ->where('Mes', $date->month)
         ->where('Axo', $date->year)
         ->where('PolizaDeuda', $request->Id)
@@ -634,7 +634,9 @@ class DeudaController extends Controller
         $deuda = Deuda::findOrFail($request->Id);
 
         $requisitos = $deuda->requisitos;
-        dd($requisitos);
+
+
+        return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros'));
 
 
         /*$fecha = Carbon::create(null, $request->Mes, 1);
