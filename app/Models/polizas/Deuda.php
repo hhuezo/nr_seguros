@@ -63,4 +63,9 @@ class Deuda extends Model
     public function planes(){
         return $this->belongsTo('App\Models\catalogo\Plan', 'Plan', 'Id');
     }
+
+    public function requisitos()
+    {
+        return $this->hasMany(DeudaRequisitos::class,'Deuda', 'Id');
+    }
 }

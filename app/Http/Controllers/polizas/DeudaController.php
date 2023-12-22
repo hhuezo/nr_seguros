@@ -607,18 +607,22 @@ class DeudaController extends Controller
     public function create_pago(Request $request)
     {
 
-        $date = Carbon::create($request->Axo, $request->Mes, "01");
+       $date = Carbon::create($request->Axo, $request->Mes, "01");
         $date_anterior = Carbon::create($request->Axo, $request->Mes, "01");
         $date_mes_anterior = $date_anterior->subMonth();
+
+        $poliza_id = $request->Id;
 
         $result = DB::table('poliza_deuda_temp_cartera')
         ->where('Mes', $date->month)
         ->where('Axo', $date->year)
-        ->whereNotExists(function ($query) use ($date_anterior, $date_mes_anterior) {
+        ->where('PolizaDeuda', $request->Id)
+        ->whereNotExists(function ($query) use ($date_anterior, $date_mes_anterior, $poliza_id) {
             $query->select(DB::raw(1))
                 ->from('poliza_deuda_cartera')
                 ->where('poliza_deuda_cartera.Mes', $date_anterior->month)
                 ->where('poliza_deuda_cartera.Axo', $date_mes_anterior->year)
+                ->where('PolizaDeuda', $poliza_id)
                 ->where(function ($subQuery) {
                     $subQuery->whereColumn('poliza_deuda_temp_cartera.Dui', '=', 'poliza_deuda_cartera.Dui')
                         ->orWhere('poliza_deuda_temp_cartera.Nit', '=', 'poliza_deuda_cartera.Nit');
@@ -626,10 +630,14 @@ class DeudaController extends Controller
         })
         ->get();
 
-        dd($result);
+
+        $deuda = Deuda::findOrFail($request->Id);
+
+        $requisitos = $deuda->requisitos;
+        dd($requisitos);
 
 
-        /*- $fecha = Carbon::create(null, $request->Mes, 1);
+        /*$fecha = Carbon::create(null, $request->Mes, 1);
         $nombreMes = $fecha->locale('es')->monthName;
 
         $time = Carbon::now('America/El_Salvador');
@@ -760,7 +768,7 @@ class DeudaController extends Controller
         //     return false;
         // }
 
-        */
+*/
     }
     public function delete_pago($id)
     {
