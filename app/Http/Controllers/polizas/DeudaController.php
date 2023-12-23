@@ -18,6 +18,7 @@ use App\Models\catalogo\TipoCartera;
 use App\Models\catalogo\TipoCobro;
 use App\Models\catalogo\TipoContribuyente;
 use App\Models\catalogo\UbicacionCobro;
+use App\Models\polizas\Comentario;
 use App\Models\polizas\Deuda;
 use App\Models\polizas\DeudaCredito;
 use App\Models\polizas\DeudaDetalle;
@@ -489,7 +490,7 @@ class DeudaController extends Controller
                 $i++;
             }
 
-            $creditos = DeudaCredito::where('Deuda', $deuda->Id)->get();
+            $creditos = DeudaCredito::where('Deuda', $deuda->Id)->groupBy('TipoCartera')->get();
             $videuda = DeudaVida::where('Deuda', $deuda->Id)->first();
             $requisitos = DeudaRequisitos::where('Deuda', $deuda->Id)->get();
             $tipos_contribuyente =  TipoContribuyente::get();
@@ -513,7 +514,7 @@ class DeudaController extends Controller
             $detalle = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1)->orderBy('Id', 'desc')->get();
             $ultimo_pago = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1)->orderBy('Id', 'desc')->first();
             $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
-
+            $comentarios = Comentario::where('Deuda',$deuda->Id)->get();
             $ultimo_pago_fecha_final = null;
             if ($ultimo_pago) {
                 $fecha_inicial = Carbon::parse($ultimo_pago->FechaFinal);
@@ -542,7 +543,8 @@ class DeudaController extends Controller
                 'ultimo_pago',
                 'productos',
                 'planes',
-                'data'
+                'data',
+                'comentarios'
             ));
         }
     }
