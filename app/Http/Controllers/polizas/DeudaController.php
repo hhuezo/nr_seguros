@@ -615,27 +615,20 @@ class DeudaController extends Controller
         $date_anterior = Carbon::create($request->Axo, $request->Mes, "01");
         $date_mes_anterior = $date_anterior->subMonth();
 
-
-
-
-
         $deuda = Deuda::findOrFail($request->Id);
 
-
-        //consultando la tabla requisitos
-        $requisitos = $deuda->requisitos;
-
-
+        
+        //insertando cartera
         try {
             $archivo = $request->Archivo;
             PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->delete();
-            Excel::import(new PolizaDeudaTempCarteraImport($date_mes_anterior->year, $date_anterior->month, $deuda->Id, $request->FechaInicio, $request->FechaFinal), $archivo);
+            Excel::import(new PolizaDeudaTempCarteraImport($date->year, $date->month, $deuda->Id, $request->FechaInicio, $request->FechaFinal), $archivo);
         } catch (Throwable $e) {
             //     print($e);
             //     return false;
         }
 
-
+        //calculando errores de cartera
         $cartera_temp = PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->get();
 
         foreach ($cartera_temp as $obj) {
@@ -682,17 +675,29 @@ class DeudaController extends Controller
 
         $data_error = $cartera_temp->where('TipoError', '<>', 0);
 
-        if ($data_error) {
-            return view('polizas.deuda.respuesta_poliza_error', compact('data_error','deuda'));
+        if ($data_error->count()>0) {
+            return view('polizas.deuda.respuesta_poliza_error', compact('data_error', 'deuda'));
         }
+     
+
+
+        //estableciendo fecha de nacimiento date y calculando edad
+        PolizaDeudaTempCartera::where('User', auth()->user()->id)
+            ->where('PolizaDeuda', $request->Id)
+            ->update([
+                'FechaNacimientoDate' => DB::raw("STR_TO_DATE(FechaNacimiento, '%d/%m/%Y')"),
+                'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, CURDATE())"),
+            ]);
 
 
         //buscando registros nuevos
         $poliza_id = $request->Id;
         $nuevos_registros = DB::table('poliza_deuda_temp_cartera')
-            ->where('Mes', $date->month)
-            ->where('Axo', $date->year)
-            ->where('PolizaDeuda', $request->Id)
+            ->where([
+                ['Mes', $date->month],
+                ['Axo', $date->year],
+                ['PolizaDeuda', $request->Id],
+            ])
             ->whereNotExists(function ($query) use ($date_anterior, $date_mes_anterior, $poliza_id) {
                 $query->select(DB::raw(1))
                     ->from('poliza_deuda_cartera')
@@ -700,14 +705,53 @@ class DeudaController extends Controller
                     ->where('poliza_deuda_cartera.Axo', $date_mes_anterior->year)
                     ->where('PolizaDeuda', $poliza_id)
                     ->where(function ($subQuery) {
-                        $subQuery->whereColumn('poliza_deuda_temp_cartera.Dui', '=', 'poliza_deuda_cartera.Dui')
-                            ->orWhere('poliza_deuda_temp_cartera.Nit', '=', 'poliza_deuda_cartera.Nit');
+                        $subQuery->whereColumn('poliza_deuda_temp_cartera.Dui', '=', 'poliza_deuda_cartera.Dui');
+                        // ->orWhere('poliza_deuda_temp_cartera.Nit', '=', 'poliza_deuda_cartera.Nit');
                     });
             })->get();
 
+        $maximos_minimos = DeudaRequisitos::where('Deuda', '=', $request->Id)
+            ->selectRaw('MIN(MontoInicial) as min_monto_inicial, MAX(MontoFinal) as max_monto_final,MIN(EdadInicial) as min_edad_inicial, MAX(EdadFinal) as max_edad_final ')
+            ->first();
 
 
-        return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros',));
+        // $maximos_minimos contendrá el resultado de la consulta
+        $minMontoInicial = $maximos_minimos->min_monto_inicial;
+        $maxMontoFinal = $maximos_minimos->max_monto_final;
+        $minEdadInicial = $maximos_minimos->min_edad_inicial;
+        $maxEdadFinal = $maximos_minimos->max_edad_final;
+
+        //cumulos por dui
+        $poliza_cumulos = PolizaDeudaTempCartera::selectRaw('Id,Dui,Edad,Nit,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento, 
+        SUM(SaldoCapital) as total_saldo')->groupBy('Dui')->get();
+
+        //consultando la tabla requisitos
+        $requisitos = $deuda->requisitos;
+
+
+        foreach ($poliza_cumulos as $cumulo) {
+            $cumulo->NoValido = 0;
+            if ($cumulo->Edad > $maxEdadFinal) {
+                $cumulo->NoValido = 1;
+            } else {
+                //datos que estan dentro de la edad
+                $requisitos_poliza = $requisitos->where('EdadInicial', '<=', $cumulo->Edad)->where('EdadFinal', '>=', $cumulo->Edad);
+
+                if ($requisitos_poliza) {
+                    $max = $requisitos_poliza->max('MontoFinal');
+                    if ($cumulo->total_saldo >  $max) {
+                        $cumulo->NoValido = 1;
+                    } else {
+                        $perfiles =  $requisitos_poliza->where('MontoInicial', '<=', $cumulo->total_saldo)->where('MontoFinal', '>=', $cumulo->total_saldo)->pluck('perfil.Descripcion')->toArray();
+                $cumulo->Perfiles = $perfiles;
+                    }
+                }
+            }
+        }
+
+
+        return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'deuda', 'poliza_cumulos'));
+
     }
     public function delete_pago($id)
     {
