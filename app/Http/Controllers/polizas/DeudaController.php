@@ -608,6 +608,65 @@ class DeudaController extends Controller
             return preg_match($reglaFormato, $documento) === 1;
         }
     }
+    public function store_poliza(Request $request)
+    {
+
+        // Convertir la cadena en un objeto Carbon (la clase de fecha en Laravel)
+        $fecha = \Carbon\Carbon::parse($request->MesActual);
+
+        // Obtener el mes y el año
+        $mes = $fecha->format('m');  // El formato 'm' devuelve el mes con ceros iniciales (por ejemplo, "02")
+        $anio = $fecha->format('Y');
+
+        // Obtener los datos de la tabla temporal
+        $tempData = PolizaDeudaTempCartera::where('Axo', $anio)
+            ->where('Mes', $mes +0)
+            ->where('User', auth()->user()->id)
+            ->get();
+
+
+        // Iterar sobre los resultados y realizar la inserción en la tabla principal
+        foreach ($tempData as $tempRecord) {
+            PolizaDeudaCartera::create([
+                'Id' => $tempRecord->Id,
+                'Nit' => $tempRecord->Nit,
+                'Dui' => $tempRecord->Dui,
+                'Pasaporte' => $tempRecord->Pasaporte,
+                'Nacionalidad' => $tempRecord->Nacionalidad,
+                'FechaNacimiento' => $tempRecord->FechaNacimiento,
+                'TipoPersona' => $tempRecord->TipoPersona,
+                'PrimerApellido' => $tempRecord->PrimerApellido,
+                'SegundoApellido' => $tempRecord->SegundoApellido,
+                'ApellidoCasada' => $tempRecord->ApellidoCasada,
+                'PrimerNombre' => $tempRecord->PrimerNombre,
+                'SegundoNombre' => $tempRecord->SegundoNombre,
+                'NombreSociedad' => $tempRecord->NombreSociedad,
+                'Sexo' => $tempRecord->Sexo,
+                'FechaOtorgamiento' => $tempRecord->FechaOtorgamiento,
+                'FechaVencimiento' => $tempRecord->FechaVencimiento,
+                'Ocupacion' => $tempRecord->Ocupacion,
+                'NumeroReferencia' => $tempRecord->NumeroReferencia,
+                'MontoOtorgado' => $tempRecord->MontoOtorgado,
+                'SaldoCapital' => $tempRecord->SaldoCapital,
+                'Intereses' => $tempRecord->Intereses,
+                'InteresesMoratorios' => $tempRecord->InteresesMoratorios,
+                'SaldoTotal' => $tempRecord->SaldoTotal,
+                'User' => $tempRecord->User,
+                'Axo' => $tempRecord->Axo,
+                'Mes' => $tempRecord->Mes,
+                'PolizaDeuda' => $tempRecord->PolizaDeuda,
+                'FechaInicio' => $tempRecord->FechaInicio,
+                'FechaFinal' => $tempRecord->FechaFinal,
+                'TipoError' => $tempRecord->TipoError,
+                'FechaNacimientoDate' => $tempRecord->FechaNacimientoDate,
+                'Edad' => $tempRecord->Edad
+            ]);
+        }
+
+        alert()->success('El registro de poliza ha sido ingresado correctamente');
+        return redirect('polizas/deuda/' . $tempRecord->PolizaDeuda . '/edit');
+    }
+
 
     public function create_pago(Request $request)
     {
@@ -617,7 +676,7 @@ class DeudaController extends Controller
 
         $deuda = Deuda::findOrFail($request->Id);
 
-        
+
         //insertando cartera
         try {
             $archivo = $request->Archivo;
@@ -675,10 +734,10 @@ class DeudaController extends Controller
 
         $data_error = $cartera_temp->where('TipoError', '<>', 0);
 
-        if ($data_error->count()>0) {
+        if ($data_error->count() > 0) {
             return view('polizas.deuda.respuesta_poliza_error', compact('data_error', 'deuda'));
         }
-     
+
 
 
         //estableciendo fecha de nacimiento date y calculando edad
@@ -743,15 +802,14 @@ class DeudaController extends Controller
                         $cumulo->NoValido = 1;
                     } else {
                         $perfiles =  $requisitos_poliza->where('MontoInicial', '<=', $cumulo->total_saldo)->where('MontoFinal', '>=', $cumulo->total_saldo)->pluck('perfil.Descripcion')->toArray();
-                $cumulo->Perfiles = $perfiles;
+                        $cumulo->Perfiles = $perfiles;
                     }
                 }
             }
         }
 
 
-        return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'deuda', 'poliza_cumulos'));
-
+        return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'deuda', 'poliza_cumulos', 'date_anterior', 'date'));
     }
     public function delete_pago($id)
     {

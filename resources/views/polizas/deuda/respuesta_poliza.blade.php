@@ -13,11 +13,21 @@
                                 <h2>Resumen de cartera</h2>
                             </div>
                             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
-                                <a href="{{ url('/polizas/deuda') }}/{{ $deuda->Id }}/edit">
+                                {{-- <a href="{{ url('/polizas/deuda') }}/{{ $deuda->Id }}/edit">
                                     <button class="btn btn-primary">
                                         <i class="fa fa-arrow-left"></i>
                                     </button>
-                                </a>
+                                </a> --}}
+                                <form method="post" action="{{ url('polizas/deuda/store_poliza') }}">
+                                    @csrf
+                                    <input type="hidden" name="Cartera" value="{{ $deuda->Id }}">
+                                    <input type="date" name="MesActual" value="{{ date('Y-m-d', strtotime($date)) }}">
+                                    <input type="date" name="MesAnterior" value="{{ date('Y-m-d', strtotime($date_anterior)) }}">
+                                    <button class="btn btn-primary">
+                                        Guardar en cartera
+                                    </button>
+                                </form>
+
                             </div>
 
                             <div class="clearfix"></div>
@@ -35,10 +45,12 @@
                                                 válidos</a>
                                         </li>
                                         <li role="presentation" class=""><a href="#tab_content3" role="tab"
-                                                id="profile-tab2" data-toggle="tab" aria-expanded="false">Registros con requisitos</a>
+                                                id="profile-tab2" data-toggle="tab" aria-expanded="false">Registros con
+                                                requisitos</a>
                                         </li>
                                         <li role="presentation" class=""><a href="#tab_content4" role="tab"
-                                                id="profile-tab2" data-toggle="tab" aria-expanded="false">Registros válidos</a>
+                                                id="profile-tab2" data-toggle="tab" aria-expanded="false">Registros
+                                                válidos</a>
                                         </li>
                                     </ul>
                                     <div id="myTabContent" class="tab-content">
@@ -92,7 +104,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach ($poliza_cumulos->where('NoValido','=',1) as $registro)
+                                                    @foreach ($poliza_cumulos->where('NoValido', '=', 1) as $registro)
                                                         <tr>
                                                             <td>{{ $registro->Dui }}</td>
                                                             <td>{{ $registro->Nit }}</td>
@@ -130,7 +142,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach ($poliza_cumulos->where('Perfiles','<>',null) as $registro)
+                                                    @foreach ($poliza_cumulos->where('Perfiles', '<>', null) as $registro)
                                                         <tr>
                                                             <td>{{ $registro->Dui }}</td>
                                                             <td>{{ $registro->Nit }}</td>
@@ -178,7 +190,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach ($poliza_cumulos->where('Perfiles','=',null) as $registro)
+                                                    @foreach ($poliza_cumulos->where('Perfiles', '=', null) as $registro)
                                                         <tr>
                                                             <td>{{ $registro->Dui }}</td>
                                                             <td>{{ $registro->Nit }}</td>
@@ -190,7 +202,7 @@
                                                             <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
                                                             </td>
                                                             <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
-                                                       
+
                                                             <td class="text-right">
                                                                 ${{ number_format($registro->total_saldo, 2) }}</td>
 
