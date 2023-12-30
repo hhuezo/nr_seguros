@@ -1,5 +1,44 @@
 @extends ('welcome')
 @section('contenido')
+    <style>
+        #loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #loading-overlay img {
+            width: 50px;
+            /* Ajusta el tamaño de la imagen según tus necesidades */
+            height: 50px;
+            /* Ajusta el tamaño de la imagen según tus necesidades */
+        }
+    </style>
+
+
+    <!-- Agrega este script en tu archivo blade -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var loadingOverlay = document.getElementById('loading-overlay');
+
+            // Muestra el overlay de carga cuando se hace clic en el botón
+            document.querySelector('button').addEventListener('click', function() {
+                loadingOverlay.style.display = 'flex'; // Cambia a 'flex' para usar flexbox
+            });
+
+            // Oculta el overlay de carga después de que la página se haya cargado completamente
+            window.addEventListener('load', function() {
+                loadingOverlay.style.display = 'none';
+            });
+        });
+    </script>
     <div role="main">
         <div class="">
 
@@ -13,16 +52,13 @@
                                 <h2>Resumen de cartera</h2>
                             </div>
                             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
-                                {{-- <a href="{{ url('/polizas/deuda') }}/{{ $deuda->Id }}/edit">
-                                    <button class="btn btn-primary">
-                                        <i class="fa fa-arrow-left"></i>
-                                    </button>
-                                </a> --}}
+
                                 <form method="post" action="{{ url('polizas/deuda/store_poliza') }}">
                                     @csrf
                                     <input type="hidden" name="Cartera" value="{{ $deuda->Id }}">
-                                    <input type="date" name="MesActual" value="{{ date('Y-m-d', strtotime($date)) }}">
-                                    <input type="date" name="MesAnterior" value="{{ date('Y-m-d', strtotime($date_anterior)) }}">
+                                    <input type="hidden" name="MesActual" value="{{ date('Y-m-d', strtotime($date)) }}">
+                                    <input type="hidden" name="MesAnterior"
+                                        value="{{ date('Y-m-d', strtotime($date_anterior)) }}">
                                     <button class="btn btn-primary">
                                         Guardar en cartera
                                     </button>
@@ -221,6 +257,12 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Agrega este div al final de tu archivo blade -->
+            <div id="loading-overlay">
+                <img src="{{ asset('img/ajax-loader.gif') }}" alt="Loading..." />
+            </div>
+
         </div>
     </div>
 @endsection
