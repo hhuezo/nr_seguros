@@ -690,6 +690,7 @@ class DeudaController extends Controller
         //calculando errores de cartera
         $cartera_temp = PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->get();
 
+
         foreach ($cartera_temp as $obj) {
             $errores_array = [];
             // 1 error formato fecha nacimiento
@@ -764,7 +765,8 @@ class DeudaController extends Controller
                     ->where('poliza_deuda_cartera.Axo', $date_mes_anterior->year)
                     ->where('PolizaDeuda', $poliza_id)
                     ->where(function ($subQuery) {
-                        $subQuery->whereColumn('poliza_deuda_temp_cartera.Dui', '=', 'poliza_deuda_cartera.Dui');
+                        $subQuery->whereColumn('poliza_deuda_temp_cartera.NumeroReferencia', '=', 'poliza_deuda_cartera.NumeroReferencia');
+                        //$subQuery->whereColumn('poliza_deuda_temp_cartera.Dui', '=', 'poliza_deuda_cartera.Dui');
                         // ->orWhere('poliza_deuda_temp_cartera.Nit', '=', 'poliza_deuda_cartera.Nit');
                     });
             })->get();
@@ -781,7 +783,7 @@ class DeudaController extends Controller
         $maxEdadFinal = $maximos_minimos->max_edad_final;
 
         //cumulos por dui
-        $poliza_cumulos = PolizaDeudaTempCartera::selectRaw('Id,Dui,Edad,Nit,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento, 
+        $poliza_cumulos = PolizaDeudaTempCartera::selectRaw('Id,Dui,Edad,Nit,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento, NumeroReferencia,
         SUM(SaldoCapital) as total_saldo')->groupBy('Dui')->get();
 
         //consultando la tabla requisitos

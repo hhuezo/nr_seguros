@@ -96,6 +96,7 @@
                                             <table class="table table-striped">
                                                 <thead>
                                                     <tr>
+                                                        <th>Número crédito</th>
                                                         <th>DUI</th>
                                                         <th>NIT</th>
                                                         <th>Nombre</th>
@@ -106,6 +107,7 @@
                                                 <tbody>
                                                     @foreach ($nuevos_registros as $registro)
                                                         <tr>
+                                                            <td>{{ $registro->NumeroReferencia }}</td>
                                                             <td>{{ $registro->Dui }}</td>
                                                             <td>{{ $registro->Nit }}</td>
                                                             <td>{{ $registro->PrimerNombre }} {{ $registro->SegundoNombre }}
@@ -131,6 +133,7 @@
                                             <table class="table table-striped">
                                                 <thead>
                                                     <tr>
+                                                        <th>Número crédito</th>
                                                         <th>DUI</th>
                                                         <th>NIT</th>
                                                         <th>Nombre</th>
@@ -142,6 +145,7 @@
                                                 <tbody>
                                                     @foreach ($poliza_cumulos->where('NoValido', '=', 1) as $registro)
                                                         <tr>
+                                                            <td>{{ $registro->NumeroReferencia }}</td>
                                                             <td>{{ $registro->Dui }}</td>
                                                             <td>{{ $registro->Nit }}</td>
                                                             <td>{{ $registro->PrimerNombre }}
@@ -168,6 +172,7 @@
                                             <table class="table table-striped" id="datatable">
                                                 <thead>
                                                     <tr>
+                                                        <th>Número crédito</th>
                                                         <th>DUI</th>
                                                         <th>NIT</th>
                                                         <th>Nombre</th>
@@ -180,6 +185,7 @@
                                                 <tbody>
                                                     @foreach ($poliza_cumulos->where('Perfiles', '<>', null) as $registro)
                                                         <tr>
+                                                            <td>{{ $registro->NumeroReferencia }}</td>
                                                             <td>{{ $registro->Dui }}</td>
                                                             <td>{{ $registro->Nit }}</td>
                                                             <td>{{ $registro->PrimerNombre }}
@@ -217,6 +223,7 @@
                                             <table class="table table-striped" id="datatable">
                                                 <thead>
                                                     <tr>
+                                                        <th>Número crédito</th>
                                                         <th>DUI</th>
                                                         <th>NIT</th>
                                                         <th>Nombre</th>
@@ -228,6 +235,7 @@
                                                 <tbody>
                                                     @foreach ($poliza_cumulos->where('Perfiles', '=', null) as $registro)
                                                         <tr>
+                                                            <td>{{ $registro->NumeroReferencia }}</td>
                                                             <td>{{ $registro->Dui }}</td>
                                                             <td>{{ $registro->Nit }}</td>
                                                             <td>{{ $registro->PrimerNombre }}

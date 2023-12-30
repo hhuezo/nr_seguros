@@ -31,6 +31,7 @@ class PolizaDeudaTempCartera extends Model
         'FechaOtorgamiento',
         'FechaVencimiento',
         'Ocupacion',
+        'NumeroReferencia',
         'MontoOtorgado',
         'SaldoCapital',
         'InteresesMoratorios',
