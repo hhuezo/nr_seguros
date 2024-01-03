@@ -59,16 +59,16 @@
                                 @include('polizas.deuda.tab2')
                             </div>
                             <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="creditos-tab">
-
+                                @include('polizas.deuda.tab3')
                             </div>
-
                             <div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="pagos-tab">
+                            @include('polizas.deuda.tab4')
                             </div>
                             <div role="tabpanel" class="tab-pane fade" id="tab_content5" aria-labelledby="avisos-tab">
-
+                            @include('polizas.deuda.tab5')
                             </div>
                             <div role="tabpanel" class="tab-pane fade" id="tab_content6" aria-labelledby="comentarios-tab">
-
+                            @include('polizas.deuda.tab6')
                             </div>
 
 
@@ -179,13 +179,6 @@
 
 
 
-        // $("#MontoCartera").on('blur', function() {
-        //     alert('');
-        //     $("#MontoCartera").show();
-        //     $("#MontoCarteraView").hide();
-        // })
-
-
         $('#PrimaDescontada2').val($('#PrimaCalculada2').val() - $('#DescuentoRentabilidad2').val());
 
         $('#Validar').on('change', function() {
@@ -208,18 +201,13 @@
         calculoCCF();
 
         $('#MontoCartera').change(function() {
-            // var monto = Number(document.getElementById('MontoCartera').value);
-            // var grupal = Number(document.getElementById('LimiteGrupo').value);
-            // if (grupal < monto) {
-
-            //     swal('Su monto de cartera a superado al techo establecido en la póliza');
-            // } else {
+          
             calculoPrimaCalculada();
             calculoPrimaTotal();
             calculoDescuento();
             calculoSubTotal();
             calculoCCF();
-            // }
+         
 
 
         })
@@ -234,23 +222,19 @@
 
         function calculoPrimaCalculada() {
             var monto = document.getElementById('MontoCartera').value;
-            //console.log(document.getElementById('VigenciaDesde').value);
             var desde = new Date(document.getElementById('VigenciaDesde').value);
             var hasta = new Date(document.getElementById('VigenciaHasta').value);
             var hoy = new Date();
             console.log(hoy);
 
-            // var aseguradora = document.getElementById('IdAseguradora').value;
-            // Determine the time difference between two dates
             var millisBetween = hasta.getTime() - desde.getTime();
 
-            // Determine the number of days between two dates
+   
             var dias_axo = (millisBetween / (1000 * 3600 * 24));
             console.log(desde, hasta);
             console.log("dias del año: " + dias_axo)
 
-            // var inicio = new Date(document.getElementById('FechaInicio').value += 'T00:00:00');
-            // var final = new Date(document.getElementById('FechaFinal').value += 'T23:59:59' );
+
             var inicio = new Date(document.getElementById('FechaInicio').value);
             var final = new Date(document.getElementById('FechaFinal').value);
             inicio.setHours(0, 0, 0, 0);
@@ -259,48 +243,23 @@
             console.log("final" + final)
 
             var millisBetween = final.getTime() - inicio.getTime();
-
-            // Determine the number of days between two dates
             var dias_mes = Math.round(millisBetween / (1000 * 3600 * 24));
 
-            // alert(dias_axo);
-            //alert(dias_mes);
-            // var tasa = document.getElementById('Tasa').value;
-            // //  alert(aseguradora);
-            // if (aseguradora == 3) { // busca la aseguradora de fedecredito, revisar el id de fedecredito
-
-            //     if (document.getElementById('Anual').checked == true) { //pendiente de confirmacion
-            //         var tasaFinal = (tasa / 1000); /// 12
-            //     } else {
-            //         var tasaFinal = (tasa / 1000);
-            //     }
-
-            // } else { // sisa
-            //     if (document.getElementById('Anual').checked == true) {
-            //         var tasaFinal = (tasa / 1000) / 12;
-            //     } else {
-            //         var tasaFinal = (tasa / 1000) / 12;
-            //     }
-
-            // }
+    
 
             console.log('tasa Final:', tasaFinal);
             var tasaFinal = document.getElementById('Tasa').value;
             var sub = parseFloat(monto) * parseFloat(tasaFinal);
-            // if (document.getElementById('Diario').checked == true) {
-            //     var sub = ((parseFloat(monto) * parseFloat(tasaFinal)) / dias_axo) * dias_mes;
-            // } else {
+      
             var sub = parseFloat(monto) * parseFloat(tasaFinal);
-            // }
-            // alert(sub);
+         
             document.getElementById('PruebaDecimales').value = sub;
             document.getElementById('PrimaCalculada').value = sub.toLocaleString('sv-SV', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             }).replace(',', '.').replace(/[^\d,.-]/g, '');
             document.getElementById('tasaFinal').value = tasaFinal
-            //  var bomberos = (monto * (0.04 / 12) / 1000); //valor de impuesto varia por gobierno
-            // document.getElementById('ImpuestoBomberos').value = bomberos;
+        
 
         }
 
