@@ -27,6 +27,7 @@ use App\Models\polizas\DeudaVida;
 use App\Models\polizas\PolizaDeudaCartera;
 use App\Models\temp\PolizaDeudaTempCartera;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -513,8 +514,16 @@ class DeudaController extends Controller
             $planes = Plan::where('Activo', 1)->get();
             $detalle = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1)->orderBy('Id', 'desc')->get();
             $ultimo_pago = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1)->orderBy('Id', 'desc')->first();
+
+            //para fechas de modal
             $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
+
+            $primerDia = Carbon::now()->startOfMonth();
+            $ultimoDia = Carbon::now()->endOfMonth();
+
+
             $comentarios = Comentario::where('Deuda',$deuda->Id)->get();
+
             $ultimo_pago_fecha_final = null;
             if ($ultimo_pago) {
                 $fecha_inicial = Carbon::parse($ultimo_pago->FechaFinal);
@@ -525,6 +534,8 @@ class DeudaController extends Controller
             return view('polizas.deuda.edit', compact(
                 'ultimo_pago_fecha_final',
                 'meses',
+                'primerDia',
+                'ultimoDia',
                 'detalle',
                 'videuda',
                 'deuda',
@@ -572,71 +583,240 @@ class DeudaController extends Controller
         //
     }
 
+    public function validarFormatoFecha($data)
+    {
+        try {
+            // Intenta crear un objeto Carbon a partir de la cadena de fecha
+            $fechaCarbon = Carbon::createFromFormat('d/m/Y', $data);
+
+            // Comprueba si la cadena de fecha tiene el formato correcto
+            return $fechaCarbon && $fechaCarbon->format('d/m/Y') === $data;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+
+    public function validarDocumento($documento, $tipo)
+    {
+        if ($tipo == "dui") {
+            // Define las reglas de validación para el formato 000000000
+            $reglaFormato = '/^\d{9}$/';
+
+            return preg_match($reglaFormato, $documento) === 1;
+        } else if ($tipo == "nit") {
+            // Define las reglas de validación para el formato 000000000
+            $reglaFormato = '/^\d{14}$/';
+
+
+
+            return preg_match($reglaFormato, $documento) === 1;
+        }
+    }
+    public function store_poliza(Request $request)
+    {
+
+        // Convertir la cadena en un objeto Carbon (la clase de fecha en Laravel)
+        $fecha = \Carbon\Carbon::parse($request->MesActual);
+
+        // Obtener el mes y el año
+        $mes = $fecha->format('m');  // El formato 'm' devuelve el mes con ceros iniciales (por ejemplo, "02")
+        $anio = $fecha->format('Y');
+
+        // Obtener los datos de la tabla temporal
+        $tempData = PolizaDeudaTempCartera::where('Axo', $anio)
+            ->where('Mes', $mes +0)
+            ->where('User', auth()->user()->id)
+            ->get();
+
+
+        // Iterar sobre los resultados y realizar la inserción en la tabla principal
+        foreach ($tempData as $tempRecord) {
+            PolizaDeudaCartera::create([
+                'Id' => $tempRecord->Id,
+                'Nit' => $tempRecord->Nit,
+                'Dui' => $tempRecord->Dui,
+                'Pasaporte' => $tempRecord->Pasaporte,
+                'Nacionalidad' => $tempRecord->Nacionalidad,
+                'FechaNacimiento' => $tempRecord->FechaNacimiento,
+                'TipoPersona' => $tempRecord->TipoPersona,
+                'PrimerApellido' => $tempRecord->PrimerApellido,
+                'SegundoApellido' => $tempRecord->SegundoApellido,
+                'ApellidoCasada' => $tempRecord->ApellidoCasada,
+                'PrimerNombre' => $tempRecord->PrimerNombre,
+                'SegundoNombre' => $tempRecord->SegundoNombre,
+                'NombreSociedad' => $tempRecord->NombreSociedad,
+                'Sexo' => $tempRecord->Sexo,
+                'FechaOtorgamiento' => $tempRecord->FechaOtorgamiento,
+                'FechaVencimiento' => $tempRecord->FechaVencimiento,
+                'Ocupacion' => $tempRecord->Ocupacion,
+                'NumeroReferencia' => $tempRecord->NumeroReferencia,
+                'MontoOtorgado' => $tempRecord->MontoOtorgado,
+                'SaldoCapital' => $tempRecord->SaldoCapital,
+                'Intereses' => $tempRecord->Intereses,
+                'InteresesMoratorios' => $tempRecord->InteresesMoratorios,
+                'SaldoTotal' => $tempRecord->SaldoTotal,
+                'User' => $tempRecord->User,
+                'Axo' => $tempRecord->Axo,
+                'Mes' => $tempRecord->Mes,
+                'PolizaDeuda' => $tempRecord->PolizaDeuda,
+                'FechaInicio' => $tempRecord->FechaInicio,
+                'FechaFinal' => $tempRecord->FechaFinal,
+                'TipoError' => $tempRecord->TipoError,
+                'FechaNacimientoDate' => $tempRecord->FechaNacimientoDate,
+                'Edad' => $tempRecord->Edad
+            ]);
+        }
+
+        alert()->success('El registro de poliza ha sido ingresado correctamente');
+        return redirect('polizas/deuda/' . $tempRecord->PolizaDeuda . '/edit');
+    }
+
+
     public function create_pago(Request $request)
     {
-        /*session(['MontoCarteraDeuda' => 0]);
-        session(['FechaInicioDeuda' => $today]);
-        session(['FechaFinalDeuda' => $today]);
-        session(['ExcelURLDeuda' => '']);*/
-        $fecha = Carbon::create(null, $request->Mes, 1);
-        $nombreMes = $fecha->locale('es')->monthName;
-
-        $time = Carbon::now('America/El_Salvador');
+        $date = Carbon::create($request->Axo, $request->Mes, "01");
+        $date_anterior = Carbon::create($request->Axo, $request->Mes, "01");
+        $date_mes_anterior = $date_anterior->subMonth();
 
         $deuda = Deuda::findOrFail($request->Id);
 
-        if ($request->Mes == 1) {
-            $mes_evaluar = 12;
-            $axo_evaluar = $request->Axo - 1;
-        } else {
-            $mes_evaluar = $request->Mes - 1;
-            $axo_evaluar = $request->Axo;
-        }
 
+        //insertando cartera
         try {
             $archivo = $request->Archivo;
             PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->delete();
-
-            //dd(Excel::toArray(new PolizaDeudaTempCarteraImport($request->Axo, $request->Mes, $deuda->Id, $request->FechaInicio, $request->FechaFinal), $archivo));
-            Excel::import(new PolizaDeudaTempCarteraImport($request->Axo, $request->Mes, $deuda->Id, $request->FechaInicio, $request->FechaFinal), $archivo);
-
-            $monto_cartera_total = PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->sum('SumaAsegurada');
-
-            if ($monto_cartera_total > $deuda->LimiteMaximo) {
-                alert()->error('Error, el saldo supera el Limite Maximo');
-                return back();
-            }
-
-            if ($request->Validar == "on") {
-
-                $eliminados = DB::select('CALL lista_deuda_eliminados(?, ?, ?, ?, ?, ?)', [$axo_evaluar, $mes_evaluar, $deuda->Id, auth()->user()->id, $request->Axo, $request->Mes]);
-
-                $nuevos = DB::select('CALL lista_deuda_nuevos(?, ?, ?, ?, ?, ?)', [$axo_evaluar, $mes_evaluar, $deuda->Id, auth()->user()->id, $request->Axo, $request->Mes]);
-
-                return view('polizas.validacion_cartera.resultado', compact('nuevos', 'eliminados'));
-            }
-
-            DB::statement("CALL insertar_temp_cartera_deuda(?, ?, ?, ?)", [auth()->user()->id, $request->Axo, $request->Mes, $deuda->Id]);
-
-            $monto_cartera_total = PolizaDeudaCartera::where('Axo', $request->Axo)
-                ->where('Mes', $request->Mes)
-                ->where('PolizaDeuda', $deuda->Id)->sum('SumaAsegurada');
-
-            session(['MontoCarteraDeuda' => $monto_cartera_total]);
-            session(['FechaInicioDeuda' => $request->FechaInicio]);
-            session(['FechaFinalDeuda' => $request->FechaFinal]);
-
-            $filePath = 'documentos/polizas/' . $deuda->NumeroPoliza . '-' . $nombreMes . '-' . $request->Axo . '-Deuda.xlsx';
-            Storage::disk('public')->put($filePath, file_get_contents($archivo));
-
-            session(['ExcelURLDeuda' => $filePath]);
-
-            alert()->success('El registro ha sido ingresado correctamente');
-            return back();
+            Excel::import(new PolizaDeudaTempCarteraImport($date->year, $date->month, $deuda->Id, $request->FechaInicio, $request->FechaFinal), $archivo);
         } catch (Throwable $e) {
-            print($e);
-            return false;
+            //     print($e);
+            //     return false;
         }
+
+        //calculando errores de cartera
+        $cartera_temp = PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->get();
+
+
+        foreach ($cartera_temp as $obj) {
+            $errores_array = [];
+            // 1 error formato fecha nacimiento
+            $validador_fecha_nacimiento = $this->validarFormatoFecha($obj->FechaNacimiento);
+            if ($validador_fecha_nacimiento == false) {
+                $obj->TipoError = 1;
+                $obj->update();
+
+                array_push($errores_array, 1);
+            }
+
+            // 2 error formato de dui
+            $validador_dui = $this->validarDocumento($obj->Dui, "dui");
+
+            if ($validador_dui == false) {
+                $obj->TipoError = 2;
+                $obj->update();
+
+                array_push($errores_array, 2);
+            }
+
+            // 3 error formato de nit
+            // $validador_nit = $this->validarDocumento($obj->Nit, "nit");
+
+            // if ($validador_nit == false) {
+            //     $obj->TipoError = 3;
+            //     $obj->update();
+            // }
+
+
+            // 4 nombre o apellido
+            if (trim($obj->PrimerApellido) == "" || trim($obj->PrimerNombre) == "") {
+                $obj->TipoError = 4;
+                $obj->update();
+
+                array_push($errores_array, 4);
+            }
+
+            $obj->Errores = $errores_array;
+        }
+
+
+        $data_error = $cartera_temp->where('TipoError', '<>', 0);
+
+        if ($data_error->count() > 0) {
+            return view('polizas.deuda.respuesta_poliza_error', compact('data_error', 'deuda'));
+        }
+
+
+
+        //estableciendo fecha de nacimiento date y calculando edad
+        PolizaDeudaTempCartera::where('User', auth()->user()->id)
+            ->where('PolizaDeuda', $request->Id)
+            ->update([
+                'FechaNacimientoDate' => DB::raw("STR_TO_DATE(FechaNacimiento, '%d/%m/%Y')"),
+                'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, CURDATE())"),
+            ]);
+
+
+        //buscando registros nuevos
+        $poliza_id = $request->Id;
+        $nuevos_registros = DB::table('poliza_deuda_temp_cartera')
+            ->where([
+                ['Mes', $date->month],
+                ['Axo', $date->year],
+                ['PolizaDeuda', $request->Id],
+            ])
+            ->whereNotExists(function ($query) use ($date_anterior, $date_mes_anterior, $poliza_id) {
+                $query->select(DB::raw(1))
+                    ->from('poliza_deuda_cartera')
+                    ->where('poliza_deuda_cartera.Mes', $date_anterior->month)
+                    ->where('poliza_deuda_cartera.Axo', $date_mes_anterior->year)
+                    ->where('PolizaDeuda', $poliza_id)
+                    ->where(function ($subQuery) {
+                        $subQuery->whereColumn('poliza_deuda_temp_cartera.NumeroReferencia', '=', 'poliza_deuda_cartera.NumeroReferencia');
+                        //$subQuery->whereColumn('poliza_deuda_temp_cartera.Dui', '=', 'poliza_deuda_cartera.Dui');
+                        // ->orWhere('poliza_deuda_temp_cartera.Nit', '=', 'poliza_deuda_cartera.Nit');
+                    });
+            })->get();
+
+        $maximos_minimos = DeudaRequisitos::where('Deuda', '=', $request->Id)
+            ->selectRaw('MIN(MontoInicial) as min_monto_inicial, MAX(MontoFinal) as max_monto_final,MIN(EdadInicial) as min_edad_inicial, MAX(EdadFinal) as max_edad_final ')
+            ->first();
+
+
+        // $maximos_minimos contendrá el resultado de la consulta
+        $minMontoInicial = $maximos_minimos->min_monto_inicial;
+        $maxMontoFinal = $maximos_minimos->max_monto_final;
+        $minEdadInicial = $maximos_minimos->min_edad_inicial;
+        $maxEdadFinal = $maximos_minimos->max_edad_final;
+
+        //cumulos por dui
+        $poliza_cumulos = PolizaDeudaTempCartera::selectRaw('Id,Dui,Edad,Nit,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento, NumeroReferencia,
+        SUM(SaldoCapital) as total_saldo')->groupBy('Dui')->get();
+
+        //consultando la tabla requisitos
+        $requisitos = $deuda->requisitos;
+
+
+        foreach ($poliza_cumulos as $cumulo) {
+            $cumulo->NoValido = 0;
+            if ($cumulo->Edad > $maxEdadFinal) {
+                $cumulo->NoValido = 1;
+            } else {
+                //datos que estan dentro de la edad
+                $requisitos_poliza = $requisitos->where('EdadInicial', '<=', $cumulo->Edad)->where('EdadFinal', '>=', $cumulo->Edad);
+
+                if ($requisitos_poliza) {
+                    $max = $requisitos_poliza->max('MontoFinal');
+                    if ($cumulo->total_saldo >  $max) {
+                        $cumulo->NoValido = 1;
+                    } else {
+                        $perfiles =  $requisitos_poliza->where('MontoInicial', '<=', $cumulo->total_saldo)->where('MontoFinal', '>=', $cumulo->total_saldo)->pluck('perfil.Descripcion')->toArray();
+                        $cumulo->Perfiles = $perfiles;
+                    }
+                }
+            }
+        }
+
+
+        return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'deuda', 'poliza_cumulos', 'date_anterior', 'date'));
     }
     public function delete_pago($id)
     {

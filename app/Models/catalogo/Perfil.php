@@ -2,6 +2,7 @@
 
 namespace App\Models\catalogo;
 
+use App\Models\polizas\DeudaRequisitos;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -25,8 +26,12 @@ class Perfil extends Model
 
     public function aseguradoras()
     {
-        return $this->belongsTo('App\Models\catalogo\Aseguradora', 'Aseguradora', 'Id');
+        return $this->belongsTo(Aseguradora::class, 'Aseguradora', 'Id');
     }
 
 
+    public function requisitos()
+    {
+        return $this->hasMany(DeudaRequisitos::class,'Perfil', 'Id');
+    }
 }
