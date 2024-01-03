@@ -523,7 +523,7 @@ class DeudaController extends Controller
             $primerDia = Carbon::now()->startOfMonth();
             $ultimoDia = Carbon::now()->endOfMonth();
 
->>>>>>>>> Temporary merge branch 2
+
             $ultimo_pago_fecha_final = null;
             if ($ultimo_pago) {
                 $fecha_inicial = Carbon::parse($ultimo_pago->FechaFinal);
