@@ -35,7 +35,7 @@ class PolizaDeudaTempCarteraImport implements ToModel, WithStartRow, SkipsEmptyR
     }
     public function model(array $row)
     {
-            if($row[0] || $row[1])
+            if(($row[0] || $row[1]) && ($row[0] != "DUI" && $row[1] != "NIT"))
             {
                 return new PolizaDeudaTempCartera([
                     'Nit' => $row[0],

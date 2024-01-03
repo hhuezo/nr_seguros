@@ -1,5 +1,44 @@
 @extends ('welcome')
 @section('contenido')
+    <style>
+        #loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #loading-overlay img {
+            width: 50px;
+            /* Ajusta el tamaño de la imagen según tus necesidades */
+            height: 50px;
+            /* Ajusta el tamaño de la imagen según tus necesidades */
+        }
+    </style>
+
+
+    <!-- Agrega este script en tu archivo blade -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var loadingOverlay = document.getElementById('loading-overlay');
+
+            // Muestra el overlay de carga cuando se hace clic en el botón
+            document.querySelector('button').addEventListener('click', function() {
+                loadingOverlay.style.display = 'flex'; // Cambia a 'flex' para usar flexbox
+            });
+
+            // Oculta el overlay de carga después de que la página se haya cargado completamente
+            window.addEventListener('load', function() {
+                loadingOverlay.style.display = 'none';
+            });
+        });
+    </script>
     <div role="main">
         <div class="">
 
@@ -13,11 +52,18 @@
                                 <h2>Resumen de cartera</h2>
                             </div>
                             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
-                                <a href="{{ url('/polizas/deuda') }}/{{ $deuda->Id }}/edit">
+
+                                <form method="post" action="{{ url('polizas/deuda/store_poliza') }}">
+                                    @csrf
+                                    <input type="hidden" name="Cartera" value="{{ $deuda->Id }}">
+                                    <input type="hidden" name="MesActual" value="{{ date('Y-m-d', strtotime($date)) }}">
+                                    <input type="hidden" name="MesAnterior"
+                                        value="{{ date('Y-m-d', strtotime($date_anterior)) }}">
                                     <button class="btn btn-primary">
-                                        <i class="fa fa-arrow-left"></i>
+                                        Guardar en cartera
                                     </button>
-                                </a>
+                                </form>
+
                             </div>
 
                             <div class="clearfix"></div>
@@ -35,10 +81,12 @@
                                                 válidos</a>
                                         </li>
                                         <li role="presentation" class=""><a href="#tab_content3" role="tab"
-                                                id="profile-tab2" data-toggle="tab" aria-expanded="false">Registros con requisitos</a>
+                                                id="profile-tab2" data-toggle="tab" aria-expanded="false">Registros con
+                                                requisitos</a>
                                         </li>
                                         <li role="presentation" class=""><a href="#tab_content4" role="tab"
-                                                id="profile-tab2" data-toggle="tab" aria-expanded="false">Registros válidos</a>
+                                                id="profile-tab2" data-toggle="tab" aria-expanded="false">Registros
+                                                válidos</a>
                                         </li>
                                     </ul>
                                     <div id="myTabContent" class="tab-content">
@@ -48,6 +96,7 @@
                                             <table class="table table-striped">
                                                 <thead>
                                                     <tr>
+                                                        <th>Número crédito</th>
                                                         <th>DUI</th>
                                                         <th>NIT</th>
                                                         <th>Nombre</th>
@@ -58,6 +107,7 @@
                                                 <tbody>
                                                     @foreach ($nuevos_registros as $registro)
                                                         <tr>
+                                                            <td>{{ $registro->NumeroReferencia }}</td>
                                                             <td>{{ $registro->Dui }}</td>
                                                             <td>{{ $registro->Nit }}</td>
                                                             <td>{{ $registro->PrimerNombre }} {{ $registro->SegundoNombre }}
@@ -83,6 +133,7 @@
                                             <table class="table table-striped">
                                                 <thead>
                                                     <tr>
+                                                        <th>Número crédito</th>
                                                         <th>DUI</th>
                                                         <th>NIT</th>
                                                         <th>Nombre</th>
@@ -92,8 +143,9 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach ($poliza_cumulos->where('NoValido','=',1) as $registro)
+                                                    @foreach ($poliza_cumulos->where('NoValido', '=', 1) as $registro)
                                                         <tr>
+                                                            <td>{{ $registro->NumeroReferencia }}</td>
                                                             <td>{{ $registro->Dui }}</td>
                                                             <td>{{ $registro->Nit }}</td>
                                                             <td>{{ $registro->PrimerNombre }}
@@ -120,6 +172,7 @@
                                             <table class="table table-striped" id="datatable">
                                                 <thead>
                                                     <tr>
+                                                        <th>Número crédito</th>
                                                         <th>DUI</th>
                                                         <th>NIT</th>
                                                         <th>Nombre</th>
@@ -130,8 +183,9 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach ($poliza_cumulos->where('Perfiles','<>',null) as $registro)
+                                                    @foreach ($poliza_cumulos->where('Perfiles', '<>', null) as $registro)
                                                         <tr>
+                                                            <td>{{ $registro->NumeroReferencia }}</td>
                                                             <td>{{ $registro->Dui }}</td>
                                                             <td>{{ $registro->Nit }}</td>
                                                             <td>{{ $registro->PrimerNombre }}
@@ -169,6 +223,7 @@
                                             <table class="table table-striped" id="datatable">
                                                 <thead>
                                                     <tr>
+                                                        <th>Número crédito</th>
                                                         <th>DUI</th>
                                                         <th>NIT</th>
                                                         <th>Nombre</th>
@@ -178,8 +233,9 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach ($poliza_cumulos->where('Perfiles','=',null) as $registro)
+                                                    @foreach ($poliza_cumulos->where('Perfiles', '=', null) as $registro)
                                                         <tr>
+                                                            <td>{{ $registro->NumeroReferencia }}</td>
                                                             <td>{{ $registro->Dui }}</td>
                                                             <td>{{ $registro->Nit }}</td>
                                                             <td>{{ $registro->PrimerNombre }}
@@ -190,7 +246,7 @@
                                                             <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
                                                             </td>
                                                             <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
-                                                       
+
                                                             <td class="text-right">
                                                                 ${{ number_format($registro->total_saldo, 2) }}</td>
 
@@ -209,6 +265,12 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Agrega este div al final de tu archivo blade -->
+            <div id="loading-overlay">
+                <img src="{{ asset('img/ajax-loader.gif') }}" alt="Loading..." />
+            </div>
+
         </div>
     </div>
 @endsection
