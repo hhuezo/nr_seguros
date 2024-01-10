@@ -343,6 +343,11 @@ class DeudaController extends Controller
         return view('polizas.deuda.show', compact('requisitos', 'planes', 'productos', 'perfil', 'saldos',  'deuda', 'aseguradora', 'cliente', 'estadoPoliza', 'ejecutivo', 'creditos', 'tipoCartera', 'data'));
     }
 
+
+    public function eliminar_requisito(Request $request)
+    {
+    }
+
     public function datos_asegurabilidad(Request $request)
     {
         $asegurabilidad = new DeudaRequisitos();
@@ -517,7 +522,7 @@ class DeudaController extends Controller
 
             //para fechas de modal
             $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
-            $comentarios = Comentario::where('Deuda',$deuda->Id)->get();
+            $comentarios = Comentario::where('Deuda', $deuda->Id)->get();
 
 
             $primerDia = Carbon::now()->startOfMonth();
@@ -625,7 +630,7 @@ class DeudaController extends Controller
 
         // Obtener los datos de la tabla temporal
         $tempData = PolizaDeudaTempCartera::where('Axo', $anio)
-            ->where('Mes', $mes +0)
+            ->where('Mes', $mes + 0)
             ->where('User', auth()->user()->id)
             ->get();
 
@@ -654,7 +659,9 @@ class DeudaController extends Controller
                 'MontoOtorgado' => $tempRecord->MontoOtorgado,
                 'SaldoCapital' => $tempRecord->SaldoCapital,
                 'Intereses' => $tempRecord->Intereses,
+                'InteresesCovid' => $tempRecord->InteresesCovid,
                 'InteresesMoratorios' => $tempRecord->InteresesMoratorios,
+                'MontoNominal' => $tempRecord->MontoNominal,
                 'SaldoTotal' => $tempRecord->SaldoTotal,
                 'User' => $tempRecord->User,
                 'Axo' => $tempRecord->Axo,
@@ -668,10 +675,360 @@ class DeudaController extends Controller
             ]);
         }
 
+        $deuda = Deuda::findOrFail($tempData->PolizaDeuda);
+        $cartera = PolizaDeudaCartera::where('PolizaDeuda', '=', $tempData->PolizaDeuda)->get();
+        $tasas = DeudaCredito::where('Deuda', '=', $tempData->PolizaDeuda)->where('Activo', 1)->get();
+        foreach ($tasas as $obj) {
+            switch ($obj->Saldos) {
+                case '1':
+                    # saldo a capital
+                    $saldo = $this->calcularCarteraINS1($deuda, $tasas);
+                    break;
+                case '2':
+                    # saldo a capital mas intereses
+                    $saldo = $this->calcularCarteraINS2($deuda, $tasas);
+                    break;
+                case '3':
+                    # saldo a capital mas intereses mas covid
+                    $saldo = $this->calcularCarteraINS3($deuda, $tasas);
+                    break;
+                case '4':
+                    # saldo a capital as intereses mas covid mas moratorios
+                    $saldo = $this->calcularCarteraINS4($deuda, $tasas);
+                    break;
+                default:
+                    # .monto moninal
+                    $saldo = $this->calcularCarteraINS5($deuda, $tasas);
+                    break;
+            }
+        }
+
+
         alert()->success('El registro de poliza ha sido ingresado correctamente');
         return redirect('polizas/deuda/' . $tempRecord->PolizaDeuda . '/edit');
     }
 
+    public function calcularCarteraINS1($deuda, $tasas)
+    {
+        $tasaGeneral = $deuda->Tasa;
+        foreach ($tasas as $obj) {
+            if (!$obj->TasaFecha && !$obj->TasaMonto && !$obj->TasaEdad) {
+                $saldo = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->select(DB::raw('SUM(SaldoCapital) as Saldo'))->first();
+                $total = $saldo->Saldo * $tasaGeneral;
+            } elseif ($obj->TasaFecha && !$obj->TasaMonto && !$obj->TasaEdad) {
+                //existe tasa de Fecha
+                $desde = Carbon::parse($obj->FechaDesde)->format('y-m-d');
+                $hasta = Carbon::parse($obj->FechaHasta)->format('y-m-d');
+                $saldo = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('FechaOtorgamiento', [$desde, $hasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'))->first();
+                $total = $saldo->Saldo * $obj->TasaFecha;
+            } elseif (!$obj->TasaFecha && $obj->TasaMonto && !$obj->TasaEdad) {
+                $saldo = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('MontoOtorgado', [$obj->MontoDesde, $obj->MontoHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'))->first();
+                $total = $saldo->Saldo * $obj->TasaMonto;
+            } elseif (!$obj->TasaFecha && !$obj->TasaMonto && $obj->TasaEdad) {
+                $saldo = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('Edad', [$obj->EdadDesde, $obj->EdadHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'))->first();
+                $total = $saldo->Saldo * $obj->TasaEdad;
+            } elseif ($obj->TasaFecha && $obj->TasaMonto && !$obj->TasaEdad) {
+                $desde = Carbon::parse($obj->FechaDesde)->format('y-m-d');
+                $hasta = Carbon::parse($obj->FechaHasta)->format('y-m-d');
+                $saldo1 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('FechaOtorgamiento', [$desde, $hasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'))->first();
+                $saldo2 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('MontoOtorgado', [$obj->MontoDesde, $obj->MontoHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'))->first();
+                $total = ($saldo1->Saldo  * $obj->TasaFecha) + ($saldo2->Saldo  * $obj->TasaMonto);
+            } elseif ($obj->TasaFecha && !$obj->TasaMonto && $obj->TasaEdad) {
+                $desde = Carbon::parse($obj->FechaDesde)->format('y-m-d');
+                $hasta = Carbon::parse($obj->FechaHasta)->format('y-m-d');
+                $saldo1 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('FechaOtorgamiento', [$desde, $hasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'))->first();
+                $saldo2 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('Edad', [$obj->EdadDesde, $obj->EdadHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'))->first();
+
+                $total = ($saldo1->Saldo  * $obj->TasaFecha) + ($saldo2->Saldo  * $obj->TasaEdad);
+            } elseif (!$obj->TasaFecha && $obj->TasaMonto && $obj->TasaEdad) {
+                $saldo1 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('MontoOtorgado', [$obj->MontoDesde, $obj->MontoHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'))->first();
+                $saldo2 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('Edad', [$obj->EdadDesde, $obj->EdadHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'))->first();
+
+                $total = ($saldo1->Saldo  * $obj->TasaMonto) + ($saldo2->Saldo  * $obj->TasaEdad);
+            } elseif ($obj->TasaFecha && $obj->TasaMonto && $obj->TasaEdad) {
+
+                $desde = Carbon::parse($obj->FechaDesde)->format('y-m-d');
+                $hasta = Carbon::parse($obj->FechaHasta)->format('y-m-d');
+                $saldo1 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('FechaOtorgamiento', [$desde, $hasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'))->first();
+                $saldo2 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('Edad', [$obj->EdadDesde, $obj->EdadHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'))->first();
+                $saldo3 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('MontoOtorgado', [$obj->MontoDesde, $obj->MontoHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'))->first();
+
+                $total = ($saldo1->Saldo  * $obj->TasaFecha) + ($saldo2->Saldo  * $obj->TasaEdad) + ($saldo3->Saldo  * $obj->TasaMonto);
+            }
+        }
+        return $total;
+    }
+
+    public function calcularCarteraINS2($deuda, $tasas)
+    {
+        $tasaGeneral = $deuda->Tasa;
+        foreach ($tasas as $obj) {
+            if (!$obj->TasaFecha && !$obj->TasaMonto && !$obj->TasaEdad) {
+                $saldo = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'))
+                    ->first();
+                $total = ($saldo->Saldo + $saldo->Intereses) * $tasaGeneral;
+            } elseif ($obj->TasaFecha && !$obj->TasaMonto && !$obj->TasaEdad) {
+                //existe tasa de Fecha
+                $desde = Carbon::parse($obj->FechaDesde)->format('y-m-d');
+                $hasta = Carbon::parse($obj->FechaHasta)->format('y-m-d');
+                $saldo = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('FechaOtorgamiento', [$desde, $hasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'))->first();
+                $total = ($saldo->Saldo + $saldo->Intereses) * $obj->TasaFecha;
+            } elseif (!$obj->TasaFecha && $obj->TasaMonto && !$obj->TasaEdad) {
+                $saldo = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('MontoOtorgado', [$obj->MontoDesde, $obj->MontoHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'))->first();
+                $total = ($saldo->Saldo + $saldo->Intereses) * $obj->TasaMonto;
+            } elseif (!$obj->TasaFecha && !$obj->TasaMonto && $obj->TasaEdad) {
+                $saldo = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('Edad', [$obj->EdadDesde, $obj->EdadHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'))->first();
+                $total = ($saldo->Saldo + $saldo->Intereses) * $obj->TasaEdad;
+            } elseif ($obj->TasaFecha && $obj->TasaMonto && !$obj->TasaEdad) {
+                $desde = Carbon::parse($obj->FechaDesde)->format('y-m-d');
+                $hasta = Carbon::parse($obj->FechaHasta)->format('y-m-d');
+                $saldo1 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('FechaOtorgamiento', [$desde, $hasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'))->first();
+                $saldo2 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('MontoOtorgado', [$obj->MontoDesde, $obj->MontoHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'))->first();
+                $total = (($saldo1->Saldo + $saldo1->Intereses) * $obj->TasaFecha) + (($saldo2->Saldo + $saldo2->Intereses) * $obj->TasaMonto);
+            } elseif ($obj->TasaFecha && !$obj->TasaMonto && $obj->TasaEdad) {
+                $desde = Carbon::parse($obj->FechaDesde)->format('y-m-d');
+                $hasta = Carbon::parse($obj->FechaHasta)->format('y-m-d');
+                $saldo1 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('FechaOtorgamiento', [$desde, $hasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'))->first();
+                $saldo2 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('Edad', [$obj->EdadDesde, $obj->EdadHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'))->first();
+
+                $total = (($saldo1->Saldo + $saldo1->Intereses) * $obj->TasaFecha) + (($saldo2->Saldo + $saldo2->Intereses) * $obj->TasaEdad);
+            } elseif (!$obj->TasaFecha && $obj->TasaMonto && $obj->TasaEdad) {
+                $saldo1 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('MontoOtorgado', [$obj->MontoDesde, $obj->MontoHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'))->first();
+                $saldo2 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('Edad', [$obj->EdadDesde, $obj->EdadHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'))->first();
+
+                $total = (($saldo1->Saldo + $saldo1->Intereses) * $obj->TasaMonto) + (($saldo2->Saldo + $saldo2->Intereses) * $obj->TasaEdad);
+            } elseif ($obj->TasaFecha && $obj->TasaMonto && $obj->TasaEdad) {
+
+                $desde = Carbon::parse($obj->FechaDesde)->format('y-m-d');
+                $hasta = Carbon::parse($obj->FechaHasta)->format('y-m-d');
+                $saldo1 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('FechaOtorgamiento', [$desde, $hasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'))->first();
+                $saldo2 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('Edad', [$obj->EdadDesde, $obj->EdadHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'))->first();
+                $saldo3 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('MontoOtorgado', [$obj->MontoDesde, $obj->MontoHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'))->first();
+
+                $total = (($saldo1->Saldo + $saldo1->Intereses) * $obj->TasaFecha) + (($saldo2->Saldo + $saldo2->Intereses) * $obj->TasaEdad) + (($saldo3->Saldo + $saldo3->Intereses) * $obj->TasaMonto);
+            }
+        }
+        return $total;
+    }
+
+    public function calcularCarteraINS3($deuda, $tasas)
+    {
+        $tasaGeneral = $deuda->Tasa;
+        foreach ($tasas as $obj) {
+            if (!$obj->TasaFecha && !$obj->TasaMonto && !$obj->TasaEdad) {
+                $saldo = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'), DB::raw('SUM(InteresesCovid) as Covid'), DB::raw('SUM(InteresesCovid) as Covid'))
+                    ->first();
+                $total = ($saldo->Saldo + $saldo->Intereses + $saldo->Covid ) * $tasaGeneral;
+            } elseif ($obj->TasaFecha && !$obj->TasaMonto && !$obj->TasaEdad) {
+                //existe tasa de Fecha
+                $desde = Carbon::parse($obj->FechaDesde)->format('y-m-d');
+                $hasta = Carbon::parse($obj->FechaHasta)->format('y-m-d');
+                $saldo = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('FechaOtorgamiento', [$desde, $hasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'), DB::raw('SUM(InteresesCovid) as Covid'))->first();
+                $total = ($saldo->Saldo + $saldo->Intereses + $saldo->Covid) * $obj->TasaFecha;
+            } elseif (!$obj->TasaFecha && $obj->TasaMonto && !$obj->TasaEdad) {
+                $saldo = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('MontoOtorgado', [$obj->MontoDesde, $obj->MontoHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'), DB::raw('SUM(InteresesCovid) as Covid'))->first();
+                $total = ($saldo->Saldo + $saldo->Intereses + $saldo->Covid) * $obj->TasaMonto;
+            } elseif (!$obj->TasaFecha && !$obj->TasaMonto && $obj->TasaEdad) {
+                $saldo = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('Edad', [$obj->EdadDesde, $obj->EdadHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'), DB::raw('SUM(InteresesCovid) as Covid'))->first();
+                $total = ($saldo->Saldo + $saldo->Intereses + $saldo->Covid) * $obj->TasaEdad;
+            } elseif ($obj->TasaFecha && $obj->TasaMonto && !$obj->TasaEdad) {
+                $desde = Carbon::parse($obj->FechaDesde)->format('y-m-d');
+                $hasta = Carbon::parse($obj->FechaHasta)->format('y-m-d');
+                $saldo1 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('FechaOtorgamiento', [$desde, $hasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'), DB::raw('SUM(InteresesCovid) as Covid'))->first();
+                $saldo2 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('MontoOtorgado', [$obj->MontoDesde, $obj->MontoHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'), DB::raw('SUM(InteresesCovid) as Covid'))->first();
+                $total = (($saldo1->Saldo + $saldo1->Intereses + $saldo1->Covid) * $obj->TasaFecha) + (($saldo2->Saldo + $saldo2->Intereses + $saldo2->Covid) * $obj->TasaMonto);
+            } elseif ($obj->TasaFecha && !$obj->TasaMonto && $obj->TasaEdad) {
+                $desde = Carbon::parse($obj->FechaDesde)->format('y-m-d');
+                $hasta = Carbon::parse($obj->FechaHasta)->format('y-m-d');
+                $saldo1 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('FechaOtorgamiento', [$desde, $hasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'), DB::raw('SUM(InteresesCovid) as Covid'))->first();
+                $saldo2 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('Edad', [$obj->EdadDesde, $obj->EdadHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'), DB::raw('SUM(InteresesCovid) as Covid'))->first();
+
+                $total = (($saldo1->Saldo + $saldo1->Intereses + $saldo1->Covid) * $obj->TasaFecha) + (($saldo2->Saldo + $saldo2->Intereses + $saldo2->Covid) * $obj->TasaEdad);
+            } elseif (!$obj->TasaFecha && $obj->TasaMonto && $obj->TasaEdad) {
+                $saldo1 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('MontoOtorgado', [$obj->MontoDesde, $obj->MontoHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'), DB::raw('SUM(InteresesCovid) as Covid'))->first();
+                $saldo2 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('Edad', [$obj->EdadDesde, $obj->EdadHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'), DB::raw('SUM(InteresesCovid) as Covid'))->first();
+
+                $total = (($saldo1->Saldo + $saldo1->Intereses + $saldo1->Covid) * $obj->TasaMonto) + (($saldo2->Saldo + $saldo2->Intereses + $saldo2->Covid) * $obj->TasaEdad);
+            } elseif ($obj->TasaFecha && $obj->TasaMonto && $obj->TasaEdad) {
+
+                $desde = Carbon::parse($obj->FechaDesde)->format('y-m-d');
+                $hasta = Carbon::parse($obj->FechaHasta)->format('y-m-d');
+                $saldo1 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('FechaOtorgamiento', [$desde, $hasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'), DB::raw('SUM(InteresesCovid) as Covid'))->first();
+                $saldo2 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('Edad', [$obj->EdadDesde, $obj->EdadHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'), DB::raw('SUM(InteresesCovid) as Covid'))->first();
+                $saldo3 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('MontoOtorgado', [$obj->MontoDesde, $obj->MontoHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'), DB::raw('SUM(InteresesCovid) as Covid'))->first();
+
+                $total = (($saldo1->Saldo + $saldo1->Intereses + $saldo1->Covid) * $obj->TasaFecha) + (($saldo2->Saldo + $saldo2->Intereses + $saldo2->Covid) * $obj->TasaEdad) + (($saldo3->Saldo + $saldo3->Intereses + $saldo3->Covid) * $obj->TasaMonto);
+            }
+        }
+        return $total;
+    }
+
+
+    public function calcularCarteraINS4($deuda, $tasas)
+    {
+        $tasaGeneral = $deuda->Tasa;
+        foreach ($tasas as $obj) {
+            if (!$obj->TasaFecha && !$obj->TasaMonto && !$obj->TasaEdad) {
+                $saldo = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'), DB::raw('SUM(InteresesCovid) as Covid'), 
+                    DB::raw('SUM(InteresesCovid) as Covid'), DB::raw('Sum(InteresesMoratorios) as Mora'),DB::raw('Sum(InteresesMoratorios) as Mora'))
+                    ->first();
+                $total = ($saldo->Saldo + $saldo->Intereses + $saldo->Covid + $saldo->Mora + $saldo->Mora) * $tasaGeneral;
+            } elseif ($obj->TasaFecha && !$obj->TasaMonto && !$obj->TasaEdad) {
+                //existe tasa de Fecha
+                $desde = Carbon::parse($obj->FechaDesde)->format('y-m-d');
+                $hasta = Carbon::parse($obj->FechaHasta)->format('y-m-d');
+                $saldo = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('FechaOtorgamiento', [$desde, $hasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'), DB::raw('SUM(InteresesCovid) as Covid'), DB::raw('Sum(InteresesMoratorios) as Mora'))->first();
+                $total = ($saldo->Saldo + $saldo->Intereses + $saldo->Covid + $saldo->Mora) * $obj->TasaFecha;
+            } elseif (!$obj->TasaFecha && $obj->TasaMonto && !$obj->TasaEdad) {
+                $saldo = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('MontoOtorgado', [$obj->MontoDesde, $obj->MontoHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'), DB::raw('SUM(InteresesCovid) as Covid'), DB::raw('Sum(InteresesMoratorios) as Mora'))->first();
+                $total = ($saldo->Saldo + $saldo->Intereses + $saldo->Covid + $saldo->Mora) * $obj->TasaMonto;
+            } elseif (!$obj->TasaFecha && !$obj->TasaMonto && $obj->TasaEdad) {
+                $saldo = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('Edad', [$obj->EdadDesde, $obj->EdadHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'), DB::raw('SUM(InteresesCovid) as Covid'), DB::raw('Sum(InteresesMoratorios) as Mora'))->first();
+                $total = ($saldo->Saldo + $saldo->Intereses + $saldo->Covid + $saldo->Mora) * $obj->TasaEdad;
+            } elseif ($obj->TasaFecha && $obj->TasaMonto && !$obj->TasaEdad) {
+                $desde = Carbon::parse($obj->FechaDesde)->format('y-m-d');
+                $hasta = Carbon::parse($obj->FechaHasta)->format('y-m-d');
+                $saldo1 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('FechaOtorgamiento', [$desde, $hasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'), DB::raw('SUM(InteresesCovid) as Covid'), DB::raw('Sum(InteresesMoratorios) as Mora'))->first();
+                $saldo2 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('MontoOtorgado', [$obj->MontoDesde, $obj->MontoHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'), DB::raw('SUM(InteresesCovid) as Covid'), DB::raw('Sum(InteresesMoratorios) as Mora'))->first();
+                $total = (($saldo1->Saldo + $saldo1->Intereses + $saldo1->Covid + $saldo1->Mora) * $obj->TasaFecha) + (($saldo2->Saldo + $saldo2->Intereses + $saldo2->Covid + $saldo2->Mora) * $obj->TasaMonto);
+            } elseif ($obj->TasaFecha && !$obj->TasaMonto && $obj->TasaEdad) {
+                $desde = Carbon::parse($obj->FechaDesde)->format('y-m-d');
+                $hasta = Carbon::parse($obj->FechaHasta)->format('y-m-d');
+                $saldo1 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('FechaOtorgamiento', [$desde, $hasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'), DB::raw('SUM(InteresesCovid) as Covid'), DB::raw('Sum(InteresesMoratorios) as Mora'))->first();
+                $saldo2 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('Edad', [$obj->EdadDesde, $obj->EdadHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'), DB::raw('SUM(InteresesCovid) as Covid'), DB::raw('Sum(InteresesMoratorios) as Mora'))->first();
+
+                $total = (($saldo1->Saldo + $saldo1->Intereses + $saldo1->Covid + $saldo1->Mora) * $obj->TasaFecha) + (($saldo2->Saldo + $saldo2->Intereses + $saldo2->Covid + $saldo2->Mora) * $obj->TasaEdad);
+            } elseif (!$obj->TasaFecha && $obj->TasaMonto && $obj->TasaEdad) {
+                $saldo1 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('MontoOtorgado', [$obj->MontoDesde, $obj->MontoHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'), DB::raw('SUM(InteresesCovid) as Covid'), DB::raw('Sum(InteresesMoratorios) as Mora'))->first();
+                $saldo2 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('Edad', [$obj->EdadDesde, $obj->EdadHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'), DB::raw('SUM(InteresesCovid) as Covid'), DB::raw('Sum(InteresesMoratorios) as Mora'))->first();
+
+                $total = (($saldo1->Saldo + $saldo1->Intereses + $saldo1->Covid + $saldo1->Mora) * $obj->TasaMonto) + (($saldo2->Saldo + $saldo2->Intereses + $saldo2->Covid + $saldo2->Mora) * $obj->TasaEdad);
+            } elseif ($obj->TasaFecha && $obj->TasaMonto && $obj->TasaEdad) {
+
+                $desde = Carbon::parse($obj->FechaDesde)->format('y-m-d');
+                $hasta = Carbon::parse($obj->FechaHasta)->format('y-m-d');
+                $saldo1 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('FechaOtorgamiento', [$desde, $hasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'), DB::raw('SUM(InteresesCovid) as Covid'), DB::raw('Sum(InteresesMoratorios) as Mora'))->first();
+                $saldo2 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('Edad', [$obj->EdadDesde, $obj->EdadHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'), DB::raw('SUM(InteresesCovid) as Covid'), DB::raw('Sum(InteresesMoratorios) as Mora'))->first();
+                $saldo3 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('MontoOtorgado', [$obj->MontoDesde, $obj->MontoHasta])
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'), DB::raw('SUM(InteresesCovid) as Covid'), DB::raw('Sum(InteresesMoratorios) as Mora'))->first();
+
+                $total = (($saldo1->Saldo + $saldo1->Intereses + $saldo1->Covid + $saldo1->Mora) * $obj->TasaFecha) + (($saldo2->Saldo + $saldo2->Intereses + $saldo2->Covid + $saldo2->Mora) * $obj->TasaEdad) + (($saldo3->Saldo + $saldo3->Intereses + $saldo3->Covid + $saldo3->Mora) * $obj->TasaMonto);
+            }
+        }
+        return $total;
+    }
+
+    public function calcularCarteraINS5($deuda, $tasas)
+    {
+        $tasaGeneral = $deuda->Tasa;
+        foreach ($tasas as $obj) {
+            if (!$obj->TasaFecha && !$obj->TasaMonto && !$obj->TasaEdad) {
+                $saldo = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->select(DB::raw('SUM(MontoNominal) as Saldo'))->first();
+                $total = $saldo->Saldo * $tasaGeneral;
+            } elseif ($obj->TasaFecha && !$obj->TasaMonto && !$obj->TasaEdad) {
+                //existe tasa de Fecha
+                $desde = Carbon::parse($obj->FechaDesde)->format('y-m-d');
+                $hasta = Carbon::parse($obj->FechaHasta)->format('y-m-d');
+                $saldo = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('FechaOtorgamiento', [$desde, $hasta])
+                    ->select(DB::raw('SUM(MontoNominal) as Saldo'))->first();
+                $total = $saldo->Saldo * $obj->TasaFecha;
+            } elseif (!$obj->TasaFecha && $obj->TasaMonto && !$obj->TasaEdad) {
+                $saldo = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('MontoOtorgado', [$obj->MontoDesde, $obj->MontoHasta])
+                    ->select(DB::raw('SUM(MontoNominal) as Saldo'))->first();
+                $total = $saldo->Saldo * $obj->TasaMonto;
+            } elseif (!$obj->TasaFecha && !$obj->TasaMonto && $obj->TasaEdad) {
+                $saldo = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('Edad', [$obj->EdadDesde, $obj->EdadHasta])
+                    ->select(DB::raw('SUM(MontoNominal) as Saldo'))->first();
+                $total = $saldo->Saldo * $obj->TasaEdad;
+            } elseif ($obj->TasaFecha && $obj->TasaMonto && !$obj->TasaEdad) {
+                $desde = Carbon::parse($obj->FechaDesde)->format('y-m-d');
+                $hasta = Carbon::parse($obj->FechaHasta)->format('y-m-d');
+                $saldo1 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('FechaOtorgamiento', [$desde, $hasta])
+                    ->select(DB::raw('SUM(MontoNominal) as Saldo'))->first();
+                $saldo2 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('MontoOtorgado', [$obj->MontoDesde, $obj->MontoHasta])
+                    ->select(DB::raw('SUM(MontoNominal) as Saldo'))->first();
+                $total = ($saldo1->Saldo  * $obj->TasaFecha) + ($saldo2->Saldo  * $obj->TasaMonto);
+            } elseif ($obj->TasaFecha && !$obj->TasaMonto && $obj->TasaEdad) {
+                $desde = Carbon::parse($obj->FechaDesde)->format('y-m-d');
+                $hasta = Carbon::parse($obj->FechaHasta)->format('y-m-d');
+                $saldo1 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('FechaOtorgamiento', [$desde, $hasta])
+                    ->select(DB::raw('SUM(MontoNominal) as Saldo'))->first();
+                $saldo2 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('Edad', [$obj->EdadDesde, $obj->EdadHasta])
+                    ->select(DB::raw('SUM(MontoNominal) as Saldo'))->first();
+
+                $total = ($saldo1->Saldo  * $obj->TasaFecha) + ($saldo2->Saldo  * $obj->TasaEdad);
+            } elseif (!$obj->TasaFecha && $obj->TasaMonto && $obj->TasaEdad) {
+                $saldo1 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('MontoOtorgado', [$obj->MontoDesde, $obj->MontoHasta])
+                    ->select(DB::raw('SUM(MontoNominal) as Saldo'))->first();
+                $saldo2 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('Edad', [$obj->EdadDesde, $obj->EdadHasta])
+                    ->select(DB::raw('SUM(MontoNominal) as Saldo'))->first();
+
+                $total = ($saldo1->Saldo  * $obj->TasaMonto) + ($saldo2->Saldo  * $obj->TasaEdad);
+            } elseif ($obj->TasaFecha && $obj->TasaMonto && $obj->TasaEdad) {
+
+                $desde = Carbon::parse($obj->FechaDesde)->format('y-m-d');
+                $hasta = Carbon::parse($obj->FechaHasta)->format('y-m-d');
+                $saldo1 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('FechaOtorgamiento', [$desde, $hasta])
+                    ->select(DB::raw('SUM(MontoNominal) as Saldo'))->first();
+                $saldo2 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('Edad', [$obj->EdadDesde, $obj->EdadHasta])
+                    ->select(DB::raw('SUM(MontoNominal) as Saldo'))->first();
+                $saldo3 = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)->whereBetween('MontoOtorgado', [$obj->MontoDesde, $obj->MontoHasta])
+                    ->select(DB::raw('SUM(MontoNominal) as Saldo'))->first();
+
+                $total = ($saldo1->Saldo  * $obj->TasaFecha) + ($saldo2->Saldo  * $obj->TasaEdad) + ($saldo3->Saldo  * $obj->TasaMonto);
+            }
+        }
+        return $total;
+    }
 
     public function create_pago(Request $request)
     {

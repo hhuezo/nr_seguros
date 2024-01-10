@@ -198,7 +198,7 @@
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label" align="right">Concepto</label>
-                                    <textarea class="form-control" name="Concepto" row="3" col="4"  >{{ $deuda->Concepto}}</textarea>
+                                    <textarea class="form-control" name="Concepto" row="3" col="4">{{ $deuda->Concepto}}</textarea>
                                 </div>
                                 <div class="col-sm-4 ocultar" style="display: none !important;">
                                     <br>
@@ -222,12 +222,12 @@
                                 <div class="col-sm-4" align="center">
                                     <br>
                                     <label class="control-label" align="center">Vida</label>
-                                    <input id="Vida" type="checkbox" class="js-switch"  {{$deuda->Vida <> '' ? 'checked': ''}} />
+                                    <input id="Vida" type="checkbox" class="js-switch" {{$deuda->Vida <> '' ? 'checked': ''}} />
                                 </div>
                                 <div class="col-sm-4" align="center">
                                     <br>
                                     <label class="control-label" align="center">Desempleo</label>
-                                    <input id="Desempleo" type="checkbox" class="js-switch"  {{$deuda->Desempleo <> '' ? 'checked': ''}} />
+                                    <input id="Desempleo" type="checkbox" class="js-switch" {{$deuda->Desempleo <> '' ? 'checked': ''}} />
                                 </div>
                                 <div class="col-sm-12">
                                     &nbsp;
@@ -404,6 +404,7 @@
                                         <tr>
                                             <th>Linea Carteras</th>
                                             <th>Saldos y Montos</th>
+                                            <th>Tasa General</th>
                                             <th>Fecha Desde</th>
                                             <th>Fecha Hasta</th>
                                             <th>Tasa Fechas</th>
@@ -419,26 +420,11 @@
                                     <tbody>
                                         @foreach($creditos as $obj)
                                         <tr>
-                                            @if($obj->TipoCartera)
-                                            <td>{{$obj->tipoCarteras->Nombre}}</td>
-                                            @else
-                                            <td></td>
-                                            @endif
-                                            @if($obj->Saldos)
-                                            <td>{{$obj->saldos->Abreviatura}}</td>
-                                            @else
-                                            <td></td>
-                                            @endif
-                                            @isset($obj->FechaDesde)
-                                            <td>{{date('d/m/Y', strtotime($obj->FechaDesde))}}</td>
-                                            @else
-                                            <td></td>
-                                            @endif
-                                            @isset($obj->FechaHasta)
-                                            <td>{{date('d/m/Y', strtotime($obj->FechaHasta))}}</td>
-                                            @else
-                                            <td></td>
-                                            @endif
+                                            <td>{{$obj->TipoCartera == null ? '': $obj->tipoCarteras->Nombre}}</td>
+                                            <td>{{$obj->Saldos == null ? '': $obj->saldos->Abreviatura}}</td>
+                                            <td>{{$obj->TasaFecha == null && $obj->TasaMonto == null && $obj->TasaEdad == null ? $deuda->Tasa.'%' : '0'}}</td>
+                                            <td>{{isset($obj->FechaDesde) ? date('d/m/Y', strtotime($obj->FechaDesde)) : ''}}</td>
+                                            <td>{{isset($obj->FechaHasta) ? date('d/m/Y', strtotime($obj->FechaHasta)) : ''}}</td>
                                             <td>{{isset($obj->TasaFecha) ? $obj->TasaFecha.'%' :'' }} </td>
                                             <td>{{isset($obj->MontoDesde) ? '$'.number_format($obj->MontoDesde,2,'.',',') : ''}}</td>
                                             <td>{{isset($obj->MontoHasta) ? '$'.number_format($obj->MontoHasta,2,'.',',') : ''}}</td>
@@ -545,15 +531,13 @@
                             </form>
                         </div>
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        <table class="table table-striped table-bordered">
-                                @for ($i = 0;$i<count($data);$i++)
-                                    <tr style="width: 25%;">
-                                        @for ($j = 0;$j<count($data[0]);$j++)
-                                        <td> {{$data[$i][$j]}}</td>
+                            <table class="table table-striped table-bordered">
+                                @for ($i = 0;$i<count($data);$i++) <tr style="width: 25%;">
+                                    @for ($j = 0;$j<count($data[0]);$j++) <td><button onclick="eliminar('{{$data[0][$j]}}','{{$data[$i][$j]}}','{{$data[$i][0]}}')">{{$data[$i][$j]}}</button> </td>
                                         @endfor
-                                    </tr>
+                                        </tr>
 
-                                @endfor
+                                        @endfor
 
                             </table>
 
@@ -570,12 +554,75 @@
 
 @include('sweetalert::alert')
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <!-- jQuery -->
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
+    function eliminar(edad, id, perfil) {
+        Swal.fire({
+                title: "¿Estás seguro?",
+                text: "¿De eliminar el requisito?",
+                icon: "danger",
+                buttons: true,
+                dangerMode: true,
+            })
+            .then((Aceptar) => {
+                if (Aceptar) {
+                    $('#response').html(
+                        "<div align='center'><img src='{{ asset('img/ajax-loader.gif') }}'/></div>");
+
+                    var parametros = {
+                        "edad": edad,
+                        "id": id,
+                        "perfil": perfil,
+
+                    };
+
+                    $.ajax({
+                        type: "get",
+                        url: "{{ url('eliminar/requisito') }}",
+                        data: parametros,
+                        success: function(data) {
+                            console.log(data);
+                            $('#response').html(data);
+                            swal(data.title,
+                                data.mensaje,
+                                data.icon, {
+                                    showConfirmButton: true // Configura showConfirmButton según la respuesta JSON
+                                });
+                            mostrar();
+
+                        }
+
+                    });
+
+                    // alert("¡Eliminado exitosamente!");
+                } else {
+                    // Aquí es donde colocarías el código que se ejecutará si el usuario cancela la acción
+                    //swal("¡Acción cancelada!", 'info');
+                }
+            });
+    }
+
+    function add_rango() {
+        $("#modal_rango").modal('show');
+    }
+
+    function modal_cliente() {
+        $('#modal_cliente').modal('show');
+    }
+
+    function modal_requisitos() {
+        $('#modal_requisitos').modal('show');
+    }
+
+    function modal_creditos() {
+        $('#modal_creditos').modal('show');
+    }
+</script>
+<script type="text/javascript">
     $(document).ready(function() {
+
         $("#fechas").change(function() {
             if (document.getElementById('fechas').checked == true) {
                 $('#fecha_otorgamiento').show();
@@ -636,27 +683,6 @@
                 }
             });
         });
-
-    });
-
-    function add_rango() {
-        $("#modal_rango").modal('show');
-    }
-
-    function modal_cliente() {
-        $('#modal_cliente').modal('show');
-    }
-
-    function modal_requisitos() {
-        $('#modal_requisitos').modal('show');
-    }
-
-    function modal_creditos() {
-        $('#modal_creditos').modal('show');
-    }
-</script>
-<script type="text/javascript">
-    $(document).ready(function() {
         $("#EdadInicial2").prop("disabled", true);
         $("#EdadFinal2").prop("disabled", true);
         $("#MontoInicial2").prop("disabled", true);
