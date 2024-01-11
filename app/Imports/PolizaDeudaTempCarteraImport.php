@@ -59,7 +59,7 @@ class PolizaDeudaTempCarteraImport implements ToModel, WithStartRow, SkipsEmptyR
                     'SaldoCapital' => $row[18],
                     'Intereses' => $row[19],
                     'InteresesMoratorios' => $row[20],
-                    'SaldoTotal' => $row[20],
+                    'SaldoTotal' => $row[21],
                     'User' => auth()->user()->id,
                     'Axo' =>  $this->Axo,
                     'Mes' =>  $this->Mes,
@@ -69,7 +69,7 @@ class PolizaDeudaTempCarteraImport implements ToModel, WithStartRow, SkipsEmptyR
                 ]);
             }
 
-         
-      
+
+
     }
 }
