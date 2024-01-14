@@ -109,7 +109,7 @@
         </div>
     </div>
     <div>
-        <form action="{{ url('polizas/residencia/agregar_pago') }}" method="POST">
+        <form action="{{ url('polizas/deuda/agregar_pago') }}" method="POST">
             <div class="modal-header">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <h5 class="modal-title" id="exampleModalLabel">Nuevo pago</h5>

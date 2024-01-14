@@ -217,6 +217,7 @@ Route::post('polizas/deuda/actualizar',[DeudaController::class ,'actualizar']);
 Route::post('agregar_credito',[DeudaController::class, 'agregar_credito']);
 Route::post('eliminar_credito/{id}',[DeudaController::class,'eliminar_credito']);
 Route::post('datos_asegurabilidad',[DeudaController::class,'datos_asegurabilidad']);
+Route::get('eliminar/requisito',[DeudaController::class,'eliminar_requisito']);
 
 
 
