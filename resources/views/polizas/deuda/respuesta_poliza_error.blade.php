@@ -30,6 +30,9 @@
                                         <th>NIT</th>
                                         <th>Nombre</th>
                                         <th>Fecha nacimiento</th>
+                                        <th>Fecha otorgamiento</th>
+                                        <th>Fecha vencimiento</th>
+                                        <th>No De Referencia Del Crédito </th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -45,15 +48,51 @@
                                             </td>
 
                                             <td>{{ $registro->Nit }}</td>
-                                            <td>{{ $registro->PrimerNombre }} {{ $registro->SegundoNombre }}
+
+                                            <td class="{{ in_array(4, $registro->Errores) ? 'alert alert-danger alert-dismissible' : '' }}"
+                                                role="alert">
+                                                @if (in_array(4, $registro->Errores))
+                                                {{ $registro->PrimerNombre ? $registro->PrimerNombre : '(Falta el primer nombre)' }}
+                                                {{ $registro->SegundoNombre }}
+                                                {{ $registro->PrimerApellido ? $registro->PrimerApellido : '(Falta el primer apellido)' }}
+                                                {{ $registro->SegundoApellido }}
+                                                {{ $registro->ApellidoCasada }}
+                                                @else
+                                                {{ $registro->PrimerNombre }} {{ $registro->SegundoNombre }}
                                                 {{ $registro->PrimerApellido }} {{ $registro->SegundoApellido }}
-                                                {{ $registro->ApellidoCasada }}</td>
+                                                {{ $registro->ApellidoCasada }}
+                                                @endif
+                                            </td>
                                             <td class="{{ in_array(1, $registro->Errores) ? 'alert alert-danger alert-dismissible' : '' }}"
                                                 role="alert">
                                                 @if (in_array(1, $registro->Errores))
                                                     <strong>{{ $registro->FechaNacimiento }}</strong>
                                                 @else
                                                     {{ $registro->FechaNacimiento }}
+                                                @endif
+                                            </td>
+                                            <td class="{{ in_array(5, $registro->Errores) ? 'alert alert-danger alert-dismissible' : '' }}"
+                                                role="alert">
+                                                @if (in_array(5, $registro->Errores))
+                                                    <strong>{{ $registro->FechaOtorgamiento }}</strong>
+                                                @else
+                                                    {{ $registro->FechaOtorgamiento }}
+                                                @endif
+                                            </td>
+                                            <td class="{{ in_array(6, $registro->Errores) ? 'alert alert-danger alert-dismissible' : '' }}"
+                                                role="alert">
+                                                @if (in_array(6, $registro->Errores))
+                                                    <strong>{{ $registro->FechaVencimiento }}</strong>
+                                                @else
+                                                    {{ $registro->FechaVencimiento }}
+                                                @endif
+                                            </td>
+                                            <td class="{{ in_array(7, $registro->Errores) ? 'alert alert-danger alert-dismissible' : '' }}"
+                                                role="alert">
+                                                @if (in_array(7, $registro->Errores))
+                                                    <strong>{{ $registro->NumeroReferencia }}</strong>
+                                                @else
+                                                    {{ $registro->NumeroReferencia }}
                                                 @endif
                                             </td>
                                         </tr>

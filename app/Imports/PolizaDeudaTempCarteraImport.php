@@ -35,8 +35,7 @@ class PolizaDeudaTempCarteraImport implements ToModel, WithStartRow, SkipsEmptyR
     }
     public function model(array $row)
     {
-            if(($row[0] || $row[1]) && ($row[0] != "DUI" && $row[1] != "NIT"))
-            {
+
                 return new PolizaDeudaTempCartera([
                     'Nit' => $row[0],
                     'Dui' => $row[1],
@@ -69,9 +68,9 @@ class PolizaDeudaTempCarteraImport implements ToModel, WithStartRow, SkipsEmptyR
                     'FechaInicio' =>  $this->FechaInicio,
                     'FechaFinal' =>  $this->FechaFinal
                 ]);
-            }
 
-         
-      
+
+
+
     }
 }
