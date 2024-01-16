@@ -76,6 +76,9 @@
                                         <li role="presentation" class="active"><a href="#tab_content1" id="home-tab"
                                                 role="tab" data-toggle="tab" aria-expanded="true">Nuevos registros</a>
                                         </li>
+                                        <li role="presentation" class=""><a href="#tab_content5" id="profile-tab5"
+                                            role="tab" data-toggle="tab" aria-expanded="false">Registros Eliminados</a>
+                                        </li>
                                         <li role="presentation" class=""><a href="#tab_content2" role="tab"
                                                 id="profile-tab" data-toggle="tab" aria-expanded="false">Creditos no
                                                 válidos</a>
@@ -106,6 +109,44 @@
                                                 </thead>
                                                 <tbody>
                                                     @foreach ($nuevos_registros as $registro)
+                                                        <tr>
+                                                            <td>{{ $registro->NumeroReferencia }}</td>
+                                                            <td>{{ $registro->Dui }}</td>
+                                                            <td>{{ $registro->Nit }}</td>
+                                                            <td>{{ $registro->PrimerNombre }} {{ $registro->SegundoNombre }}
+                                                                {{ $registro->PrimerApellido }}
+                                                                {{ $registro->SegundoApellido }}
+                                                                {{ $registro->ApellidoCasada }}</td>
+                                                            <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
+                                                            </td>
+                                                            <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
+                                                        </tr>
+                                                    @endforeach
+
+
+                                                </tbody>
+                                            </table>
+
+
+
+                                        </div>
+
+                                        <div role="tabpanel5" class="tab-pane" id="tab_content5"
+                                            aria-labelledby="tab">
+                                            <br>
+                                            <table class="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Número crédito</th>
+                                                        <th>DUI</th>
+                                                        <th>NIT</th>
+                                                        <th>Nombre</th>
+                                                        <th>Fecha nacimiento</th>
+                                                        <th>Edad</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($registros_eliminados as $registro)
                                                         <tr>
                                                             <td>{{ $registro->NumeroReferencia }}</td>
                                                             <td>{{ $registro->Dui }}</td>

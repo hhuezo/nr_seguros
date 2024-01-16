@@ -1039,6 +1039,7 @@ class DeudaController extends Controller
         //ini_set('max_execution_time', 300); // Ajusta el valor según sea necesario (por ejemplo, 300 segundos)
 
         $date = Carbon::create($request->Axo, $request->Mes, "01");
+        $date_mes = $date->subMonth();
         $date_anterior = Carbon::create($request->Axo, $request->Mes, "01");
         $date_mes_anterior = $date_anterior->subMonth();
 
@@ -1207,6 +1208,25 @@ class DeudaController extends Controller
                     });
             })->get();
 
+            $registros_eliminados = DB::table('poliza_deuda_cartera')
+            ->where([
+                ['Mes', $date_anterior->month],
+                ['Axo', $date_mes_anterior->year],
+                ['PolizaDeuda', $request->Id],
+            ])
+            ->whereNotExists(function ($query) use ($date, $date_mes, $poliza_id) {
+                $query->select(DB::raw(1))
+                    ->from('poliza_deuda_temp_cartera')
+                    ->where('poliza_deuda_temp_cartera.Mes', $date->month)
+                    ->where('poliza_deuda_temp_cartera.Axo', $date_mes->year)
+                    ->where('PolizaDeuda', $poliza_id)
+                    ->where(function ($subQuery) {
+                        $subQuery->whereColumn('poliza_deuda_cartera.NumeroReferencia', '=', 'poliza_deuda_temp_cartera.NumeroReferencia');
+                        //$subQuery->whereColumn('poliza_deuda_cartera.Dui', '=', 'poliza_deuda_temp_cartera.Dui');
+                        // ->orWhere('poliza_deuda_cartera.Nit', '=', 'poliza_deuda_temp_cartera.Nit');
+                    });
+            })->get();
+
         $maximos_minimos = DeudaRequisitos::where('Deuda', '=', $request->Id)
             ->selectRaw('MIN(MontoInicial) as min_monto_inicial, MAX(MontoFinal) as max_monto_final,MIN(EdadInicial) as min_edad_inicial, MAX(EdadFinal) as max_edad_final ')
             ->first();
@@ -1244,7 +1264,7 @@ class DeudaController extends Controller
             }
         }
 
-        return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'deuda', 'poliza_cumulos', 'date_anterior', 'date'));
+        return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date'));
     }
     public function delete_pago($id)
     {
