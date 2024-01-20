@@ -285,7 +285,7 @@ class DeudaController extends Controller
         $requisitos = DeudaRequisitos::where('Activo', 1)->where('Deuda', $id)->get();
 
         //formando encabezados
-        $data[0][0] = ['id'=> '','value' => "REQUISITOS"];
+        $data[0][0] = ['id' => '', 'value' => "REQUISITOS"];
 
         $i = 1;
         $uniqueRequisitos = $requisitos->unique(function ($item) {
@@ -294,13 +294,13 @@ class DeudaController extends Controller
 
         $i = 1;
         foreach ($uniqueRequisitos as $requisito) {
-            $data[0][$i] =  ['id'=> '','value' => 'DESDE ' . $requisito->EdadInicial . ' AÑOS HASTA ' . $requisito->EdadFinal . ' AÑOS'];
+            $data[0][$i] =  ['id' => '', 'value' => 'DESDE ' . $requisito->EdadInicial . ' AÑOS HASTA ' . $requisito->EdadFinal . ' AÑOS'];
             $i++;
         }
 
         $i = 1;
         foreach ($requisitos->unique('Perfil') as $requisito) {
-            $data[$i][0] = ['id'=> '','value' => $requisito->perfil->Descripcion];
+            $data[$i][0] = ['id' => '', 'value' => $requisito->perfil->Descripcion];
             $j = 1;
             for ($j = 1; $j < count($data[0]); $j++) {
                 $data[$i][$j] = ['id' => '', 'value' => ''];
@@ -318,14 +318,13 @@ class DeudaController extends Controller
 
                 $columnaEncontrada = array_search($valorBuscado, array_column($data[0], 'value'));
 
-                $data[$i][$columnaEncontrada] = ['id'=> $record->Id, 'value' => 'Desde $' . number_format($record->MontoInicial, 2, '.', ',') . ' HASTA $' . number_format($record->MontoFinal, 2, '.', ',')];
-
+                $data[$i][$columnaEncontrada] = ['id' => $record->Id, 'value' => 'Desde $' . number_format($record->MontoInicial, 2, '.', ',') . ' HASTA $' . number_format($record->MontoFinal, 2, '.', ',')];
             }
 
             $i++;
         }
 
-       // dd($data);
+        // dd($data);
 
         $deuda = Deuda::findOrFail($id);
 
@@ -529,8 +528,27 @@ class DeudaController extends Controller
             $primerDia = Carbon::now()->startOfMonth();
             $ultimoDia = Carbon::now()->endOfMonth();
 
-            $clientes = PolizaDeudaCartera::where('PolizaDeuda',$id)->get();
-            $extraprimados = PolizaDeudaExtraPrimados::where('PolizaDeuda',$id)->get();
+
+
+            //tab 7 
+            $extraprimados = PolizaDeudaExtraPrimados::where('PolizaDeuda', $id)->get();
+
+            $array_dui = $extraprimados->pluck('Dui')->toArray();
+
+            $clientesQuery = PolizaDeudaCartera::select('Id', DB::raw("CONCAT(PrimerNombre, ' ', SegundoNombre, ' ', PrimerApellido, ' ', SegundoApellido, ' ', ' ', ApellidoCasada) as Nombre"), 'Dui', 'NumeroReferencia', 'SaldoCapital');
+
+            // Verificar si $array_dui tiene datos antes de agregar la condición whereNotIn
+            if (!empty($array_dui)) {
+                $clientesQuery->whereNotIn('Dui', $array_dui);
+            }
+
+            $clientes = $clientesQuery->distinct('Dui')->get();
+
+
+            // dd($clientes);
+
+
+
 
             $ultimo_pago_fecha_final = null;
             if ($ultimo_pago) {
@@ -545,31 +563,31 @@ class DeudaController extends Controller
                     case '1':
                         # saldo a capital
                         $saldo = $this->calcularCarteraINS1($deuda, $tasas);
-                        array_push($montos,$saldo);
+                        array_push($montos, $saldo);
                         break;
                     case '2':
                         # saldo a capital mas intereses
                         $saldo = $this->calcularCarteraINS2($deuda, $tasas);
-                        array_push($montos,$saldo);
+                        array_push($montos, $saldo);
                         break;
                     case '3':
                         # saldo a capital mas intereses mas covid
                         $saldo = $this->calcularCarteraINS3($deuda, $tasas);
-                        array_push($montos,$saldo);
+                        array_push($montos, $saldo);
                         break;
                     case '4':
                         # saldo a capital as intereses mas covid mas moratorios
                         $saldo = $this->calcularCarteraINS4($deuda, $tasas);
-                        array_push($montos,$saldo);
+                        array_push($montos, $saldo);
                         break;
                     default:
                         # .monto moninal
                         $saldo = $this->calcularCarteraINS5($deuda, $tasas);
-                        array_push($montos,$saldo);
+                        array_push($montos, $saldo);
                         break;
                 }
             }
-            
+
 
             return view('polizas.deuda.edit', compact(
                 'montos',
@@ -603,13 +621,51 @@ class DeudaController extends Controller
         }
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
+    public function get_extraprimado($id, $dui)
+    {
+        $cliente = PolizaDeudaCartera::select(
+            'Id',
+            DB::raw("CONCAT(PrimerNombre, ' ', SegundoNombre, ' ', PrimerApellido, ' ', SegundoApellido, ' ', ' ', ApellidoCasada) as Nombre"),
+            'Dui',
+            'NumeroReferencia',
+            'SaldoCapital',
+            'FechaOtorgamiento',
+            'MontoOtorgado'
+        )
+            ->where('PolizaDeuda', $id)->where('Dui', $dui)->first();
+
+        return response()->json($cliente);
+    }
+
+    public function store_extraprimado(Request $request)
+    {
+        $cliente = new PolizaDeudaExtraPrimados();
+        $cliente->NumeroReferencia = $request->NumeroReferencia;
+        $cliente->PolizaDeuda = $request->PolizaDeuda;
+        $cliente->Nombre = $request->Nombre;
+        $cliente->FechaOtorgamiento = $request->FechaOtorgamiento;
+        $cliente->MontoOtorgamiento = $request->MontoOtorgamiento;
+        $cliente->Tarifa = $request->Tarifa;
+        $cliente->PorcentajeEP = $request->PorcentajeEP;
+        $cliente->PagoEP = $request->PagoEP;
+        $cliente->Dui = $request->Dui;
+        $cliente->save();
+        alert()->success('El registro de poliza ha sido ingresado correctamente');
+        return redirect('polizas/deuda/' . $request->PolizaDeuda . '/edit?tab=7');
+    }
+
+    public function update_extraprimado(Request $request)
+    {
+        $extra_primado = PolizaDeudaExtraPrimados::findOrFail($request->Id); 
+        $extra_primado->Tarifa = $request->Tarifa;
+        $extra_primado->PorcentajeEP = $request->PorcentajeEP;
+        $extra_primado->PagoEP = $request->PagoEP;
+        $extra_primado->update();
+        alert()->success('El registro de poliza ha sido modificado correctamente');
+        return redirect('polizas/deuda/' . $extra_primado->PolizaDeuda. '/edit?tab=7');
+    }
+
     public function update(Request $request, $id)
     {
         //
@@ -645,7 +701,6 @@ class DeudaController extends Controller
 
             $unixDate = (intval($dateValue) - 25569) * 86400;
             return $unixDate = gmdate("d/m/Y", $unixDate);
-
         } catch (Exception $e) {
             return false;
         }
@@ -959,8 +1014,14 @@ class DeudaController extends Controller
         foreach ($tasas as $obj) {
             if (!$obj->TasaFecha && !$obj->TasaMonto && !$obj->TasaEdad) {
                 $saldo = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->id)
-                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'), DB::raw('SUM(InteresesCovid) as Covid'),
-                        DB::raw('SUM(InteresesCovid) as Covid'), DB::raw('Sum(InteresesMoratorios) as Mora'), DB::raw('Sum(InteresesMoratorios) as Mora'))
+                    ->select(
+                        DB::raw('SUM(SaldoCapital) as Saldo'),
+                        DB::raw('SUM(Intereses) as Intereses'),
+                        DB::raw('SUM(InteresesCovid) as Covid'),
+                        DB::raw('SUM(InteresesCovid) as Covid'),
+                        DB::raw('Sum(InteresesMoratorios) as Mora'),
+                        DB::raw('Sum(InteresesMoratorios) as Mora')
+                    )
                     ->first();
                 $total = ($saldo->Saldo + $saldo->Intereses + $saldo->Covid + $saldo->Mora + $saldo->Mora) * $tasaGeneral;
             } elseif ($obj->TasaFecha && !$obj->TasaMonto && !$obj->TasaEdad) {
