@@ -11,6 +11,7 @@ use App\Models\catalogo\Ejecutivo;
 use App\Models\catalogo\EstadoPoliza;
 use App\Models\catalogo\Perfil;
 use App\Models\catalogo\Plan;
+use App\Models\catalogo\PolizaDeudaExtraPrimados;
 use App\Models\catalogo\Producto;
 use App\Models\catalogo\Ruta;
 use App\Models\catalogo\SaldoMontos;
@@ -284,7 +285,7 @@ class DeudaController extends Controller
         $requisitos = DeudaRequisitos::where('Activo', 1)->where('Deuda', $id)->get();
 
         //formando encabezados
-        $data[0][0] = "REQUISITOS";
+        $data[0][0] = ['id'=> '','value' => "REQUISITOS"];
 
         $i = 1;
         $uniqueRequisitos = $requisitos->unique(function ($item) {
@@ -293,16 +294,16 @@ class DeudaController extends Controller
 
         $i = 1;
         foreach ($uniqueRequisitos as $requisito) {
-            $data[0][$i] = 'DESDE ' . $requisito->EdadInicial . ' AÑOS HASTA ' . $requisito->EdadFinal . ' AÑOS';
+            $data[0][$i] =  ['id'=> '','value' => 'DESDE ' . $requisito->EdadInicial . ' AÑOS HASTA ' . $requisito->EdadFinal . ' AÑOS'];
             $i++;
         }
 
         $i = 1;
         foreach ($requisitos->unique('Perfil') as $requisito) {
-            $data[$i][0] = $requisito->perfil->Descripcion;
+            $data[$i][0] = ['id'=> '','value' => $requisito->perfil->Descripcion];
             $j = 1;
             for ($j = 1; $j < count($data[0]); $j++) {
-                $data[$i][$j] = "";
+                $data[$i][$j] = ['id' => '', 'value' => ''];
             }
             $i++;
         }
@@ -312,13 +313,19 @@ class DeudaController extends Controller
             $records = DeudaRequisitos::where('Activo', 1)->where('Deuda', $id)->where('Perfil', $requisito->Perfil)->get();
 
             foreach ($records as $record) {
+
                 $valorBuscado = 'DESDE ' . $record->EdadInicial . ' AÑOS HASTA ' . $record->EdadFinal . ' AÑOS';
-                $columnaEncontrada = array_search($valorBuscado, $data[0]);
-                $data[$i][$columnaEncontrada] = 'Desde $' . number_format($record->MontoInicial, 2, '.', ',') . ' HASTA $' . number_format($record->MontoFinal, 2, '.', ',');
+
+                $columnaEncontrada = array_search($valorBuscado, array_column($data[0], 'value'));
+
+                $data[$i][$columnaEncontrada] = ['id'=> $record->Id, 'value' => 'Desde $' . number_format($record->MontoInicial, 2, '.', ',') . ' HASTA $' . number_format($record->MontoFinal, 2, '.', ',')];
+
             }
 
             $i++;
         }
+
+       // dd($data);
 
         $deuda = Deuda::findOrFail($id);
 
@@ -339,6 +346,10 @@ class DeudaController extends Controller
 
     public function eliminar_requisito(Request $request)
     {
+        $requisito = DeudaRequisitos::findOrFail($request->id);
+        $requisito->delete();
+
+        return response()->json(['mensaje' => 'Se ha eliminado con exito', 'title' => 'Requisito!', 'icon' => 'success', 'showConfirmButton' => 'true']);
     }
 
     public function datos_asegurabilidad(Request $request)
@@ -518,14 +529,52 @@ class DeudaController extends Controller
             $primerDia = Carbon::now()->startOfMonth();
             $ultimoDia = Carbon::now()->endOfMonth();
 
+            $clientes = PolizaDeudaCartera::where('PolizaDeuda',$id)->get();
+            $extraprimados = PolizaDeudaExtraPrimados::where('PolizaDeuda',$id)->get();
+
             $ultimo_pago_fecha_final = null;
             if ($ultimo_pago) {
                 $fecha_inicial = Carbon::parse($ultimo_pago->FechaFinal);
                 $fecha_final_temp = $fecha_inicial->addMonth();
                 $ultimo_pago_fecha_final = $fecha_final_temp->format('Y-m-d');
             }
+            $tasas = DeudaCredito::where('Deuda', '=', $id)->where('Activo', 1)->get();
+            $montos = array();
+            foreach ($tasas as $obj) {
+                switch ($obj->Saldos) {
+                    case '1':
+                        # saldo a capital
+                        $saldo = $this->calcularCarteraINS1($deuda, $tasas);
+                        array_push($montos,$saldo);
+                        break;
+                    case '2':
+                        # saldo a capital mas intereses
+                        $saldo = $this->calcularCarteraINS2($deuda, $tasas);
+                        array_push($montos,$saldo);
+                        break;
+                    case '3':
+                        # saldo a capital mas intereses mas covid
+                        $saldo = $this->calcularCarteraINS3($deuda, $tasas);
+                        array_push($montos,$saldo);
+                        break;
+                    case '4':
+                        # saldo a capital as intereses mas covid mas moratorios
+                        $saldo = $this->calcularCarteraINS4($deuda, $tasas);
+                        array_push($montos,$saldo);
+                        break;
+                    default:
+                        # .monto moninal
+                        $saldo = $this->calcularCarteraINS5($deuda, $tasas);
+                        array_push($montos,$saldo);
+                        break;
+                }
+            }
+            
 
             return view('polizas.deuda.edit', compact(
+                'montos',
+                'clientes',
+                'extraprimados',
                 'ultimo_pago_fecha_final',
                 'meses',
                 'primerDia',
@@ -680,9 +729,9 @@ class DeudaController extends Controller
             ]);
         }
 
-        $deuda = Deuda::findOrFail($tempData->PolizaDeuda);
-        $cartera = PolizaDeudaCartera::where('PolizaDeuda', '=', $tempData->PolizaDeuda)->get();
-        $tasas = DeudaCredito::where('Deuda', '=', $tempData->PolizaDeuda)->where('Activo', 1)->get();
+        $deuda = Deuda::findOrFail($tempRecord->PolizaDeuda);
+        $cartera = PolizaDeudaCartera::where('PolizaDeuda', '=', $tempRecord->PolizaDeuda)->get();
+        $tasas = DeudaCredito::where('Deuda', '=', $tempRecord->PolizaDeuda)->where('Activo', 1)->get();
         foreach ($tasas as $obj) {
             switch ($obj->Saldos) {
                 case '1':

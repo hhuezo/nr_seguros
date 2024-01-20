@@ -39,6 +39,8 @@
                             </li>
                             <li role="presentation" class=""><a href="#tab_content2" role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">Generar Cartera</a>
                             </li>
+                            <li role="presentation" class=""><a href="#tab_content7" role="tab" id="extra-prima-tab" data-toggle="tab" aria-expanded="false">Extra Prima {{$deuda->NumeroPoliza}}</a>
+                            </li>
                             <li role="presentation" class=""><a href="#tab_content3" role="tab" id="creditos-tab" data-toggle="tab" aria-expanded="false">Hoja de Cartera {{$deuda->NumeroPoliza}}</a>
                             </li>
                             <li role="presentation" class=""><a href="#tab_content4" role="tab" id="pagos-tab" data-toggle="tab" aria-expanded="false">Estados de Pago</a>
@@ -57,6 +59,9 @@
                             </div>
                             <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="profile-tab">
                                 @include('polizas.deuda.tab2')
+                            </div>
+                            <div role="tabpanel" class="tab-pane fade" id="tab_content7" aria-labelledby="extra-prima-tab">
+                                @include('polizas.deuda.tab7')
                             </div>
                             <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="creditos-tab">
                                 @include('polizas.deuda.tab3')
@@ -107,6 +112,8 @@
         // alert(document.getElementById('ComisionIva').value);
         $('#comentarios').DataTable();
         $('#avisos').DataTable();
+        $('#clientes').DataTable();
+        $('#clientes-extra').DataTable();
         //    $('#cobros').DataTable();
 
         $('#cobros').DataTable({
