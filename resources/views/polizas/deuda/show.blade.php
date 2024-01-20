@@ -616,7 +616,11 @@
                                         <tr style="width: 25%;">
                                             @for ($j = 0; $j < count($data[0]); $j++)
                                                 <td>
-                                                    {{ $data[$i][$j]['value'] }} {{$data[$i][$j]['id']}}
+                                                    @if($data[$i][$j]['id'] > 0)
+                                                    <span onclick="eliminar('{{$data[$i][$j]['id']}}')" title="click para eliminar">{{ $data[$i][$j]['value'] }} {{$data[$i][$j]['id']}} </span>
+                                                    @else
+                                                    {{ $data[$i][$j]['value'] }} {{$data[$i][$j]['id']}} 
+                                                    @endif
                                                     {{--<button
                                                         onclick="eliminar('{{ $data[0][$j] }}','{{ $data[$i][$j] }}','{{ $data[$i][0] }}')">{{ $data[$i][$j] }}</button>--}}
                                                 </td>
@@ -642,7 +646,8 @@
     <!-- jQuery -->
     <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
     <script type="text/javascript">
-        function eliminar(edad, id, perfil) {
+        function eliminar(id) {
+        //    alert(id);
             Swal.fire({
                     title: "¿Estás seguro?",
                     text: "¿De eliminar el requisito?",
@@ -656,10 +661,7 @@
                             "<div align='center'><img src='{{ asset('img/ajax-loader.gif') }}'/></div>");
 
                         var parametros = {
-                            "edad": edad,
                             "id": id,
-                            "perfil": perfil,
-
                         };
 
                         $.ajax({
@@ -669,12 +671,12 @@
                             success: function(data) {
                                 console.log(data);
                                 $('#response').html(data);
-                                swal(data.title,
+                                Swal.fire(data.title,
                                     data.mensaje,
                                     data.icon, {
                                         showConfirmButton: true // Configura showConfirmButton según la respuesta JSON
                                     });
-                                mostrar();
+                                    location.reload();
 
                             }
 

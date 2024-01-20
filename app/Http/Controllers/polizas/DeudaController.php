@@ -11,6 +11,7 @@ use App\Models\catalogo\Ejecutivo;
 use App\Models\catalogo\EstadoPoliza;
 use App\Models\catalogo\Perfil;
 use App\Models\catalogo\Plan;
+use App\Models\catalogo\PolizaDeudaExtraPrimados;
 use App\Models\catalogo\Producto;
 use App\Models\catalogo\Ruta;
 use App\Models\catalogo\SaldoMontos;
@@ -345,6 +346,10 @@ class DeudaController extends Controller
 
     public function eliminar_requisito(Request $request)
     {
+        $requisito = DeudaRequisitos::findOrFail($request->id);
+        $requisito->delete();
+
+        return response()->json(['mensaje' => 'Se ha eliminado con exito', 'title' => 'Requisito!', 'icon' => 'success', 'showConfirmButton' => 'true']);
     }
 
     public function datos_asegurabilidad(Request $request)
@@ -524,14 +529,52 @@ class DeudaController extends Controller
             $primerDia = Carbon::now()->startOfMonth();
             $ultimoDia = Carbon::now()->endOfMonth();
 
+            $clientes = PolizaDeudaCartera::where('PolizaDeuda',$id)->get();
+            $extraprimados = PolizaDeudaExtraPrimados::where('PolizaDeuda',$id)->get();
+
             $ultimo_pago_fecha_final = null;
             if ($ultimo_pago) {
                 $fecha_inicial = Carbon::parse($ultimo_pago->FechaFinal);
                 $fecha_final_temp = $fecha_inicial->addMonth();
                 $ultimo_pago_fecha_final = $fecha_final_temp->format('Y-m-d');
             }
+            $tasas = DeudaCredito::where('Deuda', '=', $id)->where('Activo', 1)->get();
+            $montos = array();
+            foreach ($tasas as $obj) {
+                switch ($obj->Saldos) {
+                    case '1':
+                        # saldo a capital
+                        $saldo = $this->calcularCarteraINS1($deuda, $tasas);
+                        array_push($montos,$saldo);
+                        break;
+                    case '2':
+                        # saldo a capital mas intereses
+                        $saldo = $this->calcularCarteraINS2($deuda, $tasas);
+                        array_push($montos,$saldo);
+                        break;
+                    case '3':
+                        # saldo a capital mas intereses mas covid
+                        $saldo = $this->calcularCarteraINS3($deuda, $tasas);
+                        array_push($montos,$saldo);
+                        break;
+                    case '4':
+                        # saldo a capital as intereses mas covid mas moratorios
+                        $saldo = $this->calcularCarteraINS4($deuda, $tasas);
+                        array_push($montos,$saldo);
+                        break;
+                    default:
+                        # .monto moninal
+                        $saldo = $this->calcularCarteraINS5($deuda, $tasas);
+                        array_push($montos,$saldo);
+                        break;
+                }
+            }
+            
 
             return view('polizas.deuda.edit', compact(
+                'montos',
+                'clientes',
+                'extraprimados',
                 'ultimo_pago_fecha_final',
                 'meses',
                 'primerDia',
@@ -600,7 +643,7 @@ class DeudaController extends Controller
     { //función para convertir fechas  excel a fechas unix(que reconoce php)
         try {
 
-            $unixDate = ($dateValue - 25569) * 86400;
+            $unixDate = (intval($dateValue) - 25569) * 86400;
             return $unixDate = gmdate("d/m/Y", $unixDate);
 
         } catch (Exception $e) {
@@ -686,9 +729,9 @@ class DeudaController extends Controller
             ]);
         }
 
-        $deuda = Deuda::findOrFail($tempData->PolizaDeuda);
-        $cartera = PolizaDeudaCartera::where('PolizaDeuda', '=', $tempData->PolizaDeuda)->get();
-        $tasas = DeudaCredito::where('Deuda', '=', $tempData->PolizaDeuda)->where('Activo', 1)->get();
+        $deuda = Deuda::findOrFail($tempRecord->PolizaDeuda);
+        $cartera = PolizaDeudaCartera::where('PolizaDeuda', '=', $tempRecord->PolizaDeuda)->get();
+        $tasas = DeudaCredito::where('Deuda', '=', $tempRecord->PolizaDeuda)->where('Activo', 1)->get();
         foreach ($tasas as $obj) {
             switch ($obj->Saldos) {
                 case '1':
