@@ -594,7 +594,7 @@ class DeudaController extends Controller
     { //función para convertir fechas  excel a fechas unix(que reconoce php)
         try {
 
-            $unixDate = ($dateValue - 25569) * 86400;
+            $unixDate = (intval($dateValue) - 25569) * 86400;
             return $unixDate = gmdate("d/m/Y", $unixDate);
 
         } catch (Exception $e) {
