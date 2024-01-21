@@ -33,7 +33,7 @@
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                 <select name="LineaCredito" class="form-control">
                                     @foreach ($creditos as $obj)
-                                    <option value="{{ $obj->id }}">{{ $obj->tipoCarteras->Nombre }} {{$obj->saldos->Abreviatura}}
+                                    <option value="{{ $obj->Id }}">{{ $obj->tipoCarteras->Nombre }} {{$obj->saldos->Abreviatura}}
                                     </option>
                                     @endforeach
                                 </select>
@@ -135,19 +135,19 @@
                         @php($i = 0)
                         @php($total = 0)
                         @foreach($creditos as $obj)
-                        @if($obj->Id == session('LineaCredito'))
+
                         <div class="form-group row" style="margin-top:-3%;">
                             <label class="control-label" align="right">{{$obj->tipoCarteras->Nombre}} {{$obj->saldos->Abreviatura}}</label>
 
                             <div class="form-group has-feedback">
-                                <input type="number" step="any" style="padding-left: 25%;" name="Credito{{$obj->Id}}" id="Credito{{$obj->Id}}" value="{{$montos[$i] }}" class="form-control">
+                                <input type="number" step="any" style="padding-left: 25%;" name="Credito{{$obj->Id}}" id="Credito{{$obj->Id}}" 
+                                value="{{$obj->Id == session('LineaCredito') ? $saldo :0 }}" class="form-control">
                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                             </div>
 
                         </div>
-                        @endif
-                        @php($total = $total + $montos[$i])
-                        @php($i++)
+                     
+                       
                         @endforeach
 
                         <div class="form-group row" style="margin-top:-3%;">

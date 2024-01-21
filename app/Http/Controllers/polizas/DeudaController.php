@@ -556,44 +556,46 @@ class DeudaController extends Controller
                 $fecha_final_temp = $fecha_inicial->addMonth();
                 $ultimo_pago_fecha_final = $fecha_final_temp->format('Y-m-d');
             }
+            /*if(session('LineaCredito')){
+                $tipoCartera = DeudaCredito::findOrFail(session('LineaCredito'));
+            }else{
+                $tipoCartera = DeudaCredito::where('Deuda', $deuda->Id)->get();
+            }*/
+            
+            
             $tasas = DeudaCredito::where('Deuda', '=', $id)->where('Activo', 1)->get();
             $lineaCredito = session(['LineaCredito']);
-            $montos = array();
+            $montos = 0;
             foreach ($tasas as $obj) {
                 switch ($obj->Saldos) {
                     case '1':
                         # saldo a capital
                         $saldo = $this->calcularCarteraINS1($deuda, $tasas,$lineaCredito);
-                        array_push($montos, $saldo);
                         break;
                     case '2':
                         # saldo a capital mas intereses
                         $saldo = $this->calcularCarteraINS2($deuda, $tasas,$lineaCredito);
-                        array_push($montos, $saldo);
                         break;
                     case '3':
                         # saldo a capital mas intereses mas covid
                         $saldo = $this->calcularCarteraINS3($deuda, $tasas,$lineaCredito);
-                        array_push($montos, $saldo);
                         break;
                     case '4':
                         # saldo a capital as intereses mas covid mas moratorios
                         $saldo = $this->calcularCarteraINS4($deuda, $tasas,$lineaCredito);
-                        array_push($montos, $saldo);
                         break;
                     default:
                         # .monto moninal
                         $saldo = $this->calcularCarteraINS5($deuda, $tasas,$lineaCredito);
-                        array_push($montos, $saldo);
                         break;
                 }
             }
 
-          //  dd($montos);
+         // dd($montos);
 
 
             return view('polizas.deuda.edit', compact(
-                'montos',
+                'saldo',
                 'clientes',
                 'extraprimados',
                 'ultimo_pago_fecha_final',
@@ -1156,7 +1158,7 @@ class DeudaController extends Controller
     {
 
         session(['LineaCredito' => $request->get('LineaCredito')]);
-        $credito = $request->get('LineaCredito');
+        $credito = $request->get('LineaCredito');   
         //ini_set('memory_limit', '25024M');
         //ini_set('max_execution_time', 300); // Ajusta el valor según sea necesario (por ejemplo, 300 segundos)
         $date = Carbon::create($request->Axo, $request->Mes, "01");
