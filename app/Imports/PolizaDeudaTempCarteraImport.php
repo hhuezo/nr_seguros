@@ -23,6 +23,7 @@ class PolizaDeudaTempCarteraImport implements ToModel, WithStartRow, SkipsEmptyR
     private $Axo;
     private $Mes;
     private $PolizaDeuda;
+    private $encabezados=0;
 
 
     public function __construct($Axo, $Mes, $PolizaDeuda, $FechaInicio, $FechaFinal)
@@ -35,6 +36,12 @@ class PolizaDeudaTempCarteraImport implements ToModel, WithStartRow, SkipsEmptyR
     }
     public function model(array $row)
     {
+        if($row[0] == "NIT" && $row[1] == "DUI"){
+            $this->encabezados=1;
+        }
+
+        if($this->encabezados==1 && ($row[0] != "NIT" && $row[1] != "DUI"))
+            {
 
                 return new PolizaDeudaTempCartera([
                     'Nit' => $row[0],
@@ -70,7 +77,7 @@ class PolizaDeudaTempCarteraImport implements ToModel, WithStartRow, SkipsEmptyR
                 ]);
 
 
-
+            }
 
     }
 }
