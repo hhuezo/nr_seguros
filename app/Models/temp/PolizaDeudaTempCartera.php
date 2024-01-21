@@ -34,6 +34,7 @@ class PolizaDeudaTempCartera extends Model
         'NumeroReferencia',
         'MontoOtorgado',
         'SaldoCapital',
+        'Intereses',
         'InteresesMoratorios',
         'SaldoTotal',
         'User',
@@ -41,6 +42,13 @@ class PolizaDeudaTempCartera extends Model
         'Mes',
         'PolizaDeuda',
         'FechaInicio',
-        'FechaFinal'
+        'FechaFinal',
+        'TipoError',
+        'FechaNacimientoDate',
+        'Edad',
+        'InteresesCovid',
+        'MontoNominal',
+        'LineaCredito',
+        
     ];
 }

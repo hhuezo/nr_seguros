@@ -33,7 +33,7 @@
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                 <select name="LineaCredito" class="form-control">
                                     @foreach ($creditos as $obj)
-                                    <option value="{{ $obj->id }}">{{ $obj->tipoCarteras->Nombre }}
+                                    <option value="{{ $obj->id }}">{{ $obj->tipoCarteras->Nombre }} {{$obj->saldos->Abreviatura}}
                                     </option>
                                     @endforeach
                                 </select>
@@ -135,7 +135,7 @@
                         @php($i = 0)
                         @php($total = 0)
                         @foreach($creditos as $obj)
-
+                        @if($obj->Id == session('LineaCredito'))
                         <div class="form-group row" style="margin-top:-3%;">
                             <label class="control-label" align="right">{{$obj->tipoCarteras->Nombre}} {{$obj->saldos->Abreviatura}}</label>
 
@@ -145,7 +145,7 @@
                             </div>
 
                         </div>
-                        
+                        @endif
                         @php($total = $total + $montos[$i])
                         @php($i++)
                         @endforeach
