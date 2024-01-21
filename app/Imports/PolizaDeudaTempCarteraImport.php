@@ -8,17 +8,17 @@ use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 
-class PolizaDeudaTempCarteraImport implements ToModel, WithStartRow, SkipsEmptyRows
+class PolizaDeudaTempCarteraImport implements ToModel, /*WithStartRow,*/ SkipsEmptyRows
 {
     /**
      * @param array $row
      *
      * @return \Illuminate\Database\Eloquent\Model|null
      */
-    public function startRow(): int
+    /*public function startRow(): int
     {
         return 2;
-    }
+    }*/
 
     private $Axo;
     private $Mes;
@@ -36,11 +36,11 @@ class PolizaDeudaTempCarteraImport implements ToModel, WithStartRow, SkipsEmptyR
     }
     public function model(array $row)
     {
-        if($row[0] == "NIT" && $row[1] == "DUI"){
+        if(trim($row[0]) == "NIT" && trim($row[1]) == "DUI"){
             $this->encabezados=1;
         }
 
-        if($this->encabezados==1 && ($row[0] != "NIT" && $row[1] != "DUI"))
+        if($this->encabezados==1 && (trim($row[0]) != "NIT" && trim($row[1]) != "DUI"))
             {
 
                 return new PolizaDeudaTempCartera([
