@@ -498,6 +498,7 @@ class DeudaController extends Controller
             }
 
             $creditos = DeudaCredito::where('Deuda', $deuda->Id)->get();
+   
             $videuda = DeudaVida::where('Deuda', $deuda->Id)->first();
             $requisitos = DeudaRequisitos::where('Deuda', $deuda->Id)->get();
             $tipos_contribuyente = TipoContribuyente::get();
@@ -563,35 +564,37 @@ class DeudaController extends Controller
             }*/
             
             
-            $tasas = DeudaCredito::where('Deuda', '=', $id)->where('Activo', 1)->get();
+            $creditos = DeudaCredito::where('Deuda', '=', $id)->where('Activo', 1)->get();
             $lineaCredito = session(['LineaCredito']);
             $montos = 0;
-            foreach ($tasas as $obj) {
+            foreach ($creditos as $obj) {                
                 switch ($obj->Saldos) {
                     case '1':
                         # saldo a capital
-                        $saldo = $this->calcularCarteraINS1($deuda, $tasas,$lineaCredito);
+                        $saldo = $this->calcularCarteraINS1($deuda, $creditos,$lineaCredito);
                         break;
                     case '2':
                         # saldo a capital mas intereses
-                        $saldo = $this->calcularCarteraINS2($deuda, $tasas,$lineaCredito);
+                        $saldo = $this->calcularCarteraINS2($deuda, $creditos,$lineaCredito);
                         break;
                     case '3':
                         # saldo a capital mas intereses mas covid
-                        $saldo = $this->calcularCarteraINS3($deuda, $tasas,$lineaCredito);
+                        $saldo = $this->calcularCarteraINS3($deuda, $creditos,$lineaCredito);
                         break;
                     case '4':
                         # saldo a capital as intereses mas covid mas moratorios
-                        $saldo = $this->calcularCarteraINS4($deuda, $tasas,$lineaCredito);
+                        $saldo = $this->calcularCarteraINS4($deuda, $creditos,$lineaCredito);
                         break;
                     default:
                         # .monto moninal
-                        $saldo = $this->calcularCarteraINS5($deuda, $tasas,$lineaCredito);
+                        $saldo = $this->calcularCarteraINS5($deuda, $creditos,$lineaCredito);
                         break;
                 }
+
+                $obj->TotalLiniaCredito = $saldo;
             }
 
-         // dd($montos);
+          //dd($creditos);
 
 
             return view('polizas.deuda.edit', compact(
@@ -788,6 +791,7 @@ class DeudaController extends Controller
                 'TipoError' => $tempRecord->TipoError,
                 'FechaNacimientoDate' => $tempRecord->FechaNacimientoDate,
                 'Edad' => $tempRecord->Edad,
+                'LineaCredito' => $tempRecord->LineaCredito,
             ]);
         }
 
@@ -828,7 +832,7 @@ class DeudaController extends Controller
     public function calcularCarteraINS1($deuda, $tasas,$lineaCredito)
     {
         $tasaGeneral = $deuda->Tasa;
-    //    dd($deuda);
+            //    dd($deuda);
         foreach ($tasas as $obj) {
             if (!$obj->TasaFecha && !$obj->TasaMonto && !$obj->TasaEdad) {
                 $saldo = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->Id)->select(DB::raw('SUM(SaldoCapital) as Saldo'))->where('LineaCredito','=', $lineaCredito)->first();
