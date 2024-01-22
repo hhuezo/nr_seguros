@@ -44,7 +44,7 @@
                             </div>
 
                             <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Monto Otorgamiento </label>
+                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Monto Otorgado </label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                     <input class="form-control" type="text" name="MontoOtorgamiento" id="ExtraprimadosMontoOtorgamiento" readonly>
                                 </div>
@@ -54,7 +54,7 @@
                             <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tarifa</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" type="number" name="Tarifa" required >
+                                    <input class="form-control" type="number" step="any" name="Tarifa" required >
                                 </div>
                             </div>
 

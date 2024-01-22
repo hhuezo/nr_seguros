@@ -15,7 +15,7 @@
                         <th>Dui</th>
                         <th>Nombre</th>
                         <th>Numero Referencia</th>
-                        <th>Saldo Total</th>
+                        <th>Monto Otorgado</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -30,7 +30,7 @@
                                 <td>{{ $obj->Dui }}</td>
                                 <td>{{ $obj->Nombre }}</td>
                                 <td>{{ $obj->NumeroReferencia }}</td>
-                                <td>{{ $obj->SaldoTotal }}</td>
+                                <td>{{ number_format($obj->MontoOtorgado, 2, '.', ',')  }}</td>
                             </tr>
                         @endif
                     @endforeach
@@ -59,13 +59,14 @@
                         <th>Dui</th>
                         <th>Nombre</th>
                         <th>Numero Referencia</th>
-                        <th>Saldo Total</th>
+                        <th>Monto Otorgado</th>
                         <th>Tarifa</th>
                         <th>Porcentaje EP</th>
                         <th>Pago EP</th>
                     </tr>
                 </thead>
                 <tbody>
+                    @php($totalextraprima = 0)
                     @if ($extraprimados->count() > 0)
                         @foreach ($extraprimados as $obj)
                             <tr>
@@ -76,15 +77,22 @@
                                 <td>{{ $obj->Dui }}</td>
                                 <td>{{ $obj->PrimerNombre }} {{ $obj->PrimerApellido }}</td>
                                 <td>{{ $obj->NumeroReferencia }}</td>
-                                <td>{{ $obj->SaldoTotal }}</td>
+                                <td>{{ number_format($obj->MontoOtorgado, 2, '.', ',')  }}</td>
                                 <td>{{ $obj->Tarifa }}</td>
                                 <td>{{ $obj->PorcentajeEP }}%</td>
-                                <td>{{ $obj->PagoEP }}</td>
+                                <td>$ {{ number_format($obj->PagoEP,2,'.', ',')  }}</td>
                             </tr>
                             @include('polizas.deuda.modal_edit_extraprimados')
+                            @php($totalextraprima = $totalextraprima + $obj->PagoEP)
                         @endforeach
                     @endif
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="7" align="right">Total</td>
+                        <td>$ {{number_format($totalextraprima,2,'.', ',')}}</td>
+                    </tr>
+                </tfoot>
             </table>
         </div>
     </div>
@@ -105,8 +113,8 @@
                 document.getElementById('ExtraprimadosNombre').value = data.Nombre;
                 document.getElementById('ExtraprimadosFechaOtorgamiento').value = data.FechaOtorgamiento;
                 document.getElementById('ExtraprimadosNumeroReferencia').value = data.NumeroReferencia;
-                if (data.hasOwnProperty('MontoOtorgamiento')) {
-                    document.getElementById('ExtraprimadosMontoOtorgamiento').value = data.MontoOtorgamiento;
+                if (data.hasOwnProperty('MontoOtorgado')) {
+                    document.getElementById('ExtraprimadosMontoOtorgamiento').value = data.MontoOtorgado;
                 }
             })
             .fail(function() {

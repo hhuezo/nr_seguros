@@ -160,6 +160,8 @@
                 }
             })
 
+       
+
         });
 
         function formatearNumero(numero) {
@@ -431,7 +433,7 @@
 
 
 
-            $.get("{{ url('polizas/residencia/get_pago') }}" + '/' + id, function(data) {
+            $.get("{{ url('polizas/deuda/get_pago') }}" + '/' + id, function(data) {
 
 
                 console.log(data);
