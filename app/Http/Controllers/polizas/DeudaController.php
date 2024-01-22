@@ -556,7 +556,7 @@ class DeudaController extends Controller
 
             //para fechas de modal
             $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
-            $comentarios = Comentario::where('Deuda', $deuda->Id)->get();
+            $comentarios = Comentario::where('Deuda', $deuda->Id)->where('Activo','=',1)->get();
 
             $primerDia = Carbon::now()->startOfMonth();
             $ultimoDia = Carbon::now()->endOfMonth();
