@@ -262,46 +262,48 @@
                                             </tbody>
                                         </table>
 
-                                    </div>
-                                    <div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="profile-tab">
-                                        <br>
-                                        <table class="table table-striped" id="MyTable5">
-                                            <thead>
-                                                <tr>
-                                                    <th>Número crédito</th>
-                                                    <th>DUI</th>
-                                                    <th>NIT</th>
-                                                    <th>Nombre</th>
-                                                    <th>Fecha nacimiento</th>
-                                                    <th>Edad</th>
-                                                    <th>Saldo</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($poliza_cumulos->where('Perfiles', '=', null) as $registro)
-                                                <tr>
-                                                    <td>{{ $registro->NumeroReferencia }}</td>
-                                                    <td>{{ $registro->Dui }}</td>
-                                                    <td>{{ $registro->Nit }}</td>
-                                                    <td>{{ $registro->PrimerNombre }}
-                                                        {{ $registro->SegundoNombre }}
-                                                        {{ $registro->PrimerApellido }}
-                                                        {{ $registro->SegundoApellido }}
-                                                        {{ $registro->ApellidoCasada }}
-                                                    </td>
-                                                    <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
-                                                    </td>
-                                                    <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
-
-                                                    <td class="text-right">
-                                                        ${{ number_format($registro->total_saldo, 2) }}</td>
-
-                                                </tr>
-                                                @endforeach
+                                        </div>
+                                        <div role="tabpanel" class="tab-pane fade" id="tab_content4"
+                                            aria-labelledby="profile-tab">
 
 
-                                            </tbody>
-                                        </table>
+                                            <br>
+                                            <table class="table table-striped" id="datatable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Número crédito</th>
+                                                        <th>DUI</th>
+                                                        <th>NIT</th>
+                                                        <th>Nombre</th>
+                                                        <th>Fecha nacimiento</th>
+                                                        <th>Edad</th>
+                                                        <th>Saldo</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($poliza_cumulos->where('Perfiles', '=', null)->where('NoValido', '=', 0) as $registro)
+                                                        <tr>
+                                                            <td>{{ $registro->NumeroReferencia }}</td>
+                                                            <td>{{ $registro->Dui }}</td>
+                                                            <td>{{ $registro->Nit }}</td>
+                                                            <td>{{ $registro->PrimerNombre }}
+                                                                {{ $registro->SegundoNombre }}
+                                                                {{ $registro->PrimerApellido }}
+                                                                {{ $registro->SegundoApellido }}
+                                                                {{ $registro->ApellidoCasada }}</td>
+                                                            <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
+                                                            </td>
+                                                            <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
+
+                                                            <td class="text-right">
+                                                                ${{ number_format($registro->total_saldo, 2) }}</td>
+
+                                                        </tr>
+                                                    @endforeach
+
+
+                                                </tbody>
+                                            </table>
 
                                     </div>
                                 </div>
