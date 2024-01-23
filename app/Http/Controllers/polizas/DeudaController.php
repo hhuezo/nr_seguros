@@ -853,12 +853,22 @@ class DeudaController extends Controller
             ->where('User', auth()->user()->id)
             ->get();
 
-        // dd($tempData->take(20));
+            if ($tempData->isNotEmpty()) {
+                $linea_credito = $tempData->first()->LineaCredito;
+                $poliza_deuda = $tempData->first()->PolizaDeuda;
+                $mes_int = intval($mes);
+                PolizaDeudaCartera::where('PolizaDeuda',$poliza_deuda)->where('LineaCredito',$linea_credito)->where('Axo',$anio)->where('Mes',$mes_int)->delete();
+
+            } 
+
+
+//
+        
 
         // Iterar sobre los resultados y realizar la inserción en la tabla principal
         foreach ($tempData as $tempRecord) {
             $poliza = new PolizaDeudaCartera();
-            $poliza->Id = $tempRecord->Id;
+            //$poliza->Id = $tempRecord->Id;
             $poliza->Nit = $tempRecord->Nit;
             $poliza->Dui = $tempRecord->Dui;
             $poliza->Pasaporte = $tempRecord->Pasaporte;
