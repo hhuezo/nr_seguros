@@ -49,6 +49,7 @@ class PolizaDeudaTempCartera extends Model
         'InteresesCovid',
         'MontoNominal',
         'LineaCredito',
+        'NoValido',
         
     ];
 }

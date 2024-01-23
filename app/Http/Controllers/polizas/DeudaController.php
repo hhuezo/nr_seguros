@@ -857,43 +857,44 @@ class DeudaController extends Controller
 
         // Iterar sobre los resultados y realizar la inserción en la tabla principal
         foreach ($tempData as $tempRecord) {
-            PolizaDeudaCartera::create([
-                'Id' => $tempRecord->Id,
-                'Nit' => $tempRecord->Nit,
-                'Dui' => $tempRecord->Dui,
-                'Pasaporte' => $tempRecord->Pasaporte,
-                'Nacionalidad' => $tempRecord->Nacionalidad,
-                'FechaNacimiento' => $tempRecord->FechaNacimiento,
-                'TipoPersona' => $tempRecord->TipoPersona,
-                'PrimerApellido' => $tempRecord->PrimerApellido,
-                'SegundoApellido' => $tempRecord->SegundoApellido,
-                'ApellidoCasada' => $tempRecord->ApellidoCasada,
-                'PrimerNombre' => $tempRecord->PrimerNombre,
-                'SegundoNombre' => $tempRecord->SegundoNombre,
-                'NombreSociedad' => $tempRecord->NombreSociedad,
-                'Sexo' => $tempRecord->Sexo,
-                'FechaOtorgamiento' => $tempRecord->FechaOtorgamiento,
-                'FechaVencimiento' => $tempRecord->FechaVencimiento,
-                'Ocupacion' => $tempRecord->Ocupacion,
-                'NumeroReferencia' => $tempRecord->NumeroReferencia,
-                'MontoOtorgado' => $tempRecord->MontoOtorgado,
-                'SaldoCapital' => $tempRecord->SaldoCapital,
-                'Intereses' => $tempRecord->Intereses,
-                'InteresesCovid' => $tempRecord->InteresesCovid,
-                'InteresesMoratorios' => $tempRecord->InteresesMoratorios,
-                'MontoNominal' => $tempRecord->MontoNominal,
-                'SaldoTotal' => $tempRecord->SaldoTotal,
-                'User' => $tempRecord->User,
-                'Axo' => $tempRecord->Axo,
-                'Mes' => $tempRecord->Mes,
-                'PolizaDeuda' => $tempRecord->PolizaDeuda,
-                'FechaInicio' => $tempRecord->FechaInicio,
-                'FechaFinal' => $tempRecord->FechaFinal,
-                'TipoError' => $tempRecord->TipoError,
-                'FechaNacimientoDate' => $tempRecord->FechaNacimientoDate,
-                'Edad' => $tempRecord->Edad,
-                'LineaCredito' => $tempRecord->LineaCredito,
-            ]);
+            $poliza = new PolizaDeudaCartera();
+            $poliza->Id = $tempRecord->Id;
+            $poliza->Nit = $tempRecord->Nit;
+            $poliza->Dui = $tempRecord->Dui;
+            $poliza->Pasaporte = $tempRecord->Pasaporte;
+            $poliza->Nacionalidad = $tempRecord->Nacionalidad;
+            $poliza->FechaNacimiento = $tempRecord->FechaNacimiento;
+            $poliza->TipoPersona = $tempRecord->TipoPersona;
+            $poliza->PrimerApellido = $tempRecord->PrimerApellido;
+            $poliza->SegundoApellido = $tempRecord->SegundoApellido;
+            $poliza->ApellidoCasada = $tempRecord->ApellidoCasada;
+            $poliza->PrimerNombre = $tempRecord->PrimerNombre;
+            $poliza->SegundoNombre = $tempRecord->SegundoNombre;
+            $poliza->NombreSociedad = $tempRecord->NombreSociedad;
+            $poliza->Sexo = $tempRecord->Sexo;
+            $poliza->FechaOtorgamiento = $tempRecord->FechaOtorgamiento;
+            $poliza->FechaVencimiento = $tempRecord->FechaVencimiento;
+            $poliza->Ocupacion = $tempRecord->Ocupacion;
+            $poliza->NumeroReferencia = $tempRecord->NumeroReferencia;
+            $poliza->MontoOtorgado = $tempRecord->MontoOtorgado;
+            $poliza->SaldoCapital = $tempRecord->SaldoCapital;
+            $poliza->Intereses = $tempRecord->Intereses;
+            $poliza->InteresesCovid = $tempRecord->InteresesCovid;
+            $poliza->InteresesMoratorios = $tempRecord->InteresesMoratorios;
+            $poliza->MontoNominal = $tempRecord->MontoNominal;
+            $poliza->SaldoTotal = $tempRecord->SaldoTotal;
+            $poliza->User = $tempRecord->User;
+            $poliza->Axo = $tempRecord->Axo;
+            $poliza->Mes = $tempRecord->Mes;
+            $poliza->PolizaDeuda = $tempRecord->PolizaDeuda;
+            $poliza->FechaInicio = $tempRecord->FechaInicio;
+            $poliza->FechaFinal = $tempRecord->FechaFinal;
+            $poliza->TipoError = $tempRecord->TipoError;
+            $poliza->FechaNacimientoDate = $tempRecord->FechaNacimientoDate;
+            $poliza->Edad = $tempRecord->Edad;
+            $poliza->LineaCredito = $tempRecord->LineaCredito;
+            $poliza->NoValido = $tempRecord->NoValido;
+            $poliza->save();
         }
 
         // dd()
@@ -1019,8 +1020,9 @@ class DeudaController extends Controller
 
                 $saldo = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->Id)
                     ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'))
-                    ->where('LineaCredito', '=', $lineaCredito)->where('Mes', '=', $fecha->Mes)->where('Axo', '=', $fecha->Axo)->first();
-                $total = ($saldo->Saldo + $saldo->Intereses) * $tasaGeneral;
+                    ->where('LineaCredito', '=', $lineaCredito)->where('Mes', '=', $fecha->Mes)->where('Axo', '=', $fecha->Axo)->where('NoValido', '=', 0)->first();
+                //$total = ($saldo->Saldo + $saldo->Intereses) * $tasaGeneral;
+                $total = ($saldo->Saldo + $saldo->Intereses);
             } elseif ($obj->TasaFecha && !$obj->TasaMonto && !$obj->TasaEdad) {
                 //existe tasa de Fecha
                 $desde = Carbon::parse($obj->FechaDesde)->format('y-m-d');
