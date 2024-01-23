@@ -93,9 +93,9 @@
                                     <li role="presentation" class=""><a href="#tab_content3" role="tab" id="profile-tab2" data-toggle="tab" aria-expanded="false">Registros con
                                             requisitos</a>
                                     </li>
-                                    <li role="presentation" class=""><a href="#tab_content4" role="tab" id="profile-tab2" data-toggle="tab" aria-expanded="false">Registros
+                                    {{-- <li role="presentation" class=""><a href="#tab_content4" role="tab" id="profile-tab2" data-toggle="tab" aria-expanded="false">Registros
                                             válidos</a>
-                                    </li>
+                                    </li> --}}
                                 </ul>
                                 <div id="myTabContent" class="tab-content">
                                     <div role="tabpanel" class="tab-pane active " id="tab_content1" aria-labelledby="home-tab">
