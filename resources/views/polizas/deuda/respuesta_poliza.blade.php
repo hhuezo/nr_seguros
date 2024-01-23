@@ -209,6 +209,7 @@
                                         </div>
                                         <div role="tabpanel" class="tab-pane fade" id="tab_content3"
                                             aria-labelledby="profile-tab">
+                                            con requisitos
                                             <br>
                                             <table class="table table-striped" id="datatable">
                                                 <thead>
@@ -239,13 +240,13 @@
                                                             <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
 
                                                             <td>
-                                                                @php
-                                                                    $uniquePerfiles = array_unique($registro->Perfiles);
+                                                                {{-- @php
+                                                                    // $uniquePerfiles = array_unique($registro->Perfiles);
                                                                 @endphp
 
                                                                 @foreach ($uniquePerfiles as $key => $perfil)
                                                                     {{ $perfil }}{{ $loop->last ? '' : ', ' }}
-                                                                @endforeach
+                                                                @endforeach --}}
                                                             </td>
                                                             <td class="text-right">
                                                                 ${{ number_format($registro->total_saldo, 2) }}</td>
@@ -260,6 +261,8 @@
                                         </div>
                                         <div role="tabpanel" class="tab-pane fade" id="tab_content4"
                                             aria-labelledby="profile-tab">
+
+                                            validos
                                             <br>
                                             <table class="table table-striped" id="datatable">
                                                 <thead>
@@ -274,7 +277,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach ($poliza_cumulos->where('Perfiles', '=', null) as $registro)
+                                                    @foreach ($poliza_cumulos->where('Perfiles', '=', null)->where('NoValido', '=', 0) as $registro)
                                                         <tr>
                                                             <td>{{ $registro->NumeroReferencia }}</td>
                                                             <td>{{ $registro->Dui }}</td>
