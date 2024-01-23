@@ -1539,7 +1539,7 @@ class DeudaController extends Controller
         PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Perfiles', null)->where('NoValido', 0)->where('Edad', '>=', $minEdadInicial)->update(['NoValido' => 1]);
 
         //update para los que son mayores al monto inicial
-        PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
+       /* PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
             ->where('Perfiles', null)
             ->where('NoValido', 0)
             ->whereRaw(
@@ -1549,7 +1549,7 @@ class DeudaController extends Controller
           AND p.LineaCredito = poliza_deuda_temp_cartera.LineaCredito) >= ?",
                 [$minMontoInicial]
             )
-            ->update(['NoValido' => 1]);
+            ->update(['NoValido' => 1]);*/
 
 
 
