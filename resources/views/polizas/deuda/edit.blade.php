@@ -17,7 +17,7 @@
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
 
                 <div class="x_title">
-                    <h2>Nuevo Poliza de Deuda &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; VIDE - Seguro por Deuda<small></small>
+                    <h2>Poliza de Deuda &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; VIDE - Deuda<small></small>
                     </h2>
                     <ul class="nav navbar-right panel_toolbox">
 
@@ -159,6 +159,8 @@
                     $('#poliza_desempleo').hide();
                 }
             })
+
+       
 
         });
 
@@ -431,7 +433,7 @@
 
 
 
-            $.get("{{ url('polizas/residencia/get_pago') }}" + '/' + id, function(data) {
+            $.get("{{ url('polizas/deuda/get_pago') }}" + '/' + id, function(data) {
 
 
                 console.log(data);

@@ -53,4 +53,7 @@ class DeudaDetalle extends Model
     {
         return $this->belongsTo('App\Models\polizas\Deuda', 'Deuda', 'Id');
     }
+    public function usuarios(){
+        return $this->belongsTo('App\Models\User', 'Usuario', 'id');
+    }
 }
