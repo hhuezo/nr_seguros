@@ -1372,10 +1372,10 @@ class DeudaController extends Controller
 
         //consultando la tabla requisitos
         $requisitos = $deuda->requisitos;
-        
 
 
-        
+
+
 
 
         //definiendo edad maxima segu requisitos
@@ -1392,12 +1392,27 @@ class DeudaController extends Controller
             PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Perfiles', '<>', null)->whereIn('Dui', $data_dui_cartera)->update(['Perfiles' => DB::raw('CONCAT(Perfiles, "," ,"' . $requisito->perfil->Descripcion . '")')]);
         }
 
-        PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Perfiles', null)->where('NoValido', 0)->where('Edad','>=', $minEdadInicial)->update(['NoValido' => 1]);
+        //update para los que son mayores a la edad inicial
+        PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Perfiles', null)->where('NoValido', 0)->where('Edad', '>=', $minEdadInicial)->update(['NoValido' => 1]);
+
+        //update para los que son mayores al monto inicial
+        PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
+            ->where('Perfiles', null)
+            ->where('NoValido', 0)
+            ->whereRaw(
+                "(SELECT SUM(SaldoCapital) FROM poliza_deuda_temp_cartera AS p 
+          WHERE p.NoValido = 0 
+          AND p.PolizaDeuda = poliza_deuda_temp_cartera.PolizaDeuda 
+          AND p.LineaCredito = poliza_deuda_temp_cartera.LineaCredito) >= ?",
+                [$minMontoInicial]
+            )
+            ->update(['NoValido' => 1]);
 
 
-     
 
-   
+
+
+
 
 
 
