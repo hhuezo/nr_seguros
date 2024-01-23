@@ -52,16 +52,27 @@
                             <h2>Resumen de cartera</h2>
                         </div>
                         <div class="col-md-6 col-sm-6 col-xs-12" align="right">
+                            <table>
+                                <tr>
+                                    <td style="vertical-align: top;"> <a href="{{url('polizas/deuda')}}/{{$deuda->Id}}/edit" class="btn btn-default">
+                                            Cancelar
+                                        </a></td>
+                                    <td>
+                                    
+                                        <form method="post" action="{{ url('polizas/deuda/store_poliza') }}">
+                                            @csrf
+                                            <input type="hidden" name="Cartera" value="{{ $deuda->Id }}">
+                                            <input type="hidden" name="MesActual" value="{{ date('Y-m-d', strtotime($date)) }}">
+                                            <input type="hidden" name="MesAnterior" value="{{ date('Y-m-d', strtotime($date_anterior)) }}">
+                                            <button class="btn btn-primary">
+                                                Guardar en cartera
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </table>
 
-                            <form method="post" action="{{ url('polizas/deuda/store_poliza') }}">
-                                @csrf
-                                <input type="hidden" name="Cartera" value="{{ $deuda->Id }}">
-                                <input type="hidden" name="MesActual" value="{{ date('Y-m-d', strtotime($date)) }}">
-                                <input type="hidden" name="MesAnterior" value="{{ date('Y-m-d', strtotime($date_anterior)) }}">
-                                <button class="btn btn-primary">
-                                    Guardar en cartera
-                                </button>
-                            </form>
+
 
                         </div>
 

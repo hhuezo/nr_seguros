@@ -16,8 +16,8 @@ class SaldoMontos extends Model
 
 
     protected $fillable = [
-        'Nombre',
-        'LineaCredito',
+        'Abreviatura',
+        'Descripcion',
         'Activo'
     ];
 

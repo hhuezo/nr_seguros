@@ -379,8 +379,9 @@ class DeudaController extends Controller
     {
         $requisito = DeudaRequisitos::findOrFail($request->id);
         $requisito->delete();
-
-        return response()->json(['mensaje' => 'Se ha eliminado con exito', 'title' => 'Requisito!', 'icon' => 'success', 'showConfirmButton' => 'true']);
+        alert()->success('Se ha eliminado con exito');
+        return back();
+       // return response()->json(['mensaje' => 'Se ha eliminado con exito', 'title' => 'Requisito!', 'icon' => 'success', 'showConfirmButton' => 'true']);
     }
 
     public function datos_asegurabilidad(Request $request)

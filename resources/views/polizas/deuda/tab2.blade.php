@@ -135,11 +135,11 @@
                         <label class="control-label" align="right">Fecha Inicio</label>
                         <div class="form-group row">
                             <input class="form-control" name="FechaInicio" id="FechaInicio" type="date"
-                                value="{{ isset($fecha) ? $fecha->FechaInicio : ''}}" required>
+                                value="{{ isset($fecha) ? $fecha->FechaInicio : ''}}" readonly>
                         </div>
                         <br>
                         <div class="form-group row" style="margin-top:-3%; text-align: center">
-                            <label class="control-label" align="center">Lineas de Credito</label>
+                            <label class="control-label" align="center">Líneas de Crédito</label>
 
 
 
@@ -149,7 +149,7 @@
                         @foreach ($creditos as $obj)
                             <div class="form-group row" style="margin-top:-3%;">
                                 <label class="control-label" align="right">  {{ $obj->tipoCarteras->Nombre }}
-                                    {{ $obj->saldos->Abreviatura }}</label>
+                                  <small>{{ $obj->saldos->Descripcion }}</small>  </label>
 
                                 <div class="form-group has-feedback">
                                     <input type="number" step="any" style="padding-left: 25%;"
@@ -177,7 +177,7 @@
                             </div>
 
                         </div>
-                        <div class="form-group row">
+                        <div class="form-group row ocultar">
                             <label class="control-label" align="right">Tasa %</label>
                             <div class="form-group has-feedback">
                                 <input type="number" step="any" style="padding-left: 25%;" name="Tasa"
@@ -377,7 +377,7 @@
                         <div class="form-group row">
                             <label class="control-label" align="right">Fecha Final</label>
                             <input class="form-control" name="FechaFinal" id="FechaFinal" type="date"
-                                value="{{ isset($fecha) ? $fecha->FechaFinal : ''}}" required>
+                                value="{{ isset($fecha) ? $fecha->FechaFinal : ''}}" readonly>
                         </div>
                         <br>
                         <div class="form-group row">
