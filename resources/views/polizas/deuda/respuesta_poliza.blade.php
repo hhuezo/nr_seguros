@@ -244,13 +244,14 @@
                                                         <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
 
                                                         <td>
-                                                            @php
-                                                            $uniquePerfiles = array_unique($registro->Perfiles);
-                                                            @endphp
+                                                           @php
+                                                                    $perfilesArreglo = explode(',', $registro->Perfiles);
+                                                                    $uniquePerfiles = array_unique($perfilesArreglo);
+                                                                @endphp
 
-                                                            @foreach ($uniquePerfiles as $key => $perfil)
-                                                            {{ $perfil }}{{ $loop->last ? '' : ', ' }}
-                                                            @endforeach
+                                                                 @foreach ($uniquePerfiles as $key => $perfil)
+                                                                    {{ $perfil }}{{ $loop->last ? '' : ', ' }}
+                                                                @endforeach 
                                                         </td>
                                                         <td class="text-right">
                                                             ${{ number_format($registro->total_saldo, 2) }}</td>
