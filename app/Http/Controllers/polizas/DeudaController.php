@@ -1372,6 +1372,10 @@ class DeudaController extends Controller
 
         //consultando la tabla requisitos
         $requisitos = $deuda->requisitos;
+        
+
+
+        
 
 
         //definiendo edad maxima segu requisitos
@@ -1383,94 +1387,23 @@ class DeudaController extends Controller
                 ->where('total_saldo', '>=', $requisito->MontoInicial)->where('total_saldo', '<=', $requisito->MontoFinal)
                 ->pluck('Dui')->toArray();
 
-            PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Perfiles', null)->whereIn('Dui', $data_dui_cartera)->update(['Perfiles' => $requisito->Perfil]);
+            PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Perfiles', null)->whereIn('Dui', $data_dui_cartera)->update(['Perfiles' => $requisito->perfil->Descripcion]);
 
-            PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Perfiles', '<>', null)->whereIn('Dui', $data_dui_cartera)->update(['Perfiles' => DB::raw('CONCAT(Perfiles, ",", ' . $requisito->Perfil . ')')]);
+            PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Perfiles', '<>', null)->whereIn('Dui', $data_dui_cartera)->update(['Perfiles' => DB::raw('CONCAT(Perfiles, "," ,"' . $requisito->perfil->Descripcion . '")')]);
         }
 
-
-        $maxMontos = DB::table('poliza_deuda_requisitos as requisitos')
-            ->select([
-                'Perfil',
-                DB::raw('MAX(MontoFinal) as MontoFinalMax'),
-                DB::raw('(SELECT MAX(r.EdadInicial) FROM poliza_deuda_requisitos as r WHERE r.Deuda = requisitos.Deuda AND r.Perfil = requisitos.Perfil) as EdadFinalMax'),
-            ])
-            ->where('requisitos.Deuda', '=', $deuda->Id)
-            ->where('requisitos.EdadInicial', '=', function ($query) {
-                $query->select(DB::raw('MAX(r.EdadInicial)'))
-                    ->from('poliza_deuda_requisitos as r')
-                    ->whereRaw('r.Deuda = requisitos.Deuda AND r.Perfil = requisitos.Perfil');
-            })
-            ->groupBy('requisitos.Perfil')
-            ->get();       
-
-            dd($maxMontos);
-        foreach ($maxMontos as $monto) {
-
-            $data_dui_cartera = DB::table('poliza_deuda_temp_cartera')
-            ->select([
-                'Id', 'Dui', 'Edad', 'Nit', 'PrimerNombre', 'SegundoNombre', 'PrimerApellido', 'SegundoApellido',
-                'ApellidoCasada', 'FechaNacimiento', 'NumeroReferencia',
-                DB::raw('SUM(SaldoCapital) as total_saldo')
-            ])
-            ->where('PolizaDeuda', '=',  $deuda->Id)
-            ->whereNull('Perfiles')
-            ->where('NoValido', '=', 0)
-            ->where('Edad', '>',  $monto->EdadFinalMax)
-            ->groupBy('Dui')
-            ->having('total_saldo', '>', $monto->MontoFinalMax)
-                ->pluck('Dui')->toarray();
-
-                dd( $data_dui_cartera);
+        PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Perfiles', null)->where('NoValido', 0)->where('Edad','>=', $minEdadInicial)->update(['NoValido' => 1]);
 
 
+     
 
-            if ($data_dui_cartera) {
-                dd($data_dui_cartera);
-                PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Perfiles', null)->whereIn('Dui', $data_dui_cartera)->update(['NoValido' => 1]);
-            }
-        }
-        dd($poliza_cumulos, $monto);
+   
 
 
 
         $poliza_cumulos = PolizaDeudaTempCartera::selectRaw('Id,Dui,Edad,Nit,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento, NumeroReferencia,NoValido,Perfiles,
         SUM(SaldoCapital) as total_saldo')->groupBy('Dui')->get();
 
-        /*$id_perfiles = $requisitos->pluck('Perfil')->unique()->toArray();
-
-        foreach($id_perfiles as $id_perfil)
-        {
-            $temp_requisitos =  $requisitos->where('Perfil','=',$id_perfil);
-            dd($temp_requisitos);
-        }
-
-        dd( $id_perfiles);*/
-
-        /* foreach ($poliza_cumulos as $cumulo) {
-
-
-        }
-
-        foreach ($poliza_cumulos as $cumulo) {
-            $cumulo->NoValido = 0;
-            if ($cumulo->Edad > $maxEdadFinal) {
-                $cumulo->NoValido = 1;
-            } else {
-                //datos que estan dentro de la edad
-                $requisitos_poliza = $requisitos->where('EdadInicial', '<=', $cumulo->Edad)->where('EdadFinal', '>=', $cumulo->Edad);
-
-                if ($requisitos_poliza) {
-                    $max = $requisitos_poliza->max('MontoFinal');
-                    if ($cumulo->total_saldo > $max) {
-                        $cumulo->NoValido = 1;
-                    } else {
-                        $perfiles = $requisitos_poliza->where('MontoInicial', '<=', $cumulo->total_saldo)->where('MontoFinal', '>=', $cumulo->total_saldo)->pluck('perfil.Descripcion')->toArray();
-                        $cumulo->Perfiles = $perfiles;
-                    }
-                }
-            }
-        }*/
 
         return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date'));
     }

@@ -77,7 +77,8 @@
                                                 role="tab" data-toggle="tab" aria-expanded="true">Nuevos registros</a>
                                         </li>
                                         <li role="presentation" class=""><a href="#tab_content5" id="profile-tab5"
-                                            role="tab" data-toggle="tab" aria-expanded="false">Registros Eliminados</a>
+                                                role="tab" data-toggle="tab" aria-expanded="false">Registros
+                                                Eliminados</a>
                                         </li>
                                         <li role="presentation" class=""><a href="#tab_content2" role="tab"
                                                 id="profile-tab" data-toggle="tab" aria-expanded="false">Creditos no
@@ -131,8 +132,7 @@
 
                                         </div>
 
-                                        <div role="tabpanel5" class="tab-pane" id="tab_content5"
-                                            aria-labelledby="tab">
+                                        <div role="tabpanel5" class="tab-pane" id="tab_content5" aria-labelledby="tab">
                                             <br>
                                             <table class="table table-striped">
                                                 <thead>
@@ -151,7 +151,8 @@
                                                             <td>{{ $registro->NumeroReferencia }}</td>
                                                             <td>{{ $registro->Dui }}</td>
                                                             <td>{{ $registro->Nit }}</td>
-                                                            <td>{{ $registro->PrimerNombre }} {{ $registro->SegundoNombre }}
+                                                            <td>{{ $registro->PrimerNombre }}
+                                                                {{ $registro->SegundoNombre }}
                                                                 {{ $registro->PrimerApellido }}
                                                                 {{ $registro->SegundoApellido }}
                                                                 {{ $registro->ApellidoCasada }}</td>
@@ -240,13 +241,14 @@
                                                             <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
 
                                                             <td>
-                                                                {{-- @php
-                                                                    // $uniquePerfiles = array_unique($registro->Perfiles);
+                                                                @php
+                                                                    $perfilesArreglo = explode(',', $registro->Perfiles);
+                                                                    $uniquePerfiles = array_unique($perfilesArreglo);
                                                                 @endphp
 
-                                                                @foreach ($uniquePerfiles as $key => $perfil)
+                                                                 @foreach ($uniquePerfiles as $key => $perfil)
                                                                     {{ $perfil }}{{ $loop->last ? '' : ', ' }}
-                                                                @endforeach --}}
+                                                                @endforeach 
                                                             </td>
                                                             <td class="text-right">
                                                                 ${{ number_format($registro->total_saldo, 2) }}</td>
@@ -262,7 +264,7 @@
                                         <div role="tabpanel" class="tab-pane fade" id="tab_content4"
                                             aria-labelledby="profile-tab">
 
-                                            validos
+
                                             <br>
                                             <table class="table table-striped" id="datatable">
                                                 <thead>
