@@ -104,7 +104,7 @@
                         &nbsp;
                     </div>
                     <div class="col-sm-4">
-                        <label class="control-label" align="right">Tasa ‰ </label>
+                        <label class="control-label" align="right">Tasa ‰ Millar Mensual</label>
                         <input class="form-control" name="Tasa" type="number" id="Tasa" step="any" value="{{ $deuda->Tasa }}" readonly>
                     </div>
                     <div class="col-sm-4" align="center">
@@ -121,7 +121,7 @@
                         &nbsp;
                     </div>
                     <div class="col-sm-2">
-                        <label class="control-label" align="right">% Tasa de Comision </label>
+                        <label class="control-label" align="right">% Tasa de Comisión </label>
                         <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" value="{{ $deuda->TasaComision }}" readonly>
                     </div>
                     <div class="col-sm-2"><br>
@@ -187,7 +187,7 @@
                                     <td>{{ $obj->TipoCartera == null ? '' : $obj->tipoCarteras->Nombre }}
                                     </td>
                                     <td>{{ $obj->Saldos == null ? '' : $obj->saldos->Abreviatura }}</td>
-                                    <td>{{ $obj->TasaFecha == null && $obj->TasaMonto == null && $obj->TasaEdad == null ? $deuda->Tasa . '%' : '0' }}
+                                    <td>{{ $obj->TasaFecha == null && $obj->TasaMonto == null && $obj->TasaEdad == null ? $deuda->Tasa  : '0' }}
                                     </td>
                                     <td>{{ isset($obj->FechaDesde) ? date('d/m/Y', strtotime($obj->FechaDesde)) : '' }}
                                     </td>

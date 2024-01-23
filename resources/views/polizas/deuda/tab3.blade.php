@@ -70,7 +70,7 @@
                 <td>{{$obj->tipoCarteras->Nombre}} {{$obj->saldos->Abreviatura}}</td>
                 <td>
                     <div class="col-md-9 col-sm-9  form-group has-feedback">
-                        <input type="text" class="form-control has-feedback-left" style="text-align: right;" id="MontoCartera2" value="@if ($ultimo_pago) {{ number_format($ultimo_pago->MontoCartera, 2, '.', ',') }} @else 0 @endif" readonly>
+                        <input type="text" class="form-control has-feedback-left" style="text-align: right;" id="MontoCartera2" value="@if ($ultimo_pago) {{ number_format($obj->TotalLiniaCredito, 2, '.', ',') }} @else 0 @endif" readonly>
                         <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                     </div>
                 </td>
@@ -91,7 +91,7 @@
                 <td>Tasa por millar</td>
                 <td>
                     <div class="col-md-9 col-sm-9  form-group has-feedback">
-                        <input type="text" class="form-control has-feedback-left" style="text-align: right;" id="TasaMillar2" value="@if ($ultimo_pago) {{ $valorTasa }} @else 0 @endif" readonly>
+                        <input type="text" class="form-control has-feedback-left" style="text-align: right;" id="TasaMillar2" value="@if ($ultimo_pago) {{ $ultimo_pago->Tasa }} @else 0 @endif" readonly>
                         <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                     </div>
                 </td>
@@ -105,6 +105,15 @@
                 <td>
                     <div class="col-md-9 col-sm-9  form-group has-feedback">
                         <input type="text" class="form-control has-feedback-left" style="text-align: right;" id="PrimaCalculada2" value="@if ($ultimo_pago) {{ number_format($ultimo_pago->PrimaCalculada, 2, '.', ',') }} @else 0 @endif" readonly>
+                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>Extra Prima  </td>
+                <td>
+                    <div class="col-md-9 col-sm-9  form-group has-feedback">
+                        <input type="text" class="form-control has-feedback-left" style="text-align: right;" id="ExtraPrima2" value="@if ($ultimo_pago) {{ number_format($ultimo_pago->ExtraPrima, 2, '.', ',') }} @else 0 @endif" readonly>
                         <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                     </div>
                 </td>
