@@ -839,7 +839,6 @@ class DeudaController extends Controller
     }
     public function store_poliza(Request $request)
     {
-
         // Convertir la cadena en un objeto Carbon (la clase de fecha en Laravel)
         $fecha = \Carbon\Carbon::parse($request->MesActual);
 
@@ -847,11 +846,14 @@ class DeudaController extends Controller
         $mes = $fecha->format('m'); // El formato 'm' devuelve el mes con ceros iniciales (por ejemplo, "02")
         $anio = $fecha->format('Y');
 
+        
         // Obtener los datos de la tabla temporal
         $tempData = PolizaDeudaTempCartera::where('Axo', $anio)
             ->where('Mes', $mes + 0)
             ->where('User', auth()->user()->id)
             ->get();
+
+           
 
             if ($tempData->isNotEmpty()) {
                 $linea_credito = $tempData->first()->LineaCredito;
@@ -862,7 +864,7 @@ class DeudaController extends Controller
             } 
 
 
-//
+        //
         
 
         // Iterar sobre los resultados y realizar la inserción en la tabla principal
@@ -938,7 +940,7 @@ class DeudaController extends Controller
         // }
 
         alert()->success('El registro de poliza ha sido ingresado correctamente');
-        return redirect('polizas/deuda/' . $tempRecord->PolizaDeuda . '/edit');
+        return redirect('polizas/deuda/' . $tempRecord->PolizaDeuda . '/edit?tab=2');
     }
 
 
@@ -1315,8 +1317,9 @@ class DeudaController extends Controller
 
     public function create_pago(Request $request)
     {
-
+       
         $credito = $request->get('LineaCredito');
+        
         //ini_set('memory_limit', '25024M');
         //ini_set('max_execution_time', 300); // Ajusta el valor según sea necesario (por ejemplo, 300 segundos)
         $date_submes = Carbon::create($request->Axo, $request->Mes, "01");
@@ -1326,7 +1329,7 @@ class DeudaController extends Controller
         $date_mes_anterior = $date_anterior->subMonth();
 
         $deuda = Deuda::findOrFail($request->Id);
-
+ 
         //insertando cartera
         try {
             $archivo = $request->Archivo;
@@ -1548,32 +1551,13 @@ class DeudaController extends Controller
         }
 
         //update para los que son mayores a la edad inicial
-        PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Perfiles', null)->where('NoValido', 0)->where('Edad', '>=', $minEdadInicial)->update(['NoValido' => 1]);
+        PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Perfiles', null)->where('NoValido', 0)->update(['NoValido' => 1]);
 
-        //update para los que son mayores al monto inicial
-       /* PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
-            ->where('Perfiles', null)
-            ->where('NoValido', 0)
-            ->whereRaw(
-                "(SELECT SUM(SaldoCapital) FROM poliza_deuda_temp_cartera AS p 
-          WHERE p.NoValido = 0 
-          AND p.PolizaDeuda = poliza_deuda_temp_cartera.PolizaDeuda 
-          AND p.LineaCredito = poliza_deuda_temp_cartera.LineaCredito) >= ?",
-                [$minMontoInicial]
-            )
-            ->update(['NoValido' => 1]);*/
-
-
-
-
-
-
-
+        
 
 
         $poliza_cumulos = PolizaDeudaTempCartera::selectRaw('Id,Dui,Edad,Nit,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento, NumeroReferencia,NoValido,Perfiles,
         SUM(SaldoCapital) as total_saldo')->groupBy('Dui')->get();
-
 
         return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date'));
     }

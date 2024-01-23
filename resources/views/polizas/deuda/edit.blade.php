@@ -44,7 +44,7 @@
                                         href="#tab_content1" id="home-tab" role="tab" data-toggle="tab"
                                         aria-expanded="true">Datos de la Poliza</a>
                                 </li>
-                                <li role="presentation" class=""><a href="#tab_content2" role="tab"
+                                <li role="presentation" class="{{ $tab == 2 ? 'active' : '' }}"><a href="#tab_content2" role="tab"
                                         id="profile-tab" data-toggle="tab" aria-expanded="false">Generar Cartera</a>
                                 </li>
                                 <li role="presentation"
@@ -75,7 +75,7 @@
                                         @include('polizas.deuda.tab1')
                                     </div>
                                 </div>
-                                <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="profile-tab">
+                                <div role="tabpanel" class="tab-pane fade {{ $tab == 2 ? ' active in' : '' }}" id="tab_content2" aria-labelledby="profile-tab">
                                     @include('polizas.deuda.tab2')
                                 </div>
                                 <div role="tabpanel"

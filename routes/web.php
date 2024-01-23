@@ -204,6 +204,7 @@ Route::post('poliza/vida/usuario_delete', [VidaController::class, 'eliminarUsuar
 Route::get('poliza/vida/usuario_create', [VidaController::class, 'agregarUsuario']);
 Route::get('poliza/vida/usuario/{id}', [VidaController::class, 'getUsuario']);
 
+Route::post('polizas/deuda/create_pago', [DeudaController::class, 'create_pago']);
 Route::get('polizas/deuda/get_extraprimado/{poliza}/{dui}', [DeudaController::class, 'get_extraprimado']);
 Route::post('polizas/deuda/store_extraprimado', [DeudaController::class, 'store_extraprimado']);
 Route::post('polizas/deuda/update_extraprimado', [DeudaController::class, 'update_extraprimado']);
@@ -211,7 +212,7 @@ Route::post('polizas/deuda/store_poliza', [DeudaController::class, 'store_poliza
 Route::post('polizas/deuda/store_requisitos', [DeudaController::class, 'store_requisitos']);
 Route::get('polizas/deuda/get_requisitos', [DeudaController::class, 'get_requisitos']);
 Route::resource('polizas/deuda', DeudaController::class);
-Route::post('polizas/deuda/create_pago', [DeudaController::class, 'create_pago']);
+
 Route::post('polizas/deuda/agregar_pago', [DeudaController::class, 'agregar_pago']);
 Route::get('polizas/deuda/get_pago/{id}', [DeudaController::class, 'get_pago']);
 Route::post('polizas/deuda/edit_pago', [DeudaController::class, 'edit_pago']);
