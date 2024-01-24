@@ -1531,7 +1531,7 @@ class DeudaController extends Controller
 
         //consultando la tabla requisitos
         $requisitos = $deuda->requisitos;
-
+        dd($requisitos);
 
 
 
