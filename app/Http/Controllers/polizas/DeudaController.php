@@ -1550,8 +1550,7 @@ class DeudaController extends Controller
 
             PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Perfiles', '<>', null)->whereIn('Dui', $data_dui_cartera)->update(['Perfiles' => DB::raw('CONCAT(Perfiles, "," ,"' . $requisito->perfil->Descripcion . '")')]);
         }
-        $aa = PolizaDeudaTempCartera::where('Perfiles','<>',null)->get();
-        dd($aa);
+  
 
         //update para los que son mayores a la edad inicial
          PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Perfiles', null)->where('NoValido', 0)->update(['NoValido' => 1]);
