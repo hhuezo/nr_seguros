@@ -1531,11 +1531,6 @@ class DeudaController extends Controller
 
         //consultando la tabla requisitos
         $requisitos = $deuda->requisitos;
-        dd($requisitos);
-
-
-
-
 
         //definiendo edad maxima segu requisitos
         $maxEdadMaxima = $deuda->requisitos->max('EdadFinal');
