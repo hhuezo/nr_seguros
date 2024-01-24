@@ -20,19 +20,17 @@
                 </thead>
                 <tbody>
                     @foreach ($clientes as $obj)
-                        @if ($clientes->count() > 0)
-                            <tr>
-                                <td align="center"><button class="btn btn-primary"
-                                        onclick="modalExtraprimados({{ $deuda->Id }},'{{ $obj->Dui }}')"
-                                        data-target="#modal_extraprimados" data-toggle="modal">
-                                        <i class="fa fa-edit fa-lg"></i>
-                                    </button></td>
-                                <td>{{ $obj->Dui }}</td>
-                                <td>{{ $obj->Nombre }}</td>
-                                <td>{{ $obj->NumeroReferencia }}</td>
-                                <td>{{ number_format($obj->MontoOtorgado, 2, '.', ',')  }}</td>
-                            </tr>
-                        @endif
+                    @if ($clientes->count() > 0)
+                    <tr>
+                        <td align="center"><button class="btn btn-primary" onclick="modalExtraprimados({{ $deuda->Id }},'{{ $obj->Dui }}')" data-target="#modal_extraprimados" data-toggle="modal">
+                                <i class="fa fa-edit fa-lg"></i>
+                            </button></td>
+                        <td>{{ $obj->Dui }}</td>
+                        <td>{{ $obj->Nombre }}</td>
+                        <td>{{ $obj->NumeroReferencia }}</td>
+                        <td>{{ number_format($obj->MontoOtorgado, 2, '.', ',')  }}</td>
+                    </tr>
+                    @endif
                     @endforeach
                 </tbody>
             </table>
@@ -68,23 +66,22 @@
                 <tbody>
                     @php($totalextraprima = 0)
                     @if ($extraprimados->count() > 0)
-                        @foreach ($extraprimados as $obj)
-                            <tr>
-                                <td align="center"><button class="btn btn-primary"
-                                    data-target="#modal-edit-extraprimados-{{ $obj->Id }}" data-toggle="modal">
-                                    <i class="fa fa-edit fa-lg"></i>
-                                </button></td>
-                                <td>{{ $obj->Dui }}</td>
-                                <td>{{ $obj->PrimerNombre }} {{ $obj->PrimerApellido }}</td>
-                                <td>{{ $obj->NumeroReferencia }}</td>
-                                <td>{{ number_format($obj->MontoOtorgado, 2, '.', ',')  }}</td>
-                                <td>{{ $obj->Tarifa }}</td>
-                                <td>{{ $obj->PorcentajeEP }}%</td>
-                                <td>$ {{ number_format($obj->PagoEP,2,'.', ',')  }}</td>
-                            </tr>
-                            @include('polizas.deuda.modal_edit_extraprimados')
-                            @php($totalextraprima = $totalextraprima + $obj->PagoEP)
-                        @endforeach
+                    @foreach ($extraprimados as $obj)
+                    <tr>
+                        <td align="center"><button class="btn btn-primary" data-target="#modal-edit-extraprimados-{{ $obj->Id }}" data-toggle="modal">
+                                <i class="fa fa-edit fa-lg"></i>
+                            </button></td>
+                        <td>{{ $obj->Dui }}</td>
+                        <td>{{ $obj->PrimerNombre }} {{ $obj->PrimerApellido }}</td>
+                        <td>{{ $obj->NumeroReferencia }}</td>
+                        <td>{{ number_format($obj->MontoOtorgado, 2, '.', ',')  }}</td>
+                        <td>{{ $obj->Tarifa }}</td>
+                        <td>{{ $obj->PorcentajeEP }}%</td>
+                        <td>$ {{ number_format($obj->PagoEP,2,'.', ',')  }}</td>
+                    </tr>
+                    @include('polizas.deuda.modal_edit_extraprimados')
+                    @php($totalextraprima = $totalextraprima + $obj->PagoEP)
+                    @endforeach
                     @endif
                 </tbody>
                 <tfoot>
@@ -121,5 +118,13 @@
                 // Manejar errores si es necesario
                 console.error("Error al realizar la solicitud GET.");
             });
+    }
+
+    function totalPago(deuda_tasa) {
+        //alert(deuda_tasa);
+        var total = document.getElementById('ExtraprimadosMontoOtorgamiento').value * deuda_tasa * document.getElementById('PorcentajeEP').value;
+        console.log(total);
+        document.getElementById('PagoEP').value = total;
+
     }
 </script>

@@ -22,6 +22,10 @@
     }
 </style>
 
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
+
+
 
 <!-- Agrega este script en tu archivo blade -->
 <script>
@@ -58,7 +62,7 @@
                                             Cancelar
                                         </a></td>
                                     <td>
-                                    
+
                                         <form method="post" action="{{ url('polizas/deuda/store_poliza') }}">
                                             @csrf
                                             <input type="hidden" name="Cartera" value="{{ $deuda->Id }}">
@@ -174,7 +178,9 @@
 
                                     </div>
                                     <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="profile-tab">
-
+                                        <div>
+                                            <a href="{{url('exportar/poliza_cumulo')}}" class="btn btn-success">Descargar Excel</a>
+                                        </div>
                                         <table class="table table-striped" id="MyTable3">
                                             <thead>
                                                 <tr>
@@ -244,14 +250,14 @@
                                                         <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
 
                                                         <td>
-                                                           @php
-                                                                    $perfilesArreglo = explode(',', $registro->Perfiles);
-                                                                    $uniquePerfiles = array_unique($perfilesArreglo);
-                                                                @endphp
+                                                            @php
+                                                            $perfilesArreglo = explode(',', $registro->Perfiles);
+                                                            $uniquePerfiles = array_unique($perfilesArreglo);
+                                                            @endphp
 
-                                                                 @foreach ($uniquePerfiles as $key => $perfil)
-                                                                    {{ $perfil }}{{ $loop->last ? '' : ', ' }}
-                                                                @endforeach 
+                                                            @foreach ($uniquePerfiles as $key => $perfil)
+                                                            {{ $perfil }}{{ $loop->last ? '' : ', ' }}
+                                                            @endforeach
                                                         </td>
                                                         <td class="text-right">
                                                             ${{ number_format($registro->total_saldo, 2) }}</td>
@@ -263,48 +269,48 @@
                                             </tbody>
                                         </table>
 
-                                        </div>
-                                        <div role="tabpanel" class="tab-pane fade" id="tab_content4"
-                                            aria-labelledby="profile-tab">
+                                    </div>
+                                    <div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="profile-tab">
 
 
-                                            <br>
-                                            <table class="table table-striped" id="datatable">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Número crédito</th>
-                                                        <th>DUI</th>
-                                                        <th>NIT</th>
-                                                        <th>Nombre</th>
-                                                        <th>Fecha nacimiento</th>
-                                                        <th>Edad</th>
-                                                        <th>Saldo</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach ($poliza_cumulos->where('Perfiles', '=', null)->where('NoValido', '=', 0) as $registro)
-                                                        <tr>
-                                                            <td>{{ $registro->NumeroReferencia }}</td>
-                                                            <td>{{ $registro->Dui }}</td>
-                                                            <td>{{ $registro->Nit }}</td>
-                                                            <td>{{ $registro->PrimerNombre }}
-                                                                {{ $registro->SegundoNombre }}
-                                                                {{ $registro->PrimerApellido }}
-                                                                {{ $registro->SegundoApellido }}
-                                                                {{ $registro->ApellidoCasada }}</td>
-                                                            <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
-                                                            </td>
-                                                            <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
+                                        <br>
+                                        <table class="table table-striped" id="datatable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Número crédito</th>
+                                                    <th>DUI</th>
+                                                    <th>NIT</th>
+                                                    <th>Nombre</th>
+                                                    <th>Fecha nacimiento</th>
+                                                    <th>Edad</th>
+                                                    <th>Saldo</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($poliza_cumulos->where('Perfiles', '=', null)->where('NoValido', '=', 0) as $registro)
+                                                <tr>
+                                                    <td>{{ $registro->NumeroReferencia }}</td>
+                                                    <td>{{ $registro->Dui }}</td>
+                                                    <td>{{ $registro->Nit }}</td>
+                                                    <td>{{ $registro->PrimerNombre }}
+                                                        {{ $registro->SegundoNombre }}
+                                                        {{ $registro->PrimerApellido }}
+                                                        {{ $registro->SegundoApellido }}
+                                                        {{ $registro->ApellidoCasada }}
+                                                    </td>
+                                                    <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
+                                                    </td>
+                                                    <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
 
-                                                            <td class="text-right">
-                                                                ${{ number_format($registro->total_saldo, 2) }}</td>
+                                                    <td class="text-right">
+                                                        ${{ number_format($registro->total_saldo, 2) }}</td>
 
-                                                        </tr>
-                                                    @endforeach
+                                                </tr>
+                                                @endforeach
 
 
-                                                </tbody>
-                                            </table>
+                                            </tbody>
+                                        </table>
 
                                     </div>
                                 </div>

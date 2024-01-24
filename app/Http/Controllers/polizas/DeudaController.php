@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\polizas;
 
+use App\Exports\CreditosNoValidoExport;
 use App\Http\Controllers\Controller;
 use App\Imports\PolizaDeudaTempCarteraImport;
 use App\Models\catalogo\Aseguradora;
@@ -1568,5 +1569,13 @@ class DeudaController extends Controller
         $detalle->update();
         alert()->success('El registro ha sido ingresado correctamente');
         return back();
+    }
+
+    public function exportar(){
+        $poliza_cumulos = PolizaDeudaTempCartera::where('NoValido',1)->where('User',auth()->user()->id)->groupBy('Dui')->get();
+
+        return Excel::download(new CreditosNoValidoExport($poliza_cumulos), 'creditos_no_validos.xlsx');
+
+        
     }
 }
