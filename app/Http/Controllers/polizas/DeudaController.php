@@ -1548,7 +1548,13 @@ class DeudaController extends Controller
   
 
         //update para los que son mayores a la edad inicial
-         PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Perfiles', null)->where('NoValido', 0)->update(['NoValido' => 1]);
+        PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
+        ->where('NoValido', 0)
+        ->where(function ($query) {
+            $query->where('Perfiles', null)
+                  ->orWhere('Perfiles', '=', '');
+        })
+        ->update(['NoValido' => 1]);
         
 
 
