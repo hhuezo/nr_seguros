@@ -39,18 +39,17 @@
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
                         <div class="" role="tabpanel" data-example-id="togglable-tabs">
                             <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-                                <li role="presentation"
-                                    class="{{ $tab == 1 ? 'active' : '' }}"><a
-                                        href="#tab_content1" id="home-tab" role="tab" data-toggle="tab"
-                                        aria-expanded="true">Datos de la Poliza</a>
+                                <li role="presentation" class="{{ $tab == 1 ? 'active' : '' }}"><a href="#tab_content1"
+                                        id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Datos de la
+                                        Poliza</a>
                                 </li>
-                                <li role="presentation" class="{{ $tab == 2 ? 'active' : '' }}"><a href="#tab_content2" role="tab"
-                                        id="profile-tab" data-toggle="tab" aria-expanded="false">Generar Cartera</a>
+                                <li role="presentation" class="{{ $tab == 2 ? 'active' : '' }}"><a href="#tab_content2"
+                                        role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">Generar
+                                        Cartera</a>
                                 </li>
-                                <li role="presentation"
-                                    class="{{ $tab == 7 ? 'active' : '' }}"><a
-                                        href="#tab_content7" role="tab" id="extra-prima-tab" data-toggle="tab"
-                                        aria-expanded="false">Extra Prima {{ $deuda->NumeroPoliza }}</a>
+                                <li role="presentation" class="{{ $tab == 7 ? 'active' : '' }}"><a href="#tab_content7"
+                                        role="tab" id="extra-prima-tab" data-toggle="tab" aria-expanded="false">Extra
+                                        Prima {{ $deuda->NumeroPoliza }}</a>
                                 </li>
                                 <li role="presentation" class=""><a href="#tab_content3" role="tab"
                                         id="creditos-tab" data-toggle="tab" aria-expanded="false">Hoja de Cartera
@@ -68,18 +67,17 @@
                             </ul>
 
                             <div id="myTabContent" class="tab-content">
-                                <div role="tabpanel"
-                                    class="tab-pane fade {{ $tab == 1 ? ' active in' : '' }}"
+                                <div role="tabpanel" class="tab-pane fade {{ $tab == 1 ? ' active in' : '' }}"
                                     id="tab_content1" aria-labelledby="home-tab">
                                     <div style="background-color: lightslategray;">
                                         @include('polizas.deuda.tab1')
                                     </div>
                                 </div>
-                                <div role="tabpanel" class="tab-pane fade {{ $tab == 2 ? ' active in' : '' }}" id="tab_content2" aria-labelledby="profile-tab">
+                                <div role="tabpanel" class="tab-pane fade {{ $tab == 2 ? ' active in' : '' }}"
+                                    id="tab_content2" aria-labelledby="profile-tab">
                                     @include('polizas.deuda.tab2')
                                 </div>
-                                <div role="tabpanel"
-                                    class="tab-pane fade {{ $tab == 7 ? ' active in' : '' }}"
+                                <div role="tabpanel" class="tab-pane fade {{ $tab == 7 ? ' active in' : '' }}"
                                     id="tab_content7" aria-labelledby="extra-prima-tab">
                                     @include('polizas.deuda.tab7')
                                 </div>
@@ -160,7 +158,7 @@
                 }
             })
 
-       
+
 
         });
 
@@ -202,10 +200,10 @@
         }
         $(document).ready(function() {
 
-            $("#MontoCarteraView").on('focus', function() {
-                $("#MontoCarteraView").hide();
-                $("#MontoCartera").show();
-            })
+            // $("#MontoCarteraView").on('focus', function() {
+            //     $("#MontoCarteraView").hide();
+            //     $("#MontoCartera").show();
+            // })
 
 
 
@@ -231,7 +229,6 @@
             calculoCCF();
 
             $('#MontoCartera').change(function() {
-
                 calculoPrimaCalculada();
                 calculoPrimaTotal();
                 calculoDescuento();
@@ -250,48 +247,6 @@
             })
 
 
-            function calculoPrimaCalculada() {
-                var monto = document.getElementById('MontoCartera').value;
-                var desde = new Date(document.getElementById('VigenciaDesde').value);
-                var hasta = new Date(document.getElementById('VigenciaHasta').value);
-                var hoy = new Date();
-                console.log(hoy);
-
-                var millisBetween = hasta.getTime() - desde.getTime();
-
-
-                var dias_axo = (millisBetween / (1000 * 3600 * 24));
-                console.log(desde, hasta);
-                console.log("dias del año: " + dias_axo)
-
-
-                var inicio = new Date(document.getElementById('FechaInicio').value);
-                var final = new Date(document.getElementById('FechaFinal').value);
-                inicio.setHours(0, 0, 0, 0);
-                final.setHours(0, 0, 0, 0);
-                console.log("inicio" + inicio)
-                console.log("final" + final)
-
-                var millisBetween = final.getTime() - inicio.getTime();
-                var dias_mes = Math.round(millisBetween / (1000 * 3600 * 24));
-
-
-
-                console.log('tasa Final:', tasaFinal);
-                var tasaFinal = document.getElementById('Tasa').value;
-                var sub = parseFloat(monto) * parseFloat(tasaFinal);
-
-                var sub = parseFloat(monto) * parseFloat(tasaFinal);
-
-                document.getElementById('PruebaDecimales').value = sub;
-                document.getElementById('PrimaCalculada').value = sub.toLocaleString('sv-SV', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                }).replace(',', '.').replace(/[^\d,.-]/g, '');
-                document.getElementById('tasaFinal').value = tasaFinal
-
-
-            }
 
             $("#ExtPrima").change(function() {
                 calculoPrimaTotal();
@@ -300,12 +255,7 @@
                 calculoCCF();
             })
 
-            function calculoPrimaTotal() {
-                var sub = document.getElementById('PrimaCalculada').value;
-                var extra = document.getElementById('ExtPrima').value;
-                var prima = Number(sub) + Number(extra);
-                document.getElementById('PrimaTotal').value = Number(prima);
-            }
+
             $("#PrimaTotal").change(function() {
                 calculoDescuento();
                 calculoSubTotal();
@@ -317,25 +267,7 @@
                 calculoCCF();
             })
 
-            function calculoDescuento() {
-                var tasa = document.getElementById('TasaDescuento').value;
-                var primaTotal = document.getElementById('PrimaTotal').value;
-                if (tasa < 0) {
-                    document.getElementById('Descuento').value = (tasa * primaTotal).toFixed(2);
-                } else {
-                    document.getElementById('Descuento').value = ((tasa / 100) * primaTotal).toFixed(2);
-                }
-                document.getElementById('PrimaDescontada').value = (primaTotal - document.getElementById(
-                    'Descuento').value).toFixed(2);
-                //  var bomberos = (monto * (0.04 / 12) / 1000); //valor de impuesto varia por gobierno
-                if (document.getElementById('Bomberos').value == 0) {
-                    document.getElementById('ImpuestoBomberos').value = 0;
-                } else {
-                    document.getElementById('ImpuestoBomberos').value = (document.getElementById('MontoCartera')
-                        .value * ((document.getElementById('Bomberos').value / 100) / 12) / 1000);
-                }
 
-            }
             $('#GastosEmision').change(function() {
                 calculoSubTotal();
                 calculoCCF();
@@ -345,16 +277,6 @@
                 calculoCCF();
             })
 
-            function calculoSubTotal() {
-                var bomberos = document.getElementById('ImpuestoBomberos').value;
-                var primaDescontada = document.getElementById('PrimaDescontada').value;
-                var gastos = document.getElementById('GastosEmision').value;
-                var otros = document.getElementById('Otros').value;
-                document.getElementById('SubTotal').value = Number(bomberos) + Number(primaDescontada) + Number(
-                    gastos) + Number(otros);
-                document.getElementById('Iva').value = (document.getElementById('SubTotal').value * 0.13).toFixed(
-                    2);
-            }
 
             $('#TasaComision').change(function() {
                 calculoCCF();
@@ -383,43 +305,129 @@
             })
 
 
-            function calculoCCF() {
-                var comision = document.getElementById('TasaComision').value;
-                var total = document.getElementById('PrimaDescontada').value;
-                var valorDes = total * (comision / 100);
-                document.getElementById('Comision').value = Number(valorDes).toFixed(2);
-
-
-                if (document.getElementById('ComisionIva').value == 0) {
-                    //  alert('si');
-                    var IvaSobreComision = Number(valorDes) * 0.13;
-                    document.getElementById('IvaSobreComision').value = Number(IvaSobreComision).toFixed(2);
-                } else {
-                    // alert('no');
-                    var IvaSobreComision = 0;
-                    document.getElementById('IvaSobreComision').value = 0;
-                }
-                if (document.getElementById('Retencion').hasAttribute('readonly')) {
-                    var Retencion = 0;
-                } else {
-                    var Retencion = valorDes * 0.01;
-                    document.getElementById('Retencion').value = Retencion;
-                }
-                var ValorCCF = Number(valorDes) + Number(IvaSobreComision) - Number(Retencion);
-                // alert(ValorCCF);
-                document.getElementById('ValorCCFE').value = Number(ValorCCF).toFixed(2);
-                document.getElementById('ValorCCF').value = Number(ValorCCF).toFixed(2);
-                var PrimaTotal = document.getElementById('SubTotal').value;
-                var iva = document.getElementById('Iva').value;
-                var APagar = Number(PrimaTotal) - Number(ValorCCF) + Number(iva);
-                document.getElementById('APagar').value = APagar.toFixed(2);
-                document.getElementById('Facturar').value = (Number(PrimaTotal) + Number(iva)).toFixed(2);
-
-            }
 
 
 
         })
+
+
+        function calculoCCF() {
+            var comision = document.getElementById('TasaComision').value;
+            var total = document.getElementById('PrimaDescontada').value;
+            var valorDes = total * (comision / 100);
+            document.getElementById('Comision').value = Number(valorDes).toFixed(2);
+
+
+            if (document.getElementById('ComisionIva').value == 0) {
+                //  alert('si');
+                var IvaSobreComision = Number(valorDes) * 0.13;
+                document.getElementById('IvaSobreComision').value = Number(IvaSobreComision).toFixed(2);
+            } else {
+                // alert('no');
+                var IvaSobreComision = 0;
+                document.getElementById('IvaSobreComision').value = 0;
+            }
+            if (document.getElementById('Retencion').hasAttribute('readonly')) {
+                var Retencion = 0;
+            } else {
+                var Retencion = valorDes * 0.01;
+                document.getElementById('Retencion').value = Retencion;
+            }
+            var ValorCCF = Number(valorDes) + Number(IvaSobreComision) - Number(Retencion);
+            // alert(ValorCCF);
+            document.getElementById('ValorCCFE').value = Number(ValorCCF).toFixed(2);
+            document.getElementById('ValorCCF').value = Number(ValorCCF).toFixed(2);
+            var PrimaTotal = document.getElementById('SubTotal').value;
+            var iva = document.getElementById('Iva').value;
+            var APagar = Number(PrimaTotal) - Number(ValorCCF) + Number(iva);
+            document.getElementById('APagar').value = APagar.toFixed(2);
+            document.getElementById('Facturar').value = (Number(PrimaTotal) + Number(iva)).toFixed(2);
+
+        }
+
+
+        function calculoSubTotal() {
+            var bomberos = document.getElementById('ImpuestoBomberos').value;
+            var primaDescontada = document.getElementById('PrimaDescontada').value;
+            var gastos = document.getElementById('GastosEmision').value;
+            var otros = document.getElementById('Otros').value;
+            document.getElementById('SubTotal').value = Number(bomberos) + Number(primaDescontada) + Number(
+                gastos) + Number(otros);
+            document.getElementById('Iva').value = (document.getElementById('SubTotal').value * 0.13).toFixed(
+                2);
+        }
+
+
+        function calculoDescuento() {
+            var tasa = document.getElementById('TasaDescuento').value;
+            var primaTotal = document.getElementById('PrimaTotal').value;
+            if (tasa < 0) {
+                document.getElementById('Descuento').value = (tasa * primaTotal).toFixed(2);
+            } else {
+                document.getElementById('Descuento').value = ((tasa / 100) * primaTotal).toFixed(2);
+            }
+            document.getElementById('PrimaDescontada').value = (primaTotal - document.getElementById(
+                'Descuento').value).toFixed(2);
+            //  var bomberos = (monto * (0.04 / 12) / 1000); //valor de impuesto varia por gobierno
+            if (document.getElementById('Bomberos').value == 0) {
+                document.getElementById('ImpuestoBomberos').value = 0;
+            } else {
+                document.getElementById('ImpuestoBomberos').value = (document.getElementById('MontoCartera')
+                    .value * ((document.getElementById('Bomberos').value / 100) / 12) / 1000);
+            }
+
+        }
+
+        function calculoPrimaTotal() {
+            var sub = document.getElementById('PrimaCalculada').value;
+            var extra = document.getElementById('ExtPrima').value;
+            var prima = Number(sub) + Number(extra);
+            document.getElementById('PrimaTotal').value = Number(prima);
+        }
+
+        function calculoPrimaCalculada() {
+            var monto = document.getElementById('MontoCartera').value;
+            var desde = new Date(document.getElementById('VigenciaDesde').value);
+            var hasta = new Date(document.getElementById('VigenciaHasta').value);
+            var hoy = new Date();
+            console.log(hoy);
+
+            var millisBetween = hasta.getTime() - desde.getTime();
+
+
+            var dias_axo = (millisBetween / (1000 * 3600 * 24));
+            console.log(desde, hasta);
+            console.log("dias del año: " + dias_axo)
+
+
+            var inicio = new Date(document.getElementById('FechaInicio').value);
+            var final = new Date(document.getElementById('FechaFinal').value);
+            inicio.setHours(0, 0, 0, 0);
+            final.setHours(0, 0, 0, 0);
+            console.log("inicio" + inicio)
+            console.log("final" + final)
+
+            var millisBetween = final.getTime() - inicio.getTime();
+            var dias_mes = Math.round(millisBetween / (1000 * 3600 * 24));
+
+
+
+            console.log('tasa Final:', tasaFinal);
+            var tasaFinal = document.getElementById('Tasa').value;
+            var sub = parseFloat(monto) * parseFloat(tasaFinal);
+
+            var sub = parseFloat(monto) * parseFloat(tasaFinal);
+
+            document.getElementById('PruebaDecimales').value = sub;
+            document.getElementById('PrimaCalculada').value = sub.toLocaleString('sv-SV', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).replace(',', '.').replace(/[^\d,.-]/g, '');
+            document.getElementById('tasaFinal').value = tasaFinal
+
+
+        }
+
 
         function modal_edit(id) {
 
