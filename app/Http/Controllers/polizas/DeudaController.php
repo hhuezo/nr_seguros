@@ -573,7 +573,7 @@ class DeudaController extends Controller
 
             $array_dui = $extraprimados->pluck('Dui')->toArray();
 
-            $clientesQuery = PolizaDeudaCartera::select('Id', DB::raw("CONCAT(PrimerNombre, ' ', SegundoNombre, ' ', PrimerApellido, ' ', SegundoApellido, ' ', ' ', ApellidoCasada) as Nombre"), 'Dui', 'NumeroReferencia', 'MontoOtorgado','SaldoCapital' )->whereNull('PolizaDeudaDetalle');
+            $clientesQuery = PolizaDeudaCartera::select('Id', DB::raw("CONCAT(PrimerNombre, ' ', SegundoNombre, ' ', PrimerApellido, ' ', SegundoApellido, ' ', ' ', ApellidoCasada) as Nombre"), 'Dui', 'NumeroReferencia', 'MontoOtorgado','SaldoCapital' )->where('PolizaDeudaDetalle','=', 0);
 
             // Verificar si $array_dui tiene datos antes de agregar la condición whereNotIn
             if (!empty($array_dui)) {
@@ -585,7 +585,7 @@ class DeudaController extends Controller
             $clientes = PolizaDeudaCartera::select(
                 'Id',DB::raw("CONCAT(PrimerNombre, ' ', SegundoNombre, ' ', PrimerApellido, ' ', SegundoApellido, ' ', ' ', ApellidoCasada) as Nombre"),
                 'Dui',DB::raw("GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
-                'MontoOtorgado','SaldoCapital')->whereNull('PolizaDeudaDetalle')->groupBy('Dui')->get();
+                'MontoOtorgado','SaldoCapital')->where('PolizaDeudaDetalle','=', 0)->groupBy('Dui')->get();
 
 
 
@@ -599,7 +599,7 @@ class DeudaController extends Controller
 
 
             
-            $fecha = PolizaDeudaCartera::select('Mes', 'Axo','FechaInicio','FechaFinal')->where('PolizaDeuda', '=', $id)->whereNull('PolizaDeudaDetalle')->orderByDesc('Id')->first();
+            $fecha = PolizaDeudaCartera::select('Mes', 'Axo','FechaInicio','FechaFinal')->where('PolizaDeuda', '=', $id)->where('PolizaDeudaDetalle','=', 0)->orderByDesc('Id')->first();
             $saldo = 0;
             if($fecha){
                 $creditos = DeudaCredito::where('Deuda', '=', $id)->where('Activo', 1)->get();
