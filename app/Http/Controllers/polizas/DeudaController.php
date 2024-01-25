@@ -156,6 +156,8 @@ class DeudaController extends Controller
             $detalle->FechaIngreso = $time->format('Y-m-d');
             $detalle->save();
 
+            $cartera = PolizaDeudaCartera::where('FechaInicio','=',$request->FechaInicio)->where('FechaFinal','=',$request->FechaFinal)->update(['PolizaDeudaDetalle' => $detalle->Id]);
+
             $comen = new Comentario();
             $comen->Comentario = 'Se agrego el pago de la cartera';
             $comen->Activo = 1;
@@ -571,7 +573,7 @@ class DeudaController extends Controller
 
             $array_dui = $extraprimados->pluck('Dui')->toArray();
 
-            $clientesQuery = PolizaDeudaCartera::select('Id', DB::raw("CONCAT(PrimerNombre, ' ', SegundoNombre, ' ', PrimerApellido, ' ', SegundoApellido, ' ', ' ', ApellidoCasada) as Nombre"), 'Dui', 'NumeroReferencia', 'MontoOtorgado','SaldoCapital' );
+            $clientesQuery = PolizaDeudaCartera::select('Id', DB::raw("CONCAT(PrimerNombre, ' ', SegundoNombre, ' ', PrimerApellido, ' ', SegundoApellido, ' ', ' ', ApellidoCasada) as Nombre"), 'Dui', 'NumeroReferencia', 'MontoOtorgado','SaldoCapital' )->whereNull('PolizaDeudaDetalle');
 
             // Verificar si $array_dui tiene datos antes de agregar la condición whereNotIn
             if (!empty($array_dui)) {
@@ -583,7 +585,7 @@ class DeudaController extends Controller
             $clientes = PolizaDeudaCartera::select(
                 'Id',DB::raw("CONCAT(PrimerNombre, ' ', SegundoNombre, ' ', PrimerApellido, ' ', SegundoApellido, ' ', ' ', ApellidoCasada) as Nombre"),
                 'Dui',DB::raw("GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
-                'MontoOtorgado','SaldoCapital')->groupBy('Dui')->get();
+                'MontoOtorgado','SaldoCapital')->whereNull('PolizaDeudaDetalle')->groupBy('Dui')->get();
 
 
 
@@ -597,7 +599,7 @@ class DeudaController extends Controller
 
 
             
-            $fecha = PolizaDeudaCartera::select('Mes', 'Axo','FechaInicio','FechaFinal')->where('PolizaDeuda', '=', $id)->orderByDesc('Id')->first();
+            $fecha = PolizaDeudaCartera::select('Mes', 'Axo','FechaInicio','FechaFinal')->where('PolizaDeuda', '=', $id)->whereNull('PolizaDeudaDetalle')->orderByDesc('Id')->first();
             $saldo = 0;
             if($fecha){
                 $creditos = DeudaCredito::where('Deuda', '=', $id)->where('Activo', 1)->get();
