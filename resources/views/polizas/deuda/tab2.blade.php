@@ -35,7 +35,7 @@
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                 <select name="LineaCredito" class="form-control">
                                     @foreach ($creditos as $obj)
-                                        <option value="{{ $obj->Id }}">  {{ $obj->tipoCarteras->Nombre }}
+                                        <option value="{{ $obj->Id }}"> {{ $obj->tipoCarteras->Nombre }}
                                             {{ $obj->saldos->Abreviatura }}
                                         </option>
                                     @endforeach
@@ -58,7 +58,7 @@
                                 <select name="Mes" class="form-control">
                                     @for ($i = 1; $i <= 12; $i++)
                                         <option value="{{ $i }}" {{ date('m') == $i ? 'selected' : '' }}>
-                                            {{ $meses[$i] }} 
+                                            {{ $meses[$i] }}
                                         </option>
                                     @endfor
                                 </select>
@@ -135,7 +135,7 @@
                         <label class="control-label" align="right">Fecha Inicio</label>
                         <div class="form-group row">
                             <input class="form-control" name="FechaInicio" id="FechaInicio" type="date"
-                                value="{{ isset($fecha) ? $fecha->FechaInicio : ''}}" readonly>
+                                value="{{ isset($fecha) ? $fecha->FechaInicio : '' }}" readonly>
                         </div>
                         <br>
                         <div class="form-group row" style="margin-top:-3%; text-align: center">
@@ -143,36 +143,47 @@
 
 
 
-                        </div>  
+                        </div>
                         @php($i = 0)
                         @php($total = 0)
                         @foreach ($creditos as $obj)
                             <div class="form-group row" style="margin-top:-3%;">
-                                <label class="control-label" align="right">  {{ $obj->tipoCarteras->Nombre }}
-                                  <small>{{ $obj->saldos->Descripcion }}</small>  </label>
+                                <label class="control-label" align="right"> {{ $obj->tipoCarteras->Nombre }}
+                                    <small>{{ $obj->saldos->Descripcion }}</small> </label>
+
+                                {{-- <div class="form-group has-feedback">
+                                    <input type="number" step="any" style="padding-left: 25%;"
+                                        name="Credito{{ $obj->Id }}" id="Credito{{ $obj->Id }}"
+                                        value="{{ $obj->TotalLiniaCredito }}" class="form-control">
+                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                </div> --}}
 
                                 <div class="form-group has-feedback">
-                                    <input type="number" step="any" style="padding-left: 25%;"
-                                        name="Credito{{ $obj->Id }}" id="Credito{{ $obj->Id }}" 
-                                        value="{{ $obj->TotalLiniaCredito }}" 
-                                        class="form-control">
+                                    <input type="text" step="any"
+                                        style="text-align: right; padding-left: 25%;" pattern="[0-9,]*\.?[0-9]+"
+                                        oninput="validateInput(this)" name="Credito{{ $obj->Id }}"
+                                        id="Credito{{ $i }}"
+                                        value="{{ $obj->TotalLiniaCredito ? number_format($obj->TotalLiniaCredito, 2, '.', ',') : '' }}"
+                                        class="form-control" onchange="calcularTotal()">
                                     <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                                 </div>
 
                             </div>
+
                             @php($total = $total + $obj->TotalLiniaCredito)
+                            @php($i++)
                         @endforeach
 
                         <div class="form-group row" style="margin-top:-3%;">
                             <label class="control-label" align="right">Monto Cartera </label>
-
                             <div class="form-group has-feedback">
                                 <input class="form-control" name="MontoCartera" onblur="show_MontoCartera()"
                                     id="MontoCartera" type="number" step="any"
                                     style="text-align: right; display: none;" value="{{ $total }}" required>
                                 <input class="form-control" id="MontoCarteraView" type="text" step="any"
-                                    style="text-align: right;" value="{{ number_format($total, 2, '.', ',') }}"
-                                    required>
+                                onchange="calculoTotalMonto(this.value)" style="text-align: right;"
+                                    value="{{ number_format($total, 2, '.', ',') }}" pattern="[0-9,]*\.?[0-9]+"
+                                    oninput="validateInput(this)" required>
                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                             </div>
 
@@ -229,7 +240,8 @@
 
                             <div class="form-group has-feedback">
                                 <input class="form-control" name="ExtraPrima" type="number" step="any"
-                                    id="ExtPrima" style="text-align: right;" value="{{isset($sumaExtra) ? $sumaExtra->TotalExtra : ''}}">
+                                    id="ExtPrima" style="text-align: right;"
+                                    value="{{ isset($sumaExtra) ? $sumaExtra->TotalExtra : '' }}">
                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                             </div>
 
@@ -377,7 +389,7 @@
                         <div class="form-group row">
                             <label class="control-label" align="right">Fecha Final</label>
                             <input class="form-control" name="FechaFinal" id="FechaFinal" type="date"
-                                value="{{ isset($fecha) ? $fecha->FechaFinal : ''}}" readonly>
+                                value="{{ isset($fecha) ? $fecha->FechaFinal : '' }}" readonly>
                         </div>
                         <br>
                         <div class="form-group row">
@@ -485,4 +497,52 @@
             </div>
         </form>
     </div>
+    <script>
+        function validateInput(input) {
+            // Eliminar caracteres no permitidos, pero mantener los separadores de miles
+            input.value = input.value.replace(/[^\d.,]/g, '');
+
+            // Verificar si hay más de un punto decimal y corregirlo
+            if (input.value.split('.').length > 2) {
+                input.value = input.value.replace(/\.+$/, '');
+            }
+        }
+
+        function calcularTotal() {
+            var registros = <?php echo $i; ?>;
+            var total = 0;
+            console.log(registros);
+            for (var i = 0; i < registros; i++) {
+                var number_text = document.getElementById('Credito' + i).value;
+                var decimal_number = parseFloat(number_text.replace(/,/g, ''));
+                total += decimal_number;
+            }
+
+            document.getElementById('MontoCartera').value = total;
+
+            //formato para vista
+            var formattedTotal = total.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            document.getElementById('MontoCarteraView').value = formattedTotal;
+
+            calculoGeneralMontoCartera();
+        }
+
+        function calculoTotalMonto(cantidad) {
+            var decimal_number = parseFloat(cantidad.replace(/,/g, ''));
+            document.getElementById('MontoCartera').value = decimal_number;
+            calculoGeneralMontoCartera();
+        }
+
+
+        function calculoGeneralMontoCartera() {
+            calculoPrimaCalculada();
+            calculoPrimaTotal();
+            calculoDescuento();
+            calculoSubTotal();
+            calculoCCF();
+        }
+    </script>
 </div>
