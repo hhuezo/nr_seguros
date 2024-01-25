@@ -196,7 +196,7 @@
                                             <tbody>
                                                 @foreach ($poliza_cumulos->where('NoValido', '=', 1) as $registro)
                                                 <tr>
-                                                    <td>{{ $registro->NumeroReferencia }}</td>
+                                                    <td>{{ $registro->ConcatenatedNumeroReferencia }}</td>
                                                     <td>{{ $registro->Dui }}</td>
                                                     <td>{{ $registro->Nit }}</td>
                                                     <td>{{ $registro->PrimerNombre }}
@@ -236,7 +236,7 @@
                                             <tbody>
                                                 @foreach ($poliza_cumulos->where('Perfiles', '<>', null) as $registro)
                                                     <tr>
-                                                        <td>{{ $registro->NumeroReferencia }}</td>
+                                                        <td>{{ $registro->ConcatenatedNumeroReferencia }}</td>
                                                         <td>{{ $registro->Dui }}</td>
                                                         <td>{{ $registro->Nit }}</td>
                                                         <td>{{ $registro->PrimerNombre }}
@@ -289,7 +289,7 @@
                                             <tbody>
                                                 @foreach ($poliza_cumulos->where('Perfiles', '=', null)->where('NoValido', '=', 0) as $registro)
                                                 <tr>
-                                                    <td>{{ $registro->NumeroReferencia }}</td>
+                                                    <td>{{ $registro->ConcatenatedNumeroReferencia }}</td>
                                                     <td>{{ $registro->Dui }}</td>
                                                     <td>{{ $registro->Nit }}</td>
                                                     <td>{{ $registro->PrimerNombre }}
