@@ -957,8 +957,8 @@ class DeudaController extends Controller
                     ->select(DB::raw('SUM(SaldoCapital) as Saldo'))
                     ->where('LineaCredito', '=', $lineaCredito)->where('Mes', '=', $fecha->Mes)->where('Axo', '=', $fecha->Axo)->where('Mes', '=', $fecha->Mes)->where('Axo', '=', $fecha->Axo)->first();
                 //   dd($saldo);
-
-                $total = $saldo->Saldo * $tasaGeneral;
+                $total = $saldo->Saldo;
+               // $total = $saldo->Saldo * $tasaGeneral;
             } elseif ($obj->TasaFecha && !$obj->TasaMonto && !$obj->TasaEdad) {
                 //existe tasa de Fecha
                 $desde = Carbon::parse($obj->FechaDesde)->format('y-m-d');
