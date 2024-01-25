@@ -583,7 +583,7 @@ class DeudaController extends Controller
             $clientes = PolizaDeudaCartera::select(
                 'Id',DB::raw("CONCAT(PrimerNombre, ' ', SegundoNombre, ' ', PrimerApellido, ' ', SegundoApellido, ' ', ' ', ApellidoCasada) as Nombre"),
                 'Dui',DB::raw("GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
-                'MontoOtorgado','SaldoCapital')->whereNotIn('Dui', $array_dui)->groupBy('Dui')->get();
+                'MontoOtorgado','SaldoCapital')->groupBy('Dui')->get();
 
 
 
@@ -1602,7 +1602,7 @@ class DeudaController extends Controller
 
 
         $poliza_cumulos = PolizaDeudaTempCartera::selectRaw('Id,Dui,Edad,Nit,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento, NumeroReferencia,NoValido,Perfiles,
-        SUM(SaldoCapital) as total_saldo')->groupBy('Dui')->get();
+        SUM(SaldoCapital) as total_saldo, GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ", ") AS ConcatenatedNumeroReferencia')->groupBy('Dui')->get();
 
         return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date'));
     }
