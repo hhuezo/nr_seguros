@@ -571,17 +571,19 @@ class DeudaController extends Controller
 
             $array_dui = $extraprimados->pluck('Dui')->toArray();
 
-            $clientesQuery = PolizaDeudaCartera::select('Id', DB::raw("CONCAT(PrimerNombre, ' ', SegundoNombre, ' ', PrimerApellido, ' ', SegundoApellido, ' ', ' ', ApellidoCasada) as Nombre"), 'Dui', 'NumeroReferencia', 'MontoOtorgado','SaldoCapital');
+            $clientesQuery = PolizaDeudaCartera::select('Id', DB::raw("CONCAT(PrimerNombre, ' ', SegundoNombre, ' ', PrimerApellido, ' ', SegundoApellido, ' ', ' ', ApellidoCasada) as Nombre"), 'Dui', 'NumeroReferencia', 'MontoOtorgado','SaldoCapital' );
 
             // Verificar si $array_dui tiene datos antes de agregar la condición whereNotIn
             if (!empty($array_dui)) {
+            
                 $clientesQuery->whereNotIn('Dui', $array_dui);
             }
 
-            $clientes = $clientesQuery->distinct('Dui')->get();
-
-
-            // dd($clientes);
+            //$clientes = $clientesQuery->distinct('Dui')->get();
+            $clientes = PolizaDeudaCartera::select(
+                'Id',DB::raw("CONCAT(PrimerNombre, ' ', SegundoNombre, ' ', PrimerApellido, ' ', SegundoApellido, ' ', ' ', ApellidoCasada) as Nombre"),
+                'Dui',DB::raw("GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
+                'MontoOtorgado','SaldoCapital')->whereNotIn('Dui', $array_dui)->groupBy('Dui')->get();
 
 
 
