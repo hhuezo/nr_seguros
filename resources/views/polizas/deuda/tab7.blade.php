@@ -22,12 +22,12 @@
                     @foreach ($clientes as $obj)
                     @if ($clientes->count() > 0)
                     <tr>
-                        <td align="center"><button class="btn btn-primary" onclick="modalExtraprimados({{ $deuda->Id }},'{{ $obj->Dui }}')" data-target="#modal_extraprimados" data-toggle="modal">
+                        <td align="center"><button class="btn btn-primary" onclick="modalExtraprimados({{ $deuda->Id }},'{{ $obj->Dui }}','{{ $obj->ConcatenatedNumeroReferencia }}')" data-target="#modal_extraprimados" data-toggle="modal">
                                 <i class="fa fa-edit fa-lg"></i>
                             </button></td>
                         <td>{{ $obj->Dui }}</td>
                         <td>{{ $obj->Nombre }}</td>
-                        <td>{{ $obj->NumeroReferencia }}</td>
+                        <td>{{ $obj->ConcatenatedNumeroReferencia }}</td>
                         <td>{{ number_format($obj->MontoOtorgado, 2, '.', ',')  }}</td>
                     </tr>
                     @endif
@@ -72,7 +72,7 @@
                                 <i class="fa fa-edit fa-lg"></i>
                             </button></td>
                         <td>{{ $obj->Dui }}</td>
-                        <td>{{ $obj->PrimerNombre }} {{ $obj->PrimerApellido }}</td>
+                        <td>{{ $obj->Nombre }}</td>
                         <td>{{ $obj->NumeroReferencia }}</td>
                         <td>{{ number_format($obj->MontoOtorgado, 2, '.', ',')  }}</td>
                         <td>{{ $obj->Tarifa }}</td>
@@ -98,7 +98,7 @@
 @include('polizas.deuda.modal_extraprimados')
 
 <script type="text/javascript">
-    function modalExtraprimados(poliza, dui) {
+    function modalExtraprimados(poliza, dui ,ConcatenatedNumeroReferencia) {
         console.log(poliza, dui);
         // Construir la URL con los parámetros
         var url = "{{ url('polizas/deuda/get_extraprimado') }}" + '/' + poliza + '/' + dui;
@@ -109,7 +109,7 @@
                 document.getElementById('ExtraprimadosDui').value = data.Dui;
                 document.getElementById('ExtraprimadosNombre').value = data.Nombre;
                 document.getElementById('ExtraprimadosFechaOtorgamiento').value = data.FechaOtorgamiento;
-                document.getElementById('ExtraprimadosNumeroReferencia').value = data.NumeroReferencia;
+                document.getElementById('ExtraprimadosNumeroReferencia').value = ConcatenatedNumeroReferencia;
                 if (data.hasOwnProperty('MontoOtorgado')) {
                     document.getElementById('ExtraprimadosMontoOtorgamiento').value = data.MontoOtorgado;
                 }
