@@ -49,6 +49,18 @@ class PolizaDeudaCartera extends Model
         'InteresesCovid',
         'MontoNominal',
         'LineaCredito',
+        'NoValido',
+        'PolizaDeudaDetalle'
         
     ];
+
+    public function poliza_deuda()
+    {
+        return $this->belongsTo(Deuda::class, 'PolizaDeuda', 'Id');
+    }
+
+    public function linia_credito()
+    {
+        return $this->belongsTo(DeudaCredito::class, 'LineaCredito', 'Id');
+    }
 }

@@ -66,12 +66,12 @@
                             </div>
 
                             
-                            <div class="form-group row">
+                            {{-- <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Pago EP</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                     <input class="form-control"  type="number"  name="PagoEP" id="PagoEP" readonly  step="0.01">
                                 </div>
-                            </div>
+                            </div> --}}
                          
                         </div>
                     </div>

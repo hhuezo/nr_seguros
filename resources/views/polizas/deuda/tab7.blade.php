@@ -20,17 +20,19 @@
                 </thead>
                 <tbody>
                     @foreach ($clientes as $obj)
-                    @if ($clientes->count() > 0)
-                    <tr>
-                        <td align="center"><button class="btn btn-primary" onclick="modalExtraprimados({{ $deuda->Id }},'{{ $obj->Dui }}','{{ $obj->ConcatenatedNumeroReferencia }}')" data-target="#modal_extraprimados" data-toggle="modal">
-                                <i class="fa fa-edit fa-lg"></i>
-                            </button></td>
-                        <td>{{ $obj->Dui }}</td>
-                        <td>{{ $obj->Nombre }}</td>
-                        <td>{{ $obj->ConcatenatedNumeroReferencia }}</td>
-                        <td>{{ number_format($obj->MontoOtorgado, 2, '.', ',')  }}</td>
-                    </tr>
-                    @endif
+                        @if ($clientes->count() > 0)
+                            <tr>
+                                <td align="center"><button class="btn btn-primary"
+                                        onclick="modalExtraprimados({{ $deuda->Id }},'{{ $obj->Dui }}','{{ $obj->NumeroReferencia }}')"
+                                        data-target="#modal_extraprimados" data-toggle="modal">
+                                        <i class="fa fa-edit fa-lg"></i>
+                                    </button></td>
+                                <td>{{ $obj->Dui }}</td>
+                                <td>{{ $obj->Nombre }}</td>
+                                <td>{{ $obj->NumeroReferencia }}</td>
+                                <td>{{ number_format($obj->MontoOtorgado, 2, '.', ',') }}</td>
+                            </tr>
+                        @endif
                     @endforeach
                 </tbody>
             </table>
@@ -54,40 +56,51 @@
                 <thead>
                     <tr>
                         <th>Extra Prima</th>
-                        <th>Dui</th>
+                        {{-- <th>Dui</th> --}}
+                        <th>Crédito</th>
                         <th>Nombre</th>
-                        <th>Numero Referencia</th>
-                        <th>Monto Otorgado</th>
-                        <th>Tarifa</th>
-                        <th>Porcentaje EP</th>
-                        <th>Pago EP</th>
+
+                        {{-- <th>Monto Otorgado</th>
+                         <th>Tarifa</th> --}}
+                        <th>SA</th>
+                        <th>Interes</th>
+                        <th>Total</th>
+                        <th>Prima neta</th>
+                        <th>%EP</th>
+                        <th>Extra prima</th>
                     </tr>
                 </thead>
                 <tbody>
                     @php($totalextraprima = 0)
                     @if ($extraprimados->count() > 0)
-                    @foreach ($extraprimados as $obj)
-                    <tr>
-                        <td align="center"><button class="btn btn-primary" data-target="#modal-edit-extraprimados-{{ $obj->Id }}" data-toggle="modal">
-                                <i class="fa fa-edit fa-lg"></i>
-                            </button></td>
-                        <td>{{ $obj->Dui }}</td>
-                        <td>{{ $obj->Nombre }}</td>
-                        <td>{{ $obj->NumeroReferencia }}</td>
-                        <td>{{ number_format($obj->MontoOtorgado, 2, '.', ',')  }}</td>
-                        <td>{{ $obj->Tarifa }}</td>
-                        <td>{{ $obj->PorcentajeEP }}%</td>
-                        <td>$ {{ number_format($obj->PagoEP,2,'.', ',')  }}</td>
-                    </tr>
-                    @include('polizas.deuda.modal_edit_extraprimados')
-                    @php($totalextraprima = $totalextraprima + $obj->PagoEP)
-                    @endforeach
+                        @foreach ($extraprimados as $obj)
+                            @php($data_array = $obj->getPagoEP($obj->Id))
+                            <tr>
+                                <td align="center"><button class="btn btn-primary"
+                                        data-target="#modal-edit-extraprimados-{{ $obj->Id }}" data-toggle="modal">
+                                        <i class="fa fa-edit fa-lg"></i>
+                                    </button></td>
+                                <td>{{ $obj->NumeroReferencia }}</td>
+                                <td>{{ $obj->Nombre }}</td>
+
+                                <td>${{ number_format($data_array['saldo_capital'], 2, '.', ',') }}</td>
+                                <td>{{ number_format($data_array['interes'], 2, '.', ',') }}</td>
+                                {{-- <td>{{ $obj->Tarifa }}</td> --}}
+
+                                <td align="right">${{ number_format($data_array['total'], 2, '.', ',') }}</td>
+                                <td align="right">${{ number_format($data_array['prima_neta'], 2, '.', ',') }}</td>
+                                <td>{{ $obj->PorcentajeEP }}%</td>
+                                <td align="right">${{ number_format($data_array['extra_prima'], 2, '.', ',') }}</td>
+                            </tr>
+                            @include('polizas.deuda.modal_edit_extraprimados')
+                            {{-- @php($totalextraprima += $pago) --}}
+                        @endforeach
                     @endif
                 </tbody>
                 <tfoot>
-                    <tr>
-                        <td colspan="7" align="right">Total</td>
-                        <td>$ {{number_format($totalextraprima,2,'.', ',')}}</td>
+                    <tr align="right">
+                        <td colspan="7">Total</td>
+                        <td>${{ number_format($totalextraprima, 2, '.', ',') }}</td>
                     </tr>
                 </tfoot>
             </table>
@@ -98,7 +111,7 @@
 @include('polizas.deuda.modal_extraprimados')
 
 <script type="text/javascript">
-    function modalExtraprimados(poliza, dui ,ConcatenatedNumeroReferencia) {
+    function modalExtraprimados(poliza, dui, NumeroReferencia) {
         console.log(poliza, dui);
         // Construir la URL con los parámetros
         var url = "{{ url('polizas/deuda/get_extraprimado') }}" + '/' + poliza + '/' + dui;
@@ -109,7 +122,7 @@
                 document.getElementById('ExtraprimadosDui').value = data.Dui;
                 document.getElementById('ExtraprimadosNombre').value = data.Nombre;
                 document.getElementById('ExtraprimadosFechaOtorgamiento').value = data.FechaOtorgamiento;
-                document.getElementById('ExtraprimadosNumeroReferencia').value = ConcatenatedNumeroReferencia;
+                document.getElementById('ExtraprimadosNumeroReferencia').value = NumeroReferencia;
                 if (data.hasOwnProperty('MontoOtorgado')) {
                     document.getElementById('ExtraprimadosMontoOtorgamiento').value = data.MontoOtorgado;
                 }
@@ -120,11 +133,12 @@
             });
     }
 
-    function totalPago(deuda_tasa) {
-        //alert(deuda_tasa);
-        var total = document.getElementById('ExtraprimadosMontoOtorgamiento').value * deuda_tasa * document.getElementById('PorcentajeEP').value;
-        console.log(total);
-        document.getElementById('PagoEP').value = total;
+    // function totalPago(deuda_tasa) {
+    //     //alert(deuda_tasa);
+    //     var total = document.getElementById('ExtraprimadosMontoOtorgamiento').value * deuda_tasa * document
+    //         .getElementById('PorcentajeEP').value;
+    //     console.log(total);
+    //     document.getElementById('PagoEP').value = total;
 
-    }
+    // }
 </script>
