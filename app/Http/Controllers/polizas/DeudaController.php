@@ -568,9 +568,21 @@ class DeudaController extends Controller
 
             //tab 7 
             $extraprimados = PolizaDeudaExtraPrimados::where('PolizaDeuda', $id)->get();
-            //$sumaExtra = PolizaDeudaExtraPrimados::where('PolizaDeuda', $id)->select(DB::raw('Sum(PagoEP) as TotalExtra'))->first();
+            $total_extrapima = 0;
+            foreach($extraprimados as $extraprimado)
+            {
+                //consultando calculos de extraprimados
+                $data_array = $extraprimado->getPagoEP($extraprimado->Id);
 
+                $extraprimado->total = $data_array['total'];
+                $extraprimado->saldo_capital = $data_array['saldo_capital'];
+                $extraprimado->interes = $data_array['interes'];
+                $extraprimado->prima_neta = $data_array['prima_neta'];
+                $extraprimado->extra_prima = $data_array['extra_prima'];
+                $total_extrapima += $data_array['extra_prima'];
+            }
 
+   
 
             $array_dui = $extraprimados->pluck('Dui')->toArray();
 
@@ -650,7 +662,7 @@ class DeudaController extends Controller
 
             return view('polizas.deuda.edit', compact(
                 'fecha',
-                //'sumaExtra',
+                'total_extrapima',
                 'saldo',
                 'clientes',
                 'extraprimados',

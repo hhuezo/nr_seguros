@@ -74,7 +74,6 @@
                     @php($totalextraprima = 0)
                     @if ($extraprimados->count() > 0)
                         @foreach ($extraprimados as $obj)
-                            @php($data_array = $obj->getPagoEP($obj->Id))
                             <tr>
                                 <td align="center"><button class="btn btn-primary"
                                         data-target="#modal-edit-extraprimados-{{ $obj->Id }}" data-toggle="modal">
@@ -82,18 +81,14 @@
                                     </button></td>
                                 <td>{{ $obj->NumeroReferencia }}</td>
                                 <td>{{ $obj->Nombre }}</td>
-
-                                <td>${{ number_format($data_array['saldo_capital'], 2, '.', ',') }}</td>
-                                <td>{{ number_format($data_array['interes'], 2, '.', ',') }}</td>
-                                {{-- <td>{{ $obj->Tarifa }}</td> --}}
-
-                                <td align="right">${{ number_format($data_array['total'], 2, '.', ',') }}</td>
-                                <td align="right">${{ number_format($data_array['prima_neta'], 2, '.', ',') }}</td>
+                                <td>${{ number_format($obj->saldo_capital, 2, '.', ',') }}</td>
+                                <td>{{ number_format($obj->interes, 2, '.', ',') }}</td>
+                                <td align="right">${{ number_format($obj->total, 2, '.', ',') }}</td>
+                                <td align="right">${{ number_format($obj->prima_neta, 2, '.', ',') }}</td>
                                 <td>{{ $obj->PorcentajeEP }}%</td>
-                                <td align="right">${{ number_format($data_array['extra_prima'], 2, '.', ',') }}</td>
+                                <td align="right">${{ number_format($obj->extra_prima, 2, '.', ',') }}</td>
                             </tr>
                             @include('polizas.deuda.modal_edit_extraprimados')
-                            {{-- @php($totalextraprima += $pago) --}}
                         @endforeach
                     @endif
                 </tbody>

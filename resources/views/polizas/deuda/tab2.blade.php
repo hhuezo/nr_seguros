@@ -211,15 +211,15 @@
                     @endforeach
 
                     <div class="form-group row" style="margin-top:-3%;">
-                        <label class="control-label" align="right">Monto Cartera </label>
+                        <label class="control-label" align="right">Monto Cartera</label>
                         <div class="form-group has-feedback">
                             <input class="form-control" name="MontoCartera" onblur="show_MontoCartera()"
                                 id="MontoCartera" type="number" step="any"
                                 style="text-align: right; display: none;" value="{{ $total }}" required>
-                            <input class="form-control" id="MontoCarteraView" type="text" step="any"
+                             <input class="form-control" id="MontoCarteraView" type="text" step="any"
                                 onchange="calculoTotalMonto(this.value)" style="text-align: right;"
                                 value="{{ number_format($total, 2, '.', ',') }}" pattern="[0-9,]*\.?[0-9]+"
-                                oninput="validateInput(this)" required>
+                                oninput="validateInput(this)" required> 
                             <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                         </div>
 
@@ -270,14 +270,12 @@
 
                     </div>
                     <div class="form-group row ">
-                        <label class="control-label " align="right">Extra
-                            Prima</label>
-
+                        <label class="control-label " align="right">Extra Prima</label>
 
                         <div class="form-group has-feedback">
                             <input class="form-control" name="ExtraPrima" type="number" step="any"
                                 id="ExtPrima" style="text-align: right;"
-                                value="{{ isset($sumaExtra) ? $sumaExtra->TotalExtra : '' }}">
+                                value="{{ number_format($total_extrapima, 2)  }}">
                             <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                         </div>
 
