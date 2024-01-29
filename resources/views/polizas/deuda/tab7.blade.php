@@ -20,19 +20,17 @@
                 </thead>
                 <tbody>
                     @foreach ($clientes as $obj)
-                        @if ($clientes->count() > 0)
-                            <tr>
-                                <td align="center"><button class="btn btn-primary"
-                                        onclick="modalExtraprimados({{ $deuda->Id }},'{{ $obj->Dui }}','{{ $obj->NumeroReferencia }}')"
-                                        data-target="#modal_extraprimados" data-toggle="modal">
-                                        <i class="fa fa-edit fa-lg"></i>
-                                    </button></td>
-                                <td>{{ $obj->Dui }}</td>
-                                <td>{{ $obj->Nombre }}</td>
-                                <td>{{ $obj->NumeroReferencia }}</td>
-                                <td>{{ number_format($obj->MontoOtorgado, 2, '.', ',') }}</td>
-                            </tr>
-                        @endif
+                    @if ($clientes->count() > 0)
+                    <tr>
+                        <td align="center"><button class="btn btn-primary" onclick="modalExtraprimados({{ $deuda->Id }},'{{ $obj->Dui }}','{{ $obj->NumeroReferencia }}')" data-target="#modal_extraprimados" data-toggle="modal">
+                                <i class="fa fa-edit fa-lg"></i>
+                            </button></td>
+                        <td>{{ $obj->Dui }}</td>
+                        <td>{{ $obj->Nombre }}</td>
+                        <td>{{ $obj->NumeroReferencia }}</td>
+                        <td>${{ number_format($obj->MontoOtorgado, 2, '.', ',') }}</td>
+                    </tr>
+                    @endif
                     @endforeach
                 </tbody>
             </table>
@@ -73,29 +71,57 @@
                 <tbody>
                     @php($totalextraprima = 0)
                     @if ($extraprimados->count() > 0)
-                        @foreach ($extraprimados as $obj)
-                            <tr>
-                                <td align="center"><button class="btn btn-primary"
-                                        data-target="#modal-edit-extraprimados-{{ $obj->Id }}" data-toggle="modal">
-                                        <i class="fa fa-edit fa-lg"></i>
-                                    </button></td>
-                                <td>{{ $obj->NumeroReferencia }}</td>
-                                <td>{{ $obj->Nombre }}</td>
-                                <td>${{ number_format($obj->saldo_capital, 2, '.', ',') }}</td>
-                                <td>{{ number_format($obj->interes, 2, '.', ',') }}</td>
-                                <td align="right">${{ number_format($obj->total, 2, '.', ',') }}</td>
-                                <td align="right">${{ number_format($obj->prima_neta, 2, '.', ',') }}</td>
-                                <td>{{ $obj->PorcentajeEP }}%</td>
-                                <td align="right">${{ number_format($obj->extra_prima, 2, '.', ',') }}</td>
-                            </tr>
-                            @include('polizas.deuda.modal_edit_extraprimados')
-                        @endforeach
+                    @foreach ($extraprimados as $obj)
+                    <tr>
+                        <td align="center"><button class="btn btn-primary" data-target="#modal-edit-extraprimados-{{ $obj->Id }}" data-toggle="modal">
+                                <i class="fa fa-edit fa-lg"></i>
+                            </button>
+                            <a href="" data-target="#modal-delete_extraprima-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
+                        </td>
+                        <td>{{ $obj->NumeroReferencia }}</td>
+                        <td>{{ $obj->Nombre }}</td>
+                        <td>${{ number_format($obj->saldo_capital, 2, '.', ',') }}</td>
+                        <td>${{ number_format($obj->interes, 2, '.', ',') }}</td>
+                        <td align="right">${{ number_format($obj->total, 2, '.', ',') }}</td>
+                        <td align="right">${{ number_format($obj->prima_neta, 2, '.', ',') }}</td>
+                        <td>{{ $obj->PorcentajeEP }}%</td>
+                        <td align="right">${{ number_format($obj->extra_prima, 2, '.', ',') }}</td>
+                    </tr>
+                    <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete_extraprima-{{ $obj->Id }}">
+
+                        <form method="POST" action="{{ url('polizas/deuda/eliminar_extraprima')}}">
+                            @method('POST')
+                            @csrf
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">×</span>
+                                        </button>
+                                        <input type="hidden" name="IdExtraPrima" value="{{$obj->Id}}">
+                                        <h4 class="modal-title">Eliminar Registro</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Confirme si desea Eliminar el Registro</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                        <button type="submit" class="btn btn-primary">Confirmar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+
+                    @include('polizas.deuda.modal_edit_extraprimados')
+                    @endforeach
                     @endif
                 </tbody>
                 <tfoot>
                     <tr align="right">
-                        <td colspan="7">Total</td>
-                        <td>${{ number_format($totalextraprima, 2, '.', ',') }}</td>
+                        <td colspan="8">Total</td>
+                        <td>${{ number_format($total_extrapima, 2, '.', ',') }}</td>
                     </tr>
                 </tfoot>
             </table>

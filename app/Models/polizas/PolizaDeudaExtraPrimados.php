@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\catalogo;
+namespace App\Models\polizas;
 
 use App\Models\polizas\Deuda;
 use App\Models\polizas\PolizaDeudaCartera;

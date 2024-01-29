@@ -13,7 +13,7 @@ use App\Models\catalogo\Ejecutivo;
 use App\Models\catalogo\EstadoPoliza;
 use App\Models\catalogo\Perfil;
 use App\Models\catalogo\Plan;
-use App\Models\catalogo\PolizaDeudaExtraPrimados;
+use App\Models\polizas\PolizaDeudaExtraPrimados;
 use App\Models\catalogo\Producto;
 use App\Models\catalogo\Ruta;
 use App\Models\catalogo\SaldoMontos;
@@ -28,6 +28,7 @@ use App\Models\polizas\DeudaDetalle;
 use App\Models\polizas\DeudaRequisitos;
 use App\Models\polizas\DeudaVida;
 use App\Models\polizas\PolizaDeudaCartera;
+use App\Models\polizas\PolizaDeudaExtraPrimadosMensual;
 use App\Models\temp\PolizaDeudaTempCartera;
 use Carbon\Carbon;
 use Exception;
@@ -170,6 +171,37 @@ class DeudaController extends Controller
 
         $recibo->Id_recibo = ($recibo->Id_recibo) + 1;
         $recibo->update();
+
+        $extraprimados = PolizaDeudaExtraPrimados::where('PolizaDeuda', $request->Deuda)->get();
+        $total_extrapima = 0;
+        foreach ($extraprimados as $extraprimado) {
+            //consultando calculos de extraprimados
+            $data_array = $extraprimado->getPagoEP($extraprimado->Id);
+
+            $extraprimado->total = $data_array['total'];
+            $extraprimado->saldo_capital = $data_array['saldo_capital'];
+            $extraprimado->interes = $data_array['interes'];
+            $extraprimado->prima_neta = $data_array['prima_neta'];
+            $extraprimado->extra_prima = $data_array['extra_prima'];
+            $total_extrapima += $data_array['extra_prima'];
+
+
+            $prima_mensual = new PolizaDeudaExtraPrimadosMensual();
+            $prima_mensual->PolizaDeuda = $request->Deuda;
+            $prima_mensual->Dui = $extraprimado->Dui;
+            $prima_mensual->NumeroReferencia = $extraprimado->NumeroReferencia;
+            $prima_mensual->Nombre = $extraprimado->Nombre;
+            $prima_mensual->FechaOtorgamiento = $extraprimado->FechaOtorgamiento;
+            $prima_mensual->MontoOtorgamiento = $extraprimado->MontoOtorgamiento;
+            $prima_mensual->Tarifa = $extraprimado->Tarifa;
+            $prima_mensual->PorcentajeEP = $extraprimado->PorcentajeEP;
+            $prima_mensual->PagoEP = $extraprimado->PagoEP;
+            $prima_mensual->DeudaDetalle = $detalle->Id;
+            $prima_mensual->save();
+        }
+
+
+
         session(['MontoCartera' => 0]);
         alert()->success('El registro de pago ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
         // }
@@ -464,6 +496,13 @@ class DeudaController extends Controller
 
         alert()->success('El registro de poliza ha sido ingresado correctamente');
         return redirect('polizas/deuda/' . $request->Deuda);
+    }
+
+    public function eliminar_extraprima(Request $request)
+    {
+        $extra = PolizaDeudaExtraPrimados::findOrFail($request->IdExtraPrima)->delete();
+        alert()->success('El registro ha sido eliminado correctamente');
+        return back();
     }
 
     public function eliminar_credito($id)
@@ -783,9 +822,7 @@ class DeudaController extends Controller
         $cliente->Nombre = $request->Nombre;
         $cliente->FechaOtorgamiento = $request->FechaOtorgamiento;
         $cliente->MontoOtorgamiento = $request->MontoOtorgamiento;
-        //$cliente->Tarifa = $request->Tarifa;
         $cliente->PorcentajeEP = $request->PorcentajeEP;
-        //$cliente->PagoEP = $request->PagoEP;
         $cliente->Dui = $request->Dui;
         $cliente->save();
         alert()->success('El registro de poliza ha sido ingresado correctamente');
@@ -794,10 +831,10 @@ class DeudaController extends Controller
 
     public function update_extraprimado(Request $request)
     {
-        $extra_primado = PolizaDeudaExtraPrimados::findOrFail($request->Id);
-        $extra_primado->Tarifa = $request->Tarifa;
+        $extra_primado = PolizaDeudaExtraPrimados::findOrFail($request->IdExtraPrima);
+       // dd($extra_primado);
         $extra_primado->PorcentajeEP = $request->PorcentajeEP;
-        $extra_primado->PagoEP = $request->PagoEP;
+        // $extra_primado->PagoEP = $request->PagoEP;
         $extra_primado->update();
         alert()->success('El registro de poliza ha sido modificado correctamente');
         return redirect('polizas/deuda/' . $extra_primado->PolizaDeuda . '/edit?tab=7');
@@ -1144,7 +1181,7 @@ class DeudaController extends Controller
         foreach ($tasas as $obj) {
             if (!$obj->TasaFecha && !$obj->TasaMonto && !$obj->TasaEdad) {
                 $saldo = PolizaDeudaCartera::where('PolizaDeuda', '=', $deuda->Id)
-                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'), DB::raw('SUM(InteresesCovid) as Covid'), DB::raw('SUM(InteresesCovid) as Covid'))
+                    ->select(DB::raw('SUM(SaldoCapital) as Saldo'), DB::raw('SUM(Intereses) as Intereses'), DB::raw('SUM(InteresesCovid) as Covid'))
 
                     ->where('LineaCredito', '=', $lineaCredito)->where('Mes', '=', $fecha->Mes)->where('Axo', '=', $fecha->Axo)->first();
                 // $total = ($saldo->Saldo + $saldo->Intereses + $saldo->Covid) * $tasaGeneral;
@@ -1231,13 +1268,11 @@ class DeudaController extends Controller
                         DB::raw('SUM(SaldoCapital) as Saldo'),
                         DB::raw('SUM(Intereses) as Intereses'),
                         DB::raw('SUM(InteresesCovid) as Covid'),
-                        DB::raw('SUM(InteresesCovid) as Covid'),
                         DB::raw('Sum(InteresesMoratorios) as Mora'),
-                        DB::raw('Sum(InteresesMoratorios) as Mora')
                     )
                     ->where('LineaCredito', '=', $lineaCredito)->where('Mes', '=', $fecha->Mes)->where('Axo', '=', $fecha->Axo)->first();
                 // $total = ($saldo->Saldo + $saldo->Intereses + $saldo->Covid + $saldo->Mora + $saldo->Mora) * $tasaGeneral;
-                $total = ($saldo->Saldo + $saldo->Intereses + $saldo->Covid + $saldo->Mora + $saldo->Mora);
+                $total = ($saldo->Saldo + $saldo->Intereses + $saldo->Covid + $saldo->Mora);
             } elseif ($obj->TasaFecha && !$obj->TasaMonto && !$obj->TasaEdad) {
                 //existe tasa de Fecha
                 $desde = Carbon::parse($obj->FechaDesde)->format('y-m-d');
@@ -1563,6 +1598,7 @@ class DeudaController extends Controller
                 ['Mes', $date_anterior->month],
                 ['Axo', $date_mes_anterior->year],
                 ['PolizaDeuda', $request->Id],
+                ['LineaCredito',$request->LineaCredito],
             ])
             ->whereNotExists(function ($query) use ($date, $date_mes, $poliza_id) {
                 $query->select(DB::raw(1))

@@ -18,7 +18,7 @@
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">DUI</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                     
-                                    <input class="form-control" type="hidden" value="{{$obj->Id}}" name="Id" readonly>
+                                    <input class="form-control" type="hidden" value="{{$obj->Id}}" name="IdExtraPrima" readonly>
                                     <input class="form-control" type="text" value="{{$obj->Dui}}" readonly>
                                 </div>
                             </div>
@@ -46,7 +46,7 @@
                             <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Monto Otorgado </label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" type="text" value="{{$obj->MontoOtorgado}}" readonly>
+                                    <input class="form-control" type="text" value="{{$obj->MontoOtorgamiento}}" readonly>
                                 </div>
                             </div>
 
@@ -54,7 +54,7 @@
                             <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tarifa</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" type="number" name="Tarifa" value="{{$obj->Tarifa}}" required >
+                                    <input class="form-control" type="number" name="Tarifa" value="{{$deuda->Tasa}}" readonly    >
                                 </div>
                             </div>
 
@@ -66,12 +66,12 @@
                             </div>
 
                             
-                            <div class="form-group row">
+                            <!-- <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Pago EP</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                     <input class="form-control"  type="number"  name="PagoEP" value="{{$obj->PagoEP}}" required  step="0.01">
                                 </div>
-                            </div>
+                            </div> -->
                          
                         </div>
                     </div>
