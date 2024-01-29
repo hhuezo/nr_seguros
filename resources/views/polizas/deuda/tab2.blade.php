@@ -27,33 +27,30 @@
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        var loadingOverlay = document.getElementById('loading-overlay');
-        var submitButton = document.getElementById('submitButton');
-        var myForm = document.getElementById('myForm');
+    document.addEventListener("DOMContentLoaded", function () {
+    var loadingOverlay = document.getElementById('loading-overlay');
+    var submitButton = document.getElementById('submitButton');
+    var myForm = document.getElementById('myForm');
 
-        // Muestra el overlay de carga cuando se hace clic en el botón
-        submitButton.addEventListener('click', function() {
-            loadingOverlay.style.display = 'flex'; // Cambia a 'flex' para usar flexbox
-            if (document.getElementById('LineaCredito_Subir').value == '') {
-                Swal.fire('Debe Seleccionar linea de credito');
-                return false;
-            }
-           else if (document.getElementById('Archivo').value == '') {
-                Swal.fire('Debe Seleccionar linea de credito');
-                return false;
-            } else {
-                myForm.submit(); // Envía el formulario después de mostrar el overlay
-                window.addEventListener('load', function() {
-                    loadingOverlay.style.display = 'none';
-                });
-            }
+    submitButton.addEventListener('click', function (event) {
+        event.preventDefault(); // Evita que el formulario se envíe automáticamente
 
-        });
+        loadingOverlay.style.display = 'flex'; // Cambia a 'flex' para usar flexbox
 
-        // Oculta el overlay de carga después de que la página se haya cargado completamente
-
+        // Validación del formulario
+        if (document.getElementById('LineaCredito_Subir').value === '') {
+            Swal.fire('Debe seleccionar una línea de crédito');
+            loadingOverlay.style.display = 'none'; // Oculta el overlay en caso de error
+            return;
+        } else if (document.getElementById('Archivo').value === '') {
+            Swal.fire('Debe seleccionar un archivo');
+            loadingOverlay.style.display = 'none'; // Oculta el overlay en caso de error
+            return;
+        }
+        myForm.submit();
+       
     });
+});
 </script>
 
 
