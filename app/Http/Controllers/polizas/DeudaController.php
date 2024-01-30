@@ -651,8 +651,6 @@ class DeudaController extends Controller
                 $ultimo_pago_fecha_final = $fecha_final_temp->format('Y-m-d');
             }
 
-
-
             $fecha = PolizaDeudaCartera::select('Mes', 'Axo', 'FechaInicio', 'FechaFinal')
                 ->where('PolizaDeuda', '=', $id)
                 ->where(function ($query) {
@@ -696,10 +694,49 @@ class DeudaController extends Controller
                 }
             }
 
+            $fecha1 = PolizaDeudaCartera::select('Mes', 'Axo', 'FechaInicio', 'FechaFinal')
+                ->where('PolizaDeuda', '=', $id)
+                ->where('PolizaDeudaDetalle', '=', $ultimo_pago->Id)
+                ->orderByDesc('Id')->first();
 
+            $saldo1 = 0;
+            if ($fecha1) {
+                $creditos1 = DeudaCredito::where('Deuda', '=', $id)->where('Activo', 1)->get();
+                $montos = 0;
+                foreach ($creditos1 as $obj) {
+                    switch ($obj->Saldos) {
+                        case '1':
+                            # saldo a capital
+                            $saldo1 = $this->calcularCarteraINS1($deuda, $creditos1, $obj->Id, $fecha1);
+                            //  dd($saldo);
+                            break;
+                        case '2':
+
+                            # saldo a capital mas intereses
+                            $saldo1 = $this->calcularCarteraINS2($deuda, $creditos1, $obj->Id, $fecha1);
+                            //  dd($saldo);
+                            break;
+                        case '3':
+                            # saldo a capital mas intereses mas covid
+                            $saldo1 = $this->calcularCarteraINS3($deuda, $creditos1, $obj->Id, $fecha1);
+                            break;
+                        case '4':
+                            # saldo a capital as intereses mas covid mas moratorios
+                            $saldo1 = $this->calcularCarteraINS4($deuda, $creditos1, $obj->Id, $fecha1);
+                            break;
+                        default:
+                            # .monto moninal
+                            $saldo1 = $this->calcularCarteraINS5($deuda, $creditos1, $obj->Id, $fecha1);
+                            break;
+                    }
+
+                    $obj->TotalLiniaCredito = $saldo1;
+                }
+            }
 
 
             return view('polizas.deuda.edit', compact(
+                'creditos1',
                 'fecha',
                 'total_extrapima',
                 'saldo',

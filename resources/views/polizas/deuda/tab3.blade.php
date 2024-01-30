@@ -54,7 +54,7 @@
                 </td>
                 <td>
                     <div class="col-md-9 col-sm-9 form-group has-feedback">
-                        <input type="text" class="form-control has-feedback-left" value="@if ($ultimo_pago) {{ number_format($deuda->Tasa, 2, '.', ',') }} @else 0 @endif" readonly>
+                        <input type="text" class="form-control has-feedback-left" value="{{ $deuda->Tasa }}" readonly>
                         <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
                     </div>
 
@@ -65,12 +65,13 @@
                     <center><strong>Base Cálculo de la Prima </strong></center>
                 </td>
             </tr>
-            @foreach($creditos as $obj)
+            @foreach($creditos1 as $obj)
             <tr>
                 <td>{{$obj->tipoCarteras->Nombre}} {{$obj->saldos->Abreviatura}}</td>
                 <td>
                     <div class="col-md-9 col-sm-9  form-group has-feedback">
-                        <input type="text" class="form-control has-feedback-left" style="text-align: right;" id="MontoCartera2" value="@if ($ultimo_pago) {{ number_format($obj->TotalLiniaCredito, 2, '.', ',') }} @else 0 @endif" readonly>
+                        <input type="text" class="form-control has-feedback-left" style="text-align: right;" id="MontoCartera2" 
+                        value="{{ number_format($obj->TotalLiniaCredito, 2, '.', ',') }} " readonly>
                         <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                     </div>
                 </td>
