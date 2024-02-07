@@ -35,7 +35,7 @@
                 <td style="text-align: center;">{{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
                 <td style="text-align: center;">01/01</td>
                 @if($obj->NumeroCorrelativo)
-                <td style="text-align: center;">{{$obj->NumeroCorrelativo}}</td>
+                <td style="text-align: center;">AC {{str_pad($obj->NumeroCorrelativo, 6, "0", STR_PAD_LEFT);}} {{date('y')}}</td>
                 @else
                 <td></td>
                 @endif
@@ -101,7 +101,7 @@
             <form method="POST" action="{{ url('polizas/deuda/edit_pago') }}">
                 <div class="modal-header">
                     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
-                        <h5 class="modal-title" id="exampleModalLabel">Pago</h5>
+                        <h5 class="modal-title" id="exampleModalLabel">Gestión de cobro de póliza</h5>
                     </div>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>

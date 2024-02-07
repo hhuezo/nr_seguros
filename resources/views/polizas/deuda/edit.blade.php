@@ -20,7 +20,7 @@
                     <h2>Poliza de Deuda &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; VIDE - Deuda<small></small>
                     </h2>
                     <ul class="nav navbar-right panel_toolbox">
-
+                        <a href="{{url('polizas/deuda')}}" class="btn btn-info">Atras</a>
                     </ul>
                     <div class="clearfix"></div>
                 </div>

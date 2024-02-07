@@ -178,9 +178,10 @@
 
                                     </div>
                                     <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="profile-tab">
-                                        <div>
+                                        <div align="right">
                                             <a href="{{url('exportar/poliza_cumulo')}}" class="btn btn-success">Descargar Excel</a>
                                         </div>
+                                        <br>
                                         <table class="table table-striped" id="MyTable3">
                                             <thead>
                                                 <tr>

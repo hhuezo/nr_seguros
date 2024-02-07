@@ -287,9 +287,19 @@ class DeudaController extends Controller
             /*$detalle->EnvioPago = $request->EnvioPago;
             $detalle->PagoAplicado = $request->PagoAplicado;*/
             $detalle->update();
-            alert()->success('El registro ha sido ingresado correctamente');
         }
 
+        $time = Carbon::now('America/El_Salvador');
+        $comen = new Comentario();
+        $comen->Comentario = $request->Comentario;
+        $comen->Activo = 1;
+        $comen->DetalleDeuda == $detalle->Id;
+        $comen->Usuario = auth()->user()->id;
+        $comen->FechaIngreso = $time;
+        $comen->Deuda = $detalle->Deuda;
+        $comen->save();
+
+        alert()->success('El registro ha sido ingresado correctamente');
         return back();
     }
 
@@ -608,8 +618,7 @@ class DeudaController extends Controller
             //tab 7 
             $extraprimados = PolizaDeudaExtraPrimados::where('PolizaDeuda', $id)->get();
             $total_extrapima = 0;
-            foreach($extraprimados as $extraprimado)
-            {
+            foreach ($extraprimados as $extraprimado) {
                 //consultando calculos de extraprimados
                 $data_array = $extraprimado->getPagoEP($extraprimado->Id);
 
@@ -621,7 +630,7 @@ class DeudaController extends Controller
                 $total_extrapima += $data_array['extra_prima'];
             }
 
-   
+
 
             $array_dui = $extraprimados->pluck('Dui')->toArray();
 
@@ -821,7 +830,7 @@ class DeudaController extends Controller
         $comen->Deuda = $request->DeudaComment;
         $comen->save();
         alert()->success('El registro del comentario ha sido creado correctamente')->showConfirmButton('Aceptar', '#3085d6');
-        return Redirect::to('polizas/residencia/' . $request->DeudaComment . '/edit');
+        return Redirect::to('polizas/deuda/' . $request->DeudaComment . '/edit');
     }
 
     public function eliminar_comentario(Request $request)
@@ -869,7 +878,7 @@ class DeudaController extends Controller
     public function update_extraprimado(Request $request)
     {
         $extra_primado = PolizaDeudaExtraPrimados::findOrFail($request->IdExtraPrima);
-       // dd($extra_primado);
+        // dd($extra_primado);
         $extra_primado->PorcentajeEP = $request->PorcentajeEP;
         // $extra_primado->PagoEP = $request->PagoEP;
         $extra_primado->update();
@@ -1635,7 +1644,7 @@ class DeudaController extends Controller
                 ['Mes', $date_anterior->month],
                 ['Axo', $date_mes_anterior->year],
                 ['PolizaDeuda', $request->Id],
-                ['LineaCredito',$request->LineaCredito],
+                ['LineaCredito', $request->LineaCredito],
             ])
             ->whereNotExists(function ($query) use ($date, $date_mes, $poliza_id) {
                 $query->select(DB::raw(1))

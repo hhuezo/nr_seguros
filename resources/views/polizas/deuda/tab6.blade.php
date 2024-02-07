@@ -79,7 +79,7 @@
                     <div class="modal-body">
                         <div class="box-body">
                             @csrf
-                            <input type="hidden" name="deudaComment" value="{{$deuda->Id}}" class="form-control">
+                            <input type="hidden" name="DeudaComment" value="{{$deuda->Id}}" class="form-control">
 
                             <div class="form-group">
                                 <div class="col-sm-12">

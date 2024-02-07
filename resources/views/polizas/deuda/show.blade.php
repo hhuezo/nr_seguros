@@ -62,7 +62,7 @@
                     <li role="presentation" class="{{ session('tab') == 2 ? 'active' : '' }} "><a href="#tab_content2" id="lineas-tab" role="tab" data-toggle="tab" aria-expanded="true">Tasa diferencia</a>
                     </li>
                     <li role="presentation" class="{{ session('tab') == 3 ? 'active' : '' }}"><a href="#tab_content3" id="asegurabilidad-tab" role="tab" data-toggle="tab" aria-expanded="true">Requisitos
-                            Minimos de Asegurabilidad </a>
+                            Mínimos de Asegurabilidad </a>
                     </li>
 
 
@@ -145,7 +145,7 @@
                                     </select>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label" align="right">Nit</label>
+                                    <label class="control-label" align="right">DUI / NIT</label>
                                     <input class="form-control" name="Nit" id="Nit" type="text" value="{{ $deuda->Nit }}" readonly>
                                 </div>
                                 <div class="col-sm-12">
@@ -160,7 +160,7 @@
                                     <input class="form-control" name="VigenciaHasta" type="date" value="{{ $deuda->VigenciaHasta }}" required>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label" align="right">Estatus</label>
+                                    <label class="control-label" align="right">Estado</label>
                                     <select name="EstadoPoliza" class="form-control select2" style="width: 100%">
                                         @foreach ($estadoPoliza as $obj)
                                         @if ($obj->Id == 1)
@@ -222,7 +222,7 @@
                                     &nbsp;
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label" align="right">asa ‰ Millar Mensual</label>
+                                    <label class="control-label" align="right">Tasa Millar Mensual</label>
                                     <input class="form-control" name="Tasa" type="number" id="Tasa" step="any" value="{{ $deuda->Tasa }}" required>
                                 </div>
                                 <div class="col-sm-4" align="center">
@@ -273,7 +273,7 @@
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div class="form-group" align="center">
                                     <button type="submit" class="btn btn-success" {{ $deuda->Configuracion == 1 ? 'disabled' : '' }}>Guardar y Continuar</button>
-                                    <a href="{{ url('poliza/vida') }}"><button type="button" class="btn btn-primary">Cancelar</button></a>
+                                    <a href="{{ url('polizas/deuda') }}"><button type="button" class="btn btn-primary">Cancelar</button></a>
                                 </div>
                             </div>
                         </form>
@@ -290,7 +290,7 @@
                                     diferenciada</label>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                                <label class="control-label" align="center">Linea de Credito</label> <br>
+                                <label class="control-label" align="center">Linea de crédito</label> <br>
                                 <select name="TipoCartera" id="TipoCartera" class="form-control" required>
                                     @foreach ($tipoCartera as $obj)
                                     <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
@@ -400,7 +400,7 @@
                                 <br><br>
                                 <div class="form-group" align="center">
                                     <button type="submit" class="btn btn-success" {{ $deuda->Configuracion == 1 ? 'disabled' : '' }}>Guardar y Continuar</button>
-                                    <a href="{{ url('poliza/vida') }}"><button type="button" class="btn btn-primary">Cancelar</button></a>
+                                    <a href="{{ url('polizas/deuda') }}"><button type="button" class="btn btn-primary">Cancelar</button></a>
                                 </div>
                             </div>
                         </form>
@@ -412,7 +412,7 @@
                                 <table width="100%" class="table table-striped">
                                     <thead>
                                         <tr>
-                                            <th>Linea Carteras</th>
+                                            <th>Línea de Crédito</th>
                                             <th>Saldos y Montos</th>
                                             <th>Tasa General</th>
                                             <th>Fecha Desde</th>
@@ -433,21 +433,21 @@
                                             <td>{{ $obj->TipoCartera == null ? '' : $obj->tipoCarteras->Nombre }}
                                             </td>
                                             <td>{{ $obj->Saldos == null ? '' : $obj->saldos->Abreviatura }}</td>
-                                            <td>{{ $obj->TasaFecha == null && $obj->TasaMonto == null && $obj->TasaEdad == null ? $deuda->Tasa . '%' : '0' }}
+                                            <td>{{ $obj->TasaFecha == null && $obj->TasaMonto == null && $obj->TasaEdad == null ? $deuda->Tasa  : '0' }}
                                             </td>
                                             <td>{{ isset($obj->FechaDesde) ? date('d/m/Y', strtotime($obj->FechaDesde)) : '' }}
                                             </td>
                                             <td>{{ isset($obj->FechaHasta) ? date('d/m/Y', strtotime($obj->FechaHasta)) : '' }}
                                             </td>
-                                            <td>{{ isset($obj->TasaFecha) ? $obj->TasaFecha . '%' : '' }} </td>
+                                            <td>{{ isset($obj->TasaFecha) ? $obj->TasaFecha  : '' }} </td>
                                             <td>{{ isset($obj->MontoDesde) ? '$' . number_format($obj->MontoDesde, 2, '.', ',') : '' }}
                                             </td>
                                             <td>{{ isset($obj->MontoHasta) ? '$' . number_format($obj->MontoHasta, 2, '.', ',') : '' }}
                                             </td>
-                                            <td>{{ isset($obj->TasaMonto) ? $obj->TasaMonto . '%' : '' }} </td>
+                                            <td>{{ isset($obj->TasaMonto) ? $obj->TasaMonto  : '' }} </td>
                                             <td>{{ isset($obj->EdadDesde) ? $obj->EdadDesde . 'años' : '' }}</td>
                                             <td>{{ isset($obj->EdadHasta) ? $obj->EdadHasta . 'años' : '' }}</td>
-                                            <td>{{ isset($obj->TasaEdad) ? $obj->TasaEdad . '%' : '' }} </td>
+                                            <td>{{ isset($obj->TasaEdad) ? $obj->TasaEdad  : '' }} </td>
                                             <td><a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a></td>
                                         </tr>
                                         <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-{{ $obj->Id }}">
@@ -514,24 +514,24 @@
                                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad
                                                     inicial</label>
                                                 <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                                    <input class="form-control" id="EdadInicial" value="1" type="text" name="EdadInicial">
+                                                    <input class="form-control" id="EdadInicial" value="1" type="text" name="EdadInicial" required>
                                                 </div>
                                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad
                                                     final</label>
                                                 <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                                    <input class="form-control" id="EdadFinal" name="EdadFinal" type="number">
+                                                    <input class="form-control" id="EdadFinal" name="EdadFinal" type="number" required>
                                                 </div>
                                             </div>
                                             <div class="form-group row">
                                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Monto
                                                     inicial</label>
                                                 <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                                    <input class="form-control" id="MontoInicial" step="0.01" type="number" name="MontoInicial">
+                                                    <input class="form-control" id="MontoInicial" step="0.01" type="number" name="MontoInicial" required>
                                                 </div>
                                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Monto
                                                     final</label>
                                                 <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                                    <input class="form-control" id="MontoFinal" step="0.01" type="number" name="MontoFinal">
+                                                    <input class="form-control" id="MontoFinal" step="0.01" type="number" name="MontoFinal" required>
                                                 </div>
                                             </div>
 
@@ -543,7 +543,7 @@
                                 <br>
                                 <div class="form-group" align="center">
                                     <button type="submit" class="btn btn-success" {{ $deuda->Configuracion == 1 ? 'disabled' : '' }}>Guardar y Continuar</button>
-                                    <a href="{{ url('poliza/vida') }}"><button type="button" class="btn btn-primary">Cancelar</button></a>
+                                    <a href="{{ url('polizas/deuda') }}"><button type="button" class="btn btn-primary">Cancelar</button></a>
                                 </div>
                             </form>
                         </div>
@@ -553,9 +553,8 @@
                                 @for ($i = 0; $i < count($data); $i++) <tr style="width: 25%;">
                                     @for ($j = 0; $j < count($data[0]); $j++) <td>
                                         @if($data[$i][$j]['id'] > 0)
-                                        {{ $data[$i][$j]['value'] }}  {{ $data[$i][$j]['id'] }}
-                                        <a href="" data-target="#modal-elimin-{{ $data[$i][$j]['id'] }}"
-                                            data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
+                                        {{ $data[$i][$j]['value'] }} {{ $data[$i][$j]['id'] }}
+                                        <a href="" data-target="#modal-elimin-{{ $data[$i][$j]['id'] }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
 
                                         @else
                                         {{ $data[$i][$j]['value'] }} {{$data[$i][$j]['id']}}
@@ -612,8 +611,6 @@
 <!-- jQuery -->
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
-   
-
     function add_rango() {
         $("#modal_rango").modal('show');
     }
@@ -636,26 +633,45 @@
         $("#fechas").change(function() {
             if (document.getElementById('fechas').checked == true) {
                 $('#fecha_otorgamiento').show();
+                $("#FechaDesde").prop('required', true);
+                $("#FechaHasta").prop('required', true);
+                $("#TasaFecha").prop('required', true);
+
 
             } else {
                 $('#fecha_otorgamiento').hide();
+                $("#FechaDesde").removeAttr('required');
+                $("#FechaHasta").removeAttr('required');
+                $("#TasaFecha").removeAttr('required');
             }
         })
 
         $("#montos").change(function() {
             if (document.getElementById('montos').checked == true) {
                 $('#monto_otorgamiento').show();
+                $("#MontoDesde").prop('required', true);
+                $("#MontoHasta").prop('required', true);
+                $("#TasaMonto").prop('required', true);
 
             } else {
                 $('#monto_otorgamiento').hide();
+                $("#MontoDesde").removeAttr('required');
+                $("#MontoHasta").removeAttr('required');
+                $("#TasaMonto").removeAttr('required');
             }
         })
         $("#edad").change(function() {
             if (document.getElementById('edad').checked == true) {
                 $('#edad_otorgamiento').show();
+                $("#EdadDesde").prop('required', true);
+                $("#EdadHasta").prop('required', true);
+                $("#TasaEdad").prop('required', true);
 
             } else {
                 $('#edad_otorgamiento').hide();
+                $("#EdadDesde").removeAttr('required');
+                $("#EdadHasta").removeAttr('required');
+                $("#TasaEdad").removeAttr('required');
             }
         })
 

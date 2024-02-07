@@ -222,7 +222,7 @@
 
                 </div>
                 <div class="form-group row" style="margin-top:-4%;">
-                    <label class="control-label " align="right">Tasa por millar
+                    <label class="control-label " align="right">Tasa mensual por millar
                     </label>
 
 
@@ -350,7 +350,7 @@
 
                 <div class="form-group row" style="margin-top:-5%;">
                     <label class="control-label" align="right">Menos valor CCF de
-                        comision</label>
+                        comisión</label>
 
 
                     <div class="form-group has-feedback">
@@ -408,7 +408,7 @@
                     </div>
 
                 </div>
-                <div class="form-group row">
+                <div class="form-group row ocultar" >
                     <label class="control-label" align="right" style="margin-top:-4%;">% Comisión</label>
 
 
@@ -430,7 +430,7 @@
                 </div>
 
                 <div class="form-group row" style="margin-top:-4%;">
-                    <label class="control-label" align="right">Menos 1% Ret</label>
+                    <label class="control-label" align="right">(-) 1% Retención</label>
 
 
                     <div class="form-group has-feedback">
@@ -452,10 +452,10 @@
 
                 </div>
                 <div class="form-group" style="margin-top:-4%;">
-                    <div class="col-sm-12">
+                    
                         <label class="control-label">Comentario</label>
                         <textarea name="Comentario" class="form-control" rows="5"></textarea>
-                    </div>
+                   
                 </div>
             </div>
 
@@ -467,15 +467,15 @@
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">×</span>
                         </button>
-                        <h4 class="modal-title">Aplicación de pago</h4>
+                        <h4 class="modal-title">Aplicación de cobro</h4>
                     </div>
                     <div class="modal-body">
-                        <p>¿Esta seguro/a que desea aplicar el pago?</p>
+                        <p>¿Esta seguro/a que desea aplicar el cobro?</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
                         <button id="boton_pago" class="btn btn-primary">Confirmar
-                            Pago</button>
+                            Cobro</button>
                     </div>
                 </div>
             </div>

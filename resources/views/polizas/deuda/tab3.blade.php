@@ -41,7 +41,7 @@
     </div>
     <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
         <table class="table table-striped jambo_table bulk_action" style="font-size: 13px;">
-            <tr>
+            <tr class="ocultar">
                 <td>
                     <!-- Tasa @if ($deuda->Mensual == 1)
                                             Mensual
@@ -89,10 +89,10 @@
                 </td>
             </tr>
             <tr>
-                <td>Tasa por millar</td>
+                <td>Tasa mensual por millar</td>
                 <td>
                     <div class="col-md-9 col-sm-9  form-group has-feedback">
-                        <input type="text" class="form-control has-feedback-left" style="text-align: right;" id="TasaMillar2" value="@if ($ultimo_pago) {{ $ultimo_pago->Tasa }} @else 0 @endif" readonly>
+                        <input type="text" class="form-control has-feedback-left" style="text-align: right;" id="TasaMillar2" value="{{ $deuda->Tasa }} " readonly>
                         <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                     </div>
                 </td>
