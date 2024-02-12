@@ -891,12 +891,6 @@ class DeudaController extends Controller
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         //
@@ -1466,8 +1460,8 @@ class DeudaController extends Controller
 
         $credito = $request->get('LineaCredito');
 
-        //ini_set('memory_limit', '25024M');
-        //ini_set('max_execution_time', 300); // Ajusta el valor según sea necesario (por ejemplo, 300 segundos)
+
+
         $date_submes = Carbon::create($request->Axo, $request->Mes, "01");
         $date = Carbon::create($request->Axo, $request->Mes, "01");
         $date_mes = $date_submes->subMonth();
@@ -1671,9 +1665,48 @@ class DeudaController extends Controller
         $minEdadInicial = $maximos_minimos->min_edad_inicial;
         $maxEdadFinal = $maximos_minimos->max_edad_final;
 
+
+
+        //definiendp el tipo de cartera a evaluar para calculo
+        
+        $linea_credito = DeudaCredito::findOrFail($request->get('LineaCredito'));
+
+        $tipo_cartera = $linea_credito->TipoCartera;
+
+  
+
         //cumulos por dui
-        $poliza_cumulos = PolizaDeudaTempCartera::selectRaw('Id,Dui,Edad,Nit,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento, NumeroReferencia,
-        SUM(SaldoCapital) as total_saldo')->groupBy('Dui')->get();
+        $poliza_cumulos = PolizaDeudaTempCartera::selectRaw('Id,Dui,Edad,Nit,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento,
+        NumeroReferencia,SUM(SaldoCapital) as total_saldo,SUM(Intereses) as total_interes,SUM(InteresesCovid) as total_covid,
+        SUM(InteresesMoratorios) as total_moratorios, SUM(MontoNominal) as total_monto_nominal')->groupBy('Dui')->get();
+
+        foreach ($poliza_cumulos as $cumulo) {
+            switch ($tipo_cartera) {
+                case '1':
+                    # saldo a capital
+                    $saldo = $cumulo->total_saldo;                    
+                    break;
+                case '2':
+
+                    # saldo a capital mas intereses
+                    $saldo =  $cumulo->total_saldo + $cumulo->total_interes ;                    
+                    break;
+                case '3':
+                    # saldo a capital mas intereses mas covid
+                    $saldo = $cumulo->total_saldo + $cumulo->total_interes +  $cumulo->total_covid; 
+                    break;
+                case '4':
+                    # saldo a capital as intereses mas covid mas moratorios
+                    $saldo = $cumulo->total_saldo + $cumulo->total_interes +  $cumulo->total_covid +  $cumulo->total_moratorios ; 
+                    break;
+                default:
+                    # .monto moninal
+                    $saldo = $cumulo->total_monto_nominal;
+                    break;
+            }
+
+            $obj->total_saldo = $saldo;
+        }    
 
 
 
@@ -1707,7 +1740,36 @@ class DeudaController extends Controller
 
 
         $poliza_cumulos = PolizaDeudaTempCartera::selectRaw('Id,Dui,Edad,Nit,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento, NumeroReferencia,NoValido,Perfiles,
-        SUM(SaldoCapital) as total_saldo, GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ", ") AS ConcatenatedNumeroReferencia')->groupBy('Dui')->get();
+         GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ", ") AS ConcatenatedNumeroReferencia,SUM(SaldoCapital) as total_saldo,SUM(Intereses) as total_interes,SUM(InteresesCovid) as total_covid,
+         SUM(InteresesMoratorios) as total_moratorios, SUM(MontoNominal) as total_monto_nominal')->groupBy('Dui')->get();
+
+         foreach ($poliza_cumulos as $cumulo) {
+            switch ($tipo_cartera) {
+                case '1':
+                    # saldo a capital
+                    $saldo = $cumulo->total_saldo;                    
+                    break;
+                case '2':
+
+                    # saldo a capital mas intereses
+                    $saldo =  $cumulo->total_saldo + $cumulo->total_interes ;                    
+                    break;
+                case '3':
+                    # saldo a capital mas intereses mas covid
+                    $saldo = $cumulo->total_saldo + $cumulo->total_interes +  $cumulo->total_covid; 
+                    break;
+                case '4':
+                    # saldo a capital as intereses mas covid mas moratorios
+                    $saldo = $cumulo->total_saldo + $cumulo->total_interes +  $cumulo->total_covid +  $cumulo->total_moratorios ; 
+                    break;
+                default:
+                    # .monto moninal
+                    $saldo = $cumulo->total_monto_nominal;
+                    break;
+            }
+
+            $obj->total_saldo = $saldo;
+        }    
 
         return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date'));
     }
