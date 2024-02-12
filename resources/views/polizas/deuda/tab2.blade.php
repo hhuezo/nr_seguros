@@ -232,7 +232,7 @@
                     </div>
 
                 </div>
-                <div class="form-group row" style="margin-top:-4%;">
+                <div class="form-group row ocultar" style="margin-top:-4%;">
                     <label class="control-label " align="right">Prueba
                         Decimales</label>
 

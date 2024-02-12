@@ -15,7 +15,7 @@
                         <th>Dui</th>
                         <th>Nombre</th>
                         <th>Numero Referencia</th>
-                        <th>Monto Otorgado</th>
+                        <th>Saldos</th>
                     </tr>
                 </thead>
                 <tbody>

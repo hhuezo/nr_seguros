@@ -112,11 +112,12 @@
                                                     <th>NIT</th>
                                                     <th>Nombre</th>
                                                     <th>Fecha nacimiento</th>
-                                                    <th>Edad</th>
+                                                    <th>Edad Actual</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 @foreach ($nuevos_registros as $registro)
+                                           
                                                 <tr>
                                                     <td>{{ $registro->NumeroReferencia }}</td>
                                                     <td>{{ $registro->Dui }}</td>
@@ -126,8 +127,7 @@
                                                         {{ $registro->SegundoApellido }}
                                                         {{ $registro->ApellidoCasada }}
                                                     </td>
-                                                    <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
-                                                    </td>
+                                                    <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}    </td>
                                                     <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
                                                 </tr>
                                                 @endforeach
@@ -150,7 +150,7 @@
                                                     <th>NIT</th>
                                                     <th>Nombre</th>
                                                     <th>Fecha nacimiento</th>
-                                                    <th>Edad</th>
+                                                    <th>Edad Actual</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -164,7 +164,7 @@
                                                         {{ $registro->SegundoApellido }}
                                                         {{ $registro->ApellidoCasada }}
                                                     </td>
-                                                    <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
+                                                    <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}  
                                                     </td>
                                                     <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
                                                 </tr>
@@ -190,12 +190,15 @@
                                                     <th>NIT</th>
                                                     <th>Nombre</th>
                                                     <th>Fecha nacimiento</th>
-                                                    <th>Edad</th>
+                                                    <th>Edad actual</th>
+                                                    <th>Edad otorgamiento</th>
+                                                    <th>Fecha otorgamiento</th>
                                                     <th>Saldo</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 @foreach ($poliza_cumulos->where('NoValido', '=', 1) as $registro)
+                                                
                                                 <tr>
                                                     <td>{{ $registro->ConcatenatedNumeroReferencia }}</td>
                                                     <td>{{ $registro->Dui }}</td>
@@ -211,6 +214,8 @@
                                                     <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
                                                     <td class="text-right">
                                                         ${{ number_format($registro->total_saldo, 2) }}</td>
+                                                        <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }} Años</td>
+                                                        <td>{{ $registro->FechaOtorgamiento ? $registro->FechaOtorgamiento : '' }}</td>
                                                 </tr>
                                                 @endforeach
 
@@ -229,7 +234,9 @@
                                                     <th>NIT</th>
                                                     <th>Nombre</th>
                                                     <th>Fecha nacimiento</th>
-                                                    <th>Edad</th>
+                                                    <th>Edad actual</th>
+                                                    <th>Edad otorgamiento</th>
+                                                    <th>Fecha otorgamiento</th>
                                                     <th>Requisitos</th>
                                                     <th>Saldo</th>
                                                 </tr>
@@ -249,6 +256,10 @@
                                                         <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
                                                         </td>
                                                         <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
+                                                        <td class="text-right">
+                                                        ${{ number_format($registro->total_saldo, 2) }}</td>
+                                                        <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }} Años</td>
+                                                        <td>{{ $registro->FechaOtorgamiento ? $registro->FechaOtorgamiento : '' }}</td>
 
                                                         <td>
                                                             @php
@@ -283,7 +294,7 @@
                                                     <th>NIT</th>
                                                     <th>Nombre</th>
                                                     <th>Fecha nacimiento</th>
-                                                    <th>Edad</th>
+                                                    <th>Edad Actual</th>
                                                     <th>Saldo</th>
                                                 </tr>
                                             </thead>

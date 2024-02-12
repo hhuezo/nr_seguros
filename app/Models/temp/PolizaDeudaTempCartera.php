@@ -50,6 +50,8 @@ class PolizaDeudaTempCartera extends Model
         'MontoNominal',
         'LineaCredito',
         'NoValido',
+        'EdadDesembloso',
+        'FechaOtorgamientoDate'
         
     ];
 }
