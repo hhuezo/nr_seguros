@@ -28,7 +28,18 @@
                         <td>{{ $obj->Dui }}</td>
                         <td>{{ $obj->Nombre }}</td>
                         <td>{{ $obj->NumeroReferencia }}</td>
-                        <td>${{ number_format($obj->MontoOtorgado, 2, '.', ',') }}</td>
+                        @if($obj->linia_credito->Saldos == 1)
+                        <td>${{ number_format($obj->SaldoCapital, 2, '.', ',') }} </td>
+                        @elseif($obj->linia_credito->Saldos == 2)
+                        @php($linea2 = $obj->SaldoCapital + $obj->Intereses)
+                        <td>${{ number_format(($linea2), 2, '.', ',') }} </td>
+                        @elseif($obj->linia_credito->Saldos == 3)
+                        <td>${{ number_format(($obj->SaldoCapital + $obj->Intereses + $obj->InteresesCovid), 2, '.', ',') }} </td>
+                        @elseif($obj->linia_credito->Saldos == 4)
+                        <td>${{ number_format(($obj->SaldoCapital + $obj->Intereses + $obj->InteresesCovid + $obj->InteresesMoratorios), 2, '.', ',') }} </td>
+                        @else
+                        <td>${{ number_format($obj->MontoNominal, 2, '.', ',') }} </td>
+                        @endif
                     </tr>
                     @endif
                     @endforeach
@@ -145,7 +156,18 @@
                 document.getElementById('ExtraprimadosFechaOtorgamiento').value = data.FechaOtorgamiento;
                 document.getElementById('ExtraprimadosNumeroReferencia').value = NumeroReferencia;
                 if (data.hasOwnProperty('MontoOtorgado')) {
-                    document.getElementById('ExtraprimadosMontoOtorgamiento').value = data.MontoOtorgado;
+                    if (data.LineaCredito == 1) {
+                        document.getElementById('ExtraprimadosMontoOtorgamiento').value = data.SaldoCapital.toFixed(2);
+                    } else if (data.LineaCredito == 2) {
+                        document.getElementById('ExtraprimadosMontoOtorgamiento').value = (parseFloat(data.SaldoCapital) + parseFloat(data.Intereses)).toFixed(2);
+                    } else if (data.LineaCredito == 3) {
+                        document.getElementById('ExtraprimadosMontoOtorgamiento').value = (parseFloat(data.SaldoCapital) + parseFloat(data.Intereses) + parseFloat(data.InteresesCovid)).toFixed(2);
+                    } else if (data.LineaCredito == 4) {
+                        document.getElementById('ExtraprimadosMontoOtorgamiento').value = (parseFloat(data.SaldoCapital) + parseFloat(data.Intereses) + parseFloat(data.InteresesCovid) + parseFloat(data.InteresesMoratorios)).toFixed(2);
+                    } else {
+                        document.getElementById('ExtraprimadosMontoOtorgamiento').value = data.MontoNominal.toFixed(2);
+                    }
+
                 }
             })
             .fail(function() {
