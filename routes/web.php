@@ -204,6 +204,7 @@ Route::post('poliza/vida/usuario_delete', [VidaController::class, 'eliminarUsuar
 Route::get('poliza/vida/usuario_create', [VidaController::class, 'agregarUsuario']);
 Route::get('poliza/vida/usuario/{id}', [VidaController::class, 'getUsuario']);
 
+Route::post('polizas/deuda/agregar_valido', [DeudaController::class, 'agregar_valido']);
 Route::post('polizas/deuda/create_pago', [DeudaController::class, 'create_pago']);
 Route::post('deuda/cancelar_pago',[DeudaController::class,'cancelar_pago']);
 Route::post('polizas/deuda/eliminar_extraprima',[DeudaController::class,'eliminar_extraprima']);

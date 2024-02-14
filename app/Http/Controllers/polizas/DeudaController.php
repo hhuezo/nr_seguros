@@ -754,7 +754,7 @@ class DeudaController extends Controller
 
                     $obj->TotalLiniaCredito = $saldo1;
                 }
-            }else{
+            } else {
                 $creditos1 = [];
             }
 
@@ -861,8 +861,7 @@ class DeudaController extends Controller
 
     public function get_extraprimado($id, $dui)
     {
-        $cliente = PolizaDeudaCartera::
-        join('poliza_deuda_creditos as cred', 'cred.Id', '=', 'poliza_deuda_cartera.LineaCredito')
+        $cliente = PolizaDeudaCartera::join('poliza_deuda_creditos as cred', 'cred.Id', '=', 'poliza_deuda_cartera.LineaCredito')
             ->join('saldos_montos as sal', 'sal.Id', '=', 'cred.Saldos')
             ->select(
                 'poliza_deuda_cartera.Id',
@@ -880,7 +879,7 @@ class DeudaController extends Controller
 
             )
             ->where('PolizaDeuda', $id)->where('Dui', $dui)->first();
-           // dd($cliente);
+        // dd($cliente);
 
         return response()->json($cliente);
     }
@@ -1825,5 +1824,19 @@ class DeudaController extends Controller
 
         alert()->success('El registro ha sido ingresado correctamente');
         return back();
+    }
+
+
+    public function agregar_valido(Request $request)
+    {
+        $poliza = PolizaDeudaTempCartera::findOrFail($request->id);
+        if ($poliza->NoValido == 1) {
+            $poliza->NoValido = 0;
+            $poliza->update();
+        } else {
+            $poliza->NoValido = 1;
+            $poliza->update();
+        }
+        return $request->id;
     }
 }
