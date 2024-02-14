@@ -156,18 +156,19 @@
                 document.getElementById('ExtraprimadosFechaOtorgamiento').value = data.FechaOtorgamiento;
                 document.getElementById('ExtraprimadosNumeroReferencia').value = NumeroReferencia;
                 if (data.hasOwnProperty('MontoOtorgado')) {
-                    if (data.LineaCredito == 1) {
-                        document.getElementById('ExtraprimadosMontoOtorgamiento').value = data.SaldoCapital.toFixed(2);
-                    } else if (data.LineaCredito == 2) {
+                    console.log(data.Linea);
+                    if (data.Linea == 1) {
+                        document.getElementById('ExtraprimadosMontoOtorgamiento').value = parseFloat(data.SaldoCapital).toFixed(2);
+                    } else if (data.Linea == 2) {
                         document.getElementById('ExtraprimadosMontoOtorgamiento').value = (parseFloat(data.SaldoCapital) + parseFloat(data.Intereses)).toFixed(2);
-                    } else if (data.LineaCredito == 3) {
+                    } else if (data.Linea == 3) {
                         document.getElementById('ExtraprimadosMontoOtorgamiento').value = (parseFloat(data.SaldoCapital) + parseFloat(data.Intereses) + parseFloat(data.InteresesCovid)).toFixed(2);
-                    } else if (data.LineaCredito == 4) {
+                    } else if (data.Linea == 4) {
                         document.getElementById('ExtraprimadosMontoOtorgamiento').value = (parseFloat(data.SaldoCapital) + parseFloat(data.Intereses) + parseFloat(data.InteresesCovid) + parseFloat(data.InteresesMoratorios)).toFixed(2);
                     } else {
-                        document.getElementById('ExtraprimadosMontoOtorgamiento').value = data.MontoNominal.toFixed(2);
+                        document.getElementById('ExtraprimadosMontoOtorgamiento').value = parseFloat(data.MontoNominal).toFixed(2);
                     }
-
+console.log(document.getElementById('ExtraprimadosMontoOtorgamiento').value);
                 }
             })
             .fail(function() {

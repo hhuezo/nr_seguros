@@ -754,6 +754,8 @@ class DeudaController extends Controller
 
                     $obj->TotalLiniaCredito = $saldo1;
                 }
+            }else{
+                $creditos1 = [];
             }
 
 
@@ -866,7 +868,7 @@ class DeudaController extends Controller
                 'poliza_deuda_cartera.Id',
                 DB::raw("CONCAT(poliza_deuda_cartera.PrimerNombre, ' ', poliza_deuda_cartera.SegundoNombre, ' ', poliza_deuda_cartera.PrimerApellido, ' ', poliza_deuda_cartera.SegundoApellido, ' ', ' ', poliza_deuda_cartera.ApellidoCasada) as Nombre"),
                 'poliza_deuda_cartera.Dui',
-                'sal.Id as LineaCredito',
+                'sal.Id as Linea',
                 'poliza_deuda_cartera.NumeroReferencia',
                 'poliza_deuda_cartera.MontoOtorgado',
                 'poliza_deuda_cartera.SaldoCapital',
@@ -878,6 +880,7 @@ class DeudaController extends Controller
 
             )
             ->where('PolizaDeuda', $id)->where('Dui', $dui)->first();
+           // dd($cliente);
 
         return response()->json($cliente);
     }
@@ -1693,7 +1696,7 @@ class DeudaController extends Controller
 
         $linea_credito = DeudaCredito::findOrFail($request->get('LineaCredito'));
 
-        $tipo_cartera = $linea_credito->TipoCartera;
+        $tipo_cartera = $linea_credito->Saldos;
 
 
 
@@ -1727,7 +1730,7 @@ class DeudaController extends Controller
                     break;
             }
 
-            $obj->total_saldo = $saldo;
+            $cumulo->total_saldo = $saldo;
         }
 
 
@@ -1791,7 +1794,7 @@ class DeudaController extends Controller
                     break;
             }
 
-            $obj->total_saldo = $saldo;
+            $cumulo->total_saldo = $saldo;
         }
 
         return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date'));

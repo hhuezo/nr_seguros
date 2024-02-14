@@ -59,7 +59,8 @@
                             <table>
                                 <tr>
                                     <td style="vertical-align: top;"> <a href="{{url('polizas/deuda')}}/{{$deuda->Id}}/edit" class="btn btn-default">
-                                            Cancelar
+                                            Cancelar  <br> 
+                                            <!-- (borrar los datos de la cartera temporal) -->
                                         </a></td>
                                     <td>
 
@@ -149,8 +150,11 @@
                                                     <th>DUI</th>
                                                     <th>NIT</th>
                                                     <th>Nombre</th>
-                                                    <th>Fecha nacimiento</th>
+                                                    <th>Fecha Nacimiento</th>
+                                                    <th>Fecha Otorgamiento</th>
                                                     <th>Edad Actual</th>
+                                                    <th>Edad Desembolso</th>
+                                                    <th>Saldo</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -162,11 +166,12 @@
                                                     <td>{{ $registro->PrimerNombre }} {{ $registro->SegundoNombre }}
                                                         {{ $registro->PrimerApellido }}
                                                         {{ $registro->SegundoApellido }}
-                                                        {{ $registro->ApellidoCasada }}
-                                                    </td>
-                                                    <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}  
-                                                    </td>
+                                                        {{ $registro->ApellidoCasada }}  </td>
+                                                    <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}  </td>
+                                                    <td>{{ $registro->FechaOtorgamiento ? $registro->FechaOtorgamiento : '' }}    </td>
                                                     <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
+                                                    <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }} Años</td>
+                                                    <td>${{ number_format($registro->total_saldo, 2) }}</td>
                                                 </tr>
                                                 @endforeach
 
@@ -190,9 +195,9 @@
                                                     <th>NIT</th>
                                                     <th>Nombre</th>
                                                     <th>Fecha nacimiento</th>
-                                                    <th>Edad actual</th>
-                                                    <th>Edad otorgamiento</th>
                                                     <th>Fecha otorgamiento</th>
+                                                    <th>Edad desembolso</th>
+                                                    <th>Edad actual</th>                                               
                                                     <th>Saldo</th>
                                                 </tr>
                                             </thead>
@@ -211,9 +216,9 @@
                                                     </td>
                                                     <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
                                                     </td>
+                                                    <td>{{ $registro->FechaOtorgamiento ? $registro->FechaOtorgamiento : '' }}</td>
                                                     <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
                                                     <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }} Años</td>
-                                                    <td>{{ $registro->FechaOtorgamiento ? $registro->FechaOtorgamiento : '' }}</td>
                                                     <td class="text-right">
                                                         ${{ number_format($registro->total_saldo, 2) }}
                                                     </td>
