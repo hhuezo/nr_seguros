@@ -51,7 +51,7 @@ class PolizaDeudaTempCartera extends Model
         'LineaCredito',
         'NoValido',
         'EdadDesembloso',
-        'FechaOtorgamientoDate'
-        
+        'FechaOtorgamientoDate',
+        'total_saldo'        
     ];
 }

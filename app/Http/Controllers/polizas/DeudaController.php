@@ -39,7 +39,7 @@ use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PDF;
-
+use PhpOffice\PhpSpreadsheet\Calculation\MathTrig\Sum;
 
 class DeudaController extends Controller
 {
@@ -1482,9 +1482,9 @@ class DeudaController extends Controller
     public function create_pago(Request $request)
     {
 
+
+
         $credito = $request->get('LineaCredito');
-
-
 
         $date_submes = Carbon::create($request->Axo, $request->Mes, "01");
         $date = Carbon::create($request->Axo, $request->Mes, "01");
@@ -1730,6 +1730,7 @@ class DeudaController extends Controller
             }
 
             $cumulo->total_saldo = $saldo;
+            $cumulo->update();
         }
 
 
@@ -1764,39 +1765,41 @@ class DeudaController extends Controller
 
 
         $poliza_cumulos = PolizaDeudaTempCartera::selectRaw('Id,Dui,Edad,Nit,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento, 
-        NumeroReferencia,NoValido,Perfiles,EdadDesembloso,FechaOtorgamiento,
+        NumeroReferencia,NoValido,Perfiles,EdadDesembloso,FechaOtorgamiento,NoValido,
          GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ", ") AS ConcatenatedNumeroReferencia,SUM(SaldoCapital) as total_saldo,SUM(Intereses) as total_interes,SUM(InteresesCovid) as total_covid,
-         SUM(InteresesMoratorios) as total_moratorios, SUM(MontoNominal) as total_monto_nominal')->groupBy('Dui')->get();
+         SUM(InteresesMoratorios) as total_moratorios, SUM(MontoNominal) as total_monto_nominal')->groupBy('Dui', 'NoValido')->get();
 
-        foreach ($poliza_cumulos as $cumulo) {
-            switch ($tipo_cartera) {
-                case '1':
-                    # saldo a capital
-                    $saldo = $cumulo->total_saldo;
-                    break;
-                case '2':
+        // foreach ($poliza_cumulos as $cumulo) {
+        //     switch ($tipo_cartera) {
+        //         case '1':
+        //             # saldo a capital
+        //             $saldo = $cumulo->total_saldo;
+        //             break;
+        //         case '2':
 
-                    # saldo a capital mas intereses
-                    $saldo =  $cumulo->total_saldo + $cumulo->total_interes;
-                    break;
-                case '3':
-                    # saldo a capital mas intereses mas covid
-                    $saldo = $cumulo->total_saldo + $cumulo->total_interes +  $cumulo->total_covid;
-                    break;
-                case '4':
-                    # saldo a capital as intereses mas covid mas moratorios
-                    $saldo = $cumulo->total_saldo + $cumulo->total_interes +  $cumulo->total_covid +  $cumulo->total_moratorios;
-                    break;
-                default:
-                    # .monto moninal
-                    $saldo = $cumulo->total_monto_nominal;
-                    break;
-            }
+        //             # saldo a capital mas intereses
+        //             $saldo =  $cumulo->total_saldo + $cumulo->total_interes;
+        //             break;
+        //         case '3':
+        //             # saldo a capital mas intereses mas covid
+        //             $saldo = $cumulo->total_saldo + $cumulo->total_interes +  $cumulo->total_covid;
+        //             break;
+        //         case '4':
+        //             # saldo a capital as intereses mas covid mas moratorios
+        //             $saldo = $cumulo->total_saldo + $cumulo->total_interes +  $cumulo->total_covid +  $cumulo->total_moratorios;
+        //             break;
+        //         default:
+        //             # .monto moninal
+        //             $saldo = $cumulo->total_monto_nominal;
+        //             break;
+        //     }
 
-            $cumulo->total_saldo = $saldo;
-        }
+        //     $cumulo->total_saldo = $saldo;
+        // }
 
-        return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date'));
+
+
+        return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date', 'tipo_cartera'));
     }
     public function delete_pago($id)
     {
@@ -1830,13 +1833,137 @@ class DeudaController extends Controller
     public function agregar_valido(Request $request)
     {
         $poliza = PolizaDeudaTempCartera::findOrFail($request->id);
-        if ($poliza->NoValido == 1) {
-            $poliza->NoValido = 0;
-            $poliza->update();
-        } else {
-            $poliza->NoValido = 1;
-            $poliza->update();
+        $poliza->NoValido = 0;
+        $poliza->update();
+
+        $poliza_cumulos = PolizaDeudaTempCartera::selectRaw('Id,Dui,Edad,Nit,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento,
+        NumeroReferencia,SUM(SaldoCapital) as saldo_capital,SUM(Intereses) as total_interes,SUM(InteresesCovid) as total_covid,
+        SUM(InteresesMoratorios) as total_moratorios, SUM(MontoNominal) as total_monto_nominal')->where('Dui', $poliza->Dui)->groupBy('Dui', 'NoValido')->get();
+
+        $tipo_cartera = $request->tipo_cartera;
+
+        foreach ($poliza_cumulos as $cumulo) {
+            switch ($tipo_cartera) {
+                case '1':
+                    # saldo a capital
+                    $saldo = $cumulo->saldo_capital;
+                    break;
+                case '2':
+
+                    # saldo a capital mas intereses
+                    $saldo =  $cumulo->saldo_capital + $cumulo->total_interes;
+                    break;
+                case '3':
+                    # saldo a capital mas intereses mas covid
+                    $saldo = $cumulo->saldo_capital + $cumulo->total_interes +  $cumulo->total_covid;
+                    break;
+                case '4':
+                    # saldo a capital as intereses mas covid mas moratorios
+                    $saldo = $cumulo->saldo_capital + $cumulo->total_interes +  $cumulo->total_covid +  $cumulo->total_moratorios;
+                    break;
+                default:
+                    # .monto moninal
+                    $saldo = $cumulo->total_monto_nominal;
+                    break;
+            }
+
+            $cumulo->total_saldo = $saldo;
+            $cumulo->update();
         }
-        return $request->id;
+
+        return $poliza_cumulos;
+    }
+
+    public function get_referencia_creditos($id)
+    {
+        $poliza = PolizaDeudaTempCartera::findOrFail($id);
+        $polizas = PolizaDeudaTempCartera::select('Id', 'NumeroReferencia')->where('Dui', $poliza->Dui)->get();
+        return response()->json($polizas);
+    }
+
+    public function get_creditos($poliza, Request $request)
+    {
+        $buscar = $request->buscar;
+        $opcion = $request->opcion;
+        $tipo_cartera = $request->tipo_cartera;
+        if ($opcion == 1) {
+            $poliza_cumulos = DB::table('poliza_deuda_temp_cartera')
+                ->select(
+                    'Id',
+                    'Dui',
+                    'Edad',
+                    'Nit',
+                    'PrimerNombre',
+                    'SegundoNombre',
+                    'PrimerApellido',
+                    'SegundoApellido',
+                    'ApellidoCasada',
+                    'FechaNacimiento',
+                    'NumeroReferencia',
+                    'NoValido',
+                    'Perfiles',
+                    'EdadDesembloso',
+                    'FechaOtorgamiento',
+                    'NoValido',
+                    DB::raw("GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
+                    DB::raw('SUM(SaldoCapital) as saldo_cpital'),
+                    DB::raw('SUM(total_saldo) as total_saldo'),
+                    DB::raw('SUM(Intereses) as total_interes'),
+                    DB::raw('SUM(InteresesCovid) as total_covid'),
+                    DB::raw('SUM(InteresesMoratorios) as total_moratorios'),
+                    DB::raw('SUM(MontoNominal) as total_monto_nominal')
+                )
+                ->where(function ($query) use ($buscar) {
+                    $query->whereRaw("CONCAT(PrimerNombre, ' ', IFNULL(SegundoNombre,''), ' ', PrimerApellido, ' ', IFNULL(SegundoApellido,''), ' ', IFNULL(ApellidoCasada,'')) LIKE ?", ['%' . $buscar . '%'])
+                        ->orWhere('Dui', 'like', '%' . $buscar . '%')
+                        ->orWhere('Nit', 'like', '%' . $buscar . '%')
+                        ->orWhere('NumeroReferencia', 'like', '%' . $buscar . '%');
+                })
+                ->where('NoValido', 1)
+                ->where('PolizaDeuda', $poliza)
+                ->groupBy('Dui')
+                ->get();
+        } else {
+            $poliza_cumulos = DB::table('poliza_deuda_temp_cartera')
+                ->select(
+                    'Id',
+                    'Dui',
+                    'Edad',
+                    'Nit',
+                    'PrimerNombre',
+                    'SegundoNombre',
+                    'PrimerApellido',
+                    'SegundoApellido',
+                    'ApellidoCasada',
+                    'FechaNacimiento',
+                    'NumeroReferencia',
+                    'NoValido',
+                    'Perfiles',
+                    'EdadDesembloso',
+                    'FechaOtorgamiento',
+                    'NoValido',
+                    DB::raw("GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
+                    DB::raw('SUM(SaldoCapital) as saldo_cpital'),
+                    DB::raw('SUM(total_saldo) as total_saldo'),
+                    DB::raw('SUM(Intereses) as total_interes'),
+                    DB::raw('SUM(InteresesCovid) as total_covid'),
+                    DB::raw('SUM(InteresesMoratorios) as total_moratorios'),
+                    DB::raw('SUM(MontoNominal) as total_monto_nominal')
+                )
+                ->where(function ($query) use ($buscar) {
+                    $query->whereRaw("CONCAT(PrimerNombre, ' ', IFNULL(SegundoNombre,''), ' ', PrimerApellido, ' ', IFNULL(SegundoApellido,''), ' ', IFNULL(ApellidoCasada,'')) LIKE ?", ['%' . $buscar . '%'])
+                        ->orWhere('Dui', 'like', '%' . $buscar . '%')
+                        ->orWhere('Nit', 'like', '%' . $buscar . '%')
+                        ->orWhere('NumeroReferencia', 'like', '%' . $buscar . '%');
+                })
+                ->where('NoValido', 0)
+                ->where('PolizaDeuda', $poliza)
+                ->groupBy('Dui')
+                ->get();
+        }
+
+
+
+        return view('polizas.deuda.get_creditos', compact('poliza_cumulos', 'opcion'));
     }
 }

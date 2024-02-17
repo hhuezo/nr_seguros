@@ -23,80 +23,6 @@
     </style>
 
 
-    <style>
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 40px;
-            /* Reducido de 60px a 40px */
-            height: 24px;
-            /* Reducido de 34px a 24px */
-        }
-
-        /* Hide default HTML checkbox */
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        /* The slider */
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            -webkit-transition: .4s;
-            transition: .4s;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            /* Reducido de 26px a 18px */
-            width: 18px;
-            /* Reducido de 26px a 18px */
-            left: 3px;
-            /* Ajustado de 4px a 3px para centrar */
-            bottom: 3px;
-            /* Ajustado de 4px a 3px para centrar */
-            background-color: white;
-            -webkit-transition: .4s;
-            transition: .4s;
-        }
-
-        input:checked+.slider {
-            background-color: #2196F3;
-        }
-
-        input:focus+.slider {
-            box-shadow: 0 0 1px #2196F3;
-        }
-
-        input:checked+.slider:before {
-            -webkit-transform: translateX(16px);
-            /* Ajustado acorde al nuevo tamaño */
-            -ms-transform: translateX(16px);
-            /* Ajustado acorde al nuevo tamaño */
-            transform: translateX(16px);
-            /* Ajustado acorde al nuevo tamaño */
-        }
-
-        /* Rounded sliders */
-        .slider.round {
-            border-radius: 24px;
-            /* Ajustado para mantener la proporción */
-        }
-
-        .slider.round:before {
-            border-radius: 50%;
-        }
-    </style>
-
 
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
@@ -275,67 +201,92 @@
                                         </div>
                                         <div role="tabpanel" class="tab-pane fade" id="tab_content2"
                                             aria-labelledby="profile-tab">
-                                            <div align="right">
+                                            <div class="col-md-6 col-sm-12">
+                                                <div class="input-group">
+                                                    <input type="text" id="buscar_no_valido" class="form-control">
+                                                    <span class="input-group-btn">
+                                                        <button type="button" id="btn_no_valido"
+                                                            class="btn btn-primary">Buscar</button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-12" align="right">
                                                 <a href="{{ url('exportar/poliza_cumulo') }}"
                                                     class="btn btn-success">Descargar Excel</a>
                                             </div>
                                             <br>
-                                            <table class="table table-striped" id="MyTable3">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Número crédito</th>
-                                                        <th>DUI</th>
-                                                        <th>NIT</th>
-                                                        <th>Nombre</th>
-                                                        <th>Fecha nacimiento</th>
-                                                        <th>Fecha otorgamiento</th>
-                                                        <th>Edad desembolso</th>
-                                                        <th>Edad actual</th>
-                                                        <th>Saldo</th>
-                                                        <th>Agregar a válidos</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach ($poliza_cumulos->where('NoValido', '=', 1) as $registro)
+                                            <br>
+                                            <div id="creditos_no_validos">
+
+                                                {{-- <table class="table table-striped" id="MyTable3">
+                                                    <thead>
                                                         <tr>
-                                                            <td>{{ $registro->ConcatenatedNumeroReferencia }}</td>
-                                                            <td>{{ $registro->Dui }}</td>
-                                                            <td>{{ $registro->Nit }}</td>
-                                                            <td>{{ $registro->PrimerNombre }}
-                                                                {{ $registro->SegundoNombre }}
-                                                                {{ $registro->PrimerApellido }}
-                                                                {{ $registro->SegundoApellido }}
-                                                                {{ $registro->ApellidoCasada }}
-                                                            </td>
-                                                            <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
-                                                            </td>
-                                                            <td>{{ $registro->FechaOtorgamiento ? $registro->FechaOtorgamiento : '' }}
-                                                            </td>
-                                                            <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
-                                                            <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }}
-                                                                Años</td>
-                                                            <td class="text-right">
-                                                                ${{ number_format($registro->total_saldo, 2) }}
-                                                            </td>
-                                                            <td align="center">
-                                                                <label class="switch">
-                                                                    <input type="checkbox"
-                                                                        onchange="agregarValidos({{ $registro->Id }})">
-                                                                    <span class="slider round"></span>
-                                                                </label>
-                                                            </td>
+                                                            <th>Número crédito</th>
+                                                            <th>DUI</th>
+                                                            <th>NIT</th>
+                                                            <th>Nombre</th>
+                                                            <th>Fecha nacimiento</th>
+                                                            <th>Fecha otorgamiento</th>
+                                                            <th>Edad desembolso</th>
+                                                            <th>Edad actual</th>
+                                                            <th>Saldo</th>
+                                                            <th>Agregar a válidos</th>
                                                         </tr>
-                                                    @endforeach
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach ($poliza_cumulos->where('NoValido', '=', 1) as $registro)
+                                                            <tr>
+                                                                <td>{{ $registro->ConcatenatedNumeroReferencia }}</td>
+                                                                <td>{{ $registro->Dui }}</td>
+                                                                <td>{{ $registro->Nit }}</td>
+                                                                <td>{{ $registro->PrimerNombre }}
+                                                                    {{ $registro->SegundoNombre }}
+                                                                    {{ $registro->PrimerApellido }}
+                                                                    {{ $registro->SegundoApellido }}
+                                                                    {{ $registro->ApellidoCasada }}
+                                                                </td>
+                                                                <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
+                                                                </td>
+                                                                <td>{{ $registro->FechaOtorgamiento ? $registro->FechaOtorgamiento : '' }}
+                                                                </td>
+                                                                <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
+                                                                <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }}
+                                                                    Años</td>
+                                                                <td class="text-right">
+                                                                    ${{ number_format($registro->total_saldo, 2) }}
+                                                                </td>
+                                                                <td align="center">
+                                                                    <button class="btn btn-primary"
+                                                                        onclick="get_creditos({{ $registro->Id }})">
+                                                                        <i class="fa fa-exchange"
+                                                                            data-target="#modal_cambio_credito_valido"
+                                                                            data-toggle="modal"></i>
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
 
 
-                                                </tbody>
-                                            </table>
+                                                    </tbody>
+                                                </table> --}}
+                                            </div>
 
                                         </div>
                                         <div role="tabpanel" class="tab-pane fade" id="tab_content3"
                                             aria-labelledby="profile-tab">
+                                            <div class="col-md-6 col-sm-12">
+                                                <div class="input-group">
+                                                    <input type="text" id="buscar_valido" class="form-control">
+                                                    <span class="input-group-btn">
+                                                        <button type="button" id="btn_valido"
+                                                            class="btn btn-primary">Buscar</button>
+                                                    </span>
+                                                </div>
+                                            </div>
                                             <br>
-                                            <table class="table table-striped" id="MyTable4">
+                                            <div id="creditos_validos">
+                                            </div>
+                                            {{-- <table class="table table-striped" id="MyTable4">
                                                 <thead>
                                                     <tr>
                                                         <th>Número crédito</th>
@@ -386,7 +337,7 @@
 
 
                                                 </tbody>
-                                            </table>
+                                            </table> --}}
 
                                         </div>
                                         <div role="tabpanel" class="tab-pane fade" id="tab_content4"
@@ -441,6 +392,50 @@
                 </div>
             </div>
 
+
+
+
+            <div class="modal fade" id="modal_cambio_credito_valido" tabindex="-1" role="dialog"
+                aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
+                <div class="modal-dialog modal-md" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                                <h5 class="modal-title" id="exampleModalLabel">Cambiar credito a válido</h5>
+                            </div>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="box-body">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="form-group row">
+                                        <label class="control-label col-md-3 col-sm-12 col-xs-12"
+                                            align="right">Seleccione credito</label>
+                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                            <select id="creditos" class="form-control">
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="modal-footer" align="center">
+                            <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+                            <button type="button" onclick="agregarValidos()" class="btn btn-primary">Aceptar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+
             <!-- Agrega este div al final de tu archivo blade -->
             <div id="loading-overlay">
                 <img src="{{ asset('img/ajax-loader.gif') }}" alt="Loading..." />
@@ -457,19 +452,49 @@
             $('#MyTable3').DataTable();
             $('#MyTable4').DataTable();
             $('#MyTable5').DataTable();
+            loadCreditos(1, "");
+            loadCreditos(2, "");
         });
 
+        function get_creditos(id) {
+            $.ajax({
+                url: '{{ url('polizas/deuda/get_referencia_creditos') }}/' + id,
+                type: 'GET',
+                success: function(response) {
+                    // Aquí manejas la respuesta. Por ejemplo, podrías imprimir la respuesta en la consola:
+                    console.log(response);
+                    var _select = ''
+                    for (var i = 0; i < response.length; i++)
+                        _select += '<option value="' + response[i].Id + '"  >' + response[i].NumeroReferencia +
+                        '</option>';
+                    $("#creditos").html(_select);
+                },
+                error: function(error) {
+                    // Aquí manejas el error, si ocurre alguno durante la petición
+                    console.error(error);
+                }
+            });
+        }
+
         function agregarValidos(id) {
+            var id = document.getElementById('creditos').value;
+            var buscar = document.getElementById('buscar_no_valido').value;
+            var id = document.getElementById('creditos').value;
+            console.log(id,' ',buscar,' ',{{ $tipo_cartera }});
             $.ajax({
                 url: '{{ url('polizas/deuda/agregar_valido') }}', // Asegúrate de que esta sintaxis se procese correctamente en tu archivo .blade.php
                 type: 'POST',
                 data: {
                     id: id,
+                    tipo_cartera: '{{ $tipo_cartera }}',
                     _token: '{{ csrf_token() }}' // Necesario para la protección CSRF de Laravel
                 },
                 success: function(response) {
                     // Aquí manejas lo que suceda después de la respuesta exitosa
                     console.log(response);
+                    $('#modal_cambio_credito_valido').modal('hide');
+                    loadCreditos(1, buscar);
+                    loadCreditos(2, buscar);
                 },
                 error: function(xhr, status, error) {
                     // Aquí manejas los errores
@@ -477,5 +502,44 @@
                 }
             });
         }
+
+
+        function loadCreditos(opcion, buscar) {
+            $.ajax({
+                url: '{{ url('polizas/deuda/get_creditos') }}/' + {{ $deuda->Id }},
+                type: 'GET',
+                data: {
+                    buscar: buscar,
+                    opcion: opcion,
+                    tipo_cartera: {{ $tipo_cartera }},
+                },
+                success: function(response) {
+                    // Aquí manejas la respuesta. Por ejemplo, podrías imprimir la respuesta en la consola:
+                    if (opcion == 1) {
+                        $('#creditos_no_validos').html(response);
+                    } else {
+                        $('#creditos_validos').html(response);
+                    }
+
+                },
+                error: function(error) {
+                    // Aquí manejas el error, si ocurre alguno durante la petición
+                    console.error(error);
+                }
+            });
+        }
+
+        $('#btn_valido').on('click', function() {
+            var buscar = document.getElementById('buscar_valido').value;
+
+            loadCreditos(2, buscar);
+            console.log("hola");
+        });
+
+        $('#btn_no_valido').on('click', function() {
+            var buscar = document.getElementById('buscar_no_valido').value;
+
+            loadCreditos(1, buscar);
+        });
     </script>
 @endsection
