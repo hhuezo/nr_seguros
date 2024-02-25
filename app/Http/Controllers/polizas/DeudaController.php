@@ -24,6 +24,7 @@ use App\Models\catalogo\UbicacionCobro;
 use App\Models\polizas\Comentario;
 use App\Models\polizas\Deuda;
 use App\Models\polizas\DeudaCredito;
+use App\Models\polizas\DeudaCreditosValidos;
 use App\Models\polizas\DeudaDetalle;
 use App\Models\polizas\DeudaRequisitos;
 use App\Models\polizas\DeudaVida;
@@ -1801,6 +1802,14 @@ class DeudaController extends Controller
 
         return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date', 'tipo_cartera'));
     }
+
+    public function regresar_edit(Request $request)
+    {
+        // dd($request->deuda_id);
+
+        PolizaDeudaTempCartera::where('PolizaDeuda', $request->deuda_id)->delete();
+        return redirect('polizas/deuda/' . $request->deuda_id . '/edit');
+    }
     public function delete_pago($id)
     {
         $detalle = DeudaDetalle::findOrFail($id);
@@ -1835,6 +1844,12 @@ class DeudaController extends Controller
         $poliza = PolizaDeudaTempCartera::findOrFail($request->id);
         $poliza->NoValido = 0;
         $poliza->update();
+
+        $creditos_validos = new DeudaCreditosValidos();
+        $creditos_validos->NumeroReferencia = $poliza->NumeroReferencia;
+        $creditos_validos->Poliza = $poliza->PolizaDeuda;
+        $creditos_validos->save();
+
 
         $poliza_cumulos = PolizaDeudaTempCartera::selectRaw('Id,Dui,Edad,Nit,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento,
         NumeroReferencia,SUM(SaldoCapital) as saldo_capital,SUM(Intereses) as total_interes,SUM(InteresesCovid) as total_covid,

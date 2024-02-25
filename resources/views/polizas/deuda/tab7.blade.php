@@ -168,7 +168,7 @@
                     } else {
                         document.getElementById('ExtraprimadosMontoOtorgamiento').value = parseFloat(data.MontoNominal).toFixed(2);
                     }
-console.log(document.getElementById('ExtraprimadosMontoOtorgamiento').value);
+                    console.log(document.getElementById('ExtraprimadosMontoOtorgamiento').value);
                 }
             })
             .fail(function() {

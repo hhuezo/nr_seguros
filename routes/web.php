@@ -218,6 +218,7 @@ Route::post('polizas/deuda/store_requisitos', [DeudaController::class, 'store_re
 Route::get('polizas/deuda/get_requisitos', [DeudaController::class, 'get_requisitos']);
 Route::resource('polizas/deuda', DeudaController::class);
 Route::get('exportar/poliza_cumulo',[DeudaController::class,'exportar']);
+Route::post('regresar_edit',[DeudaController::class, 'regresar_edit']);
 
 Route::post('polizas/deuda/agregar_pago', [DeudaController::class, 'agregar_pago']);
 Route::get('polizas/deuda/get_pago/{id}', [DeudaController::class, 'get_pago']);
