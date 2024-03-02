@@ -491,7 +491,7 @@
 
     function loadCreditos(opcion, buscar) {
         $.ajax({
-            url: "{{ url('polizas / deuda / get_creditos ') }}/" + {{$deuda->Id}},
+            url: "{{ url('polizas/deuda/get_creditos ') }}/" + {{$deuda->Id}},
             type: 'GET',
             data: {
                 buscar: buscar,
