@@ -499,19 +499,19 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
-                    <h4 class="modal-title">Cancelar de pago</h4>
+                    <h4 class="modal-title">Cancelar de Cobro</h4>
 
                     <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
                     <input type="hidden" name="MesCancelar" value="{{ isset($fecha) ? $fecha->Mes : '' }}">
                     <input type="hidden" name="AxoCancelar" value="{{ isset($fecha) ? $fecha->Axo : '' }}">
                 </div>
                 <div class="modal-body">
-                    <p>¿Esta seguro/a que desea cancelar el pago?</p>
+                    <p>¿Esta seguro/a que desea cancelar el cobro?</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
                     <button class="btn btn-danger">Cancelar
-                        Pago</button>
+                        Cobro</button>
                 </div>
             </div>
         </form>

@@ -292,6 +292,7 @@
                             <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                                 <label class="control-label" align="center">Linea de crédito</label> <br>
                                 <select name="TipoCartera" id="TipoCartera" class="form-control" required>
+                                    <option value="">Seleccione...</option>
                                     @foreach ($tipoCartera as $obj)
                                     <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
                                     @endforeach
@@ -300,6 +301,7 @@
                             <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                                 <label class="control-label" align="center">Saldos y Montos</label> <br>
                                 <select name="Saldos" id="Saldos" class="form-control" required>
+                                <option value="">Seleccione...</option>
                                     @foreach ($saldos as $obj)
                                     <option value="{{ $obj->Id }}">{{ $obj->Abreviatura }} -
                                         {{ $obj->Descripcion }}
@@ -382,7 +384,7 @@
                                 <div id="edad_otorgamiento" style="display: none;">
                                     <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                                         <label class="control-label" align="center">Edad Desde</label>
-                                        <input type="number" class="form-control" name="EdadDesde" id="EdadDesde" />
+                                        <input type="number" class="form-control" name="EdadDesde" id="EdadDesde" min="18"/>
                                     </div>
                                     <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                                         <label class="control-label" align="center">Edad Hasta</label>
@@ -498,9 +500,10 @@
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="form-group row">
                                                 <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Perfiles</label>
+                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Perfiles médicos</label>
                                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <select name="Perfiles" id="Perfiles" class="form-control">
+                                                    <select name="Perfiles" id="Perfiles" class="form-control" required>
+                                                        <option value="">Seleccione...</option>
                                                         @foreach ($perfil as $obj)
                                                         <option value="{{ $obj->Id }}">
                                                             {{ $obj->Descripcion }}
@@ -514,7 +517,7 @@
                                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad
                                                     inicial</label>
                                                 <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                                    <input class="form-control" id="EdadInicial" value="1" type="text" name="EdadInicial" required>
+                                                    <input class="form-control" id="EdadInicial" value="1" type="text" name="EdadInicial" required min="18">
                                                 </div>
                                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad
                                                     final</label>

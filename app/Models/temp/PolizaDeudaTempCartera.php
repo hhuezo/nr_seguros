@@ -2,6 +2,7 @@
 
 namespace App\Models\temp;
 
+use App\Models\polizas\DeudaCredito;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -54,4 +55,8 @@ class PolizaDeudaTempCartera extends Model
         'FechaOtorgamientoDate',
         'total_saldo'        
     ];
+
+    public function linea_credito(){
+        return $this->belongsTo(DeudaCredito::class,'LineaCredito','Id');
+    }   
 }

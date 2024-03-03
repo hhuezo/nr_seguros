@@ -431,16 +431,21 @@ class DeudaController extends Controller
 
     public function datos_asegurabilidad(Request $request)
     {
-        $asegurabilidad = new DeudaRequisitos();
-        $asegurabilidad->Deuda = $request->Deuda;
-        $asegurabilidad->Perfil = $request->Perfiles;
-        $asegurabilidad->EdadInicial = $request->EdadInicial;
-        $asegurabilidad->EdadFinal = $request->EdadFinal;
-        $asegurabilidad->MontoInicial = $request->MontoInicial;
-        $asegurabilidad->MontoFinal = $request->MontoFinal;
-        $asegurabilidad->save();
+        if ($request->EdadInicial <= 18) {
+            alert()->error('Debe ser mayor a 18 años');
+        } else {
+            $asegurabilidad = new DeudaRequisitos();
+            $asegurabilidad->Deuda = $request->Deuda;
+            $asegurabilidad->Perfil = $request->Perfiles;
+            $asegurabilidad->EdadInicial = $request->EdadInicial;
+            $asegurabilidad->EdadFinal = $request->EdadFinal;
+            $asegurabilidad->MontoInicial = $request->MontoInicial;
+            $asegurabilidad->MontoFinal = $request->MontoFinal;
+            $asegurabilidad->save();
+            alert()->success('El registro de poliza ha sido ingresado correctamente');
+        }
+
         session(['tab' => 3]);
-        alert()->success('El registro de poliza ha sido ingresado correctamente');
         return redirect('polizas/deuda/' . $request->Deuda);
     }
 
@@ -486,26 +491,28 @@ class DeudaController extends Controller
 
     public function agregar_credito(Request $request)
     {
-        $credito = new DeudaCredito();
-        $credito->Deuda = $request->Deuda;
-        $credito->Saldos = $request->Saldos;
-        $credito->FechaDesde = $request->FechaDesde;
-        $credito->FechaHasta = $request->FechaHasta;
-        $credito->MontoDesde = $request->MontoDesde;
-        $credito->MontoHasta = $request->MontoHasta;
-        $credito->EdadDesde = $request->EdadDesde;
-        $credito->EdadHasta = $request->EdadHasta;
-        $credito->TasaFecha = $request->TasaFecha;
-        $credito->TasaMonto = $request->TasaMonto;
-        $credito->TasaEdad = $request->TasaEdad;
-        $credito->TipoCartera = $request->TipoCartera;
-        $credito->Activo = 1;
-        $credito->Usuario = auth()->user()->id;
-        $credito->save();
-
+        if ($request->EdadDesde <= 18 && $request->EdadDesde != null) {
+            alert()->error('Debe de tener ser mayor o igual a 18 años');
+        } else {
+            $credito = new DeudaCredito();
+            $credito->Deuda = $request->Deuda;
+            $credito->Saldos = $request->Saldos;
+            $credito->FechaDesde = $request->FechaDesde;
+            $credito->FechaHasta = $request->FechaHasta;
+            $credito->MontoDesde = $request->MontoDesde;
+            $credito->MontoHasta = $request->MontoHasta;
+            $credito->EdadDesde = $request->EdadDesde;
+            $credito->EdadHasta = $request->EdadHasta;
+            $credito->TasaFecha = $request->TasaFecha;
+            $credito->TasaMonto = $request->TasaMonto;
+            $credito->TasaEdad = $request->TasaEdad;
+            $credito->TipoCartera = $request->TipoCartera;
+            $credito->Activo = 1;
+            $credito->Usuario = auth()->user()->id;
+            $credito->save();
+            alert()->success('El registro de poliza ha sido ingresado correctamente');
+        }
         session(['tab' => 2]);
-
-        alert()->success('El registro de poliza ha sido ingresado correctamente');
         return redirect('polizas/deuda/' . $request->Deuda);
     }
 

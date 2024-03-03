@@ -55,7 +55,7 @@
                 <div class="x_panel">
                     <div class="x_title">
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                            <h2>Resumen de cartera</h2>
+                            <h2>Resumen de cartera {{$nuevos_registros->first()->linea_credito->tipoCarteras->Nombre}}</h2>
                         </div>
                         <div class="col-md-6 col-sm-6 col-xs-12" align="right">
                             <table>
@@ -219,8 +219,8 @@
                                                         <th>Nombre</th>
                                                         <th>Fecha nacimiento</th>
                                                         <th>Fecha otorgamiento</th>
-                                                        <th>Edad desembolso</th>
                                                         <th>Edad actual</th>
+                                                        <th>Edad desembolso</th>
                                                         <th>Saldo</th>
                                                         <th>Agregar a válidos</th>
                                                     </tr>
@@ -387,7 +387,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
-                            <h5 class="modal-title" id="exampleModalLabel">Cambiar credito a válido</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">Excluir crédito no válido</h5>
                         </div>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
@@ -448,7 +448,7 @@
             success: function(response) {
                 // Aquí manejas la respuesta. Por ejemplo, podrías imprimir la respuesta en la consola:
                 console.log(response);
-                var _select = ''
+                var _select = '<option value="">Seleccione ...</option>'
                 for (var i = 0; i < response.length; i++)
                     _select += '<option value="' + response[i].Id + '"  >' + response[i].NumeroReferencia +
                     '</option>';

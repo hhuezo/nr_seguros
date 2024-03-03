@@ -50,7 +50,7 @@ Route::get('/', function () {
 
 Route::get('/', [HomeController::class, 'index']);
 
-Route::get('/public', [HomeController::class, 'redirectToLogin']);
+Route::get('/', [HomeController::class, 'redirectToLogin']);
 
 
 Auth::routes();
