@@ -448,7 +448,7 @@
             success: function(response) {
                 // Aquí manejas la respuesta. Por ejemplo, podrías imprimir la respuesta en la consola:
                 console.log(response);
-                var _select = ''
+                var _select = '<option value=""> Seleccione ... </option>';
                 for (var i = 0; i < response.length; i++)
                     _select += '<option value="' + response[i].Id + '"  >' + response[i].NumeroReferencia +
                     '</option>';
@@ -464,30 +464,29 @@
     function agregarValidos() {
         var id = document.getElementById('creditos').value;
         var buscar = document.getElementById('buscar_no_valido').value;
-        var id = document.getElementById('creditos').value;
         console.log(id, ' ', buscar, ' ', '{{$tipo_cartera}}');
-        if(id != ''){
+        if (id != '') {
             $.ajax({
-            url: "{{ url('polizas/deuda/agregar_valido') }}", // Asegúrate de que esta sintaxis se procese correctamente en tu archivo .blade.php
-            type: 'POST',
-            data: {
-                id: id,
-                tipo_cartera: '{{ $tipo_cartera }}',
-                _token: '{{ csrf_token() }}' // Necesario para la protección CSRF de Laravel
-            },
-            success: function(response) {
-                // Aquí manejas lo que suceda después de la respuesta exitosa
-                console.log(response);
-                $('#modal_cambio_credito_valido').modal('hide');
-                loadCreditos(1, buscar);
-                loadCreditos(2, buscar);
-            },
-            error: function(xhr, status, error) {
-                // Aquí manejas los errores
-                console.error(error);
-            }
-        });
-        }else{
+                url: "{{ url('polizas/deuda/agregar_valido') }}", // Asegúrate de que esta sintaxis se procese correctamente en tu archivo .blade.php
+                type: 'POST',
+                data: {
+                    id: id,
+                    tipo_cartera: '{{ $tipo_cartera }}',
+                    _token: '{{ csrf_token() }}' // Necesario para la protección CSRF de Laravel
+                },
+                success: function(response) {
+                    // Aquí manejas lo que suceda después de la respuesta exitosa
+                    console.log(response);
+                    $('#modal_cambio_credito_valido').modal('hide');
+                    loadCreditos(1, buscar);
+                    loadCreditos(2, buscar);
+                },
+                error: function(xhr, status, error) {
+                    // Aquí manejas los errores
+                    console.error(error);
+                }
+            });
+        } else {
             Swal.fire({
                 title: 'Error!',
                 text: 'Debe de seleccionar el credito',
@@ -495,7 +494,7 @@
                 confirmButtonText: 'Aceptar'
             });
         }
-        
+
     }
 
 
