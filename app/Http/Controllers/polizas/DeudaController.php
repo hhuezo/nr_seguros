@@ -1848,7 +1848,7 @@ class DeudaController extends Controller
 
     public function agregar_valido(Request $request)
     {
-        $poliza = PolizaDeudaTempCartera::where('NumeroReferencia','=',$request->id)->first();
+        $poliza = PolizaDeudaTempCartera::findOrFail($request->id);
         $poliza->NoValido = 0;
         $poliza->update();
 
