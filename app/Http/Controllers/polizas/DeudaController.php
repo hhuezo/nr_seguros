@@ -1852,7 +1852,7 @@ class DeudaController extends Controller
         $poliza->NoValido = 0;
         $poliza->update();
 
-        return $poliza;
+        //return $poliza;
 
         $creditos_validos = new DeudaCreditosValidos();
         $creditos_validos->NumeroReferencia = $poliza->NumeroReferencia;
