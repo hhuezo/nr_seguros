@@ -465,11 +465,7 @@
         var id = document.getElementById('creditos').value;
         var buscar = document.getElementById('buscar_no_valido').value;
         var id = document.getElementById('creditos').value;
-        console.log(id, ' ', buscar, ' ', {
-            {
-                $tipo_cartera
-            }
-        });
+        console.log(id, ' ', buscar, ' ', '{{$tipo_cartera}}');
         $.ajax({
             url: "{{ url('polizas/deuda/agregar_valido') }}", // Asegúrate de que esta sintaxis se procese correctamente en tu archivo .blade.php
             type: 'POST',
@@ -495,20 +491,12 @@
 
     function loadCreditos(opcion, buscar) {
         $.ajax({
-            url: "{{ url('polizas/deuda/get_creditos ') }}/" + {
-                {
-                    $deuda - > Id
-                }
-            },
+            url: "{{ url('polizas/deuda/get_creditos ') }}/" + '{{$deuda->Id}}',
             type: 'GET',
             data: {
                 buscar: buscar,
                 opcion: opcion,
-                tipo_cartera: {
-                    {
-                        $tipo_cartera
-                    }
-                },
+                tipo_cartera: '{{$tipo_cartera}}',
             },
             success: function(response) {
                 // Aquí manejas la respuesta. Por ejemplo, podrías imprimir la respuesta en la consola:
