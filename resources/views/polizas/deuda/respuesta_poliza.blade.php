@@ -55,7 +55,7 @@
                 <div class="x_panel">
                     <div class="x_title">
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                            <h2>Resumen de cartera {{$nuevos_registros->first()->linea_credito->tipoCarteras->Nombre}}</h2>
+                            <h2>Resumen de cartera</h2>
                         </div>
                         <div class="col-md-6 col-sm-6 col-xs-12" align="right">
                             <table>
