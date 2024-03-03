@@ -448,7 +448,7 @@
             success: function(response) {
                 // Aquí manejas la respuesta. Por ejemplo, podrías imprimir la respuesta en la consola:
                 console.log(response);
-                var _select = '<option value="">Seleccione ...</option>'
+                var _select = ''
                 for (var i = 0; i < response.length; i++)
                     _select += '<option value="' + response[i].Id + '"  >' + response[i].NumeroReferencia +
                     '</option>';
