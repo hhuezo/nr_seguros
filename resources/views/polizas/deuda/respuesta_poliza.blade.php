@@ -461,12 +461,13 @@
         });
     }
 
-    function agregarValidos(id) {
+    function agregarValidos() {
         var id = document.getElementById('creditos').value;
         var buscar = document.getElementById('buscar_no_valido').value;
         var id = document.getElementById('creditos').value;
         console.log(id, ' ', buscar, ' ', '{{$tipo_cartera}}');
-        $.ajax({
+        if(id != ''){
+            $.ajax({
             url: "{{ url('polizas/deuda/agregar_valido') }}", // Asegúrate de que esta sintaxis se procese correctamente en tu archivo .blade.php
             type: 'POST',
             data: {
@@ -486,6 +487,15 @@
                 console.error(error);
             }
         });
+        }else{
+            Swal.fire({
+                title: 'Error!',
+                text: 'Debe de seleccionar el credito',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+        
     }
 
 
