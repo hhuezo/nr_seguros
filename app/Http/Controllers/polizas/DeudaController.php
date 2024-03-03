@@ -1855,6 +1855,7 @@ class DeudaController extends Controller
         $creditos_validos = new DeudaCreditosValidos();
         $creditos_validos->NumeroReferencia = $poliza->NumeroReferencia;
         $creditos_validos->Poliza = $poliza->PolizaDeuda;
+        $creditos_validos->Activo = 1;
         $creditos_validos->save();
 
 
