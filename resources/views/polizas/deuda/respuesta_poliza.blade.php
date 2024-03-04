@@ -221,7 +221,7 @@
                                                         <th>Fecha otorgamiento</th>
                                                         <th>Edad actual</th>
                                                         <th>Edad desembolso</th>
-                                                        <th>Saldo holi</th>
+                                                        <th>Saldo</th>
                                                         <th>Agregar a válidos</th>
                                                     </tr>
                                                 </thead>
