@@ -1714,7 +1714,7 @@ class DeudaController extends Controller
         NumeroReferencia,SUM(SaldoCapital) as total_saldo,SUM(Intereses) as total_interes,SUM(InteresesCovid) as total_covid,
         SUM(InteresesMoratorios) as total_moratorios, SUM(MontoNominal) as total_monto_nominal')->groupBy('Dui')->get();
 
-        dd($poliza_cumulos);
+        dd($poliza_cumulos->take(10));
 
         foreach ($poliza_cumulos as $cumulo) {
             switch ($tipo_cartera) {
