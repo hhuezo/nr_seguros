@@ -1705,7 +1705,7 @@ class DeudaController extends Controller
 
         $tipo_cartera = $linea_credito->Saldos;
 
-        dd($tipo_cartera);
+        //dd($tipo_cartera);
 
 
 
@@ -1713,6 +1713,8 @@ class DeudaController extends Controller
         $poliza_cumulos = PolizaDeudaTempCartera::selectRaw('Id,Dui,Edad,Nit,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento,
         NumeroReferencia,SUM(SaldoCapital) as total_saldo,SUM(Intereses) as total_interes,SUM(InteresesCovid) as total_covid,
         SUM(InteresesMoratorios) as total_moratorios, SUM(MontoNominal) as total_monto_nominal')->groupBy('Dui')->get();
+
+        dd($poliza_cumulos);
 
         foreach ($poliza_cumulos as $cumulo) {
             switch ($tipo_cartera) {
