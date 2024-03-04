@@ -834,7 +834,11 @@ class DeudaController extends Controller
         //  dd($detalle);
         return $pdf->stream('Recibos.pdf');
     }
-
+    
+    public function exportar_excel(Request $request)
+    {
+        dd('hombre trabajando');
+    }
 
 
     public function agregar_comentario(Request $request)
@@ -1714,7 +1718,7 @@ class DeudaController extends Controller
         NumeroReferencia,SUM(SaldoCapital) as total_saldo,SUM(Intereses) as total_interes,SUM(InteresesCovid) as total_covid,
         SUM(InteresesMoratorios) as total_moratorios, SUM(MontoNominal) as total_monto_nominal')->groupBy('Dui')->get();
 
-      //  dd($poliza_cumulos->take(10));
+        //  dd($poliza_cumulos->take(10));
 
         foreach ($poliza_cumulos as $cumulo) {
             switch ($tipo_cartera) {
@@ -1746,7 +1750,7 @@ class DeudaController extends Controller
 
             //dd($tipo_cartera, $poliza_cumulos->take(10), $saldo );
         }
-//dd($poliza_cumulos->take(10));
+        //dd($poliza_cumulos->take(10));
 
 
         //consultando la tabla requisitos
@@ -2023,7 +2027,6 @@ class DeudaController extends Controller
 
             $cumulo->total_saldo = $saldo;
             $cumulo->update();
-
         }
 
         return view('polizas.deuda.get_creditos', compact('poliza_cumulos', 'opcion'));

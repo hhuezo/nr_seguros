@@ -27,9 +27,7 @@
         <tbody>
             @foreach ($detalle as $obj)
             <tr>
-                @php
-                $fileUrl = asset($obj->ExcelURL);
-                @endphp
+               
                 <td style="text-align: center;">{{ $deuda->NumeroPoliza }}</td>
                 <td style="text-align: center;">{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
                 <td style="text-align: center;">{{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
@@ -72,7 +70,13 @@
                     <i class="fa fa-pencil fa-lg" onclick="modal_edit({{ $obj->Id }})" title="Actualizar Fechas de Cobro"></i>
                     @endif
                     &nbsp;&nbsp;
-                    <a href="{{ $fileUrl }}" class="fa fa-file-excel-o" align="center" title="Descargar Cartera"></a>&nbsp;&nbsp;
+                    <form action="url('exportar_excel')" method="POST">
+                    @csrf
+                        <input type="hidden" value="{{$deuda->Id}}" name="Deuda">
+                        <input type="hidden" value="{{$obj->Id}}" name="DeudaDetalle">
+                        <button class="fa fa-file-excel-o" align="center" title="Descargar Cartera"></button>&nbsp;&nbsp;
+                    </form>
+                    
                     <i data-target="#modal-view-{{ $obj->Id }}" data-toggle="modal" class="fa fa-eye" align="center" title="Ver Detalles"></i>&nbsp;&nbsp;
                     @if($obj->Activo == 1)
                     <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal" title="Anular Cartera"><i class="fa fa-trash fa-lg"></i></a> &nbsp;&nbsp;

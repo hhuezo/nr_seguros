@@ -87,7 +87,7 @@
                         <td align="center"><button class="btn btn-primary" data-target="#modal-edit-extraprimados-{{ $obj->Id }}" data-toggle="modal">
                                 <i class="fa fa-edit fa-lg"></i>
                             </button>
-                            <a href="" data-target="#modal-delete_extraprima-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
+                            <a href="" data-target="#modal-delete_extraprima-{{ $obj->Id }}" data-toggle="modal" class="btn btn-danger"><i class="fa fa-trash fa-lg"></i></a>
                         </td>
                         <td>{{ $obj->NumeroReferencia }}</td>
                         <td>{{ $obj->Nombre }}</td>

@@ -249,7 +249,7 @@
 
 
                     <div class="form-group has-feedback">
-                        <input type="number" step="any" name="PrimaCalculada" id="PrimaCalculada" class="form-control" style="text-align: right;">
+                        <input type="text" step="any" name="PrimaCalculada" id="PrimaCalculada" class="form-control" style="text-align: right;">
                         <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                     </div>
 
@@ -301,18 +301,8 @@
                         <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                     </div>
                 </div>
-                <input type="hidden" name="Bomberos" id="Bomberos" value="{{ $bomberos }}">
-                <div class="form-group row" style="margin-top:-5%;">
-                    <label class="control-label" align="right">(+) Impuestos
-                        Bomberos</label>
-
-
-                    <div class="form-group has-feedback">
-                        <input type="number" step="any" name="ImpuestoBomberos" id="ImpuestoBomberos" class="form-control" readonly style="text-align: right;">
-                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                    </div>
-
-                </div>
+                <input type="hidden" name="Bomberos" id="Bomberos" value="0">
+             
                 <div class="form-group row" style="margin-top:-5%;">
                     <label class="control-label" align="right">Gastos emisión</label>
 

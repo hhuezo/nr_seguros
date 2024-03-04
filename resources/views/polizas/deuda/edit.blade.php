@@ -347,11 +347,11 @@
 
 
         function calculoSubTotal() {
-            var bomberos = document.getElementById('ImpuestoBomberos').value;
+        
             var primaDescontada = document.getElementById('PrimaDescontada').value;
             var gastos = document.getElementById('GastosEmision').value;
             var otros = document.getElementById('Otros').value;
-            document.getElementById('SubTotal').value = Number(bomberos) + Number(primaDescontada) + Number(
+            document.getElementById('SubTotal').value =  Number(primaDescontada) + Number(
                 gastos) + Number(otros);
             document.getElementById('Iva').value = (document.getElementById('SubTotal').value * 0.13).toFixed(
                 2);
@@ -368,13 +368,8 @@
             }
             document.getElementById('PrimaDescontada').value = (primaTotal - document.getElementById(
                 'Descuento').value).toFixed(2);
-            //  var bomberos = (monto * (0.04 / 12) / 1000); //valor de impuesto varia por gobierno
-            if (document.getElementById('Bomberos').value == 0) {
-                document.getElementById('ImpuestoBomberos').value = 0;
-            } else {
-                document.getElementById('ImpuestoBomberos').value = (document.getElementById('MontoCartera')
-                    .value * ((document.getElementById('Bomberos').value / 100) / 12) / 1000);
-            }
+            
+        
 
         }
 
@@ -419,11 +414,12 @@
             var sub = parseFloat(monto) * parseFloat(tasaFinal);
 
             document.getElementById('PruebaDecimales').value = sub;
-            document.getElementById('PrimaCalculada').value = sub.toLocaleString('sv-SV', {
+            document.getElementById('PrimaCalculada').value = sub.toLocaleString('sv-SE', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
-            }).replace(',', '.').replace(/[^\d,.-]/g, '');
-            document.getElementById('tasaFinal').value = tasaFinal
+            }).replace(',', '.').replace(/[^\d,.-]/g, ''); 
+            console.log(sub.toLocaleString('sv-SE'));
+            document.getElementById('tasaFinal').value = tasaFinal;
 
 
         }
