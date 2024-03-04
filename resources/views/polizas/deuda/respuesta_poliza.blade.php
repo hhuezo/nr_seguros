@@ -221,7 +221,7 @@
                                                         <th>Fecha otorgamiento</th>
                                                         <th>Edad actual</th>
                                                         <th>Edad desembolso</th>
-                                                        <th>Saldo</th>
+                                                        <th>Saldo holi</th>
                                                         <th>Agregar a válidos</th>
                                                     </tr>
                                                 </thead>
@@ -245,7 +245,7 @@
                                                         <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }}
                                                             Años</td>
                                                         <td class="text-right">{{$registro->total_saldo}} holi
-                                                            ${{ number_format($registro->total_saldo, 2) }}
+                                                            ${{ number_format($registro->total_saldo, 2) }} mar
                                                         </td>
                                                         <td align="center">
                                                             <button class="btn btn-primary" onclick="get_creditos({{ $registro->Id }})">
