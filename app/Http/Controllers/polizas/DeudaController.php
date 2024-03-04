@@ -1705,6 +1705,8 @@ class DeudaController extends Controller
 
         $tipo_cartera = $linea_credito->Saldos;
 
+        dd($tipo_cartera);
+
 
 
         //cumulos por dui
