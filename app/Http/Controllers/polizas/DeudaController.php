@@ -1744,9 +1744,9 @@ class DeudaController extends Controller
             $cumulo->total_saldo = $saldo;
             $cumulo->update();
 
-            dd($tipo_cartera, $poliza_cumulos->take(10), $saldo );
+            //dd($tipo_cartera, $poliza_cumulos->take(10), $saldo );
         }
-
+dd($poliza_cumulos->take(10));
 
 
         //consultando la tabla requisitos
