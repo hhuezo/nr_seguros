@@ -1783,6 +1783,8 @@ class DeudaController extends Controller
          GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ", ") AS ConcatenatedNumeroReferencia,SUM(SaldoCapital) as total_saldo,SUM(Intereses) as total_interes,SUM(InteresesCovid) as total_covid,
          SUM(InteresesMoratorios) as total_moratorios, SUM(MontoNominal) as total_monto_nominal')->groupBy('Dui', 'NoValido')->get();
 
+         dd($poliza_cumulos->take(10));
+
         // foreach ($poliza_cumulos as $cumulo) {
         //     switch ($tipo_cartera) {
         //         case '1':
