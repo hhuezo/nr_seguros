@@ -1710,7 +1710,7 @@ class DeudaController extends Controller
 
 
         //cumulos por dui
-        $poliza_cumulos = PolizaDeudaTempCartera::selectRaw('Id,Dui,Edad,Nit,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento,
+        $poliza_cumulos = PolizaDeudaTempCartera::selectRaw('Id,Dui,Edad,Nit,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento,NoValido
         NumeroReferencia,SUM(SaldoCapital) as total_saldo,SUM(Intereses) as total_interes,SUM(InteresesCovid) as total_covid,
         SUM(InteresesMoratorios) as total_moratorios, SUM(MontoNominal) as total_monto_nominal')->groupBy('Dui')->get();
 
@@ -1746,7 +1746,7 @@ class DeudaController extends Controller
 
             //dd($tipo_cartera, $poliza_cumulos->take(10), $saldo );
         }
-dd($poliza_cumulos->take(10));
+//dd($poliza_cumulos->take(10));
 
 
         //consultando la tabla requisitos
