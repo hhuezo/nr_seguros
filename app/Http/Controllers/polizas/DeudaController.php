@@ -1995,6 +1995,34 @@ class DeudaController extends Controller
                 ->get();
         }
 
+        foreach ($poliza_cumulos as $cumulo) {
+            switch ($tipo_cartera) {
+                case '1':
+                    # saldo a capital
+                    $saldo = $cumulo->saldo_capital;
+                    break;
+                case '2':
+
+                    # saldo a capital mas intereses
+                    $saldo =  $cumulo->saldo_capital + $cumulo->total_interes;
+                    break;
+                case '3':
+                    # saldo a capital mas intereses mas covid
+                    $saldo = $cumulo->saldo_capital + $cumulo->total_interes +  $cumulo->total_covid;
+                    break;
+                case '4':
+                    # saldo a capital as intereses mas covid mas moratorios
+                    $saldo = $cumulo->saldo_capital + $cumulo->total_interes +  $cumulo->total_covid +  $cumulo->total_moratorios;
+                    break;
+                default:
+                    # .monto moninal
+                    $saldo = $cumulo->total_monto_nominal;
+                    break;
+            }
+
+            $cumulo->total_saldo = $saldo;
+            $cumulo->update();
+
 
 
         return view('polizas.deuda.get_creditos', compact('poliza_cumulos', 'opcion'));

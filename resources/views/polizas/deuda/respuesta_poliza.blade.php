@@ -204,7 +204,7 @@
                                             </div>
                                         </div>
                                         <div class="col-md-6 col-sm-12" align="right">
-                                            <a href="{{ url('exportar/poliza_cumulo') }}" class="btn btn-success">Descargar Excelente</a>
+                                            <a href="{{ url('exportar/poliza_cumulo') }}" class="btn btn-success">Descargar Excel</a>
                                         </div>
                                         <br>
                                         <br>
