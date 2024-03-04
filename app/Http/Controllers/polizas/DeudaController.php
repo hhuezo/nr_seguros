@@ -667,7 +667,7 @@ class DeudaController extends Controller
                     'InteresesCovid',
                     'InteresesMoratorios',
                     'MontoNominal',
-                )->where('PolizaDeuda', '=', $id)->where('PolizaDeudaDetalle', '=', 0)->orWhere('PolizaDeudaDetalle', '=', null)->groupBy('NumeroReferencia')->take(100)->get();
+                )->where('PolizaDeuda', '=', $id)->where('PolizaDeudaDetalle', '=', 0)->orWhere('PolizaDeudaDetalle', '=', null)->groupBy('NumeroReferencia')->get();
 
             //  dd($clientes->take(20));
 
