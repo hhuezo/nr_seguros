@@ -244,8 +244,8 @@
                                                         <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
                                                         <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }}
                                                             Años</td>
-                                                        <td class="text-right">{{$registro->total_saldo}} holi
-                                                            ${{ number_format($registro->total_saldo, 2) }} mar
+                                                        <td class="text-right">
+                                                            ${{ number_format($registro->total_saldo, 2) }} 
                                                         </td>
                                                         <td align="center">
                                                             <button class="btn btn-primary" onclick="get_creditos({{ $registro->Id }})">
