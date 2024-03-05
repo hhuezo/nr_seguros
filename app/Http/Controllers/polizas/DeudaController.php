@@ -1980,8 +1980,8 @@ class DeudaController extends Controller
                     'FechaOtorgamiento',
                     'NoValido',
                     DB::raw("GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
-                    DB::raw('SUM(SaldoCapital) as saldo_cpital'),
-                    DB::raw('SUM(total_saldo) as total_saldo'),
+                  //  DB::raw('SUM(SaldoCapital) as saldo_cpital'),
+                    DB::raw('SUM(SaldoCapital) as total_saldo'),
                     DB::raw('SUM(Intereses) as total_interes'),
                     DB::raw('SUM(InteresesCovid) as total_covid'),
                     DB::raw('SUM(InteresesMoratorios) as total_moratorios'),
@@ -1998,10 +1998,10 @@ class DeudaController extends Controller
                 ->groupBy('Dui')
                 ->get();
 
-                $poliza_cumulos = PolizaDeudaTempCartera::selectRaw('Id,Dui,Edad,Nit,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento, 
-        NumeroReferencia,NoValido,Perfiles,EdadDesembloso,FechaOtorgamiento,NoValido,
-         GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ", ") AS ConcatenatedNumeroReferencia,SUM(SaldoCapital) as total_saldo,SUM(Intereses) as total_interes,SUM(InteresesCovid) as total_covid,
-         SUM(InteresesMoratorios) as total_moratorios, SUM(MontoNominal) as total_monto_nominal')->groupBy('Dui', 'NoValido')->get();
+        //         $poliza_cumulos = PolizaDeudaTempCartera::selectRaw('Id,Dui,Edad,Nit,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento, 
+        // NumeroReferencia,NoValido,Perfiles,EdadDesembloso,FechaOtorgamiento,NoValido,
+        //  GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ", ") AS ConcatenatedNumeroReferencia,SUM(SaldoCapital) as total_saldo,SUM(Intereses) as total_interes,SUM(InteresesCovid) as total_covid,
+        //  SUM(InteresesMoratorios) as total_moratorios, SUM(MontoNominal) as total_monto_nominal')->groupBy('Dui', 'NoValido')->get();
 
          //   dd($poliza_cumulos->take(10));
         }
