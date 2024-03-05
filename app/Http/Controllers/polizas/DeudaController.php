@@ -1925,7 +1925,38 @@ class DeudaController extends Controller
         $tipo_cartera = $request->tipo_cartera;
        // dd($buscar,$opcion,$tipo_cartera);
         if ($opcion == 1) {
-            $poliza_cumulos = DB::table('poliza_deuda_temp_cartera')
+            if($buscar == ''){
+                $poliza_cumulos = DB::table('poliza_deuda_temp_cartera')
+                ->select(
+                    'Id',
+                    'Dui',
+                    'Edad',
+                    'Nit',
+                    'PrimerNombre',
+                    'SegundoNombre',
+                    'PrimerApellido',
+                    'SegundoApellido',
+                    'ApellidoCasada',
+                    'FechaNacimiento',
+                    'NumeroReferencia',
+                    'NoValido',
+                    'Perfiles',
+                    'EdadDesembloso',
+                    'FechaOtorgamiento',
+                    'NoValido',
+                    DB::raw("GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
+                    DB::raw('SUM(SaldoCapital) as saldo_cpital'),
+                    DB::raw('SUM(total_saldo) as total_saldo'),
+                    DB::raw('SUM(Intereses) as total_interes'),
+                    DB::raw('SUM(InteresesCovid) as total_covid'),
+                    DB::raw('SUM(InteresesMoratorios) as total_moratorios'),
+                    DB::raw('SUM(MontoNominal) as total_monto_nominal')
+                )->where('NoValido', 1)
+                ->where('PolizaDeuda', $poliza)
+                ->groupBy('Dui')
+                ->get();
+            }else{
+                $poliza_cumulos = DB::table('poliza_deuda_temp_cartera')
                 ->select(
                     'Id',
                     'Dui',
@@ -1960,9 +1991,71 @@ class DeudaController extends Controller
                 ->where('NoValido', 1)
                 ->where('PolizaDeuda', $poliza)
                 ->groupBy('Dui')
-                ->toSql();
+                ->get();
+            }
+          
+                foreach ($poliza_cumulos as $cumulo) {
+                    switch ($tipo_cartera) {
+                        case '1':
+                            # saldo a capital
+                            $saldo = $cumulo->saldo_capital;
+                            break;
+                        case '2':
+        
+                            # saldo a capital mas intereses
+                            $saldo =  $cumulo->saldo_capital + $cumulo->total_interes;
+                            break;
+                        case '3':
+                            # saldo a capital mas intereses mas covid
+                            $saldo = $cumulo->saldo_capital + $cumulo->total_interes +  $cumulo->total_covid;
+                            break;
+                        case '4':
+                            # saldo a capital as intereses mas covid mas moratorios
+                            $saldo = $cumulo->saldo_capital + $cumulo->total_interes +  $cumulo->total_covid +  $cumulo->total_moratorios;
+                            break;
+                        default:
+                            # .monto moninal
+                            $saldo = $cumulo->total_monto_nominal;
+                            break;
+                    }
+        
+                    $cumulo->total_saldo = $saldo;
+                    $cumulo->update();
+                }
+        
         } else {
-            $poliza_cumulos = DB::table('poliza_deuda_temp_cartera')
+            if($buscar == ''){
+                $poliza_cumulos = DB::table('poliza_deuda_temp_cartera')
+                ->select(
+                    'Id',
+                    'Dui',
+                    'Edad',
+                    'Nit',
+                    'PrimerNombre',
+                    'SegundoNombre',
+                    'PrimerApellido',
+                    'SegundoApellido',
+                    'ApellidoCasada',
+                    'FechaNacimiento',
+                    'NumeroReferencia',
+                    'NoValido',
+                    'Perfiles',
+                    'EdadDesembloso',
+                    'FechaOtorgamiento',
+                    'NoValido',
+                    DB::raw("GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
+                    DB::raw('SUM(SaldoCapital) as saldo_cpital'),
+                    DB::raw('SUM(total_saldo) as total_saldo'),
+                    DB::raw('SUM(Intereses) as total_interes'),
+                    DB::raw('SUM(InteresesCovid) as total_covid'),
+                    DB::raw('SUM(InteresesMoratorios) as total_moratorios'),
+                    DB::raw('SUM(MontoNominal) as total_monto_nominal')
+                )->where('NoValido', 0)
+                ->where('PolizaDeuda', $poliza)
+                ->groupBy('Dui')
+                ->get();
+            }else{
+                $poliza_cumulos = DB::table('poliza_deuda_temp_cartera')
                 ->select(
                     'Id',
                     'Dui',
@@ -1997,40 +2090,43 @@ class DeudaController extends Controller
                 ->where('NoValido', 0)
                 ->where('PolizaDeuda', $poliza)
                 ->groupBy('Dui')
-                ->toSql();
-        }
-
-        dd($poliza_cumulos);
-
-        foreach ($poliza_cumulos as $cumulo) {
-            switch ($tipo_cartera) {
-                case '1':
-                    # saldo a capital
-                    $saldo = $cumulo->saldo_capital;
-                    break;
-                case '2':
-
-                    # saldo a capital mas intereses
-                    $saldo =  $cumulo->saldo_capital + $cumulo->total_interes;
-                    break;
-                case '3':
-                    # saldo a capital mas intereses mas covid
-                    $saldo = $cumulo->saldo_capital + $cumulo->total_interes +  $cumulo->total_covid;
-                    break;
-                case '4':
-                    # saldo a capital as intereses mas covid mas moratorios
-                    $saldo = $cumulo->saldo_capital + $cumulo->total_interes +  $cumulo->total_covid +  $cumulo->total_moratorios;
-                    break;
-                default:
-                    # .monto moninal
-                    $saldo = $cumulo->total_monto_nominal;
-                    break;
+                ->get();
             }
-
-            $cumulo->total_saldo = $saldo;
-            $cumulo->update();
+           
+                foreach ($poliza_cumulos as $cumulo) {
+                    switch ($tipo_cartera) {
+                        case '1':
+                            # saldo a capital
+                            $saldo = $cumulo->saldo_capital;
+                            break;
+                        case '2':
+        
+                            # saldo a capital mas intereses
+                            $saldo =  $cumulo->saldo_capital + $cumulo->total_interes;
+                            break;
+                        case '3':
+                            # saldo a capital mas intereses mas covid
+                            $saldo = $cumulo->saldo_capital + $cumulo->total_interes +  $cumulo->total_covid;
+                            break;
+                        case '4':
+                            # saldo a capital as intereses mas covid mas moratorios
+                            $saldo = $cumulo->saldo_capital + $cumulo->total_interes +  $cumulo->total_covid +  $cumulo->total_moratorios;
+                            break;
+                        default:
+                            # .monto moninal
+                            $saldo = $cumulo->total_monto_nominal;
+                            break;
+                    }
+        
+                    $cumulo->total_saldo = $saldo;
+                    $cumulo->update();
+                }
+        
         }
 
+        //dd($poliza_cumulos);
+
+        
       //  dd($poliza_cumulos);
 
         return view('polizas.deuda.get_creditos', compact('poliza_cumulos', 'opcion'));
