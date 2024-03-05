@@ -1923,7 +1923,7 @@ class DeudaController extends Controller
         $buscar = $request->buscar;
         $opcion = $request->opcion;
         $tipo_cartera = $request->tipo_cartera;
-
+        dd($buscar,$opcion,$tipo_cartera);
         if ($opcion == 1) {
             $poliza_cumulos = DB::table('poliza_deuda_temp_cartera')
                 ->select(
@@ -2029,7 +2029,7 @@ class DeudaController extends Controller
             $cumulo->update();
         }
 
-        dd($poliza_cumulos);
+       // dd($poliza_cumulos);
 
         return view('polizas.deuda.get_creditos', compact('poliza_cumulos', 'opcion'));
     }
