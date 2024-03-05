@@ -1997,6 +1997,8 @@ class DeudaController extends Controller
                 ->where('PolizaDeuda', $poliza)
                 ->groupBy('Dui')
                 ->get();
+
+            dd($poliza_cumulos->take(10));
         }
 
 
