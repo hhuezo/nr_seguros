@@ -1925,7 +1925,7 @@ class DeudaController extends Controller
         $tipo_cartera = $request->tipo_cartera;
        // dd($buscar,$opcion,$tipo_cartera);
         if ($opcion == 1) {
-            if($buscar == ''){
+            if($buscar == null){
                 $poliza_cumulos = DB::table('poliza_deuda_temp_cartera')
                 ->select(
                     'Id',
@@ -2024,7 +2024,7 @@ class DeudaController extends Controller
                 }
         
         } else {
-            if($buscar == ''){
+            if($buscar == null){
                 $poliza_cumulos = DB::table('poliza_deuda_temp_cartera')
                 ->select(
                     'Id',
