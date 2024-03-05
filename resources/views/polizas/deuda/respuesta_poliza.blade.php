@@ -527,13 +527,13 @@
         var buscar = document.getElementById('buscar_valido').value;
 
         loadCreditos(2, buscar);
-        console.log("hola", buscar);
+        console.log("hola", buscar.toString());
     });
 
     $('#btn_no_valido').on('click', function() {
         var buscar = document.getElementById('buscar_no_valido').value;
 
-        loadCreditos(1, buscar);
+        loadCreditos(1, buscar.toString());
         console.log(buscar);
     });
 </script>
