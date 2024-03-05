@@ -489,7 +489,7 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
-                    <h4 class="modal-title">Cancelar de Cobro</h4>
+                    <h4 class="modal-title">Cancelar Cobro</h4>
 
                     <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
                     <input type="hidden" name="MesCancelar" value="{{ isset($fecha) ? $fecha->Mes : '' }}">
