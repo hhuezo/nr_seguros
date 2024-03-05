@@ -48,7 +48,7 @@
         </tbody>
     </table>
 @else
-    <table class="table table-striped" id="MyTable3">
+    <table class="table table-striped" id="MyTable4">
         <thead>
             <tr>
                 <th>Número crédito</th>

@@ -210,7 +210,7 @@
                                         <br>
                                         <div id="creditos_no_validos">
 
-                                            <table class="table table-striped" id="MyTable3">
+                                            <!-- <table class="table table-striped" id="MyTable3">
                                                 <thead>
                                                     <tr>
                                                         <th>Número crédito</th>
@@ -257,7 +257,7 @@
 
 
                                                 </tbody>
-                                            </table>
+                                            </table> -->
                                         </div>
 
                                     </div>
@@ -273,7 +273,7 @@
                                         <br>
                                         <div id="creditos_validos">
                                         </div>
-                                        <table class="table table-striped" id="MyTable4">
+                                        <!-- <table class="table table-striped" id="MyTable4">
                                             <thead>
                                                 <tr>
                                                     <th>Número crédito</th>
@@ -325,7 +325,7 @@
 
 
                                             </tbody>
-                                        </table>
+                                        </table> -->
 
                                     </div>
                                     <div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="profile-tab">
