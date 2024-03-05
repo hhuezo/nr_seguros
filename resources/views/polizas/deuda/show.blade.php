@@ -517,7 +517,7 @@
                                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad
                                                     inicial</label>
                                                 <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                                    <input class="form-control" id="EdadInicial" value="1" type="text" name="EdadInicial" required min="18">
+                                                    <input class="form-control" id="EdadInicial" value="18" type="text" name="EdadInicial" required min="18">
                                                 </div>
                                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad
                                                     final</label>

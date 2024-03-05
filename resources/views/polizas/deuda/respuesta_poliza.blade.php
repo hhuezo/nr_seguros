@@ -503,7 +503,7 @@
             url: "{{ url('polizas/deuda/get_creditos') }}/" + '{{$deuda->Id}}',
             type: 'GET',
             data: {
-                buscar: buscar,
+                buscar: buscar.toString(),
                 opcion: opcion,
                 tipo_cartera: '{{$tipo_cartera}}',
             },
