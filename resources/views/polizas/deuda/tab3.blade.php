@@ -137,17 +137,7 @@
                     </div>
                 </td>
             </tr>
-            <tr>
-                <td>(+)Impuesto Bomberos</td>
-                <td>
-
-                    <div class="col-md-9 col-sm-9  form-group has-feedback">
-                        <input type="text" class="form-control has-feedback-left" style="text-align: right;" value="@if ($ultimo_pago) {{ number_format($ultimo_pago->ImpuestoBomberos, 2, '.', ',') }} @else 0 @endif" readonly>
-                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                    </div>
-
-                </td>
-            </tr>
+       
             <tr>
                 <td>SubTotal</td>
                 <td>
