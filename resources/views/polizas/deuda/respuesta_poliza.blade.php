@@ -503,7 +503,7 @@
             url: "{{ url('polizas/deuda/get_creditos') }}/" + '{{$deuda->Id}}',
             type: 'GET',
             data: {
-                buscar: buscar.toString(),
+                buscar: buscar,
                 opcion: opcion,
                 tipo_cartera: '{{$tipo_cartera}}',
             },
@@ -527,13 +527,14 @@
         var buscar = document.getElementById('buscar_valido').value;
 
         loadCreditos(2, buscar);
-        console.log("hola");
+        console.log("hola", buscar);
     });
 
     $('#btn_no_valido').on('click', function() {
         var buscar = document.getElementById('buscar_no_valido').value;
 
         loadCreditos(1, buscar);
+        console.log(buscar);
     });
 </script>
 @endsection
