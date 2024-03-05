@@ -1955,6 +1955,8 @@ class DeudaController extends Controller
                 ->where('PolizaDeuda', $poliza)
                 ->groupBy('Dui')
                 ->get();
+                
+                dd($poliza_cumulos);
             }else{
                 $poliza_cumulos = DB::table('poliza_deuda_temp_cartera')
                 ->select(
@@ -2124,7 +2126,6 @@ class DeudaController extends Controller
         
         }
 
-        dd($poliza_cumulos);
 
         
       //  dd($poliza_cumulos);
