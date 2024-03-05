@@ -2124,7 +2124,7 @@ class DeudaController extends Controller
         
         }
 
-        //dd($poliza_cumulos);
+        dd($poliza_cumulos);
 
         
       //  dd($poliza_cumulos);

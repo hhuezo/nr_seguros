@@ -480,6 +480,13 @@
                     $('#modal_cambio_credito_valido').modal('hide');
                     loadCreditos(1, buscar);
                     loadCreditos(2, buscar);
+                    Swal.fire({
+                        title: 'Exito!',
+                        text: 'Se agrego el credito con exito',
+                        icon: 'exito',
+                        confirmButtonText: 'Aceptar'
+                    });
+
                 },
                 error: function(xhr, status, error) {
                     // Aquí manejas los errores
