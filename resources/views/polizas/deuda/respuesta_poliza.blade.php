@@ -245,7 +245,7 @@
                                                         <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }}
                                                             Años</td>
                                                         <td class="text-right">
-                                                            ${{ number_format($registro->total_saldo, 2) }} 
+                                                            ${{ number_format($registro->total_saldo, 2) }}
                                                         </td>
                                                         <td align="center">
                                                             <button class="btn btn-primary" onclick="get_creditos({{ $registro->Id }})">
@@ -503,7 +503,7 @@
             url: "{{ url('polizas/deuda/get_creditos') }}/" + '{{$deuda->Id}}',
             type: 'GET',
             data: {
-                buscar: buscar,
+                buscar: "'" + buscar + "'",
                 opcion: opcion,
                 tipo_cartera: '{{$tipo_cartera}}',
             },
