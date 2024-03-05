@@ -499,6 +499,7 @@
 
 
     function loadCreditos(opcion, buscar) {
+        var buscar = parse_str(buscar);
         $.ajax({
             url: "{{ url('polizas/deuda/get_creditos') }}/" + '{{$deuda->Id}}',
             type: 'GET',
@@ -527,13 +528,13 @@
         var buscar = document.getElementById('buscar_valido').value;
 
         loadCreditos(2, buscar);
-        console.log("hola", buscar.toString());
+        console.log("hola", buscar);
     });
 
     $('#btn_no_valido').on('click', function() {
         var buscar = document.getElementById('buscar_no_valido').value;
 
-        loadCreditos(1, buscar.toString());
+        loadCreditos(1, buscar);
         console.log(buscar);
     });
 </script>

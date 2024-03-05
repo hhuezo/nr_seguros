@@ -2029,6 +2029,8 @@ class DeudaController extends Controller
             $cumulo->update();
         }
 
+        dd($poliza_cumulos);
+
         return view('polizas.deuda.get_creditos', compact('poliza_cumulos', 'opcion'));
     }
 }
