@@ -499,7 +499,6 @@
 
 
     function loadCreditos(opcion, buscar) {
-        var buscar = parse_str(buscar);
         $.ajax({
             url: "{{ url('polizas/deuda/get_creditos') }}/" + '{{$deuda->Id}}',
             type: 'GET',
