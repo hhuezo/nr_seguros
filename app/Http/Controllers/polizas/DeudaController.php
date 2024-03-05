@@ -1960,7 +1960,7 @@ class DeudaController extends Controller
                 ->where('NoValido', 1)
                 ->where('PolizaDeuda', $poliza)
                 ->groupBy('Dui')
-                ->get();
+                ->toSql();
         } else {
             $poliza_cumulos = DB::table('poliza_deuda_temp_cartera')
                 ->select(
@@ -1997,8 +1997,10 @@ class DeudaController extends Controller
                 ->where('NoValido', 0)
                 ->where('PolizaDeuda', $poliza)
                 ->groupBy('Dui')
-                ->get();
+                ->toSql();
         }
+
+        dd($poliza_cumulos);
 
         foreach ($poliza_cumulos as $cumulo) {
             switch ($tipo_cartera) {
@@ -2029,7 +2031,7 @@ class DeudaController extends Controller
             $cumulo->update();
         }
 
-       // dd($poliza_cumulos);
+      //  dd($poliza_cumulos);
 
         return view('polizas.deuda.get_creditos', compact('poliza_cumulos', 'opcion'));
     }
