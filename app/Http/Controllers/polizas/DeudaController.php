@@ -838,8 +838,8 @@ class DeudaController extends Controller
     
     public function exportar_excel(Request $request)
     {
-        $deuda = 18; //$request->Deuda;
-        $detalle = 6; //$request->DeudaDetalle;
+        $deuda = $request->Deuda;
+        $detalle = $request->DeudaDetalle;
         $cartera = PolizaDeudaCartera::where('PolizaDeudaDetalle',$detalle)->where('PolizaDeuda',$deuda)->where('NoValido',0)->get();
 
         return Excel::download(new DeudaExport($cartera), 'Cartera.xlsx');
