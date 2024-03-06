@@ -20,7 +20,7 @@
                     <h2>Poliza de Deuda &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; VIDE - Deuda<small></small>
                     </h2>
                     <ul class="nav navbar-right panel_toolbox">
-                        <a href="{{url('polizas/deuda')}}" class="btn btn-info">Atras</a>
+                        <a href="{{ url('polizas/deuda') }}" class="btn btn-info">Atras</a>
                     </ul>
                     <div class="clearfix"></div>
                 </div>
@@ -170,10 +170,7 @@
             }
 
             // Formatear el número con separador de miles y punto como separador decimal
-            var numeroFormateado = numero.toLocaleString('en-US', {
-                style: 'decimal',
-                maximumFractionDigits: 2
-            });
+            var numeroFormateado = numero.toLocaleString('en-US', { style: 'decimal' });
 
             return numeroFormateado;
         }
@@ -196,6 +193,11 @@
         }
 
         function aplicarpago() {
+
+            document.getElementById('MontoCartera').type = "submit";
+
+
+
             document.getElementById('boton_pago').type = "submit";
         }
         $(document).ready(function() {
@@ -285,23 +287,46 @@
             $('#ValorCCFE').change(function() {
                 var ccfe = document.getElementById('ValorCCFE').value
                 document.getElementById('ValorCCF').value = Number(ccfe);
+                var formattedSub = formatearNumero(Number(ccfe));
+                document.getElementById('ValorCCFView').value = formattedSub;
+
+
+
                 var PrimaTotal = document.getElementById('SubTotal').value;
                 var iva = document.getElementById('Iva').value;
                 var APagar = Number(PrimaTotal) - Number(ccfe) + Number(iva);
                 document.getElementById('APagar').value = APagar.toFixed(2);
+                formattedSub = formatearNumero(Number(APagar.toFixed(2)));
+                document.getElementById('APagarView').value = formattedSub;
+
                 document.getElementById('APagar').style.backgroundColor = 'yellow';
+                document.getElementById('APagarView').style.backgroundColor = 'yellow';
+
                 document.getElementById('Facturar').value = (Number(PrimaTotal) + Number(iva)).toFixed(2);
+                formattedSub = formatearNumero((Number(PrimaTotal) + Number(iva)).toFixed(2));
+                document.getElementById('FacturarView').value = formattedSub;
             })
 
             $('#ValorCCF').change(function() {
                 var ccf = document.getElementById('ValorCCF').value
                 document.getElementById('ValorCCFE').value = Number(ccf);
+                var formattedSub = formatearNumero(Number(ccf));
+                document.getElementById('ValorCCFEView').value = formattedSub;
+
+
                 var PrimaTotal = document.getElementById('SubTotal').value;
                 var iva = document.getElementById('Iva').value;
                 var APagar = Number(PrimaTotal) - Number(ccf) + Number(iva);
                 document.getElementById('APagar').value = APagar.toFixed(2);
                 document.getElementById('APagar').style.backgroundColor = 'yellow';
+                var formattedSub = formatearNumero(APagar.toFixed(2));
+                document.getElementById('APagarView').value = formattedSub;
+                document.getElementById('APagarView').style.backgroundColor = 'yellow';
+
+
                 document.getElementById('Facturar').value = (Number(PrimaTotal) + Number(iva)).toFixed(2);
+                formattedSub = formatearNumero((Number(PrimaTotal) + Number(iva)).toFixed(2));
+                document.getElementById('FacturarView').value = formattedSub;
             })
 
 
@@ -322,55 +347,80 @@
                 //  alert('si');
                 var IvaSobreComision = Number(valorDes) * 0.13;
                 document.getElementById('IvaSobreComision').value = Number(IvaSobreComision).toFixed(2);
+                var formattedSub = formatearNumero(Number(IvaSobreComision).toFixed(2));
+                document.getElementById('IvaSobreComisionView').value = formattedSub;
             } else {
                 // alert('no');
                 var IvaSobreComision = 0;
                 document.getElementById('IvaSobreComision').value = 0;
+                document.getElementById('IvaSobreComisionView').value = 0;
             }
             if (document.getElementById('Retencion').hasAttribute('readonly')) {
                 var Retencion = 0;
+                document.getElementById('RetencionView').value = 0;
             } else {
                 var Retencion = valorDes * 0.01;
                 document.getElementById('Retencion').value = Retencion;
+                var formattedSub = formatearNumero(Number(Retencion));
+                document.getElementById('RetencionView').value = formattedSub;
             }
             var ValorCCF = Number(valorDes) + Number(IvaSobreComision) - Number(Retencion);
             // alert(ValorCCF);
             document.getElementById('ValorCCFE').value = Number(ValorCCF).toFixed(2);
+            var formattedSub = formatearNumero(Number(ValorCCF).toFixed(2));
+            document.getElementById('ValorCCFEView').value = formattedSub;
+
             document.getElementById('ValorCCF').value = Number(ValorCCF).toFixed(2);
+            formattedSub = formatearNumero(Number(ValorCCF));
+            document.getElementById('ValorCCFView').value = formattedSub;
+
             var PrimaTotal = document.getElementById('SubTotal').value;
             var iva = document.getElementById('Iva').value;
             var APagar = Number(PrimaTotal) - Number(ValorCCF) + Number(iva);
+
+
             document.getElementById('APagar').value = APagar.toFixed(2);
+            formattedSub = formatearNumero(Number(APagar.toFixed(2)));
+            document.getElementById('APagarView').value = formattedSub;
+
             document.getElementById('Facturar').value = (Number(PrimaTotal) + Number(iva)).toFixed(2);
+            formattedSub = formatearNumero((Number(PrimaTotal) + Number(iva)).toFixed(2));
+            document.getElementById('FacturarView').value = formattedSub;
 
         }
 
 
         function calculoSubTotal() {
-        
+
             var primaDescontada = document.getElementById('PrimaDescontada').value;
             var gastos = document.getElementById('GastosEmision').value;
             var otros = document.getElementById('Otros').value;
-            document.getElementById('SubTotal').value =  Number(primaDescontada) + Number(
-                gastos) + Number(otros);
-            document.getElementById('Iva').value = (document.getElementById('SubTotal').value * 0.13).toFixed(
-                2);
+            document.getElementById('SubTotal').value = Number(primaDescontada) + Number(gastos) + Number(otros);
+            document.getElementById('Iva').value = (document.getElementById('SubTotal').value * 0.13).toFixed(2);
+
+            var formattedSub = formatearNumero(Number(primaDescontada) + Number(gastos) + Number(otros));
+            document.getElementById('SubTotalView').value = formattedSub;
+
+
+            formattedSub = formatearNumero((document.getElementById('SubTotal').value * 0.13));
+            document.getElementById('IvaView').value = formattedSub;
+
         }
 
 
         function calculoDescuento() {
             var tasa = document.getElementById('TasaDescuento').value;
             var primaTotal = document.getElementById('PrimaTotal').value;
+
             if (tasa < 0) {
                 document.getElementById('Descuento').value = (tasa * primaTotal).toFixed(2);
             } else {
                 document.getElementById('Descuento').value = ((tasa / 100) * primaTotal).toFixed(2);
             }
-            document.getElementById('PrimaDescontada').value = (primaTotal - document.getElementById(
-                'Descuento').value).toFixed(2);
-            
-        
+            document.getElementById('PrimaDescontada').value = (primaTotal - document.getElementById('Descuento').value).toFixed(2);
 
+            var formattedSub = formatearNumero((primaTotal - document.getElementById('Descuento').value));
+            document.getElementById('PrimaDescontadaView').value = formattedSub;
         }
 
         function calculoPrimaTotal() {
@@ -378,6 +428,10 @@
             var extra = document.getElementById('ExtPrima').value;
             var prima = Number(sub) + Number(extra);
             document.getElementById('PrimaTotal').value = Number(prima);
+
+            var formattedSub = formatearNumero(Number(prima));
+            // Establecer el valor formateado en el elemento
+            document.getElementById('PrimaTotalView').value = formattedSub;
         }
 
         function calculoPrimaCalculada() {
@@ -417,9 +471,14 @@
             document.getElementById('PrimaCalculada').value = sub.toLocaleString('sv-SE', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
-            }).replace(',', '.').replace(/[^\d,.-]/g, ''); 
+            }).replace(',', '.').replace(/[^\d,.-]/g, '');
             console.log(sub.toLocaleString('sv-SE'));
             document.getElementById('tasaFinal').value = tasaFinal;
+
+            var formattedSub = formatearNumero(sub);
+
+            // Establecer el valor formateado en el elemento
+            document.getElementById('PrimaCalculadaView').value = formattedSub;
 
 
         }
