@@ -70,7 +70,7 @@
                     <i class="fa fa-pencil fa-lg" onclick="modal_edit({{ $obj->Id }})" title="Actualizar Fechas de Cobro"></i>
                     @endif
                     &nbsp;&nbsp;
-                    <form action="url('exportar_excel')" method="POST">
+                    <form action="{{url('exportar_excel')}}" method="POST">
                     @csrf
                         <input type="hidden" value="{{$deuda->Id}}" name="Deuda">
                         <input type="hidden" value="{{$obj->Id}}" name="DeudaDetalle">
