@@ -84,7 +84,7 @@
                                 <div role="tabpanel" class="tab-pane fade {{ $tab == 3 ? ' active in' : '' }}" id="tab_content3" aria-labelledby="creditos-tab">
                                     @include('polizas.deuda.tab3')
                                 </div>
-                                <div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="pagos-tab">
+                                <div role="tabpanel" class="tab-pane fade {{ $tab == 4 ? ' active in' : '' }}" id="tab_content4" aria-labelledby="pagos-tab">
                                     @include('polizas.deuda.tab4')
                                 </div>
                                 <div role="tabpanel" class="tab-pane fade" id="tab_content5" aria-labelledby="avisos-tab">
