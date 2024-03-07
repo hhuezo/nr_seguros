@@ -1506,7 +1506,7 @@ class DeudaController extends Controller
 
         $deuda_credito = DeudaCredito::findOrFail($request->get('LineaCredito'));
 
-        $nombre_cartera = $deuda_credito->tipoCarteras->Nombre .' '. $deuda_credito->saldos->Abreviatura;
+        $nombre_cartera = $deuda_credito->tipoCarteras->Nombre .' '. $deuda_credito->saldos->Abreviatura. ' '. $deuda_credito->saldos->Descripcion;
 
         $date_submes = Carbon::create($request->Axo, $request->Mes, "01");
         $date = Carbon::create($request->Axo, $request->Mes, "01");
