@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\polizas;
 
 use App\Exports\CreditosNoValidoExport;
+use App\Exports\DeudaExport;
 use App\Http\Controllers\Controller;
 use App\Imports\PolizaDeudaTempCarteraImport;
 use App\Models\catalogo\Aseguradora;
@@ -837,7 +838,12 @@ class DeudaController extends Controller
 
     public function exportar_excel(Request $request)
     {
-        dd('hombre trabajando');
+        $deuda = $request->Deuda;
+        $detalle = $request->DeudaDetalle;
+        $cartera = PolizaDeudaCartera::where('PolizaDeudaDetalle',$detalle)->where('PolizaDeuda',$deuda)->where('NoValido',0)->get();
+
+        return Excel::download(new DeudaExport($cartera), 'Cartera.xlsx');
+      //  dd($cartera->take(25),$request->Deuda,$request->DeudaDetalle);
     }
 
 
