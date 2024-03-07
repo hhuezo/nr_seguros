@@ -37,9 +37,9 @@
                     <td class="text-right">
                         ${{ number_format($registro->total_saldo, 2) }}
                     </td>
-                    <td align="center">
-                        <button class="btn btn-primary" onclick="get_creditos({{ $registro->Id }})">
-                            <i class="fa fa-exchange" data-target="#modal_cambio_credito_valido" data-toggle="modal"></i>
+                    <td align="center" data-target="#modal_cambio_credito_valido" data-toggle="modal" onclick="get_creditos({{ $registro->Id }})">
+                        <button  class="btn btn-primary" >
+                            <i class="fa fa-exchange" ></i>
                         </button>
                     </td>
                 </tr>
