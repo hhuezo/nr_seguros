@@ -1940,6 +1940,7 @@ class DeudaController extends Controller
         $buscar = $request->buscar;
         $opcion = $request->opcion;
         $tipo_cartera = $request->tipo_cartera;
+
         if ($opcion == 1) {
             $poliza_cumulos = DB::table('poliza_deuda_temp_cartera')
                 ->select(
@@ -1960,7 +1961,7 @@ class DeudaController extends Controller
                     'FechaOtorgamiento',
                     'NoValido',
                     DB::raw("GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
-                    DB::raw('SUM(SaldoCapital) as saldo_cpital'),
+                    DB::raw('SUM(SaldoCapital) as saldo_capital'),
                     DB::raw('SUM(total_saldo) as total_saldo'),
                     DB::raw('SUM(Intereses) as total_interes'),
                     DB::raw('SUM(InteresesCovid) as total_covid'),
@@ -1998,7 +1999,7 @@ class DeudaController extends Controller
                     'NoValido',
                     DB::raw("GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
                   //  DB::raw('SUM(SaldoCapital) as saldo_cpital'),
-                    DB::raw('SUM(SaldoCapital) as total_saldo'),
+                    DB::raw('SUM(SaldoCapital) as saldo_capital'),
                     DB::raw('SUM(Intereses) as total_interes'),
                     DB::raw('SUM(InteresesCovid) as total_covid'),
                     DB::raw('SUM(InteresesMoratorios) as total_moratorios'),
@@ -2016,6 +2017,36 @@ class DeudaController extends Controller
                 ->get();
 
 
+        }
+        //dd($poliza_cumulos);
+
+        foreach ($poliza_cumulos as $cumulo) {
+            switch ($tipo_cartera) {
+                case '1':
+                    # saldo a capital
+                    $saldo = $cumulo->saldo_capital;
+                    break;
+                case '2':
+
+                    # saldo a capital mas intereses
+                    $saldo =  $cumulo->saldo_capital + $cumulo->total_interes;
+                    break;
+                case '3':
+                    # saldo a capital mas intereses mas covid
+                    $saldo = $cumulo->saldo_capital + $cumulo->total_interes +  $cumulo->total_covid;
+                    break;
+                case '4':
+                    # saldo a capital as intereses mas covid mas moratorios
+                    $saldo = $cumulo->saldo_capital + $cumulo->total_interes +  $cumulo->total_covid +  $cumulo->total_moratorios;
+                    break;
+                default:
+                    # .monto moninal
+                    $saldo = $cumulo->total_monto_nominal;
+                    break;
+            }
+
+            $cumulo->saldo_capital = $saldo;
+            //$cumulo->update();
         }
 
 
