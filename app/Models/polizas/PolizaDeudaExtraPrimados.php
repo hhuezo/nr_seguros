@@ -46,7 +46,7 @@ class PolizaDeudaExtraPrimados extends Model
                 ->where(function ($query) {
                     $query->where('PolizaDeudaDetalle', '=', 0)
                         ->orWhere('PolizaDeudaDetalle', '=', null);
-                })->first();
+                })->where('PolizaDeuda','=',$extraprimado->PolizaDeuda)->first();
 
 
 
