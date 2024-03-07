@@ -81,7 +81,7 @@
                                     id="tab_content7" aria-labelledby="extra-prima-tab">
                                     @include('polizas.deuda.tab7')
                                 </div>
-                                <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="creditos-tab">
+                                <div role="tabpanel" class="tab-pane fade {{ $tab == 3 ? ' active in' : '' }}" id="tab_content3" aria-labelledby="creditos-tab">
                                     @include('polizas.deuda.tab3')
                                 </div>
                                 <div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="pagos-tab">
