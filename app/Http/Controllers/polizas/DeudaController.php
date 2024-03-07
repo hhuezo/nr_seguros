@@ -623,7 +623,7 @@ class DeudaController extends Controller
 
 
 
-            //tab 7 
+            //tab 7
             $extraprimados = PolizaDeudaExtraPrimados::where('PolizaDeuda', $id)->get();
             $total_extrapima = 0;
             foreach ($extraprimados as $extraprimado) {
@@ -834,7 +834,7 @@ class DeudaController extends Controller
         //  dd($detalle);
         return $pdf->stream('Recibos.pdf');
     }
-    
+
     public function exportar_excel(Request $request)
     {
         dd('hombre trabajando');
@@ -1498,6 +1498,10 @@ class DeudaController extends Controller
 
         $credito = $request->get('LineaCredito');
 
+        $deuda_credito = DeudaCredito::findOrFail($request->get('LineaCredito'));
+
+        $nombre_cartera = $deuda_credito->tipoCarteras->Nombre .' '. $deuda_credito->saldos->Abreviatura;
+
         $date_submes = Carbon::create($request->Axo, $request->Mes, "01");
         $date = Carbon::create($request->Axo, $request->Mes, "01");
         $date_mes = $date_submes->subMonth();
@@ -1782,7 +1786,7 @@ class DeudaController extends Controller
 
 
 
-        $poliza_cumulos = PolizaDeudaTempCartera::selectRaw('Id,Dui,Edad,Nit,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento, 
+        $poliza_cumulos = PolizaDeudaTempCartera::selectRaw('Id,Dui,Edad,Nit,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento,
         NumeroReferencia,NoValido,Perfiles,EdadDesembloso,FechaOtorgamiento,NoValido,
          GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ", ") AS ConcatenatedNumeroReferencia,SUM(SaldoCapital) as total_saldo,SUM(Intereses) as total_interes,SUM(InteresesCovid) as total_covid,
          SUM(InteresesMoratorios) as total_moratorios, SUM(MontoNominal) as total_monto_nominal')->groupBy('Dui', 'NoValido')->get();
@@ -1819,7 +1823,7 @@ class DeudaController extends Controller
 
 
 
-        return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date', 'tipo_cartera'));
+        return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date', 'tipo_cartera','nombre_cartera'));
     }
 
     public function regresar_edit(Request $request)
@@ -1998,7 +2002,7 @@ class DeudaController extends Controller
                 ->groupBy('Dui')
                 ->get();
 
-      
+
         }
 
 
