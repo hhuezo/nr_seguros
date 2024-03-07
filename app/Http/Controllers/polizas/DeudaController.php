@@ -2045,7 +2045,7 @@ class DeudaController extends Controller
                     break;
             }
 
-            $cumulo->saldo_capital = $saldo;
+            $cumulo->total_saldo = $saldo;
             //$cumulo->update();
         }
 
