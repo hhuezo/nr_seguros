@@ -1785,11 +1785,18 @@ class DeudaController extends Controller
             ->update(['NoValido' => 1]);
 
 
+        //poniendo valido los creditos guardados en DeudaCreditosValidos
+        $creditos_validos_array = DeudaCreditosValidos::where('Poliza',$deuda->Id)->pluck('NumeroReferencia')->toArray();
+        PolizaDeudaTempCartera::whereIn('NumeroReferencia',$creditos_validos_array)->update(["NoValido"=>0]);
+
+
 
         $poliza_cumulos = PolizaDeudaTempCartera::selectRaw('Id,Dui,Edad,Nit,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento,
         NumeroReferencia,NoValido,Perfiles,EdadDesembloso,FechaOtorgamiento,NoValido,
          GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ", ") AS ConcatenatedNumeroReferencia,SUM(SaldoCapital) as total_saldo,SUM(Intereses) as total_interes,SUM(InteresesCovid) as total_covid,
          SUM(InteresesMoratorios) as total_moratorios, SUM(MontoNominal) as total_monto_nominal')->groupBy('Dui', 'NoValido')->get();
+
+        
 
         // dd($poliza_cumulos->where('NoValido','=',1)->take(10));
 
