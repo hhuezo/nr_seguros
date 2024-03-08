@@ -172,7 +172,7 @@
             // Formatear el número con separador de miles y punto como separador decimal
             var numeroFormateado = numero.toLocaleString('en-US', { style: 'decimal' });
 
-            return numeroFormateado;
+            return numeroFormateado.toFixed(2);
         }
 
         function add_comment() {

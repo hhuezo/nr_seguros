@@ -495,7 +495,7 @@
                         <div class="form-group has-feedback">
                             <input class="form-control" id="ValorCCFEView" onblur="updateCantidad(this.value,'ValorCCFE')" type="text" style="text-align: right;">
                             <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                            <input class="form-control " id="ValorCCFE" type="number" step="any" style="text-align: right;">
+                            <input class="form-control" id="ValorCCFE" type="number" step="any" style="text-align: right;">
                         </div>
 
                     </div>
