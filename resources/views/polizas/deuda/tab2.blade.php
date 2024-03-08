@@ -577,7 +577,7 @@
         input.value = input.value.replace(/[^\d.,]/g, '');
 
         // Verificar si hay más de un punto decimal y corregirlo
-        if (input.value.split('.').length > 2) {
+        if (input.value.split('.').length > 1) {
             input.value = input.value.replace(/\.+$/, '');
         }
     }
