@@ -285,7 +285,7 @@
                 document.getElementById('APagar').style.backgroundColor = 'yellow';
             })
             $('#ValorCCFE').change(function() {
-                var ccfe = document.getElementById('ValorCCFE').value
+                var ccfe = (document.getElementById('ValorCCFE').value).toFixed(2);
                 document.getElementById('ValorCCF').value = Number(ccfe);
                 var formattedSub = formatearNumero(Number(ccfe));
                 document.getElementById('ValorCCFView').value = formattedSub;
@@ -308,14 +308,14 @@
             })
 
             $('#ValorCCF').change(function() {
-                var ccf = document.getElementById('ValorCCF').value
+                var ccf = (document.getElementById('ValorCCF').value).toFixed(2);
                 document.getElementById('ValorCCFE').value = Number(ccf);
                 var formattedSub = formatearNumero(Number(ccf));
                 document.getElementById('ValorCCFEView').value = formattedSub;
 
 
                 var PrimaTotal = document.getElementById('SubTotal').value;
-                var iva = document.getElementById('Iva').value;
+                var iva = (document.getElementById('Iva').value).toFixed(2);
                 var APagar = Number(PrimaTotal) - Number(ccf) + Number(iva);
                 document.getElementById('APagar').value = APagar.toFixed(2);
                 document.getElementById('APagar').style.backgroundColor = 'yellow';
@@ -337,8 +337,8 @@
 
 
         function calculoCCF() {
-            var comision = document.getElementById('TasaComision').value;
-            var total = document.getElementById('PrimaDescontada').value;
+            var comision = (document.getElementById('TasaComision').value).toFixed(2);
+            var total = (document.getElementById('PrimaDescontada').value).toFixed(2);
             var valorDes = total * (comision / 100);
             document.getElementById('Comision').value = Number(valorDes).toFixed(2);
 
