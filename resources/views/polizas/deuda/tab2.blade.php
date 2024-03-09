@@ -273,10 +273,10 @@
 
                         <div class="form-group has-feedback">
                             
-                            <input type="text" id="PrimaCalculadaView" onblur="updateCantidad(this.value,'PrimaCalculada')" class="form-control" style="text-align: right;">
+                            <input type="text" id="PrimaCalculadaView" onblur="updateCantidad(this.value,'PrimaCalculada')" oninput="validateInput(this)" class="form-control" style="text-align: right;">
                             <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                            <input type="number" step="any" name="PrimaCalculada" id="PrimaCalculada"
-                                class="form-control" style="text-align: right; " >
+                            <input type="hidden" step="any" name="PrimaCalculada" id="PrimaCalculada"
+                                class="form-control" style="text-align: right;">
                         </div>
 
                     </div>
@@ -284,9 +284,9 @@
                         <label class="control-label " align="right">Extra Prima</label>
 
                         <div class="form-group has-feedback">
-                             <input class="form-control" type="text" id="ExtPrimaView" onblur="updateCantidad(this.value,'ExtPrima')" style="text-align: right;" value="{{ number_format($total_extrapima, 2, '.', ',') }}">
+                             <input class="form-control" type="text" id="ExtPrimaView" onblur="updateCantidad(this.value,'ExtPrima')"  oninput="validateInput(this)" style="text-align: right;" value="{{ number_format($total_extrapima, 2, '.', ',') }}">
                             <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                            <input class="form-control ocultar" name="ExtraPrima" type="number" step="any" id="ExtPrima" style="text-align: right;" value="{{ $total_extrapima }}">
+                            <input class="form-control" name="ExtraPrima" type="hidden" step="any" id="ExtPrima" style="text-align: right;" value="{{ $total_extrapima }}">
                            
                         </div>
 
@@ -297,9 +297,9 @@
                             Prima Total</label>
                         <div class="form-group has-feedback">
                             
-                                <input class="form-control"  type="text" id="PrimaTotalView" onblur="updateCantidad(this.value,'PrimaTotal')" style="text-align: right;">
+                                <input class="form-control"  type="text" id="PrimaTotalView" onblur="updateCantidad(this.value,'PrimaTotal')" oninput="validateInput(this)" style="text-align: right;">
                             <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                            <input class="form-control" name="PrimaTotal" type="number" step="any" id="PrimaTotal" style="text-align: right;">
+                            <input class="form-control" name="PrimaTotal" type="hidden" step="any" id="PrimaTotal" style="text-align: right;">
                         </div>
                     </div>
 
@@ -307,8 +307,7 @@
                         <label class="control-label" align="right">Tasa de Descuento %</label>
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                             <div class="form-group has-feedback">
-                                <input class="form-control" name="TasaDescuento" type="number" step="any"
-                                    id="TasaDescuento" style="padding-left: 25%;"
+                                <input class="form-control" name="TasaDescuento" type="number" step="any"  id="TasaDescuento" style="padding-left: 25%;"
                                     value="{{ $deuda->TasaDescuento }}" readonly>
                                 <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
                             </div>
@@ -319,13 +318,10 @@
                             Rentabilidad {{ $deuda->TasaDescuento }} %</label>
 
 
-                        <div class="form-group has-feedback">
-                            
-                            <input class="form-control"  type="text" step="any" id="DescuentoView" style="text-align: right;">
+                        <div class="form-group has-feedback">                            
+                            <input class="form-control"  type="hidden" step="any" id="DescuentoView" onblur="updateCantidad(this.value,'Descuento')" oninput="validateInput(this)" style="text-align: right;">
                             <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-
-
-                            <input class="form-control" name="Descuento" type="number" step="any" id="Descuento" style="text-align: right;">
+                            <input class="form-control" name="Descuento" type="number"  id="Descuento" style="text-align: right;">
                         </div>
 
                     </div>
@@ -335,7 +331,7 @@
                         <div class="form-group has-feedback">
                             <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                             <input class="form-control" type="text" id="PrimaDescontadaView" onblur="updateCantidad(this.value,'PrimaDescontada')" style="text-align: right;">
-                            <input class="form-control" name="PrimaDescontada" type="number" step="any" id="PrimaDescontada" style="text-align: right;">
+                            <input class="form-control" name="PrimaDescontada" type="hidden" step="any" id="PrimaDescontada" style="text-align: right;">
                             
                         </div>
                     </div>
@@ -348,7 +344,7 @@
                         <div class="form-group has-feedback">                            
                             <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                             <input type="text" step="any"  id="GastosEmisionView" onblur="updateCantidad(this.value,'GastosEmision')" value="0" class="form-control" style="text-align: right;">
-                            <input type="number" step="any" name="GastosEmision" id="GastosEmision"
+                            <input type="hidden" step="any" name="GastosEmision" id="GastosEmision"
                             value="0" class="form-control" style="text-align: right;">
                         </div>
                     </div>
@@ -359,7 +355,7 @@
                         <div class="form-group has-feedback">                           
                             <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                             <input type="text"  id="OtrosView" onblur="updateCantidad(this.value,'Otros')" value="0" class="form-control" style="text-align: right;">
-                            <input type="number" step="any" name="Otros" id="Otros" value="0" class="form-control " style="text-align: right;">
+                            <input type="hidden" step="any" name="Otros" id="Otros" value="0" class="form-control" style="text-align: right;">
                         </div>
                     </div>
                     <div class="form-group row" style="margin-top:-5%;">
@@ -367,7 +363,7 @@
                         <div class="form-group has-feedback">
                             <input type="text"   id="SubTotalView" onblur="updateCantidad(this.value,'SubTotal')" class="form-control" style="text-align: right;">
                             <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                            <input type="number" step="any" name="SubTotal" id="SubTotal" class="form-control" style="text-align: right;">
+                            <input type="hidden" step="any" name="SubTotal" id="SubTotal" class="form-control" style="text-align: right;">
                         </div>
                     </div>
                     <div class="form-group row" style="margin-top:-5%;">
@@ -375,7 +371,7 @@
                         <div class="form-group has-feedback">
                             <input type="text" id="IvaView" onblur="updateCantidad(this.value,'Iva')" class="form-control" style="text-align: right;">
                             <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                            <input type="number" step="any" name="Iva" id="Iva" class="form-control " style="text-align: right;">
+                            <input type="hidden" step="any" name="Iva" id="Iva" class="form-control" style="text-align: right;">
                         </div>
                     </div>
 
@@ -389,7 +385,7 @@
                             <input type="text" id="ValorCCFView" onblur="updateCantidad(this.value,'ValorCCF')" class="form-control" style="text-align: right;">
                             <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
 
-                            <input type="number" step="any" name="ValorCCF" id="ValorCCF" class="form-control " style="text-align: right;">
+                            <input type="hidden" step="any" name="ValorCCF" id="ValorCCF" class="form-control" style="text-align: right;">
                         </div>
                         <!-- <a href="" data-target="#modal-calculator" data-toggle="modal" class="col-md-1 control-label" style="text-align: center;"><span class="fa fa-calculator fa-lg"></span></a> -->
 
@@ -402,7 +398,7 @@
                         <div class="form-group has-feedback">
                             <input type="text" id="APagarView" onblur="updateCantidad(this.value,'APagar')" class="form-control"  style="text-align: right;">
                             <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                            <input type="number" step="any" name="APagar" id="APagar" class="form-control "  style="text-align: right;">
+                            <input type="hidden" step="any" name="APagar" id="APagar" class="form-control"  style="text-align: right;">
                         </div>
                     </div>
 
@@ -413,7 +409,7 @@
                         <div class="form-group has-feedback">
                             <input type="text" id="FacturarView" onblur="updateCantidad(this.value,'Facturar')" class="form-control" style="text-align: right;">
                             <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                            <input type="number" step="any" name="Facturar" id="Facturar" class="form-control " style="text-align: right;">
+                            <input type="hidden" step="any" name="Facturar" id="Facturar" class="form-control" style="text-align: right;">
                         </div>
                     </div>
 
@@ -453,7 +449,7 @@
 
 
                         <div class="form-group has-feedback">
-                            <input class="form-control " name="Comision" id="Comision" type="number"
+                            <input class="form-control" name="Comision" id="Comision" type="number"
                                 step="any" style="text-align: right;">
                             <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                         </div>
@@ -466,7 +462,7 @@
                         <div class="form-group has-feedback">
                             <input class="form-control" id="IvaSobreComisionView" onblur="updateCantidad(this.value,'IvaSobreComision')" type="text" style="text-align: right;">
                             <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                            <input class="form-control " name="IvaSobreComision" id="IvaSobreComision" type="number" step="any" style="text-align: right;">
+                            <input class="form-control" name="IvaSobreComision" id="IvaSobreComision" type="hidden" step="any" style="text-align: right;">
                         </div>
 
                     </div>
@@ -480,7 +476,7 @@
                                 @if ($deuda->clientes->TipoContribuyente == 1 || $deuda->clientes->TipoContribuyente == 4) readonly @endif>
                             <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
 
-                            <input class="form-control " name="Retencion" id="Retencion" type="number"
+                            <input class="form-control" name="Retencion" id="Retencion" type="hidden"
                                 step="any" style="text-align: right;"
                                 @if ($deuda->clientes->TipoContribuyente == 1 || $deuda->clientes->TipoContribuyente == 4) readonly @endif>
                         </div>
@@ -495,7 +491,7 @@
                         <div class="form-group has-feedback">
                             <input class="form-control" id="ValorCCFEView" onblur="updateCantidad(this.value,'ValorCCFE')" type="text" style="text-align: right;">
                             <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                            <input class="form-control" id="ValorCCFE" type="number" step="any" style="text-align: right;">
+                            <input class="form-control" id="ValorCCFE" type="hidden" step="any" style="text-align: right;">
                         </div>
 
                     </div>
@@ -621,7 +617,7 @@
 
 
 
-    function updateCantidad(value, control) {
+    function updateCantidad(value, control) {        
         var decimal_number = parseFloat(value.replace(/,/g, ''));
         $('#' + control).val(decimal_number).trigger('change');
     }

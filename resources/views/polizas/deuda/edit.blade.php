@@ -81,10 +81,12 @@
                                     id="tab_content7" aria-labelledby="extra-prima-tab">
                                     @include('polizas.deuda.tab7')
                                 </div>
-                                <div role="tabpanel" class="tab-pane fade {{ $tab == 3 ? ' active in' : '' }}" id="tab_content3" aria-labelledby="creditos-tab">
+                                <div role="tabpanel" class="tab-pane fade {{ $tab == 3 ? ' active in' : '' }}"
+                                    id="tab_content3" aria-labelledby="creditos-tab">
                                     @include('polizas.deuda.tab3')
                                 </div>
-                                <div role="tabpanel" class="tab-pane fade {{ $tab == 4 ? ' active in' : '' }}" id="tab_content4" aria-labelledby="pagos-tab">
+                                <div role="tabpanel" class="tab-pane fade {{ $tab == 4 ? ' active in' : '' }}"
+                                    id="tab_content4" aria-labelledby="pagos-tab">
                                     @include('polizas.deuda.tab4')
                                 </div>
                                 <div role="tabpanel" class="tab-pane fade" id="tab_content5" aria-labelledby="avisos-tab">
@@ -169,8 +171,12 @@
                 return null;
             }
 
-            // Formatear el número con separador de miles y punto como separador decimal
-            var numeroFormateado = numero.toLocaleString('en-US', { style: 'decimal' });
+            // Formatear el número con separador de miles, punto como separador decimal y dos decimales
+            var numeroFormateado = numero.toLocaleString('en-US', {
+                style: 'decimal',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
 
             return numeroFormateado;
         }
@@ -421,6 +427,9 @@
 
             var formattedSub = formatearNumero((primaTotal - document.getElementById('Descuento').value));
             document.getElementById('PrimaDescontadaView').value = formattedSub;
+
+            formattedSub = formatearNumero(document.getElementById('Descuento').value);
+            document.getElementById('DescuentoView').value = formattedSub;
         }
 
         function calculoPrimaTotal() {
