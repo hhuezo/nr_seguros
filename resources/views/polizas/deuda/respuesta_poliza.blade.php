@@ -214,8 +214,9 @@
                                                 <div class="input-group">
                                                     <input type="text" id="buscar_no_valido" class="form-control">
                                                     <span class="input-group-btn">
-                                                        <button type="button" id="btn_no_valido"
-                                                            class="btn btn-primary">Buscar</button>
+                                                        <button type="button" id="btn_no_valido" class="btn btn-primary">Buscar</button>
+                                                        <!-- Nuevo botón Borrar -->
+                                                        <button type="button" id="btn_limpiarn_no_valido" class="btn btn-secondary">Limpiar</button>
                                                     </span>
                                                 </div>
                                             </div>
@@ -280,12 +281,15 @@
                                         </div>
                                         <div role="tabpanel" class="tab-pane fade" id="tab_content3"
                                             aria-labelledby="profile-tab">
+
+                        
                                             <div class="col-md-6 col-sm-12">
                                                 <div class="input-group">
                                                     <input type="text" id="buscar_valido" class="form-control">
                                                     <span class="input-group-btn">
                                                         <button type="button" id="btn_valido"
                                                             class="btn btn-primary">Buscar</button>
+                                                            <button type="button" id="btn_limpiarn_valido" class="btn btn-secondary">Limpiar</button>
                                                     </span>
                                                 </div>
                                             </div>
@@ -562,11 +566,29 @@
             console.log("hola", buscar);
         });
 
+        $('#btn_limpiarn_valido').on('click', function() {
+            document.getElementById('buscar_valido').value = "";
+            var buscar = "" ;
+
+            loadCreditos(2, buscar);
+            console.log("hola", buscar);
+        });
+
         $('#btn_no_valido').on('click', function() {
             var buscar = document.getElementById('buscar_no_valido').value;
 
             loadCreditos(1, buscar);
             console.log(buscar);
         });
+
+        $('#btn_limpiarn_no_valido').on('click', function() {
+            document.getElementById('buscar_no_valido').value = "";
+            var buscar = "" ;
+
+            loadCreditos(1, buscar);
+            console.log(buscar);
+        });
+
+        
     </script>
 @endsection
