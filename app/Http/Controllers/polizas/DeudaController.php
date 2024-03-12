@@ -629,6 +629,8 @@ class DeudaController extends Controller
                 ->groupBy('poliza.LineaCredito')
                 ->get();
 
+            $lineas_abreviatura = $lineas_credito->pluck('Abreviatura')->toArray();
+
 
 
 
@@ -846,7 +848,8 @@ class DeudaController extends Controller
                 'planes',
                 'data',
                 'comentarios',
-                'lineas_credito'
+                'lineas_credito',
+                'lineas_abreviatura'
             ));
         }
     }
