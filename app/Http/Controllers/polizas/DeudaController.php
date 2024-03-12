@@ -37,7 +37,6 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PDF;
@@ -418,7 +417,21 @@ class DeudaController extends Controller
         $saldos = SaldoMontos::where('Activo', 1)->get();
         $planes = Plan::where('Activo', 1)->get();
         $perfil = Perfil::where('Activo', 1)->where('Aseguradora', '=', $deuda->Aseguradora)->get();
-        return view('polizas.deuda.show', compact('requisitos', 'planes', 'productos', 'perfil', 'saldos', 'deuda', 'aseguradora', 'cliente', 'estadoPoliza', 'ejecutivo', 'creditos', 'tipoCartera', 'data'));
+        return view('polizas.deuda.show', compact(
+            'requisitos',
+            'planes',
+            'productos',
+            'perfil',
+            'saldos',
+            'deuda',
+            'aseguradora',
+            'cliente',
+            'estadoPoliza',
+            'ejecutivo',
+            'creditos',
+            'tipoCartera',
+            'data'
+        ));
     }
 
     public function eliminar_requisito(Request $request)
@@ -591,6 +604,40 @@ class DeudaController extends Controller
             }
 
             $creditos = DeudaCredito::where('Deuda', $deuda->Id)->get();
+
+
+
+
+
+
+            $lineas_credito = DB::table('poliza_deuda_temp_cartera as poliza')
+                ->join('poliza_deuda_creditos as creditos', 'poliza.LineaCredito', '=', 'creditos.Id')
+                ->join('saldos_montos as saldos', 'creditos.Saldos', '=', 'saldos.Id')
+                ->join('tipo_cartera as tipo', 'creditos.TipoCartera', '=', 'tipo.Id')
+                ->select(
+                    'poliza.LineaCredito',
+                    'saldos.Descripcion',
+                    'saldos.Abreviatura',
+                    'tipo.Nombre as tipo',
+                    DB::raw("IFNULL(sum(poliza.SaldoCapital), '0.00') as SaldoCapital"),
+                    DB::raw("IFNULL(sum(poliza.Intereses), '0.00') as Intereses"),
+                    DB::raw("IFNULL(sum(poliza.MontoNominal), '0.00') as MontoNominal"),
+                    DB::raw("IFNULL(sum(poliza.InteresesCovid), '0.00') as InteresesCovid"),
+                    DB::raw("IFNULL(sum(poliza.InteresesMoratorios), '0.00') as InteresesMoratorios")
+
+                )
+                ->groupBy('poliza.LineaCredito')
+                ->get();
+
+
+
+
+
+
+
+
+
+
 
             $videuda = DeudaVida::where('Deuda', $deuda->Id)->first();
             $requisitos = DeudaRequisitos::where('Deuda', $deuda->Id)->get();
@@ -798,7 +845,8 @@ class DeudaController extends Controller
                 'productos',
                 'planes',
                 'data',
-                'comentarios'
+                'comentarios',
+                'lineas_credito'
             ));
         }
     }
@@ -840,10 +888,10 @@ class DeudaController extends Controller
     {
         $deuda = $request->Deuda;
         $detalle = $request->DeudaDetalle;
-        $cartera = PolizaDeudaCartera::where('PolizaDeudaDetalle',$detalle)->where('PolizaDeuda',$deuda)->where('NoValido',0)->get();
+        $cartera = PolizaDeudaCartera::where('PolizaDeudaDetalle', $detalle)->where('PolizaDeuda', $deuda)->where('NoValido', 0)->get();
 
         return Excel::download(new DeudaExport($cartera), 'Cartera.xlsx');
-      //  dd($cartera->take(25),$request->Deuda,$request->DeudaDetalle);
+        //  dd($cartera->take(25),$request->Deuda,$request->DeudaDetalle);
     }
 
 
@@ -1506,7 +1554,7 @@ class DeudaController extends Controller
 
         $deuda_credito = DeudaCredito::findOrFail($request->get('LineaCredito'));
 
-        $nombre_cartera = $deuda_credito->tipoCarteras->Nombre .' '. $deuda_credito->saldos->Abreviatura. ' '. $deuda_credito->saldos->Descripcion;
+        $nombre_cartera = $deuda_credito->tipoCarteras->Nombre . ' ' . $deuda_credito->saldos->Abreviatura . ' ' . $deuda_credito->saldos->Descripcion;
 
         $date_submes = Carbon::create($request->Axo, $request->Mes, "01");
         $date = Carbon::create($request->Axo, $request->Mes, "01");
@@ -1792,8 +1840,8 @@ class DeudaController extends Controller
 
 
         //poniendo valido los creditos guardados en DeudaCreditosValidos
-        $creditos_validos_array = DeudaCreditosValidos::where('Poliza',$deuda->Id)->pluck('NumeroReferencia')->toArray();
-        PolizaDeudaTempCartera::whereIn('NumeroReferencia',$creditos_validos_array)->update(["NoValido"=>0]);
+        $creditos_validos_array = DeudaCreditosValidos::where('Poliza', $deuda->Id)->pluck('NumeroReferencia')->toArray();
+        PolizaDeudaTempCartera::whereIn('NumeroReferencia', $creditos_validos_array)->update(["NoValido" => 0]);
 
 
 
@@ -1802,7 +1850,7 @@ class DeudaController extends Controller
          GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ", ") AS ConcatenatedNumeroReferencia,SUM(SaldoCapital) as total_saldo,SUM(Intereses) as total_interes,SUM(InteresesCovid) as total_covid,
          SUM(InteresesMoratorios) as total_moratorios, SUM(MontoNominal) as total_monto_nominal')->groupBy('Dui', 'NoValido')->get();
 
-        
+
 
         // dd($poliza_cumulos->where('NoValido','=',1)->take(10));
 
@@ -1836,7 +1884,7 @@ class DeudaController extends Controller
 
 
 
-        return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date', 'tipo_cartera','nombre_cartera'));
+        return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date', 'tipo_cartera', 'nombre_cartera'));
     }
 
     public function regresar_edit(Request $request)
@@ -1998,7 +2046,7 @@ class DeudaController extends Controller
                     'FechaOtorgamiento',
                     'NoValido',
                     DB::raw("GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
-                  //  DB::raw('SUM(SaldoCapital) as saldo_cpital'),
+                    //  DB::raw('SUM(SaldoCapital) as saldo_cpital'),
                     DB::raw('SUM(SaldoCapital) as saldo_capital'),
                     DB::raw('SUM(Intereses) as total_interes'),
                     DB::raw('SUM(InteresesCovid) as total_covid'),
@@ -2015,8 +2063,6 @@ class DeudaController extends Controller
                 ->where('PolizaDeuda', $poliza)
                 ->groupBy('Dui')
                 ->get();
-
-
         }
         //dd($poliza_cumulos);
 
