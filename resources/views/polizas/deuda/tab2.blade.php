@@ -110,6 +110,10 @@
                 </table>
             </div>
             <div class="col-md-12">&nbsp;
+                <input type="text" id="Tasa" value="{{ $deuda->Tasa }}">
+                <input type="text" id="TasaComision" value="{{ $deuda->TasaComision }}">
+                <input type="text" id="ExtraPrima" value="{{ $total_extrapima }}">
+
             </div>
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <table class="excel-like-table">
@@ -119,11 +123,11 @@
                     </tr>
                     <tr>
                         <td>Porcentaje de comisión</td>
-                        <td class="numeric editable">0.00</td>
+                        <td class="numeric editable">{{ $deuda->Tasa }}</td>
                     </tr>
                     <tr>
                         <td>Comisión</td>
-                        <td class="numeric editable">0.00</td>
+                        <td class="numeric editable">{{ $deuda->TasaComision }}</td>
                     </tr>
                     <tr>
                         <td>(+) 13% IVA</td>
@@ -137,9 +141,9 @@
                         <td>(=) Valor CCF Comisión</td>
                         <td class="numeric editable">0.00</td>
                     </tr>
-                   
+
                 </table>
-                
+
             </div>
 
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -154,27 +158,27 @@
                     </tr>
                     <tr>
                         <td>Sub total</td>
-                        <td class="numeric editable">0.00</td>
+                        <td class="numeric editable"><span id="sub_total"></span></td>
                     </tr>
                     <tr>
                         <td>Sub total Extra Prima</td>
-                        <td class="numeric editable">0.00</td>
+                        <td class="numeric editable"><span id="sub_total_extra_prima"></span></td>
                     </tr>
                     <tr>
                         <td>Prima a cobrar</td>
-                        <td class="numeric editable">0.00</td>
+                        <td class="numeric editable"><span id="prima_a_cobrar"></span></td>
                     </tr>
                     <tr>
                         <td>Comisión (10%)</td>
-                        <td class="numeric editable">0.00</td>
+                        <td class="numeric editable"><span id="comision"></span></td>
                     </tr>
                     <tr>
                         <td>Liquido a pagar</td>
-                        <td class="numeric editable">0.00</td>
+                        <td class="numeric editable"><span id="iva"></span></td>
                     </tr>
-                   
+
                 </table>
-                
+
             </div>
 
 
@@ -273,9 +277,33 @@
                 let total_suma_asegurada_formateada = formatearCantidad(total_suma_asegurada);
                 document.getElementById("total_suma_asegurada").textContent = total_suma_asegurada_formateada;
 
+
+                let tasa = document.getElementById('Tasa').value;
+                let tasa_comision = parseFloat(document.getElementById('TasaComision').value);
+                let extra_prima = document.getElementById('ExtraPrima').value;
+
                 //modificando valores de cuadros
                 document.getElementById("monto_total_cartera").textContent = total_suma_asegurada_formateada;
 
+                let sub_total = total_suma_asegurada * tasa;
+
+                document.getElementById("sub_total").textContent = formatearCantidad(sub_total);
+
+                document.getElementById("sub_total_extra_prima").textContent = formatearCantidad(extra_prima);
+
+
+                prima_a_cobrar = parseFloat(sub_total)  + parseFloat(extra_prima );
+
+                document.getElementById("prima_a_cobrar").textContent = formatearCantidad(prima_a_cobrar);
+
+                let comision = prima_a_cobrar * (tasa_comision/100);
+
+                document.getElementById("comision").textContent = formatearCantidad(comision);
+
+                let iva = comision * 0.13;
+                document.getElementById("iva").textContent = formatearCantidad(iva);
+
+                console.log(comision);
             }
 
 
@@ -285,7 +313,8 @@
             }
 
             function formatearCantidad(cantidad) {
-                return cantidad.toLocaleString('en-US', {
+                let numero = Number(cantidad);
+                return numero.toLocaleString('en-US', {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2
                 });
