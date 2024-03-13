@@ -2,6 +2,7 @@
 
 namespace App\Models\temp;
 
+use App\Models\polizas\DeudaCredito;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,30 +16,47 @@ class PolizaDeudaTempCartera extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'Nit',
         'Dui',
         'Pasaporte',
-        'CarnetResidencia',
         'Nacionalidad',
         'FechaNacimiento',
         'TipoPersona',
-        'NombreCompleto',
+        'PrimerApellido',
+        'SegundoApellido',
+        'ApellidoCasada',
+        'PrimerNombre',
+        'SegundoNombre',
         'NombreSociedad',
-        'Genero',
-        'Direccion',
+        'Sexo',
         'FechaOtorgamiento',
         'FechaVencimiento',
+        'Ocupacion',
         'NumeroReferencia',
-        'SumaAsegurada',
-        'Tarifa',
-        'PrimaMensual',
-        'NumeroCuotas',
-        'TipoDeuda',
-        'ClaseCartera',
+        'MontoOtorgado',
+        'SaldoCapital',
+        'Intereses',
+        'InteresesMoratorios',
+        'SaldoTotal',
         'User',
         'Axo',
         'Mes',
         'PolizaDeuda',
         'FechaInicio',
-        'FechaFinal'
+        'FechaFinal',
+        'TipoError',
+        'FechaNacimientoDate',
+        'Edad',
+        'InteresesCovid',
+        'MontoNominal',
+        'LineaCredito',
+        'NoValido',
+        'EdadDesembloso',
+        'FechaOtorgamientoDate',
+        'total_saldo'        
     ];
+
+    public function linea_credito(){
+        return $this->belongsTo(DeudaCredito::class,'LineaCredito','Id');
+    }   
 }

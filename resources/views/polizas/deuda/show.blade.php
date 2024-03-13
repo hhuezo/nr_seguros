@@ -10,7 +10,7 @@
                 <h2>Nuevo Poliza de Deuda &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; VIDE - Seguro por Deuda<small></small>
                 </h2>
                 <ul class="nav navbar-right panel_toolbox">
-                    @if($deuda->Configuracion == 0)
+                    @if ($deuda->Configuracion == 0)
                     <a href="" data-target="#modal-finalizar" data-toggle="modal" class="btn btn-success">Finalizar <br> Configuración</a>
                     @else
                     <a href="" data-target="#modal-finalizar" data-toggle="modal" class="btn btn-primary">Apertura <br> Configuración</a>
@@ -28,7 +28,7 @@
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">×</span>
                                     </button>
-                                    <input type="hidden" name="deuda" value="{{$deuda->Id}}">
+                                    <input type="hidden" name="deuda" value="{{ $deuda->Id }}">
                                     <h4 class="modal-title">Finalizar Configuración</h4>
                                 </div>
                                 <div class="modal-body">
@@ -57,25 +57,26 @@
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
             <div class="" role="tabpanel" data-example-id="togglable-tabs">
                 <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-                    <li role="presentation" class="{{session('tab') == 1 ? 'active':''}}"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Datos de Póliza</a>
+                    <li role="presentation" class="{{ session('tab') == 1 ? 'active' : '' }}"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Datos de Póliza</a>
                     </li>
-                    <li role="presentation" class="{{session('tab') == 2 ? 'active':''}} "><a href="#tab_content2" id="lineas-tab" role="tab" data-toggle="tab" aria-expanded="true">Tasa diferencia</a>
+                    <li role="presentation" class="{{ session('tab') == 2 ? 'active' : '' }} "><a href="#tab_content2" id="lineas-tab" role="tab" data-toggle="tab" aria-expanded="true">Tasa diferencia</a>
                     </li>
-                    <li role="presentation" class="{{session('tab') == 3 ? 'active':''}}"><a href="#tab_content3" id="asegurabilidad-tab" role="tab" data-toggle="tab" aria-expanded="true">Requisitos Minimos de Asegurabilidad </a>
+                    <li role="presentation" class="{{ session('tab') == 3 ? 'active' : '' }}"><a href="#tab_content3" id="asegurabilidad-tab" role="tab" data-toggle="tab" aria-expanded="true">Requisitos
+                            Mínimos de Asegurabilidad </a>
                     </li>
 
 
                 </ul>
 
                 <div id="myTabContent" class="tab-content">
-                    <div role="tabpanel" class="tab-pane fade {{session('tab') == 1 ? 'active in':''}}" id="tab_content1" aria-labelledby="home-tab">
+                    <div role="tabpanel" class="tab-pane fade {{ session('tab') == 1 ? 'active in' : '' }}" id="tab_content1" aria-labelledby="home-tab">
                         <form action="{{ url('polizas/deuda/actualizar') }}" method="POST">
                             @csrf
 
                             <div class="x_content" style="font-size: 12px;">
                                 <div class="col-sm-12 row">
                                     <div class="col-sm-4">
-                                        <input type="hidden" value="{{$deuda->Id}}" name="Deuda">
+                                        <input type="hidden" value="{{ $deuda->Id }}" name="Deuda">
                                         <label class="control-label" align="right">Número de Póliza</label>
                                         <input class="form-control" name="NumeroPoliza" id="NumeroPoliza" type="text" value="{{ $deuda->NumeroPoliza }}" required>
                                     </div>
@@ -84,7 +85,7 @@
 
                                     <div class="col-sm-4" style="display: none !important;">
                                         <label class="control-label" align="right">Código</label>
-                                        <input class="form-control" name="Codigo" type="text" value="{{ $deuda->Codigo}}" readonly>
+                                        <input class="form-control" name="Codigo" type="text" value="{{ $deuda->Codigo }}" readonly>
                                     </div>
                                 </div>
                                 <div class="col-sm-8">
@@ -92,8 +93,9 @@
                                     <select name="Aseguradora" id="Aseguradora" class="form-control select2" style="width: 100%" required>
                                         <option value="">Seleccione...</option>
                                         @foreach ($aseguradora as $obj)
-                                        @if($obj->Id == $deuda->Aseguradora)
-                                        <option value="{{ $obj->Id }}" selected>{{ $obj->Nombre }}</option>
+                                        @if ($obj->Id == $deuda->Aseguradora)
+                                        <option value="{{ $obj->Id }}" selected>{{ $obj->Nombre }}
+                                        </option>
                                         @else
                                         <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
                                         @endif
@@ -105,8 +107,9 @@
                                     <select name="Productos" id="Productos" class="form-control select2" style="width: 100%">
                                         <option value="" selected disabled>Seleccione...</option>
                                         @foreach ($productos as $obj)
-                                        @if($obj->Id == $deuda->planes->Producto)
-                                        <option value="{{ $obj->Id }}" selected>{{ $obj->Nombre }}</option>
+                                        @if ($obj->Id == $deuda->planes->Producto)
+                                        <option value="{{ $obj->Id }}" selected>{{ $obj->Nombre }}
+                                        </option>
                                         @else
                                         <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
                                         @endif
@@ -118,8 +121,9 @@
                                     <select name="Planes" id="Planes" class="form-control select2" style="width: 100%">
                                         <option value="" selected disabled>Seleccione...</option>
                                         @foreach ($planes as $obj)
-                                        @if($obj->Id == $deuda->Plan)
-                                        <option value="{{ $obj->Id }}" selected>{{ $obj->Nombre }}</option>
+                                        @if ($obj->Id == $deuda->Plan)
+                                        <option value="{{ $obj->Id }}" selected>{{ $obj->Nombre }}
+                                        </option>
                                         @else
                                         <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
                                         @endif
@@ -131,8 +135,9 @@
                                     <select name="Asegurado" id="Asegurado" class="form-control select2" style="width: 100%" required>
                                         <option value="">Seleccione...</option>
                                         @foreach ($cliente as $obj)
-                                        @if($obj->Id == $deuda->Asegurado)
-                                        <option value="{{ $obj->Id }}" selected>{{ $obj->Nombre }}</option>
+                                        @if ($obj->Id == $deuda->Asegurado)
+                                        <option value="{{ $obj->Id }}" selected>{{ $obj->Nombre }}
+                                        </option>
                                         @else
                                         <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
                                         @endif
@@ -140,7 +145,7 @@
                                     </select>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label" align="right">Nit</label>
+                                    <label class="control-label" align="right">DUI / NIT</label>
                                     <input class="form-control" name="Nit" id="Nit" type="text" value="{{ $deuda->Nit }}" readonly>
                                 </div>
                                 <div class="col-sm-12">
@@ -155,7 +160,7 @@
                                     <input class="form-control" name="VigenciaHasta" type="date" value="{{ $deuda->VigenciaHasta }}" required>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label" align="right">Estatus</label>
+                                    <label class="control-label" align="right">Estado</label>
                                     <select name="EstadoPoliza" class="form-control select2" style="width: 100%">
                                         @foreach ($estadoPoliza as $obj)
                                         @if ($obj->Id == 1)
@@ -170,7 +175,8 @@
                                         <option value="">Seleccione...</option>
                                         @foreach ($ejecutivo as $obj)
                                         @if ($obj->Id == $deuda->Ejecutivo)
-                                        <option value="{{ $obj->Id }}" selected>{{ $obj->Nombre }}</option>
+                                        <option value="{{ $obj->Id }}" selected>{{ $obj->Nombre }}
+                                        </option>
                                         @else
                                         <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
                                         @endif
@@ -198,17 +204,17 @@
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label" align="right">Concepto</label>
-                                    <textarea class="form-control" name="Concepto" row="3" col="4"  >{{ $deuda->Concepto}}</textarea>
+                                    <textarea class="form-control" name="Concepto" row="3" col="4">{{ $deuda->Concepto }}</textarea>
                                 </div>
                                 <div class="col-sm-4 ocultar" style="display: none !important;">
                                     <br>
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                        <input type="radio" name="tipoTasa" id="Mensual" value="1" {{$deuda->Mensual == 1 ? 'checked': ''}}>
+                                        <input type="radio" name="tipoTasa" id="Mensual" value="1" {{ $deuda->Mensual == 1 ? 'checked' : '' }}>
                                         <label class="control-label">Tasa ‰ Millar Mensual</label>
                                     </div>
 
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                        <input type="radio" name="tipoTasa" id="Anual" value="0" {{$deuda->Mensual == 0 ? 'checked': ''}}>
+                                        <input type="radio" name="tipoTasa" id="Anual" value="0" {{ $deuda->Mensual == 0 ? 'checked' : '' }}>
                                         <label class="control-label">Tasa ‰ Millar Anual</label>
                                     </div>
                                 </div>
@@ -216,41 +222,41 @@
                                     &nbsp;
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label" align="right">Tasa ‰ </label>
+                                    <label class="control-label" align="right">Tasa Millar Mensual</label>
                                     <input class="form-control" name="Tasa" type="number" id="Tasa" step="any" value="{{ $deuda->Tasa }}" required>
                                 </div>
                                 <div class="col-sm-4" align="center">
                                     <br>
                                     <label class="control-label" align="center">Vida</label>
-                                    <input id="Vida" type="checkbox" class="js-switch"  {{$deuda->Vida <> '' ? 'checked': ''}} />
+                                    <input id="Vida" type="checkbox" class="js-switch" {{ $deuda->Vida != '' ? 'checked' : '' }} />
                                 </div>
                                 <div class="col-sm-4" align="center">
                                     <br>
                                     <label class="control-label" align="center">Desempleo</label>
-                                    <input id="Desempleo" type="checkbox" class="js-switch"  {{$deuda->Desempleo <> '' ? 'checked': ''}} />
+                                    <input id="Desempleo" type="checkbox" class="js-switch" {{ $deuda->Desempleo != '' ? 'checked' : '' }} />
                                 </div>
                                 <div class="col-sm-12">
                                     &nbsp;
                                 </div>
                                 <div class="col-sm-2">
-                                    <label class="control-label" align="right">% Tasa de Comision </label>
+                                    <label class="control-label" align="right">% Tasa de Comisión </label>
                                     <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" value="{{ $deuda->TasaComision }}">
                                 </div>
                                 <div class="col-sm-2"><br>
-                                    <label class="control-label" align="right">¿IVA incluido?</label>
-                                    <input name="ComisionIva" id="ComisionIva" type="checkbox" class="js-switch" {{$deuda->ComisionIva == 1 ? 'checked': ''}}>
+                                    <label class="control-label" align="right">¿IVA incluído?</label>
+                                    <input name="ComisionIva" id="ComisionIva" type="checkbox" class="js-switch" {{ $deuda->ComisionIva == 1 ? 'checked' : '' }}>
                                 </div>
                                 <div class="col-sm-4">
-                                    <div id="poliza_vida" style="display: {{$deuda->Vida <> '' ? 'block': 'none'}};">
+                                    <div id="poliza_vida" style="display: {{ $deuda->Vida != '' ? 'block' : 'none' }};">
                                         <label class="control-label">Numero de Poliza Vida</label>
-                                        <input name="Vida" type="text" class="form-control" value="{{$deuda->Vida}}" />
+                                        <input name="Vida" type="text" class="form-control" value="{{ $deuda->Vida }}" />
                                     </div>
 
                                 </div>
                                 <div class="col-sm-4">
-                                    <div id="poliza_desempleo" style="display:  {{$deuda->Desempleo <> '' ? 'block': 'none'}};">
+                                    <div id="poliza_desempleo" style="display:  {{ $deuda->Desempleo != '' ? 'block' : 'none' }};">
                                         <label class="control-label">Numero de Poliza Desempleo</label>
-                                        <input name="Desempleo" type="text" class="form-control" value="{{$deuda->Desempleo}}" />
+                                        <input name="Desempleo" type="text" class="form-control" value="{{ $deuda->Desempleo }}" />
                                     </div>
 
                                 </div>
@@ -266,35 +272,40 @@
                             <br>
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div class="form-group" align="center">
-                                    <button type="submit" class="btn btn-success" {{$deuda->Configuracion == 1 ? 'disabled':''}}>Guardar y Continuar</button>
-                                    <a href="{{ url('poliza/vida') }}"><button type="button" class="btn btn-primary">Cancelar</button></a>
+                                    <button type="submit" class="btn btn-success" {{ $deuda->Configuracion == 1 ? 'disabled' : '' }}>Guardar y Continuar</button>
+                                    <a href="{{ url('polizas/deuda') }}"><button type="button" class="btn btn-primary">Cancelar</button></a>
                                 </div>
                             </div>
                         </form>
                     </div>
-                    <div role="tabpanel" class="tab-pane fade {{session('tab') == 2 ? 'active in':''}}" id="tab_content2" aria-labelledby="lineas-tab">
+                    <div role="tabpanel" class="tab-pane fade {{ session('tab') == 2 ? 'active in' : '' }}" id="tab_content2" aria-labelledby="lineas-tab">
                         <div class="x_title"> &nbsp;
                         </div>
-                        <form action="{{url('agregar_credito')}}" method="post">
+                        <form action="{{ url('agregar_credito') }}" method="post">
                             @csrf
                             <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                                 <h4>&nbsp;&nbsp; Tasa Diferenciada<small></small>
                                 </h4>
-                                <label style="font-size: 12px;">* Se pueden agregar n número de tasa diferenciada</label>
+                                <label style="font-size: 12px;">* Se pueden agregar n número de tasa
+                                    diferenciada</label>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                                <label class="control-label" align="center">Linea de Credito</label> <br>
+                                <label class="control-label" align="center">Linea de crédito</label> <br>
                                 <select name="TipoCartera" id="TipoCartera" class="form-control" required>
-                                    @foreach($tipoCartera as $obj)
-                                    <option value="{{$obj->Id}}">{{$obj->Nombre}}</option>
+                                    <option value="">Seleccione...</option>
+                                    @foreach ($tipoCartera as $obj)
+                                    <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                                 <label class="control-label" align="center">Saldos y Montos</label> <br>
                                 <select name="Saldos" id="Saldos" class="form-control" required>
-                                    @foreach($saldos as $obj)
-                                    <option value="{{$obj->Id}}">{{$obj->Abreviatura}} - {{$obj->Descripcion}}</option>
+                                <option value="">Seleccione...</option>
+                                    @foreach ($saldos as $obj)
+                                    <option value="{{ $obj->Id }}">{{ $obj->Abreviatura }} -
+                                        {{ $obj->Descripcion }}
+                                    </option>
                                     @endforeach
                                 </select>
                             </div>
@@ -310,8 +321,9 @@
                             <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12">
 
                                 <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                    <input type="hidden" name="Deuda" value="{{$deuda->Id}}">
-                                    <label class="control-label" align="center"> Rangos por Fechas de otorgamiento</label> <br>
+                                    <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
+                                    <label class="control-label" align="center"> Rangos por Fechas de
+                                        otorgamiento</label> <br>
                                     <input id="fechas" type="checkbox" class="js-switch" style="margin-left: 25%;" />
                                 </div>
                                 <div id="fecha_otorgamiento" style="display: none;">
@@ -372,7 +384,7 @@
                                 <div id="edad_otorgamiento" style="display: none;">
                                     <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                                         <label class="control-label" align="center">Edad Desde</label>
-                                        <input type="number" class="form-control" name="EdadDesde" id="EdadDesde" />
+                                        <input type="number" class="form-control" name="EdadDesde" id="EdadDesde" min="18"/>
                                     </div>
                                     <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                                         <label class="control-label" align="center">Edad Hasta</label>
@@ -389,8 +401,8 @@
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <br><br>
                                 <div class="form-group" align="center">
-                                    <button type="submit" class="btn btn-success" {{$deuda->Configuracion == 1 ? 'disabled':''}}>Guardar y Continuar</button>
-                                    <a href="{{ url('poliza/vida') }}"><button type="button" class="btn btn-primary">Cancelar</button></a>
+                                    <button type="submit" class="btn btn-success" {{ $deuda->Configuracion == 1 ? 'disabled' : '' }}>Guardar y Continuar</button>
+                                    <a href="{{ url('polizas/deuda') }}"><button type="button" class="btn btn-primary">Cancelar</button></a>
                                 </div>
                             </div>
                         </form>
@@ -402,8 +414,9 @@
                                 <table width="100%" class="table table-striped">
                                     <thead>
                                         <tr>
-                                            <th>Linea Carteras</th>
+                                            <th>Línea de Crédito</th>
                                             <th>Saldos y Montos</th>
+                                            <th>Tasa General</th>
                                             <th>Fecha Desde</th>
                                             <th>Fecha Hasta</th>
                                             <th>Tasa Fechas</th>
@@ -417,35 +430,26 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($creditos as $obj)
+                                        @foreach ($creditos as $obj)
                                         <tr>
-                                            @if($obj->TipoCartera)
-                                            <td>{{$obj->tipoCarteras->Nombre}}</td>
-                                            @else
-                                            <td></td>
-                                            @endif
-                                            @if($obj->Saldos)
-                                            <td>{{$obj->saldos->Abreviatura}}</td>
-                                            @else
-                                            <td></td>
-                                            @endif
-                                            @isset($obj->FechaDesde)
-                                            <td>{{date('d/m/Y', strtotime($obj->FechaDesde))}}</td>
-                                            @else
-                                            <td></td>
-                                            @endif
-                                            @isset($obj->FechaHasta)
-                                            <td>{{date('d/m/Y', strtotime($obj->FechaHasta))}}</td>
-                                            @else
-                                            <td></td>
-                                            @endif
-                                            <td>{{isset($obj->TasaFecha) ? $obj->TasaFecha.'%' :'' }} </td>
-                                            <td>{{isset($obj->MontoDesde) ? '$'.number_format($obj->MontoDesde,2,'.',',') : ''}}</td>
-                                            <td>{{isset($obj->MontoHasta) ? '$'.number_format($obj->MontoHasta,2,'.',',') : ''}}</td>
-                                            <td>{{isset($obj->TasaMonto) ? $obj->TasaMonto.'%' :'' }} </td>
-                                            <td>{{isset($obj->EdadDesde) ? $obj->EdadDesde.'años' : ''}}</td>
-                                            <td>{{isset($obj->EdadHasta) ? $obj->EdadHasta.'años' : ''}}</td>
-                                            <td>{{isset($obj->TasaEdad) ? $obj->TasaEdad.'%' :'' }} </td>
+                                            <td>{{ $obj->TipoCartera == null ? '' : $obj->tipoCarteras->Nombre }}
+                                            </td>
+                                            <td>{{ $obj->Saldos == null ? '' : $obj->saldos->Abreviatura }}</td>
+                                            <td>{{ $obj->TasaFecha == null && $obj->TasaMonto == null && $obj->TasaEdad == null ? $deuda->Tasa  : '0' }}
+                                            </td>
+                                            <td>{{ isset($obj->FechaDesde) ? date('d/m/Y', strtotime($obj->FechaDesde)) : '' }}
+                                            </td>
+                                            <td>{{ isset($obj->FechaHasta) ? date('d/m/Y', strtotime($obj->FechaHasta)) : '' }}
+                                            </td>
+                                            <td>{{ isset($obj->TasaFecha) ? $obj->TasaFecha  : '' }} </td>
+                                            <td>{{ isset($obj->MontoDesde) ? '$' . number_format($obj->MontoDesde, 2, '.', ',') : '' }}
+                                            </td>
+                                            <td>{{ isset($obj->MontoHasta) ? '$' . number_format($obj->MontoHasta, 2, '.', ',') : '' }}
+                                            </td>
+                                            <td>{{ isset($obj->TasaMonto) ? $obj->TasaMonto  : '' }} </td>
+                                            <td>{{ isset($obj->EdadDesde) ? $obj->EdadDesde . 'años' : '' }}</td>
+                                            <td>{{ isset($obj->EdadHasta) ? $obj->EdadHasta . 'años' : '' }}</td>
+                                            <td>{{ isset($obj->TasaEdad) ? $obj->TasaEdad  : '' }} </td>
                                             <td><a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a></td>
                                         </tr>
                                         <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-{{ $obj->Id }}">
@@ -473,14 +477,13 @@
                                             </form>
 
                                         </div>
-
                                         @endforeach
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
-                    <div role="tabpanel" class="tab-pane fade {{session('tab')== 3 ? 'active in':''}}" id="tab_content3" aria-labelledby="asegurabilidad-tab">
+                    <div role="tabpanel" class="tab-pane fade {{ session('tab') == 3 ? 'active in' : '' }}" id="tab_content3" aria-labelledby="asegurabilidad-tab">
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <form action="{{ url('datos_asegurabilidad') }}" method="POST">
                                 @csrf
@@ -496,12 +499,15 @@
                                     <div class="box-body">
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="form-group row">
-                                                <input type="hidden" name="Deuda" value="{{$deuda->Id}}">
-                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Perfiles</label>
+                                                <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
+                                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Perfiles médicos</label>
                                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                    <select name="Perfiles" id="Perfiles" class="form-control">
-                                                        @foreach($perfil as $obj)
-                                                        <option value="{{$obj->Id}}">{{$obj->Descripcion}}</option>
+                                                    <select name="Perfiles" id="Perfiles" class="form-control" required>
+                                                        <option value="">Seleccione...</option>
+                                                        @foreach ($perfil as $obj)
+                                                        <option value="{{ $obj->Id }}">
+                                                            {{ $obj->Descripcion }}
+                                                        </option>
                                                         @endforeach
                                                     </select>
 
@@ -511,24 +517,24 @@
                                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad
                                                     inicial</label>
                                                 <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                                    <input class="form-control" id="EdadInicial" value="1" type="text" name="EdadInicial">
+                                                    <input class="form-control" id="EdadInicial" value="18" type="text" name="EdadInicial" required min="18">
                                                 </div>
                                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Edad
                                                     final</label>
                                                 <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                                    <input class="form-control" id="EdadFinal" name="EdadFinal" type="number">
+                                                    <input class="form-control" id="EdadFinal" name="EdadFinal" type="number" required>
                                                 </div>
                                             </div>
                                             <div class="form-group row">
                                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Monto
                                                     inicial</label>
                                                 <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                                    <input class="form-control" id="MontoInicial" step="0.01" type="number" name="MontoInicial">
+                                                    <input class="form-control" id="MontoInicial" step="0.01" type="number" name="MontoInicial" required>
                                                 </div>
                                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Monto
                                                     final</label>
                                                 <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                                    <input class="form-control" id="MontoFinal" step="0.01" type="number" name="MontoFinal">
+                                                    <input class="form-control" id="MontoFinal" step="0.01" type="number" name="MontoFinal" required>
                                                 </div>
                                             </div>
 
@@ -539,22 +545,56 @@
                                 <br>
                                 <br>
                                 <div class="form-group" align="center">
-                                    <button type="submit" class="btn btn-success" {{$deuda->Configuracion == 1 ? 'disabled':''}}>Guardar y Continuar</button>
-                                    <a href="{{ url('poliza/vida') }}"><button type="button" class="btn btn-primary">Cancelar</button></a>
+                                    <button type="submit" class="btn btn-success" {{ $deuda->Configuracion == 1 ? 'disabled' : '' }}>Guardar y Continuar</button>
+                                    <a href="{{ url('polizas/deuda') }}"><button type="button" class="btn btn-primary">Cancelar</button></a>
                                 </div>
                             </form>
                         </div>
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        <table class="table table-striped table-bordered">
-                                @for ($i = 0;$i<count($data);$i++)
-                                    <tr style="width: 25%;">
-                                        @for ($j = 0;$j<count($data[0]);$j++)
-                                        <td> {{$data[$i][$j]}}</td>
+
+                            <table class="table table-striped table-bordered">
+                                @for ($i = 0; $i < count($data); $i++) <tr style="width: 25%;">
+                                    @for ($j = 0; $j < count($data[0]); $j++) <td>
+                                        @if($data[$i][$j]['id'] > 0)
+                                        {{ $data[$i][$j]['value'] }} {{ $data[$i][$j]['id'] }}
+                                        <a href="" data-target="#modal-elimin-{{ $data[$i][$j]['id'] }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
+
+                                        @else
+                                        {{ $data[$i][$j]['value'] }} {{$data[$i][$j]['id']}}
+                                        @endif
+
+                                        </td>
+
+                                        <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-elimin-{{ $data[$i][$j]['id'] }}">
+
+                                            <form method="POST" action="{{ url('eliminar/requisito') }}">
+                                                @method('POST')
+                                                @csrf
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">×</span>
+                                                            </button>
+                                                            <input type="hidden" value="{{ $data[$i][$j]['id'] }}" name="id">
+                                                            <h4 class="modal-title">Eliminar Registro</h4>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Confirme si desea Eliminar el Registro</p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                                            <button type="submit" class="btn btn-primary">Confirmar</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+
+                                        </div>
+
                                         @endfor
-                                    </tr>
-
-                                @endfor
-
+                                        </tr>
+                                        @endfor
                             </table>
 
                         </div>
@@ -570,35 +610,71 @@
 
 @include('sweetalert::alert')
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <!-- jQuery -->
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
+    function add_rango() {
+        $("#modal_rango").modal('show');
+    }
+
+    function modal_cliente() {
+        $('#modal_cliente').modal('show');
+    }
+
+    function modal_requisitos() {
+        $('#modal_requisitos').modal('show');
+    }
+
+    function modal_creditos() {
+        $('#modal_creditos').modal('show');
+    }
+</script>
+<script type="text/javascript">
     $(document).ready(function() {
+
         $("#fechas").change(function() {
             if (document.getElementById('fechas').checked == true) {
                 $('#fecha_otorgamiento').show();
+                $("#FechaDesde").prop('required', true);
+                $("#FechaHasta").prop('required', true);
+                $("#TasaFecha").prop('required', true);
+
 
             } else {
                 $('#fecha_otorgamiento').hide();
+                $("#FechaDesde").removeAttr('required');
+                $("#FechaHasta").removeAttr('required');
+                $("#TasaFecha").removeAttr('required');
             }
         })
 
         $("#montos").change(function() {
             if (document.getElementById('montos').checked == true) {
                 $('#monto_otorgamiento').show();
+                $("#MontoDesde").prop('required', true);
+                $("#MontoHasta").prop('required', true);
+                $("#TasaMonto").prop('required', true);
 
             } else {
                 $('#monto_otorgamiento').hide();
+                $("#MontoDesde").removeAttr('required');
+                $("#MontoHasta").removeAttr('required');
+                $("#TasaMonto").removeAttr('required');
             }
         })
         $("#edad").change(function() {
             if (document.getElementById('edad').checked == true) {
                 $('#edad_otorgamiento').show();
+                $("#EdadDesde").prop('required', true);
+                $("#EdadHasta").prop('required', true);
+                $("#TasaEdad").prop('required', true);
 
             } else {
                 $('#edad_otorgamiento').hide();
+                $("#EdadDesde").removeAttr('required');
+                $("#EdadHasta").removeAttr('required');
+                $("#TasaEdad").removeAttr('required');
             }
         })
 
@@ -636,27 +712,6 @@
                 }
             });
         });
-
-    });
-
-    function add_rango() {
-        $("#modal_rango").modal('show');
-    }
-
-    function modal_cliente() {
-        $('#modal_cliente').modal('show');
-    }
-
-    function modal_requisitos() {
-        $('#modal_requisitos').modal('show');
-    }
-
-    function modal_creditos() {
-        $('#modal_creditos').modal('show');
-    }
-</script>
-<script type="text/javascript">
-    $(document).ready(function() {
         $("#EdadInicial2").prop("disabled", true);
         $("#EdadFinal2").prop("disabled", true);
         $("#MontoInicial2").prop("disabled", true);

@@ -25,7 +25,7 @@ class HomeController extends Controller
      */
     public function redirectToLogin()
     {
-        return redirect('/public/login');
+        return redirect('login');
     }
 
     public function index()

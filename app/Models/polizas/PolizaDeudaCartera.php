@@ -15,30 +15,52 @@ class PolizaDeudaCartera extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'Nit',
         'Dui',
         'Pasaporte',
-        'CarnetResidencia',
         'Nacionalidad',
         'FechaNacimiento',
         'TipoPersona',
-        'NombreCompleto',
+        'PrimerApellido',
+        'SegundoApellido',
+        'ApellidoCasada',
+        'PrimerNombre',
+        'SegundoNombre',
         'NombreSociedad',
-        'Genero',
-        'Direccion',
+        'Sexo',
         'FechaOtorgamiento',
         'FechaVencimiento',
+        'Ocupacion',
         'NumeroReferencia',
-        'SumaAsegurada',
-        'Tarifa',
-        'PrimaMensual',
-        'NumeroCuotas',
-        'TipoDeuda',
-        'ClaseCartera',
+        'MontoOtorgado',
+        'SaldoCapital',
+        'Intereses',
+        'InteresesMoratorios',
+        'SaldoTotal',
         'User',
         'Axo',
         'Mes',
         'PolizaDeuda',
         'FechaInicio',
-        'FechaFinal'
+        'FechaFinal',
+        'TipoError',
+        'FechaNacimientoDate',
+        'Edad',
+        'InteresesCovid',
+        'MontoNominal',
+        'LineaCredito',
+        'NoValido',
+        'PolizaDeudaDetalle'
+        
     ];
+
+    public function poliza_deuda()
+    {
+        return $this->belongsTo(Deuda::class, 'PolizaDeuda', 'Id');
+    }
+
+    public function linia_credito()
+    {
+        return $this->belongsTo(DeudaCredito::class, 'LineaCredito', 'Id');
+    }
 }

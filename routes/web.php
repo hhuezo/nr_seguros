@@ -50,7 +50,7 @@ Route::get('/', function () {
 
 Route::get('/', [HomeController::class, 'index']);
 
-Route::get('/public', [HomeController::class, 'redirectToLogin']);
+Route::get('/', [HomeController::class, 'redirectToLogin']);
 
 
 Auth::routes();
@@ -204,10 +204,23 @@ Route::post('poliza/vida/usuario_delete', [VidaController::class, 'eliminarUsuar
 Route::get('poliza/vida/usuario_create', [VidaController::class, 'agregarUsuario']);
 Route::get('poliza/vida/usuario/{id}', [VidaController::class, 'getUsuario']);
 
+Route::get('polizas/deuda/get_referencia_creditos/{id}', [DeudaController::class, 'get_referencia_creditos']);
+Route::get('polizas/deuda/get_creditos/{id}', [DeudaController::class, 'get_creditos']);
+Route::post('polizas/deuda/agregar_valido', [DeudaController::class, 'agregar_valido']);
+Route::post('polizas/deuda/create_pago', [DeudaController::class, 'create_pago']);
+Route::post('deuda/cancelar_pago',[DeudaController::class,'cancelar_pago']);
+Route::post('polizas/deuda/eliminar_extraprima',[DeudaController::class,'eliminar_extraprima']);
+Route::get('polizas/deuda/get_extraprimado/{poliza}/{dui}', [DeudaController::class, 'get_extraprimado']);
+Route::post('polizas/deuda/store_extraprimado', [DeudaController::class, 'store_extraprimado']);
+Route::post('polizas/deuda/update_extraprimado', [DeudaController::class, 'update_extraprimado']);
+Route::post('polizas/deuda/store_poliza', [DeudaController::class, 'store_poliza']);
 Route::post('polizas/deuda/store_requisitos', [DeudaController::class, 'store_requisitos']);
 Route::get('polizas/deuda/get_requisitos', [DeudaController::class, 'get_requisitos']);
 Route::resource('polizas/deuda', DeudaController::class);
-Route::post('polizas/deuda/create_pago', [DeudaController::class, 'create_pago']);
+Route::get('exportar/poliza_cumulo',[DeudaController::class,'exportar']);
+Route::post('regresar_edit',[DeudaController::class, 'regresar_edit']);
+Route::post('exportar_excel',[DeudaController::class,'exportar_excel']);
+
 Route::post('polizas/deuda/agregar_pago', [DeudaController::class, 'agregar_pago']);
 Route::get('polizas/deuda/get_pago/{id}', [DeudaController::class, 'get_pago']);
 Route::post('polizas/deuda/edit_pago', [DeudaController::class, 'edit_pago']);
@@ -216,7 +229,12 @@ Route::post('polizas/deuda/actualizar',[DeudaController::class ,'actualizar']);
 Route::post('agregar_credito',[DeudaController::class, 'agregar_credito']);
 Route::post('eliminar_credito/{id}',[DeudaController::class,'eliminar_credito']);
 Route::post('datos_asegurabilidad',[DeudaController::class,'datos_asegurabilidad']);
+Route::post('eliminar/requisito',[DeudaController::class,'eliminar_requisito']);
 
+Route::post('poliza/deuda/recibo/{id}', [DeudaController::class, 'recibo_pago']);
+Route::get('poliza/deuda/get_recibo/{id}', [DeudaController::class, 'get_recibo']);
+Route::post('polizas/deuda/agregar_comentario',[DeudaController::class,'agregar_comentario']);
+Route::post('polizas/deuda/eliminar_comentario',[DeudaController::class,'eliminar_comentario']);
 
 
 //validación de cartera

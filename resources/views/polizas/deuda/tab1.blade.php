@@ -1,4 +1,4 @@
-<div class="row" >
+<div class="row">
     <div class="col-md-12 col-sm-12 ">
         <div class="x_panel">
             <div class="x_title">
@@ -10,7 +10,7 @@
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
-            
+
                 <div class="x_content" style="font-size: 12px;">
                     <div class="col-sm-12 row">
                         <div class="col-sm-4">
@@ -36,7 +36,7 @@
                     </div>
                     <div class="col-sm-2">
                         <label class="control-label">Planes</label>
-                        <input type="text" name="Planes" id="Planes"class="form-control" value="{{$deuda->planes->Nombre}}" readonly>
+                        <input type="text" name="Planes" id="Planes" class="form-control" value="{{$deuda->planes->Nombre}}" readonly>
                     </div>
                     <div class="col-sm-8">
                         <label class="control-label" align="right">Asegurado</label>
@@ -104,7 +104,7 @@
                         &nbsp;
                     </div>
                     <div class="col-sm-4">
-                        <label class="control-label" align="right">Tasa ‰ </label>
+                        <label class="control-label" align="right">Tasa ‰ Millar Mensual</label>
                         <input class="form-control" name="Tasa" type="number" id="Tasa" step="any" value="{{ $deuda->Tasa }}" readonly>
                     </div>
                     <div class="col-sm-4" align="center">
@@ -121,15 +121,15 @@
                         &nbsp;
                     </div>
                     <div class="col-sm-2">
-                        <label class="control-label" align="right">% Tasa de Comision </label>
+                        <label class="control-label" align="right">% Tasa de Comisión </label>
                         <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" value="{{ $deuda->TasaComision }}" readonly>
                     </div>
                     <div class="col-sm-2"><br>
                         <label class="control-label" align="right">¿IVA incluido?</label>
-                        <input  type="checkbox" readonly class="js-switch" {{$deuda->ComisionIva == 1 ? 'checked': ''}}>
+                        <input type="checkbox" readonly class="js-switch" {{$deuda->ComisionIva == 1 ? 'checked': ''}}>
                         <input type="hidden" name="ComisionIva" id="ComisionIva" value="{{$deuda->ComisionIva}}">
                     </div>
-                    <div class="col-sm-4"> 
+                    <div class="col-sm-4">
                         <div id="poliza_vida" style="display: {{$deuda->Vida <> '' ? 'block': 'none'}};">
                             <label class="control-label">Numero de Poliza Vida</label>
                             <input name="Vida" type="text" class="form-control" value="{{$deuda->Vida}}" readonly />
@@ -168,6 +168,7 @@
                                 <tr>
                                     <th>Linea Carteras</th>
                                     <th>Saldos y Montos</th>
+                                    <th>Tasa General</th>
                                     <th>Fecha Desde</th>
                                     <th>Fecha Hasta</th>
                                     <th>Tasa Fechas</th>
@@ -177,40 +178,31 @@
                                     <th>Edad Desde</th>
                                     <th>Edad Hasta</th>
                                     <th>Tasa por Edad</th>
-
+                                   
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($creditos as $obj)
                                 <tr>
-                                    @if($obj->TipoCartera)
-                                    <td>{{$obj->tipoCarteras->Nombre}}</td>
-                                    @else
-                                    <td></td>
-                                    @endif
-                                    @if($obj->Saldos)
-                                    <td>{{$obj->saldos->Abreviatura}}</td>
-                                    @else
-                                    <td></td>
-                                    @endif
-                                    @isset($obj->FechaDesde)
-                                    <td>{{date('d/m/Y', strtotime($obj->FechaDesde))}}</td>
-                                    @else
-                                    <td></td>
-                                    @endif
-                                    @isset($obj->FechaHasta)
-                                    <td>{{date('d/m/Y', strtotime($obj->FechaHasta))}}</td>
-                                    @else
-                                    <td></td>
-                                    @endif
-                                    <td>{{isset($obj->TasaFecha) ? $obj->TasaFecha.'%' :'' }} </td>
-                                    <td>{{isset($obj->MontoDesde) ? '$'.number_format($obj->MontoDesde,2,'.',',') : ''}}</td>
-                                    <td>{{isset($obj->MontoHasta) ? '$'.number_format($obj->MontoHasta,2,'.',',') : ''}}</td>
-                                    <td>{{isset($obj->TasaMonto) ? $obj->TasaMonto.'%' :'' }} </td>
-                                    <td>{{isset($obj->EdadDesde) ? $obj->EdadDesde.'años' : ''}}</td>
-                                    <td>{{isset($obj->EdadHasta) ? $obj->EdadHasta.'años' : ''}}</td>
-                                    <td>{{isset($obj->TasaEdad) ? $obj->TasaEdad.'%' :'' }} </td>
-
+                                    <td>{{ $obj->TipoCartera == null ? '' : $obj->tipoCarteras->Nombre }}
+                                    </td>
+                                    <td>{{ $obj->Saldos == null ? '' : $obj->saldos->Abreviatura }}</td>
+                                    <td>{{ $obj->TasaFecha == null && $obj->TasaMonto == null && $obj->TasaEdad == null ? $deuda->Tasa  : '0' }}
+                                    </td>
+                                    <td>{{ isset($obj->FechaDesde) ? date('d/m/Y', strtotime($obj->FechaDesde)) : '' }}
+                                    </td>
+                                    <td>{{ isset($obj->FechaHasta) ? date('d/m/Y', strtotime($obj->FechaHasta)) : '' }}
+                                    </td>
+                                    <td>{{ isset($obj->TasaFecha) ? $obj->TasaFecha . '%' : '' }} </td>
+                                    <td>{{ isset($obj->MontoDesde) ? '$' . number_format($obj->MontoDesde, 2, '.', ',') : '' }}
+                                    </td>
+                                    <td>{{ isset($obj->MontoHasta) ? '$' . number_format($obj->MontoHasta, 2, '.', ',') : '' }}
+                                    </td>
+                                    <td>{{ isset($obj->TasaMonto) ? $obj->TasaMonto . '%' : '' }} </td>
+                                    <td>{{ isset($obj->EdadDesde) ? $obj->EdadDesde . 'años' : '' }}</td>
+                                    <td>{{ isset($obj->EdadHasta) ? $obj->EdadHasta . 'años' : '' }}</td>
+                                    <td>{{ isset($obj->TasaEdad) ? $obj->TasaEdad . '%' : '' }} </td>
+                                   
                                 </tr>
 
 
