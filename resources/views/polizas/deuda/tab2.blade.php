@@ -71,7 +71,7 @@
                             @php($total = $lineas->SaldoCapital + $lineas->MontoNominal + $lineas->Intereses + $lineas->InteresesCovid + $lineas->InteresesMoratorios)
                             <tr>
                                 <td>{{ $lineas->tipo }}</td>
-                                <td contenteditable="true">Editable</td>
+                                <td>{{ $deuda->Tasa }} %</td>
                                 <td class="numeric editable" contenteditable="true"
                                     id="{{ $lineas->Abreviatura }}_saldo_capital">
                                     {{ $lineas->SaldoCapital ? number_format($lineas->SaldoCapital, 2, '.', ',') : '' }}
@@ -117,30 +117,38 @@
             </div>
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <table class="excel-like-table">
-                    <tr>
-                        <td>Detalle</td>
-                        <td>USD</td>
-                    </tr>
-                    <tr>
-                        <td>Porcentaje de comisión</td>
-                        <td class="numeric editable">{{ $deuda->Tasa }}</td>
-                    </tr>
-                    <tr>
-                        <td>Comisión</td>
-                        <td class="numeric editable">{{ $deuda->TasaComision }}</td>
-                    </tr>
-                    <tr>
-                        <td>(+) 13% IVA</td>
-                        <td class="numeric editable">0.00</td>
-                    </tr>
-                    <tr>
-                        <td>(-) 1% Retención</td>
-                        <td class="numeric editable">0.00</td>
-                    </tr>
-                    <tr>
-                        <td>(=) Valor CCF Comisión</td>
-                        <td class="numeric editable">0.00</td>
-                    </tr>
+                    <thead>
+                        <tr>
+                            <th colspan="2">Estructura CCF de comisión</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Detalle</td>
+                            <td>USD</td>
+                        </tr>
+                        <tr>
+                            <td>Porcentaje de comisión</td>
+                            <td class="numeric editable">{{ $deuda->Tasa }}</td>
+                        </tr>
+                        <tr>
+                            <td>Comisión</td>
+                            <td class="numeric editable">{{ $deuda->TasaComision }}</td>
+                        </tr>
+                        <tr>
+                            <td>(+) 13% IVA</td>
+                            <td class="numeric editable">0.00</td>
+                        </tr>
+                        <tr>
+                            <td>(-) 1% Retención</td>
+                            <td class="numeric editable">0.00</td>
+                        </tr>
+                        <tr>
+                            <td>(=) Valor CCF Comisión</td>
+                            <td class="numeric editable">0.00</td>
+                        </tr>
+
+                    </tbody>
 
                 </table>
 
@@ -148,35 +156,42 @@
 
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <table class="excel-like-table">
-                    <tr>
-                        <td>Detalle</td>
-                        <td>USD</td>
-                    </tr>
-                    <tr>
-                        <td>Monto total cartera</td>
-                        <td class="numeric editable"><span id="monto_total_cartera"></span></td>
-                    </tr>
-                    <tr>
-                        <td>Sub total</td>
-                        <td class="numeric editable"><span id="sub_total"></span></td>
-                    </tr>
-                    <tr>
-                        <td>Sub total Extra Prima</td>
-                        <td class="numeric editable"><span id="sub_total_extra_prima"></span></td>
-                    </tr>
-                    <tr>
-                        <td>Prima a cobrar</td>
-                        <td class="numeric editable"><span id="prima_a_cobrar"></span></td>
-                    </tr>
-                    <tr>
-                        <td>Comisión (10%)</td>
-                        <td class="numeric editable"><span id="comision"></span></td>
-                    </tr>
-                    <tr>
-                        <td>Liquido a pagar</td>
-                        <td class="numeric editable"><span id="iva"></span></td>
-                    </tr>
 
+                    <thead>
+                        <tr>
+                            <th colspan="2">Detalle general de cobro</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Detalle</td>
+                            <td>USD</td>
+                        </tr>
+                        <tr>
+                            <td>Monto total cartera</td>
+                            <td class="numeric editable"><span id="monto_total_cartera"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Sub total</td>
+                            <td class="numeric editable"><span id="sub_total"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Sub total Extra Prima</td>
+                            <td class="numeric editable"><span id="sub_total_extra_prima"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Prima a cobrar</td>
+                            <td class="numeric editable"><span id="prima_a_cobrar"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Comisión (10%)</td>
+                            <td class="numeric editable"><span id="comision"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Liquido a pagar</td>
+                            <td class="numeric editable"><span id="iva"></span></td>
+                        </tr>
+                    </tbody>
                 </table>
 
             </div>
@@ -292,11 +307,11 @@
                 document.getElementById("sub_total_extra_prima").textContent = formatearCantidad(extra_prima);
 
 
-                prima_a_cobrar = parseFloat(sub_total)  + parseFloat(extra_prima );
+                prima_a_cobrar = parseFloat(sub_total) + parseFloat(extra_prima);
 
                 document.getElementById("prima_a_cobrar").textContent = formatearCantidad(prima_a_cobrar);
 
-                let comision = prima_a_cobrar * (tasa_comision/100);
+                let comision = prima_a_cobrar * (tasa_comision / 100);
 
                 document.getElementById("comision").textContent = formatearCantidad(comision);
 
