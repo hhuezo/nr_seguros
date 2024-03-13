@@ -610,7 +610,7 @@ class DeudaController extends Controller
 
 
 
-            $lineas_credito = DB::table('poliza_deuda_temp_cartera as poliza')
+            $lineas_credito = DB::table('poliza_deuda_cartera as poliza')
                 ->join('poliza_deuda_creditos as creditos', 'poliza.LineaCredito', '=', 'creditos.Id')
                 ->join('saldos_montos as saldos', 'creditos.Saldos', '=', 'saldos.Id')
                 ->join('tipo_cartera as tipo', 'creditos.TipoCartera', '=', 'tipo.Id')
@@ -626,10 +626,13 @@ class DeudaController extends Controller
                     DB::raw("IFNULL(sum(poliza.InteresesMoratorios), '0.00') as InteresesMoratorios")
 
                 )
-                ->groupBy('poliza.LineaCredito')
+                ->where('poliza.PolizaDeuda',$id)
+                ->groupBy('saldos.Abreviatura')
                 ->get();
 
             $lineas_abreviatura = $lineas_credito->pluck('Abreviatura')->toArray();
+
+       
 
 
 

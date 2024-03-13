@@ -33,6 +33,10 @@
             background-color: #e2effd;
             outline: 2px solid #4d90fe;
         }
+
+        .numeric {
+            text-align: right !important;
+        }
     </style>
 
 
@@ -48,7 +52,7 @@
     <div class="modal-body">
         <div class="box-body row">
 
-            <div class="container mt-5">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <table class="excel-like-table">
                     <thead>
                         <tr>
@@ -95,15 +99,82 @@
 
                         <tr>
                             <th colspan="2">Totales</th>
-                            <td><span id="total_saldo_capital"></span></td>
-                            <td><span id="total_monto_nominal"></span></td>
-                            <td><span id="total_interes"></span></td>
-                            <td><span id="total_interes_covid"></span></td>
-                            <td><span id="total_interes_moratorio"></span></td>
-                            <td><span id="total_suma_asegurada"></span></td>
+                            <td class="numeric"><span id="total_saldo_capital"></span></td>
+                            <td class="numeric"><span id="total_monto_nominal"></span></td>
+                            <td class="numeric"><span id="total_interes"></span></td>
+                            <td class="numeric"><span id="total_interes_covid"></span></td>
+                            <td class="numeric"><span id="total_interes_moratorio"></span></td>
+                            <td class="numeric"><span id="total_suma_asegurada"></span></td>
                         </tr>
                     </tbody>
                 </table>
+            </div>
+            <div class="col-md-12">&nbsp;
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <table class="excel-like-table">
+                    <tr>
+                        <td>Detalle</td>
+                        <td>USD</td>
+                    </tr>
+                    <tr>
+                        <td>Porcentaje de comisión</td>
+                        <td class="numeric editable">0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Comisión</td>
+                        <td class="numeric editable">0.00</td>
+                    </tr>
+                    <tr>
+                        <td>(+) 13% IVA</td>
+                        <td class="numeric editable">0.00</td>
+                    </tr>
+                    <tr>
+                        <td>(-) 1% Retención</td>
+                        <td class="numeric editable">0.00</td>
+                    </tr>
+                    <tr>
+                        <td>(=) Valor CCF Comisión</td>
+                        <td class="numeric editable">0.00</td>
+                    </tr>
+                   
+                </table>
+                
+            </div>
+
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <table class="excel-like-table">
+                    <tr>
+                        <td>Detalle</td>
+                        <td>USD</td>
+                    </tr>
+                    <tr>
+                        <td>Monto total cartera</td>
+                        <td class="numeric editable"><span id="monto_total_cartera"></span></td>
+                    </tr>
+                    <tr>
+                        <td>Sub total</td>
+                        <td class="numeric editable">0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Sub total Extra Prima</td>
+                        <td class="numeric editable">0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Prima a cobrar</td>
+                        <td class="numeric editable">0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Comisión (10%)</td>
+                        <td class="numeric editable">0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Liquido a pagar</td>
+                        <td class="numeric editable">0.00</td>
+                    </tr>
+                   
+                </table>
+                
             </div>
 
 
@@ -114,50 +185,110 @@
         $(document).ready(function() {
             let lineas = @json($lineas_abreviatura);
 
-            console.log(lineas);
+            //console.log(lineas);
             calculoTotales();
             // Calcula la suma de los valores de las columnas numéricas y muestra el resultado en la columna total
             $('.editable').on('input', function() {
-                let sum = 0;
-                $(this).closest('tr').find('.editable').each(function() {
-                    const value = parseFloat($(this).text().replace(/[^0-9.-]+/g, ''));
-                    if (!isNaN(value)) {
-                        sum += value;
-                    }
-                });
-                $(this).closest('tr').find('.total').text(sum.toFixed(2).replace(/\d(?=(\d{3})+\.)/g,
-                    '$&,'));
+                calculoTotales();
+                // let sum = 0;
+                // $(this).closest('tr').find('.editable').each(function() {
+                //     const value = parseFloat($(this).text().replace(/[^0-9.-]+/g, ''));
+                //     if (!isNaN(value)) {
+                //         sum += value;
+                //     }
+                // });
+                // $(this).closest('tr').find('.total').text(sum.toFixed(2).replace(/\d(?=(\d{3})+\.)/g,
+                //     '$&,'));
             });
 
             function calculoTotales() {
+                let total_saldo_capital = 0;
+                let total_monto_nominal = 0;
+                let total_interes = 0;
+                let total_interes_covid = 0;
+                let total_interes_moratorio = 0;
+                let total_suma_asegurada = 0;
+
+
                 for (let i = 0; i < lineas.length; i++) {
                     let linea = lineas[i];
                     let elemento = document.getElementById(linea + "_saldo_capital");
 
                     let saldo_capital = elemento.innerText || elemento.textContent;
-                    console.log(linea + "_saldo_capital :", saldo_capital);
+                    // console.log(linea + "_saldo_capital :", saldo_capital);
 
                     elemento = document.getElementById(linea + "_monto_nominal");
                     let monto_nominal = elemento.innerText || elemento.textContent;
-                    console.log(linea + "_monto_nominal: ", monto_nominal);
+                    // console.log(linea + "_monto_nominal: ", monto_nominal);
 
                     elemento = document.getElementById(linea + "_interes");
                     let interes = elemento.innerText || elemento.textContent;
-                    console.log(linea + "_interes: ", interes);
+                    // console.log(linea + "_interes: ", interes);
 
                     elemento = document.getElementById(linea + "_interes_covid");
                     let interes_covid = elemento.innerText || elemento.textContent;
-                    console.log(linea + "_interes_covid: ", interes_covid);
+                    // console.log(linea + "_interes_covid: ", interes_covid);
 
                     elemento = document.getElementById(linea + "_interes_moratorio");
                     let interes_moratorio = elemento.innerText || elemento.textContent;
-                    console.log(linea + "_interes_moratorio: ", interes_moratorio);
+                    //console.log(linea + "_interes_moratorio: ", interes_moratorio);
 
                     elemento = document.getElementById(linea + "_suma_asegurada");
-                    let suma_asegurada = saldo_capital + monto_nominal + interes + interes_covid + interes_moratorio + interes_moratorio;
+                    let suma_asegurada = convertirANumero(saldo_capital) + convertirANumero(monto_nominal) +
+                        convertirANumero(interes) + convertirANumero(interes_covid) + convertirANumero(
+                            interes_moratorio);
+
+                    let suma_asegurada_formateada = suma_asegurada.toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+
+                    // Asigna la suma formateada al elemento
+                    elemento.textContent = suma_asegurada_formateada;
 
 
+                    total_saldo_capital += convertirANumero(saldo_capital);
+                    total_monto_nominal += convertirANumero(monto_nominal);
+                    total_interes += convertirANumero(interes);
+                    total_interes_covid += convertirANumero(interes_covid);
+                    total_interes_moratorio += convertirANumero(interes_moratorio);
+                    total_suma_asegurada += suma_asegurada;
                 }
+
+                let total_saldo_capital_formateada = formatearCantidad(total_saldo_capital);
+                document.getElementById("total_saldo_capital").textContent = total_saldo_capital_formateada;
+
+                let total_monto_nominal_formateada = formatearCantidad(total_monto_nominal);
+                document.getElementById("total_monto_nominal").textContent = total_monto_nominal_formateada;
+
+                let total_interes_formateada = formatearCantidad(total_interes);
+                document.getElementById("total_interes").textContent = total_interes_formateada;
+
+                let total_interes_covid_formateada = formatearCantidad(total_interes_covid);
+                document.getElementById("total_interes_covid").textContent = total_interes_covid_formateada;
+
+                let total_interes_moratorio_formateada = formatearCantidad(total_interes_moratorio);
+                document.getElementById("total_interes_moratorio").textContent = total_interes_moratorio_formateada;
+
+                let total_suma_asegurada_formateada = formatearCantidad(total_suma_asegurada);
+                document.getElementById("total_suma_asegurada").textContent = total_suma_asegurada_formateada;
+
+                //modificando valores de cuadros
+                document.getElementById("monto_total_cartera").textContent = total_suma_asegurada_formateada;
+
+            }
+
+
+            // Función para convertir una cadena formateada a un número flotante
+            function convertirANumero(cadena) {
+                return parseFloat(cadena.replace(/,/g, ''));
+            }
+
+            function formatearCantidad(cantidad) {
+                return cantidad.toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
             }
         });
     </script>
