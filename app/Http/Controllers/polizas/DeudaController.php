@@ -624,15 +624,19 @@ class DeudaController extends Controller
                     DB::raw("IFNULL(sum(poliza.MontoNominal), '0.00') as MontoNominal"),
                     DB::raw("IFNULL(sum(poliza.InteresesCovid), '0.00') as InteresesCovid"),
                     DB::raw("IFNULL(sum(poliza.InteresesMoratorios), '0.00') as InteresesMoratorios")
-
                 )
-                ->where('poliza.PolizaDeuda',$id)
+                ->where('poliza.PolizaDeuda', $id)
+                ->where(function ($query) {
+                    $query->where('PolizaDeudaDetalle', null)
+                        ->orWhere('PolizaDeudaDetalle', 0);
+                })
                 ->groupBy('saldos.Abreviatura')
                 ->get();
 
+
             $lineas_abreviatura = $lineas_credito->pluck('Abreviatura')->toArray();
 
-       
+
 
 
 
