@@ -3,6 +3,63 @@
 
 
     <style>
+        #loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+    
+        #loading-overlay img {
+            width: 50px;
+            /* Ajusta el tamaño de la imagen según tus necesidades */
+            height: 50px;
+            /* Ajusta el tamaño de la imagen según tus necesidades */
+        }
+    </style>
+    
+    
+    <!-- Agrega este div al final de tu archivo blade -->
+    <div id="loading-overlay">
+        <img src="{{ asset('img/ajax-loader.gif') }}" alt="Loading..." />
+    </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var loadingOverlay = document.getElementById('loading-overlay');
+            var submitButton = document.getElementById('submitButton');
+            var myForm = document.getElementById('myForm');
+    
+            submitButton.addEventListener('click', function(event) {
+                event.preventDefault(); // Evita que el formulario se envíe automáticamente
+    
+                loadingOverlay.style.display = 'flex'; // Cambia a 'flex' para usar flexbox
+    
+                // Validación del formulario
+                if (document.getElementById('LineaCredito_Subir').value === '') {
+                    Swal.fire('Debe seleccionar una línea de crédito');
+                    loadingOverlay.style.display = 'none'; // Oculta el overlay en caso de error
+                    return;
+                } else if (document.getElementById('Archivo').value === '') {
+                    Swal.fire('Debe seleccionar un archivo');
+                    loadingOverlay.style.display = 'none'; // Oculta el overlay en caso de error
+                    return;
+                }
+                myForm.submit();
+    
+            });
+        });
+    </script>
+
+
+
+    <style>
         .excel-like-table {
             border-collapse: collapse;
             width: 100%;
@@ -40,15 +97,124 @@
     </style>
 
 
+    <div class="modal fade bs-example-modal-lg" id="modal_pago" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                        <h5 class="modal-title" id="exampleModalLabel">Subir archivo Excel</h5>
+                    </div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="myForm" action="{{ url('polizas/deuda/create_pago') }}" method="POST"
+                    enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="form-group row">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Linea de
+                                Credito</label>
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <select name="LineaCredito" id="LineaCredito_Subir" class="form-control" required>
+                                    <option value="" selected disabled>Seleccione...</option>
+                                    @foreach ($creditos as $obj)
+                                        <option value="{{ $obj->Id }}"> {{ $obj->tipoCarteras->Nombre }}
+                                            {{ $obj->saldos->Abreviatura }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Año</label>
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <select name="Axo" class="form-control">
+                                    @for ($i = date('Y'); $i >= 2022; $i--)
+                                        <option value="{{ $i }}"> {{ $i }}</option>
+                                    @endfor
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Mes</label>
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <select name="Mes" class="form-control">
+                                    @for ($i = 1; $i <= 12; $i++)
+                                        <option value="{{ $i }}" {{ date('m') == $i ? 'selected' : '' }}>
+                                            {{ $meses[$i] }}
+                                        </option>
+                                    @endfor
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
+                                inicio</label>
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <input class="form-control" name="Id" value="{{ $deuda->Id }}" type="hidden"
+                                    required>
+                                <input class="form-control" type="date" name="FechaInicio"
+                                    value="{{ $ultimo_pago ? date('Y-m-d', strtotime($ultimo_pago->FechaFinal)) : date('Y-m-d', strtotime($primerDia)) }}"
+                                    {{ $ultimo_pago ? 'readonly' : '' }} required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
+                                final</label>
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <input class="form-control" name="FechaFinal"
+                                    value="{{ $ultimo_pago_fecha_final ? $ultimo_pago_fecha_final : date('Y-m-d', strtotime($ultimoDia)) }}"
+                                    type="date" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Archivo</label>
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                <input class="form-control" name="Archivo" id="Archivo" type="file" required>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="clearfix"></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" id="submitButton">Subir Cartera</button>
+                    </div>
+                </form>
+
+                <div id="loading-indicator" style="text-align: center; display:none">
+                    <img src="{{ asset('img/ajax-loader.gif') }}">
+                    <br>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+
 
     <div class="modal-header">
-        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-            <h5 class="modal-title" id="exampleModalLabel">Nuevo pago</h5>
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <h4 class="title" id="exampleModalLabel">Nuevo pago</h4>
+
         </div>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true"></span>
-        </button>
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 d-flex justify-content-start" style="text-align: right;">
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal_pago">
+                Subir Archivo Excel
+            </button>
+        </div>
+
     </div>
+
+    <input type="text" id="Tasa" value="{{ $deuda->Tasa }}">
+    <input type="text" id="TasaComision" value="{{ $deuda->TasaComision }}">
+    <input type="text" id="ExtraPrima" value="{{ $total_extrapima }}">
+
+
     <div class="modal-body">
         <div class="box-body row">
 
@@ -71,7 +237,7 @@
                             @php($total = $lineas->SaldoCapital + $lineas->MontoNominal + $lineas->Intereses + $lineas->InteresesCovid + $lineas->InteresesMoratorios)
                             <tr>
                                 <td>{{ $lineas->tipo }}</td>
-                                <td contenteditable="true">Editable</td>
+                                <td>{{ $deuda->Tasa }} %</td>
                                 <td class="numeric editable" contenteditable="true"
                                     id="{{ $lineas->Abreviatura }}_saldo_capital">
                                     {{ $lineas->SaldoCapital ? number_format($lineas->SaldoCapital, 2, '.', ',') : '' }}
@@ -110,37 +276,43 @@
                 </table>
             </div>
             <div class="col-md-12">&nbsp;
-                <input type="text" id="Tasa" value="{{ $deuda->Tasa }}">
-                <input type="text" id="TasaComision" value="{{ $deuda->TasaComision }}">
-                <input type="text" id="ExtraPrima" value="{{ $total_extrapima }}">
+               
 
             </div>
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <table class="excel-like-table">
-                    <tr>
-                        <td>Detalle</td>
-                        <td>USD</td>
-                    </tr>
-                    <tr>
-                        <td>Porcentaje de comisión</td>
-                        <td class="numeric editable">{{ $deuda->Tasa }}</td>
-                    </tr>
-                    <tr>
-                        <td>Comisión</td>
-                        <td class="numeric editable">{{ $deuda->TasaComision }}</td>
-                    </tr>
-                    <tr>
-                        <td>(+) 13% IVA</td>
-                        <td class="numeric editable">0.00</td>
-                    </tr>
-                    <tr>
-                        <td>(-) 1% Retención</td>
-                        <td class="numeric editable">0.00</td>
-                    </tr>
-                    <tr>
-                        <td>(=) Valor CCF Comisión</td>
-                        <td class="numeric editable">0.00</td>
-                    </tr>
+                    <thead>
+                        <tr>
+                            <th colspan="2">Estructura CCF de comisión</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Detalle</td>
+                            <td>USD</td>
+                        </tr>
+                        <tr>
+                            <td>Porcentaje de comisión</td>
+                            <td class="numeric editable">{{ $deuda->Tasa }}</td>
+                        </tr>
+                        <tr>
+                            <td>Comisión</td>
+                            <td class="numeric editable">{{ $deuda->TasaComision }}</td>
+                        </tr>
+                        <tr>
+                            <td>(+) 13% IVA</td>
+                            <td class="numeric editable">0.00</td>
+                        </tr>
+                        <tr>
+                            <td>(-) 1% Retención</td>
+                            <td class="numeric editable">0.00</td>
+                        </tr>
+                        <tr>
+                            <td>(=) Valor CCF Comisión</td>
+                            <td class="numeric editable">0.00</td>
+                        </tr>
+
+                    </tbody>
 
                 </table>
 
@@ -148,35 +320,42 @@
 
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <table class="excel-like-table">
-                    <tr>
-                        <td>Detalle</td>
-                        <td>USD</td>
-                    </tr>
-                    <tr>
-                        <td>Monto total cartera</td>
-                        <td class="numeric editable"><span id="monto_total_cartera"></span></td>
-                    </tr>
-                    <tr>
-                        <td>Sub total</td>
-                        <td class="numeric editable"><span id="sub_total"></span></td>
-                    </tr>
-                    <tr>
-                        <td>Sub total Extra Prima</td>
-                        <td class="numeric editable"><span id="sub_total_extra_prima"></span></td>
-                    </tr>
-                    <tr>
-                        <td>Prima a cobrar</td>
-                        <td class="numeric editable"><span id="prima_a_cobrar"></span></td>
-                    </tr>
-                    <tr>
-                        <td>Comisión (10%)</td>
-                        <td class="numeric editable"><span id="comision"></span></td>
-                    </tr>
-                    <tr>
-                        <td>Liquido a pagar</td>
-                        <td class="numeric editable"><span id="iva"></span></td>
-                    </tr>
 
+                    <thead>
+                        <tr>
+                            <th colspan="2">Detalle general de cobro</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Detalle</td>
+                            <td>USD</td>
+                        </tr>
+                        <tr>
+                            <td>Monto total cartera</td>
+                            <td class="numeric editable"><span id="monto_total_cartera"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Sub total</td>
+                            <td class="numeric editable"><span id="sub_total"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Sub total Extra Prima</td>
+                            <td class="numeric editable"><span id="sub_total_extra_prima"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Prima a cobrar</td>
+                            <td class="numeric editable"><span id="prima_a_cobrar"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Comisión (10%)</td>
+                            <td class="numeric editable"><span id="comision"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Liquido a pagar</td>
+                            <td class="numeric editable"><span id="liquido_pagar"></span></td>
+                        </tr>
+                    </tbody>
                 </table>
 
             </div>
@@ -292,16 +471,16 @@
                 document.getElementById("sub_total_extra_prima").textContent = formatearCantidad(extra_prima);
 
 
-                prima_a_cobrar = parseFloat(sub_total)  + parseFloat(extra_prima );
+                prima_a_cobrar = parseFloat(sub_total) + parseFloat(extra_prima);
 
                 document.getElementById("prima_a_cobrar").textContent = formatearCantidad(prima_a_cobrar);
 
-                let comision = prima_a_cobrar * (tasa_comision/100);
+                let comision = prima_a_cobrar * (tasa_comision / 100);
 
                 document.getElementById("comision").textContent = formatearCantidad(comision);
 
-                let iva = comision * 0.13;
-                document.getElementById("iva").textContent = formatearCantidad(iva);
+                let liquido_pagar = comision * 0.13;
+                document.getElementById("liquido_pagar").textContent = formatearCantidad(liquido_pagar);
 
                 console.log(comision);
             }
