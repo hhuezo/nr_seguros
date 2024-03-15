@@ -354,10 +354,85 @@
                         </tr>
                     </tbody>
                 </table>
-
+                <br><br><br>
+            </div>
+            
+            <div>
+                <form action="{{ url('polizas/deuda/agregar_pago') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="FechaInicio" value="{{ isset($fecha) ? $fecha->FechaInicio : '' }}">
+                    <input type="hidden" name="FechaFinal" value="{{isset($fecha) ? $fecha->FechaFinal : ''}}">
+                    <input type="hidden" name="MontoCartera" id="MontoCarteraDetalle">
+                    <input type="hidden" name="Deuda" value="{{$deuda->Id}}">
+                    <input type="hidden" name="Tasa" value="{{$deuda->Tasa}}">
+                    <input type="hidden" name="PrimaCalculada" id="PrimaCalculadaDetalle">
+                    <input type="hidden" name="PrimaDescontada" id="PrimaDescontadaDetalle">
+                    <input type="hidden" name="SubTotal" id="SubTotalDetalle">
+                    <input type="hidden" name="Iva" id="IvaDetalle">
+                    <input type="hidden" name="TasaComision" value="{{$deuda->TasaComision}}">
+                    <input type="hidden" name="Comision" id="ComisionDetalle">
+                    <input type="hidden" name="IvaSobreComision" id="IvaComisionDetalle">
+                    <input type="hidden" name="Retencion" id="RetencionDetalle">
+                    <input type="hidden" name="ValorCCF" id="ValorCCFDetalle">
+                    <input type="hidden" name="APagar" id="APagarDetalle">
+                    <input type="hidden" name="ExtraPrima" value="{{$total_extrapima}}">
+                    <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-aplicar">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                    <h4 class="modal-title">Aplicación de cobro</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>¿Esta seguro/a que desea aplicar el cobro?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                    <button id="boton_pago" class="btn btn-primary">Confirmar
+                                        Cobro</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br><br>
+                    <div align="center">
+                        <br><br><br>
+                        <a class="btn btn-default" data-target="#modal-cancelar" data-toggle="modal" onclick="cancelarpago()">Cancelar Cobro</a>
+                        <a class="btn btn-primary" data-target="#modal-aplicar" data-toggle="modal" onclick="aplicarpago()">Generar Cobro</a>
+                    </div>
+                </form>
             </div>
 
+            <div class="modal fade" id="modal-cancelar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
+                <div class="modal-dialog">
+                    <form action="{{ url('deuda/cancelar_pago') }}" method="POST">
+                        @method('POST')
+                        @csrf
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                                <h4 class="modal-title">Cancelar Cobro</h4>
 
+                                <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
+                                <input type="hidden" name="MesCancelar" value="{{ isset($fecha) ? $fecha->Mes : '' }}">
+                                <input type="hidden" name="AxoCancelar" value="{{ isset($fecha) ? $fecha->Axo : '' }}">
+                            </div>
+                            <div class="modal-body">
+                                <p>¿Esta seguro/a que desea cancelar el cobro?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                <button class="btn btn-danger">Cancelar
+                                    Cobro</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -460,21 +535,25 @@
 
                 //modificando valores de cuadros
                 document.getElementById("monto_total_cartera").textContent = total_suma_asegurada_formateada;
+                document.getElementById('MontoCarteraDetalle').value = total_suma_asegurada_formateada;
+                document.getElementById('PrimaCalculadaDetalle').value = parseFloat(total_suma_asegurada_formateada) * parseFloat(tasa);
+                document.getElementById('PrimaDescontadaDetalle').value = parseFloat(total_suma_asegurada_formateada) * parseFloat(tasa);
+
 
                 let sub_total = total_suma_asegurada * tasa;
 
                 document.getElementById("sub_total").textContent = formatearCantidad(sub_total);
-
+                document.getElementById('SubTotalDetalle').value = sub_total;
                 document.getElementById("sub_total_extra_prima").textContent = formatearCantidad(extra_prima);
 
 
                 prima_a_cobrar = parseFloat(sub_total) + parseFloat(extra_prima);
 
                 document.getElementById("prima_a_cobrar").textContent = formatearCantidad(prima_a_cobrar);
-                
+
                 let iva = parseFloat(prima_a_cobrar) * 0.13;
                 document.getElementById('iva').textContent = formatearCantidad(iva);
-
+                document.getElementById('IvaDetalle').value = iva;
                 let total_factura = parseFloat(iva) + parseFloat(prima_a_cobrar);
                 document.getElementById('total_factura').textContent = formatearCantidad(total_factura);
 
@@ -486,10 +565,10 @@
 
                 let valor_comision = parseFloat(prima_a_cobrar) * parseFloat(tasa_comision / 100);
                 document.getElementById('valor_comision').textContent = formatearCantidad(valor_comision);
-
+                document.getElementById('ComisionDetalle').value = valor_comision;
                 let iva_comision = parseFloat(valor_comision) * 0.13;
                 document.getElementById('iva_comision').textContent = formatearCantidad(iva_comision);
-
+                document.getElementById('IvaComisionDetalle').value = iva_comision;
                 let tipo_contribuyente = document.getElementById('TipoContribuyente').value;
                 if (tipo_contribuyente == 2 || tipo_contribuyente == 3) {
                     let retencion_comision = parseFloat(valor_comision) * 0.1;
@@ -499,7 +578,9 @@
                     document.getElementById('comision').textContent = formatearCantidad(comision_ccf);
                     let liquido_pagar = parseFloat(total_factura) - parseFloat(comision_ccf);
                     document.getElementById("liquido_pagar").textContent = formatearCantidad(liquido_pagar);
-
+                    document.getElementById('RetencionDetalle').value = retencion_comision;
+                    document.getElementById('ValorCCFDetalle').value = comision_ccf;
+                    document.getElementById('APagarDetalle').value = liquido_pagar;
                 } else {
                     let retencion_comision = 0
                     document.getElementById('retencion_comision').textContent = formatearCantidad(retencion_comision);
@@ -508,6 +589,9 @@
                     document.getElementById('comision').textContent = formatearCantidad(comision_ccf);
                     let liquido_pagar = parseFloat(total_factura) - parseFloat(comision_ccf);
                     document.getElementById("liquido_pagar").textContent = formatearCantidad(liquido_pagar);
+                    document.getElementById('RetencionDetalle').value = retencion_comision;
+                    document.getElementById('ValorCCFDetalle').value = comision_ccf;
+                    document.getElementById('APagarDetalle').value = liquido_pagar;
 
                 }
 
