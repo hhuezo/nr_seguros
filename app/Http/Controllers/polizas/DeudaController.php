@@ -637,17 +637,6 @@ class DeudaController extends Controller
             $lineas_abreviatura = $lineas_credito->pluck('Abreviatura')->toArray();
 
 
-
-
-
-
-
-
-
-
-
-
-
             $videuda = DeudaVida::where('Deuda', $deuda->Id)->first();
             $requisitos = DeudaRequisitos::where('Deuda', $deuda->Id)->get();
             $tipos_contribuyente = TipoContribuyente::get();
