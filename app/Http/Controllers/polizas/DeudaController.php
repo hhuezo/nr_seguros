@@ -445,7 +445,7 @@ class DeudaController extends Controller
 
     public function datos_asegurabilidad(Request $request)
     {
-        if ($request->EdadInicial <= 18) {
+        if ($request->EdadInicial < 18) {
             alert()->error('Debe ser mayor a 18 años');
         } else {
             $asegurabilidad = new DeudaRequisitos();
@@ -505,7 +505,7 @@ class DeudaController extends Controller
 
     public function agregar_credito(Request $request)
     {
-        if ($request->EdadDesde <= 18 && $request->EdadDesde != null) {
+        if ($request->EdadDesde < 18 && $request->EdadDesde != null) {
             alert()->error('Debe de tener ser mayor o igual a 18 años');
         } else {
             $credito = new DeudaCredito();
