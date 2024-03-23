@@ -725,6 +725,13 @@ class DeudaController extends Controller
                 $fecha_inicial = Carbon::parse($ultimo_pago->FechaFinal);
                 $fecha_final_temp = $fecha_inicial->addMonth();
                 $ultimo_pago_fecha_final = $fecha_final_temp->format('Y-m-d');
+                $fecha1 = PolizaDeudaCartera::select('Mes', 'Axo', 'FechaInicio', 'FechaFinal')
+                ->where('PolizaDeuda', '=', $id)
+                ->where('PolizaDeudaDetalle', '=', $ultimo_pago->Id)
+                ->orderByDesc('Id')->first();
+            }else{
+                $ultimo_pago = '';
+                $fecha1 = null;
             }
 
             $fecha = PolizaDeudaCartera::select('Mes', 'Axo', 'FechaInicio', 'FechaFinal')
@@ -770,10 +777,7 @@ class DeudaController extends Controller
                 }
             }
 
-            $fecha1 = PolizaDeudaCartera::select('Mes', 'Axo', 'FechaInicio', 'FechaFinal')
-                ->where('PolizaDeuda', '=', $id)
-                ->where('PolizaDeudaDetalle', '=', $ultimo_pago->Id)
-                ->orderByDesc('Id')->first();
+            
 
             $saldo1 = 0;
             if ($fecha1) {

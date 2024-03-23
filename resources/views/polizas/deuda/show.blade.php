@@ -556,7 +556,7 @@
                                 @for ($i = 0; $i < count($data); $i++) <tr style="width: 25%;">
                                     @for ($j = 0; $j < count($data[0]); $j++) <td>
                                         @if($data[$i][$j]['id'] > 0)
-                                        {{ $data[$i][$j]['value'] }} {{ $data[$i][$j]['id'] }}
+                                        {{ $data[$i][$j]['value'] }} 
                                         <a href="" data-target="#modal-elimin-{{ $data[$i][$j]['id'] }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
 
                                         @else
