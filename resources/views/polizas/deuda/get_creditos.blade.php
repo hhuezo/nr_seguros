@@ -43,7 +43,12 @@
         @php $i++; $total += $registro->total_saldo; @endphp
         @endforeach
     </tbody>
-  
+    <tfoot>
+        <tr>
+            <td colspan="9" align="right">Total</td>
+            <td>{{ number_format($total, 2, '.', ',') }}</td>
+        </tr>
+    </tfoot>
 </table>
 
 @else
