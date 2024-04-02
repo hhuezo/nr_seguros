@@ -619,6 +619,7 @@ class DeudaController extends Controller
                     'saldos.Descripcion',
                     'saldos.Abreviatura',
                     'tipo.Nombre as tipo',
+                    DB::raw("IFNULL(sum(poliza.MontoOtorgado), '0.00') as MontoOtorgado"),
                     DB::raw("IFNULL(sum(poliza.SaldoCapital), '0.00') as SaldoCapital"),
                     DB::raw("IFNULL(sum(poliza.Intereses), '0.00') as Intereses"),
                     DB::raw("IFNULL(sum(poliza.MontoNominal), '0.00') as MontoNominal"),

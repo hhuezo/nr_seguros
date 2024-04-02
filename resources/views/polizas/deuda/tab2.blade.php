@@ -217,11 +217,12 @@
                         <tr>
                             <th>Lineas de crédito</th>
                             <th>Tasa interés</th>
+                            <th>Monto Otorgado</th>
                             <th>Saldo capital</th>
-                            <th>Monto nominal</th>
                             <th>Intereses corrientes</th>
                             <th>Interes COVID</th>
                             <th>Intereses Moratorios</th>
+                            <th>Monto nominal</th>
                             <th>Suma asegurada</th>
                         </tr>
                     </thead>
@@ -271,11 +272,9 @@
                         <tr>
                             <td>{{ $lineas->tipo }} {{$lineas->Abreviatura}}</td>
                             <td>{{ $deuda->Tasa }} %</td>
+                            <td class="numeric">{{$lineas->MontoOtorgado != 0 ? number_format($lineas->MontoOtorgado,2,'.',',') : 0 }}</td>
                             <td class="numeric editable" contenteditable="true" id="{{ $lineas->Abreviatura }}_saldo_capital">
                                 {{ $saldo_capital != 0 ? number_format($saldo_capital, 2, '.', ',') : 0 }}
-                            </td>
-                            <td class="numeric editable" contenteditable="true" id="{{ $lineas->Abreviatura }}_monto_nominal">
-                                {{ $monto_nominal != 0 ? number_format($monto_nominal, 2, '.', ',') : 0 }}
                             </td>
                             <td class="numeric editable" contenteditable="true" id="{{ $lineas->Abreviatura }}_interes">
                                 {{ $intereses != 0 ? number_format($intereses, 2, '.', ',') : 0 }}
@@ -286,6 +285,9 @@
                             <td class="numeric editable" contenteditable="true" id="{{ $lineas->Abreviatura }}_interes_moratorio">
                                 {{ $intereses_moratorios != 0 ? number_format($intereses_moratorios, 2, '.', ',') : 0 }}
                             </td>
+                            <td class="numeric editable" contenteditable="true" id="{{ $lineas->Abreviatura }}_monto_nominal">
+                                {{ $monto_nominal != 0 ? number_format($monto_nominal, 2, '.', ',') : 0 }}
+                            </td>
                             <td class="numeric total" id="{{ $lineas->Abreviatura }}_suma_asegurada">
                                 {{ number_format($total, 2, '.', ',') }}
                             </td>
@@ -293,12 +295,12 @@
                         @endforeach
 
                         <tr>
-                            <th colspan="2">Totales</th>
+                            <th colspan="3">Totales</th>
                             <td class="numeric"><span id="total_saldo_capital"></span></td>
-                            <td class="numeric"><span id="total_monto_nominal"></span></td>
                             <td class="numeric"><span id="total_interes"></span></td>
                             <td class="numeric"><span id="total_interes_covid"></span></td>
                             <td class="numeric"><span id="total_interes_moratorio"></span></td>
+                            <td class="numeric"><span id="total_monto_nominal"></span></td>
                             <td class="numeric"><span id="total_suma_asegurada"></span></td>
                         </tr>
                     </tbody>
