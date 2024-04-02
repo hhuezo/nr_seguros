@@ -45,8 +45,9 @@
     </tbody>
     <tfoot>
         <tr>
-            <td colspan="9" align="right">Total</td>
+            <td colspan="8" align="right">Total</td>
             <td>{{ number_format($total, 2, '.', ',') }}</td>
+            <td>&nbsp;</td>
         </tr>
     </tfoot>
 </table>
