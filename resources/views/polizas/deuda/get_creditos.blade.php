@@ -15,6 +15,7 @@
             </tr>
         </thead>
         @php $i=1 @endphp
+        @php $total=0 @endphp
         <tbody>
             @foreach ($poliza_cumulos as $registro)
                 <tr>
@@ -44,8 +45,15 @@
                     </td>
                 </tr>
                 @php $i++ @endphp
+                @php $total = $total + $registro->total_saldo @endphp
             @endforeach
         </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="9" align="right">Total</td>
+            <td>{{number_format($total, '.',',')}}</td>
+        </tr>
+    </tfoot>
     </table>
 @else
     <table class="table table-striped" id="MyTable4">
