@@ -1050,6 +1050,7 @@ class DeudaController extends Controller
         $tempData = PolizaDeudaTempCartera::where('Axo', $anio)
             ->where('Mes', $mes + 0)
             ->where('User', auth()->user()->id)
+            ->where('NoValido',0)
             ->get();
 
 
