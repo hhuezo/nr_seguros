@@ -1050,7 +1050,7 @@ class DeudaController extends Controller
         $tempData = PolizaDeudaTempCartera::where('Axo', $anio)
             ->where('Mes', $mes + 0)
             ->where('User', auth()->user()->id)
-            ->where('NoValido',0)
+            ->where('NoValido', 0)
             ->get();
 
 
@@ -1576,7 +1576,7 @@ class DeudaController extends Controller
             $deuda->Configuracion = 0;
             $deuda->update();
             session(['tab' => 3]);
-            return redirect('polizas/deuda/'.$deuda->Id);
+            return redirect('polizas/deuda/' . $deuda->Id);
         } else {
 
 
@@ -1627,14 +1627,19 @@ class DeudaController extends Controller
                 }
 
                 // 2 error formato de dui
-                $validador_dui = $this->validarDocumento($obj->Dui, "dui");
+                if ($request->validacion_dui == 'on') {
+                    $validador_dui = $this->validarDocumento($obj->Dui, "dui");
 
-                if ($validador_dui == false) {
-                    $obj->TipoError = 2;
-                    $obj->update();
+                    if ($validador_dui == false) {
+                        $obj->TipoError = 2;
+                        $obj->update();
 
-                    array_push($errores_array, 2);
+                        array_push($errores_array, 2);
+                    }
+                }else{
+                    $validador_dui = true;
                 }
+
 
                 // 3 error formato de nit
                 // $validador_nit = $this->validarDocumento($obj->Nit, "nit");

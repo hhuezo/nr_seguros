@@ -167,6 +167,12 @@
                                 <input class="form-control" name="Archivo" id="Archivo" type="file" required>
                             </div>
                         </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">¿Quitar validación de DUI?</label>
+                            <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12" align="left">
+                                <input type="checkbox" class="form-control" name="validacion_dui" align="left">
+                            </div>
+                        </div>
 
                     </div>
 
@@ -243,17 +249,17 @@
                         @php($intereses = $lineas->Intereses)
                         @php($intereses_covid = 0)
                         @php($intereses_moratorios = 0)
-                        
+
                         @elseif($lineas->Abreviatura == 'INS3')
                         @php($total = $lineas->SaldoCapital + $lineas->Intereses + $lineas->InteresesCovid)
                         @php($saldo_capital = $lineas->SaldoCapital)
                         @php($monto_nominal = 0)
                         @php($intereses = $lineas->Intereses)
-                        @php($intereses_covid =  $lineas->InteresesCovid)
+                        @php($intereses_covid = $lineas->InteresesCovid)
                         @php($intereses_moratorios = 0)
 
                         @elseif($lineas->Abreviatura == 'INS4')
-                        @php($total = $lineas->SaldoCapital +  $lineas->Intereses + $lineas->InteresesCovid + $lineas->InteresesMoratorios)
+                        @php($total = $lineas->SaldoCapital + $lineas->Intereses + $lineas->InteresesCovid + $lineas->InteresesMoratorios)
                         @php($saldo_capital = $lineas->SaldoCapital)
                         @php($monto_nominal = 0)
                         @php($intereses = $lineas->Intereses)
@@ -266,7 +272,7 @@
                         @php($monto_nominal = $lineas->MontoNominal)
                         @php($intereses = 0)
                         @php($intereses_covid = 0)
-                        @php($intereses_moratorios = 0)    
+                        @php($intereses_moratorios = 0)
 
                         @endif
                         <tr>
@@ -398,7 +404,7 @@
                 </table>
                 <br><br><br>
             </div>
-            
+
             <div>
                 <form action="{{ url('polizas/deuda/agregar_pago') }}" method="POST">
                     @csrf
