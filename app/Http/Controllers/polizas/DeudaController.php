@@ -631,7 +631,7 @@ class DeudaController extends Controller
                     $query->where('PolizaDeudaDetalle', null)
                         ->orWhere('PolizaDeudaDetalle', 0);
                 })
-                ->groupBy('saldos.Abreviatura')
+                ->groupBy('saldos.LineaCredito')
                 ->get();
 
 
