@@ -62,7 +62,7 @@ class DeudaController extends Controller
         session(['FechaInicioDeuda' => $today]);
         session(['FechaFinalDeuda' => $today]);
         session(['ExcelURLDeuda' => '']);
-        $deuda = Deuda::get();
+        $deuda = Deuda::where('Activo',1)->get();
         return view('polizas.deuda.index', compact('deuda'));
     }
 
@@ -987,7 +987,12 @@ class DeudaController extends Controller
 
     public function destroy($id)
     {
-        //
+        $deuda = Deuda::findOrFail($id);
+        $deuda->Activo = 0;
+        $deuda->update();
+
+        alert()->success('Eliminada con exito');
+        return back();
     }
 
     public function validarFormatoFecha($data)
@@ -1628,6 +1633,8 @@ class DeudaController extends Controller
 
                 // 2 error formato de dui
                 if ($request->validacion_dui == 'on') {
+                    $validador_dui = true;
+                }else{
                     $validador_dui = $this->validarDocumento($obj->Dui, "dui");
 
                     if ($validador_dui == false) {
@@ -1636,9 +1643,7 @@ class DeudaController extends Controller
 
                         array_push($errores_array, 2);
                     }
-                }else{
-                    $validador_dui = true;
-                }
+               }
 
 
                 // 3 error formato de nit

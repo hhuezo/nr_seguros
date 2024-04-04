@@ -128,7 +128,7 @@
 
     <!-- jQuery -->
     <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
-    <script type="text/javascript">
+ <!--   <script type="text/javascript">
         $(document).ready(function() {
             // alert(document.getElementById('ComisionIva').value);
             $('#comentarios').DataTable();
@@ -556,5 +556,5 @@
             $('#modal_editar_pago').modal('show');
 
         }
-    </script>
+    </script> -->
 @endsection
