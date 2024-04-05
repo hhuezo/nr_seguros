@@ -363,7 +363,7 @@
                                 @php($intereses_moratorios = 0)
                             @endif
                             <tr>
-                                <td>{{ $lineas->tipo }}</td>
+                                <td>{{ $lineas->tipo }} {{ $lineas->Abreviatura }}</td>
                                 <td>{{ $deuda->Tasa }} %</td>
                                 <td class="numeric">
                                     0

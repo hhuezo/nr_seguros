@@ -57,7 +57,9 @@
 
                             @if($obj->Configuracion == 1)
                             <a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}/edit" class="on-default edit-row">
-                                <i class="fa fa-pencil fa-lg"></i></a>
+                                <i class="fa fa-pencil fa-lg"></i></a>&nbsp;
+                                <a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}" class="on-default edit-row">
+                                <i class="fa fa-cog fa-lg"></i></a>
                             @else
                             <a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}" class="on-default edit-row">
                                 <i class="fa fa-cog fa-lg"></i></a>
