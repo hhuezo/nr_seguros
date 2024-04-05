@@ -147,4 +147,9 @@
 
     </tbody>
 </table>
+<script>
+      $(document).ready(function() {
+       $('#MyTable4').DataTable();
+      });
+</script>
 @endif
