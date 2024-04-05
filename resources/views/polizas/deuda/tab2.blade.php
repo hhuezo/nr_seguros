@@ -651,7 +651,8 @@
                     elemento.textContent = suma_asegurada_formateada;
 
 
-                    total_saldo_capital += convertirANumero(saldo_capital);
+//                    total_saldo_capital += convertirANumero(saldo_capital);
+                    total_saldo_capital = total_saldo_capital + convertirANumero(saldo_capital);
                     total_monto_nominal += convertirANumero(monto_nominal);
                     total_interes += convertirANumero(interes);
                     total_interes_covid += convertirANumero(interes_covid);
