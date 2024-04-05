@@ -354,7 +354,7 @@
                                 @php($intereses = $lineas->Intereses)
                                 @php($intereses_covid = $lineas->InteresesCovid)
                                 @php($intereses_moratorios = $lineas->InteresesMoratorios)
-                            @else
+                                @elseif($lineas->Abreviatura == 'INS5'.$lineas->LineaCredito)
                                 @php($total = $lineas->MontoNominal)
                                 @php($saldo_capital = 0)
                                 @php($monto_nominal = $lineas->MontoNominal)
