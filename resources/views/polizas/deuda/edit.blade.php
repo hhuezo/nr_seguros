@@ -128,7 +128,7 @@
 
     <!-- jQuery -->
     <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
- <!--   <script type="text/javascript">
+   <script type="text/javascript">
         $(document).ready(function() {
             // alert(document.getElementById('ComisionIva').value);
             $('#comentarios').DataTable();
@@ -187,16 +187,16 @@
         }
 
 
-        function show_MontoCartera() {
-            var montoCartera = parseFloat(document.getElementById("MontoCartera").value);
+        // function show_MontoCartera() {
+        //     var montoCartera = parseFloat(document.getElementById("MontoCartera").value);
 
-            var numeroFormateado = formatearNumero(montoCartera);
-            document.getElementById('MontoCarteraView').value = numeroFormateado;
+        //     var numeroFormateado = formatearNumero(montoCartera);
+        //     document.getElementById('MontoCarteraView').value = numeroFormateado;
 
-            $("#MontoCarteraView").show();
-            $("#MontoCartera").hide();
+        //     $("#MontoCarteraView").show();
+        //     $("#MontoCartera").hide();
 
-        }
+        // }
 
         function aplicarpago() {
 
@@ -206,291 +206,291 @@
 
             document.getElementById('boton_pago').type = "submit";
         }
-        $(document).ready(function() {
-
-            // $("#MontoCarteraView").on('focus', function() {
-            //     $("#MontoCarteraView").hide();
-            //     $("#MontoCartera").show();
-            // })
-
+        // $(document).ready(function() {
+
+        //     // $("#MontoCarteraView").on('focus', function() {
+        //     //     $("#MontoCarteraView").hide();
+        //     //     $("#MontoCartera").show();
+        //     // })
+
 
 
-            $('#PrimaDescontada2').val($('#PrimaCalculada2').val() - $('#DescuentoRentabilidad2').val());
-
-            $('#Validar').on('change', function() {
-                if ($(this).is(':checked')) {
-                    $('#FormArchivo').prop('target', '_blank');
-                } else {
-                    $('#FormArchivo').removeAttr('target')
-                }
-            });
-
-            $("#btn_confirmar_recibo").click(function() {
-                window.location.reload();
-
-            })
-
-            calculoPrimaCalculada();
-            calculoPrimaTotal();
-            calculoDescuento();
-            calculoSubTotal();
-            calculoCCF();
-
-            $('#MontoCartera').change(function() {
-                calculoPrimaCalculada();
-                calculoPrimaTotal();
-                calculoDescuento();
-                calculoSubTotal();
-                calculoCCF();
+        //     $('#PrimaDescontada2').val($('#PrimaCalculada2').val() - $('#DescuentoRentabilidad2').val());
+
+        //     $('#Validar').on('change', function() {
+        //         if ($(this).is(':checked')) {
+        //             $('#FormArchivo').prop('target', '_blank');
+        //         } else {
+        //             $('#FormArchivo').removeAttr('target')
+        //         }
+        //     });
+
+        //     $("#btn_confirmar_recibo").click(function() {
+        //         window.location.reload();
+
+        //     })
+
+        //     calculoPrimaCalculada();
+        //     calculoPrimaTotal();
+        //     calculoDescuento();
+        //     calculoSubTotal();
+        //     calculoCCF();
+
+        //     $('#MontoCartera').change(function() {
+        //         calculoPrimaCalculada();
+        //         calculoPrimaTotal();
+        //         calculoDescuento();
+        //         calculoSubTotal();
+        //         calculoCCF();
 
 
 
-            })
-            $("#PrimaCalculada").change(function() {
-                //  calculoPrimaCalculada();
-                calculoPrimaTotal();
-                calculoDescuento();
-                calculoSubTotal();
-                calculoCCF();
-            })
+        //     })
+        //     $("#PrimaCalculada").change(function() {
+        //         //  calculoPrimaCalculada();
+        //         calculoPrimaTotal();
+        //         calculoDescuento();
+        //         calculoSubTotal();
+        //         calculoCCF();
+        //     })
 
 
 
-            $("#ExtPrima").change(function() {
-                calculoPrimaTotal();
-                calculoDescuento();
-                calculoSubTotal();
-                calculoCCF();
-            })
+        //     $("#ExtPrima").change(function() {
+        //         calculoPrimaTotal();
+        //         calculoDescuento();
+        //         calculoSubTotal();
+        //         calculoCCF();
+        //     })
 
 
-            $("#PrimaTotal").change(function() {
-                calculoDescuento();
-                calculoSubTotal();
-                calculoCCF();
-            })
-            $("#TasaDescuento").change(function() {
-                calculoDescuento();
-                calculoSubTotal();
-                calculoCCF();
-            })
-
-
-            $('#GastosEmision').change(function() {
-                calculoSubTotal();
-                calculoCCF();
-            })
-            $('#Otros').change(function() {
-                calculoSubTotal();
-                calculoCCF();
-            })
-
-
-            $('#TasaComision').change(function() {
-                calculoCCF();
-                document.getElementById('APagar').style.backgroundColor = 'yellow';
-            })
-            $('#ValorCCFE').change(function() {
-                var ccfe = document.getElementById('ValorCCFE').value
-                document.getElementById('ValorCCF').value = Number(ccfe);
-                var formattedSub = formatearNumero(Number(ccfe));
-                document.getElementById('ValorCCFView').value = formattedSub;
-
+        //     $("#PrimaTotal").change(function() {
+        //         calculoDescuento();
+        //         calculoSubTotal();
+        //         calculoCCF();
+        //     })
+        //     $("#TasaDescuento").change(function() {
+        //         calculoDescuento();
+        //         calculoSubTotal();
+        //         calculoCCF();
+        //     })
+
+
+        //     $('#GastosEmision').change(function() {
+        //         calculoSubTotal();
+        //         calculoCCF();
+        //     })
+        //     $('#Otros').change(function() {
+        //         calculoSubTotal();
+        //         calculoCCF();
+        //     })
+
+
+        //     $('#TasaComision').change(function() {
+        //         calculoCCF();
+        //         document.getElementById('APagar').style.backgroundColor = 'yellow';
+        //     })
+        //     $('#ValorCCFE').change(function() {
+        //         var ccfe = document.getElementById('ValorCCFE').value
+        //         document.getElementById('ValorCCF').value = Number(ccfe);
+        //         var formattedSub = formatearNumero(Number(ccfe));
+        //         document.getElementById('ValorCCFView').value = formattedSub;
+
 
 
-                var PrimaTotal = document.getElementById('SubTotal').value;
-                var iva = document.getElementById('Iva').value;
-                var APagar = Number(PrimaTotal) - Number(ccfe) + Number(iva);
-                document.getElementById('APagar').value = APagar.toFixed(2);
-                formattedSub = formatearNumero(Number(APagar.toFixed(2)));
-                document.getElementById('APagarView').value = formattedSub;
+        //         var PrimaTotal = document.getElementById('SubTotal').value;
+        //         var iva = document.getElementById('Iva').value;
+        //         var APagar = Number(PrimaTotal) - Number(ccfe) + Number(iva);
+        //         document.getElementById('APagar').value = APagar.toFixed(2);
+        //         formattedSub = formatearNumero(Number(APagar.toFixed(2)));
+        //         document.getElementById('APagarView').value = formattedSub;
 
-                document.getElementById('APagar').style.backgroundColor = 'yellow';
-                document.getElementById('APagarView').style.backgroundColor = 'yellow';
+        //         document.getElementById('APagar').style.backgroundColor = 'yellow';
+        //         document.getElementById('APagarView').style.backgroundColor = 'yellow';
 
-                document.getElementById('Facturar').value = (Number(PrimaTotal) + Number(iva)).toFixed(2);
-                formattedSub = formatearNumero((Number(PrimaTotal) + Number(iva)).toFixed(2));
-                document.getElementById('FacturarView').value = formattedSub;
-            })
+        //         document.getElementById('Facturar').value = (Number(PrimaTotal) + Number(iva)).toFixed(2);
+        //         formattedSub = formatearNumero((Number(PrimaTotal) + Number(iva)).toFixed(2));
+        //         document.getElementById('FacturarView').value = formattedSub;
+        //     })
 
-            $('#ValorCCF').change(function() {
-                var ccf = document.getElementById('ValorCCF').value
-                document.getElementById('ValorCCFE').value = Number(ccf);
-                var formattedSub = formatearNumero(Number(ccf));
-                document.getElementById('ValorCCFEView').value = formattedSub;
+        //     $('#ValorCCF').change(function() {
+        //         var ccf = document.getElementById('ValorCCF').value
+        //         document.getElementById('ValorCCFE').value = Number(ccf);
+        //         var formattedSub = formatearNumero(Number(ccf));
+        //         document.getElementById('ValorCCFEView').value = formattedSub;
 
 
-                var PrimaTotal = document.getElementById('SubTotal').value;
-                var iva = document.getElementById('Iva').value;
-                var APagar = Number(PrimaTotal) - Number(ccf) + Number(iva);
-                document.getElementById('APagar').value = APagar.toFixed(2);
-                document.getElementById('APagar').style.backgroundColor = 'yellow';
-                var formattedSub = formatearNumero(APagar.toFixed(2));
-                document.getElementById('APagarView').value = formattedSub;
-                document.getElementById('APagarView').style.backgroundColor = 'yellow';
+        //         var PrimaTotal = document.getElementById('SubTotal').value;
+        //         var iva = document.getElementById('Iva').value;
+        //         var APagar = Number(PrimaTotal) - Number(ccf) + Number(iva);
+        //         document.getElementById('APagar').value = APagar.toFixed(2);
+        //         document.getElementById('APagar').style.backgroundColor = 'yellow';
+        //         var formattedSub = formatearNumero(APagar.toFixed(2));
+        //         document.getElementById('APagarView').value = formattedSub;
+        //         document.getElementById('APagarView').style.backgroundColor = 'yellow';
 
 
-                document.getElementById('Facturar').value = (Number(PrimaTotal) + Number(iva)).toFixed(2);
-                formattedSub = formatearNumero((Number(PrimaTotal) + Number(iva)).toFixed(2));
-                document.getElementById('FacturarView').value = formattedSub;
-            })
+        //         document.getElementById('Facturar').value = (Number(PrimaTotal) + Number(iva)).toFixed(2);
+        //         formattedSub = formatearNumero((Number(PrimaTotal) + Number(iva)).toFixed(2));
+        //         document.getElementById('FacturarView').value = formattedSub;
+        //     })
 
 
 
 
 
-        })
+        // })
 
 
-        function calculoCCF() {
-            var comision = document.getElementById('TasaComision').value;
-            var total = document.getElementById('PrimaDescontada').value;
-            var valorDes = total * (comision / 100);
-            document.getElementById('Comision').value = Number(valorDes).toFixed(2);
+        // function calculoCCF() {
+        //     var comision = document.getElementById('TasaComision').value;
+        //     var total = document.getElementById('PrimaDescontada').value;
+        //     var valorDes = total * (comision / 100);
+        //     document.getElementById('Comision').value = Number(valorDes).toFixed(2);
 
 
-            if (document.getElementById('ComisionIva').value == 0) {
-                //  alert('si');
-                var IvaSobreComision = Number(valorDes) * 0.13;
-                document.getElementById('IvaSobreComision').value = Number(IvaSobreComision).toFixed(2);
-                var formattedSub = formatearNumero(Number(IvaSobreComision).toFixed(2));
-                document.getElementById('IvaSobreComisionView').value = formattedSub;
-            } else {
-                // alert('no');
-                var IvaSobreComision = 0;
-                document.getElementById('IvaSobreComision').value = 0;
-                document.getElementById('IvaSobreComisionView').value = 0;
-            }
-            if (document.getElementById('Retencion').hasAttribute('readonly')) {
-                var Retencion = 0;
-                document.getElementById('RetencionView').value = 0;
-            } else {
-                var Retencion = valorDes * 0.01;
-                document.getElementById('Retencion').value = Retencion;
-                var formattedSub = formatearNumero(Number(Retencion));
-                document.getElementById('RetencionView').value = formattedSub;
-            }
-            var ValorCCF = Number(valorDes) + Number(IvaSobreComision) - Number(Retencion);
-            // alert(ValorCCF);
-            document.getElementById('ValorCCFE').value = Number(ValorCCF).toFixed(2);
-            var formattedSub = formatearNumero(Number(ValorCCF).toFixed(2));
-            document.getElementById('ValorCCFEView').value = formattedSub;
+        //     if (document.getElementById('ComisionIva').value == 0) {
+        //         //  alert('si');
+        //         var IvaSobreComision = Number(valorDes) * 0.13;
+        //         document.getElementById('IvaSobreComision').value = Number(IvaSobreComision).toFixed(2);
+        //         var formattedSub = formatearNumero(Number(IvaSobreComision).toFixed(2));
+        //         document.getElementById('IvaSobreComisionView').value = formattedSub;
+        //     } else {
+        //         // alert('no');
+        //         var IvaSobreComision = 0;
+        //         document.getElementById('IvaSobreComision').value = 0;
+        //         document.getElementById('IvaSobreComisionView').value = 0;
+        //     }
+        //     if (document.getElementById('Retencion').hasAttribute('readonly')) {
+        //         var Retencion = 0;
+        //         document.getElementById('RetencionView').value = 0;
+        //     } else {
+        //         var Retencion = valorDes * 0.01;
+        //         document.getElementById('Retencion').value = Retencion;
+        //         var formattedSub = formatearNumero(Number(Retencion));
+        //         document.getElementById('RetencionView').value = formattedSub;
+        //     }
+        //     var ValorCCF = Number(valorDes) + Number(IvaSobreComision) - Number(Retencion);
+        //     // alert(ValorCCF);
+        //     document.getElementById('ValorCCFE').value = Number(ValorCCF).toFixed(2);
+        //     var formattedSub = formatearNumero(Number(ValorCCF).toFixed(2));
+        //     document.getElementById('ValorCCFEView').value = formattedSub;
 
-            document.getElementById('ValorCCF').value = Number(ValorCCF).toFixed(2);
-            formattedSub = formatearNumero(Number(ValorCCF));
-            document.getElementById('ValorCCFView').value = formattedSub;
+        //     document.getElementById('ValorCCF').value = Number(ValorCCF).toFixed(2);
+        //     formattedSub = formatearNumero(Number(ValorCCF));
+        //     document.getElementById('ValorCCFView').value = formattedSub;
 
-            var PrimaTotal = document.getElementById('SubTotal').value;
-            var iva = document.getElementById('Iva').value;
-            var APagar = Number(PrimaTotal) - Number(ValorCCF) + Number(iva);
+        //     var PrimaTotal = document.getElementById('SubTotal').value;
+        //     var iva = document.getElementById('Iva').value;
+        //     var APagar = Number(PrimaTotal) - Number(ValorCCF) + Number(iva);
 
 
-            document.getElementById('APagar').value = APagar.toFixed(2);
-            formattedSub = formatearNumero(Number(APagar.toFixed(2)));
-            document.getElementById('APagarView').value = formattedSub;
+        //     document.getElementById('APagar').value = APagar.toFixed(2);
+        //     formattedSub = formatearNumero(Number(APagar.toFixed(2)));
+        //     document.getElementById('APagarView').value = formattedSub;
 
-            document.getElementById('Facturar').value = (Number(PrimaTotal) + Number(iva)).toFixed(2);
-            formattedSub = formatearNumero((Number(PrimaTotal) + Number(iva)).toFixed(2));
-            document.getElementById('FacturarView').value = formattedSub;
+        //     document.getElementById('Facturar').value = (Number(PrimaTotal) + Number(iva)).toFixed(2);
+        //     formattedSub = formatearNumero((Number(PrimaTotal) + Number(iva)).toFixed(2));
+        //     document.getElementById('FacturarView').value = formattedSub;
 
-        }
+        // }
 
 
-        function calculoSubTotal() {
+        // function calculoSubTotal() {
 
-            var primaDescontada = document.getElementById('PrimaDescontada').value;
-            var gastos = document.getElementById('GastosEmision').value;
-            var otros = document.getElementById('Otros').value;
-            document.getElementById('SubTotal').value = Number(primaDescontada) + Number(gastos) + Number(otros);
-            document.getElementById('Iva').value = (document.getElementById('SubTotal').value * 0.13).toFixed(2);
+        //     var primaDescontada = document.getElementById('PrimaDescontada').value;
+        //     var gastos = document.getElementById('GastosEmision').value;
+        //     var otros = document.getElementById('Otros').value;
+        //     document.getElementById('SubTotal').value = Number(primaDescontada) + Number(gastos) + Number(otros);
+        //     document.getElementById('Iva').value = (document.getElementById('SubTotal').value * 0.13).toFixed(2);
 
-            var formattedSub = formatearNumero(Number(primaDescontada) + Number(gastos) + Number(otros));
-            document.getElementById('SubTotalView').value = formattedSub;
+        //     var formattedSub = formatearNumero(Number(primaDescontada) + Number(gastos) + Number(otros));
+        //     document.getElementById('SubTotalView').value = formattedSub;
 
 
-            formattedSub = formatearNumero((document.getElementById('SubTotal').value * 0.13));
-            document.getElementById('IvaView').value = formattedSub;
+        //     formattedSub = formatearNumero((document.getElementById('SubTotal').value * 0.13));
+        //     document.getElementById('IvaView').value = formattedSub;
 
-        }
+        // }
 
 
-        function calculoDescuento() {
-            var tasa = document.getElementById('TasaDescuento').value;
-            var primaTotal = document.getElementById('PrimaTotal').value;
+        // function calculoDescuento() {
+        //     var tasa = document.getElementById('TasaDescuento').value;
+        //     var primaTotal = document.getElementById('PrimaTotal').value;
 
-            if (tasa < 0) {
-                document.getElementById('Descuento').value = (tasa * primaTotal).toFixed(2);
-            } else {
-                document.getElementById('Descuento').value = ((tasa / 100) * primaTotal).toFixed(2);
-            }
-            document.getElementById('PrimaDescontada').value = (primaTotal - document.getElementById('Descuento').value).toFixed(2);
+        //     if (tasa < 0) {
+        //         document.getElementById('Descuento').value = (tasa * primaTotal).toFixed(2);
+        //     } else {
+        //         document.getElementById('Descuento').value = ((tasa / 100) * primaTotal).toFixed(2);
+        //     }
+        //     document.getElementById('PrimaDescontada').value = (primaTotal - document.getElementById('Descuento').value).toFixed(2);
 
-            var formattedSub = formatearNumero((primaTotal - document.getElementById('Descuento').value));
-            document.getElementById('PrimaDescontadaView').value = formattedSub;
+        //     var formattedSub = formatearNumero((primaTotal - document.getElementById('Descuento').value));
+        //     document.getElementById('PrimaDescontadaView').value = formattedSub;
 
-            formattedSub = formatearNumero(document.getElementById('Descuento').value);
-            document.getElementById('DescuentoView').value = formattedSub;
-        }
+        //     formattedSub = formatearNumero(document.getElementById('Descuento').value);
+        //     document.getElementById('DescuentoView').value = formattedSub;
+        // }
 
-        function calculoPrimaTotal() {
-            var sub = document.getElementById('PrimaCalculada').value;
-            var extra = document.getElementById('ExtPrima').value;
-            var prima = Number(sub) + Number(extra);
-            document.getElementById('PrimaTotal').value = Number(prima);
+        // function calculoPrimaTotal() {
+        //     var sub = document.getElementById('PrimaCalculada').value;
+        //     var extra = document.getElementById('ExtPrima').value;
+        //     var prima = Number(sub) + Number(extra);
+        //     document.getElementById('PrimaTotal').value = Number(prima);
 
-            var formattedSub = formatearNumero(Number(prima));
-            // Establecer el valor formateado en el elemento
-            document.getElementById('PrimaTotalView').value = formattedSub;
-        }
+        //     var formattedSub = formatearNumero(Number(prima));
+        //     // Establecer el valor formateado en el elemento
+        //     document.getElementById('PrimaTotalView').value = formattedSub;
+        // }
 
-        function calculoPrimaCalculada() {
-            var monto = document.getElementById('MontoCartera').value;
-            var desde = new Date(document.getElementById('VigenciaDesde').value);
-            var hasta = new Date(document.getElementById('VigenciaHasta').value);
-            var hoy = new Date();
-            console.log(hoy);
+        // function calculoPrimaCalculada() {
+        //     var monto = document.getElementById('MontoCartera').value;
+        //     var desde = new Date(document.getElementById('VigenciaDesde').value);
+        //     var hasta = new Date(document.getElementById('VigenciaHasta').value);
+        //     var hoy = new Date();
+        //     console.log(hoy);
 
-            var millisBetween = hasta.getTime() - desde.getTime();
+        //     var millisBetween = hasta.getTime() - desde.getTime();
 
 
-            var dias_axo = (millisBetween / (1000 * 3600 * 24));
-            console.log(desde, hasta);
-            console.log("dias del año: " + dias_axo)
+        //     var dias_axo = (millisBetween / (1000 * 3600 * 24));
+        //     console.log(desde, hasta);
+        //     console.log("dias del año: " + dias_axo)
 
 
-            var inicio = new Date(document.getElementById('FechaInicio').value);
-            var final = new Date(document.getElementById('FechaFinal').value);
-            inicio.setHours(0, 0, 0, 0);
-            final.setHours(0, 0, 0, 0);
-            console.log("inicio" + inicio)
-            console.log("final" + final)
+        //     var inicio = new Date(document.getElementById('FechaInicio').value);
+        //     var final = new Date(document.getElementById('FechaFinal').value);
+        //     inicio.setHours(0, 0, 0, 0);
+        //     final.setHours(0, 0, 0, 0);
+        //     console.log("inicio" + inicio)
+        //     console.log("final" + final)
 
-            var millisBetween = final.getTime() - inicio.getTime();
-            var dias_mes = Math.round(millisBetween / (1000 * 3600 * 24));
+        //     var millisBetween = final.getTime() - inicio.getTime();
+        //     var dias_mes = Math.round(millisBetween / (1000 * 3600 * 24));
 
 
 
-            console.log('tasa Final:', tasaFinal);
-            var tasaFinal = document.getElementById('Tasa').value;
-            var sub = parseFloat(monto) * parseFloat(tasaFinal);
+        //     console.log('tasa Final:', tasaFinal);
+        //     var tasaFinal = document.getElementById('Tasa').value;
+        //     var sub = parseFloat(monto) * parseFloat(tasaFinal);
 
-            var sub = parseFloat(monto) * parseFloat(tasaFinal);
+        //     var sub = parseFloat(monto) * parseFloat(tasaFinal);
 
-            document.getElementById('PruebaDecimales').value = sub;
-            document.getElementById('PrimaCalculada').value = sub.toLocaleString('sv-SE', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            }).replace(',', '.').replace(/[^\d,.-]/g, '');
-            console.log(sub.toLocaleString('sv-SE'));
-            document.getElementById('tasaFinal').value = tasaFinal;
+        //     document.getElementById('PruebaDecimales').value = sub;
+        //     document.getElementById('PrimaCalculada').value = sub.toLocaleString('sv-SE', {
+        //         minimumFractionDigits: 2,
+        //         maximumFractionDigits: 2
+        //     }).replace(',', '.').replace(/[^\d,.-]/g, '');
+        //     console.log(sub.toLocaleString('sv-SE'));
+        //     document.getElementById('tasaFinal').value = tasaFinal;
 
-            var formattedSub = formatearNumero(sub);
+        //     var formattedSub = formatearNumero(sub);
 
-            // Establecer el valor formateado en el elemento
-            document.getElementById('PrimaCalculadaView').value = formattedSub;
+        //     // Establecer el valor formateado en el elemento
+        //     document.getElementById('PrimaCalculadaView').value = formattedSub;
 
 
-        }
+        // }
 
 
         function modal_edit(id) {
@@ -556,5 +556,5 @@
             $('#modal_editar_pago').modal('show');
 
         }
-    </script> -->
+    </script> 
 @endsection
