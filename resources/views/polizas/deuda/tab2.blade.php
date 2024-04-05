@@ -168,10 +168,11 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">¿Quitar validación de DUI?</label>
+                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">&nbsp;</label>
                             <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12" align="left">
                                 <input type="checkbox" class="form-control" name="validacion_dui" align="left">
                             </div>
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="left">Desea  omitir la <br> validación de formato de DUI?</label>
                         </div>
 
                     </div>
