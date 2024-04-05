@@ -363,10 +363,11 @@
                                 @php($intereses_moratorios = 0)
                             @endif
                             <tr>
-                                <td>{{ $lineas->tipo }} {{ $lineas->Abreviatura }}</td>
+                                <td>{{ $lineas->tipo }}</td>
                                 <td>{{ $deuda->Tasa }} %</td>
                                 <td class="numeric">
-                                    {{ $lineas->MontoOtorgado != 0 ? number_format($lineas->MontoOtorgado, 2, '.', ',') : 0 }}
+                                    0
+                                    {{-- {{ $lineas->MontoOtorgado != 0 ? number_format($lineas->MontoOtorgado, 2, '.', ',') : 0 }} --}}
                                 </td>
                                 <td class="numeric editable" contenteditable="true"
                                     id="{{ $lineas->Abreviatura }}_saldo_capital">
