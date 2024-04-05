@@ -617,7 +617,7 @@ class DeudaController extends Controller
                 ->select(
                     'poliza.LineaCredito',
                     'saldos.Descripcion',
-                    'saldos.Abreviatura',
+                    DB::raw("CONCAT(saldos.Abreviatura, poliza.LineaCredito) as Abreviatura"),
                     'tipo.Nombre as tipo',
                     DB::raw("IFNULL(sum(poliza.MontoOtorgado), '0.00') as MontoOtorgado"),
                     DB::raw("IFNULL(sum(poliza.SaldoCapital), '0.00') as SaldoCapital"),
