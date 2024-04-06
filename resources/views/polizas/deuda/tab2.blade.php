@@ -380,7 +380,7 @@
                                 <td>{{ $deuda->Tasa }} %</td>
                                 <td class="numeric">
                                     
-                                    {{ $saldo_capital != 0 ? number_format($monto_otorgado, 2, '.', ',') : 0 }}
+                                    {{ $monto_otorgado != 0 ? number_format($monto_otorgado, 2, '.', ',') : 0 }}
                                     {{-- {{ $lineas->MontoOtorgado != 0 ? number_format($monto_otorgado, 2, '.', ',') : 0 }} --}}
                                 </td>
                                 <td class="numeric editable" contenteditable="true"
