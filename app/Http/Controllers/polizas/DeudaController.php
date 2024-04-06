@@ -635,7 +635,7 @@ class DeudaController extends Controller
                 ->groupBy('poliza.LineaCredito')
                 ->get();
 
-                dd($lineas_credito);
+                //dd($lineas_credito);
 
             $lineas_abreviatura = $lineas_credito->pluck('Abreviatura')->toArray();
 
