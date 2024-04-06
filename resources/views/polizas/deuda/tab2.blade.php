@@ -361,6 +361,13 @@
                                 @php($intereses = 0)
                                 @php($intereses_covid = 0)
                                 @php($intereses_moratorios = 0)
+                                @elseif($lineas->Abreviatura == 'INS6'.$lineas->LineaCredito)
+                                @php($total = 0)
+                                @php($saldo_capital = 0)
+                                @php($monto_nominal = 0)
+                                @php($intereses = 0)
+                                @php($intereses_covid = 0)
+                                @php($intereses_moratorios = 0)
                             @endif
                             <tr>
                                 <td>{{ $lineas->tipo }} {{ $lineas->Abrev }}</td>
@@ -371,7 +378,7 @@
                                 </td>
                                 <td class="numeric editable" contenteditable="true"
                                     id="{{ $lineas->Abreviatura }}_saldo_capital">
-                                    {{ $saldo_capital != 0 ? number_format($saldo_capital, 2, '.', ',') : 0 }}
+                                    {{ $saldo_capital != 0 ? number_format($    , 2, '.', ',') : 0 }}
                                 </td>
                                 <td class="numeric editable" contenteditable="true"
                                     id="{{ $lineas->Abreviatura }}_interes">
