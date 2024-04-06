@@ -333,6 +333,7 @@
                                 @php($intereses = 0.0)
                                 @php($intereses_covid = 0.0)
                                 @php($intereses_moratorios = 0.0)
+                                @php($monto_otorgado = 0.0)
                             @elseif($lineas->Abreviatura == 'INS2'.$lineas->LineaCredito)
                                 @php($total = $lineas->SaldoCapital + $lineas->Intereses)
                                 @php($saldo_capital = $lineas->SaldoCapital)
@@ -340,6 +341,7 @@
                                 @php($intereses = $lineas->Intereses)
                                 @php($intereses_covid = 0)
                                 @php($intereses_moratorios = 0)
+                                @php($monto_otorgado = 0)
                             @elseif($lineas->Abreviatura == 'INS3'.$lineas->LineaCredito)
                                 @php($total = $lineas->SaldoCapital + $lineas->Intereses + $lineas->InteresesCovid)
                                 @php($saldo_capital = $lineas->SaldoCapital)
@@ -347,6 +349,7 @@
                                 @php($intereses = $lineas->Intereses)
                                 @php($intereses_covid = $lineas->InteresesCovid)
                                 @php($intereses_moratorios = 0)
+                                @php($monto_otorgado = 0)
                             @elseif($lineas->Abreviatura == 'INS4'.$lineas->LineaCredito)
                                 @php($total = $lineas->SaldoCapital + $lineas->Intereses + $lineas->InteresesCovid + $lineas->InteresesMoratorios)
                                 @php($saldo_capital = $lineas->SaldoCapital)
@@ -354,19 +357,30 @@
                                 @php($intereses = $lineas->Intereses)
                                 @php($intereses_covid = $lineas->InteresesCovid)
                                 @php($intereses_moratorios = $lineas->InteresesMoratorios)
-                                @elseif($lineas->Abreviatura == 'INS5'.$lineas->LineaCredito)
+                                @php($monto_otorgado = 0)
+                            @elseif($lineas->Abreviatura == 'INS5'.$lineas->LineaCredito)
                                 @php($total = $lineas->MontoNominal)
                                 @php($saldo_capital = 0)
                                 @php($monto_nominal = $lineas->MontoNominal)
                                 @php($intereses = 0)
                                 @php($intereses_covid = 0)
                                 @php($intereses_moratorios = 0)
+                                @php($monto_otorgado = 0)
+                            @elseif($lineas->Abreviatura == 'INS6'.$lineas->LineaCredito)
+                                @php($total = $lineas->MontoOtorgado)
+                                @php($saldo_capital = 0)
+                                @php($monto_nominal = 0)
+                                @php($intereses = 0)
+                                @php($intereses_covid = 0)
+                                @php($intereses_moratorios = 0)
+                                @php($monto_otorgado = $lineas->MontoOtorgado)
                             @endif
                             <tr>
                                 <td>{{ $lineas->tipo }} {{ $lineas->Abrev }}</td>
                                 <td>{{ $deuda->Tasa }} %</td>
                                 <td class="numeric">
                                     0
+                                    {{ $saldo_capital != 0 ? number_format($monto_otorgado, 2, '.', ',') : 0 }}
                                     {{-- {{ $lineas->MontoOtorgado != 0 ? number_format($lineas->MontoOtorgado, 2, '.', ',') : 0 }} --}}
                                 </td>
                                 <td class="numeric editable" contenteditable="true"
@@ -396,7 +410,8 @@
                         @endforeach
 
                         <tr>
-                            <th colspan="3">Totales</th>
+                            <th colspan="2">Totales</th>
+                            <td class="numeric"><span id="total_monto_otorgado"></span></td>
                             <td class="numeric"><span id="total_saldo_capital"></span></td>
                             <td class="numeric"><span id="total_interes"></span></td>
                             <td class="numeric"><span id="total_interes_covid"></span></td>
@@ -609,6 +624,7 @@
             function calculoTotales() {
                 let total_saldo_capital = 0;
                 let total_monto_nominal = 0;
+                let total_monto_otorgado = 0;
                 let total_interes = 0;
                 let total_interes_covid = 0;
                 let total_interes_moratorio = 0;
@@ -624,6 +640,10 @@
 
                     elemento = document.getElementById(linea + "_monto_nominal");
                     let monto_nominal = elemento.innerText || elemento.textContent;
+                    // console.log(linea + "_monto_nominal: ", monto_nominal);
+
+                    elemento = document.getElementById(linea + "_monto_otorgado");
+                    let monto_otorgado = elemento.innerText || elemento.textContent;
                     // console.log(linea + "_monto_nominal: ", monto_nominal);
 
                     elemento = document.getElementById(linea + "_interes");
@@ -654,6 +674,7 @@
 
                     total_saldo_capital += convertirANumero(saldo_capital);
                     total_monto_nominal += convertirANumero(monto_nominal);
+                    total_monto_otorgado += convertirANumero(monto_otorgado);
                     total_interes += convertirANumero(interes);
                     total_interes_covid += convertirANumero(interes_covid);
                     total_interes_moratorio += convertirANumero(interes_moratorio);
@@ -665,6 +686,9 @@
 
                 let total_monto_nominal_formateada = formatearCantidad(total_monto_nominal);
                 document.getElementById("total_monto_nominal").textContent = total_monto_nominal_formateada;
+
+                let total_monto_otorgado_formateada = formatearCantidad(total_monto_otorgado);
+                document.getElementById("total_monto_otorgado").textContent = total_monto_otorgado_formateada;
 
                 let total_interes_formateada = formatearCantidad(total_interes);
                 document.getElementById("total_interes").textContent = total_interes_formateada;
