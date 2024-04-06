@@ -379,7 +379,7 @@
                                 <td>{{ $lineas->tipo }} {{ $lineas->Abrev }}</td>
                                 <td>{{ $deuda->Tasa }} %</td>
                                 <td class="numeric">
-                                    0
+                                    
                                     {{ $saldo_capital != 0 ? number_format($monto_otorgado, 2, '.', ',') : 0 }}
                                     {{-- {{ $lineas->MontoOtorgado != 0 ? number_format($lineas->MontoOtorgado, 2, '.', ',') : 0 }} --}}
                                 </td>
