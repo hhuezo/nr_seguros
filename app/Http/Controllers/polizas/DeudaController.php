@@ -811,9 +811,13 @@ class DeudaController extends Controller
                             # saldo a capital as intereses mas covid mas moratorios
                             $saldo1 = $this->calcularCarteraINS4($deuda, $creditos1, $obj->Id, $fecha1);
                             break;
+                            case '5':
+                                # saldo a capital as intereses mas covid mas moratorios
+                                $saldo1 = $this->calcularCarteraINS5($deuda, $creditos1, $obj->Id, $fecha1);
+                                break;
                         default:
                             # .monto moninal
-                            $saldo1 = $this->calcularCarteraINS5($deuda, $creditos1, $obj->Id, $fecha1);
+                            $saldo1 = $this->calcularCarteraINS6($deuda, $creditos1, $obj->Id, $fecha1);
                             break;
                     }
 
