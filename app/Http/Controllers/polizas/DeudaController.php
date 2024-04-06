@@ -1566,7 +1566,7 @@ class DeudaController extends Controller
     }
 
     public function calcularCarteraINS6($deuda, $tasas, $lineaCredito, $fecha){
-        return 0;
+        return 1;
     }
 
     public function create_pago(Request $request)
