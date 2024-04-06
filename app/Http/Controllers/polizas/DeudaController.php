@@ -62,7 +62,7 @@ class DeudaController extends Controller
         session(['FechaInicioDeuda' => $today]);
         session(['FechaFinalDeuda' => $today]);
         session(['ExcelURLDeuda' => '']);
-        $deuda = Deuda::where('Activo', 1)->get();
+        $deuda = Deuda::where('Activo',1)->get();
         return view('polizas.deuda.index', compact('deuda'));
     }
 
@@ -769,14 +769,9 @@ class DeudaController extends Controller
                             # saldo a capital as intereses mas covid mas moratorios
                             $saldo = $this->calcularCarteraINS4($deuda, $creditos, $obj->Id, $fecha);
                             break;
-
-                        case '5':
-                            # saldo a capital as intereses mas covid mas moratorios
-                            $saldo = $this->calcularCarteraINS5($deuda, $creditos, $obj->Id, $fecha);
-                            break;
                         default:
                             # .monto moninal
-                            $saldo = $this->calcularCarteraINS6($deuda, $creditos, $obj->Id, $fecha);
+                            $saldo = $this->calcularCarteraINS5($deuda, $creditos, $obj->Id, $fecha);
                             break;
                     }
 
@@ -811,13 +806,9 @@ class DeudaController extends Controller
                             # saldo a capital as intereses mas covid mas moratorios
                             $saldo1 = $this->calcularCarteraINS4($deuda, $creditos1, $obj->Id, $fecha1);
                             break;
-                            case '5':
-                                # saldo a capital as intereses mas covid mas moratorios
-                                $saldo1 = $this->calcularCarteraINS5($deuda, $creditos1, $obj->Id, $fecha1);
-                                break;
                         default:
                             # .monto moninal
-                            $saldo1 = $this->calcularCarteraINS6($deuda, $creditos1, $obj->Id, $fecha1);
+                            $saldo1 = $this->calcularCarteraINS5($deuda, $creditos1, $obj->Id, $fecha1);
                             break;
                     }
 
@@ -1565,10 +1556,6 @@ class DeudaController extends Controller
         return $total;
     }
 
-    public function calcularCarteraINS6($deuda, $tasas, $lineaCredito, $fecha){
-        return 1;
-    }
-
     public function create_pago(Request $request)
     {
 
@@ -1648,7 +1635,7 @@ class DeudaController extends Controller
                 // 2 error formato de dui
                 if ($request->validacion_dui == 'on') {
                     $validador_dui = true;
-                } else {
+                }else{
                     $validador_dui = $this->validarDocumento($obj->Dui, "dui");
 
                     if ($validador_dui == false) {
@@ -1657,7 +1644,7 @@ class DeudaController extends Controller
 
                         array_push($errores_array, 2);
                     }
-                }
+               }
 
 
                 // 3 error formato de nit
