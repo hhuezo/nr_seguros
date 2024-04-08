@@ -326,35 +326,35 @@
                     </thead>
                     <tbody>
                         @foreach ($lineas_credito as $lineas)
-                            @if ($lineas->Abreviatura == 'INS1'.$lineas->LineaCredito)
+                            @if ($lineas->Abreviatura == 'INS1' . $lineas->LineaCredito)
                                 @php($total = $lineas->SaldoCapital)
                                 @php($saldo_capital = $lineas->SaldoCapital)
                                 @php($monto_nominal = 0.0)
                                 @php($intereses = 0.0)
                                 @php($intereses_covid = 0.0)
                                 @php($intereses_moratorios = 0.0)
-                            @elseif($lineas->Abreviatura == 'INS2'.$lineas->LineaCredito)
+                            @elseif($lineas->Abreviatura == 'INS2' . $lineas->LineaCredito)
                                 @php($total = $lineas->SaldoCapital + $lineas->Intereses)
                                 @php($saldo_capital = $lineas->SaldoCapital)
                                 @php($monto_nominal = 0)
                                 @php($intereses = $lineas->Intereses)
                                 @php($intereses_covid = 0)
                                 @php($intereses_moratorios = 0)
-                            @elseif($lineas->Abreviatura == 'INS3'.$lineas->LineaCredito)
+                            @elseif($lineas->Abreviatura == 'INS3' . $lineas->LineaCredito)
                                 @php($total = $lineas->SaldoCapital + $lineas->Intereses + $lineas->InteresesCovid)
                                 @php($saldo_capital = $lineas->SaldoCapital)
                                 @php($monto_nominal = 0)
                                 @php($intereses = $lineas->Intereses)
                                 @php($intereses_covid = $lineas->InteresesCovid)
                                 @php($intereses_moratorios = 0)
-                            @elseif($lineas->Abreviatura == 'INS4'.$lineas->LineaCredito)
+                            @elseif($lineas->Abreviatura == 'INS4' . $lineas->LineaCredito)
                                 @php($total = $lineas->SaldoCapital + $lineas->Intereses + $lineas->InteresesCovid + $lineas->InteresesMoratorios)
                                 @php($saldo_capital = $lineas->SaldoCapital)
                                 @php($monto_nominal = 0)
                                 @php($intereses = $lineas->Intereses)
                                 @php($intereses_covid = $lineas->InteresesCovid)
                                 @php($intereses_moratorios = $lineas->InteresesMoratorios)
-                                @elseif($lineas->Abreviatura == 'INS5'.$lineas->LineaCredito)
+                            @elseif($lineas->Abreviatura == 'INS5' . $lineas->LineaCredito)
                                 @php($total = $lineas->MontoNominal)
                                 @php($saldo_capital = 0)
                                 @php($monto_nominal = $lineas->MontoNominal)
@@ -541,15 +541,45 @@
                             </div>
                         </div>
                     </div>
-                    <br><br>
                     <div align="center">
-                        <br><br><br>
+
+
+                        <br><br>
+                        <a class="btn btn-primary" data-target="#modal-validar" data-toggle="modal">Validar
+                            pólizas</a>
+                        <br>
                         <a class="btn btn-default" data-target="#modal-cancelar" data-toggle="modal"
                             onclick="cancelarpago()">Cancelar Cobro</a>
                         <a class="btn btn-primary" data-target="#modal-aplicar" data-toggle="modal"
                             onclick="aplicarpago()">Generar Cobro</a>
                     </div>
                 </form>
+            </div>
+
+            <div class="modal fade" id="modal-validar" tabindex="-1" role="dialog"
+                aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
+                <div class="modal-dialog">
+                    <form action="{{ url('deuda/validar_poliza') }}" method="POST">
+                        @csrf
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                                <h4 class="modal-title">Validar pólizas</h4>
+
+                                <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
+                            </div>
+                            <div class="modal-body">
+                                <p>¿Esta seguro/a que desea validar las pólizas?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                <button class="btn btn-primary">Validar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
 
             <div class="modal fade" id="modal-cancelar" tabindex="-1" role="dialog"

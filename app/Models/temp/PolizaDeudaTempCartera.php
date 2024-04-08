@@ -3,6 +3,7 @@
 namespace App\Models\temp;
 
 use App\Models\polizas\DeudaCredito;
+use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -53,10 +54,50 @@ class PolizaDeudaTempCartera extends Model
         'NoValido',
         'EdadDesembloso',
         'FechaOtorgamientoDate',
-        'total_saldo'        
+        'total_saldo'
     ];
 
-    public function linea_credito(){
-        return $this->belongsTo(DeudaCredito::class,'LineaCredito','Id');
-    }   
+    public function linea_credito()
+    {
+        return $this->belongsTo(DeudaCredito::class, 'LineaCredito', 'Id');
+    }
+
+
+    public function total_saldo()
+    {
+        try {
+            $tipo_cartera = $this->linea_credito->Saldos;
+            switch ($tipo_cartera) {
+                case '1':
+                    # saldo a capital
+                    $saldo = $this->total_saldo;
+                    break;
+                case '2':
+                    # saldo a capital mas intereses
+                    $saldo =  $this->total_saldo + $this->total_interes;
+                    break; 
+                case '3':
+                    # saldo a capital mas intereses mas covid
+                    $saldo = $this->total_saldo + $this->total_interes +  $this->total_covid;
+                    break;
+                case '4':
+                    # saldo a capital as intereses mas covid mas moratorios
+                    $saldo = $this->total_saldo + $this->total_interes +  $this->total_covid +  $this->total_moratorios;
+                    break;
+                case '5':
+                    # .monto moninal
+                    $saldo = $this->total_monto_nominal;
+                    break;
+                default:
+                    # .monto moninal
+                    $saldo = $this->total_monto_nominal;
+                    break;
+            }
+    
+            return $saldo;
+        } catch (Exception $e) {
+            return 0.00;
+        }
+    }
+    
 }
