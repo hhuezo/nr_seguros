@@ -9,7 +9,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form  action="{{ url('polizas/deuda/create_pago') }}" method="POST" enctype="multipart/form-data">
+            <form  action="{{ url('polizas/deuda/create_pago') }}"  id="uploadForm{{$obj->Id}}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body">
                     <div class="form-group row">
@@ -90,42 +90,14 @@
                 </div>
             </form>
 
-            <div id="loading-indicator" style="text-align: center; display:none">
-                <img src="{{ asset('img/ajax-loader.gif') }}">
-                <br>
-            </div>
+
 
 
         </div>
     </div>
 </div>
-<script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        var loadingOverlay = document.getElementById('loading-overlay');
-        var id = document.getElementById('LineaCredito').value;
-        var submitButton = document.getElementById('submitButton-'+id);
-        var myForm = document.getElementById('myForm');
-
-        submitButton.addEventListener('click', function(event) {
-            alert('holi');
-            event.preventDefault(); // Evita que el formulario se envíe automáticamente
-
-            loadingOverlay.style.display = 'flex'; // Cambia a 'flex' para usar flexbox
-
-            // Validación del formulario
-            // if (document.getElementById('LineaCredito_Subir').value === '') {
-            //     Swal.fire('Debe seleccionar una línea de crédito');
-            //     loadingOverlay.style.display = 'none'; // Oculta el overlay en caso de error
-            //     return;
-            // } else
-             if (document.getElementById('Archivo').value === '') {
-                Swal.fire('Debe seleccionar un archivo');
-                loadingOverlay.style.display = 'none'; // Oculta el overlay en caso de error
-                return;
-            }
-            myForm.submit();
-
-        });
+    document.getElementById('uploadForm{{$obj->Id}}').addEventListener('submit', function() {
+        document.getElementById('loading-overlay').style.display = 'flex'; // Muestra el overlay de carga
     });
 </script>

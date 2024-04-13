@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\polizas;
 
 use App\Http\Controllers\Controller;
+use App\Imports\PolizaDeudaCarteraImport;
 use App\Imports\PolizaDeudaTempCarteraImport;
 use App\Models\polizas\Deuda;
 use App\Models\polizas\DeudaCredito;
@@ -26,6 +27,14 @@ class DeudaCarteraController extends Controller
         
         $deuda = Deuda::findOrFail($id);
         $linea_credito = DeudaCredito::where('Deuda',$id)->where('Activo',1)->get();
+
+
+        foreach($linea_credito as $linea)
+        {
+            $total = PolizaDeudaTempCartera::where('LineaCredito',$linea->Id)->sum('saldo_total');
+            $linea->Total = $total;
+        }
+
         $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
         $ultimo_pago = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1)->orderBy('Id', 'desc')->first();
         $ultimo_pago_fecha_final = null;
@@ -135,7 +144,7 @@ class DeudaCarteraController extends Controller
                 }
             }
 
-            $obj->SaldoTotal = $obj->calculoTodalSaldo();
+            $obj->saldo_total = $obj->calculoTodalSaldo();
           
 
             //se limpia el nombre completo de espacios en blanco y numeros
@@ -434,7 +443,7 @@ class DeudaCarteraController extends Controller
 
         $poliza_cumulos = PolizaDeudaTempCartera::selectRaw('Id,Dui,Edad,Nit,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento,
         NumeroReferencia,NoValido,Perfiles,EdadDesembloso,FechaOtorgamiento,NoValido,
-         GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ", ") AS ConcatenatedNumeroReferencia,SUM(total_saldo) as total_saldo')
+         GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ", ") AS ConcatenatedNumeroReferencia,SUM(saldo_total) as total_saldo')
          ->where('User',auth()->user()->id)
          ->groupBy('Dui', 'NoValido')->get();
 
