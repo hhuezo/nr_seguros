@@ -503,15 +503,15 @@
                         </div>
                     </div>
                     <br><br>
-                    @if($deuda->EstadoGuardar == 1)
+                    
                     <div align="center">
                         <br><br><br>
                         <a class="btn btn-default" data-target="#modal-cancelar" data-toggle="modal" onclick="cancelarpago()">Cancelar Cobro</a>
                         <a class="btn btn-primary" data-target="#modal-aplicar" data-toggle="modal" onclick="aplicarpago()">Generar Cobro</a>
                     </div>
-                    @endif
+                   
                 </form>
-                @if($deuda->EstadoGuardar == 0)
+                
                 <div align="center">
                     <form action="{{url('polizas/deuda/validar_poliza')}}" method="POST">
                         @method('POST')
@@ -520,7 +520,7 @@
                         <button type="submit">Validar Poliza</button>
                     </form>
                 </div>
-                @endif
+                
             </div>
 
             <div class="modal fade" id="modal-cancelar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
