@@ -438,8 +438,6 @@ class DeudaCarteraController extends Controller
          ->where('User',auth()->user()->id)
          ->groupBy('Dui', 'NoValido')->get();
 
-         $deuda->EstadoGuardar = 1;
-         $deuda->update();
 
      
          return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date'));
