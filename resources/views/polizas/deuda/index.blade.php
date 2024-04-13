@@ -74,7 +74,7 @@
                             @endcan
                         </td>
                     </tr>
-                    @include('catalogo.aseguradora.modal')
+                    @include('polizas.deuda.modal')
                     @endforeach
                 </tbody>
             </table>

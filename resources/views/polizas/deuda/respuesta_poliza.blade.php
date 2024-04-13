@@ -70,7 +70,8 @@
                     <div class="x_panel">
                         <div class="x_title">
                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                <h2>Resumen de cartera {{ $nombre_cartera }} <br> {{ $deuda->NumeroPoliza }} &nbsp;
+                                {{-- <h2>Resumen de cartera {{ $nombre_cartera }} <br> {{ $deuda->NumeroPoliza }} &nbsp; --}}
+                                    <h2>Resumen de cartera  {{ $deuda->NumeroPoliza }} &nbsp;
                                     {{ $deuda->clientes->Nombre }} </h2>
                             </div>
                             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
@@ -508,14 +509,14 @@
         function agregarValidos() {
             var id = document.getElementById('creditos').value;
             var buscar = document.getElementById('buscar_no_valido').value;
-            console.log(id, ' ', buscar, ' ', '{{ $tipo_cartera }}');
+   
             if (id != '') {
                 $.ajax({
                     url: "{{ url('polizas/deuda/agregar_valido') }}", // Asegúrate de que esta sintaxis se procese correctamente en tu archivo .blade.php
                     type: 'POST',
                     data: {
                         id: id,
-                        tipo_cartera: '{{ $tipo_cartera }}',
+                        //tipo_cartera: ' $tipo_cartera',
                         _token: '{{ csrf_token() }}' // Necesario para la protección CSRF de Laravel
                     },
                     success: function(response) {
@@ -556,7 +557,7 @@
                 data: {
                     buscar: buscar,
                     opcion: opcion,
-                    tipo_cartera: '{{ $tipo_cartera }}',
+                   //<tipo_cartera: ' $tipo_cartera',
                 },
                 success: function(response) {
                     // Aquí manejas la respuesta. Por ejemplo, podrías imprimir la respuesta en la consola:

@@ -104,32 +104,7 @@
         <img src="{{ asset('img/ajax-loader.gif') }}" alt="Loading..." />
     </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var loadingOverlay = document.getElementById('loading-overlay');
-            var submitButton = document.getElementById('submitButton');
-            var myForm = document.getElementById('myForm');
 
-            submitButton.addEventListener('click', function(event) {
-                event.preventDefault(); // Evita que el formulario se envíe automáticamente
-
-                loadingOverlay.style.display = 'flex'; // Cambia a 'flex' para usar flexbox
-
-                // Validación del formulario
-                if (document.getElementById('LineaCredito_Subir').value === '') {
-                    Swal.fire('Debe seleccionar una línea de crédito');
-                    loadingOverlay.style.display = 'none'; // Oculta el overlay en caso de error
-                    return;
-                } else if (document.getElementById('Archivo').value === '') {
-                    Swal.fire('Debe seleccionar un archivo');
-                    loadingOverlay.style.display = 'none'; // Oculta el overlay en caso de error
-                    return;
-                }
-                myForm.submit();
-
-            });
-        });
-    </script>
 
 
 
@@ -171,8 +146,7 @@
     </style>
 
 
-    <div class="modal fade bs-example-modal-lg" id="modal_pago" tabindex="-1" role="dialog"
-        aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
+    <!-- <div class="modal fade bs-example-modal-lg" id="modal_pago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -183,8 +157,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form id="myForm" action="{{ url('polizas/deuda/create_pago') }}" method="POST"
-                    enctype="multipart/form-data">
+                <form id="myForm" action="{{ url('polizas/deuda/create_pago') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="form-group row">
@@ -194,9 +167,9 @@
                                 <select name="LineaCredito" id="LineaCredito_Subir" class="form-control" required>
                                     <option value="" selected disabled>Seleccione...</option>
                                     @foreach ($creditos as $obj)
-                                        <option value="{{ $obj->Id }}"> {{ $obj->tipoCarteras->Nombre }}
-                                            {{ $obj->saldos->Abreviatura }}
-                                        </option>
+                                    <option value="{{ $obj->Id }}"> {{ $obj->tipoCarteras->Nombre }}
+                                        {{ $obj->saldos->Abreviatura }}
+                                    </option>
                                     @endforeach
                                 </select>
                             </div>
@@ -206,7 +179,7 @@
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                 <select name="Axo" class="form-control">
                                     @for ($i = date('Y'); $i >= 2022; $i--)
-                                        <option value="{{ $i }}"> {{ $i }}</option>
+                                    <option value="{{ $i }}"> {{ $i }}</option>
                                     @endfor
                                 </select>
                             </div>
@@ -215,11 +188,10 @@
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Mes</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                 <select name="Mes" class="form-control">
-                                    @for ($i = 1; $i <= 12; $i++)
-                                        <option value="{{ $i }}" {{ date('m') == $i ? 'selected' : '' }}>
-                                            {{ $meses[$i] }}
+                                    @for ($i = 1; $i <= 12; $i++) <option value="{{ $i }}" {{ date('m') == $i ? 'selected' : '' }}>
+                                        {{ $meses[$i] }}
                                         </option>
-                                    @endfor
+                                        @endfor
                                 </select>
                             </div>
                         </div>
@@ -227,20 +199,15 @@
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
                                 inicio</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="Id" value="{{ $deuda->Id }}" type="hidden"
-                                    required>
-                                <input class="form-control" type="date" name="FechaInicio"
-                                    value="{{ $ultimo_pago ? date('Y-m-d', strtotime($ultimo_pago->FechaFinal)) : date('Y-m-d', strtotime($primerDia)) }}"
-                                    {{ $ultimo_pago ? 'readonly' : '' }} required>
+                                <input class="form-control" name="Id" value="{{ $deuda->Id }}" type="hidden" required>
+                                <input class="form-control" type="date" name="FechaInicio" value="{{ $ultimo_pago ? date('Y-m-d', strtotime($ultimo_pago->FechaFinal)) : date('Y-m-d', strtotime($primerDia)) }}" {{ $ultimo_pago ? 'readonly' : '' }} required>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
                                 final</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="FechaFinal"
-                                    value="{{ $ultimo_pago_fecha_final ? $ultimo_pago_fecha_final : date('Y-m-d', strtotime($ultimoDia)) }}"
-                                    type="date" required>
+                                <input class="form-control" name="FechaFinal" value="{{ $ultimo_pago_fecha_final ? $ultimo_pago_fecha_final : date('Y-m-d', strtotime($ultimoDia)) }}" type="date" required>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -251,7 +218,7 @@
                         </div>
                         <div class="form-group row">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">
-                                <!-- Rounded switch -->
+                              
                                 <label class="switch">
                                     <input type="checkbox" name="validacion_dui">
                                     <span class="slider round"></span>
@@ -283,7 +250,7 @@
 
             </div>
         </div>
-    </div>
+    </div> -->
 
 
 
@@ -293,9 +260,10 @@
 
         </div>
         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 d-flex justify-content-start" style="text-align: right;">
-            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal_pago">
+            <!-- <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal_pago">
                 Subir Archivo Excel
-            </button>
+            </button> -->
+            <a href="{{url('polizas/deuda/subir_cartera')}}/{{$deuda->Id}}" class="btn btn-info"> Subir Archivos Excel</a>
         </div>
 
     </div>
@@ -326,73 +294,68 @@
                     </thead>
                     <tbody>
                         @foreach ($lineas_credito as $lineas)
-                            @if ($lineas->Abreviatura == 'INS1'.$lineas->LineaCredito)
-                                @php($total = $lineas->SaldoCapital)
-                                @php($saldo_capital = $lineas->SaldoCapital)
-                                @php($monto_nominal = 0.0)
-                                @php($intereses = 0.0)
-                                @php($intereses_covid = 0.0)
-                                @php($intereses_moratorios = 0.0)
-                            @elseif($lineas->Abreviatura == 'INS2'.$lineas->LineaCredito)
-                                @php($total = $lineas->SaldoCapital + $lineas->Intereses)
-                                @php($saldo_capital = $lineas->SaldoCapital)
-                                @php($monto_nominal = 0)
-                                @php($intereses = $lineas->Intereses)
-                                @php($intereses_covid = 0)
-                                @php($intereses_moratorios = 0)
-                            @elseif($lineas->Abreviatura == 'INS3'.$lineas->LineaCredito)
-                                @php($total = $lineas->SaldoCapital + $lineas->Intereses + $lineas->InteresesCovid)
-                                @php($saldo_capital = $lineas->SaldoCapital)
-                                @php($monto_nominal = 0)
-                                @php($intereses = $lineas->Intereses)
-                                @php($intereses_covid = $lineas->InteresesCovid)
-                                @php($intereses_moratorios = 0)
-                            @elseif($lineas->Abreviatura == 'INS4'.$lineas->LineaCredito)
-                                @php($total = $lineas->SaldoCapital + $lineas->Intereses + $lineas->InteresesCovid + $lineas->InteresesMoratorios)
-                                @php($saldo_capital = $lineas->SaldoCapital)
-                                @php($monto_nominal = 0)
-                                @php($intereses = $lineas->Intereses)
-                                @php($intereses_covid = $lineas->InteresesCovid)
-                                @php($intereses_moratorios = $lineas->InteresesMoratorios)
-                                @elseif($lineas->Abreviatura == 'INS5'.$lineas->LineaCredito)
-                                @php($total = $lineas->MontoNominal)
-                                @php($saldo_capital = 0)
-                                @php($monto_nominal = $lineas->MontoNominal)
-                                @php($intereses = 0)
-                                @php($intereses_covid = 0)
-                                @php($intereses_moratorios = 0)
-                            @endif
-                            <tr>
-                                <td>{{ $lineas->tipo }} {{ $lineas->Abrev }}</td>
-                                <td>{{ $deuda->Tasa }} %</td>
-                                <td class="numeric">
-                                    0
-                                    {{-- {{ $lineas->MontoOtorgado != 0 ? number_format($lineas->MontoOtorgado, 2, '.', ',') : 0 }} --}}
-                                </td>
-                                <td class="numeric editable" contenteditable="true"
-                                    id="{{ $lineas->Abreviatura }}_saldo_capital">
-                                    {{ $saldo_capital != 0 ? number_format($saldo_capital, 2, '.', ',') : 0 }}
-                                </td>
-                                <td class="numeric editable" contenteditable="true"
-                                    id="{{ $lineas->Abreviatura }}_interes">
-                                    {{ $intereses != 0 ? number_format($intereses, 2, '.', ',') : 0 }}
-                                </td>
-                                <td class="numeric editable" contenteditable="true"
-                                    id="{{ $lineas->Abreviatura }}_interes_covid">
-                                    {{ $intereses_covid != 0 ? number_format($intereses_covid, 2, '.', ',') : 0 }}
-                                </td>
-                                <td class="numeric editable" contenteditable="true"
-                                    id="{{ $lineas->Abreviatura }}_interes_moratorio">
-                                    {{ $intereses_moratorios != 0 ? number_format($intereses_moratorios, 2, '.', ',') : 0 }}
-                                </td>
-                                <td class="numeric editable" contenteditable="true"
-                                    id="{{ $lineas->Abreviatura }}_monto_nominal">
-                                    {{ $monto_nominal != 0 ? number_format($monto_nominal, 2, '.', ',') : 0 }}
-                                </td>
-                                <td class="numeric total" id="{{ $lineas->Abreviatura }}_suma_asegurada">
-                                    {{ number_format($total, 2, '.', ',') }}
-                                </td>
-                            </tr>
+                        @if ($lineas->Abreviatura == 'INS1'.$lineas->LineaCredito)
+                        @php($total = $lineas->SaldoCapital)
+                        @php($saldo_capital = $lineas->SaldoCapital)
+                        @php($monto_nominal = 0.0)
+                        @php($intereses = 0.0)
+                        @php($intereses_covid = 0.0)
+                        @php($intereses_moratorios = 0.0)
+                        @elseif($lineas->Abreviatura == 'INS2'.$lineas->LineaCredito)
+                        @php($total = $lineas->SaldoCapital + $lineas->Intereses)
+                        @php($saldo_capital = $lineas->SaldoCapital)
+                        @php($monto_nominal = 0)
+                        @php($intereses = $lineas->Intereses)
+                        @php($intereses_covid = 0)
+                        @php($intereses_moratorios = 0)
+                        @elseif($lineas->Abreviatura == 'INS3'.$lineas->LineaCredito)
+                        @php($total = $lineas->SaldoCapital + $lineas->Intereses + $lineas->InteresesCovid)
+                        @php($saldo_capital = $lineas->SaldoCapital)
+                        @php($monto_nominal = 0)
+                        @php($intereses = $lineas->Intereses)
+                        @php($intereses_covid = $lineas->InteresesCovid)
+                        @php($intereses_moratorios = 0)
+                        @elseif($lineas->Abreviatura == 'INS4'.$lineas->LineaCredito)
+                        @php($total = $lineas->SaldoCapital + $lineas->Intereses + $lineas->InteresesCovid + $lineas->InteresesMoratorios)
+                        @php($saldo_capital = $lineas->SaldoCapital)
+                        @php($monto_nominal = 0)
+                        @php($intereses = $lineas->Intereses)
+                        @php($intereses_covid = $lineas->InteresesCovid)
+                        @php($intereses_moratorios = $lineas->InteresesMoratorios)
+                        @elseif($lineas->Abreviatura == 'INS5'.$lineas->LineaCredito)
+                        @php($total = $lineas->MontoNominal)
+                        @php($saldo_capital = 0)
+                        @php($monto_nominal = $lineas->MontoNominal)
+                        @php($intereses = 0)
+                        @php($intereses_covid = 0)
+                        @php($intereses_moratorios = 0)
+                        @endif
+                        <tr>
+                            <td>{{ $lineas->tipo }} {{ $lineas->Abrev }}</td>
+                            <td>{{ $deuda->Tasa }} %</td>
+                            <td class="numeric">
+                                0
+                                {{-- {{ $lineas->MontoOtorgado != 0 ? number_format($lineas->MontoOtorgado, 2, '.', ',') : 0 }} --}}
+                            </td>
+                            <td class="numeric editable" contenteditable="true" id="{{ $lineas->Abreviatura }}_saldo_capital">
+                                {{ $saldo_capital != 0 ? number_format($saldo_capital, 2, '.', ',') : 0 }}
+                            </td>
+                            <td class="numeric editable" contenteditable="true" id="{{ $lineas->Abreviatura }}_interes">
+                                {{ $intereses != 0 ? number_format($intereses, 2, '.', ',') : 0 }}
+                            </td>
+                            <td class="numeric editable" contenteditable="true" id="{{ $lineas->Abreviatura }}_interes_covid">
+                                {{ $intereses_covid != 0 ? number_format($intereses_covid, 2, '.', ',') : 0 }}
+                            </td>
+                            <td class="numeric editable" contenteditable="true" id="{{ $lineas->Abreviatura }}_interes_moratorio">
+                                {{ $intereses_moratorios != 0 ? number_format($intereses_moratorios, 2, '.', ',') : 0 }}
+                            </td>
+                            <td class="numeric editable" contenteditable="true" id="{{ $lineas->Abreviatura }}_monto_nominal">
+                                {{ $monto_nominal != 0 ? number_format($monto_nominal, 2, '.', ',') : 0 }}
+                            </td>
+                            <td class="numeric total" id="{{ $lineas->Abreviatura }}_suma_asegurada">
+                                {{ number_format($total, 2, '.', ',') }}
+                            </td>
+                        </tr>
                         @endforeach
 
                         <tr>
@@ -519,8 +482,7 @@
                     <input type="hidden" name="ValorCCF" id="ValorCCFDetalle">
                     <input type="hidden" name="APagar" id="APagarDetalle">
                     <input type="hidden" name="ExtraPrima" value="{{ $total_extrapima }}">
-                    <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
-                        id="modal-aplicar">
+                    <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-aplicar">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -533,8 +495,7 @@
                                     <p>¿Esta seguro/a que desea aplicar el cobro?</p>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-default"
-                                        data-dismiss="modal">Cerrar</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
                                     <button id="boton_pago" class="btn btn-primary">Confirmar
                                         Cobro</button>
                                 </div>
@@ -542,18 +503,27 @@
                         </div>
                     </div>
                     <br><br>
+                    @if($deuda->EstadoGuardar == 1)
                     <div align="center">
                         <br><br><br>
-                        <a class="btn btn-default" data-target="#modal-cancelar" data-toggle="modal"
-                            onclick="cancelarpago()">Cancelar Cobro</a>
-                        <a class="btn btn-primary" data-target="#modal-aplicar" data-toggle="modal"
-                            onclick="aplicarpago()">Generar Cobro</a>
+                        <a class="btn btn-default" data-target="#modal-cancelar" data-toggle="modal" onclick="cancelarpago()">Cancelar Cobro</a>
+                        <a class="btn btn-primary" data-target="#modal-aplicar" data-toggle="modal" onclick="aplicarpago()">Generar Cobro</a>
                     </div>
+                    @endif
                 </form>
+                @if($deuda->EstadoGuardar == 0)
+                <div align="center">
+                    <form action="{{url('polizas/deuda/validar_poliza')}}" method="POST">
+                        @method('POST')
+                        @csrf
+                        <input type="hidden" name="Deuda" value="{{$deuda->Id}}">
+                        <button type="submit">Validar Poliza</button>
+                    </form>
+                </div>
+                @endif
             </div>
 
-            <div class="modal fade" id="modal-cancelar" tabindex="-1" role="dialog"
-                aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
+            <div class="modal fade" id="modal-cancelar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
                 <div class="modal-dialog">
                     <form action="{{ url('deuda/cancelar_pago') }}" method="POST">
                         @method('POST')
@@ -566,10 +536,8 @@
                                 <h4 class="modal-title">Cancelar Cobro</h4>
 
                                 <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
-                                <input type="hidden" name="MesCancelar"
-                                    value="{{ isset($fecha) ? $fecha->Mes : '' }}">
-                                <input type="hidden" name="AxoCancelar"
-                                    value="{{ isset($fecha) ? $fecha->Axo : '' }}">
+                                <input type="hidden" name="MesCancelar" value="{{ isset($fecha) ? $fecha->Mes : '' }}">
+                                <input type="hidden" name="AxoCancelar" value="{{ isset($fecha) ? $fecha->Axo : '' }}">
                             </div>
                             <div class="modal-body">
                                 <p>¿Esta seguro/a que desea cancelar el cobro?</p>
