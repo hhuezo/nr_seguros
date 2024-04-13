@@ -7,9 +7,9 @@
         <div class="col-md-6 col-sm-6 col-xs-12">
             <h3>Subir Carteras de <br>  {{$deuda->NumeroPoliza}} | {{$deuda->clientes->Nombre}} </h3>
         </div>
-        <!-- <div class="col-md-6 col-sm-6 col-xs-12" align="right">
-            <a href="{{ url('polizas/deuda/create/') }}"><button class="btn btn-info float-right"> <i class="fa fa-plus"></i> Nuevo</button></a>
-        </div> -->
+        <div class="col-md-6 col-sm-6 col-xs-12" align="right">
+            <a href="{{ url('polizas/deuda')}}/{{$deuda->Id}}/edit"><button class="btn btn-info float-right"> <i class="fa fa-undo"></i> Atras</button></a>
+        </div> 
         <div class="clearfix"></div>
     </div>
 
