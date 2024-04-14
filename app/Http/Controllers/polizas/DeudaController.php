@@ -2039,7 +2039,7 @@ class DeudaController extends Controller
                     'NoValido',
                     DB::raw("GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
                     DB::raw('SUM(SaldoCapital) as saldo_capital'),
-                    DB::raw('SUM(total_saldo) as total_saldo'),
+                    DB::raw('SUM(saldo_total) as total_saldo'),
                     DB::raw('SUM(Intereses) as total_interes'),
                     DB::raw('SUM(InteresesCovid) as total_covid'),
                     DB::raw('SUM(InteresesMoratorios) as total_moratorios'),
@@ -2074,6 +2074,7 @@ class DeudaController extends Controller
                     'EdadDesembloso',
                     'FechaOtorgamiento',
                     'NoValido',
+                    DB::raw('SUM(saldo_total) as total_saldo'),
                     DB::raw("GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
                     //  DB::raw('SUM(SaldoCapital) as saldo_cpital'),
                     DB::raw('SUM(SaldoCapital) as saldo_capital'),
@@ -2095,7 +2096,7 @@ class DeudaController extends Controller
         }
         //dd($poliza_cumulos);
 
-        foreach ($poliza_cumulos as $cumulo) {
+      /*  foreach ($poliza_cumulos as $cumulo) {
             switch ($tipo_cartera) {
                 case '1':
                     # saldo a capital
@@ -2122,7 +2123,7 @@ class DeudaController extends Controller
 
             $cumulo->total_saldo = $saldo;
             //$cumulo->update();
-        }
+        }*/
 
 
 
