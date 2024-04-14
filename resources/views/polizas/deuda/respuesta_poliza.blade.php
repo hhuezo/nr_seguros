@@ -129,7 +129,7 @@
                                                 requisitos</a>
                                         </li>
                                         <li role="presentation" class=""><a href="#tab_content4" role="tab"
-                                                id="profile-tab2" data-toggle="tab" aria-expanded="false">Extraprimados</a>
+                                                id="profile-tab2" data-toggle="tab" aria-expanded="false">Extraprimados excluidos</a>
                                         </li>
                                     </ul>
                                     <div id="myTabContent" class="tab-content">

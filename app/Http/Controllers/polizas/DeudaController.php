@@ -684,6 +684,8 @@ class DeudaController extends Controller
                 $extraprimado->prima_neta = $data_array['prima_neta'];
                 $extraprimado->extra_prima = $data_array['extra_prima'];
                 $total_extrapima += $data_array['extra_prima'];
+
+                $extraprimado->Existe = PolizaDeudaTempCartera::where('NumeroReferencia', $extraprimado->NumeroReferencia)->count();
             }
 
 
