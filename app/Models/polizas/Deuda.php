@@ -68,4 +68,9 @@ class Deuda extends Model
     {
         return $this->hasMany(DeudaRequisitos::class,'Deuda', 'Id');
     }
+
+    public function extra_primados()
+    {
+        return $this->hasMany(PolizaDeudaExtraPrimados::class, 'PolizaDeuda', 'Id');
+    }
 }

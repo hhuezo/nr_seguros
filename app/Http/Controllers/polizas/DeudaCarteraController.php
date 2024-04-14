@@ -511,7 +511,92 @@ class DeudaCarteraController extends Controller
             ->groupBy('Dui', 'NoValido')->get();
 
 
+        $extra_primados = $deuda->extra_primados;
 
-        return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date'));
+        foreach ($extra_primados as $extra_primado) {
+            $extra_primado->Existe = PolizaDeudaTempCartera::where('NumeroReferencia', $extra_primado->NumeroReferencia)->count();
+        }
+
+        return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date','extra_primados'));
+    }
+
+
+
+    public function store_poliza(Request $request)
+    {
+        // Convertir la cadena en un objeto Carbon (la clase de fecha en Laravel)
+        $fecha = \Carbon\Carbon::parse($request->MesActual);
+
+        // Obtener el mes y el año
+        $mes = $fecha->format('m'); // El formato 'm' devuelve el mes con ceros iniciales (por ejemplo, "02")
+        $anio = $fecha->format('Y');
+
+
+        // Obtener los datos de la tabla temporal
+        $tempData = PolizaDeudaTempCartera::where('Axo', $anio)
+            ->where('Mes', $mes + 0)
+            ->where('User', auth()->user()->id)
+            ->where('NoValido', 0)
+            ->get();
+
+
+
+        if ($tempData->isNotEmpty()) {
+            $linea_credito = $tempData->first()->LineaCredito;
+            $poliza_deuda = $tempData->first()->PolizaDeuda;
+            $mes_int = intval($mes);
+            PolizaDeudaCartera::where('PolizaDeuda', $poliza_deuda)->where('LineaCredito', $linea_credito)->where('Axo', $anio)->where('Mes', $mes_int)->delete();
+        }
+
+        // Iterar sobre los resultados y realizar la inserción en la tabla principal
+        foreach ($tempData as $tempRecord) {
+            $poliza = new PolizaDeudaCartera();
+            //$poliza->Id = $tempRecord->Id;
+            $poliza->Nit = $tempRecord->Nit;
+            $poliza->Dui = $tempRecord->Dui;
+            $poliza->Pasaporte = $tempRecord->Pasaporte;
+            $poliza->Nacionalidad = $tempRecord->Nacionalidad;
+            $poliza->FechaNacimiento = $tempRecord->FechaNacimiento;
+            $poliza->TipoPersona = $tempRecord->TipoPersona;
+            $poliza->PrimerApellido = $tempRecord->PrimerApellido;
+            $poliza->SegundoApellido = $tempRecord->SegundoApellido;
+            $poliza->ApellidoCasada = $tempRecord->ApellidoCasada;
+            $poliza->PrimerNombre = $tempRecord->PrimerNombre;
+            $poliza->SegundoNombre = $tempRecord->SegundoNombre;
+            $poliza->NombreSociedad = $tempRecord->NombreSociedad;
+            $poliza->Sexo = $tempRecord->Sexo;
+            $poliza->FechaOtorgamiento = $tempRecord->FechaOtorgamiento;
+            $poliza->FechaVencimiento = $tempRecord->FechaVencimiento;
+            $poliza->Ocupacion = $tempRecord->Ocupacion;
+            $poliza->NumeroReferencia = $tempRecord->NumeroReferencia;
+            $poliza->MontoOtorgado = $tempRecord->MontoOtorgado;
+            $poliza->SaldoCapital = $tempRecord->SaldoCapital;
+            $poliza->Intereses = $tempRecord->Intereses;
+            $poliza->InteresesCovid = $tempRecord->InteresesCovid;
+            $poliza->InteresesMoratorios = $tempRecord->InteresesMoratorios;
+            $poliza->MontoNominal = $tempRecord->MontoNominal;
+            $poliza->SaldoTotal = $tempRecord->SaldoTotal;
+            $poliza->User = $tempRecord->User;
+            $poliza->Axo = $tempRecord->Axo;
+            $poliza->Mes = $tempRecord->Mes;
+            $poliza->PolizaDeuda = $tempRecord->PolizaDeuda;
+            $poliza->FechaInicio = $tempRecord->FechaInicio;
+            $poliza->FechaFinal = $tempRecord->FechaFinal;
+            $poliza->TipoError = $tempRecord->TipoError;
+            $poliza->FechaNacimientoDate = $tempRecord->FechaNacimientoDate;
+            $poliza->Edad = $tempRecord->Edad;
+            $poliza->LineaCredito = $tempRecord->LineaCredito;
+            $poliza->NoValido = $tempRecord->NoValido;
+            $poliza->save();
+        }
+
+        // dd()
+
+        $deuda = Deuda::findOrFail($tempRecord->PolizaDeuda);
+        $cartera = PolizaDeudaCartera::where('PolizaDeuda', '=', $tempRecord->PolizaDeuda)->get();
+  
+
+        alert()->success('El registro de poliza ha sido ingresado correctamente');
+        return redirect('polizas/deuda/' . $tempRecord->PolizaDeuda . '/edit?tab=2');
     }
 }

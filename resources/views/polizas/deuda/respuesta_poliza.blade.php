@@ -71,7 +71,7 @@
                         <div class="x_title">
                             <div class="col-md-6 col-sm-6 col-xs-12">
                                 {{-- <h2>Resumen de cartera {{ $nombre_cartera }} <br> {{ $deuda->NumeroPoliza }} &nbsp; --}}
-                                    <h2>Resumen de cartera  {{ $deuda->NumeroPoliza }} &nbsp;
+                                <h2>Resumen de cartera {{ $deuda->NumeroPoliza }} &nbsp;
                                     {{ $deuda->clientes->Nombre }} </h2>
                             </div>
                             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
@@ -128,9 +128,9 @@
                                                 id="profile-tab2" data-toggle="tab" aria-expanded="false">Registros con
                                                 requisitos</a>
                                         </li>
-                                        {{-- <li role="presentation" class=""><a href="#tab_content4" role="tab" id="profile-tab2" data-toggle="tab" aria-expanded="false">Registros
-                                            válidos</a>
-                                    </li> --}}
+                                        <li role="presentation" class=""><a href="#tab_content4" role="tab"
+                                                id="profile-tab2" data-toggle="tab" aria-expanded="false">Extraprimados</a>
+                                        </li>
                                     </ul>
                                     <div id="myTabContent" class="tab-content">
                                         <div role="tabpanel" class="tab-pane active " id="tab_content1"
@@ -241,54 +241,7 @@
                                             <br>
                                             <div id="creditos_no_validos">
 
-                                                <!-- <table class="table table-striped" id="MyTable3">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>Número crédito</th>
-                                                                    <th>DUI</th>
-                                                                    <th>NIT</th>
-                                                                    <th>Nombre</th>
-                                                                    <th>Fecha nacimiento</th>
-                                                                    <th>Fecha otorgamiento</th>
-                                                                    <th>Edad actual</th>
-                                                                    <th>Edad desembolso</th>
-                                                                    <th>Saldo</th>
-                                                                    <th>Agregar a válidos</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                @foreach ($poliza_cumulos->where('NoValido', '=', 1) as $registro)
-    <tr>
-                                                                    <td>{{ $registro->ConcatenatedNumeroReferencia }}</td>
-                                                                    <td>{{ $registro->Dui }}</td>
-                                                                    <td>{{ $registro->Nit }}</td>
-                                                                    <td>{{ $registro->PrimerNombre }}
-                                                                        {{ $registro->SegundoNombre }}
-                                                                        {{ $registro->PrimerApellido }}
-                                                                        {{ $registro->SegundoApellido }}
-                                                                        {{ $registro->ApellidoCasada }}
-                                                                    </td>
-                                                                    <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
-                                                                    </td>
-                                                                    <td>{{ $registro->FechaOtorgamiento ? $registro->FechaOtorgamiento : '' }}
-                                                                    </td>
-                                                                    <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
-                                                                    <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }}
-                                                                        Años</td>
-                                                                    <td class="text-right">
-                                                                        ${{ number_format($registro->total_saldo, 2) }}
-                                                                    </td>
-                                                                    <td align="center">
-                                                                        <button class="btn btn-primary" onclick="get_creditos({{ $registro->Id }})">
-                                                                            <i class="fa fa-exchange" data-target="#modal_cambio_credito_valido" data-toggle="modal"></i>
-                                                                        </button>
-                                                                    </td>
-                                                                </tr>
-    @endforeach
 
-
-                                                            </tbody>
-                                                        </table> -->
                                             </div>
 
                                         </div>
@@ -310,71 +263,43 @@
                                             <br>
                                             <div id="creditos_validos">
                                             </div>
-                                            <!-- <table class="table table-striped" id="MyTable4">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Número crédito</th>
-                                                                <th>DUI</th>
-                                                                <th>NIT</th>
-                                                                <th>Nombre</th>
-                                                                <th>Fecha nacimiento</th>
-                                                                <th>Edad actual</th>
-                                                                <th>Edad otorgamiento</th>
-                                                                <th>Fecha otorgamiento</th>
-                                                                <th>Requisitos</th>
-                                                                <th>Saldo</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            @foreach ($poliza_cumulos->where('Perfiles', '<>', null) as $registro)
-    <tr>
-                                                                    <td>{{ $registro->ConcatenatedNumeroReferencia }}</td>
-                                                                    <td>{{ $registro->Dui }}</td>
-                                                                    <td>{{ $registro->Nit }}</td>
-                                                                    <td>{{ $registro->PrimerNombre }}
-                                                                        {{ $registro->SegundoNombre }}
-                                                                        {{ $registro->PrimerApellido }}
-                                                                        {{ $registro->SegundoApellido }}
-                                                                        {{ $registro->ApellidoCasada }}
-                                                                    </td>
-                                                                    <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
-                                                                    </td>
-                                                                    <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
-                                                                    <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }}
-                                                                        Años</td>
-                                                                    <td>{{ $registro->FechaOtorgamiento ? $registro->FechaOtorgamiento : '' }}
-                                                                    </td>
-                                                                    <td>
-                                                                        @php
-                                                                            $perfilesArreglo = explode(
-                                                                                ',',
-                                                                                $registro->Perfiles,
-                                                                            );
-                                                                            $uniquePerfiles = array_unique(
-                                                                                $perfilesArreglo,
-                                                                            );
-                                                                        @endphp
 
-                                                                        @foreach ($uniquePerfiles as $key => $perfil)
-    {{ $perfil }}{{ $loop->last ? '' : ', ' }}
-    @endforeach
-                                                                    </td>
-                                                                    <td class="text-right">
-                                                                        ${{ number_format($registro->total_saldo, 2) }}</td>
-
-                                                                </tr>
-    @endforeach
-
-
-                                                        </tbody>
-                                                    </table> -->
 
                                         </div>
                                         <div role="tabpanel" class="tab-pane fade" id="tab_content4"
                                             aria-labelledby="profile-tab">
 
-
                                             <br>
+                                            <table class="table table-striped" id="datatable">
+
+                                                <thead>
+                                                    <tr>
+
+                                                        <th>Número Referencia</th>
+                                                        <th>Nombre</th>
+                                                        <th>Fecha Otorgamiento</th>
+                                                        <th>Monto Otorgamiento</th>
+                                                        <th>Porcentaje EP</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($extra_primados->where('Existe', '=', 0) as $extra_primado)
+                                                        <tr>
+                                                            <td>{{ $extra_primado->NumeroReferencia }}</td>
+                                                            <td>{{ $extra_primado->Nombre }}</td>
+                                                            <td>{{ $extra_primado->FechaOtorgamiento }}</td>
+                                                            <td>{{ $extra_primado->MontoOtorgamiento }}</td>
+                                                            <td> {{ $extra_primado->PorcentajeEP }}%</td>
+                                                        </tr>
+                                                    @endforeach
+
+
+                                                </tbody>
+                                            </table>
+
+
+
+                                            <?php /*
                                             <table class="table table-striped" id="datatable">
                                                 <thead>
                                                     <tr>
@@ -411,7 +336,8 @@
 
 
                                                 </tbody>
-                                            </table>
+                                            </table> */
+                                            ?>
 
                                         </div>
                                     </div>
@@ -509,7 +435,7 @@
         function agregarValidos() {
             var id = document.getElementById('creditos').value;
             var buscar = document.getElementById('buscar_no_valido').value;
-   
+
             if (id != '') {
                 $.ajax({
                     url: "{{ url('polizas/deuda/agregar_valido') }}", // Asegúrate de que esta sintaxis se procese correctamente en tu archivo .blade.php
@@ -557,7 +483,7 @@
                 data: {
                     buscar: buscar,
                     opcion: opcion,
-                   //<tipo_cartera: ' $tipo_cartera',
+                    //<tipo_cartera: ' $tipo_cartera',
                 },
                 success: function(response) {
                     // Aquí manejas la respuesta. Por ejemplo, podrías imprimir la respuesta en la consola:

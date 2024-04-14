@@ -216,7 +216,7 @@ Route::post('polizas/deuda/eliminar_extraprima',[DeudaController::class,'elimina
 Route::get('polizas/deuda/get_extraprimado/{poliza}/{dui}', [DeudaController::class, 'get_extraprimado']);
 Route::post('polizas/deuda/store_extraprimado', [DeudaController::class, 'store_extraprimado']);
 Route::post('polizas/deuda/update_extraprimado', [DeudaController::class, 'update_extraprimado']);
-Route::post('polizas/deuda/store_poliza', [DeudaController::class, 'store_poliza']);
+Route::post('polizas/deuda/store_poliza', [DeudaCarteraController::class, 'store_poliza']);
 Route::post('polizas/deuda/store_requisitos', [DeudaController::class, 'store_requisitos']);
 Route::get('polizas/deuda/get_requisitos', [DeudaController::class, 'get_requisitos']);
 Route::resource('polizas/deuda', DeudaController::class);
