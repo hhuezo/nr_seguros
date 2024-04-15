@@ -269,9 +269,17 @@
     </div>
 
     <input type="hidden" id="Tasa" value="{{ $deuda->Tasa }}">
-    <input type="hidden" id="TasaComision" value="{{ $deuda->TasaComision }}">
+    @if($deuda->ComisionIva == 1)
+    @php($var = $deuda->TasaComision / 1.13)
+    <input type="hidden" id="TasaComisionDetalle" value="{{ $var}}">
+    @else
+    <input type="hidden" id="TasaComisionDetalle" value="{{ $deuda->TasaComision}}">
+    @endif
     <input type="hidden" id="ExtraPrima" value="{{ $total_extrapima }}">
     <input type="hidden" id="TipoContribuyente" value="{{ $deuda->clientes->TipoContribuyente }}">
+    <input type="hidden" id="ComisionIva" value="{{ $deuda->ComisionIva }}">
+    <input type="hidden" id="DescuentoRentabilidad" value="{{$deuda->Descuento}}">
+
 
 
     <div class="modal-body">
@@ -301,6 +309,7 @@
                         @php($intereses = 0.0)
                         @php($intereses_covid = 0.0)
                         @php($intereses_moratorios = 0.0)
+                        @php($monto_otorgado = 0)
                         @elseif($lineas->Abreviatura == 'INS2'.$lineas->LineaCredito)
                         @php($total = $lineas->SaldoCapital + $lineas->Intereses)
                         @php($saldo_capital = $lineas->SaldoCapital)
@@ -308,6 +317,7 @@
                         @php($intereses = $lineas->Intereses)
                         @php($intereses_covid = 0)
                         @php($intereses_moratorios = 0)
+                        @php($monto_otorgado = 0)
                         @elseif($lineas->Abreviatura == 'INS3'.$lineas->LineaCredito)
                         @php($total = $lineas->SaldoCapital + $lineas->Intereses + $lineas->InteresesCovid)
                         @php($saldo_capital = $lineas->SaldoCapital)
@@ -315,6 +325,7 @@
                         @php($intereses = $lineas->Intereses)
                         @php($intereses_covid = $lineas->InteresesCovid)
                         @php($intereses_moratorios = 0)
+                        @php($monto_otorgado = 0)
                         @elseif($lineas->Abreviatura == 'INS4'.$lineas->LineaCredito)
                         @php($total = $lineas->SaldoCapital + $lineas->Intereses + $lineas->InteresesCovid + $lineas->InteresesMoratorios)
                         @php($saldo_capital = $lineas->SaldoCapital)
@@ -322,6 +333,7 @@
                         @php($intereses = $lineas->Intereses)
                         @php($intereses_covid = $lineas->InteresesCovid)
                         @php($intereses_moratorios = $lineas->InteresesMoratorios)
+                        @php($monto_otorgado = 0)
                         @elseif($lineas->Abreviatura == 'INS5'.$lineas->LineaCredito)
                         @php($total = $lineas->MontoNominal)
                         @php($saldo_capital = 0)
@@ -329,13 +341,22 @@
                         @php($intereses = 0)
                         @php($intereses_covid = 0)
                         @php($intereses_moratorios = 0)
+                        @php($monto_otorgado = 0)
+                        @elseif($lineas->Abreviatura == 'INS6'.$lineas->LineaCredito)
+                        @php($total = $lineas->MontoOtorgado)
+                        @php($saldo_capital = 0)
+                        @php($monto_nominal = 0)
+                        @php($intereses = 0)
+                        @php($intereses_covid = 0)
+                        @php($intereses_moratorios = 0)
+                        @php($monto_otorgado = $lineas->MontoOtorgado)
                         @endif
                         <tr>
                             <td>{{ $lineas->tipo }} {{ $lineas->Abrev }}</td>
                             <td>{{ $deuda->Tasa }} %</td>
-                            <td class="numeric">
-                                0
-                                {{-- {{ $lineas->MontoOtorgado != 0 ? number_format($lineas->MontoOtorgado, 2, '.', ',') : 0 }} --}}
+                            <td class="numeric editable" contenteditable="true" id="{{ $lineas->Abreviatura }}_monto_otorgado">
+
+                                {{ $monto_otorgado != 0 ? number_format($monto_otorgado, 2, '.', ',') : 0 }}
                             </td>
                             <td class="numeric editable" contenteditable="true" id="{{ $lineas->Abreviatura }}_saldo_capital">
                                 {{ $saldo_capital != 0 ? number_format($saldo_capital, 2, '.', ',') : 0 }}
@@ -359,7 +380,8 @@
                         @endforeach
 
                         <tr>
-                            <th colspan="3">Totales</th>
+                            <th colspan="2">Totales</th>
+                            <td class="numeric"><span id="total_monto_otorgado"></span></td>
                             <td class="numeric"><span id="total_saldo_capital"></span></td>
                             <td class="numeric"><span id="total_interes"></span></td>
                             <td class="numeric"><span id="total_interes_covid"></span></td>
@@ -387,8 +409,12 @@
                             <td>USD</td>
                         </tr>
                         <tr>
-                            <td>Comisión </td>
-                            <td class="numeric editable">{{ $deuda->TasaComision }}%</td>
+                            <td>Comisión {{$deuda->ComisionIva == 1 ? 'Iva Incluido': ''}} </td>
+                            <td class="numeric editable"><span>{{$deuda->ComisionIva == 1 ? number_format($deuda->TasaComision / 1.13,2,".",",") : $deuda->TasaComision}}%</span></td>
+                        </tr>
+                        <tr>
+                            <td>Prima a cobrar</td>
+                            <td class="numeric editable"><span id="prima_a_cobrar_ccf"></span></td>
                         </tr>
                         <tr>
                             <td>Valor de comisión</td>
@@ -397,6 +423,10 @@
                         <tr>
                             <td>(+) 13% IVA</td>
                             <td class="numeric editable"><span id="iva_comision"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Sub Total Comision</td>
+                            <td class="numeric editable"><span id="sub_total_ccf"></span></td>
                         </tr>
                         <tr>
                             <td>(-) 1% Retención</td>
@@ -431,31 +461,35 @@
                             <td class="numeric editable"><span id="monto_total_cartera"></span></td>
                         </tr>
                         <tr>
-                            <td>Sub total</td>
+                            <td>Prima calculada</td>
                             <td class="numeric editable"><span id="sub_total"></span></td>
                         </tr>
                         <tr>
-                            <td>Sub total Extra Prima</td>
+                            <td>Extra Prima</td>
                             <td class="numeric editable"><span id="sub_total_extra_prima"></span></td>
                         </tr>
                         <tr>
-                            <td>Prima a cobrar</td>
-                            <td class="numeric editable"><span id="prima_a_cobrar"></span></td>
+                            <td>(-) Descuento rentabilidad ({{$deuda->Descuento == '' ? 0 : $deuda->Descuento}}%)</td>
+                            <td class="numeric editable"><span id="descuento_rentabilidad"></span></td>
                         </tr>
                         <tr>
+                            <td>(=) Prima descontada</td>
+                            <td class="numeric editable"><span id="prima_a_cobrar"></span></td>
+                        </tr>
+                        <!-- <tr>
                             <td>Iva</td>
                             <td class="numeric editable"><span id="iva"></span></td>
                         </tr>
                         <tr>
                             <td>Total Factura</td>
                             <td class="numeric editable"><span id="total_factura"></span></td>
-                        </tr>
+                        </tr> -->
                         <tr>
-                            <td>Comisión (10%)</td>
+                            <td>(-) Estructura CCF de Comisión (10%)</td>
                             <td class="numeric editable"><span id="comision"></span></td>
                         </tr>
                         <tr>
-                            <td>Liquido a pagar</td>
+                            <td>Total a pagar</td>
                             <td class="numeric editable"><span id="liquido_pagar"></span></td>
                         </tr>
                     </tbody>
@@ -503,15 +537,15 @@
                         </div>
                     </div>
                     <br><br>
-                    
+
                     <div align="center">
                         <br><br><br>
                         <a class="btn btn-default" data-target="#modal-cancelar" data-toggle="modal" onclick="cancelarpago()">Cancelar Cobro</a>
                         <a class="btn btn-primary" data-target="#modal-aplicar" data-toggle="modal" onclick="aplicarpago()">Generar Cobro</a>
                     </div>
-                   
+
                 </form>
-                
+                <!-- 
                 <div align="center">
                     <form action="{{url('polizas/deuda/validar_poliza')}}" method="POST">
                         @method('POST')
@@ -519,8 +553,8 @@
                         <input type="hidden" name="Deuda" value="{{$deuda->Id}}">
                         <button type="submit">Validar Poliza</button>
                     </form>
-                </div>
-                
+                </div> -->
+
             </div>
 
             <div class="modal fade" id="modal-cancelar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
@@ -577,6 +611,7 @@
             function calculoTotales() {
                 let total_saldo_capital = 0;
                 let total_monto_nominal = 0;
+                let total_monto_otorgado = 0;
                 let total_interes = 0;
                 let total_interes_covid = 0;
                 let total_interes_moratorio = 0;
@@ -592,7 +627,10 @@
 
                     elemento = document.getElementById(linea + "_monto_nominal");
                     let monto_nominal = elemento.innerText || elemento.textContent;
-                    // console.log(linea + "_monto_nominal: ", monto_nominal);
+
+                    elemento = document.getElementById(linea + "_monto_otorgado");
+                    let monto_otorgado = elemento.innerText || elemento.textContent;
+                    // console.log(linea + "_monto_otorgado: ", monto_otorgado);
 
                     elemento = document.getElementById(linea + "_interes");
                     let interes = elemento.innerText || elemento.textContent;
@@ -607,7 +645,7 @@
                     //console.log(linea + "_interes_moratorio: ", interes_moratorio);
 
                     elemento = document.getElementById(linea + "_suma_asegurada");
-                    let suma_asegurada = convertirANumero(saldo_capital) + convertirANumero(monto_nominal) +
+                    let suma_asegurada = convertirANumero(saldo_capital) + convertirANumero(monto_nominal) + convertirANumero(monto_otorgado) +
                         convertirANumero(interes) + convertirANumero(interes_covid) + convertirANumero(
                             interes_moratorio);
 
@@ -622,17 +660,22 @@
 
                     total_saldo_capital += convertirANumero(saldo_capital);
                     total_monto_nominal += convertirANumero(monto_nominal);
+                    total_monto_otorgado += convertirANumero(monto_otorgado);
                     total_interes += convertirANumero(interes);
                     total_interes_covid += convertirANumero(interes_covid);
                     total_interes_moratorio += convertirANumero(interes_moratorio);
                     total_suma_asegurada += suma_asegurada;
                 }
 
+
                 let total_saldo_capital_formateada = formatearCantidad(total_saldo_capital);
                 document.getElementById("total_saldo_capital").textContent = total_saldo_capital_formateada;
 
                 let total_monto_nominal_formateada = formatearCantidad(total_monto_nominal);
                 document.getElementById("total_monto_nominal").textContent = total_monto_nominal_formateada;
+
+                let total_monto_otorgado_formateada = formatearCantidad(total_monto_otorgado);
+                document.getElementById("total_monto_otorgado").textContent = total_monto_otorgado_formateada;
 
                 let total_interes_formateada = formatearCantidad(total_interes);
                 document.getElementById("total_interes").textContent = total_interes_formateada;
@@ -648,16 +691,18 @@
 
 
                 let tasa = document.getElementById('Tasa').value;
-                let tasa_comision = parseFloat(document.getElementById('TasaComision').value);
+                let comision_iva = document.getElementById('ComisionIva').value;
+                let tasa_comision = document.getElementById('TasaComisionDetalle').value;
+                console.log(tasa_comision);
                 let extra_prima = document.getElementById('ExtraPrima').value;
 
                 //modificando valores de cuadros
                 document.getElementById("monto_total_cartera").textContent = total_suma_asegurada_formateada;
-                document.getElementById('MontoCarteraDetalle').value = total_suma_asegurada_formateada;
+                document.getElementById('MontoCarteraDetalle').value = total_suma_asegurada;
                 document.getElementById('PrimaCalculadaDetalle').value = parseFloat(
-                    total_suma_asegurada_formateada) * parseFloat(tasa);
+                    total_suma_asegurada) * parseFloat(tasa);
                 document.getElementById('PrimaDescontadaDetalle').value = parseFloat(
-                    total_suma_asegurada_formateada) * parseFloat(tasa);
+                    total_suma_asegurada) * parseFloat(tasa);
 
 
                 let sub_total = total_suma_asegurada * tasa;
@@ -667,15 +712,17 @@
                 document.getElementById("sub_total_extra_prima").textContent = formatearCantidad(extra_prima);
 
 
-                prima_a_cobrar = parseFloat(sub_total) + parseFloat(extra_prima);
 
+                let descuento = (parseFloat(sub_total) + parseFloat(extra_prima)) * parseFloat(parseFloat(document.getElementById('DescuentoRentabilidad').value) / 100);
+                document.getElementById('descuento_rentabilidad').textContent = formatearCantidad(descuento);
+                prima_a_cobrar = (parseFloat(sub_total) + parseFloat(extra_prima)) - parseFloat(descuento);
                 document.getElementById("prima_a_cobrar").textContent = formatearCantidad(prima_a_cobrar);
-
+                document.getElementById("prima_a_cobrar_ccf").textContent = formatearCantidad(prima_a_cobrar);
                 let iva = parseFloat(prima_a_cobrar) * 0.13;
-                document.getElementById('iva').textContent = formatearCantidad(iva);
+                // document.getElementById('iva').textContent = formatearCantidad(iva);
                 document.getElementById('IvaDetalle').value = iva;
                 let total_factura = parseFloat(iva) + parseFloat(prima_a_cobrar);
-                document.getElementById('total_factura').textContent = formatearCantidad(total_factura);
+                // document.getElementById('total_factura').textContent = formatearCantidad(total_factura);
 
                 // let comision = prima_a_cobrar * (tasa_comision / 100);
 
@@ -683,41 +730,28 @@
 
                 //estructura ccf
 
-                let valor_comision = parseFloat(prima_a_cobrar) * parseFloat(tasa_comision / 100);
+                let valor_comision = parseFloat(prima_a_cobrar) * (parseFloat(tasa_comision) / 100);
                 document.getElementById('valor_comision').textContent = formatearCantidad(valor_comision);
+                console.log(valor_comision);
                 document.getElementById('ComisionDetalle').value = valor_comision;
                 let iva_comision = parseFloat(valor_comision) * 0.13;
                 document.getElementById('iva_comision').textContent = formatearCantidad(iva_comision);
                 document.getElementById('IvaComisionDetalle').value = iva_comision;
-                let tipo_contribuyente = document.getElementById('TipoContribuyente').value;
-                if (tipo_contribuyente == 2 || tipo_contribuyente == 3) {
-                    let retencion_comision = parseFloat(valor_comision) * 0.1;
-                    document.getElementById('retencion_comision').textContent = formatearCantidad(
-                        retencion_comision);
-                    let comision_ccf = parseFloat(valor_comision) + parseFloat(iva_comision) + parseFloat(
-                        retencion_comision);
-                    document.getElementById('comision_ccf').textContent = formatearCantidad(comision_ccf);
-                    document.getElementById('comision').textContent = formatearCantidad(comision_ccf);
-                    let liquido_pagar = parseFloat(total_factura) - parseFloat(comision_ccf);
-                    document.getElementById("liquido_pagar").textContent = formatearCantidad(liquido_pagar);
-                    document.getElementById('RetencionDetalle').value = retencion_comision;
-                    document.getElementById('ValorCCFDetalle').value = comision_ccf;
-                    document.getElementById('APagarDetalle').value = liquido_pagar;
-                } else {
-                    let retencion_comision = 0
-                    document.getElementById('retencion_comision').textContent = formatearCantidad(
-                        retencion_comision);
-                    let comision_ccf = parseFloat(valor_comision) + parseFloat(iva_comision) + parseFloat(
-                        retencion_comision);
-                    document.getElementById('comision_ccf').textContent = formatearCantidad(comision_ccf);
-                    document.getElementById('comision').textContent = formatearCantidad(comision_ccf);
-                    let liquido_pagar = parseFloat(total_factura) - parseFloat(comision_ccf);
-                    document.getElementById("liquido_pagar").textContent = formatearCantidad(liquido_pagar);
-                    document.getElementById('RetencionDetalle').value = retencion_comision;
-                    document.getElementById('ValorCCFDetalle').value = comision_ccf;
-                    document.getElementById('APagarDetalle').value = liquido_pagar;
+                let retencion_comision = parseFloat(valor_comision) * 0.01;
+                let sub_total_ccf = parseFloat(valor_comision) + parseFloat(iva_comision);
+                document.getElementById('sub_total_ccf').textContent = formatearCantidad(sub_total_ccf);
 
-                }
+                document.getElementById('retencion_comision').textContent = formatearCantidad(
+                    retencion_comision);
+                let comision_ccf = parseFloat(sub_total_ccf) - parseFloat(
+                    retencion_comision);
+                document.getElementById('comision_ccf').textContent = formatearCantidad(comision_ccf);
+                document.getElementById('comision').textContent = formatearCantidad(comision_ccf);
+                let liquido_pagar = parseFloat(prima_a_cobrar) - parseFloat(comision_ccf);
+                document.getElementById("liquido_pagar").textContent = formatearCantidad(liquido_pagar);
+                document.getElementById('RetencionDetalle').value = retencion_comision;
+                document.getElementById('ValorCCFDetalle').value = comision_ccf;
+                document.getElementById('APagarDetalle').value = liquido_pagar;
 
 
 

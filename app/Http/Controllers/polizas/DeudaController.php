@@ -203,7 +203,7 @@ class DeudaController extends Controller
 
 
 
-        session(['MontoCartera' => 0]);
+        //session(['MontoCartera' => 0]);
         alert()->success('El registro de pago ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
         // }
         return back();

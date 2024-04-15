@@ -102,7 +102,7 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
           </tr>
           <tr>
             <td style="width: 65%;">Extra Prima</td>
-            <td style="width: 35%; text-align: right;">$</td>
+            <td style="width: 35%; text-align: right;">${{number_format($detalle->ExtraPrima,2,'.',',')}}</td>
           </tr>
           <tr>
             <td>(-) Descuento rentabilidad ({{$deuda->TasaDescuento == '' ? 0 : $deuda->TasaDescuento}}%)</td>
