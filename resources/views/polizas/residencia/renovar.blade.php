@@ -325,6 +325,7 @@
         let inputReal = document.getElementById('LimiteGrupo');
         let value = inputDisplay.value.replace(/,/g, ''); // Elimina las comas
         inputReal.value = parseFloat(value).toFixed(2); // Actualiza el valor en formato numérico
+        inputDisplay.value = parseFloat(value).toLocaleString().replace(/\./g, ','); // Formatea el valor con coma para separación de miles
     }
 </script>
 
@@ -339,6 +340,7 @@
         let inputReal = document.getElementById('LimiteIndividual');
         let value = inputDisplay.value.replace(/,/g, ''); // Elimina las comas
         inputReal.value = parseFloat(value); // Actualiza el valor en formato numérico
+        inputDisplay.value = parseFloat(value).toLocaleString().replace(/\./g, ','); // Formatea el valor con coma para separación de miles
     }
 </script>
 @endsection
