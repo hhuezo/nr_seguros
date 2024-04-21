@@ -178,7 +178,7 @@
 
                     <div class="form-group" align="center">
 
-                        <button class="btn btn-success" type="submit">Acecptar</button>
+                        <button class="btn btn-success" type="submit">Aceptar</button>
                         <a href="#"><button class="btn btn-primary" type="button">Cancelar</button></a>
                     </div>
                 </div>
