@@ -8,7 +8,7 @@
             <div class="x_title">
                 <h2>RESI - Poliza de Residencia Renovar o Cancelar Poliza <small></small></h2>
                 <ul class="nav navbar-right panel_toolbox">
-                <a href="{{url('polizas/residencia')}}" class="btn btn-info fa fa-undo " style="color: white"> Atrás</a>
+                    <a href="{{url('polizas/residencia')}}" class="btn btn-info fa fa-undo " style="color: white"> Atrás</a>
                 </ul>
                 <div class="clearfix"></div>
             </div>
@@ -36,7 +36,7 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right" >Número de Póliza</label>
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Número de Póliza</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                 <input class="form-control" name="NumeroPoliza" type="text" value="{{ $residencia->NumeroPoliza }}" readonly>
                             </div>
@@ -65,15 +65,15 @@
                         <div class="form-group">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12">Estatus</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                            <select name="EstadoPoliza" id="EstadoPoliza" class="form-control" style="width: 100%" required >
-                            <option value="">Seleccione...</option>
+                                <select name="EstadoPoliza" id="EstadoPoliza" class="form-control" style="width: 100%" required>
+                                    <option value="">Seleccione...</option>
                                     @foreach ($estados_poliza as $obj)
-                                    
+
                                     @if($obj->Id <> 1)
-                                    
-                                    <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
-                                    @endif
-                                    @endforeach
+
+                                        <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                        @endif
+                                        @endforeach
                                 </select>
                             </div>
                         </div>
@@ -112,7 +112,8 @@
                         <div class="form-group">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12">Limite grupo</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input type="number" step="any" name="LimiteGrupo" id="LimiteGrupo" value="{{ $residencia->LimiteGrupo }}" class="form-control">
+                                <input type="number" step="any" name="LimiteGrupo" id="LimiteGrupo" value="{{ $residencia->LimiteGrupo }}" class="form-control" style="display: none;" onblur="changeGrupo(0)">
+                                <input type="text" step="any" id="LimiteGrupoDisplay" value="{{number_format($residencia->LimiteGrupo,2,'.',',' )}}" class="form-control" style="display: block;"  onfocus="changeGrupo(1)">
                             </div>
                         </div>
 
@@ -120,7 +121,9 @@
                         <div class="form-group">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12">Limite individual</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input type="number" step="any" name="LimiteIndividual" id="LimiteIndividual" value="{{ $residencia->LimiteIndividual }}" class="form-control">
+                                <input type="number" step="any" name="LimiteIndividual" id="LimiteIndividual" value="{{ $residencia->LimiteIndividual }}" class="form-control" style="display: none;" onblur="changeIndividual(0)">
+                                <input type="text" step="any" id="LimiteIndividualDisplay" value="{{ number_format($residencia->LimiteIndividual,2,'.',',' ) }}" class="form-control" style="display: block;"  onfocus="changeIndividual(1)">
+
                             </div>
                         </div>
 
@@ -135,14 +138,14 @@
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vigencia
                                 Desde</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="VigenciaDesde"  id="VigenciaDesde" type="date" value="{{ \Carbon\Carbon::parse($residencia->VigenciaDesde)->format('d/m/Y') }}">
+                                <input class="form-control" name="VigenciaDesde" id="VigenciaDesde" type="date" value="{{ $residencia->VigenciaDesde}}">
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vigencia
                                 Hasta</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="VigenciaHasta" id="VigenciaHasta" type="date" value="{{ \Carbon\Carbon::parse($residencia->VigenciaHasta)->format('d/m/Y') }}">
+                                <input class="form-control" name="VigenciaHasta" id="VigenciaHasta" type="date" value="{{$residencia->VigenciaHasta }}">
                             </div>
                         </div>
                         <div class="form-group row">
@@ -154,18 +157,18 @@
                                     @if($obj->Id == $residencia->Ejecutivo)
                                     <option value="{{ $obj->Id }}" selected>{{ $obj->Nombre }}</option>
                                     @else
-                                    <option value="{{ $obj->Id }}" >{{ $obj->Nombre }}</option>
+                                    <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
                                     @endif
                                     @endforeach
                                 </select>
                             </div>
                         </div>
-                        
+
 
 
                     </div>
 
-       
+
 
                     <br><br>
                     <div class="x_title">
@@ -175,7 +178,7 @@
 
                     <div class="form-group" align="center">
 
-                        <button class="btn btn-success" type="submit">Renovar</button>
+                        <button class="btn btn-success" type="submit">Acecptar</button>
                         <a href="#"><button class="btn btn-primary" type="button">Cancelar</button></a>
                     </div>
                 </div>
@@ -199,8 +202,8 @@
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function() {
-        $("#EstadoPoliza").change(function(){
-            if(document.getElementById('EstadoPoliza').value != 2){
+        $("#EstadoPoliza").change(function() {
+            if (document.getElementById('EstadoPoliza').value != 2) {
                 $('#LimiteGrupo').attr('required');
                 $('#LimiteIndividual').attr('required');
                 $('#Tasa').attr('required');
@@ -208,8 +211,8 @@
                 $('#VigenciaHasta').attr('required');
                 $('#Ejecutivo').attr('required');
                 $("#Renovado").hide();
-               
-            }else{
+
+            } else {
                 $('#LimiteGrupo').removeAttr('required');
                 $('#LimiteIndividual').removeAttr('required');
                 $('#Tasa').removeAttr('required');
@@ -228,6 +231,39 @@
             }
         })
     })
+
+    function changeGrupo(id) {
+        if (id == 1) {
+            $("#LimiteGrupo").show();
+            $("#LimiteGrupoDisplay").hide();
+            //  document.getElementById('LimiteGrupo').value = document.getElementById('LimiteGrupoDisplay').value;
+
+        } else {
+            $("#LimiteGrupo").hide();
+            $("#LimiteGrupoDisplay").show();
+            document.getElementById('LimiteGrupoDisplay').value = Number(document.getElementById('LimiteGrupo').value).toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+    }
+
+    function changeIndividual(id) {
+   if (id == 1) {
+            $("#LimiteIndividual").show();
+            $("#LimiteIndividualDisplay").hide();
+            //  document.getElementById('LimiteIndividual').value = document.getElementById('LimiteIndividualDisplay').value;
+
+        } else {
+            $("#LimiteIndividual").hide();
+            $("#LimiteIndividualDisplay").show();
+            document.getElementById('LimiteIndividualDisplay').value = Number(document.getElementById('LimiteIndividual').value).toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+    }
 
     function modal_edit(id) {
         document.getElementById('ModalSaldoA').value = "";
