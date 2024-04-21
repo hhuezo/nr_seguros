@@ -110,20 +110,21 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Limite grupo</label>
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Límite grupo</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input type="number" step="any" name="LimiteGrupo" id="LimiteGrupo" value="{{ $residencia->LimiteGrupo }}" class="form-control" style="display: none;" onblur="changeGrupo(0)">
-                                <input type="text" step="any" id="LimiteGrupoDisplay" value="{{number_format($residencia->LimiteGrupo,2,'.',',' )}}" class="form-control" style="display: block;"  onfocus="changeGrupo(1)">
+                                <input type="number" style="display: none" step="any" name="LimiteGrupo" id="LimiteGrupo" value="{{ $residencia->LimiteGrupo }}" class="form-control"  onblur="changeGrupo(0)">
+                                <input type="text" id="LimiteGrupoDisplay" class="form-control" oninput="formatLimiteGrupo()" onblur="updateLimiteGrupo()" value="{{ number_format($residencia->LimiteGrupo, 2, '.', ',') }}">
                             </div>
                         </div>
 
 
                         <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Limite individual</label>
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Límite individual</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input type="number" step="any" name="LimiteIndividual" id="LimiteIndividual" value="{{ $residencia->LimiteIndividual }}" class="form-control" style="display: none;" onblur="changeIndividual(0)">
-                                <input type="text" step="any" id="LimiteIndividualDisplay" value="{{ number_format($residencia->LimiteIndividual,2,'.',',' ) }}" class="form-control" style="display: block;"  onfocus="changeIndividual(1)">
+                                <input type="number" style="display: none" step="any" name="LimiteIndividual" id="LimiteIndividual" value="{{ $residencia->LimiteIndividual }}" class="form-control" >
 
+                                <input type="text" step="any" id="LimiteIndividualDisplay" value="{{ number_format($residencia->LimiteIndividual, 2, '.', ',') }}" class="form-control" onchange="changeIndividual()" oninput="validateLimiteIndividual()">
+                                   
                             </div>
                         </div>
 
@@ -179,7 +180,7 @@
                     <div class="form-group" align="center">
 
                         <button class="btn btn-success" type="submit">Aceptar</button>
-                        <a href="#"><button class="btn btn-primary" type="button">Cancelar</button></a>
+                        <a href="{{url('polizas/residencia')}}"><button class="btn btn-primary" type="button">Cancelar</button></a>
                     </div>
                 </div>
 
@@ -234,13 +235,13 @@
 
     function changeGrupo(id) {
         if (id == 1) {
-            $("#LimiteGrupo").show();
-            $("#LimiteGrupoDisplay").hide();
+            //$("#LimiteGrupo").show();
+            //$("#LimiteGrupoDisplay").hide();
             //  document.getElementById('LimiteGrupo').value = document.getElementById('LimiteGrupoDisplay').value;
 
         } else {
-            $("#LimiteGrupo").hide();
-            $("#LimiteGrupoDisplay").show();
+            //$("#LimiteGrupo").hide();
+            //$("#LimiteGrupoDisplay").show();
             document.getElementById('LimiteGrupoDisplay').value = Number(document.getElementById('LimiteGrupo').value).toLocaleString('en-US', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
@@ -251,17 +252,17 @@
 
     function changeIndividual(id) {
    if (id == 1) {
-            $("#LimiteIndividual").show();
-            $("#LimiteIndividualDisplay").hide();
+            //$("#LimiteIndividual").show();
+            //$("#LimiteIndividualDisplay").hide();
             //  document.getElementById('LimiteIndividual').value = document.getElementById('LimiteIndividualDisplay').value;
 
         } else {
-            $("#LimiteIndividual").hide();
-            $("#LimiteIndividualDisplay").show();
-            document.getElementById('LimiteIndividualDisplay').value = Number(document.getElementById('LimiteIndividual').value).toLocaleString('en-US', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
+           // $("#LimiteIndividual").hide();
+            //$("#LimiteIndividualDisplay").show();
+            // document.getElementById('LimiteIndividualDisplay').value = Number(document.getElementById('LimiteIndividual').value).toLocaleString('en-US', {
+            //     minimumFractionDigits: 2,
+            //     maximumFractionDigits: 2
+            // });
         }
     }
 
@@ -310,6 +311,34 @@
         });
         $('#modal_editar_pago').modal('show');
 
+    }
+</script>
+
+<script>
+    function formatLimiteGrupo() {
+        let input = document.getElementById('LimiteGrupoDisplay');
+        input.value = input.value.replace(/[^\d.,]/g, ''); // Solo permite números, coma y punto
+    }
+
+    function updateLimiteGrupo() {
+        let inputDisplay = document.getElementById('LimiteGrupoDisplay');
+        let inputReal = document.getElementById('LimiteGrupo');
+        let value = inputDisplay.value.replace(/,/g, ''); // Elimina las comas
+        inputReal.value = parseFloat(value).toFixed(2); // Actualiza el valor en formato numérico
+    }
+</script>
+
+<script>
+    function validateLimiteIndividual() {
+        let input = document.getElementById('LimiteIndividualDisplay');
+        input.value = input.value.replace(/[^\d.,]/g, ''); // Solo permite números, coma y punto
+    }
+
+    function changeIndividual() {
+        let inputDisplay = document.getElementById('LimiteIndividualDisplay');
+        let inputReal = document.getElementById('LimiteIndividual');
+        let value = inputDisplay.value.replace(/,/g, ''); // Elimina las comas
+        inputReal.value = parseFloat(value); // Actualiza el valor en formato numérico
     }
 </script>
 @endsection
