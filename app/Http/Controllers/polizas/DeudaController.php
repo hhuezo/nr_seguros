@@ -62,7 +62,7 @@ class DeudaController extends Controller
         session(['FechaInicioDeuda' => $today]);
         session(['FechaFinalDeuda' => $today]);
         session(['ExcelURLDeuda' => '']);
-        $deuda = Deuda::where('Activo',1)->get();
+        $deuda = Deuda::where('Activo', 1)->get();
         return view('polizas.deuda.index', compact('deuda'));
     }
 
@@ -1637,7 +1637,7 @@ class DeudaController extends Controller
                 // 2 error formato de dui
                 if ($request->validacion_dui == 'on') {
                     $validador_dui = true;
-                }else{
+                } else {
                     $validador_dui = $this->validarDocumento($obj->Dui, "dui");
 
                     if ($validador_dui == false) {
@@ -1646,7 +1646,7 @@ class DeudaController extends Controller
 
                         array_push($errores_array, 2);
                     }
-               }
+                }
 
 
                 // 3 error formato de nit
@@ -1945,12 +1945,18 @@ class DeudaController extends Controller
     {
         // dd($request->Deuda);
         //  dd($request->MesCancelar);
-        $poliza = PolizaDeudaCartera::where('PolizaDeuda', '=', $request->Deuda)->where('Mes', '=', $request->MesCancelar)->where('Axo', '=', $request->AxoCancelar)
-            ->delete();
+        try {
+            $poliza_temp = PolizaDeudaTempCartera::where('PolizaDeuda', '=', $request->Deuda)->where('User', '=', auth()->user()->id)->first();
+            $poliza = PolizaDeudaCartera::where('PolizaDeuda', '=', $request->Deuda)->where('Mes', '=', $poliza_temp->Mes)
+                ->where('Axo', '=', $poliza_temp->Axo)->where('User', '=', auth()->user()->id)
+                ->delete();
 
-            $poliza = PolizaDeudaTempCartera::where('PolizaDeuda', '=', $request->Deuda)->where('Mes', '=', $request->MesCancelar)->where('Axo', '=', $request->AxoCancelar)
-            ->delete();
-        // dd($poliza);
+            PolizaDeudaTempCartera::where('PolizaDeuda', '=', $request->Deuda)->delete();
+            // dd($poliza);
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+
 
         alert()->success('El registro ha sido ingresado correctamente');
         return back();
@@ -2101,7 +2107,7 @@ class DeudaController extends Controller
         }
         //dd($poliza_cumulos);
 
-      /*  foreach ($poliza_cumulos as $cumulo) {
+        /*  foreach ($poliza_cumulos as $cumulo) {
             switch ($tipo_cartera) {
                 case '1':
                     # saldo a capital
