@@ -1947,6 +1947,9 @@ class DeudaController extends Controller
         //  dd($request->MesCancelar);
         $poliza = PolizaDeudaCartera::where('PolizaDeuda', '=', $request->Deuda)->where('Mes', '=', $request->MesCancelar)->where('Axo', '=', $request->AxoCancelar)
             ->delete();
+
+            $poliza = PolizaDeudaTempCartera::where('PolizaDeuda', '=', $request->Deuda)->where('Mes', '=', $request->MesCancelar)->where('Axo', '=', $request->AxoCancelar)
+            ->delete();
         // dd($poliza);
 
         alert()->success('El registro ha sido ingresado correctamente');
