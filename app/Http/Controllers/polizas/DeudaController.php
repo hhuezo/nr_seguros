@@ -158,6 +158,7 @@ class DeudaController extends Controller
         $detalle->FechaIngreso = $time->format('Y-m-d');
         $detalle->save();
 
+        PolizaDeudaTempCartera::where('User','=',auth()->user()->id)->where('PolizaDeuda',$request->Deuda)->delete();
         $cartera = PolizaDeudaCartera::where('FechaInicio', '=', $request->FechaInicio)->where('FechaFinal', '=', $request->FechaFinal)->update(['PolizaDeudaDetalle' => $detalle->Id]);
 
         $comen = new Comentario();
