@@ -44,7 +44,7 @@ class DeudaCarteraController extends Controller
             $ultimo_pago_fecha_final = $fecha_final_temp->format('Y-m-d');
             $fecha1 = PolizaDeudaCartera::select('Mes', 'Axo', 'FechaInicio', 'FechaFinal')
                 ->where('PolizaDeuda', '=', $id)
-                ->where('PolizaDeudaDetalle', '<>', null)
+                ->where('PolizaDeudaDetalle', '=', null)
                 ->orderByDesc('Id')->first();
         } else {
             $ultimo_pago = '';
