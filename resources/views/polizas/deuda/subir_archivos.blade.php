@@ -135,7 +135,7 @@
                             <th>Abreviatura</th>
                             <th>Descripcion</th>
                             <th>Datos Ingresados</th>
-                            <th>Opciones</th>
+                            <th align="center">Carga de <br> archivo de cartera </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -146,13 +146,9 @@
                                 <td>{{ $obj->saldos->Descripcion }}</td>
                                 <td align="right">${{ number_format($obj->Total, 2, '.', ',') }}
                                 </td>
-
-
                                 <td align="center">
-
-
-                                    <a data-target="#modal-add-{{ $obj->Id }}" data-toggle="modal"><i
-                                            class="fa fa-upload fa-lg"></i></a>
+                                    <a data-target="#modal-add-{{ $obj->Id }}" data-toggle="modal">
+                                       <button class="btn btn-default"><i class="fa fa-upload fa-lg"></i></button> </a>
 
                                 </td>
 
