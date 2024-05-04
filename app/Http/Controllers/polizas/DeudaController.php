@@ -158,7 +158,7 @@ class DeudaController extends Controller
         $detalle->FechaIngreso = $time->format('Y-m-d');
         $detalle->save();
 
-        PolizaDeudaTempCartera::where('User','=',auth()->user()->id)->where('PolizaDeuda',$request->Deuda)->delete();
+        PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeuda', $request->Deuda)->delete();
         $cartera = PolizaDeudaCartera::where('FechaInicio', '=', $request->FechaInicio)->where('FechaFinal', '=', $request->FechaFinal)->update(['PolizaDeudaDetalle' => $detalle->Id]);
 
         $comen = new Comentario();
@@ -661,7 +661,7 @@ class DeudaController extends Controller
             $productos = Producto::where('Activo', 1)->get();
             $planes = Plan::where('Activo', 1)->get();
             $detalle = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1)->orderBy('Id', 'desc')->get();
-            $ultimo_pago = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1)->where('PagoAplicado','<>',null)->orderBy('Id', 'desc')->first();
+            $ultimo_pago = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1)->where('PagoAplicado', '<>', null)->orderBy('Id', 'desc')->first();
 
             //para fechas de modal
             $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
@@ -673,6 +673,7 @@ class DeudaController extends Controller
 
 
             //tab 7
+            $data_temp_count = PolizaDeudaTempCartera::where('PolizaDeuda', $id)->count();
             $extraprimados = PolizaDeudaExtraPrimados::where('PolizaDeuda', $id)->get();
             $total_extrapima = 0;
             foreach ($extraprimados as $extraprimado) {
@@ -854,7 +855,9 @@ class DeudaController extends Controller
                 'data',
                 'comentarios',
                 'lineas_credito',
-                'lineas_abreviatura'
+                'lineas_abreviatura',
+                'data_temp_count'
+
             ));
         }
     }
