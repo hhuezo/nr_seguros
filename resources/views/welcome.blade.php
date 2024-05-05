@@ -50,7 +50,7 @@
                     <!-- menu profile quick info -->
                     <div class="profile clearfix">
                         <div class="profile_pic">
-                            <img src="{{ asset('img/usuario.jpg') }}" alt="..." class="img-circle profile_img">
+                            <img src="{{ asset('img/usuario.svg') }}" alt="..." class="img-circle profile_img">
                         </div>
                         <div class="profile_info">
                             <span>Bienvenido,</span>
@@ -167,7 +167,7 @@
                             <li class="">
                                 <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown"
                                     aria-expanded="false">
-                                    <img src="{{ asset('img/usuario.jpg') }}"
+                                    <img src="{{ asset('img/usuario.svg') }}"
                                         alt="">{{ auth()->user()->name }}
                                     <span class=" fa fa-angle-down"></span>
                                 </a>
