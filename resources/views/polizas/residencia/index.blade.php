@@ -46,17 +46,17 @@
                         <td>{{ $obj->ejecutivos->Nombre }}</td>
                         <td align="center">
                             @can('edit users')
-                            <a href="{{ url('polizas/residencia') }}/{{ $obj->Id }}/edit" class="on-default edit-row" title="Generar Pago">
+                            <a href="{{ url('polizas/residencia') }}/{{ $obj->Id }}/edit" class="btn btn-success on-default edit-row" title="Generar Pago">
                                 <i class="fa fa-pencil fa-lg"></i></a>
                             @endcan
-                            &nbsp;&nbsp;<a href="{{ url('polizas/residencia') }}/{{ $obj->Id }}/renovar" class="on-default edit-row" title="Renovar o Cancelar "><i class="fa fa-refresh fa-lg"></i></a>
+                            &nbsp;<a href="{{ url('polizas/residencia') }}/{{ $obj->Id }}/renovar" class="btn btn-primary on-default edit-row" title="Renovar o Cancelar "><i class="fa fa-refresh fa-lg"></i></a>
                             @can('delete users')
-                            &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal" title="Anular Poliza"><i class="fa fa-trash fa-lg"></i></a>
+                            &nbsp;<a href="" class="btn btn-danger" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal" title="Anular Poliza"><i class="fa fa-trash fa-lg"></i></a>
                             @endcan
                             @if($obj->Modificar == 1)
-                            &nbsp;&nbsp;<a href="" data-target="#modal-desactivar-{{ $obj->Id }}" data-toggle="modal" title="Desactivar modificación"><i class="fa fa-check-square fa-lg"></i></a>
+                            &nbsp;<a href="" class="btn btn-danger" data-target="#modal-desactivar-{{ $obj->Id }}" data-toggle="modal" title="Desactivar modificación"><i class="fa fa-check-square fa-lg"></i></a>
                             @else
-                            &nbsp;&nbsp;<a href="" data-target="#modal-activar-{{ $obj->Id }}" data-toggle="modal" title="Activar modificación"><i class="fa fa-square fa-lg"></i></a>
+                            &nbsp;<a href="" class="btn btn-warning" data-target="#modal-activar-{{ $obj->Id }}" data-toggle="modal" title="Activar modificación"><i class="fa fa-square fa-lg"></i></a>
                             @endif
                         </td>
                     </tr>

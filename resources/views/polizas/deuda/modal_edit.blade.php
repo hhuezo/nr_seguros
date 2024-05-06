@@ -30,8 +30,7 @@
                         </div>
                         <div class="form-group">
                             <div class="col-sm-12">
-                                <label class="control-label">Numero
-                                    Correlativo</label>
+                                <label class="control-label">Número de Factura</label>
                                 <input type="text" class="form-control" name="NumeroCorrelativo">
                             </div>
                         </div>
