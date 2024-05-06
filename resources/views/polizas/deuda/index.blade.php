@@ -56,19 +56,19 @@
                         <td align="right">
 
                             @if($obj->Configuracion == 1)
-                            <a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}/edit" class="on-default edit-row">
+                            <a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}/edit" class="btn btn-primary on-default edit-row">
                                 <i class="fa fa-file fa-lg"></i></a>&nbsp;
-                                <a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}" class="on-default edit-row">
+                                <a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}" class="btn btn-success on-default edit-row">
                                 <i class="fa fa-cog fa-lg"></i></a>
                             @else
-                            <a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}" class="on-default edit-row">
+                            <a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}" class="btn btn-success on-default edit-row">
                                 <i class="fa fa-cog fa-lg"></i></a>
                             @endif
-                            &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
+                            &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal" class="btn btn-danger"><i class="fa fa-trash fa-lg"></i></a>
                             @can('delete userss')
-                            &nbsp;&nbsp;<a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}/renovar" class="on-default edit-row"><i class="fa fa-refresh fa-lg"></i></a>
+                            &nbsp;&nbsp;<a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}/renovar" class="on-default edit-row btn btn-info"><i class="fa fa-refresh fa-lg"></i></a>
 
-                            &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
+                            &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal" class="btn btn-danger"><i class="fa fa-trash fa-lg"></i></a>
 
 
                             @endcan

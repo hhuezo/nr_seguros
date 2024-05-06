@@ -14,7 +14,7 @@
                                 <h2>Error<small>Cartera con registros erroneos</small> </h2>
                             </div>
                             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
-                                <a href="{{url('/polizas/deuda')}}/{{$deuda->Id}}/edit">
+                                <a href="{{url('polizas/deuda/subir_cartera')}}/{{$deuda->Id}}">
                                 <button class="btn btn-primary">
                                     <i class="fa fa-arrow-left"></i>
                                 </button>
