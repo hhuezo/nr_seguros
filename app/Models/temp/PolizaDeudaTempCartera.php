@@ -53,8 +53,7 @@ class PolizaDeudaTempCartera extends Model
         'LineaCredito',
         'NoValido',
         'EdadDesembloso',
-        'FechaOtorgamientoDate',
-        'total_saldo'
+        'FechaOtorgamientoDate'
     ];
 
     public function linea_credito()
@@ -63,34 +62,35 @@ class PolizaDeudaTempCartera extends Model
     }
 
 
-    public function total_saldo()
+    public function calculoTodalSaldo()
     {
+       
         try {
             $tipo_cartera = $this->linea_credito->Saldos;
             switch ($tipo_cartera) {
                 case '1':
                     # saldo a capital
-                    $saldo = $this->total_saldo;
+                    $saldo = $this->SaldoCapital;
                     break;
                 case '2':
                     # saldo a capital mas intereses
-                    $saldo =  $this->total_saldo + $this->total_interes;
+                    $saldo =  $this->SaldoCapital + $this->Intereses;
                     break; 
                 case '3':
                     # saldo a capital mas intereses mas covid
-                    $saldo = $this->total_saldo + $this->total_interes +  $this->total_covid;
+                    $saldo = $this->SaldoCapital + $this->Intereses +  $this->InteresesCovid;
                     break;
                 case '4':
                     # saldo a capital as intereses mas covid mas moratorios
-                    $saldo = $this->total_saldo + $this->total_interes +  $this->total_covid +  $this->total_moratorios;
+                    $saldo = $this->SaldoCapital + $this->Intereses +  $this->InteresesCovid +  $this->InteresesMoratorios;
                     break;
                 case '5':
                     # .monto moninal
-                    $saldo = $this->total_monto_nominal;
+                    $saldo = $this->MontoNominal;
                     break;
                 default:
-                    # .monto moninal
-                    $saldo = $this->total_monto_nominal;
+                    # .sando capital
+                    $saldo = $this->SaldoCapital;
                     break;
             }
     

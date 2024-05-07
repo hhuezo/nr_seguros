@@ -39,38 +39,52 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
   </table>
   <table border="1" cellspacing="0" style="width: 100%;">
     <tr style="background-color: lightgrey;">
-      <td colspan="2">Compañia aseguradora</td>
+      <td>Compañia aseguradora</td>
       <td colspan="2">Producto de seguros</td>
     </tr>
     <tr>
-      <td colspan="2">{{$deuda->aseguradoras->Nombre}}</td>
+      <td>{{$deuda->aseguradoras->Nombre}}</td>
       <td colspan="2">@if($deuda->Plan) {{$deuda->planes->productos->Nombre}}@endif</td>
     </tr>
     <tr style="background-color: lightgrey;">
-      <td>Numero de Poliza</td>
-      <td>Vigencia Inicial</td>
-      <td>Vigencia Final</td>
-      <td>Anexo</td>
+      <td>Número de Póliza</td>
+      <td>Vigencia Inicial (anual)</td>
+      <td>Vigencia Final (anual)</td>
     </tr>
     <tr>
       <td>{{$deuda->NumeroPoliza}}</td>
-      <td>{{ \Carbon\Carbon::parse($detalle->FechaInicio)->format('d/m/Y') }}</td>
-      <td>{{ \Carbon\Carbon::parse($detalle->FechaFinal)->format('d/m/Y') }}</td>
-      <td>{{$detalle->Anexo}}</td>
-    </tr>
-    <tr>
-      <td colspan="2" style="background-color: lightgrey;">Referencia</td>
-      <td colspan="2">{{$detalle->Referencia}}</td>
-    </tr>
-    <tr>
-      <td colspan="2" style="background-color: lightgrey;">Factura (s) a Nombre de</td>
-      <td colspan="2">{{$deuda->clientes->Nombre}} </td>
+      <td>{{ \Carbon\Carbon::parse($deuda->VigenciaDesde)->format('d/m/Y') }}</td>
+      <td>{{ \Carbon\Carbon::parse($deuda->VigenciaHasta)->format('d/m/Y') }}</td>
     </tr>
   </table>
-  <table style="width: 100%;">
+  <table border="1" cellspacing="0" style="width: 100%;">
     <tr>
-      <td colspan="4" style="text-align: center;">
-        <br> Detalles del cobro generado
+      <td rowspan="2" style="background-color: lightgrey;">Periodo de cobro</td>
+      <td align="center">Fecha Inicio (mes)</td>
+      <td align="center">Fecha Fin (mes)</td>
+    </tr>
+    <tr>
+      <td align="center">{{ \Carbon\Carbon::parse($detalle->FechaInicio)->format('d/m/Y') }}</td>
+      <td align="center">{{ \Carbon\Carbon::parse($detalle->FechaFinal)->format('d/m/Y') }}</td>
+    </tr>
+    <tr>
+      <td style="background-color: lightgrey;">Anexo</td>
+      <td colspan="2" align="center">{{$detalle->Anexo}}</td>
+    </tr>
+    <tr>
+      <td style="background-color: lightgrey;">Referencia</td>
+      <td colspan="2" align="center">{{$detalle->Referencia}}</td>
+    </tr>
+    <tr>
+      <td style="background-color: lightgrey;">Factura (s) a Nombre de</td>
+      <td colspan="2" align="center">{{$deuda->clientes->Nombre}} </td>
+    </tr>
+  </table>
+  <br>
+  <table style="width: 100%;" border="1" cellspacing="0"> 
+    <tr>
+      <td colspan="4" style="text-align: center;background-color: lightgrey;" >
+         Detalles del cobro generado
       </td>
     </tr>
   </table>
@@ -78,27 +92,27 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
     <tr>
       <td style="width: 45%;">
         <table border="1" cellspacing="0">
-        <tr>
+          <tr>
             <td style="width: 65%;">Monto de Cartera</td>
             <td style="width: 35%; text-align: right;">${{number_format($detalle->MontoCartera,2,'.',',')}}</td>
           </tr>
           <tr>
-            <td style="width: 65%;">Prima</td>
+            <td style="width: 65%;">Prima calculada</td>
             <td style="width: 35%; text-align: right;">${{number_format($detalle->PrimaCalculada,2,'.',',')}}</td>
           </tr>
           <tr>
-            <td>(-) Tasa de rentabilidad ({{$deuda->TasaDescuento}}%)</td>
+            <td style="width: 65%;">Extra Prima</td>
+            <td style="width: 35%; text-align: right;">${{number_format($detalle->ExtraPrima,2,'.',',')}}</td>
+          </tr>
+          <tr>
+            <td>(-) Descuento rentabilidad ({{$deuda->TasaDescuento == '' ? 0 : $deuda->TasaDescuento}}%)</td>
             <td style="width: 35%; text-align: right;">${{number_format($detalle->Descuento,2,'.',',')}}</td>
           </tr>
           <tr>
             <td>(=) Prima descontada</td>
             <td style="width: 35%; text-align: right;">${{number_format($detalle->PrimaDescontada,2,'.',',')}}</td>
           </tr>
-          <tr>
-            <td>(+) impuesto bomberos</td>
-            <td style="width: 35%; text-align: right;">${{number_format($detalle->ImpuestoBomberos,2,'.',',')}}</td>
-          </tr>
-          <tr>
+           <!-- <tr>
             <td>Sub Total</td>
             <td style="width: 35%; text-align: right;"> ${{number_format($detalle->SubTotal,2,'.',',')}}</td>
           </tr>
@@ -109,13 +123,13 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
           <tr>
             <td>Total Factura</td>
             <td style="width: 35%; text-align: right;">${{number_format(($detalle->SubTotal+$detalle->Iva),2,'.',',')}}</td>
-          </tr>
+          </tr>  -->
           <tr>
             <td>(-) Estructura CCF de Comisión</td>
-            <td style="width: 35%; text-align: right;">${{number_format($detalle->ValorCCF,2,'.',',')}}</td>
+            <td style="width: 35%; text-align: right;">(${{number_format($detalle->ValorCCF,2,'.',',')}})</td>
           </tr>
           <tr>
-            <td><b>Prima total a pagar</b></td>
+            <td><b>Total a pagar</b></td>
             <td style="width: 35%; text-align: right;"><b>${{number_format($detalle->APagar,2,'.',',')}}</b></td>
           </tr>
         </table>
@@ -129,7 +143,11 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
           </tr>
           <tr>
             <td>Porcentaje de comisión </td>
-            <td style="width: 35%; text-align: right;">{{$deuda->Comision}} %</td>
+            <td style="width: 35%; text-align: right;">{{$deuda->TasaComision == '' ? 0: $deuda->TasaComision}}%</td>
+          </tr>
+          <tr>
+            <td>(=) Prima descontada</td>
+            <td style="width: 35%; text-align: right;">${{number_format($detalle->PrimaDescontada,2,'.',',')}}</td>
           </tr>
           <tr>
             <td>Valor de la comisión</td>
@@ -138,6 +156,14 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
           <tr>
             <td>(+) 13% IVA</td>
             <td style="width: 35%; text-align: right;">${{number_format($detalle->IvaSobreComision,2,'.',',')}}</td>
+          </tr>
+          <tr>
+            <td>Sub Total de comision</td>
+            <td style="width: 35%; text-align: right;">${{number_format($detalle->IvaSobreComision + $detalle->Comision,2,'.',',')}}</td>
+          </tr>
+          <tr>
+            <td>Retencion 1%</td>
+            <td style="width: 35%; text-align: right;">${{number_format($detalle->Retencion,2,'.',',')}}</td>
           </tr>
           <tr>
             <td>Valor del CCF por Comisión</td>
@@ -152,31 +178,28 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
   <table border="1" cellspacing="0" style="width: 100%;">
     <tr style="background-color: lightgrey;">
       <th>Cuota</th>
-      <th>Número Correlativo</th>
+      <th>Número de <br> documento</th>
       <th>Fecha de Pago</th>
-      <th>Prima Neta</th>
-      <th>Gastos Emisión</th>
+      <th>Prima A Cobrar</th>
+      <th>Total Comisión</th>
       <th>Otros</th>
-      <th>IVA</th>
-      <th>Total a facturar</th>
+      <th>Pago liquido de prima</th>
     </tr>
     <tr>
       <td style="text-align: center;">01/01</td>
       <td>{{$detalle->NumeroCorrelativo}}</td>
-      <td>{{ \Carbon\Carbon::parse($detalle->FechaInicio)->format('d/m/Y') }}</td>
+      <td>{{ \Carbon\Carbon::parse($detalle->ImpresionRecibo)->format('d/m/Y') }}</td>
       <td style="text-align: right;">${{number_format($detalle->SubTotal,2,'.',',')}}</td>
-      <td style="text-align: right;">${{number_format($detalle->GastosEmision,2,'.',',')}}</td>
+      <td style="text-align: right;">${{number_format(($detalle->Comision ),2,'.',',')}}</td>
       <td style="text-align: right;">${{number_format($detalle->Otros,2,'.',',')}}</td>
-      <td style="text-align: right;">${{number_format($detalle->Iva,2,'.',',')}}</td>
-      <td style="text-align: right;">${{number_format(($detalle->SubTotal + $detalle->Iva + $detalle->GastosEmision + $detalle->Otros),2,'.',',')}}</td>
+      <td style="text-align: right;">${{number_format($detalle->APagar,2,'.',',')}}</td>
     </tr>
     <tr>
       <td colspan="3" align="center">TOTAL </td>
       <td style="text-align: right;">${{number_format($detalle->SubTotal,2,'.',',')}}</td>
+      <td style="text-align: right;">${{number_format($detalle->Comision,2,'.',',')}}</td>
       <td></td>
-      <td></td>
-      <td style="text-align: right;">${{number_format($detalle->Iva,2,'.',',')}}</td>
-      <td style="text-align: right;">${{number_format(($detalle->SubTotal + $detalle->Iva + $detalle->GastosEmision + $detalle->Otros),2,'.',',')}}</td>
+      <td style="text-align: right;">${{number_format(($detalle->APagar),2,'.',',')}}</td>
     </tr>
   </table>
   <br>
@@ -190,11 +213,11 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
           vencimiento para el pago de sus primas, caso contrario la compañía de seguros no se hará responsable
           por la cobertura del bien asegurado en caso de un reclamo.
           <br>
-          Además hacemos de su conocimiento que en caso que usted no pueda presentarse a la compañía de seguros a realizar los pagos de 
-          las cuotas de su póliza puede hacerlo a través de nuestra empresa, comunicándose a nuestras oficinas a los teléfonos 2521-3700 o 7601-2895 
-          para programar el día y la hora en la cual nuestra área de mensajería se hará presente al lugar convenido a retirar los cheques o 
-          dinero en efectivo por el pago de sus seguros enviándole posteriormente, la factura o comprobante de crédito fiscal emitido y 
-          cancelado por la compañía aseguradora. 
+          Además hacemos de su conocimiento que en caso que usted no pueda presentarse a la compañía de seguros a realizar los pagos de
+          las cuotas de su póliza puede hacerlo a través de nuestra empresa, comunicándose a nuestras oficinas a los teléfonos 2521-3700 o 7601-2895
+          para programar el día y la hora en la cual nuestra área de mensajería se hará presente al lugar convenido a retirar los cheques o
+          dinero en efectivo por el pago de sus seguros enviándole posteriormente, la factura o comprobante de crédito fiscal emitido y
+          cancelado por la compañía aseguradora.
 
           <br>
           Esperando lo anterior sea de satisfacción, nos ponemos a sus apreciables órdenes por cualquier consulta adicional al respecto.

@@ -83,7 +83,7 @@
                     @php($totalextraprima = 0)
                     @if ($extraprimados->count() > 0)
                     @foreach ($extraprimados as $obj)
-                    <tr>
+                    <tr  class=" {{$obj->Existe == 0 && $data_temp_count > 0 ? 'danger':''}}" >
                         <td align="center"><button class="btn btn-primary" data-target="#modal-edit-extraprimados-{{ $obj->Id }}" data-toggle="modal">
                                 <i class="fa fa-edit fa-lg"></i>
                             </button>

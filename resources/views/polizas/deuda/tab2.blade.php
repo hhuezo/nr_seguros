@@ -104,32 +104,7 @@
         <img src="{{ asset('img/ajax-loader.gif') }}" alt="Loading..." />
     </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var loadingOverlay = document.getElementById('loading-overlay');
-            var submitButton = document.getElementById('submitButton');
-            var myForm = document.getElementById('myForm');
 
-            submitButton.addEventListener('click', function(event) {
-                event.preventDefault(); // Evita que el formulario se envíe automáticamente
-
-                loadingOverlay.style.display = 'flex'; // Cambia a 'flex' para usar flexbox
-
-                // Validación del formulario
-                if (document.getElementById('LineaCredito_Subir').value === '') {
-                    Swal.fire('Debe seleccionar una línea de crédito');
-                    loadingOverlay.style.display = 'none'; // Oculta el overlay en caso de error
-                    return;
-                } else if (document.getElementById('Archivo').value === '') {
-                    Swal.fire('Debe seleccionar un archivo');
-                    loadingOverlay.style.display = 'none'; // Oculta el overlay en caso de error
-                    return;
-                }
-                myForm.submit();
-
-            });
-        });
-    </script>
 
 
 
@@ -171,119 +146,7 @@
     </style>
 
 
-    <div class="modal fade bs-example-modal-lg" id="modal_pago" tabindex="-1" role="dialog"
-        aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
-                        <h5 class="modal-title" id="exampleModalLabel">Subir archivo Excel</h5>
-                    </div>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form id="myForm" action="{{ url('polizas/deuda/create_pago') }}" method="POST"
-                    enctype="multipart/form-data">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Linea de
-                                Credito</label>
-                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <select name="LineaCredito" id="LineaCredito_Subir" class="form-control" required>
-                                    <option value="" selected disabled>Seleccione...</option>
-                                    @foreach ($creditos as $obj)
-                                        <option value="{{ $obj->Id }}"> {{ $obj->tipoCarteras->Nombre }}
-                                            {{ $obj->saldos->Abreviatura }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Año</label>
-                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <select name="Axo" class="form-control">
-                                    @for ($i = date('Y'); $i >= 2022; $i--)
-                                        <option value="{{ $i }}"> {{ $i }}</option>
-                                    @endfor
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Mes</label>
-                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <select name="Mes" class="form-control">
-                                    @for ($i = 1; $i <= 12; $i++)
-                                        <option value="{{ $i }}" {{ date('m') == $i ? 'selected' : '' }}>
-                                            {{ $meses[$i] }}
-                                        </option>
-                                    @endfor
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
-                                inicio</label>
-                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="Id" value="{{ $deuda->Id }}" type="hidden"
-                                    required>
-                                <input class="form-control" type="date" name="FechaInicio"
-                                    value="{{ $ultimo_pago ? date('Y-m-d', strtotime($ultimo_pago->FechaFinal)) : date('Y-m-d', strtotime($primerDia)) }}"
-                                    {{ $ultimo_pago ? 'readonly' : '' }} required>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
-                                final</label>
-                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="FechaFinal"
-                                    value="{{ $ultimo_pago_fecha_final ? $ultimo_pago_fecha_final : date('Y-m-d', strtotime($ultimoDia)) }}"
-                                    type="date" required>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Archivo</label>
-                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="Archivo" id="Archivo" type="file" required>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">
-                                <!-- Rounded switch -->
-                                <label class="switch">
-                                    <input type="checkbox" name="validacion_dui">
-                                    <span class="slider round"></span>
-                                </label>
 
-                            </label>
-                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <label class="control-label" align="left">Desea omitir la validación de formato de
-                                    DUI?</label>
-                                {{-- <input type="checkbox" class="form-control" name="validacion_dui" align="left"> --}}
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <div class="clearfix"></div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-primary" id="submitButton">Subir Cartera</button>
-                    </div>
-                </form>
-
-                <div id="loading-indicator" style="text-align: center; display:none">
-                    <img src="{{ asset('img/ajax-loader.gif') }}">
-                    <br>
-                </div>
-
-
-            </div>
-        </div>
-    </div>
 
 
 
@@ -293,17 +156,26 @@
 
         </div>
         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 d-flex justify-content-start" style="text-align: right;">
-            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal_pago">
+            <!-- <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal_pago">
                 Subir Archivo Excel
-            </button>
+            </button> -->
+            <a href="{{url('polizas/deuda/subir_cartera')}}/{{$deuda->Id}}" class="btn btn-info"> Subir Archivos Excel</a>
         </div>
 
     </div>
 
     <input type="hidden" id="Tasa" value="{{ $deuda->Tasa }}">
-    <input type="hidden" id="TasaComision" value="{{ $deuda->TasaComision }}">
+    @if($deuda->ComisionIva == 1)
+    @php($var = $deuda->TasaComision / 1.13)
+    <input type="hidden" id="TasaComisionDetalle" value="{{ $var}}">
+    @else
+    <input type="hidden" id="TasaComisionDetalle" value="{{ $deuda->TasaComision}}">
+    @endif
     <input type="hidden" id="ExtraPrima" value="{{ $total_extrapima }}">
     <input type="hidden" id="TipoContribuyente" value="{{ $deuda->clientes->TipoContribuyente }}">
+    <input type="hidden" id="ComisionIva" value="{{ $deuda->ComisionIva }}">
+    <input type="hidden" id="DescuentoRentabilidad" value="{{$deuda->Descuento}}">
+
 
 
     <div class="modal-body">
@@ -326,77 +198,86 @@
                     </thead>
                     <tbody>
                         @foreach ($lineas_credito as $lineas)
-                            @if ($lineas->Abreviatura == 'INS1' . $lineas->LineaCredito)
-                                @php($total = $lineas->SaldoCapital)
-                                @php($saldo_capital = $lineas->SaldoCapital)
-                                @php($monto_nominal = 0.0)
-                                @php($intereses = 0.0)
-                                @php($intereses_covid = 0.0)
-                                @php($intereses_moratorios = 0.0)
-                            @elseif($lineas->Abreviatura == 'INS2' . $lineas->LineaCredito)
-                                @php($total = $lineas->SaldoCapital + $lineas->Intereses)
-                                @php($saldo_capital = $lineas->SaldoCapital)
-                                @php($monto_nominal = 0)
-                                @php($intereses = $lineas->Intereses)
-                                @php($intereses_covid = 0)
-                                @php($intereses_moratorios = 0)
-                            @elseif($lineas->Abreviatura == 'INS3' . $lineas->LineaCredito)
-                                @php($total = $lineas->SaldoCapital + $lineas->Intereses + $lineas->InteresesCovid)
-                                @php($saldo_capital = $lineas->SaldoCapital)
-                                @php($monto_nominal = 0)
-                                @php($intereses = $lineas->Intereses)
-                                @php($intereses_covid = $lineas->InteresesCovid)
-                                @php($intereses_moratorios = 0)
-                            @elseif($lineas->Abreviatura == 'INS4' . $lineas->LineaCredito)
-                                @php($total = $lineas->SaldoCapital + $lineas->Intereses + $lineas->InteresesCovid + $lineas->InteresesMoratorios)
-                                @php($saldo_capital = $lineas->SaldoCapital)
-                                @php($monto_nominal = 0)
-                                @php($intereses = $lineas->Intereses)
-                                @php($intereses_covid = $lineas->InteresesCovid)
-                                @php($intereses_moratorios = $lineas->InteresesMoratorios)
-                            @elseif($lineas->Abreviatura == 'INS5' . $lineas->LineaCredito)
-                                @php($total = $lineas->MontoNominal)
-                                @php($saldo_capital = 0)
-                                @php($monto_nominal = $lineas->MontoNominal)
-                                @php($intereses = 0)
-                                @php($intereses_covid = 0)
-                                @php($intereses_moratorios = 0)
-                            @endif
-                            <tr>
-                                <td>{{ $lineas->tipo }} {{ $lineas->Abrev }}</td>
-                                <td>{{ $deuda->Tasa }} %</td>
-                                <td class="numeric">
-                                    0
-                                    {{-- {{ $lineas->MontoOtorgado != 0 ? number_format($lineas->MontoOtorgado, 2, '.', ',') : 0 }} --}}
-                                </td>
-                                <td class="numeric editable" contenteditable="true"
-                                    id="{{ $lineas->Abreviatura }}_saldo_capital">
-                                    {{ $saldo_capital != 0 ? number_format($saldo_capital, 2, '.', ',') : 0 }}
-                                </td>
-                                <td class="numeric editable" contenteditable="true"
-                                    id="{{ $lineas->Abreviatura }}_interes">
-                                    {{ $intereses != 0 ? number_format($intereses, 2, '.', ',') : 0 }}
-                                </td>
-                                <td class="numeric editable" contenteditable="true"
-                                    id="{{ $lineas->Abreviatura }}_interes_covid">
-                                    {{ $intereses_covid != 0 ? number_format($intereses_covid, 2, '.', ',') : 0 }}
-                                </td>
-                                <td class="numeric editable" contenteditable="true"
-                                    id="{{ $lineas->Abreviatura }}_interes_moratorio">
-                                    {{ $intereses_moratorios != 0 ? number_format($intereses_moratorios, 2, '.', ',') : 0 }}
-                                </td>
-                                <td class="numeric editable" contenteditable="true"
-                                    id="{{ $lineas->Abreviatura }}_monto_nominal">
-                                    {{ $monto_nominal != 0 ? number_format($monto_nominal, 2, '.', ',') : 0 }}
-                                </td>
-                                <td class="numeric total" id="{{ $lineas->Abreviatura }}_suma_asegurada">
-                                    {{ number_format($total, 2, '.', ',') }}
-                                </td>
-                            </tr>
+                        @if ($lineas->Abreviatura == 'INS1'.$lineas->LineaCredito)
+                        @php($total = $lineas->SaldoCapital)
+                        @php($saldo_capital = $lineas->SaldoCapital)
+                        @php($monto_nominal = 0.0)
+                        @php($intereses = 0.0)
+                        @php($intereses_covid = 0.0)
+                        @php($intereses_moratorios = 0.0)
+                        @php($monto_otorgado = 0)
+                        @elseif($lineas->Abreviatura == 'INS2'.$lineas->LineaCredito)
+                        @php($total = $lineas->SaldoCapital + $lineas->Intereses)
+                        @php($saldo_capital = $lineas->SaldoCapital)
+                        @php($monto_nominal = 0)
+                        @php($intereses = $lineas->Intereses)
+                        @php($intereses_covid = 0)
+                        @php($intereses_moratorios = 0)
+                        @php($monto_otorgado = 0)
+                        @elseif($lineas->Abreviatura == 'INS3'.$lineas->LineaCredito)
+                        @php($total = $lineas->SaldoCapital + $lineas->Intereses + $lineas->InteresesCovid)
+                        @php($saldo_capital = $lineas->SaldoCapital)
+                        @php($monto_nominal = 0)
+                        @php($intereses = $lineas->Intereses)
+                        @php($intereses_covid = $lineas->InteresesCovid)
+                        @php($intereses_moratorios = 0)
+                        @php($monto_otorgado = 0)
+                        @elseif($lineas->Abreviatura == 'INS4'.$lineas->LineaCredito)
+                        @php($total = $lineas->SaldoCapital + $lineas->Intereses + $lineas->InteresesCovid + $lineas->InteresesMoratorios)
+                        @php($saldo_capital = $lineas->SaldoCapital)
+                        @php($monto_nominal = 0)
+                        @php($intereses = $lineas->Intereses)
+                        @php($intereses_covid = $lineas->InteresesCovid)
+                        @php($intereses_moratorios = $lineas->InteresesMoratorios)
+                        @php($monto_otorgado = 0)
+                        @elseif($lineas->Abreviatura == 'INS5'.$lineas->LineaCredito)
+                        @php($total = $lineas->MontoNominal)
+                        @php($saldo_capital = 0)
+                        @php($monto_nominal = $lineas->MontoNominal)
+                        @php($intereses = 0)
+                        @php($intereses_covid = 0)
+                        @php($intereses_moratorios = 0)
+                        @php($monto_otorgado = 0)
+                        @elseif($lineas->Abreviatura == 'INS6'.$lineas->LineaCredito)
+                        @php($total = $lineas->MontoOtorgado)
+                        @php($saldo_capital = 0)
+                        @php($monto_nominal = 0)
+                        @php($intereses = 0)
+                        @php($intereses_covid = 0)
+                        @php($intereses_moratorios = 0)
+                        @php($monto_otorgado = $lineas->MontoOtorgado)
+                        @endif
+                        <tr>
+                            <td>{{ $lineas->tipo }} {{ $lineas->Abrev }}</td>
+                            <td>{{ $deuda->Tasa }} %</td>
+                            <td class="numeric editable" contenteditable="true" id="{{ $lineas->Abreviatura }}_monto_otorgado">
+
+                                {{ $monto_otorgado != 0 ? number_format($monto_otorgado, 2, '.', ',') : 0 }}
+                            </td>
+                            <td class="numeric editable" contenteditable="true" id="{{ $lineas->Abreviatura }}_saldo_capital">
+                                {{ $saldo_capital != 0 ? number_format($saldo_capital, 2, '.', ',') : 0 }}
+                            </td>
+                            <td class="numeric editable" contenteditable="true" id="{{ $lineas->Abreviatura }}_interes">
+                                {{ $intereses != 0 ? number_format($intereses, 2, '.', ',') : 0 }}
+                            </td>
+                            <td class="numeric editable" contenteditable="true" id="{{ $lineas->Abreviatura }}_interes_covid">
+                                {{ $intereses_covid != 0 ? number_format($intereses_covid, 2, '.', ',') : 0 }}
+                            </td>
+                            <td class="numeric editable" contenteditable="true" id="{{ $lineas->Abreviatura }}_interes_moratorio">
+                                {{ $intereses_moratorios != 0 ? number_format($intereses_moratorios, 2, '.', ',') : 0 }}
+                            </td>
+                            <td class="numeric editable" contenteditable="true" id="{{ $lineas->Abreviatura }}_monto_nominal">
+                                {{ $monto_nominal != 0 ? number_format($monto_nominal, 2, '.', ',') : 0 }}
+                            </td>
+                            <td class="numeric total" id="{{ $lineas->Abreviatura }}_suma_asegurada">
+                                {{ number_format($total, 2, '.', ',') }}
+                            </td>
+                        </tr>
                         @endforeach
 
                         <tr>
-                            <th colspan="3">Totales</th>
+                            <th colspan="2">Totales</th>
+                            <td class="numeric"><span id="total_monto_otorgado"></span></td>
                             <td class="numeric"><span id="total_saldo_capital"></span></td>
                             <td class="numeric"><span id="total_interes"></span></td>
                             <td class="numeric"><span id="total_interes_covid"></span></td>
@@ -424,8 +305,12 @@
                             <td>USD</td>
                         </tr>
                         <tr>
-                            <td>Comisión </td>
-                            <td class="numeric editable">{{ $deuda->TasaComision }}%</td>
+                            <td>Comisión {{$deuda->ComisionIva == 1 ? 'Iva Incluido': ''}} </td>
+                            <td class="numeric editable"><span>{{$deuda->ComisionIva == 1 ? number_format($deuda->TasaComision / 1.13,2,".",",") : $deuda->TasaComision}}%</span></td>
+                        </tr>
+                        <tr>
+                            <td>Prima a cobrar</td>
+                            <td class="numeric editable"><span id="prima_a_cobrar_ccf"></span></td>
                         </tr>
                         <tr>
                             <td>Valor de comisión</td>
@@ -434,6 +319,10 @@
                         <tr>
                             <td>(+) 13% IVA</td>
                             <td class="numeric editable"><span id="iva_comision"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Sub Total Comision</td>
+                            <td class="numeric editable"><span id="sub_total_ccf"></span></td>
                         </tr>
                         <tr>
                             <td>(-) 1% Retención</td>
@@ -468,31 +357,35 @@
                             <td class="numeric editable"><span id="monto_total_cartera"></span></td>
                         </tr>
                         <tr>
-                            <td>Sub total</td>
+                            <td>Prima calculada</td>
                             <td class="numeric editable"><span id="sub_total"></span></td>
                         </tr>
                         <tr>
-                            <td>Sub total Extra Prima</td>
+                            <td>Extra Prima</td>
                             <td class="numeric editable"><span id="sub_total_extra_prima"></span></td>
                         </tr>
                         <tr>
-                            <td>Prima a cobrar</td>
-                            <td class="numeric editable"><span id="prima_a_cobrar"></span></td>
+                            <td>(-) Descuento rentabilidad ({{$deuda->Descuento == '' ? 0 : $deuda->Descuento}}%)</td>
+                            <td class="numeric editable"><span id="descuento_rentabilidad"></span></td>
                         </tr>
                         <tr>
+                            <td>(=) Prima descontada</td>
+                            <td class="numeric editable"><span id="prima_a_cobrar"></span></td>
+                        </tr>
+                        <!-- <tr>
                             <td>Iva</td>
                             <td class="numeric editable"><span id="iva"></span></td>
                         </tr>
                         <tr>
                             <td>Total Factura</td>
                             <td class="numeric editable"><span id="total_factura"></span></td>
-                        </tr>
+                        </tr> -->
                         <tr>
-                            <td>Comisión (10%)</td>
+                            <td>(-) Estructura CCF de Comisión (10%)</td>
                             <td class="numeric editable"><span id="comision"></span></td>
                         </tr>
                         <tr>
-                            <td>Liquido a pagar</td>
+                            <td>Total a pagar</td>
                             <td class="numeric editable"><span id="liquido_pagar"></span></td>
                         </tr>
                     </tbody>
@@ -519,8 +412,7 @@
                     <input type="hidden" name="ValorCCF" id="ValorCCFDetalle">
                     <input type="hidden" name="APagar" id="APagarDetalle">
                     <input type="hidden" name="ExtraPrima" value="{{ $total_extrapima }}">
-                    <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
-                        id="modal-aplicar">
+                    <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-aplicar">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -533,57 +425,35 @@
                                     <p>¿Esta seguro/a que desea aplicar el cobro?</p>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-default"
-                                        data-dismiss="modal">Cerrar</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
                                     <button id="boton_pago" class="btn btn-primary">Confirmar
                                         Cobro</button>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <br><br>
+
                     <div align="center">
-
-
-                        <br><br>
-                        <a class="btn btn-primary" data-target="#modal-validar" data-toggle="modal">Validar
-                            pólizas</a>
-                        <br>
-                        <a class="btn btn-default" data-target="#modal-cancelar" data-toggle="modal"
-                            onclick="cancelarpago()">Cancelar Cobro</a>
-                        <a class="btn btn-primary" data-target="#modal-aplicar" data-toggle="modal"
-                            onclick="aplicarpago()">Generar Cobro</a>
+                        <br><br><br>
+                        <a class="btn btn-default" data-target="#modal-cancelar" data-toggle="modal" onclick="cancelarpago()">Cancelar Cobro</a>
+                        <a class="btn btn-primary" data-target="#modal-aplicar" data-toggle="modal" onclick="aplicarpago()">Generar Cobro</a>
                     </div>
+
                 </form>
-            </div>
-
-            <div class="modal fade" id="modal-validar" tabindex="-1" role="dialog"
-                aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
-                <div class="modal-dialog">
-                    <form action="{{ url('deuda/validar_poliza') }}" method="POST">
+                <!-- 
+                <div align="center">
+                    <form action="{{url('polizas/deuda/validar_poliza')}}" method="POST">
+                        @method('POST')
                         @csrf
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">×</span>
-                                </button>
-                                <h4 class="modal-title">Validar pólizas</h4>
-
-                                <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
-                            </div>
-                            <div class="modal-body">
-                                <p>¿Esta seguro/a que desea validar las pólizas?</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                                <button class="btn btn-primary">Validar</button>
-                            </div>
-                        </div>
+                        <input type="hidden" name="Deuda" value="{{$deuda->Id}}">
+                        <button type="submit">Validar Poliza</button>
                     </form>
-                </div>
+                </div> -->
+
             </div>
 
-            <div class="modal fade" id="modal-cancelar" tabindex="-1" role="dialog"
-                aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
+            <div class="modal fade" id="modal-cancelar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
                 <div class="modal-dialog">
                     <form action="{{ url('deuda/cancelar_pago') }}" method="POST">
                         @method('POST')
@@ -596,10 +466,8 @@
                                 <h4 class="modal-title">Cancelar Cobro</h4>
 
                                 <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
-                                <input type="hidden" name="MesCancelar"
-                                    value="{{ isset($fecha) ? $fecha->Mes : '' }}">
-                                <input type="hidden" name="AxoCancelar"
-                                    value="{{ isset($fecha) ? $fecha->Axo : '' }}">
+                                <input type="hidden" name="MesCancelar" value="{{ isset($fecha) ? $fecha->Mes : '' }}">
+                                <input type="hidden" name="AxoCancelar" value="{{ isset($fecha) ? $fecha->Axo : '' }}">
                             </div>
                             <div class="modal-body">
                                 <p>¿Esta seguro/a que desea cancelar el cobro?</p>
@@ -639,6 +507,7 @@
             function calculoTotales() {
                 let total_saldo_capital = 0;
                 let total_monto_nominal = 0;
+                let total_monto_otorgado = 0;
                 let total_interes = 0;
                 let total_interes_covid = 0;
                 let total_interes_moratorio = 0;
@@ -654,7 +523,10 @@
 
                     elemento = document.getElementById(linea + "_monto_nominal");
                     let monto_nominal = elemento.innerText || elemento.textContent;
-                    // console.log(linea + "_monto_nominal: ", monto_nominal);
+
+                    elemento = document.getElementById(linea + "_monto_otorgado");
+                    let monto_otorgado = elemento.innerText || elemento.textContent;
+                    // console.log(linea + "_monto_otorgado: ", monto_otorgado);
 
                     elemento = document.getElementById(linea + "_interes");
                     let interes = elemento.innerText || elemento.textContent;
@@ -669,7 +541,7 @@
                     //console.log(linea + "_interes_moratorio: ", interes_moratorio);
 
                     elemento = document.getElementById(linea + "_suma_asegurada");
-                    let suma_asegurada = convertirANumero(saldo_capital) + convertirANumero(monto_nominal) +
+                    let suma_asegurada = convertirANumero(saldo_capital) + convertirANumero(monto_nominal) + convertirANumero(monto_otorgado) +
                         convertirANumero(interes) + convertirANumero(interes_covid) + convertirANumero(
                             interes_moratorio);
 
@@ -684,17 +556,22 @@
 
                     total_saldo_capital += convertirANumero(saldo_capital);
                     total_monto_nominal += convertirANumero(monto_nominal);
+                    total_monto_otorgado += convertirANumero(monto_otorgado);
                     total_interes += convertirANumero(interes);
                     total_interes_covid += convertirANumero(interes_covid);
                     total_interes_moratorio += convertirANumero(interes_moratorio);
                     total_suma_asegurada += suma_asegurada;
                 }
 
+
                 let total_saldo_capital_formateada = formatearCantidad(total_saldo_capital);
                 document.getElementById("total_saldo_capital").textContent = total_saldo_capital_formateada;
 
                 let total_monto_nominal_formateada = formatearCantidad(total_monto_nominal);
                 document.getElementById("total_monto_nominal").textContent = total_monto_nominal_formateada;
+
+                let total_monto_otorgado_formateada = formatearCantidad(total_monto_otorgado);
+                document.getElementById("total_monto_otorgado").textContent = total_monto_otorgado_formateada;
 
                 let total_interes_formateada = formatearCantidad(total_interes);
                 document.getElementById("total_interes").textContent = total_interes_formateada;
@@ -710,16 +587,18 @@
 
 
                 let tasa = document.getElementById('Tasa').value;
-                let tasa_comision = parseFloat(document.getElementById('TasaComision').value);
+                let comision_iva = document.getElementById('ComisionIva').value;
+                let tasa_comision = document.getElementById('TasaComisionDetalle').value;
+                console.log(tasa_comision);
                 let extra_prima = document.getElementById('ExtraPrima').value;
 
                 //modificando valores de cuadros
                 document.getElementById("monto_total_cartera").textContent = total_suma_asegurada_formateada;
-                document.getElementById('MontoCarteraDetalle').value = total_suma_asegurada_formateada;
+                document.getElementById('MontoCarteraDetalle').value = total_suma_asegurada;
                 document.getElementById('PrimaCalculadaDetalle').value = parseFloat(
-                    total_suma_asegurada_formateada) * parseFloat(tasa);
+                    total_suma_asegurada) * parseFloat(tasa);
                 document.getElementById('PrimaDescontadaDetalle').value = parseFloat(
-                    total_suma_asegurada_formateada) * parseFloat(tasa);
+                    total_suma_asegurada) * parseFloat(tasa);
 
 
                 let sub_total = total_suma_asegurada * tasa;
@@ -729,15 +608,17 @@
                 document.getElementById("sub_total_extra_prima").textContent = formatearCantidad(extra_prima);
 
 
-                prima_a_cobrar = parseFloat(sub_total) + parseFloat(extra_prima);
 
+                let descuento = (parseFloat(sub_total) + parseFloat(extra_prima)) * parseFloat(parseFloat(document.getElementById('DescuentoRentabilidad').value) / 100);
+                document.getElementById('descuento_rentabilidad').textContent = formatearCantidad(descuento);
+                prima_a_cobrar = (parseFloat(sub_total) + parseFloat(extra_prima)) - parseFloat(descuento);
                 document.getElementById("prima_a_cobrar").textContent = formatearCantidad(prima_a_cobrar);
-
+                document.getElementById("prima_a_cobrar_ccf").textContent = formatearCantidad(prima_a_cobrar);
                 let iva = parseFloat(prima_a_cobrar) * 0.13;
-                document.getElementById('iva').textContent = formatearCantidad(iva);
+                // document.getElementById('iva').textContent = formatearCantidad(iva);
                 document.getElementById('IvaDetalle').value = iva;
                 let total_factura = parseFloat(iva) + parseFloat(prima_a_cobrar);
-                document.getElementById('total_factura').textContent = formatearCantidad(total_factura);
+                // document.getElementById('total_factura').textContent = formatearCantidad(total_factura);
 
                 // let comision = prima_a_cobrar * (tasa_comision / 100);
 
@@ -745,41 +626,28 @@
 
                 //estructura ccf
 
-                let valor_comision = parseFloat(prima_a_cobrar) * parseFloat(tasa_comision / 100);
+                let valor_comision = parseFloat(prima_a_cobrar) * (parseFloat(tasa_comision) / 100);
                 document.getElementById('valor_comision').textContent = formatearCantidad(valor_comision);
+                console.log(valor_comision);
                 document.getElementById('ComisionDetalle').value = valor_comision;
                 let iva_comision = parseFloat(valor_comision) * 0.13;
                 document.getElementById('iva_comision').textContent = formatearCantidad(iva_comision);
                 document.getElementById('IvaComisionDetalle').value = iva_comision;
-                let tipo_contribuyente = document.getElementById('TipoContribuyente').value;
-                if (tipo_contribuyente == 2 || tipo_contribuyente == 3) {
-                    let retencion_comision = parseFloat(valor_comision) * 0.1;
-                    document.getElementById('retencion_comision').textContent = formatearCantidad(
-                        retencion_comision);
-                    let comision_ccf = parseFloat(valor_comision) + parseFloat(iva_comision) + parseFloat(
-                        retencion_comision);
-                    document.getElementById('comision_ccf').textContent = formatearCantidad(comision_ccf);
-                    document.getElementById('comision').textContent = formatearCantidad(comision_ccf);
-                    let liquido_pagar = parseFloat(total_factura) - parseFloat(comision_ccf);
-                    document.getElementById("liquido_pagar").textContent = formatearCantidad(liquido_pagar);
-                    document.getElementById('RetencionDetalle').value = retencion_comision;
-                    document.getElementById('ValorCCFDetalle').value = comision_ccf;
-                    document.getElementById('APagarDetalle').value = liquido_pagar;
-                } else {
-                    let retencion_comision = 0
-                    document.getElementById('retencion_comision').textContent = formatearCantidad(
-                        retencion_comision);
-                    let comision_ccf = parseFloat(valor_comision) + parseFloat(iva_comision) + parseFloat(
-                        retencion_comision);
-                    document.getElementById('comision_ccf').textContent = formatearCantidad(comision_ccf);
-                    document.getElementById('comision').textContent = formatearCantidad(comision_ccf);
-                    let liquido_pagar = parseFloat(total_factura) - parseFloat(comision_ccf);
-                    document.getElementById("liquido_pagar").textContent = formatearCantidad(liquido_pagar);
-                    document.getElementById('RetencionDetalle').value = retencion_comision;
-                    document.getElementById('ValorCCFDetalle').value = comision_ccf;
-                    document.getElementById('APagarDetalle').value = liquido_pagar;
+                let retencion_comision = parseFloat(valor_comision) * 0.01;
+                let sub_total_ccf = parseFloat(valor_comision) + parseFloat(iva_comision);
+                document.getElementById('sub_total_ccf').textContent = formatearCantidad(sub_total_ccf);
 
-                }
+                document.getElementById('retencion_comision').textContent = formatearCantidad(
+                    retencion_comision);
+                let comision_ccf = parseFloat(sub_total_ccf) - parseFloat(
+                    retencion_comision);
+                document.getElementById('comision_ccf').textContent = formatearCantidad(comision_ccf);
+                document.getElementById('comision').textContent = formatearCantidad(comision_ccf);
+                let liquido_pagar = parseFloat(prima_a_cobrar) - parseFloat(comision_ccf);
+                document.getElementById("liquido_pagar").textContent = formatearCantidad(liquido_pagar);
+                document.getElementById('RetencionDetalle').value = retencion_comision;
+                document.getElementById('ValorCCFDetalle').value = comision_ccf;
+                document.getElementById('APagarDetalle').value = liquido_pagar;
 
 
 
