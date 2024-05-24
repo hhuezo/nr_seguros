@@ -237,7 +237,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="DireccionResidencia" class="form-label">Municipio</label>
-                                            <select name="Municipio" id="Municipio" required class="form-control select2" style="width: 100%">
+                                            <select name="Municipio" id="Municipio" required class="form-control select2" style="width: 100%" disabled>
                                                 @foreach ($municipios as $obj)
                                                     <option value="{{ $obj->Id }}" {{ old('Estado') == $obj->Id ? 'selected' : '' }}>{{ $obj->Nombre }}
                                                     </option>
@@ -246,7 +246,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="DireccionResidencia" class="form-label">Distrito</label>
-                                            <select id="Distrito" name="Distrito" class="form-control select2" style="width: 100%">
+                                            <select id="Distrito" name="Distrito" class="form-control select2" style="width: 100%" disabled>
                                                 @foreach ($distritos as $obj)
                                                     <option value="{{ $obj->Id }}" {{ old('Estado') == $obj->Id ? 'selected' : '' }}>{{ $obj->Nombre }}
                                                     </option>
@@ -345,6 +345,7 @@
                 for (var i = 0; i < data.length; i++)
                     _select += '<option value="' + data[i].Id + '"  >' + data[i].Nombre +
                     '</option>';
+                $("#Municipio").prop('disabled',false);
                 $("#Municipio").html(_select);
             });
 
@@ -363,6 +364,7 @@
                 for (var i = 0; i < data.length; i++)
                     _select += '<option value="' + data[i].Id + '"  >' + data[i].Nombre +
                     '</option>';
+                $("#Distrito").prop('disabled',false);
                 $("#Distrito").html(_select);
             });
 

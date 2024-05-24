@@ -51,7 +51,7 @@
                     </div>
                     <div class="col-sm-2">
                         <label class="control-label">Productos</label>
-                        <select name="Productos" id="Productos" class="form-control select2" style="width: 100%" >
+                        <select name="Productos" id="Productos" class="form-control select2" style="width: 100%" required>
                             <option value="" selected disabled>Seleccione...</option>
                             @foreach ($productos as $obj)
                             <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
@@ -60,7 +60,7 @@
                     </div>
                     <div class="col-sm-2">
                         <label class="control-label">Planes</label>
-                        <select name="Planes" id="Planes" class="form-control select2" style="width: 100%" >
+                        <select name="Planes" id="Planes" class="form-control select2" style="width: 100%" required>
                             <option value="" selected disabled>Seleccione...</option>
                             @foreach ($planes as $obj)
                             <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
