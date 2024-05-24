@@ -1051,10 +1051,10 @@
         }
         $(document).ready(function() {
 
-            $("#MontoCarteraView").on('focus', function() {
+           /* $("#MontoCarteraView").on('focus', function() {
                 $("#MontoCarteraView").hide();
                 $("#MontoCartera").show();
-            })
+            })*/
 
 
 
@@ -1080,24 +1080,24 @@
 
             })
 
-            calculoPrimaCalculada();
-            calculoPrimaTotal();
-            calculoDescuento();
-            calculoSubTotal();
-            calculoCCF();
+           // calculoPrimaCalculada();
+           /// calculoPrimaTotal();
+           // calculoDescuento();
+           // calculoSubTotal();
+           // calculoCCF();
 
-            $('#MontoCartera').change(function() {
+          /*  $('#MontoCartera').change(function() {
                 var monto = Number(document.getElementById('MontoCartera').value);
                 var grupal = Number(document.getElementById('LimiteGrupo').value);
                 if (grupal < monto) {
 
                     swal('Su monto de cartera a superado al techo establecido en la póliza');
                 } else {
-                    calculoPrimaCalculada();
-                    calculoPrimaTotal();
-                    calculoDescuento();
-                    calculoSubTotal();
-                    calculoCCF();
+                 //   calculoPrimaCalculada();
+                 //   calculoPrimaTotal();
+                  //  calculoDescuento();
+                   // calculoSubTotal();
+                  //  calculoCCF();
                 }
 
 
@@ -1108,7 +1108,7 @@
                 calculoDescuento();
                 calculoSubTotal();
                 calculoCCF();
-            })
+            })*/
 
 
             function calculoPrimaCalculada() {
@@ -1183,12 +1183,12 @@
 
             }
 
-            $("#ExtPrima").change(function() {
-                calculoPrimaTotal();
+           /*  $("#ExtPrima").change(function() {
+               calculoPrimaTotal();
                 calculoDescuento();
                 calculoSubTotal();
                 calculoCCF();
-            })
+            })*/
 
             function calculoPrimaTotal() {
                 var sub = document.getElementById('PrimaCalculada').value;
@@ -1196,16 +1196,16 @@
                 var prima = Number(sub) + Number(extra);
                 document.getElementById('PrimaTotal').value = Number(prima);
             }
-            $("#PrimaTotal").change(function() {
-                calculoDescuento();
-                calculoSubTotal();
-                calculoCCF();
-            })
-            $("#TasaDescuento").change(function() {
-                calculoDescuento();
-                calculoSubTotal();
-                calculoCCF();
-            })
+            // $("#PrimaTotal").change(function() {
+            //     calculoDescuento();
+            //     calculoSubTotal();
+            //     calculoCCF();
+            // })
+            // $("#TasaDescuento").change(function() {
+            //     calculoDescuento();
+            //     calculoSubTotal();
+            //     calculoCCF();
+            // })
 
             function calculoDescuento() {
                 var tasa = document.getElementById('TasaDescuento').value;
@@ -1226,14 +1226,14 @@
                 }
 
             }
-            $('#GastosEmision').change(function() {
-                calculoSubTotal();
-                calculoCCF();
-            })
-            $('#Otros').change(function() {
-                calculoSubTotal();
-                calculoCCF();
-            })
+            // $('#GastosEmision').change(function() {
+            //     calculoSubTotal();
+            //     calculoCCF();
+            // })
+            // $('#Otros').change(function() {
+            //     calculoSubTotal();
+            //     calculoCCF();
+            // })
 
             function calculoSubTotal() {
                 var bomberos = document.getElementById('ImpuestoBomberos').value;
@@ -1246,10 +1246,10 @@
                     2);
             }
 
-            $('#TasaComision').change(function() {
-                calculoCCF();
-                document.getElementById('APagar').style.backgroundColor = 'yellow';
-            })
+            // $('#TasaComision').change(function() {
+            //     calculoCCF();
+            //     document.getElementById('APagar').style.backgroundColor = 'yellow';
+            // })
             $('#ValorCCFE').change(function() {
                 var ccfe = document.getElementById('ValorCCFE').value
                 document.getElementById('ValorCCF').value = Number(ccfe);

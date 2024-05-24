@@ -213,14 +213,6 @@
                             </div>
 
                         </div>
-
-                        <!-- <div class="form-group row">
-                                                                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Validar</label>
-                                                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                                            <input name="Validar" id="Validar" type="checkbox" checked class="js-switch" />
-                                                                        </div>
-                                                                    </div> -->
-
                         <div class="clearfix"></div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
@@ -248,7 +240,6 @@
                         <table class="excel-like-table">
                             <thead>
                                 <tr>
-
                                     <th>Tasa Millar</th>
                                     <th>Monto Otorgado</th>
                                     <th>Prueba Decimales</th>
@@ -317,14 +308,14 @@
                                     </tr>
 
 
-                                    <tr>
+                                    <!-- <tr>
                                         <th>Totales</th>
                                         <td class="numeric"><span id="total_monto_otorgado"></span></td>
                                         <td class="numeric"><span id="total_saldo_capital"></span></td>
                                         <td class="numeric"><span id="total_interes"></span></td>
                                         <td class="numeric"><span id="total_interes_covid"></span></td>
                                         <td class="numeric"><span id="total_suma_asegurada"></span></td>
-                                    </tr>
+                                    </tr> -->
                             </tbody>
                         </table>
                     </div>
@@ -401,22 +392,34 @@
                                     <td class="numeric editable"><span id="sub_total"></span></td>
                                 </tr>
                                 <tr>
-                                    <td>Extra Prima</td>
-                                    <td class="numeric editable"><span id="sub_total_extra_prima"></span></td>
-                                </tr>
-                                <tr>
                                     <td>(-) Descuento rentabilidad ({{$residencia->Descuento == '' ? 0 : $residencia->Descuento}}%)</td>
                                     <td class="numeric editable"><span id="descuento_rentabilidad"></span></td>
                                 </tr>
                                 <tr>
                                     <td>(=) Prima descontada</td>
-                                    <td class="numeric editable"><span id="prima_a_cobrar"></span></td>
+                                    <td class="numeric editable"><span id="prima_descontada"></span></td>
                                 </tr>
-                                <!-- <tr>
-                            <td>Iva</td>
-                            <td class="numeric editable"><span id="iva"></span></td>
-                        </tr>
-                        <tr>
+                                <tr>
+                                    <td>(+) Impuesto Bomberos</td>
+                                    <td class="numeric "><span id="impuesto_bomberos"></span></td>
+                                </tr>
+                                <tr>
+                                    <td>Gastos Emision</td>
+                                    <td class="numeric editable"><span id="gastos_emision"></span></td>
+                                </tr>
+                                <tr>
+                                    <td>Otros</td>
+                                    <td class="numeric editable"><span id="otros"></span></td>
+                                </tr>
+                                <tr>
+                                    <td>Sub Total</td>
+                                    <td class="numeric editable"><span id="sob_total"></span></td>
+                                </tr>
+                               <tr>
+                                    <td>13% Iva</td>
+                                    <td class="numeric editable"><span id="iva"></span></td>
+                                </tr>
+                        <!--  <tr>
                             <td>Total Factura</td>
                             <td class="numeric editable"><span id="total_factura"></span></td>
                         </tr> -->
@@ -434,13 +437,18 @@
                     </div>
 
                     <div>
-                        <form action="{{ url('polizas/deuda/agregar_pago') }}" method="POST">
+                        <form action="{{ url('polizas/residencia/agregar_pago') }}" method="POST">
                             @csrf
+                            <input type="hidden" name="ExcelURL" id="ExcelURL" value="{{ session('ExcelURL') }}" class="form-control">
+                            <input type="hidden" name="Residencia" id="Residencia" value="{{ $residencia->Id }}" class="form-control">
+                            <input type="hidden" name="Tasa" value="{{ $residencia->Tasa }}">
                             <input type="hidden" name="FechaInicio" value="{{ isset($fecha) ? $fecha->FechaInicio : '' }}">
                             <input type="hidden" name="FechaFinal" value="{{ isset($fecha) ? $fecha->FechaFinal : '' }}">
-                            <input type="hidden" name="MontoCartera" id="MontoCarteraDetalle">
-                            <input type="hidden" name="Deuda" value="{{ $residencia->Id }}">
-                            <input type="hidden" name="Tasa" value="{{ $residencia->Tasa }}">
+
+
+
+
+                            <input type="hidden" name="MontoCartera" id="MontoCarteraDetalle">                   
                             <input type="hidden" name="PrimaCalculada" id="PrimaCalculadaDetalle">
                             <input type="hidden" name="PrimaDescontada" id="PrimaDescontadaDetalle">
                             <input type="hidden" name="SubTotal" id="SubTotalDetalle">
@@ -480,16 +488,6 @@
                             </div>
 
                         </form>
-                        <!-- 
-                <div align="center">
-                    <form action="{{url('polizas/deuda/validar_poliza')}}" method="POST">
-                        @method('POST')
-                        @csrf
-                        <input type="hidden" name="Deuda" value="{{$residencia->Id}}">
-                        <button type="submit">Validar Poliza</button>
-                    </form>
-                </div> -->
-
                     </div>
 
                     <div class="modal fade" id="modal-cancelar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
@@ -504,7 +502,7 @@
                                         </button>
                                         <h4 class="modal-title">Cancelar Cobro</h4>
 
-                                        <input type="hidden" name="Deuda" value="{{ $residencia->Id }}">
+                                        <input type="hidden" name="Residencia" value="{{ $residencia->Id }}">
                                         <input type="hidden" name="MesCancelar" value="{{ isset($fecha) ? $fecha->Mes : '' }}">
                                         <input type="hidden" name="AxoCancelar" value="{{ isset($fecha) ? $fecha->Axo : '' }}">
                                     </div>
@@ -522,329 +520,194 @@
                     </div>
                 </div>
             </div>
-
-
-            <form action="{{ url('polizas/residencia/agregar_pago') }}" method="POST">
-                <div class="modal-header">
-                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        <h5 class="modal-title" id="exampleModalLabel">Nuevo pago</h5>
-                    </div>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true"></span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="box-body row">
-                        <input type="hidden" name="ExcelURL" id="ExcelURL" value="{{ session('ExcelURL') }}" class="form-control">
-                        <input type="hidden" name="Residencia" id="Residencia" value="{{ $residencia->Id }}" class="form-control">
-                        @csrf
-                        <div class="col-lg-1 col-md-1 col-sm-12 col-xs-12 ">
-
-                            &nbsp;
-
-                        </div>
-                        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
-                            <label class="control-label" align="right">Fecha Inicio</label>
-                            <div class="form-group row">
-                                <input class="form-control" name="FechaInicio" id="FechaInicio" type="date" value="{{ session('FechaInicio') }}" required>
-                            </div>
-
-                            <div class="form-group row" style="margin-top:-3%;">
-                                <label class="control-label" align="right">Monto Cartera </label>
-
-                                <div class="form-group has-feedback">
-                                    <input class="form-control" name="MontoCartera" onblur="show_MontoCartera()" id="MontoCartera" type="number" step="any" style="text-align: right; display: none;" value="{{ session('MontoCartera', 0) }}" required>
-                                    <input class="form-control" id="MontoCarteraView" type="text" step="any" style="text-align: right;" value="{{ number_format(session('MontoCartera', 0), 2, '.', ',') }}" required>
-                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                                </div>
-
-                            </div>
-                            <div class="form-group row ocultar">
-                                <label class="control-label" align="right">Tasa %</label>
-                                <div class="form-group has-feedback">
-                                    <input type="number" step="any" style="padding-left: 25%;" name="Tasa" id="Tasa" value="{{ $residencia->Tasa }}" class="form-control" readonly>
-                                    <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
-                                </div>
-
-                            </div>
-                            <div class="form-group row" style="margin-top:-4%;">
-                                <label class="control-label " align="right">Tasa por millar
-                                </label>
-
-
-                                <div class="form-group has-feedback">
-                                    <input type="number" step="any" style="text-align: right;" id="tasaFinal" class="form-control" readonly>
-                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                                </div>
-
-                            </div>
-                            <div class="form-group row" style="margin-top:-4%;">
-                                <label class="control-label " align="right">Prueba
-                                    Decimales</label>
-
-
-                                <div class="form-group has-feedback">
-                                    <input type="number" step="any" readonly id="PruebaDecimales" class="form-control" style="text-align: right;">
-                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                                </div>
-
-                            </div>
-                            <div class="form-group row" style="margin-top:-4%;">
-                                <label class="control-label " align="right">Prima
-                                    Calculada</label>
-
-
-                                <div class="form-group has-feedback">
-                                    <input type="number" step="any" name="PrimaCalculada" id="PrimaCalculada" class="form-control" style="text-align: right;">
-                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                                </div>
-
-                            </div>
-                            <div class="form-group row ocultar">
-                                <label class="control-label " align="right">Extra
-                                    Prima</label>
-
-
-                                <div class="form-group has-feedback">
-                                    <input class="form-control" name="ExtraPrima" type="number" step="any" id="ExtPrima" style="text-align: right;">
-                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                                </div>
-
-                            </div>
-
-                            <div class="form-group row ocultar">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">
-                                    Prima Total</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-
-                                    <div class="form-group has-feedback">
-                                        <input class="form-control" name="PrimaTotal" type="number" step="any" id="PrimaTotal" style="text-align: right;">
-                                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group row ocultar">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa de Descuento %</label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-
-                                    <div class="form-group has-feedback">
-                                        <input class="form-control" name="TasaDescuento" type="number" step="any" id="TasaDescuento" style="padding-left: 25%;" value="{{ $residencia->TasaDescuento }}" readonly>
-                                        <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group row" style="margin-top:-5%;">
-                                <label class="control-label" align="right">(-) Descuento
-                                    Rentabilidad {{ $residencia->TasaDescuento }} %</label>
-
-
-                                <div class="form-group has-feedback">
-                                    <input class="form-control" name="Descuento" type="number" step="any" id="Descuento" style="text-align: right;">
-                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                                </div>
-
-                            </div>
-                            <div class="form-group row" style="margin-top:-5%;">
-                                <label class="control-label" align="right">
-                                    (=) Prima Descontada</label>
-                                <div class="form-group has-feedback">
-                                    <input class="form-control" name="PrimaDescontada" type="number" step="any" id="PrimaDescontada" style="text-align: right;">
-                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                                </div>
-                            </div>
-                            <input type="hidden" name="Bomberos" id="Bomberos" value="{{ $bomberos }}">
-                            <div class="form-group row" style="margin-top:-5%;">
-                                <label class="control-label" align="right">(+) Impuestos
-                                    Bomberos</label>
-
-
-                                <div class="form-group has-feedback">
-                                    <input type="number" step="any" name="ImpuestoBomberos" id="ImpuestoBomberos" class="form-control" readonly style="text-align: right;">
-                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                                </div>
-
-                            </div>
-                            <div class="form-group row" style="margin-top:-5%;">
-                                <label class="control-label" align="right">Gastos emisión</label>
-
-
-                                <div class="form-group has-feedback">
-                                    <input type="number" step="any" name="GastosEmision" id="GastosEmision" value="0" class="form-control" style="text-align: right;">
-                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-
-                                </div>
-                            </div>
-                            <div class="form-group row" style="margin-top:-5%;">
-                                <label class="control-label" align="right">Otros</label>
-
-
-                                <div class="form-group has-feedback">
-                                    <input type="number" step="any" name="Otros" id="Otros" value="0" class="form-control" style="text-align: right;">
-                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                                </div>
-                            </div>
-                            <div class="form-group row" style="margin-top:-5%;">
-                                <label class="control-label" align="right">Sub Total</label>
-                                <div class="form-group has-feedback">
-                                    <input type="number" step="any" name="SubTotal" id="SubTotal" class="form-control" style="text-align: right;">
-                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                                </div>
-                            </div>
-                            <div class="form-group row" style="margin-top:-5%;">
-                                <label class="control-label" align="right">13% IVA</label>
-                                <div class="form-group has-feedback">
-                                    <input type="number" step="any" name="Iva" id="Iva" class="form-control" style="text-align: right;">
-                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                                </div>
-                            </div>
-
-
-                            <div class="form-group row" style="margin-top:-5%;">
-                                <label class="control-label" align="right">Menos valor CCF de
-                                    comision</label>
-
-
-                                <div class="form-group has-feedback">
-                                    <input type="number" step="any" name="ValorCCF" id="ValorCCF" class="form-control" style="text-align: right;">
-                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                                </div>
-                                <!-- <a href="" data-target="#modal-calculator" data-toggle="modal" class="col-md-1 control-label" style="text-align: center;"><span class="fa fa-calculator fa-lg"></span></a> -->
-
-                            </div>
-
-                            <div class="form-group row" style="margin-top:-5%;">
-                                <label class="control-label" align="right">A pagar</label>
-
-
-                                <div class="form-group has-feedback">
-                                    <input type="number" step="any" name="APagar" id="APagar" class="form-control" style="text-align: right;">
-                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                                </div>
-                            </div>
-
-                            <div class="form-group row" style="margin-top:-5%;">
-                                <label class="control-label" align="right">Total Factura</label>
-
-
-                                <div class="form-group has-feedback">
-                                    <input type="number" step="any" name="Facturar" id="Facturar" class="form-control" style="text-align: right;">
-                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div class="col-lg-1 col-md-1 col-sm-12 col-xs-12 ">
-
-                            &nbsp;
-
-                        </div>
-                        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
-
-                            <div class="form-group row">
-                                <label class="control-label" align="right">Fecha Final</label>
-
-                                <input class="form-control" name="FechaFinal" id="FechaFinal" type="date" value="{{ session('FechaFinal') }}" required>
-
-                            </div>
-
-                            <br>
-                            <div class="form-group row">
-                                <label class="control-label col-md-12 col-sm-12 col-xs-12" style="text-align: center;">Estructura CCF de comisión</label>
-                            </div>
-                            <div class="form-group row">
-                                <label class="control-label" align="right">% Comisión</label>
-
-
-                                <div class="form-group has-feedback">
-                                    <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" style="padding-left: 25%;" value="{{ $residencia->Comision }}" readonly>
-                                    <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
-                                </div>
-
-                            </div>
-                            <div class="form-group row">
-                                <label class="control-label" align="right" style="margin-top:-4%;">% Comisión</label>
-
-
-                                <div class="form-group has-feedback">
-                                    <input class="form-control" name="Comision" id="Comision" type="number" step="any" style="text-align: right;">
-                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                                </div>
-
-                            </div>
-                            <div class="form-group row" style="margin-top:-4%;">
-                                <label class="control-label" align="right">(+) 13% IVA </label>
-
-
-                                <div class="form-group has-feedback">
-                                    <input class="form-control" name="IvaSobreComision" id="IvaSobreComision" type="number" step="any" style="text-align: right;">
-                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                                </div>
-
-                            </div>
-
-                            <div class="form-group row" style="margin-top:-4%;">
-                                <label class="control-label" align="right">Menos 1% Ret</label>
-
-
-                                <div class="form-group has-feedback">
-                                    <input class="form-control" name="Retencion" id="Retencion" type="number" step="any" style="text-align: right;" @if ($residencia->clientes->TipoContribuyente == 1 || $residencia->clientes->TipoContribuyente == 4) readonly @endif>
-                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                                </div>
-
-                            </div>
-
-                            <div class="form-group row" style="margin-top:-4%;">
-                                <label class="control-label" align="right">Valor CCF
-                                    Comisión</label>
-
-
-                                <div class="form-group has-feedback">
-                                    <input class="form-control" id="ValorCCFE" type="number" step="any" style="text-align: right;">
-                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                                </div>
-
-                            </div>
-                            <div class="form-group" style="margin-top:-4%;">
-                                <div class="col-sm-12">
-                                    <label class="control-label">Comentario</label>
-                                    <textarea name="Comentario" class="form-control" rows="5"></textarea>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-aplicar">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">×</span>
-                                    </button>
-                                    <h4 class="modal-title">Generar Cobro</h4>
-                                </div>
-                                <div class="modal-body">
-                                    <p>¿Esta seguro/a que desea generar cobro?</p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                                    <button id="boton_pago" class="btn btn-primary">Confirmar
-                                        Cobro</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="clearfix"></div>
-                    <div align="center">
-                        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
-                        <a class="btn btn-primary" data-target="#modal-aplicar" data-toggle="modal" onclick="aplicarpago()">Generar Cobro</a>
-                    </div>
-
-
-                </div>
-            </form>
         </div>
     </div>
 
 </div>
+
+
+<script>
+        $(document).ready(function() {
+            
+
+            //console.log(lineas);
+            calculoTotales();
+            // Calcula la suma de los valores de las columnas numéricas y muestra el resultado en la columna total
+            $('.editable').on('input', function() {
+                calculoTotales();
+                // let sum = 0;
+                // $(this).closest('tr').find('.editable').each(function() {
+                //     const value = parseFloat($(this).text().replace(/[^0-9.-]+/g, ''));
+                //     if (!isNaN(value)) {
+                //         sum += value;
+                //     }
+                // });
+                // $(this).closest('tr').find('.total').text(sum.toFixed(2).replace(/\d(?=(\d{3})+\.)/g,
+                //     '$&,'));
+            });
+
+            function calculoTotales() {
+                let total_saldo_capital = 0;
+                let total_monto_nominal = 0;
+                let total_monto_otorgado = 0;
+                let total_interes = 0;
+                let total_interes_covid = 0;
+                let total_interes_moratorio = 0;
+                let total_suma_asegurada = 0;
+
+
+                for (let i = 0; i < lineas.length; i++) {
+                    let linea = lineas[i];
+                    let elemento = document.getElementById(linea + "_saldo_capital");
+
+                    let saldo_capital = elemento.innerText || elemento.textContent;
+                    // console.log(linea + "_saldo_capital :", saldo_capital);
+
+                    elemento = document.getElementById(linea + "_monto_nominal");
+                    let monto_nominal = elemento.innerText || elemento.textContent;
+
+                    elemento = document.getElementById(linea + "_monto_otorgado");
+                    let monto_otorgado = elemento.innerText || elemento.textContent;
+                    // console.log(linea + "_monto_otorgado: ", monto_otorgado);
+
+                    elemento = document.getElementById(linea + "_interes");
+                    let interes = elemento.innerText || elemento.textContent;
+                    // console.log(linea + "_interes: ", interes);
+
+                    elemento = document.getElementById(linea + "_interes_covid");
+                    let interes_covid = elemento.innerText || elemento.textContent;
+                    // console.log(linea + "_interes_covid: ", interes_covid);
+
+                    elemento = document.getElementById(linea + "_interes_moratorio");
+                    let interes_moratorio = elemento.innerText || elemento.textContent;
+                    //console.log(linea + "_interes_moratorio: ", interes_moratorio);
+
+                    elemento = document.getElementById(linea + "_suma_asegurada");
+                    let suma_asegurada = convertirANumero(saldo_capital) + convertirANumero(monto_nominal) + convertirANumero(monto_otorgado) +
+                        convertirANumero(interes) + convertirANumero(interes_covid) + convertirANumero(
+                            interes_moratorio);
+
+                    let suma_asegurada_formateada = suma_asegurada.toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+
+                    // Asigna la suma formateada al elemento
+                    elemento.textContent = suma_asegurada_formateada;
+
+
+                    total_saldo_capital += convertirANumero(saldo_capital);
+                    total_monto_nominal += convertirANumero(monto_nominal);
+                    total_monto_otorgado += convertirANumero(monto_otorgado);
+                    total_interes += convertirANumero(interes);
+                    total_interes_covid += convertirANumero(interes_covid);
+                    total_interes_moratorio += convertirANumero(interes_moratorio);
+                    total_suma_asegurada += suma_asegurada;
+                }
+
+
+                let total_saldo_capital_formateada = formatearCantidad(total_saldo_capital);
+                document.getElementById("total_saldo_capital").textContent = total_saldo_capital_formateada;
+
+                let total_monto_nominal_formateada = formatearCantidad(total_monto_nominal);
+                document.getElementById("total_monto_nominal").textContent = total_monto_nominal_formateada;
+
+                let total_monto_otorgado_formateada = formatearCantidad(total_monto_otorgado);
+                document.getElementById("total_monto_otorgado").textContent = total_monto_otorgado_formateada;
+
+                let total_interes_formateada = formatearCantidad(total_interes);
+                document.getElementById("total_interes").textContent = total_interes_formateada;
+
+                let total_interes_covid_formateada = formatearCantidad(total_interes_covid);
+                document.getElementById("total_interes_covid").textContent = total_interes_covid_formateada;
+
+                let total_interes_moratorio_formateada = formatearCantidad(total_interes_moratorio);
+                document.getElementById("total_interes_moratorio").textContent = total_interes_moratorio_formateada;
+
+                let total_suma_asegurada_formateada = formatearCantidad(total_suma_asegurada);
+                document.getElementById("total_suma_asegurada").textContent = total_suma_asegurada_formateada;
+
+
+                let tasa = document.getElementById('Tasa').value;
+                let comision_iva = document.getElementById('ComisionIva').value;
+                let tasa_comision = document.getElementById('TasaComisionDetalle').value;
+                console.log(tasa_comision);
+                let extra_prima = document.getElementById('ExtraPrima').value;
+
+                //modificando valores de cuadros
+                document.getElementById("monto_total_cartera").textContent = total_suma_asegurada_formateada;
+                document.getElementById('MontoCarteraDetalle').value = total_suma_asegurada;
+                document.getElementById('PrimaCalculadaDetalle').value = parseFloat(
+                    total_suma_asegurada) * parseFloat(tasa);
+                document.getElementById('PrimaDescontadaDetalle').value = parseFloat(
+                    total_suma_asegurada) * parseFloat(tasa);
+
+
+                let sub_total = total_suma_asegurada * tasa;
+
+                document.getElementById("sub_total").textContent = formatearCantidad(sub_total);
+                document.getElementById('SubTotalDetalle').value = sub_total;
+                document.getElementById("sub_total_extra_prima").textContent = formatearCantidad(extra_prima);
+
+
+
+                let descuento = (parseFloat(sub_total) + parseFloat(extra_prima)) * parseFloat(parseFloat(document.getElementById('DescuentoRentabilidad').value) / 100);
+                document.getElementById('descuento_rentabilidad').textContent = formatearCantidad(descuento);
+                prima_a_cobrar = (parseFloat(sub_total) + parseFloat(extra_prima)) - parseFloat(descuento);
+                document.getElementById("prima_a_cobrar").textContent = formatearCantidad(prima_a_cobrar);
+                document.getElementById("prima_a_cobrar_ccf").textContent = formatearCantidad(prima_a_cobrar);
+                let iva = parseFloat(prima_a_cobrar) * 0.13;
+                // document.getElementById('iva').textContent = formatearCantidad(iva);
+                document.getElementById('IvaDetalle').value = iva;
+                let total_factura = parseFloat(iva) + parseFloat(prima_a_cobrar);
+                // document.getElementById('total_factura').textContent = formatearCantidad(total_factura);
+
+                // let comision = prima_a_cobrar * (tasa_comision / 100);
+
+                // document.getElementById("comision").textContent = formatearCantidad(comision);
+
+                //estructura ccf
+
+                let valor_comision = parseFloat(prima_a_cobrar) * (parseFloat(tasa_comision) / 100);
+                document.getElementById('valor_comision').textContent = formatearCantidad(valor_comision);
+                console.log(valor_comision);
+                document.getElementById('ComisionDetalle').value = valor_comision;
+                let iva_comision = parseFloat(valor_comision) * 0.13;
+                document.getElementById('iva_comision').textContent = formatearCantidad(iva_comision);
+                document.getElementById('IvaComisionDetalle').value = iva_comision;
+                let retencion_comision = parseFloat(valor_comision) * 0.01;
+                let sub_total_ccf = parseFloat(valor_comision) + parseFloat(iva_comision);
+                document.getElementById('sub_total_ccf').textContent = formatearCantidad(sub_total_ccf);
+
+                document.getElementById('retencion_comision').textContent = formatearCantidad(
+                    retencion_comision);
+                let comision_ccf = parseFloat(sub_total_ccf) - parseFloat(
+                    retencion_comision);
+                document.getElementById('comision_ccf').textContent = formatearCantidad(comision_ccf);
+                document.getElementById('comision').textContent = formatearCantidad(comision_ccf);
+                let liquido_pagar = parseFloat(prima_a_cobrar) - parseFloat(comision_ccf);
+                document.getElementById("liquido_pagar").textContent = formatearCantidad(liquido_pagar);
+                document.getElementById('RetencionDetalle').value = retencion_comision;
+                document.getElementById('ValorCCFDetalle').value = comision_ccf;
+                document.getElementById('APagarDetalle').value = liquido_pagar;
+
+
+
+                console.log(comision);
+            }
+
+
+            // Función para convertir una cadena formateada a un número flotante
+            function convertirANumero(cadena) {
+                return parseFloat(cadena.replace(/,/g, ''));
+            }
+
+            function formatearCantidad(cantidad) {
+                let numero = Number(cantidad);
+                return numero.toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+            }
+        });
+    </script>
