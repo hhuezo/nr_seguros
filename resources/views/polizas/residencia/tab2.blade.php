@@ -241,7 +241,7 @@
                             <thead>
                                 <tr>
                                     <th>Tasa Millar</th>
-                                    <th>Monto Otorgado</th>
+                                    <th>Monto Cartera</th>
                                     <th>Prueba Decimales</th>
                                     <th>Prima Calculada</th>
                                     <th>Descuento Rentabilidad</th>
@@ -251,7 +251,9 @@
                             <tbody>
                                 @php
                                 use \Carbon\Carbon;
-                                $monto_otorgado = $residencia->MontoOtorgado;
+                                //$monto_cartera =  session('MontoCartera', 0);
+                                //monto de cartera quemado
+                               $monto_cartera = 3844478.89;
                                 // Determinar la tasa por millar
                                 if ($residencia->Aseguradora == 3) {
                                 $tasa_millar = ($residencia->Tasa / 1000);
@@ -263,47 +265,50 @@
                                 $dias_axo = Carbon::parse($residencia->VigenciaDesde)->diffInDays(Carbon::parse($residencia->VigenciaHasta));
 
                                 // Calcular los días entre las fechas especificadas, si existen
-                                if (isset($fecha)) {
-                                $dias_mes = Carbon::parse($fecha->FechaInicio)->diffInDays(Carbon::parse($fecha->FechaFinal));
+                                if (isset($fechas)) {
+                                $dias_mes = Carbon::parse($fechas->FechaInicio)->diffInDays(Carbon::parse($fechas->FechaFinal));
                                 } else {
                                 $dias_mes = 1;
                                 }
 
                                 // Calcular los decimales dependiendo si la aseguradora tiene la opción Diario activa
                                 if ($residencia->aseguradoras->Diario == 1) {
-                                $decimales = (($residencia->MontoOtorgado * $tasa_millar) / $dias_axo) * $dias_mes;
+                                $decimales = (($monto_cartera * $tasa_millar) / $dias_axo) * $dias_mes;
+                                
                                 } else {
-                                $decimales = ($residencia->MontoOtorgado * $tasa_millar);
+                                $decimales = ($monto_cartera * $tasa_millar);
+                                
                                 }
 
                                 // Formatear el monto otorgado
-                                $prima_calculada = number_format($residencia->MontoOtorgado, 2, '.', ',');
+                                $prima_calculada = $decimales;
 
-                                if($residencia->TasaDescuento < 0){ $descuento=number_format($residencia->TasaDescuento * $prima_calculada,2,'.',',');
+                                if($residencia->TasaDescuento < 0){ 
+                                    $descuento=$residencia->TasaDescuento * $prima_calculada;
                                     }else{
-                                    $descuento = number_format(($residencia->TasaDescuento / 100) * $prima_calculada,2,'.',',');
+                                    $descuento = ($residencia->TasaDescuento / 100) * $prima_calculada;
                                     }
-                                    $prima_descontada = number_format($prima_calculada - $descuento,2,'.',',');
+                                    $total_prima_descontada = $prima_calculada - $descuento;
                                     @endphp
 
                                     <tr>
-                                        <td class="numeric editable" contenteditable="true" id="tasa_millar">
-                                            {{ $tasa_millar != 0 ? number_format($tasa_millar, 2, '.', ',') : 0 }}
+                                        <td  contenteditable="true" id="tasa_millar">
+                                            {{ $tasa_millar != 0 ? $tasa_millar : 0 }}
                                         </td>
-                                        <td class="numeric editable" contenteditable="true" id="monto_otorgado">
-                                            {{ $monto_otorgado != 0 ? number_format($monto_otorgado, 2, '.', ',') : 0 }}
+                                        <td class="numeric editable" contenteditable="true" id="monto_cartera" onblur="actualizarCalculos()">
+                                            {{ $monto_cartera != 0 ? number_format($monto_cartera, 2, '.', ',') : 0 }}
                                         </td>
-                                        <td class="numeric editable" contenteditable="true" id="saldo_capital">
-                                            {{ $decimales != 0 ? number_format($decimales, 2, '.', ',') : 0 }}
+                                        <td class="numeric editable" contenteditable="false" id="prueba_decimales">
+                                            {{ $decimales != 0 ? $decimales : 0 }}
                                         </td>
-                                        <td class="numeric editable" contenteditable="true" id="prima_calculada">
+                                        <td class="numeric editable" contenteditable="true" id="prima_calculada" onblur="actualizarCalculos()">
                                             {{ $prima_calculada != 0 ? number_format($prima_calculada, 2, '.', ',') : 0 }}
                                         </td>
-                                        <td class="numeric editable" contenteditable="true" id="descuento">
+                                        <td class="numeric editable" contenteditable="true" id="descuento" onblur="actualizarCalculos()">
                                             {{ $descuento != 0 ? number_format($descuento, 2, '.', ',') : 0 }}
                                         </td>
-                                        <td class="numeric total" contenteditable="true" id="prima_descontada">
-                                            {{ $prima_descontada != 0 ? number_format($prima_descontada, 2, '.', ',') : 0 }}
+                                        <td class="numeric total" contenteditable="true" id="prima_descontada" onblur="actualizarCalculos()">
+                                            {{ $total_prima_descontada != 0 ? number_format($total_prima_descontada, 2, '.', ',') : 0 }}
                                         </td>
                                     </tr>
 
@@ -336,8 +341,8 @@
                                     <td>USD</td>
                                 </tr>
                                 <tr>
-                                    <td>Comisión {{$residencia->ComisionIva == 1 ? 'Iva Incluido': ''}} </td>
-                                    <td class="numeric editable"><span>{{$residencia->ComisionIva == 1 ? number_format($residencia->TasaComision / 1.13,2,".",",") : $residencia->TasaComision}}%</span></td>
+                                    <td>Comisión </td>
+                                    <td class="numeric editable"><span>{{$residencia->Comision ? number_format($residencia->Comision ,2,".",",") : $residencia->Comision}}%</span></td>
                                 </tr>
                                 <tr>
                                     <td>Prima a cobrar</td>
@@ -384,36 +389,24 @@
                                     <td>USD</td>
                                 </tr>
                                 <tr>
-                                    <td>Monto total cartera</td>
-                                    <td class="numeric editable"><span id="monto_total_cartera"></span></td>
+                                    <td>Prima Descontada</td>
+                                    <td class="numeric editable"><span id="total_prima_descontada"></span></td>
                                 </tr>
-                                <tr>
-                                    <td>Prima calculada</td>
-                                    <td class="numeric editable"><span id="sub_total"></span></td>
-                                </tr>
-                                <tr>
-                                    <td>(-) Descuento rentabilidad ({{$residencia->Descuento == '' ? 0 : $residencia->Descuento}}%)</td>
-                                    <td class="numeric editable"><span id="descuento_rentabilidad"></span></td>
-                                </tr>
-                                <tr>
-                                    <td>(=) Prima descontada</td>
-                                    <td class="numeric editable"><span id="prima_descontada"></span></td>
-                                </tr>
-                                <tr>
+                              
                                     <td>(+) Impuesto Bomberos</td>
-                                    <td class="numeric "><span id="impuesto_bomberos"></span></td>
+                                    <td class="numeric "><span id="impuestos_bomberos"></span></td>
                                 </tr>
                                 <tr>
                                     <td>Gastos Emision</td>
-                                    <td class="numeric editable"><span id="gastos_emision"></span></td>
+                                    <td class="numeric editable" contenteditable="true"><span id="gastos_emision" onblur="actualizarCalculos()"></span></td>
                                 </tr>
                                 <tr>
                                     <td>Otros</td>
-                                    <td class="numeric editable"><span id="otros"></span></td>
+                                    <td class="numeric editable" contenteditable="true"><span id="otros" onblur="actualizarCalculos()"></span></td>
                                 </tr>
                                 <tr>
                                     <td>Sub Total</td>
-                                    <td class="numeric editable"><span id="sob_total"></span></td>
+                                    <td class="numeric editable" contenteditable="true"><span id="sub_total" onblur="actualizarCalculos()"></span></td>
                                 </tr>
                                <tr>
                                     <td>13% Iva</td>
@@ -428,8 +421,12 @@
                                     <td class="numeric editable"><span id="comision"></span></td>
                                 </tr>
                                 <tr>
-                                    <td>Total a pagar</td>
+                                    <td>A pagar</td>
                                     <td class="numeric editable"><span id="liquido_pagar"></span></td>
+                                </tr>
+                                <tr>
+                                    <td>Total factura</td>
+                                    <td class="numeric editable"><span id="total_factura"></span></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -444,21 +441,25 @@
                             <input type="hidden" name="Tasa" value="{{ $residencia->Tasa }}">
                             <input type="hidden" name="FechaInicio" value="{{ isset($fecha) ? $fecha->FechaInicio : '' }}">
                             <input type="hidden" name="FechaFinal" value="{{ isset($fecha) ? $fecha->FechaFinal : '' }}">
-
-
-
-
-                            <input type="hidden" name="MontoCartera" id="MontoCarteraDetalle">                   
+                            <input type="hidden" name="MontoCartera" id="MontoCarteraDetalle">
                             <input type="hidden" name="PrimaCalculada" id="PrimaCalculadaDetalle">
                             <input type="hidden" name="PrimaDescontada" id="PrimaDescontadaDetalle">
-                            <input type="hidden" name="SubTotal" id="SubTotalDetalle">
                             <input type="hidden" name="Iva" id="IvaDetalle">
+                            <input type="hidden" name="SubTotal" id="SubTotalDetalle">
                             <input type="hidden" name="TasaComision" value="{{ $residencia->TasaComision }}">
                             <input type="hidden" name="Comision" id="ComisionDetalle">
                             <input type="hidden" name="IvaSobreComision" id="IvaComisionDetalle">
                             <input type="hidden" name="Retencion" id="RetencionDetalle">
                             <input type="hidden" name="ValorCCF" id="ValorCCFDetalle">
                             <input type="hidden" name="APagar" id="APagarDetalle">
+                            <input type="hidden" name="Descuento" id="DescuentoDetalle">
+                            <input type="hidden" name="ImpuestoBomberos" value="{{$bomberos}}">
+                            <input type="hidden" name="GastosEmision" id="GastosEmisionDetalle">
+                            <input type="hidden" name="Otros" id="OtrosDetalle">
+                            <input type="hidden" name="PrimaTotal" id="PrimaTotalDetalle">
+                            <input type="hidden" name="ExtraPrima" value="0">
+
+
                             <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-aplicar">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
@@ -527,177 +528,117 @@
 
 
 <script>
-        $(document).ready(function() {
-            
-
-            //console.log(lineas);
-            calculoTotales();
-            // Calcula la suma de los valores de las columnas numéricas y muestra el resultado en la columna total
-            $('.editable').on('input', function() {
-                calculoTotales();
-                // let sum = 0;
-                // $(this).closest('tr').find('.editable').each(function() {
-                //     const value = parseFloat($(this).text().replace(/[^0-9.-]+/g, ''));
-                //     if (!isNaN(value)) {
-                //         sum += value;
-                //     }
-                // });
-                // $(this).closest('tr').find('.total').text(sum.toFixed(2).replace(/\d(?=(\d{3})+\.)/g,
-                //     '$&,'));
-            });
-
-            function calculoTotales() {
-                let total_saldo_capital = 0;
-                let total_monto_nominal = 0;
-                let total_monto_otorgado = 0;
-                let total_interes = 0;
-                let total_interes_covid = 0;
-                let total_interes_moratorio = 0;
-                let total_suma_asegurada = 0;
-
-
-                for (let i = 0; i < lineas.length; i++) {
-                    let linea = lineas[i];
-                    let elemento = document.getElementById(linea + "_saldo_capital");
-
-                    let saldo_capital = elemento.innerText || elemento.textContent;
-                    // console.log(linea + "_saldo_capital :", saldo_capital);
-
-                    elemento = document.getElementById(linea + "_monto_nominal");
-                    let monto_nominal = elemento.innerText || elemento.textContent;
-
-                    elemento = document.getElementById(linea + "_monto_otorgado");
-                    let monto_otorgado = elemento.innerText || elemento.textContent;
-                    // console.log(linea + "_monto_otorgado: ", monto_otorgado);
-
-                    elemento = document.getElementById(linea + "_interes");
-                    let interes = elemento.innerText || elemento.textContent;
-                    // console.log(linea + "_interes: ", interes);
-
-                    elemento = document.getElementById(linea + "_interes_covid");
-                    let interes_covid = elemento.innerText || elemento.textContent;
-                    // console.log(linea + "_interes_covid: ", interes_covid);
-
-                    elemento = document.getElementById(linea + "_interes_moratorio");
-                    let interes_moratorio = elemento.innerText || elemento.textContent;
-                    //console.log(linea + "_interes_moratorio: ", interes_moratorio);
-
-                    elemento = document.getElementById(linea + "_suma_asegurada");
-                    let suma_asegurada = convertirANumero(saldo_capital) + convertirANumero(monto_nominal) + convertirANumero(monto_otorgado) +
-                        convertirANumero(interes) + convertirANumero(interes_covid) + convertirANumero(
-                            interes_moratorio);
-
-                    let suma_asegurada_formateada = suma_asegurada.toLocaleString('en-US', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    });
-
-                    // Asigna la suma formateada al elemento
-                    elemento.textContent = suma_asegurada_formateada;
-
-
-                    total_saldo_capital += convertirANumero(saldo_capital);
-                    total_monto_nominal += convertirANumero(monto_nominal);
-                    total_monto_otorgado += convertirANumero(monto_otorgado);
-                    total_interes += convertirANumero(interes);
-                    total_interes_covid += convertirANumero(interes_covid);
-                    total_interes_moratorio += convertirANumero(interes_moratorio);
-                    total_suma_asegurada += suma_asegurada;
+      function actualizarCalculos(){
+                //alert(document.getElementById('monto_cartera').innerText);
+                let monto = convertirANumero(document.getElementById('monto_cartera').innerText);
+                let aseguradora = {{$residencia->Aseguradora}};
+                let tasa = {{$residencia->Tasa}};
+                let millar = 0;
+                let dias_axo = {{$dias_axo}};
+                let dias_mes = {{$dias_mes}};
+                let decimales = 0;
+                let diario = {{$residencia->aseguradoras->Diario}};
+                let descuento = 0;
+                let tasadescuento = {{$residencia->TasaDescuento}};
+                let sub_total = 0;
+                let bomberos = {{$bomberos}};
+                let gastos = document.getElementById('gastos_emision').innerText;
+                let otros = document.getElementById('otros').innerText;
+                let iva = 0;
+                let ccf = 0;
+                let total = 0;
+                let tasa_comision = {{$residencia->Comision }};
+                if(aseguradora == 3){
+                    millar = tasa / 1000;
+                }else{
+                    millar = (tasa / 1000) /12;
                 }
+                
+                if(diario == 1){
+                     decimales = ((monto * millar) / dias_axo) * dias_mes;
+                }else{
+                     decimales = (monto * millar);
+                }
+                
+                if(tasadescuento < 0){
+                    descuento =  tasadescuento  * decimales;
+                }else{
+                    descuento =  (tasadescuento/100) * decimales; 
+                }
+                let prima_descontada = decimales - descuento;
 
+                document.getElementById('prueba_decimales').innerText = decimales;
+                document.getElementById('prima_calculada').innerText = formatearCantidad(decimales);
+                document.getElementById('prima_descontada').innerText = formatearCantidad(prima_descontada);
+                document.getElementById('total_prima_descontada').innerText = formatearCantidad(prima_descontada);
 
-                let total_saldo_capital_formateada = formatearCantidad(total_saldo_capital);
-                document.getElementById("total_saldo_capital").textContent = total_saldo_capital_formateada;
+                //funcion para los calculos totales
 
-                let total_monto_nominal_formateada = formatearCantidad(total_monto_nominal);
-                document.getElementById("total_monto_nominal").textContent = total_monto_nominal_formateada;
+                
+                document.getElementById('impuestos_bomberos').innerText = formatearCantidad(bomberos);
+                
+                if(gastos == 0){
+                    document.getElementById('gastos_emision').innerText = formatearCantidad(0);
+                    
+                }else{
+                    document.getElementById('gastos_emision').innerText = formatearCantidad(gastos);
+                    
+                }
+                if(otros == 0){
+                    document.getElementById('otros').innerText = formatearCantidad(0);
+                    
+                }else{
+                    document.getElementById('otros').innerText = formatearCantidad(otros);
+                   
+                }
+                gastos = document.getElementById('gastos_emision').innerText;
+                otros = document.getElementById('otros').innerText;        
+                alert(gastos);
+                sub_total = convertirANumero(prima_descontada + bomberos + gastos + otros);
+                alert(sub_total);
+                document.getElementById('sub_total').innerText = formatearCantidad(sub_total);
+                let iva_form = 0.13;
+                iva = sub_total * iva_form;
+                document.getElementById('iva').innerText = formatearCantidad(iva);
+                
 
-                let total_monto_otorgado_formateada = formatearCantidad(total_monto_otorgado);
-                document.getElementById("total_monto_otorgado").textContent = total_monto_otorgado_formateada;
-
-                let total_interes_formateada = formatearCantidad(total_interes);
-                document.getElementById("total_interes").textContent = total_interes_formateada;
-
-                let total_interes_covid_formateada = formatearCantidad(total_interes_covid);
-                document.getElementById("total_interes_covid").textContent = total_interes_covid_formateada;
-
-                let total_interes_moratorio_formateada = formatearCantidad(total_interes_moratorio);
-                document.getElementById("total_interes_moratorio").textContent = total_interes_moratorio_formateada;
-
-                let total_suma_asegurada_formateada = formatearCantidad(total_suma_asegurada);
-                document.getElementById("total_suma_asegurada").textContent = total_suma_asegurada_formateada;
-
-
-                let tasa = document.getElementById('Tasa').value;
-                let comision_iva = document.getElementById('ComisionIva').value;
-                let tasa_comision = document.getElementById('TasaComisionDetalle').value;
-                console.log(tasa_comision);
-                let extra_prima = document.getElementById('ExtraPrima').value;
-
-                //modificando valores de cuadros
-                document.getElementById("monto_total_cartera").textContent = total_suma_asegurada_formateada;
-                document.getElementById('MontoCarteraDetalle').value = total_suma_asegurada;
-                document.getElementById('PrimaCalculadaDetalle').value = parseFloat(
-                    total_suma_asegurada) * parseFloat(tasa);
-                document.getElementById('PrimaDescontadaDetalle').value = parseFloat(
-                    total_suma_asegurada) * parseFloat(tasa);
-
-
-                let sub_total = total_suma_asegurada * tasa;
-
-                document.getElementById("sub_total").textContent = formatearCantidad(sub_total);
-                document.getElementById('SubTotalDetalle').value = sub_total;
-                document.getElementById("sub_total_extra_prima").textContent = formatearCantidad(extra_prima);
-
-
-
-                let descuento = (parseFloat(sub_total) + parseFloat(extra_prima)) * parseFloat(parseFloat(document.getElementById('DescuentoRentabilidad').value) / 100);
-                document.getElementById('descuento_rentabilidad').textContent = formatearCantidad(descuento);
-                prima_a_cobrar = (parseFloat(sub_total) + parseFloat(extra_prima)) - parseFloat(descuento);
-                document.getElementById("prima_a_cobrar").textContent = formatearCantidad(prima_a_cobrar);
-                document.getElementById("prima_a_cobrar_ccf").textContent = formatearCantidad(prima_a_cobrar);
-                let iva = parseFloat(prima_a_cobrar) * 0.13;
-                // document.getElementById('iva').textContent = formatearCantidad(iva);
-                document.getElementById('IvaDetalle').value = iva;
-                let total_factura = parseFloat(iva) + parseFloat(prima_a_cobrar);
-                // document.getElementById('total_factura').textContent = formatearCantidad(total_factura);
-
-                // let comision = prima_a_cobrar * (tasa_comision / 100);
-
-                // document.getElementById("comision").textContent = formatearCantidad(comision);
-
-                //estructura ccf
-
-                let valor_comision = parseFloat(prima_a_cobrar) * (parseFloat(tasa_comision) / 100);
+                //calculo ccf
+                let prima_cobrar = sub_total;
+                document.getElementById('prima_a_cobrar_ccf').textContent = formatearCantidad(sub_total);
+                let valor_comision = (tasa_comision/100) * prima_cobrar;
                 document.getElementById('valor_comision').textContent = formatearCantidad(valor_comision);
-                console.log(valor_comision);
-                document.getElementById('ComisionDetalle').value = valor_comision;
-                let iva_comision = parseFloat(valor_comision) * 0.13;
+                let iva_comision = valor_comision * 0.13;
                 document.getElementById('iva_comision').textContent = formatearCantidad(iva_comision);
-                document.getElementById('IvaComisionDetalle').value = iva_comision;
-                let retencion_comision = parseFloat(valor_comision) * 0.01;
-                let sub_total_ccf = parseFloat(valor_comision) + parseFloat(iva_comision);
-                document.getElementById('sub_total_ccf').textContent = formatearCantidad(sub_total_ccf);
-
-                document.getElementById('retencion_comision').textContent = formatearCantidad(
-                    retencion_comision);
-                let comision_ccf = parseFloat(sub_total_ccf) - parseFloat(
-                    retencion_comision);
+                let sub_total_ccf = iva_comision + valor_comision;
+                document.getElementById('sub_total_ccf').textContent = formatearCantidad(sub_total_ccf); 
+                let retencion = prima_cobrar *  0.001;
+                document.getElementById('retencion_comision').textContent = formatearCantidad(retencion);
+                let comision_ccf = sub_total_ccf - retencion;
                 document.getElementById('comision_ccf').textContent = formatearCantidad(comision_ccf);
                 document.getElementById('comision').textContent = formatearCantidad(comision_ccf);
-                let liquido_pagar = parseFloat(prima_a_cobrar) - parseFloat(comision_ccf);
-                document.getElementById("liquido_pagar").textContent = formatearCantidad(liquido_pagar);
-                document.getElementById('RetencionDetalle').value = retencion_comision;
-                document.getElementById('ValorCCFDetalle').value = comision_ccf;
-                document.getElementById('APagarDetalle').value = liquido_pagar;
+                let liquido_pagar = sub_total + iva - comision_ccf;
+                document.getElementById('liquido_pagar').textContent = formatearCantidad(liquido_pagar);
+                let total_factura = sub_total + iva;
+                document.getElementById('total_factura').textContent = formatearCantidad(total_factura);
 
-
-
-                console.log(comision);
+                //llenado de form
+                document.getElementById('MontoCarteraDetalle').value = formatearCantidad(monto);
+                document.getElementById('PrimaCalculadaDetalle').value = formatearCantidad(decimales);
+                document.getElementById('PrimaDescontadaDetalle').value = formatearCantidad(prima_descontada);
+                document.getElementById('IvaDetalle').value = formatearCantidad(iva);
+                document.getElementById('SubTotalDetalle').value = formatearCantidad(sub_total);
+                document.getElementById('ComisionDetalle').value = formatearCantidad(valor_comision);
+                document.getElementById('IvaComisionDetalle').value = formatearCantidad(iva_comision);
+                document.getElementById('RetencionDetalle').value = formatearCantidad(retencion);
+                document.getElementById('ValorCCFDetalle').value = formatearCantidad(comision_ccf);
+                document.getElementById('APagarDetalle').value = formatearCantidad(liquido_pagar);
+                document.getElementById('DescuentoDetalle').value = formatearCantidad(descuento);
+                document.getElementById('GastosEmisionDetalle').value = formatearCantidad(gastos);
+                document.getElementById('OtrosDetalle').value = formatearCantidad(otros);
+                document.getElementById('PrimaTotalDetalle').value = formatearCantidad(prima_descontada);
+            
             }
 
-
-            // Función para convertir una cadena formateada a un número flotante
             function convertirANumero(cadena) {
                 return parseFloat(cadena.replace(/,/g, ''));
             }
@@ -709,5 +650,32 @@
                     maximumFractionDigits: 2
                 });
             }
+            
+        $(document).ready(function() {
+            
+
+            //console.log(lineas);
+            actualizarCalculos();
+            // Calcula la suma de los valores de las columnas numéricas y muestra el resultado en la columna total
+            $('.editable').on('input', function() {
+                calculoTotales();
+                actualizarCalculos();
+            });
+
+          
+
+            function calculoTotales() {
+               
+                let prima_descontada = convertirANumero(document.getElementById('prima_descontada').innerText);
+                let total_prima_descontada = formatearCantidad(prima_descontada);
+                document.getElementById('total_prima_descontada').innerText = total_prima_descontada;
+
+
+             //   console.log(comision);
+            }
+
+
+            // Función para convertir una cadena formateada a un número flotante
+           
         });
     </script>
