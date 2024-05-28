@@ -567,7 +567,7 @@
                 }
                 let prima_descontada = decimales - descuento;
 
-                document.getElementById('prueba_decimales').innerText = decimales;
+                document.getElementById('prueba_decimales').innerText = parseFloat(decimales);
                 document.getElementById('prima_calculada').innerText = formatearCantidad(decimales);
                 document.getElementById('prima_descontada').innerText = formatearCantidad(prima_descontada);
                 document.getElementById('total_prima_descontada').innerText = formatearCantidad(prima_descontada);
@@ -593,32 +593,32 @@
                 }
                 gastos = document.getElementById('gastos_emision').innerText;
                 otros = document.getElementById('otros').innerText;        
-                alert(gastos);
-                sub_total = convertirANumero(prima_descontada + bomberos + gastos + otros);
-                alert(sub_total);
+                
+                sub_total = (parseFloat(prima_descontada) + parseFloat(bomberos) + parseFloat(gastos) + parseFloat(otros));
+                
                 document.getElementById('sub_total').innerText = formatearCantidad(sub_total);
                 let iva_form = 0.13;
-                iva = sub_total * iva_form;
+                iva = parseFloat(sub_total) * parseFloat(iva_form);
                 document.getElementById('iva').innerText = formatearCantidad(iva);
                 
 
                 //calculo ccf
                 let prima_cobrar = sub_total;
                 document.getElementById('prima_a_cobrar_ccf').textContent = formatearCantidad(sub_total);
-                let valor_comision = (tasa_comision/100) * prima_cobrar;
+                let valor_comision = (parseFloat(tasa_comision)/100) * parseFloat(prima_cobrar);
                 document.getElementById('valor_comision').textContent = formatearCantidad(valor_comision);
-                let iva_comision = valor_comision * 0.13;
+                let iva_comision = (parseFloat(valor_comision) * 0.13);
                 document.getElementById('iva_comision').textContent = formatearCantidad(iva_comision);
-                let sub_total_ccf = iva_comision + valor_comision;
+                let sub_total_ccf = (parseFloat(iva_comision) + parseFloat(valor_comision));
                 document.getElementById('sub_total_ccf').textContent = formatearCantidad(sub_total_ccf); 
-                let retencion = prima_cobrar *  0.001;
+                let retencion = (parseFloat(prima_cobrar) *  0.001);
                 document.getElementById('retencion_comision').textContent = formatearCantidad(retencion);
-                let comision_ccf = sub_total_ccf - retencion;
+                let comision_ccf = parseFloat(sub_total_ccf) - parseFloat(retencion);
                 document.getElementById('comision_ccf').textContent = formatearCantidad(comision_ccf);
                 document.getElementById('comision').textContent = formatearCantidad(comision_ccf);
-                let liquido_pagar = sub_total + iva - comision_ccf;
+                let liquido_pagar = (parseFloat(sub_total) + parseFloat(iva) - parseFloat(comision_ccf));
                 document.getElementById('liquido_pagar').textContent = formatearCantidad(liquido_pagar);
-                let total_factura = sub_total + iva;
+                let total_factura = (parseFloat(sub_total) + parseFloat(iva));
                 document.getElementById('total_factura').textContent = formatearCantidad(total_factura);
 
                 //llenado de form
