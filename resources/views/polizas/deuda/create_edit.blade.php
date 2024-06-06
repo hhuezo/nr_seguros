@@ -45,19 +45,19 @@
                             @csrf
                             <div class="x_content" style="font-size: 12px;">
                                 <div class="col-sm-4">
-                                    <label class="control-label" align="right">Número de Póliza</label>
+                                    <label class="control-label" align="right">Número de Póliza *</label>
                                     <input class="form-control" name="NumeroPoliza" id="NumeroPoliza" type="text" value="{{ $deuda->NumeroPoliza }}" required>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label" align="right">Nit</label>
+                                    <label class="control-label" align="right">Nit *</label>
                                     <input class="form-control" name="Nit" id="Nit" type="text" value="{{ $deuda->Nit }}" readonly>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label" align="right">Código</label>
+                                    <label class="control-label" align="right">Código *</label>
                                     <input class="form-control" name="Codigo"  type="text" value="{{ $deuda->Codigo}}" readonly>
                                 </div>
                                 <div class="col-sm-8">
-                                    <label class="control-label" align="right">Aseguradora</label>
+                                    <label class="control-label" align="right">Aseguradora *</label>
                                     <select name="Aseguradora" class="form-control select2" style="width: 100%" required>
                                         <option value="">Seleccione...</option>
                                         @foreach ($aseguradora as $obj)
@@ -70,7 +70,7 @@
                                     </select>
                                 </div>
                                 <div class="col-sm-8">
-                                    <label class="control-label" align="right">Asegurado</label>
+                                    <label class="control-label" align="right">Asegurado *</label>
                                     <select name="Asegurado" id="Asegurado" class="form-control select2" style="width: 100%" required>
                                         <option value="">Seleccione...</option>
                                         @foreach ($cliente as $obj)
@@ -86,15 +86,15 @@
                                     &nbsp;
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label" align="right">Vigencia Desde</label>
+                                    <label class="control-label" align="right">Vigencia Desde *</label>
                                     <input class="form-control" name="VigenciaDesde" type="date" value="{{ $deuda->VigenciaDesde }}" required>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label" align="right">Vigencia Hasta</label>
+                                    <label class="control-label" align="right">Vigencia Hasta *</label>
                                     <input class="form-control" name="VigenciaHasta" type="date" value="{{ $deuda->VigenciaHasta }}" required>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label" align="right">Estatus</label>
+                                    <label class="control-label" align="right">Estatus *</label>
                                     <select name="EstadoPoliza" class="form-control select2" style="width: 100%" >
                                         @foreach ($estadoPoliza as $obj)
                                         @if ($obj->Id == 1)
@@ -104,7 +104,7 @@
                                     </select>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label" align="right">Ejecutivo</label>
+                                    <label class="control-label" align="right">Ejecutivo *</label>
                                     <select name="Ejecutivo" class="form-control select2" style="width: 100%" required>
                                         <option value="">Seleccione...</option>
                                         @foreach ($ejecutivo as $obj)
@@ -117,7 +117,7 @@
                                     </select>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label" align="right">Descuento de Rentabilidad %</label>
+                                    <label class="control-label" align="right">Descuento de Rentabilidad *</label>
                                     <input class="form-control" name="Descuento" type="number" step="any" id="Descuento" value="{{ $deuda->Descuento }}" required>
                                 </div>
                                 <div class="col-sm-4">
@@ -143,19 +143,19 @@
                                     <br>
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                         <input type="radio" name="tipoTasa" id="Mensual" value="1" {{$deuda->Mensual == 1 ? 'checked': ''}} >
-                                        <label class="control-label">Tasa ‰ Millar Mensual</label>
+                                        <label class="control-label">Tasa ‰ Millar Mensual *</label>
                                     </div>
 
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                         <input type="radio" name="tipoTasa" id="Anual" value="0" {{$deuda->Mensual == 0 ? 'checked': ''}}>
-                                        <label class="control-label">Tasa ‰ Millar Anual</label>
+                                        <label class="control-label">Tasa ‰ Millar Anual *</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-12">
                                     &nbsp;
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label" align="right">Tasa ‰ </label>
+                                    <label class="control-label" align="right">Tasa ‰ *</label>
                                     <input class="form-control" name="Tasa" type="number" id="Tasa" step="any" value="{{ $deuda->Tasa }}" required>
                                 </div>
                                 <div class="col-sm-4" align="center">
@@ -167,16 +167,18 @@
                                     &nbsp;
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label" align="right">Tasa de Comision %</label>
+                                    <label class="control-label" align="right">Tasa de Comision % *</label>
                                     <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" value="{{ $deuda->TasaComision }}">
                                 </div>
                                 <div class="col-sm-4" id="poliza_vida" style="display: none;">
                                    
-                                    <label class="control-label" >Numero de Poliza Vida</label>
+                                    <label class="control-label" >Número de Póliza Vida</label>
                                     <input name="Vida" type="text" class="form-control" />
                                 </div>
+                                <div class="col-sm-12 row">* Campo requerido</div>
 
                             </div>
+                            
 
 
                             <div class="x_title">

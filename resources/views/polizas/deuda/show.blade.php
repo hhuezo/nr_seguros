@@ -7,7 +7,7 @@
     <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
             <div class="x_title">
-                <h2>Nuevo Poliza de Deuda &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; VIDE - Seguro por Deuda<small></small>
+            <h2>Pólizas / Deuda / Póliza de deuda / Nueva póliza<small></small>
                 </h2>
                 <ul class="nav navbar-right panel_toolbox">
                     @if ($deuda->Configuracion == 0)
@@ -77,19 +77,19 @@
                                 <div class="col-sm-12 row">
                                     <div class="col-sm-4">
                                         <input type="hidden" value="{{ $deuda->Id }}" name="Deuda">
-                                        <label class="control-label" align="right">Número de Póliza</label>
+                                        <label class="control-label" align="right">Número de Póliza *</label>
                                         <input class="form-control" name="NumeroPoliza" id="NumeroPoliza" type="text" value="{{ $deuda->NumeroPoliza }}" required>
                                     </div>
 
                                     <div class="col-sm-4">&nbsp;</div>
 
                                     <div class="col-sm-4" style="display: none !important;">
-                                        <label class="control-label" align="right">Código</label>
+                                        <label class="control-label" align="right">Código *</label>
                                         <input class="form-control" name="Codigo" type="text" value="{{ $deuda->Codigo }}" readonly>
                                     </div>
                                 </div>
                                 <div class="col-sm-8">
-                                    <label class="control-label" align="right">Aseguradora</label>
+                                    <label class="control-label" align="right">Aseguradora *</label>
                                     <select name="Aseguradora" id="Aseguradora" class="form-control select2" style="width: 100%" required>
                                         <option value="">Seleccione...</option>
                                         @foreach ($aseguradora as $obj)
@@ -103,7 +103,7 @@
                                     </select>
                                 </div>
                                 <div class="col-sm-2">
-                                    <label class="control-label">Productos</label>
+                                    <label class="control-label">Productos *</label>
                                     <select name="Productos" id="Productos" class="form-control select2" style="width: 100%">
                                         <option value="" selected disabled>Seleccione...</option>
                                         @foreach ($productos as $obj)
@@ -117,7 +117,7 @@
                                     </select>
                                 </div>
                                 <div class="col-sm-2">
-                                    <label class="control-label">Planes</label>
+                                    <label class="control-label">Planes *</label>
                                     <select name="Planes" id="Planes" class="form-control select2" style="width: 100%">
                                         <option value="" selected disabled>Seleccione...</option>
                                         @foreach ($planes as $obj)
@@ -131,7 +131,7 @@
                                     </select>
                                 </div>
                                 <div class="col-sm-8">
-                                    <label class="control-label" align="right">Asegurado</label>
+                                    <label class="control-label" align="right">Asegurado *</label>
                                     <select name="Asegurado" id="Asegurado" class="form-control select2" style="width: 100%" required>
                                         <option value="">Seleccione...</option>
                                         @foreach ($cliente as $obj)
@@ -145,22 +145,22 @@
                                     </select>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label" align="right">DUI / NIT</label>
+                                    <label class="control-label" align="right">DUI / NIT *</label>
                                     <input class="form-control" name="Nit" id="Nit" type="text" value="{{ $deuda->Nit }}" readonly>
                                 </div>
                                 <div class="col-sm-12">
                                     &nbsp;
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label" align="right">Vigencia Desde</label>
+                                    <label class="control-label" align="right">Vigencia Desde *</label>
                                     <input class="form-control" name="VigenciaDesde" type="date" value="{{ $deuda->VigenciaDesde }}" required>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label" align="right">Vigencia Hasta</label>
+                                    <label class="control-label" align="right">Vigencia Hasta *</label>
                                     <input class="form-control" name="VigenciaHasta" type="date" value="{{ $deuda->VigenciaHasta }}" required>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label" align="right">Estado</label>
+                                    <label class="control-label" align="right">Estado *</label>
                                     <select name="EstadoPoliza" class="form-control select2" style="width: 100%">
                                         @foreach ($estadoPoliza as $obj)
                                         @if ($obj->Id == 1)
@@ -170,7 +170,7 @@
                                     </select>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label" align="right">Ejecutivo</label>
+                                    <label class="control-label" align="right">Ejecutivo *</label>
                                     <select name="Ejecutivo" class="form-control select2" style="width: 100%" required>
                                         <option value="">Seleccione...</option>
                                         @foreach ($ejecutivo as $obj)
@@ -184,7 +184,7 @@
                                     </select>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label" align="right">Descuento de Rentabilidad %</label>
+                                    <label class="control-label" align="right">Descuento de Rentabilidad *</label>
                                     <input class="form-control" name="Descuento" type="number" step="any" id="Descuento" value="{{ $deuda->Descuento }}" required>
                                 </div>
                                 <div class="col-sm-4">
@@ -195,7 +195,7 @@
                                 </div>
 
                                 <div class="col-sm-4">
-                                    <label class="control-label " align="right">Clausulas Especiales</label>
+                                    <label class="control-label " align="right">Clausulas Especiales </label>
                                     <textarea class="form-control" name="ClausulasEspeciales" row="3" col="4">{{ $deuda->ClausulasEspeciales }} </textarea>
                                 </div>
                                 <div class="col-sm-4">
@@ -210,19 +210,19 @@
                                     <br>
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                         <input type="radio" name="tipoTasa" id="Mensual" value="1" {{ $deuda->Mensual == 1 ? 'checked' : '' }}>
-                                        <label class="control-label">Tasa ‰ Millar Mensual</label>
+                                        <label class="control-label">Tasa ‰ Millar Mensual *</label>
                                     </div>
 
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                         <input type="radio" name="tipoTasa" id="Anual" value="0" {{ $deuda->Mensual == 0 ? 'checked' : '' }}>
-                                        <label class="control-label">Tasa ‰ Millar Anual</label>
+                                        <label class="control-label">Tasa ‰ Millar Anual *</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-12">
                                     &nbsp;
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label" align="right">Tasa Millar Mensual</label>
+                                    <label class="control-label" align="right">Tasa Millar Mensual *</label>
                                     <input class="form-control" name="Tasa" type="number" id="Tasa" step="any" value="{{ $deuda->Tasa }}" required>
                                 </div>
                                 <div class="col-sm-4" align="center">
@@ -239,7 +239,7 @@
                                     &nbsp;
                                 </div>
                                 <div class="col-sm-2">
-                                    <label class="control-label" align="right">% Tasa de Comisión </label>
+                                    <label class="control-label" align="right">% Tasa de Comisión *</label>
                                     <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" value="{{ $deuda->TasaComision }}">
                                 </div>
                                 <div class="col-sm-2"><br>
@@ -248,14 +248,14 @@
                                 </div>
                                 <div class="col-sm-4">
                                     <div id="poliza_vida" style="display: {{ $deuda->Vida != '' ? 'block' : 'none' }};">
-                                        <label class="control-label">Numero de Poliza Vida</label>
+                                        <label class="control-label">Numero de Poliza Vida *</label>
                                         <input name="Vida" type="text" class="form-control" value="{{ $deuda->Vida }}" />
                                     </div>
 
                                 </div>
                                 <div class="col-sm-4">
                                     <div id="poliza_desempleo" style="display:  {{ $deuda->Desempleo != '' ? 'block' : 'none' }};">
-                                        <label class="control-label">Numero de Poliza Desempleo</label>
+                                        <label class="control-label">Número de Póliza Desempleo *</label>
                                         <input name="Desempleo" type="text" class="form-control" value="{{ $deuda->Desempleo }}" />
                                     </div>
 

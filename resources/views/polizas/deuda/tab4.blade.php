@@ -12,8 +12,10 @@
                 <th style="text-align: center;">Póliza</th>
                 <th style="text-align: center;">Fecha Inicio <br> Vigencia</th>
                 <th style="text-align: center;">Fecha Final <br> Vigencia</th>
+                <th style="text-align: center;">Fecha de Creación</th>
+                <th style="text-align: center;">Nro de Aviso Cobro</th>
                 <th style="text-align: center;">Cuota</th>
-                <th style="text-align: center;">Correlativo</th>
+                <th style="text-align: center;">Nro de Documento</th>
                 <th style="text-align: center;">Fecha de <br> Vencimiento</th>
                 <th style="text-align: center;">Fecha de <br> Aplicación de pago</th>
                 <th style="text-align: center;">Valor (US$)</th>
@@ -31,6 +33,8 @@
                     <td style="text-align: center;">{{ $deuda->NumeroPoliza }}</td>
                     <td style="text-align: center;">{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
                     <td style="text-align: center;">{{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
+                    <td style="text-align: center;">{{ \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}</td>
+                    <td style="text-align: center;"> AC {{ str_pad($obj->NumeroRecibo,6,"0",STR_PAD_LEFT)}} {{date('Y')}}</td>
                     <td style="text-align: center;">01/01</td>
                     @if ($obj->NumeroCorrelativo)
                         <td style="text-align: center;">AC {{ str_pad($obj->NumeroCorrelativo, 6, '0', STR_PAD_LEFT) }}

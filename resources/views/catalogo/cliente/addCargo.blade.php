@@ -17,13 +17,13 @@
                         <br />
 
                         <div class="form-group">
-                            <label class="col-sm-3 control-label">Nombre</label>
+                            <label class="col-sm-3 control-label">Nombre *</label>
                             <div class="col-md-6 col-sm-6 col-xs-12">
                                 <input type="text" name="Nombre" id="ModalNombreCargo" class="form-control" autofocus="true">
                             </div>
                             <label class="col-sm-3 control-label">&nbsp;</label>
                         </div>
-
+                        <div class="row"> * Campo requerido</div>
                     </div>
 
 

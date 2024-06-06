@@ -467,10 +467,10 @@
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">×</span>
                                             </button>
-                                            <h4 class="modal-title">Aplicación de cobro</h4>
+                                            <h4 class="modal-title">Aviso de cobro</h4>
                                         </div>
                                         <div class="modal-body">
-                                            <p>¿Esta seguro/a que desea aplicar el cobro?</p>
+                                            <p>¿Desea generar el aviso de cobro?</p>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
@@ -611,7 +611,12 @@
                 document.getElementById('iva_comision').textContent = formatearCantidad(iva_comision);
                 let sub_total_ccf = (parseFloat(iva_comision) + parseFloat(valor_comision));
                 document.getElementById('sub_total_ccf').textContent = formatearCantidad(sub_total_ccf); 
-                let retencion = (parseFloat(prima_cobrar) *  0.001);
+                let tipo_contribuyente = {{$residencia->clientes->TipoContribuyente}};
+                let comision = 0;
+                if(tipo_contribuyente != 1){
+                    retencion = (parseFloat(prima_cobrar) *  0.001);
+                }
+                
                 document.getElementById('retencion_comision').textContent = formatearCantidad(retencion);
                 let comision_ccf = parseFloat(sub_total_ccf) - parseFloat(retencion);
                 document.getElementById('comision_ccf').textContent = formatearCantidad(comision_ccf);

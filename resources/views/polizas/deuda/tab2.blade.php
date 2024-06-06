@@ -419,10 +419,10 @@
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">×</span>
                                     </button>
-                                    <h4 class="modal-title">Aplicación de cobro</h4>
+                                    <h4 class="modal-title">Aviso de cobro</h4>
                                 </div>
                                 <div class="modal-body">
-                                    <p>¿Esta seguro/a que desea aplicar el cobro?</p>
+                                    <p>¿Desea generar el aviso de cobro?</p>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
@@ -633,10 +633,15 @@
                 let iva_comision = parseFloat(valor_comision) * 0.13;
                 document.getElementById('iva_comision').textContent = formatearCantidad(iva_comision);
                 document.getElementById('IvaComisionDetalle').value = iva_comision;
-                let retencion_comision = parseFloat(valor_comision) * 0.01;
+                let retencion_comision = 0;
                 let sub_total_ccf = parseFloat(valor_comision) + parseFloat(iva_comision);
                 document.getElementById('sub_total_ccf').textContent = formatearCantidad(sub_total_ccf);
 
+                let tipo_contribuyente = {{$deuda->clientes->TipoContribuyente}};
+                if(tipo_contribuyente != 1 ){
+                    retencion_comision = parseFloat(valor_comision) * 0.01;
+                }
+                console.log(tipo_contribuyente);
                 document.getElementById('retencion_comision').textContent = formatearCantidad(
                     retencion_comision);
                 let comision_ccf = parseFloat(sub_total_ccf) - parseFloat(

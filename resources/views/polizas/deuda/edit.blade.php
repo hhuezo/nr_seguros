@@ -17,7 +17,7 @@
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
 
                 <div class="x_title">
-                    <h2>Poliza de Deuda &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; VIDE - Deuda<small></small>
+                    <h2>Pólizas / Deuda / Póliza de deuda / {{$deuda->NumeroPoliza}}<small></small>
                     </h2>
                     <ul class="nav navbar-right panel_toolbox">
                         <a href="{{ url('polizas/deuda') }}" class="btn btn-info">Atras</a>

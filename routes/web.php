@@ -24,6 +24,7 @@ use App\Http\Controllers\catalogo\PlanController;
 use App\Http\Controllers\catalogo\ProductoController;
 use App\Http\Controllers\catalogo\RutaController;
 use App\Http\Controllers\catalogo\TipoCobroController;
+use App\Http\Controllers\polizas\DesempleoController;
 use App\Http\Controllers\polizas\DeudaCarteraController;
 use App\Http\Controllers\polizas\DeudaController;
 use App\Http\Controllers\polizas\VidaController;
@@ -243,3 +244,9 @@ Route::post('polizas/deuda/eliminar_comentario',[DeudaController::class,'elimina
 
 //validación de cartera
 Route::resource('polizas/validacion_cartera', ValidacionCarteraController::class);
+
+
+
+
+//desempleo
+Route::resource('polizas/desempleo',DesempleoController::class);
