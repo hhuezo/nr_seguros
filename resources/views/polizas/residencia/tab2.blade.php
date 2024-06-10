@@ -244,7 +244,7 @@
                                     <th>Monto Cartera</th>
                                     <th>Prueba Decimales</th>
                                     <th>Prima Calculada</th>
-                                    <th>Descuento Rentabilidad</th>
+                                    <th>Descuento Rentabilidad {{$residencia->TasaDescuento ? $residencia->TasaDescuento : '0'}} %</th>
                                     <th>Prima Descontada</th>
                                 </tr>
                             </thead>
@@ -256,9 +256,9 @@
                                $monto_cartera = 3844478.89;
                                 // Determinar la tasa por millar
                                 if ($residencia->Aseguradora == 3) {
-                                $tasa_millar = ($residencia->Tasa / 1000);
+                                $tasa_millar = number_format(($residencia->Tasa / 1000),6,'.',',');
                                 } else {
-                                $tasa_millar = ($residencia->Tasa / 1000) / 12;
+                                $tasa_millar = number_format(($residencia->Tasa / 1000) / 12,6,'.',',');
                                 }
 
                                 // Calcular los días entre las fechas de vigencia
@@ -341,8 +341,13 @@
                                     <td>USD</td>
                                 </tr>
                                 <tr>
-                                    <td>Comisión </td>
-                                    <td class="numeric editable"><span>{{$residencia->Comision ? number_format($residencia->Comision ,2,".",",") : $residencia->Comision}}%</span></td>
+                                @if($residencia->ComisionIva == 1)
+                                @php($var = $residencia->Comision / 1.13)
+                                @else
+                                @php($var = $residencia->Comision)
+                                @endif
+                                    <td>Porcentaje de Comisión {{$residencia->ComisionIva == 1 ? 'Iva Incluido':''}}</td>
+                                    <td class="numeric editable"><span>{{$residencia->Comision ? number_format($var ,2,".",",") : ''}}</span></td>
                                 </tr>
                                 <tr>
                                     <td>Prima a cobrar</td>
@@ -397,7 +402,7 @@
                                     <td class="numeric "><span id="impuestos_bomberos"></span></td>
                                 </tr>
                                 <tr>
-                                    <td>Gastos Emision</td>
+                                    <td>Gastos Emisión</td>
                                     <td class="numeric editable" contenteditable="true"><span id="gastos_emision" onblur="actualizarCalculos()"></span></td>
                                 </tr>
                                 <tr>
@@ -537,7 +542,7 @@
                 let dias_axo = {{$dias_axo}};
                 let dias_mes = {{$dias_mes}};
                 let decimales = 0;
-                let diario = {{$residencia->aseguradoras->Diario}};
+                let diario = {{$residencia->aseguradoras->Diario ? 1 : 0}};
                 let descuento = 0;
                 let tasadescuento = {{$residencia->TasaDescuento}};
                 let sub_total = 0;
@@ -546,8 +551,17 @@
                 let otros = document.getElementById('otros').innerText;
                 let iva = 0;
                 let ccf = 0;
+                let comision_iva = {{$residencia->ComisionIva}};
                 let total = 0;
-                let tasa_comision = {{$residencia->Comision }};
+                let tasa_comision = 0;
+                let var_com = {{$residencia->Comision}};
+                if(comision_iva == 1){
+                    tasa_comision = var_com/1.13;
+                }else{
+                    tasa_comision = var_com;
+                    
+                }
+                let tipo_contribuyente = {{$residencia->clientes->TipoContribuyente}};
                 if(aseguradora == 3){
                     millar = tasa / 1000;
                 }else{
@@ -597,8 +611,14 @@
                 sub_total = (parseFloat(prima_descontada) + parseFloat(bomberos) + parseFloat(gastos) + parseFloat(otros));
                 
                 document.getElementById('sub_total').innerText = formatearCantidad(sub_total);
-                let iva_form = 0.13;
+                let iva_form = 0;
+                if(tipo_contribuyente != 4){
+                    iva_form = 0.13;
+                }else{
+                    iva_form = 0;
+                }
                 iva = parseFloat(sub_total) * parseFloat(iva_form);
+
                 document.getElementById('iva').innerText = formatearCantidad(iva);
                 
 
@@ -607,12 +627,19 @@
                 document.getElementById('prima_a_cobrar_ccf').textContent = formatearCantidad(sub_total);
                 let valor_comision = (parseFloat(tasa_comision)/100) * parseFloat(prima_cobrar);
                 document.getElementById('valor_comision').textContent = formatearCantidad(valor_comision);
-                let iva_comision = (parseFloat(valor_comision) * 0.13);
+                let iva_comision = 0;
+                //el cliente no contribuyente, no paga iva
+                
+                if(tipo_contribuyente != 4){
+                    iva_comision = (parseFloat(valor_comision) * 0.13);
+                }else{
+                    iva_comision = 0;
+                }
                 document.getElementById('iva_comision').textContent = formatearCantidad(iva_comision);
                 let sub_total_ccf = (parseFloat(iva_comision) + parseFloat(valor_comision));
                 document.getElementById('sub_total_ccf').textContent = formatearCantidad(sub_total_ccf); 
-                let tipo_contribuyente = {{$residencia->clientes->TipoContribuyente}};
                 let comision = 0;
+                let retencion = 0;
                 if(tipo_contribuyente != 1){
                     retencion = (parseFloat(prima_cobrar) *  0.001);
                 }

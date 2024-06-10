@@ -179,7 +179,7 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
     <tr style="background-color: lightgrey;">
       <th>Cuota</th>
       <th>Número de <br> documento</th>
-      <th>Fecha de Pago</th>
+      <th>Fecha de vencimiento</th>
       <th>Prima A Cobrar</th>
       <th>Total Comisión</th>
       <th>Otros</th>
@@ -188,7 +188,7 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
     <tr>
       <td style="text-align: center;">01/01</td>
       <td>{{$detalle->NumeroCorrelativo}}</td>
-      <td>{{ \Carbon\Carbon::parse($detalle->ImpresionRecibo)->format('d/m/Y') }}</td>
+      <td>{{ \Carbon\Carbon::parse($detalle->FechaInicio)->format('d/m/Y') }}</td>
       <td style="text-align: right;">${{number_format($detalle->SubTotal,2,'.',',')}}</td>
       <td style="text-align: right;">${{number_format(($detalle->Comision ),2,'.',',')}}</td>
       <td style="text-align: right;">${{number_format($detalle->Otros,2,'.',',')}}</td>
@@ -260,7 +260,7 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
       <td>
         NR Seguros, S.A. de C.V
         <br>
-        Colonia San Ernesto, pasaje San Carlos #154, sobre el bulevar de los Herores, San Salvador. <br>
+        Colonia San Ernesto, pasaje San Carlos #154,  Bulevar de los Heroes, San Salvador Centro. <br>
         Oficina escalón: 11 Calle poniente entre 79 y 81 avenida norte #3 Colonia Escalón.
 
       </td>

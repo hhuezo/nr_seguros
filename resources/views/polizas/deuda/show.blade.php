@@ -29,7 +29,7 @@
                                         <span aria-hidden="true">×</span>
                                     </button>
                                     <input type="hidden" name="deuda" value="{{ $deuda->Id }}">
-                                    <h4 class="modal-title">Finalizar Configuración</h4>
+                                    <h4 class="modal-title">{{$deuda->Configuracion == 0 ? 'Finalizar' :'Aperturar'}} Configuración</h4>
                                 </div>
                                 <div class="modal-body">
                                     <p>Confirme si desea finalizar la configuración de la poliza</p>

@@ -305,7 +305,7 @@
                             <td>USD</td>
                         </tr>
                         <tr>
-                            <td>Comisión {{$deuda->ComisionIva == 1 ? 'Iva Incluido': ''}} </td>
+                            <td>Porcentaje de Comisión {{$deuda->ComisionIva == 1 ? 'Iva Incluido': ''}} </td>
                             <td class="numeric editable"><span>{{$deuda->ComisionIva == 1 ? number_format($deuda->TasaComision / 1.13,2,".",",") : $deuda->TasaComision}}%</span></td>
                         </tr>
                         <tr>
@@ -589,6 +589,7 @@
                 let tasa = document.getElementById('Tasa').value;
                 let comision_iva = document.getElementById('ComisionIva').value;
                 let tasa_comision = document.getElementById('TasaComisionDetalle').value;
+                let tipo_contribuyente = {{$deuda->clientes->TipoContribuyente}};
                 console.log(tasa_comision);
                 let extra_prima = document.getElementById('ExtraPrima').value;
 
@@ -614,7 +615,13 @@
                 prima_a_cobrar = (parseFloat(sub_total) + parseFloat(extra_prima)) - parseFloat(descuento);
                 document.getElementById("prima_a_cobrar").textContent = formatearCantidad(prima_a_cobrar);
                 document.getElementById("prima_a_cobrar_ccf").textContent = formatearCantidad(prima_a_cobrar);
-                let iva = parseFloat(prima_a_cobrar) * 0.13;
+                let iva = 0;
+                // no contribuyente no paga iva
+                if (tipo_contribuyente != 4) {
+                    iva = parseFloat(prima_a_cobrar) * 0.13;
+                } else {
+                    iva = 0;
+                }
                 // document.getElementById('iva').textContent = formatearCantidad(iva);
                 document.getElementById('IvaDetalle').value = iva;
                 let total_factura = parseFloat(iva) + parseFloat(prima_a_cobrar);
@@ -630,15 +637,19 @@
                 document.getElementById('valor_comision').textContent = formatearCantidad(valor_comision);
                 console.log(valor_comision);
                 document.getElementById('ComisionDetalle').value = valor_comision;
-                let iva_comision = parseFloat(valor_comision) * 0.13;
+                let iva_comision = 0;
+                if (tipo_contribuyente != 4) {
+                    iva_comision = parseFloat(valor_comision) * 0.13;
+                } else {
+                    iva_comision = 0;
+                }
                 document.getElementById('iva_comision').textContent = formatearCantidad(iva_comision);
                 document.getElementById('IvaComisionDetalle').value = iva_comision;
                 let retencion_comision = 0;
                 let sub_total_ccf = parseFloat(valor_comision) + parseFloat(iva_comision);
                 document.getElementById('sub_total_ccf').textContent = formatearCantidad(sub_total_ccf);
 
-                let tipo_contribuyente = {{$deuda->clientes->TipoContribuyente}};
-                if(tipo_contribuyente != 1 ){
+                if (tipo_contribuyente != 1) {
                     retencion_comision = parseFloat(valor_comision) * 0.01;
                 }
                 console.log(tipo_contribuyente);

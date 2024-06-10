@@ -59,10 +59,10 @@
                                 <a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}/edit" class="btn btn-primary on-default edit-row" title="Generar Pago">
                                     <i class="fa fa-file fa-lg"></i></a>&nbsp;
                                 <a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}" class="btn btn-success on-default edit-row" title="Configuracion">
-                                    <i class="fa fa-cog fa-lg"></i></a>
+                                    <i class="fa fa-lock fa-lg"></i></a>
                                 @else
                                 <a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}" class="btn btn-success on-default edit-row" title="Configuracion">
-                                    <i class="fa fa-cog fa-lg"></i></a>
+                                    <i class="fa fa-unlock fa-lg"></i></a>
                                 @endif
                             </div>
                             <div style="display: flex; justify-content: center;">

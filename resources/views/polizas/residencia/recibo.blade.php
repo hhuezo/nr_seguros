@@ -87,7 +87,7 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
             <td style="width: 35%; text-align: right;">${{number_format($detalle->PrimaCalculada,2,'.',',')}}</td>
           </tr>
           <tr>
-            <td>(-) Tasa de rentabilidad ({{$residencia->TasaDescuento}}%)</td>
+            <td>(-) Descuento de rentabilidad ({{$residencia->TasaDescuento}}%)</td>
             <td style="width: 35%; text-align: right;">${{number_format($detalle->Descuento,2,'.',',')}}</td>
           </tr>
           <tr>
@@ -152,8 +152,8 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
   <table border="1" cellspacing="0" style="width: 100%;">
     <tr style="background-color: lightgrey;">
       <th>Cuota</th>
-      <th>Número Correlativo</th>
-      <th>Fecha de Pago</th>
+      <th>Número Documento</th>
+      <th>Fecha de Vencimiento</th>
       <th>Prima Neta</th>
       <th>Gastos Emisión</th>
       <th>Otros</th>
@@ -237,7 +237,7 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
       <td>
         NR Seguros, S.A. de C.V
         <br>
-        Colonia San Ernesto, pasaje San Carlos #154, sobre el bulevar de los Herores, San Salvador. <br>
+        Colonia San Ernesto, pasaje San Carlos #154, sobre el bulevar de los Herores, San Salvador Centro. <br>
         Oficina escalón: 11 Calle poniente entre 79 y 81 avenida norte #3 Colonia Escalón.
 
       </td>

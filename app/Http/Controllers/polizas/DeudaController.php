@@ -339,13 +339,17 @@ class DeudaController extends Controller
         $deuda = Deuda::findOrFail($request->deuda);
         if ($deuda->Configuracion == 1) {
             $deuda->Configuracion = 0;
+            $deuda->update();   
+
+            alert()->success('El registro de poliza ha sido configurado correctamente');
+            return redirect('polizas/deuda/'.$request->deuda);
         } else {
             $deuda->Configuracion = 1;
-        }
-        $deuda->update();
+            $deuda->update();
 
-        alert()->success('El registro de poliza ha sido configurado correctamente');
-        return redirect('polizas/deuda/');
+            alert()->success('El registro de poliza ha sido configurado correctamente');
+            return redirect('polizas/deuda/'.$request->deuda.'/edit');
+        }
     }
 
     /**

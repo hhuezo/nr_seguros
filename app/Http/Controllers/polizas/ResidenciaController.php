@@ -151,6 +151,11 @@ class ResidenciaController extends Controller
         $residencia->Mensual = $request->tipoTasa;
         $residencia->Plan = $request->Planes;
         $residencia->Comision = $request->TasaComision;
+        if ($request->ComisionIva == 'on') {
+            $residencia->ComisionIva = 1;
+        } else {
+            $residencia->ComisionIva = 0;
+        }
         $residencia->save();
 
         alert()->success('El registro ha sido creado correctamente')->showConfirmButton('Aceptar', '#3085d6');
@@ -205,7 +210,7 @@ class ResidenciaController extends Controller
         $detalle = DetalleResidencia::where('Residencia', $residencia->Id)->orderBy('Id', 'desc')->get();
         $ultimo_pago = DetalleResidencia::where('Residencia', $residencia->Id)->where('Activo', 1)->orderBy('Id', 'desc')->first();
         $comentarios = Comentario::where('Residencia', '=', $id)->where('Activo', 1)->get();
-        $fechas = PolizaResidenciaTempCartera::where('PolizaResidencia',17)->where('User',auth()->user()->id)->first();
+        $fechas = PolizaResidenciaTempCartera::where('PolizaResidencia',$id)->where('User',auth()->user()->id)->first();
 
         $ultimo_pago_fecha_final = null;
         if ($ultimo_pago) {

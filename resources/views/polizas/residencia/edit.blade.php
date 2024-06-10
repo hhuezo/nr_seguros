@@ -77,7 +77,7 @@
                                         <input class="form-control" name="Nit" id="Nit" type="text"
                                             value="{{ $residencia->Nit }}" readonly>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-4 ocultar">
                                         <label class="control-label">Código</label>
                                         <input class="form-control" name="Codigo" id="Codigo" type="text"
                                             value="{{ $residencia->Id }}" readonly>
@@ -300,12 +300,13 @@
                                             <th style="text-align: center;">Fecha de Creación</th>
                                             <th style="text-align: center;">Nro de Aviso Cobro</th>
                                             <th style="text-align: center;">Cuota</th>
-                                            <th style="text-align: center;">Nro de Documento</th>
+                                            <!-- <th style="text-align: center;">Nro de Documento</th> -->
                                             <th style="text-align: center;">Fecha de <br> Vencimiento</th>
                                             <th style="text-align: center;">Fecha de <br> Aplicación de pago</th>
                                             <th style="text-align: center;">Valor (US$)</th>
                                             <th style="text-align: center;">Estatus</th>
                                             <th style="text-align: center;">Opciones</th>
+                                            
                                         </tr>
                                     </thead>
                                     @php
@@ -327,8 +328,7 @@
 
                                                 <td style="text-align: center;">01/01</td>
                                                 @if ($obj->NumeroCorrelativo)
-                                                    <td style="text-align: center;">AC {{ str_pad($obj->NumeroCorrelativo, 6, '0', STR_PAD_LEFT) }}
-                            {{ date('y') }}</td>
+                                                    <td style="text-align: center;">AC {{ str_pad($obj->NumeroCorrelativo, 6, '0', STR_PAD_LEFT) }} {{ date('y') }}</td>
                                                 @else
                                                     <td></td>
                                                 @endif
