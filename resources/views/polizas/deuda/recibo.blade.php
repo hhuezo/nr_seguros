@@ -10,6 +10,14 @@
       font-family: Arial, Helvetica, sans-serif;
       font-size: 12px;
     }
+
+    footer {
+      position: fixed;
+      bottom: -60px;
+      left: 0px;
+      right: 0px;
+      height: 50px;
+    }
   </style>
 </head>
 @php
@@ -81,10 +89,10 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
     </tr>
   </table>
   <br>
-  <table style="width: 100%;" border="1" cellspacing="0"> 
+  <table style="width: 100%;" border="1" cellspacing="0">
     <tr>
-      <td colspan="4" style="text-align: center;background-color: lightgrey;" >
-         Detalles del cobro generado
+      <td colspan="4" style="text-align: center;background-color: lightgrey;">
+        Detalles del cobro generado
       </td>
     </tr>
   </table>
@@ -112,7 +120,7 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
             <td>(=) Prima descontada</td>
             <td style="width: 35%; text-align: right;">${{number_format($detalle->PrimaDescontada,2,'.',',')}}</td>
           </tr>
-           <!-- <tr>
+          <!-- <tr>
             <td>Sub Total</td>
             <td style="width: 35%; text-align: right;"> ${{number_format($detalle->SubTotal,2,'.',',')}}</td>
           </tr>
@@ -255,17 +263,20 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
   <br><br>
 
   <br><br>
-  <table style="width: 100%; text-align: center;">
+  <footer>
+     <table style="width: 100%; text-align: center;">
     <tr>
       <td>
         NR Seguros, S.A. de C.V
         <br>
-        Colonia San Ernesto, pasaje San Carlos #154,  Bulevar de los Heroes, San Salvador Centro. <br>
+        Colonia San Ernesto, pasaje San Carlos #154, Bulevar de los Heroes, San Salvador Centro. <br>
         Oficina escalón: 11 Calle poniente entre 79 y 81 avenida norte #3 Colonia Escalón.
 
       </td>
     </tr>
-  </table>
+  </table> 
+  </footer>
+
 
 
 </body>

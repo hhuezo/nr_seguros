@@ -10,6 +10,15 @@
       font-family: Arial, Helvetica, sans-serif;
       font-size: 12px;
     }
+
+    footer {
+      position: fixed;
+      bottom: -60px;
+      left: 0px;
+      right: 0px;
+      height: 50px;
+
+    }
   </style>
 </head>
 @php
@@ -78,7 +87,7 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
     <tr>
       <td style="width: 45%;">
         <table border="1" cellspacing="0">
-        <tr>
+          <tr>
             <td style="width: 65%;">Monto de Cartera</td>
             <td style="width: 35%; text-align: right;">${{number_format($detalle->MontoCartera,2,'.',',')}}</td>
           </tr>
@@ -190,11 +199,11 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
           vencimiento para el pago de sus primas, caso contrario la compañía de seguros no se hará responsable
           por la cobertura del bien asegurado en caso de un reclamo.
           <br>
-          Además hacemos de su conocimiento que en caso que usted no pueda presentarse a la compañía de seguros a realizar los pagos de 
-          las cuotas de su póliza puede hacerlo a través de nuestra empresa, comunicándose a nuestras oficinas a los teléfonos 2521-3700 o 7601-2895 
-          para programar el día y la hora en la cual nuestra área de mensajería se hará presente al lugar convenido a retirar los cheques o 
-          dinero en efectivo por el pago de sus seguros enviándole posteriormente, la factura o comprobante de crédito fiscal emitido y 
-          cancelado por la compañía aseguradora. 
+          Además hacemos de su conocimiento que en caso que usted no pueda presentarse a la compañía de seguros a realizar los pagos de
+          las cuotas de su póliza puede hacerlo a través de nuestra empresa, comunicándose a nuestras oficinas a los teléfonos 2521-3700 o 7601-2895
+          para programar el día y la hora en la cual nuestra área de mensajería se hará presente al lugar convenido a retirar los cheques o
+          dinero en efectivo por el pago de sus seguros enviándole posteriormente, la factura o comprobante de crédito fiscal emitido y
+          cancelado por la compañía aseguradora.
 
           <br>
           Esperando lo anterior sea de satisfacción, nos ponemos a sus apreciables órdenes por cualquier consulta adicional al respecto.
@@ -232,17 +241,20 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
   <br><br>
 
   <br><br>
-  <table style="width: 100%; text-align: center;">
-    <tr>
-      <td>
-        NR Seguros, S.A. de C.V
-        <br>
-        Colonia San Ernesto, pasaje San Carlos #154, sobre el bulevar de los Herores, San Salvador Centro. <br>
-        Oficina escalón: 11 Calle poniente entre 79 y 81 avenida norte #3 Colonia Escalón.
+  <footer>
+    <table style="width: 100%; text-align: center;">
+      <tr>
+        <td>
+          NR Seguros, S.A. de C.V
+          <br>
+          Colonia San Ernesto, pasaje San Carlos #154, sobre el bulevar de los Herores, San Salvador Centro. <br>
+          Oficina escalón: 11 Calle poniente entre 79 y 81 avenida norte #3 Colonia Escalón.
 
-      </td>
-    </tr>
-  </table>
+        </td>
+      </tr>
+    </table>
+  </footer>
+
 
 
 </body>
