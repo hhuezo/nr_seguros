@@ -1,9 +1,12 @@
 @extends ('welcome')
 @section('contenido')
-
-
-<script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
-
+    <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            //mostrar opcion en menu
+            displayOption("ul-poliza", "li-poliza-deuda");
+        });
+    </script>
 
     <style>
         #loading-overlay {
@@ -148,11 +151,11 @@
                                 </td>
                                 <td align="center">
                                     <a data-target="#modal-add-{{ $obj->Id }}" data-toggle="modal">
-                                       <button class="btn btn-default"><i class="fa fa-upload fa-lg"></i></button> </a>
+                                        <button class="btn btn-default"><i class="fa fa-upload fa-lg"></i></button> </a>
 
                                 </td>
 
-                                
+
                             </tr>
                             @include('polizas.deuda.add_cartera')
                         @endforeach
@@ -163,9 +166,9 @@
 
             </div>
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align: right;">
-                <form method="POST" action="{{url('polizas/deuda/validar_poliza')}}">
+                <form method="POST" action="{{ url('polizas/deuda/validar_poliza') }}">
                     @csrf
-                    <input type="hidden" value="{{$deuda->Id}}" name="Deuda">
+                    <input type="hidden" value="{{ $deuda->Id }}" name="Deuda">
                     <button class="btn btn-primary float-right">Validar póliza</button>
                 </form>
             </div>

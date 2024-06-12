@@ -111,4 +111,12 @@
             </div>
         </div>
     </div>
+
+    <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            //mostrar opcion en menu
+            displayOption("ul-poliza", "li-poliza-deuda");
+        });
+    </script>
 @endsection
