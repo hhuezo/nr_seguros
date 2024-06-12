@@ -167,11 +167,11 @@
                                             value="{{ $bomberos }}">
                                         <label class="control-label">Límite grupo $</label>
                                         <div class="form-group has-feedback">
-                                            @if ($residencia->Modificar == 1)  
-                                            
+                                            @if ($residencia->Modificar == 1)
+
                                                     <input type="number" style="display: none"   name="LimiteGrupo" id="LimiteGrupo" value="{{ $residencia->LimiteGrupo }}" class="form-control"  onblur="changeGrupo(0)">
                                                     <input type="text" style="text-align: right;"  id="LimiteGrupoDisplay" class="form-control" oninput="formatLimiteGrupo()" onblur="updateLimiteGrupo()" value="{{ number_format($residencia->LimiteGrupo, 2, '.', ',') }}">
-                                               
+
                                             @else
                                                 <input type="text" step="any" style="text-align: right;"
                                                     name="LimiteGrupo" id="LimiteGrupo"
@@ -189,7 +189,7 @@
                                             <input type="number" style="display: none" step="any" name="LimiteIndividual" id="LimiteIndividual" value="{{ $residencia->LimiteIndividual }}" class="form-control" >
 
                                             <input type="text" step="any" style="text-align: right;" id="LimiteIndividualDisplay" value="{{ number_format($residencia->LimiteIndividual, 2, '.', ',') }}" class="form-control" onchange="changeIndividual()" oninput="validateLimiteIndividual()">
-                                        
+
                                             @else
                                                 <input type="text" step="any" style="text-align: right;"
                                                     name="LimiteIndividual" id="LimiteIndividual"
@@ -306,7 +306,7 @@
                                             <th style="text-align: center;">Valor (US$)</th>
                                             <th style="text-align: center;">Estatus</th>
                                             <th style="text-align: center;">Opciones</th>
-                                            
+
                                         </tr>
                                     </thead>
                                     @php
@@ -1007,6 +1007,9 @@
     <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function() {
+            //mostrar opcion en menu
+            displayOption("ul-poliza", "li-poliza-residencia");
+
             $('#comentarios').DataTable();
             $('#avisos').DataTable();
             //    $('#cobros').DataTable();

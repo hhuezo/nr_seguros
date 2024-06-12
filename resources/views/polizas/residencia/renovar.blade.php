@@ -124,7 +124,7 @@
                                 <input type="number" style="display: none" step="any" name="LimiteIndividual" id="LimiteIndividual" value="{{ $residencia->LimiteIndividual }}" class="form-control" >
 
                                 <input type="text" step="any" id="LimiteIndividualDisplay" value="{{ number_format($residencia->LimiteIndividual, 2, '.', ',') }}" class="form-control" onchange="changeIndividual()" oninput="validateLimiteIndividual()">
-                                   
+
                             </div>
                         </div>
 
@@ -203,6 +203,10 @@
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function() {
+        //mostrar opcion en menu
+        displayOption("ul-poliza", "li-poliza-residencia");
+
+
         $("#EstadoPoliza").change(function() {
             if (document.getElementById('EstadoPoliza').value != 2) {
                 $('#LimiteGrupo').attr('required');
