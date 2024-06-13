@@ -251,9 +251,9 @@
                             <tbody>
                                 @php
                                 use \Carbon\Carbon;
-                                //$monto_cartera =  session('MontoCartera', 0);
+                                $monto_cartera =  session('MontoCartera', 0);
                                 //monto de cartera quemado
-                               $monto_cartera = 3844478.89;
+                                // $monto_cartera = 3844478.89;
                                 // Determinar la tasa por millar
                                 if ($residencia->Aseguradora == 3) {
                                 $tasa_millar = number_format(($residencia->Tasa / 1000),6,'.',',');
@@ -475,12 +475,11 @@
                                             <h4 class="modal-title">Aviso de cobro</h4>
                                         </div>
                                         <div class="modal-body">
-                                            <p>¿Desea generar el aviso de cobro?</p>
+                                            <p>¿Desea generar el aviso de cobro</p>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                                            <button id="boton_pago" class="btn btn-primary">Confirmar
-                                                Cobro</button>
+                                            <button id="boton_pago" class="btn btn-primary">Generar aviso de cobro</button>
                                         </div>
                                     </div>
                                 </div>
@@ -498,7 +497,7 @@
 
                     <div class="modal fade" id="modal-cancelar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
                         <div class="modal-dialog">
-                            <form action="{{ url('deuda/cancelar_pago') }}" method="POST">
+                            <form action="{{ url('polizas/residencia/cancelar_pago') }}" method="POST">
                                 @method('POST')
                                 @csrf
                                 <div class="modal-content">

@@ -33,6 +33,7 @@ use App\Http\Controllers\polizas\ValidacionCarteraController;
 use App\Http\Controllers\seguridad\PermissionController;
 use App\Http\Controllers\seguridad\RoleController;
 use App\Models\catalogo\Aseguradora;
+use App\Models\polizas\Residencia;
 
 /*
 |--------------------------------------------------------------------------
@@ -189,6 +190,7 @@ Route::post('polizas/residencia/renovar/{id}', [ResidenciaController::class, 're
 Route::post('polizas/residencia/delete_pago/{id}', [ResidenciaController::class, 'delete_pago']);
 Route::post('polizas/residencia/agregar_comentario',[ResidenciaController::class,'agregar_comentario']);
 Route::post('polizas/residencia/eliminar_comentario',[ResidenciaController::class,'eliminar_comentario']);
+Route::post('polizas/residencia/cancelar_pago',[ResidenciaController::class,'cancelar_pago']);
 
 
 Route::resource('polizas/vida', VidaController::class);

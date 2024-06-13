@@ -168,6 +168,28 @@ class ResidenciaController extends Controller
     //
     }*/
 
+    public function cancelar_pago(Request $request)
+    {
+       //  dd($request->Residencia);
+       //   dd($request->MesCancelar);
+        try {
+            $poliza_temp = PolizaResidenciaTempCartera::where('PolizaResidencia', '=', $request->Residencia)->where('User', '=', auth()->user()->id)->first();
+            $poliza = PolizaResidenciaCartera::where('PolizaResidencia', '=', $request->Residencia)->where('Mes', '=', $poliza_temp->Mes)
+                ->where('Axo', '=', $poliza_temp->Axo)->where('User', '=', auth()->user()->id)
+                ->delete();
+
+            PolizaResidenciaTempCartera::where('PolizaResidencia', '=', $request->Residencia)->delete();
+            // dd($poliza);
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+
+
+        alert()->success('El cobro se ha eliminado correctamente');
+        return back();
+    }
+
+
     public function agregar_comentario(Request $request)
     {
         $time = Carbon::now('America/El_Salvador');
@@ -248,10 +270,18 @@ class ResidenciaController extends Controller
             $bomberos = 0;
         }
 
+        $fecha = PolizaResidenciaCartera::select('Mes', 'Axo', 'FechaInicio', 'FechaFinal')
+        ->where('PolizaResidencia', '=', $id)
+        // ->where(function ($query) {
+        //     $query->where('PolizaResidenciaDetalle', '=', 0)
+        //         ->orWhere('PolizaResidenciaDetalle', '=', null);
+        // })
+        ->orderByDesc('Id')->first();
+
         $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
         // session(['MontoCartera' => 0]);
 
-        return view('polizas.residencia.edit', compact(
+        return view('polizas.residencia.edit', compact('fecha',
             'fechas',
             'residencia',
             'ejecutivo',
