@@ -28,6 +28,7 @@ use App\Models\catalogo\UbicacionCobro;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class ClienteController extends Controller
@@ -41,7 +42,7 @@ class ClienteController extends Controller
     public function index()
     {
         session(['tab2' => '1']);
-        $clientes = Cliente::where('Activo',1)->get();
+        $clientes = Cliente::where('Activo', 1)->get();
         return view('catalogo.cliente.index', compact('clientes'));
     }
 
@@ -81,6 +82,47 @@ class ClienteController extends Controller
     {
         return str_replace("_", "", $string);
     }
+
+    public function validar(Request $request)
+    {
+        $messages = [
+            'Dui.min' => 'El formato de DUI es incorrecto',
+            'Dui.unique' => 'El DUI ya existe en la base de datos',
+            // 'Nit.min' => 'El formato de NIT es incorrecto',
+            // 'Nit.unique' => 'El NIT ya existe en la base de datos',
+        ];
+
+        $request->merge(['Dui' => $this->string_replace($request->get('Dui'))]);
+        $request->merge(['Nit' => $this->string_replace($request->get('Nit'))]);
+
+        $rules = [
+            'Nombre' => 'required',
+        ];
+
+        if ($request->get('TipoPersona') == 1) {
+            $rules['Dui'] = 'required';
+        }
+
+        if ($request->get('Dui') != null) {
+            $rules['Dui'] = 'min:10|unique:cliente';
+        }
+
+        if ($request->TipoPersona <> 1) {
+            if ($request->get('Nit') != null) {
+                $rules['Nit'] = 'min:17|unique:cliente';
+            }
+        }
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+        }
+
+        // Si todas las validaciones pasan
+        return response()->json(['success' => true, 'message' => 'Validación exitosa']);
+    }
+
 
     public function store(Request $request)
     {
@@ -168,6 +210,8 @@ class ClienteController extends Controller
 
         // return back();
     }
+
+
 
     public function cliente_create(Request $request)
     {
@@ -282,7 +326,8 @@ class ClienteController extends Controller
         return response()->json(['datosRecibidos' => $datosRecibidos]);
     }
 
-    public function verificarCredenciales(Request $request) {
+    public function verificarCredenciales(Request $request)
+    {
         $credenciales = $request->only('email', 'password');
 
         if (auth()->attempt($credenciales)) {
