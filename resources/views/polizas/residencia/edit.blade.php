@@ -300,7 +300,7 @@
                                             <th style="text-align: center;">Fecha de Creación</th>
                                             <th style="text-align: center;">Nro de Aviso Cobro</th>
                                             <th style="text-align: center;">Cuota</th>
-                                            <!-- <th style="text-align: center;">Nro de Documento</th> -->
+                                            <th style="text-align: center;">Nro de Documento</th>
                                             <th style="text-align: center;">Fecha de <br> Vencimiento</th>
                                             <th style="text-align: center;">Fecha de <br> Aplicación de pago</th>
                                             <th style="text-align: center;">Valor (US$)</th>
@@ -319,47 +319,31 @@
                                                     $fileUrl = asset($obj->ExcelURL);
                                                 @endphp
                                                 <td style="text-align: center;">{{ $residencia->NumeroPoliza }}</td>
-                                                <td style="text-align: center;">
-                                                    {{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
-                                                <td style="text-align: center;">
-                                                    {{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
-                                                    <td style="text-align: center;">
-                                                    {{ \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}</td>
-
+                                                <td style="text-align: center;">{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
+                                                <td style="text-align: center;">{{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
+                                                <td style="text-align: center;">{{ \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}</td>
+                                                <td style="text-align: center;">{{$obj->NumeroCorrelativo ? 'AC'.str_pad($obj->NumeroCorrelativo, 6, '0', STR_PAD_LEFT).' '.date('y'):'' }} </td>
                                                 <td style="text-align: center;">01/01</td>
-                                                @if ($obj->NumeroCorrelativo)
-                                                    <td style="text-align: center;">AC {{ str_pad($obj->NumeroCorrelativo, 6, '0', STR_PAD_LEFT) }} {{ date('y') }}</td>
-                                                @else
-                                                    <td></td>
-                                                @endif
-                                                <td style="text-align: center;">
-                                                    {{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }} </td>
-                                                @if ($obj->PagoAplicado)
-                                                    <td style="text-align: center;">
-                                                        {{ \Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') }}
-                                                    </td>
-                                                @else
-                                                    <td></td>
-                                                @endif
-                                                @if ($obj->Activo == 0)
-                                                    <td style="text-align: right;">$0.00</td>
-                                                @else
-                                                    <td style="text-align: right;">$
-                                                        {{ number_format($obj->APagar, 2, '.', ',') }}
+                                                <td style="text-align: center;">{{$obj->NumeroCorrelativo ? $obj->NumeroCorrelativo : ''}}</td>
+                                                <td style="text-align: center;">{{ $obj->FechaInicio ? \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') : ''}}</td>
+                                                <td style="text-align: center;">{{ $obj->PagoAplicado ?  \Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') : ''}}</td>
+                                                <td style="text-align: center;">{{ $obj->APagar ? number_format($obj->APagar, 2, '.', ',') :''}} 
                                                         @php
                                                             $total += $obj->APagar;
                                                         @endphp
-                                                    </td>
-                                                @endif
+                                                </td>
+                                                <td style="text-align: center;">
                                                 @if ($obj->Activo == 0)
-                                                    <td style="text-align: center;">Anulado</td>
+                                                    Anulado
                                                 @elseif(!$obj->PagoAplicado)
-                                                    <td style="text-align: center;">Pendiente</td>
+                                                    Pendiente
                                                 @elseif($obj->PagoAplicado)
-                                                    <td style="text-align: center;">Pagado</td>
+                                                    Pagado
                                                 @else
-                                                    <td style="text-align: center;"></td>
+                                                    
                                                 @endif
+
+                                                </td>
                                                 <td style="text-align: center;">
                                                     @if ($obj->Activo == 0)
                                                     @elseif(!$obj->ImpresionRecibo)

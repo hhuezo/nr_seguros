@@ -252,8 +252,7 @@
                                 @php
                                 use \Carbon\Carbon;
                                 $monto_cartera =  session('MontoCartera', 0);
-                                //monto de cartera quemado
-                                // $monto_cartera = 3844478.89;
+                              
                                 // Determinar la tasa por millar
                                 if ($residencia->Aseguradora == 3) {
                                 $tasa_millar = number_format(($residencia->Tasa / 1000),6,'.',',');
@@ -284,10 +283,10 @@
                                 $prima_calculada = $decimales;
 
                                 if($residencia->TasaDescuento < 0){ 
-                                    $descuento=$residencia->TasaDescuento * $prima_calculada;
-                                    }else{
+                                    $descuento = $residencia->TasaDescuento * $prima_calculada;
+                                }else{
                                     $descuento = ($residencia->TasaDescuento / 100) * $prima_calculada;
-                                    }
+                                }
                                     $total_prima_descontada = $prima_calculada - $descuento;
                                     @endphp
 
@@ -583,6 +582,7 @@
                 document.getElementById('prueba_decimales').innerText = parseFloat(decimales);
                 document.getElementById('prima_calculada').innerText = formatearCantidad(decimales);
                 document.getElementById('prima_descontada').innerText = formatearCantidad(prima_descontada);
+                document.getElementById('descuento').innerText = formatearCantidad(descuento);
                 document.getElementById('total_prima_descontada').innerText = formatearCantidad(prima_descontada);
 
                 //funcion para los calculos totales
