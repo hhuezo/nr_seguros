@@ -244,6 +244,7 @@
                                     <th>Monto Cartera</th>
                                     <th>Prueba Decimales</th>
                                     <th>Prima Calculada</th>
+                                    <th>Prima Mensual</th>
                                     <th>Descuento Rentabilidad {{$residencia->TasaDescuento ? $residencia->TasaDescuento : '0'}} %</th>
                                     <th>Prima Descontada</th>
                                 </tr>
@@ -252,7 +253,7 @@
                                 @php
                                 use \Carbon\Carbon;
                                 $monto_cartera =  session('MontoCartera', 0);
-                              
+                               // $monto_cartera = 3844478.89;
                                 // Determinar la tasa por millar
                                 if ($residencia->Aseguradora == 3) {
                                 $tasa_millar = number_format(($residencia->Tasa / 1000),6,'.',',');
@@ -269,16 +270,14 @@
                                 } else {
                                 $dias_mes = 1;
                                 }
-
-                                // Calcular los decimales dependiendo si la aseguradora tiene la opción Diario activa
-                                if ($residencia->aseguradoras->Diario == 1) {
-                                $decimales = (($monto_cartera * $tasa_millar) / $dias_axo) * $dias_mes;
-                                
-                                } else {
                                 $decimales = ($monto_cartera * $tasa_millar);
-                                
-                                }
+                                // Calcular los decimales dependiendo si la aseguradora tiene la opción Diario activa
+                                $prima_mensual = 0;
+                                if ($residencia->aseguradoras->Diario == 1) {
+                                $prima_mensual = ($decimales / $dias_axo) * $dias_mes;
 
+                                } 
+                                
                                 // Formatear el monto otorgado
                                 $prima_calculada = $decimales;
 
@@ -302,6 +301,9 @@
                                         </td>
                                         <td class="numeric editable" contenteditable="true" id="prima_calculada" onblur="actualizarCalculos()">
                                             {{ $prima_calculada != 0 ? number_format($prima_calculada, 2, '.', ',') : 0 }}
+                                        </td>
+                                        <td class="numeric editable" contenteditable="true" id="prima_mensual" onblur="actualizarCalculos()">
+                                            {{ $prima_mensual != 0 ? number_format($prima_mensual, 2, '.', ',') : 0 }}
                                         </td>
                                         <td class="numeric editable" contenteditable="true" id="descuento" onblur="actualizarCalculos()">
                                             {{ $descuento != 0 ? number_format($descuento, 2, '.', ',') : 0 }}
@@ -553,6 +555,7 @@
                 let total = 0;
                 let tasa_comision = 0;
                 let var_com = {{$residencia->Comision}};
+                let prima_mensual = 0;
                 if(comision_iva == 1){
                     tasa_comision = var_com/1.13;
                 }else{
@@ -561,26 +564,38 @@
                 }
                 let tipo_contribuyente = {{$residencia->clientes->TipoContribuyente}};
                 if(aseguradora == 3){
+                //fede
                     millar = tasa / 1000;
                 }else{
+                    //sisa
                     millar = (tasa / 1000) /12;
                 }
                 
+                decimales = (monto * millar);
+                let prima_descontada = 0;
                 if(diario == 1){
-                     decimales = ((monto * millar) / dias_axo) * dias_mes;
+                     prima_mensual = (parseFloat(decimales) / parseFloat(dias_axo)) * parseFloat(dias_mes);
+                     if(tasadescuento < 0){
+                    descuento =  tasadescuento  * prima_mensual;
+                    }else{
+                        descuento =  (tasadescuento/100) * prima_mensual; 
+                    }
+                     prima_descontada = prima_mensual - descuento;
                 }else{
-                     decimales = (monto * millar);
-                }
-                
-                if(tasadescuento < 0){
+                    if(tasadescuento < 0){
                     descuento =  tasadescuento  * decimales;
-                }else{
-                    descuento =  (tasadescuento/100) * decimales; 
-                }
-                let prima_descontada = decimales - descuento;
+                    }else{
+                        descuento =  (tasadescuento/100) * decimales; 
+                    }
+                     prima_descontada = decimales - descuento;
 
+                }
+            
+                
+                
                 document.getElementById('prueba_decimales').innerText = parseFloat(decimales);
                 document.getElementById('prima_calculada').innerText = formatearCantidad(decimales);
+                document.getElementById('prima_mensual').innerText = formatearCantidad(prima_mensual);
                 document.getElementById('prima_descontada').innerText = formatearCantidad(prima_descontada);
                 document.getElementById('descuento').innerText = formatearCantidad(descuento);
                 document.getElementById('total_prima_descontada').innerText = formatearCantidad(prima_descontada);
@@ -640,7 +655,7 @@
                 let comision = 0;
                 let retencion = 0;
                 if(tipo_contribuyente != 1){
-                    retencion = (parseFloat(prima_cobrar) *  0.001);
+                    retencion = (parseFloat(valor_comision) *  0.01);
                 }
                 
                 document.getElementById('retencion_comision').textContent = formatearCantidad(retencion);
