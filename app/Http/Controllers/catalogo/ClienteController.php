@@ -30,6 +30,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Validation\Rule;
+
 
 class ClienteController extends Controller
 {
@@ -88,28 +90,67 @@ class ClienteController extends Controller
         $messages = [
             'Dui.min' => 'El formato de DUI es incorrecto',
             'Dui.unique' => 'El DUI ya existe en la base de datos',
-            // 'Nit.min' => 'El formato de NIT es incorrecto',
-            // 'Nit.unique' => 'El NIT ya existe en la base de datos',
+            'TelefonoCelular.required' => 'El teléfono principal es obligatorio',
+            'TelefonoCelular.size' => 'El teléfono Principal es incorrecto',
         ];
 
         $request->merge(['Dui' => $this->string_replace($request->get('Dui'))]);
         $request->merge(['Nit' => $this->string_replace($request->get('Nit'))]);
-
+        $request->merge(['TelefonoCelular' => $this->string_replace($request->get('TelefonoCelular'))]);
+        //dd($request->get('Dui'));
         $rules = [
             'Nombre' => 'required',
+            'DireccionCorrespondencia' => 'required|max:255',
+            'TelefonoCelular' => 'required|size:9',
+            'CorreoPrincipal' => 'required|email|max:255',
+            'FechaVinculacion' => 'required|date',
+            'Estado' => 'required|integer',
+            'Genero' => 'required|integer',
+            'TipoContribuyente' => 'required|integer',
+            'UbicacionCobro' => 'required|integer',
+            'Departamento' => 'required|integer',
+            'Municipio' => 'required|integer',
+            'Distrito' => 'required|integer',
         ];
 
         if ($request->get('TipoPersona') == 1) {
             $rules['Dui'] = 'required';
+            $rules['FechaNacimiento'] = [
+                'required',
+                'date',
+                function ($attribute, $value, $fail) {
+                    $eighteenYearsAgo = now()->subYears(18)->format('Y-m-d');
+                    if ($value > $eighteenYearsAgo) {
+                        $fail('El cliente debe tener al menos 18 años.');
+                    }
+                }
+            ];
         }
 
         if ($request->get('Dui') != null) {
-            $rules['Dui'] = 'min:10|unique:cliente';
+            if ($request->get('ClienteId') != null) {
+                $rules['Dui'] = [
+                    'required',
+                    'min:10',
+                    Rule::unique('cliente')->ignore($request->get('ClienteId')),
+                ];
+            } else {
+                $rules['Dui'] = 'min:10|unique:cliente';
+            }
         }
 
         if ($request->TipoPersona <> 1) {
             if ($request->get('Nit') != null) {
-                $rules['Nit'] = 'min:17|unique:cliente';
+
+                if ($request->get('ClienteId') != null) {
+                    $rules['Nit'] = [
+                        'required',
+                        'min:17',
+                        Rule::unique('cliente')->ignore($request->get('ClienteId')),
+                    ];
+                } else {
+                    $rules['Nit'] = 'min:17|unique:cliente';
+                }
             }
         }
 
@@ -138,6 +179,7 @@ class ClienteController extends Controller
 
         $request->validate([
             'Nombre' => 'required',
+            'FechaNacimiento' => 'required|date',
         ], $messages);
 
         if ($request->get('TipoPersona') == 1) {
@@ -676,7 +718,13 @@ class ClienteController extends Controller
 
     public function destroy($id)
     {
-        Cliente::findOrFail($id)->update(['Activo' => 0]);
+        $cliente = Cliente::findOrFail($id);
+
+        $cliente->update([
+            'Activo' => 0,
+            'Nit' => $cliente->Nit . '-',
+            'Dui' => $cliente->Dui . '-',
+        ]);
         alert()->info('El registro ha sido desactivado correctamente');
 
         return back();

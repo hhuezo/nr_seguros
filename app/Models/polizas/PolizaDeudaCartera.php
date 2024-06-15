@@ -51,7 +51,7 @@ class PolizaDeudaCartera extends Model
         'LineaCredito',
         'NoValido',
         'PolizaDeudaDetalle'
-        
+
     ];
 
     public function poliza_deuda()
