@@ -29,7 +29,7 @@ class PolizaDeudaTempCarteraImport implements ToModel, /*WithStartRow,*/ SkipsEm
     private $encabezados = 0;
 
 
-    public function __construct($Axo, $Mes, $PolizaDeuda, $FechaInicio, $FechaFinal,$credito)
+    public function __construct($Axo, $Mes, $PolizaDeuda, $FechaInicio, $FechaFinal, $credito)
     {
         $this->Axo = $Axo;
         $this->Mes = $Mes;
@@ -46,7 +46,7 @@ class PolizaDeudaTempCarteraImport implements ToModel, /*WithStartRow,*/ SkipsEm
 
         if ($this->encabezados == 1 && (trim($row[0]) != "NIT" && trim($row[1]) != "DUI")) {
 
-            return new PolizaDeudaTempCartera([
+            /*  return new PolizaDeudaTempCartera([
                 'Nit' => $row[0],
                 'Dui' => $row[1],
                 'Pasaporte' => $row[2],
@@ -78,7 +78,43 @@ class PolizaDeudaTempCarteraImport implements ToModel, /*WithStartRow,*/ SkipsEm
                 'FechaInicio' =>  $this->FechaInicio,
                 'FechaFinal' =>  $this->FechaFinal,
                 'LineaCredito' => $this->credito,
-            ]);
+            ]);*/
+
+            $poliza = new PolizaDeudaTempCartera();
+            $poliza->Nit = $row[0];
+            $poliza->Dui = $row[1];
+            $poliza->Pasaporte = $row[2];
+            $poliza->Nacionalidad = $row[3];
+            $poliza->FechaNacimiento = $row[4];
+            $poliza->TipoPersona = $row[5];
+            $poliza->PrimerApellido = $row[6];
+            $poliza->SegundoApellido = $row[7];
+            $poliza->ApellidoCasada = $row[8];
+            $poliza->PrimerNombre = $row[9];
+            $poliza->SegundoNombre = $row[10];
+            $poliza->NombreSociedad = $row[11];
+            $poliza->Sexo = $row[12];
+            $poliza->FechaOtorgamiento = $row[13];
+            $poliza->FechaVencimiento = $row[14];
+            $poliza->Ocupacion = $row[15];
+            $poliza->NumeroReferencia = $row[16];
+            $poliza->MontoOtorgado = $row[17];
+            $poliza->SaldoCapital = $row[18];
+            $poliza->Intereses = $row[19];
+            $poliza->InteresesMoratorios = $row[20];
+            $poliza->InteresesCovid = $row[21];
+            $poliza->MontoNominal = $row[22];
+            $poliza->SaldoTotal = $row[23];
+            $poliza->User = auth()->user()->id;
+            $poliza->Axo = $this->Axo;
+            $poliza->Mes = $this->Mes;
+            $poliza->PolizaDeuda = $this->PolizaDeuda;
+            $poliza->FechaInicio = $this->FechaInicio;
+            $poliza->FechaFinal = $this->FechaFinal;
+            $poliza->LineaCredito = $this->credito;
+            $poliza->save();
+
+            return $poliza;
         }
     }
 }

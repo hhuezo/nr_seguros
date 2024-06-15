@@ -34,6 +34,7 @@ class PolizaDeudaCartera extends Model
         'NumeroReferencia',
         'MontoOtorgado',
         'SaldoCapital',
+        'Intereses',
         'InteresesMoratorios',
         'SaldoTotal',
         'User',
@@ -41,6 +42,25 @@ class PolizaDeudaCartera extends Model
         'Mes',
         'PolizaDeuda',
         'FechaInicio',
-        'FechaFinal'
+        'FechaFinal',
+        'TipoError',
+        'FechaNacimientoDate',
+        'Edad',
+        'InteresesCovid',
+        'MontoNominal',
+        'LineaCredito',
+        'NoValido',
+        'PolizaDeudaDetalle'
+
     ];
+
+    public function poliza_deuda()
+    {
+        return $this->belongsTo(Deuda::class, 'PolizaDeuda', 'Id');
+    }
+
+    public function linia_credito()
+    {
+        return $this->belongsTo(DeudaCredito::class, 'LineaCredito', 'Id');
+    }
 }

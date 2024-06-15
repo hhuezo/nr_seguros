@@ -79,7 +79,7 @@
                     <div class="modal-body">
                         <div class="box-body">
                             @csrf
-                            <input type="hidden" name="deudaComment" value="{{$deuda->Id}}" class="form-control">
+                            <input type="hidden" name="DeudaComment" value="{{$deuda->Id}}" class="form-control">
 
                             <div class="form-group">
                                 <div class="col-sm-12">
@@ -108,6 +108,53 @@
                 </form>
 
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade " id="modal_agregar_comentario" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <form method="POST" action="{{ url('polizas/deuda/agregar_comentario') }}">
+                <div class="modal-header">
+                    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                        <h5 class="modal-title" id="exampleModalLabel">Agregar Comentario</h5>
+                    </div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="box-body">
+                        @csrf
+                        <input type="hidden" name="DeudaComment" value="{{$deuda->Id}}" class="form-control">
+
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <label class="control-label">Tipo de Comentario</label>
+                                <select name="TipoComentario" id="TipoComentario" class="form-control">
+                                    <option value="">Sobre Póliza</option>
+                                    @foreach($detalle as $det)
+                                    <option value="{{$det->Id}}">Sobre Cobro de {{ \Carbon\Carbon::parse($det->FechaInicio)->format('d/m/Y') }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <label class="control-label">Comentario</label>
+                                <textarea class="form-control" rows="4" name="Comentario"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Aceptar</button>
+                </div>
+            </form>
+
         </div>
     </div>
 </div>

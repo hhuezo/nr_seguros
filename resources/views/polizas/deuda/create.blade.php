@@ -170,7 +170,7 @@
                                     &nbsp;
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label" align="right">Tasa ‰ </label>
+                                    <label class="control-label" align="right">Tasa ‰ Millar Mensual </label>
                                     <input class="form-control" name="Tasa" type="number" id="Tasa" step="any" value="{{ old('Tasa') }}" required>
                                 </div>
                                 <div class="col-sm-4" align="center">
@@ -187,11 +187,11 @@
                                     &nbsp;
                                 </div>
                                 <div class="col-sm-2">
-                                    <label class="control-label" align="right">% Tasa de Comision </label>
+                                    <label class="control-label" align="right">% Tasa de Comisión </label>
                                     <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any">
                                 </div>
                                 <div class="col-sm-2"><br>
-                                    <label class="control-label" align="right">¿IVA incluido?</label>
+                                    <label class="control-label" align="right">¿IVA incluído?</label>
                                     <input name="ComisionIva" id="ComisionIva" type="checkbox" class="js-switch">
                                 </div>
                                 <div class="col-sm-4">

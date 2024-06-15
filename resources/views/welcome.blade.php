@@ -50,7 +50,7 @@
                     <!-- menu profile quick info -->
                     <div class="profile clearfix">
                         <div class="profile_pic">
-                            <img src="{{ asset('img/usuario.jpg') }}" alt="..." class="img-circle profile_img">
+                            <img src="{{ asset('img/usuario.svg') }}" alt="..." class="img-circle profile_img">
                         </div>
                         <div class="profile_info">
                             <span>Bienvenido,</span>
@@ -66,6 +66,8 @@
                         <div class="menu_section">
                            <h3>NR Seguros</h3>
                             <ul class="nav side-menu">
+
+                              
                                 <li><a href="{{ url('/') }}"><i class="fa fa-bar-chart"></i>Control de Primas General</a></li>
                                 <li><a><i class="fa fa-users"></i> Seguridad <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
@@ -74,6 +76,7 @@
                                         <li><a href="{{ url('rol/') }}">Roles</a></li>
                                     </ul>
                                 </li>
+                               
 
                                 <li><a><i class="fa fa-folder"></i> Catálogos<span
                                             class="fa fa-chevron-down"></span></a>
@@ -113,7 +116,7 @@
                                 <li><a><i class="fa fa-shield"></i> Aseguradoras <span
                                             class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
-                                        <li><a href="{{ url('catalogo/aseguradoras') }}">Aseguradora</a></li>
+                                        <li><a href="{{ url('catalogo/aseguradoras') }}">Aseguradora </a></li>
                                         <!-- <li><a href="{{ url('catalogo/necesidad_aseguradora') }}">Asignar Necesidad de Protección <br>
                                     Aseguradora</a></li> -->
                                     </ul>
@@ -164,7 +167,7 @@
                             <li class="">
                                 <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown"
                                     aria-expanded="false">
-                                    <img src="{{ asset('img/usuario.jpg') }}"
+                                    <img src="{{ asset('img/usuario.svg') }}"
                                         alt="">{{ auth()->user()->name }}
                                     <span class=" fa fa-angle-down"></span>
                                 </a>

@@ -41,7 +41,7 @@
     </div>
     <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
         <table class="table table-striped jambo_table bulk_action" style="font-size: 13px;">
-            <tr>
+            <tr class="ocultar">
                 <td>
                     <!-- Tasa @if ($deuda->Mensual == 1)
                                             Mensual
@@ -54,7 +54,7 @@
                 </td>
                 <td>
                     <div class="col-md-9 col-sm-9 form-group has-feedback">
-                        <input type="text" class="form-control has-feedback-left" value="@if ($ultimo_pago) {{ number_format($deuda->Tasa, 2, '.', ',') }} @else 0 @endif" readonly>
+                        <input type="text" class="form-control has-feedback-left" value="{{ $deuda->Tasa }}" readonly>
                         <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
                     </div>
 
@@ -65,12 +65,13 @@
                     <center><strong>Base Cálculo de la Prima </strong></center>
                 </td>
             </tr>
-            @foreach($creditos as $obj)
+            @foreach($creditos1 as $obj)
             <tr>
                 <td>{{$obj->tipoCarteras->Nombre}} {{$obj->saldos->Abreviatura}}</td>
                 <td>
                     <div class="col-md-9 col-sm-9  form-group has-feedback">
-                        <input type="text" class="form-control has-feedback-left" style="text-align: right;" id="MontoCartera2" value="@if ($ultimo_pago) {{ number_format($ultimo_pago->MontoCartera, 2, '.', ',') }} @else 0 @endif" readonly>
+                        <input type="text" class="form-control has-feedback-left" style="text-align: right;" id="MontoCartera2" 
+                        value="{{ number_format($obj->TotalLiniaCredito, 2, '.', ',') }} " readonly>
                         <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                     </div>
                 </td>
@@ -88,10 +89,10 @@
                 </td>
             </tr>
             <tr>
-                <td>Tasa por millar</td>
+                <td>Tasa mensual por millar</td>
                 <td>
                     <div class="col-md-9 col-sm-9  form-group has-feedback">
-                        <input type="text" class="form-control has-feedback-left" style="text-align: right;" id="TasaMillar2" value="@if ($ultimo_pago) {{ $valorTasa }} @else 0 @endif" readonly>
+                        <input type="text" class="form-control has-feedback-left" style="text-align: right;" id="TasaMillar2" value="{{ $deuda->Tasa }} " readonly>
                         <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                     </div>
                 </td>
@@ -105,6 +106,15 @@
                 <td>
                     <div class="col-md-9 col-sm-9  form-group has-feedback">
                         <input type="text" class="form-control has-feedback-left" style="text-align: right;" id="PrimaCalculada2" value="@if ($ultimo_pago) {{ number_format($ultimo_pago->PrimaCalculada, 2, '.', ',') }} @else 0 @endif" readonly>
+                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>Extra Prima  </td>
+                <td>
+                    <div class="col-md-9 col-sm-9  form-group has-feedback">
+                        <input type="text" class="form-control has-feedback-left" style="text-align: right;" id="ExtraPrima2" value="@if ($ultimo_pago) {{ number_format($ultimo_pago->ExtraPrima, 2, '.', ',') }} @else 0 @endif" readonly>
                         <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                     </div>
                 </td>
@@ -127,17 +137,7 @@
                     </div>
                 </td>
             </tr>
-            <tr>
-                <td>(+)Impuesto Bomberos</td>
-                <td>
-
-                    <div class="col-md-9 col-sm-9  form-group has-feedback">
-                        <input type="text" class="form-control has-feedback-left" style="text-align: right;" value="@if ($ultimo_pago) {{ number_format($ultimo_pago->ImpuestoBomberos, 2, '.', ',') }} @else 0 @endif" readonly>
-                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                    </div>
-
-                </td>
-            </tr>
+       
             <tr>
                 <td>SubTotal</td>
                 <td>

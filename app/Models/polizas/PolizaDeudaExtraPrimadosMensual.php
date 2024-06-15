@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Models\catalogo;
+namespace App\Models\polizas;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PolizaDeudaExtraPrimados extends Model
+class PolizaDeudaExtraPrimadosMensual extends Model
 {
     use HasFactory;
-    protected $table = 'poliza_deuda_extra_primado';
+    protected $table = 'poliza_deuda_extra_primado_mensual';
 
     protected $primaryKey = 'Id';
 

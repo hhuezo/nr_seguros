@@ -20,7 +20,8 @@ class DeudaCredito extends Model
         'TipoCartera',
         'SumaAsegurada',
         'Tasa',
-        'Total'
+        'Total',
+        'Saldos'
     ];  
 
     public function tipoCarteras()
