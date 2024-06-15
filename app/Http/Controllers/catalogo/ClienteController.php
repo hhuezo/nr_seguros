@@ -718,7 +718,13 @@ class ClienteController extends Controller
 
     public function destroy($id)
     {
-        Cliente::findOrFail($id)->update(['Activo' => 0]);
+        $cliente = Cliente::findOrFail($id);
+
+        $cliente->update([
+            'Activo' => 0,
+            'Nit' => $cliente->Nit . '-',
+            'Dui' => $cliente->Dui . '-',
+        ]);
         alert()->info('El registro ha sido desactivado correctamente');
 
         return back();
