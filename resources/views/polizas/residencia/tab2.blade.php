@@ -268,7 +268,7 @@
                                 if (isset($fechas)) {
                                 $dias_mes = Carbon::parse($fechas->FechaInicio)->diffInDays(Carbon::parse($fechas->FechaFinal));
                                 } else {
-                                $dias_mes = 1;
+                                $dias_mes = 31;
                                 }
                                 $decimales = ($monto_cartera * $tasa_millar);
                                 // Calcular los decimales dependiendo si la aseguradora tiene la opción Diario activa
@@ -536,6 +536,7 @@
       function actualizarCalculos(){
                 //alert(document.getElementById('monto_cartera').innerText);
                 let monto = convertirANumero(document.getElementById('monto_cartera').innerText);
+                console.log(monto);
                 let aseguradora = {{$residencia->Aseguradora}};
                 let tasa = {{$residencia->Tasa}};
                 let millar = 0;
@@ -570,7 +571,7 @@
                     //sisa
                     millar = (tasa / 1000) /12;
                 }
-                
+                //dias_mes = 31;
                 decimales = (monto * millar);
                 let prima_descontada = 0;
                 if(diario == 1){
@@ -668,20 +669,20 @@
                 document.getElementById('total_factura').textContent = formatearCantidad(total_factura);
 
                 //llenado de form
-                document.getElementById('MontoCarteraDetalle').value = formatearCantidad(monto);
-                document.getElementById('PrimaCalculadaDetalle').value = formatearCantidad(decimales);
-                document.getElementById('PrimaDescontadaDetalle').value = formatearCantidad(prima_descontada);
-                document.getElementById('IvaDetalle').value = formatearCantidad(iva);
-                document.getElementById('SubTotalDetalle').value = formatearCantidad(sub_total);
-                document.getElementById('ComisionDetalle').value = formatearCantidad(valor_comision);
-                document.getElementById('IvaComisionDetalle').value = formatearCantidad(iva_comision);
-                document.getElementById('RetencionDetalle').value = formatearCantidad(retencion);
-                document.getElementById('ValorCCFDetalle').value = formatearCantidad(comision_ccf);
-                document.getElementById('APagarDetalle').value = formatearCantidad(liquido_pagar);
-                document.getElementById('DescuentoDetalle').value = formatearCantidad(descuento);
-                document.getElementById('GastosEmisionDetalle').value = formatearCantidad(gastos);
-                document.getElementById('OtrosDetalle').value = formatearCantidad(otros);
-                document.getElementById('PrimaTotalDetalle').value = formatearCantidad(prima_descontada);
+                document.getElementById('MontoCarteraDetalle').value = parseFloat(monto);
+                document.getElementById('PrimaCalculadaDetalle').value = parseFloat(decimales);
+                document.getElementById('PrimaDescontadaDetalle').value = parseFloat(prima_descontada);
+                document.getElementById('IvaDetalle').value = parseFloat(iva);
+                document.getElementById('SubTotalDetalle').value = parseFloat(sub_total);
+                document.getElementById('ComisionDetalle').value = parseFloat(valor_comision);
+                document.getElementById('IvaComisionDetalle').value = parseFloat(iva_comision);
+                document.getElementById('RetencionDetalle').value = parseFloat(retencion);
+                document.getElementById('ValorCCFDetalle').value = parseFloat(comision_ccf);
+                document.getElementById('APagarDetalle').value = parseFloat(liquido_pagar);
+                document.getElementById('DescuentoDetalle').value = parseFloat(descuento);
+                document.getElementById('GastosEmisionDetalle').value = parseFloat(gastos);
+                document.getElementById('OtrosDetalle').value = parseFloat(otros);
+                document.getElementById('PrimaTotalDetalle').value = parseFloat(prima_descontada);
             
             }
 

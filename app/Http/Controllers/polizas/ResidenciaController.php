@@ -231,6 +231,7 @@ class ResidenciaController extends Controller
         $ubicaciones_cobro = UbicacionCobro::where('Activo', '=', 1)->get();
         $detalle = DetalleResidencia::where('Residencia', $residencia->Id)->orderBy('Id', 'desc')->get();
         $ultimo_pago = DetalleResidencia::where('Residencia', $residencia->Id)->where('Activo', 1)->orderBy('Id', 'desc')->first();
+        
         $comentarios = Comentario::where('Residencia', '=', $id)->where('Activo', 1)->get();
         $fechas = PolizaResidenciaTempCartera::where('PolizaResidencia',$id)->where('User',auth()->user()->id)->first();
 
@@ -491,6 +492,7 @@ class ResidenciaController extends Controller
     public function agregar_pago(Request $request)
     {
 
+        //dd($request->MontoCartera);
         $residencia = Residencia::findOrFail($request->Residencia);
         $time = Carbon::now('America/El_Salvador');
 
