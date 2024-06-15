@@ -347,24 +347,28 @@
                                                 <td style="text-align: center;">
                                                     @if ($obj->Activo == 0)
                                                     @elseif(!$obj->ImpresionRecibo)
-                                                        <a href="" target="_blank"
+                                                        <a href="" target="_blank" class="btn btn-primary"
                                                             data-target="#modal-recibo-{{ $obj->Id }}"
-                                                            title="Generar Recibo" data-toggle="modal"><i
+                                                            title="Generar Aviso de Cobro" data-toggle="modal"><i
                                                                 class="fa fa-file-text-o" aria-hidden="true"></i></a>
                                                     @else
+                                                    <button class="btn btn-secondary">
                                                         <i class="fa fa-pencil fa-lg"
                                                             onclick="modal_edit({{ $obj->Id }})"
                                                             title="Actualizar Fechas de Cobro"></i>
+                                                    </button>
+                                                        
                                                     @endif
-                                                    &nbsp;&nbsp;
-                                                    <a href="{{ $fileUrl }}" class="fa fa-file-excel-o"
-                                                        align="center" title="Descargar Cartera"></a>&nbsp;&nbsp;
-                                                    <i data-target="#modal-view-{{ $obj->Id }}" data-toggle="modal"
+                                                    
+                                                    <a href="{{ $fileUrl }}" class=" btn btn-success fa fa-file-excel-o"
+                                                        align="center" title="Descargar Cartera Excel"></a>&nbsp;&nbsp;
+                                                        <button class="btn btn-warning"><i data-target="#modal-view-{{ $obj->Id }}" data-toggle="modal"
                                                         class="fa fa-eye" align="center"
-                                                        title="Ver Detalles"></i>&nbsp;&nbsp;
+                                                        title="Ver Detalles"></i></button>
+                                                    &nbsp;&nbsp;
                                                     @if ($obj->Activo == 1)
-                                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}"
-                                                            data-toggle="modal" title="Anular Cartera"><i
+                                                        <a href="" class="btn btn-danger" data-target="#modal-delete-{{ $obj->Id }}"
+                                                            data-toggle="modal" title="Anular Cobro"><i
                                                                 class="fa fa-trash fa-lg"></i></a> &nbsp;&nbsp;
                                                     @endif
 
@@ -725,7 +729,7 @@
                                                     @if ($obj->ImpresionRecibo != null)
                                                         <tr>
                                                             <td>{{ $obj->NumeroRecibo }}</td>
-                                                            <td>{{ $obj->NumeroCorrelativo }}</td>
+                                                            <td>{{$obj->NumeroCorrelativo ? 'AC'.str_pad($obj->NumeroCorrelativo, 6, '0', STR_PAD_LEFT).' '.date('y'):'' }} </td>
                                                             <td>{{ \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}
                                                             </td>
                                                             <td>{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}
