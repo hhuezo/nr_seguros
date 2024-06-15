@@ -146,11 +146,11 @@
                                     <div class="form-group">
                                         <label for="DireccionResidencia" class="form-label">Dirección Correspondencia
                                             *</label>
-                                        <textarea class="form-control" name="DireccionCorrespondencia" required>{{ old('DireccionCorrespondencia') }}</textarea>
+                                        <textarea class="form-control" name="DireccionCorrespondencia" id="DireccionCorrespondencia" required>{{ old('DireccionCorrespondencia') }}</textarea>
                                     </div>
                                     <div class="form-group">
                                         <label for="Referencia" class="form-label">Teléfono Principal *</label>
-                                        <input class="form-control" name="TelefonoCelular"
+                                        <input class="form-control" name="TelefonoCelular" id="TelefonoCelular"
                                             value="{{ old('TelefonoCelular') }}" required
                                             data-inputmask="'mask': ['9999-9999']" data-mask type="text">
                                     </div>
@@ -175,21 +175,21 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="CorreoPrincipal" class="form-label">Correo Principal *</label>
-                                        <input class="form-control" name="CorreoPrincipal"
+                                        <input class="form-control" name="CorreoPrincipal" id="CorreoPrincipal"
                                             value="{{ old('CorreoPrincipal') }}" type="email" required>
                                     </div>
                                     <div class="form-group">
-                                        <label for="CorreoPrincipal" class="form-label">Correo Secundario</label>
+                                        <label for="CorreoSecundario" class="form-label">Correo Secundario</label>
                                         <input class="form-control" name="CorreoSecundario"
-                                            value="{{ old('CorreoPrincipal') }}" type="email">
+                                            value="{{ old('CorreoSecundario') }}" type="email">
                                     </div>
                                     <div class="form-group">
                                         <label for="FechaVinculacion" class="form-label">Fecha Vinculación *</label>
-                                        <input class="form-control" name="FechaVinculacion"
+                                        <input class="form-control" name="FechaVinculacion" id="FechaVinculacion"
                                             value="{{ old('FechaVinculacion') }}" type="date" required>
                                     </div>
                                     <div class="form-group">
-                                        <label for="FechaVinculacion" class="form-label">Fecha Baja Cliente </label>
+                                        <label for="FechaBaja" class="form-label">Fecha Baja Cliente </label>
                                         <input class="form-control" name="FechaBaja" value="{{ old('FechaBaja') }}"
                                             type="date">
                                     </div>
@@ -202,7 +202,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="Genero" class="form-label">Estado Cliente * </label>
-                                        <select name="Estado" class="form-control" required>
+                                        <select name="Estado" id="Estado" class="form-control" required>
                                             @foreach ($cliente_estados as $obj)
                                                 <option value="{{ $obj->Id }}"
                                                     {{ old('Estado') == $obj->Id ? 'selected' : '' }}>{{ $obj->Nombre }}
@@ -252,7 +252,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="Genero" class="form-label">Ubicación de cobro * </label>
-                                            <select name="UbicacionCobro" class="form-control" style="width: 100%"
+                                            <select name="UbicacionCobro" id="UbicacionCobro" class="form-control" style="width: 100%"
                                                 required>
                                                 <option value="" selected disabled>Seleccione ...</option>
                                                 @foreach ($ubicaciones_cobro as $obj)
@@ -521,10 +521,22 @@
         }
 
         function validar_cliente() {
-            var dui = document.getElementById('Dui').value;
-            var nit = document.getElementById('Nit').value;
-            var nombre = document.getElementById('Nombre').value;
             var tipoPersona = document.getElementById('TipoPersona').value;
+            var nit = document.getElementById('Nit').value;
+            var dui = document.getElementById('Dui').value;
+            var nombre = document.getElementById('Nombre').value;
+            var fechaNacimiento = document.getElementById('FechaNacimiento').value;
+            var direccionCorrespondencia = document.getElementById('DireccionCorrespondencia').value;
+            var telefonoCelular = document.getElementById('TelefonoCelular').value;
+            var correoPrincipal = document.getElementById('CorreoPrincipal').value;
+            var fechaVinculacion = document.getElementById('FechaVinculacion').value;
+            var estado = document.getElementById('Estado').value;
+            var genero = document.getElementById('Genero').value;
+            var tipoContribuyente = document.getElementById('TipoContribuyente').value;
+            var ubicacionCobro = document.getElementById('UbicacionCobro').value;
+            var departamento = document.getElementById('Departamento').value;
+            var municipio = document.getElementById('Municipio').value;
+            var distrito = document.getElementById('Distrito').value;
 
 
             // Construir la URL con los parámetros
@@ -533,7 +545,19 @@
                 Dui: dui,
                 Nit: nit,
                 Nombre: nombre,
-                TipoPersona: tipoPersona
+                TipoPersona: tipoPersona,
+                FechaNacimiento: fechaNacimiento,
+                DireccionCorrespondencia: direccionCorrespondencia,
+                TelefonoCelular: telefonoCelular,
+                CorreoPrincipal: correoPrincipal,
+                FechaVinculacion: fechaVinculacion,
+                Estado: estado,
+                Genero: genero,
+                TipoContribuyente: tipoContribuyente,
+                UbicacionCobro: ubicacionCobro,
+                Departamento: departamento,
+                Municipio: municipio,
+                Distrito: distrito
             };
             Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
 
@@ -577,6 +601,12 @@
                 })
                 .catch(error => {
                     console.error('Error en la solicitud:', error);
+                });
+
+                window.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'smooth'
                 });
         }
     </script>
