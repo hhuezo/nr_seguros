@@ -64,19 +64,21 @@
                     <!-- sidebar menu -->
                     <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
                         <div class="menu_section">
-                           <h3>NR Seguros</h3>
+                            <h3>NR Seguros</h3>
                             <ul class="nav side-menu">
 
-                              
-                                <li><a href="{{ url('/') }}"><i class="fa fa-bar-chart"></i>Control de Primas General</a></li>
-                                <li><a><i class="fa fa-users"></i> Seguridad <span class="fa fa-chevron-down"></span></a>
+
+                                <li><a href="{{ url('/') }}"><i class="fa fa-bar-chart"></i>Control de Primas
+                                        General</a></li>
+                                <li><a><i class="fa fa-users"></i> Seguridad <span
+                                            class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li><a href="{{ url('usuario/') }}">Usuario</a></li>
                                         <li><a href="{{ url('permission/') }}">Permisos</a></li>
                                         <li><a href="{{ url('rol/') }}">Roles</a></li>
                                     </ul>
                                 </li>
-                               
+
 
                                 <li><a><i class="fa fa-folder"></i> Catálogos<span
                                             class="fa fa-chevron-down"></span></a>
@@ -86,7 +88,8 @@
                                         <li><a href="{{ url('catalogo/ejecutivos') }}">Ejecutivo</a></li>
                                         <li><a href="{{ url('catalogo/estado_polizas') }}">Estado Póliza</a></li>
                                         <li><a href="{{ url('catalogo/estado_venta') }}">Estado Venta</a></li>
-                                        <li><a href="{{ url('catalogo/tipo_cartera') }}">Tipo de Credito (Deuda)</a></li>
+                                        <li><a href="{{ url('catalogo/tipo_cartera') }}">Tipo de Credito (Deuda)</a>
+                                        </li>
                                         <li><a href="{{ url('catalogo/nr_cartera') }}">Tipo Cartera NR </a></li>
                                         <li><a href="{{ url('catalogo/tipo_negocio') }}">Tipo Negocio</a></li>
                                         <li><a href="{{ url('catalogo/tipo_cobro') }}">Tipo Cobro</a></li>
@@ -94,7 +97,7 @@
                                         <li><a href="{{ url('catalogo/area_comercial') }}">Área Comercial</a></li>
                                         <li><a href="{{ url('catalogo/ubicacion_cobro') }}">Ubicación Cobro</a></li>
                                         <li><a href="{{ url('catalogo/necesidad_proteccion') }}">Ramos</a></li>
-                                        <li><a href="{{ url('catalogo/perfiles')}}">Perfiles</a></li>
+                                        <li><a href="{{ url('catalogo/perfiles') }}">Perfiles</a></li>
                                         <li><a href="{{ url('catalogo/departamento_nr') }}">Departamentos NR</a></li>
                                         <li><a href="{{ url('catalogo/producto') }}">Productos</a></li>
                                         <li><a href="{{ url('catalogo/plan') }}">Planes</a></li>
@@ -102,15 +105,18 @@
 
                                     </ul>
                                 </li>
-                                <li id="botonMenuCliente"><a><i class="fa fa-user"></i> Cliente <span class="fa fa-chevron-down"></span></a>
+                                <li id="botonMenuCliente"><a><i class="fa fa-user"></i> Cliente <span
+                                            class="fa fa-chevron-down"></span></a>
                                     <ul id="menuCliente" class="nav child_menu">
-                                        <li id="opcionCliente"><a href="{{ url('catalogo/cliente') }}">Clientes</a></li>
+                                        <li id="opcionCliente"><a href="{{ url('catalogo/cliente') }}">Clientes</a>
+                                        </li>
                                     </ul>
                                 </li>
 
-                                <li id="botonMenuNegocio"><a><i class="fa fa-solid fa-briefcase"></i> Cotizaciones <span class="fa fa-chevron-down"></span></a>
+                                <li id="botonMenuNegocio"><a><i class="fa fa-solid fa-briefcase"></i> Cotizaciones <span
+                                            class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu" id="menuNegocio">
-                                    <li id="opcionNegocio"><a href="{{ url('catalogo/negocio') }}">Negocio</a></li>
+                                        <li id="opcionNegocio"><a href="{{ url('catalogo/negocio') }}">Negocio</a></li>
                                     </ul>
                                 </li>
                                 <li><a><i class="fa fa-shield"></i> Aseguradoras <span
@@ -124,10 +130,11 @@
 
                                 <li><a><i class="fa fa-folder-open"></i> Pólizas<span
                                             class="fa fa-chevron-down"></span></a>
-                                    <ul class="nav child_menu">
-                                        <li><a href="{{ url('polizas/residencia') }}">Residencias</a></li>
+                                    <ul class="nav child_menu" id="ul-poliza">
+                                        <li id="li-poliza-residencia"><a
+                                                href="{{ url('polizas/residencia') }}">Residencias</a></li>
                                         <!-- <li><a href="{{ url('polizas/vida') }}">Vida</a></li>-->
-                                        <li><a href="{{ url('polizas/deuda') }}">Deuda</a></li>
+                                        <li id="li-poliza-deuda"><a href="{{ url('polizas/deuda') }}">Deuda</a></li>
                                     </ul>
                                 </li>
 
@@ -237,7 +244,6 @@
 </body>
 <script>
     $(function() {
-
         //clase para dar formato a las fechas
         $(".formatoFecha").datepicker({
             dateFormat: 'dd/mm/yy', // Formato de fecha dd-mm-yyyy
@@ -251,6 +257,26 @@
         //Dui
         $('[data-mask]').inputmask()
     });
+
+
+    function displayOption(ul, li) {
+        var _li = document.getElementById(li);
+
+        // Verificar si el elemento <li> existe
+        if (_li) {
+            // Agregar la clase 'current-page' al elemento <li>
+            _li.classList.add('current-page');
+
+            // Obtener el elemento <ul> por su id
+            var _ul = document.getElementById(ul);
+
+            // Verificar si el elemento <ul> existe
+            if (_ul) {
+                // Establecer el display del <ul> a 'block'
+                _ul.style.display = 'block';
+            }
+        }
+    }
 </script>
 
 </html>

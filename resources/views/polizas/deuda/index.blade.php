@@ -46,32 +46,36 @@
                         <td>{{ $obj->ejecutivos->Nombre }}</td>
                         @else
                         <td></td>
-                        @endif   
+                        @endif
                         @isset($obj->EstadoPoliza)
                         <td>{{ $obj->estadoPolizas->Nombre }}</td>
                         @else
                         <td></td>
                         @endif
-                       
+
                         <td align="right">
+                            <div style="display: flex; justify-content: center;">
+                                @if($obj->Configuracion == 1)
+                                <a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}/edit" class="btn btn-primary on-default edit-row" title="Generar Pago">
+                                    <i class="fa fa-file fa-lg"></i></a>&nbsp;
+                                <a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}" class="btn btn-success on-default edit-row" title="Configuracion">
+                                    <i class="fa fa-lock fa-lg"></i></a>
+                                @else
+                                <a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}" class="btn btn-success on-default edit-row" title="Configuracion">
+                                    <i class="fa fa-unlock fa-lg"></i></a>
+                                @endif
+                            </div>
+                            <div style="display: flex; justify-content: center;">
+                                &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal" class="btn btn-danger" title="Eliminar"><i class="fa fa-trash fa-lg"></i></a>
+                                
+                                @can('delete userss')
+                                &nbsp;&nbsp;<a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}/renovar" class="on-default edit-row btn btn-info" title="Renovar"><i class="fa fa-refresh fa-lg"></i></a>
 
-                            @if($obj->Configuracion == 1)
-                            <a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}/edit" class="btn btn-primary on-default edit-row">
-                                <i class="fa fa-file fa-lg"></i></a>&nbsp;
-                                <a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}" class="btn btn-success on-default edit-row">
-                                <i class="fa fa-cog fa-lg"></i></a>
-                            @else
-                            <a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}" class="btn btn-success on-default edit-row">
-                                <i class="fa fa-cog fa-lg"></i></a>
-                            @endif
-                            &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal" class="btn btn-danger"><i class="fa fa-trash fa-lg"></i></a>
-                            @can('delete userss')
-                            &nbsp;&nbsp;<a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}/renovar" class="on-default edit-row btn btn-info"><i class="fa fa-refresh fa-lg"></i></a>
-
-                            &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal" class="btn btn-danger"><i class="fa fa-trash fa-lg"></i></a>
+                                &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal" class="btn btn-danger" title="Eliminar"><i class="fa fa-trash fa-lg"></i></a>
 
 
-                            @endcan
+                                @endcan
+                            </div>
                         </td>
                     </tr>
                     @include('polizas.deuda.modal')

@@ -12,8 +12,10 @@
                 <th style="text-align: center;">Póliza</th>
                 <th style="text-align: center;">Fecha Inicio <br> Vigencia</th>
                 <th style="text-align: center;">Fecha Final <br> Vigencia</th>
+                <th style="text-align: center;">Fecha de Creación</th>
+                <th style="text-align: center;">Nro de Aviso Cobro</th>
                 <th style="text-align: center;">Cuota</th>
-                <th style="text-align: center;">Correlativo</th>
+                <th style="text-align: center;">Nro de Documento</th>
                 <th style="text-align: center;">Fecha de <br> Vencimiento</th>
                 <th style="text-align: center;">Fecha de <br> Aplicación de pago</th>
                 <th style="text-align: center;">Valor (US$)</th>
@@ -28,9 +30,11 @@
             @foreach ($detalle as $obj)
                 <tr>
 
-                    <td style="text-align: center;">{{ $deuda->NumeroPoliza }}</td>
+                    <td style="text-align: center;">{{ $deuda->NumeroPoliza }} </td>
                     <td style="text-align: center;">{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
                     <td style="text-align: center;">{{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
+                    <td style="text-align: center;">{{ \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}</td>
+                    <td style="text-align: center;"> AC {{ str_pad($obj->NumeroRecibo,6,"0",STR_PAD_LEFT)}} {{date('Y')}}</td>
                     <td style="text-align: center;">01/01</td>
                     @if ($obj->NumeroCorrelativo)
                         <td style="text-align: center;">AC {{ str_pad($obj->NumeroCorrelativo, 6, '0', STR_PAD_LEFT) }}
@@ -64,42 +68,7 @@
                     @else
                         <td style="text-align: center;"></td>
                     @endif
-                    {{-- <td style="text-align: center;">
-                        @if ($obj->Activo == 0)
-                        @elseif(!$obj->ImpresionRecibo)
-                            <a href="" target="_blank" data-target="#modal-recibo-{{ $obj->Id }}"
-                                title="Generar Recibo" data-toggle="modal">
-                                <button class="btn btn-primary"><i class="fa fa-file-text-o"
-                                        aria-hidden="true"></i></button></a>
-                        @else
-                            <button class="btn btn-primary" onclick="modal_edit({{ $obj->Id }})"><i
-                                    class="fa fa-pencil fa-lg" title="Actualizar Fechas de Cobro"></i></button>
-                        @endif
-
-
-                        <button class="btn btn-warning" data-target="#modal-view-{{ $obj->Id }}"
-                            data-toggle="modal"><i class="fa fa-eye" align="center"
-                                title="Ver Detalles"></i></button>&nbsp;&nbsp;
-                        @if ($obj->Activo == 1)
-                            <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"
-                                title="Anular Cartera">
-                                <button class="btn btn-danger">
-                                    <i class="fa fa-trash fa-lg"></i></button></a> &nbsp;&nbsp;
-                        @endif
-
-                        &nbsp;&nbsp;
-                        <form action="{{ url('exportar_excel') }}" method="POST" style="display: inline-block;">
-                            @csrf
-                            <input type="hidden" value="{{ $deuda->Id }}" name="Deuda">
-                            <input type="hidden" value="{{ $obj->Id }}" name="DeudaDetalle">
-                            <button class="btn btn-success">
-                                <i class="fa fa-file-excel-o" align="center"
-                                    title="Descargar Cartera"></i></button>&nbsp;&nbsp;
-                        </form>
-
-
-
-                    </td> --}}
+                   
 
                     <td style="text-align: center;">
                         @if ($obj->Activo == 0)
@@ -141,7 +110,7 @@
             @endforeach
         </tbody>
         <tfoot>
-            <td colspan="3" style="text-align: right;"><b>Total de Poliza:</b> </td>
+            <td colspan="5" style="text-align: right;"><b>Total de Poliza:</b> </td>
             <td colspan="5" style="text-align: right;"><b>${{ number_format($total, 2, '.', ',') }}</b> </td>
             <td colspan="2"></td>
         </tfoot>

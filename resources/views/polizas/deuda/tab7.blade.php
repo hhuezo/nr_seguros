@@ -68,6 +68,7 @@
                         {{-- <th>Dui</th> --}}
                         <th>Crédito</th>
                         <th>Nombre</th>
+                        <th>Fecha de Otorgamiento</th>
 
                         {{-- <th>Monto Otorgado</th>
                          <th>Tarifa</th> --}}
@@ -91,6 +92,7 @@
                         </td>
                         <td>{{ $obj->NumeroReferencia }}</td>
                         <td>{{ $obj->Nombre }}</td>
+                        <td>{{ $obj->FechaOtorgamiento }}</td>
                         <td>${{ number_format($obj->saldo_capital, 2, '.', ',') }}</td>
                         <td>${{ number_format($obj->interes, 2, '.', ',') }}</td>
                         <td align="right">${{ number_format($obj->total, 2, '.', ',') }}</td>

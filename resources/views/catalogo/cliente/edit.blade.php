@@ -95,7 +95,7 @@ $annos->y;
 
                                                 <!-- Campos para la columna izquierda -->
                                             <div class="form-group">
-                                                <label for="TipoPersona" class="form-label">Tipo Persona</label>
+                                                <label for="TipoPersona" class="form-label">Tipo Persona *</label>
                                                 <select name="TipoPersona" id="TipoPersona" onchange="validaciones.cboTipoPersona(this.value)" class="form-control">
                                                     <option value="1" {{ $cliente->TipoPersona == 1 ? 'selected' : '' }}>Natural
                                                     </option>
@@ -104,14 +104,14 @@ $annos->y;
                                                 </select>
                                             </div>
                                                 <div class="form-group">
-                                                    <label for="Nombre" class="form-label">NIT</label>
+                                                    <label for="Nombre" class="form-label">NIT * </label>
                                                     <input class="form-control" name="Nit" id="Nit" value="{{ $cliente->Nit }}" @if($cliente->TipoPersona == 1 && ($cliente->Dui == $cliente->Nit)) data-inputmask="'mask': ['99999999-9']" readonly @else data-inputmask="'mask': ['9999-999999-999-9']" @endif data-mask type="text">
                                                 </div>
 
                                                 <div class="form-group">
                                                     <div class="row">
                                                         <div class="col-md-8">
-                                                            <label for="Nombre" class="form-label">DUI</label>
+                                                            <label for="Nombre" class="form-label">DUI *</label>
                                                             <input class="form-control" name="Dui" id="Dui" value="{{ $cliente->Dui}}" data-inputmask="'mask': ['99999999-9']" data-mask type="text">
                                                         </div>
                                                         <div class="col-md-4">
@@ -123,23 +123,23 @@ $annos->y;
                                                     </div>
                                                 </div>
                                                     <div class="form-group">
-                                                        <label for="Nombre" class="form-label">Registro Fiscal</label>
+                                                        <label for="Nombre" class="form-label">Registro Fiscal *</label>
                                                         <input class="form-control" name="RegistroFiscal" id="RegistroFiscal" value="{{ $cliente->RegistroFiscal}}" type="text">
                                                     </div>
                                             <div class="form-group">
-                                                <label for="Nombre" class="form-label">Nombre o Razón Social</label>
+                                                <label for="Nombre" class="form-label">Nombre o Razón Social *</label>
                                                 <input class="form-control" id="Nombre" name="Nombre" value="{{ $cliente->Nombre }}" type="text">
                                             </div>
                                             <div class="form-group">
-                                                <label for="FechaNacimiento" class="form-label">Fecha Nacimiento o Fundación Sociedad</label>
+                                                <label for="FechaNacimiento" class="form-label">Fecha Nacimiento o Fundación Sociedad *</label>
                                                 <input class="form-control" name="FechaNacimiento" id="FechaNacimiento" value="{{ $cliente->FechaNacimiento }}" type="date">
                                             </div>
                                             <div class="form-group">
-                                                <label for="FechaNacimiento" class="form-label">Edad</label>
+                                                <label for="FechaNacimiento" class="form-label">Edad *</label>
                                                 <input class="form-control" id="EdadCalculada" value="<?php echo $annos->y; ?>" type="text" disabled>
                                             </div>
                                             <div class="form-group">
-                                                <label for="Genero" class="form-label">Estado Familiar</label>
+                                                <label for="Genero" class="form-label">Estado Familiar *</label>
                                                 <select class="form-control" name="EstadoFamiliar" id="EstadoFamiliar">
                                                     <option value="" selected disabled>Seleccione ...</option>
                                                     <option value="0" {{ $cliente->EstadoFamiliar == 0 ? 'selected' : '' }}>No Aplica
@@ -160,7 +160,7 @@ $annos->y;
                                                 <input class="form-control" name="NumeroDependientes" id="NumeroDependientes" value="{{ $cliente->NumeroDependientes }}" type="number">
                                             </div>
                                             <div class="form-group">
-                                                <label for="Genero" class="form-label">Ocupación</label>
+                                                <label for="Genero" class="form-label">Ocupación *</label>
                                                 <input class="form-control" id="Ocupacion" name="Ocupacion" value="{{ $cliente->Ocupacion }}" type="text">
                                             </div>
                                             <div class="form-group" style="padding-bottom: 38px;">
@@ -171,11 +171,11 @@ $annos->y;
                                                 <textarea class="form-control" name="DireccionResidencia">{{ $cliente->DireccionResidencia }}</textarea>
                                             </div>
                                             <div class="form-group">
-                                                <label for="DireccionResidencia" class="form-label">Dirección Correspondencia</label>
+                                                <label for="DireccionResidencia" class="form-label">Dirección Correspondencia *</label>
                                                 <textarea class="form-control" name="DireccionCorrespondencia">{{ $cliente->DireccionCorrespondencia }}</textarea>
                                             </div>
                                             <div class="form-group">
-                                                <label for="Referencia" class="form-label">Teléfono Principal Contacto </label>
+                                                <label for="Referencia" class="form-label">Teléfono Principal Contacto *</label>
                                                 <input class="form-control" name="TelefonoCelular" value="{{ $cliente->TelefonoCelular }}" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
                                             </div>
                                             <div class="form-group">
@@ -183,27 +183,27 @@ $annos->y;
                                                 <input class="form-control" name="TelefonoResidencia" value="{{ $cliente->TelefonoResidencia }}" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
                                             </div>
                                             <div class="form-group">
-                                                <label for="Referencia" class="form-label">Teléfono Oficina</label>
+                                                <label for="Referencia" class="form-label">Teléfono Oficina *</label>
                                                 <input class="form-control" name="TelefonoOficina" value="{{ $cliente->TelefonoOficina }}" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
                                             </div>
                                             <div class="form-group">
-                                                <label for="TelefonoCelular2" class="form-label">Teléfono Celular</label>
+                                                <label for="TelefonoCelular2" class="form-label">Teléfono Celular *</label>
                                                 <input class="form-control" name="TelefonoCelular2" value="{{ $cliente->TelefonoCelular2 }}" data-inputmask="'mask': ['9999-9999']" data-mask type="text">
                                             </div>
                                             <div class="form-group">
-                                                <label for="CorreoPrincipal" class="form-label">Correo Principal</label>
+                                                <label for="CorreoPrincipal" class="form-label">Correo Principal *</label>
                                                 <input class="form-control" name="CorreoPrincipal" value="{{ $cliente->CorreoPrincipal }}" type="email">
                                             </div>
                                             <div class="form-group">
-                                                <label for="CorreoPrincipal" class="form-label">Correo Secundario</label>
+                                                <label for="CorreoPrincipal" class="form-label">Correo Secundario *</label>
                                                 <input class="form-control" name="CorreoSecundario" value="{{ $cliente->CorreoSecundario }}" type="email">
                                             </div>
                                             <div class="form-group">
-                                                <label for="FechaVinculacion" class="form-label">Fecha Vinculación</label>
+                                                <label for="FechaVinculacion" class="form-label">Fecha Vinculación *</label>
                                                 <input class="form-control" name="FechaVinculacion" value="{{ $cliente->FechaVinculacion }}" type="date">
                                             </div>
                                             <div class="form-group">
-                                                <label for="FechaVinculacion" class="form-label">Fecha Baja Cliente</label>
+                                                <label for="FechaVinculacion" class="form-label">Fecha Baja Cliente *</label>
                                                 <input class="form-control" name="FechaBaja" value="{{ $cliente->FechaBaja }}" type="date">
                                             </div>
                                             <div class="form-group">
@@ -215,7 +215,7 @@ $annos->y;
                                         <div class="col-md-6">
                                                 <!-- Campos para la columna derecha -->
                                                 <div class="form-group">
-                                                    <label for="Genero" class="form-label">Estado Cliente</label>
+                                                    <label for="Genero" class="form-label">Estado Cliente *</label>
                                                     <select name="Estado" class="form-control" style="width: 100%">
                                                         @foreach ($cliente_estados as $obj)
                                                             <option value="{{ $obj->Id }}" {{ $cliente->Estado == $obj->Id ? 'selected' : '' }}>{{ $obj->Nombre }}
@@ -224,7 +224,7 @@ $annos->y;
                                                     </select>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="Genero" class="form-label">Género</label>
+                                                    <label for="Genero" class="form-label">Género *</label>
                                                     <select name="Genero" id="Genero" class="form-control">
                                                         <option value="" selected disabled>Seleccione ...</option>
                                                         <option value="1" {{ $cliente->Genero == 1 ? 'selected' : '' }}>Masculino
@@ -236,7 +236,7 @@ $annos->y;
                                                     </select>
                                                 </div>
                                             <div class="form-group">
-                                                <label for="Nombre" class="form-label">Tipo Contribuyente</label>
+                                                <label for="Nombre" class="form-label">Tipo Contribuyente *</label>
                                                 <select name="TipoContribuyente" id="TipoContribuyente" class="form-control" onchange="validaciones.cboTipoContribuyente(this.value)" style="width: 100%">
                                                     <option value="" disabled selected>Seleccione ...</option>
                                                     @foreach ($tipos_contribuyente as $obj)
@@ -247,18 +247,18 @@ $annos->y;
                                                 </select>
                                             </div>
                                             <div class="form-group" style="padding-bottom: 90px!important;">
-                                                <label for="Referencia" class="form-label">Vinculado al Grupo o Referencia</label>
+                                                <label for="Referencia" class="form-label">Vinculado al Grupo o Referencia *</label>
                                                 <input class="form-control" name="Referencia" id="Referencia" value="{{ $cliente->Referencia }}" type="text">
                                             </div>
 
                                             <div class="campo-container">
                                                 <div class="titulo">Formas de pago</div>
                                               <div class="form-group">
-                                                  <label for="Genero" class="form-label">Responsable de Pago</label>
+                                                  <label for="Genero" class="form-label">Responsable de Pago *</label>
                                                   <input class="form-control" id="ResponsablePago" name="ResponsablePago" value="{{ $cliente->ResponsablePago }}" type="text">
                                               </div>
                                               <div class="form-group">
-                                                  <label for="Genero" class="form-label">Ubicación de cobro</label>
+                                                  <label for="Genero" class="form-label">Ubicación de cobro *</label>
                                                   <select name="UbicacionCobro" class="form-control" style="width: 100%">
                                                       <option value="" selected disabled>Seleccione ...</option>
                                                       @foreach ($ubicaciones_cobro as $obj)
@@ -273,7 +273,7 @@ $annos->y;
                                                         Ruta
                                                     </div>
                                                     <div class="form-group">
-                                                        <label for="DireccionResidencia" class="form-label">Departamento</label>
+                                                        <label for="DireccionResidencia" class="form-label">Departamento *</label>
                                                         <select id="Departamento" class="form-control" style="width: 100%">
                                                             @foreach ($departamentos as $obj)
                                                                 <option value="{{ $obj->Id }}" {{ $departamento_actual == $obj->Id ? 'selected' : '' }}>
@@ -283,7 +283,7 @@ $annos->y;
                                                         </select>
                                                     </div>
                                                     <div class="form-group">
-                                                        <label for="DireccionResidencia" class="form-label">Municipio</label>
+                                                        <label for="DireccionResidencia" class="form-label">Municipio *</label>
                                                         <select name="Municipio" id="Municipio" class="form-control select2" style="width: 100%">
                                                             @foreach ($municipios as $obj)
                                                                 <option value="{{ $obj->Id }}" {{ $municipio_actual == $obj->Id ? 'selected' : '' }}>
@@ -293,7 +293,7 @@ $annos->y;
                                                         </select>
                                                     </div>
                                                     <div class="form-group">
-                                                        <label for="DireccionResidencia" class="form-label">Distrito</label>
+                                                        <label for="DireccionResidencia" class="form-label">Distrito *</label>
                                                         <select id="Distrito" name="Distrito" required class="form-control select2" style="width: 100%">
                                                             @foreach ($distritos as $obj)
                                                                 <option value="{{ $obj->Id }}" {{ $cliente->Distrito == $obj->Id ? 'selected' : '' }}>{{ $obj->Nombre }}
@@ -303,11 +303,11 @@ $annos->y;
                                                     </div>
                                                 </div>
                                                 <div class="form-group" style="padding-top: 10px!important;">
-                                                    <label for="BancoPrefencia" class="form-label">Banco de su Preferencia</label>
+                                                    <label for="BancoPrefencia" class="form-label">Banco de su Preferencia *</label>
                                                     <input class="form-control" name="BancoPrefencia" value="{{ $cliente->BancoPrefencia }}"  type="text">
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="CuentasDevolucionPrimas" class="form-label">Cuentas para devolución de Primas</label>
+                                                    <label for="CuentasDevolucionPrimas" class="form-label">Cuentas para devolución de Primas *</label>
                                                     <input class="form-control" name="CuentasDevolucionPrimas" value="{{ $cliente->CuentasDevolucionPrimas }}"  type="text">
                                                 </div>
 
@@ -324,14 +324,17 @@ $annos->y;
 
                                             </div>
                                         </div>
+
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="Comentarios" class="form-label">* Campo requerido</label>
+                                                
+
+                                            </div>
+                                        </div>
                                     </div>
 
                                 </div>
-
-
-
-
-
 
                             </div>
 
@@ -353,30 +356,30 @@ $annos->y;
                                 <input type="hidden" name="Id" value="{{ $cliente->Id }}">
                                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                     <div class="form-group row">
-                                        <label class="control-label ">Contacto Facebook</label>
+                                        <label class="control-label ">Contacto Facebook *</label>
                                         <input class="form-control" value="{{ $cliente->Facebook }}" name="Facebook">
                                     </div>
                                     <div class="form-group row">
-                                        <label class="control-label ">Actividades Creativas</label>
+                                        <label class="control-label ">Actividades Creativas *</label>
 
                                         <input class="form-control" value="{{ $cliente->ActividadesCreativas }}" name="ActividadesCreativas" type="text">
 
                                     </div>
                                     <div class="form-group row">
-                                        <label class="control-label ">Estilo Vida</label>
+                                        <label class="control-label ">Estilo Vida *</label>
 
                                         <input class="form-control" value="{{ $cliente->EstiloVida }}" name="EstiloVida" type="text">
 
                                     </div>
                                     <div class="form-group row">
-                                        <label class="control-label ">Sitio Web</label>
+                                        <label class="control-label ">Sitio Web *</label>
 
                                         <input class="form-control" name="SitioWeb" value="{{ $cliente->SitioWeb }}" type="text">
 
                                     </div>
 
                                     <div class="form-group row">
-                                        <label class="control-label ">Necesidad Protección</label>
+                                        <label class="control-label ">Necesidad Protección *</label>
 
                                         <select name="NecesidadProteccion" class="form-control" style="width: 100%">
                                             @foreach ($necesidades as $obj)
@@ -391,31 +394,31 @@ $annos->y;
                                         <br>
 
                                         <div class="col-md-4">
-                                            <label class="control-label ">Smartphones</label>
+                                            <label class="control-label ">Smartphones *</label>
 
                                             <input class="form-control" name="Smartphone" value="@if($cliente->Smartphone <> 0){{$cliente->Smartphone}}@endif" type="number" required maxlength="1" min="0" Max="6">
 
-                                            <label class="control-label ">Laptop</label>
+                                            <label class="control-label ">Laptop *</label>
 
                                             <input class="form-control" name="Laptop" value="@if($cliente->Laptop <> 0){{$cliente->Laptop}}@endif" type="number" required maxlength="1" min="0" Max="6">
 
                                         </div>
                                         <div class="col-md-4">
-                                            <label class="control-label ">PC</label>
+                                            <label class="control-label ">PC *</label>
 
                                             <input class="form-control" name="PC" value="@if($cliente->PC <> 0){{$cliente->PC}}@endif" type="number" required maxlength="1" min="0" Max="6">
 
-                                            <label class="control-label ">Tablet</label>
+                                            <label class="control-label ">Tablet *</label>
 
                                             <input class="form-control" name="Tablet" value="@if($cliente->Tablet <> 0){{$cliente->Tablet}}@endif" type="number" required maxlength="1" min="0" Max="6">
 
                                         </div>
                                         <div class="col-md-4">
-                                            <label class="control-label ">SmartWatch</label>
+                                            <label class="control-label ">SmartWatch *</label>
 
                                             <input class="form-control" name="SmartWatch" value="@if($cliente->SmartWatch <> 0){{$cliente->SmartWatch}}@endif" type="number" required maxlength="1" min="0" Max="6">
 
-                                            <label class="control-label ">Otros Dispositivos</label>
+                                            <label class="control-label ">Otros Dispositivos *</label>
 
                                             <input class="form-control" name="DispositivosOtros" value="@if($cliente->DispositivosOtros <> 0){{$cliente->DispositivosOtros}}@endif" required type="number" maxlength="1" min="0" Max="6">
 
@@ -423,7 +426,7 @@ $annos->y;
 
                                     </div>
                                     <div class="form-group row">
-                                        <label class="control-label ">Le Gusta Informarse</label>
+                                        <label class="control-label ">Le Gusta Informarse *</label>
 
                                         <select name="Informarse" class="form-control" style="width: 100%">
                                             @foreach ($informarse as $obj)
@@ -438,17 +441,17 @@ $annos->y;
                                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
 
                                     <div class="form-group row">
-                                        <label class="control-label ">Contacto Instagram</label>
+                                        <label class="control-label ">Contacto Instagram * </label>
 
                                         <input class="form-control" value="{{ $cliente->Instagram }}" name="Instagram">
                                     </div>
                                     <div class="form-group row">
-                                        <label class="control-label ">¿Tiene mascota?</label> &nbsp;
+                                        <label class="control-label ">¿Tiene mascota? *</label> &nbsp;
                                         <input type="checkbox" name="TieneMascota" value="1" class="js-switch" {{ $cliente->TieneMascota == 1 ? 'checked' : '' }} />
                                     </div>
 
                                     <div class="form-group row">
-                                        <label class="control-label ">Compañia de su Preferencia</label>
+                                        <label class="control-label ">Compañia de su Preferencia *</label>
 
                                         <select name="AseguradoraPreferencia" class="form-control" style="width: 100%">
 
@@ -463,7 +466,7 @@ $annos->y;
                                     </div>
 
                                     <div class="form-group row">
-                                        <label class="control-label ">Motivo de Elección</label>
+                                        <label class="control-label ">Motivo de Elección *</label>
 
                                         <select name="MotivoEleccion" id="MotivoEleccion" class="form-control col-md-4" style="width: 100%">
                                             @foreach ($motivo_eleccion as $obj)
@@ -478,7 +481,7 @@ $annos->y;
 
 
                                     <div class="form-group row">
-                                        <label class="control-label ">Preferencia de Compra</label>
+                                        <label class="control-label ">Preferencia de Compra *</label>
 
                                         <select name="PreferenciaCompra" id="PreferenciaCompra" class="form-control col-md-4" style="width: 100%">
                                             @foreach ($preferencia_compra as $obj)
@@ -492,7 +495,7 @@ $annos->y;
 
                                     </div>
                                     <div class="form-group row">
-                                        <label class="control-label ">Compra Habitualmente</label>
+                                        <label class="control-label ">Compra Habitualmente *</label>
                                         <div class="">
                                             <label>
                                                 <input type="checkbox" name="Efectivo" value="1" class="js-switch" {{ $cliente->Efectivo == 1 ? 'checked' : '' }} /> Efectivo
@@ -849,7 +852,7 @@ $annos->y;
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    Método Pago
+                                    Método Pago *
                                     <select name="MetodoPago" class="form-control" id="MetodoPago">
                                         @foreach ($metodos_pago as $obj)
                                             <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
@@ -859,7 +862,7 @@ $annos->y;
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    Número Tarjeta
+                                    Número Tarjeta *
                                     <input type="text" name="NumeroTarjeta" id="tarjeta" class="form-control"
                                            data-inputmask="'mask': ['9999-9999-9999-9999']" disabled data-mask>
                                 </div>
@@ -868,7 +871,7 @@ $annos->y;
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    Fecha Vencimiento
+                                    Fecha Vencimiento *
                                     <input type="text" id="vencimiento" class="form-control"
                                            data-inputmask="'mask': ['99/99']" data-mask disabled
                                            name="FechaVencimiento">
@@ -876,11 +879,12 @@ $annos->y;
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    Póliza Vinculada
+                                    Póliza Vinculada *
                                     <input type="text" name="PolizaVinculada" class="form-control" required>
                                 </div>
                             </div>
                         </div>
+                        <div class="row">* Campo requerido</div>
                     </div>
                     <div class="clearfix"></div>
                     <div class="modal-footer">
@@ -934,7 +938,7 @@ $annos->y;
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    Metodo pago
+                                    Método pago *
                                     <select name="MetodoPago" id="ModalMetodoPago" class="form-control" disabled>
                                         @foreach ($metodos_pago as $obj)
                                             <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
@@ -944,7 +948,7 @@ $annos->y;
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    NumeroTarjeta
+                                    Número Tarjeta *
                                     <input type="text" name="NumeroTarjeta" id="ModalNumeroTarjeta" class="form-control"
                                            >
                                 </div>
@@ -954,7 +958,7 @@ $annos->y;
                             <div class="col-sm-6">
                                 <div class="form-group">
 
-                                    Fecha vencimiento
+                                    Fecha vencimiento *
                                     <input type="text" name="FechaVencimiento" id="ModalFechaVencimiento"
                                            class="form-control" >
                                 </div>
@@ -962,12 +966,13 @@ $annos->y;
                             <div class="col-sm-6">
                                 <div class="form-group">
 
-                                    Poliza vinculada
+                                    Póliza vinculada *
                                     <input type="text" name="PolizaVinculada" id="ModalPolizaVinculada"
                                            class="form-control" required>
                                 </div>
                             </div>
                         </div>
+                        <div class="row">* Campo requerido</div>
                     </div>
                     <div class="clearfix"></div>
                     <div class="modal-footer">
@@ -994,11 +999,11 @@ $annos->y;
                         <div class="row" style="padding-bottom: 15px;">
                             <div class="col-md-6">
                                 <input type="hidden" name="Cliente" value="{{ $cliente->Id }}" class="form-control">
-                                <label for="Nombre" class="form-label">Nombre </label>
+                                <label for="Nombre" class="form-label">Nombre *</label>
                                 <input type="text" name="Nombre" class="form-control" required>
                             </div>
                             <div class="col-md-4">
-                                <label for="Cargo" class="form-label">Cargo </label>
+                                <label for="Cargo" class="form-label">Cargo *</label>
                                 <select name="Cargo" id="Cargo" class="form-control" required>
                                     @foreach ($cliente_contacto_cargos as $cargo)
                                         <option value="{{ $cargo->Id }}">{{ $cargo->Nombre }}</option>
@@ -1013,68 +1018,20 @@ $annos->y;
                         </div>
                         <div class="row" style="padding-bottom: 15px;">
                             <div class="col-md-4">
-                                <label for="Telefono" class="form-label">Teléfono </label>
+                                <label for="Telefono" class="form-label">Teléfono * </label>
                                 <input type="text" name="Telefono" data-inputmask="'mask': ['9999-9999']" data-mask class="form-control" required>
                             </div>
                             <div class="col-md-4">
-                                <label for="Email" class="form-label">Email </label>
+                                <label for="Email" class="form-label">Email *</label>
                                 <input type="email" class="form-control" required name="Email">
                             </div>
                             <div class="col-md-4">
-                                <label for="LugarTrabajo" class="form-label">Lugar de Trabajo </label>
+                                <label for="LugarTrabajo" class="form-label">Lugar de Trabajo *</label>
                                 <input type="text" class="form-control" required name="LugarTrabajo">
                             </div>
 
                         </div>
-
-{{--                        <input type="hidden" name="Cliente" value="{{ $cliente->Id }}" class="form-control">--}}
-{{--                        <div class="form-group">--}}
-{{--                            <div class="col-sm-6">--}}
-{{--                                Nombre--}}
-{{--                                <input type="text" name="Nombre" class="form-control" required>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-
-{{--                        <div class="form-group">--}}
-{{--                            <div class="col-sm-4">--}}
-{{--                                Cargo--}}
-{{--                                <select name="Cargo" id="Cargo" class="form-control" required>--}}
-{{--                                    @foreach ($cliente_contacto_cargos as $cargo)--}}
-{{--                                    <option value="{{ $cargo->Id }}">{{ $cargo->Nombre }}</option>--}}
-{{--                                    @endforeach--}}
-
-{{--                                </select>--}}
-
-{{--                            </div>--}}
-{{--                            <div class="col-sm-2">--}}
-{{--                                Nuevo Cargo--}}
-{{--                                <span class="fa fa-plus" onclick="addCargo();"></span>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-
-
-
-{{--                        <div class="form-group">--}}
-{{--                            <div class="col-sm-6">--}}
-{{--                                Teléfono--}}
-{{--                                <input type="text" name="Telefono" data-inputmask="'mask': ['9999-9999']" data-mask class="form-control" required>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                        <div class="form-group">--}}
-{{--                            <div class="col-sm-6">--}}
-{{--                                Email--}}
-{{--                                <input type="email" class="form-control" required name="Email">--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-
-{{--                        <div class="form-group">--}}
-{{--                            <div class="col-sm-6">--}}
-{{--                                Lugar Trabajo--}}
-{{--                                <input type="text" class="form-control" required name="LugarTrabajo">--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-
-
+                        <div class="row"> * Campo requerido </div>
 
                     </div>
                     <div>&nbsp; </div>
@@ -1105,14 +1062,14 @@ $annos->y;
                         <input type="hidden" name="Cliente" value="{{ $cliente->Id }}" class="form-control">
                         <div class="form-group">
                             <div class="col-sm-6">
-                                Nombre
+                                Nombre *
                                 <input type="text" name="Nombre" id="ModalContactoNombre" class="form-control" required>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <div class="col-sm-6">
-                                Cargo
+                                Cargo *
                                 <select name="Cargo" id="ModalContactoCargo" class="form-control" required>
                                     @foreach ($cliente_contacto_cargos as $cargo)
                                     <option value="{{ $cargo->Id }}">{{ $cargo->Nombre }}</option>
@@ -1124,23 +1081,24 @@ $annos->y;
 
                         <div class="form-group">
                             <div class="col-sm-6">
-                                Teléfono
+                                Teléfono *
                                 <input type="text" name="Telefono" id="ModalContactoTelefono" data-inputmask="'mask': ['9999-9999']" data-mask class="form-control" required>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="col-sm-6">
-                                Email
+                                Email *
                                 <input type="email" required name="Email" id="ModalContactoEmail" class="form-control">
                             </div>
                         </div>
 
                         <div class="form-group">
                             <div class="col-sm-6">
-                                Lugar Trabajo
+                                Lugar Trabajo * 
                                 <input type="text" name="LugarTrabajo" id="ModalContactoLugarTrabajo" class="form-control" required>
                             </div>
                         </div>
+                        <div class="form-group"> * Campo requerido</div>
 
 
 
@@ -1201,13 +1159,13 @@ $annos->y;
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    Actividad Económica
+                                    Actividad Económica *
                                     <input type="text" name="ActividadEconomica" class="form-control" required>
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    Ingreso Promedio
+                                    Ingreso Promedio *
                                     <input type="number" step="0.001" min="0" class="form-control" required
                                            name="IngresoPromedio">
                                 </div>
@@ -1216,18 +1174,19 @@ $annos->y;
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    Porción de ingresos que gasta en seguros mensual
+                                    Porción de ingresos que gasta en seguros mensual *
                                     <input type="number" step="0.001" min="0" name="GastoMensualSeguro"
                                            class="form-control" required>
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    Nivel Educativo
+                                    Nivel Educativo *
                                     <input type="text" name="NivelEducativo" class="form-control" required>
                                 </div>
                             </div>
                         </div>
+                        <div class="row"> * Campo requerido</div>
                     </div>
 
                     <div class="clearfix"></div>
@@ -1283,14 +1242,14 @@ $annos->y;
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    Actividad Económica
+                                    Actividad Económica * 
                                     <input type="text" name="ActividadEconomica" id="ModalHabitoActividadEconomica"
                                            class="form-control" required>
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    Ingreso Promedio
+                                    Ingreso Promedio *
                                     <input type="number" name="IngresoPromedio" id="ModalHabitoIngresoPromedio"
                                            step="0.001" min="0" class="form-control" required>
                                 </div>
@@ -1299,19 +1258,20 @@ $annos->y;
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    Porción de ingresos que gasta en seguros mensual
+                                    Porción de ingresos que gasta en seguros mensual *
                                     <input type="number" step="0.001" min="0" name="GastoMensualSeguro"
                                            id="ModalHabitoGastoMensualSeguro" class="form-control" required>
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    Nivel Educativo
+                                    Nivel Educativo *
                                     <input type="text" name="NivelEducativo" id="ModalHabitoNivelEducativo"
                                            class="form-control" required>
                                 </div>
                             </div>
                         </div>
+                        <div class="row"> * Campo requerido</div>
                     </div>
                     <div class="clearfix"></div>
                     <div class="modal-footer">
@@ -1340,13 +1300,13 @@ $annos->y;
                         <div class="row">
                             <div class="col-sm-6">
                             <div class="form-group">
-                                    Producto de NR
+                                    Producto de NR *
                                     <input type="text" name="Producto" required class="form-control">
                                 </div>
                             </div>
                             <div class="col-sm-6">
                             <div class="form-group">
-                                    Servicio al ciente <br>
+                                    Servicio al ciente  * <br>
                                     <div id="stars">
                                         <i class="fa fa-star-o fa-2x" style="padding-right: 5px;" onclick="check_stars(1)"></i>
                                         <i class="fa fa-star-o fa-2x" style="padding-right: 5px;" onclick="check_stars(2)"></i>
@@ -1360,13 +1320,13 @@ $annos->y;
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    Valores agregados
+                                    Valores agregados *
                                     <input type="text" name="ValoresAgregados" class="form-control" required>
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    Competidores
+                                    Competidores *
                                     <input type="text" name="Competidores" class="form-control" required>
                                 </div>
                             </div>
@@ -1375,7 +1335,7 @@ $annos->y;
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="form-group">
-                                    ¿Que quisiera de NR?
+                                    ¿Que quisiera de NR? *
                                     <input type="text" name="QueQuisiera" class="form-control" required>
                                 </div>
                             </div>
@@ -1383,11 +1343,12 @@ $annos->y;
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="form-group">
-                                    Referidos
+                                    Referidos *
                                     <input type="text" name="Referidos" class="form-control" required>
                                 </div>
                             </div>
                         </div>
+                        <div class="row"> * Campor requerido</div>
                     </div>
                     <div class="clearfix"></div>
                     <div class="modal-footer">
@@ -1418,13 +1379,13 @@ $annos->y;
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    Producto de NR
+                                    Producto de NR *
                                     <input type="text" name="Producto" id="ModalRetroProducto" required class="form-control">
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    Servicio al ciente <br>
+                                    Servicio al ciente  *<br>
                                     <div id="modal_stars">
                                         <i class="fa fa-star-o fa-2x" onclick="modal_check_stars(1)"></i>
                                         <i class="fa fa-star-o fa-2x" onclick="modal_check_stars(2)"></i>
@@ -1438,13 +1399,13 @@ $annos->y;
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    Valores agregados
+                                    Valores agregados *
                                     <input type="text" name="ValoresAgregados" id="ModalRetroValoresAgregados" class="form-control" required>
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    Competidores
+                                    Competidores *
                                     <input type="text" name="Competidores" id="ModalRetroCompetidores" class="form-control" required>
                                 </div>
                             </div>
@@ -1452,7 +1413,7 @@ $annos->y;
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="form-group">
-                                    ¿Que quisiera de NR?
+                                    ¿Que quisiera de NR? *
                                     <input type="text" name="QueQuisiera" id="ModalRetroQueQuisiera" class="form-control" required>
                                 </div>
                             </div>
@@ -1460,11 +1421,12 @@ $annos->y;
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="form-group">
-                                    Referidos
+                                    Referidos *
                                     <input type="text" name="Referidos" id="ModalRetroReferidos" class="form-control" required>
                                 </div>
                             </div>
                         </div>
+                        <div class="row"> * Campo requerido </div>
                     </div>
                     <div class="clearfix"></div>
                     <div class="modal-footer">
@@ -1883,6 +1845,9 @@ $annos->y;
             if (tipoPersona.val()==='2') {
                 dui.prop('readonly', true);
                 dui.val('');
+                dependientes.prop('readonly',true);
+                residencia.prop('readonly',true);
+                telefono.prop('readonly',true);
                 switchery.disable();
                 if (homologado.prop('checked')) {
                     switchery.setPosition(true);// Cambia a estado seleccionado
@@ -1898,6 +1863,9 @@ $annos->y;
                 /*genero.prop('readonly', true);
                 estadoFamiliar.prop('readonly', true);*/
             } else {
+                dependientes.prop('readonly',false);
+                residencia.prop('readonly',false);
+                telefono.prop('readonly',false);
                 dui.prop('readonly', false);
                 switchery.enable(); // Cambia a estado seleccionado
                 genero.find('option:selected').prop('selected', false);

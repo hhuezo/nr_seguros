@@ -24,6 +24,7 @@ use App\Http\Controllers\catalogo\PlanController;
 use App\Http\Controllers\catalogo\ProductoController;
 use App\Http\Controllers\catalogo\RutaController;
 use App\Http\Controllers\catalogo\TipoCobroController;
+use App\Http\Controllers\polizas\DesempleoController;
 use App\Http\Controllers\polizas\DeudaCarteraController;
 use App\Http\Controllers\polizas\DeudaController;
 use App\Http\Controllers\polizas\VidaController;
@@ -127,10 +128,11 @@ Route::post('catalogo/negocio/delete_gestion', [NegocioController::class, 'delet
 
 
 Route::resource('catalogo/negocio', NegocioController::class);
-Route::get('get_producto/{id}',[PlanController::class , 'get_producto']);
-Route::get('get_plan/{id}',[PlanController::class , 'get_plan']);
+Route::get('get_producto/{id}', [PlanController::class, 'get_producto']);
+Route::get('get_plan/{id}', [PlanController::class, 'get_plan']);
 
 
+Route::get('catalogo/cliente/validar_cliente', [ClienteController::class, 'validar']);
 Route::post('catalogo/cliente/add_contacto', [ClienteController::class, 'add_contacto']);
 Route::post('catalogo/cliente/delete_contacto', [ClienteController::class, 'delete_contacto']);
 Route::post('catalogo/cliente/edit_contacto', [ClienteController::class, 'edit_contacto']);
@@ -154,8 +156,8 @@ Route::post('catalogo/aseguradora/documento_eliminar/{id}', [AseguradoraControll
 Route::get('catalogo/cliente/addPreferencia', [ClienteController::class, 'addPreferencia']);
 Route::get('catalogo/cliente_create', [ClienteController::class, 'cliente_create']);
 Route::resource('catalogo/ruta', RutaController::class);
-Route::resource('catalogo/perfiles',PerfilController::class);
-Route::post('finalizar_configuracion',[DeudaController::class, 'finalizar_configuracion']);    
+Route::resource('catalogo/perfiles', PerfilController::class);
+Route::post('finalizar_configuracion', [DeudaController::class, 'finalizar_configuracion']);
 
 Route::resource('catalogo/tipo_cobro', TipoCobroController::class);
 Route::resource('catalogo/area_comercial', AreaComercialController::class);
@@ -166,7 +168,7 @@ Route::get('get_distrito/{id}', [ClienteController::class, 'get_distrito']);
 Route::get('catalogo/cliente/getMetodoPago', [ClienteController::class, 'getMetodoPago']);
 Route::get('catalogo/cliente/verificarCredenciales', [ClienteController::class, 'verificarCredenciales']);
 
-Route::resource('catalogo/cliente', ClienteController::class);//el resource va siempre de ultimo o ocurre problema con metodo controller::show()
+Route::resource('catalogo/cliente', ClienteController::class); //el resource va siempre de ultimo o ocurre problema con metodo controller::show()
 
 
 
@@ -186,8 +188,8 @@ Route::get('polizas/residencia/{id}/renovar', [ResidenciaController::class, 'ren
 Route::get('polizas/residencia/{id}/cancelacion', [ResidenciaController::class, 'cancelacion']);
 Route::post('polizas/residencia/renovar/{id}', [ResidenciaController::class, 'renovarPoliza'])->name('residencia.renovarPoliza');
 Route::post('polizas/residencia/delete_pago/{id}', [ResidenciaController::class, 'delete_pago']);
-Route::post('polizas/residencia/agregar_comentario',[ResidenciaController::class,'agregar_comentario']);
-Route::post('polizas/residencia/eliminar_comentario',[ResidenciaController::class,'eliminar_comentario']);
+Route::post('polizas/residencia/agregar_comentario', [ResidenciaController::class, 'agregar_comentario']);
+Route::post('polizas/residencia/eliminar_comentario', [ResidenciaController::class, 'eliminar_comentario']);
 
 
 Route::resource('polizas/vida', VidaController::class);
@@ -209,11 +211,11 @@ Route::get('polizas/deuda/get_referencia_creditos/{id}', [DeudaController::class
 Route::get('polizas/deuda/get_creditos/{id}', [DeudaController::class, 'get_creditos']);
 Route::post('polizas/deuda/agregar_valido', [DeudaController::class, 'agregar_valido']);
 Route::post('polizas/deuda/create_pago', [DeudaCarteraController::class, 'create_pago']);
-Route::post('polizas/deuda/validar_poliza',[DeudaCarteraController::class,'validar_poliza']);
-Route::get('polizas/deuda/subir_cartera/{id}',[DeudaCarteraController::class, 'subir_cartera']);
-Route::post('deuda/cancelar_pago',[DeudaController::class,'cancelar_pago']);
-Route::post('deuda/validar_poliza',[DeudaCarteraController::class,'validar_poliza']);
-Route::post('polizas/deuda/eliminar_extraprima',[DeudaController::class,'eliminar_extraprima']);
+Route::post('polizas/deuda/validar_poliza', [DeudaCarteraController::class, 'validar_poliza']);
+Route::get('polizas/deuda/subir_cartera/{id}', [DeudaCarteraController::class, 'subir_cartera']);
+Route::post('deuda/cancelar_pago', [DeudaController::class, 'cancelar_pago']);
+Route::post('deuda/validar_poliza', [DeudaCarteraController::class, 'validar_poliza']);
+Route::post('polizas/deuda/eliminar_extraprima', [DeudaController::class, 'eliminar_extraprima']);
 Route::get('polizas/deuda/get_extraprimado/{poliza}/{dui}', [DeudaController::class, 'get_extraprimado']);
 Route::post('polizas/deuda/store_extraprimado', [DeudaController::class, 'store_extraprimado']);
 Route::post('polizas/deuda/update_extraprimado', [DeudaController::class, 'update_extraprimado']);
@@ -221,25 +223,31 @@ Route::post('polizas/deuda/store_poliza', [DeudaCarteraController::class, 'store
 Route::post('polizas/deuda/store_requisitos', [DeudaController::class, 'store_requisitos']);
 Route::get('polizas/deuda/get_requisitos', [DeudaController::class, 'get_requisitos']);
 Route::resource('polizas/deuda', DeudaController::class);
-Route::get('exportar/poliza_cumulo',[DeudaController::class,'exportar']);
-Route::post('regresar_edit',[DeudaController::class, 'regresar_edit']);
-Route::post('exportar_excel',[DeudaController::class,'exportar_excel']);
+Route::get('exportar/poliza_cumulo', [DeudaController::class, 'exportar']);
+Route::post('regresar_edit', [DeudaController::class, 'regresar_edit']);
+Route::post('exportar_excel', [DeudaController::class, 'exportar_excel']);
 
 Route::post('polizas/deuda/agregar_pago', [DeudaController::class, 'agregar_pago']);
 Route::get('polizas/deuda/get_pago/{id}', [DeudaController::class, 'get_pago']);
 Route::post('polizas/deuda/edit_pago', [DeudaController::class, 'edit_pago']);
 Route::post('polizas/deuda/delete_pago/{id}', [DeudaController::class, 'delete_pago']);
-Route::post('polizas/deuda/actualizar',[DeudaController::class ,'actualizar']);     
-Route::post('agregar_credito',[DeudaController::class, 'agregar_credito']);
-Route::post('eliminar_credito/{id}',[DeudaController::class,'eliminar_credito']);
-Route::post('datos_asegurabilidad',[DeudaController::class,'datos_asegurabilidad']);
-Route::post('eliminar/requisito',[DeudaController::class,'eliminar_requisito']);
+Route::post('polizas/deuda/actualizar', [DeudaController::class, 'actualizar']);
+Route::post('agregar_credito', [DeudaController::class, 'agregar_credito']);
+Route::post('eliminar_credito/{id}', [DeudaController::class, 'eliminar_credito']);
+Route::post('datos_asegurabilidad', [DeudaController::class, 'datos_asegurabilidad']);
+Route::post('eliminar/requisito', [DeudaController::class, 'eliminar_requisito']);
 
 Route::post('poliza/deuda/recibo/{id}', [DeudaController::class, 'recibo_pago']);
 Route::get('poliza/deuda/get_recibo/{id}', [DeudaController::class, 'get_recibo']);
-Route::post('polizas/deuda/agregar_comentario',[DeudaController::class,'agregar_comentario']);
-Route::post('polizas/deuda/eliminar_comentario',[DeudaController::class,'eliminar_comentario']);
+Route::post('polizas/deuda/agregar_comentario', [DeudaController::class, 'agregar_comentario']);
+Route::post('polizas/deuda/eliminar_comentario', [DeudaController::class, 'eliminar_comentario']);
 
 
 //validación de cartera
 Route::resource('polizas/validacion_cartera', ValidacionCarteraController::class);
+
+
+
+
+//desempleo
+Route::resource('polizas/desempleo', DesempleoController::class);
