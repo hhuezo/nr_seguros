@@ -13,11 +13,10 @@
 
     footer {
       position: fixed;
-      bottom: -60px;
+      bottom: -30px;
       left: 0px;
       right: 0px;
       height: 50px;
-
     }
   </style>
 </head>
@@ -48,38 +47,52 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
   </table>
   <table border="1" cellspacing="0" style="width: 100%;">
     <tr style="background-color: lightgrey;">
-      <td colspan="2">Compañia aseguradora</td>
+      <td>Compañia aseguradora</td>
       <td colspan="2">Producto de seguros</td>
     </tr>
     <tr>
-      <td colspan="2">{{$residencia->aseguradoras->Nombre}}</td>
+      <td>{{$residencia->aseguradoras->Nombre}}</td>
       <td colspan="2">@if($residencia->Plan) {{$residencia->planes->productos->Nombre}}@endif</td>
     </tr>
     <tr style="background-color: lightgrey;">
-      <td>Numero de Poliza</td>
-      <td>Vigencia Inicial</td>
-      <td>Vigencia Final</td>
-      <td>Anexo</td>
+      <td>Número de Póliza</td>
+      <td>Vigencia Inicial (anual)</td>
+      <td>Vigencia Final (anual)</td>
     </tr>
     <tr>
       <td>{{$residencia->NumeroPoliza}}</td>
-      <td>{{ \Carbon\Carbon::parse($detalle->FechaInicio)->format('d/m/Y') }}</td>
-      <td>{{ \Carbon\Carbon::parse($detalle->FechaFinal)->format('d/m/Y') }}</td>
-      <td>{{$detalle->Anexo}}</td>
-    </tr>
-    <tr>
-      <td colspan="2" style="background-color: lightgrey;">Referencia</td>
-      <td colspan="2">{{$detalle->Referencia}}</td>
-    </tr>
-    <tr>
-      <td colspan="2" style="background-color: lightgrey;">Factura (s) a Nombre de</td>
-      <td colspan="2">{{$residencia->clientes->Nombre}} </td>
+      <td>{{ \Carbon\Carbon::parse($residencia->VigenciaDesde)->format('d/m/Y') }}</td>
+      <td>{{ \Carbon\Carbon::parse($residencia->VigenciaHasta)->format('d/m/Y') }}</td>
     </tr>
   </table>
-  <table style="width: 100%;">
+  <table border="1" cellspacing="0" style="width: 100%;">
     <tr>
-      <td colspan="4" style="text-align: center;">
-        <br> Detalles del cobro generado
+      <td rowspan="2" style="background-color: lightgrey;">Periodo de cobro</td>
+      <td align="center">Fecha Inicio (mes)</td>
+      <td align="center">Fecha Fin (mes)</td>
+    </tr>
+    <tr>
+      <td align="center">{{ \Carbon\Carbon::parse($detalle->FechaInicio)->format('d/m/Y') }}</td>
+      <td align="center">{{ \Carbon\Carbon::parse($detalle->FechaFinal)->format('d/m/Y') }}</td>
+    </tr>
+    <tr>
+      <td style="background-color: lightgrey;">Anexo</td>
+      <td colspan="2" align="center">{{$detalle->Anexo}}</td>
+    </tr>
+    <tr>
+      <td style="background-color: lightgrey;">Referencia</td>
+      <td colspan="2" align="center">{{$detalle->Referencia}}</td>
+    </tr>
+    <tr>
+      <td style="background-color: lightgrey;">Factura (s) a Nombre de</td>
+      <td colspan="2" align="center">{{$residencia->clientes->Nombre}} </td>
+    </tr>
+  </table>
+  <br>
+  <table style="width: 100%;" border="1" cellspacing="0">
+    <tr>
+      <td colspan="4" style="text-align: center;background-color: lightgrey;">
+        Detalles del cobro generado
       </td>
     </tr>
   </table>
@@ -92,22 +105,22 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
             <td style="width: 35%; text-align: right;">${{number_format($detalle->MontoCartera,2,'.',',')}}</td>
           </tr>
           <tr>
-            <td style="width: 65%;">Prima</td>
+            <td style="width: 65%;">Prima calculada</td>
             <td style="width: 35%; text-align: right;">${{number_format($detalle->PrimaCalculada,2,'.',',')}}</td>
           </tr>
-          <tr>
-            <td>(-) Descuento de rentabilidad ({{$residencia->TasaDescuento}}%)</td>
+          <!-- <tr>
+            <td style="width: 65%;">Extra Prima</td>
+            <td style="width: 35%; text-align: right;">${{number_format($detalle->ExtraPrima,2,'.',',')}}</td>
+          </tr>
+          <tr> -->
+            <td>(-) Descuento rentabilidad ({{$residencia->TasaDescuento == '' ? 0 : $residencia->TasaDescuento}}%)</td>
             <td style="width: 35%; text-align: right;">${{number_format($detalle->Descuento,2,'.',',')}}</td>
           </tr>
           <tr>
             <td>(=) Prima descontada</td>
             <td style="width: 35%; text-align: right;">${{number_format($detalle->PrimaDescontada,2,'.',',')}}</td>
           </tr>
-          <tr>
-            <td>(+) impuesto bomberos</td>
-            <td style="width: 35%; text-align: right;">${{number_format($detalle->ImpuestoBomberos,2,'.',',')}}</td>
-          </tr>
-          <tr>
+           <tr>
             <td>Sub Total</td>
             <td style="width: 35%; text-align: right;"> ${{number_format($detalle->SubTotal,2,'.',',')}}</td>
           </tr>
@@ -118,13 +131,13 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
           <tr>
             <td>Total Factura</td>
             <td style="width: 35%; text-align: right;">${{number_format(($detalle->SubTotal+$detalle->Iva),2,'.',',')}}</td>
-          </tr>
+          </tr> 
           <tr>
             <td>(-) Estructura CCF de Comisión</td>
-            <td style="width: 35%; text-align: right;">${{number_format($detalle->ValorCCF,2,'.',',')}}</td>
+            <td style="width: 35%; text-align: right;">(${{number_format($detalle->ValorCCF,2,'.',',')}})</td>
           </tr>
           <tr>
-            <td><b>Prima total a pagar</b></td>
+            <td><b>Total a pagar</b></td>
             <td style="width: 35%; text-align: right;"><b>${{number_format($detalle->APagar,2,'.',',')}}</b></td>
           </tr>
         </table>
@@ -138,7 +151,11 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
           </tr>
           <tr>
             <td>Porcentaje de comisión </td>
-            <td style="width: 35%; text-align: right;">{{$residencia->Comision}} %</td>
+            <td style="width: 35%; text-align: right;">{{$residencia->TasaComision == '' ? 0: $residencia->TasaComision}}%</td>
+          </tr>
+          <tr>
+            <td>(=) Prima descontada</td>
+            <td style="width: 35%; text-align: right;">${{number_format($detalle->PrimaDescontada,2,'.',',')}}</td>
           </tr>
           <tr>
             <td>Valor de la comisión</td>
@@ -147,6 +164,14 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
           <tr>
             <td>(+) 13% IVA</td>
             <td style="width: 35%; text-align: right;">${{number_format($detalle->IvaSobreComision,2,'.',',')}}</td>
+          </tr>
+          <tr>
+            <td>Sub Total de comision</td>
+            <td style="width: 35%; text-align: right;">${{number_format($detalle->IvaSobreComision + $detalle->Comision,2,'.',',')}}</td>
+          </tr>
+          <tr>
+            <td>Retencion 1%</td>
+            <td style="width: 35%; text-align: right;">${{number_format($detalle->Retencion,2,'.',',')}}</td>
           </tr>
           <tr>
             <td>Valor del CCF por Comisión</td>
@@ -161,31 +186,28 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
   <table border="1" cellspacing="0" style="width: 100%;">
     <tr style="background-color: lightgrey;">
       <th>Cuota</th>
-      <th>Número Documento</th>
-      <th>Fecha de Vencimiento</th>
-      <th>Prima Neta</th>
-      <th>Gastos Emisión</th>
+      <th>Número de <br> documento</th>
+      <th>Fecha de vencimiento</th>
+      <th>Prima A Cobrar</th>
+      <th>Total Comisión</th>
       <th>Otros</th>
-      <th>IVA</th>
-      <th>Total a facturar</th>
+      <th>Pago liquido de prima</th>
     </tr>
     <tr>
       <td style="text-align: center;">01/01</td>
       <td>{{$detalle->NumeroCorrelativo}}</td>
       <td>{{ \Carbon\Carbon::parse($detalle->FechaInicio)->format('d/m/Y') }}</td>
       <td style="text-align: right;">${{number_format($detalle->SubTotal,2,'.',',')}}</td>
-      <td style="text-align: right;">${{number_format($detalle->GastosEmision,2,'.',',')}}</td>
+      <td style="text-align: right;">${{number_format(($detalle->Comision ),2,'.',',')}}</td>
       <td style="text-align: right;">${{number_format($detalle->Otros,2,'.',',')}}</td>
-      <td style="text-align: right;">${{number_format($detalle->Iva,2,'.',',')}}</td>
-      <td style="text-align: right;">${{number_format(($detalle->SubTotal + $detalle->Iva + $detalle->GastosEmision + $detalle->Otros),2,'.',',')}}</td>
+      <td style="text-align: right;">${{number_format($detalle->APagar,2,'.',',')}}</td>
     </tr>
     <tr>
       <td colspan="3" align="center">TOTAL </td>
       <td style="text-align: right;">${{number_format($detalle->SubTotal,2,'.',',')}}</td>
+      <td style="text-align: right;">${{number_format($detalle->Comision,2,'.',',')}}</td>
       <td></td>
-      <td></td>
-      <td style="text-align: right;">${{number_format($detalle->Iva,2,'.',',')}}</td>
-      <td style="text-align: right;">${{number_format(($detalle->SubTotal + $detalle->Iva + $detalle->GastosEmision + $detalle->Otros),2,'.',',')}}</td>
+      <td style="text-align: right;">${{number_format(($detalle->APagar),2,'.',',')}}</td>
     </tr>
   </table>
   <br>
@@ -242,17 +264,17 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
 
   <br><br>
   <footer>
-    <table style="width: 100%; text-align: center;">
-      <tr>
-        <td>
-          NR Seguros, S.A. de C.V
-          <br>
-          Colonia San Ernesto, pasaje San Carlos #154, sobre el bulevar de los Herores, San Salvador Centro. <br>
-          Oficina escalón: 11 Calle poniente entre 79 y 81 avenida norte #3 Colonia Escalón.
+     <table style="width: 100%; text-align: center;">
+    <tr>
+      <td>
+        NR Seguros, S.A. de C.V
+        <br>
+        Colonia San Ernesto, pasaje San Carlos #154, Bulevar de los Heroes, San Salvador Centro. <br>
+        Oficina escalón: 11 Calle poniente entre 79 y 81 avenida norte #3 Colonia Escalón.
 
-        </td>
-      </tr>
-    </table>
+      </td>
+    </tr>
+  </table> 
   </footer>
 
 
