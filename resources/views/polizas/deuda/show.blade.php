@@ -36,7 +36,7 @@
                                             Configuración</h4>
                                     </div>
                                     <div class="modal-body">
-                                        <p>Confirme si desea finalizar la configuración de la poliza</p>
+                                        <p>Confirme si desea {{ $deuda->Configuracion == 0 ? 'finalizar' : 'aperturar' }} la configuración de la poliza</p>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>

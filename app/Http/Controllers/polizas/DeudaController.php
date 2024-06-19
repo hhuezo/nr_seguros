@@ -296,7 +296,7 @@ class DeudaController extends Controller
         $comen = new Comentario();
         $comen->Comentario = $request->Comentario;
         $comen->Activo = 1;
-        $comen->DetalleDeuda == $detalle->Id;
+        $comen->DetalleDeuda = $detalle->Id;
         $comen->Usuario = auth()->user()->id;
         $comen->FechaIngreso = $time;
         $comen->Deuda = $detalle->Deuda;
@@ -667,6 +667,7 @@ class DeudaController extends Controller
             $planes = Plan::where('Activo', 1)->get();
             $detalle = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1)->orderBy('Id', 'desc')->get();
             $ultimo_pago = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1)->where('PagoAplicado', '<>', null)->orderBy('Id', 'desc')->first();
+           // dd($ultimo_pago,$detalle);
 
             //para fechas de modal
             $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');

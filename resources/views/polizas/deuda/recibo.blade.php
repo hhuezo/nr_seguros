@@ -13,7 +13,7 @@
 
     footer {
       position: fixed;
-      bottom: -60px;
+      bottom: -30px;
       left: 0px;
       right: 0px;
       height: 50px;
@@ -113,7 +113,7 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
             <td style="width: 35%; text-align: right;">${{number_format($detalle->ExtraPrima,2,'.',',')}}</td>
           </tr>
           <tr>
-            <td>(-) Descuento rentabilidad ({{$deuda->TasaDescuento == '' ? 0 : $deuda->TasaDescuento}}%)</td>
+            <td>(-) Descuento rentabilidad ({{$deuda->Descuento == '' ? 0 : $deuda->Descuento}}%)</td>
             <td style="width: 35%; text-align: right;">${{number_format($detalle->Descuento,2,'.',',')}}</td>
           </tr>
           <tr>

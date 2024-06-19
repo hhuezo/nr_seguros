@@ -9,6 +9,7 @@
     <table id="tblCobros" width="100%" class="table table-striped">
         <thead>
             <tr>
+                <th style="display: none;">Id</th>
                 <th style="text-align: center;">Póliza</th>
                 <th style="text-align: center;">Fecha Inicio <br> Vigencia</th>
                 <th style="text-align: center;">Fecha Final <br> Vigencia</th>
@@ -29,11 +30,11 @@
         <tbody>
             @foreach ($detalle as $obj)
                 <tr>
-
-                    <td style="text-align: center;">{{ $deuda->NumeroPoliza }} </td>
-                    <td style="text-align: center;">{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
-                    <td style="text-align: center;">{{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
-                    <td style="text-align: center;">{{ \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}</td>
+                    <td style="display: none;">{{$obj->Id}}</td>
+                    <td style="text-align: center;">{{ $deuda->NumeroPoliza }}</td>
+                    <td style="text-align: center;">{{ $obj->FechaInicio ? \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') : ''}}</td>
+                    <td style="text-align: center;">{{ $obj->FechaFinal ? \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') : ''}}</td>
+                    <td style="text-align: center;">{{ $obj->ImpresionRecibo ? \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') : ''}}</td>
                     <td style="text-align: center;"> AC {{ str_pad($obj->NumeroRecibo,6,"0",STR_PAD_LEFT)}} {{date('Y')}}</td>
                     <td style="text-align: center;">01/01</td>
                     @if ($obj->NumeroCorrelativo)
@@ -42,7 +43,7 @@
                     @else
                         <td></td>
                     @endif
-                    <td style="text-align: center;">{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}
+                    <td style="text-align: center;">{{ $obj->FechaInicio ? \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') : ''}}
                     </td>
                     @if ($obj->PagoAplicado)
                         <td style="text-align: center;">{{ \Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') }}
@@ -73,7 +74,7 @@
                     <td style="text-align: center;">
                         @if ($obj->Activo == 0)
                         @elseif (!$obj->ImpresionRecibo)
-                            <a href="" target="_blank" data-target="#modal-recibo-{{ $obj->Id }}" title="Generar Recibo" data-toggle="modal">
+                            <a href="" target="_blank" data-target="#modal-recibo-{{ $obj->Id }}" title="Generar Aviso de cobro" data-toggle="modal">
                                 <button class="btn btn-primary"><i class="fa fa-file-text-o" aria-hidden="true"></i></button>
                             </a>
                         @else
@@ -83,11 +84,11 @@
                         @endif
                     
                         <button class="btn btn-warning" data-target="#modal-view-{{ $obj->Id }}" data-toggle="modal">
-                            <i class="fa fa-eye" align="center" title="Ver Detalles"></i>
+                            <i class="fa fa-eye" align="center" title="Ver Actividad de Aviso de cobro"></i>
                         </button>
                     
                         @if ($obj->Activo == 1)
-                            <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal" title="Anular Cartera">
+                            <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal" title="Eliminar Aviso de Cobro">
                                 <button class="btn btn-danger">
                                     <i class="fa fa-trash fa-lg"></i>
                                 </button>
@@ -99,7 +100,7 @@
                             <input type="hidden" value="{{ $deuda->Id }}" name="Deuda">
                             <input type="hidden" value="{{ $obj->Id }}" name="DeudaDetalle">
                             <button class="btn btn-success" style="margin-top: 15px">
-                                <i class="fa fa-file-excel-o" align="center" title="Descargar Cartera"></i>
+                                <i class="fa fa-file-excel-o" align="center" title="Descargar Cartera a excel"></i>
                             </button>
                         </form>
                     </td>

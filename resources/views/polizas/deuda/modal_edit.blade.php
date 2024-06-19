@@ -110,7 +110,7 @@
                     </div>
                     <hr>
                     @foreach($comentarios as $comen)
-                    @if($comen->DetalleDeuda == $obj->Id)
+                    <!-- @if($comen->DetalleDeuda == $obj->Id) -->
                     <div class="row">
                         <div class="col-sm-4">
                             <label for="" class="form-label">{{$comen->Comentario}}</label>
@@ -124,7 +124,7 @@
                     </div>
                     <hr>
 
-                    @endif
+                    <!-- @endif -->
                     @endforeach
                 </div>
             </div>

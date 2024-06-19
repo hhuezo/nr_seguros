@@ -146,7 +146,11 @@
                 "ordering": true,
                 "info": true,
             });
-            $("#tblCobros").DataTable();
+            $("#tblCobros").DataTable({
+                "paging": true,
+                "ordering": false,
+                "info": true,
+            });
 
             $("#Vida").change(function() {
                 if (document.getElementById('Vida').checked == true) {

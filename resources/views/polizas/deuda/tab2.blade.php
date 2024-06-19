@@ -408,6 +408,7 @@
                     <input type="hidden" name="TasaComision" value="{{ $deuda->TasaComision }}">
                     <input type="hidden" name="Comision" id="ComisionDetalle">
                     <input type="hidden" name="IvaSobreComision" id="IvaComisionDetalle">
+                    <input type="hidden" name="Descuento" id="DescuentoDetalle">
                     <input type="hidden" name="Retencion" id="RetencionDetalle">
                     <input type="hidden" name="ValorCCF" id="ValorCCFDetalle">
                     <input type="hidden" name="APagar" id="APagarDetalle">
@@ -611,6 +612,7 @@
 
                 let descuento = (parseFloat(sub_total) + parseFloat(extra_prima)) * parseFloat(parseFloat(document.getElementById('DescuentoRentabilidad').value) / 100);
                 document.getElementById('descuento_rentabilidad').textContent = formatearCantidad(descuento);
+                document.getElementById('DescuentoDetalle').value = parseFloat(descuento);
                 prima_a_cobrar = (parseFloat(sub_total) + parseFloat(extra_prima)) - parseFloat(descuento);
                 document.getElementById("prima_a_cobrar").textContent = formatearCantidad(prima_a_cobrar);
                 document.getElementById("prima_a_cobrar_ccf").textContent = formatearCantidad(prima_a_cobrar);
