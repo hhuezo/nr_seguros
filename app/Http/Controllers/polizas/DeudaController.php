@@ -666,7 +666,7 @@ class DeudaController extends Controller
             $productos = Producto::where('Activo', 1)->get();
             $planes = Plan::where('Activo', 1)->get();
             $detalle = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1)->orderBy('Id', 'desc')->get();
-            $ultimo_pago = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1)->where('PagoAplicado', '<>', null)
+            $ultimo_pago = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1)//->where('PagoAplicado', '<>', null)
             ->orderBy('Id', 'desc')->first();
            // dd($ultimo_pago,$detalle);
 

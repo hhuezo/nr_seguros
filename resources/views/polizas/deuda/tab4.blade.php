@@ -77,7 +77,7 @@
                             <a href="" target="_blank" data-target="#modal-recibo-{{ $obj->Id }}" title="Generar Aviso de cobro" data-toggle="modal">
                                 <button class="btn btn-primary"><i class="fa fa-file-text-o" aria-hidden="true"></i></button>
                             </a>
-                        @else
+                        @elseif(!$obj->PagoAplicado)
                             <button class="btn btn-primary" onclick="modal_edit({{ $obj->Id }})">
                                 <i class="fa fa-pencil fa-lg" title="Actualizar Fechas de Cobro"></i>
                             </button>

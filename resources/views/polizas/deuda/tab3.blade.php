@@ -148,7 +148,7 @@
                     </div>
                 </td>
             </tr>
-            <tr>
+            <!-- <tr>
                 <td>13% IVA</td>
                 <td>
                     <div class="col-md-9 col-sm-9  form-group has-feedback">
@@ -156,7 +156,7 @@
                         <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                     </div>
                 </td>
-            </tr>
+            </tr> -->
             <tr>
                 <td>Total Factura</td>
                 <td>
