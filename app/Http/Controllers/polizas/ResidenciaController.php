@@ -183,7 +183,8 @@ class ResidenciaController extends Controller
         } catch (\Throwable $th) {
             //throw $th;
         }
-
+        session(['MontoCartera' => 0]);
+        session(['ExcelURL' => null]);
 
         alert()->success('El cobro se ha eliminado correctamente');
         return back();

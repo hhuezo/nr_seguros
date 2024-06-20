@@ -108,11 +108,8 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
             <td style="width: 65%;">Prima calculada</td>
             <td style="width: 35%; text-align: right;">${{number_format($detalle->PrimaCalculada,2,'.',',')}}</td>
           </tr>
-          <!-- <tr>
-            <td style="width: 65%;">Extra Prima</td>
-            <td style="width: 35%; text-align: right;">${{number_format($detalle->ExtraPrima,2,'.',',')}}</td>
-          </tr>
-          <tr> -->
+     
+          <tr>
             <td>(-) Descuento rentabilidad ({{$residencia->TasaDescuento == '' ? 0 : $residencia->TasaDescuento}}%)</td>
             <td style="width: 35%; text-align: right;">${{number_format($detalle->Descuento,2,'.',',')}}</td>
           </tr>
@@ -120,7 +117,7 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
             <td>(=) Prima descontada</td>
             <td style="width: 35%; text-align: right;">${{number_format($detalle->PrimaDescontada,2,'.',',')}}</td>
           </tr>
-           <tr>
+          <tr>
             <td>Sub Total</td>
             <td style="width: 35%; text-align: right;"> ${{number_format($detalle->SubTotal,2,'.',',')}}</td>
           </tr>
@@ -131,7 +128,7 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
           <tr>
             <td>Total Factura</td>
             <td style="width: 35%; text-align: right;">${{number_format(($detalle->SubTotal+$detalle->Iva),2,'.',',')}}</td>
-          </tr> 
+          </tr>
           <tr>
             <td>(-) Estructura CCF de Comisión</td>
             <td style="width: 35%; text-align: right;">(${{number_format($detalle->ValorCCF,2,'.',',')}})</td>
@@ -151,7 +148,7 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
           </tr>
           <tr>
             <td>Porcentaje de comisión </td>
-            <td style="width: 35%; text-align: right;">{{$residencia->TasaComision == '' ? 0: $residencia->TasaComision}}%</td>
+            <td style="width: 35%; text-align: right;">{{$residencia->Comision == '' ? 0: $residencia->Comision}}%</td>
           </tr>
           <tr>
             <td>(=) Prima descontada</td>
@@ -264,17 +261,17 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
 
   <br><br>
   <footer>
-     <table style="width: 100%; text-align: center;">
-    <tr>
-      <td>
-        NR Seguros, S.A. de C.V
-        <br>
-        Colonia San Ernesto, pasaje San Carlos #154, Bulevar de los Heroes, San Salvador Centro. <br>
-        Oficina escalón: 11 Calle poniente entre 79 y 81 avenida norte #3 Colonia Escalón.
+    <table style="width: 100%; text-align: center;">
+      <tr>
+        <td>
+          NR Seguros, S.A. de C.V
+          <br>
+          Colonia San Ernesto, pasaje San Carlos #154, Bulevar de los Heroes, San Salvador Centro. <br>
+          Oficina escalón: 11 Calle poniente entre 79 y 81 avenida norte #3 Colonia Escalón.
 
-      </td>
-    </tr>
-  </table> 
+        </td>
+      </tr>
+    </table>
   </footer>
 
 

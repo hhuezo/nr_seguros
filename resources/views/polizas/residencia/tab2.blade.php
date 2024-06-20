@@ -195,14 +195,14 @@
                                     inicio</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                     <input class="form-control" name="Id" value="{{ $residencia->Id }}" type="hidden" required>
-                                    <input class="form-control" type="date" name="FechaInicio" value="{{ $ultimo_pago ? date('Y-m-d', strtotime($ultimo_pago->FechaFinal)) : '' }}" {{ $ultimo_pago ? 'readonly' : '' }} required>
+                                    <input class="form-control" type="date" name="FechaInicio" value="{{ $ultimo_pago && $ultimo_pago != null ? date('Y-m-d', strtotime($ultimo_pago->FechaFinal)) : '' }}" required>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
                                     final</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="FechaFinal" value="{{ $ultimo_pago_fecha_final ? $ultimo_pago_fecha_final : '' }}" type="date" required>
+                                    <input class="form-control" name="FechaFinal" value="{{ $ultimo_pago_fecha_final && $ultimo_pago_fecha_final != null ? $ultimo_pago_fecha_final : '' }}" type="date" required>
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -423,7 +423,7 @@
                             <td class="numeric editable"><span id="total_factura"></span></td>
                         </tr> -->
                                 <tr>
-                                    <td>(-) Estructura CCF de Comisión (10%)</td>
+                                    <td>(-) Estructura CCF de Comisión ({{$residencia->Comision ? $residencia->Comision:'0'}}%)</td>
                                     <td class="numeric editable"><span id="comision"></span></td>
                                 </tr>
                                 <tr>
