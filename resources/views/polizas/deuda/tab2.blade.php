@@ -1,4 +1,9 @@
 <div>
+@php
+ini_set('max_execution_time', 30000);
+set_time_limit(30000);
+@endphp
+
     <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 
 
@@ -598,8 +603,6 @@
                 document.getElementById('MontoCarteraDetalle').value = parseFloat(total_suma_asegurada);
                 document.getElementById('PrimaCalculadaDetalle').value = parseFloat(
                     total_suma_asegurada) * parseFloat(tasa);
-                document.getElementById('PrimaDescontadaDetalle').value = parseFloat(
-                    total_suma_asegurada) * parseFloat(tasa);
 
 
                 let sub_total = total_suma_asegurada * tasa;
@@ -619,10 +622,12 @@
                 let iva = 0;
                 // no contribuyente no paga iva
                 if (tipo_contribuyente != 4) {
-                    iva = parseFloat(prima_a_cobrar) * 0.13;
+                    iva = 0; //parseFloat(prima_a_cobrar) * 0.13;
                 } else {
                     iva = 0;
                 }
+                document.getElementById('PrimaDescontadaDetalle').value = parseFloat(prima_a_cobrar);
+
                 // document.getElementById('iva').textContent = formatearCantidad(iva);
                 document.getElementById('IvaDetalle').value = parseFloat(iva);
                 let total_factura = parseFloat(iva) + parseFloat(prima_a_cobrar);
