@@ -49,7 +49,7 @@ class PolizaDeudaTempCarteraImport implements ToModel, /*WithStartRow,*/ SkipsEm
             // Check if row[10] is empty and row[9] has two words with each word length >= 3
             if (empty($row[10]) && strpos($row[9], ' ') !== false) {
                 $words = explode(' ', $row[9]);
-                if (count($words) == 2 && strlen($words[0]) >= 3 && strlen($words[1]) >= 3) {
+                if (count($words) >= 2 && strlen($words[0]) >= 3 && strlen($words[1]) >= 3) {
                     $row[9] = $words[0];
                     $row[10] = $words[1];
                 }
