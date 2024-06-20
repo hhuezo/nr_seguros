@@ -404,7 +404,7 @@
                     <input type="hidden" name="PrimaCalculada" id="PrimaCalculadaDetalle">
                     <input type="hidden" name="PrimaDescontada" id="PrimaDescontadaDetalle">
                     <input type="hidden" name="SubTotal" id="SubTotalDetalle">
-                    <input type="hidden" name="Iva" value="0">
+                    <input type="hidden" name="Iva" id="IvaDetalle">
                     <input type="hidden" name="TasaComision" value="{{ $deuda->TasaComision }}">
                     <input type="hidden" name="Comision" id="ComisionDetalle">
                     <input type="hidden" name="IvaSobreComision" id="IvaComisionDetalle">
@@ -618,12 +618,11 @@
                 document.getElementById("prima_a_cobrar_ccf").textContent = formatearCantidad(prima_a_cobrar);
                 let iva = 0;
                 // no contribuyente no paga iva
-                //se retiro el calculo de iva 
-             /*   if (tipo_contribuyente != 4) {
+                if (tipo_contribuyente != 4) {
                     iva = parseFloat(prima_a_cobrar) * 0.13;
                 } else {
                     iva = 0;
-                }*/
+                }
                 // document.getElementById('iva').textContent = formatearCantidad(iva);
                 document.getElementById('IvaDetalle').value = parseFloat(iva);
                 let total_factura = parseFloat(iva) + parseFloat(prima_a_cobrar);
