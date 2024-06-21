@@ -319,10 +319,10 @@
                                                     $fileUrl = asset($obj->ExcelURL);
                                                 @endphp
                                                 <td style="text-align: center;">{{ $residencia->NumeroPoliza }}</td>
-                                                <td style="text-align: center;">{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
-                                                <td style="text-align: center;">{{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
-                                                <td style="text-align: center;">{{ \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}</td>
-                                                <td style="text-align: center;">{{$obj->NumeroCorrelativo ? 'AC'.str_pad($obj->NumeroCorrelativo, 6, '0', STR_PAD_LEFT).' '.date('y'):'' }} </td>
+                                                <td style="text-align: center;">{{ $obj->FechaInicio ? \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') : '' }}</td>
+                                                <td style="text-align: center;">{{ $obj->FechaFinal ?  \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') : '' }}</td>
+                                                <td style="text-align: center;">{{ $obj->ImpresionRecibo ?  \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') : '' }}</td>
+                                                <td style="text-align: center;">{{$obj->NumeroRecibo ? 'AC'.str_pad($obj->NumeroRecibo, 6, '0', STR_PAD_LEFT).' '.date('y'):'' }} </td>
                                                 <td style="text-align: center;">01/01</td>
                                                 <td style="text-align: center;">{{$obj->NumeroCorrelativo ? $obj->NumeroCorrelativo : ''}}</td>
                                                 <td style="text-align: center;">{{ $obj->FechaInicio ? \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') : ''}}</td>
@@ -716,7 +716,7 @@
                                             <thead>
                                                 <tr>
                                                     <th>N° Aviso</th>
-                                                    <th>N° Correlativo</th>
+                                                    <th>N° Documento</th>
                                                     <th>Fecha Impresión Aviso</th>
                                                     <th>Fecha Inicio</th>
                                                     <th>Fecha Final</th>
@@ -728,8 +728,8 @@
                                                 @foreach ($detalle as $obj)
                                                     @if ($obj->ImpresionRecibo != null)
                                                         <tr>
-                                                            <td>{{ $obj->NumeroRecibo }}</td>
-                                                            <td>{{$obj->NumeroCorrelativo ? 'AC'.str_pad($obj->NumeroCorrelativo, 6, '0', STR_PAD_LEFT).' '.date('y'):'' }} </td>
+                                                            <td>{{$obj->NumeroRecibo ? 'AC'.str_pad($obj->NumeroRecibo, 6, '0', STR_PAD_LEFT).' '.date('y'):'' }}</td>
+                                                            <td>{{$obj->NumeroCorrelativo ? $obj->NumeroCorrelativo : '' }} </td>
                                                             <td>{{ \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}
                                                             </td>
                                                             <td>{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}

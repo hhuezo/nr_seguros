@@ -1,4 +1,8 @@
 <div role="tabpanel" class="tab-pane fade {{ session('tab') == 2 ? 'active in' : '' }}" id="tab_content2" aria-labelledby="profile-tab">
+@php
+ini_set('max_execution_time', 30000);
+set_time_limit(30000);
+@endphp
     <style>
         #loading-overlay {
             display: none;
@@ -238,6 +242,14 @@
                     <br>
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                         <table class="excel-like-table">
+                            <tr>
+                                <td>Fecha Inicio: {{$fechas != null ? date('Y-m-d',strtotime($fechas->FechaInicio)) :''}}</td>
+                                <td>Fecha Final: {{$fechas != null ? date('Y-m-d',strtotime($fechas->FechaFinal)) : ''}}</td>
+                                <td>Mes: {{$fechas != null ? $meses[$fechas->Mes] : ''}}</td>
+                            </tr>
+                        </table>
+                        <br>
+                        <table class="excel-like-table">
                             <thead>
                                 <tr>
                                     <th>Tasa Millar</th>
@@ -423,7 +435,7 @@
                             <td class="numeric editable"><span id="total_factura"></span></td>
                         </tr> -->
                                 <tr>
-                                    <td>(-) Estructura CCF de Comisión ({{$residencia->Comision ? $residencia->Comision:'0'}}%)</td>
+                                    <td>(-) Estructura CCF de Comisión ({{$residencia->Comision ? number_format($var ,2,".",",") : ''}}%)</td>
                                     <td class="numeric editable"><span id="comision"></span></td>
                                 </tr>
                                 <tr>

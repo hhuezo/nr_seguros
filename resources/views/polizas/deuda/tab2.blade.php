@@ -386,7 +386,7 @@ set_time_limit(30000);
                             <td class="numeric editable"><span id="total_factura"></span></td>
                         </tr> -->
                         <tr>
-                            <td>(-) Estructura CCF de Comisión ({{$deuda->TasaComision ? $deuda->TasaComision : '0'}}%)</td>
+                            <td>(-) Estructura CCF de Comisión ({{$deuda->ComisionIva == 1 ? number_format($deuda->TasaComision / 1.13,2,".",",") : $deuda->TasaComision}}%)</td>
                             <td class="numeric editable"><span id="comision"></span></td>
                         </tr>
                         <tr>
