@@ -243,8 +243,8 @@ set_time_limit(30000);
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                         <table class="excel-like-table">
                             <tr>
-                                <td>Fecha Inicio: {{$fechas != null ? date('Y-m-d',strtotime($fechas->FechaInicio)) :''}}</td>
-                                <td>Fecha Final: {{$fechas != null ? date('Y-m-d',strtotime($fechas->FechaFinal)) : ''}}</td>
+                                <td>Fecha Inicio: {{$fechas != null ? date('d/m/Y',strtotime($fechas->FechaInicio)) :''}}</td>
+                                <td>Fecha Final: {{$fechas != null ? date('d/m/Y',strtotime($fechas->FechaFinal)) : ''}}</td>
                                 <td>Mes: {{$fechas != null ? $meses[$fechas->Mes] : ''}}</td>
                             </tr>
                         </table>
