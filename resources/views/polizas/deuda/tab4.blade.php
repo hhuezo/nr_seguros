@@ -38,8 +38,7 @@
                     <td style="text-align: center;"> AC {{ str_pad($obj->NumeroRecibo,6,"0",STR_PAD_LEFT)}} {{date('Y')}}</td>
                     <td style="text-align: center;">01/01</td>
                     @if ($obj->NumeroCorrelativo)
-                        <td style="text-align: center;">AC {{ str_pad($obj->NumeroCorrelativo, 6, '0', STR_PAD_LEFT) }}
-                            {{ date('y') }}</td>
+                        <td style="text-align: center;">{{$obj->NumeroCorrelativo }}</td>
                     @else
                         <td></td>
                     @endif

@@ -24,8 +24,8 @@
                     @foreach ($detalle as $obj)
                     @if ($obj->ImpresionRecibo != null)
                     <tr>
-                        <td>{{$obj->NumeroRecibo}}</td>
-                        <td>AC {{str_pad($obj->NumeroCorrelativo, 6, "0", STR_PAD_LEFT);}} {{date('y')}}</td>
+                        <td>AC {{str_pad($obj->NumeroRecibo, 6, "0", STR_PAD_LEFT);}} {{date('y')}}</td>
+                        <td>{{$obj->NumeroCorrelativo ? $obj->NumeroCorrelativo : ''}} </td>
                         <td>{{ \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}
                         </td>
                         <td>{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}
