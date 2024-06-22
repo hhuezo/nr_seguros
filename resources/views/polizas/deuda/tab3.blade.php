@@ -138,7 +138,7 @@
                 </td>
             </tr>
        
-            <tr>
+           <!-- <tr>
                 <td>SubTotal</td>
                 <td>
 
@@ -148,7 +148,7 @@
                     </div>
                 </td>
             </tr>
-            <!-- <tr>
+             <tr>
                 <td>13% IVA</td>
                 <td>
                     <div class="col-md-9 col-sm-9  form-group has-feedback">
@@ -156,7 +156,7 @@
                         <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                     </div>
                 </td>
-            </tr> -->
+            </tr> 
             <tr>
                 <td>Total Factura</td>
                 <td>
@@ -165,7 +165,7 @@
                         <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                     </div>
                 </td>
-            </tr>
+            </tr>-->
             <tr>
                 <td>(-) Estructura CCF de Comisión</td>
                 <td>
@@ -208,6 +208,15 @@
                 </td>
             </tr>
             <tr>
+                <td>(=) Prima a cobrar</td>
+                <td>
+                    <div class="col-md-9 col-sm-9  form-group has-feedback">
+                        <input type="text" class="form-control has-feedback-left" style="text-align: right;" value="@if ($ultimo_pago) {{ number_format($ultimo_pago->PrimaDescontada, 2, '.', ',') }} @else 0 @endif" readonly>
+                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </td>
+            </tr>
+            <tr>
                 <td>Valor por Comisión</td>
                 <td>
                     <div class="col-md-9 col-sm-9  form-group has-feedback">
@@ -221,6 +230,15 @@
                 <td>
                     <div class="col-md-9 col-sm-9  form-group has-feedback">
                         <input type="text" class="form-control has-feedback-left" style="text-align: right;" value="@if ($ultimo_pago) {{ number_format($ultimo_pago->IvaSobreComision, 2, '.', ',') }} @else 0 @endif" readonly>
+                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>Sub Total Comisión</td>
+                <td>
+                    <div class="col-md-9 col-sm-9  form-group has-feedback">
+                        <input type="text" class="form-control has-feedback-left" style="text-align: right;" value="@if ($ultimo_pago) {{ number_format($ultimo_pago->Comision + $ultimo_pago->IvaSobreComision, 2, '.', ',') }} @else 0 @endif" readonly>
                         <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                     </div>
                 </td>

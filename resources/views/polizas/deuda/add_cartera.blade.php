@@ -47,7 +47,7 @@
                             inicio</label>
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                             <input class="form-control" name="Id" value="{{ $deuda->Id }}" type="hidden" required>
-                            <input class="form-control" type="date" name="FechaInicio" value="{{ $ultimo_pago ? date('Y-m-d', strtotime($ultimo_pago->FechaFinal)) : date('Y-m-d', strtotime($primerDia)) }}" {{ $ultimo_pago ? 'readonly' : '' }} required>
+                            <input class="form-control" type="date" name="FechaInicio" value="{{ $ultimo_pago ? date('Y-m-d', strtotime($ultimo_pago->FechaFinal)) : date('Y-m-d', strtotime($primerDia)) }}" required>
                         </div>
                     </div>
                     <div class="form-group row">

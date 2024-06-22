@@ -352,7 +352,7 @@
                                                             title="Generar Aviso de Cobro" data-toggle="modal"><i
                                                                 class="fa fa-file-text-o" aria-hidden="true"></i></a>
                                                     @else
-                                                    <button class="btn btn-secondary">
+                                                    <button class="btn btn-primary">
                                                         <i class="fa fa-pencil fa-lg"
                                                             onclick="modal_edit({{ $obj->Id }})"
                                                             title="Actualizar Fechas de Cobro"></i>
@@ -361,15 +361,15 @@
                                                     @endif
                                                     
                                                     <a href="{{ $fileUrl }}" class=" btn btn-success fa fa-file-excel-o"
-                                                        align="center" title="Descargar Cartera Excel"></a>&nbsp;&nbsp;
+                                                        align="center" title="Descargar Cartera Excel"></a>
                                                         <button class="btn btn-warning"><i data-target="#modal-view-{{ $obj->Id }}" data-toggle="modal"
                                                         class="fa fa-eye" align="center"
                                                         title="Ver Detalles"></i></button>
-                                                    &nbsp;&nbsp;
+                                                    
                                                     @if ($obj->Activo == 1)
                                                         <a href="" class="btn btn-danger" data-target="#modal-delete-{{ $obj->Id }}"
                                                             data-toggle="modal" title="Anular Cobro"><i
-                                                                class="fa fa-trash fa-lg"></i></a> &nbsp;&nbsp;
+                                                                class="fa fa-trash fa-lg"></i></a>
                                                     @endif
 
 
@@ -636,7 +636,7 @@
                                                 <div class="col-md-9 col-sm-9  form-group has-feedback">
                                                     <input type="text" class="form-control has-feedback-left"
                                                         style="padding-left: 25%;"
-                                                        value="@if ($ultimo_pago) {{ $ultimo_pago->TasaComision }} @else 0 @endif"
+                                                        value="@if ($ultimo_pago) {{ $residencia->Comision }} @else 0 @endif"
                                                         readonly>
                                                     <span class="fa fa-percent form-control-feedback left"
                                                         aria-hidden="true"></span>
