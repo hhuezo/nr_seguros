@@ -92,7 +92,7 @@ class DeudaCarteraController extends Controller
                 alert()->error('La cartera solo puede contener un solo libro de Excel (sheet)');
                 return back();
             }
-
+       
             PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('LineaCredito', '=', $credito)->delete();
             Excel::import(new PolizaDeudaTempCarteraImport($date->year, $date->month, $deuda->Id, $request->FechaInicio, $request->FechaFinal, $credito), $archivo);
         } catch (Throwable $e) {
@@ -106,7 +106,7 @@ class DeudaCarteraController extends Controller
         //calculando errores de cartera
         $cartera_temp = PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('LineaCredito', '=', $credito)->get();
 
-
+        
 
         foreach ($cartera_temp as $obj) {
             $errores_array = [];
@@ -143,18 +143,20 @@ class DeudaCarteraController extends Controller
             }
 
             $obj->saldo_total = $obj->calculoTodalSaldo();
-
-
-            //se limpia el nombre completo de espacios en blanco y numeros
-            $obj->PrimerApellido = $this->limpiarNombre($obj->PrimerApellido);
-            $obj->SegundoApellido = $this->limpiarNombre($obj->SegundoApellido);
-            $obj->ApellidoCasada = $this->limpiarNombre($obj->ApellidoCasada);
-            $obj->PrimerNombre = $this->limpiarNombre($obj->PrimerNombre);
-            $obj->SegundoNombre = $this->limpiarNombre($obj->SegundoNombre);
             $obj->update();
+           
+
+                /*
+                //se limpia el nombre completo de espacios en blanco y numeros
+                $obj->PrimerApellido = $this->limpiarNombre($obj->PrimerApellido);
+                $obj->SegundoApellido = $this->limpiarNombre($obj->SegundoApellido);
+                $obj->ApellidoCasada = $this->limpiarNombre($obj->ApellidoCasada);
+                $obj->PrimerNombre = $this->limpiarNombre($obj->PrimerNombre);
+                $obj->SegundoNombre = $this->limpiarNombre($obj->SegundoNombre);
+                */
 
             // 4 nombre o apellido
-            if ($obj->PrimerApellido == "" || $obj->PrimerNombre == "") {
+            if (trim($obj->PrimerApellido) == "" || trim($obj->PrimerNombre) == "") {
                 $obj->TipoError = 4;
                 $obj->update();
 
@@ -224,7 +226,7 @@ class DeudaCarteraController extends Controller
         $mes = $fecha->format('m'); // El formato 'm' devuelve el mes con ceros iniciales (por ejemplo, "02")
         $anio = $fecha->format('Y');
 
-
+        
 
         // Obtener los datos de la tabla temporal
         $tempData = PolizaDeudaTempCartera::where('Axo', $anio)
@@ -234,70 +236,7 @@ class DeudaCarteraController extends Controller
             ->where('LineaCredito', '=', $credito)
             ->get();
 
-
-
-        /*if ($tempData->isNotEmpty()) {
-            $linea_credito = $tempData->first()->LineaCredito;
-            $poliza_deuda = $tempData->first()->PolizaDeuda;
-            $mes_int = intval($mes);
-            PolizaDeudaCartera::where('PolizaDeuda', $poliza_deuda)->where('LineaCredito', $linea_credito)->where('Axo', $anio)->where('Mes', $mes_int)
-                ->where(function ($query) {
-                    $query->where('PolizaDeudaDetalle', 0)
-                        ->orWhereNull('PolizaDeudaDetalle');
-                })
-                ->delete();
-        }*/
-
-        /*
-        PolizaDeudaCartera::where('LineaCredito', $credito)
-            ->where(function ($query) {
-                $query->where('PolizaDeudaDetalle', 0)
-                    ->orWhereNull('PolizaDeudaDetalle');
-            })
-            ->delete();
-
-        // Iterar sobre los resultados y realizar la inserción en la tabla principal
-        foreach ($tempData as $tempRecord) {
-            $poliza = new PolizaDeudaCartera();
-            //$poliza->Id = $tempRecord->Id;
-            $poliza->Nit = $tempRecord->Nit;
-            $poliza->Dui = $tempRecord->Dui;
-            $poliza->Pasaporte = $tempRecord->Pasaporte;
-            $poliza->Nacionalidad = $tempRecord->Nacionalidad;
-            $poliza->FechaNacimiento = $tempRecord->FechaNacimiento;
-            $poliza->TipoPersona = $tempRecord->TipoPersona;
-            $poliza->PrimerApellido = $tempRecord->PrimerApellido;
-            $poliza->SegundoApellido = $tempRecord->SegundoApellido;
-            $poliza->ApellidoCasada = $tempRecord->ApellidoCasada;
-            $poliza->PrimerNombre = $tempRecord->PrimerNombre;
-            $poliza->SegundoNombre = $tempRecord->SegundoNombre;
-            $poliza->NombreSociedad = $tempRecord->NombreSociedad;
-            $poliza->Sexo = $tempRecord->Sexo;
-            $poliza->FechaOtorgamiento = $tempRecord->FechaOtorgamiento;
-            $poliza->FechaVencimiento = $tempRecord->FechaVencimiento;
-            $poliza->Ocupacion = $tempRecord->Ocupacion;
-            $poliza->NumeroReferencia = $tempRecord->NumeroReferencia;
-            $poliza->MontoOtorgado = $tempRecord->MontoOtorgado;
-            $poliza->SaldoCapital = $tempRecord->SaldoCapital;
-            $poliza->Intereses = $tempRecord->Intereses;
-            $poliza->InteresesCovid = $tempRecord->InteresesCovid;
-            $poliza->InteresesMoratorios = $tempRecord->InteresesMoratorios;
-            $poliza->MontoNominal = $tempRecord->MontoNominal;
-            $poliza->SaldoTotal = $tempRecord->SaldoTotal;
-            $poliza->User = $tempRecord->User;
-            $poliza->Axo = $tempRecord->Axo;
-            $poliza->Mes = $tempRecord->Mes;
-            $poliza->PolizaDeuda = $tempRecord->PolizaDeuda;
-            $poliza->FechaInicio = $tempRecord->FechaInicio;
-            $poliza->FechaFinal = $tempRecord->FechaFinal;
-            $poliza->TipoError = $tempRecord->TipoError;
-            $poliza->FechaNacimientoDate = $tempRecord->FechaNacimientoDate;
-            $poliza->Edad = $tempRecord->Edad;
-            $poliza->LineaCredito = $tempRecord->LineaCredito;
-            $poliza->NoValido = $tempRecord->NoValido;
-            $poliza->save();
-        }*/
-
+        //dd($tempData->take(20));
 
         alert()->success('Exito', 'La cartera fue subida con exito');
 
