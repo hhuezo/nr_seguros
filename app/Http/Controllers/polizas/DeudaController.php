@@ -339,16 +339,16 @@ class DeudaController extends Controller
         $deuda = Deuda::findOrFail($request->deuda);
         if ($deuda->Configuracion == 1) {
             $deuda->Configuracion = 0;
-            $deuda->update();   
+            $deuda->update();
 
             alert()->success('El registro de poliza ha sido configurado correctamente');
-            return redirect('polizas/deuda/'.$request->deuda);
+            return redirect('polizas/deuda/' . $request->deuda);
         } else {
             $deuda->Configuracion = 1;
             $deuda->update();
 
             alert()->success('El registro de poliza ha sido configurado correctamente');
-            return redirect('polizas/deuda/'.$request->deuda.'/edit');
+            return redirect('polizas/deuda/' . $request->deuda . '/edit');
         }
     }
 
@@ -666,9 +666,9 @@ class DeudaController extends Controller
             $productos = Producto::where('Activo', 1)->get();
             $planes = Plan::where('Activo', 1)->get();
             $detalle = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1)->orderBy('Id', 'desc')->get();
-            $ultimo_pago = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1)//->where('PagoAplicado', '<>', null)
-            ->orderBy('Id', 'desc')->first();
-           // dd($ultimo_pago,$detalle);
+            $ultimo_pago = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1) //->where('PagoAplicado', '<>', null)
+                ->orderBy('Id', 'desc')->first();
+            // dd($ultimo_pago,$detalle);
 
             //para fechas de modal
             $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
@@ -1738,15 +1738,15 @@ class DeudaController extends Controller
                 // }
 
                 //se limpia el nombre completo de espacios en blanco y numeros
-                $obj->PrimerApellido = $this->limpiarNombre($obj->PrimerApellido);
+                /* $obj->PrimerApellido = $this->limpiarNombre($obj->PrimerApellido);
                 $obj->SegundoApellido = $this->limpiarNombre($obj->SegundoApellido);
                 $obj->ApellidoCasada = $this->limpiarNombre($obj->ApellidoCasada);
                 $obj->PrimerNombre = $this->limpiarNombre($obj->PrimerNombre);
                 $obj->SegundoNombre = $this->limpiarNombre($obj->SegundoNombre);
-                $obj->update();
+                $obj->update();*/
 
                 // 4 nombre o apellido
-                if ($obj->PrimerApellido == "" || $obj->PrimerNombre == "") {
+                if (trim($obj->PrimerApellido) == "" || trim($obj->PrimerNombre) == "") {
                     $obj->TipoError = 4;
                     $obj->update();
 
