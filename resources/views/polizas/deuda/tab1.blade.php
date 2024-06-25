@@ -75,6 +75,20 @@
                     <div class="col-md-12">
                         &nbsp;
                     </div>
+                    <div class="col-sm-4">
+                        <label class="control-label" align="right">Edad Máxima de Terminación</label>
+                        <input type="text"  class="form-control" value="{{$deuda->EdadMaximaTerminacion}}" readonly>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="control-label" align="right">Responsabilidad Máxima</label>
+                        <input class="form-control" type="number" step="any"  value="{{ $deuda->ResponsabilidadMaxima }}" readonly>
+                    </div>
+                    <div class="col-sm-4">
+                        &nbsp;
+                    </div>
+                    <div class="col-md-12">
+                        &nbsp;
+                    </div>
 
                     <div class="col-sm-4">
                         <label class="control-label " align="right">Clausulas Especiales</label>
