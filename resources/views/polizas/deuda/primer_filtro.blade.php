@@ -114,24 +114,15 @@
                                 <div class="" role="tabpanel" data-example-id="togglable-tabs">
                                     <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
                                         <li role="presentation" class="active"><a href="#tab_content1" id="home-tab"
-                                                role="tab" data-toggle="tab" aria-expanded="true">Nuevos registros</a>
+                                                role="tab" data-toggle="tab" aria-expanded="true">Edad Maxima de Terminación {{$deuda->EdadMaximaTerminacion}} años</a>
                                         </li>
                                         <li role="presentation" class=""><a href="#tab_content5" id="profile-tab5"
-                                                role="tab" data-toggle="tab" aria-expanded="false">Registros
-                                                Eliminados</a>
+                                                role="tab" data-toggle="tab" aria-expanded="false">Responsabilidad Máxima {{$deuda->ResponsabilidadMaxima}}</a>
                                         </li>
                                         <li role="presentation" class=""><a href="#tab_content2" role="tab"
-                                                id="profile-tab" data-toggle="tab" aria-expanded="false">Creditos no
-                                                válidos</a>
+                                                id="profile-tab" data-toggle="tab" aria-expanded="false">Registros validos</a>
                                         </li>
-                                        <li role="presentation" class=""><a href="#tab_content3" role="tab"
-                                                id="profile-tab2" data-toggle="tab" aria-expanded="false">Registros con
-                                                requisitos</a>
-                                        </li>
-                                        <li role="presentation" class=""><a href="#tab_content4" role="tab"
-                                                id="profile-tab2" data-toggle="tab" aria-expanded="false">Extraprimados
-                                                excluidos</a>
-                                        </li>
+                                        
                                     </ul>
                                     <div id="myTabContent" class="tab-content">
                                         <div role="tabpanel" class="tab-pane active " id="tab_content1"
@@ -149,7 +140,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach ($nuevos_registros as $registro)
+                                                    @foreach ($poliza_temporal->where('Edad','>',$deuda->EdadMaximaTerminacion) as $registro)
                                                         <tr>
                                                             <td>{{ $registro->NumeroReferencia }}</td>
                                                             <td>{{ $registro->Dui }}</td>
@@ -191,7 +182,11 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach ($registros_eliminados as $registro)
+                                                    @foreach ($poliza_cumulos->where('Edad','<',$deuda->EdadMaximaTerminacion) as $registro)
+                                                    @php
+                                                    $sub_total = $registro->total_saldo + $registro->total_interes + $registro->total_covid + $registro->total_moratorios + $registro->total_monto_nominal;
+                                                    @endphp
+                                                    @if($sub_total > $deuda->ResponsabilidadMaxima)
                                                         <tr>
                                                             <td>{{ $registro->NumeroReferencia }}</td>
                                                             <td>{{ $registro->Dui }}</td>
@@ -211,6 +206,7 @@
                                                                 Años</td>
                                                             <td>${{ number_format($registro->total_saldo, 2) }}</td>
                                                         </tr>
+                                                    @endif
                                                     @endforeach
 
 
@@ -220,103 +216,29 @@
 
 
                                         </div>
-                                        <div role="tabpanel" class="tab-pane fade" id="tab_content2"
-                                            aria-labelledby="profile-tab">
-                                            <div class="col-md-6 col-sm-12">
-                                                <div class="input-group">
-                                                    <input type="text" id="buscar_no_valido" class="form-control">
-                                                    <span class="input-group-btn">
-                                                        <button type="button" id="btn_no_valido"
-                                                            class="btn btn-primary">Buscar</button>
-                                                        <!-- Nuevo botón Borrar -->
-                                                        <button type="button" id="btn_limpiarn_no_valido"
-                                                            class="btn btn-secondary">Limpiar</button>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 col-sm-12" align="right">
-                                                <a href="{{ url('exportar/poliza_cumulo') }}"
-                                                    class="btn btn-success">Descargar Excel</a>
-                                            </div>
-                                            <br>
-                                            <br>
-                                            <div id="creditos_no_validos">
-
-
-                                            </div>
-
-                                        </div>
-                                        <div role="tabpanel" class="tab-pane fade" id="tab_content3"
-                                            aria-labelledby="profile-tab">
-
-
-                                            <div class="col-md-6 col-sm-12">
-                                                <div class="input-group">
-                                                    <input type="text" id="buscar_valido" class="form-control">
-                                                    <span class="input-group-btn">
-                                                        <button type="button" id="btn_valido"
-                                                            class="btn btn-primary">Buscar</button>
-                                                        <button type="button" id="btn_limpiarn_valido"
-                                                            class="btn btn-secondary">Limpiar</button>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <br>
-                                            <div id="creditos_validos">
-                                            </div>
-
-
-                                        </div>
-                                        <div role="tabpanel" class="tab-pane fade" id="tab_content4"
-                                            aria-labelledby="profile-tab">
-
-                                            <br>
-                                            <table class="table table-striped" id="datatable">
-
-                                                <thead>
-                                                    <tr>
-
-                                                        <th>Número Referencia</th>
-                                                        <th>Nombre</th>
-                                                        <th>Fecha Otorgamiento</th>
-                                                        <th>Monto Otorgamiento</th>
-                                                        <th>Porcentaje EP</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach ($extra_primados->where('Existe', '=', 0) as $extra_primado)
-                                                        <tr>
-                                                            <td>{{ $extra_primado->NumeroReferencia }}</td>
-                                                            <td>{{ $extra_primado->Nombre }}</td>
-                                                            <td>{{ $extra_primado->FechaOtorgamiento }}</td>
-                                                            <td>{{ $extra_primado->MontoOtorgamiento }}</td>
-                                                            <td> {{ $extra_primado->PorcentajeEP }}%</td>
-                                                        </tr>
-                                                    @endforeach
-
-
-                                                </tbody>
-                                            </table>
-
-
-
-                                            <?php /*
-                                            <table class="table table-striped" id="datatable">
+                                        <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="profile-tab">
+                                        <table class="table table-striped" id="MyTable3">
                                                 <thead>
                                                     <tr>
                                                         <th>Número crédito</th>
                                                         <th>DUI</th>
                                                         <th>NIT</th>
                                                         <th>Nombre</th>
-                                                        <th>Fecha nacimiento</th>
+                                                        <th>Fecha Nacimiento</th>
+                                                        <th>Fecha Otorgamiento</th>
                                                         <th>Edad Actual</th>
+                                                        <th>Edad Desembolso</th>
                                                         <th>Saldo</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach ($poliza_cumulos->where('Perfiles', '=', null)->where('NoValido', '=', 0) as $registro)
+                                                    @foreach ($poliza_cumulos->where('Edad','<',$deuda->EdadMaximaTerminacion) as $registro)
+                                                    @php
+                                                    $sub_total = $registro->total_saldo + $registro->total_interes + $registro->total_covid + $registro->total_moratorios + $registro->total_monto_nominal;
+                                                    @endphp
+                                                    @if($sub_total < $deuda->ResponsabilidadMaxima)
                                                         <tr>
-                                                            <td>{{ $registro->ConcatenatedNumeroReferencia }}</td>
+                                                            <td>{{ $registro->NumeroReferencia }}</td>
                                                             <td>{{ $registro->Dui }}</td>
                                                             <td>{{ $registro->Nit }}</td>
                                                             <td>{{ $registro->PrimerNombre }}
@@ -327,20 +249,23 @@
                                                             </td>
                                                             <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
                                                             </td>
+                                                            <td>{{ $registro->FechaOtorgamiento ? $registro->FechaOtorgamiento : '' }}
+                                                            </td>
                                                             <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
-
-                                                            <td class="text-right">
-                                                                ${{ number_format($registro->total_saldo, 2) }}</td>
-
+                                                            <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }}
+                                                                Años</td>
+                                                            <td>${{ number_format($registro->total_saldo, 2) }}</td>
                                                         </tr>
+                                                    @endif
                                                     @endforeach
 
 
                                                 </tbody>
-                                            </table> */
-                                            ?>
+                                            </table>
+
 
                                         </div>
+                                      
                                     </div>
                                 </div>
                             </div>

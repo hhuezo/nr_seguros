@@ -322,6 +322,28 @@ class DeudaCarteraController extends Controller
                 'EdadDesembloso' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaOtorgamientoDate)"),
             ]);
 
+        $poliza_temporal = PolizaDeudaTempCartera::where('PolizaDeuda', $poliza_id)->where('User',auth()->user()->id)->get();
+        $poliza_cumulos = PolizaDeudaTempCartera::selectRaw('Id,Dui,Edad,Nit,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento,NoValido
+        NumeroReferencia,SUM(SaldoCapital) as total_saldo,SUM(Intereses) as total_interes,SUM(InteresesCovid) as total_covid,
+        SUM(InteresesMoratorios) as total_moratorios, SUM(MontoNominal) as total_monto_nominal')->groupBy('Dui')->get();
+
+    
+        return view('polizas.deuda.primer_filtro', compact('poliza_temporal','deuda','poliza_cumulos','date','date_anterior'));
+
+    }
+
+    public function validar_poliza_requisitos(Request $request)
+    {
+
+        $poliza_id = $request->Deuda;
+        $deuda = Deuda::findOrFail($request->Deuda);
+
+        $temp_data_fisrt = PolizaDeudaTempCartera::where('PolizaDeuda', $poliza_id)->where('User', auth()->user()->id)->first();
+        $date_submes = Carbon::create($temp_data_fisrt->Axo, $temp_data_fisrt->Mes, "01");
+        $date = Carbon::create($temp_data_fisrt->Axo, $temp_data_fisrt->Mes, "01");
+        $date_mes = $date_submes->subMonth();
+        $date_anterior = Carbon::create($temp_data_fisrt->Axo, $temp_data_fisrt->Mes, "01");
+        $date_mes_anterior = $date_anterior->subMonth();
 
         $requisitos = $deuda->requisitos;
 
