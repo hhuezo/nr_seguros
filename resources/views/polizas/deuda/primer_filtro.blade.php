@@ -117,7 +117,7 @@
                                                 role="tab" data-toggle="tab" aria-expanded="true">Edad Maxima de Terminación {{$deuda->EdadMaximaTerminacion}} años</a>
                                         </li>
                                         <li role="presentation" class=""><a href="#tab_content5" id="profile-tab5"
-                                                role="tab" data-toggle="tab" aria-expanded="false">Responsabilidad Máxima {{$deuda->ResponsabilidadMaxima}}</a>
+                                                role="tab" data-toggle="tab" aria-expanded="false">Responsabilidad Máxima ${{number_format($deuda->ResponsabilidadMaxima,2,'.',',')}}</a>
                                         </li>
                                         <li role="presentation" class=""><a href="#tab_content2" role="tab"
                                                 id="profile-tab" data-toggle="tab" aria-expanded="false">Registros validos</a>
@@ -137,6 +137,7 @@
                                                         <th>Nombre</th>
                                                         <th>Fecha nacimiento</th>
                                                         <th>Edad Actual</th>
+                                                        <th style="text-align: center;">Opciones</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -154,6 +155,7 @@
                                                             <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
                                                             </td>
                                                             <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
+                                                            <td style="text-align: center;"><button class="btn btn-primary"><i class="fa fa-exchange"></i></button></td>
                                                         </tr>
                                                     @endforeach
 
@@ -178,7 +180,8 @@
                                                         <th>Fecha Otorgamiento</th>
                                                         <th>Edad Actual</th>
                                                         <th>Edad Desembolso</th>
-                                                        <th>Saldo</th>
+                                                        <th>Total </th>
+                                                        <th>Opciones</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -188,7 +191,8 @@
                                                     @endphp
                                                     @if($sub_total > $deuda->ResponsabilidadMaxima)
                                                         <tr>
-                                                            <td>{{ $registro->NumeroReferencia }}</td>
+                                                            <td>{{ $registro->NumeroReferencia }}  <br>
+                                                        </td>
                                                             <td>{{ $registro->Dui }}</td>
                                                             <td>{{ $registro->Nit }}</td>
                                                             <td>{{ $registro->PrimerNombre }}
@@ -204,7 +208,9 @@
                                                             <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
                                                             <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }}
                                                                 Años</td>
-                                                            <td>${{ number_format($registro->total_saldo, 2) }}</td>
+                                                            <td>${{ number_format($sub_total, 2) }}</td>
+                                                            <td style="text-align: center;"><button class="btn btn-primary"><i class="fa fa-exchange"></i></button></td>
+
                                                         </tr>
                                                     @endif
                                                     @endforeach
@@ -254,7 +260,7 @@
                                                             <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
                                                             <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }}
                                                                 Años</td>
-                                                            <td>${{ number_format($registro->total_saldo, 2) }}</td>
+                                                            <td>${{ number_format($sub_total, 2) }}</td>
                                                         </tr>
                                                     @endif
                                                     @endforeach

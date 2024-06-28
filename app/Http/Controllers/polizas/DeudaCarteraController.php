@@ -92,7 +92,7 @@ class DeudaCarteraController extends Controller
                 alert()->error('La cartera solo puede contener un solo libro de Excel (sheet)');
                 return back();
             }
-       
+
             PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('LineaCredito', '=', $credito)->delete();
             Excel::import(new PolizaDeudaTempCarteraImport($date->year, $date->month, $deuda->Id, $request->FechaInicio, $request->FechaFinal, $credito), $archivo);
         } catch (Throwable $e) {
@@ -106,7 +106,7 @@ class DeudaCarteraController extends Controller
         //calculando errores de cartera
         $cartera_temp = PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('LineaCredito', '=', $credito)->get();
 
-        
+
 
         foreach ($cartera_temp as $obj) {
             $errores_array = [];
@@ -144,9 +144,9 @@ class DeudaCarteraController extends Controller
 
             $obj->saldo_total = $obj->calculoTodalSaldo();
             $obj->update();
-           
 
-                /*
+
+            /*
                 //se limpia el nombre completo de espacios en blanco y numeros
                 $obj->PrimerApellido = $this->limpiarNombre($obj->PrimerApellido);
                 $obj->SegundoApellido = $this->limpiarNombre($obj->SegundoApellido);
@@ -226,7 +226,7 @@ class DeudaCarteraController extends Controller
         $mes = $fecha->format('m'); // El formato 'm' devuelve el mes con ceros iniciales (por ejemplo, "02")
         $anio = $fecha->format('Y');
 
-        
+
 
         // Obtener los datos de la tabla temporal
         $tempData = PolizaDeudaTempCartera::where('Axo', $anio)
@@ -298,7 +298,6 @@ class DeudaCarteraController extends Controller
 
 
 
-
     public function validar_poliza(Request $request)
     {
 
@@ -312,6 +311,12 @@ class DeudaCarteraController extends Controller
         $date_anterior = Carbon::create($temp_data_fisrt->Axo, $temp_data_fisrt->Mes, "01");
         $date_mes_anterior = $date_anterior->subMonth();
 
+
+
+
+
+
+
         //estableciendo fecha de nacimiento date y calculando edad
         PolizaDeudaTempCartera::where('User', auth()->user()->id)
             ->where('PolizaDeuda', $poliza_id)
@@ -322,28 +327,6 @@ class DeudaCarteraController extends Controller
                 'EdadDesembloso' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaOtorgamientoDate)"),
             ]);
 
-        $poliza_temporal = PolizaDeudaTempCartera::where('PolizaDeuda', $poliza_id)->where('User',auth()->user()->id)->get();
-        $poliza_cumulos = PolizaDeudaTempCartera::selectRaw('Id,Dui,Edad,Nit,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento,NoValido
-        NumeroReferencia,SUM(SaldoCapital) as total_saldo,SUM(Intereses) as total_interes,SUM(InteresesCovid) as total_covid,
-        SUM(InteresesMoratorios) as total_moratorios, SUM(MontoNominal) as total_monto_nominal')->groupBy('Dui')->get();
-
-    
-        return view('polizas.deuda.primer_filtro', compact('poliza_temporal','deuda','poliza_cumulos','date','date_anterior'));
-
-    }
-
-    public function validar_poliza_requisitos(Request $request)
-    {
-
-        $poliza_id = $request->Deuda;
-        $deuda = Deuda::findOrFail($request->Deuda);
-
-        $temp_data_fisrt = PolizaDeudaTempCartera::where('PolizaDeuda', $poliza_id)->where('User', auth()->user()->id)->first();
-        $date_submes = Carbon::create($temp_data_fisrt->Axo, $temp_data_fisrt->Mes, "01");
-        $date = Carbon::create($temp_data_fisrt->Axo, $temp_data_fisrt->Mes, "01");
-        $date_mes = $date_submes->subMonth();
-        $date_anterior = Carbon::create($temp_data_fisrt->Axo, $temp_data_fisrt->Mes, "01");
-        $date_mes_anterior = $date_anterior->subMonth();
 
         $requisitos = $deuda->requisitos;
 
@@ -425,7 +408,25 @@ class DeudaCarteraController extends Controller
             })->get();
 
 
-  
+        /* $registros_eliminados = DB::table('poliza_deuda_cartera')
+            ->where([
+                ['Mes', $date_anterior->month],
+                ['Axo', $date_mes_anterior->year],
+                ['PolizaDeuda', $poliza_id],
+            ])
+            ->whereNotExists(function ($query) use ($date, $date_mes, $poliza_id) {
+                $query->select(DB::raw(1))
+                    ->from('poliza_deuda_temp_cartera')
+                    ->where('poliza_deuda_temp_cartera.Mes', $date->month)
+                    ->where('poliza_deuda_temp_cartera.Axo', $date_mes->year)
+                    ->where('PolizaDeuda', $poliza_id)
+                    ->where('poliza_deuda_cartera.NumeroReferencia', 'poliza_deuda_temp_cartera.NumeroReferencia');
+                    // ->where(function ($subQuery) {
+                    //     $subQuery->whereColumn('poliza_deuda_cartera.NumeroReferencia', '=', 'poliza_deuda_temp_cartera.NumeroReferencia');
+                    //     //$subQuery->whereColumn('poliza_deuda_cartera.Dui', '=', 'poliza_deuda_temp_cartera.Dui');
+                    //     // ->orWhere('poliza_deuda_cartera.Nit', '=', 'poliza_deuda_temp_cartera.Nit');
+                    // })
+            })->get();*/
 
 
         $registros_eliminados = DB::table('poliza_deuda_cartera as c')
@@ -437,8 +438,8 @@ class DeudaCarteraController extends Controller
                     ->from('poliza_deuda_temp_cartera as t')
                     ->whereRaw('t.NumeroReferencia = c.NumeroReferencia')
                     ->whereRaw('t.PolizaDeuda = c.PolizaDeuda')
-                    ->whereRaw('t.Mes = '.$date->month)
-                    ->whereRaw('t.Axo = '.$date_mes->year);
+                    ->whereRaw('t.Mes = ' . $date->month)
+                    ->whereRaw('t.Axo = ' . $date_mes->year);
             })
             ->get();
 
