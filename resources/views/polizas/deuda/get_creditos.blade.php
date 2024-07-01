@@ -11,12 +11,27 @@
             <th>Edad actual</th>
             <th>Edad desembolso</th>
             <th>Saldo</th>
+            <th>Motivo</th>
             <th>Agregar a válidos</th>
         </tr>
     </thead>
     <tbody>
         @php $i=1; $total=0; @endphp
         @foreach ($poliza_cumulos as $registro)
+        @php
+        foreach($requisitos as $req){
+            if($registro->Edad < $req->EdadInicial){
+                $motivo = 'Edad Menor a la Edad Inicial';
+            }else if($registro->Edad > $req->EdadFinal){
+                $motivo = 'Edad Mayor a la Edad Final';
+            }else if($registro->total_saldo < $req->MontoÑInicial){
+                $motivo = 'Monto Inicial es menor al Monto Inicial';
+            }else if($registro->total_saldo > $req->MontoFinal){
+                $motivo = 'Monto Final es mayor al Monto Final';
+            }
+        }
+      
+        @endphp
         <tr>
             <td>{{ $registro->ConcatenatedNumeroReferencia }}</td>
             <td>{{ $registro->Dui }}</td>
@@ -34,6 +49,7 @@
             <td class="text-right">
                 ${{ number_format($registro->total_saldo, 2) }}
             </td>
+            <td>{{$motivo}}</td>
             <td align="center" data-target="#modal_cambio_credito_valido" data-toggle="modal" onclick="get_creditos({{ $registro->Id }})">
                 <button class="btn btn-primary">
                     <i class="fa fa-exchange"></i>

@@ -2094,6 +2094,8 @@ class DeudaController extends Controller
         $buscar = $request->buscar;
         $opcion = $request->opcion;
         $tipo_cartera = $request->tipo_cartera;
+        $deuda = Deuda::findOrFail($poliza);
+        $requisitos = $deuda->requisitos;
 
         if ($opcion == 1) {
             $poliza_cumulos = DB::table('poliza_deuda_temp_cartera')
@@ -2174,6 +2176,6 @@ class DeudaController extends Controller
 
 
 
-        return view('polizas.deuda.get_creditos', compact('poliza_cumulos', 'opcion'));
+        return view('polizas.deuda.get_creditos', compact('poliza_cumulos', 'opcion','requisitos'));
     }
 }

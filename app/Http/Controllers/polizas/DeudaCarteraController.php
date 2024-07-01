@@ -348,6 +348,7 @@ class DeudaCarteraController extends Controller
 
 
         //definiendo edad maxima segu requisitos
+        //
         $maxEdadMaxima = $deuda->requisitos->max('EdadFinal');
         PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Edad', '>', $maxEdadMaxima)->update(['NoValido' => 1]);
 
@@ -355,6 +356,7 @@ class DeudaCarteraController extends Controller
             $data_dui_cartera = $poliza_cumulos->where('Edad', '>=', $requisito->EdadInicial)->where('Edad', '<=', $requisito->EdadFinal)
                 ->where('total_saldo', '>=', $requisito->MontoInicial)->where('total_saldo', '<=', $requisito->MontoFinal)
                 ->pluck('Dui')->toArray();
+
 
             PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Perfiles', null)->whereIn('Dui', $data_dui_cartera)->update(['Perfiles' => $requisito->perfil->Descripcion]);
 
@@ -468,7 +470,7 @@ class DeudaCarteraController extends Controller
             $extra_primado->Existe = PolizaDeudaTempCartera::where('NumeroReferencia', $extra_primado->NumeroReferencia)->count();
         }
 
-        return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date', 'extra_primados'));
+        return view('polizas.deuda.respuesta_poliza', compact('maxEdadMaxima','nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date', 'extra_primados','requisitos'));
     }
 
 
