@@ -202,8 +202,8 @@
                                 <div class="col-sm-4">
                                     <label class="control-label">Responsabilidad Máxima *</label>
                                     <div class=" form-group has-feedback">
-                                        <input type="number" step="any" name="ResponsabilidadMaxima" id="ResponsabilidadMaxima" style="padding-left: 15%;display: block;" value="{{ $deuda->ResponsabilidadMaxima }}" class="form-control" required onblur="ResponsabilidadMax(this.value)">
-                                        <input type="text" step="any" style="padding-left: 15%; display: none;" id="ResponsabilidadMaximaTexto" class="form-control" required onfocus="ResponsabilidadMaxTexto(this.value)">
+                                        <input type="number" step="any" name="ResponsabilidadMaxima" id="ResponsabilidadMaxima" style="padding-left: 15%;display: none;" value="{{ $deuda->ResponsabilidadMaxima }}" class="form-control" required onblur="ResponsabilidadMax(this.value)">
+                                        <input type="text" step="any" style="padding-left: 15%; display: block;" id="ResponsabilidadMaximaTexto" value="{{number_format($deuda->ResponsabilidadMaxima,2,'.',',')}}" class="form-control" required onfocus="ResponsabilidadMaxTexto(this.value)">
                                         <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                                     </div>
                                 </div>
@@ -632,14 +632,13 @@
 <!-- jQuery -->
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
-    
     function formatearCantidad(cantidad) {
-            let numero = Number(cantidad);
-            return numero.toLocaleString('en-US', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
-        }
+        let numero = Number(cantidad);
+        return numero.toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    }
 
     function ResponsabilidadMax(id) {
         document.getElementById('ResponsabilidadMaximaTexto').value = formatearCantidad(id);

@@ -77,11 +77,14 @@
                     </div>
                     <div class="col-sm-4">
                         <label class="control-label" align="right">Edad Máxima de Terminación</label>
-                        <input type="text"  class="form-control" value="{{$deuda->EdadMaximaTerminacion}}" readonly>
+                        <input type="text" class="form-control" value="{{$deuda->EdadMaximaTerminacion}}" readonly>
                     </div>
                     <div class="col-sm-4">
-                        <label class="control-label" align="right">Responsabilidad Máxima</label>
-                        <input class="form-control" type="number" step="any"  value="{{ $deuda->ResponsabilidadMaxima }}" readonly>
+                        <label class="control-label">Responsabilidad Máxima *</label>
+                        <div class=" form-group has-feedback">
+                            <input type="text" step="any" style="padding-left: 15%; display: block;" readonly id="ResponsabilidadMaximaTexto" value="{{number_format($deuda->ResponsabilidadMaxima,2,'.',',')}}" class="form-control" required >
+                            <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                        </div>
                     </div>
                     <div class="col-sm-4">
                         &nbsp;
@@ -192,7 +195,7 @@
                                     <th>Edad Desde</th>
                                     <th>Edad Hasta</th>
                                     <th>Tasa por Edad</th>
-                                   
+
                                 </tr>
                             </thead>
                             <tbody>
@@ -216,7 +219,7 @@
                                     <td>{{ isset($obj->EdadDesde) ? $obj->EdadDesde . 'años' : '' }}</td>
                                     <td>{{ isset($obj->EdadHasta) ? $obj->EdadHasta . 'años' : '' }}</td>
                                     <td>{{ isset($obj->TasaEdad) ? $obj->TasaEdad . '%' : '' }} </td>
-                                   
+
                                 </tr>
 
 

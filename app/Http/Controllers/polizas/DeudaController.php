@@ -236,6 +236,8 @@ class DeudaController extends Controller
         $deuda->Vida = $request->Vida;
         $deuda->Mensual = $request->tipoTasa;
         $deuda->Desempleo = $request->Desempleo;
+        $deuda->EdadMaximaTerminacion = $request->EdadMaximaTerminacion;
+        $deuda->ResponsabilidadMaxima = $request->ResponsabilidadMaxima;
         if ($request->ComisionIva == 'on') {
             $deuda->ComisionIva = 1;
         } else {
@@ -494,6 +496,8 @@ class DeudaController extends Controller
         $deuda->Vida = $request->Vida;
         $deuda->Desempleo = $request->Desempleo;
         $deuda->Mensual = $request->tipoTasa;
+        $deuda->EdadMaximaTerminacion = $request->EdadMaximaTerminacion;
+        $deuda->ResponsabilidadMaxima = $request->ResponsabilidadMaxima;
         if ($request->ComisionIva == 'on') {
             $deuda->ComisionIva = 1;
         } else {
@@ -567,8 +571,13 @@ class DeudaController extends Controller
             //  dd("si");
             //  alert()->success('La configuracion no ha sido terminada');
             session(['tab' => 1]);
-            return redirect('polizas/deuda/' . $deuda);
+            return redirect('polizas/deuda/' . $id);
         } else {
+            if($deuda->EdadMaximaTerminacion == null || $deuda->ResponsabilidadMaxima == null){
+                session(['tab' => 1]);
+                return redirect('polizas/deuda/' . $id);  
+            }
+
             // dd("no");
             $requisitos = DeudaRequisitos::where('Activo', 1)->where('Deuda', $id)->get();
 
