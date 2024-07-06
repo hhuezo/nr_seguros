@@ -570,11 +570,12 @@ class DeudaController extends Controller
         if ($deuda->Configuracion == 0) {
             //  dd("si");
             //  alert()->success('La configuracion no ha sido terminada');
-            session(['tab' => 1]);
+            //session(['tab' => 1]);
             return redirect('polizas/deuda/' . $id);
         } else {
             if($deuda->EdadMaximaTerminacion == null || $deuda->ResponsabilidadMaxima == null){
-                session(['tab' => 1]);
+                //session(['tab' => 1]);
+                alert()->success('Debe agregar Edad Máxima y Responsabilidad Máxima');
                 return redirect('polizas/deuda/' . $id);  
             }
 

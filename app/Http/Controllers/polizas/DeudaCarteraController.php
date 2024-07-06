@@ -286,14 +286,15 @@ class DeudaCarteraController extends Controller
 
     public function add_excluidos($deuda, $val)
     {
-        $ex_existe = DeudaExcluidos::where('Dui', $deuda->Dui)->first();
+        $ex_existe = DeudaExcluidos::where('NumeroReferencia', $deuda->NumeroReferencia)->first();
         $sub_total = $deuda->total_saldo + $deuda->total_interes + $deuda->total_covid + $deuda->total_moratorios + $deuda->total_monto_nominal;
         
         if ($ex_existe) {
             if ($val == 1) {
                 $ex_existe->Edad = $deuda->Edad;
                 $ex_existe->EdadMaxima = 1;
-            } else {
+            } 
+            if ($val == 0) {
                 $ex_existe->Responsabilidad = $sub_total;
                 $ex_existe->ResponsabilidadMaxima = 1;
             }
@@ -309,7 +310,8 @@ class DeudaCarteraController extends Controller
             if ($val == 1) {
                 $excluidos->Edad = $deuda->Edad;
                 $excluidos->EdadMaxima = 1;
-            } else {
+            } 
+            if ($val == 0) {
                 $excluidos->Responsabilidad = $sub_total;
                 $excluidos->ResponsabilidadMaxima = 1;
             }
@@ -420,7 +422,15 @@ class DeudaCarteraController extends Controller
         NumeroReferencia,NoValido,Perfiles,EdadDesembloso,FechaOtorgamiento,NoValido,PolizaDeuda,
          GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ", ") AS ConcatenatedNumeroReferencia,SUM(SaldoCapital) as total_saldo,SUM(Intereses) as total_interes,SUM(InteresesCovid) as total_covid,
          SUM(InteresesMoratorios) as total_moratorios, SUM(MontoNominal) as total_monto_nominal')->where('User',auth()->user()->id)->where('PolizaDeuda',$deuda->Id)->groupBy('Dui', 'NoValido')->get();
+        
 
+
+         $poliza_cumulos_2 = PolizaDeudaTempCartera::selectRaw('Id,Dui,Edad,Nit,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento,
+         NumeroReferencia,NoValido,Perfiles,EdadDesembloso,FechaOtorgamiento,NoValido,PolizaDeuda,
+          GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ", ") AS ConcatenatedNumeroReferencia,SUM(SaldoCapital) as total_saldo,SUM(Intereses) as total_interes,SUM(InteresesCovid) as total_covid,
+          SUM(InteresesMoratorios) as total_moratorios, SUM(MontoNominal) as total_monto_nominal')->where('User',auth()->user()->id)->where('PolizaDeuda',$deuda->Id)->groupBy('NumeroReferencia', 'NoValido')->get();
+         
+ 
 
         //   $poliza_cumulos->where('Edad','>',$deuda->EdadMaximaTerminacion)->update(['NoValido' => 1]);
         //sobre pasan la edad maxima 
@@ -429,28 +439,41 @@ class DeudaCarteraController extends Controller
         ->update(['NoValido' => 1]);*/
 
         //sobre la responsabilidad maxima que se establecio
+        $edadM = array();
+        $pisto = array();
+        $sub = array();
         foreach ($poliza_cumulos as $registro) {
+	
             $sub_total = $registro->total_saldo + $registro->total_interes + $registro->total_covid + $registro->total_moratorios + $registro->total_monto_nominal;
+           // array_push($sub,$sub_total);
             if ($sub_total > $deuda->ResponsabilidadMaxima) {
                 $registro->NoValido = 1;
                 $registro->update();
                 //agregar a tabla excluidos
                 //val 0: Responsabilidad
+			 //   array_push($pisto,$registro->Id);
+
                 $val = 0;
                 $this->add_excluidos($registro,$val);
             }
+        }
+        foreach ($poliza_cumulos_2 as $registro) {
             
             if ($registro->Edad > $deuda->EdadMaximaTerminacion) {
                 $registro->NoValido = 1;
                 $registro->update();
                 //agregar a tabla excluidos
                 //val 1: Edad
+			  //  array_push($edadM,$registro->Id);
+
                 $val = 1;
                 $this->add_excluidos($registro,$val);
 
 
             }
         }
+
+      //  dd($deuda->ResponsabilidadMaxima , $sub,$edadM,$pisto);
 
 
 
@@ -526,7 +549,7 @@ class DeudaCarteraController extends Controller
         $poliza_cumulos = PolizaDeudaTempCartera::selectRaw('Id,Dui,Edad,Nit,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento,
         NumeroReferencia,NoValido,Perfiles,EdadDesembloso,FechaOtorgamiento,NoValido,
          GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ", ") AS ConcatenatedNumeroReferencia,SUM(saldo_total) as total_saldo')
-            ->where('User', auth()->user()->id)
+            ->where('User', auth()->user()->id)->where('PolizaDeuda',$deuda->Id)
             ->groupBy('Dui', 'NoValido')->get();
 
 
