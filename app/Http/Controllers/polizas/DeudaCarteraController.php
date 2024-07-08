@@ -451,7 +451,7 @@ class DeudaCarteraController extends Controller
             // $poliza_temporal = PolizaDeudaTempCartera::where('PolizaDeuda', $poliza_id)->where('User', auth()->user()->id)->get();
             $excluidos = DeudaExcluidos::whereMonth('FechaExclusion', $poliza_temporal->first()->Mes)->where('Poliza', $deuda->Id)->get();
             foreach ($excluidos as $obj) {
-                if ($sub_total > $deuda->ResponsabilidadMaxima) {
+                if ($sub_total < $deuda->ResponsabilidadMaxima && $obj->ResponsabilidaMaxima == 1 && $obj->EdadMaxima == null) {
 
                     if ($obj->Dui == $registro->Dui) {
                         $obj->Activo = 1;
