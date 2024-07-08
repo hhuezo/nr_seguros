@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\polizas;
 
+use App\Exports\EdadMaximaExport;
+use App\Exports\ExcluidosExport;
 use App\Http\Controllers\Controller;
 use App\Imports\PolizaDeudaCarteraImport;
 use App\Imports\PolizaDeudaTempCarteraImport;
@@ -295,6 +297,7 @@ class DeudaCarteraController extends Controller
                 $ex_existe->EdadMaxima = 1;
             } 
             if ($val == 0) {
+                
                 $ex_existe->Responsabilidad = $sub_total;
                 $ex_existe->ResponsabilidadMaxima = 1;
             }
@@ -439,13 +442,18 @@ class DeudaCarteraController extends Controller
         ->update(['NoValido' => 1]);*/
 
         //sobre la responsabilidad maxima que se establecio
-        $edadM = array();
-        $pisto = array();
-        $sub = array();
+ 
         foreach ($poliza_cumulos as $registro) {
 	
             $sub_total = $registro->total_saldo + $registro->total_interes + $registro->total_covid + $registro->total_moratorios + $registro->total_monto_nominal;
            // array_push($sub,$sub_total);
+           $excluidos = DeudaExcluidos::whereMonth('FechaExclusion', $date_mes)->get();
+           foreach($excluidos as $obj){
+                if($obj->Dui == $registro->Dui){
+                    $obj->Activo = 1;
+                    $obj->update();
+                }
+           }
             if ($sub_total > $deuda->ResponsabilidadMaxima) {
                 $registro->NoValido = 1;
                 $registro->update();
@@ -643,5 +651,30 @@ class DeudaCarteraController extends Controller
 
         alert()->success('El registro de poliza ha sido ingresado correctamente');
         return redirect('polizas/deuda/' . $tempRecord->PolizaDeuda . '/edit?tab=2');
+    }
+
+    public function exportar_excel(Request $request){
+        $deuda = Deuda::findOrFail($request->Deuda);
+        //edad maxima
+        $tipo = $request->Tipo;
+        $mes = $request->MesActual;
+        if($tipo == 1){
+            $excluidos = DeudaExcluidos::where('Poliza',$deuda->Id)->where('EdadMaxima',1)->whereMonth('FechaExclusion',$mes)->where('Activo',0)->get();
+        }else{
+            $excluidos = DeudaExcluidos::where('Poliza',$deuda->Id)->where('ResponsabilidadMaxima',1)->whereMonth('FechaExclusion',$mes)->where('Activo',0)->get();
+        }
+
+        return Excel::download(new ExcluidosExport($excluidos,$tipo), 'Clientes Excluidos.xlsx');
+    }
+
+    public function aumentar_techo(Request $request){
+        $deuda = Deuda::findOrFail($request->Deuda);
+        $deuda->ResponsabilidadMaxima = $request->ResponsabilidadMaxima;
+        $deuda->update();
+
+        alert()->success('El registro de poliza ha sido modificado correctamente');
+        return back();
+
+
     }
 }

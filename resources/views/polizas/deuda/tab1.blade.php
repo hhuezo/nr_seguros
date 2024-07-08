@@ -3,10 +3,48 @@
         <div class="x_panel">
             <div class="x_title">
                 <h2>Datos de Póliza <small></small></h2>
-                <ul class="nav navbar-right panel_toolbox">
+                <div class="nav navbar-right panel_toolbox">
+
+
+                    <a href="" data-target="#modal-techo" data-toggle="modal" class="btn btn-default">Aumentar Techo</a>
+                    <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-techo">
+
+                        <form method="POST" action="{{ url('poliza/deuda/aumentar_techo') }}">
+                            @method('POST')
+                            @csrf
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">×</span>
+                                        </button>
+                                        <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
+                                        <h4 class="modal-title">Aumentar Techo de Poliza</h4>
+                                    </div>
+                                    <div class="modal-body">
+
+                                        <label class="control-label">Responsabilidad Máxima *</label>
+                                        <div class=" form-group has-feedback">
+                                            <input type="number" step="any" name="ResponsabilidadMaxima" id="ResponsabilidadMaxima" style="padding-left: 15%;display: none;" value="{{ $deuda->ResponsabilidadMaxima }}" class="form-control" required onblur="ResponsabilidadMax(this.value)">
+                                            <input type="text" step="any" style="padding-left: 15%; display: block;" id="ResponsabilidadMaximaTexto" value="{{number_format($deuda->ResponsabilidadMaxima,2,'.',',')}}" class="form-control" required onfocus="ResponsabilidadMaxTexto(this.value)">
+                                            <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                        </div>
+
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                        <button type="button" class="btn btn-primary">Confirmar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+                <!-- <ul class="nav navbar-right panel_toolbox">
                     <li style="margin-left: 55px;"><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                     </li>
-                </ul>
+                </ul> -->
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
@@ -82,7 +120,7 @@
                     <div class="col-sm-4">
                         <label class="control-label">Responsabilidad Máxima *</label>
                         <div class=" form-group has-feedback">
-                            <input type="text" step="any" style="padding-left: 15%; display: block;" readonly id="ResponsabilidadMaximaTexto" value="{{number_format($deuda->ResponsabilidadMaxima,2,'.',',')}}" class="form-control" required >
+                            <input type="text" step="any" style="padding-left: 15%; display: block;" readonly id="ResponsabilidadMaximaTexto" value="{{number_format($deuda->ResponsabilidadMaxima,2,'.',',')}}" class="form-control" required>
                             <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                         </div>
                     </div>

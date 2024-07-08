@@ -133,7 +133,22 @@
                                 <div id="myTabContent" class="tab-content">
                                     <div role="tabpanel" class="tab-pane active" id="tab_content6" aria-labelledby="edad-tab">
                                         <br>
-                                        <h4 class="form-label">Edad Maxima de Terminación {{$deuda->EdadMaximaTerminacion}} años</h4>
+                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                            <h4>Edad Maxima de Terminación {{$deuda->EdadMaximaTerminacion}} años
+                                            </h4>
+                                        </div>
+                                        <div class="col-md-6 col-sm-6 col-xs-12" align="right">
+                                            <form action="{{url('poliza/deuda/exportar')}}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="Tipo" value="1">
+                                                <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
+                                                <input type="hidden" name="MesActual" value="{{ date('m', strtotime($date)) }}">
+                                                <button style="text-align: right;" class="btn btn-primary">Exportar</button>
+                                            </form>
+
+                                        </div>
+                                        <br><br>
+
                                         <table class="table table-striped" id="MyTable6">
                                             <thead>
                                                 <tr>
@@ -174,7 +189,38 @@
                                     </div>
                                     <div role="tabpanel5" class="tab-pane" id="tab_content7" aria-labelledby="responsabilidad-tab5">
                                         <br>
-                                        <h4 class="form-label">Responsabilidad Máxima ${{number_format($deuda->ResponsabilidadMaxima,2,'.',',')}}</h4>
+                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                            <h4 id="text_dinero" style="display: block;">Responsabilidad Máxima ${{number_format($deuda->ResponsabilidadMaxima,2,'.',',')}} </h4>
+                                            <h4 id="text_dinero_ac" style="display: none;"> </h4>
+
+                                        </div>
+                                        <div class="col-md-6 col-sm-6 col-xs-12" align="right">
+                                            <table>
+                                                <tr>
+                                                    <td style="vertical-align: top;">
+                                                        <!-- <button class="btn btn-default">Aumentar Techo</button> -->
+                                              
+
+                                                    </td>
+                                                    <td>
+
+                                                        <form action="{{url('poliza/deuda/exportar')}}" method="POST">
+                                                            @csrf
+                                                            <input type="hidden" name="Tipo" value="0">
+                                                            <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
+                                                            <input type="hidden" name="MesActual" value="{{ date('m', strtotime($date)) }}">
+                                                            <button style="text-align: right;" class="btn btn-primary">Exportar</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            </table>
+
+
+
+                                        </div>
+                                        <br><br>
+
+
                                         <table class="table table-striped" id="MyTable7">
                                             <thead>
                                                 <tr>
