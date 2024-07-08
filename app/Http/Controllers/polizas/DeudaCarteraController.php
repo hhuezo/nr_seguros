@@ -456,6 +456,10 @@ class DeudaCarteraController extends Controller
                     if ($obj->Dui == $registro->Dui) {
                         $obj->Activo = 1;
                         $obj->update();
+                        
+                        $registro->NoValido = 0;
+                        $registro->update();
+
                     }
                 }
             }
