@@ -237,7 +237,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($poliza_cumulos->where('Edad','<',$deuda->EdadMaximaTerminacion) as $registro)
+                                                @foreach ($poliza_cumulos as $registro)
                                                     @php
                                                     $sub_total = $registro->total_saldo + $registro->total_interes + $registro->total_covid + $registro->total_moratorios + $registro->total_monto_nominal;
                                                     @endphp
