@@ -447,13 +447,16 @@ class DeudaCarteraController extends Controller
 
             $sub_total = $registro->total_saldo + $registro->total_interes + $registro->total_covid + $registro->total_moratorios + $registro->total_monto_nominal;
             // array_push($sub,$sub_total);
-           // $excluidos = DeudaExcluidos::whereMonth('FechaExclusion', $date_mes)->get();
-           // $poliza_temporal = PolizaDeudaTempCartera::where('PolizaDeuda', $poliza_id)->where('User', auth()->user()->id)->get();
-            $excluidos = DeudaExcluidos::whereMonth('FechaExclusion', $poliza_temporal->first()->Mes)->where('Poliza',$deuda->Id)->get();
+            // $excluidos = DeudaExcluidos::whereMonth('FechaExclusion', $date_mes)->get();
+            // $poliza_temporal = PolizaDeudaTempCartera::where('PolizaDeuda', $poliza_id)->where('User', auth()->user()->id)->get();
+            $excluidos = DeudaExcluidos::whereMonth('FechaExclusion', $poliza_temporal->first()->Mes)->where('Poliza', $deuda->Id)->get();
             foreach ($excluidos as $obj) {
-                if ($obj->Dui == $registro->Dui) {
-                    $obj->Activo = 1;
-                    $obj->update();
+                if ($sub_total > $deuda->ResponsabilidadMaxima) {
+
+                    if ($obj->Dui == $registro->Dui) {
+                        $obj->Activo = 1;
+                        $obj->update();
+                    }
                 }
             }
             if ($sub_total > $deuda->ResponsabilidadMaxima) {
