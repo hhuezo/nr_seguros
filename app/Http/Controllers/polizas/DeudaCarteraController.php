@@ -433,7 +433,7 @@ class DeudaCarteraController extends Controller
           GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ", ") AS ConcatenatedNumeroReferencia,SUM(SaldoCapital) as total_saldo,SUM(Intereses) as total_interes,SUM(InteresesCovid) as total_covid,
           SUM(InteresesMoratorios) as total_moratorios, SUM(MontoNominal) as total_monto_nominal')->where('User',auth()->user()->id)->where('PolizaDeuda',$deuda->Id)->groupBy('NumeroReferencia', 'NoValido')->get();
          
- 
+          $poliza_temporal = PolizaDeudaTempCartera::where('PolizaDeuda', $poliza_id)->where('User', auth()->user()->id)->get();
 
         //   $poliza_cumulos->where('Edad','>',$deuda->EdadMaximaTerminacion)->update(['NoValido' => 1]);
         //sobre pasan la edad maxima 
@@ -465,7 +465,7 @@ class DeudaCarteraController extends Controller
                 $this->add_excluidos($registro,$val);
             }
         }
-        foreach ($poliza_cumulos_2 as $registro) {
+        foreach ($poliza_temporal as $registro) {
             
             if ($registro->Edad > $deuda->EdadMaximaTerminacion) {
                 $registro->NoValido = 1;
@@ -567,7 +567,7 @@ class DeudaCarteraController extends Controller
             $extra_primado->Existe = PolizaDeudaTempCartera::where('NumeroReferencia', $extra_primado->NumeroReferencia)->count();
         }
 
-        $poliza_temporal = PolizaDeudaTempCartera::where('PolizaDeuda', $poliza_id)->where('User', auth()->user()->id)->get();
+        
 
         return view('polizas.deuda.respuesta_poliza', compact('poliza_temporal', 'maxEdadMaxima', 'nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date', 'extra_primados', 'requisitos'));
     }
