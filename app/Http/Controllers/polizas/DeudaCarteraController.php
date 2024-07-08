@@ -454,15 +454,16 @@ class DeudaCarteraController extends Controller
                     $obj->update();
                 }
             }
+            if ($sub_total > $registro->ResponsabilidadMaxima) {
+                $registro->NoValido = 1;
+                $registro->update();
+                //agregar a tabla excluidos
+                //val 0: Responsabilidad
+                //   array_push($pisto,$registro->Id);
 
-            $registro->NoValido = 1;
-            $registro->update();
-            //agregar a tabla excluidos
-            //val 0: Responsabilidad
-            //   array_push($pisto,$registro->Id);
-
-            $val = 0;
-            $this->add_excluidos($registro, $val);
+                $val = 0;
+                $this->add_excluidos($registro, $val);
+            }
         }
         foreach ($poliza_temporal as $registro) {
 
