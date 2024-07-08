@@ -454,7 +454,7 @@ class DeudaCarteraController extends Controller
                     $obj->update();
                 }
             }
-            if ($sub_total > $registro->ResponsabilidadMaxima) {
+            if ($sub_total > $deuda->ResponsabilidadMaxima) {
                 $registro->NoValido = 1;
                 $registro->update();
                 //agregar a tabla excluidos
