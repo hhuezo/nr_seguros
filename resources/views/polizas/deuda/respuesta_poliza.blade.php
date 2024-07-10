@@ -71,7 +71,7 @@
                     <div class="x_title">
                         <div class="col-md-6 col-sm-6 col-xs-12">
                             {{-- <h2>Resumen de cartera {{ $nombre_cartera }} <br> {{ $deuda->NumeroPoliza }} &nbsp; --}}
-                            <h2>Resumen de cartera {{ $deuda->NumeroPoliza }} &nbsp;
+                            <h2>Resumen de cartera {{ $deuda->NumeroPoliza }} <br>
                                 {{ $deuda->clientes->Nombre }}
                             </h2>
                         </div>
@@ -79,10 +79,13 @@
                             <table>
                                 <tr>
                                     <td style="vertical-align: top;">
+                                        <a href="{{url('polizas/deuda') }}/{{ $deuda->Id }}/edit" class="btn btn-info">Pausar Validación</a>
+                                    </td>
+                                    <td style="vertical-align: top;">
                                         <form method="post" action="{{ url('regresar_edit') }}">
                                             @csrf
                                             <input type="hidden" name="deuda_id" value="{{ $deuda->Id }}">
-                                            <button class="btn btn-default">Cancelar</button>
+                                            <button class="btn btn-default">Borrar Proceso Actual</button>
                                         </form>
                                     </td>
                                     <td>
@@ -137,7 +140,7 @@
                                             <h4>Edad Maxima de Terminación {{$deuda->EdadMaximaTerminacion}} años
                                             </h4>
                                         </div>
-                                        <div class="col-md-6 col-sm-6 col-xs-12" align="right">
+                                        <div class="col-md-6 col-sm-6 col-xs-12" align="right" id="btn_expo" style="display:{{$excluidos->count() > 0 ? 'block' : 'none'}}">
                                             <form action="{{url('poliza/deuda/exportar')}}" method="POST">
                                                 @csrf
                                                 <input type="hidden" name="Tipo" value="1">
@@ -158,7 +161,7 @@
                                                     <th>Nombre</th>
                                                     <th>Fecha nacimiento</th>
                                                     <th>Edad Actual</th>
-                                                    <!-- <th style="text-align: center;">Opciones</th> -->
+                                                    <th style="text-align: center;">Excluir</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -176,6 +179,7 @@
                                                     <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
                                                     </td>
                                                     <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
+                                                    <td><input type="checkbox" class="form-control" onclick="excluir({{$registro->Id}},0,1)" {{$registro->Excluido == 1 ? 'checked':''}}></td>
                                                     <!-- <td style="text-align: center;"><button class="btn btn-primary"><i class="fa fa-exchange"></i></button></td> -->
                                                 </tr>
                                                 @endforeach
@@ -194,26 +198,17 @@
                                             <h4 id="text_dinero_ac" style="display: none;"> </h4>
 
                                         </div>
-                                        <div class="col-md-6 col-sm-6 col-xs-12" align="right">
-                                            <table>
-                                                <tr>
-                                                    <td style="vertical-align: top;">
-                                                        <!-- <button class="btn btn-default">Aumentar Techo</button> -->
-                                              
+                                        <div class="col-md-6 col-sm-6 col-xs-12" align="right" id="btn_expo2" style="display:{{$excluidos->count() > 0 ? 'block' : 'none'}}">
 
-                                                    </td>
-                                                    <td>
 
-                                                        <form action="{{url('poliza/deuda/exportar')}}" method="POST">
-                                                            @csrf
-                                                            <input type="hidden" name="Tipo" value="0">
-                                                            <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
-                                                            <input type="hidden" name="MesActual" value="{{ date('m', strtotime($date)) }}">
-                                                            <button style="text-align: right;" class="btn btn-primary">Exportar</button>
-                                                        </form>
-                                                    </td>
-                                                </tr>
-                                            </table>
+                                            <form action="{{url('poliza/deuda/exportar')}}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="Tipo" value="0">
+                                                <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
+                                                <input type="hidden" name="MesActual" value="{{ date('m', strtotime($date)) }}">
+                                                <button style="text-align: right;" class="btn btn-primary">Exportar</button>
+                                            </form>
+
 
 
 
@@ -233,39 +228,39 @@
                                                     <th>Edad Actual</th>
                                                     <th>Edad Desembolso</th>
                                                     <th>Total </th>
-                                                    <!-- <th>Opciones</th> -->
+                                                    <th>Excluir</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 @foreach ($poliza_cumulos as $registro)
-                                                    @php
-                                                    $sub_total = $registro->total_saldo + $registro->total_interes + $registro->total_covid + $registro->total_moratorios + $registro->total_monto_nominal;
-                                                    @endphp
-                                                    @if($sub_total > $deuda->ResponsabilidadMaxima)
-                                                    <tr>
-                                                        <td>{{ $registro->NumeroReferencia }} <br>
-                                                        </td>
-                                                        <td>{{ $registro->Dui }}</td>
-                                                        <td>{{ $registro->Nit }}</td>
-                                                        <td>{{ $registro->PrimerNombre }}
-                                                            {{ $registro->SegundoNombre }}
-                                                            {{ $registro->PrimerApellido }}
-                                                            {{ $registro->SegundoApellido }}
-                                                            {{ $registro->ApellidoCasada }}
-                                                        </td>
-                                                        <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
-                                                        </td>
-                                                        <td>{{ $registro->FechaOtorgamiento ? $registro->FechaOtorgamiento : '' }}
-                                                        </td>
-                                                        <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
-                                                        <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }}
-                                                            Años</td>
-                                                        <td>${{ number_format($sub_total, 2) }}</td>
-                                                        <!-- <td style="text-align: center;"><button class="btn btn-primary"><i class="fa fa-exchange"></i></button></td> -->
+                                                @php
+                                                $sub_total = $registro->total_saldo + $registro->total_interes + $registro->total_covid + $registro->total_moratorios + $registro->total_monto_nominal;
+                                                @endphp
+                                                @if($sub_total > $deuda->ResponsabilidadMaxima)
+                                                <tr>
+                                                    <td>{{ $registro->NumeroReferencia }} <br>
+                                                    </td>
+                                                    <td>{{ $registro->Dui }}</td>
+                                                    <td>{{ $registro->Nit }}</td>
+                                                    <td>{{ $registro->PrimerNombre }}
+                                                        {{ $registro->SegundoNombre }}
+                                                        {{ $registro->PrimerApellido }}
+                                                        {{ $registro->SegundoApellido }}
+                                                        {{ $registro->ApellidoCasada }}
+                                                    </td>
+                                                    <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
+                                                    </td>
+                                                    <td>{{ $registro->FechaOtorgamiento ? $registro->FechaOtorgamiento : '' }}
+                                                    </td>
+                                                    <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
+                                                    <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }}
+                                                        Años</td>
+                                                    <td>${{ number_format($sub_total, 2) }}</td>
+                                                    <td style="text-align: center;"><input type="checkbox" class="form-control" onclick="excluir({{$registro->Id}},{{$sub_total}},0)" {{$registro->Excluido == 1 ? 'checked':''}}></td>
 
-                                                    </tr>
-                                                    @endif
-                                                    @endforeach
+                                                </tr>
+                                                @endif
+                                                @endforeach
 
 
                                             </tbody>
@@ -543,6 +538,35 @@
         loadCreditos(1, "");
         loadCreditos(2, "");
     });
+
+    function excluir(id, subtotal, val) {
+        //   alert(subtotal);
+
+        $.ajax({
+            url: "{{ url('poliza/deuda/add_excluidos') }}", // Asegúrate de que esta sintaxis se procese correctamente en tu archivo .blade.php
+            type: 'POST',
+            data: {
+                id: id,
+                subtotal: subtotal,
+                val: val,
+                //tipo_cartera: ' $tipo_cartera',
+                _token: '{{ csrf_token() }}' // Necesario para la protección CSRF de Laravel
+            },
+            success: function(response) {
+                // Aquí manejas lo que suceda después de la respuesta exitosa
+                console.log(response);
+                if (response.excluido > 0) {
+                    $("#btn_expo").show();
+                    $("#btn_expo2").show();
+                }
+
+            },
+            error: function(xhr, status, error) {
+                // Aquí manejas los errores
+                console.error(error);
+            }
+        });
+    }
 
     function get_creditos(id) {
         $.ajax({
