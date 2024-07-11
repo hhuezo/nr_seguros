@@ -179,7 +179,8 @@
                                                     <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
                                                     </td>
                                                     <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
-                                                    <td><input type="checkbox" class="form-control" onclick="excluir({{$registro->Id}},0,1)" {{$registro->Excluido == 1 ? 'checked':''}}></td>
+                                                    <td><input type="checkbox" onclick="excluir({{$registro->Id}},0,1)" class="js-switch" {{$registro->Excluido == 1 ? 'checked':''}}>
+                                                    </td>
                                                     <!-- <td style="text-align: center;"><button class="btn btn-primary"><i class="fa fa-exchange"></i></button></td> -->
                                                 </tr>
                                                 @endforeach
@@ -256,7 +257,9 @@
                                                     <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }}
                                                         Años</td>
                                                     <td>${{ number_format($sub_total, 2) }}</td>
-                                                    <td style="text-align: center;"><input type="checkbox" class="form-control" onclick="excluir({{$registro->Id}},{{$sub_total}},0)" {{$registro->Excluido == 1 ? 'checked':''}}></td>
+                                                    <td style="text-align: center;"><input type="checkbox" class="js-switch" onclick="excluir({{$registro->Id}},{{$sub_total}},0)" 
+                                                    {{$registro->Excluido == 1 ? 'checked':''}}>
+                                                </td>
 
                                                 </tr>
                                                 @endif
