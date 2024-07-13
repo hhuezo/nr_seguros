@@ -547,9 +547,9 @@
 
     function excluir(id, subtotal, val) {
         let id_ex = document.getElementById('id_excluido-' + id).value;
-        alert(id_ex);
+        //alert(id_ex);
         if (id_ex == 0) {
-            alert('si');
+           // alert('si');
             $.ajax({
                 url: "{{ url('poliza/deuda/add_excluidos') }}", // Asegúrate de que esta sintaxis se procese correctamente en tu archivo .blade.php
                 type: 'POST',
@@ -576,7 +576,7 @@
                 }
             });
         }  else{
-            alert('no');
+           // alert('no');
             $.ajax({
                 url: "{{ url('poliza/deuda/delete_excluido') }}", // Asegúrate de que esta sintaxis se procese correctamente en tu archivo .blade.php
                 type: 'POST',
