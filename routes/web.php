@@ -231,6 +231,7 @@ Route::post('exportar_excel', [DeudaController::class, 'exportar_excel']);
 Route::post('poliza/deuda/exportar',[DeudaCarteraController::class,'exportar_excel']);
 Route::post('poliza/deuda/aumentar_techo',[DeudaCarteraController::class, 'aumentar_techo']);
 Route::post('poliza/deuda/add_excluidos',[DeudaCarteraController::class, 'add_excluidos']);
+Route::post('poliza/deuda/delete_excluido',[DeudaCarteraController::class,'delete_excluido']);
 
 Route::post('polizas/deuda/agregar_pago', [DeudaController::class, 'agregar_pago']);
 Route::get('polizas/deuda/get_pago/{id}', [DeudaController::class, 'get_pago']);

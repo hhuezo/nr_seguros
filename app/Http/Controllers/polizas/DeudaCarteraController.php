@@ -291,8 +291,7 @@ class DeudaCarteraController extends Controller
         $registro =  PolizaDeudaTempCartera::findOrFail($request->id);
         $deuda = Deuda::findOrFail($registro->PolizaDeuda);
         $registro->NoValido = 1;
-        $registro->Excluido = 1;
-        $registro->update();
+      
         
         $ex_existe = DeudaExcluidos::where('NumeroReferencia', $registro->NumeroReferencia)->first();
         //$sub_total = $deuda->total_saldo + $deuda->total_interes + $deuda->total_covid + $deuda->total_moratorios + $deuda->total_monto_nominal;
@@ -323,6 +322,7 @@ class DeudaCarteraController extends Controller
                 $ex_existe->ResponsabilidadMaxima = 1;
             }
             $ex_existe->update();
+            $id = $ex_existe->Id;
         } else {
             $excluidos = new DeudaExcluidos();
             $excluidos->Dui = $registro->Dui;
@@ -340,9 +340,23 @@ class DeudaCarteraController extends Controller
                 $excluidos->ResponsabilidadMaxima = 1;
             }
             $excluidos->save();
+            $id = $excluidos->Id;
         }
+        $registro->Excluido = $id;
+        $registro->update();
 
-        return response()->json(['excluido' => $excluidos->count()]);
+        return response()->json(['excluido' => $id]);
+    }
+
+    public function delete_excluido(Request $request){
+        $registro = PolizaDeudaTempCartera::findOrFail($request->id);
+        $registro->NoValido = 1;
+        $registro->Excluido = 0;
+        $registro->update();
+        $id_exx = 0;
+        $excluido = DeudaExcluidos::findOrFail($request->id_ex)->delete();
+
+        return response()->json(['excluido' => $id_exx]);
     }
 
 

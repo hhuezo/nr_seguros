@@ -179,7 +179,9 @@
                                                     <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
                                                     </td>
                                                     <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
-                                                    <td><input type="checkbox" onclick="excluir({{$registro->Id}},0,1)" class="js-switch" {{$registro->Excluido == 1 ? 'checked':''}}>
+                                                    <td>
+                                                        <input type="checkbox" onchange="excluir({{$registro->Id}},0,1)" class="js-switch" {{$registro->Excluido > 0 ? 'checked':''}}>
+                                                        <input type="hidden" id="id_excluido-{{$registro->Id}}" value="{{$registro->Excluido}}">
                                                     </td>
                                                     <!-- <td style="text-align: center;"><button class="btn btn-primary"><i class="fa fa-exchange"></i></button></td> -->
                                                 </tr>
@@ -257,9 +259,10 @@
                                                     <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }}
                                                         Años</td>
                                                     <td>${{ number_format($sub_total, 2) }}</td>
-                                                    <td style="text-align: center;"><input type="checkbox" class="js-switch" onclick="excluir({{$registro->Id}},{{$sub_total}},0)" 
-                                                    {{$registro->Excluido == 1 ? 'checked':''}}>
-                                                </td>
+                                                    <td style="text-align: center;">
+                                                    <input type="checkbox" onchange="excluir_dinero({{$registro->Id}},0,1)" class="js-switch" {{$registro->Excluido > 0 ? 'checked':''}}>
+                                                    <input type="hidden" id="id_excluido_dinero-{{$registro->Id}}" value="{{$registro->Excluido}}">
+                                                    </td>
 
                                                 </tr>
                                                 @endif
@@ -543,33 +546,117 @@
     });
 
     function excluir(id, subtotal, val) {
-        //   alert(subtotal);
+        let id_ex = document.getElementById('id_excluido-' + id).value;
+        alert(id_ex);
+        if (id_ex == 0) {
+            alert('si');
+            $.ajax({
+                url: "{{ url('poliza/deuda/add_excluidos') }}", // Asegúrate de que esta sintaxis se procese correctamente en tu archivo .blade.php
+                type: 'POST',
+                data: {
+                    id: id,
+                    subtotal: subtotal,
+                    val: val,
+                    //tipo_cartera: ' $tipo_cartera',
+                    _token: '{{ csrf_token() }}' // Necesario para la protección CSRF de Laravel
+                },
+                success: function(response) {
+                    // Aquí manejas lo que suceda después de la respuesta exitosa
+                    console.log(response);
+                    if (response.excluido > 0) {
+                        $("#btn_expo").show();
+                        $("#btn_expo2").show();
+                        document.getElementById('id_excluido-' + id).value = response.excluido;
+                    }
 
-        $.ajax({
-            url: "{{ url('poliza/deuda/add_excluidos') }}", // Asegúrate de que esta sintaxis se procese correctamente en tu archivo .blade.php
-            type: 'POST',
-            data: {
-                id: id,
-                subtotal: subtotal,
-                val: val,
-                //tipo_cartera: ' $tipo_cartera',
-                _token: '{{ csrf_token() }}' // Necesario para la protección CSRF de Laravel
-            },
-            success: function(response) {
-                // Aquí manejas lo que suceda después de la respuesta exitosa
-                console.log(response);
-                if (response.excluido > 0) {
-                    $("#btn_expo").show();
-                    $("#btn_expo2").show();
+                },
+                error: function(xhr, status, error) {
+                    // Aquí manejas los errores
+                    console.error(error);
                 }
+            });
+        }  else{
+            alert('no');
+            $.ajax({
+                url: "{{ url('poliza/deuda/delete_excluido') }}", // Asegúrate de que esta sintaxis se procese correctamente en tu archivo .blade.php
+                type: 'POST',
+                data: {
+                    id: id,
+                    id_ex : id_ex,
+                    //tipo_cartera: ' $tipo_cartera',
+                    _token: '{{ csrf_token() }}' // Necesario para la protección CSRF de Laravel
+                },
+                success: function(response) {
+                    // Aquí manejas lo que suceda después de la respuesta exitosa
+                    console.log(response);
+                    document.getElementById('id_excluido-' + id).value = response.excluido;
+                },
+                error: function(xhr, status, error) {
+                    // Aquí manejas los errores
+                    console.error(error);
+                }
+            });
+        }
 
-            },
-            error: function(xhr, status, error) {
-                // Aquí manejas los errores
-                console.error(error);
-            }
-        });
+
     }
+
+    function excluir_dinero(id, subtotal, val) {
+        let id_ex = document.getElementById('id_excluido_dinero-' + id).value;
+        alert(id_ex);
+        if (id_ex == 0) {
+            alert('si');
+            $.ajax({
+                url: "{{ url('poliza/deuda/add_excluidos') }}", // Asegúrate de que esta sintaxis se procese correctamente en tu archivo .blade.php
+                type: 'POST',
+                data: {
+                    id: id,
+                    subtotal: subtotal,
+                    val: val,
+                    //tipo_cartera: ' $tipo_cartera',
+                    _token: '{{ csrf_token() }}' // Necesario para la protección CSRF de Laravel
+                },
+                success: function(response) {
+                    // Aquí manejas lo que suceda después de la respuesta exitosa
+                    console.log(response);
+                    if (response.excluido > 0) {
+                        $("#btn_expo").show();
+                        $("#btn_expo2").show();
+                        document.getElementById('id_excluido_dinero-' + id).value = response.excluido;
+                    }
+
+                },
+                error: function(xhr, status, error) {
+                    // Aquí manejas los errores
+                    console.error(error);
+                }
+            });
+        }  else{
+            alert('no');
+            $.ajax({
+                url: "{{ url('poliza/deuda/delete_excluido') }}", // Asegúrate de que esta sintaxis se procese correctamente en tu archivo .blade.php
+                type: 'POST',
+                data: {
+                    id: id,
+                    id_ex : id_ex,
+                    //tipo_cartera: ' $tipo_cartera',
+                    _token: '{{ csrf_token() }}' // Necesario para la protección CSRF de Laravel
+                },
+                success: function(response) {
+                    // Aquí manejas lo que suceda después de la respuesta exitosa
+                    console.log(response);
+                    document.getElementById('id_excluido_dinero-' + id).value = response.excluido;
+                },
+                error: function(xhr, status, error) {
+                    // Aquí manejas los errores
+                    console.error(error);
+                }
+            });
+        }
+
+
+    }
+
 
     function get_creditos(id) {
         $.ajax({
