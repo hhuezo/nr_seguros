@@ -140,7 +140,9 @@
                                             <h4>Edad Maxima de Terminación {{$deuda->EdadMaximaTerminacion}} años
                                             </h4>
                                         </div>
-                                        <div class="col-md-6 col-sm-6 col-xs-12" align="right" id="btn_expo" style="display:{{$excluidos->count() > 0 ? 'block' : 'none'}}">
+                                        <!-- <div class="col-md-6 col-sm-6 col-xs-12" align="right" id="btn_expo" style="display:{{$excluidos->count() > 0 ? 'block' : 'none'}}"> -->
+                                        <div class="col-md-6 col-sm-6 col-xs-12" align="right" >
+
                                             <form action="{{url('poliza/deuda/exportar')}}" method="POST">
                                                 @csrf
                                                 <input type="hidden" name="Tipo" value="1">
@@ -201,7 +203,9 @@
                                             <h4 id="text_dinero_ac" style="display: none;"> </h4>
 
                                         </div>
-                                        <div class="col-md-6 col-sm-6 col-xs-12" align="right" id="btn_expo2" style="display:{{$excluidos->count() > 0 ? 'block' : 'none'}}">
+                                        <div class="col-md-6 col-sm-6 col-xs-12" align="right" >
+                                        <!-- <div class="col-md-6 col-sm-6 col-xs-12" align="right" id="btn_expo2" style="display:{{$excluidos->count() > 0 ? 'block' : 'none'}}"> -->
+
 
 
                                             <form action="{{url('poliza/deuda/exportar')}}" method="POST">

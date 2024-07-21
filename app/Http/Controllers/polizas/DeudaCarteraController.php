@@ -707,12 +707,20 @@ class DeudaCarteraController extends Controller
         $tipo = $request->Tipo;
         $mes = $request->MesActual;
         if ($tipo == 1) {
-            $excluidos = DeudaExcluidos::where('Poliza', $deuda->Id)->where('EdadMaxima', 1)->whereMonth('FechaExclusion', $mes)->where('Activo', 0)->get();
+            //edad maxima
+           // $excluidos = DeudaExcluidos::where('Poliza', $deuda->Id)->where('EdadMaxima', 1)->whereMonth('FechaExclusion', $mes)->where('Activo', 0)->get();
+            $excluidos = PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Edad','>', $deuda->EdadMaximaTerminacion)->where('User', auth()->user()->id)->get();
+
         } else {
-            $excluidos = DeudaExcluidos::where('Poliza', $deuda->Id)->where('ResponsabilidadMaxima', 1)->whereMonth('FechaExclusion', $mes)->where('Activo', 0)->get();
+             //$excluidos = DeudaExcluidos::where('Poliza', $deuda->Id)->where('ResponsabilidadMaxima', 1)->whereMonth('FechaExclusion', $mes)->where('Activo', 0)->get();
+            $excluidos = PolizaDeudaTempCartera::selectRaw('Id,Dui,Edad,Nit,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento,Excluido,
+        NumeroReferencia,NoValido,Perfiles,EdadDesembloso,FechaOtorgamiento,NoValido,
+         GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ", ") AS ConcatenatedNumeroReferencia,SUM(saldo_total) as total_saldo')
+            ->where('User', auth()->user()->id)->where('PolizaDeuda', $deuda->Id)
+            ->groupBy('Dui', 'NoValido')->get();
         }
 
-        return Excel::download(new ExcluidosExport($excluidos, $tipo), 'Clientes Excluidos.xlsx');
+        return Excel::download(new ExcluidosExport($excluidos, $tipo,$mes,$deuda), 'Clientes Excluidos.xlsx');
     }
 
     public function aumentar_techo(Request $request)

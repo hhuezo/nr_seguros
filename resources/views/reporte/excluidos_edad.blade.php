@@ -14,7 +14,7 @@
             <th>Nombre</th>
             <th>Dui</th>
             <th>Número de Referencia</th>
-            <th>Fecha de Exclusión</th>
+            <th>Fecha</th>
             <th>Edad</th>
         </tr>
         @php($i=1)
@@ -22,11 +22,15 @@
         <tr>
 
             <td>{{$i}}</td>
-            <td>{{$obj->Nombre}}</td>
+            <td>{{$obj->PrimerNombre}}
+             {{$obj->SegundoNombre}}
+             {{$obj->PrimerApellido}}
+             {{$obj->SegundoApellido}}
+         </td>
             <td>{{strlen($obj->Dui) == 9 ? substr($obj->Dui, 0, 8) . '-' . substr($obj->Dui, 8, 1) : 
                 substr($obj->Dui, 0, 4) . '-' . substr($obj->Dui, 4, 6) . '-' . substr($obj->Dui, 10, 3) . '-' . substr($obj->Dui, 13, 1)}}</td>
             <td>{{$obj->NumeroReferencia}}</td>
-            <td>{{ \Carbon\Carbon::parse($obj->FechaExclusion)->format('d/m/Y') }}</td>
+            <td>{{\Carbon\Carbon::now()->format('d/m/Y')}}</td>
             <td>{{$obj->Edad}} años</td>
 
         </tr>
