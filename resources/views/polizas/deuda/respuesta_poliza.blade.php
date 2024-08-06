@@ -123,8 +123,7 @@
                                     <li role="presentation" class=""><a href="#tab_content5" id="profile-tab5" role="tab" data-toggle="tab" aria-expanded="false">Registros
                                             Eliminados</a>
                                     </li>
-                                    <li role="presentation" class=""><a href="#tab_content2" role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">Creditos no
-                                            válidos</a>
+                                    <li role="presentation" class=""><a href="#tab_content2" role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">Creditos no válidos</a>
                                     </li>
                                     <li role="presentation" class=""><a href="#tab_content3" role="tab" id="profile-tab2" data-toggle="tab" aria-expanded="false">Registros con
                                             requisitos</a>
@@ -167,7 +166,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($poliza_temporal->where('Edad','>',$deuda->EdadMaximaTerminacion) as $registro)
+                                                @foreach ($poliza_temporal->where('Edad','>=',$deuda->EdadMaximaTerminacion) as $registro)
                                                 <tr>
                                                     <td>{{ $registro->NumeroReferencia }}</td>
                                                     <td>{{ $registro->Dui }}</td>

@@ -472,63 +472,6 @@ class DeudaCarteraController extends Controller
 
         $poliza_temporal = PolizaDeudaTempCartera::where('PolizaDeuda', $poliza_id)->where('User', auth()->user()->id)->get();
 
-        //   $poliza_cumulos->where('Edad','>',$deuda->EdadMaximaTerminacion)->update(['NoValido' => 1]);
-        //sobre pasan la edad maxima 
-        /* PolizaDeudaTempCartera::where('Edad','>',$deuda->EdadMaximaTerminacion)
-        ->where('PolizaDeuda', $deuda->Id)   
-        ->update(['NoValido' => 1]);*/
-
-        //sobre la responsabilidad maxima que se establecio
-/*
-        foreach ($poliza_cumulos as $registro) {
-
-            $sub_total = $registro->total_saldo + $registro->total_interes + $registro->total_covid + $registro->total_moratorios + $registro->total_monto_nominal;
-            // array_push($sub,$sub_total);
-            // $excluidos = DeudaExcluidos::whereMonth('FechaExclusion', $date_mes)->get();
-            // $poliza_temporal = PolizaDeudaTempCartera::where('PolizaDeuda', $poliza_id)->where('User', auth()->user()->id)->get();
-            $excluidos = DeudaExcluidos::whereMonth('FechaExclusion', $poliza_temporal->first()->Mes)->where('Poliza', $deuda->Id)->get();
-            foreach ($excluidos as $obj) {
-                if ($sub_total < $deuda->ResponsabilidadMaxima && $obj->ResponsabilidadMaxima == 1 && $obj->EdadMaxima == null) {
-
-                    if ($obj->Dui == $registro->Dui) {
-                        $obj->Activo = 1;
-                        $obj->update();
-                        
-                        $registro->NoValido = 0;
-                        $registro->update();
-
-                    }
-                }
-            }
-            if ($sub_total > $deuda->ResponsabilidadMaxima) {
-                $registro->NoValido = 1;
-                $registro->update();
-                //agregar a tabla excluidos
-                //val 0: Responsabilidad
-                //   array_push($pisto,$registro->Id);
-
-                $val = 0;
-                $this->add_excluidos($registro, $val);
-            }
-        }
-        foreach ($poliza_temporal as $registro) {
-
-            if ($registro->Edad > $deuda->EdadMaximaTerminacion) {
-                $registro->NoValido = 1;
-                $registro->update();
-                //agregar a tabla excluidos
-                //val 1: Edad
-                //  array_push($edadM,$registro->Id);
-
-                $val = 1;
-                $this->add_excluidos($registro, $val);
-            }
-        }
-*/
-        //  dd($deuda->ResponsabilidadMaxima , $sub,$edadM,$pisto);
-
-
-
 
 
         $nuevos_registros = DB::table('poliza_deuda_temp_cartera')
@@ -709,7 +652,7 @@ class DeudaCarteraController extends Controller
         if ($tipo == 1) {
             //edad maxima
            // $excluidos = DeudaExcluidos::where('Poliza', $deuda->Id)->where('EdadMaxima', 1)->whereMonth('FechaExclusion', $mes)->where('Activo', 0)->get();
-            $excluidos = PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Edad','>', $deuda->EdadMaximaTerminacion)->where('User', auth()->user()->id)->get();
+            $excluidos = PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Edad','>=', $deuda->EdadMaximaTerminacion)->where('User', auth()->user()->id)->get();
 
         } else {
              //$excluidos = DeudaExcluidos::where('Poliza', $deuda->Id)->where('ResponsabilidadMaxima', 1)->whereMonth('FechaExclusion', $mes)->where('Activo', 0)->get();

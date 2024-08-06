@@ -2184,8 +2184,6 @@ class DeudaController extends Controller
                 ->get();
         }
 
-
-
         return view('polizas.deuda.get_creditos', compact('poliza_cumulos', 'opcion','requisitos'));
     }
 }

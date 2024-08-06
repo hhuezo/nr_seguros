@@ -16,18 +16,21 @@
         </tr>
     </thead>
     <tbody>
-        @php $i=1; $total=0; @endphp
+        @php $i=1; $total=0; @endphp    
         @foreach ($poliza_cumulos as $registro)
         @php
         foreach($requisitos as $req){
             if($registro->Edad < $req->EdadInicial){
-                $motivo = 'Edad Menor a la Edad Inicial';
+                //$motivo = 'Edad Menor a la Edad Inicial';
+                $motivo = 'Debe presentar documentacion que justifique sus Saldo';  //mar
             }else if($registro->Edad > $req->EdadFinal){
-                $motivo = 'Edad Mayor a la Edad Final';
+                //$motivo = 'Edad Mayor a la Edad Final';
+                $motivo = 'La persona se encuentra fuera del rango de asegurabilidad';  //1:32- miguel
             }else if($registro->total_saldo < $req->MontoÑInicial){
                 $motivo = 'Monto Inicial es menor al Monto Inicial';
             }else if($registro->total_saldo > $req->MontoFinal){
-                $motivo = 'Monto Final es mayor al Monto Final';
+                //$motivo = 'Monto Final es mayor al Monto Final';
+                $motivo = 'El monto del usuario se encuentra fuera del rango de la tabla de asegurabilidad';  //7:30 -walter
             }
         }
       
@@ -56,7 +59,8 @@
                 </button>
             </td>
         </tr>
-        @php $i++; $total += $registro->total_saldo; @endphp
+        @php $i++; 
+        $total += $registro->total_saldo; @endphp
         @endforeach
     </tbody>
     <tfoot>
