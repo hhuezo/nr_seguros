@@ -2095,7 +2095,7 @@ class DeudaController extends Controller
     public function get_referencia_creditos($id)
     {
         $poliza = PolizaDeudaTempCartera::findOrFail($id);
-        $polizas = PolizaDeudaTempCartera::select('Id', 'NumeroReferencia')->where('Dui', $poliza->Dui)->get();
+        $polizas = PolizaDeudaTempCartera::select('Id', 'NumeroReferencia')->where('Dui', $poliza->Dui)->where('PolizaDeuda',$poliza->PolizaDeuda)->get();
         return response()->json($polizas);
     }
 
@@ -2126,6 +2126,7 @@ class DeudaController extends Controller
                     'EdadDesembloso',
                     'FechaOtorgamiento',
                     'NoValido',
+                    'Excluido',
                     DB::raw("GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
                     DB::raw('SUM(SaldoCapital) as saldo_capital'),
                     DB::raw('SUM(saldo_total) as total_saldo'),
@@ -2141,6 +2142,7 @@ class DeudaController extends Controller
                         ->orWhere('NumeroReferencia', 'like', '%' . $buscar . '%');
                 })
                 ->where('NoValido', 1)
+                ->where('Edad','<', $deuda->EdadMaximaTerminacion)
                 ->where('PolizaDeuda', $poliza)
                 ->groupBy('Dui')
                 ->get();
@@ -2163,6 +2165,7 @@ class DeudaController extends Controller
                     'EdadDesembloso',
                     'FechaOtorgamiento',
                     'NoValido',
+                    'Excluido',
                     DB::raw('SUM(saldo_total) as total_saldo'),
                     DB::raw("GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
                     //  DB::raw('SUM(SaldoCapital) as saldo_cpital'),
@@ -2178,6 +2181,7 @@ class DeudaController extends Controller
                         ->orWhere('Nit', 'like', '%' . $buscar . '%')
                         ->orWhere('NumeroReferencia', 'like', '%' . $buscar . '%');
                 })
+                ->where('Edad','<', $deuda->EdadMaximaTerminacion)
                 ->where('NoValido', 0)
                 ->where('PolizaDeuda', $poliza)
                 ->groupBy('Dui')
