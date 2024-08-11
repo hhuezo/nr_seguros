@@ -64,6 +64,7 @@ class DeudaCarteraController extends Controller
 
     public function create_pago(Request $request)
     {
+       
         $credito = $request->get('LineaCredito');
         $deuda = Deuda::findOrFail($request->Id);
 
@@ -82,7 +83,7 @@ class DeudaCarteraController extends Controller
             return redirect('polizas/deuda/' . $deuda->Id);
         }
 
-
+       
 
         try {
             $archivo = $request->Archivo;
@@ -105,7 +106,7 @@ class DeudaCarteraController extends Controller
             return back();
         }
 
-
+        
 
 
         //calculando errores de cartera
@@ -216,13 +217,13 @@ class DeudaCarteraController extends Controller
 
             $obj->Errores = $errores_array;
         }
-
+       
         $data_error = $cartera_temp->where('TipoError', '<>', 0);
 
         if ($data_error->count() > 0) {
-            return view('polizas.deuda.respuesta_poliza_error', compact('data_error', 'deuda'));
+            return view('polizas.deuda.respuesta_poliza_error', compact('data_error', 'deuda','credito'));
         }
-
+        
 
         // Convertir la cadena en un objeto Carbon (la clase de fecha en Laravel)
         $fecha = \Carbon\Carbon::parse($date);
@@ -242,7 +243,7 @@ class DeudaCarteraController extends Controller
             ->get();
 
         //dd($tempData->take(20));
-
+        
         alert()->success('Exito', 'La cartera fue subida con exito');
 
 
@@ -250,6 +251,15 @@ class DeudaCarteraController extends Controller
 
 
         // return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date', 'tipo_cartera', 'nombre_cartera'));
+    }
+
+
+    public function deleteLineaCredito(Request $request)
+    {
+
+        PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('LineaCredito', '=', $request->LineaCredito)->delete();
+
+        return redirect('polizas/deuda/subir_cartera/' . $request->DeudaId);
     }
 
     public function validarDocumento($documento, $tipo)
