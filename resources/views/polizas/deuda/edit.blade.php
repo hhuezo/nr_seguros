@@ -8,6 +8,27 @@
             display: none;
         }
     </style>
+    <style>
+    #loading-overlay-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.8);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #loading-overlay-modal img {
+        width: 50px;
+        /* Ajusta el tamaño de la imagen según tus necesidades */
+        height: 50px;
+        /* Ajusta el tamaño de la imagen según tus necesidades */
+    }
+</style>
 
     @php
     $tab = request()->has('tab') ? request('tab') : 1;
@@ -52,7 +73,7 @@
                             <li role="presentation" class=""><a href="#tab_content3" role="tab" id="creditos-tab" data-toggle="tab" aria-expanded="false">Hoja de Cartera
                                     {{ $deuda->NumeroPoliza }}</a>
                             </li>
-                            <li role="presentation" class=""><a href="#tab_content4" role="tab" id="pagos-tab" data-toggle="tab" aria-expanded="false">Estados de Pago</a>
+                            <li role="presentation" class="{{ $tab == 4 ? 'active' : '' }}"><a href="#tab_content4" role="tab" id="pagos-tab" data-toggle="tab" aria-expanded="false">Estados de Pago</a>
                             </li>
                             <li role="presentation" class=""><a href="#tab_content5" role="tab" id="avisos-tab" data-toggle="tab" aria-expanded="false">Ver Avisos</a>
                             </li>
@@ -107,7 +128,12 @@
             </div>
         </div>
     </div>
+  
 </div>
+
+<div id="loading-overlay-modal" >
+        <img src="{{ asset('img/ajax-loader.gif') }}" alt="Loading..." />
+    </div>
 
 
 @include('sweetalert::alert')
