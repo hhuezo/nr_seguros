@@ -483,8 +483,17 @@ class DeudaCarteraController extends Controller
         $poliza_temporal = PolizaDeudaTempCartera::where('PolizaDeuda', $poliza_id)->where('User', auth()->user()->id)->get();
 
 
+        $registro_mes_anterior = PolizaDeudaCartera::select('NumeroReferencia')->where('Mes', $date_anterior->month)->where('Axo', $date_mes_anterior->year)->where('PolizaDeuda', $poliza_id)->get();
+        $registro_mes_anterior_array = $registro_mes_anterior->pluck('NumeroReferencia')->toArray();
 
         $nuevos_registros = DB::table('poliza_deuda_temp_cartera')
+        ->where('Mes', $date->month)
+        ->where('Axo', $date->year)
+        ->where('PolizaDeuda', $poliza_id)
+        ->whereNotIn('NumeroReferencia',$registro_mes_anterior_array)->get();
+
+
+        /*$nuevos_registros = DB::table('poliza_deuda_temp_cartera')
             ->where([
                 ['Mes', $date->month],
                 ['Axo', $date->year],
@@ -501,28 +510,9 @@ class DeudaCarteraController extends Controller
                         //$subQuery->whereColumn('poliza_deuda_temp_cartera.Dui', '=', 'poliza_deuda_cartera.Dui');
                         // ->orWhere('poliza_deuda_temp_cartera.Nit', '=', 'poliza_deuda_cartera.Nit');
                     });
-            })->get();
-
-
-        /* $registros_eliminados = DB::table('poliza_deuda_cartera')
-            ->where([
-                ['Mes', $date_anterior->month],
-                ['Axo', $date_mes_anterior->year],
-                ['PolizaDeuda', $poliza_id],
-            ])
-            ->whereNotExists(function ($query) use ($date, $date_mes, $poliza_id) {
-                $query->select(DB::raw(1))
-                    ->from('poliza_deuda_temp_cartera')
-                    ->where('poliza_deuda_temp_cartera.Mes', $date->month)
-                    ->where('poliza_deuda_temp_cartera.Axo', $date_mes->year)
-                    ->where('PolizaDeuda', $poliza_id)
-                    ->where('poliza_deuda_cartera.NumeroReferencia', 'poliza_deuda_temp_cartera.NumeroReferencia');
-                    // ->where(function ($subQuery) {
-                    //     $subQuery->whereColumn('poliza_deuda_cartera.NumeroReferencia', '=', 'poliza_deuda_temp_cartera.NumeroReferencia');
-                    //     //$subQuery->whereColumn('poliza_deuda_cartera.Dui', '=', 'poliza_deuda_temp_cartera.Dui');
-                    //     // ->orWhere('poliza_deuda_cartera.Nit', '=', 'poliza_deuda_temp_cartera.Nit');
-                    // })
             })->get();*/
+
+
 
 
         $registros_eliminados = DB::table('poliza_deuda_cartera as c')
