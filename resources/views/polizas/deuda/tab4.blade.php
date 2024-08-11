@@ -109,6 +109,7 @@
                 @include('polizas.deuda.modal_edit')
             @endforeach
         </tbody>
+        
         <tfoot>
             <td colspan="5" style="text-align: right;"><b>Total de Poliza:</b> </td>
             <td colspan="5" style="text-align: right;"><b>${{ number_format($total, 2, '.', ',') }}</b> </td>
@@ -149,10 +150,7 @@
                                 <input type="date" name="ImpresionRecibo" id="ModalImpresionRecibo"
                                     value="{{ date('Y-m-d') }}" class="form-control" readonly>
                             </div>
-                            <!-- <div class="col-sm-3">
-                                                                <label class="control-label">&nbsp;</label>
-                                                                <i class="btn btn-default fa fa-print form-control" id="btn_impresion"></i>
-                                                            </div> -->
+                
                         </div>
 
                         <div class="form-group">
