@@ -215,6 +215,7 @@ Route::post('polizas/deuda/agregar_valido', [DeudaController::class, 'agregar_va
 Route::post('polizas/deuda/create_pago', [DeudaCarteraController::class, 'create_pago']);
 Route::post('polizas/deuda/validar_poliza', [DeudaCarteraController::class, 'validar_poliza']);
 Route::get('polizas/deuda/subir_cartera/{id}', [DeudaCarteraController::class, 'subir_cartera']);
+Route::post('polizas/deuda/delete_temp', [DeudaCarteraController::class, 'deleteLineaCredito']);
 Route::post('deuda/cancelar_pago', [DeudaController::class, 'cancelar_pago']);
 Route::post('deuda/validar_poliza', [DeudaCarteraController::class, 'validar_poliza']);
 Route::post('polizas/deuda/eliminar_extraprima', [DeudaController::class, 'eliminar_extraprima']);
