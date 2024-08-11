@@ -206,7 +206,7 @@ class DeudaController extends Controller
 
 
         //session(['MontoCartera' => 0]);
-        alert()->success('El registro de pago ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
+        alert()->success('El Registro de cobro ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
         // }
         return back();
     }
@@ -711,7 +711,15 @@ class DeudaController extends Controller
 
             $array_dui = $extraprimados->pluck('Dui')->toArray();
 
-            $clientesQuery = PolizaDeudaCartera::select('Id', DB::raw("CONCAT(PrimerNombre, ' ', SegundoNombre, ' ', PrimerApellido, ' ', SegundoApellido, ' ', ' ', ApellidoCasada) as Nombre"), 'Dui', 'NumeroReferencia', 'MontoOtorgado', 'SaldoCapital')->where('PolizaDeudaDetalle', '=', 0);
+            $clientesQuery = PolizaDeudaCartera::select('Id', 
+            DB::raw("TRIM(CONCAT(
+                IFNULL(PrimerNombre, ''), 
+                IF(IFNULL(SegundoNombre, '') != '', CONCAT(' ', SegundoNombre), ''), 
+                IF(IFNULL(PrimerApellido, '') != '', CONCAT(' ', PrimerApellido), ''), 
+                IF(IFNULL(SegundoApellido, '') != '', CONCAT(' ', SegundoApellido), ''), 
+                IF(IFNULL(ApellidoCasada, '') != '', CONCAT(' ', ApellidoCasada), '')
+            )) as Nombre"), 
+            'Dui', 'NumeroReferencia', 'MontoOtorgado', 'SaldoCapital')->where('PolizaDeudaDetalle', '=', 0);
 
             // Verificar si $array_dui tiene datos antes de agregar la condición whereNotIn
             if (!empty($array_dui)) {
@@ -726,7 +734,14 @@ class DeudaController extends Controller
                 //->
                 select(
                     'Id',
-                    DB::raw("CONCAT(PrimerNombre, ' ', SegundoNombre, ' ', PrimerApellido, ' ', SegundoApellido, ' ', ' ', ApellidoCasada) as Nombre"),
+                    'PrimerNombre',
+                    DB::raw("TRIM(CONCAT(
+                        IFNULL(PrimerNombre, ''), 
+                        IF(IFNULL(SegundoNombre, '') != '', CONCAT(' ', SegundoNombre), ''), 
+                        IF(IFNULL(PrimerApellido, '') != '', CONCAT(' ', PrimerApellido), ''), 
+                        IF(IFNULL(SegundoApellido, '') != '', CONCAT(' ', SegundoApellido), ''), 
+                        IF(IFNULL(ApellidoCasada, '') != '', CONCAT(' ', ApellidoCasada), '')
+                    )) as Nombre"),
                     'Dui',
                     'LineaCredito',
                     'NumeroReferencia',
@@ -738,7 +753,7 @@ class DeudaController extends Controller
                     'MontoNominal',
                 )->where('PolizaDeuda', '=', $id)->where('PolizaDeudaDetalle', '=', 0)->orWhere('PolizaDeudaDetalle', '=', null)->groupBy('NumeroReferencia')->get();
 
-            //  dd($clientes->take(20));
+            // dd($clientes->take(20));
 
 
 
@@ -967,7 +982,14 @@ class DeudaController extends Controller
             ->join('saldos_montos as sal', 'sal.Id', '=', 'cred.Saldos')
             ->select(
                 'poliza_deuda_cartera.Id',
-                DB::raw("CONCAT(poliza_deuda_cartera.PrimerNombre, ' ', poliza_deuda_cartera.SegundoNombre, ' ', poliza_deuda_cartera.PrimerApellido, ' ', poliza_deuda_cartera.SegundoApellido, ' ', ' ', poliza_deuda_cartera.ApellidoCasada) as Nombre"),
+               // DB::raw("CONCAT(poliza_deuda_cartera.PrimerNombre, ' ', poliza_deuda_cartera.SegundoNombre, ' ', poliza_deuda_cartera.PrimerApellido, ' ', poliza_deuda_cartera.SegundoApellido, ' ', ' ', poliza_deuda_cartera.ApellidoCasada) as Nombre"),
+                DB::raw("TRIM(CONCAT(
+                    IFNULL(poliza_deuda_cartera.PrimerNombre, ''), 
+                    IF(IFNULL(poliza_deuda_cartera.SegundoNombre, '') != '', CONCAT(' ', poliza_deuda_cartera.SegundoNombre), ''), 
+                    IF(IFNULL(poliza_deuda_cartera.PrimerApellido, '') != '', CONCAT(' ', poliza_deuda_cartera.PrimerApellido), ''), 
+                    IF(IFNULL(poliza_deuda_cartera.SegundoApellido, '') != '', CONCAT(' ', poliza_deuda_cartera.SegundoApellido), ''), 
+                    IF(IFNULL(poliza_deuda_cartera.ApellidoCasada, '') != '', CONCAT(' ', poliza_deuda_cartera.ApellidoCasada), '')
+                )) as Nombre"), 
                 'poliza_deuda_cartera.Dui',
                 'sal.Id as Linea',
                 'poliza_deuda_cartera.NumeroReferencia',
@@ -997,7 +1019,7 @@ class DeudaController extends Controller
         $cliente->PorcentajeEP = $request->PorcentajeEP;
         $cliente->Dui = $request->Dui;
         $cliente->save();
-        alert()->success('El registro de poliza ha sido ingresado correctamente');
+        alert()->success('Extraprimado agregado correctamente.');
         return redirect('polizas/deuda/' . $request->PolizaDeuda . '/edit?tab=7');
     }
 
