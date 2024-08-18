@@ -101,7 +101,7 @@
                                                     value="{{ date('Y-m-d', strtotime($date_anterior)) }}">
 
                                                 <button id="btnGuardarCartera" type="submit" class="btn btn-primary"
-                                                   >
+                                                {{ $conteo_excluidos > 0 ? 'disabled' : '' }}>
                                                     Guardar en cartera
                                                 </button>
 
@@ -629,6 +629,7 @@
                         // Aquí manejas lo que suceda después de la respuesta exitosa
                         console.log(response);
                         document.getElementById('id_excluido-' + id).value = response.excluido;
+                        document.getElementById("btnGuardarCartera").disabled = true;
                     },
                     error: function(xhr, status, error) {
                         // Aquí manejas los errores

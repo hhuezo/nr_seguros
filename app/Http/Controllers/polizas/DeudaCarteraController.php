@@ -560,12 +560,11 @@ class DeudaCarteraController extends Controller
         ->whereNotIn('NumeroReferencia',$excuidos_array)->get();
         
         $conteo_excluidos = $poliza_temporal->count();
-        //,'conteo_excluidos'  {{ $conteo_excluidos > 0 ? 'disabled' : '' }}
 
 
         return view('polizas.deuda.respuesta_poliza', compact('excluidos', 'poliza_temporal', 'maxEdadMaxima', 
         'nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date',
-         'extra_primados', 'requisitos'));
+         'extra_primados', 'requisitos','conteo_excluidos'));
     }
 
 
