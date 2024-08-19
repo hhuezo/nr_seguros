@@ -168,6 +168,7 @@
 <script>
       $(document).ready(function() {
        $('#MyTable4').DataTable();
+       $('#MyTable3').DataTable();
       });
 </script>
 @endif
