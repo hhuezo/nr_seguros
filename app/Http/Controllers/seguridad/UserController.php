@@ -17,7 +17,7 @@ class UserController extends Controller
     }
     public function index()
     {
-        return view('seguridad.user.index', ['usuarios' => User::get()]);
+        return view('seguridad.user.index', ['usuarios' => User::where('activo',1)->get()]);
     }
 
 
@@ -58,6 +58,7 @@ class UserController extends Controller
             $user->name = $request->get('name');
             $user->email = $request->get('email');
             $user->password = Hash::make($request->password);
+            $user->activo = 1;
             $user->save();
             alert()->error('El registro ha sido eliminado correctamente');
         }
@@ -101,9 +102,11 @@ class UserController extends Controller
 
     public function destroy($id)
     {
-        // $user = User::findOrFail($id);
+         $user = User::findOrFail($id);
+         $user->activo = 0;
+         $user->update();
         // $user->delete();
-        // Alert::error('', 'Record delete');
-        // return back();
+        alert()->error('Eliminar', 'Record delete');
+        return back();
     }
 }
