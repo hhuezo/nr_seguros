@@ -80,8 +80,8 @@ class ResidenciaController extends Controller
         $rutas = Ruta::where('Activo', '=', 1)->get();
         $ubicaciones_cobro = UbicacionCobro::where('Activo', '=', 1)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
-        $productos = Producto::where('Activo',1)->get();
-        $planes = Plan::where('Activo',1)->get();
+        $productos = Producto::where('Activo', 1)->get();
+        $planes = Plan::where('Activo', 1)->get();
         return view('polizas.residencia.create', compact(
             'ejecutivo',
             'productos',
@@ -105,7 +105,7 @@ class ResidenciaController extends Controller
      */
     public function store(Request $request)
     {
-      //  dd($request->Planes);
+        //  dd($request->Planes);
         $messages = [
             'NumeroPoliza.required' => 'El Número de poliza es requerido',
             'LimiteGrupo.required' => 'El Límite Grupal es requerido',
@@ -170,8 +170,8 @@ class ResidenciaController extends Controller
 
     public function cancelar_pago(Request $request)
     {
-       //  dd($request->Residencia);
-       //   dd($request->MesCancelar);
+        //  dd($request->Residencia);
+        //   dd($request->MesCancelar);
         try {
             $poliza_temp = PolizaResidenciaTempCartera::where('PolizaResidencia', '=', $request->Residencia)->where('User', '=', auth()->user()->id)->first();
             $poliza = PolizaResidenciaCartera::where('PolizaResidencia', '=', $request->Residencia)->where('Mes', '=', $poliza_temp->Mes)
@@ -232,9 +232,9 @@ class ResidenciaController extends Controller
         $ubicaciones_cobro = UbicacionCobro::where('Activo', '=', 1)->get();
         $detalle = DetalleResidencia::where('Residencia', $residencia->Id)->orderBy('Id', 'desc')->get();
         $ultimo_pago = DetalleResidencia::where('Residencia', $residencia->Id)->where('Activo', 1)->orderBy('Id', 'desc')->first();
-        
+
         $comentarios = Comentario::where('Residencia', '=', $id)->where('Activo', 1)->get();
-        $fechas = PolizaResidenciaTempCartera::where('PolizaResidencia',$id)->where('User',auth()->user()->id)->first();
+        $fechas = PolizaResidenciaTempCartera::where('PolizaResidencia', $id)->where('User', auth()->user()->id)->first();
 
         $ultimo_pago_fecha_final = null;
         if ($ultimo_pago) {
@@ -243,7 +243,7 @@ class ResidenciaController extends Controller
             $ultimo_pago_fecha_final = $fecha_final_temp->format('Y-m-d');
         }
 
-        if(!$fechas){
+        if (!$fechas) {
             $fechas = null;
         }
 
@@ -273,17 +273,18 @@ class ResidenciaController extends Controller
         }
 
         $fecha = PolizaResidenciaCartera::select('Mes', 'Axo', 'FechaInicio', 'FechaFinal')
-        ->where('PolizaResidencia', '=', $id)
-        // ->where(function ($query) {
-        //     $query->where('PolizaResidenciaDetalle', '=', 0)
-        //         ->orWhere('PolizaResidenciaDetalle', '=', null);
-        // })
-        ->orderByDesc('Id')->first();
+            ->where('PolizaResidencia', '=', $id)
+            // ->where(function ($query) {
+            //     $query->where('PolizaResidenciaDetalle', '=', 0)
+            //         ->orWhere('PolizaResidenciaDetalle', '=', null);
+            // })
+            ->orderByDesc('Id')->first();
 
         $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
         // session(['MontoCartera' => 0]);
 
-        return view('polizas.residencia.edit', compact('fecha',
+        return view('polizas.residencia.edit', compact(
+            'fecha',
             'fechas',
             'residencia',
             'ejecutivo',
@@ -558,46 +559,46 @@ class ResidenciaController extends Controller
         $residencia = Residencia::findOrFail($detalle->Residencia);
         $time = Carbon::now('America/El_Salvador');
 
-        // if ($detalle->SaldoA == null && $detalle->ImpresionRecibo == null) {
-        //     $detalle->SaldoA = $request->SaldoA;
-        //     $detalle->ImpresionRecibo = $request->ImpresionRecibo;
-        //     $detalle->Comentario = $request->Comentario;
-        //     $detalle->update();
-        //     $pdf = \PDF::loadView('polizas.residencia.recibo', compact('detalle', 'residencia'))->setWarnings(false)->setPaper('letter');
-        //     return $pdf->stream('Recibo.pdf');
+        if ($detalle->SaldoA == null && $detalle->ImpresionRecibo == null) {
+            $detalle->SaldoA = $request->SaldoA;
+            $detalle->ImpresionRecibo = $request->ImpresionRecibo;
+            $detalle->Comentario = $request->Comentario;
+            $detalle->update();
+            $pdf = \PDF::loadView('polizas.residencia.recibo', compact('detalle', 'residencia'))->setWarnings(false)->setPaper('letter');
+            return $pdf->stream('Recibo.pdf');
 
-        //     return back();
-        // } else {
+            return back();
+        } else {
 
-        //dd($request->EnvioCartera .' 00:00:00');
-        if ($request->EnvioCartera) {
-            $detalle->EnvioCartera = $request->EnvioCartera;
-            $detalle->ComCartera = $request->Comentario;
-        }
-        if ($request->EnvioPago) {
-            $detalle->EnvioPago = $request->EnvioPago;
-            $detalle->ComPago = $request->Comentario;
-        }
-        if ($request->PagoAplicado) {
-            $detalle->PagoAplicado = $request->PagoAplicado;
-            $detalle->ComAplicado = $request->Comentario;
-        }
+            //dd($request->EnvioCartera .' 00:00:00');
+            if ($request->EnvioCartera) {
+                $detalle->EnvioCartera = $request->EnvioCartera;
+                $detalle->ComCartera = $request->Comentario;
+            }
+            if ($request->EnvioPago) {
+                $detalle->EnvioPago = $request->EnvioPago;
+                $detalle->ComPago = $request->Comentario;
+            }
+            if ($request->PagoAplicado) {
+                $detalle->PagoAplicado = $request->PagoAplicado;
+                $detalle->ComAplicado = $request->Comentario;
+            }
 
-        $comen = new Comentario();
-        $comen->Comentario = $request->Comentario;
-        $comen->Activo = 1;
-        $comen->Usuario = auth()->user()->id;
-        $comen->FechaIngreso = $time;
-        $comen->Residencia = $detalle->Residencia;
-        $comen->DetalleResidencia = $detalle->Id;
-        $comen->save();
+            $comen = new Comentario();
+            $comen->Comentario = $request->Comentario;
+            $comen->Activo = 1;
+            $comen->Usuario = auth()->user()->id;
+            $comen->FechaIngreso = $time;
+            $comen->Residencia = $detalle->Residencia;
+            $comen->DetalleResidencia = $detalle->Id;
+            $comen->save();
 
 
-        /*$detalle->EnvioPago = $request->EnvioPago;
+            /*$detalle->EnvioPago = $request->EnvioPago;
             $detalle->PagoAplicado = $request->PagoAplicado;*/
-        $detalle->update();
-        alert()->success('El registro ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
-        //   }
+            $detalle->update();
+            alert()->success('El registro ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
+        }
 
 
 

@@ -278,6 +278,8 @@ $annos->y;
                                                 <label for="Genero" class="form-label">Estado Cliente *</label>
                                                 <select name="Estado" id="Estado" class="form-control"
                                                     style="width: 100%">
+                                                    <option value=""> Seleccione...</option>
+
                                                     @foreach ($cliente_estados as $obj)
                                                     <option value="{{ $obj->Id }}" {{ $cliente->Estado == $obj->Id ?
                                                         'selected' : '' }}>{{ $obj->Nombre }}
@@ -536,6 +538,7 @@ $annos->y;
                                         <label class="control-label ">Le Gusta Informarse *</label>
 
                                         <select name="Informarse" class="form-control" style="width: 100%">
+                                            <option value=""> Seleccione...</option>
                                             @foreach ($informarse as $obj)
                                             <option value="{{ $obj->Id }}" {{ $cliente->Informarse == $obj->Id ?
                                                 'selected' : '' }}>
@@ -563,7 +566,7 @@ $annos->y;
                                         <label class="control-label ">Compañia de su Preferencia *</label>
 
                                         <select name="AseguradoraPreferencia" class="form-control" style="width: 100%">
-
+                                            <option value=""> Seleccione...</option>
                                             @foreach ($aseguradoras as $obj)
                                             <option value="{{ $obj->Id }}" {{ $cliente->AseguradoraPreferencia ==
                                                 $obj->Id ? 'selected' : '' }}>
@@ -580,6 +583,7 @@ $annos->y;
 
                                         <select name="MotivoEleccion" id="MotivoEleccion" class="form-control col-md-4"
                                             style="width: 100%">
+                                            <option value=""> Seleccione...</option>
                                             @foreach ($motivo_eleccion as $obj)
                                             <option value="{{ $obj->Id }}" {{ $cliente->MotivoEleccion == $obj->Id ?
                                                 'selected' : '' }}>
@@ -598,6 +602,7 @@ $annos->y;
 
                                         <select name="PreferenciaCompra" id="PreferenciaCompra"
                                             class="form-control col-md-4" style="width: 100%">
+                                            <option value=""> Seleccione...</option>
                                             @foreach ($preferencia_compra as $obj)
                                             <option value="{{ $obj->Id }}" {{ $cliente->PreferenciaCompra == $obj->Id ?
                                                 'selected' : '' }}>
