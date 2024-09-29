@@ -11,6 +11,7 @@ use App\Models\polizas\Deuda;
 use App\Models\polizas\DeudaCredito;
 use App\Models\polizas\DeudaCreditosValidos;
 use App\Models\polizas\DeudaDetalle;
+use App\Models\polizas\DeudaEliminados;
 use App\Models\polizas\DeudaExcluidos;
 use App\Models\polizas\DeudaRequisitos;
 use App\Models\polizas\PolizaDeudaCartera;
@@ -356,22 +357,21 @@ class DeudaCarteraController extends Controller
 
 
 
-        $excuidos = DeudaExcluidos::where('Poliza',$registro->PolizaDeuda)->get();
+        $excuidos = DeudaExcluidos::where('Poliza', $registro->PolizaDeuda)->get();
 
         $excuidos_array = [];
-        if($excuidos)
-        {
+        if ($excuidos) {
             $excuidos_array = $excuidos->pluck('NumeroReferencia')->toArray();
         }
         //dd($excuidos);
 
         $poliza_temporal = PolizaDeudaTempCartera::where('PolizaDeuda', $registro->PolizaDeuda)->where('User', auth()->user()->id)
-        ->where('Edad', '>=', $deuda->EdadMaximaTerminacion)
-        ->whereNotIn('NumeroReferencia',$excuidos_array)->get();
-        
+            ->where('Edad', '>=', $deuda->EdadMaximaTerminacion)
+            ->whereNotIn('NumeroReferencia', $excuidos_array)->get();
+
         $conteo_excluidos = $poliza_temporal->count();
-    
-        return response()->json(['excluido' => $id, 'conteo_excluidos'=>$conteo_excluidos]);
+
+        return response()->json(['excluido' => $id, 'conteo_excluidos' => $conteo_excluidos]);
     }
 
     public function delete_excluido(Request $request)
@@ -383,7 +383,7 @@ class DeudaCarteraController extends Controller
         $id_exx = 0;
         $excluido = DeudaExcluidos::findOrFail($request->id_ex)->delete();
 
-        return response()->json(['excluido' => $id_exx, 'conteo_excluidos'=>1]);
+        return response()->json(['excluido' => $id_exx, 'conteo_excluidos' => 1]);
     }
 
 
@@ -515,7 +515,7 @@ class DeudaCarteraController extends Controller
 
         $registros_eliminados =  $registro_mes_anterior->whereNotIn('NumeroReferencia', $poliza_temporal_array);
 
-        
+
         $maximos_minimos = DeudaRequisitos::where('Deuda', '=', $poliza_id)
             ->selectRaw('MIN(MontoInicial) as min_monto_inicial, MAX(MontoFinal) as max_monto_final,MIN(EdadInicial) as min_edad_inicial, MAX(EdadFinal) as max_edad_final ')
             ->first();
@@ -535,6 +535,16 @@ class DeudaCarteraController extends Controller
             ->groupBy('Dui', 'NoValido')->get();
 
 
+
+        //creditos rehabilitados
+        $poliza_eliminados = DeudaEliminados::where('Poliza',$poliza_id)->groupBy('NumeroReferencia')->get();
+        $poliza_eliminados_array = $poliza_eliminados->pluck('NumeroReferencia')->toArray();
+        //dd($poliza_eliminados_array);
+
+        $rehabilitados = $poliza_cumulos->whereIn('NumeroReferencia',$poliza_eliminados_array);
+
+
+
         $extra_primados = $deuda->extra_primados;
 
         foreach ($extra_primados as $extra_primado) {
@@ -546,32 +556,45 @@ class DeudaCarteraController extends Controller
 
 
 
-        $excuidos = DeudaExcluidos::where('Poliza',$request->Deuda)->get();
+        $excuidos = DeudaExcluidos::where('Poliza', $request->Deuda)->get();
 
         $excuidos_array = [];
-        if($excuidos)
-        {
+        if ($excuidos) {
             $excuidos_array = $excuidos->pluck('NumeroReferencia')->toArray();
         }
         //dd($excuidos);
 
         $poliza_temporal = PolizaDeudaTempCartera::where('PolizaDeuda', $request->Deuda)->where('User', auth()->user()->id)
-        ->where('Edad', '>=', $deuda->EdadMaximaTerminacion)
-        ->whereNotIn('NumeroReferencia',$excuidos_array)->get();
-        
+            ->where('Edad', '>=', $deuda->EdadMaximaTerminacion)
+            ->whereNotIn('NumeroReferencia', $excuidos_array)->get();
+
         $conteo_excluidos = $poliza_temporal->count();
 
 
-        return view('polizas.deuda.respuesta_poliza', compact('excluidos', 'poliza_temporal', 'maxEdadMaxima', 
-        'nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date',
-         'extra_primados', 'requisitos','conteo_excluidos'));
+        return view('polizas.deuda.respuesta_poliza', compact(
+            'excluidos',
+            'poliza_temporal',
+            'maxEdadMaxima',
+            'nuevos_registros',
+            'registros_eliminados',
+            'deuda',
+            'poliza_cumulos',
+            'date_anterior',
+            'date',
+            'extra_primados',
+            'requisitos',
+            'conteo_excluidos',
+            'rehabilitados'
+        ));
     }
 
 
 
     public function store_poliza(Request $request)
     {
-            
+
+
+
 
         // Convertir la cadena en un objeto Carbon (la clase de fecha en Laravel)
         $fecha = \Carbon\Carbon::parse($request->MesActual);
@@ -589,6 +612,43 @@ class DeudaCarteraController extends Controller
             ->where('PolizaDeuda', $request->Deuda)
             ->get();
 
+
+        if (!empty($request->Eliminados)) {
+            $eliminadosArray = explode(', ', $request->Eliminados);
+        } else {
+            $eliminadosArray = []; // Un array vacío si la cadena está vacía
+        }
+
+        $eliminados = PolizaDeudaCartera::whereIn('NumeroReferencia', $eliminadosArray)
+            ->where('PolizaDeuda', $request->Deuda)
+            ->groupBy('NumeroReferencia')
+            ->orderBy('Id', 'desc')
+            ->get();
+        //dd($eliminados);
+
+        if ($eliminados->isNotEmpty()) {
+            foreach ($eliminados as $eliminado) {
+
+                $nombreCompleto =
+                    ($eliminado->PrimerNombre ?? '') . ' ' .
+                    ($eliminado->SegundoNombre ?? '') . ' ' .
+                    ($eliminado->PrimerApellido ?? '') . ' ' .
+                    ($eliminado->SegundoApellido ?? '') . ' ' .
+                    ($eliminado->ApellidoCasada ?? '');
+
+                // Eliminar espacios en exceso (en caso de valores nulos o vacíos)
+                $nombreCompleto = trim(preg_replace('/\s+/', ' ', $nombreCompleto));
+
+                $eliminado_obj = new DeudaEliminados();
+                $eliminado_obj->Dui = $eliminado->Dui;
+                $eliminado_obj->Nombre = $nombreCompleto;
+                $eliminado_obj->NumeroReferencia = $eliminado->NumeroReferencia;
+                $eliminado_obj->Poliza = $eliminado->PolizaDeuda;
+                $eliminado_obj->Mes = $mes;
+                $eliminado_obj->Usuario = auth()->user()->id;
+                $eliminado_obj->save();
+            }
+        }
 
 
         if ($tempData->isNotEmpty()) {
