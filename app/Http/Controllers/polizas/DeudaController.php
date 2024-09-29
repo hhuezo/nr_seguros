@@ -27,6 +27,7 @@ use App\Models\polizas\Deuda;
 use App\Models\polizas\DeudaCredito;
 use App\Models\polizas\DeudaCreditosValidos;
 use App\Models\polizas\DeudaDetalle;
+use App\Models\polizas\DeudaEliminados;
 use App\Models\polizas\DeudaRequisitos;
 use App\Models\polizas\DeudaVida;
 use App\Models\polizas\PolizaDeudaCartera;
@@ -573,10 +574,10 @@ class DeudaController extends Controller
             //session(['tab' => 1]);
             return redirect('polizas/deuda/' . $id);
         } else {
-            if($deuda->EdadMaximaTerminacion == null || $deuda->ResponsabilidadMaxima == null){
+            if ($deuda->EdadMaximaTerminacion == null || $deuda->ResponsabilidadMaxima == null) {
                 //session(['tab' => 1]);
                 alert()->success('Debe agregar Edad Máxima y Responsabilidad Máxima');
-                return redirect('polizas/deuda/' . $id);  
+                return redirect('polizas/deuda/' . $id);
             }
 
             // dd("no");
@@ -711,15 +712,20 @@ class DeudaController extends Controller
 
             $array_dui = $extraprimados->pluck('Dui')->toArray();
 
-            $clientesQuery = PolizaDeudaCartera::select('Id', 
-            DB::raw("TRIM(CONCAT(
+            $clientesQuery = PolizaDeudaCartera::select(
+                'Id',
+                DB::raw("TRIM(CONCAT(
                 IFNULL(PrimerNombre, ''), 
                 IF(IFNULL(SegundoNombre, '') != '', CONCAT(' ', SegundoNombre), ''), 
                 IF(IFNULL(PrimerApellido, '') != '', CONCAT(' ', PrimerApellido), ''), 
                 IF(IFNULL(SegundoApellido, '') != '', CONCAT(' ', SegundoApellido), ''), 
                 IF(IFNULL(ApellidoCasada, '') != '', CONCAT(' ', ApellidoCasada), '')
-            )) as Nombre"), 
-            'Dui', 'NumeroReferencia', 'MontoOtorgado', 'SaldoCapital')->where('PolizaDeudaDetalle', '=', 0);
+            )) as Nombre"),
+                'Dui',
+                'NumeroReferencia',
+                'MontoOtorgado',
+                'SaldoCapital'
+            )->where('PolizaDeudaDetalle', '=', 0);
 
             // Verificar si $array_dui tiene datos antes de agregar la condición whereNotIn
             if (!empty($array_dui)) {
@@ -982,14 +988,14 @@ class DeudaController extends Controller
             ->join('saldos_montos as sal', 'sal.Id', '=', 'cred.Saldos')
             ->select(
                 'poliza_deuda_cartera.Id',
-               // DB::raw("CONCAT(poliza_deuda_cartera.PrimerNombre, ' ', poliza_deuda_cartera.SegundoNombre, ' ', poliza_deuda_cartera.PrimerApellido, ' ', poliza_deuda_cartera.SegundoApellido, ' ', ' ', poliza_deuda_cartera.ApellidoCasada) as Nombre"),
+                // DB::raw("CONCAT(poliza_deuda_cartera.PrimerNombre, ' ', poliza_deuda_cartera.SegundoNombre, ' ', poliza_deuda_cartera.PrimerApellido, ' ', poliza_deuda_cartera.SegundoApellido, ' ', ' ', poliza_deuda_cartera.ApellidoCasada) as Nombre"),
                 DB::raw("TRIM(CONCAT(
                     IFNULL(poliza_deuda_cartera.PrimerNombre, ''), 
                     IF(IFNULL(poliza_deuda_cartera.SegundoNombre, '') != '', CONCAT(' ', poliza_deuda_cartera.SegundoNombre), ''), 
                     IF(IFNULL(poliza_deuda_cartera.PrimerApellido, '') != '', CONCAT(' ', poliza_deuda_cartera.PrimerApellido), ''), 
                     IF(IFNULL(poliza_deuda_cartera.SegundoApellido, '') != '', CONCAT(' ', poliza_deuda_cartera.SegundoApellido), ''), 
                     IF(IFNULL(poliza_deuda_cartera.ApellidoCasada, '') != '', CONCAT(' ', poliza_deuda_cartera.ApellidoCasada), '')
-                )) as Nombre"), 
+                )) as Nombre"),
                 'poliza_deuda_cartera.Dui',
                 'sal.Id as Linea',
                 'poliza_deuda_cartera.NumeroReferencia',
@@ -2117,7 +2123,7 @@ class DeudaController extends Controller
     public function get_referencia_creditos($id)
     {
         $poliza = PolizaDeudaTempCartera::findOrFail($id);
-        $polizas = PolizaDeudaTempCartera::select('Id', 'NumeroReferencia')->where('Dui', $poliza->Dui)->where('PolizaDeuda',$poliza->PolizaDeuda)->get();
+        $polizas = PolizaDeudaTempCartera::select('Id', 'NumeroReferencia')->where('Dui', $poliza->Dui)->where('PolizaDeuda', $poliza->PolizaDeuda)->get();
         return response()->json($polizas);
     }
 
@@ -2164,11 +2170,18 @@ class DeudaController extends Controller
                         ->orWhere('NumeroReferencia', 'like', '%' . $buscar . '%');
                 })
                 ->where('NoValido', 1)
-                ->where('Edad','<', $deuda->EdadMaximaTerminacion)
+                ->where('Edad', '<', $deuda->EdadMaximaTerminacion)
                 ->where('PolizaDeuda', $poliza)
                 ->groupBy('Dui')
                 ->get();
         } else {
+
+
+            //creditos rehabilitados
+            $poliza_eliminados = DeudaEliminados::where('Poliza', $poliza)->groupBy('NumeroReferencia')->get();
+            $poliza_eliminados_array = $poliza_eliminados->pluck('NumeroReferencia')->toArray();
+
+
             $poliza_cumulos = DB::table('poliza_deuda_temp_cartera')
                 ->select(
                     'Id',
@@ -2203,13 +2216,29 @@ class DeudaController extends Controller
                         ->orWhere('Nit', 'like', '%' . $buscar . '%')
                         ->orWhere('NumeroReferencia', 'like', '%' . $buscar . '%');
                 })
-                ->where('Edad','<', $deuda->EdadMaximaTerminacion)
+                ->where('Edad', '<', $deuda->EdadMaximaTerminacion)
                 ->where('NoValido', 0)
                 ->where('PolizaDeuda', $poliza)
                 ->groupBy('Dui')
                 ->get();
-        }
 
-        return view('polizas.deuda.get_creditos', compact('poliza_cumulos', 'opcion','requisitos'));
+
+                foreach($poliza_cumulos as $poliza)
+                {
+                    if(in_array($poliza->NumeroReferencia, $poliza_eliminados_array))
+                    {
+                        $poliza->Rehabilitado = 1;
+                    }
+                    else
+                    {
+                        $poliza->Rehabilitado = 0;
+                    }
+                }
+                
+        
+        
+            }
+
+        return view('polizas.deuda.get_creditos', compact('poliza_cumulos', 'opcion', 'requisitos'));
     }
 }

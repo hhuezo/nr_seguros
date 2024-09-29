@@ -152,8 +152,6 @@
                                                 id="profile-tab2" data-toggle="tab" aria-expanded="false">Extraprimados
                                                 excluidos</a>
                                         </li>
-                                        <li role="presentation" class=""><a href="#tab_content_rehabilitado" role="tab"
-                                            id="profile-tab8" data-toggle="tab" aria-expanded="false">Rehabilitados</a>
                                     </li>
 
                                         
@@ -420,14 +418,19 @@
 
 
                                             <div class="col-md-6 col-sm-12">
-                                                <div class="input-group">
+                                                {{-- <div class="input-group">
                                                     <input type="text" id="buscar_valido" class="form-control">
                                                     <span class="input-group-btn">
                                                         <button type="button" id="btn_valido" class="btn btn-primary">Buscar</button>
                                                         <button type="button" id="btn_limpiarn_valido" class="btn btn-secondary">Limpiar</button>
                                                     </span>
+                                                </div> --}}
+                                                <div style="display: flex; align-items: center;">
+                                                    <div style="width: 20px; height: 20px; background-color: #eeb458; margin-right: 10px;"></div>
+                                                    <span>Los créditos rehabilitados se mostrarán de color naranja.</span>
                                                 </div>
                                             </div>
+                                            <br>
                                             <br>
                                             <div id="creditos_validos">
                                             </div>
@@ -511,56 +514,6 @@
 
 
 
-                                        <div role="tabpanel" class="tab-pane fade" id="tab_content_rehabilitado" aria-labelledby="profile-tab">
-
-                                            <br>
-                                            <table class="table table-striped" id="datatable">
-
-                                                <thead>
-                                                    <tr>
-
-                                                        <th>Número crédito</th>
-                                                        <th>DUI</th>
-                                                        <th>NIT</th>
-                                                        <th>Nombre</th>
-                                                        <th>Fecha Nacimiento</th>
-                                                        <th>Fecha Otorgamiento</th>
-                                                        <th>Edad Actual</th>
-                                                        <th>Edad Desembolso</th>
-                                                        <th>Total </th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach ($rehabilitados as $registro)
-                                                            <tr>
-                                                                <td>{{ $registro->NumeroReferencia }}</td>
-                                                                <td>{{ $registro->Dui }}</td>
-                                                        <td>{{ $registro->Nit }}</td>
-                                                        <td>{{ $registro->PrimerNombre }}
-                                                            {{ $registro->SegundoNombre }}
-                                                            {{ $registro->PrimerApellido }}
-                                                            {{ $registro->SegundoApellido }}
-                                                            {{ $registro->ApellidoCasada }}
-                                                        </td>
-                                                        <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
-                                                        </td>
-                                                        <td>{{ $registro->FechaOtorgamiento ? $registro->FechaOtorgamiento : '' }}
-                                                        </td>
-                                                        <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
-                                                        <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }}
-                                                            Años</td>
-                                                        <td>${{ number_format($sub_total, 2) }}</td>
-                                                            </tr>
-                                                        @endforeach
-
-
-                                                    </tbody>
-                                                </table>
-
-
-
-                                            </div>
-                                        </div>
 
                                 </div>
                             </div>

@@ -534,16 +534,7 @@ class DeudaCarteraController extends Controller
             ->where('User', auth()->user()->id)->where('PolizaDeuda', $deuda->Id)
             ->groupBy('Dui', 'NoValido')->get();
 
-
-
-        //creditos rehabilitados
-        $poliza_eliminados = DeudaEliminados::where('Poliza',$poliza_id)->groupBy('NumeroReferencia')->get();
-        $poliza_eliminados_array = $poliza_eliminados->pluck('NumeroReferencia')->toArray();
-        //dd($poliza_eliminados_array);
-
-        $rehabilitados = $poliza_cumulos->whereIn('NumeroReferencia',$poliza_eliminados_array);
-
-
+  
 
         $extra_primados = $deuda->extra_primados;
 
@@ -583,8 +574,7 @@ class DeudaCarteraController extends Controller
             'date',
             'extra_primados',
             'requisitos',
-            'conteo_excluidos',
-            'rehabilitados'
+            'conteo_excluidos'
         ));
     }
 
