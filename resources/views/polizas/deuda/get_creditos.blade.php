@@ -48,7 +48,7 @@
                     <td>{{ $registro->Edad ? $registro->Edad . ' Años' : '' }}</td>
                     <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso . ' Años' : '' }}</td>
                     <td class="text-right">
-                        ${{ number_format($registro->total_saldo, 2) }}
+                        ${{ number_format($registro->total_saldo, 2,'.',',') }}
                     </td>
                     <td>{{ $motivo }}</td>
                     <td align="center" data-target="#modal_cambio_credito_valido" data-toggle="modal"
@@ -58,7 +58,8 @@
                         </button>
                     </td>
                 </tr>
-                @php$i++;
+                @php
+                $i++;
                 $total += $registro->total_saldo; @endphp
             @endforeach
         </tbody>
@@ -127,7 +128,7 @@
                         @endforeach
                     </td>
                     <td class="text-right">
-                        ${{ number_format($registro->total_saldo, 2) }}</td>
+                        ${{ number_format($registro->total_saldo, 2,'.',',') }}</td>
 
                 </tr>
                 @php $i++ @endphp
@@ -163,7 +164,7 @@
                         @endforeach
                     </td>
                     <td class="text-right">
-                        ${{ number_format($registro->total_saldo, 2) }}</td>
+                        ${{ number_format($registro->total_saldo, 2,'.',',') }}</td>
 
                 </tr>
                 @php $i++ @endphp
