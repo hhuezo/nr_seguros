@@ -64,7 +64,7 @@ class PolizaDeudaTempCartera extends Model
 
     public function calculoTodalSaldo()
     {
-       
+
         try {
             $tipo_cartera = $this->linea_credito->Saldos;
             switch ($tipo_cartera) {
@@ -75,7 +75,7 @@ class PolizaDeudaTempCartera extends Model
                 case '2':
                     # saldo a capital mas intereses
                     $saldo =  $this->SaldoCapital + $this->Intereses;
-                    break; 
+                    break;
                 case '3':
                     # saldo a capital mas intereses mas covid
                     $saldo = $this->SaldoCapital + $this->Intereses +  $this->InteresesCovid;
@@ -88,16 +88,20 @@ class PolizaDeudaTempCartera extends Model
                     # .monto moninal
                     $saldo = $this->MontoNominal;
                     break;
+                case '6':
+                    # .monto otorgado
+                    $saldo = $this->MontoOtorgado;
+                    break;
                 default:
                     # .sando capital
                     $saldo = $this->SaldoCapital;
                     break;
             }
-    
+
             return $saldo;
         } catch (Exception $e) {
             return 0.00;
         }
     }
-    
+
 }
