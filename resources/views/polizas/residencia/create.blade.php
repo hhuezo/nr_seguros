@@ -8,7 +8,7 @@
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
 
                 <div class="x_title">
-                    <h2>RESI - Seguro de residencias <small></small></h2>
+                    <h2>Pólizas / Residencia / Póliza de Residencia / Nueva  <small></small></h2>
                     <ul class="nav navbar-right panel_toolbox">
                         <a href="{{ url('polizas/residencia') }}" class="btn btn-info fa fa-undo " style="color: white">
                             Atrás</a>
@@ -80,7 +80,7 @@
                                 required>
                                 <option value="" disabled selected>Seleccione...</option>
                                 @foreach ($cliente as $obj)
-                                    <option value="{{ $obj->Id }}">{{ $obj->Id }} {{ $obj->Nombre }}
+                                    <option value="{{ $obj->Id }}"> {{ $obj->Nombre }}
                                         {{ $obj->Dui }} {{ $obj->Nit }}</option>
                                 @endforeach
                             </select>

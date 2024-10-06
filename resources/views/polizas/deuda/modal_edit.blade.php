@@ -1,6 +1,6 @@
 <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-recibo-{{ $obj->Id }}">
 
-    <form method="POST" action="{{ url('poliza/deuda/recibo', $obj->Id) }}">
+    <form method="POST" action="{{ url('poliza/deuda/recibo', $obj->Id) }}" target="_blank">
 
         @csrf
         <div class="modal-dialog">
@@ -12,7 +12,7 @@
                     <h4 class="modal-title">Generar Recibo de la poliza</h4>
 
                     <div class="modal-body">
-                        <input type="hidden" value="{{ $deuda->Id }}" name="Residencia" class="form-control">
+                        <input type="hidden" value="{{ $deuda->Id }}" name="Deuda" id="Deuda" class="form-control">
                         <div class="form-group">
                             <div class="col-sm-12">
                                 <label class="control-label">Saldo a</label>
@@ -50,7 +50,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-primary" id="btn_confirmar_recibo">Confirmar</button>
+                        <button type="submit" class="btn btn-primary" id="btn_confirmar_recibo" onclick="confirmar_recibo({{$obj->Id}})">Confirmar</button>
                     </div>
                 </div>
             </div>
@@ -99,18 +99,24 @@
                 <div>
                     <div class="row">
                         <div class="col-sm-4">
-                            <label for="" class="form-labeL"><h5>Comentario</h5></label>
+                            <label for="" class="form-labeL">
+                                <h5>Comentario</h5>
+                            </label>
                         </div>
                         <div class="col-sm-4">
-                            <label for="" class="form-label"><h5>Usuario</h5></label>
+                            <label for="" class="form-label">
+                                <h5>Usuario</h5>
+                            </label>
                         </div>
                         <div class="col-sm-4">
-                            <label for="" class="form-label"><h5>Fecha Creación</h5></label>
+                            <label for="" class="form-label">
+                                <h5>Fecha Creación</h5>
+                            </label>
                         </div>
                     </div>
                     <hr>
                     @foreach($comentarios as $comen)
-                    @if($comen->DetalleDeuda == $obj->Id)
+                    <!-- @if($comen->DetalleDeuda == $obj->Id) -->
                     <div class="row">
                         <div class="col-sm-4">
                             <label for="" class="form-label">{{$comen->Comentario}}</label>
@@ -124,16 +130,43 @@
                     </div>
                     <hr>
 
-                    @endif
+                    <!-- @endif -->
                     @endforeach
                 </div>
             </div>
-        
+
             <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                    
-                </div>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+
+            </div>
 
         </div>
     </div>
 </div>
+
+
+
+
+<script>
+    function confirmar_recibo(id) {
+        var deuda = {{$deuda->Id}};
+        $("#modal-recibo-" + id).modal('hide');
+        //alert(id);
+
+        Swal.fire({
+            title: 'Éxito',
+            text: 'El Recibo fue creado con éxito',
+            icon: 'success',
+            confirmButtonText: 'Aceptar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('loading-overlay-modal').style.display = 'flex';
+
+                // Retrasar la redirección para permitir que se muestre el overlay
+                setTimeout(() => {
+                    window.location.href = "{{url('polizas/deuda/')}}/" + deuda + '/edit?tab=4'; // Redirigir a otra URL
+                }, 500); // 500ms de retraso (puedes ajustar este valor si es necesario)
+            }
+        });
+    }
+</script>

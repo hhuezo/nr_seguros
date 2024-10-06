@@ -1,4 +1,8 @@
 <div role="tabpanel" class="tab-pane fade {{ session('tab') == 2 ? 'active in' : '' }}" id="tab_content2" aria-labelledby="profile-tab">
+@php
+ini_set('max_execution_time', 30000);
+set_time_limit(30000);
+@endphp
     <style>
         #loading-overlay {
             display: none;
@@ -195,14 +199,14 @@
                                     inicio</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                     <input class="form-control" name="Id" value="{{ $residencia->Id }}" type="hidden" required>
-                                    <input class="form-control" type="date" name="FechaInicio" value="{{ $ultimo_pago ? date('Y-m-d', strtotime($ultimo_pago->FechaFinal)) : '' }}" {{ $ultimo_pago ? 'readonly' : '' }} required>
+                                    <input class="form-control" type="date" name="FechaInicio" value="{{ $ultimo_pago && $ultimo_pago != null ? date('Y-m-d', strtotime($ultimo_pago->FechaFinal)) : '' }}" required>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
                                     final</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control" name="FechaFinal" value="{{ $ultimo_pago_fecha_final ? $ultimo_pago_fecha_final : '' }}" type="date" required>
+                                    <input class="form-control" name="FechaFinal" value="{{ $ultimo_pago_fecha_final && $ultimo_pago_fecha_final != null ? $ultimo_pago_fecha_final : '' }}" type="date" required>
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -238,12 +242,21 @@
                     <br>
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                         <table class="excel-like-table">
+                            <tr>
+                                <td>Fecha Inicio: {{$fechas != null ? date('d/m/Y',strtotime($fechas->FechaInicio)) :''}}</td>
+                                <td>Fecha Final: {{$fechas != null ? date('d/m/Y',strtotime($fechas->FechaFinal)) : ''}}</td>
+                                <td>Mes: {{$fechas != null ? $meses[$fechas->Mes] : ''}}</td>
+                            </tr>
+                        </table>
+                        <br>
+                        <table class="excel-like-table">
                             <thead>
                                 <tr>
                                     <th>Tasa Millar</th>
                                     <th>Monto Cartera</th>
                                     <th>Prueba Decimales</th>
                                     <th>Prima Calculada</th>
+                                    <th>Prima Mensual</th>
                                     <th>Descuento Rentabilidad {{$residencia->TasaDescuento ? $residencia->TasaDescuento : '0'}} %</th>
                                     <th>Prima Descontada</th>
                                 </tr>
@@ -251,9 +264,8 @@
                             <tbody>
                                 @php
                                 use \Carbon\Carbon;
-                                //$monto_cartera =  session('MontoCartera', 0);
-                                //monto de cartera quemado
-                               $monto_cartera = 3844478.89;
+                                $monto_cartera =  session('MontoCartera', 0);
+                               // $monto_cartera = 3844478.89;
                                 // Determinar la tasa por millar
                                 if ($residencia->Aseguradora == 3) {
                                 $tasa_millar = number_format(($residencia->Tasa / 1000),6,'.',',');
@@ -268,26 +280,24 @@
                                 if (isset($fechas)) {
                                 $dias_mes = Carbon::parse($fechas->FechaInicio)->diffInDays(Carbon::parse($fechas->FechaFinal));
                                 } else {
-                                $dias_mes = 1;
+                                $dias_mes = 31;
                                 }
-
-                                // Calcular los decimales dependiendo si la aseguradora tiene la opción Diario activa
-                                if ($residencia->aseguradoras->Diario == 1) {
-                                $decimales = (($monto_cartera * $tasa_millar) / $dias_axo) * $dias_mes;
-                                
-                                } else {
                                 $decimales = ($monto_cartera * $tasa_millar);
-                                
-                                }
+                                // Calcular los decimales dependiendo si la aseguradora tiene la opción Diario activa
+                                $prima_mensual = 0;
+                                if ($residencia->aseguradoras->Diario == 1) {
+                                $prima_mensual = ($decimales / $dias_axo) * $dias_mes;
 
+                                } 
+                                
                                 // Formatear el monto otorgado
                                 $prima_calculada = $decimales;
 
                                 if($residencia->TasaDescuento < 0){ 
-                                    $descuento=$residencia->TasaDescuento * $prima_calculada;
-                                    }else{
+                                    $descuento = $residencia->TasaDescuento * $prima_calculada;
+                                }else{
                                     $descuento = ($residencia->TasaDescuento / 100) * $prima_calculada;
-                                    }
+                                }
                                     $total_prima_descontada = $prima_calculada - $descuento;
                                     @endphp
 
@@ -303,6 +313,9 @@
                                         </td>
                                         <td class="numeric editable" contenteditable="true" id="prima_calculada" onblur="actualizarCalculos()">
                                             {{ $prima_calculada != 0 ? number_format($prima_calculada, 2, '.', ',') : 0 }}
+                                        </td>
+                                        <td class="numeric editable" contenteditable="true" id="prima_mensual" onblur="actualizarCalculos()">
+                                            {{ $prima_mensual != 0 ? number_format($prima_mensual, 2, '.', ',') : 0 }}
                                         </td>
                                         <td class="numeric editable" contenteditable="true" id="descuento" onblur="actualizarCalculos()">
                                             {{ $descuento != 0 ? number_format($descuento, 2, '.', ',') : 0 }}
@@ -422,7 +435,7 @@
                             <td class="numeric editable"><span id="total_factura"></span></td>
                         </tr> -->
                                 <tr>
-                                    <td>(-) Estructura CCF de Comisión (10%)</td>
+                                    <td>(-) Estructura CCF de Comisión ({{$residencia->Comision ? number_format($var ,2,".",",") : ''}}%)</td>
                                     <td class="numeric editable"><span id="comision"></span></td>
                                 </tr>
                                 <tr>
@@ -475,12 +488,11 @@
                                             <h4 class="modal-title">Aviso de cobro</h4>
                                         </div>
                                         <div class="modal-body">
-                                            <p>¿Desea generar el aviso de cobro?</p>
+                                            <p>¿Desea generar el aviso de cobro</p>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                                            <button id="boton_pago" class="btn btn-primary">Confirmar
-                                                Cobro</button>
+                                            <button id="boton_pago" class="btn btn-primary">Generar aviso de cobro</button>
                                         </div>
                                     </div>
                                 </div>
@@ -498,7 +510,7 @@
 
                     <div class="modal fade" id="modal-cancelar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
                         <div class="modal-dialog">
-                            <form action="{{ url('deuda/cancelar_pago') }}" method="POST">
+                            <form action="{{ url('polizas/residencia/cancelar_pago') }}" method="POST">
                                 @method('POST')
                                 @csrf
                                 <div class="modal-content">
@@ -536,6 +548,7 @@
       function actualizarCalculos(){
                 //alert(document.getElementById('monto_cartera').innerText);
                 let monto = convertirANumero(document.getElementById('monto_cartera').innerText);
+                console.log(monto);
                 let aseguradora = {{$residencia->Aseguradora}};
                 let tasa = {{$residencia->Tasa}};
                 let millar = 0;
@@ -555,6 +568,7 @@
                 let total = 0;
                 let tasa_comision = 0;
                 let var_com = {{$residencia->Comision}};
+                let prima_mensual = 0;
                 if(comision_iva == 1){
                     tasa_comision = var_com/1.13;
                 }else{
@@ -563,27 +577,40 @@
                 }
                 let tipo_contribuyente = {{$residencia->clientes->TipoContribuyente}};
                 if(aseguradora == 3){
+                //fede
                     millar = tasa / 1000;
                 }else{
+                    //sisa
                     millar = (tasa / 1000) /12;
                 }
-                
+                //dias_mes = 31;
+                decimales = (monto * millar);
+                let prima_descontada = 0;
                 if(diario == 1){
-                     decimales = ((monto * millar) / dias_axo) * dias_mes;
+                     prima_mensual = (parseFloat(decimales) / parseFloat(dias_axo)) * parseFloat(dias_mes);
+                     if(tasadescuento < 0){
+                    descuento =  tasadescuento  * prima_mensual;
+                    }else{
+                        descuento =  (tasadescuento/100) * prima_mensual; 
+                    }
+                     prima_descontada = prima_mensual - descuento;
                 }else{
-                     decimales = (monto * millar);
-                }
-                
-                if(tasadescuento < 0){
+                    if(tasadescuento < 0){
                     descuento =  tasadescuento  * decimales;
-                }else{
-                    descuento =  (tasadescuento/100) * decimales; 
-                }
-                let prima_descontada = decimales - descuento;
+                    }else{
+                        descuento =  (tasadescuento/100) * decimales; 
+                    }
+                     prima_descontada = decimales - descuento;
 
+                }
+            
+                
+                
                 document.getElementById('prueba_decimales').innerText = parseFloat(decimales);
                 document.getElementById('prima_calculada').innerText = formatearCantidad(decimales);
+                document.getElementById('prima_mensual').innerText = formatearCantidad(prima_mensual);
                 document.getElementById('prima_descontada').innerText = formatearCantidad(prima_descontada);
+                document.getElementById('descuento').innerText = formatearCantidad(descuento);
                 document.getElementById('total_prima_descontada').innerText = formatearCantidad(prima_descontada);
 
                 //funcion para los calculos totales
@@ -641,7 +668,7 @@
                 let comision = 0;
                 let retencion = 0;
                 if(tipo_contribuyente != 1){
-                    retencion = (parseFloat(prima_cobrar) *  0.001);
+                    retencion = (parseFloat(valor_comision) *  0.01);
                 }
                 
                 document.getElementById('retencion_comision').textContent = formatearCantidad(retencion);
@@ -654,20 +681,20 @@
                 document.getElementById('total_factura').textContent = formatearCantidad(total_factura);
 
                 //llenado de form
-                document.getElementById('MontoCarteraDetalle').value = formatearCantidad(monto);
-                document.getElementById('PrimaCalculadaDetalle').value = formatearCantidad(decimales);
-                document.getElementById('PrimaDescontadaDetalle').value = formatearCantidad(prima_descontada);
-                document.getElementById('IvaDetalle').value = formatearCantidad(iva);
-                document.getElementById('SubTotalDetalle').value = formatearCantidad(sub_total);
-                document.getElementById('ComisionDetalle').value = formatearCantidad(valor_comision);
-                document.getElementById('IvaComisionDetalle').value = formatearCantidad(iva_comision);
-                document.getElementById('RetencionDetalle').value = formatearCantidad(retencion);
-                document.getElementById('ValorCCFDetalle').value = formatearCantidad(comision_ccf);
-                document.getElementById('APagarDetalle').value = formatearCantidad(liquido_pagar);
-                document.getElementById('DescuentoDetalle').value = formatearCantidad(descuento);
-                document.getElementById('GastosEmisionDetalle').value = formatearCantidad(gastos);
-                document.getElementById('OtrosDetalle').value = formatearCantidad(otros);
-                document.getElementById('PrimaTotalDetalle').value = formatearCantidad(prima_descontada);
+                document.getElementById('MontoCarteraDetalle').value = parseFloat(monto);
+                document.getElementById('PrimaCalculadaDetalle').value = parseFloat(decimales);
+                document.getElementById('PrimaDescontadaDetalle').value = parseFloat(prima_descontada);
+                document.getElementById('IvaDetalle').value = parseFloat(iva);
+                document.getElementById('SubTotalDetalle').value = parseFloat(sub_total);
+                document.getElementById('ComisionDetalle').value = parseFloat(valor_comision);
+                document.getElementById('IvaComisionDetalle').value = parseFloat(iva_comision);
+                document.getElementById('RetencionDetalle').value = parseFloat(retencion);
+                document.getElementById('ValorCCFDetalle').value = parseFloat(comision_ccf);
+                document.getElementById('APagarDetalle').value = parseFloat(liquido_pagar);
+                document.getElementById('DescuentoDetalle').value = parseFloat(descuento);
+                document.getElementById('GastosEmisionDetalle').value = parseFloat(gastos);
+                document.getElementById('OtrosDetalle').value = parseFloat(otros);
+                document.getElementById('PrimaTotalDetalle').value = parseFloat(prima_descontada);
             
             }
 

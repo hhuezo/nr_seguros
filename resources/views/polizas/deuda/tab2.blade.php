@@ -1,4 +1,9 @@
 <div>
+@php
+ini_set('max_execution_time', 30000);
+set_time_limit(30000);
+@endphp
+
     <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 
 
@@ -381,7 +386,7 @@
                             <td class="numeric editable"><span id="total_factura"></span></td>
                         </tr> -->
                         <tr>
-                            <td>(-) Estructura CCF de Comisión (10%)</td>
+                            <td>(-) Estructura CCF de Comisión ({{$deuda->ComisionIva == 1 ? number_format($deuda->TasaComision / 1.13,2,".",",") : $deuda->TasaComision}}%)</td>
                             <td class="numeric editable"><span id="comision"></span></td>
                         </tr>
                         <tr>
@@ -408,6 +413,7 @@
                     <input type="hidden" name="TasaComision" value="{{ $deuda->TasaComision }}">
                     <input type="hidden" name="Comision" id="ComisionDetalle">
                     <input type="hidden" name="IvaSobreComision" id="IvaComisionDetalle">
+                    <input type="hidden" name="Descuento" id="DescuentoDetalle">
                     <input type="hidden" name="Retencion" id="RetencionDetalle">
                     <input type="hidden" name="ValorCCF" id="ValorCCFDetalle">
                     <input type="hidden" name="APagar" id="APagarDetalle">
@@ -426,8 +432,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                                    <button id="boton_pago" class="btn btn-primary">Confirmar
-                                        Cobro</button>
+                                    <button id="boton_pago" class="btn btn-primary">Generar Aviso de cobro</button>
                                 </div>
                             </div>
                         </div>
@@ -595,10 +600,8 @@
 
                 //modificando valores de cuadros
                 document.getElementById("monto_total_cartera").textContent = total_suma_asegurada_formateada;
-                document.getElementById('MontoCarteraDetalle').value = total_suma_asegurada;
+                document.getElementById('MontoCarteraDetalle').value = parseFloat(total_suma_asegurada);
                 document.getElementById('PrimaCalculadaDetalle').value = parseFloat(
-                    total_suma_asegurada) * parseFloat(tasa);
-                document.getElementById('PrimaDescontadaDetalle').value = parseFloat(
                     total_suma_asegurada) * parseFloat(tasa);
 
 
@@ -612,18 +615,21 @@
 
                 let descuento = (parseFloat(sub_total) + parseFloat(extra_prima)) * parseFloat(parseFloat(document.getElementById('DescuentoRentabilidad').value) / 100);
                 document.getElementById('descuento_rentabilidad').textContent = formatearCantidad(descuento);
+                document.getElementById('DescuentoDetalle').value = parseFloat(descuento);
                 prima_a_cobrar = (parseFloat(sub_total) + parseFloat(extra_prima)) - parseFloat(descuento);
                 document.getElementById("prima_a_cobrar").textContent = formatearCantidad(prima_a_cobrar);
                 document.getElementById("prima_a_cobrar_ccf").textContent = formatearCantidad(prima_a_cobrar);
                 let iva = 0;
                 // no contribuyente no paga iva
                 if (tipo_contribuyente != 4) {
-                    iva = parseFloat(prima_a_cobrar) * 0.13;
+                    iva = 0; //parseFloat(prima_a_cobrar) * 0.13;
                 } else {
                     iva = 0;
                 }
+                document.getElementById('PrimaDescontadaDetalle').value = parseFloat(prima_a_cobrar);
+
                 // document.getElementById('iva').textContent = formatearCantidad(iva);
-                document.getElementById('IvaDetalle').value = iva;
+                document.getElementById('IvaDetalle').value = parseFloat(iva);
                 let total_factura = parseFloat(iva) + parseFloat(prima_a_cobrar);
                 // document.getElementById('total_factura').textContent = formatearCantidad(total_factura);
 
@@ -636,7 +642,7 @@
                 let valor_comision = parseFloat(prima_a_cobrar) * (parseFloat(tasa_comision) / 100);
                 document.getElementById('valor_comision').textContent = formatearCantidad(valor_comision);
                 console.log(valor_comision);
-                document.getElementById('ComisionDetalle').value = valor_comision;
+                document.getElementById('ComisionDetalle').value = parseFloat(valor_comision);
                 let iva_comision = 0;
                 if (tipo_contribuyente != 4) {
                     iva_comision = parseFloat(valor_comision) * 0.13;
@@ -644,7 +650,7 @@
                     iva_comision = 0;
                 }
                 document.getElementById('iva_comision').textContent = formatearCantidad(iva_comision);
-                document.getElementById('IvaComisionDetalle').value = iva_comision;
+                document.getElementById('IvaComisionDetalle').value = parseFloat(iva_comision);
                 let retencion_comision = 0;
                 let sub_total_ccf = parseFloat(valor_comision) + parseFloat(iva_comision);
                 document.getElementById('sub_total_ccf').textContent = formatearCantidad(sub_total_ccf);
@@ -661,9 +667,9 @@
                 document.getElementById('comision').textContent = formatearCantidad(comision_ccf);
                 let liquido_pagar = parseFloat(prima_a_cobrar) - parseFloat(comision_ccf);
                 document.getElementById("liquido_pagar").textContent = formatearCantidad(liquido_pagar);
-                document.getElementById('RetencionDetalle').value = retencion_comision;
-                document.getElementById('ValorCCFDetalle').value = comision_ccf;
-                document.getElementById('APagarDetalle').value = liquido_pagar;
+                document.getElementById('RetencionDetalle').value = parseFloat(retencion_comision);
+                document.getElementById('ValorCCFDetalle').value = parseFloat(comision_ccf);
+                document.getElementById('APagarDetalle').value = parseFloat(liquido_pagar);
 
 
 

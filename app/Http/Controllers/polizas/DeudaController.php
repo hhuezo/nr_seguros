@@ -27,6 +27,7 @@ use App\Models\polizas\Deuda;
 use App\Models\polizas\DeudaCredito;
 use App\Models\polizas\DeudaCreditosValidos;
 use App\Models\polizas\DeudaDetalle;
+use App\Models\polizas\DeudaEliminados;
 use App\Models\polizas\DeudaRequisitos;
 use App\Models\polizas\DeudaVida;
 use App\Models\polizas\PolizaDeudaCartera;
@@ -206,7 +207,7 @@ class DeudaController extends Controller
 
 
         //session(['MontoCartera' => 0]);
-        alert()->success('El registro de pago ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
+        alert()->success('El Registro de cobro ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
         // }
         return back();
     }
@@ -236,6 +237,8 @@ class DeudaController extends Controller
         $deuda->Vida = $request->Vida;
         $deuda->Mensual = $request->tipoTasa;
         $deuda->Desempleo = $request->Desempleo;
+        $deuda->EdadMaximaTerminacion = $request->EdadMaximaTerminacion;
+        $deuda->ResponsabilidadMaxima = $request->ResponsabilidadMaxima;
         if ($request->ComisionIva == 'on') {
             $deuda->ComisionIva = 1;
         } else {
@@ -296,7 +299,7 @@ class DeudaController extends Controller
         $comen = new Comentario();
         $comen->Comentario = $request->Comentario;
         $comen->Activo = 1;
-        $comen->DetalleDeuda == $detalle->Id;
+        $comen->DetalleDeuda = $detalle->Id;
         $comen->Usuario = auth()->user()->id;
         $comen->FechaIngreso = $time;
         $comen->Deuda = $detalle->Deuda;
@@ -339,16 +342,16 @@ class DeudaController extends Controller
         $deuda = Deuda::findOrFail($request->deuda);
         if ($deuda->Configuracion == 1) {
             $deuda->Configuracion = 0;
-            $deuda->update();   
+            $deuda->update();
 
             alert()->success('El registro de poliza ha sido configurado correctamente');
-            return redirect('polizas/deuda/'.$request->deuda);
+            return redirect('polizas/deuda/' . $request->deuda);
         } else {
             $deuda->Configuracion = 1;
             $deuda->update();
 
             alert()->success('El registro de poliza ha sido configurado correctamente');
-            return redirect('polizas/deuda/'.$request->deuda.'/edit');
+            return redirect('polizas/deuda/' . $request->deuda . '/edit');
         }
     }
 
@@ -494,6 +497,8 @@ class DeudaController extends Controller
         $deuda->Vida = $request->Vida;
         $deuda->Desempleo = $request->Desempleo;
         $deuda->Mensual = $request->tipoTasa;
+        $deuda->EdadMaximaTerminacion = $request->EdadMaximaTerminacion;
+        $deuda->ResponsabilidadMaxima = $request->ResponsabilidadMaxima;
         if ($request->ComisionIva == 'on') {
             $deuda->ComisionIva = 1;
         } else {
@@ -566,9 +571,15 @@ class DeudaController extends Controller
         if ($deuda->Configuracion == 0) {
             //  dd("si");
             //  alert()->success('La configuracion no ha sido terminada');
-            session(['tab' => 1]);
-            return redirect('polizas/deuda/' . $deuda);
+            //session(['tab' => 1]);
+            return redirect('polizas/deuda/' . $id);
         } else {
+            if ($deuda->EdadMaximaTerminacion == null || $deuda->ResponsabilidadMaxima == null) {
+                //session(['tab' => 1]);
+                alert()->success('Debe agregar Edad Máxima y Responsabilidad Máxima');
+                return redirect('polizas/deuda/' . $id);
+            }
+
             // dd("no");
             $requisitos = DeudaRequisitos::where('Activo', 1)->where('Deuda', $id)->get();
 
@@ -666,7 +677,9 @@ class DeudaController extends Controller
             $productos = Producto::where('Activo', 1)->get();
             $planes = Plan::where('Activo', 1)->get();
             $detalle = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1)->orderBy('Id', 'desc')->get();
-            $ultimo_pago = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1)->where('PagoAplicado', '<>', null)->orderBy('Id', 'desc')->first();
+            $ultimo_pago = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1) //->where('PagoAplicado', '<>', null)
+                ->orderBy('Id', 'desc')->first();
+            // dd($ultimo_pago,$detalle);
 
             //para fechas de modal
             $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
@@ -699,7 +712,20 @@ class DeudaController extends Controller
 
             $array_dui = $extraprimados->pluck('Dui')->toArray();
 
-            $clientesQuery = PolizaDeudaCartera::select('Id', DB::raw("CONCAT(PrimerNombre, ' ', SegundoNombre, ' ', PrimerApellido, ' ', SegundoApellido, ' ', ' ', ApellidoCasada) as Nombre"), 'Dui', 'NumeroReferencia', 'MontoOtorgado', 'SaldoCapital')->where('PolizaDeudaDetalle', '=', 0);
+            $clientesQuery = PolizaDeudaCartera::select(
+                'Id',
+                DB::raw("TRIM(CONCAT(
+                IFNULL(PrimerNombre, ''), 
+                IF(IFNULL(SegundoNombre, '') != '', CONCAT(' ', SegundoNombre), ''), 
+                IF(IFNULL(PrimerApellido, '') != '', CONCAT(' ', PrimerApellido), ''), 
+                IF(IFNULL(SegundoApellido, '') != '', CONCAT(' ', SegundoApellido), ''), 
+                IF(IFNULL(ApellidoCasada, '') != '', CONCAT(' ', ApellidoCasada), '')
+            )) as Nombre"),
+                'Dui',
+                'NumeroReferencia',
+                'MontoOtorgado',
+                'SaldoCapital'
+            )->where('PolizaDeudaDetalle', '=', 0);
 
             // Verificar si $array_dui tiene datos antes de agregar la condición whereNotIn
             if (!empty($array_dui)) {
@@ -714,7 +740,14 @@ class DeudaController extends Controller
                 //->
                 select(
                     'Id',
-                    DB::raw("CONCAT(PrimerNombre, ' ', SegundoNombre, ' ', PrimerApellido, ' ', SegundoApellido, ' ', ' ', ApellidoCasada) as Nombre"),
+                    'PrimerNombre',
+                    DB::raw("TRIM(CONCAT(
+                        IFNULL(PrimerNombre, ''), 
+                        IF(IFNULL(SegundoNombre, '') != '', CONCAT(' ', SegundoNombre), ''), 
+                        IF(IFNULL(PrimerApellido, '') != '', CONCAT(' ', PrimerApellido), ''), 
+                        IF(IFNULL(SegundoApellido, '') != '', CONCAT(' ', SegundoApellido), ''), 
+                        IF(IFNULL(ApellidoCasada, '') != '', CONCAT(' ', ApellidoCasada), '')
+                    )) as Nombre"),
                     'Dui',
                     'LineaCredito',
                     'NumeroReferencia',
@@ -726,7 +759,7 @@ class DeudaController extends Controller
                     'MontoNominal',
                 )->where('PolizaDeuda', '=', $id)->where('PolizaDeudaDetalle', '=', 0)->orWhere('PolizaDeudaDetalle', '=', null)->groupBy('NumeroReferencia')->get();
 
-            //  dd($clientes->take(20));
+            // dd($clientes->take(20));
 
 
 
@@ -955,7 +988,14 @@ class DeudaController extends Controller
             ->join('saldos_montos as sal', 'sal.Id', '=', 'cred.Saldos')
             ->select(
                 'poliza_deuda_cartera.Id',
-                DB::raw("CONCAT(poliza_deuda_cartera.PrimerNombre, ' ', poliza_deuda_cartera.SegundoNombre, ' ', poliza_deuda_cartera.PrimerApellido, ' ', poliza_deuda_cartera.SegundoApellido, ' ', ' ', poliza_deuda_cartera.ApellidoCasada) as Nombre"),
+                // DB::raw("CONCAT(poliza_deuda_cartera.PrimerNombre, ' ', poliza_deuda_cartera.SegundoNombre, ' ', poliza_deuda_cartera.PrimerApellido, ' ', poliza_deuda_cartera.SegundoApellido, ' ', ' ', poliza_deuda_cartera.ApellidoCasada) as Nombre"),
+                DB::raw("TRIM(CONCAT(
+                    IFNULL(poliza_deuda_cartera.PrimerNombre, ''), 
+                    IF(IFNULL(poliza_deuda_cartera.SegundoNombre, '') != '', CONCAT(' ', poliza_deuda_cartera.SegundoNombre), ''), 
+                    IF(IFNULL(poliza_deuda_cartera.PrimerApellido, '') != '', CONCAT(' ', poliza_deuda_cartera.PrimerApellido), ''), 
+                    IF(IFNULL(poliza_deuda_cartera.SegundoApellido, '') != '', CONCAT(' ', poliza_deuda_cartera.SegundoApellido), ''), 
+                    IF(IFNULL(poliza_deuda_cartera.ApellidoCasada, '') != '', CONCAT(' ', poliza_deuda_cartera.ApellidoCasada), '')
+                )) as Nombre"),
                 'poliza_deuda_cartera.Dui',
                 'sal.Id as Linea',
                 'poliza_deuda_cartera.NumeroReferencia',
@@ -985,7 +1025,7 @@ class DeudaController extends Controller
         $cliente->PorcentajeEP = $request->PorcentajeEP;
         $cliente->Dui = $request->Dui;
         $cliente->save();
-        alert()->success('El registro de poliza ha sido ingresado correctamente');
+        alert()->success('Extraprimado agregado correctamente.');
         return redirect('polizas/deuda/' . $request->PolizaDeuda . '/edit?tab=7');
     }
 
@@ -1736,15 +1776,15 @@ class DeudaController extends Controller
                 // }
 
                 //se limpia el nombre completo de espacios en blanco y numeros
-                $obj->PrimerApellido = $this->limpiarNombre($obj->PrimerApellido);
+                /* $obj->PrimerApellido = $this->limpiarNombre($obj->PrimerApellido);
                 $obj->SegundoApellido = $this->limpiarNombre($obj->SegundoApellido);
                 $obj->ApellidoCasada = $this->limpiarNombre($obj->ApellidoCasada);
                 $obj->PrimerNombre = $this->limpiarNombre($obj->PrimerNombre);
                 $obj->SegundoNombre = $this->limpiarNombre($obj->SegundoNombre);
-                $obj->update();
+                $obj->update();*/
 
                 // 4 nombre o apellido
-                if ($obj->PrimerApellido == "" || $obj->PrimerNombre == "") {
+                if (trim($obj->PrimerApellido) == "" || trim($obj->PrimerNombre) == "") {
                     $obj->TipoError = 4;
                     $obj->update();
 
@@ -2083,7 +2123,7 @@ class DeudaController extends Controller
     public function get_referencia_creditos($id)
     {
         $poliza = PolizaDeudaTempCartera::findOrFail($id);
-        $polizas = PolizaDeudaTempCartera::select('Id', 'NumeroReferencia')->where('Dui', $poliza->Dui)->get();
+        $polizas = PolizaDeudaTempCartera::select('Id', 'NumeroReferencia')->where('Dui', $poliza->Dui)->where('PolizaDeuda', $poliza->PolizaDeuda)->get();
         return response()->json($polizas);
     }
 
@@ -2092,6 +2132,8 @@ class DeudaController extends Controller
         $buscar = $request->buscar;
         $opcion = $request->opcion;
         $tipo_cartera = $request->tipo_cartera;
+        $deuda = Deuda::findOrFail($poliza);
+        $requisitos = $deuda->requisitos;
 
         if ($opcion == 1) {
             $poliza_cumulos = DB::table('poliza_deuda_temp_cartera')
@@ -2112,6 +2154,7 @@ class DeudaController extends Controller
                     'EdadDesembloso',
                     'FechaOtorgamiento',
                     'NoValido',
+                    'Excluido',
                     DB::raw("GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
                     DB::raw('SUM(SaldoCapital) as saldo_capital'),
                     DB::raw('SUM(saldo_total) as total_saldo'),
@@ -2127,10 +2170,18 @@ class DeudaController extends Controller
                         ->orWhere('NumeroReferencia', 'like', '%' . $buscar . '%');
                 })
                 ->where('NoValido', 1)
+                ->where('Edad', '<', $deuda->EdadMaximaTerminacion)
                 ->where('PolizaDeuda', $poliza)
                 ->groupBy('Dui')
                 ->get();
         } else {
+
+
+            //creditos rehabilitados
+            $poliza_eliminados = DeudaEliminados::where('Poliza', $poliza)->groupBy('NumeroReferencia')->get();
+            $poliza_eliminados_array = $poliza_eliminados->pluck('NumeroReferencia')->toArray();
+
+
             $poliza_cumulos = DB::table('poliza_deuda_temp_cartera')
                 ->select(
                     'Id',
@@ -2149,6 +2200,7 @@ class DeudaController extends Controller
                     'EdadDesembloso',
                     'FechaOtorgamiento',
                     'NoValido',
+                    'Excluido',
                     DB::raw('SUM(saldo_total) as total_saldo'),
                     DB::raw("GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
                     //  DB::raw('SUM(SaldoCapital) as saldo_cpital'),
@@ -2164,14 +2216,29 @@ class DeudaController extends Controller
                         ->orWhere('Nit', 'like', '%' . $buscar . '%')
                         ->orWhere('NumeroReferencia', 'like', '%' . $buscar . '%');
                 })
+                ->where('Edad', '<', $deuda->EdadMaximaTerminacion)
                 ->where('NoValido', 0)
                 ->where('PolizaDeuda', $poliza)
                 ->groupBy('Dui')
                 ->get();
-        }
 
 
+                foreach($poliza_cumulos as $poliza)
+                {
+                    if(in_array($poliza->NumeroReferencia, $poliza_eliminados_array))
+                    {
+                        $poliza->Rehabilitado = 1;
+                    }
+                    else
+                    {
+                        $poliza->Rehabilitado = 0;
+                    }
+                }
+                
+        
+        
+            }
 
-        return view('polizas.deuda.get_creditos', compact('poliza_cumulos', 'opcion'));
+        return view('polizas.deuda.get_creditos', compact('poliza_cumulos', 'opcion', 'requisitos'));
     }
 }

@@ -278,6 +278,8 @@ $annos->y;
                                                 <label for="Genero" class="form-label">Estado Cliente *</label>
                                                 <select name="Estado" id="Estado" class="form-control"
                                                     style="width: 100%">
+                                                    <option value=""> Seleccione...</option>
+
                                                     @foreach ($cliente_estados as $obj)
                                                     <option value="{{ $obj->Id }}" {{ $cliente->Estado == $obj->Id ?
                                                         'selected' : '' }}>{{ $obj->Nombre }}
@@ -446,25 +448,25 @@ $annos->y;
                                 <input type="hidden" name="Id" value="{{ $cliente->Id }}">
                                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                     <div class="form-group row">
-                                        <label class="control-label ">Contacto Facebook *</label>
+                                        <label class="control-label ">Contacto Facebook </label>
                                         <input class="form-control" value="{{ $cliente->Facebook }}" name="Facebook">
                                     </div>
                                     <div class="form-group row">
-                                        <label class="control-label ">Actividades Creativas *</label>
+                                        <label class="control-label ">Actividades Creativas </label>
 
                                         <input class="form-control" value="{{ $cliente->ActividadesCreativas }}"
                                             name="ActividadesCreativas" type="text">
 
                                     </div>
                                     <div class="form-group row">
-                                        <label class="control-label ">Estilo Vida *</label>
+                                        <label class="control-label ">Estilo Vida </label>
 
                                         <input class="form-control" value="{{ $cliente->EstiloVida }}" name="EstiloVida"
                                             type="text">
 
                                     </div>
                                     <div class="form-group row">
-                                        <label class="control-label ">Sitio Web *</label>
+                                        <label class="control-label ">Sitio Web </label>
 
                                         <input class="form-control" name="SitioWeb" value="{{ $cliente->SitioWeb }}"
                                             type="text">
@@ -472,9 +474,10 @@ $annos->y;
                                     </div>
 
                                     <div class="form-group row">
-                                        <label class="control-label ">Necesidad Protección *</label>
+                                        <label class="control-label ">Necesidad Protección </label>
 
                                         <select name="NecesidadProteccion" class="form-control" style="width: 100%">
+                                            <option value="">Seleccione...</option>
                                             @foreach ($necesidades as $obj)
                                             <option value="{{ $obj->Id }}" {{ $cliente->NecesidadProteccion == $obj->Id
                                                 ? 'selected' : '' }}>
@@ -489,13 +492,13 @@ $annos->y;
                                         <br>
 
                                         <div class="col-md-4">
-                                            <label class="control-label ">Smartphones *</label>
+                                            <label class="control-label ">Smartphones </label>
 
                                             <input class="form-control" name="Smartphone"
                                                 value="@if($cliente->Smartphone <> 0){{$cliente->Smartphone}}@endif"
                                                 type="number" required maxlength="1" min="0" Max="6">
 
-                                            <label class="control-label ">Laptop *</label>
+                                            <label class="control-label ">Laptop </label>
 
                                             <input class="form-control" name="Laptop"
                                                 value="@if($cliente->Laptop <> 0){{$cliente->Laptop}}@endif"
@@ -503,13 +506,13 @@ $annos->y;
 
                                         </div>
                                         <div class="col-md-4">
-                                            <label class="control-label ">PC *</label>
+                                            <label class="control-label ">PC </label>
 
                                             <input class="form-control" name="PC"
                                                 value="@if($cliente->PC <> 0){{$cliente->PC}}@endif" type="number"
                                                 required maxlength="1" min="0" Max="6">
 
-                                            <label class="control-label ">Tablet *</label>
+                                            <label class="control-label ">Tablet </label>
 
                                             <input class="form-control" name="Tablet"
                                                 value="@if($cliente->Tablet <> 0){{$cliente->Tablet}}@endif"
@@ -517,13 +520,13 @@ $annos->y;
 
                                         </div>
                                         <div class="col-md-4">
-                                            <label class="control-label ">SmartWatch *</label>
+                                            <label class="control-label ">SmartWatch </label>
 
                                             <input class="form-control" name="SmartWatch"
                                                 value="@if($cliente->SmartWatch <> 0){{$cliente->SmartWatch}}@endif"
                                                 type="number" required maxlength="1" min="0" Max="6">
 
-                                            <label class="control-label ">Otros Dispositivos *</label>
+                                            <label class="control-label ">Otros Dispositivos </label>
 
                                             <input class="form-control" name="DispositivosOtros"
                                                 value="@if($cliente->DispositivosOtros <> 0){{$cliente->DispositivosOtros}}@endif"
@@ -533,9 +536,10 @@ $annos->y;
 
                                     </div>
                                     <div class="form-group row">
-                                        <label class="control-label ">Le Gusta Informarse *</label>
+                                        <label class="control-label ">Le Gusta Informarse </label>
 
                                         <select name="Informarse" class="form-control" style="width: 100%">
+                                            <option value=""> Seleccione...</option>
                                             @foreach ($informarse as $obj)
                                             <option value="{{ $obj->Id }}" {{ $cliente->Informarse == $obj->Id ?
                                                 'selected' : '' }}>
@@ -549,21 +553,21 @@ $annos->y;
                                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
 
                                     <div class="form-group row">
-                                        <label class="control-label ">Contacto Instagram * </label>
+                                        <label class="control-label ">Contacto Instagram  </label>
 
                                         <input class="form-control" value="{{ $cliente->Instagram }}" name="Instagram">
                                     </div>
                                     <div class="form-group row">
-                                        <label class="control-label ">¿Tiene mascota? *</label> &nbsp;
+                                        <label class="control-label ">¿Tiene mascota? </label> &nbsp;
                                         <input type="checkbox" name="TieneMascota" value="1" class="js-switch" {{
                                             $cliente->TieneMascota == 1 ? 'checked' : '' }} />
                                     </div>
 
                                     <div class="form-group row">
-                                        <label class="control-label ">Compañia de su Preferencia *</label>
+                                        <label class="control-label ">Compañia de su Preferencia </label>
 
                                         <select name="AseguradoraPreferencia" class="form-control" style="width: 100%">
-
+                                            <option value=""> Seleccione...</option>
                                             @foreach ($aseguradoras as $obj)
                                             <option value="{{ $obj->Id }}" {{ $cliente->AseguradoraPreferencia ==
                                                 $obj->Id ? 'selected' : '' }}>
@@ -576,10 +580,11 @@ $annos->y;
                                     </div>
 
                                     <div class="form-group row">
-                                        <label class="control-label ">Motivo de Elección *</label>
+                                        <label class="control-label ">Motivo de Elección </label>
 
                                         <select name="MotivoEleccion" id="MotivoEleccion" class="form-control col-md-4"
                                             style="width: 100%">
+                                            <option value=""> Seleccione...</option>
                                             @foreach ($motivo_eleccion as $obj)
                                             <option value="{{ $obj->Id }}" {{ $cliente->MotivoEleccion == $obj->Id ?
                                                 'selected' : '' }}>
@@ -594,10 +599,11 @@ $annos->y;
 
 
                                     <div class="form-group row">
-                                        <label class="control-label ">Preferencia de Compra *</label>
+                                        <label class="control-label ">Preferencia de Compra </label>
 
                                         <select name="PreferenciaCompra" id="PreferenciaCompra"
                                             class="form-control col-md-4" style="width: 100%">
+                                            <option value=""> Seleccione...</option>
                                             @foreach ($preferencia_compra as $obj)
                                             <option value="{{ $obj->Id }}" {{ $cliente->PreferenciaCompra == $obj->Id ?
                                                 'selected' : '' }}>
@@ -611,7 +617,7 @@ $annos->y;
 
                                     </div>
                                     <div class="form-group row">
-                                        <label class="control-label ">Compra Habitualmente *</label>
+                                        <label class="control-label ">Compra Habitualmente </label>
                                         <div class="">
                                             <label>
                                                 <input type="checkbox" name="Efectivo" value="1" class="js-switch" {{
@@ -664,7 +670,7 @@ $annos->y;
                                         type="button">Cancelar</button></a>
                             </div>
                         </form>
-                    </div>
+                    </div> 
                     <div role="tabpanel" class="tab-pane fade" id="pago" aria-labelledby="home-tab">
 
                         <div class="col-12" style="text-align: right;">

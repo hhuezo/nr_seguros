@@ -71,17 +71,22 @@
                         <div class="x_title">
                             <div class="col-md-6 col-sm-6 col-xs-12">
                                 {{-- <h2>Resumen de cartera {{ $nombre_cartera }} <br> {{ $deuda->NumeroPoliza }} &nbsp; --}}
-                                <h2>Resumen de cartera {{ $deuda->NumeroPoliza }} &nbsp;
-                                    {{ $deuda->clientes->Nombre }} </h2>
+                                <h2>Resumen de cartera {{ $deuda->NumeroPoliza }} <br>
+                                    {{ $deuda->clientes->Nombre }}
+                                </h2>
                             </div>
                             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
                                 <table>
                                     <tr>
                                         <td style="vertical-align: top;">
+                                            <a href="{{ url('polizas/deuda') }}/{{ $deuda->Id }}/edit"
+                                                class="btn btn-info">Pausar Validación</a>
+                                        </td>
+                                        <td style="vertical-align: top;">
                                             <form method="post" action="{{ url('regresar_edit') }}">
                                                 @csrf
                                                 <input type="hidden" name="deuda_id" value="{{ $deuda->Id }}">
-                                                <button class="btn btn-default">Cancelar</button>
+                                                <button class="btn btn-default">Borrar Proceso Actual</button>
                                             </form>
                                         </td>
                                         <td>
@@ -89,14 +94,22 @@
                                             <form method="post" id="miFormulario"
                                                 action="{{ url('polizas/deuda/store_poliza') }}">
                                                 @csrf
-                                                <input type="hidden" name="Cartera" value="{{ $deuda->Id }}">
+                                                <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
                                                 <input type="hidden" name="MesActual"
                                                     value="{{ date('Y-m-d', strtotime($date)) }}">
+
+                                                <input type="hidden" name="Eliminados"
+                                                    value="{{ $registros_eliminados->isNotEmpty() ? implode(', ', $registros_eliminados->pluck('NumeroReferencia')->toArray()) : '' }}">
+
+
                                                 <input type="hidden" name="MesAnterior"
                                                     value="{{ date('Y-m-d', strtotime($date_anterior)) }}">
-                                                <button class="btn btn-primary">
+
+                                                <button id="btnGuardarCartera" type="submit" class="btn btn-primary"
+                                                    {{ $conteo_excluidos > 0 ? 'disabled' : '' }}>
                                                     Guardar en cartera
                                                 </button>
+
                                             </form>
                                         </td>
                                     </tr>
@@ -113,7 +126,14 @@
 
                                 <div class="" role="tabpanel" data-example-id="togglable-tabs">
                                     <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-                                        <li role="presentation" class="active"><a href="#tab_content1" id="home-tab"
+                                        <li role="presentation" class="active"><a href="#tab_content6" id="edad-tab"
+                                                role="tab" data-toggle="tab" aria-expanded="false">Edad Máxima </a>
+                                        </li>
+                                        <li role="presentation" class=""><a href="#tab_content7"
+                                                id="responsabilidad-tab5" role="tab" data-toggle="tab"
+                                                aria-expanded="false">Responsabilidad Máxima </a>
+                                        </li>
+                                        <li role="presentation" class=""><a href="#tab_content1" id="home-tab"
                                                 role="tab" data-toggle="tab" aria-expanded="true">Nuevos registros</a>
                                         </li>
                                         <li role="presentation" class=""><a href="#tab_content5" id="profile-tab5"
@@ -132,10 +152,162 @@
                                                 id="profile-tab2" data-toggle="tab" aria-expanded="false">Extraprimados
                                                 excluidos</a>
                                         </li>
+                                    </li>
+
+                                        
                                     </ul>
                                     <div id="myTabContent" class="tab-content">
-                                        <div role="tabpanel" class="tab-pane active " id="tab_content1"
-                                            aria-labelledby="home-tab">
+                                        <div role="tabpanel" class="tab-pane active" id="tab_content6"
+                                                aria-labelledby="edad-tab">
+                                                <br>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <h4>Edad Maxima de Terminación {{ $deuda->EdadMaximaTerminacion }} años
+                                                    </h4>
+                                                </div>
+                                                <!-- <div class="col-md-6 col-sm-6 col-xs-12" align="right" id="btn_expo" style="display:{{ $excluidos->count() > 0 ? 'block' : 'none' }}"> -->
+                                                <div class="col-md-6 col-sm-6 col-xs-12" align="right">
+
+                                                    <form action="{{ url('poliza/deuda/exportar') }}" method="POST">
+                                                        @csrf
+                                                        <input type="hidden" name="Tipo" value="1">
+                                                        <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
+                                                        <input type="hidden" name="MesActual"
+                                                            value="{{ date('m', strtotime($date)) }}">
+                                                        <button style="text-align: right;"
+                                                            class="btn btn-primary">Exportar</button>
+                                                    </form>
+
+                                                </div>
+                                                <br><br>
+
+                                                <table class="table table-striped" id="MyTable6">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Número crédito</th>
+                                                            <th>DUI</th>
+                                                            <th>NIT</th>
+                                                            <th>Nombre</th>
+                                                            <th>Fecha nacimiento</th>
+                                                            <th>Edad Actual</th>
+                                                            <th style="text-align: center;">Excluir</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach ($poliza_temporal->where('Edad', '>=', $deuda->EdadMaximaTerminacion) as $registro)
+                                                        <tr>
+                                                        <td>{{ $registro->NumeroReferencia }}</td>
+                                                        <td>{{ $registro->Dui }}</td>
+                                                        <td>{{ $registro->Nit }}</td>
+                                                        <td>{{ $registro->PrimerNombre }}
+                                                            {{ $registro->SegundoNombre }}
+                                                            {{ $registro->PrimerApellido }}
+                                                            {{ $registro->SegundoApellido }}
+                                                            {{ $registro->ApellidoCasada }}
+                                                        </td>
+                                                        <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
+                                                        </td>
+                                                        <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
+                                                        <td>
+                                                            <input type="checkbox" onchange="excluir({{ $registro->Id }},0,1)" class="js-switch" {{ $registro->Excluido > 0 ? 'checked' : '' }}>
+                                                            <input type="hidden" id="id_excluido-{{ $registro->Id }}" value="{{ $registro->Excluido }}">
+                                                        </td>
+                                                        <!-- <td style="text-align: center;"><button class="btn btn-primary"><i class="fa fa-exchange"></i></button></td> -->
+                                                    </tr>
+                                                    @endforeach
+
+
+                                                </tbody>
+                                            </table>
+
+
+
+                                        </div>
+                                        <div role="tabpanel5" class="tab-pane" id="tab_content7" aria-labelledby="responsabilidad-tab5">
+                                            <br>
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <h4 id="text_dinero" style="display: block;">Responsabilidad Máxima ${{ number_format($deuda->ResponsabilidadMaxima, 2, '.', ',') }} </h4>
+                                                <h4 id="text_dinero_ac" style="display: none;"> </h4>
+
+                                            </div>
+                                            <div class="col-md-6 col-sm-6 col-xs-12" align="right" >
+                                            <!-- <div class="col-md-6 col-sm-6 col-xs-12" align="right" id="btn_expo2" style="display:{{ $excluidos->count() > 0 ? 'block' : 'none' }}"> -->
+
+
+
+                                                <form action="{{ url('poliza/deuda/exportar') }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="Tipo" value="0">
+                                                    <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
+                                                    <input type="hidden" name="MesActual" value="{{ date('m', strtotime($date)) }}">
+                                                    <button style="text-align: right;" class="btn btn-primary">Exportar</button>
+                                                </form>
+
+
+
+
+                                            </div>
+                                            <br><br>
+
+
+                                            <table class="table table-striped" id="MyTable7">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Número crédito</th>
+                                                        <th>DUI</th>
+                                                        <th>NIT</th>
+                                                        <th>Nombre</th>
+                                                        <th>Fecha Nacimiento</th>
+                                                        <th>Fecha Otorgamiento</th>
+                                                        <th>Edad Actual</th>
+                                                        <th>Edad Desembolso</th>
+                                                        <th>Total </th>
+                                                        <th>Excluir</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($poliza_cumulos as $registro)
+                                                    @php
+                                                        $sub_total =
+                                                            $registro->total_saldo +
+                                                            $registro->total_interes +
+                                                            $registro->total_covid +
+                                                            $registro->total_moratorios +
+                                                            $registro->total_monto_nominal;
+                                                    @endphp
+                                                    @if ($sub_total > $deuda->ResponsabilidadMaxima)
+                                                        <tr>
+                                                        <td>{{ $registro->NumeroReferencia }} <br>
+                                                        </td>
+                                                        <td>{{ $registro->Dui }}</td>
+                                                        <td>{{ $registro->Nit }}</td>
+                                                        <td>{{ $registro->PrimerNombre }}
+                                                            {{ $registro->SegundoNombre }}
+                                                            {{ $registro->PrimerApellido }}
+                                                            {{ $registro->SegundoApellido }}
+                                                            {{ $registro->ApellidoCasada }}
+                                                        </td>
+                                                        <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
+                                                        </td>
+                                                        <td>{{ $registro->FechaOtorgamiento ? $registro->FechaOtorgamiento : '' }}
+                                                        </td>
+                                                        <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
+                                                        <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }}
+                                                            Años</td>
+                                                        <td>${{ number_format($sub_total, 2) }}</td>
+                                                        <td style="text-align: center;">
+                                                        <input type="checkbox" onchange="excluir_dinero({{ $registro->Id }},0,1)" class="js-switch" {{ $registro->Excluido > 0 ? 'checked' : '' }}>
+                                                        <input type="hidden" id="id_excluido_dinero-{{ $registro->Id }}" value="{{ $registro->Excluido }}">
+                                                        </td>
+
+                                                    </tr>
+                                                    @endif
+                                                    @endforeach
+
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div role="tabpanel" class="tab-pane  " id="tab_content1" aria-labelledby="home-tab">
                                             <br>
                                             <table class="table table-striped" id="MyTable1">
                                                 <thead>
@@ -150,20 +322,20 @@
                                                 </thead>
                                                 <tbody>
                                                     @foreach ($nuevos_registros as $registro)
-                                                        <tr>
-                                                            <td>{{ $registro->NumeroReferencia }}</td>
-                                                            <td>{{ $registro->Dui }}</td>
-                                                            <td>{{ $registro->Nit }}</td>
-                                                            <td>{{ $registro->PrimerNombre }}
-                                                                {{ $registro->SegundoNombre }}
-                                                                {{ $registro->PrimerApellido }}
-                                                                {{ $registro->SegundoApellido }}
-                                                                {{ $registro->ApellidoCasada }}
-                                                            </td>
-                                                            <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
-                                                            </td>
-                                                            <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
-                                                        </tr>
+                                                    <tr>
+                                                        <td>{{ $registro->NumeroReferencia }}</td>
+                                                        <td>{{ $registro->Dui }}</td>
+                                                        <td>{{ $registro->Nit }}</td>
+                                                        <td>{{ $registro->PrimerNombre }}
+                                                            {{ $registro->SegundoNombre }}
+                                                            {{ $registro->PrimerApellido }}
+                                                            {{ $registro->SegundoApellido }}
+                                                            {{ $registro->ApellidoCasada }}
+                                                        </td>
+                                                        <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
+                                                        </td>
+                                                        <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
+                                                    </tr>
                                                     @endforeach
 
 
@@ -193,23 +365,23 @@
                                                 <tbody>
                                                     @foreach ($registros_eliminados as $registro)
                                                         <tr>
-                                                            <td>{{ $registro->NumeroReferencia }}</td>
-                                                            <td>{{ $registro->Dui }}</td>
-                                                            <td>{{ $registro->Nit }}</td>
-                                                            <td>{{ $registro->PrimerNombre }}
-                                                                {{ $registro->SegundoNombre }}
-                                                                {{ $registro->PrimerApellido }}
-                                                                {{ $registro->SegundoApellido }}
-                                                                {{ $registro->ApellidoCasada }}
-                                                            </td>
-                                                            <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
-                                                            </td>
-                                                            <td>{{ $registro->FechaOtorgamiento ? $registro->FechaOtorgamiento : '' }}
-                                                            </td>
-                                                            <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
-                                                            <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }}
-                                                                Años</td>
-                                                            <td>${{ number_format($registro->total_saldo, 2) }}</td>
+                                                        <td>{{ $registro->NumeroReferencia }}</td>
+                                                        <td>{{ $registro->Dui }}</td>
+                                                        <td>{{ $registro->Nit }}</td>
+                                                        <td>{{ $registro->PrimerNombre }}
+                                                            {{ $registro->SegundoNombre }}
+                                                            {{ $registro->PrimerApellido }}
+                                                            {{ $registro->SegundoApellido }}
+                                                            {{ $registro->ApellidoCasada }}
+                                                        </td>
+                                                        <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
+                                                        </td>
+                                                        <td>{{ $registro->FechaOtorgamiento ? $registro->FechaOtorgamiento : '' }}
+                                                        </td>
+                                                        <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
+                                                        <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }}
+                                                            Años</td>
+                                                        <td>${{ number_format($registro->total_saldo, 2) }}</td>
                                                         </tr>
                                                     @endforeach
 
@@ -220,23 +392,19 @@
 
 
                                         </div>
-                                        <div role="tabpanel" class="tab-pane fade" id="tab_content2"
-                                            aria-labelledby="profile-tab">
+                                        <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="profile-tab">
                                             <div class="col-md-6 col-sm-12">
                                                 <div class="input-group">
                                                     <input type="text" id="buscar_no_valido" class="form-control">
                                                     <span class="input-group-btn">
-                                                        <button type="button" id="btn_no_valido"
-                                                            class="btn btn-primary">Buscar</button>
+                                                        <button type="button" id="btn_no_valido" class="btn btn-primary">Buscar</button>
                                                         <!-- Nuevo botón Borrar -->
-                                                        <button type="button" id="btn_limpiarn_no_valido"
-                                                            class="btn btn-secondary">Limpiar</button>
+                                                        <button type="button" id="btn_limpiarn_no_valido" class="btn btn-secondary">Limpiar</button>
                                                     </span>
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-sm-12" align="right">
-                                                <a href="{{ url('exportar/poliza_cumulo') }}"
-                                                    class="btn btn-success">Descargar Excel</a>
+                                                <a href="{{ url('exportar/poliza_cumulo') }}" class="btn btn-success">Descargar Excel</a>
                                             </div>
                                             <br>
                                             <br>
@@ -246,29 +414,30 @@
                                             </div>
 
                                         </div>
-                                        <div role="tabpanel" class="tab-pane fade" id="tab_content3"
-                                            aria-labelledby="profile-tab">
+                                        <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="profile-tab">
 
 
                                             <div class="col-md-6 col-sm-12">
-                                                <div class="input-group">
+                                                {{-- <div class="input-group">
                                                     <input type="text" id="buscar_valido" class="form-control">
                                                     <span class="input-group-btn">
-                                                        <button type="button" id="btn_valido"
-                                                            class="btn btn-primary">Buscar</button>
-                                                        <button type="button" id="btn_limpiarn_valido"
-                                                            class="btn btn-secondary">Limpiar</button>
+                                                        <button type="button" id="btn_valido" class="btn btn-primary">Buscar</button>
+                                                        <button type="button" id="btn_limpiarn_valido" class="btn btn-secondary">Limpiar</button>
                                                     </span>
+                                                </div> --}}
+                                                <div style="display: flex; align-items: center;">
+                                                    <div style="width: 20px; height: 20px; background-color: #eeb458; margin-right: 10px;"></div>
+                                                    <span>Los créditos rehabilitados se mostrarán de color naranja.</span>
                                                 </div>
                                             </div>
+                                            <br>
                                             <br>
                                             <div id="creditos_validos">
                                             </div>
 
 
                                         </div>
-                                        <div role="tabpanel" class="tab-pane fade" id="tab_content4"
-                                            aria-labelledby="profile-tab">
+                                        <div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="profile-tab">
 
                                             <br>
                                             <table class="table table-striped" id="datatable">
@@ -285,63 +454,67 @@
                                                 </thead>
                                                 <tbody>
                                                     @foreach ($extra_primados->where('Existe', '=', 0) as $extra_primado)
+                                                            <tr>
+                                                                <td>{{ $extra_primado->NumeroReferencia }}</td>
+                                                                <td>{{ $extra_primado->Nombre }}</td>
+                                                                <td>{{ $extra_primado->FechaOtorgamiento }}</td>
+                                                                <td>{{ $extra_primado->MontoOtorgamiento }}</td>
+                                                                <td> {{ $extra_primado->PorcentajeEP }}%</td>
+                                                            </tr>
+                                                        @endforeach
+
+
+                                                    </tbody>
+                                                </table>
+
+
+
+                                                <?php /*
+                                                <table class="table table-striped" id="datatable">
+                                                    <thead>
                                                         <tr>
-                                                            <td>{{ $extra_primado->NumeroReferencia }}</td>
-                                                            <td>{{ $extra_primado->Nombre }}</td>
-                                                            <td>{{ $extra_primado->FechaOtorgamiento }}</td>
-                                                            <td>{{ $extra_primado->MontoOtorgamiento }}</td>
-                                                            <td> {{ $extra_primado->PorcentajeEP }}%</td>
+                                                            <th>Número crédito</th>
+                                                            <th>DUI</th>
+                                                            <th>NIT</th>
+                                                            <th>Nombre</th>
+                                                            <th>Fecha nacimiento</th>
+                                                            <th>Edad Actual</th>
+                                                            <th>Saldo</th>
                                                         </tr>
-                                                    @endforeach
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach ($poliza_cumulos->where('Perfiles', '=', null)->where('NoValido', '=', 0) as $registro)
+                                                            <tr>
+                                                                <td>{{ $registro->ConcatenatedNumeroReferencia }}</td>
+                                                                <td>{{ $registro->Dui }}</td>
+                                                                <td>{{ $registro->Nit }}</td>
+                                                                <td>{{ $registro->PrimerNombre }}
+                                                                    {{ $registro->SegundoNombre }}
+                                                                    {{ $registro->PrimerApellido }}
+                                                                    {{ $registro->SegundoApellido }}
+                                                                    {{ $registro->ApellidoCasada }}
+                                                                </td>
+                                                                <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
+                                                                </td>
+                                                                <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
+
+                                                                <td class="text-right">
+                                                                    ${{ number_format($registro->total_saldo, 2) }}</td>
+
+                                                            </tr>
+                                                        @endforeach
 
 
-                                                </tbody>
-                                            </table>
+                                                    </tbody>
+                                                </table> */
+                                                ?>
 
-
-
-                                            <?php /*
-                                            <table class="table table-striped" id="datatable">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Número crédito</th>
-                                                        <th>DUI</th>
-                                                        <th>NIT</th>
-                                                        <th>Nombre</th>
-                                                        <th>Fecha nacimiento</th>
-                                                        <th>Edad Actual</th>
-                                                        <th>Saldo</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach ($poliza_cumulos->where('Perfiles', '=', null)->where('NoValido', '=', 0) as $registro)
-                                                        <tr>
-                                                            <td>{{ $registro->ConcatenatedNumeroReferencia }}</td>
-                                                            <td>{{ $registro->Dui }}</td>
-                                                            <td>{{ $registro->Nit }}</td>
-                                                            <td>{{ $registro->PrimerNombre }}
-                                                                {{ $registro->SegundoNombre }}
-                                                                {{ $registro->PrimerApellido }}
-                                                                {{ $registro->SegundoApellido }}
-                                                                {{ $registro->ApellidoCasada }}
-                                                            </td>
-                                                            <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
-                                                            </td>
-                                                            <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
-
-                                                            <td class="text-right">
-                                                                ${{ number_format($registro->total_saldo, 2) }}</td>
-
-                                                        </tr>
-                                                    @endforeach
-
-
-                                                </tbody>
-                                            </table> */
-                                            ?>
-
+                                            </div>
                                         </div>
-                                    </div>
+
+
+
+
                                 </div>
                             </div>
                         </div>
@@ -412,9 +585,135 @@
             $('#MyTable3').DataTable();
             $('#MyTable4').DataTable();
             $('#MyTable5').DataTable();
+            $('#MyTable6').DataTable();
+            $('#MyTable7').DataTable();
             loadCreditos(1, "");
             loadCreditos(2, "");
         });
+
+        function excluir(id, subtotal, val) {
+            let id_ex = document.getElementById('id_excluido-' + id).value;
+            //alert(id_ex);
+            if (id_ex == 0) {
+                // alert('si');
+                $.ajax({
+                    url: "{{ url('poliza/deuda/add_excluidos') }}", // Asegúrate de que esta sintaxis se procese correctamente en tu archivo .blade.php
+                    type: 'POST',
+                    data: {
+                        id: id,
+                        subtotal: subtotal,
+                        val: val,
+                        //tipo_cartera: ' $tipo_cartera',
+                        _token: '{{ csrf_token() }}' // Necesario para la protección CSRF de Laravel
+                    },
+                    success: function(response) {
+                        // Aquí manejas lo que suceda después de la respuesta exitosa
+                        console.log(response);
+                        if (response.excluido > 0) {
+                            $("#btn_expo").show();
+                            $("#btn_expo2").show();
+                            document.getElementById('id_excluido-' + id).value = response.excluido;
+                            //btnGuardarCartera
+
+
+                        }
+
+
+                        if (response.conteo_excluidos) {
+                            document.getElementById("btnGuardarCartera").disabled = true;
+                        } else {
+                            document.getElementById("btnGuardarCartera").disabled = false;
+                        }
+
+                    },
+                    error: function(xhr, status, error) {
+                        // Aquí manejas los errores
+                        console.error(error);
+                    }
+                });
+            } else {
+                // alert('no');
+                $.ajax({
+                    url: "{{ url('poliza/deuda/delete_excluido') }}", // Asegúrate de que esta sintaxis se procese correctamente en tu archivo .blade.php
+                    type: 'POST',
+                    data: {
+                        id: id,
+                        id_ex: id_ex,
+                        //tipo_cartera: ' $tipo_cartera',
+                        _token: '{{ csrf_token() }}' // Necesario para la protección CSRF de Laravel
+                    },
+                    success: function(response) {
+                        // Aquí manejas lo que suceda después de la respuesta exitosa
+                        console.log(response);
+                        document.getElementById('id_excluido-' + id).value = response.excluido;
+                        document.getElementById("btnGuardarCartera").disabled = true;
+                    },
+                    error: function(xhr, status, error) {
+                        // Aquí manejas los errores
+                        console.error(error);
+                    }
+                });
+            }
+
+
+        }
+
+        function excluir_dinero(id, subtotal, val) {
+            let id_ex = document.getElementById('id_excluido_dinero-' + id).value;
+            alert(id_ex);
+            if (id_ex == 0) {
+                alert('si');
+                $.ajax({
+                    url: "{{ url('poliza/deuda/add_excluidos') }}", // Asegúrate de que esta sintaxis se procese correctamente en tu archivo .blade.php
+                    type: 'POST',
+                    data: {
+                        id: id,
+                        subtotal: subtotal,
+                        val: val,
+                        //tipo_cartera: ' $tipo_cartera',
+                        _token: '{{ csrf_token() }}' // Necesario para la protección CSRF de Laravel
+                    },
+                    success: function(response) {
+                        // Aquí manejas lo que suceda después de la respuesta exitosa
+                        console.log(response);
+                        if (response.excluido > 0) {
+                            $("#btn_expo").show();
+                            $("#btn_expo2").show();
+                            document.getElementById('id_excluido_dinero-' + id).value = response.excluido;
+                        }
+
+                    },
+                    error: function(xhr, status, error) {
+                        // Aquí manejas los errores
+                        console.error(error);
+                    }
+                });
+            } else {
+                alert('no');
+                $.ajax({
+                    url: "{{ url('poliza/deuda/delete_excluido') }}", // Asegúrate de que esta sintaxis se procese correctamente en tu archivo .blade.php
+                    type: 'POST',
+                    data: {
+                        id: id,
+                        id_ex: id_ex,
+                        //tipo_cartera: ' $tipo_cartera',
+                        _token: '{{ csrf_token() }}' // Necesario para la protección CSRF de Laravel
+                    },
+                    success: function(response) {
+                        // Aquí manejas lo que suceda después de la respuesta exitosa
+                        console.log(response);
+                        document.getElementById('id_excluido_dinero-' + id).value = response.excluido;
+                    },
+                    error: function(xhr, status, error) {
+                        // Aquí manejas los errores
+                        console.error(error);
+                    }
+                });
+            }
+
+
+        }
+
 
         function get_creditos(id) {
             $.ajax({

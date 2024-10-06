@@ -33,6 +33,7 @@ use App\Http\Controllers\polizas\ValidacionCarteraController;
 use App\Http\Controllers\seguridad\PermissionController;
 use App\Http\Controllers\seguridad\RoleController;
 use App\Models\catalogo\Aseguradora;
+use App\Models\polizas\Residencia;
 
 /*
 |--------------------------------------------------------------------------
@@ -188,8 +189,9 @@ Route::get('polizas/residencia/{id}/renovar', [ResidenciaController::class, 'ren
 Route::get('polizas/residencia/{id}/cancelacion', [ResidenciaController::class, 'cancelacion']);
 Route::post('polizas/residencia/renovar/{id}', [ResidenciaController::class, 'renovarPoliza'])->name('residencia.renovarPoliza');
 Route::post('polizas/residencia/delete_pago/{id}', [ResidenciaController::class, 'delete_pago']);
-Route::post('polizas/residencia/agregar_comentario', [ResidenciaController::class, 'agregar_comentario']);
-Route::post('polizas/residencia/eliminar_comentario', [ResidenciaController::class, 'eliminar_comentario']);
+Route::post('polizas/residencia/agregar_comentario',[ResidenciaController::class,'agregar_comentario']);
+Route::post('polizas/residencia/eliminar_comentario',[ResidenciaController::class,'eliminar_comentario']);
+Route::post('polizas/residencia/cancelar_pago',[ResidenciaController::class,'cancelar_pago']);
 
 
 Route::resource('polizas/vida', VidaController::class);
@@ -213,6 +215,7 @@ Route::post('polizas/deuda/agregar_valido', [DeudaController::class, 'agregar_va
 Route::post('polizas/deuda/create_pago', [DeudaCarteraController::class, 'create_pago']);
 Route::post('polizas/deuda/validar_poliza', [DeudaCarteraController::class, 'validar_poliza']);
 Route::get('polizas/deuda/subir_cartera/{id}', [DeudaCarteraController::class, 'subir_cartera']);
+Route::post('polizas/deuda/delete_temp', [DeudaCarteraController::class, 'deleteLineaCredito']);
 Route::post('deuda/cancelar_pago', [DeudaController::class, 'cancelar_pago']);
 Route::post('deuda/validar_poliza', [DeudaCarteraController::class, 'validar_poliza']);
 Route::post('polizas/deuda/eliminar_extraprima', [DeudaController::class, 'eliminar_extraprima']);
@@ -226,6 +229,10 @@ Route::resource('polizas/deuda', DeudaController::class);
 Route::get('exportar/poliza_cumulo', [DeudaController::class, 'exportar']);
 Route::post('regresar_edit', [DeudaController::class, 'regresar_edit']);
 Route::post('exportar_excel', [DeudaController::class, 'exportar_excel']);
+Route::post('poliza/deuda/exportar',[DeudaCarteraController::class,'exportar_excel']);
+Route::post('poliza/deuda/aumentar_techo',[DeudaCarteraController::class, 'aumentar_techo']);
+Route::post('poliza/deuda/add_excluidos',[DeudaCarteraController::class, 'add_excluidos']);
+Route::post('poliza/deuda/delete_excluido',[DeudaCarteraController::class,'delete_excluido']);
 
 Route::post('polizas/deuda/agregar_pago', [DeudaController::class, 'agregar_pago']);
 Route::get('polizas/deuda/get_pago/{id}', [DeudaController::class, 'get_pago']);

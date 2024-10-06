@@ -12,7 +12,7 @@
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
 
                 <div class="x_title">
-                    <h2>RESI - Póliza de Residencia <small></small></h2>
+                    <h2>Pólizas / Residencia / Póliza de Residencia / {{$residencia->NumeroPoliza}} <small></small></h2>
                     <ul class="nav navbar-right panel_toolbox">
                         <a href="{{ url('polizas/residencia') }}" class="btn btn-info fa fa-undo " style="color: white">
                             Atrás</a>
@@ -217,7 +217,7 @@
                                         &nbsp;
                                     </div>
                                     <div class="col-sm-4">
-                                        <label class="control-label">Tasa de Comisión %</label>
+                                        <label class="control-label">Porcentaje de Comisión</label>
                                         <div class="form-group has-feedback">
                                             <input type="number" style="padding-left: 15%;" step="any"
                                                 name="Comision" value="{{ $residencia->Comision }}" class="form-control"
@@ -300,7 +300,7 @@
                                             <th style="text-align: center;">Fecha de Creación</th>
                                             <th style="text-align: center;">Nro de Aviso Cobro</th>
                                             <th style="text-align: center;">Cuota</th>
-                                            <!-- <th style="text-align: center;">Nro de Documento</th> -->
+                                            <th style="text-align: center;">Nro de Documento</th>
                                             <th style="text-align: center;">Fecha de <br> Vencimiento</th>
                                             <th style="text-align: center;">Fecha de <br> Aplicación de pago</th>
                                             <th style="text-align: center;">Valor (US$)</th>
@@ -319,69 +319,57 @@
                                                     $fileUrl = asset($obj->ExcelURL);
                                                 @endphp
                                                 <td style="text-align: center;">{{ $residencia->NumeroPoliza }}</td>
-                                                <td style="text-align: center;">
-                                                    {{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
-                                                <td style="text-align: center;">
-                                                    {{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
-                                                    <td style="text-align: center;">
-                                                    {{ \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}</td>
-
+                                                <td style="text-align: center;">{{ $obj->FechaInicio ? \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') : '' }}</td>
+                                                <td style="text-align: center;">{{ $obj->FechaFinal ?  \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') : '' }}</td>
+                                                <td style="text-align: center;">{{ $obj->ImpresionRecibo ?  \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') : '' }}</td>
+                                                <td style="text-align: center;">{{$obj->NumeroRecibo ? 'AC'.str_pad($obj->NumeroRecibo, 6, '0', STR_PAD_LEFT).' '.date('y'):'' }} </td>
                                                 <td style="text-align: center;">01/01</td>
-                                                @if ($obj->NumeroCorrelativo)
-                                                    <td style="text-align: center;">AC {{ str_pad($obj->NumeroCorrelativo, 6, '0', STR_PAD_LEFT) }} {{ date('y') }}</td>
-                                                @else
-                                                    <td></td>
-                                                @endif
-                                                <td style="text-align: center;">
-                                                    {{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }} </td>
-                                                @if ($obj->PagoAplicado)
-                                                    <td style="text-align: center;">
-                                                        {{ \Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') }}
-                                                    </td>
-                                                @else
-                                                    <td></td>
-                                                @endif
-                                                @if ($obj->Activo == 0)
-                                                    <td style="text-align: right;">$0.00</td>
-                                                @else
-                                                    <td style="text-align: right;">$
-                                                        {{ number_format($obj->APagar, 2, '.', ',') }}
+                                                <td style="text-align: center;">{{$obj->NumeroCorrelativo ? $obj->NumeroCorrelativo : ''}}</td>
+                                                <td style="text-align: center;">{{ $obj->FechaInicio ? \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') : ''}}</td>
+                                                <td style="text-align: center;">{{ $obj->PagoAplicado ?  \Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') : ''}}</td>
+                                                <td style="text-align: center;">{{ $obj->APagar ? number_format($obj->APagar, 2, '.', ',') :''}} 
                                                         @php
                                                             $total += $obj->APagar;
                                                         @endphp
-                                                    </td>
-                                                @endif
+                                                </td>
+                                                <td style="text-align: center;">
                                                 @if ($obj->Activo == 0)
-                                                    <td style="text-align: center;">Anulado</td>
+                                                    Anulado
                                                 @elseif(!$obj->PagoAplicado)
-                                                    <td style="text-align: center;">Pendiente</td>
+                                                    Pendiente
                                                 @elseif($obj->PagoAplicado)
-                                                    <td style="text-align: center;">Pagado</td>
+                                                    Pagado
                                                 @else
-                                                    <td style="text-align: center;"></td>
+                                                    
                                                 @endif
+
+                                                </td>
                                                 <td style="text-align: center;">
                                                     @if ($obj->Activo == 0)
                                                     @elseif(!$obj->ImpresionRecibo)
-                                                        <a href="" target="_blank"
+                                                        <a href="" target="_blank" class="btn btn-primary"
                                                             data-target="#modal-recibo-{{ $obj->Id }}"
-                                                            title="Generar Recibo" data-toggle="modal"><i
+                                                            title="Generar Aviso de Cobro" data-toggle="modal"><i
                                                                 class="fa fa-file-text-o" aria-hidden="true"></i></a>
                                                     @else
+                                                    <button class="btn btn-primary">
                                                         <i class="fa fa-pencil fa-lg"
                                                             onclick="modal_edit({{ $obj->Id }})"
                                                             title="Actualizar Fechas de Cobro"></i>
+                                                    </button>
+                                                        
                                                     @endif
-                                                    &nbsp;&nbsp;
-                                                    <a href="{{ $fileUrl }}" class="fa fa-file-excel-o"
-                                                        align="center" title="Descargar Cartera"></a>&nbsp;&nbsp;
-                                                    <i data-target="#modal-view-{{ $obj->Id }}" data-toggle="modal"
+                                                    
+                                                    <a href="{{ $fileUrl }}" class=" btn btn-success fa fa-file-excel-o"
+                                                        align="center" title="Descargar Cartera Excel"></a>
+                                                        <button class="btn btn-warning"><i data-target="#modal-view-{{ $obj->Id }}" data-toggle="modal"
                                                         class="fa fa-eye" align="center"
-                                                        title="Ver Detalles"></i>&nbsp;&nbsp;
+                                                        title="Ver Detalles"></i></button>
+                                                    
                                                     @if ($obj->Activo == 1)
-                                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}"
-                                                            data-toggle="modal" title="Anular Cartera"><i
-                                                                class="fa fa-trash fa-lg"></i></a> &nbsp;&nbsp;
+                                                        <a href="" class="btn btn-danger" data-target="#modal-delete-{{ $obj->Id }}"
+                                                            data-toggle="modal" title="Anular Cobro"><i
+                                                                class="fa fa-trash fa-lg"></i></a>
                                                     @endif
 
 
@@ -648,7 +636,7 @@
                                                 <div class="col-md-9 col-sm-9  form-group has-feedback">
                                                     <input type="text" class="form-control has-feedback-left"
                                                         style="padding-left: 25%;"
-                                                        value="@if ($ultimo_pago) {{ $ultimo_pago->TasaComision }} @else 0 @endif"
+                                                        value="@if ($ultimo_pago) {{ $residencia->Comision }} @else 0 @endif"
                                                         readonly>
                                                     <span class="fa fa-percent form-control-feedback left"
                                                         aria-hidden="true"></span>
@@ -728,7 +716,7 @@
                                             <thead>
                                                 <tr>
                                                     <th>N° Aviso</th>
-                                                    <th>N° Correlativo</th>
+                                                    <th>N° Documento</th>
                                                     <th>Fecha Impresión Aviso</th>
                                                     <th>Fecha Inicio</th>
                                                     <th>Fecha Final</th>
@@ -740,8 +728,8 @@
                                                 @foreach ($detalle as $obj)
                                                     @if ($obj->ImpresionRecibo != null)
                                                         <tr>
-                                                            <td>{{ $obj->NumeroRecibo }}</td>
-                                                            <td>{{ $obj->NumeroCorrelativo }}</td>
+                                                            <td>{{$obj->NumeroRecibo ? 'AC'.str_pad($obj->NumeroRecibo, 6, '0', STR_PAD_LEFT).' '.date('y'):'' }}</td>
+                                                            <td>{{$obj->NumeroCorrelativo ? $obj->NumeroCorrelativo : '' }} </td>
                                                             <td>{{ \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}
                                                             </td>
                                                             <td>{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}

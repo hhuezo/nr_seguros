@@ -9,6 +9,7 @@
     <table id="tblCobros" width="100%" class="table table-striped">
         <thead>
             <tr>
+                <th style="display: none;">Id</th>
                 <th style="text-align: center;">Póliza</th>
                 <th style="text-align: center;">Fecha Inicio <br> Vigencia</th>
                 <th style="text-align: center;">Fecha Final <br> Vigencia</th>
@@ -29,20 +30,19 @@
         <tbody>
             @foreach ($detalle as $obj)
                 <tr>
-
-                    <td style="text-align: center;">{{ $deuda->NumeroPoliza }} </td>
-                    <td style="text-align: center;">{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
-                    <td style="text-align: center;">{{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
-                    <td style="text-align: center;">{{ \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}</td>
+                    <td style="display: none;">{{$obj->Id}}</td>
+                    <td style="text-align: center;">{{ $deuda->NumeroPoliza }}</td>
+                    <td style="text-align: center;">{{ $obj->FechaInicio ? \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') : ''}}</td>
+                    <td style="text-align: center;">{{ $obj->FechaFinal ? \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') : ''}}</td>
+                    <td style="text-align: center;">{{ $obj->ImpresionRecibo ? \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') : ''}}</td>
                     <td style="text-align: center;"> AC {{ str_pad($obj->NumeroRecibo,6,"0",STR_PAD_LEFT)}} {{date('Y')}}</td>
                     <td style="text-align: center;">01/01</td>
                     @if ($obj->NumeroCorrelativo)
-                        <td style="text-align: center;">AC {{ str_pad($obj->NumeroCorrelativo, 6, '0', STR_PAD_LEFT) }}
-                            {{ date('y') }}</td>
+                        <td style="text-align: center;">{{$obj->NumeroCorrelativo }}</td>
                     @else
                         <td></td>
                     @endif
-                    <td style="text-align: center;">{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}
+                    <td style="text-align: center;">{{ $obj->FechaInicio ? \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') : ''}}
                     </td>
                     @if ($obj->PagoAplicado)
                         <td style="text-align: center;">{{ \Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') }}
@@ -73,21 +73,21 @@
                     <td style="text-align: center;">
                         @if ($obj->Activo == 0)
                         @elseif (!$obj->ImpresionRecibo)
-                            <a href="" target="_blank" data-target="#modal-recibo-{{ $obj->Id }}" title="Generar Recibo" data-toggle="modal">
+                            <a href="" target="_blank" data-target="#modal-recibo-{{ $obj->Id }}" title="Generar Aviso de cobro" data-toggle="modal">
                                 <button class="btn btn-primary"><i class="fa fa-file-text-o" aria-hidden="true"></i></button>
                             </a>
-                        @else
+                        @elseif(!$obj->PagoAplicado)
                             <button class="btn btn-primary" onclick="modal_edit({{ $obj->Id }})">
                                 <i class="fa fa-pencil fa-lg" title="Actualizar Fechas de Cobro"></i>
                             </button>
                         @endif
                     
                         <button class="btn btn-warning" data-target="#modal-view-{{ $obj->Id }}" data-toggle="modal">
-                            <i class="fa fa-eye" align="center" title="Ver Detalles"></i>
+                            <i class="fa fa-eye" align="center" title="Ver Actividad de Aviso de cobro"></i>
                         </button>
                     
                         @if ($obj->Activo == 1)
-                            <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal" title="Anular Cartera">
+                            <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal" title="Eliminar Aviso de Cobro">
                                 <button class="btn btn-danger">
                                     <i class="fa fa-trash fa-lg"></i>
                                 </button>
@@ -99,7 +99,7 @@
                             <input type="hidden" value="{{ $deuda->Id }}" name="Deuda">
                             <input type="hidden" value="{{ $obj->Id }}" name="DeudaDetalle">
                             <button class="btn btn-success" style="margin-top: 15px">
-                                <i class="fa fa-file-excel-o" align="center" title="Descargar Cartera"></i>
+                                <i class="fa fa-file-excel-o" align="center" title="Descargar Cartera a excel"></i>
                             </button>
                         </form>
                     </td>
@@ -109,6 +109,7 @@
                 @include('polizas.deuda.modal_edit')
             @endforeach
         </tbody>
+        
         <tfoot>
             <td colspan="5" style="text-align: right;"><b>Total de Poliza:</b> </td>
             <td colspan="5" style="text-align: right;"><b>${{ number_format($total, 2, '.', ',') }}</b> </td>
@@ -149,10 +150,7 @@
                                 <input type="date" name="ImpresionRecibo" id="ModalImpresionRecibo"
                                     value="{{ date('Y-m-d') }}" class="form-control" readonly>
                             </div>
-                            <!-- <div class="col-sm-3">
-                                                                <label class="control-label">&nbsp;</label>
-                                                                <i class="btn btn-default fa fa-print form-control" id="btn_impresion"></i>
-                                                            </div> -->
+                
                         </div>
 
                         <div class="form-group">
