@@ -270,7 +270,7 @@
                     miTabla.rows().data().each(function(value, index) {
                         let estadoFila = miTabla.cell(index, 5, { search: 'applied' }).data(); // Columna 5 para los estados
                         let sumaAsegurada = miTabla.cell(index, 6, { search: 'applied' }).data(); // Columna 6 para los números
-                        let PrimaNetaAnual = miTabla.cell(index, 7, { search: 'applied' }).data(); // Columna 6 para los números
+                        let PrimaNetaAnual = miTabla.cell(index, 7, { search: 'applied' }).data(); // Columna 7 para los números
                         if (estadoFila === estado) {
                             suma[0] += intVal(sumaAsegurada);
                             suma[1] += intVal(PrimaNetaAnual);
