@@ -2161,7 +2161,8 @@ class DeudaController extends Controller
                     DB::raw('SUM(Intereses) as total_interes'),
                     DB::raw('SUM(InteresesCovid) as total_covid'),
                     DB::raw('SUM(InteresesMoratorios) as total_moratorios'),
-                    DB::raw('SUM(MontoNominal) as total_monto_nominal')
+                    DB::raw('SUM(MontoNominal) as total_monto_nominal'),
+                    DB::raw('SUM(MontoOtorgado) as total_monto_otorgado'),
                 )
                 ->where(function ($query) use ($buscar) {
                     $query->whereRaw("CONCAT(PrimerNombre, ' ', IFNULL(SegundoNombre,''), ' ', PrimerApellido, ' ', IFNULL(SegundoApellido,''), ' ', IFNULL(ApellidoCasada,'')) LIKE ?", ['%' . $buscar . '%'])
@@ -2208,7 +2209,9 @@ class DeudaController extends Controller
                     DB::raw('SUM(Intereses) as total_interes'),
                     DB::raw('SUM(InteresesCovid) as total_covid'),
                     DB::raw('SUM(InteresesMoratorios) as total_moratorios'),
-                    DB::raw('SUM(MontoNominal) as total_monto_nominal')
+                    DB::raw('SUM(MontoNominal) as total_monto_nominal'),
+                    DB::raw('SUM(MontoOtorgado) as total_monto_otorgado'),
+                    
                 )
                 ->where(function ($query) use ($buscar) {
                     $query->whereRaw("CONCAT(PrimerNombre, ' ', IFNULL(SegundoNombre,''), ' ', PrimerApellido, ' ', IFNULL(SegundoApellido,''), ' ', IFNULL(ApellidoCasada,'')) LIKE ?", ['%' . $buscar . '%'])
