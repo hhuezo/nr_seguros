@@ -476,7 +476,7 @@ class DeudaCarteraController extends Controller
                 $query->where('Perfiles', null)
                     ->orWhere('Perfiles', '=', '');
             })
-            ->update(['NoValido' => 1]);
+            ->update(['NoValido' => 2]);
 
 
         //poniendo valido los creditos guardados en DeudaCreditosValidos
