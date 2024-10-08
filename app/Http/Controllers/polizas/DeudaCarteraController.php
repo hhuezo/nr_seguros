@@ -462,7 +462,7 @@ class DeudaCarteraController extends Controller
                 ->where('total_saldo', '>=', $requisito->MontoInicial)->where('total_saldo', '<=', $requisito->MontoFinal)
                 ->pluck('Dui')->toArray();
 
-                dd($data_dui_cartera);
+                dd($data_dui_cartera,$requisito);
 
             PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Perfiles', null)->whereIn('Dui', $data_dui_cartera)->update(['Perfiles' => $requisito->perfil->Descripcion]);
 
