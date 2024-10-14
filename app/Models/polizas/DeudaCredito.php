@@ -21,8 +21,9 @@ class DeudaCredito extends Model
         'SumaAsegurada',
         'Tasa',
         'Total',
-        'Saldos'
-    ];  
+        'Saldos',
+        'MontoMaximoIndividual'
+    ];
 
     public function tipoCarteras()
     {

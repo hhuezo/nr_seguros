@@ -154,7 +154,7 @@
                                         </li>
                                     </li>
 
-                                        
+
                                     </ul>
                                     <div id="myTabContent" class="tab-content">
                                         <div role="tabpanel" class="tab-pane active" id="tab_content6"
@@ -428,6 +428,11 @@
                                                 <div style="display: flex; align-items: center;">
                                                     <div style="width: 20px; height: 20px; background-color: #eeb458; margin-right: 10px;"></div>
                                                     <span>Los créditos rehabilitados se mostrarán de color naranja.</span>
+                                                </div>
+                                                <br>
+                                                <div style="display: flex; align-items: center;">
+                                                    <div style="width: 20px; height: 20px; background-color: #E63946; margin-right: 10px;"></div>
+                                                    <span>Los créditos resaltados en rojo han excedido el monto máximo permitido por línea de crédito.</span>
                                                 </div>
                                             </div>
                                             <br>

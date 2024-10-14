@@ -532,6 +532,7 @@ class DeudaController extends Controller
             $credito->TasaMonto = $request->TasaMonto;
             $credito->TasaEdad = $request->TasaEdad;
             $credito->TipoCartera = $request->TipoCartera;
+            $credito->MontoMaximoIndividual = $request->MontoMaximoIndividual;
             $credito->Activo = 1;
             $credito->Usuario = auth()->user()->id;
             $credito->save();
@@ -715,10 +716,10 @@ class DeudaController extends Controller
             $clientesQuery = PolizaDeudaCartera::select(
                 'Id',
                 DB::raw("TRIM(CONCAT(
-                IFNULL(PrimerNombre, ''), 
-                IF(IFNULL(SegundoNombre, '') != '', CONCAT(' ', SegundoNombre), ''), 
-                IF(IFNULL(PrimerApellido, '') != '', CONCAT(' ', PrimerApellido), ''), 
-                IF(IFNULL(SegundoApellido, '') != '', CONCAT(' ', SegundoApellido), ''), 
+                IFNULL(PrimerNombre, ''),
+                IF(IFNULL(SegundoNombre, '') != '', CONCAT(' ', SegundoNombre), ''),
+                IF(IFNULL(PrimerApellido, '') != '', CONCAT(' ', PrimerApellido), ''),
+                IF(IFNULL(SegundoApellido, '') != '', CONCAT(' ', SegundoApellido), ''),
                 IF(IFNULL(ApellidoCasada, '') != '', CONCAT(' ', ApellidoCasada), '')
             )) as Nombre"),
                 'Dui',
@@ -742,10 +743,10 @@ class DeudaController extends Controller
                     'Id',
                     'PrimerNombre',
                     DB::raw("TRIM(CONCAT(
-                        IFNULL(PrimerNombre, ''), 
-                        IF(IFNULL(SegundoNombre, '') != '', CONCAT(' ', SegundoNombre), ''), 
-                        IF(IFNULL(PrimerApellido, '') != '', CONCAT(' ', PrimerApellido), ''), 
-                        IF(IFNULL(SegundoApellido, '') != '', CONCAT(' ', SegundoApellido), ''), 
+                        IFNULL(PrimerNombre, ''),
+                        IF(IFNULL(SegundoNombre, '') != '', CONCAT(' ', SegundoNombre), ''),
+                        IF(IFNULL(PrimerApellido, '') != '', CONCAT(' ', PrimerApellido), ''),
+                        IF(IFNULL(SegundoApellido, '') != '', CONCAT(' ', SegundoApellido), ''),
                         IF(IFNULL(ApellidoCasada, '') != '', CONCAT(' ', ApellidoCasada), '')
                     )) as Nombre"),
                     'Dui',
@@ -990,10 +991,10 @@ class DeudaController extends Controller
                 'poliza_deuda_cartera.Id',
                 // DB::raw("CONCAT(poliza_deuda_cartera.PrimerNombre, ' ', poliza_deuda_cartera.SegundoNombre, ' ', poliza_deuda_cartera.PrimerApellido, ' ', poliza_deuda_cartera.SegundoApellido, ' ', ' ', poliza_deuda_cartera.ApellidoCasada) as Nombre"),
                 DB::raw("TRIM(CONCAT(
-                    IFNULL(poliza_deuda_cartera.PrimerNombre, ''), 
-                    IF(IFNULL(poliza_deuda_cartera.SegundoNombre, '') != '', CONCAT(' ', poliza_deuda_cartera.SegundoNombre), ''), 
-                    IF(IFNULL(poliza_deuda_cartera.PrimerApellido, '') != '', CONCAT(' ', poliza_deuda_cartera.PrimerApellido), ''), 
-                    IF(IFNULL(poliza_deuda_cartera.SegundoApellido, '') != '', CONCAT(' ', poliza_deuda_cartera.SegundoApellido), ''), 
+                    IFNULL(poliza_deuda_cartera.PrimerNombre, ''),
+                    IF(IFNULL(poliza_deuda_cartera.SegundoNombre, '') != '', CONCAT(' ', poliza_deuda_cartera.SegundoNombre), ''),
+                    IF(IFNULL(poliza_deuda_cartera.PrimerApellido, '') != '', CONCAT(' ', poliza_deuda_cartera.PrimerApellido), ''),
+                    IF(IFNULL(poliza_deuda_cartera.SegundoApellido, '') != '', CONCAT(' ', poliza_deuda_cartera.SegundoApellido), ''),
                     IF(IFNULL(poliza_deuda_cartera.ApellidoCasada, '') != '', CONCAT(' ', poliza_deuda_cartera.ApellidoCasada), '')
                 )) as Nombre"),
                 'poliza_deuda_cartera.Dui',
@@ -1926,7 +1927,7 @@ class DeudaController extends Controller
         SUM(MontoOtorgado) as total_monto_otorgado,
         SUM(Intereses) as total_interes,
         SUM(InteresesCovid) as total_covid,
-        SUM(InteresesMoratorios) as total_moratorios, 
+        SUM(InteresesMoratorios) as total_moratorios,
         SUM(MontoNominal) as total_monto_nominal')->groupBy('Dui')->get();
 
             //  dd($poliza_cumulos->take(10));
@@ -2079,7 +2080,7 @@ class DeudaController extends Controller
         SUM(MontoOtorgado) as total_monto_otorgado,
         SUM(Intereses) as total_interes,
         SUM(InteresesCovid) as total_covid,
-        SUM(InteresesMoratorios) as total_moratorios, 
+        SUM(InteresesMoratorios) as total_moratorios,
         SUM(MontoNominal) as total_monto_nominal')->where('Dui', $poliza->Dui)->groupBy('Dui', 'NoValido')->get();
 
         $tipo_cartera = $request->tipo_cartera;
@@ -2136,44 +2137,50 @@ class DeudaController extends Controller
         $requisitos = $deuda->requisitos;
 
         if ($opcion == 1) {
-            $poliza_cumulos = DB::table('poliza_deuda_temp_cartera')
+            $poliza_cumulos = DB::table('poliza_deuda_temp_cartera as pdtc')
                 ->select(
-                    'Id',
-                    'Dui',
-                    'Edad',
-                    'Nit',
-                    'PrimerNombre',
-                    'SegundoNombre',
-                    'PrimerApellido',
-                    'SegundoApellido',
-                    'ApellidoCasada',
-                    'FechaNacimiento',
-                    'NumeroReferencia',
-                    'NoValido',
-                    'Perfiles',
-                    'EdadDesembloso',
-                    'FechaOtorgamiento',
-                    'NoValido',
-                    'Excluido',
-                    DB::raw("GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
-                    DB::raw('SUM(SaldoCapital) as saldo_capital'),
-                    DB::raw('SUM(saldo_total) as total_saldo'),
-                    DB::raw('SUM(Intereses) as total_interes'),
-                    DB::raw('SUM(InteresesCovid) as total_covid'),
-                    DB::raw('SUM(InteresesMoratorios) as total_moratorios'),
-                    DB::raw('SUM(MontoNominal) as total_monto_nominal'),
-                    DB::raw('SUM(MontoOtorgado) as total_monto_otorgado'),
+                    'pdtc.Id',
+                    'pdtc.Dui',
+                    'pdtc.Edad',
+                    'pdtc.Nit',
+                    'pdtc.PrimerNombre',
+                    'pdtc.SegundoNombre',
+                    'pdtc.PrimerApellido',
+                    'pdtc.SegundoApellido',
+                    'pdtc.ApellidoCasada',
+                    'pdtc.FechaNacimiento',
+                    'pdtc.NumeroReferencia',
+                    'pdtc.NoValido',
+                    'pdtc.Perfiles',
+                    'pdtc.EdadDesembloso',
+                    'pdtc.FechaOtorgamiento',
+                    'pdtc.NoValido',
+                    'pdtc.Excluido',
+                    DB::raw("GROUP_CONCAT(DISTINCT pdtc.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
+                    DB::raw('SUM(pdtc.SaldoCapital) as saldo_capital'),
+                    DB::raw('SUM(pdtc.saldo_total) as total_saldo'),
+                    DB::raw('SUM(pdtc.Intereses) as total_interes'),
+                    DB::raw('SUM(pdtc.InteresesCovid) as total_covid'),
+                    DB::raw('SUM(pdtc.InteresesMoratorios) as total_moratorios'),
+                    DB::raw('SUM(pdtc.MontoNominal) as total_monto_nominal'),
+                    DB::raw('SUM(pdtc.MontoOtorgado) as total_monto_otorgado'),
+                    'pdc.MontoMaximoIndividual as MontoMaximoIndividual',
+                    'sm.Abreviatura as Abreviatura',
+                    'tc.nombre AS TipoCarteraNombre' // Agregar el nombre de la TipoCartera
                 )
+                ->join('poliza_deuda_creditos as pdc', 'pdtc.LineaCredito', '=', 'pdc.Id')
+                ->join('saldos_montos as sm', 'pdc.saldos', '=', 'sm.id')
+                ->join('tipo_cartera as tc', 'pdc.TipoCartera', '=', 'tc.id') // Unir con la tabla tipo_cartera
                 ->where(function ($query) use ($buscar) {
-                    $query->whereRaw("CONCAT(PrimerNombre, ' ', IFNULL(SegundoNombre,''), ' ', PrimerApellido, ' ', IFNULL(SegundoApellido,''), ' ', IFNULL(ApellidoCasada,'')) LIKE ?", ['%' . $buscar . '%'])
-                        ->orWhere('Dui', 'like', '%' . $buscar . '%')
-                        ->orWhere('Nit', 'like', '%' . $buscar . '%')
-                        ->orWhere('NumeroReferencia', 'like', '%' . $buscar . '%');
+                    $query->whereRaw("CONCAT(pdtc.PrimerNombre, ' ', IFNULL(pdtc.SegundoNombre,''), ' ', pdtc.PrimerApellido, ' ', IFNULL(pdtc.SegundoApellido,''), ' ', IFNULL(pdtc.ApellidoCasada,'')) LIKE ?", ['%' . $buscar . '%'])
+                        ->orWhere('pdtc.Dui', 'like', '%' . $buscar . '%')
+                        ->orWhere('pdtc.Nit', 'like', '%' . $buscar . '%')
+                        ->orWhere('pdtc.NumeroReferencia', 'like', '%' . $buscar . '%');
                 })
-                ->where('NoValido', 1)
-                ->where('Edad', '<', $deuda->EdadMaximaTerminacion)
-                ->where('PolizaDeuda', $poliza)
-                ->groupBy('Dui')
+                ->where('pdtc.NoValido', 1)
+                ->where('pdtc.Edad', '<', $deuda->EdadMaximaTerminacion)
+                ->where('pdtc.PolizaDeuda', $poliza)
+                ->groupBy('pdtc.Dui')
                 ->get();
         } else {
 
@@ -2183,64 +2190,61 @@ class DeudaController extends Controller
             $poliza_eliminados_array = $poliza_eliminados->pluck('NumeroReferencia')->toArray();
 
 
-            $poliza_cumulos = DB::table('poliza_deuda_temp_cartera')
+            $poliza_cumulos = DB::table('poliza_deuda_temp_cartera as pdtc')
                 ->select(
-                    'Id',
-                    'Dui',
-                    'Edad',
-                    'Nit',
-                    'PrimerNombre',
-                    'SegundoNombre',
-                    'PrimerApellido',
-                    'SegundoApellido',
-                    'ApellidoCasada',
-                    'FechaNacimiento',
-                    'NumeroReferencia',
-                    'NoValido',
-                    'Perfiles',
-                    'EdadDesembloso',
-                    'FechaOtorgamiento',
-                    'NoValido',
-                    'Excluido',
-                    DB::raw('SUM(saldo_total) as total_saldo'),
-                    DB::raw("GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
+                    'pdtc.Id',
+                    'pdtc.Dui',
+                    'pdtc.Edad',
+                    'pdtc.Nit',
+                    'pdtc.PrimerNombre',
+                    'pdtc.SegundoNombre',
+                    'pdtc.PrimerApellido',
+                    'pdtc.SegundoApellido',
+                    'pdtc.ApellidoCasada',
+                    'pdtc.FechaNacimiento',
+                    'pdtc.NumeroReferencia',
+                    'pdtc.NoValido',
+                    'pdtc.Perfiles',
+                    'pdtc.EdadDesembloso',
+                    'pdtc.FechaOtorgamiento',
+                    'pdtc.NoValido',
+                    'pdtc.Excluido',
+                    DB::raw('SUM(pdtc.saldo_total) as total_saldo'),
+                    DB::raw("GROUP_CONCAT(DISTINCT pdtc.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
                     //  DB::raw('SUM(SaldoCapital) as saldo_cpital'),
-                    DB::raw('SUM(SaldoCapital) as saldo_capital'),
-                    DB::raw('SUM(Intereses) as total_interes'),
-                    DB::raw('SUM(InteresesCovid) as total_covid'),
-                    DB::raw('SUM(InteresesMoratorios) as total_moratorios'),
-                    DB::raw('SUM(MontoNominal) as total_monto_nominal'),
-                    DB::raw('SUM(MontoOtorgado) as total_monto_otorgado'),
-                    
+                    DB::raw('SUM(pdtc.SaldoCapital) as saldo_capital'),
+                    DB::raw('SUM(pdtc.Intereses) as total_interes'),
+                    DB::raw('SUM(pdtc.InteresesCovid) as total_covid'),
+                    DB::raw('SUM(pdtc.InteresesMoratorios) as total_moratorios'),
+                    DB::raw('SUM(pdtc.MontoNominal) as total_monto_nominal'),
+                    'pdc.MontoMaximoIndividual as MontoMaximoIndividual',
+                    'sm.Abreviatura as Abreviatura',
+                    'tc.nombre AS TipoCarteraNombre' // Agregar el nombre de la TipoCartera
                 )
+                ->join('poliza_deuda_creditos as pdc', 'pdtc.LineaCredito', '=', 'pdc.Id')
+                ->join('saldos_montos as sm', 'pdc.saldos', '=', 'sm.id')
+                ->join('tipo_cartera as tc', 'pdc.TipoCartera', '=', 'tc.id') // Unir con la tabla tipo_cartera
                 ->where(function ($query) use ($buscar) {
-                    $query->whereRaw("CONCAT(PrimerNombre, ' ', IFNULL(SegundoNombre,''), ' ', PrimerApellido, ' ', IFNULL(SegundoApellido,''), ' ', IFNULL(ApellidoCasada,'')) LIKE ?", ['%' . $buscar . '%'])
-                        ->orWhere('Dui', 'like', '%' . $buscar . '%')
-                        ->orWhere('Nit', 'like', '%' . $buscar . '%')
-                        ->orWhere('NumeroReferencia', 'like', '%' . $buscar . '%');
+                    $query->whereRaw("CONCAT(pdtc.PrimerNombre, ' ', IFNULL(pdtc.SegundoNombre,''), ' ', pdtc.PrimerApellido, ' ', IFNULL(pdtc.SegundoApellido,''), ' ', IFNULL(pdtc.ApellidoCasada,'')) LIKE ?", ['%' . $buscar . '%'])
+                        ->orWhere('pdtc.Dui', 'like', '%' . $buscar . '%')
+                        ->orWhere('pdtc.Nit', 'like', '%' . $buscar . '%')
+                        ->orWhere('pdtc.NumeroReferencia', 'like', '%' . $buscar . '%');
                 })
-                ->where('Edad', '<', $deuda->EdadMaximaTerminacion)
-                ->where('NoValido', 0)
-                ->where('PolizaDeuda', $poliza)
-                ->groupBy('Dui')
+                ->where('pdtc.Edad', '<', $deuda->EdadMaximaTerminacion)
+                ->where('pdtc.NoValido', 0)
+                ->where('pdtc.PolizaDeuda', $poliza)
+                ->groupBy('pdtc.Dui')
                 ->get();
 
 
-                foreach($poliza_cumulos as $poliza)
-                {
-                    if(in_array($poliza->NumeroReferencia, $poliza_eliminados_array))
-                    {
-                        $poliza->Rehabilitado = 1;
-                    }
-                    else
-                    {
-                        $poliza->Rehabilitado = 0;
-                    }
+            foreach ($poliza_cumulos as $poliza) {
+                if (in_array($poliza->NumeroReferencia, $poliza_eliminados_array)) {
+                    $poliza->Rehabilitado = 1;
+                } else {
+                    $poliza->Rehabilitado = 0;
                 }
-                
-        
-        
             }
+        }
 
         return view('polizas.deuda.get_creditos', compact('poliza_cumulos', 'opcion', 'requisitos'));
     }

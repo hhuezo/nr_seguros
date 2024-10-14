@@ -309,7 +309,7 @@
                                 <label style="font-size: 12px;">* Se pueden agregar n número de tasa
                                     diferenciada</label>
                             </div>
-                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                            <div class="col-lg-3 col-md-4 col-sm-12 col-xs-12">
                                 <label class="control-label" align="center">Linea de crédito</label> <br>
                                 <select name="TipoCartera" id="TipoCartera" class="form-control" required>
                                     <option value="">Seleccione...</option>
@@ -318,7 +318,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                            <div class="col-lg-3 col-md-4 col-sm-12 col-xs-12">
                                 <label class="control-label" align="center">Saldos y Montos</label> <br>
                                 <select name="Saldos" id="Saldos" class="form-control" required>
                                     <option value="">Seleccione...</option>
@@ -328,6 +328,14 @@
                                     </option>
                                     @endforeach
                                 </select>
+                            </div>
+                            <div class="col-lg-3 col-md-4 col-sm-12 col-xs-12">
+                                <label class="control-label" align="center">Monto máximo</label> <br>
+                                <div class=" form-group has-feedback">
+                                <input type="number" step="any" name="MontoMaximoIndividual" id="MontoMaximoIndividual" style="padding-left: 15%;display: none;" class="form-control" required onblur="MontoMaxIndividual(this.value)">
+                                <input type="text" step="any" style="padding-left: 15%; display: block;" id="MontoMaximoIndividualTexto" class="form-control" required onfocus="MontoMaxIndividualTexto(this.value)">
+                                <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                </div>
                             </div>
                             <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                                 <h4>&nbsp;&nbsp;
@@ -446,6 +454,7 @@
                                             <th>Edad Desde</th>
                                             <th>Edad Hasta</th>
                                             <th>Tasa por Edad</th>
+                                            <th>Monto Máximo</th>
                                             <th>Opciones</th>
                                         </tr>
                                     </thead>
@@ -470,6 +479,7 @@
                                             <td>{{ isset($obj->EdadDesde) ? $obj->EdadDesde . 'años' : '' }}</td>
                                             <td>{{ isset($obj->EdadHasta) ? $obj->EdadHasta . 'años' : '' }}</td>
                                             <td>{{ isset($obj->TasaEdad) ? $obj->TasaEdad : '' }} </td>
+                                            <td>{{ isset($obj->MontoMaximoIndividual) ? '$' . number_format($obj->MontoMaximoIndividual, 2, '.', ',') : '' }}</td>
                                             <td><a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a></td>
                                         </tr>
                                         <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-{{ $obj->Id }}">
@@ -650,6 +660,18 @@
         // document.getElementById('ResponsabilidadMaxima').value = document.getElementById('ResponsabilidadMaximaTexto');
         $("#ResponsabilidadMaxima").show();
         $("#ResponsabilidadMaximaTexto").hide();
+    }
+
+    function MontoMaxIndividual(id) {
+        document.getElementById('MontoMaximoIndividualTexto').value = formatearCantidad(id);
+        $("#MontoMaximoIndividual").hide();
+        $("#MontoMaximoIndividualTexto").show();
+    }
+
+    function MontoMaxIndividualTexto(id) {
+        // document.getElementById('MontoMaximoIndividual').value = document.getElementById('MontoMaximoIndividualTexto');
+        $("#MontoMaximoIndividual").show();
+        $("#MontoMaximoIndividualTexto").hide();
     }
 
     function add_rango() {
