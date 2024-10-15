@@ -709,6 +709,24 @@ class DeudaController extends Controller
                 $extraprimado->Existe = PolizaDeudaTempCartera::where('NumeroReferencia', $extraprimado->NumeroReferencia)->count();
             }
 
+            //tab 8
+            $polizaDeuda = 31; // Puedes cambiar este valor por el que necesites
+
+            $historico = DB::table('poliza_deuda_cartera')
+                ->select(
+                    'Axo',
+                    'Mes',
+                    'FechaInicio',
+                    'FechaFinal',
+                    DB::raw('COUNT(*) AS total_registros'),  // Cuenta el número total de registros (usuarios)
+                )
+                ->where('PolizaDeuda', $id)  // Filtro por PolizaDeuda
+                ->groupBy('Axo', 'Mes', 'FechaInicio', 'FechaFinal')  // Agrupación por los campos especificados
+                ->orderBy('Axo', 'asc')  // Ordenar primero por Axo
+                ->orderBy('Mes', 'asc')  // Luego ordenar por Mes
+                ->orderBy('FechaInicio', 'asc')  // Finalmente ordenar por FechaInicio
+                ->get();
+
 
 
             $array_dui = $extraprimados->pluck('Dui')->toArray();
@@ -871,6 +889,7 @@ class DeudaController extends Controller
 
 
             return view('polizas.deuda.edit', compact(
+                'historico',
                 'creditos1',
                 'fecha',
                 'total_extrapima',
@@ -2245,6 +2264,61 @@ class DeudaController extends Controller
                 }
             }
         }
+
+        return view('polizas.deuda.get_creditos', compact('poliza_cumulos', 'opcion', 'requisitos'));
+    }
+
+    public function get_historico(Request $request)
+    {
+        $tipo_cartera = $request->tipo_cartera;
+        $deuda = Deuda::findOrFail($request->poliza);
+        $requisitos = $deuda->requisitos;
+
+        $poliza_cumulos = DB::table('poliza_deuda_temp_cartera as pdtc')
+        ->select(
+            'pdtc.Id',
+            'pdtc.Dui',
+            'pdtc.Edad',
+            'pdtc.Nit',
+            'pdtc.PrimerNombre',
+            'pdtc.SegundoNombre',
+            'pdtc.PrimerApellido',
+            'pdtc.SegundoApellido',
+            'pdtc.ApellidoCasada',
+            'pdtc.FechaNacimiento',
+            'pdtc.NumeroReferencia',
+            'pdtc.NoValido',
+            'pdtc.Perfiles',
+            'pdtc.EdadDesembloso',
+            'pdtc.FechaOtorgamiento',
+            'pdtc.NoValido',
+            'pdtc.Excluido',
+            DB::raw('SUM(pdtc.saldo_total) as total_saldo'),
+            DB::raw("GROUP_CONCAT(DISTINCT pdtc.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
+            //  DB::raw('SUM(SaldoCapital) as saldo_cpital'),
+            DB::raw('SUM(pdtc.SaldoCapital) as saldo_capital'),
+            DB::raw('SUM(pdtc.Intereses) as total_interes'),
+            DB::raw('SUM(pdtc.InteresesCovid) as total_covid'),
+            DB::raw('SUM(pdtc.InteresesMoratorios) as total_moratorios'),
+            DB::raw('SUM(pdtc.MontoNominal) as total_monto_nominal'),
+            'pdc.MontoMaximoIndividual as MontoMaximoIndividual',
+            'sm.Abreviatura as Abreviatura',
+            'tc.nombre AS TipoCarteraNombre' // Agregar el nombre de la TipoCartera
+        )
+        ->join('poliza_deuda_creditos as pdc', 'pdtc.LineaCredito', '=', 'pdc.Id')
+        ->join('saldos_montos as sm', 'pdc.saldos', '=', 'sm.id')
+        ->join('tipo_cartera as tc', 'pdc.TipoCartera', '=', 'tc.id') // Unir con la tabla tipo_cartera
+        ->where(function ($query) use ($buscar) {
+            $query->whereRaw("CONCAT(pdtc.PrimerNombre, ' ', IFNULL(pdtc.SegundoNombre,''), ' ', pdtc.PrimerApellido, ' ', IFNULL(pdtc.SegundoApellido,''), ' ', IFNULL(pdtc.ApellidoCasada,'')) LIKE ?", ['%' . $buscar . '%'])
+                ->orWhere('pdtc.Dui', 'like', '%' . $buscar . '%')
+                ->orWhere('pdtc.Nit', 'like', '%' . $buscar . '%')
+                ->orWhere('pdtc.NumeroReferencia', 'like', '%' . $buscar . '%');
+        })
+        ->where('pdtc.Edad', '<', $deuda->EdadMaximaTerminacion)
+        ->where('pdtc.NoValido', 0)
+        ->where('pdtc.PolizaDeuda', $poliza)
+        ->groupBy('pdtc.Dui')
+        ->get();
 
         return view('polizas.deuda.get_creditos', compact('poliza_cumulos', 'opcion', 'requisitos'));
     }

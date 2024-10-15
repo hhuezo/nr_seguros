@@ -79,6 +79,8 @@
                             </li>
                             <li role="presentation" class=""><a href="#tab_content6" role="tab" id="comentarios-tab" data-toggle="tab" aria-expanded="false">Comentarios</a>
                             </li>
+                            <li role="presentation" class=""><a href="#tab_content8" role="tab" id="historico-tab" data-toggle="tab" aria-expanded="false">Histórico de pagos</a>
+                            </li>
                         </ul>
 
                         <div id="myTabContent" class="tab-content">
@@ -105,6 +107,9 @@
                             <div role="tabpanel" class="tab-pane fade" id="tab_content6" aria-labelledby="comentarios-tab">
                                 @include('polizas.deuda.tab6')
                             </div>
+                            <div role="tabpanel" class="tab-pane fade" id="tab_content8" aria-labelledby="historico-tab">
+                                @include('polizas.deuda.tab8')
+                            </div>
 
 
                         </div>
@@ -128,7 +133,7 @@
             </div>
         </div>
     </div>
-  
+
 </div>
 
 <div id="loading-overlay-modal" >
@@ -150,6 +155,7 @@
 
         // alert(document.getElementById('ComisionIva').value);
         $('#comentarios').DataTable();
+        $('#historico').DataTable();
         $('#avisos').DataTable();
         $('#clientes').DataTable();
         $('#clientes-extra').DataTable();
@@ -227,6 +233,11 @@
     function add_comment() {
 
         $("#modal_agregar_comentario").modal('show');
+    }
+
+    function mostrar_historial() {
+
+        $("#modal_historial").modal('show');
     }
 
 
