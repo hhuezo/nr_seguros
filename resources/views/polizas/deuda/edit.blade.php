@@ -235,10 +235,27 @@
         $("#modal_agregar_comentario").modal('show');
     }
 
-    function mostrar_historial() {
+    function mostrar_historial(axo, mes, fechaInicio, fechaFinal, polizaDeuda) {
+    $.ajax({
+        url: "{{ url('polizas/deuda/get_historico') }}",
+        type: 'GET',
+        data: {
+            Axo: axo,
+            Mes: mes,
+            FechaInicio: encodeURIComponent(fechaInicio),  // Codifica las fechas
+            FechaFinal: encodeURIComponent(fechaFinal),     // Codifica las fechas
+            PolizaDeuda: polizaDeuda
+        },
+        success: function(response) {
+            $('#historial_table').html(response);
+            $("#modal_historial").modal('show');
+        },
+        error: function(error) {
+            console.error(error);
+        }
+    });
+}
 
-        $("#modal_historial").modal('show');
-    }
 
 
     // function show_MontoCartera() {

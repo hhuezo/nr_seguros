@@ -211,6 +211,7 @@ Route::get('poliza/vida/usuario/{id}', [VidaController::class, 'getUsuario']);
 
 Route::get('polizas/deuda/get_referencia_creditos/{id}', [DeudaController::class, 'get_referencia_creditos']);
 Route::get('polizas/deuda/get_creditos/{id}', [DeudaController::class, 'get_creditos']);
+Route::get('polizas/deuda/get_historico', [DeudaController::class, 'get_historico']);
 Route::post('polizas/deuda/agregar_valido', [DeudaController::class, 'agregar_valido']);
 Route::post('polizas/deuda/create_pago', [DeudaCarteraController::class, 'create_pago']);
 Route::post('polizas/deuda/validar_poliza', [DeudaCarteraController::class, 'validar_poliza']);
