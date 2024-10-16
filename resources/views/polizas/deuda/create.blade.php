@@ -177,7 +177,7 @@
                                     <br>
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                         <input type="radio" name="tipoTasa" id="Mensual" value="1" checked>
-                                        <label class="control-label">Tasa ‰ Millar Mensual *</label>
+                                        <label class="control-label">Tasa Millar Mensual *</label>
                                     </div>
 
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -189,7 +189,7 @@
                                     &nbsp;
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label" align="right">Tasa ‰ Millar Mensual* </label>
+                                    <label class="control-label" align="right">Tasa Millar Mensual* </label>
                                     <input class="form-control" name="Tasa" type="number" id="Tasa" step="any" value="{{ old('Tasa') }}" required>
                                 </div>
                                 <div class="col-sm-4" align="center">

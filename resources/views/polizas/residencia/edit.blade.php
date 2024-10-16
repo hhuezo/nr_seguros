@@ -237,7 +237,7 @@
                                                         <input type="radio" name="tipoTasa" id="Mensual"
                                                             value="1" checked
                                                             @if ($residencia->Modificar == 0) disabled @endif>
-                                                        <label class="control-label">Tasa ‰ Millar Mensual</label>
+                                                        <label class="control-label">Tasa Millar Mensual</label>
                                                     </div>
 
                                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -251,7 +251,7 @@
                                                         <input type="radio" name="tipoTasa" id="Mensual"
                                                             value="1"
                                                             @if ($residencia->Modificar == 0) disabled @endif>
-                                                        <label class="control-label">Tasa ‰ Millar Mensual</label>
+                                                        <label class="control-label">Tasa Millar Mensual</label>
                                                     </div>
 
                                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
