@@ -188,7 +188,7 @@
                         &nbsp;
                     </div>
                     <div class="col-sm-2">
-                        <label class="control-label" align="right">% Tasa de Comisión </label>
+                        <label class="control-label" align="right">%  de Comisión </label>
                         <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any">
                     </div>
                     <div class="col-sm-2"><br>
