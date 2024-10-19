@@ -985,7 +985,7 @@ class DeudaController extends Controller
 
             $recibo_historial->Usuario = auth()->user()->id;
             
-            $recibo_historial->save();
+            //$recibo_historial->save();
             dd("insert");
          }
 
