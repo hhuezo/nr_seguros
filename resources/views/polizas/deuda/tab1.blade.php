@@ -147,7 +147,7 @@
                         <br>
                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                             <input type="radio" name="tipoTasa" id="Mensual" value="1" {{$deuda->Mensual == 1 ? 'checked': ''}}>
-                            <label class="control-label">Tasa ‰ Millar Mensual</label>
+                            <label class="control-label">Tasa Millar Mensual</label>
                         </div>
 
                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -159,7 +159,7 @@
                         &nbsp;
                     </div>
                     <div class="col-sm-4">
-                        <label class="control-label" align="right">Tasa ‰ Millar Mensual</label>
+                        <label class="control-label" align="right">Tasa Millar Mensual</label>
                         <input class="form-control" name="Tasa" type="number" id="Tasa" step="any" value="{{ $deuda->Tasa }}" readonly>
                     </div>
                     <div class="col-sm-4" align="center">
@@ -176,7 +176,7 @@
                         &nbsp;
                     </div>
                     <div class="col-sm-2">
-                        <label class="control-label" align="right">% Tasa de Comisión </label>
+                        <label class="control-label" align="right">%  de Comisión </label>
                         <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" value="{{ $deuda->TasaComision }}" readonly>
                     </div>
                     <div class="col-sm-2"><br>
