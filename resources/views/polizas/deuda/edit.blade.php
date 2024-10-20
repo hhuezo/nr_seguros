@@ -60,26 +60,26 @@
                 <br />
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
                     <div class="" role="tabpanel" data-example-id="togglable-tabs">
-                        <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-                            <li role="presentation" class="{{ $tab == 1 ? 'active' : '' }}"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Datos de la
+                        <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist" style=" padding-bottom: 5%;">
+                            <li role="presentation" class="{{ $tab == 1 ? 'active' : '' }}"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Datos de <br> la
                                     Poliza</a>
                             </li>
-                            <li role="presentation" class="{{ $tab == 2 ? 'active' : '' }}"><a href="#tab_content2" role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">Generar
+                            <li role="presentation" class="{{ $tab == 2 ? 'active' : '' }}"><a href="#tab_content2" role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">Generar <br>
                                     Cartera</a>
                             </li>
                             <li role="presentation" class="{{ $tab == 7 ? 'active' : '' }}"><a href="#tab_content7" role="tab" id="extra-prima-tab" data-toggle="tab" aria-expanded="false">Extra
-                                    Prima {{ $deuda->NumeroPoliza }}</a>
+                                    Prima <br> {{ $deuda->NumeroPoliza }}</a>
                             </li>
-                            <li role="presentation" class=""><a href="#tab_content3" role="tab" id="creditos-tab" data-toggle="tab" aria-expanded="false">Hoja de Cartera
+                            <li role="presentation" class=""><a href="#tab_content3" role="tab" id="creditos-tab" data-toggle="tab" aria-expanded="false">Hoja de  <br> Cartera
                                     {{ $deuda->NumeroPoliza }}</a>
                             </li>
-                            <li role="presentation" class="{{ $tab == 4 ? 'active' : '' }}"><a href="#tab_content4" role="tab" id="pagos-tab" data-toggle="tab" aria-expanded="false">Estados de Pago</a>
+                            <li role="presentation" class="{{ $tab == 4 ? 'active' : '' }}"><a href="#tab_content4" role="tab" id="pagos-tab" data-toggle="tab" aria-expanded="false">Estados <br> de Pago</a>
                             </li>
-                            <li role="presentation" class=""><a href="#tab_content5" role="tab" id="avisos-tab" data-toggle="tab" aria-expanded="false">Ver Avisos</a>
+                            <li role="presentation" class=""><a href="#tab_content5" role="tab" id="avisos-tab" data-toggle="tab" aria-expanded="false">Ver <br> Avisos</a>
                             </li>
-                            <li role="presentation" class=""><a href="#tab_content6" role="tab" id="comentarios-tab" data-toggle="tab" aria-expanded="false">Comentarios</a>
+                            <li role="presentation" class=""><a href="#tab_content6" role="tab" id="comentarios-tab" data-toggle="tab" aria-expanded="false"><br> Comentarios</a>
                             </li>
-                            <li role="presentation" class=""><a href="#tab_content8" role="tab" id="historico-tab" data-toggle="tab" aria-expanded="false">Histórico de pagos</a>
+                            <li role="presentation" class=""><a href="#tab_content8" role="tab" id="historico-tab" data-toggle="tab" aria-expanded="false">Histórico <br> de pagos</a>
                             </li>
                         </ul>
 
