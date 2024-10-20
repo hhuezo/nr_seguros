@@ -1189,6 +1189,7 @@ class DeudaController extends Controller
             $poliza->Edad = $tempRecord->Edad;
             $poliza->LineaCredito = $tempRecord->LineaCredito;
             $poliza->NoValido = $tempRecord->NoValido;
+            $poliza->saldo_total = $tempRecord->saldo_total;
             $poliza->save();
         }
 
@@ -2294,14 +2295,15 @@ class DeudaController extends Controller
                 'pdtc.EdadDesembloso',
                 'pdtc.FechaOtorgamiento',
                 'pdtc.NoValido',
+                'pdtc.NumeroReferencia AS ConcatenatedNumeroReferencia',
                 DB::raw('SUM(pdtc.saldo_total) as total_saldo'),
-                DB::raw("GROUP_CONCAT(DISTINCT pdtc.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
+                //DB::raw("GROUP_CONCAT(DISTINCT pdtc.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
                 //  DB::raw('SUM(SaldoCapital) as saldo_cpital'),
                 DB::raw('SUM(pdtc.SaldoCapital) as saldo_capital'),
                 DB::raw('SUM(pdtc.Intereses) as total_interes'),
                 DB::raw('SUM(pdtc.InteresesCovid) as total_covid'),
                 DB::raw('SUM(pdtc.InteresesMoratorios) as total_moratorios'),
-                DB::raw('SUM(pdtc.MontoNominal) as total_monto_nominal'),
+                DB::raw('SUM(pdtc.MontoNominal) as total_monto_nominal'), 
                 'pdc.MontoMaximoIndividual as MontoMaximoIndividual',
                 'sm.Abreviatura as Abreviatura',
                 'tc.nombre AS TipoCarteraNombre' // Agregar el nombre de la TipoCartera
@@ -2315,7 +2317,7 @@ class DeudaController extends Controller
             ->where('FechaInicio', $request->FechaInicio)
             ->where('FechaFinal', $request->FechaFinal)
             ->where('PolizaDeuda', $request->PolizaDeuda)
-            ->groupBy('pdtc.Dui')
+            ->groupBy('pdtc.Dui','pdtc.NumeroReferencia')
             ->get();
 
         return view('polizas.deuda.get_historico', compact('tabla_historico'));
