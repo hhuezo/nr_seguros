@@ -13,7 +13,7 @@ class DeudaHistorialRecibo extends Model
 
     protected $primaryKey = 'Id';
 
-    public $timestamps = true; // Cambiar a true si usas los timestamps
+    public $timestamps = false; // Cambiar a true si usas los timestamps
 
     protected $fillable = [
         'PolizaDeudaDetalle',

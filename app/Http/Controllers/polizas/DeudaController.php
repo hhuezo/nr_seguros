@@ -268,13 +268,17 @@ class DeudaController extends Controller
         //dd($detalle);
 
         $deuda = Deuda::findOrFail($detalle->Deuda);
+        $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
 
         if ($detalle->SaldoA == null && $detalle->ImpresionRecibo == null) {
             $detalle->SaldoA = $request->SaldoA;
             $detalle->ImpresionRecibo = $request->ImpresionRecibo;
             $detalle->Comentario = $request->Comentario;
             $detalle->update();
-            $pdf = \PDF::loadView('polizas.deuda.recibo', compact('detalle', 'deuda'))->setWarnings(false)->setPaper('letter');
+
+            $recibo_historial = $this->save_recibo($detalle, $deuda);
+            $pdf = \PDF::loadView('polizas.deuda.recibo', compact('recibo_historial', 'detalle', 'deuda', 'meses'))->setWarnings(false)->setPaper('letter');
             return $pdf->stream('Recibo.pdf');
 
             return back();
@@ -943,10 +947,57 @@ class DeudaController extends Controller
         $detalle->update();
         //$calculo = $this->monto($residencia, $detalle);
 
-        $pdf = \PDF::loadView('polizas.deuda.recibo', compact('detalle', 'deuda', 'meses'))->setWarnings(false)->setPaper('letter');
+        $recibo_historial = $this->save_recibo($detalle, $deuda);
+        $pdf = \PDF::loadView('polizas.deuda.recibo', compact('recibo_historial', 'detalle', 'deuda', 'meses'))->setWarnings(false)->setPaper('letter');
         return $pdf->stream('Recibo.pdf');
 
         //  return back();
+    }
+
+    public function save_recibo($detalle, $deuda)
+    {
+        $recibo_historial = new DeudaHistorialRecibo();
+        $recibo_historial->PolizaDeudaDetalle = $id;
+        $recibo_historial->ImpresionRecibo = $detalle->ImpresionRecibo; //Carbon::now();
+        $recibo_historial->NombreCliente = $deuda->clientes->Nombre;
+        $recibo_historial->NitCliente = $deuda->clientes->Nit;
+        $recibo_historial->DireccionResidencia = $deuda->clientes->DireccionResidencia ?? '(vacio)';
+        $recibo_historial->Departamento = $deuda->clientes->distrito->municipio->departamento->Nombre;
+        $recibo_historial->Municipio = $deuda->clientes->distrito->municipio->Nombre;
+        $recibo_historial->NumeroRecibo = $detalle->NumeroRecibo;
+        $recibo_historial->CompaniaAseguradora = $deuda->aseguradoras->Nombre;
+        $recibo_historial->ProductoSeguros = $deuda->planes->productos->Nombre;
+        $recibo_historial->NumeroPoliza = $deuda->NumeroPoliza;
+        $recibo_historial->VigenciaDesde = $deuda->VigenciaDesde;
+        $recibo_historial->VigenciaHasta = $deuda->VigenciaHasta;
+        $recibo_historial->FechaInicio = $detalle->FechaInicio;
+        $recibo_historial->FechaFin = $detalle->FechaFinal;
+        $recibo_historial->Anexo = $detalle->Anexo;
+        $recibo_historial->Referencia = $detalle->Referencia;
+        $recibo_historial->FacturaNombre = $deuda->clientes->Nombre;
+        $recibo_historial->MontoCartera = $detalle->MontoCartera;
+        $recibo_historial->PrimaCalculada = $detalle->PrimaCalculada;
+        $recibo_historial->ExtraPrima = $detalle->ExtraPrima;
+        $recibo_historial->Descuento = $detalle->Descuento ?? 0;
+        $recibo_historial->PordentajeDescuento = $deuda->Descuento;
+        $recibo_historial->PrimaDescontada = $detalle->PrimaDescontada;
+        $recibo_historial->ValorCCF = $detalle->ValorCCF;
+        $recibo_historial->TotalAPagar = $detalle->APagar;
+        $recibo_historial->TasaComision = $deuda->TasaComision;
+        $recibo_historial->Comision = $detalle->Comision;
+        $recibo_historial->IvaSobreComision = $detalle->IvaSobreComision;
+        $recibo_historial->SubTotalComision =  $detalle->IvaSobreComision + $detalle->Comision;
+        $recibo_historial->Retencion = $detalle->Retencion;
+        $recibo_historial->ValorCCF = $detalle->ValorCCF;
+        $recibo_historial->FechaVencimiento = $detalle->FechaInicio;
+        $recibo_historial->NumeroCorrelativo = $detalle->NumeroCorrelativo;
+        $recibo_historial->Cuota = '01/01';
+        $recibo_historial->Otros = $detalle->Otros ?? 0;
+
+        $recibo_historial->Usuario = auth()->user()->id;
+
+        $recibo_historial->save();
+        return $recibo_historial;
     }
 
     public function get_recibo($id)
@@ -956,62 +1007,86 @@ class DeudaController extends Controller
         $deuda = Deuda::findOrFail($detalle->Deuda);
         $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
-        $recibo_historial = DeudaHistorialRecibo::where('PolizaDeudaDetalle',$id)->orderBy('id','desc')->first();
+        $recibo_historial = DeudaHistorialRecibo::where('PolizaDeudaDetalle', $id)->orderBy('id', 'desc')->first();
         //  $calculo = $this->monto($deuda, $detalle);
-         if(!$recibo_historial)
-         {
-            $recibo_historial = new DeudaHistorialRecibo();
-            $recibo_historial->PolizaDeudaDetalle = $id;
-            $recibo_historial->ImpresionRecibo = Carbon::now();
-            $recibo_historial->NombreCliente = $deuda->clientes->Nombre;
-            $recibo_historial->NitCliente = $deuda->clientes->Nit;
-            $recibo_historial->DireccionResidencia = $deuda->clientes->DireccionResidencia;
-            $recibo_historial->Departamento = $deuda->clientes->distrito->municipio->departamento->Nombre;
-            $recibo_historial->Municipio = $deuda->clientes->distrito->municipio->Nombre;
-            $recibo_historial->NumeroRecibo = $detalle->NumeroRecibo;
-            $recibo_historial->CompaniaAseguradora = $deuda->aseguradoras->Nombre;
-            $recibo_historial->ProductoSeguros = $deuda->planes->productos->Nombre;
-            $recibo_historial->NumeroPoliza = $deuda->NumeroPoliza;
-            $recibo_historial->VigenciaDesde = $deuda->VigenciaDesde;
-            $recibo_historial->VigenciaHasta = $deuda->VigenciaHasta;
-            $recibo_historial->FechaInicio = $detalle->FechaInicio;
-            $recibo_historial->FechaFin = $detalle->FechaFinal;
-            $recibo_historial->Anexo = $detalle->Anexo;
-            $recibo_historial->Referencia = $detalle->Referencia;
-            $recibo_historial->FacturaNombre = $deuda->clientes->Nombre;
-            $recibo_historial->MontoCartera = $detalle->MontoCartera;
-            $recibo_historial->PrimaCalculada = $detalle->PrimaCalculada;
-            $recibo_historial->ExtraPrima = $detalle->ExtraPrima;
-            $recibo_historial->Descuento = $detalle->Descuento;
-            $recibo_historial->PordentajeDescuento = $deuda->Descuento;
-            $recibo_historial->PrimaDescontada = $detalle->PrimaDescontada;
-             
-  
+        if (!$recibo_historial) {
+            $recibo_historial = $this->save_recibo($detalle, $deuda);
+            //dd("insert");
+        }
 
-            
-            $recibo_historial->ValorCCF = $detalle->ValorCCF;
-            $recibo_historial->TotalAPagar = $detalle->APagar;
-            $recibo_historial->TasaComision = $deuda->TasaComision;
-            $recibo_historial->Comision = $detalle->Comision;
-            $recibo_historial->IvaSobreComision = $detalle->IvaSobreComision;
-            $recibo_historial->SubTotalComision =  $detalle->IvaSobreComision + $detalle->Comision;
-            $recibo_historial->Retencion = $detalle->Retencion;
-            $recibo_historial->ValorCCF = $detalle->ValorCCF;
-
-            $recibo_historial->NumeroCorrelativo = $detalle->NumeroCorrelativo;
-
-            $recibo_historial->Otros = $detalle->Otros;
-
-            $recibo_historial->Usuario = auth()->user()->id;
-            
-            //$recibo_historial->save();
-            dd("insert");
-         }
-
-        return view('polizas.deuda.recibo_edit', compact('detalle', 'deuda', 'meses'));
-        $pdf = \PDF::loadView('polizas.deuda.recibo', compact('detalle', 'deuda', 'meses'))->setWarnings(false)->setPaper('letter');
+        //return view('polizas.deuda.recibo_edit', compact('detalle', 'deuda', 'meses'));
+        $pdf = \PDF::loadView('polizas.deuda.recibo', compact('recibo_historial', 'detalle', 'deuda', 'meses'))->setWarnings(false)->setPaper('letter');
         //  dd($detalle);
         return $pdf->stream('Recibos.pdf');
+    }
+
+    public function get_recibo_edit($id)
+    {
+        $detalle = DeudaDetalle::findOrFail($id);
+        $deuda = Deuda::findOrFail($detalle->Deuda);
+        $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+        $recibo_historial = DeudaHistorialRecibo::where('PolizaDeudaDetalle', $id)->orderBy('id', 'desc')->first();
+        //dd($recibo_historial);
+        return view('polizas.deuda.recibo_edit', compact('recibo_historial', 'meses'));
+    }
+
+    public function get_recibo_update(Request $request)
+    {
+        //modificación de ultimo recibo
+        $id = $request->id_deuda_detalle;
+        $detalle = DeudaDetalle::findOrFail($id);
+
+        $deuda = Deuda::findOrFail($detalle->Deuda);
+        $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+        $impresion_recibo = $request->AxoImpresionRecibo . '-' . $request->MesImpresionRecibo . '-' . $request->DiaImpresionRecibo;
+
+        $recibo_historial = new DeudaHistorialRecibo();
+        $recibo_historial->PolizaDeudaDetalle = $id;
+        //este valor cambia por eso no se manda al metodo de save_recibo
+        $recibo_historial->ImpresionRecibo = Carbon::parse($impresion_recibo);
+        $recibo_historial->NombreCliente = $request->NombreCliente;
+        $recibo_historial->NitCliente = $request->NitCliente;
+        $recibo_historial->DireccionResidencia = $request->DireccionResidencia;
+        $recibo_historial->Departamento = $request->Departamento;
+        $recibo_historial->Municipio = $request->Municipio;
+        $recibo_historial->NumeroRecibo = $request->NumeroRecibo;
+        $recibo_historial->CompaniaAseguradora = $request->CompaniaAseguradora;
+        $recibo_historial->ProductoSeguros = $request->ProductoSeguros;
+        $recibo_historial->NumeroPoliza = $request->NumeroPoliza;
+        $recibo_historial->VigenciaDesde = $request->VigenciaDesde;
+        $recibo_historial->VigenciaHasta = $request->VigenciaHasta;
+        $recibo_historial->FechaInicio = $request->FechaInicio;
+        $recibo_historial->FechaFin = $request->FechaFin;
+        $recibo_historial->Anexo = $request->Anexo;
+        $recibo_historial->Referencia = $request->Referencia;
+        $recibo_historial->FacturaNombre = $request->FacturaNombre;
+        $recibo_historial->MontoCartera = $request->MontoCartera;
+        $recibo_historial->PrimaCalculada = $request->PrimaCalculada;
+        $recibo_historial->ExtraPrima = $request->ExtraPrima;
+        $recibo_historial->Descuento = $request->Descuento;
+        $recibo_historial->PordentajeDescuento = $request->PordentajeDescuento;
+        $recibo_historial->PrimaDescontada = $request->PrimaDescontada;
+        $recibo_historial->ValorCCF = $request->ValorCCF;
+        $recibo_historial->TotalAPagar = $request->TotalAPagar;
+        $recibo_historial->TasaComision = $request->TasaComision;
+        $recibo_historial->Comision = $request->Comision;
+        $recibo_historial->IvaSobreComision = $request->IvaSobreComision;
+        $recibo_historial->SubTotalComision = $request->SubTotalComision;
+        $recibo_historial->Retencion = $request->Retencion;
+        $recibo_historial->ValorCCF = $request->ValorCCF;
+        $recibo_historial->FechaVencimiento = $request->FechaVencimiento ?? $detalle->FechaInicio;
+        $recibo_historial->NumeroCorrelativo = $request->NumeroCorrelativo;
+        $recibo_historial->Cuota = $request->Cuota ?? '01/01';
+        $recibo_historial->Otros = $detalle->Otros ?? 0;
+
+        $recibo_historial->Usuario = auth()->user()->id;
+
+        $recibo_historial->save();
+        //dd("insert");
+        alert()->success('Actualizacion de Recibo Exitoso');
+        return redirect('polizas/deuda/' . $deuda->Id . '/edit');
     }
 
     public function exportar_excel(Request $request)
@@ -2357,7 +2432,7 @@ class DeudaController extends Controller
                 DB::raw('SUM(pdtc.Intereses) as total_interes'),
                 DB::raw('SUM(pdtc.InteresesCovid) as total_covid'),
                 DB::raw('SUM(pdtc.InteresesMoratorios) as total_moratorios'),
-                DB::raw('SUM(pdtc.MontoNominal) as total_monto_nominal'), 
+                DB::raw('SUM(pdtc.MontoNominal) as total_monto_nominal'),
                 'pdc.MontoMaximoIndividual as MontoMaximoIndividual',
                 'sm.Abreviatura as Abreviatura',
                 'tc.nombre AS TipoCarteraNombre' // Agregar el nombre de la TipoCartera
@@ -2371,7 +2446,7 @@ class DeudaController extends Controller
             ->where('FechaInicio', $request->FechaInicio)
             ->where('FechaFinal', $request->FechaFinal)
             ->where('PolizaDeuda', $request->PolizaDeuda)
-            ->groupBy('pdtc.Dui','pdtc.NumeroReferencia')
+            ->groupBy('pdtc.Dui', 'pdtc.NumeroReferencia')
             ->get();
 
         return view('polizas.deuda.get_historico', compact('tabla_historico'));
