@@ -28,6 +28,7 @@ use App\Models\polizas\DeudaCredito;
 use App\Models\polizas\DeudaCreditosValidos;
 use App\Models\polizas\DeudaDetalle;
 use App\Models\polizas\DeudaEliminados;
+use App\Models\polizas\DeudaHistorialRecibo;
 use App\Models\polizas\DeudaRequisitos;
 use App\Models\polizas\DeudaVida;
 use App\Models\polizas\PolizaDeudaCartera;
@@ -39,6 +40,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Maatwebsite\Excel\Facades\Excel;
+use NumberFormatter;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PDF;
 use PhpOffice\PhpSpreadsheet\Calculation\MathTrig\Sum;
@@ -953,8 +955,60 @@ class DeudaController extends Controller
 
         $deuda = Deuda::findOrFail($detalle->Deuda);
         $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+        $recibo_historial = DeudaHistorialRecibo::where('PolizaDeudaDetalle',$id)->orderBy('id','desc')->first();
         //  $calculo = $this->monto($deuda, $detalle);
-        // dd($calculo);
+         if(!$recibo_historial)
+         {
+            $recibo_historial = new DeudaHistorialRecibo();
+            $recibo_historial->PolizaDeudaDetalle = $id;
+            $recibo_historial->ImpresionRecibo = Carbon::now();
+            $recibo_historial->NombreCliente = $deuda->clientes->Nombre;
+            $recibo_historial->NitCliente = $deuda->clientes->Nit;
+            $recibo_historial->DireccionResidencia = $deuda->clientes->DireccionResidencia;
+            $recibo_historial->Departamento = $deuda->clientes->distrito->municipio->departamento->Nombre;
+            $recibo_historial->Municipio = $deuda->clientes->distrito->municipio->Nombre;
+            $recibo_historial->NumeroRecibo = $detalle->NumeroRecibo;
+            $recibo_historial->CompaniaAseguradora = $deuda->aseguradoras->Nombre;
+            $recibo_historial->ProductoSeguros = $deuda->planes->productos->Nombre;
+            $recibo_historial->NumeroPoliza = $deuda->NumeroPoliza;
+            $recibo_historial->VigenciaDesde = $deuda->VigenciaDesde;
+            $recibo_historial->VigenciaHasta = $deuda->VigenciaHasta;
+            $recibo_historial->FechaInicio = $detalle->FechaInicio;
+            $recibo_historial->FechaFin = $detalle->FechaFinal;
+            $recibo_historial->Anexo = $detalle->Anexo;
+            $recibo_historial->Referencia = $detalle->Referencia;
+            $recibo_historial->FacturaNombre = $deuda->clientes->Nombre;
+            $recibo_historial->MontoCartera = $detalle->MontoCartera;
+            $recibo_historial->PrimaCalculada = $detalle->PrimaCalculada;
+            $recibo_historial->ExtraPrima = $detalle->ExtraPrima;
+            $recibo_historial->Descuento = $detalle->Descuento;
+            $recibo_historial->PordentajeDescuento = $deuda->Descuento;
+            $recibo_historial->PrimaDescontada = $detalle->PrimaDescontada;
+             
+  
+
+            
+            $recibo_historial->ValorCCF = $detalle->ValorCCF;
+            $recibo_historial->TotalAPagar = $detalle->APagar;
+            $recibo_historial->TasaComision = $deuda->TasaComision;
+            $recibo_historial->Comision = $detalle->Comision;
+            $recibo_historial->IvaSobreComision = $detalle->IvaSobreComision;
+            $recibo_historial->SubTotalComision =  $detalle->IvaSobreComision + $detalle->Comision;
+            $recibo_historial->Retencion = $detalle->Retencion;
+            $recibo_historial->ValorCCF = $detalle->ValorCCF;
+
+            $recibo_historial->NumeroCorrelativo = $detalle->NumeroCorrelativo;
+
+            $recibo_historial->Otros = $detalle->Otros;
+
+            $recibo_historial->Usuario = auth()->user()->id;
+            
+            //$recibo_historial->save();
+            dd("insert");
+         }
+
+        return view('polizas.deuda.recibo_edit', compact('detalle', 'deuda', 'meses'));
         $pdf = \PDF::loadView('polizas.deuda.recibo', compact('detalle', 'deuda', 'meses'))->setWarnings(false)->setPaper('letter');
         //  dd($detalle);
         return $pdf->stream('Recibos.pdf');
