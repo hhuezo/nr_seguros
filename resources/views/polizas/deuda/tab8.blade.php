@@ -27,7 +27,7 @@
                         <td>{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
                         <td>{{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
                         <td> {{ $obj->total_registros}}</td>
-                        <td> <a class="btn btn-primary on-default edit-row" title="Consultar Pago" onclick="mostrar_historial({{$obj->Axo}}, {{$obj->Mes}}, {{ \Carbon\Carbon::parse($obj->FechaInicio)->format('Ymd') }}, {{ \Carbon\Carbon::parse($obj->FechaFinal)->format('Ymd') }}, {{$id}});">
+                        <td> <a class="btn btn-primary on-default edit-row" title="Consultar Histórico" onclick="mostrar_historial({{$obj->Axo}}, {{$obj->Mes}}, {{ \Carbon\Carbon::parse($obj->FechaInicio)->format('Ymd') }}, {{ \Carbon\Carbon::parse($obj->FechaFinal)->format('Ymd') }}, {{$id}});">
                             <i class="fa fa-eye fa-lg"></i></a></td>
                     </tr>
                     @endforeach

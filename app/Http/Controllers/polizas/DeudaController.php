@@ -957,7 +957,7 @@ class DeudaController extends Controller
     public function save_recibo($detalle, $deuda)
     {
         $recibo_historial = new DeudaHistorialRecibo();
-        $recibo_historial->PolizaDeudaDetalle = $id;
+        $recibo_historial->PolizaDeudaDetalle = $detalle->id;
         $recibo_historial->ImpresionRecibo = $detalle->ImpresionRecibo; //Carbon::now();
         $recibo_historial->NombreCliente = $deuda->clientes->Nombre;
         $recibo_historial->NitCliente = $deuda->clientes->Nit;
@@ -1028,6 +1028,9 @@ class DeudaController extends Controller
 
         $recibo_historial = DeudaHistorialRecibo::where('PolizaDeudaDetalle', $id)->orderBy('id', 'desc')->first();
         //dd($recibo_historial);
+        if(!$recibo_historial){
+            $recibo_historial = $this->save_recibo($detalle, $deuda);
+        }
         return view('polizas.deuda.recibo_edit', compact('recibo_historial', 'meses'));
     }
 
