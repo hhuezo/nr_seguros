@@ -94,6 +94,16 @@
             <th>Requisitos</th>
             <th>Saldo</th>
         </tr>
+        <!-- <tr>
+            <th colspan="8"></th>
+            <th style="width: 20% !important;">
+                <select id="requisitosFilter">
+                    <option value="">Todos</option>
+                </select>
+            </th>
+            <th></th>
+        </tr> -->
+
     </thead>
     @php $i=1 @endphp
     <tbody>
@@ -160,7 +170,7 @@
                     @endphp
 
                     @foreach ($uniquePerfiles as $key => $perfil)
-                    {{ $perfil }}{{ $loop->last ? '' : ', ' }}
+                    {{ $perfil }}{{ $loop->last ? '' : ' , ' }}
                     @endforeach
                 </td>
                 <td class="text-right">
@@ -181,6 +191,25 @@
 </table>
 <script>
     $(document).ready(function() {
+
+        // // Inicializar la tabla
+        // var table = $('#MyTable4').DataTable();
+
+        // // Agregar el select al encabezado de la columna deseada
+        // // $('#MyTable4 thead th').eq(8).append('<br><select><option value="">Todos</option></select>');
+
+        // // Obtener los valores únicos de la columna específica
+        // table.column(8).data().unique().sort().each(function(d) {
+        //     $('#MyTable4 thead th select').append('<option value="' + d + '">' + d + '</option>');
+        // });
+
+        // // Filtrar los datos cuando se seleccione una opción
+        // $('#MyTable4 thead th select').on('change', function() {
+        //     var value = $.fn.dataTable.util.escapeRegex($(this).val());
+        //     var val = value.replace(/ , \s+/, ', ');
+        //     console.log(val);
+        //     table.column(8).search(val ? '^' + val + '$' : '', true, false).draw();
+        // });
         $('#MyTable4').DataTable({
             ordering: false // Desactiva el ordenamiento
         });
