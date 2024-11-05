@@ -129,10 +129,10 @@
                     </td>
                     <td>
                         @php
-                            // Split the Perfiles string, remove empty elements, and get unique values
-                            $perfilesArreglo = array_filter(array_unique(explode(',', $registro->Perfiles)));
+                            // Split the Perfiles string, remove empty elements, get unique values, and trim each element
+                            $perfilesArreglo = array_map('trim', array_filter(array_unique(explode(',', $registro->Perfiles))));
                         @endphp
-
+                    
                         @foreach ($perfilesArreglo as $key => $perfil)
                             {{ $perfil }}{{ $loop->last ? '' : ', ' }}
                         @endforeach
@@ -165,12 +165,12 @@
                     </td>
                     <td>
                         @php
-                            $perfilesArreglo = explode(',', $registro->Perfiles);
-                            $uniquePerfiles = array_unique($perfilesArreglo);
+                            // Split the Perfiles string, remove empty elements, get unique values, and trim each element
+                            $perfilesArreglo = array_map('trim', array_filter(array_unique(explode(',', $registro->Perfiles))));
                         @endphp
-
-                        @foreach ($uniquePerfiles as $key => $perfil)
-                            {{ $perfil }}{{ $loop->last ? '' : ' , ' }}
+                    
+                        @foreach ($perfilesArreglo as $key => $perfil)
+                            {{ $perfil }}{{ $loop->last ? '' : ', ' }}
                         @endforeach
                     </td>
                     <td class="text-right">
@@ -208,7 +208,7 @@
 
             rows.forEach(row => {
                 // Get the "Requisitos" column text content
-                let requisitosText = row.cells[8].innerText || row.cells[8].textContent;
+                let requisitosText = (row.cells[8].innerText.trim() || row.cells[8].textContent.trim());
 
                 // Check if "Declaracion de salud Jurada" is in the requisitosText
                 if (requisitosText.includes("Declaracion de salud Jurada")) {
