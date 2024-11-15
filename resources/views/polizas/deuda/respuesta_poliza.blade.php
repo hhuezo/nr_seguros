@@ -308,6 +308,12 @@
                                             </table>
                                         </div>
                                         <div role="tabpanel" class="tab-pane  " id="tab_content1" aria-labelledby="home-tab">
+                                        <div class="col-md-12 col-sm-12" align="right">
+                                              
+                                                <a href="{{ url('exportar/nuevos_registros') }}/{{$deuda->Id}}"> <button class="btn btn-success"
+                                                {{$nuevos_registros->count() > 0 ? '':'disabled'}}>Descargar Excel</button> </a>
+                                                
+                                            </div>
                                             <br>
                                             <table class="table table-striped" id="MyTable1">
                                                 <thead>
@@ -347,6 +353,11 @@
                                         </div>
 
                                         <div role="tabpanel5" class="tab-pane" id="tab_content5" aria-labelledby="tab">
+                                        <div class="col-md-12 col-sm-12" align="right">
+                                                <a href="{{ url('exportar/registros_eliminados') }}/{{$deuda->Id}}"> <button class="btn btn-success"
+                                                {{$registros_eliminados->count() > 0 ? '':'disabled'}}>Descargar Excel</button></a>
+                                                
+                                            </div>
                                             <br>
                                             <table class="table table-striped" id="MyTable2">
                                                 <thead>
@@ -416,8 +427,9 @@
                                         </div>
                                         <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="profile-tab">
 
-
+                                            <br>
                                             <div class="col-md-6 col-sm-12">
+                                                
                                                 {{-- <div class="input-group">
                                                     <input type="text" id="buscar_valido" class="form-control">
                                                     <span class="input-group-btn">
@@ -434,6 +446,19 @@
                                                     <div style="width: 20px; height: 20px; background-color: #E63946; margin-right: 10px;"></div>
                                                     <span>Los créditos resaltados en rojo han excedido el monto máximo permitido por línea de crédito.</span>
                                                 </div>
+                                                <div class="">
+													<label>
+														<input type="checkbox" id="omitir_declaracion" class="js-switch" /> Omitir registros solo con declaracion jurada
+													</label>
+												</div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-12" align="right">
+                                                <a href="{{ url('exportar/creditos_validos') }}/{{$deuda->Id}}" class="btn btn-success">Descargar Excel</a>
+                                                <br>
+                                                <div style="display: flex; align-items: center;">
+                                                    <div style="width: 20px; height: 20px; background-color: #E63946; margin-right: 10px;"></div>
+                                                    <span>Los créditos resaltados en rojo han excedido el monto máximo permitido por línea de crédito.</span>
+                                                </div>
                                             </div>
                                             <br>
                                             <br>
@@ -444,6 +469,9 @@
                                         </div>
                                         <div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="profile-tab">
 
+                                        <div class="col-md-12 col-sm-12" align="right">
+                                                <a href="{{ url('exportar/extraprimados_excluidos') }}/{{$deuda->Id}}" class="btn btn-success">Descargar Excel</a>
+                                            </div>
                                             <br>
                                             <table class="table table-striped" id="datatable">
 

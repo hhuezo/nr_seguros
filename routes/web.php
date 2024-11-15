@@ -33,6 +33,7 @@ use App\Http\Controllers\polizas\ValidacionCarteraController;
 use App\Http\Controllers\seguridad\PermissionController;
 use App\Http\Controllers\seguridad\RoleController;
 use App\Models\catalogo\Aseguradora;
+use App\Models\polizas\Deuda;
 use App\Models\polizas\Residencia;
 
 /*
@@ -211,6 +212,10 @@ Route::get('poliza/vida/usuario/{id}', [VidaController::class, 'getUsuario']);
 
 Route::get('polizas/deuda/get_referencia_creditos/{id}', [DeudaController::class, 'get_referencia_creditos']);
 Route::get('polizas/deuda/get_creditos/{id}', [DeudaController::class, 'get_creditos']);
+Route::get('exportar/creditos_validos/{id}',[DeudaController::class,'creditos_validos']);
+Route::get('exportar/extraprimados_excluidos/{id}',[DeudaController::class,'extraprimados_excluidos']);
+Route::get('exportar/nuevos_registros/{id}',[DeudaController::class,'creditos_nuevos']);
+Route::get('exportar/registros_eliminados/{id}',[DeudaController::class,'creditos_eliminados']);
 Route::get('polizas/deuda/get_historico', [DeudaController::class, 'get_historico']);
 Route::post('polizas/deuda/agregar_valido', [DeudaController::class, 'agregar_valido']);
 Route::post('polizas/deuda/create_pago', [DeudaCarteraController::class, 'create_pago']);

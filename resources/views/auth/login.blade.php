@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
+@include('sweetalert::alert')
+    
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-6" style="background-color: #e3e9f1; border-radius: 25px;">

@@ -48,7 +48,7 @@
                 <td>{{ $registro->Edad ? $registro->Edad . ' Años' : '' }}</td>
                 <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso . ' Años' : '' }}</td>
                 <td class="text-right">
-                    ${{ number_format($registro->total_saldo, 2,'.',',') }}
+                    ${{ number_format($registro->total_saldo, 2,'.',',', '.', ',') }}
                 </td>
                 <td>{{ $motivo }}</td>
                 <td align="center" data-target="#modal_cambio_credito_valido" data-toggle="modal"
@@ -59,7 +59,8 @@
                 </td>
             </tr>
             @php
-            $i++;
+            
+                    $i++;
             $total += $registro->total_saldo; @endphp
             @endforeach
     </tbody>
@@ -100,8 +101,10 @@
             <th>Fecha otorgamiento</th>
             <th>Requisitos</th>
             <th>Saldo</th>
-            <th>Línea de Crédito</th>
+            <!-- <th>Línea de Crédito</th> -->
         </tr>
+            
+
     </thead>
     @php $i=1 @endphp
     <tbody>
@@ -138,7 +141,7 @@
                 <td
                     class="text-right {{ $registro->MontoMaximoIndividual <= $registro->total_saldo ? 'row-error' : '' }}">
                     ${{ number_format($registro->total_saldo, 2,'.',',') }}</td>
-                <td>{{$registro->TipoCarteraNombre}} {{$registro->Abreviatura}}</td>
+                <!-- <td>{{$registro->TipoCarteraNombre}} {{$registro->Abreviatura}}</td> -->
 
             </tr>
             @php $i++ @endphp
@@ -193,10 +196,31 @@
 </table>
 <script>
     $(document).ready(function() {
-            $('#MyTable4').DataTable({
+
+             $('#MyTable4').DataTable({
                 ordering: false // Desactiva el ordenamiento
             });
             $('#MyTable3').DataTable();
         });
 </script>
+
+    <script>
+        document.getElementById('omitir_declaracion').addEventListener('change', function() {
+            // Get the checkbox state
+            let omitDeclaracion = this.checked;
+            // Get all rows in the table
+            let rows = document.querySelectorAll('#MyTable4 tbody tr');
+
+            rows.forEach(row => {
+                // Get the "Requisitos" column text content
+                let requisitosText = (row.cells[8].innerText.trim() || row.cells[8].textContent.trim());
+
+                // Check if "Declaracion de salud Jurada" is in the requisitosText
+                if (requisitosText.includes("Declaracion de salud Jurada")) {
+                    // If checked, hide the row if it has "Declaracion de salud Jurada"
+                    row.style.display = omitDeclaracion ? 'none' : '';
+                }
+            });
+        });
+    </script>
 @endif

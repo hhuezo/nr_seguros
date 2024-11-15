@@ -427,7 +427,8 @@ class DeudaCarteraController extends Controller
             ->where('PolizaDeuda', $poliza_id)
             ->update([
                 'FechaNacimientoDate' => DB::raw("STR_TO_DATE(FechaNacimiento, '%d/%m/%Y')"),
-                'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, CURDATE())"),
+                //'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, CURDATE())"),
+                'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaFinal)"),
                 'FechaOtorgamientoDate' => DB::raw("STR_TO_DATE(FechaOtorgamiento, '%d/%m/%Y')"),
                 'EdadDesembloso' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaOtorgamientoDate)"),
             ]);
@@ -449,7 +450,7 @@ class DeudaCarteraController extends Controller
         NumeroReferencia,SUM(SaldoCapital) as total_saldo,SUM(Intereses) as total_interes,SUM(InteresesCovid) as total_covid,SUM(saldo_total) as saldo_total,
         SUM(InteresesMoratorios) as total_moratorios, SUM(MontoNominal) as total_monto_nominal')->groupBy('Dui')->get();
 
-//dd($poliza_cumulos->take('10'),$requisitos);
+
 
 
         //definiendo edad maxima segu requisitos
@@ -464,9 +465,17 @@ class DeudaCarteraController extends Controller
 
               //  dd($data_dui_cartera,$requisito);
 
-            PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Perfiles', null)->whereIn('Dui', $data_dui_cartera)->update(['Perfiles' => $requisito->perfil->Descripcion]);
+            //PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Perfiles', null)->whereIn('Dui', $data_dui_cartera)->update(['Perfiles' => $requisito->perfil->Descripcion]);
 
-            PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Perfiles', '<>', null)->whereIn('Dui', $data_dui_cartera)->update(['Perfiles' => DB::raw('CONCAT(Perfiles, "," ,"' . $requisito->perfil->Descripcion . '")')]);
+            //PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Perfiles', '<>', null)->whereIn('Dui', $data_dui_cartera)->update(['Perfiles' => DB::raw('CONCAT(Perfiles, "," ,"' . $requisito->perfil->Descripcion . '")')]);
+
+            PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
+                ->whereIn('Dui', $data_dui_cartera)
+                ->update([
+                    'Perfiles' => DB::raw(
+                        'IF(Perfiles IS NULL OR Perfiles = "", "' . $requisito->perfil->Descripcion . '", CONCAT(Perfiles, ",", "' . $requisito->perfil->Descripcion . '"))'
+                    )
+                ]);
         }
 
 
@@ -478,6 +487,13 @@ class DeudaCarteraController extends Controller
                     ->orWhere('Perfiles', '=', '');
             })
             ->update(['NoValido' => 1]);
+
+        //haciendo trim a perfiles
+        PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
+            ->update([
+                'Perfiles' => DB::raw('TRIM(Perfiles)')
+            ]);
+
 
 
         //poniendo valido los creditos guardados en DeudaCreditosValidos
@@ -535,7 +551,7 @@ class DeudaCarteraController extends Controller
             ->where('User', auth()->user()->id)->where('PolizaDeuda', $deuda->Id)
             ->groupBy('Dui', 'NoValido')->get();
 
-  
+
 
         $extra_primados = $deuda->extra_primados;
 
