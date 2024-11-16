@@ -134,7 +134,8 @@
                                                 aria-expanded="false">Responsabilidad <br> Máxima </a>
                                         </li>
                                         <li role="presentation" class=""><a href="#tab_content1" id="home-tab"
-                                                role="tab" data-toggle="tab" aria-expanded="true">Nuevos <br> registros</a>
+                                                role="tab" data-toggle="tab" aria-expanded="true">Nuevos <br>
+                                                registros</a>
                                         </li>
                                         <li role="presentation" class=""><a href="#tab_content5" id="profile-tab5"
                                                 role="tab" data-toggle="tab" aria-expanded="false">Registros <br>
@@ -152,50 +153,50 @@
                                                 id="profile-tab2" data-toggle="tab" aria-expanded="false">Extraprimados <br>
                                                 excluidos</a>
                                         </li>
-                                    </li>
+                                        </li>
 
 
                                     </ul>
                                     <div id="myTabContent" class="tab-content">
                                         <br>
                                         <div role="tabpanel" class="tab-pane active" id="tab_content6"
-                                                aria-labelledby="edad-tab">
-                                                <br>
-                                                <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    <h4>Edad Maxima de Terminación {{ $deuda->EdadMaximaTerminacion }} años
-                                                    </h4>
-                                                </div>
-                                                <!-- <div class="col-md-6 col-sm-6 col-xs-12" align="right" id="btn_expo" style="display:{{ $excluidos->count() > 0 ? 'block' : 'none' }}"> -->
-                                                <div class="col-md-6 col-sm-6 col-xs-12" align="right">
+                                            aria-labelledby="edad-tab">
+                                            <br>
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <h4>Edad Maxima de Terminación {{ $deuda->EdadMaximaTerminacion }} años
+                                                </h4>
+                                            </div>
+                                            <!-- <div class="col-md-6 col-sm-6 col-xs-12" align="right" id="btn_expo" style="display:{{ $excluidos->count() > 0 ? 'block' : 'none' }}"> -->
+                                            <div class="col-md-6 col-sm-6 col-xs-12" align="right">
 
-                                                    <form action="{{ url('poliza/deuda/exportar') }}" method="POST">
-                                                        @csrf
-                                                        <input type="hidden" name="Tipo" value="1">
-                                                        <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
-                                                        <input type="hidden" name="MesActual"
-                                                            value="{{ date('m', strtotime($date)) }}">
-                                                        <button style="text-align: right;"
-                                                            class="btn btn-primary">Exportar</button>
-                                                    </form>
+                                                <form action="{{ url('poliza/deuda/exportar') }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="Tipo" value="1">
+                                                    <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
+                                                    <input type="hidden" name="MesActual"
+                                                        value="{{ date('m', strtotime($date)) }}">
+                                                    <button style="text-align: right;"
+                                                        class="btn btn-primary">Exportar</button>
+                                                </form>
 
-                                                </div>
-                                                <br><br>
+                                            </div>
+                                            <br><br>
 
-                                                <table class="table table-striped" id="MyTable6">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Número crédito</th>
-                                                            <th>DUI</th>
-                                                            <th>NIT</th>
-                                                            <th>Nombre</th>
-                                                            <th>Fecha nacimiento</th>
-                                                            <th>Edad Actual</th>
-                                                            <th style="text-align: center;">Excluir</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach ($poliza_temporal->where('Edad', '>=', $deuda->EdadMaximaTerminacion) as $registro)
-                                                        <tr>
+                                            <table class="table table-striped" id="MyTable6">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Número crédito</th>
+                                                        <th>DUI</th>
+                                                        <th>NIT</th>
+                                                        <th>Nombre</th>
+                                                        <th>Fecha nacimiento</th>
+                                                        <th>Edad Actual</th>
+                                                        <th style="text-align: center;">Excluir</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($poliza_temporal->where('Edad', '>=', $deuda->EdadMaximaTerminacion) as $registro)
+<tr>
                                                         <td>{{ $registro->NumeroReferencia }}</td>
                                                         <td>{{ $registro->Dui }}</td>
                                                         <td>{{ $registro->Nit }}</td>
@@ -214,7 +215,7 @@
                                                         </td>
                                                         <!-- <td style="text-align: center;"><button class="btn btn-primary"><i class="fa fa-exchange"></i></button></td> -->
                                                     </tr>
-                                                    @endforeach
+@endforeach
 
 
                                                 </tbody>
@@ -267,16 +268,16 @@
                                                 </thead>
                                                 <tbody>
                                                     @foreach ($poliza_cumulos as $registro)
-                                                    @php
-                                                        $sub_total =
-                                                            $registro->total_saldo +
-                                                            $registro->total_interes +
-                                                            $registro->total_covid +
-                                                            $registro->total_moratorios +
-                                                            $registro->total_monto_nominal;
-                                                    @endphp
+@php
+    $sub_total =
+        $registro->total_saldo +
+        $registro->total_interes +
+        $registro->total_covid +
+        $registro->total_moratorios +
+        $registro->total_monto_nominal;
+@endphp
                                                     @if ($sub_total > $deuda->ResponsabilidadMaxima)
-                                                        <tr>
+<tr>
                                                         <td>{{ $registro->NumeroReferencia }} <br>
                                                         </td>
                                                         <td>{{ $registro->Dui }}</td>
@@ -301,8 +302,8 @@
                                                         </td>
 
                                                     </tr>
-                                                    @endif
-                                                    @endforeach
+@endif
+@endforeach
 
 
                                                 </tbody>
@@ -311,8 +312,8 @@
                                         <div role="tabpanel" class="tab-pane  " id="tab_content1" aria-labelledby="home-tab">
                                         <div class="col-md-12 col-sm-12" align="right">
                                               
-                                                <a href="{{ url('exportar/nuevos_registros') }}/{{$deuda->Id}}"> <button class="btn btn-success"
-                                                {{$nuevos_registros->count() > 0 ? '':'disabled'}}>Descargar Excel</button> </a>
+                                                <a href="{{ url('exportar/nuevos_registros') }}/{{ $deuda->Id }}"> <button class="btn btn-success"
+                                                {{ $nuevos_registros->count() > 0 ? '' : 'disabled' }}>Descargar Excel</button> </a>
                                                 
                                             </div>
                                             <br>
@@ -329,7 +330,7 @@
                                                 </thead>
                                                 <tbody>
                                                     @foreach ($nuevos_registros as $registro)
-                                                    <tr>
+<tr>
                                                         <td>{{ $registro->NumeroReferencia }}</td>
                                                         <td>{{ $registro->Dui }}</td>
                                                         <td>{{ $registro->Nit }}</td>
@@ -343,7 +344,7 @@
                                                         </td>
                                                         <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
                                                     </tr>
-                                                    @endforeach
+@endforeach
 
 
                                                 </tbody>
@@ -355,8 +356,8 @@
 
                                         <div role="tabpanel5" class="tab-pane" id="tab_content5" aria-labelledby="tab">
                                         <div class="col-md-12 col-sm-12" align="right">
-                                                <a href="{{ url('exportar/registros_eliminados') }}/{{$deuda->Id}}"> <button class="btn btn-success"
-                                                {{$registros_eliminados->count() > 0 ? '':'disabled'}}>Descargar Excel</button></a>
+                                                <a href="{{ url('exportar/registros_eliminados') }}/{{ $deuda->Id }}"> <button class="btn btn-success"
+                                                {{ $registros_eliminados->count() > 0 ? '' : 'disabled' }}>Descargar Excel</button></a>
                                                 
                                             </div>
                                             <br>
@@ -376,7 +377,7 @@
                                                 </thead>
                                                 <tbody>
                                                     @foreach ($registros_eliminados as $registro)
-                                                        <tr>
+<tr>
                                                         <td>{{ $registro->NumeroReferencia }}</td>
                                                         <td>{{ $registro->Dui }}</td>
                                                         <td>{{ $registro->Nit }}</td>
@@ -395,7 +396,7 @@
                                                             Años</td>
                                                         <td>${{ number_format($registro->total_saldo, 2) }}</td>
                                                         </tr>
-                                                    @endforeach
+@endforeach
 
 
                                                 </tbody>
@@ -450,12 +451,12 @@
                                                 <br>
                                                 <div class="">
 													<label>
-														<input type="checkbox" id="omitir_declaracion" class="js-switch" /> Omitir registros solo con declaracion jurada
+														<input type="checkbox" id="omitir_declaracion" class="flat" /> Omitir registros solo con declaracion jurada
 													</label>
 												</div>
                                             </div>
                                             <div class="col-md-6 col-sm-12" align="right">
-                                                <a href="{{ url('exportar/creditos_validos') }}/{{$deuda->Id}}" class="btn btn-success">Descargar Excel</a>
+                                                <a href="{{ url('exportar/creditos_validos') }}/{{ $deuda->Id }}" class="btn btn-success">Descargar Excel</a>
                                                 <br>
                                              
                                             </div>
@@ -469,7 +470,7 @@
                                         <div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="profile-tab">
 
                                         <div class="col-md-12 col-sm-12" align="right">
-                                                <a href="{{ url('exportar/extraprimados_excluidos') }}/{{$deuda->Id}}" class="btn btn-success">Descargar Excel</a>
+                                                <a href="{{ url('exportar/extraprimados_excluidos') }}/{{ $deuda->Id }}" class="btn btn-success">Descargar Excel</a>
                                             </div>
                                             <br>
                                             <table class="table table-striped" id="datatable">
@@ -486,22 +487,22 @@
                                                 </thead>
                                                 <tbody>
                                                     @foreach ($extra_primados->where('Existe', '=', 0) as $extra_primado)
-                                                            <tr>
-                                                                <td>{{ $extra_primado->NumeroReferencia }}</td>
-                                                                <td>{{ $extra_primado->Nombre }}</td>
-                                                                <td>{{ $extra_primado->FechaOtorgamiento }}</td>
-                                                                <td>{{ $extra_primado->MontoOtorgamiento }}</td>
-                                                                <td> {{ $extra_primado->PorcentajeEP }}%</td>
-                                                            </tr>
-                                                        @endforeach
+                                                        <tr>
+                                                            <td>{{ $extra_primado->NumeroReferencia }}</td>
+                                                            <td>{{ $extra_primado->Nombre }}</td>
+                                                            <td>{{ $extra_primado->FechaOtorgamiento }}</td>
+                                                            <td>{{ $extra_primado->MontoOtorgamiento }}</td>
+                                                            <td> {{ $extra_primado->PorcentajeEP }}%</td>
+                                                        </tr>
+                                                    @endforeach
 
 
-                                                    </tbody>
-                                                </table>
+                                                </tbody>
+                                            </table>
 
 
 
-                                                <?php /*
+                                            <?php /*
                                                 <table class="table table-striped" id="datatable">
                                                     <thead>
                                                         <tr>
@@ -539,10 +540,10 @@
 
                                                     </tbody>
                                                 </table> */
-                                                ?>
+                                            ?>
 
-                                            </div>
                                         </div>
+                                    </div>
 
 
 
@@ -811,28 +812,55 @@
 
 
         function loadCreditos(opcion, buscar) {
-            $.ajax({
-                url: "{{ url('polizas/deuda/get_creditos') }}/" + '{{ $deuda->Id }}',
-                type: 'GET',
-                data: {
-                    buscar: buscar,
-                    opcion: opcion,
-                    //<tipo_cartera: ' $tipo_cartera',
-                },
-                success: function(response) {
-                    // Aquí manejas la respuesta. Por ejemplo, podrías imprimir la respuesta en la consola:
-                    if (opcion == 1) {
-                        $('#creditos_no_validos').html(response);
-                    } else {
-                        $('#creditos_validos').html(response);
-                    }
 
-                },
-                error: function(error) {
-                    // Aquí manejas el error, si ocurre alguno durante la petición
-                    console.error(error);
-                }
-            });
+            if (document.getElementById('omitir_declaracion').checked == true) {
+                $.ajax({
+                    url: "{{ url('polizas/deuda/get_creditos') }}/" + '{{ $deuda->Id }}',
+                    type: 'GET',
+                    data: {
+                        buscar: buscar,
+                        opcion: opcion,
+                        filtro: 1,
+                    },
+                    success: function(response) {
+                        // Aquí manejas la respuesta. Por ejemplo, podrías imprimir la respuesta en la consola:
+                        if (opcion == 1) {
+                            $('#creditos_no_validos').html(response);
+                        } else {
+                            $('#creditos_validos').html(response);
+                        }
+
+                    },
+                    error: function(error) {
+                        // Aquí manejas el error, si ocurre alguno durante la petición
+                        console.error(error);
+                    }
+                });
+            } else {
+                $.ajax({
+                    url: "{{ url('polizas/deuda/get_creditos') }}/" + '{{ $deuda->Id }}',
+                    type: 'GET',
+                    data: {
+                        buscar: buscar,
+                        opcion: opcion,
+                        //<tipo_cartera: ' $tipo_cartera',
+                    },
+                    success: function(response) {
+                        // Aquí manejas la respuesta. Por ejemplo, podrías imprimir la respuesta en la consola:
+                        if (opcion == 1) {
+                            $('#creditos_no_validos').html(response);
+                        } else {
+                            $('#creditos_validos').html(response);
+                        }
+
+                    },
+                    error: function(error) {
+                        // Aquí manejas el error, si ocurre alguno durante la petición
+                        console.error(error);
+                    }
+                });
+            }
+
         }
 
         $('#btn_valido').on('click', function() {

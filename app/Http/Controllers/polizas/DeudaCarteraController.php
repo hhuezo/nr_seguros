@@ -455,6 +455,8 @@ class DeudaCarteraController extends Controller
         SUM(InteresesMoratorios) as total_moratorios, SUM(MontoNominal) as total_monto_nominal')->groupBy('Dui')->get();
 
 
+         //dejando los perfiles nulos como valor inicial
+         PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->update(['Perfiles' => null]);
 
 
         //definiendo edad maxima segu requisitos
@@ -466,23 +468,17 @@ class DeudaCarteraController extends Controller
             $data_dui_cartera = $poliza_cumulos->where('Edad', '>=', $requisito->EdadInicial)->where('Edad', '<=', $requisito->EdadFinal)
                 ->where('saldo_total', '>=', $requisito->MontoInicial)->where('saldo_total', '<=', $requisito->MontoFinal)
                 ->pluck('Dui')->toArray();
-
-            //  dd($data_dui_cartera,$requisito);
-
-            //PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Perfiles', null)->whereIn('Dui', $data_dui_cartera)->update(['Perfiles' => $requisito->perfil->Descripcion]);
-
-            //PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Perfiles', '<>', null)->whereIn('Dui', $data_dui_cartera)->update(['Perfiles' => DB::raw('CONCAT(Perfiles, "," ,"' . $requisito->perfil->Descripcion . '")')]);
-
-            PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
+                
+                PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
                 ->whereIn('Dui', $data_dui_cartera)
                 ->update([
                     'Perfiles' => DB::raw(
-                        'IF(Perfiles IS NULL OR Perfiles = "", "' . $requisito->perfil->Descripcion . '", CONCAT(Perfiles, ",", "' . $requisito->perfil->Descripcion . '"))'
+                        'IF(Perfiles IS NULL OR Perfiles = "","' . $requisito->perfil->Descripcion . '", CONCAT(Perfiles, ",","' . $requisito->perfil->Descripcion . '"))'
                     )
                 ]);
         }
 
-
+        //dd($requisitos->take(10));
         //update para los que son mayores a la edad inicial
         PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
             ->where('NoValido', 0)

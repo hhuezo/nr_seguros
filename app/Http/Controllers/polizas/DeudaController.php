@@ -2383,18 +2383,13 @@ class DeudaController extends Controller
                     'sm.Abreviatura as Abreviatura',
                     'tc.nombre AS TipoCarteraNombre' // Agregar el nombre de la TipoCartera
                 )
-                 
-                ->where(function ($query) use ($buscar) {
-                    $query->whereRaw("CONCAT(pdtc.PrimerNombre, ' ', IFNULL(pdtc.SegundoNombre,''), ' ', pdtc.PrimerApellido, ' ', IFNULL(pdtc.SegundoApellido,''), ' ', IFNULL(pdtc.ApellidoCasada,'')) LIKE ?", ['%' . $buscar . '%'])
-                        ->orWhere('pdtc.Dui', 'like', '%' . $buscar . '%')
-                        ->orWhere('pdtc.Nit', 'like', '%' . $buscar . '%')
-                        ->orWhere('pdtc.NumeroReferencia', 'like', '%' . $buscar . '%');
-                })
                 ->where('pdtc.Edad', '<', $deuda->EdadMaximaTerminacion)
                 ->where('pdtc.NoValido', 0)
                 ->where('pdtc.PolizaDeuda', $poliza)
                 ->groupBy('pdtc.Dui')
                 ->get();
+
+        
 
 
             foreach ($poliza_cumulos as $poliza) {
@@ -2405,8 +2400,13 @@ class DeudaController extends Controller
                 }
             }
         }
+        $filtro = 0;
+        if($request->filtro)
+        {
+            $filtro = 1;
+        }
 
-        return view('polizas.deuda.get_creditos', compact('poliza_cumulos', 'opcion', 'requisitos'));
+        return view('polizas.deuda.get_creditos', compact('poliza_cumulos', 'opcion', 'requisitos','filtro'));
     }
 
     public function get_historico(Request $request)
