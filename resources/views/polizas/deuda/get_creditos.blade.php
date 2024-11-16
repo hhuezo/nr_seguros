@@ -116,7 +116,18 @@
                 @else
                     <tr class="{{ $registro->Rehabilitado == 1 ? 'row-warning' : '' }}">
                         <td>{{ $registro->ConcatenatedNumeroReferencia }}</td>
-                        <td>{{ $registro->ConcatenatedMonto }}</td>
+                        <td>
+                            @php
+                                $montos = explode('-', $registro->ConcatenatedMonto);
+                            @endphp
+
+                            @foreach ($montos as $monto)
+                             <div class="{{ $monto > $registro->MontoMaximoIndividual ? 'text-danger' : '' }}">
+                                ${{ number_format((float) $monto, 2, '.', ',') }}
+                            </div>
+                            @endforeach
+                        </td>
+
                         <td>{{ $registro->Dui }}</td>
                         <td>{{ $registro->Nit }}</td>
                         <td>{{ $registro->PrimerNombre }}

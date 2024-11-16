@@ -2312,7 +2312,7 @@ class DeudaController extends Controller
                     'pdtc.NoValido',
                     'pdtc.Excluido',
                     DB::raw("GROUP_CONCAT(DISTINCT pdtc.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
-                    DB::raw("GROUP_CONCAT(DISTINCT FORMAT(pdtc.saldo_total, 2) SEPARATOR '; ') AS ConcatenatedMonto"),
+                    DB::raw("GROUP_CONCAT(DISTINCT FORMAT(pdtc.saldo_total, 2) SEPARATOR '- ') AS ConcatenatedMonto"),
                     DB::raw('SUM(pdtc.SaldoCapital) as saldo_capital'),
                     DB::raw('SUM(pdtc.saldo_total) as total_saldo'),
                     DB::raw('SUM(pdtc.Intereses) as total_interes'),
@@ -2324,16 +2324,7 @@ class DeudaController extends Controller
                     'sm.Abreviatura as Abreviatura',
                     'tc.nombre AS TipoCarteraNombre' // Agregar el nombre de la TipoCartera
                 )
-              
-             
-                ->where(function ($query) use ($buscar) {
-                    $query->whereRaw("CONCAT(pdtc.PrimerNombre, ' ', IFNULL(pdtc.SegundoNombre,''), ' ', pdtc.PrimerApellido, ' ', IFNULL(pdtc.SegundoApellido,''), ' ', IFNULL(pdtc.ApellidoCasada,'')) LIKE ?", ['%' . $buscar . '%'])
-                        ->orWhere('pdtc.Dui', 'like', '%' . $buscar . '%')
-                        ->orWhere('pdtc.Nit', 'like', '%' . $buscar . '%')
-                        ->orWhere('pdtc.NumeroReferencia', 'like', '%' . $buscar . '%');
-        
-                })
-             
+
                 ->where('pdtc.NoValido', 1)
                 ->where('pdtc.Edad', '<', $deuda->EdadMaximaTerminacion)
                 ->where('pdtc.PolizaDeuda', $poliza)
@@ -2372,7 +2363,7 @@ class DeudaController extends Controller
                     'pdtc.Excluido',
                     DB::raw('SUM(pdtc.saldo_total) as total_saldo'),
                     DB::raw("GROUP_CONCAT(DISTINCT pdtc.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
-                    DB::raw("GROUP_CONCAT(DISTINCT FORMAT(pdtc.saldo_total, 2) SEPARATOR '; ') AS ConcatenatedMonto"),
+                    DB::raw("GROUP_CONCAT(DISTINCT pdtc.saldo_total SEPARATOR '- ') AS ConcatenatedMonto"),
                     //  DB::raw('SUM(SaldoCapital) as saldo_cpital'),
                     DB::raw('SUM(pdtc.SaldoCapital) as saldo_capital'),
                     DB::raw('SUM(pdtc.Intereses) as total_interes'),
@@ -2389,7 +2380,7 @@ class DeudaController extends Controller
                 ->groupBy('pdtc.Dui')
                 ->get();
 
-        
+
 
 
             foreach ($poliza_cumulos as $poliza) {

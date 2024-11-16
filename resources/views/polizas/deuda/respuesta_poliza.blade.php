@@ -311,10 +311,10 @@
                                         </div>
                                         <div role="tabpanel" class="tab-pane  " id="tab_content1" aria-labelledby="home-tab">
                                         <div class="col-md-12 col-sm-12" align="right">
-                                              
+
                                                 <a href="{{ url('exportar/nuevos_registros') }}/{{ $deuda->Id }}"> <button class="btn btn-success"
                                                 {{ $nuevos_registros->count() > 0 ? '' : 'disabled' }}>Descargar Excel</button> </a>
-                                                
+
                                             </div>
                                             <br>
                                             <table class="table table-striped" id="MyTable1">
@@ -358,7 +358,7 @@
                                         <div class="col-md-12 col-sm-12" align="right">
                                                 <a href="{{ url('exportar/registros_eliminados') }}/{{ $deuda->Id }}"> <button class="btn btn-success"
                                                 {{ $registros_eliminados->count() > 0 ? '' : 'disabled' }}>Descargar Excel</button></a>
-                                                
+
                                             </div>
                                             <br>
                                             <table class="table table-striped" id="MyTable2">
@@ -431,7 +431,7 @@
 
                                             <br>
                                             <div class="col-md-6 col-sm-12">
-                                                
+
                                                 <!-- {{-- <div class="input-group">
                                                     <input type="text" id="buscar_valido" class="form-control">
                                                     <span class="input-group-btn">
@@ -451,14 +451,14 @@
                                                 <br>
                                                 <div class="">
 													<label>
-														<input type="checkbox" id="omitir_declaracion" class="flat" /> Omitir registros solo con declaracion jurada
+														<input type="checkbox" id="omitir_declaracion"  /> Omitir registros solo con declaracion jurada
 													</label>
 												</div>
                                             </div>
                                             <div class="col-md-6 col-sm-12" align="right">
                                                 <a href="{{ url('exportar/creditos_validos') }}/{{ $deuda->Id }}" class="btn btn-success">Descargar Excel</a>
                                                 <br>
-                                             
+
                                             </div>
                                             <br>
                                             <br>
