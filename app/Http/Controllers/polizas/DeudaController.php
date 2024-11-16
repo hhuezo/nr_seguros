@@ -2290,7 +2290,9 @@ class DeudaController extends Controller
 
         if ($opcion == 1) {
             $poliza_cumulos = DB::table('poliza_deuda_temp_cartera as pdtc')
-            // $poliza_cumulos = DB::table('poliza_deuda_temp_cartera as pdtc')
+            ->join('poliza_deuda_creditos as pdc', 'pdtc.LineaCredito', '=', 'pdc.Id')
+            ->join('saldos_montos as sm', 'pdc.saldos', '=', 'sm.id')
+            ->join('tipo_cartera as tc', 'pdc.TipoCartera', '=', 'tc.id') // Unir con la tabla tipo_cartera
                 ->select(
                     'pdtc.Id',
                     'pdtc.Dui',
@@ -2310,6 +2312,7 @@ class DeudaController extends Controller
                     'pdtc.NoValido',
                     'pdtc.Excluido',
                     DB::raw("GROUP_CONCAT(DISTINCT pdtc.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
+                    DB::raw("GROUP_CONCAT(DISTINCT FORMAT(pdtc.saldo_total, 2) SEPARATOR '; ') AS ConcatenatedMonto"),
                     DB::raw('SUM(pdtc.SaldoCapital) as saldo_capital'),
                     DB::raw('SUM(pdtc.saldo_total) as total_saldo'),
                     DB::raw('SUM(pdtc.Intereses) as total_interes'),
@@ -2321,9 +2324,7 @@ class DeudaController extends Controller
                     'sm.Abreviatura as Abreviatura',
                     'tc.nombre AS TipoCarteraNombre' // Agregar el nombre de la TipoCartera
                 )
-                ->join('poliza_deuda_creditos as pdc', 'pdtc.LineaCredito', '=', 'pdc.Id')
-                ->join('saldos_montos as sm', 'pdc.saldos', '=', 'sm.id')
-                ->join('tipo_cartera as tc', 'pdc.TipoCartera', '=', 'tc.id') // Unir con la tabla tipo_cartera
+              
              
                 ->where(function ($query) use ($buscar) {
                     $query->whereRaw("CONCAT(pdtc.PrimerNombre, ' ', IFNULL(pdtc.SegundoNombre,''), ' ', pdtc.PrimerApellido, ' ', IFNULL(pdtc.SegundoApellido,''), ' ', IFNULL(pdtc.ApellidoCasada,'')) LIKE ?", ['%' . $buscar . '%'])
@@ -2347,27 +2348,31 @@ class DeudaController extends Controller
 
 
             $poliza_cumulos = DB::table('poliza_deuda_temp_cartera as pdtc')
+            ->join('poliza_deuda_creditos as pdc', 'pdtc.LineaCredito', '=', 'pdc.Id')
+            ->join('saldos_montos as sm', 'pdc.saldos', '=', 'sm.id')
+            ->join('tipo_cartera as tc', 'pdc.TipoCartera', '=', 'tc.id') // Unir con la tabla tipo_cartera
             // $poliza_cumulos = DB::table('poliza_deuda_temp_cartera as pdtc')
                 ->select(
-                    'pdtc.pdtc.Id',
-                    'pdtc.pdtc.Dui',
-                    'pdtc.pdtc.Edad',
-                    'pdtc.pdtc.Nit',
-                    'pdtc.pdtc.PrimerNombre',
-                    'pdtc.pdtc.SegundoNombre',
-                    'pdtc.pdtc.PrimerApellido',
-                    'pdtc.pdtc.SegundoApellido',
-                    'pdtc.pdtc.ApellidoCasada',
-                    'pdtc.pdtc.FechaNacimiento',
-                    'pdtc.pdtc.NumeroReferencia',
-                    'pdtc.pdtc.NoValido',
-                    'pdtc.pdtc.Perfiles',
-                    'pdtc.pdtc.EdadDesembloso',
-                    'pdtc.pdtc.FechaOtorgamiento',
-                    'pdtc.pdtc.NoValido',
-                    'pdtc.pdtc.Excluido',
-                    DB::raw('SUM(pdtc.pdtc.saldo_total) as total_saldo'),
-                    DB::raw("GROUP_CONCAT(DISTINCT pdtc.pdtc.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
+                    'pdtc.Id',
+                    'pdtc.Dui',
+                    'pdtc.Edad',
+                    'pdtc.Nit',
+                    'pdtc.PrimerNombre',
+                    'pdtc.SegundoNombre',
+                    'pdtc.PrimerApellido',
+                    'pdtc.SegundoApellido',
+                    'pdtc.ApellidoCasada',
+                    'pdtc.FechaNacimiento',
+                    'pdtc.NumeroReferencia',
+                    'pdtc.NoValido',
+                    'pdtc.Perfiles',
+                    'pdtc.EdadDesembloso',
+                    'pdtc.FechaOtorgamiento',
+                    'pdtc.NoValido',
+                    'pdtc.Excluido',
+                    DB::raw('SUM(pdtc.saldo_total) as total_saldo'),
+                    DB::raw("GROUP_CONCAT(DISTINCT pdtc.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
+                    DB::raw("GROUP_CONCAT(DISTINCT FORMAT(pdtc.saldo_total, 2) SEPARATOR '; ') AS ConcatenatedMonto"),
                     //  DB::raw('SUM(SaldoCapital) as saldo_cpital'),
                     DB::raw('SUM(pdtc.SaldoCapital) as saldo_capital'),
                     DB::raw('SUM(pdtc.Intereses) as total_interes'),
@@ -2378,20 +2383,17 @@ class DeudaController extends Controller
                     'sm.Abreviatura as Abreviatura',
                     'tc.nombre AS TipoCarteraNombre' // Agregar el nombre de la TipoCartera
                 )
-                ->join('poliza_deuda_creditos as pdc', 'pdtc.LineaCredito', '=', 'pdc.Id')
-                ->join('saldos_montos as sm', 'pdc.saldos', '=', 'sm.id')
-                ->join('tipo_cartera as tc', 'pdc.TipoCartera', '=', 'tc.id') // Unir con la tabla tipo_cartera
                  
                 ->where(function ($query) use ($buscar) {
-                    $query->whereRaw("CONCAT(pdtc.pdtc.PrimerNombre, ' ', IFNULL(pdtc.pdtc.SegundoNombre,''), ' ', pdtc.pdtc.PrimerApellido, ' ', IFNULL(pdtc.pdtc.SegundoApellido,''), ' ', IFNULL(pdtc.pdtc.ApellidoCasada,'')) LIKE ?", ['%' . $buscar . '%'])
-                        ->orWhere('pdtc.pdtc.Dui', 'like', '%' . $buscar . '%')
-                        ->orWhere('pdtc.pdtc.Nit', 'like', '%' . $buscar . '%')
-                        ->orWhere('pdtc.pdtc.NumeroReferencia', 'like', '%' . $buscar . '%');
+                    $query->whereRaw("CONCAT(pdtc.PrimerNombre, ' ', IFNULL(pdtc.SegundoNombre,''), ' ', pdtc.PrimerApellido, ' ', IFNULL(pdtc.SegundoApellido,''), ' ', IFNULL(pdtc.ApellidoCasada,'')) LIKE ?", ['%' . $buscar . '%'])
+                        ->orWhere('pdtc.Dui', 'like', '%' . $buscar . '%')
+                        ->orWhere('pdtc.Nit', 'like', '%' . $buscar . '%')
+                        ->orWhere('pdtc.NumeroReferencia', 'like', '%' . $buscar . '%');
                 })
-                ->where('pdtc.pdtc.Edad', '<', $deuda->EdadMaximaTerminacion)
-                ->where('pdtc.pdtc.NoValido', 0)
-                ->where('pdtc.pdtc.PolizaDeuda', $poliza)
-                ->groupBy('pdtc.pdtc.Dui')
+                ->where('pdtc.Edad', '<', $deuda->EdadMaximaTerminacion)
+                ->where('pdtc.NoValido', 0)
+                ->where('pdtc.PolizaDeuda', $poliza)
+                ->groupBy('pdtc.Dui')
                 ->get();
 
 

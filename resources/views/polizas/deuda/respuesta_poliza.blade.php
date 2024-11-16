@@ -127,29 +127,29 @@
                                 <div class="" role="tabpanel" data-example-id="togglable-tabs">
                                     <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
                                         <li role="presentation" class="active"><a href="#tab_content6" id="edad-tab"
-                                                role="tab" data-toggle="tab" aria-expanded="false">Edad Máxima </a>
+                                                role="tab" data-toggle="tab" aria-expanded="false">Edad <br> Máxima </a>
                                         </li>
                                         <li role="presentation" class=""><a href="#tab_content7"
                                                 id="responsabilidad-tab5" role="tab" data-toggle="tab"
-                                                aria-expanded="false">Responsabilidad Máxima </a>
+                                                aria-expanded="false">Responsabilidad <br> Máxima </a>
                                         </li>
                                         <li role="presentation" class=""><a href="#tab_content1" id="home-tab"
-                                                role="tab" data-toggle="tab" aria-expanded="true">Nuevos registros</a>
+                                                role="tab" data-toggle="tab" aria-expanded="true">Nuevos <br> registros</a>
                                         </li>
                                         <li role="presentation" class=""><a href="#tab_content5" id="profile-tab5"
-                                                role="tab" data-toggle="tab" aria-expanded="false">Registros
+                                                role="tab" data-toggle="tab" aria-expanded="false">Registros <br>
                                                 Eliminados</a>
                                         </li>
                                         <li role="presentation" class=""><a href="#tab_content2" role="tab"
-                                                id="profile-tab" data-toggle="tab" aria-expanded="false">Creditos no
+                                                id="profile-tab" data-toggle="tab" aria-expanded="false">Creditos <br> no
                                                 válidos</a>
                                         </li>
                                         <li role="presentation" class=""><a href="#tab_content3" role="tab"
-                                                id="profile-tab2" data-toggle="tab" aria-expanded="false">Registros con
+                                                id="profile-tab2" data-toggle="tab" aria-expanded="false">Registros <br> con
                                                 requisitos</a>
                                         </li>
                                         <li role="presentation" class=""><a href="#tab_content4" role="tab"
-                                                id="profile-tab2" data-toggle="tab" aria-expanded="false">Extraprimados
+                                                id="profile-tab2" data-toggle="tab" aria-expanded="false">Extraprimados <br>
                                                 excluidos</a>
                                         </li>
                                     </li>
@@ -157,6 +157,7 @@
 
                                     </ul>
                                     <div id="myTabContent" class="tab-content">
+                                        <br>
                                         <div role="tabpanel" class="tab-pane active" id="tab_content6"
                                                 aria-labelledby="edad-tab">
                                                 <br>
@@ -430,22 +431,23 @@
                                             <br>
                                             <div class="col-md-6 col-sm-12">
                                                 
-                                                {{-- <div class="input-group">
+                                                <!-- {{-- <div class="input-group">
                                                     <input type="text" id="buscar_valido" class="form-control">
                                                     <span class="input-group-btn">
                                                         <button type="button" id="btn_valido" class="btn btn-primary">Buscar</button>
                                                         <button type="button" id="btn_limpiarn_valido" class="btn btn-secondary">Limpiar</button>
                                                     </span>
-                                                </div> --}}
+                                                </div> --}} -->
                                                 <div style="display: flex; align-items: center;">
                                                     <div style="width: 20px; height: 20px; background-color: #eeb458; margin-right: 10px;"></div>
                                                     <span>Los créditos rehabilitados se mostrarán de color naranja.</span>
                                                 </div>
                                                 <br>
-                                                <div style="display: flex; align-items: center;">
+                                                <!-- <div style="display: flex; align-items: center;">
                                                     <div style="width: 20px; height: 20px; background-color: #E63946; margin-right: 10px;"></div>
                                                     <span>Los créditos resaltados en rojo han excedido el monto máximo permitido por línea de crédito.</span>
-                                                </div>
+                                                </div> -->
+                                                <br>
                                                 <div class="">
 													<label>
 														<input type="checkbox" id="omitir_declaracion" class="js-switch" /> Omitir registros solo con declaracion jurada
@@ -455,10 +457,7 @@
                                             <div class="col-md-6 col-sm-12" align="right">
                                                 <a href="{{ url('exportar/creditos_validos') }}/{{$deuda->Id}}" class="btn btn-success">Descargar Excel</a>
                                                 <br>
-                                                <div style="display: flex; align-items: center;">
-                                                    <div style="width: 20px; height: 20px; background-color: #E63946; margin-right: 10px;"></div>
-                                                    <span>Los créditos resaltados en rojo han excedido el monto máximo permitido por línea de crédito.</span>
-                                                </div>
+                                             
                                             </div>
                                             <br>
                                             <br>

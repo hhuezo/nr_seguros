@@ -48,7 +48,7 @@
                 <td>{{ $registro->Edad ? $registro->Edad . ' Años' : '' }}</td>
                 <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso . ' Años' : '' }}</td>
                 <td class="text-right">
-                    ${{ number_format($registro->total_saldo, 2,'.',',', '.', ',') }}
+                    ${{ number_format($registro->total_saldo, 2,'.',',') }}
                 </td>
                 <td>{{ $motivo }}</td>
                 <td align="center" data-target="#modal_cambio_credito_valido" data-toggle="modal"
@@ -92,6 +92,7 @@
     <thead>
         <tr>
             <th>Número crédito</th>
+            <th>Monto</th>
             <th>DUI</th>
             <th>NIT</th>
             <th>Nombre</th>
@@ -100,7 +101,7 @@
             <th>Edad otorgamiento</th>
             <th>Fecha otorgamiento</th>
             <th>Requisitos</th>
-            <th>Saldo</th>
+            <th>Cumulo</th>
             <!-- <th>Línea de Crédito</th> -->
         </tr>
             
@@ -113,6 +114,7 @@
         @foreach ($poliza_cumulos->where('Perfiles', '<>', null)->sortBy('Rehabilitado')->reverse() as $registro)
             <tr class="{{ $registro->Rehabilitado == 1 ? 'row-warning' : '' }}">
                 <td>{{ $registro->ConcatenatedNumeroReferencia }}</td>
+                <td>{{ $registro->ConcatenatedMonto}}</td>
                 <td>{{ $registro->Dui }}</td>
                 <td>{{ $registro->Nit }}</td>
                 <td>{{ $registro->PrimerNombre }}
@@ -138,9 +140,9 @@
                     {{ $perfil }}{{ $loop->last ? '' : ', ' }}
                     @endforeach
                 </td>
-                <td
-                    class="text-right {{ $registro->MontoMaximoIndividual <= $registro->total_saldo ? 'row-error' : '' }}">
-                    ${{ number_format($registro->total_saldo, 2,'.',',') }}</td>
+                <td 
+                    class="text-right ">
+                     ${{ number_format($registro->total_saldo, 2,'.',',') }} <i class="{{$registro->MontoMaximoIndividual <= $registro->total_saldo ? 'btn btn-danger fa fa-warning' : '' }}"> </i></td>
                 <!-- <td>{{$registro->TipoCarteraNombre}} {{$registro->Abreviatura}}</td> -->
 
             </tr>
@@ -152,6 +154,7 @@
             0)->sortBy('Rehabilitado')->reverse() as $registro)
             <tr class="table-warning">
                 <td>{{ $registro->ConcatenatedNumeroReferencia }}</td>
+                <td>{{ $registro->ConcatenatedMonto}}</td>
                 <td>{{ $registro->Dui }}</td>
                 <td>{{ $registro->Nit }}</td>
                 <td>{{ $registro->PrimerNombre }}

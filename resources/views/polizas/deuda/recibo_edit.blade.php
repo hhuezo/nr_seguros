@@ -170,31 +170,31 @@
               <table>
                 <tr>
                   <td><b>Monto de Cartera</b></td>
-                  <td class="right"><input type="text" placeholder="Monto de Cartera" style="text-align: right;" value="{{$recibo_historial->MontoCartera}}" name="MontoCartera"></td>
+                  <td class="right"><input type="text" readonly placeholder="Monto de Cartera" style="text-align: right;" value="{{$recibo_historial->MontoCartera}}" name="MontoCartera"></td>
                 </tr>
                 <tr>
                   <td><b>Prima calculada</b></td>
-                  <td class="right"><input type="text" placeholder="Prima Calculada" style="text-align: right;" value="{{$recibo_historial->PrimaCalculada}}" name="PrimaCalculada"></td>
+                  <td class="right"><input type="text" readonly placeholder="Prima Calculada" style="text-align: right;" value="{{$recibo_historial->PrimaCalculada}}" name="PrimaCalculada"></td>
                 </tr>
                 <tr>
                   <td><b>Extra Prima</b></td>
-                  <td class="right"><input type="text" placeholder="Extra Prima " style="text-align: right;" value="{{$recibo_historial->ExtraPrima}}" name="ExtraPrima"></td>
+                  <td class="right"><input type="text" readonly placeholder="Extra Prima " style="text-align: right;" value="{{$recibo_historial->ExtraPrima}}" name="ExtraPrima"></td>
                 </tr>
                 <tr>
                   <td><b>(-) Descuento rentabilidad ({{$recibo_historial->PordentajeDescuento}}%)</b></td>
-                  <td class="right"><input type="text" placeholder="Descuento Rentabilidad (%)" style="text-align: right;" value="{{$recibo_historial->Descuento}}" name="Descuento"></td>
+                  <td class="right"><input type="text" readonly placeholder="Descuento Rentabilidad (%)" style="text-align: right;" value="{{$recibo_historial->Descuento}}" name="Descuento"></td>
                 </tr>
                 <tr>
                   <td><b>(=) Prima descontada</b></td>
-                  <td class="right"><input type="text" placeholder="Prima Descontada" style="text-align: right;" value="{{$recibo_historial->PrimaDescontada}}" name="PrimaDescontada"></td>
+                  <td class="right"><input type="text" readonly placeholder="Prima Descontada" style="text-align: right;" value="{{$recibo_historial->PrimaDescontada}}" name="PrimaDescontada"></td>
                 </tr>
                 <tr>
                   <td><b>(-) Estructura CCF de Comisión</b></td>
-                  <td class="right"><input type="text" placeholder="Estructura CCF" style="text-align: right;" value="{{$recibo_historial->ValorCCF}}" name="ValorCCF"></td>
+                  <td class="right"><input type="text" readonly placeholder="Estructura CCF" style="text-align: right;" value="{{$recibo_historial->ValorCCF}}" name="ValorCCF"></td>
                 </tr>
                 <tr>
                   <td><b>Total a pagar</b></td>
-                  <td class="right"><b><input type="text" placeholder="Total a Pagar" style="text-align: right;" value="{{$recibo_historial->TotalAPagar}}" name="TotalAPagar"></b></td>
+                  <td class="right"><b><input type="text" readonly placeholder="Total a Pagar" style="text-align: right;" value="{{$recibo_historial->TotalAPagar}}" name="TotalAPagar"></b></td>
                 </tr>
               </table>
             </td>
@@ -207,31 +207,31 @@
                 </tr>
                 <tr>
                   <td>Porcentaje de comisión</td>
-                  <td class="right"><input type="text" placeholder="Porcentaje de Comisión" style="text-align: right;" value="{{$recibo_historial->TasaComision}}" name="TasaComision"></td>
+                  <td class="right"><input type="text" readonly placeholder="Porcentaje de Comisión" style="text-align: right;" value="{{$recibo_historial->TasaComision}}" name="TasaComision"></td>
                 </tr>
                 <tr>
                   <td>(=) Prima descontada</td>
-                  <td class="right"><input type="text" placeholder="Prima Descontada" style="text-align: right;" value="{{$recibo_historial->PrimaDescontada}}" name="PrimaDescontada"></td>
+                  <td class="right"><input type="text" readonly placeholder="Prima Descontada" style="text-align: right;" value="{{$recibo_historial->PrimaDescontada}}" name="PrimaDescontada"></td>
                 </tr>
                 <tr>
                   <td>Valor de la comisión</td>
-                  <td class="right"><input type="text" placeholder="Valor de Comisión" style="text-align: right;" value="{{$recibo_historial->Comision}}" name="Comision"></td>
+                  <td class="right"><input type="text" readonly placeholder="Valor de Comisión" style="text-align: right;" value="{{$recibo_historial->Comision}}" name="Comision"></td>
                 </tr>
                 <tr>
                   <td>(+) 13% IVA</td>
-                  <td class="right"><input type="text" placeholder="IVA" style="text-align: right;" value="{{$recibo_historial->IvaSobreComision}}" name="IvaSobreComision"></td>
+                  <td class="right"><input type="text" readonly placeholder="IVA" style="text-align: right;" value="{{$recibo_historial->IvaSobreComision}}" name="IvaSobreComision"></td>
                 </tr>
                 <tr>
                   <td>Sub Total de comision</td>
-                  <td class="right"><input type="text" placeholder="Subtotal Comisión" style="text-align: right;" value="{{$recibo_historial->SubTotalComision}}" name="SubTotalComision"></td>
+                  <td class="right"><input type="text" readonly placeholder="Subtotal Comisión" style="text-align: right;" value="{{$recibo_historial->SubTotalComision}}" name="SubTotalComision"></td>
                 </tr>
                 <tr>
                   <td>Retencion 1%</td>
-                  <td class="right"><input type="text" placeholder="Retención 1%" style="text-align: right;" value="{{$recibo_historial->Retencion}}" name="Retencion"></td>
+                  <td class="right"><input type="text" readonly placeholder="Retención 1%" style="text-align: right;" value="{{$recibo_historial->Retencion}}" name="Retencion"></td>
                 </tr>
                 <tr>
                   <td>Valor del CCF por Comisión</td>
-                  <td class="right"><input type="text" placeholder="Valor CCF" style="text-align: right;" value="{{$recibo_historial->ValorCCF}}" name="ValorCCF"></td>
+                  <td class="right"><input type="text" readonly placeholder="Valor CCF" style="text-align: right;" value="{{$recibo_historial->ValorCCF}}" name="ValorCCF"></td>
                 </tr>
               </table>
             </td>
@@ -252,17 +252,17 @@
             <td class="center"><input type="text" placeholder="Cuota" value="{{$recibo_historial->Cuota}}" name="Cuota"></td>
             <td><input type="text" placeholder="Número de Documento" value="{{$recibo_historial->NumeroCorrelativo}}" name="NumeroCorrelativo"></td>
             <td><input type="date" value="{{$recibo_historial->FechaVencimiento}}" name="FechaVencimiento"></td>
-            <td class="right"><input type="text" placeholder="Prima a Cobrar" style="text-align: right;" value="{{$recibo_historial->PrimaDescontada}}" name="PrimaDescontada"></td>
-            <td class="right"><input type="text" placeholder="Total Comisión" style="text-align: right;" value="{{$recibo_historial->ValorCCF}}" name="ValorCCF"></td>
-            <td class="right"><input type="text" placeholder="Otros" style="text-align: right;" value="{{$recibo_historial->Otros}}" name="Otros"></td>
-            <td class="right"><input type="text" placeholder="Pago Líquido de Prima" style="text-align: right;" value="{{$recibo_historial->TotalAPagar}}" name="TotalAPagar"></td>
+            <td class="right"><input type="text" readonly placeholder="Prima a Cobrar" style="text-align: right;" value="{{$recibo_historial->PrimaDescontada}}" name="PrimaDescontada"></td>
+            <td class="right"><input type="text" readonly placeholder="Total Comisión" style="text-align: right;" value="{{$recibo_historial->ValorCCF}}" name="ValorCCF"></td>
+            <td class="right"><input type="text" readonly placeholder="Otros" style="text-align: right;" value="{{$recibo_historial->Otros}}" name="Otros"></td>
+            <td class="right"><input type="text" readonly placeholder="Pago Líquido de Prima" style="text-align: right;" value="{{$recibo_historial->TotalAPagar}}" name="TotalAPagar"></td>
           </tr>
           <tr>
             <td colspan="3" align="center">TOTAL </td>
-            <td class="right"><input type="text" placeholder="Total Prima a Cobrar" style="text-align: right;" value="{{$recibo_historial->PrimaDescontada}}" name="PrimaDescontada"></td>
-            <td class="right"><input type="text" placeholder="Total de Comisión" style="text-align: right;" value="{{$recibo_historial->ValorCCF}}" name="ValorCCF"></td>
+            <td class="right"><input type="text" readonly placeholder="Total Prima a Cobrar" style="text-align: right;" value="{{$recibo_historial->PrimaDescontada}}" name="PrimaDescontada"></td>
+            <td class="right"><input type="text" readonly placeholder="Total de Comisión" style="text-align: right;" value="{{$recibo_historial->ValorCCF}}" name="ValorCCF"></td>
             <td class="right"></td>
-            <td class="right"><input type="text" placeholder="Total liquido de prima" style="text-align: right;" value="{{$recibo_historial->TotalAPagar}}" name="TotalAPagar"></td>
+            <td class="right"><input type="text" readonly placeholder="Total liquido de prima" style="text-align: right;" value="{{$recibo_historial->TotalAPagar}}" name="TotalAPagar"></td>
           </tr>
         </table>
         <br>

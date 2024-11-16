@@ -139,13 +139,17 @@ class DeudaCarteraController extends Controller
             if ($request->validacion_dui == 'on') {
                 $validador_dui = true;
             } else {
-                $validador_dui = $this->validarDocumento($obj->Dui, "dui");
+                if ($obj->Nacionalidad == 'SAL' || $obj->Nacionalidad == 'Sal' || $obj->Nacionalidad == 'sal') {
+                    $validador_dui = $this->validarDocumento($obj->Dui, "dui");
 
-                if ($validador_dui == false) {
-                    $obj->TipoError = 2;
-                    $obj->update();
+                    if ($validador_dui == false) {
+                        $obj->TipoError = 2;
+                        $obj->update();
 
-                    array_push($errores_array, 2);
+                        array_push($errores_array, 2);
+                    }
+                } else {
+                    $validador_dui = true;
                 }
             }
 
@@ -463,7 +467,7 @@ class DeudaCarteraController extends Controller
                 ->where('saldo_total', '>=', $requisito->MontoInicial)->where('saldo_total', '<=', $requisito->MontoFinal)
                 ->pluck('Dui')->toArray();
 
-              //  dd($data_dui_cartera,$requisito);
+            //  dd($data_dui_cartera,$requisito);
 
             //PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Perfiles', null)->whereIn('Dui', $data_dui_cartera)->update(['Perfiles' => $requisito->perfil->Descripcion]);
 
