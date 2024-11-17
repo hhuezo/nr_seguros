@@ -116,6 +116,16 @@ class DeudaCarteraController extends Controller
 
 
         foreach ($cartera_temp as $obj) {
+            
+            $fecha = PolizaDeudaCartera::select('Mes', 'Axo', 'FechaInicio', 'FechaFinal')
+                ->where('PolizaDeuda', '=', $deuda->Id)
+                ->where(function ($query) {
+                    $query->where('PolizaDeudaDetalle', '=', 0)
+                        ->orWhere('PolizaDeudaDetalle', '=', null);
+                })
+                ->orderByDesc('Id')->first();
+                $tipo_cartera = $obj->linea_credito->Saldos;
+                dd($deuda, $tipo_cartera, $obj->linea_credito->Id, $fecha);
             $errores_array = [];
             // 1 error formato fecha nacimiento
             $validador_fecha_nacimiento = $this->validarFormatoFecha($obj->FechaNacimiento);
@@ -155,19 +165,12 @@ class DeudaCarteraController extends Controller
             //  $obj->saldo_total = $obj->calculoTodalSaldo(); 
             //inicio calculo de tasas diferenciadas
 
-            $fecha = PolizaDeudaCartera::select('Mes', 'Axo', 'FechaInicio', 'FechaFinal')
-                ->where('PolizaDeuda', '=', $deuda->Id)
-                ->where(function ($query) {
-                    $query->where('PolizaDeudaDetalle', '=', 0)
-                        ->orWhere('PolizaDeudaDetalle', '=', null);
-                })
-                ->orderByDesc('Id')->first();
+
             $saldo = 0;
             if ($fecha) {
                 $tipo_cartera = $obj->linea_credito->Saldos;
                 // dd($tipo_cartera);
                 try {
-                    dd($deuda, $tipo_cartera, $obj->linea_credito->Id, $fecha);
                     switch ($tipo_cartera) {
                         case '1':
                             # saldo a capital
