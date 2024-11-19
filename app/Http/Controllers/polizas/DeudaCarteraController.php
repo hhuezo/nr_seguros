@@ -152,10 +152,10 @@ class DeudaCarteraController extends Controller
                     if ($obj->Pasaporte == null || $obj->Pasaporte == '') {
                         $validador_dui = false;
                         if ($validador_dui == false) {
-                            $obj->TipoError = 2;
+                            $obj->TipoError = 8;
                             $obj->update();
     
-                            array_push($errores_array, 2);
+                            array_push($errores_array, 8);
                         }
                     } else {
                         $validador_dui = true;

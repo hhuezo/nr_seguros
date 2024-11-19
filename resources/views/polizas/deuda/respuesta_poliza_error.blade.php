@@ -100,6 +100,14 @@
                                                     {{ $registro->NumeroReferencia }}
                                                 @endif
                                             </td>
+                                            <td class="{{ in_array(8, $registro->Errores) ? 'alert alert-danger alert-dismissible' : '' }}"
+                                                role="alert">
+                                                @if (in_array(8, $registro->Errores))
+                                                    <strong>{{ $registro->Pasaporte }}</strong>
+                                                @else
+                                                    {{ $registro->Pasaporte }}
+                                                @endif
+                                            </td>
                                         </tr>
                                     @endforeach
 
