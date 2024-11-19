@@ -149,7 +149,17 @@ class DeudaCarteraController extends Controller
                         array_push($errores_array, 2);
                     }
                 } else {
-                    $validador_dui = true;
+                    if ($obj->Pasaporte == null || $obj->Pasaporte == '') {
+                        $validador_dui = false;
+                        if ($validador_dui == false) {
+                            $obj->TipoError = 2;
+                            $obj->update();
+    
+                            array_push($errores_array, 2);
+                        }
+                    } else {
+                        $validador_dui = true;
+                    }
                 }
             }
 
@@ -455,8 +465,8 @@ class DeudaCarteraController extends Controller
         SUM(InteresesMoratorios) as total_moratorios, SUM(MontoNominal) as total_monto_nominal')->groupBy('Dui')->get();
 
 
-         //dejando los perfiles nulos como valor inicial
-         PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->update(['Perfiles' => null]);
+        //dejando los perfiles nulos como valor inicial
+        PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->update(['Perfiles' => null]);
 
 
         //definiendo edad maxima segu requisitos
@@ -468,8 +478,8 @@ class DeudaCarteraController extends Controller
             $data_dui_cartera = $poliza_cumulos->where('Edad', '>=', $requisito->EdadInicial)->where('Edad', '<=', $requisito->EdadFinal)
                 ->where('saldo_total', '>=', $requisito->MontoInicial)->where('saldo_total', '<=', $requisito->MontoFinal)
                 ->pluck('Dui')->toArray();
-                
-                PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
+
+            PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
                 ->whereIn('Dui', $data_dui_cartera)
                 ->update([
                     'Perfiles' => DB::raw(
