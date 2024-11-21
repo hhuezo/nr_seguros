@@ -115,19 +115,23 @@
                 @if (isset($filtro) && $filtro == 1 && trim($registro->Perfiles) == 'Declaracion de salud Jurada')
                 @else
                     <tr class="{{ $registro->Rehabilitado == 1 ? 'row-warning' : '' }}">
-                        <td>{{ $registro->ConcatenatedNumeroReferencia }}</td>
+                        <td>{{ $registro->ConcatenatedNumeroReferencia }} </td>
                         <td>
                             @php
                                 $montos = explode('-', $registro->ConcatenatedMonto);
+                                $tiposCartera = explode(',', $registro->TipoCarteraNombre);
+                                $registroCount = count($montos);
                             @endphp
 
-                            @foreach ($montos as $monto)
-                             <div class="{{ $monto > $registro->MontoMaximoIndividual ? 'text-danger' : '' }}">
-                                ${{ number_format((float) $monto, 2, '.', ',') }}
-                            </div>
+                            @foreach ($montos as $index => $monto)
+                                @if (isset($tiposCartera[$index]))  <!-- Verifica si hay un valor correspondiente en el array de tipos -->
+                                    <div class="{{ $monto > $registro->MontoMaximoIndividual ? 'text-danger' : '' }}">
+                                        <strong>
+                                            ${{ number_format((float) $monto, 2, '.', ',') }} ({{ $tiposCartera[$index] }})                                        </strong>
+                                    </div>
+                                @endif
                             @endforeach
                         </td>
-
                         <td>{{ $registro->Dui }}</td>
                         <td>{{ $registro->Nit }}</td>
                         <td>{{ $registro->PrimerNombre }}

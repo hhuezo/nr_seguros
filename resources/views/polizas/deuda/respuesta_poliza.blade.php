@@ -444,6 +444,11 @@
                                                     <span>Los créditos rehabilitados se mostrarán de color naranja.</span>
                                                 </div>
                                                 <br>
+                                                <div style="display: flex; align-items: center;">
+                                                    <div style="width: 20px; height: 20px; background-color: #b12020; margin-right: 10px;"></div>
+                                                    <span>Los montos resaltados en rojo han pasado el monto limite por linea.</span>
+                                                </div>
+                                                <br>
                                                 <!-- <div style="display: flex; align-items: center;">
                                                     <div style="width: 20px; height: 20px; background-color: #E63946; margin-right: 10px;"></div>
                                                     <span>Los créditos resaltados en rojo han excedido el monto máximo permitido por línea de crédito.</span>

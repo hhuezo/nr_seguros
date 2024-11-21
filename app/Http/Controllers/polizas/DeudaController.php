@@ -2364,6 +2364,7 @@ class DeudaController extends Controller
                     DB::raw('SUM(pdtc.saldo_total) as total_saldo'),
                     DB::raw("GROUP_CONCAT(DISTINCT pdtc.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
                     DB::raw("GROUP_CONCAT(DISTINCT pdtc.saldo_total SEPARATOR '- ') AS ConcatenatedMonto"),
+                    DB::raw("GROUP_CONCAT(tc.nombre SEPARATOR ', ') AS TipoCarteraNombre"),
                     //  DB::raw('SUM(SaldoCapital) as saldo_cpital'),
                     DB::raw('SUM(pdtc.SaldoCapital) as saldo_capital'),
                     DB::raw('SUM(pdtc.Intereses) as total_interes'),
@@ -2372,7 +2373,7 @@ class DeudaController extends Controller
                     DB::raw('SUM(pdtc.MontoNominal) as total_monto_nominal'),
                     'pdc.MontoMaximoIndividual as MontoMaximoIndividual',
                     'sm.Abreviatura as Abreviatura',
-                    'tc.nombre AS TipoCarteraNombre' // Agregar el nombre de la TipoCartera
+                    //'tc.nombre AS TipoCarteraNombre' // Agregar el nombre de la TipoCartera
                 )
                 ->where('pdtc.Edad', '<', $deuda->EdadMaximaTerminacion)
                 ->where('pdtc.NoValido', 0)
