@@ -28,7 +28,18 @@
                         <td>{{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
                         <td> {{ $obj->total_registros}}</td>
                         <td> <a class="btn btn-primary on-default edit-row" title="Consultar Pago" onclick="mostrar_historial({{$obj->Axo}}, {{$obj->Mes}}, {{ \Carbon\Carbon::parse($obj->FechaInicio)->format('Ymd') }}, {{ \Carbon\Carbon::parse($obj->FechaFinal)->format('Ymd') }}, {{$id}});">
-                            <i class="fa fa-eye fa-lg"></i></a></td>
+                                <i class="fa fa-eye fa-lg"></i></a>
+                            <form action="{{url('polizas/deuda/exportar_historial')}}" method="post">
+                                @csrf
+                                <input type="hidden" name="Axo" id="Axo" value="{{$obj->Axo}}">
+                                <input type="hidden" name="Mes" id="Mes" value="{{$obj->Mes}}">
+                                <input type="hidden" name="FechaInicio" id="FechaInicio" value="{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('Ymd') }}">
+                                <input type="hidden" name="FechaFinal" id="FechaFinal" value="{{ \Carbon\Carbon::parse($obj->FechaFinal)->format('Ymd') }}">
+                                <input type="hidden" name="PolizaDeuda" id="PolizaDeuda" value="{{$id}}">
+                                <button class="btn btn-success on-default edit-row" title="Exportar Pago">
+                                    <i class="fa fa-file-excel-o fa-lg"></i></button>
+                            </form>
+                        </td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -39,25 +50,25 @@
 <div class="modal fade " id="modal_historial" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
     <div class="modal-dialog modal-lg" role="document" style="width: 70%!important;">
         <div class="modal-content">
-                <div class="modal-header">
-                    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
-                        <h5 class="modal-title" id="exampleModalLabel">Histórico de pagos</h5>
-                    </div>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+            <div class="modal-header">
+                <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                    <h5 class="modal-title" id="exampleModalLabel">Histórico de pagos</h5>
                 </div>
-                <div class="modal-body">
-                    <div class="box-body" id="historial_table">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="box-body" id="historial_table">
 
 
-                    </div>
                 </div>
-                <div class="clearfix"></div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Aceptar</button>
-                </div>
+            </div>
+            <div class="clearfix"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Aceptar</button>
+            </div>
         </div>
     </div>
 </div>
