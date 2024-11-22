@@ -176,7 +176,7 @@
                                                     <input type="hidden" name="MesActual"
                                                         value="{{ date('m', strtotime($date)) }}">
                                                     <button style="text-align: right;"
-                                                        class="btn btn-primary">Exportar</button>
+                                                        class="btn btn-success">Descargar Excel</button>
                                                 </form>
 
                                             </div>
@@ -241,7 +241,7 @@
                                                     <input type="hidden" name="Tipo" value="0">
                                                     <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
                                                     <input type="hidden" name="MesActual" value="{{ date('m', strtotime($date)) }}">
-                                                    <button style="text-align: right;" class="btn btn-primary">Exportar</button>
+                                                    <button style="text-align: right;" class="btn btn-success">Descargar Excel</button>
                                                 </form>
 
 
