@@ -92,7 +92,7 @@
         <thead>
             <tr>
                 <th>Número crédito</th>
-                <th>Monto</th>
+                {{-- <th>Monto</th> --}}
                 <th>DUI</th>
                 <th>NIT</th>
                 <th>Nombre</th>
@@ -101,7 +101,7 @@
                 <th>Edad otorgamiento</th>
                 <th>Fecha otorgamiento</th>
                 <th>Requisitos</th>
-                <th>Cumulo</th>
+                <th>Cúmulo</th>
                 <!-- <th>Línea de Crédito</th> -->
             </tr>
 
@@ -115,20 +115,34 @@
                 @if (isset($filtro) && $filtro == 1 && trim($registro->Perfiles) == 'Declaracion de salud Jurada')
                 @else
                     <tr class="{{ $registro->Rehabilitado == 1 ? 'row-warning' : '' }}">
-                        <td>{{ $registro->ConcatenatedNumeroReferencia }} </td>
+                        {{-- <td>{{ $registro->ConcatenatedNumeroReferencia }} </td> --}}
                         <td>
                             @php
                                 $montos = explode('-', $registro->ConcatenatedMonto);
                                 $tiposCartera = explode(',', $registro->TipoCarteraNombre);
+                                $referencias = explode(',', $registro->ConcatenatedNumeroReferencia);
+
                                 $registroCount = count($montos);
                             @endphp
 
                             @foreach ($montos as $index => $monto)
-                                @if (isset($tiposCartera[$index]))  <!-- Verifica si hay un valor correspondiente en el array de tipos -->
-                                    <div class="{{ $monto > $registro->MontoMaximoIndividual ? 'text-danger' : '' }}">
-                                        <strong>
-                                            ${{ number_format((float) $monto, 2, '.', ',') }} ({{ $tiposCartera[$index] }})                                        </strong>
-                                    </div>
+                                @if (isset($tiposCartera[$index]))
+                                    @if ($monto > $registro->MontoMaximoIndividual)
+                                        <li class="text-danger" style="font-size: 12px;">
+                                            <strong>
+                                                {{ $referencias[$index] }}
+                                                ${{ number_format((float) $monto, 2, '.', ',') }}
+                                                ({{ $tiposCartera[$index] }})
+                                            </strong>
+                                        </li>
+                                    @else
+                                        <li style="font-size: 12px;">
+                                            {{ $referencias[$index] }}
+                                            ${{ number_format((float) $monto, 2, '.', ',') }}
+                                            ({{ $tiposCartera[$index] }})
+
+                                        </li>
+                                    @endif
                                 @endif
                             @endforeach
                         </td>
@@ -170,8 +184,36 @@
                 @if (isset($filtro) && $filtro == 1 && trim($registro->Perfiles) == 'Declaracion de salud Jurada')
                 @else
                     <tr class="table-warning">
-                        <td>{{ $registro->ConcatenatedNumeroReferencia }}</td>
-                        <td>{{ $registro->ConcatenatedMonto }}</td>
+                        <td>
+                            @php
+                                $montos = explode('-', $registro->ConcatenatedMonto);
+                                $tiposCartera = explode(',', $registro->TipoCarteraNombre);
+                                $referencias = explode(',', $registro->ConcatenatedNumeroReferencia);
+
+                                $registroCount = count($montos);
+                            @endphp
+
+                            @foreach ($montos as $index => $monto)
+                                @if (isset($tiposCartera[$index]))
+                                    @if ($monto > $registro->MontoMaximoIndividual)
+                                        <li class="text-danger" style="font-size: 12px;">
+                                            <strong>
+                                                {{ $referencias[$index] }}
+                                                ${{ number_format((float) $monto, 2, '.', ',') }}
+                                                ({{ $tiposCartera[$index] }})
+                                            </strong>
+                                        </li>
+                                    @else
+                                        <li style="font-size: 12px;">
+                                            {{ $referencias[$index] }}
+                                            ${{ number_format((float) $monto, 2, '.', ',') }}
+                                            ({{ $tiposCartera[$index] }})
+
+                                        </li>
+                                    @endif
+                                @endif
+                            @endforeach
+                        </td>
                         <td>{{ $registro->Dui }}</td>
                         <td>{{ $registro->Nit }}</td>
                         <td>{{ $registro->PrimerNombre }}
