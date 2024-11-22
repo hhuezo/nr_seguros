@@ -131,15 +131,15 @@
                                         <li class="text-danger" style="font-size: 12px;">
                                             <strong>
                                                 {{ $referencias[$index] }}
-                                                ${{ number_format((float) $monto, 2, '.', ',') }}
-                                                ({{ $tiposCartera[$index] }})
+                                                (${{ number_format((float) $monto, 2, '.', ',') }}
+                                                {{ $tiposCartera[$index] }})
                                             </strong>
                                         </li>
                                     @else
                                         <li style="font-size: 12px;">
                                             {{ $referencias[$index] }}
-                                            ${{ number_format((float) $monto, 2, '.', ',') }}
-                                            ({{ $tiposCartera[$index] }})
+                                            (${{ number_format((float) $monto, 2, '.', ',') }}
+                                           {{ $tiposCartera[$index] }})
 
                                         </li>
                                     @endif
@@ -199,15 +199,15 @@
                                         <li class="text-danger" style="font-size: 12px;">
                                             <strong>
                                                 {{ $referencias[$index] }}
-                                                ${{ number_format((float) $monto, 2, '.', ',') }}
-                                                ({{ $tiposCartera[$index] }})
+                                                (${{ number_format((float) $monto, 2, '.', ',') }}
+                                               {{ $tiposCartera[$index] }})
                                             </strong>
                                         </li>
                                     @else
                                         <li style="font-size: 12px;">
                                             {{ $referencias[$index] }}
-                                            ${{ number_format((float) $monto, 2, '.', ',') }}
-                                            ({{ $tiposCartera[$index] }})
+                                            (${{ number_format((float) $monto, 2, '.', ',') }}
+                                            {{ $tiposCartera[$index] }})
 
                                         </li>
                                     @endif
