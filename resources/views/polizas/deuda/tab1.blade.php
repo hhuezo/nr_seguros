@@ -233,6 +233,7 @@
                                     <th>Edad Desde</th>
                                     <th>Edad Hasta</th>
                                     <th>Tasa por Edad</th>
+                                    <th>Valor máximo</th>
 
                                 </tr>
                             </thead>
@@ -257,7 +258,7 @@
                                     <td>{{ isset($obj->EdadDesde) ? $obj->EdadDesde . 'años' : '' }}</td>
                                     <td>{{ isset($obj->EdadHasta) ? $obj->EdadHasta . 'años' : '' }}</td>
                                     <td>{{ isset($obj->TasaEdad) ? $obj->TasaEdad . '%' : '' }} </td>
-
+                                    <td>{{ isset($obj->MontoMaximoIndividual) ? '$' . number_format($obj->MontoMaximoIndividual, 2, '.', ',') : '' }}</td>
                                 </tr>
 
 
