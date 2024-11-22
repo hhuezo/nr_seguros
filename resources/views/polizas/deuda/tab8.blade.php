@@ -27,19 +27,26 @@
                         <td>{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
                         <td>{{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
                         <td> {{ $obj->total_registros}}</td>
-                        <td> <a class="btn btn-primary on-default edit-row" title="Consultar Pago" onclick="mostrar_historial({{$obj->Axo}}, {{$obj->Mes}}, {{ \Carbon\Carbon::parse($obj->FechaInicio)->format('Ymd') }}, {{ \Carbon\Carbon::parse($obj->FechaFinal)->format('Ymd') }}, {{$id}});">
-                                <i class="fa fa-eye fa-lg"></i></a>
-                            <form action="{{url('polizas/deuda/exportar_historial')}}" method="post">
-                                @csrf
-                                <input type="hidden" name="Axo" id="Axo" value="{{$obj->Axo}}">
-                                <input type="hidden" name="Mes" id="Mes" value="{{$obj->Mes}}">
-                                <input type="hidden" name="FechaInicio" id="FechaInicio" value="{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('Ymd') }}">
-                                <input type="hidden" name="FechaFinal" id="FechaFinal" value="{{ \Carbon\Carbon::parse($obj->FechaFinal)->format('Ymd') }}">
-                                <input type="hidden" name="PolizaDeuda" id="PolizaDeuda" value="{{$id}}">
-                                <button class="btn btn-success on-default edit-row" title="Exportar Pago">
-                                    <i class="fa fa-file-excel-o fa-lg"></i></button>
-                            </form>
+                        <td>
+                            <div style=" display: flex;gap: 10px; align-items: center;">
+                                <a class="btn btn-primary on-default edit-row" title="Consultar Pago"
+                                   onclick="mostrar_historial({{$obj->Axo}}, {{$obj->Mes}}, {{ \Carbon\Carbon::parse($obj->FechaInicio)->format('Ymd') }}, {{ \Carbon\Carbon::parse($obj->FechaFinal)->format('Ymd') }}, {{$id}});">
+                                    <i class="fa fa-eye fa-lg"></i>
+                                </a>
+                                <form action="{{url('polizas/deuda/exportar_historial')}}" method="post" style="display:inline-block;">
+                                    @csrf
+                                    <input type="hidden" name="Axo" id="Axo" value="{{$obj->Axo}}">
+                                    <input type="hidden" name="Mes" id="Mes" value="{{$obj->Mes}}">
+                                    <input type="hidden" name="FechaInicio" id="FechaInicio" value="{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('Ymd') }}">
+                                    <input type="hidden" name="FechaFinal" id="FechaFinal" value="{{ \Carbon\Carbon::parse($obj->FechaFinal)->format('Ymd') }}">
+                                    <input type="hidden" name="PolizaDeuda" id="PolizaDeuda" value="{{$id}}">
+                                    <button class="btn btn-success on-default edit-row" style="margin-top: 15px" title="Exportar Pago">
+                                        <i class="fa fa-file-excel-o fa-lg"></i>
+                                    </button>
+                                </form>
+                            </div>
                         </td>
+
                     </tr>
                     @endforeach
                 </tbody>
