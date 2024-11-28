@@ -961,8 +961,9 @@ class DeudaController extends Controller
 
     public function save_recibo($detalle, $deuda)
     {
+      //      dd($detalle);
         $recibo_historial = new DeudaHistorialRecibo();
-        $recibo_historial->PolizaDeudaDetalle = $id;
+        $recibo_historial->PolizaDeudaDetalle = $detalle->Id;
         $recibo_historial->ImpresionRecibo = $detalle->ImpresionRecibo; //Carbon::now();
         $recibo_historial->NombreCliente = $deuda->clientes->Nombre;
         $recibo_historial->NitCliente = $deuda->clientes->Nit;
@@ -995,7 +996,7 @@ class DeudaController extends Controller
         $recibo_historial->Retencion = $detalle->Retencion;
         $recibo_historial->ValorCCF = $detalle->ValorCCF;
         $recibo_historial->FechaVencimiento = $detalle->FechaInicio;
-        $recibo_historial->NumeroCorrelativo = $detalle->NumeroCorrelativo;
+        $recibo_historial->NumeroCorrelativo = $detalle->NumeroCorrelativo ?? '01';
         $recibo_historial->Cuota = '01/01';
         $recibo_historial->Otros = $detalle->Otros ?? 0;
 
@@ -1029,6 +1030,11 @@ class DeudaController extends Controller
     {
         $detalle = DeudaDetalle::findOrFail($id);
         $deuda = Deuda::findOrFail($detalle->Deuda);
+        $recibo_historial = DeudaHistorialRecibo::where('PolizaDeudaDetalle', $id)->orderBy('id', 'desc')->first();
+        if (!$recibo_historial) {
+            $recibo_historial = $this->save_recibo($detalle, $deuda);
+            //dd("insert");
+        }
         $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
         $recibo_historial = DeudaHistorialRecibo::where('PolizaDeudaDetalle', $id)->orderBy('id', 'desc')->first();
@@ -1082,7 +1088,7 @@ class DeudaController extends Controller
         $recibo_historial->Retencion = $request->Retencion;
         $recibo_historial->ValorCCF = $request->ValorCCF;
         $recibo_historial->FechaVencimiento = $request->FechaVencimiento ?? $detalle->FechaInicio;
-        $recibo_historial->NumeroCorrelativo = $request->NumeroCorrelativo;
+        $recibo_historial->NumeroCorrelativo = $request->NumeroCorrelativo ??  '01';
         $recibo_historial->Cuota = $request->Cuota ?? '01/01';
         $recibo_historial->Otros = $detalle->Otros ?? 0;
 
