@@ -102,7 +102,7 @@
                 <th>Fecha otorgamiento</th>
                 <th>Requisitos</th>
                 <th>Cúmulo</th>
-                <!-- <th>Línea de Crédito</th> -->
+                <th>Detalle</th>
             </tr>
 
 
@@ -118,33 +118,9 @@
                         {{-- <td>{{ $registro->ConcatenatedNumeroReferencia }} </td> --}}
                         <td>
                             @php
-                                $montos = explode('-', $registro->ConcatenatedMonto);
-                                $tiposCartera = explode(',', $registro->TipoCarteraNombre);
                                 $referencias = explode(',', $registro->ConcatenatedNumeroReferencia);
-
-                                $registroCount = count($montos);
                             @endphp
-
-                            @foreach ($montos as $index => $monto)
-                                @if (isset($tiposCartera[$index]))
-                                    @if ($monto > $registro->MontoMaximoIndividual)
-                                        <li class="text-danger" style="font-size: 12px;">
-                                            <strong>
-                                                {{ $referencias[$index] }}
-                                                (${{ number_format((float) $monto, 2, '.', ',') }}
-                                                {{ $tiposCartera[$index] }})
-                                            </strong>
-                                        </li>
-                                    @else
-                                        <li style="font-size: 12px;">
-                                            {{ $referencias[$index] }}
-                                            (${{ number_format((float) $monto, 2, '.', ',') }}
-                                           {{ $tiposCartera[$index] }})
-
-                                        </li>
-                                    @endif
-                                @endif
-                            @endforeach
+                            {{ implode(', ', $referencias) }}
                         </td>
                         <td>{{ $registro->Dui }}</td>
                         <td>{{ $registro->Nit }}</td>
@@ -172,7 +148,13 @@
                             ${{ number_format($registro->total_saldo, 2, '.', ',') }}
                             <i
                                 class="{{ $registro->MontoMaximoIndividual <= $registro->total_saldo ? 'btn btn-danger fa fa-warning' : '' }}"></i>
+
+
+
                         </td>
+                        <td><button type="button" class="btn btn-primary" data-toggle="modal"
+                                data-target=".bs-example-modal-lg"
+                                onclick="get_creditos_detalle('{{ $registro->Dui }}')"><i class="fa fa-eye"></i></button></td>
                     </tr>
                     @php $i++ @endphp
                 @endif
@@ -200,7 +182,7 @@
                                             <strong>
                                                 {{ $referencias[$index] }}
                                                 (${{ number_format((float) $monto, 2, '.', ',') }}
-                                               {{ $tiposCartera[$index] }})
+                                                {{ $tiposCartera[$index] }})
                                             </strong>
                                         </li>
                                     @else
@@ -242,7 +224,10 @@
                         <td class="text-right">
                             ${{ number_format($registro->total_saldo, 2, '.', ',') }}</td>
                         <td>{{ $registro->TipoCarteraNombre }} {{ $registro->Abreviatura }}</td>
-
+                        <td><button type="button" class="btn btn-primary" data-toggle="modal"
+                                data-target=".bs-example-modal-lg"
+                                onclick="get_creditos_detalle('{{ $registro->Dui }}')"><i
+                                    class="fa fa-eye"></i></button></td>
                     </tr>
                     @php $i++ @endphp
                 @endif
@@ -257,6 +242,28 @@
 
         </tbody>
     </table>
+
+
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Detalle créditos</h4>
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modal-creditos">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-warning" data-dismiss="modal">Cerrar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <script>
         $(document).ready(function() {
 
@@ -265,6 +272,23 @@
             });
             $('#MyTable3').DataTable();
         });
+
+
+        function get_creditos_detalle(documento) {
+            console.log(documento)
+            $.ajax({
+                url: "{{ url('polizas/deuda/get_creditos_detalle') }}/" + documento,
+                type: 'GET',
+                success: function(response) {
+                    console.log(response);
+                    $('#modal-creditos').html(response);
+                },
+                error: function(error) {
+                    // Aquí manejas el error, si ocurre alguno durante la petición
+                    console.error(error);
+                }
+            });
+        }
     </script>
 
     <script>

@@ -961,7 +961,7 @@ class DeudaController extends Controller
 
     public function save_recibo($detalle, $deuda)
     {
-      //      dd($detalle);
+        //      dd($detalle);
         $recibo_historial = new DeudaHistorialRecibo();
         $recibo_historial->PolizaDeudaDetalle = $detalle->Id;
         $recibo_historial->ImpresionRecibo = $detalle->ImpresionRecibo; //Carbon::now();
@@ -1261,62 +1261,62 @@ class DeudaController extends Controller
         }
     }
 
-    public function exportar_historial(Request $request){
-            // Obtener las fechas en formato YYYYMMDD
-           // dd('oli');
-            $fechaInicio = $request->input('FechaInicio');
-            $fechaFinal = $request->input('FechaFinal');
-    
-            // Convertir las fechas a un formato legible usando Carbon
-            $fechaInicio = Carbon::createFromFormat('Ymd', $fechaInicio)->format('Y-m-d');
-            $fechaFinal = Carbon::createFromFormat('Ymd', $fechaFinal)->format('Y-m-d');
-    
-            $tabla_historico = DB::table('poliza_deuda_cartera as pdtc')
-                ->select(
-                    'pdtc.Id',
-                    'pdtc.Dui',
-                    'pdtc.Edad',
-                    'pdtc.Nit',
-                    'pdtc.PrimerNombre',
-                    'pdtc.SegundoNombre',
-                    'pdtc.PrimerApellido',
-                    'pdtc.SegundoApellido',
-                    'pdtc.ApellidoCasada',
-                    'pdtc.FechaNacimiento',
-                    'pdtc.NumeroReferencia',
-                    'pdtc.NoValido',
-                    'pdtc.EdadDesembloso',
-                    'pdtc.FechaOtorgamiento',
-                    'pdtc.NoValido',
-                    'pdtc.NumeroReferencia AS ConcatenatedNumeroReferencia',
-                    DB::raw('SUM(pdtc.saldo_total) as total_saldo'),
-                    //DB::raw("GROUP_CONCAT(DISTINCT pdtc.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
-                    //  DB::raw('SUM(SaldoCapital) as saldo_cpital'),
-                    DB::raw('SUM(pdtc.SaldoCapital) as saldo_capital'),
-                    DB::raw('SUM(pdtc.Intereses) as total_interes'),
-                    DB::raw('SUM(pdtc.InteresesCovid) as total_covid'),
-                    DB::raw('SUM(pdtc.InteresesMoratorios) as total_moratorios'),
-                    DB::raw('SUM(pdtc.MontoNominal) as total_monto_nominal'),
-                    'pdc.MontoMaximoIndividual as MontoMaximoIndividual',
-                    'sm.Abreviatura as Abreviatura',
-                    'tc.nombre AS TipoCarteraNombre' // Agregar el nombre de la TipoCartera
-                )
-                ->join('poliza_deuda_creditos as pdc', 'pdtc.LineaCredito', '=', 'pdc.Id')
-                ->join('saldos_montos as sm', 'pdc.saldos', '=', 'sm.id')
-                ->join('tipo_cartera as tc', 'pdc.TipoCartera', '=', 'tc.id') // Unir con la tabla tipo_cartera
-                ->where('pdtc.NoValido', 0)
-                ->where('Axo', $request->Axo)
-                ->where('Mes', $request->Mes)
-                ->where('FechaInicio', $request->FechaInicio)
-                ->where('FechaFinal', $request->FechaFinal)
-                ->where('PolizaDeuda', $request->PolizaDeuda)
-                ->groupBy('pdtc.Dui', 'pdtc.NumeroReferencia')
-                ->get();
-              //  dd($tabla_historico);
-    
-           // return view('polizas.deuda.get_historico', compact('tabla_historico'));
-        return Excel::download(new HistoricoPagosExport($tabla_historico), 'historico_pagos.xlsx');
+    public function exportar_historial(Request $request)
+    {
+        // Obtener las fechas en formato YYYYMMDD
+        // dd('oli');
+        $fechaInicio = $request->input('FechaInicio');
+        $fechaFinal = $request->input('FechaFinal');
 
+        // Convertir las fechas a un formato legible usando Carbon
+        $fechaInicio = Carbon::createFromFormat('Ymd', $fechaInicio)->format('Y-m-d');
+        $fechaFinal = Carbon::createFromFormat('Ymd', $fechaFinal)->format('Y-m-d');
+
+        $tabla_historico = DB::table('poliza_deuda_cartera as pdtc')
+            ->select(
+                'pdtc.Id',
+                'pdtc.Dui',
+                'pdtc.Edad',
+                'pdtc.Nit',
+                'pdtc.PrimerNombre',
+                'pdtc.SegundoNombre',
+                'pdtc.PrimerApellido',
+                'pdtc.SegundoApellido',
+                'pdtc.ApellidoCasada',
+                'pdtc.FechaNacimiento',
+                'pdtc.NumeroReferencia',
+                'pdtc.NoValido',
+                'pdtc.EdadDesembloso',
+                'pdtc.FechaOtorgamiento',
+                'pdtc.NoValido',
+                'pdtc.NumeroReferencia AS ConcatenatedNumeroReferencia',
+                DB::raw('SUM(pdtc.saldo_total) as total_saldo'),
+                //DB::raw("GROUP_CONCAT(DISTINCT pdtc.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
+                //  DB::raw('SUM(SaldoCapital) as saldo_cpital'),
+                DB::raw('SUM(pdtc.SaldoCapital) as saldo_capital'),
+                DB::raw('SUM(pdtc.Intereses) as total_interes'),
+                DB::raw('SUM(pdtc.InteresesCovid) as total_covid'),
+                DB::raw('SUM(pdtc.InteresesMoratorios) as total_moratorios'),
+                DB::raw('SUM(pdtc.MontoNominal) as total_monto_nominal'),
+                'pdc.MontoMaximoIndividual as MontoMaximoIndividual',
+                'sm.Abreviatura as Abreviatura',
+                'tc.nombre AS TipoCarteraNombre' // Agregar el nombre de la TipoCartera
+            )
+            ->join('poliza_deuda_creditos as pdc', 'pdtc.LineaCredito', '=', 'pdc.Id')
+            ->join('saldos_montos as sm', 'pdc.saldos', '=', 'sm.id')
+            ->join('tipo_cartera as tc', 'pdc.TipoCartera', '=', 'tc.id') // Unir con la tabla tipo_cartera
+            ->where('pdtc.NoValido', 0)
+            ->where('Axo', $request->Axo)
+            ->where('Mes', $request->Mes)
+            ->where('FechaInicio', $request->FechaInicio)
+            ->where('FechaFinal', $request->FechaFinal)
+            ->where('PolizaDeuda', $request->PolizaDeuda)
+            ->groupBy('pdtc.Dui', 'pdtc.NumeroReferencia')
+            ->get();
+        //  dd($tabla_historico);
+
+        // return view('polizas.deuda.get_historico', compact('tabla_historico'));
+        return Excel::download(new HistoricoPagosExport($tabla_historico), 'historico_pagos.xlsx');
     }
 
 
@@ -2358,9 +2358,9 @@ class DeudaController extends Controller
 
         if ($opcion == 1) {
             $poliza_cumulos = DB::table('poliza_deuda_temp_cartera as pdtc')
-            ->join('poliza_deuda_creditos as pdc', 'pdtc.LineaCredito', '=', 'pdc.Id')
-            ->join('saldos_montos as sm', 'pdc.saldos', '=', 'sm.id')
-            ->join('tipo_cartera as tc', 'pdc.TipoCartera', '=', 'tc.id') // Unir con la tabla tipo_cartera
+                ->join('poliza_deuda_creditos as pdc', 'pdtc.LineaCredito', '=', 'pdc.Id')
+                ->join('saldos_montos as sm', 'pdc.saldos', '=', 'sm.id')
+                ->join('tipo_cartera as tc', 'pdc.TipoCartera', '=', 'tc.id') // Unir con la tabla tipo_cartera
                 ->select(
                     'pdtc.Id',
                     'pdtc.Dui',
@@ -2400,17 +2400,15 @@ class DeudaController extends Controller
                 ->get();
         } else {
 
-
             //creditos rehabilitados
             $poliza_eliminados = DeudaEliminados::where('Poliza', $poliza)->groupBy('NumeroReferencia')->get();
             $poliza_eliminados_array = $poliza_eliminados->pluck('NumeroReferencia')->toArray();
 
-
+            /*
             $poliza_cumulos = DB::table('poliza_deuda_temp_cartera as pdtc')
-            ->join('poliza_deuda_creditos as pdc', 'pdtc.LineaCredito', '=', 'pdc.Id')
-            ->join('saldos_montos as sm', 'pdc.saldos', '=', 'sm.id')
-            ->join('tipo_cartera as tc', 'pdc.TipoCartera', '=', 'tc.id') // Unir con la tabla tipo_cartera
-            // $poliza_cumulos = DB::table('poliza_deuda_temp_cartera as pdtc')
+                ->join('poliza_deuda_creditos as pdc', 'pdtc.LineaCredito', '=', 'pdc.Id')
+                ->join('saldos_montos as sm', 'pdc.saldos', '=', 'sm.id')
+                ->join('tipo_cartera as tc', 'pdc.TipoCartera', '=', 'tc.id') // Unir con la tabla tipo_cartera
                 ->select(
                     'pdtc.Id',
                     'pdtc.Dui',
@@ -2427,13 +2425,10 @@ class DeudaController extends Controller
                     'pdtc.Perfiles',
                     'pdtc.EdadDesembloso',
                     'pdtc.FechaOtorgamiento',
-                    'pdtc.NoValido',
                     'pdtc.Excluido',
                     DB::raw('SUM(pdtc.saldo_total) as total_saldo'),
                     DB::raw("GROUP_CONCAT(DISTINCT pdtc.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
-                    DB::raw("GROUP_CONCAT(DISTINCT pdtc.saldo_total SEPARATOR '- ') AS ConcatenatedMonto"),
                     DB::raw("GROUP_CONCAT(tc.nombre SEPARATOR ', ') AS TipoCarteraNombre"),
-                    //  DB::raw('SUM(SaldoCapital) as saldo_cpital'),
                     DB::raw('SUM(pdtc.SaldoCapital) as saldo_capital'),
                     DB::raw('SUM(pdtc.Intereses) as total_interes'),
                     DB::raw('SUM(pdtc.InteresesCovid) as total_covid'),
@@ -2441,7 +2436,59 @@ class DeudaController extends Controller
                     DB::raw('SUM(pdtc.MontoNominal) as total_monto_nominal'),
                     'pdc.MontoMaximoIndividual as MontoMaximoIndividual',
                     'sm.Abreviatura as Abreviatura',
-                    //'tc.nombre AS TipoCarteraNombre' // Agregar el nombre de la TipoCartera
+                )
+                ->where('pdtc.Edad', '<', $deuda->EdadMaximaTerminacion)
+                ->where('pdtc.NoValido', 0)
+                ->where('pdtc.PolizaDeuda', $poliza)
+                ->groupBy('pdtc.Dui')
+                ->get();*/
+
+
+                $poliza_cumulos = DB::table('poliza_deuda_temp_cartera as pdtc')
+                ->join('poliza_deuda_creditos as pdc', 'pdtc.LineaCredito', '=', 'pdc.Id')
+                ->join('saldos_montos as sm', 'pdc.saldos', '=', 'sm.id')
+                ->join('tipo_cartera as tc', 'pdc.TipoCartera', '=', 'tc.id') // Unir con la tabla tipo_cartera
+                ->select(
+                    'pdtc.Id',
+                    'pdtc.Dui',
+                    'pdtc.Edad',
+                    'pdtc.Nit',
+                    'pdtc.PrimerNombre',
+                    'pdtc.SegundoNombre',
+                    'pdtc.PrimerApellido',
+                    'pdtc.SegundoApellido',
+                    'pdtc.ApellidoCasada',
+                    'pdtc.FechaNacimiento',
+                    'pdtc.NumeroReferencia',
+                    'pdtc.NoValido',
+                    'pdtc.Perfiles',
+                    'pdtc.EdadDesembloso',
+                    'pdtc.FechaOtorgamiento',
+                    'pdtc.Excluido',
+                    DB::raw('SUM(pdtc.saldo_total) as total_saldo'),
+                    DB::raw("GROUP_CONCAT(DISTINCT pdtc.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
+                    DB::raw("GROUP_CONCAT(tc.nombre SEPARATOR ', ') AS TipoCarteraNombre"),
+                    DB::raw('SUM(pdtc.SaldoCapital) as saldo_capital'),
+                    DB::raw('SUM(pdtc.Intereses) as total_interes'),
+                    DB::raw('SUM(pdtc.InteresesCovid) as total_covid'),
+                    DB::raw('SUM(pdtc.InteresesMoratorios) as total_moratorios'),
+                    DB::raw('SUM(pdtc.MontoNominal) as total_monto_nominal'),
+                    'pdc.MontoMaximoIndividual as MontoMaximoIndividual',
+                    'sm.Abreviatura as Abreviatura',
+                    DB::raw("
+                        CASE
+                            WHEN COUNT(
+                                CASE
+                                    WHEN pdtc.NumeroReferencia NOT IN (
+                                        SELECT NumeroReferencia
+                                        FROM poliza_deuda_cartera
+                                    ) THEN 1
+                                    ELSE NULL
+                                END
+                            ) > 0 THEN 1
+                            ELSE 0
+                        END AS Existe
+                    ")
                 )
                 ->where('pdtc.Edad', '<', $deuda->EdadMaximaTerminacion)
                 ->where('pdtc.NoValido', 0)
@@ -2450,9 +2497,8 @@ class DeudaController extends Controller
                 ->get();
 
 
-
-
             foreach ($poliza_cumulos as $poliza) {
+
                 if (in_array($poliza->NumeroReferencia, $poliza_eliminados_array)) {
                     $poliza->Rehabilitado = 1;
                 } else {
@@ -2461,13 +2507,21 @@ class DeudaController extends Controller
             }
         }
         $filtro = 0;
-        if($request->filtro)
-        {
+        if ($request->filtro) {
             $filtro = 1;
         }
 
-        return view('polizas.deuda.get_creditos', compact('poliza_cumulos', 'opcion', 'requisitos','filtro'));
+        return view('polizas.deuda.get_creditos', compact('poliza_cumulos', 'opcion', 'requisitos', 'filtro'));
     }
+
+
+    public function get_creditos_detalle($documento)
+    {
+        $data = PolizaDeudaTempCartera::where('Dui', $documento)->orWhere('Nit', $documento)->get();
+        return view('polizas.deuda.get_creditos_detalle', compact('data'));
+    }
+
+
 
     public function get_historico(Request $request)
     {
