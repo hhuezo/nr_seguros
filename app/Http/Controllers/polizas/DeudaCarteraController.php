@@ -41,24 +41,57 @@ class DeudaCarteraController extends Controller
 
         $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
         $ultimo_pago = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1)->orderBy('Id', 'desc')->first();
-        $ultimo_pago_fecha_final = null;
+
+
+
+        //inicializando valores
+        // Primer día del mes anterior
+        $fecha_inicial = Carbon::now()->subMonth()->startOfMonth()->format('Y-m-d');
+        // Primer día del mes actual
+        $fecha_final = Carbon::now()->startOfMonth()->format('Y-m-d');
+
+
+
+        //dd($registro_cartera);
+
+        $axo = Carbon::parse()->format('Y');
+        $mes = Carbon::parse()->format('m');
+
         if ($ultimo_pago) {
-            $fecha_inicial = Carbon::parse($ultimo_pago->FechaFinal);
-            $fecha_final_temp = $fecha_inicial->addMonth();
-            $ultimo_pago_fecha_final = $fecha_final_temp->format('Y-m-d');
-            $fecha1 = PolizaDeudaCartera::select('Mes', 'Axo', 'FechaInicio', 'FechaFinal')
-                ->where('PolizaDeuda', '=', $id)
-                ->where('PolizaDeudaDetalle', '<>', $ultimo_pago->Id)
-                ->orderByDesc('Id')->first();
-        } else {
-            $ultimo_pago = '';
-            $fecha1 = null;
+            $fecha_inicial = Carbon::parse($ultimo_pago->FechaInicio);
+            $fecha_inicial->addMonth();
+
+            $axo = $fecha_inicial->format('Y');
+            $mes = $fecha_inicial->format('m') + 0;
+
+            $fecha_inicial = $fecha_inicial->format('Y-m-d');
+
+            $fecha_final = Carbon::parse($ultimo_pago->FechaFinal);
+            $fecha_final->addMonth();
+            $fecha_final = $fecha_final->format('Y-m-d');
         }
-        $primerDia = Carbon::now()->startOfMonth();
-        $ultimoDia = Carbon::now()->endOfMonth();
 
 
-        return view('polizas.deuda.subir_archivos', compact('primerDia', 'ultimoDia', 'deuda', 'linea_credito', 'meses', 'ultimo_pago', 'ultimo_pago_fecha_final'));
+
+        //ultimo registro de cartera
+        $registro_cartera = PolizaDeudaTempCartera::where('PolizaDeuda', $id)->first();
+
+        if ($registro_cartera) {
+            $axo = $registro_cartera->Axo;
+            $mes = $registro_cartera->Mes + 0;
+        }
+
+
+
+        return view('polizas.deuda.subir_archivos', compact(
+            'deuda',
+            'linea_credito',
+            'meses',
+            'fecha_inicial',
+            'fecha_final',
+            'axo',
+            'mes'
+        ));
     }
 
 
@@ -115,6 +148,8 @@ class DeudaCarteraController extends Controller
 
 
 
+
+
         foreach ($cartera_temp as $obj) {
             $errores_array = [];
             // 1 error formato fecha nacimiento
@@ -135,6 +170,8 @@ class DeudaCarteraController extends Controller
                 }
             }
 
+
+
             // 2 error formato de dui
             if ($request->validacion_dui == 'on') {
                 $validador_dui = true;
@@ -154,7 +191,7 @@ class DeudaCarteraController extends Controller
                         if ($validador_dui == false) {
                             $obj->TipoError = 8;
                             $obj->update();
-    
+
                             array_push($errores_array, 8);
                         }
                     } else {
@@ -167,14 +204,6 @@ class DeudaCarteraController extends Controller
             $obj->update();
 
 
-            /*
-                //se limpia el nombre completo de espacios en blanco y numeros
-                $obj->PrimerApellido = $this->limpiarNombre($obj->PrimerApellido);
-                $obj->SegundoApellido = $this->limpiarNombre($obj->SegundoApellido);
-                $obj->ApellidoCasada = $this->limpiarNombre($obj->ApellidoCasada);
-                $obj->PrimerNombre = $this->limpiarNombre($obj->PrimerNombre);
-                $obj->SegundoNombre = $this->limpiarNombre($obj->SegundoNombre);
-                */
 
             // 4 nombre o apellido
             if (trim($obj->PrimerApellido) == "" || trim($obj->PrimerNombre) == "") {
@@ -191,6 +220,7 @@ class DeudaCarteraController extends Controller
             if ($validador_fecha_otorgamiento == false) {
                 //trata de convertir la fecha excel en fecha y luego comprobar nuevamente si la fecha convertida es una fecha.
                 $fecha_excel_convertida_otorgamiento = $this->convertDate($obj->FechaOtorgamiento);
+                //dd($obj->FechaOtorgamiento, $fecha_excel_convertida_otorgamiento);
                 $validador_fecha_otorgamiento = $this->validarFormatoFecha($fecha_excel_convertida_otorgamiento);
 
                 if ($validador_fecha_otorgamiento == false || trim($obj->FechaOtorgamiento) == "") {
@@ -199,10 +229,13 @@ class DeudaCarteraController extends Controller
 
                     array_push($errores_array, 5);
                 } else {
+                    //dd($fecha_excel_convertida_otorgamiento, $obj->FechaOtorgamiento);
                     $obj->FechaOtorgamiento = $fecha_excel_convertida_otorgamiento;
                     $obj->update();
                 }
             }
+
+
 
             //6 error formato fecha vencimiento
             $validador_fecha_vencimiento = $this->validarFormatoFecha($obj->FechaVencimiento);
@@ -233,13 +266,15 @@ class DeudaCarteraController extends Controller
             $obj->Errores = $errores_array;
         }
 
+
+
         $data_error = $cartera_temp->where('TipoError', '<>', 0);
 
         if ($data_error->count() > 0) {
             return view('polizas.deuda.respuesta_poliza_error', compact('data_error', 'deuda', 'credito'));
         }
 
-
+        /*
         // Convertir la cadena en un objeto Carbon (la clase de fecha en Laravel)
         $fecha = \Carbon\Carbon::parse($date);
 
@@ -257,7 +292,7 @@ class DeudaCarteraController extends Controller
             ->where('LineaCredito', '=', $credito)
             ->get();
 
-        //dd($tempData->take(20));
+        //dd($tempData->take(20));*/
 
         alert()->success('Exito', 'La cartera fue subida con exito');
 
@@ -265,7 +300,7 @@ class DeudaCarteraController extends Controller
         return back();
 
 
-        // return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date', 'tipo_cartera', 'nombre_cartera'));
+        return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date', 'tipo_cartera', 'nombre_cartera'));
     }
 
 
@@ -293,15 +328,33 @@ class DeudaCarteraController extends Controller
     }
 
     public function convertDate($dateValue)
-    { //función para convertir fechas  excel a fechas unix(que reconoce php)
+    {
         try {
+            // Si el valor es un número, asume que es una fecha de Excel y conviértelo
+            if (is_numeric($dateValue)) {
+                $unixDate = (intval($dateValue) - 25569) * 86400;
+                return gmdate("d/m/Y", $unixDate);
+            }
 
-            $unixDate = (intval($dateValue) - 25569) * 86400;
-            return $unixDate = gmdate("d/m/Y", $unixDate);
+            // Si el valor es una cadena en formato d/m/Y, conviértelo al formato d/m/Y
+            if (Carbon::hasFormat($dateValue, 'd/m/Y')) {
+                $fechaCarbon = Carbon::createFromFormat('d/m/Y', $dateValue);
+                return $fechaCarbon->format('d/m/Y');
+            }
+
+            // Si el valor es una cadena en formato Y/m/d, conviértelo al formato d/m/Y
+            if (Carbon::hasFormat($dateValue, 'Y/m/d')) {
+                $fechaCarbon = Carbon::createFromFormat('Y/m/d', $dateValue);
+                return $fechaCarbon->format('d/m/Y');
+            }
+
+            // Si no coincide con ninguno de los formatos, devolver false
+            return false;
         } catch (Exception $e) {
             return false;
         }
     }
+
 
     public function limpiarNombre($nombre)
     {
@@ -424,6 +477,7 @@ class DeudaCarteraController extends Controller
         $deuda = Deuda::findOrFail($request->Deuda);
 
         $temp_data_fisrt = PolizaDeudaTempCartera::where('PolizaDeuda', $poliza_id)->where('User', auth()->user()->id)->first();
+
         $date_submes = Carbon::create($temp_data_fisrt->Axo, $temp_data_fisrt->Mes, "01");
         $date = Carbon::create($temp_data_fisrt->Axo, $temp_data_fisrt->Mes, "01");
         $date_mes = $date_submes->subMonth();
@@ -431,7 +485,7 @@ class DeudaCarteraController extends Controller
         $date_mes_anterior = $date_anterior->subMonth();
 
 
-
+       // dd($date_mes, $date_mes_anterior);
 
 
 

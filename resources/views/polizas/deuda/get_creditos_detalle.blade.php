@@ -4,6 +4,7 @@
             <th>#</th>
             <th>Nombre</th>
             <th>Fecha otorgamiento</th>
+            <th>Edad otorgamiento</th>
             <th>Monto otorgado</th>
             <th>Total</th>
         </tr>
@@ -21,6 +22,8 @@
                     {{ $obj->SegundoNombre }}
                 </td>
                 <td>{{ $obj->FechaOtorgamiento }}</td>
+                <td>{{ $obj->Edad }}</td>
+
                 <td>  ${{ number_format($obj->MontoOtorgado, 2, '.', ',') }}</td>
                 <td class="text-right">
                     ${{ number_format($obj->saldo_total, 2, '.', ',') }}
@@ -32,7 +35,7 @@
         @endforeach
 
         <tr>
-            <th colspan="4">TOTAL</th>
+            <th colspan="5">TOTAL</th>
 
             <th class="text-right">
                 ${{ number_format($total, 2, '.', ',') }}
