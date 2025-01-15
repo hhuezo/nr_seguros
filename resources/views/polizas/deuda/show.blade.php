@@ -108,12 +108,9 @@
                                     <select name="Productos" id="Productos" class="form-control select2" style="width: 100%">
                                         <option value="" selected disabled>Seleccione...</option>
                                         @foreach ($productos as $obj)
-                                        @if ($obj->Id == $deuda->planes->Producto)
-                                        <option value="{{ $obj->Id }}" selected>{{ $obj->Nombre }}
+                                        <option value="{{ $obj->Id }}" {{$deuda->planes && $obj->Id == $deuda->planes->Producto ? 'selected': '' }}>{{ $obj->Nombre }}
                                         </option>
-                                        @else
-                                        <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
-                                        @endif
+                                    
                                         @endforeach
                                     </select>
                                 </div>

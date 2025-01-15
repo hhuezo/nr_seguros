@@ -564,7 +564,7 @@ set_time_limit(30000);
                 let otros = document.getElementById('otros').innerText;
                 let iva = 0;
                 let ccf = 0;
-                let comision_iva = {{$residencia->ComisionIva}};
+                let comision_iva = {{$residencia->ComisionIva ?? 0}};
                 let total = 0;
                 let tasa_comision = 0;
                 let var_com = {{$residencia->Comision}};
