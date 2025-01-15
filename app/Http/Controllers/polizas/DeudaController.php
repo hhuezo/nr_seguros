@@ -2394,7 +2394,7 @@ class DeudaController extends Controller
                 )
 
                 ->where('pdtc.NoValido', 1)
-                ->where('pdtc.Edad', '<', $deuda->EdadMaximaTerminacion)
+                ->where('pdtc.EdadDesembloso', '<', $deuda->EdadMaximaTerminacion)
                 ->where('pdtc.PolizaDeuda', $poliza)
                 ->groupBy('pdtc.Dui')
                 ->get();
@@ -2406,8 +2406,6 @@ class DeudaController extends Controller
 
             $poliza_cumulos = DB::table('poliza_deuda_temp_cartera as pdtc')
                 ->join('poliza_deuda_creditos as pdc', 'pdtc.LineaCredito', '=', 'pdc.Id')
-                ->join('saldos_montos as sm', 'pdc.saldos', '=', 'sm.id')
-                ->join('tipo_cartera as tc', 'pdc.TipoCartera', '=', 'tc.id') // Unir con la tabla tipo_cartera
                 ->select(
                     'pdtc.Id',
                     'pdtc.Dui',
@@ -2422,20 +2420,18 @@ class DeudaController extends Controller
                     'pdtc.NumeroReferencia',
                     'pdtc.NoValido',
                     'pdtc.Perfiles',
-                    'pdtc.EdadDesembloso',
-                    'pdtc.FechaOtorgamiento',
+                    DB::raw('MAX(pdtc.EdadDesembloso) as EdadDesembloso'),
+                    DB::raw('MAX(pdtc.FechaOtorgamientoDate) as FechaOtorgamiento'),
                     'pdtc.Excluido',
                     'pdtc.OmisionPerfil',
                     DB::raw('SUM(pdtc.saldo_total) as total_saldo'),
                     DB::raw("GROUP_CONCAT(DISTINCT pdtc.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
-                    DB::raw("GROUP_CONCAT(tc.nombre SEPARATOR ', ') AS TipoCarteraNombre"),
                     DB::raw('SUM(pdtc.SaldoCapital) as saldo_capital'),
                     DB::raw('SUM(pdtc.Intereses) as total_interes'),
                     DB::raw('SUM(pdtc.InteresesCovid) as total_covid'),
                     DB::raw('SUM(pdtc.InteresesMoratorios) as total_moratorios'),
                     DB::raw('SUM(pdtc.MontoNominal) as total_monto_nominal'),
                     'pdc.MontoMaximoIndividual as MontoMaximoIndividual',
-                    'sm.Abreviatura as Abreviatura',
                     DB::raw("
                         CASE
                             WHEN COUNT(
@@ -2477,7 +2473,9 @@ class DeudaController extends Controller
 
     public function get_creditos_detalle($documento)
     {
-        $data = PolizaDeudaTempCartera::where('Dui', $documento)->orWhere('Nit', $documento)->get();
+        $data = PolizaDeudaTempCartera::with('linea_credito.tipoCarteras')->where('Dui', $documento)->orWhere('Nit', $documento)->get();
+
+        //dd($data);
         return view('polizas.deuda.get_creditos_detalle', compact('data'));
     }
 

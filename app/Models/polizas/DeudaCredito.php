@@ -2,6 +2,8 @@
 
 namespace App\Models\polizas;
 
+use App\Models\catalogo\SaldoMontos;
+use App\Models\catalogo\TipoCartera;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -27,16 +29,16 @@ class DeudaCredito extends Model
 
     public function tipoCarteras()
     {
-        return $this->belongsTo('App\Models\catalogo\TipoCartera', 'TipoCartera', 'Id');
+        return $this->belongsTo(TipoCartera::class, 'TipoCartera', 'Id');
     }
 
     public function deuda()
     {
-        return $this->belongsTo('App\Models\polizas\Deuda', 'Deuda', 'Id');
+        return $this->belongsTo(Deuda::class, 'Deuda', 'Id');
     }
 
     public function saldos(){
-        return $this->belongsTo('App\Models\catalogo\SaldoMontos', 'Saldos', 'Id');
+        return $this->belongsTo(SaldoMontos::class, 'Saldos', 'Id');
     }
 
 }

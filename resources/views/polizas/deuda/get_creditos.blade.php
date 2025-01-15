@@ -93,8 +93,8 @@
             <tr>
                 <th>Número crédito</th>
                 {{-- <th>Monto</th> --}}
-                <th>DUI</th>
-                <th>NIT</th>
+                <th>DUI/NIT</th>
+                {{-- <th>NIT</th> --}}
                 <th>Nombre</th>
                 <th>Fecha nacimiento</th>
                 <th>Edad actual</th>
@@ -102,7 +102,6 @@
                 <th>Fecha otorgamiento</th>
                 <th>Requisitos</th>
                 <th>Cúmulo</th>
-                <th>Tipo cartera</th>
                 <th>Detalle</th>
             </tr>
 
@@ -113,8 +112,7 @@
 
 
             @foreach ($poliza_cumulos->where('OmisionPerfil', 0)->sortBy('Rehabilitado')->reverse() as $registro)
-                @if (isset($filtro) && $filtro == 1 && trim($registro->Perfiles) == 'Declaracion de salud Jurada')
-                @else
+                @if ($registro->Existe == 0)
                     <tr class="{{ $registro->Rehabilitado == 1 ? 'row-warning' : '' }}">
                         {{-- <td>{{ $registro->ConcatenatedNumeroReferencia }} </td> --}}
                         <td>
@@ -125,8 +123,8 @@
                             @endphp
                             {{ !empty($referencias) ? implode(', ', $referencias) : '' }}
                         </td>
-                        <td>{{ $registro->Dui }}</td>
-                        <td>{{ $registro->Nit }}</td>
+                        <td> {{ $registro->Dui == $registro->Nit ? $registro->Dui : $registro->Dui . ' - ' . $registro->Nit }}
+                        </td>
                         <td>{{ $registro->PrimerNombre }}
                             {{ $registro->SegundoNombre }}
                             {{ $registro->PrimerApellido }}
@@ -136,7 +134,9 @@
                         <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}</td>
                         <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
                         <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }} Años</td>
-                        <td>{{ $registro->FechaOtorgamiento ? $registro->FechaOtorgamiento : '' }}</td>
+                        <td>{{ $registro->FechaOtorgamiento ? date('d/m/Y', strtotime($registro->FechaOtorgamiento)) : '' }}
+                        </td>
+
                         <td>
                             @php
                                 $perfilesArreglo = explode(',', $registro->Perfiles);
@@ -155,8 +155,7 @@
 
 
                         </td>
-
-                        <td>{{ $registro->TipoCarteraNombre }} {{ $registro->Abreviatura }}</td>
+                        {{-- <td>{{ $registro->Existe }}</td> --}}
                         <td><button type="button" class="btn btn-primary" data-toggle="modal"
                                 data-target=".bs-example-modal-lg"
                                 onclick="get_creditos_detalle('{{ $registro->Dui }}')"><i
@@ -234,9 +233,13 @@
             <div class="modal-content">
 
                 <div class="modal-header">
-                    <h4 class="modal-title" id="myModalLabel">Detalle créditos</h4>
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
-                    </button>
+                    <div class="col-md-6">
+                        <h4 class="modal-title" id="myModalLabel">Detalle créditos</h4>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+                        </button>
+                    </div>
                 </div>
                 <div class="modal-body" id="modal-creditos">
 
@@ -253,7 +256,7 @@
         $(document).ready(function() {
 
             $('#MyTable4').DataTable({
-                ordering: false, // Desactiva el ordenamiento
+                //ordering: false, // Desactiva el ordenamiento
                 paging: false // Desactiva la paginación
             });
 

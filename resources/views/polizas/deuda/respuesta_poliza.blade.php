@@ -143,7 +143,7 @@
                                         </li>
                                         <li role="presentation" class=""><a href="#tab_content2" role="tab"
                                                 id="profile-tab" data-toggle="tab" aria-expanded="false">Creditos <br> no
-                                                válidos</a>
+                                                válidos.</a>
                                         </li>
                                         <li role="presentation" class=""><a href="#tab_content3" role="tab"
                                                 id="profile-tab2" data-toggle="tab" aria-expanded="false">Registros <br> con
@@ -407,14 +407,7 @@
                                         </div>
                                         <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="profile-tab">
                                             <div class="col-md-6 col-sm-12">
-                                                <div class="input-group">
-                                                    <input type="text" id="buscar_no_valido" class="form-control">
-                                                    <span class="input-group-btn">
-                                                        <button type="button" id="btn_no_valido" class="btn btn-primary">Buscar</button>
-                                                        <!-- Nuevo botón Borrar -->
-                                                        <button type="button" id="btn_limpiarn_no_valido" class="btn btn-secondary">Limpiar</button>
-                                                    </span>
-                                                </div>
+
                                             </div>
                                             <div class="col-md-6 col-sm-12" align="right">
                                                 <a href="{{ url('exportar/poliza_cumulo') }}" class="btn btn-success">Descargar Excel</a>
@@ -432,13 +425,6 @@
                                             <br>
                                             <div class="col-md-6 col-sm-12">
 
-                                                <!-- {{-- <div class="input-group">
-                                                    <input type="text" id="buscar_valido" class="form-control">
-                                                    <span class="input-group-btn">
-                                                        <button type="button" id="btn_valido" class="btn btn-primary">Buscar</button>
-                                                        <button type="button" id="btn_limpiarn_valido" class="btn btn-secondary">Limpiar</button>
-                                                    </span>
-                                                </div> --}} -->
                                                 <div style="display: flex; align-items: center;">
                                                     <div style="width: 20px; height: 20px; background-color: #eeb458; margin-right: 10px;"></div>
                                                     <span>Los créditos rehabilitados se mostrarán de color naranja.</span>
@@ -449,10 +435,7 @@
                                                     <span>Los montos resaltados en rojo han pasado el monto limite por linea.</span>
                                                 </div>
                                                 <br>
-                                                <!-- <div style="display: flex; align-items: center;">
-                                                    <div style="width: 20px; height: 20px; background-color: #E63946; margin-right: 10px;"></div>
-                                                    <span>Los créditos resaltados en rojo han excedido el monto máximo permitido por línea de crédito.</span>
-                                                </div> -->
+
                                                 <br>
 
                                             </div>
@@ -852,21 +835,6 @@
 
             loadCreditos(2, buscar);
             console.log("hola", buscar);
-        });
-
-        $('#btn_no_valido').on('click', function() {
-            var buscar = document.getElementById('buscar_no_valido').value;
-
-            loadCreditos(1, buscar);
-            console.log(buscar);
-        });
-
-        $('#btn_limpiarn_no_valido').on('click', function() {
-            document.getElementById('buscar_no_valido').value = "";
-            var buscar = "";
-
-            loadCreditos(1, buscar);
-            console.log(buscar);
         });
     </script>
 @endsection

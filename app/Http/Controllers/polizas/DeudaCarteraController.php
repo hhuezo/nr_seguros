@@ -515,7 +515,7 @@ class DeudaCarteraController extends Controller
 
         //cumulos por dui
         $poliza_cumulos = PolizaDeudaTempCartera::selectRaw('Id,Dui,Edad,Nit,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento,Excluido,NoValido
-        NumeroReferencia,SUM(SaldoCapital) as total_saldo,SUM(Intereses) as total_interes,SUM(InteresesCovid) as total_covid,SUM(saldo_total) as saldo_total,
+        NumeroReferencia,SUM(SaldoCapital) as total_saldo,SUM(Intereses) as total_interes,SUM(InteresesCovid) as total_covid,SUM(saldo_total) as saldo_total,EdadDesembloso,
         SUM(InteresesMoratorios) as total_moratorios, SUM(MontoNominal) as total_monto_nominal')->groupBy('Dui')->get();
 
 
@@ -526,7 +526,7 @@ class DeudaCarteraController extends Controller
         //definiendo edad maxima segu requisitos
         //
         $maxEdadMaxima = $deuda->requisitos->max('EdadFinal');
-        PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Edad', '>', $maxEdadMaxima)->update(['NoValido' => 1]);
+        PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('EdadDesembloso', '>', $maxEdadMaxima)->update(['NoValido' => 1]);
 
         //dd($deuda->requisitos);
 
@@ -538,11 +538,8 @@ class DeudaCarteraController extends Controller
             if ($requisito->perfil->PagoAutomatico != 1 && $requisito->perfil->DeclaracionJurada != 1) {
                 $omision_por_perfil = 0;
             }
-            //dd($requisito->perfil,$requisito);
 
-            //$dui_cartera_edad = $poliza_cumulos->where('Edad', '>=', $requisito->EdadInicial)->where('Edad', '<=', $requisito->EdadFinal)->pluck('Dui')->toArray();
-
-            $data_dui_cartera = $poliza_cumulos->where('Edad', '>=', $requisito->EdadInicial)->where('Edad', '<=', $requisito->EdadFinal)
+            $data_dui_cartera = $poliza_cumulos->where('EdadDesembloso', '>=', $requisito->EdadInicial)->where('EdadDesembloso', '<=', $requisito->EdadFinal)
                 ->where('saldo_total', '>=', $requisito->MontoInicial)->where('saldo_total', '<=', $requisito->MontoFinal)
                 ->pluck('Dui')->toArray();
 
@@ -656,7 +653,7 @@ class DeudaCarteraController extends Controller
         //dd($excuidos);
 
         $poliza_temporal = PolizaDeudaTempCartera::where('PolizaDeuda', $request->Deuda)->where('User', auth()->user()->id)
-            ->where('Edad', '>=', $deuda->EdadMaximaTerminacion)
+            ->where('EdadDesembloso', '>=', $deuda->EdadMaximaTerminacion)
             ->whereNotIn('NumeroReferencia', $excuidos_array)->get();
 
         $conteo_excluidos = $poliza_temporal->count();
