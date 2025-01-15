@@ -485,7 +485,7 @@ class DeudaCarteraController extends Controller
         $date_mes_anterior = $date_anterior->subMonth();
 
 
-       // dd($date_mes, $date_mes_anterior);
+        // dd($date_mes, $date_mes_anterior);
 
 
 
@@ -520,7 +520,7 @@ class DeudaCarteraController extends Controller
 
 
         //dejando los perfiles nulos como valor inicial
-        PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->update(['Perfiles' => null]);
+        PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->update(['Perfiles' => null, 'NoValido' => 0]);
 
 
         //definiendo edad maxima segu requisitos
@@ -528,7 +528,20 @@ class DeudaCarteraController extends Controller
         $maxEdadMaxima = $deuda->requisitos->max('EdadFinal');
         PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Edad', '>', $maxEdadMaxima)->update(['NoValido' => 1]);
 
+        //dd($deuda->requisitos);
+
         foreach ($requisitos as $requisito) {
+
+            //omitiendo el pago automatico y declaracion jurada
+
+            $omision_por_perfil = 1;
+            if ($requisito->perfil->PagoAutomatico != 1 && $requisito->perfil->DeclaracionJurada != 1) {
+                $omision_por_perfil = 0;
+            }
+            //dd($requisito->perfil,$requisito);
+
+            //$dui_cartera_edad = $poliza_cumulos->where('Edad', '>=', $requisito->EdadInicial)->where('Edad', '<=', $requisito->EdadFinal)->pluck('Dui')->toArray();
+
             $data_dui_cartera = $poliza_cumulos->where('Edad', '>=', $requisito->EdadInicial)->where('Edad', '<=', $requisito->EdadFinal)
                 ->where('saldo_total', '>=', $requisito->MontoInicial)->where('saldo_total', '<=', $requisito->MontoFinal)
                 ->pluck('Dui')->toArray();
@@ -538,8 +551,14 @@ class DeudaCarteraController extends Controller
                 ->update([
                     'Perfiles' => DB::raw(
                         'IF(Perfiles IS NULL OR Perfiles = "","' . $requisito->perfil->Descripcion . '", CONCAT(Perfiles, ",","' . $requisito->perfil->Descripcion . '"))'
-                    )
+                    ),
+                    'OmisionPerfil' =>   $omision_por_perfil
                 ]);
+
+
+            //dd($data_dui_cartera);
+
+
         }
 
         //dd($requisitos->take(10));

@@ -175,8 +175,8 @@
                                                     <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
                                                     <input type="hidden" name="MesActual"
                                                         value="{{ date('m', strtotime($date)) }}">
-                                                    <button style="text-align: right;"
-                                                        class="btn btn-success">Descargar Excel</button>
+                                                    <button style="text-align: right;" class="btn btn-success">Descargar
+                                                        Excel</button>
                                                 </form>
 
                                             </div>
@@ -454,11 +454,7 @@
                                                     <span>Los créditos resaltados en rojo han excedido el monto máximo permitido por línea de crédito.</span>
                                                 </div> -->
                                                 <br>
-                                                <div class="">
-													<label>
-														<input type="checkbox" id="omitir_declaracion"  /> Omitir registros solo con declaracion jurada
-													</label>
-												</div>
+
                                             </div>
                                             <div class="col-md-6 col-sm-12" align="right">
                                                 <a href="{{ url('exportar/creditos_validos') }}/{{ $deuda->Id }}" class="btn btn-success">Descargar Excel</a>
@@ -817,54 +813,29 @@
 
 
         function loadCreditos(opcion, buscar) {
-
-            if (document.getElementById('omitir_declaracion').checked == true) {
-                $.ajax({
-                    url: "{{ url('polizas/deuda/get_creditos') }}/" + '{{ $deuda->Id }}',
-                    type: 'GET',
-                    data: {
-                        buscar: buscar,
-                        opcion: opcion,
-                        filtro: 1,
-                    },
-                    success: function(response) {
-                        // Aquí manejas la respuesta. Por ejemplo, podrías imprimir la respuesta en la consola:
-                        if (opcion == 1) {
-                            $('#creditos_no_validos').html(response);
-                        } else {
-                            $('#creditos_validos').html(response);
-                        }
-
-                    },
-                    error: function(error) {
-                        // Aquí manejas el error, si ocurre alguno durante la petición
-                        console.error(error);
+            $.ajax({
+                url: "{{ url('polizas/deuda/get_creditos') }}/" + '{{ $deuda->Id }}',
+                type: 'GET',
+                data: {
+                    buscar: buscar,
+                    opcion: opcion,
+                    //<tipo_cartera: ' $tipo_cartera',
+                },
+                success: function(response) {
+                    // Aquí manejas la respuesta. Por ejemplo, podrías imprimir la respuesta en la consola:
+                    if (opcion == 1) {
+                        $('#creditos_no_validos').html(response);
+                    } else {
+                        $('#creditos_validos').html(response);
                     }
-                });
-            } else {
-                $.ajax({
-                    url: "{{ url('polizas/deuda/get_creditos') }}/" + '{{ $deuda->Id }}',
-                    type: 'GET',
-                    data: {
-                        buscar: buscar,
-                        opcion: opcion,
-                        //<tipo_cartera: ' $tipo_cartera',
-                    },
-                    success: function(response) {
-                        // Aquí manejas la respuesta. Por ejemplo, podrías imprimir la respuesta en la consola:
-                        if (opcion == 1) {
-                            $('#creditos_no_validos').html(response);
-                        } else {
-                            $('#creditos_validos').html(response);
-                        }
 
-                    },
-                    error: function(error) {
-                        // Aquí manejas el error, si ocurre alguno durante la petición
-                        console.error(error);
-                    }
-                });
-            }
+                },
+                error: function(error) {
+                    // Aquí manejas el error, si ocurre alguno durante la petición
+                    console.error(error);
+                }
+            });
+
 
         }
 

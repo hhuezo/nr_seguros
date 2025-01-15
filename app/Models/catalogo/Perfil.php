@@ -19,6 +19,8 @@ class Perfil extends Model
     protected $fillable = [
         'Descripcion',
         'Aseguradora',
+        'PagoAutomatico',
+        'DeclaracionJurada',
         'Activo'
     ];
 

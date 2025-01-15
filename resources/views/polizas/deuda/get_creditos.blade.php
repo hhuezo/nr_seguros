@@ -102,6 +102,7 @@
                 <th>Fecha otorgamiento</th>
                 <th>Requisitos</th>
                 <th>Cúmulo</th>
+                <th>Tipo cartera</th>
                 <th>Detalle</th>
             </tr>
 
@@ -111,16 +112,18 @@
         <tbody>
 
 
-            @foreach ($poliza_cumulos->where('Perfiles', '<>', null)->sortBy('Rehabilitado')->reverse() as $registro)
+            @foreach ($poliza_cumulos->where('OmisionPerfil', 0)->sortBy('Rehabilitado')->reverse() as $registro)
                 @if (isset($filtro) && $filtro == 1 && trim($registro->Perfiles) == 'Declaracion de salud Jurada')
                 @else
                     <tr class="{{ $registro->Rehabilitado == 1 ? 'row-warning' : '' }}">
                         {{-- <td>{{ $registro->ConcatenatedNumeroReferencia }} </td> --}}
                         <td>
                             @php
-                                $referencias = explode(',', $registro->ConcatenatedNumeroReferencia);
+                                $referencias = !empty($registro->ConcatenatedNumeroReferencia)
+                                    ? explode(',', $registro->ConcatenatedNumeroReferencia)
+                                    : [];
                             @endphp
-                            {{ implode(', ', $referencias) }}
+                            {{ !empty($referencias) ? implode(', ', $referencias) : '' }}
                         </td>
                         <td>{{ $registro->Dui }}</td>
                         <td>{{ $registro->Nit }}</td>
@@ -152,9 +155,13 @@
 
 
                         </td>
+
+                        <td>{{ $registro->TipoCarteraNombre }} {{ $registro->Abreviatura }}</td>
                         <td><button type="button" class="btn btn-primary" data-toggle="modal"
                                 data-target=".bs-example-modal-lg"
-                                onclick="get_creditos_detalle('{{ $registro->Dui }}')"><i class="fa fa-eye"></i></button></td>
+                                onclick="get_creditos_detalle('{{ $registro->Dui }}')"><i
+                                    class="fa fa-eye"></i></button></td>
+
                     </tr>
                     @php $i++ @endphp
                 @endif
@@ -162,39 +169,17 @@
 
 
 
-            @foreach ($poliza_cumulos->where('NoValido', 0)->where('Perfiles', '')->where('Excluido', 0)->sortBy('Rehabilitado')->reverse() as $registro)
+            {{-- @foreach ($poliza_cumulos->where('NoValido', 0)->where('OmisionPerfil', 0)->where('Excluido', 0)->sortBy('Rehabilitado')->reverse() as $registro)
                 @if (isset($filtro) && $filtro == 1 && trim($registro->Perfiles) == 'Declaracion de salud Jurada')
                 @else
                     <tr class="table-warning">
                         <td>
                             @php
-                                $montos = explode('-', $registro->ConcatenatedMonto);
-                                $tiposCartera = explode(',', $registro->TipoCarteraNombre);
-                                $referencias = explode(',', $registro->ConcatenatedNumeroReferencia);
-
-                                $registroCount = count($montos);
+                                $referencias = !empty($registro->ConcatenatedNumeroReferencia)
+                                    ? explode(',', $registro->ConcatenatedNumeroReferencia)
+                                    : [];
                             @endphp
-
-                            @foreach ($montos as $index => $monto)
-                                @if (isset($tiposCartera[$index]))
-                                    @if ($monto > $registro->MontoMaximoIndividual)
-                                        <li class="text-danger" style="font-size: 12px;">
-                                            <strong>
-                                                {{ $referencias[$index] }}
-                                                (${{ number_format((float) $monto, 2, '.', ',') }}
-                                                {{ $tiposCartera[$index] }})
-                                            </strong>
-                                        </li>
-                                    @else
-                                        <li style="font-size: 12px;">
-                                            {{ $referencias[$index] }}
-                                            (${{ number_format((float) $monto, 2, '.', ',') }}
-                                            {{ $tiposCartera[$index] }})
-
-                                        </li>
-                                    @endif
-                                @endif
-                            @endforeach
+                            {{ !empty($referencias) ? implode(', ', $referencias) : '' }}
                         </td>
                         <td>{{ $registro->Dui }}</td>
                         <td>{{ $registro->Nit }}</td>
@@ -231,7 +216,7 @@
                     </tr>
                     @php $i++ @endphp
                 @endif
-            @endforeach
+            @endforeach --}}
 
 
 
@@ -269,7 +254,9 @@
 
             $('#MyTable4').DataTable({
                 ordering: false, // Desactiva el ordenamiento
+                paging: false // Desactiva la paginación
             });
+
             $('#MyTable3').DataTable();
         });
 

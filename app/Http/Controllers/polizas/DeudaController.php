@@ -2404,7 +2404,6 @@ class DeudaController extends Controller
             $poliza_eliminados = DeudaEliminados::where('Poliza', $poliza)->groupBy('NumeroReferencia')->get();
             $poliza_eliminados_array = $poliza_eliminados->pluck('NumeroReferencia')->toArray();
 
-            /*
             $poliza_cumulos = DB::table('poliza_deuda_temp_cartera as pdtc')
                 ->join('poliza_deuda_creditos as pdc', 'pdtc.LineaCredito', '=', 'pdc.Id')
                 ->join('saldos_montos as sm', 'pdc.saldos', '=', 'sm.id')
@@ -2426,45 +2425,7 @@ class DeudaController extends Controller
                     'pdtc.EdadDesembloso',
                     'pdtc.FechaOtorgamiento',
                     'pdtc.Excluido',
-                    DB::raw('SUM(pdtc.saldo_total) as total_saldo'),
-                    DB::raw("GROUP_CONCAT(DISTINCT pdtc.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
-                    DB::raw("GROUP_CONCAT(tc.nombre SEPARATOR ', ') AS TipoCarteraNombre"),
-                    DB::raw('SUM(pdtc.SaldoCapital) as saldo_capital'),
-                    DB::raw('SUM(pdtc.Intereses) as total_interes'),
-                    DB::raw('SUM(pdtc.InteresesCovid) as total_covid'),
-                    DB::raw('SUM(pdtc.InteresesMoratorios) as total_moratorios'),
-                    DB::raw('SUM(pdtc.MontoNominal) as total_monto_nominal'),
-                    'pdc.MontoMaximoIndividual as MontoMaximoIndividual',
-                    'sm.Abreviatura as Abreviatura',
-                )
-                ->where('pdtc.Edad', '<', $deuda->EdadMaximaTerminacion)
-                ->where('pdtc.NoValido', 0)
-                ->where('pdtc.PolizaDeuda', $poliza)
-                ->groupBy('pdtc.Dui')
-                ->get();*/
-
-
-                $poliza_cumulos = DB::table('poliza_deuda_temp_cartera as pdtc')
-                ->join('poliza_deuda_creditos as pdc', 'pdtc.LineaCredito', '=', 'pdc.Id')
-                ->join('saldos_montos as sm', 'pdc.saldos', '=', 'sm.id')
-                ->join('tipo_cartera as tc', 'pdc.TipoCartera', '=', 'tc.id') // Unir con la tabla tipo_cartera
-                ->select(
-                    'pdtc.Id',
-                    'pdtc.Dui',
-                    'pdtc.Edad',
-                    'pdtc.Nit',
-                    'pdtc.PrimerNombre',
-                    'pdtc.SegundoNombre',
-                    'pdtc.PrimerApellido',
-                    'pdtc.SegundoApellido',
-                    'pdtc.ApellidoCasada',
-                    'pdtc.FechaNacimiento',
-                    'pdtc.NumeroReferencia',
-                    'pdtc.NoValido',
-                    'pdtc.Perfiles',
-                    'pdtc.EdadDesembloso',
-                    'pdtc.FechaOtorgamiento',
-                    'pdtc.Excluido',
+                    'pdtc.OmisionPerfil',
                     DB::raw('SUM(pdtc.saldo_total) as total_saldo'),
                     DB::raw("GROUP_CONCAT(DISTINCT pdtc.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
                     DB::raw("GROUP_CONCAT(tc.nombre SEPARATOR ', ') AS TipoCarteraNombre"),
@@ -2495,7 +2456,6 @@ class DeudaController extends Controller
                 ->where('pdtc.PolizaDeuda', $poliza)
                 ->groupBy('pdtc.Dui')
                 ->get();
-
 
             foreach ($poliza_cumulos as $poliza) {
 
