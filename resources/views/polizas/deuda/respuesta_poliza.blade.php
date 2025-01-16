@@ -87,7 +87,7 @@
                                                 class="btn btn-info">Pausar Validación</a>
                                         </td>
                                         <td style="vertical-align: top;">
-                                            <form method="post" action="{{ url('regresar_edit') }}">
+                                            <form method="post" action="{{ url('polizas/deuda/borrar_proceso_actual') }}">
                                                 @csrf
                                                 <input type="hidden" name="deuda_id" value="{{ $deuda->Id }}">
                                                 <button class="btn btn-default">Borrar Proceso Actual</button>

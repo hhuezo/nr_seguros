@@ -1263,14 +1263,14 @@ class DeudaController extends Controller
 
     public function exportar_historial(Request $request)
     {
-        // Obtener las fechas en formato YYYYMMDD
-        // dd('oli');
-        $fechaInicio = $request->input('FechaInicio');
-        $fechaFinal = $request->input('FechaFinal');
 
-        // Convertir las fechas a un formato legible usando Carbon
-        $fechaInicio = Carbon::createFromFormat('Ymd', $fechaInicio)->format('Y-m-d');
-        $fechaFinal = Carbon::createFromFormat('Ymd', $fechaFinal)->format('Y-m-d');
+        // $tabla_historico = PolizaDeudaCartera::where('Axo', $request->Axo)
+        // ->where('Mes', $request->Mes)
+        // ->where('FechaInicio', $request->FechaInicio)
+        // ->where('FechaFinal', $request->FechaFinal)
+        // ->get();
+
+        // dd($tabla_historico);
 
         $tabla_historico = DB::table('poliza_deuda_cartera as pdtc')
             ->select(
@@ -2234,9 +2234,11 @@ class DeudaController extends Controller
         }
     }
 
-    public function regresar_edit(Request $request)
+    public function borrar_proceso_actual(Request $request)
     {
         // dd($request->deuda_id);
+
+        PolizaDeudaCartera::where('PolizaDeuda', $request->deuda_id)->where('PolizaDeudaDetalle', 0)->delete();
 
         PolizaDeudaTempCartera::where('PolizaDeuda', $request->deuda_id)->delete();
         return redirect('polizas/deuda/' . $request->deuda_id . '/edit');
