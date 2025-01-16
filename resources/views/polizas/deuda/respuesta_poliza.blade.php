@@ -469,6 +469,7 @@
 
                                                         <th>Número Referencia</th>
                                                         <th>Nombre</th>
+                                                        <th>DUI</th>
                                                         <th>Fecha Otorgamiento</th>
                                                         <th>Monto Otorgamiento</th>
                                                         <th>Porcentaje EP</th>
@@ -479,6 +480,7 @@
                                                         <tr>
                                                             <td>{{ $extra_primado->NumeroReferencia }}</td>
                                                             <td>{{ $extra_primado->Nombre }}</td>
+                                                            <td>{{ $extra_primado->Dui }}</td>
                                                             <td>{{ $extra_primado->FechaOtorgamiento }}</td>
                                                             <td>{{ $extra_primado->MontoOtorgamiento }}</td>
                                                             <td> {{ $extra_primado->PorcentajeEP }}%</td>

@@ -26,7 +26,7 @@ class PolizaDeudaExtraPrimados extends Model
         'Tarifa',
         'PorcentajeEP',
         'PagoEP',
-        'Mes',
+        'Dui',
     ];
 
     public function poliza_deuda()
@@ -55,7 +55,7 @@ class PolizaDeudaExtraPrimados extends Model
                 $tipo = $registro->linia_credito->Saldos;
 
                 if ($tipo == 1) {
-                    $total = $registro->SaldoCapital;  //($pago * $deuda->Tasa) * ($extraprimado->PorcentajeEP/100)     
+                    $total = $registro->SaldoCapital;  //($pago * $deuda->Tasa) * ($extraprimado->PorcentajeEP/100)
                 } else if ($tipo == 2) {
                     $total = ($registro->SaldoCapital + $registro->Intereses);
                 } else if ($tipo == 3) {
@@ -71,7 +71,7 @@ class PolizaDeudaExtraPrimados extends Model
                     "extra_prima" => ($total * $registro->poliza_deuda->Tasa) * ($extraprimado->PorcentajeEP / 100), "interes" => $registro->Intereses
                 ];
             }
-         
+
             return $data_array;
         } catch (Exception $e) {
             $data_array = ["total" => 0, "saldo_capital" => 0, "prima_neta" => 0, "extra_prima" => 0, "interes" => 0];
