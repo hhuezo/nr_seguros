@@ -60,6 +60,10 @@
         });
     </script>
 
+    <div id="loading-overlay">
+        <img src="{{ asset('img/ajax-loader.gif') }}" alt="Loading..." />
+    </div>
+
     <div role="main">
         <div class="">
 
@@ -143,14 +147,15 @@
                                         </li>
                                         <li role="presentation" class=""><a href="#tab_content2" role="tab"
                                                 id="profile-tab" data-toggle="tab" aria-expanded="false">Creditos <br> no
-                                                válidos.</a>
+                                                válidos</a>
                                         </li>
                                         <li role="presentation" class=""><a href="#tab_content3" role="tab"
                                                 id="profile-tab2" data-toggle="tab" aria-expanded="false">Registros <br> con
                                                 requisitos</a>
                                         </li>
                                         <li role="presentation" class=""><a href="#tab_content4" role="tab"
-                                                id="profile-tab2" data-toggle="tab" aria-expanded="false">Extraprimados <br>
+                                                id="profile-tab2" data-toggle="tab" aria-expanded="false">Extraprimados
+                                                <br>
                                                 excluidos</a>
                                         </li>
                                         </li>
@@ -583,10 +588,6 @@
 
 
 
-            <!-- Agrega este div al final de tu archivo blade -->
-            <div id="loading-overlay">
-                <img src="{{ asset('img/ajax-loader.gif') }}" alt="Loading..." />
-            </div>
 
         </div>
     </div>
@@ -754,35 +755,38 @@
 
         function agregarValidos() {
             var id = document.getElementById('creditos').value;
-            var buscar = document.getElementById('buscar_no_valido').value;
+
+            var loadingOverlay = document.getElementById('loading-overlay'); // Cambiado para coincidir con el HTML
+
+            if (loadingOverlay) {
+                loadingOverlay.style.display = 'flex'; // Mostrar overlay
+            }
+
             if (id != '') {
                 $.ajax({
-                    url: "{{ url('polizas/deuda/agregar_valido') }}", // Asegúrate de que esta sintaxis se procese correctamente en tu archivo .blade.php
+                    url: "{{ url('polizas/deuda/agregar_valido') }}",
                     type: 'POST',
                     data: {
                         id: id,
-                        //tipo_cartera: ' $tipo_cartera',
-                        _token: '{{ csrf_token() }}' // Necesario para la protección CSRF de Laravel
+                        _token: '{{ csrf_token() }}'
                     },
                     success: function(response) {
-                        // Aquí manejas lo que suceda después de la respuesta exitosa
                         console.log(response);
                         $('#modal_cambio_credito_valido').modal('hide');
-                        loadCreditos(1, buscar);
-                        loadCreditos(2, buscar);
-                        Swal.fire({
-                            title: 'Exito!',
-                            text: 'Se agrego el credito con exito',
-                            icon: 'exito',
-                            confirmButtonText: 'Aceptar'
-                        });
-
+                        loadCreditos(1, "");
+                        loadCreditos(2, "");
                     },
                     error: function(xhr, status, error) {
-                        // Aquí manejas los errores
                         console.error(error);
+                    },
+                    complete: function() {
+                        if (loadingOverlay) {
+                            console.log("Ocultando overlay en complete");
+                            loadingOverlay.style.display = 'none'; // Ocultar overlay después de la solicitud
+                        }
                     }
                 });
+
             } else {
                 Swal.fire({
                     title: 'Error!',
@@ -790,9 +794,13 @@
                     icon: 'error',
                     confirmButtonText: 'Aceptar'
                 });
-            }
 
+                if (loadingOverlay) {
+                    loadingOverlay.style.display = 'none'; // Ocultar overlay si no se seleccionó un crédito
+                }
+            }
         }
+
 
 
         function loadCreditos(opcion, buscar) {

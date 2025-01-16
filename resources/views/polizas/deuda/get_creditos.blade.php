@@ -281,9 +281,4 @@
         }
     </script>
 
-    <script>
-        document.getElementById('omitir_declaracion').addEventListener('change', function() {
-            loadCreditos(2, "");
-        });
-    </script>
 @endif
