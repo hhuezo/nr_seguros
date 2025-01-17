@@ -654,7 +654,10 @@ class DeudaCarteraController extends Controller
 
         $poliza_temporal = PolizaDeudaTempCartera::where('PolizaDeuda', $request->Deuda)->where('User', auth()->user()->id)
             ->where('EdadDesembloso', '>=', $deuda->EdadMaximaTerminacion)
-            ->whereNotIn('NumeroReferencia', $excuidos_array)->get();
+            //->whereNotIn('NumeroReferencia', $excuidos_array)
+            ->get();
+
+           // dd($poliza_temporal);
 
         $conteo_excluidos = $poliza_temporal->count();
 

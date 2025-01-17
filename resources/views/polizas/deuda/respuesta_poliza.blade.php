@@ -163,13 +163,10 @@
                                         <!-- <div class="col-md-6 col-sm-6 col-xs-12" align="right" id="btn_expo" style="display:{{ $excluidos->count() > 0 ? 'block' : 'none' }}"> -->
                                         <div class="col-md-6 col-sm-6 col-xs-12" align="right">
 
-                                            <form action="{{ url('poliza/deuda/exportar') }}" method="POST">
+                                            <form action="{{ url('exportar/registros_edad_maxima') }}/{{$deuda->Id}}" method="POST">
                                                 @csrf
-                                                <input type="hidden" name="Tipo" value="1">
-                                                <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
-                                                <input type="hidden" name="MesActual" value="{{ date('m', strtotime($date)) }}">
                                                 <button style="text-align: right;" class="btn btn-success">Descargar
-                                                    Excel</button>
+                                                    Excel...</button>
                                             </form>
 
                                         </div>
@@ -188,7 +185,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($poliza_temporal->where('Edad', '>=', $deuda->EdadMaximaTerminacion) as $registro)
+                                                @foreach ($poliza_temporal->where('EdadDesembloso', '>=', $deuda->EdadMaximaTerminacion) as $registro)
                                                 <tr>
                                                     <td>{{ $registro->NumeroReferencia }}</td>
                                                     <td>{{ $registro->Dui }}</td>

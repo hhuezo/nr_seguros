@@ -4,6 +4,7 @@ namespace App\Http\Controllers\polizas;
 
 use App\Exports\CreditosNoValidoExport;
 use App\Exports\DeudaExport;
+use App\Exports\EdadMaximaExport;
 use App\Exports\ExtraPrimadosExcluidosExport;
 use App\Exports\HistoricoPagosExport;
 use App\Exports\RegistroRequisitosExport;
@@ -1342,8 +1343,14 @@ class DeudaController extends Controller
 
     public function extraprimados_excluidos($id)
     {
-        return Excel::download(new ExtraPrimadosExcluidosExport($id), 'creditos_con requisitos.xlsx');
+        return Excel::download(new ExtraPrimadosExcluidosExport($id), 'creditos_extraprimados.xlsx');
     }
+
+    public function registros_edad_maxima($id)
+    {
+        return Excel::download(new EdadMaximaExport($id), 'creditos_edad_maxima.xlsx');
+    }
+
 
 
 

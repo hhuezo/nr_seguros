@@ -219,6 +219,7 @@ Route::post('exportar/nuevos_registros/{id}',[DeudaController::class,'exportar_n
 Route::post('exportar/registros_eliminados/{id}',[DeudaController::class,'exportar_registros_eliminados']);
 Route::post('exportar/registros_no_validos/{id}', [DeudaController::class, 'registros_no_validos']);
 Route::post('exportar/registros_requisitos/{id}',[DeudaController::class,'registros_requisitos']);
+Route::post('exportar/registros_edad_maxima/{id}',[DeudaController::class,'registros_edad_maxima']);
 Route::get('polizas/deuda/get_historico', [DeudaController::class, 'get_historico']);
 Route::post('polizas/deuda/agregar_valido', [DeudaController::class, 'agregar_valido']);
 Route::post('polizas/deuda/create_pago', [DeudaCarteraController::class, 'create_pago']);
@@ -238,7 +239,7 @@ Route::resource('polizas/deuda', DeudaController::class);
 
 Route::post('polizas/deuda/borrar_proceso_actual', [DeudaController::class, 'borrar_proceso_actual']);
 Route::post('exportar_excel', [DeudaController::class, 'exportar_excel']);
-Route::post('poliza/deuda/exportar',[DeudaCarteraController::class,'exportar_excel']);
+
 Route::post('poliza/deuda/aumentar_techo',[DeudaCarteraController::class, 'aumentar_techo']);
 Route::post('poliza/deuda/add_excluidos',[DeudaCarteraController::class, 'add_excluidos']);
 Route::post('poliza/deuda/delete_excluido',[DeudaCarteraController::class,'delete_excluido']);
