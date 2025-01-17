@@ -1329,6 +1329,15 @@ class DeudaController extends Controller
         return Excel::download(new RegistrosEliminadosExport($id), 'registros_eliminados.xlsx');
     }
 
+    public function registros_no_validos($id)
+    {
+        // $poliza_cumulos = PolizaDeudaTempCartera::where('NoValido', 1)->where('User', auth()->user()->id)->groupBy('Dui')->get();
+        // dd($poliza_cumulos);
+
+        // return Excel::download(new CreditosNoValidoExport($poliza_cumulos), 'creditos_no_validos.xlsx');
+
+        return Excel::download(new CreditosNoValidoExport($id), 'creditos_no_validos.xlsx');
+    }
 
 
 
@@ -2265,12 +2274,6 @@ class DeudaController extends Controller
         return back();
     }
 
-    public function exportar()
-    {
-        $poliza_cumulos = PolizaDeudaTempCartera::where('NoValido', 1)->where('User', auth()->user()->id)->groupBy('Dui')->get();
-
-        return Excel::download(new CreditosNoValidoExport($poliza_cumulos), 'creditos_no_validos.xlsx');
-    }
 
     public function cancelar_pago(Request $request)
     {
