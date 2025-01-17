@@ -10,6 +10,7 @@ use App\Exports\HistoricoPagosExport;
 use App\Exports\RegistroRequisitosExport;
 use App\Exports\RegistrosEliminadosExport;
 use App\Exports\RegistrosNuevosExport;
+use App\Exports\ResponsabilidadMaximaExport;
 use App\Http\Controllers\Controller;
 use App\Imports\PolizaDeudaTempCarteraImport;
 use App\Models\catalogo\Aseguradora;
@@ -1352,6 +1353,10 @@ class DeudaController extends Controller
     }
 
 
+    public function registros_responsabilidad_maxima($id)
+    {
+        return Excel::download(new ResponsabilidadMaximaExport($id), 'creditos_responsabilidad_maxima.xlsx');
+    }
 
 
 

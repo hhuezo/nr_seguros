@@ -220,6 +220,7 @@ Route::post('exportar/registros_eliminados/{id}',[DeudaController::class,'export
 Route::post('exportar/registros_no_validos/{id}', [DeudaController::class, 'registros_no_validos']);
 Route::post('exportar/registros_requisitos/{id}',[DeudaController::class,'registros_requisitos']);
 Route::post('exportar/registros_edad_maxima/{id}',[DeudaController::class,'registros_edad_maxima']);
+Route::post('exportar/registros_responsabilidad_maxima/{id}',[DeudaController::class,'registros_responsabilidad_maxima']);
 Route::get('polizas/deuda/get_historico', [DeudaController::class, 'get_historico']);
 Route::post('polizas/deuda/agregar_valido', [DeudaController::class, 'agregar_valido']);
 Route::post('polizas/deuda/create_pago', [DeudaCarteraController::class, 'create_pago']);

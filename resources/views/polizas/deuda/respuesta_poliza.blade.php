@@ -166,7 +166,7 @@
                                             <form action="{{ url('exportar/registros_edad_maxima') }}/{{$deuda->Id}}" method="POST">
                                                 @csrf
                                                 <button style="text-align: right;" class="btn btn-success">Descargar
-                                                    Excel...</button>
+                                                    Excel</button>
                                             </form>
 
                                         </div>
@@ -226,19 +226,11 @@
                                         <div class="col-md-6 col-sm-6 col-xs-12" align="right">
                                             <!-- <div class="col-md-6 col-sm-6 col-xs-12" align="right" id="btn_expo2" style="display:{{ $excluidos->count() > 0 ? 'block' : 'none' }}"> -->
 
-
-
-                                            <form action="{{ url('poliza/deuda/exportar') }}" method="POST">
-                                                @csrf
-                                                <input type="hidden" name="Tipo" value="0">
-                                                <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
-                                                <input type="hidden" name="MesActual" value="{{ date('m', strtotime($date)) }}">
-                                                <button style="text-align: right;" class="btn btn-success">Descargar Excel</button>
-                                            </form>
-
-
-
-
+                                                <form action="{{ url('exportar/registros_responsabilidad_maxima/') }}/{{$deuda->Id}}" method="POST">
+                                                    @csrf
+                                                    <button style="text-align: right;" class="btn btn-success">Descargar
+                                                        Excel...</button>
+                                                </form>
                                         </div>
                                         <br><br>
 
