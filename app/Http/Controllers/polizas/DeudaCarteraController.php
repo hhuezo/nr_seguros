@@ -597,7 +597,7 @@ class DeudaCarteraController extends Controller
         $poliza_temporal = PolizaDeudaTempCartera::where('PolizaDeuda', $poliza_id)->where('User', auth()->user()->id)->get();
 
 
-        $registro_mes_anterior = PolizaDeudaCartera::where('Mes', $date_anterior->month)->where('Axo', $date_mes_anterior->year)->where('PolizaDeuda', $poliza_id)->get();
+        $registro_mes_anterior = PolizaDeudaCartera::where('Mes', $date_anterior->month)->where('Axo', $date_mes_anterior->year)->where('PolizaDeuda', $poliza_id)->groupBy('NumeroReferencia')->get();
         $registro_mes_anterior_array = $registro_mes_anterior->pluck('NumeroReferencia')->toArray();
         $poliza_temporal_array = $poliza_temporal->pluck('NumeroReferencia')->toArray();
 

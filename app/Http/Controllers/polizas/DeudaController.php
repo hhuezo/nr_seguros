@@ -1326,7 +1326,7 @@ class DeudaController extends Controller
 
     public function exportar_registros_eliminados($id)
     {
-        return Excel::download(new RegistrosNuevosExport($id), 'registros_eliminados.xlsx');
+        return Excel::download(new RegistrosEliminadosExport($id), 'registros_eliminados.xlsx');
     }
 
 

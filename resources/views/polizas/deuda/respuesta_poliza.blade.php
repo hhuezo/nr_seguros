@@ -363,11 +363,10 @@
 
                                         <div role="tabpanel5" class="tab-pane" id="tab_content5" aria-labelledby="tab">
                                         <div class="col-md-12 col-sm-12" align="right">
-                                            <form method="POST" action="{{ url('exportar/nuevos_registros') }}/{{ $deuda->Id }}">
+                                            <form method="POST" action="{{ url('exportar/registros_eliminados') }}/{{ $deuda->Id }}">
                                                 @csrf
-                                                <a href="{{ url('exportar/registros_eliminados') }}/{{ $deuda->Id }}">
                                                     <button class="btn btn-success"
-                                                {{ $registros_eliminados->count() > 0 ? '' : 'disabled' }}>Descargar Excel..</button>
+                                                {{ $registros_eliminados->count() > 0 ? '' : 'disabled' }}>Descargar Excel</button>
                                             </form>
 
                                             </div>
