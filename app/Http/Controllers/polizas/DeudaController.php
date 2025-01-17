@@ -4,6 +4,7 @@ namespace App\Http\Controllers\polizas;
 
 use App\Exports\CreditosNoValidoExport;
 use App\Exports\DeudaExport;
+use App\Exports\DeudaReciboExport;
 use App\Exports\EdadMaximaExport;
 use App\Exports\ExtraPrimadosExcluidosExport;
 use App\Exports\HistoricoPagosExport;
@@ -1004,7 +1005,7 @@ class DeudaController extends Controller
         return $recibo_historial;
     }
 
-    public function get_recibo($id)
+    public function get_recibo($id,$exportar)
     {
         $detalle = DeudaDetalle::findOrFail($id);
 
@@ -1018,8 +1019,14 @@ class DeudaController extends Controller
             //dd("insert");
         }
 
-        //return view('polizas.deuda.recibo_edit', compact('detalle', 'deuda', 'meses'));
-        $pdf = \PDF::loadView('polizas.deuda.recibo', compact('recibo_historial', 'detalle', 'deuda', 'meses'))->setWarnings(false)->setPaper('letter');
+        if($exportar == 2)
+        {
+            return Excel::download(new DeudaReciboExport($id), 'Recibo.xlsx');
+            //return view('polizas.deuda.recibo', compact('recibo_historial','detalle', 'deuda', 'meses','exportar'));
+        }
+
+
+        $pdf = \PDF::loadView('polizas.deuda.recibo', compact('recibo_historial', 'detalle', 'deuda', 'meses','exportar'))->setWarnings(false)->setPaper('letter');
         //  dd($detalle);
         return $pdf->stream('Recibos.pdf');
     }

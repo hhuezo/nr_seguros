@@ -258,7 +258,7 @@ Route::post('eliminar/requisito', [DeudaController::class, 'eliminar_requisito']
 Route::post('polizas/deuda/exportar_historial',[DeudaController::class, 'exportar_historial']);
 
 Route::post('poliza/deuda/recibo/{id}', [DeudaController::class, 'recibo_pago']);
-Route::get('poliza/deuda/get_recibo/{id}', [DeudaController::class, 'get_recibo']);
+Route::get('poliza/deuda/get_recibo/{id}/{exportar}', [DeudaController::class, 'get_recibo']);
 Route::get('poliza/deuda/get_recibo_edit/{id}', [DeudaController::class, 'get_recibo_edit']);
 Route::post('poliza/deuda/get_recibo_edit', [DeudaController::class, 'get_recibo_update']);
 Route::post('polizas/deuda/agregar_comentario', [DeudaController::class, 'agregar_comentario']);
