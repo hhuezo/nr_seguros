@@ -214,7 +214,7 @@ Route::get('polizas/deuda/get_referencia_creditos/{id}', [DeudaController::class
 Route::get('polizas/deuda/get_creditos/{id}', [DeudaController::class, 'get_creditos']);
 Route::get('polizas/deuda/get_creditos_detalle/{documento}', [DeudaController::class, 'get_creditos_detalle']);
 
-Route::get('exportar/extraprimados_excluidos/{id}',[DeudaController::class,'extraprimados_excluidos']);
+Route::post('exportar/extraprimados_excluidos/{id}',[DeudaController::class,'extraprimados_excluidos']);
 Route::post('exportar/nuevos_registros/{id}',[DeudaController::class,'exportar_nuevos_registros']);
 Route::post('exportar/registros_eliminados/{id}',[DeudaController::class,'exportar_registros_eliminados']);
 Route::post('exportar/registros_no_validos/{id}', [DeudaController::class, 'registros_no_validos']);

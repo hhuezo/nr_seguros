@@ -464,10 +464,16 @@
 
 
                                     </div>
+
+                                        <!--con extraprimados excluidos-->
                                     <div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="profile-tab">
 
                                         <div class="col-md-12 col-sm-12" align="right">
-                                            <a href="{{ url('exportar/extraprimados_excluidos') }}/{{ $deuda->Id }}" class="btn btn-success">Descargar Excel</a>
+                                            <form method="POST" action="{{ url('exportar/extraprimados_excluidos') }}/{{ $deuda->Id }}">
+                                                @csrf
+                                                <button class="btn btn-success">Descargar Excel...</button>
+                                            </form>
+                                            <br>
                                         </div>
                                         <br>
                                         <table class="table table-striped" id="datatable">

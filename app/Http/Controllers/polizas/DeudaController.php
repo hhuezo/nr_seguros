@@ -1340,6 +1340,10 @@ class DeudaController extends Controller
         return Excel::download(new RegistroRequisitosExport($id), 'creditos_con requisitos.xlsx');
     }
 
+    public function extraprimados_excluidos($id)
+    {
+        return Excel::download(new ExtraPrimadosExcluidosExport($id), 'creditos_con requisitos.xlsx');
+    }
 
 
 
