@@ -273,16 +273,16 @@
                                                 </thead>
                                                 <tbody>
                                                     @foreach ($poliza_cumulos as $registro)
-@php
-    $sub_total =
-        $registro->total_saldo +
-        $registro->total_interes +
-        $registro->total_covid +
-        $registro->total_moratorios +
-        $registro->total_monto_nominal;
-@endphp
+                                                        @php
+                                                            $sub_total =
+                                                                $registro->total_saldo +
+                                                                $registro->total_interes +
+                                                                $registro->total_covid +
+                                                                $registro->total_moratorios +
+                                                                $registro->total_monto_nominal;
+                                                        @endphp
                                                     @if ($sub_total > $deuda->ResponsabilidadMaxima)
-<tr>
+                                                    <tr>
                                                         <td>{{ $registro->NumeroReferencia }} <br>
                                                         </td>
                                                         <td>{{ $registro->Dui }}</td>
@@ -307,62 +307,68 @@
                                                         </td>
 
                                                     </tr>
-@endif
-@endforeach
+                                                @endif
+                                                @endforeach
 
 
                                                 </tbody>
                                             </table>
                                         </div>
                                         <div role="tabpanel" class="tab-pane  " id="tab_content1" aria-labelledby="home-tab">
-                                        <div class="col-md-12 col-sm-12" align="right">
+                                            <div class="col-md-12 col-sm-12" align="right">
+                                                    <form method="POST" action="{{ url('exportar/nuevos_registros') }}/{{ $deuda->Id }}">
+                                                        @csrf
+                                                    <button class="btn btn-success"
+                                                    {{ $nuevos_registros->count() > 0 ? '' : 'disabled' }}>Descargar Excel</button>
+                                                    </form>
 
-                                                <a href="{{ url('exportar/nuevos_registros') }}/{{ $deuda->Id }}"> <button class="btn btn-success"
-                                                {{ $nuevos_registros->count() > 0 ? '' : 'disabled' }}>Descargar Excel</button> </a>
+                                                </div>
+                                                <br>
+                                                <table class="table table-striped" id="MyTable1">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Número crédito</th>
+                                                            <th>DUI</th>
+                                                            <th>NIT</th>
+                                                            <th>Nombre</th>
+                                                            <th>Fecha nacimiento</th>
+                                                            <th>Edad Actual</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach ($nuevos_registros as $registro)
+                                                            <tr>
+                                                            <td>{{ $registro->NumeroReferencia }}</td>
+                                                            <td>{{ $registro->Dui }}</td>
+                                                            <td>{{ $registro->Nit }}</td>
+                                                            <td>{{ $registro->PrimerNombre }}
+                                                                {{ $registro->SegundoNombre }}
+                                                                {{ $registro->PrimerApellido }}
+                                                                {{ $registro->SegundoApellido }}
+                                                                {{ $registro->ApellidoCasada }}
+                                                            </td>
+                                                            <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
+                                                            </td>
+                                                            <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
+                                                        </tr>
+                                                        @endforeach
+
+
+                                                    </tbody>
+                                                </table>
+
+
 
                                             </div>
-                                            <br>
-                                            <table class="table table-striped" id="MyTable1">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Número crédito</th>
-                                                        <th>DUI</th>
-                                                        <th>NIT</th>
-                                                        <th>Nombre</th>
-                                                        <th>Fecha nacimiento</th>
-                                                        <th>Edad Actual</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach ($nuevos_registros as $registro)
-<tr>
-                                                        <td>{{ $registro->NumeroReferencia }}</td>
-                                                        <td>{{ $registro->Dui }}</td>
-                                                        <td>{{ $registro->Nit }}</td>
-                                                        <td>{{ $registro->PrimerNombre }}
-                                                            {{ $registro->SegundoNombre }}
-                                                            {{ $registro->PrimerApellido }}
-                                                            {{ $registro->SegundoApellido }}
-                                                            {{ $registro->ApellidoCasada }}
-                                                        </td>
-                                                        <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
-                                                        </td>
-                                                        <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
-                                                    </tr>
-@endforeach
-
-
-                                                </tbody>
-                                            </table>
-
-
-
-                                        </div>
 
                                         <div role="tabpanel5" class="tab-pane" id="tab_content5" aria-labelledby="tab">
                                         <div class="col-md-12 col-sm-12" align="right">
-                                                <a href="{{ url('exportar/registros_eliminados') }}/{{ $deuda->Id }}"> <button class="btn btn-success"
-                                                {{ $registros_eliminados->count() > 0 ? '' : 'disabled' }}>Descargar Excel</button></a>
+                                            <form method="POST" action="{{ url('exportar/nuevos_registros') }}/{{ $deuda->Id }}">
+                                                @csrf
+                                                <a href="{{ url('exportar/registros_eliminados') }}/{{ $deuda->Id }}">
+                                                    <button class="btn btn-success"
+                                                {{ $registros_eliminados->count() > 0 ? '' : 'disabled' }}>Descargar Excel..</button>
+                                            </form>
 
                                             </div>
                                             <br>
@@ -377,12 +383,12 @@
                                                         <th>Fecha Otorgamiento</th>
                                                         <th>Edad Actual</th>
                                                         <th>Edad Desembolso</th>
-                                                        <th>Saldo</th>
+                                                        {{-- <th>Saldo</th> --}}
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     @foreach ($registros_eliminados as $registro)
-<tr>
+                                                    <tr>
                                                         <td>{{ $registro->NumeroReferencia }}</td>
                                                         <td>{{ $registro->Dui }}</td>
                                                         <td>{{ $registro->Nit }}</td>
@@ -399,9 +405,9 @@
                                                         <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
                                                         <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }}
                                                             Años</td>
-                                                        <td>${{ number_format($registro->total_saldo, 2) }}</td>
+                                                        {{-- <td>${{ number_format($registro->total_saldo, 2) }}</td> --}}
                                                         </tr>
-@endforeach
+                                                    @endforeach
 
 
                                                 </tbody>

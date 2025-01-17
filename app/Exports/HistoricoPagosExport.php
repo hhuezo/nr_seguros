@@ -49,16 +49,16 @@ class HistoricoPagosExport implements FromCollection, WithHeadings
                 'FechaVencimiento',
                 'Ocupacion',
                 DB::raw("CONCAT(NumeroReferencia, ' ') AS NumeroReferencia"),
-                'MontoOtorgado',
-                'SaldoCapital',
-                'Intereses',
-                'InteresesMoratorios',
-                'InteresesCovid',
-                'MontoNominal',
-                'SaldoTotal',
-                'total_saldo', // Prima Mensual
-                'tc.Nombre',
-                DB::raw("CONCAT(sm.Abreviatura, ' - ',sm.Descripcion) AS LineaCredito"),
+                DB::raw("IF(MontoOtorgado IS NULL, '', ROUND(MontoOtorgado, 2)) AS MontoOtorgado"),
+                DB::raw("IF(SaldoCapital IS NULL, '', ROUND(SaldoCapital, 2)) AS SaldoCapital"),
+                DB::raw("IF(Intereses IS NULL, '', ROUND(Intereses, 2)) AS Intereses"),
+                DB::raw("IF(InteresesMoratorios IS NULL, '', ROUND(InteresesMoratorios, 2)) AS InteresesMoratorios"),
+                DB::raw("IF(InteresesCovid IS NULL, '', ROUND(InteresesCovid, 2)) AS InteresesCovid"),
+                DB::raw("IF(MontoNominal IS NULL, '', ROUND(MontoNominal, 2)) AS MontoNominal"),
+                DB::raw("IF(SaldoTotal IS NULL, '', ROUND(SaldoTotal, 2)) AS SaldoTotal"),
+                DB::raw("IF(total_saldo IS NULL, '', ROUND(total_saldo, 2)) AS total_saldo"), // Prima Mensual
+                'tc.Nombre as TipoCartera',
+                DB::raw("CONCAT(sm.Abreviatura, ' - ', sm.Descripcion) AS LineaCredito"),
                 // '' // Porcentaje Extraprima cambiar
             ])
             //->take(10)

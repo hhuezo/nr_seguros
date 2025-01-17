@@ -215,8 +215,8 @@ Route::get('polizas/deuda/get_creditos/{id}', [DeudaController::class, 'get_cred
 Route::get('polizas/deuda/get_creditos_detalle/{documento}', [DeudaController::class, 'get_creditos_detalle']);
 Route::get('exportar/creditos_validos/{id}',[DeudaController::class,'creditos_validos']);
 Route::get('exportar/extraprimados_excluidos/{id}',[DeudaController::class,'extraprimados_excluidos']);
-Route::get('exportar/nuevos_registros/{id}',[DeudaController::class,'creditos_nuevos']);
-Route::get('exportar/registros_eliminados/{id}',[DeudaController::class,'creditos_eliminados']);
+Route::post('exportar/nuevos_registros/{id}',[DeudaController::class,'exportar_nuevos_registros']);
+Route::post('exportar/registros_eliminados/{id}',[DeudaController::class,'exportar_registros_eliminados']);
 Route::get('polizas/deuda/get_historico', [DeudaController::class, 'get_historico']);
 Route::post('polizas/deuda/agregar_valido', [DeudaController::class, 'agregar_valido']);
 Route::post('polizas/deuda/create_pago', [DeudaCarteraController::class, 'create_pago']);

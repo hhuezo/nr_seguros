@@ -569,12 +569,8 @@ class DeudaController extends Controller
         alert()->success('El registro de poliza ha sido ingresado correctamente');
         return redirect('polizas/deuda/' . $credito->Deuda);
     }
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
+
     public function edit($id)
     {
         //  dd("holi");
@@ -1322,6 +1318,19 @@ class DeudaController extends Controller
         // return view('polizas.deuda.get_historico', compact('tabla_historico'));
 
     }
+
+    public function exportar_nuevos_registros($id)
+    {
+        return Excel::download(new RegistrosNuevosExport($id), 'nuevos_registros.xlsx');
+    }
+
+    public function exportar_registros_eliminados($id)
+    {
+        return Excel::download(new RegistrosNuevosExport($id), 'registros_eliminados.xlsx');
+    }
+
+
+
 
 
 
