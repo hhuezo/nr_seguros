@@ -1264,15 +1264,19 @@ class DeudaController extends Controller
     public function exportar_historial(Request $request)
     {
 
-        // $tabla_historico = PolizaDeudaCartera::where('Axo', $request->Axo)
-        // ->where('Mes', $request->Mes)
-        // ->where('FechaInicio', $request->FechaInicio)
-        // ->where('FechaFinal', $request->FechaFinal)
-        // ->get();
+        return Excel::download(new HistoricoPagosExport($request), 'historico_pagos.xlsx');
 
-        // dd($tabla_historico);
 
-        $tabla_historico = DB::table('poliza_deuda_cartera as pdtc')
+        // return Excel::download(new HistoricoPagosExport($tabla_historico), 'historico_pagos.xlsx');
+        /*$tabla_historico = PolizaDeudaCartera::where('Axo', $request->Axo)
+        ->where('Mes', $request->Mes)
+        ->where('FechaInicio', $request->FechaInicio)
+        ->where('FechaFinal', $request->FechaFinal)
+        ->get();
+
+        dd($tabla_historico);*/
+
+        /*$tabla_historico = DB::table('poliza_deuda_cartera as pdtc')
             ->select(
                 'pdtc.Id',
                 'pdtc.Dui',
@@ -1313,10 +1317,10 @@ class DeudaController extends Controller
             ->where('PolizaDeuda', $request->PolizaDeuda)
             ->groupBy('pdtc.Dui', 'pdtc.NumeroReferencia')
             ->get();
-        //  dd($tabla_historico);
+        //  dd($tabla_historico);*/
 
         // return view('polizas.deuda.get_historico', compact('tabla_historico'));
-        return Excel::download(new HistoricoPagosExport($tabla_historico), 'historico_pagos.xlsx');
+
     }
 
 

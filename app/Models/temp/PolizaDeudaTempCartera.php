@@ -2,6 +2,7 @@
 
 namespace App\Models\temp;
 
+use App\Models\polizas\Deuda;
 use App\Models\polizas\DeudaCredito;
 use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -59,6 +60,11 @@ class PolizaDeudaTempCartera extends Model
     public function linea_credito()
     {
         return $this->belongsTo(DeudaCredito::class, 'LineaCredito', 'Id');
+    }
+
+    public function poliza_deuda()
+    {
+        return $this->belongsTo(Deuda::class, 'PolizaDeuda', 'Id');
     }
 
 
