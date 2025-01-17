@@ -409,6 +409,8 @@
 
 
                                     </div>
+
+                                     <!-- creditos no validos -->
                                     <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="profile-tab">
                                         <div class="col-md-6 col-sm-12">
 
@@ -416,7 +418,7 @@
                                         <div class="col-md-6 col-sm-12" align="right">
                                             <form method="POST" action="{{ url('exportar/registros_no_validos') }}/{{ $deuda->Id }}">
                                                 @csrf
-                                                <button class="btn btn-success">Descargar Excel..</button>
+                                                <button class="btn btn-success">Descargar Excel</button>
                                             </form>
                                         </div>
                                         <br>
@@ -427,6 +429,7 @@
                                         </div>
 
                                     </div>
+                                      <!--con requisitos-->
                                     <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="profile-tab">
 
                                         <br>
@@ -447,7 +450,10 @@
 
                                         </div>
                                         <div class="col-md-6 col-sm-12" align="right">
-                                            <a href="{{ url('exportar/creditos_validos') }}/{{ $deuda->Id }}" class="btn btn-success">Descargar Excel</a>
+                                            <form method="POST" action="{{ url('exportar/registros_requisitos') }}/{{ $deuda->Id }}">
+                                                @csrf
+                                                <button class="btn btn-success">Descargar Excel</button>
+                                            </form>
                                             <br>
 
                                         </div>

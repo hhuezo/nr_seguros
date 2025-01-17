@@ -1331,12 +1331,13 @@ class DeudaController extends Controller
 
     public function registros_no_validos($id)
     {
-        // $poliza_cumulos = PolizaDeudaTempCartera::where('NoValido', 1)->where('User', auth()->user()->id)->groupBy('Dui')->get();
-        // dd($poliza_cumulos);
-
-        // return Excel::download(new CreditosNoValidoExport($poliza_cumulos), 'creditos_no_validos.xlsx');
-
         return Excel::download(new CreditosNoValidoExport($id), 'creditos_no_validos.xlsx');
+    }
+
+
+    public function registros_requisitos($id)
+    {
+        return Excel::download(new RegistroRequisitosExport($id), 'creditos_con requisitos.xlsx');
     }
 
 

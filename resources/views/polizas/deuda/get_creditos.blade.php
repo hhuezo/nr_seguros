@@ -91,7 +91,7 @@
     <table class="table table-striped" id="MyTable4">
         <thead>
             <tr>
-                <th>Número crédito</th>
+                <th>Número crédito....</th>
                 {{-- <th>Monto</th> --}}
                 <th>DUI/NIT</th>
                 {{-- <th>NIT</th> --}}
