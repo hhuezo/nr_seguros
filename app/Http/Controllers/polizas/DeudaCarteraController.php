@@ -35,7 +35,7 @@ class DeudaCarteraController extends Controller
 
 
         foreach ($linea_credito as $linea) {
-            $total = PolizaDeudaTempCartera::where('LineaCredito', $linea->Id)->sum('saldo_total');
+            $total = PolizaDeudaTempCartera::where('LineaCredito', $linea->Id)->where('User', auth()->user()->id)->sum('saldo_total');
             $linea->Total = $total;
         }
 
@@ -74,7 +74,7 @@ class DeudaCarteraController extends Controller
 
 
         //ultimo registro de cartera
-        $registro_cartera = PolizaDeudaTempCartera::where('PolizaDeuda', $id)->first();
+        $registro_cartera = PolizaDeudaTempCartera::where('PolizaDeuda', $id)->where('User', auth()->user()->id)->first();
 
         if ($registro_cartera) {
             $axo = $registro_cartera->Axo;
@@ -477,6 +477,12 @@ class DeudaCarteraController extends Controller
         $deuda = Deuda::findOrFail($request->Deuda);
 
         $temp_data_fisrt = PolizaDeudaTempCartera::where('PolizaDeuda', $poliza_id)->where('User', auth()->user()->id)->first();
+
+        if(!$temp_data_fisrt)
+        {
+            alert()->error('No se han cargado las carteras');
+            return back();
+        }
 
         $date_submes = Carbon::create($temp_data_fisrt->Axo, $temp_data_fisrt->Mes, "01");
         $date = Carbon::create($temp_data_fisrt->Axo, $temp_data_fisrt->Mes, "01");
