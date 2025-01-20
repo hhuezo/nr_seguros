@@ -47,6 +47,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Maatwebsite\Excel\Facades\Excel;
 use NumberFormatter;
@@ -1008,6 +1009,10 @@ class DeudaController extends Controller
 
     public function get_recibo($id, $exportar)
     {
+        if(isset($exportar))
+        {
+            $exportar = 1;
+        }
         $detalle = DeudaDetalle::findOrFail($id);
 
         $deuda = Deuda::findOrFail($detalle->Deuda);
@@ -1180,18 +1185,29 @@ class DeudaController extends Controller
 
     public function store_extraprimado(Request $request)
     {
-        $cliente = new PolizaDeudaExtraPrimados();
-        $cliente->NumeroReferencia = $request->NumeroReferencia;
-        $cliente->PolizaDeuda = $request->PolizaDeuda;
-        $cliente->Nombre = $request->Nombre;
-        $cliente->FechaOtorgamiento = $request->FechaOtorgamiento;
-        $cliente->MontoOtorgamiento = $request->MontoOtorgamiento;
-        $cliente->PorcentajeEP = $request->PorcentajeEP;
-        $cliente->Dui = $request->Dui;
-        $cliente->save();
-        alert()->success('Extraprimado agregado correctamente.');
-        return redirect('polizas/deuda/' . $request->PolizaDeuda . '/edit?tab=7');
+        try {
+            $cliente = new PolizaDeudaExtraPrimados();
+            $cliente->NumeroReferencia = $request->NumeroReferencia;
+            $cliente->PolizaDeuda = $request->PolizaDeuda;
+            $cliente->Nombre = $request->Nombre;
+            $cliente->FechaOtorgamiento = $request->FechaOtorgamiento;
+            $cliente->MontoOtorgamiento = $request->MontoOtorgamiento;
+            $cliente->PorcentajeEP = $request->PorcentajeEP;
+            $cliente->Dui = $request->Dui;
+            $cliente->save();
+
+            alert()->success('Extraprimado agregado correctamente.');
+            return redirect('polizas/deuda/' . $request->PolizaDeuda . '/edit?tab=7');
+        } catch (\Exception $e) {
+            // Log del error para depuración
+            Log::error('Error al guardar extraprimado: ' . $e->getMessage());
+
+            // Mensaje de error para el usuario
+            alert()->error('Error al guardar el registro (verificar si el registro ya fue agregado anteriormente).');
+            return redirect()->back()->withInput();
+        }
     }
+
 
     public function update_extraprimado(Request $request)
     {
@@ -2494,33 +2510,33 @@ class DeudaController extends Controller
             $poliza_eliminados = DeudaEliminados::where('Poliza', $poliza)->groupBy('NumeroReferencia')->get();
             $poliza_eliminados_array = $poliza_eliminados->pluck('NumeroReferencia')->toArray();
 
-            $poliza_cumulos = DB::table('poliza_deuda_temp_cartera as pdtc')
-                ->join('poliza_deuda_creditos as pdc', 'pdtc.LineaCredito', '=', 'pdc.Id')
+            $poliza_cumulos = PolizaDeudaTempCartera::
+                join('poliza_deuda_creditos as pdc', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'pdc.Id')
                 ->select(
-                    'pdtc.Id',
-                    'pdtc.Dui',
-                    'pdtc.Edad',
-                    'pdtc.Nit',
-                    'pdtc.PrimerNombre',
-                    'pdtc.SegundoNombre',
-                    'pdtc.PrimerApellido',
-                    'pdtc.SegundoApellido',
-                    'pdtc.ApellidoCasada',
-                    'pdtc.FechaNacimiento',
-                    'pdtc.NumeroReferencia',
-                    'pdtc.NoValido',
-                    'pdtc.Perfiles',
-                    DB::raw('MAX(pdtc.EdadDesembloso) as EdadDesembloso'),
-                    DB::raw('MAX(pdtc.FechaOtorgamientoDate) as FechaOtorgamiento'),
-                    'pdtc.Excluido',
-                    'pdtc.OmisionPerfil',
-                    DB::raw('SUM(pdtc.saldo_total) as total_saldo'),
-                    DB::raw("GROUP_CONCAT(DISTINCT pdtc.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
-                    DB::raw('SUM(pdtc.SaldoCapital) as saldo_capital'),
-                    DB::raw('SUM(pdtc.Intereses) as total_interes'),
-                    DB::raw('SUM(pdtc.InteresesCovid) as total_covid'),
-                    DB::raw('SUM(pdtc.InteresesMoratorios) as total_moratorios'),
-                    DB::raw('SUM(pdtc.MontoNominal) as total_monto_nominal'),
+                    'poliza_deuda_temp_cartera.Id',
+                    'poliza_deuda_temp_cartera.Dui',
+                    'poliza_deuda_temp_cartera.Edad',
+                    'poliza_deuda_temp_cartera.Nit',
+                    'poliza_deuda_temp_cartera.PrimerNombre',
+                    'poliza_deuda_temp_cartera.SegundoNombre',
+                    'poliza_deuda_temp_cartera.PrimerApellido',
+                    'poliza_deuda_temp_cartera.SegundoApellido',
+                    'poliza_deuda_temp_cartera.ApellidoCasada',
+                    'poliza_deuda_temp_cartera.FechaNacimiento',
+                    'poliza_deuda_temp_cartera.NumeroReferencia',
+                    'poliza_deuda_temp_cartera.NoValido',
+                    'poliza_deuda_temp_cartera.Perfiles',
+                    DB::raw('MAX(poliza_deuda_temp_cartera.EdadDesembloso) as EdadDesembloso'),
+                    DB::raw('MAX(poliza_deuda_temp_cartera.FechaOtorgamientoDate) as FechaOtorgamiento'),
+                    'poliza_deuda_temp_cartera.Excluido',
+                    'poliza_deuda_temp_cartera.OmisionPerfil',
+                    DB::raw('SUM(poliza_deuda_temp_cartera.saldo_total) as total_saldo'),
+                    DB::raw("GROUP_CONCAT(DISTINCT poliza_deuda_temp_cartera.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
+                    DB::raw('SUM(poliza_deuda_temp_cartera.SaldoCapital) as saldo_capital'),
+                    DB::raw('SUM(poliza_deuda_temp_cartera.Intereses) as total_interes'),
+                    DB::raw('SUM(poliza_deuda_temp_cartera.InteresesCovid) as total_covid'),
+                    DB::raw('SUM(poliza_deuda_temp_cartera.InteresesMoratorios) as total_moratorios'),
+                    DB::raw('SUM(poliza_deuda_temp_cartera.MontoNominal) as total_monto_nominal'),
                     'pdc.MontoMaximoIndividual as MontoMaximoIndividual',
                     DB::raw("
                         pdc.MontoMaximoIndividual AS MontoMaximoIndividual,
@@ -2530,10 +2546,10 @@ class DeudaController extends Controller
                             WHERE pdc_aux.NumeroReferencia IS NOT NULL
                         )  AS Existe")
                 )
-                ->where('pdtc.Edad', '<', $deuda->EdadMaximaTerminacion)
-                ->where('pdtc.NoValido', 0)
-                ->where('pdtc.PolizaDeuda', $poliza)
-                ->groupBy('pdtc.Dui')
+                ->where('poliza_deuda_temp_cartera.Edad', '<', $deuda->EdadMaximaTerminacion)
+                ->where('poliza_deuda_temp_cartera.NoValido', 0)
+                ->where('poliza_deuda_temp_cartera.PolizaDeuda', $poliza)
+                ->groupBy('poliza_deuda_temp_cartera.Dui')
                 ->get();
 
 
