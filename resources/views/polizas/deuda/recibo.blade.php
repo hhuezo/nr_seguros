@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
 
+@if ($exportar == 2)
+header("Content-Type: text/csv");
+header("Content-Disposition: attachment; filename=\"recibo.csv\"");
+@endif
+
+
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

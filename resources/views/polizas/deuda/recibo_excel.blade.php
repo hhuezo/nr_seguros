@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recibo</title>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -21,7 +22,6 @@
         th {
             border: 1px solid #000;
             padding: 10px 12px;
-            /* Aumentado para mayor legibilidad */
             text-align: left;
         }
 
@@ -59,6 +59,19 @@
             text-align: right;
         }
 
+        /* Controlar el ancho de las columnas */
+        .col-fixed {
+            width: 150px;
+        }
+
+        .col-wide {
+            width: 300px;
+        }
+
+        .col-narrow {
+            width: 100px;
+        }
+
     </style>
 </head>
 
@@ -67,76 +80,164 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
 @endphp
 
 <body>
-<table width="900px" border="0">
-  <tr>
-    <td width="600px"> <p>San Salvador, {{ \Carbon\Carbon::parse($recibo_historial->ImpresionRecibo)->format('d') }} de {{ $meses[\Carbon\Carbon::parse($recibo_historial->ImpresionRecibo)->format('m') - 0 ] }} del {{ \Carbon\Carbon::parse($recibo_historial->ImpresionRecibo)->format('Y') }}</p>               
-	</td>
-    <td rowspan="6" colspan="2" width="300px" ><center> 
-      <img src="{{ public_path('img/logo.jpg') }}" alt="logo" width="80">
-    </center></td>
-  </tr>
-  <tr>
-    <td>Señor (a) (es): {{$recibo_historial->NombreCliente}}</td>
-  </tr>
-  <tr>
-    <td>NIT: {{$recibo_historial->NombreCliente}} </td>
-  </tr>
-  <tr>
-    <td>{{$recibo_historial->DireccionResidencia}}</td>
-  </tr>
-  <tr>
-    <td>{{$recibo_historial->Departamento}}, {{$recibo_historial->Municipio}}</td>
-  </tr>
-  <tr>
-    <td>Estimado (a)(o)(es):</td>
-  </tr>
-  <tr>
-    <td>&nbsp;</td>
-    <td colspan="2"><p>Aviso de Cobro: AC {{ str_pad($recibo_historial->NumeroRecibo, 6, "0", STR_PAD_LEFT)}} {{ date('Y') }}</p></td>
-  </tr>
-</table>
+    <table width="900px" border="0">
+        <tr>
+            <td width="600px" colspan="4">
+                <p>San Salvador, {{ \Carbon\Carbon::parse($recibo_historial->ImpresionRecibo)->format('d') }} de {{ $meses[\Carbon\Carbon::parse($recibo_historial->ImpresionRecibo)->format('m') - 0 ] }} del {{ \Carbon\Carbon::parse($recibo_historial->ImpresionRecibo)->format('Y') }}</p>
+            </td>
+            <td rowspan="6" colspan="3" width="300px">
+                <center>
+                    <img src="{{ public_path('img/logo.jpg') }}" alt="logo" width="80">
+                </center>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4">Señor (a) (es): {{$recibo_historial->NombreCliente}}</td>
+        </tr>
+        <tr>
+            <td colspan="4">NIT: {{$recibo_historial->NombreCliente}} </td>
+        </tr>
+        <tr>
+            <td colspan="4">{{$recibo_historial->DireccionResidencia}}</td>
+        </tr>
+        <tr>
+            <td colspan="4">{{$recibo_historial->Departamento}}, {{$recibo_historial->Municipio}}</td>
+        </tr>
+        <tr>
+            <td colspan="4">Estimado (a)(o)(es):</td>
+        </tr>
+        <tr>
+            <td colspan="4">&nbsp;</td>
+            <td colspan="3">
+                <p>Aviso de Cobro: AC {{ str_pad($recibo_historial->NumeroRecibo, 6, "0", STR_PAD_LEFT)}} {{ date('Y') }}</p>
+            </td>
+        </tr>
+    </table>
 
-<table width="900px" border="1" cellpadding="0">
-  <tr>
-    <td>Compañia aseguradora</td>
-    <td colspan="2" width="400px">Producto de seguros</td>
-  </tr>
-  <tr>
-    <td>{{$recibo_historial->CompaniaAseguradora}}</td>
-    <td colspan="2">{{$deuda->Plan ? $recibo_historial->ProductoSeguros : ''}}</td>
-  </tr>
-  <tr>
-    <td>Número de Póliza</td>
-    <td style="width: 200px;">Vigencia Inicial (anual)</td>
-    <td style="width: 200px;">Vigencia Final (anual)</td>
-  </tr>
-  <tr>
-    <td>{{$recibo_historial->NumeroPoliza}}</td>
-    <td>{{ \Carbon\Carbon::parse($recibo_historial->VigenciaDesde)->format('d/m/Y') }}</td>
-    <td>{{ \Carbon\Carbon::parse($recibo_historial->VigenciaHasta)->format('d/m/Y') }}</td>
-  </tr>
-  <tr>
-    <td rowspan="2">Periodo de cobro</td>
-    <td align="center" style="width: 150px;">Fecha Inicio (mes)</td>
-    <td align="center" style="width: 150px;">Fecha Fin (mes)</td>
-  </tr>
-  <tr>
-    <td align="center">{{ \Carbon\Carbon::parse($recibo_historial->FechaInicio)->format('d/m/Y') }}</td>
-    <td align="center">{{ \Carbon\Carbon::parse($recibo_historial->FechaFin)->format('d/m/Y') }}</td>
-  </tr>
-  <tr>
-    <td>Anexo</td>
-    <td colspan="2">{{$recibo_historial->Anexo}}</td>
-  </tr>
-   <tr>
-     <td>Referencia</td>
-     <td colspan="2">{{$recibo_historial->Referencia}}</td>
-  </tr>
-   <tr>
-     <td>Factura (s) a Nombre de </td>
-     <td colspan="2">{{$deuda->clientes->Nombre}}</td>
-  </tr>
-</table>
+    <table width="900px" border="1" cellpadding="0">
+        <tr>
+            <td colspan="3">Compañia aseguradora</td>
+            <td colspan="4" class="col-wide">Producto de seguros</td>
+        </tr>
+        <tr>
+            <td colspan="3">{{$recibo_historial->CompaniaAseguradora}}</td>
+            <td colspan="4">{{$deuda->Plan ? $recibo_historial->ProductoSeguros : ''}}</td>
+        </tr>
+        <tr>
+            <td colspan="3">Número de Póliza</td>
+            <td class="col-narrow" colspan="2">Vigencia Inicial (anual)</td>
+            <td class="col-narrow" colspan="2">Vigencia Final (anual)</td>
+        </tr>
+        <tr>
+            <td colspan="3">{{$recibo_historial->NumeroPoliza}}</td>
+            <td colspan="2">{{ \Carbon\Carbon::parse($recibo_historial->VigenciaDesde)->format('d/m/Y') }}</td>
+            <td colspan="2">{{ \Carbon\Carbon::parse($recibo_historial->VigenciaHasta)->format('d/m/Y') }}</td>
+        </tr>
+        <tr>
+            <td rowspan="2" colspan="3">Periodo de cobro</td>
+            <td colspan="2" class="col-narrow" align="center">Fecha Inicio (mes)</td>
+            <td colspan="2" class="col-narrow" align="center">Fecha Fin (mes)</td>
+        </tr>
+        <tr>
+            <td align="center" colspan="2">{{ \Carbon\Carbon::parse($recibo_historial->FechaInicio)->format('d/m/Y') }}</td>
+            <td align="center" colspan="2">{{ \Carbon\Carbon::parse($recibo_historial->FechaFin)->format('d/m/Y') }}</td>
+        </tr>
+        <tr>
+            <td colspan="3">Anexo</td>
+            <td colspan="4">{{$recibo_historial->Anexo}}</td>
+        </tr>
+        <tr>
+            <td colspan="3">Referencia</td>
+            <td colspan="4">{{$recibo_historial->Referencia}}</td>
+        </tr>
+        <tr>
+            <td colspan="3">Factura (s) a Nombre de</td>
+            <td colspan="4">{{$deuda->clientes->Nombre}}</td>
+        </tr>
+    </table>
+    <table width="700" border="0">
+        <tr>
+            <td colspan="6">
+                <center>Detalles del cobro generado</center>
+            </td>
+        </tr>
+        <tr>
+            <td>Monto de Cartera</td>
+            <td colspan="2" style="text-align: right;">${{number_format($recibo_historial->MontoCartera,2,'.',',')}}</td>
+            <td colspan="3" style="text-align: center;">Estructura del CCF de comisión</td>
+        </tr>
+        <tr>
+            <td>Prima calculada</td>
+            <td colspan="2" style="text-align: right;">${{number_format($recibo_historial->PrimaCalculada,2,'.',',')}}</td>
+            <td colspan="2">Porcentaje de comisión</td>
+            <td colspan="2" style="text-align: right;">{{$deuda->TasaComision == '' ? 0: $deuda->TasaComision}}%</td>
+        </tr>
+        <tr>
+            <td>Extra Prima</td>
+            <td colspan="2" style="text-align: right;">${{number_format($recibo_historial->ExtraPrima,2,'.',',')}}</td>
+            <td colspan="2">(=) Prima descontada</td>
+            <td colspan="2" style="width: 150px; text-align: right;">${{number_format($recibo_historial->PrimaDescontada,2,'.',',')}}</td>
+        </tr>
+        <tr>
+            <td>(-) Descuento rentabilidad (0%)</td>
+            <td colspan="2" style="text-align: right;">${{number_format($recibo_historial->Descuento,2,'.',',')}}</td>
+            <td colspan="2">Valor de la comisión </td>
+            <td colspan="2" style="width: 150px; text-align: right;">${{number_format($recibo_historial->Comision,2,'.',',')}}</td>
+        </tr>
+        <tr>
+            <td>(=) Prima descontada</td>
+            <td colspan="2" style="text-align: right;">${{number_format($recibo_historial->PrimaDescontada,2,'.',',')}}</td>
+            <td colspan="2">(+) 13% IVA</td>
+            <td colspan="2" style="width: 150px; text-align: right;">${{number_format($recibo_historial->IvaSobreComision,2,'.',',')}}</td>
+        </tr>
+        <tr>
+            <td>(-) Estructura CCF de Comisión</td>
+            <td colspan="2" style="text-align: right;">(${{number_format($recibo_historial->ValorCCF,2,'.',',')}})</td>
+            <td colspan="2">Sub Total de comision</td>
+            <td colspan="2" style="width: 150px; text-align: right;">${{number_format($recibo_historial->IvaSobreComision + $recibo_historial->Comision,2,'.',',')}}</td>
+        </tr>
+
+        <tr>
+            <td>Total a pagar</td>
+            <td colspan="2" style="text-align: right;"><b>${{number_format($recibo_historial->APagar,2,'.',',')}}</b></td>
+            <td colspan="2">Retencion 1% </td>
+            <td colspan="2" style="width: 150px; text-align: right;">${{number_format($recibo_historial->Retencion,2,'.',',')}}</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td colspan="2" style="text-align: right;">&nbsp;</td>
+            <td colspan="2">Valor del CCF por Comisión</td>
+            <td colspan="2" style="width: 150px; text-align: right;">${{number_format($recibo_historial->ValorCCF,2,'.',',')}}</td>
+        </tr>
+    </table>
+
+    <table width="700" border="0">
+        <tr>
+            <td style="width: 200px;">Cuota</td>
+            <td style="width: 200px;">Número de documento</td>
+            <td style="width: 200px;">Fecha de vencimiento</td>
+            <td style="width: 200px;">Prima A Cobrar</td>
+            <td style="width: 200px;">Total Comisión</td>
+            <td style="width: 200px;">Otros</td>
+            <td style="width: 200px;">Pago liquido de prima </td>
+        </tr>
+        <tr>
+            <td style="text-align: center;">01/01</td>
+            <td style="text-align: center;">{{$recibo_historial->NumeroCorrelativo}}</td>
+            <td style="text-align: center;">{{ \Carbon\Carbon::parse($recibo_historial->FechaInicio)->format('d/m/Y') }}</td>
+            <td style="text-align: right;">${{number_format($recibo_historial->PrimaDescontada,2,'.',',')}}</td>
+            <td style="text-align: right;">${{number_format(($recibo_historial->ValorCCF ),2,'.',',')}}</td>
+            <td style="text-align: right;">${{number_format($recibo_historial->Otros,2,'.',',')}}</td>
+            <td style="text-align: right;">${{number_format($recibo_historial->APagar,2,'.',',')}}</td>
+        </tr>
+        <tr>
+            <td colspan="3" align="center">TOTAL </td>
+            <td style="text-align: right;">${{number_format($recibo_historial->PrimaDescontada,2,'.',',')}}</td>
+            <td style="text-align: right;">${{number_format($recibo_historial->ValorCCF,2,'.',',')}}</td>
+            <td></td>
+            <td style="text-align: right;">${{number_format(($recibo_historial->APagar),2,'.',',')}}</td>
+        </tr>
+    </table>
 
 
 </body>

@@ -478,8 +478,7 @@ class DeudaCarteraController extends Controller
 
         $temp_data_fisrt = PolizaDeudaTempCartera::where('PolizaDeuda', $poliza_id)->where('User', auth()->user()->id)->first();
 
-        if(!$temp_data_fisrt)
-        {
+        if (!$temp_data_fisrt) {
             alert()->error('No se han cargado las carteras');
             return back();
         }
@@ -526,7 +525,7 @@ class DeudaCarteraController extends Controller
 
 
         //dejando los perfiles nulos como valor inicial
-        PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->update(['Perfiles' => null, 'NoValido' => 0]);
+        PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->update(['Perfiles' => null, 'NoValido' => 0, 'OmisionPerfil' => 0]);
 
 
         //definiendo edad maxima segu requisitos
@@ -534,17 +533,24 @@ class DeudaCarteraController extends Controller
         $maxEdadMaxima = $deuda->requisitos->max('EdadFinal');
         PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('EdadDesembloso', '>', $maxEdadMaxima)->update(['NoValido' => 1]);
 
-        //dd($deuda->requisitos);
+
 
         foreach ($requisitos as $requisito) {
-
-            //omitiendo el pago automatico y declaracion jurada
-
-            $omision_por_perfil = 1;
-            if ($requisito->perfil->PagoAutomatico != 1 && $requisito->perfil->DeclaracionJurada != 1) {
-                $omision_por_perfil = 0;
+            if ($requisito->perfil->PagoAutomatico == 1 || $requisito->perfil->DeclaracionJurada == 1) {
+                $requisito->OmicionPerfil = 1;
+            } else {
+                $requisito->OmicionPerfil = 0;
             }
+        }
 
+
+        // Ordenar la colección por OmicionPerfil de forma descendente
+        $requisitos = $requisitos->sortByDesc('OmicionPerfil');
+
+
+        //dd($requisitos);
+
+        foreach ($requisitos as $requisito) {
             $data_dui_cartera = $poliza_cumulos->where('EdadDesembloso', '>=', $requisito->EdadInicial)->where('EdadDesembloso', '<=', $requisito->EdadFinal)
                 ->where('saldo_total', '>=', $requisito->MontoInicial)->where('saldo_total', '<=', $requisito->MontoFinal)
                 ->pluck('Dui')->toArray();
@@ -555,12 +561,8 @@ class DeudaCarteraController extends Controller
                     'Perfiles' => DB::raw(
                         'IF(Perfiles IS NULL OR Perfiles = "","' . $requisito->perfil->Descripcion . '", CONCAT(Perfiles, ",","' . $requisito->perfil->Descripcion . '"))'
                     ),
-                    'OmisionPerfil' =>   $omision_por_perfil
+                    'OmisionPerfil' =>   $requisito->OmicionPerfil
                 ]);
-
-
-            //dd($data_dui_cartera);
-
 
         }
 
@@ -663,7 +665,7 @@ class DeudaCarteraController extends Controller
             //->whereNotIn('NumeroReferencia', $excuidos_array)
             ->get();
 
-           // dd($poliza_temporal);
+        // dd($poliza_temporal);
 
         $conteo_excluidos = $poliza_temporal->count();
 

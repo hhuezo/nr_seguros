@@ -110,7 +110,7 @@
                                         @foreach ($productos as $obj)
                                         <option value="{{ $obj->Id }}" {{$deuda->planes && $obj->Id == $deuda->planes->Producto ? 'selected': '' }}>{{ $obj->Nombre }}
                                         </option>
-                                    
+
                                         @endforeach
                                     </select>
                                 </div>

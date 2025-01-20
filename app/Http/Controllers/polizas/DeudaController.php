@@ -38,6 +38,7 @@ use App\Models\polizas\DeudaDetalle;
 use App\Models\polizas\DeudaEliminados;
 use App\Models\polizas\DeudaHistorialRecibo;
 use App\Models\polizas\DeudaRequisitos;
+use App\Models\polizas\DeudaValidados;
 use App\Models\polizas\DeudaVida;
 use App\Models\polizas\PolizaDeudaCartera;
 use App\Models\polizas\PolizaDeudaExtraPrimadosMensual;
@@ -1005,7 +1006,7 @@ class DeudaController extends Controller
         return $recibo_historial;
     }
 
-    public function get_recibo($id,$exportar)
+    public function get_recibo($id, $exportar)
     {
         $detalle = DeudaDetalle::findOrFail($id);
 
@@ -1019,14 +1020,13 @@ class DeudaController extends Controller
             //dd("insert");
         }
 
-        if($exportar == 2)
-        {
+        if ($exportar == 2) {
             return Excel::download(new DeudaReciboExport($id), 'Recibo.xlsx');
             //return view('polizas.deuda.recibo', compact('recibo_historial','detalle', 'deuda', 'meses','exportar'));
         }
 
 
-        $pdf = \PDF::loadView('polizas.deuda.recibo', compact('recibo_historial', 'detalle', 'deuda', 'meses','exportar'))->setWarnings(false)->setPaper('letter');
+        $pdf = \PDF::loadView('polizas.deuda.recibo', compact('recibo_historial', 'detalle', 'deuda', 'meses', 'exportar'))->setWarnings(false)->setPaper('letter');
         //  dd($detalle);
         return $pdf->stream('Recibos.pdf');
     }
@@ -2383,6 +2383,54 @@ class DeudaController extends Controller
         return $poliza_cumulos;
     }
 
+    public function agregar_validado(Request $request)
+    {
+        try {
+            $temp = PolizaDeudaTempCartera::where('NumeroReferencia', $request->NumeroReferencia)->first();
+
+            if (!$temp) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se encontró el registro temporal con el Número de Referencia proporcionado.'
+                ], 404);
+            }
+
+            $registro = DeudaValidados::where('NumeroReferencia', $request->NumeroReferencia)
+                ->where('Poliza', $temp->PolizaDeuda)
+                ->first();
+
+            if ($registro) {
+                $registro->delete();
+            } else {
+                $registro = new DeudaValidados();
+                $registro->Dui = $temp->Dui;
+                $registro->Nombre = $temp->Nombre;
+                $registro->NumeroReferencia = $temp->NumeroReferencia;
+                $registro->Poliza = $temp->PolizaDeuda; // Asegúrate de usar PolizaDeuda aquí
+                $registro->Mes = $temp->Mes;
+                $registro->Axo = $temp->Axo;
+                $registro->Usuario = auth()->user()->id;
+                $registro->save();
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Operación realizada con éxito.'
+            ]);
+        } catch (\Exception $e) {
+            // Registrar el error en los logs para su seguimiento
+            \Log::error('Error en agregar_validado: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Ocurrió un error al procesar la solicitud.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+
     public function get_referencia_creditos($id)
     {
         $poliza = PolizaDeudaTempCartera::findOrFail($id);
@@ -2475,25 +2523,20 @@ class DeudaController extends Controller
                     DB::raw('SUM(pdtc.MontoNominal) as total_monto_nominal'),
                     'pdc.MontoMaximoIndividual as MontoMaximoIndividual',
                     DB::raw("
-                        CASE
-                            WHEN COUNT(
-                                CASE
-                                    WHEN pdtc.NumeroReferencia NOT IN (
-                                        SELECT NumeroReferencia
-                                        FROM poliza_deuda_cartera
-                                    ) THEN 1
-                                    ELSE NULL
-                                END
-                            ) > 0 THEN 1
-                            ELSE 0
-                        END AS Existe
-                    ")
+                        pdc.MontoMaximoIndividual AS MontoMaximoIndividual,
+                        (
+                            SELECT COUNT(*)
+                            FROM poliza_deuda_cartera AS pdc_aux
+                            WHERE pdc_aux.NumeroReferencia IS NOT NULL
+                        )  AS Existe")
                 )
                 ->where('pdtc.Edad', '<', $deuda->EdadMaximaTerminacion)
                 ->where('pdtc.NoValido', 0)
                 ->where('pdtc.PolizaDeuda', $poliza)
                 ->groupBy('pdtc.Dui')
                 ->get();
+
+
 
             foreach ($poliza_cumulos as $poliza) {
 
@@ -2504,18 +2547,28 @@ class DeudaController extends Controller
                 }
             }
         }
-        $filtro = 0;
-        if ($request->filtro) {
-            $filtro = 1;
-        }
 
-        return view('polizas.deuda.get_creditos', compact('poliza_cumulos', 'opcion', 'requisitos', 'filtro'));
+
+        return view('polizas.deuda.get_creditos', compact('poliza_cumulos', 'opcion', 'requisitos'));
     }
 
 
     public function get_creditos_detalle($documento)
     {
-        $data = PolizaDeudaTempCartera::with('linea_credito.tipoCarteras')->where('Dui', $documento)->orWhere('Nit', $documento)->get();
+        $data = PolizaDeudaTempCartera::with('linea_credito.tipoCarteras')
+            ->where('NoValido', 0)
+            ->where(function ($query) use ($documento) {
+                $query->where('Dui', $documento)
+                    ->orWhere('Nit', $documento);
+            })
+            ->get();
+
+            foreach( $data as $obj)
+            {
+                $count = DeudaValidados::where('NumeroReferencia',$obj->NumeroReferencia)->where('Poliza',$obj->PolizaDeuda)->count();
+                $obj->Validado = $count;
+            }
+
 
         //dd($data);
         return view('polizas.deuda.get_creditos_detalle', compact('data'));

@@ -112,7 +112,7 @@
 
 
             @foreach ($poliza_cumulos->where('OmisionPerfil', 0)->sortBy('Rehabilitado')->reverse() as $registro)
-                @if ($registro->Existe == 0)
+
                     <tr class="{{ $registro->Rehabilitado == 1 ? 'row-warning' : '' }}">
                         {{-- <td>{{ $registro->ConcatenatedNumeroReferencia }} </td> --}}
                         <td>
@@ -123,8 +123,15 @@
                             @endphp
                             {{ !empty($referencias) ? implode(', ', $referencias) : '' }}
                         </td>
-                        <td> {{ $registro->Dui == $registro->Nit ? $registro->Dui : $registro->Dui . ' - ' . $registro->Nit }}
+                        <td>
+                            {{
+                                $registro->Dui && $registro->Nit && $registro->Dui !== $registro->Nit
+                                ? $registro->Dui . ' - ' . $registro->Nit
+                                : ($registro->Dui ?? $registro->Nit)
+                            }}
                         </td>
+
+
                         <td>{{ $registro->PrimerNombre }}
                             {{ $registro->SegundoNombre }}
                             {{ $registro->PrimerApellido }}
@@ -163,7 +170,7 @@
 
                     </tr>
                     @php $i++ @endphp
-                @endif
+
             @endforeach
 
 
@@ -270,7 +277,7 @@
                 url: "{{ url('polizas/deuda/get_creditos_detalle') }}/" + documento,
                 type: 'GET',
                 success: function(response) {
-                    console.log(response);
+                    //console.log(response);
                     $('#modal-creditos').html(response);
                 },
                 error: function(error) {

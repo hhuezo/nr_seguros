@@ -460,7 +460,7 @@
                                         <div class="col-md-12 col-sm-12" align="right">
                                             <form method="POST" action="{{ url('exportar/extraprimados_excluidos') }}/{{ $deuda->Id }}">
                                                 @csrf
-                                                <button class="btn btn-success">Descargar Excel...</button>
+                                                <button class="btn btn-success">Descargar Excel</button>
                                             </form>
                                             <br>
                                         </div>

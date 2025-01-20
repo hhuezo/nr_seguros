@@ -31,9 +31,86 @@
             margin-bottom: 0;
             /* text-align: right; */
         }
+
     </style>
     <!-- jQuery -->
     <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
+
+    <style>
+        /* The switch - the box around the slider */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            /* Ajustado a un tamaño más pequeño */
+            height: 20px;
+            /* Ajustado a un tamaño más pequeño */
+        }
+
+        /* Hide default HTML checkbox */
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        /* The slider */
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            /* Ajustado para ser proporcional al nuevo tamaño */
+            width: 16px;
+            /* Ajustado para ser proporcional al nuevo tamaño */
+            left: 2px;
+            /* Ajustado para posicionar correctamente el círculo */
+            bottom: 2px;
+            /* Ajustado para posicionar correctamente el círculo */
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        input:checked+.slider {
+            background-color: #2196F3;
+        }
+
+        input:focus+.slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked+.slider:before {
+            -webkit-transform: translateX(20px);
+            /* Ajustado al nuevo ancho del switch */
+            -ms-transform: translateX(20px);
+            /* Ajustado al nuevo ancho del switch */
+            transform: translateX(20px);
+            /* Ajustado al nuevo ancho del switch */
+        }
+
+        /* Rounded sliders */
+        .slider.round {
+            border-radius: 20px;
+            /* Proporcional al nuevo tamaño */
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+    </style>
 </head>
 
 <body class="nav-md">
@@ -70,8 +147,7 @@
 
                                 <li><a href="{{ url('/') }}"><i class="fa fa-bar-chart"></i>Control de Primas
                                         General</a></li>
-                                <li><a><i class="fa fa-users"></i> Seguridad <span
-                                            class="fa fa-chevron-down"></span></a>
+                                <li><a><i class="fa fa-users"></i> Seguridad <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li><a href="{{ url('usuario/') }}">Usuario</a></li>
                                         <li><a href="{{ url('permission/') }}">Permisos</a></li>
@@ -80,8 +156,7 @@
                                 </li>
 
 
-                                <li><a><i class="fa fa-folder"></i> Catálogos<span
-                                            class="fa fa-chevron-down"></span></a>
+                                <li><a><i class="fa fa-folder"></i> Catálogos<span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
 
                                         <li><a href="{{ url('catalogo/bombero') }}">Impuesto Bomberos</a></li>
@@ -105,22 +180,19 @@
 
                                     </ul>
                                 </li>
-                                <li id="botonMenuCliente"><a><i class="fa fa-user"></i> Cliente <span
-                                            class="fa fa-chevron-down"></span></a>
+                                <li id="botonMenuCliente"><a><i class="fa fa-user"></i> Cliente <span class="fa fa-chevron-down"></span></a>
                                     <ul id="menuCliente" class="nav child_menu">
                                         <li id="opcionCliente"><a href="{{ url('catalogo/cliente') }}">Clientes</a>
                                         </li>
                                     </ul>
                                 </li>
 
-                                <li id="botonMenuNegocio"><a><i class="fa fa-solid fa-briefcase"></i> Cotizaciones <span
-                                            class="fa fa-chevron-down"></span></a>
+                                <li id="botonMenuNegocio"><a><i class="fa fa-solid fa-briefcase"></i> Cotizaciones <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu" id="menuNegocio">
                                         <li id="opcionNegocio"><a href="{{ url('catalogo/negocio') }}">Negocio</a></li>
                                     </ul>
                                 </li>
-                                <li><a><i class="fa fa-shield"></i> Aseguradoras <span
-                                            class="fa fa-chevron-down"></span></a>
+                                <li><a><i class="fa fa-shield"></i> Aseguradoras <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li><a href="{{ url('catalogo/aseguradoras') }}">Aseguradora </a></li>
                                         <!-- <li><a href="{{ url('catalogo/necesidad_aseguradora') }}">Asignar Necesidad de Protección <br>
@@ -128,11 +200,9 @@
                                     </ul>
                                 </li>
 
-                                <li><a><i class="fa fa-folder-open"></i> Pólizas<span
-                                            class="fa fa-chevron-down"></span></a>
+                                <li><a><i class="fa fa-folder-open"></i> Pólizas<span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu" id="ul-poliza">
-                                        <li id="li-poliza-residencia"><a
-                                                href="{{ url('polizas/residencia') }}">Residencias</a></li>
+                                        <li id="li-poliza-residencia"><a href="{{ url('polizas/residencia') }}">Residencias</a></li>
                                         <!-- <li><a href="{{ url('polizas/vida') }}">Vida</a></li>-->
                                         <li id="li-poliza-deuda"><a href="{{ url('polizas/deuda') }}">Deuda</a></li>
                                     </ul>
@@ -172,18 +242,15 @@
 
                         <ul class="nav navbar-nav navbar-right">
                             <li class="">
-                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown"
-                                    aria-expanded="false">
-                                    <img src="{{ asset('img/usuario.svg') }}"
-                                        alt="">{{ auth()->user()->name }}
+                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                    <img src="{{ asset('img/usuario.svg') }}" alt="">{{ auth()->user()->name }}
                                     <span class=" fa fa-angle-down"></span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-usermenu pull-right">
 
 
 
-                                    <li> <a class="dropdown-item" href="{{ route('logout') }}"
-                                            onclick="event.preventDefault();
+                                    <li> <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
                                             {{ __('Salir') }}
                                         </a>
@@ -191,8 +258,7 @@
                                 </ul>
                             </li>
 
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                                style="display: none;">
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                 @csrf
                             </form>
                         </ul>
@@ -202,8 +268,7 @@
             <!-- /top navigation -->
 
             <!-- page content -->
-            <div class="right_col" role="main"
-                style=" background-repeat: no-repeat; background-size: 30% ; background-position-x:right ; background-position-y:bottom ;">
+            <div class="right_col" role="main" style=" background-repeat: no-repeat; background-size: 30% ; background-position-x:right ; background-position-y:bottom ;">
 
                 @yield('contenido') <div class="x_content"></div>
 
@@ -247,10 +312,10 @@
         //clase para dar formato a las fechas
         $(".formatoFecha").datepicker({
             dateFormat: 'dd/mm/yy', // Formato de fecha dd-mm-yyyy
-            changeYear: true,
-            yearRange: 'c-100:c+100', // Rango de años permitidos
-            showButtonPanel: true,
-        });
+            changeYear: true
+            , yearRange: 'c-100:c+100', // Rango de años permitidos
+            showButtonPanel: true
+        , });
 
         //Initialize Select2 Elements
         $('.select2').select2()
@@ -277,6 +342,7 @@
             }
         }
     }
+
 </script>
 
 </html>
