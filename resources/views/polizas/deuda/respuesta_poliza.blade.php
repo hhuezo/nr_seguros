@@ -185,7 +185,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($poliza_temporal->where('EdadDesembloso', '>=', $deuda->EdadMaximaTerminacion) as $registro)
+                                                @foreach ($poliza_temporal->where('Edad', '>', $deuda->EdadMaximaTerminacion) as $registro)
                                                 <tr>
                                                     <td>{{ $registro->NumeroReferencia }}</td>
                                                     <td>{{ $registro->Dui }}</td>
@@ -316,7 +316,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($nuevos_registros as $registro)
+                                                @foreach ($nuevos_registros->where('Edad', '<=', $deuda->EdadMaximaTerminacion) as $registro)
                                                 <tr>
                                                     <td>{{ $registro->NumeroReferencia }}</td>
                                                     <td>{{ $registro->Dui }}</td>

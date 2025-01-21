@@ -493,8 +493,6 @@ class DeudaCarteraController extends Controller
         // dd($date_mes, $date_mes_anterior);
 
 
-
-
         //estableciendo fecha de nacimiento date y calculando edad
         PolizaDeudaTempCartera::where('User', auth()->user()->id)
             ->where('PolizaDeuda', $poliza_id)
@@ -531,7 +529,7 @@ class DeudaCarteraController extends Controller
         //definiendo edad maxima segu requisitos
         //
         $maxEdadMaxima = $deuda->requisitos->max('EdadFinal');
-        PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('EdadDesembloso', '>', $maxEdadMaxima)->update(['NoValido' => 1]);
+        PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Edad', '>', $maxEdadMaxima)->update(['NoValido' => 1]);
 
 
 
@@ -551,7 +549,7 @@ class DeudaCarteraController extends Controller
         //dd($requisitos);
 
         foreach ($requisitos as $requisito) {
-            $data_dui_cartera = $poliza_cumulos->where('EdadDesembloso', '>=', $requisito->EdadInicial)->where('EdadDesembloso', '<=', $requisito->EdadFinal)
+            $data_dui_cartera = $poliza_cumulos->where('Edad', '>=', $requisito->EdadInicial)->where('Edad', '<=', $requisito->EdadFinal)
                 ->where('saldo_total', '>=', $requisito->MontoInicial)->where('saldo_total', '<=', $requisito->MontoFinal)
                 ->pluck('Dui')->toArray();
 
@@ -661,7 +659,7 @@ class DeudaCarteraController extends Controller
         //dd($excuidos);
 
         $poliza_temporal = PolizaDeudaTempCartera::where('PolizaDeuda', $request->Deuda)->where('User', auth()->user()->id)
-            ->where('EdadDesembloso', '>=', $deuda->EdadMaximaTerminacion)
+            ->where('Edad', '>=', $deuda->EdadMaximaTerminacion)
             //->whereNotIn('NumeroReferencia', $excuidos_array)
             ->get();
 

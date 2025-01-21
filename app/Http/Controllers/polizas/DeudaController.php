@@ -53,7 +53,6 @@ use Maatwebsite\Excel\Facades\Excel;
 use NumberFormatter;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PDF;
-use PhpOffice\PhpSpreadsheet\Calculation\MathTrig\Sum;
 use Throwable;
 
 class DeudaController extends Controller
@@ -63,11 +62,7 @@ class DeudaController extends Controller
     {
         $this->middleware('auth');
     }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
         $today = Carbon::now()->toDateString();
@@ -80,11 +75,7 @@ class DeudaController extends Controller
         return view('polizas.deuda.index', compact('deuda'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function create()
     {
 
@@ -371,12 +362,6 @@ class DeudaController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show(Request $request, $id)
     {
 
