@@ -385,7 +385,7 @@
                                                     <td>{{ $registro->FechaOtorgamiento ? $registro->FechaOtorgamiento : '' }}
                                                     </td>
                                                     <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
-                                                    <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }}
+                                                    <td>{{ $registro->Edad ? $registro->Edad : '' }}
                                                         Años</td>
                                                     {{-- <td>${{ number_format($registro->total_saldo, 2) }}</td> --}}
                                                 </tr>

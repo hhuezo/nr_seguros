@@ -3,6 +3,7 @@
         <thead>
             <tr>
                 <th>Número crédito</th>
+                <th>Tipo cartera</th>
                 <th>DUI</th>
                 <th>NIT</th>
                 <th>Nombre</th>
@@ -35,6 +36,9 @@
                 @endphp
                 <tr>
                     <td>{{ $registro->ConcatenatedNumeroReferencia }}</td>
+                   <td>{{ $registro->TipoCarteraNombre }}
+                        ({{ $registro->Abreviatura }})
+                    </td>
                     <td>{{ $registro->Dui }}</td>
                     <td>{{ $registro->Nit }}</td>
                     <td>{{ $registro->PrimerNombre }}
