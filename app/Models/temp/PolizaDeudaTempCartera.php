@@ -4,6 +4,7 @@ namespace App\Models\temp;
 
 use App\Models\polizas\Deuda;
 use App\Models\polizas\DeudaCredito;
+use App\Models\polizas\PolizaDeudaCartera;
 use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -54,7 +55,8 @@ class PolizaDeudaTempCartera extends Model
         'LineaCredito',
         'NoValido',
         'EdadDesembloso',
-        'FechaOtorgamientoDate'
+        'FechaOtorgamientoDate',
+        'Rehabilitado'
     ];
 
     public function linea_credito()
@@ -110,4 +112,18 @@ class PolizaDeudaTempCartera extends Model
         }
     }
 
+    public function creditoRehabilitado($numeroReferencia, $axoAnterior, $mesAnterior)
+    {
+        try {
+            $count = PolizaDeudaCartera::where('NumeroReferencia', $numeroReferencia)
+                ->where(function ($query) use ($axoAnterior, $mesAnterior) {
+                    $query->where('Axo', '<>', $axoAnterior)
+                        ->orWhere('Mes', '<>', $mesAnterior);
+                })
+                ->count();
+            return $count;
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
 }

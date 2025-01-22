@@ -95,8 +95,7 @@
     <table class="table table-striped" id="MyTable4">
         <thead>
             <tr>
-                <th>Número crédito....</th>
-                {{-- <th>Monto</th> --}}
+                <th>Número crédito</th>
                 <th>DUI/NIT</th>
                 {{-- <th>NIT</th> --}}
                 <th>Nombre</th>
@@ -115,9 +114,9 @@
         <tbody>
 
 
-            @foreach ($poliza_cumulos->where('OmisionPerfil', 0)->sortBy('Rehabilitado')->reverse() as $registro)
+            @foreach ($poliza_cumulos->sortBy('Rehabilitado')->reverse() as $registro)
 
-                    <tr class="{{ $registro->Rehabilitado == 1 ? 'row-warning' : '' }}">
+                    <tr class="{{ $tipo == 3 ? 'row-warning' : '' }}">
                         {{-- <td>{{ $registro->ConcatenatedNumeroReferencia }} </td> --}}
                         <td>
                             @php
@@ -159,9 +158,9 @@
                             @endforeach
                         </td>
                         <td class="text-right">
-                            ${{ number_format($registro->total_saldo, 2, '.', ',') }}
+                            ${{ number_format($registro->saldo_total, 2, '.', ',') }}
                             <i
-                                class="{{ $registro->MontoMaximoIndividual <= $registro->total_saldo ? 'btn btn-danger fa fa-warning' : '' }}"></i>
+                                class="{{ $registro->MontoMaximoIndividual <= $registro->saldo_total ? 'btn btn-danger fa fa-warning' : '' }}"></i>
 
 
 
@@ -239,33 +238,9 @@
     </table>
 
 
-    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <div class="col-md-6">
-                        <h4 class="modal-title" id="myModalLabel">Detalle créditos</h4>
-                    </div>
-                    <div class="col-md-6">
-                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
-                        </button>
-                    </div>
-                </div>
-                <div class="modal-body" id="modal-creditos">
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-warning" data-dismiss="modal">Cerrar</button>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
     <script>
         $(document).ready(function() {
-
+            $('#MyTable4').DataTable().destroy();
             $('#MyTable4').DataTable({
                 //ordering: false, // Desactiva el ordenamiento
                 paging: false // Desactiva la paginación
@@ -275,21 +250,7 @@
         });
 
 
-        function get_creditos_detalle(documento) {
-            console.log(documento)
-            $.ajax({
-                url: "{{ url('polizas/deuda/get_creditos_detalle') }}/" + documento,
-                type: 'GET',
-                success: function(response) {
-                    //console.log(response);
-                    $('#modal-creditos').html(response);
-                },
-                error: function(error) {
-                    // Aquí manejas el error, si ocurre alguno durante la petición
-                    console.error(error);
-                }
-            });
-        }
+
     </script>
 
 @endif

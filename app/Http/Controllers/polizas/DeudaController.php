@@ -994,8 +994,7 @@ class DeudaController extends Controller
 
     public function get_recibo($id, $exportar)
     {
-        if(isset($exportar))
-        {
+        if (isset($exportar)) {
             $exportar = 1;
         }
         $detalle = DeudaDetalle::findOrFail($id);
@@ -2491,66 +2490,134 @@ class DeudaController extends Controller
                 ->get();
         } else {
 
-            //creditos rehabilitados
-            $poliza_eliminados = DeudaEliminados::where('Poliza', $poliza)->groupBy('NumeroReferencia')->get();
-            $poliza_eliminados_array = $poliza_eliminados->pluck('NumeroReferencia')->toArray();
+            $tipo = 1;
+            if ($request->buscar) {
+                $tipo = $request->buscar;
+            }
 
-            $poliza_cumulos = PolizaDeudaTempCartera::
-                join('poliza_deuda_creditos as pdc', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'pdc.Id')
-                ->select(
-                    'poliza_deuda_temp_cartera.Id',
-                    'poliza_deuda_temp_cartera.Dui',
-                    'poliza_deuda_temp_cartera.Edad',
-                    'poliza_deuda_temp_cartera.Nit',
-                    'poliza_deuda_temp_cartera.PrimerNombre',
-                    'poliza_deuda_temp_cartera.SegundoNombre',
-                    'poliza_deuda_temp_cartera.PrimerApellido',
-                    'poliza_deuda_temp_cartera.SegundoApellido',
-                    'poliza_deuda_temp_cartera.ApellidoCasada',
-                    'poliza_deuda_temp_cartera.FechaNacimiento',
-                    'poliza_deuda_temp_cartera.NumeroReferencia',
-                    'poliza_deuda_temp_cartera.NoValido',
-                    'poliza_deuda_temp_cartera.Perfiles',
-                    DB::raw('MAX(poliza_deuda_temp_cartera.EdadDesembloso) as EdadDesembloso'),
-                    DB::raw('MAX(poliza_deuda_temp_cartera.FechaOtorgamientoDate) as FechaOtorgamiento'),
-                    'poliza_deuda_temp_cartera.Excluido',
-                    'poliza_deuda_temp_cartera.OmisionPerfil',
-                    DB::raw('SUM(poliza_deuda_temp_cartera.saldo_total) as total_saldo'),
-                    DB::raw("GROUP_CONCAT(DISTINCT poliza_deuda_temp_cartera.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
-                    DB::raw('SUM(poliza_deuda_temp_cartera.SaldoCapital) as saldo_capital'),
-                    DB::raw('SUM(poliza_deuda_temp_cartera.Intereses) as total_interes'),
-                    DB::raw('SUM(poliza_deuda_temp_cartera.InteresesCovid) as total_covid'),
-                    DB::raw('SUM(poliza_deuda_temp_cartera.InteresesMoratorios) as total_moratorios'),
-                    DB::raw('SUM(poliza_deuda_temp_cartera.MontoNominal) as total_monto_nominal'),
-                    'pdc.MontoMaximoIndividual as MontoMaximoIndividual',
-                    DB::raw("
-                        pdc.MontoMaximoIndividual AS MontoMaximoIndividual,
-                        (
-                            SELECT COUNT(*)
-                            FROM poliza_deuda_cartera AS pdc_aux
-                            WHERE pdc_aux.NumeroReferencia IS NOT NULL
-                        )  AS Existe")
-                )
-                ->where('poliza_deuda_temp_cartera.Edad', '<', $deuda->EdadMaximaTerminacion)
-                ->where('poliza_deuda_temp_cartera.NoValido', 0)
-                ->where('poliza_deuda_temp_cartera.PolizaDeuda', $poliza)
-                ->groupBy('poliza_deuda_temp_cartera.Dui')
-                ->get();
+            if ($tipo == 1) {
 
+                $poliza_cumulos = PolizaDeudaTempCartera::join('poliza_deuda_creditos as pdc', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'pdc.Id')
+                    ->select(
+                        'poliza_deuda_temp_cartera.Id',
+                        'poliza_deuda_temp_cartera.Dui',
+                        'poliza_deuda_temp_cartera.Edad',
+                        'poliza_deuda_temp_cartera.Nit',
+                        'poliza_deuda_temp_cartera.PrimerNombre',
+                        'poliza_deuda_temp_cartera.SegundoNombre',
+                        'poliza_deuda_temp_cartera.PrimerApellido',
+                        'poliza_deuda_temp_cartera.SegundoApellido',
+                        'poliza_deuda_temp_cartera.ApellidoCasada',
+                        'poliza_deuda_temp_cartera.FechaNacimiento',
+                        'poliza_deuda_temp_cartera.NumeroReferencia',
+                        'poliza_deuda_temp_cartera.NoValido',
+                        'poliza_deuda_temp_cartera.Perfiles',
+                        DB::raw("GROUP_CONCAT(DISTINCT poliza_deuda_temp_cartera.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
+                        DB::raw('MAX(poliza_deuda_temp_cartera.EdadDesembloso) as EdadDesembloso'),
+                        DB::raw('MAX(poliza_deuda_temp_cartera.FechaOtorgamientoDate) as FechaOtorgamiento'),
+                        'poliza_deuda_temp_cartera.Excluido',
+                        'poliza_deuda_temp_cartera.OmisionPerfil',
+                        'poliza_deuda_temp_cartera.saldo_total',
+                        'pdc.MontoMaximoIndividual as MontoMaximoIndividual'
+                    )
+                    ->where('poliza_deuda_temp_cartera.Edad', '<', $deuda->EdadMaximaTerminacion)
+                    ->where('poliza_deuda_temp_cartera.NoValido', 0)
+                    ->where('poliza_deuda_temp_cartera.PolizaDeuda', $poliza)
+                    ->where('poliza_deuda_temp_cartera.OmisionPerfil', 0)
+                    ->groupBy('poliza_deuda_temp_cartera.Dui')
+                    ->get();
+            } elseif ($tipo == 2) {
+                $poliza_cumulos = PolizaDeudaTempCartera::join('poliza_deuda_creditos as pdc', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'pdc.Id')
+                    ->select(
+                        'poliza_deuda_temp_cartera.Id',
+                        'poliza_deuda_temp_cartera.Dui',
+                        'poliza_deuda_temp_cartera.Edad',
+                        'poliza_deuda_temp_cartera.Nit',
+                        'poliza_deuda_temp_cartera.PrimerNombre',
+                        'poliza_deuda_temp_cartera.SegundoNombre',
+                        'poliza_deuda_temp_cartera.PrimerApellido',
+                        'poliza_deuda_temp_cartera.SegundoApellido',
+                        'poliza_deuda_temp_cartera.ApellidoCasada',
+                        'poliza_deuda_temp_cartera.FechaNacimiento',
+                        'poliza_deuda_temp_cartera.NumeroReferencia',
+                        'poliza_deuda_temp_cartera.NoValido',
+                        'poliza_deuda_temp_cartera.Perfiles',
+                        DB::raw("GROUP_CONCAT(DISTINCT poliza_deuda_temp_cartera.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
+                        DB::raw('MAX(poliza_deuda_temp_cartera.EdadDesembloso) as EdadDesembloso'),
+                        DB::raw('MAX(poliza_deuda_temp_cartera.FechaOtorgamientoDate) as FechaOtorgamiento'),
+                        'poliza_deuda_temp_cartera.Excluido',
+                        'poliza_deuda_temp_cartera.OmisionPerfil',
+                        'poliza_deuda_temp_cartera.saldo_total',
+                        'pdc.MontoMaximoIndividual as MontoMaximoIndividual'
+                    )
+                    ->where('poliza_deuda_temp_cartera.Edad', '<', $deuda->EdadMaximaTerminacion)
+                    ->where('poliza_deuda_temp_cartera.NoValido', 0)
+                    ->where('poliza_deuda_temp_cartera.PolizaDeuda', $poliza)
+                    ->where('poliza_deuda_temp_cartera.OmisionPerfil', 1)
+                    ->groupBy('poliza_deuda_temp_cartera.Dui')
+                    ->get();
+            } elseif ($tipo == 3) {
+                $poliza_cumulos = PolizaDeudaTempCartera::join('poliza_deuda_creditos as pdc', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'pdc.Id')
+                    ->select(
+                        'poliza_deuda_temp_cartera.Id',
+                        'poliza_deuda_temp_cartera.Dui',
+                        'poliza_deuda_temp_cartera.Edad',
+                        'poliza_deuda_temp_cartera.Nit',
+                        'poliza_deuda_temp_cartera.PrimerNombre',
+                        'poliza_deuda_temp_cartera.SegundoNombre',
+                        'poliza_deuda_temp_cartera.PrimerApellido',
+                        'poliza_deuda_temp_cartera.SegundoApellido',
+                        'poliza_deuda_temp_cartera.ApellidoCasada',
+                        'poliza_deuda_temp_cartera.FechaNacimiento',
+                        'poliza_deuda_temp_cartera.NumeroReferencia as ConcatenatedNumeroReferencia',
+                        'poliza_deuda_temp_cartera.NoValido',
+                        'poliza_deuda_temp_cartera.Perfiles',
+                        DB::raw('MAX(poliza_deuda_temp_cartera.EdadDesembloso) as EdadDesembloso'),
+                        DB::raw('MAX(poliza_deuda_temp_cartera.FechaOtorgamientoDate) as FechaOtorgamiento'),
+                        'poliza_deuda_temp_cartera.Excluido',
+                        'poliza_deuda_temp_cartera.OmisionPerfil',
+                        'poliza_deuda_temp_cartera.saldo_total',
+                        'pdc.MontoMaximoIndividual as MontoMaximoIndividual'
+                    )
+                    //->where('poliza_deuda_temp_cartera.Edad', '<', $deuda->EdadMaximaTerminacion)
+                    ->where('poliza_deuda_temp_cartera.NoValido', 0)
+                    ->where('poliza_deuda_temp_cartera.PolizaDeuda', $poliza)
+                    ->where('poliza_deuda_temp_cartera.Rehabilitado', 1)
+                    ->get();
+            } elseif ($tipo == 4) {
 
-
-            foreach ($poliza_cumulos as $poliza) {
-
-                if (in_array($poliza->NumeroReferencia, $poliza_eliminados_array)) {
-                    $poliza->Rehabilitado = 1;
-                } else {
-                    $poliza->Rehabilitado = 0;
-                }
+                $poliza_cumulos = DB::table('poliza_deuda_temp_cartera')
+                    ->join('poliza_deuda_creditos as pdc', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'pdc.Id')
+                    ->select(
+                        'poliza_deuda_temp_cartera.Id',
+                        'poliza_deuda_temp_cartera.Dui',
+                        'poliza_deuda_temp_cartera.Edad',
+                        'poliza_deuda_temp_cartera.Nit',
+                        'poliza_deuda_temp_cartera.PrimerNombre',
+                        'poliza_deuda_temp_cartera.SegundoNombre',
+                        'poliza_deuda_temp_cartera.PrimerApellido',
+                        'poliza_deuda_temp_cartera.SegundoApellido',
+                        'poliza_deuda_temp_cartera.ApellidoCasada',
+                        'poliza_deuda_temp_cartera.FechaNacimiento',
+                        'poliza_deuda_temp_cartera.NumeroReferencia as ConcatenatedNumeroReferencia',
+                        'poliza_deuda_temp_cartera.NoValido',
+                        'poliza_deuda_temp_cartera.Perfiles',
+                        DB::raw('MAX(poliza_deuda_temp_cartera.EdadDesembloso) as EdadDesembloso'),
+                        DB::raw('MAX(poliza_deuda_temp_cartera.FechaOtorgamientoDate) as FechaOtorgamiento'),
+                        'poliza_deuda_temp_cartera.Excluido',
+                        'poliza_deuda_temp_cartera.OmisionPerfil',
+                        'poliza_deuda_temp_cartera.saldo_total',
+                        'pdc.MontoMaximoIndividual as MontoMaximoIndividual'
+                    )
+                    ->where('poliza_deuda_temp_cartera.NoValido', 0)
+                    ->where('poliza_deuda_temp_cartera.PolizaDeuda', $poliza)
+                    ->whereRaw('poliza_deuda_temp_cartera.saldo_total > pdc.MontoMaximoIndividual')
+                    ->groupBy('poliza_deuda_temp_cartera.Dui')
+                    ->get();
             }
         }
 
-
-        return view('polizas.deuda.get_creditos', compact('poliza_cumulos', 'opcion', 'requisitos'));
+        return view('polizas.deuda.get_creditos', compact('poliza_cumulos', 'opcion', 'requisitos','tipo'));
     }
 
 
@@ -2564,11 +2631,10 @@ class DeudaController extends Controller
             })
             ->get();
 
-            foreach( $data as $obj)
-            {
-                $count = DeudaValidados::where('NumeroReferencia',$obj->NumeroReferencia)->where('Poliza',$obj->PolizaDeuda)->count();
-                $obj->Validado = $count;
-            }
+        foreach ($data as $obj) {
+            $count = DeudaValidados::where('NumeroReferencia', $obj->NumeroReferencia)->where('Poliza', $obj->PolizaDeuda)->count();
+            $obj->Validado = $count;
+        }
 
 
         //dd($data);
