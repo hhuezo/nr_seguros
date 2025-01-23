@@ -256,7 +256,7 @@
                                     &nbsp;
                                 </div>
                                 <div class="col-sm-2">
-                                    <label class="control-label" align="right">%  de Comisión *</label>
+                                    <label class="control-label" align="right">% de Comisión *</label>
                                     <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" value="{{ $deuda->TasaComision }}">
                                 </div>
                                 <div class="col-sm-2"><br>
@@ -329,9 +329,9 @@
                             <div class="col-lg-3 col-md-4 col-sm-12 col-xs-12">
                                 <label class="control-label" align="center">Monto máximo</label> <br>
                                 <div class=" form-group has-feedback">
-                                <input type="number" step="any" name="MontoMaximoIndividual" id="MontoMaximoIndividual" style="padding-left: 15%;display: none;" class="form-control" required onblur="MontoMaxIndividual(this.value)">
-                                <input type="text" step="any" style="padding-left: 15%; display: block;" id="MontoMaximoIndividualTexto" class="form-control" required onfocus="MontoMaxIndividualTexto(this.value)">
-                                <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                    <input type="number" step="any" name="MontoMaximoIndividual" id="MontoMaximoIndividual" style="padding-left: 15%;display: none;" class="form-control" required onblur="MontoMaxIndividual(this.value)">
+                                    <input type="text" step="any" style="padding-left: 15%; display: block;" id="MontoMaximoIndividualTexto" class="form-control" required onfocus="MontoMaxIndividualTexto(this.value)">
+                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                                 </div>
                             </div>
                             <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
@@ -531,7 +531,7 @@
                                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                                     <select name="Perfiles" id="Perfiles" class="form-control" required>
                                                         <option value="">Seleccione...</option>
-                                                        @foreach ($perfil as $obj)
+                                                        @foreach ($perfiles as $obj)
                                                         <option value="{{ $obj->Id }}">
                                                             {{ $obj->Descripcion }}
                                                         </option>
@@ -579,48 +579,68 @@
                         </div>
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
+
+
                             <table class="table table-striped table-bordered">
-                                @for ($i = 0; $i < count($data); $i++) <tr style="width: 25%;">
-                                    @for ($j = 0; $j < count($data[0]); $j++) <td>
-                                        @if ($data[$i][$j]['id'] > 0)
-                                        {{ $data[$i][$j]['value'] }}
-                                        <a href="" data-target="#modal-elimin-{{ $data[$i][$j]['id'] }}" data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
-                                        @else
-                                        {{ $data[$i][$j]['value'] }} {{ $data[$i][$j]['id'] }}
-                                        @endif
+                                <thead>
+                                    <tr>
+                                        <th>REQUISITOS</th>
+                                        @foreach ($columnas as $columna)
+                                        <th>DESDE {{ explode('-', $columna)[0] }} AÑOS HASTA {{ explode('-', $columna)[1] }} AÑOS</th>
+                                        @endforeach
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($tabla as $perfil => $montos)
+                                    <tr>
+                                        <td>{{ $perfil }}</td>
+                                        @foreach ($columnas as $columna)
+                                        @php
+                                        // Obtener el monto correspondiente al rango de edad
+                                        $monto = $montos[$columna]['monto'] ?? null;
+                                        $requisitoId = $montos[$columna]['id'] ?? null; // Obtener el id del requisito
+                                        $perfilId = $montos[$columna]['perfilId'] ?? null; // Obtener el id del requisito
+                                        $edades = explode('-', $columna);
+                                        $edadInicial = $edades[0];
+                                        $edadFinal = $edades[1];
+                                        @endphp
+                                        <td>
+                                            @if ($monto)
+                                            @php
+                                            [$montoInicial, $montoFinal] = explode('-', $monto);
+                                            @endphp
+                                            Desde ${{ number_format($montoInicial, 2) }} HASTA ${{ number_format($montoFinal, 2) }}
 
-                                        </td>
-
-                                        <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-elimin-{{ $data[$i][$j]['id'] }}">
-
-                                            <form method="POST" action="{{ url('eliminar/requisito') }}">
-                                                @method('POST')
-                                                @csrf
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">×</span>
-                                                            </button>
-                                                            <input type="hidden" value="{{ $data[$i][$j]['id'] }}" name="id">
-                                                            <h4 class="modal-title">Eliminar Registro</h4>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <p>Confirme si desea Eliminar el Registro</p>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                                                            <button type="submit" class="btn btn-primary">Confirmar</button>
-                                                        </div>
-                                                    </div>
+                                            <div class="item form-group offset-md-3">
+                                                <br>
+                                                <div class="col-md-6">
+                                                    <button class="btn btn-primary" data-target="#modal-requisito-{{ $requisitoId }}" data-toggle="modal">
+                                                        <i class="fa fa-edit"></i>
+                                                    </button>
                                                 </div>
-                                            </form>
 
-                                        </div>
-                                        @endfor
-                                        </tr>
-                                        @endfor
+                                                <div class="col-md-6" style="text-align: right;">
+                                                    <button class="btn btn-danger" data-target="#modal-delete-{{ $requisitoId }}" data-toggle="modal">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
+                                                </div>
+
+
+                                            </div>
+                                            @include('polizas.deuda.modal_edit_requisito')
+                                            @include('polizas.deuda.modal_delete_requisito')
+                                            @else
+                                            -
+                                            @endif
+                                        </td>
+                                        @endforeach
+                                    </tr>
+                                    @endforeach
+                                </tbody>
                             </table>
+
+
+
 
                         </div>
                     </div>
@@ -633,6 +653,8 @@
 
 
 
+
+
 @include('sweetalert::alert')
 
 
@@ -642,8 +664,8 @@
     function formatearCantidad(cantidad) {
         let numero = Number(cantidad);
         return numero.toLocaleString('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
+            minimumFractionDigits: 2
+            , maximumFractionDigits: 2
         });
     }
 
@@ -686,6 +708,7 @@
     function modal_creditos() {
         $('#modal_creditos').modal('show');
     }
+
 </script>
 <script type="text/javascript">
     $(document).ready(function() {
@@ -757,9 +780,9 @@
             $.ajax({
                 type: "get",
                 //ruta para obtener el horario del doctor
-                url: "{{ url('get_cliente') }}",
-                data: parametros,
-                success: function(data) {
+                url: "{{ url('get_cliente') }}"
+                , data: parametros
+                , success: function(data) {
                     console.log(data);
                     document.getElementById('Nit').value = data.Nit;
                     if (data.TipoContribuyente == 1) {
@@ -839,11 +862,11 @@
         if (document.getElementById('Activar1').checked == true && document.getElementById('EdadFinal').value ==
             "" && document.getElementById('MontoFinal').value == "") {
             Swal.fire({
-                title: 'Error!',
-                text: 'Debe llenar los datos anteriores',
-                icon: 'error',
-                confirmButtonText: 'Aceptar',
-                timer: 1500
+                title: 'Error!'
+                , text: 'Debe llenar los datos anteriores'
+                , icon: 'error'
+                , confirmButtonText: 'Aceptar'
+                , timer: 1500
             });
             document.getElementById('Activar1').checked = false;
         } else {
@@ -881,11 +904,11 @@
                 'EdadFinal2').value == "" &&
             document.getElementById('MontoFinal2').value == "") {
             Swal.fire({
-                title: 'Error!',
-                text: 'Debe llenar los datos anteriores',
-                icon: 'error',
-                confirmButtonText: 'Aceptar',
-                timer: 1500
+                title: 'Error!'
+                , text: 'Debe llenar los datos anteriores'
+                , icon: 'error'
+                , confirmButtonText: 'Aceptar'
+                , timer: 1500
             });
             document.getElementById('Activar2').checked = false;
         } else {
@@ -909,35 +932,35 @@
     function validar() {
         if (document.getElementById('Requisito').value.trim() == "") {
             Swal.fire({
-                title: 'Error!',
-                text: 'El campo requisitos es requerido',
-                icon: 'error',
-                confirmButtonText: 'Aceptar',
-                timer: 1500
+                title: 'Error!'
+                , text: 'El campo requisitos es requerido'
+                , icon: 'error'
+                , confirmButtonText: 'Aceptar'
+                , timer: 1500
             })
         } else if (document.getElementById('EdadFinal').value.trim() == "") {
             Swal.fire({
-                title: 'Error!',
-                text: 'El campo edad final es requerido',
-                icon: 'error',
-                confirmButtonText: 'Aceptar',
-                timer: 1500
+                title: 'Error!'
+                , text: 'El campo edad final es requerido'
+                , icon: 'error'
+                , confirmButtonText: 'Aceptar'
+                , timer: 1500
             })
         } else if (document.getElementById('MontoInicial').value.trim() == "") {
             Swal.fire({
-                title: 'Error!',
-                text: 'El campo monto inicial es requerido',
-                icon: 'error',
-                confirmButtonText: 'Aceptar',
-                timer: 1500
+                title: 'Error!'
+                , text: 'El campo monto inicial es requerido'
+                , icon: 'error'
+                , confirmButtonText: 'Aceptar'
+                , timer: 1500
             })
         } else if (document.getElementById('MontoFinal').value.trim() == "") {
             Swal.fire({
-                title: 'Error!',
-                text: 'El campo monto final es requerido',
-                icon: 'error',
-                confirmButtonText: 'Aceptar',
-                timer: 1500
+                title: 'Error!'
+                , text: 'El campo monto final es requerido'
+                , icon: 'error'
+                , confirmButtonText: 'Aceptar'
+                , timer: 1500
             })
         } else if (document.getElementById('Activar1').checked == true &&
             (document.getElementById('EdadInicial2').value.trim() == "" || document.getElementById('EdadFinal2').value
@@ -947,11 +970,11 @@
 
         ) {
             Swal.fire({
-                title: 'Error!',
-                text: 'Debe llenar todos los campos',
-                icon: 'error',
-                confirmButtonText: 'Aceptar',
-                timer: 1500
+                title: 'Error!'
+                , text: 'Debe llenar todos los campos'
+                , icon: 'error'
+                , confirmButtonText: 'Aceptar'
+                , timer: 1500
             })
         } else if (document.getElementById('Activar2').checked == true &&
             (document.getElementById('EdadInicial3').value.trim() == "" || document.getElementById('EdadFinal3').value
@@ -961,11 +984,11 @@
 
         ) {
             Swal.fire({
-                title: 'Error!',
-                text: 'Debe llenar todos los campos',
-                icon: 'error',
-                confirmButtonText: 'Aceptar',
-                timer: 1500
+                title: 'Error!'
+                , text: 'Debe llenar todos los campos'
+                , icon: 'error'
+                , confirmButtonText: 'Aceptar'
+                , timer: 1500
             })
         } else {
             guardar();
@@ -974,26 +997,26 @@
 
     function guardar() {
         var parametros = {
-            "_token": "{{ csrf_token() }}",
-            "Requisito": document.getElementById('Requisito').value,
-            "EdadInicial": document.getElementById('EdadInicial').value,
-            "EdadFinal": document.getElementById('EdadFinal').value,
-            "MontoInicial": document.getElementById('MontoInicial').value,
-            "MontoFinal": document.getElementById('MontoFinal').value,
-            "EdadInicial2": document.getElementById('EdadInicial2').value,
-            "EdadFinal2": document.getElementById('EdadFinal2').value,
-            "MontoInicial2": document.getElementById('MontoInicial2').value,
-            "MontoFinal2": document.getElementById('MontoFinal2').value,
-            "EdadInicial3": document.getElementById('EdadInicial3').value,
-            "EdadFinal3": document.getElementById('EdadFinal3').value,
-            "MontoInicial3": document.getElementById('MontoInicial3').value,
-            "MontoFinal3": document.getElementById('MontoFinal3').value
+            "_token": "{{ csrf_token() }}"
+            , "Requisito": document.getElementById('Requisito').value
+            , "EdadInicial": document.getElementById('EdadInicial').value
+            , "EdadFinal": document.getElementById('EdadFinal').value
+            , "MontoInicial": document.getElementById('MontoInicial').value
+            , "MontoFinal": document.getElementById('MontoFinal').value
+            , "EdadInicial2": document.getElementById('EdadInicial2').value
+            , "EdadFinal2": document.getElementById('EdadFinal2').value
+            , "MontoInicial2": document.getElementById('MontoInicial2').value
+            , "MontoFinal2": document.getElementById('MontoFinal2').value
+            , "EdadInicial3": document.getElementById('EdadInicial3').value
+            , "EdadFinal3": document.getElementById('EdadFinal3').value
+            , "MontoInicial3": document.getElementById('MontoInicial3').value
+            , "MontoFinal3": document.getElementById('MontoFinal3').value
         };
         $.ajax({
-            type: "post",
-            url: "{{ url('polizas/deuda/store_requisitos') }}",
-            data: parametros,
-            success: function(data) {
+            type: "post"
+            , url: "{{ url('polizas/deuda/store_requisitos') }}"
+            , data: parametros
+            , success: function(data) {
                 console.log(data);
                 if (document.getElementById('DataRequisitos').value == "") {
                     document.getElementById('DataRequisitos').value = data;
@@ -1009,17 +1032,18 @@
 
     function get_requisitos() {
         var parametros = {
-            "Requisitos": document.getElementById('DataRequisitos').value,
-        };
+            "Requisitos": document.getElementById('DataRequisitos').value
+        , };
         $.ajax({
-            type: "get",
-            url: "{{ url('polizas/deuda/get_requisitos') }}",
-            data: parametros,
-            success: function(data) {
+            type: "get"
+            , url: "{{ url('polizas/deuda/get_requisitos') }}"
+            , data: parametros
+            , success: function(data) {
                 console.log(data);
                 $('#divRequisitos').html(data);
             }
         });
     }
+
 </script>
 @endsection

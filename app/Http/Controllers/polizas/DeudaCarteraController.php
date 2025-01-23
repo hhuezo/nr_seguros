@@ -625,8 +625,10 @@ class DeudaCarteraController extends Controller
         foreach ($requisitos as $requisito) {
             if ($requisito->perfil->PagoAutomatico == 1 || $requisito->perfil->DeclaracionJurada == 1) {
                 $requisito->OmicionPerfil = 1;
+                //$requisito->NoValido = 0;
             } else {
                 $requisito->OmicionPerfil = 0;
+                //$requisito->NoValido = 1;
             }
         }
 
@@ -646,6 +648,7 @@ class DeudaCarteraController extends Controller
                         'IF(Perfiles IS NULL OR Perfiles = "","' . $requisito->perfil->Descripcion . '", CONCAT(Perfiles, ",","' . $requisito->perfil->Descripcion . '"))'
                     ),
                     'OmisionPerfil' =>   $requisito->OmicionPerfil
+                    //,'NoValido' =>   $requisito->NoValido
                 ]);
         }
 
@@ -919,15 +922,15 @@ class DeudaCarteraController extends Controller
     public function store_poliza(Request $request)
     {
 
+        // // Convertir la cadena en un objeto Carbon (la clase de fecha en Laravel)
+        // $fecha = \Carbon\Carbon::parse($request->MesActual);
 
+        // // Obtener el mes y el año
+        // $mes = $fecha->format('m'); // El formato 'm' devuelve el mes con ceros iniciales (por ejemplo, "02")
+        // $anio = $fecha->format('Y');
 
-
-        // Convertir la cadena en un objeto Carbon (la clase de fecha en Laravel)
-        $fecha = \Carbon\Carbon::parse($request->MesActual);
-
-        // Obtener el mes y el año
-        $mes = $fecha->format('m'); // El formato 'm' devuelve el mes con ceros iniciales (por ejemplo, "02")
-        $anio = $fecha->format('Y');
+        $mes = $request->MesActual; // El formato 'm' devuelve el mes con ceros iniciales (por ejemplo, "02")
+        $anio = $request->AxoActual;
 
 
         // Obtener los datos de la tabla temporal
@@ -935,7 +938,18 @@ class DeudaCarteraController extends Controller
             ->where('Mes', $mes + 0)
             ->where('User', auth()->user()->id)
             ->where('NoValido', 0)
+            ->where('OmisionPerfil', 1)
             ->where('PolizaDeuda', $request->Deuda)
+            ->get();
+
+        $tempDataValidados = PolizaDeudaTempCartera::
+        join('poliza_deuda_validados','poliza_deuda_validados.NumeroReferencia','=','poliza_deuda_temp_cartera.NumeroReferencia')->
+        where('poliza_deuda_temp_cartera.Axo', $anio)
+            ->where('poliza_deuda_temp_cartera.Mes', $mes + 0)
+            ->where('poliza_deuda_temp_cartera.User', auth()->user()->id)
+            ->where('poliza_deuda_temp_cartera.OmisionPerfil', 0)
+            ->where('NoValido', 0)
+            ->where('poliza_deuda_temp_cartera.PolizaDeuda', $request->Deuda)
             ->get();
 
 
@@ -986,6 +1000,48 @@ class DeudaCarteraController extends Controller
 
         // Iterar sobre los resultados y realizar la inserción en la tabla principal
         foreach ($tempData as $tempRecord) {
+            $poliza = new PolizaDeudaCartera();
+            //$poliza->Id = $tempRecord->Id;
+            $poliza->Nit = $tempRecord->Nit;
+            $poliza->Dui = $tempRecord->Dui;
+            $poliza->Pasaporte = $tempRecord->Pasaporte;
+            $poliza->Nacionalidad = $tempRecord->Nacionalidad;
+            $poliza->FechaNacimiento = $tempRecord->FechaNacimiento;
+            $poliza->TipoPersona = $tempRecord->TipoPersona;
+            $poliza->PrimerApellido = $tempRecord->PrimerApellido;
+            $poliza->SegundoApellido = $tempRecord->SegundoApellido;
+            $poliza->ApellidoCasada = $tempRecord->ApellidoCasada;
+            $poliza->PrimerNombre = $tempRecord->PrimerNombre;
+            $poliza->SegundoNombre = $tempRecord->SegundoNombre;
+            $poliza->NombreSociedad = $tempRecord->NombreSociedad;
+            $poliza->Sexo = $tempRecord->Sexo;
+            $poliza->FechaOtorgamiento = $tempRecord->FechaOtorgamiento;
+            $poliza->FechaVencimiento = $tempRecord->FechaVencimiento;
+            $poliza->Ocupacion = $tempRecord->Ocupacion;
+            $poliza->NumeroReferencia = $tempRecord->NumeroReferencia;
+            $poliza->MontoOtorgado = $tempRecord->MontoOtorgado;
+            $poliza->SaldoCapital = $tempRecord->SaldoCapital;
+            $poliza->Intereses = $tempRecord->Intereses;
+            $poliza->InteresesCovid = $tempRecord->InteresesCovid;
+            $poliza->InteresesMoratorios = $tempRecord->InteresesMoratorios;
+            $poliza->MontoNominal = $tempRecord->MontoNominal;
+            $poliza->SaldoTotal = $tempRecord->SaldoTotal;
+            $poliza->User = $tempRecord->User;
+            $poliza->Axo = $tempRecord->Axo;
+            $poliza->Mes = $tempRecord->Mes;
+            $poliza->PolizaDeuda = $tempRecord->PolizaDeuda;
+            $poliza->FechaInicio = $tempRecord->FechaInicio;
+            $poliza->FechaFinal = $tempRecord->FechaFinal;
+            $poliza->TipoError = $tempRecord->TipoError;
+            $poliza->FechaNacimientoDate = $tempRecord->FechaNacimientoDate;
+            $poliza->Edad = $tempRecord->Edad;
+            $poliza->LineaCredito = $tempRecord->LineaCredito;
+            $poliza->NoValido = $tempRecord->NoValido;
+            $poliza->save();
+        }
+
+
+        foreach ($tempDataValidados as $tempRecord) {
             $poliza = new PolizaDeudaCartera();
             //$poliza->Id = $tempRecord->Id;
             $poliza->Nit = $tempRecord->Nit;

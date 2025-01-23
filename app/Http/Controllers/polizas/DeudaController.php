@@ -371,47 +371,30 @@ class DeudaController extends Controller
 
         $requisitos = DeudaRequisitos::where('Activo', 1)->where('Deuda', $id)->get();
 
-        //formando encabezados
-        $data[0][0] = ['id' => '', 'value' => "REQUISITOS"];
+        // Estructura de la tabla
+        $tabla = [];
+        foreach ($requisitos as $requisito) {
+            $perfil = $requisito->perfil->Descripcion;
+            $perfilId = $requisito->Perfil;
+            $edadRango = "{$requisito->EdadInicial}-{$requisito->EdadFinal}";
+            $montoRango = "{$requisito->MontoInicial}-{$requisito->MontoFinal}";
 
-        $i = 1;
-        $uniqueRequisitos = $requisitos->unique(function ($item) {
-            return $item->EdadInicial . '-' . $item->EdadFinal;
-        });
-
-        $i = 1;
-        foreach ($uniqueRequisitos as $requisito) {
-            $data[0][$i] =  ['id' => '', 'value' => 'DESDE ' . $requisito->EdadInicial . ' AÑOS HASTA ' . $requisito->EdadFinal . ' AÑOS'];
-            $i++;
+            // Guardar el id del requisito para su uso posterior
+            $tabla[$perfil][$edadRango] = [
+                'monto' => $montoRango,
+                'id' => $requisito->Id,
+                'perfilId'  => $perfilId,
+            ];
         }
 
-        $i = 1;
-        foreach ($requisitos->unique('Perfil') as $requisito) {
-            $data[$i][0] = ['id' => '', 'value' => $requisito->perfil->Descripcion];
-            $j = 1;
-            for ($j = 1; $j < count($data[0]); $j++) {
-                $data[$i][$j] = ['id' => '', 'value' => ''];
-            }
-            $i++;
+        // Obtener los rangos de edad para las columnas
+        $columnas = [];
+        foreach ($tabla as $filas) {
+            $columnas = array_merge($columnas, array_keys($filas));
         }
+        $columnas = array_unique($columnas);
+        sort($columnas);
 
-        $i = 1;
-        foreach ($requisitos->unique('Perfil') as $requisito) {
-            $records = DeudaRequisitos::where('Activo', 1)->where('Deuda', $id)->where('Perfil', $requisito->Perfil)->get();
-
-            foreach ($records as $record) {
-
-                $valorBuscado = 'DESDE ' . $record->EdadInicial . ' AÑOS HASTA ' . $record->EdadFinal . ' AÑOS';
-
-                $columnaEncontrada = array_search($valorBuscado, array_column($data[0], 'value'));
-
-                $data[$i][$columnaEncontrada] = ['id' => $record->Id, 'value' => 'Desde $' . number_format($record->MontoInicial, 2, '.', ',') . ' HASTA $' . number_format($record->MontoFinal, 2, '.', ',')];
-            }
-
-            $i++;
-        }
-
-        // dd($data);
 
         $deuda = Deuda::findOrFail($id);
 
@@ -423,15 +406,15 @@ class DeudaController extends Controller
         $tipoCobro = TipoCobro::where('Activo', 1)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
         $creditos = DeudaCredito::where('Activo', 1)->where('Deuda', $id)->get();
-        //  $requisitos = DeudaRequisitos::where('Activo', 1)->where('Deuda', $id)->get();
         $saldos = SaldoMontos::where('Activo', 1)->get();
         $planes = Plan::where('Activo', 1)->get();
-        $perfil = Perfil::where('Activo', 1)->where('Aseguradora', '=', $deuda->Aseguradora)->get();
+        $perfiles = Perfil::where('Activo', 1)->where('Aseguradora', '=', $deuda->Aseguradora)->get();
+
         return view('polizas.deuda.show', compact(
             'requisitos',
             'planes',
             'productos',
-            'perfil',
+            'perfiles',
             'saldos',
             'deuda',
             'aseguradora',
@@ -440,7 +423,9 @@ class DeudaController extends Controller
             'ejecutivo',
             'creditos',
             'tipoCartera',
-            'data'
+            //'data',
+            'tabla',
+            'columnas'
         ));
     }
 
@@ -452,6 +437,37 @@ class DeudaController extends Controller
         return back();
         // return response()->json(['mensaje' => 'Se ha eliminado con exito', 'title' => 'Requisito!', 'icon' => 'success', 'showConfirmButton' => 'true']);
     }
+
+    public function update_requisito(Request $request)
+    {
+        try {
+            // Buscar el requisito por su ID
+            $requisito = DeudaRequisitos::findOrFail($request->Id);
+
+            // Actualizar los datos del requisito
+            $requisito->EdadInicial = $request->EdadInicial;
+            $requisito->EdadFinal = $request->EdadFinal;
+            $requisito->MontoInicial = $request->MontoInicial;
+            $requisito->MontoFinal = $request->MontoFinal;
+            $requisito->Perfil = $request->Perfil;
+
+            // Guardar los cambios
+            $requisito->save();
+
+            // Respuesta en caso de éxito
+            alert()->success('La póliza se configuró correctamente', '¡Éxito!');
+            return back();
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // Si no se encuentra el requisito
+            alert()->success('Requisito no encontrado');
+            return back();
+        } catch (\Exception $e) {
+            // Cualquier otro error
+            alert()->success('Ocurrió un error al actualizar el requisito.');
+            return back();
+        }
+    }
+
 
     public function datos_asegurabilidad(Request $request)
     {
@@ -2617,7 +2633,7 @@ class DeudaController extends Controller
             }
         }
 
-        return view('polizas.deuda.get_creditos', compact('poliza_cumulos', 'opcion', 'requisitos','tipo'));
+        return view('polizas.deuda.get_creditos', compact('poliza_cumulos', 'opcion', 'requisitos', 'tipo'));
     }
 
 
