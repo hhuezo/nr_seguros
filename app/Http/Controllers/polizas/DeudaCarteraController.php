@@ -1040,45 +1040,45 @@ class DeudaCarteraController extends Controller
             $poliza->save();
         }
 
-
-        foreach ($tempDataValidados as $tempRecord) {
+      //  dd($tempDataValidados);
+        foreach ($tempDataValidados as $tempRecordV) {
             $poliza = new PolizaDeudaCartera();
             //$poliza->Id = $tempRecord->Id;
-            $poliza->Nit = $tempRecord->Nit;
-            $poliza->Dui = $tempRecord->Dui;
-            $poliza->Pasaporte = $tempRecord->Pasaporte;
-            $poliza->Nacionalidad = $tempRecord->Nacionalidad;
-            $poliza->FechaNacimiento = $tempRecord->FechaNacimiento;
-            $poliza->TipoPersona = $tempRecord->TipoPersona;
-            $poliza->PrimerApellido = $tempRecord->PrimerApellido;
-            $poliza->SegundoApellido = $tempRecord->SegundoApellido;
-            $poliza->ApellidoCasada = $tempRecord->ApellidoCasada;
-            $poliza->PrimerNombre = $tempRecord->PrimerNombre;
-            $poliza->SegundoNombre = $tempRecord->SegundoNombre;
-            $poliza->NombreSociedad = $tempRecord->NombreSociedad;
-            $poliza->Sexo = $tempRecord->Sexo;
-            $poliza->FechaOtorgamiento = $tempRecord->FechaOtorgamiento;
-            $poliza->FechaVencimiento = $tempRecord->FechaVencimiento;
-            $poliza->Ocupacion = $tempRecord->Ocupacion;
-            $poliza->NumeroReferencia = $tempRecord->NumeroReferencia;
-            $poliza->MontoOtorgado = $tempRecord->MontoOtorgado;
-            $poliza->SaldoCapital = $tempRecord->SaldoCapital;
-            $poliza->Intereses = $tempRecord->Intereses;
-            $poliza->InteresesCovid = $tempRecord->InteresesCovid;
-            $poliza->InteresesMoratorios = $tempRecord->InteresesMoratorios;
-            $poliza->MontoNominal = $tempRecord->MontoNominal;
-            $poliza->SaldoTotal = $tempRecord->SaldoTotal;
-            $poliza->User = $tempRecord->User;
-            $poliza->Axo = $tempRecord->Axo;
-            $poliza->Mes = $tempRecord->Mes;
-            $poliza->PolizaDeuda = $tempRecord->PolizaDeuda;
-            $poliza->FechaInicio = $tempRecord->FechaInicio;
-            $poliza->FechaFinal = $tempRecord->FechaFinal;
-            $poliza->TipoError = $tempRecord->TipoError;
-            $poliza->FechaNacimientoDate = $tempRecord->FechaNacimientoDate;
-            $poliza->Edad = $tempRecord->Edad;
-            $poliza->LineaCredito = $tempRecord->LineaCredito;
-            $poliza->NoValido = $tempRecord->NoValido;
+            $poliza->Nit = $tempRecordV->Nit;
+            $poliza->Dui = $tempRecordV->Dui;
+            $poliza->Pasaporte = $tempRecordV->Pasaporte;
+            $poliza->Nacionalidad = $tempRecordV->Nacionalidad;
+            $poliza->FechaNacimiento = $tempRecordV->FechaNacimiento;
+            $poliza->TipoPersona = $tempRecordV->TipoPersona;
+            $poliza->PrimerApellido = $tempRecordV->PrimerApellido;
+            $poliza->SegundoApellido = $tempRecordV->SegundoApellido;
+            $poliza->ApellidoCasada = $tempRecordV->ApellidoCasada;
+            $poliza->PrimerNombre = $tempRecordV->PrimerNombre;
+            $poliza->SegundoNombre = $tempRecordV->SegundoNombre;
+            $poliza->NombreSociedad = $tempRecordV->NombreSociedad;
+            $poliza->Sexo = $tempRecordV->Sexo;
+            $poliza->FechaOtorgamiento = $tempRecordV->FechaOtorgamiento;
+            $poliza->FechaVencimiento = $tempRecordV->FechaVencimiento;
+            $poliza->Ocupacion = $tempRecordV->Ocupacion;
+            $poliza->NumeroReferencia = $tempRecordV->NumeroReferencia;
+            $poliza->MontoOtorgado = $tempRecordV->MontoOtorgado;
+            $poliza->SaldoCapital = $tempRecordV->SaldoCapital;
+            $poliza->Intereses = $tempRecordV->Intereses;
+            $poliza->InteresesCovid = $tempRecordV->InteresesCovid;
+            $poliza->InteresesMoratorios = $tempRecordV->InteresesMoratorios;
+            $poliza->MontoNominal = $tempRecordV->MontoNominal;
+            $poliza->SaldoTotal = $tempRecordV->SaldoTotal;
+            $poliza->User = $tempRecordV->User;
+            $poliza->Axo = $tempRecordV->Axo;
+            $poliza->Mes = $tempRecordV->Mes;
+            $poliza->PolizaDeuda = $tempRecordV->PolizaDeuda;
+            $poliza->FechaInicio = $tempRecordV->FechaInicio;
+            $poliza->FechaFinal = $tempRecordV->FechaFinal;
+            $poliza->TipoError = $tempRecordV->TipoError;
+            $poliza->FechaNacimientoDate = $tempRecordV->FechaNacimientoDate;
+            $poliza->Edad = $tempRecordV->Edad;
+            $poliza->LineaCredito = $tempRecordV->LineaCredito;
+            $poliza->NoValido = $tempRecordV->NoValido;
             $poliza->save();
         }
 

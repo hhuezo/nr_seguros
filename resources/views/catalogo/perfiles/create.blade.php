@@ -43,7 +43,7 @@
                         <div class="col-md-3">&nbsp;</div>
                         <br>
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                             &nbsp;
+                            &nbsp;
                         </div>
                         <div class="col-md-3">&nbsp;</div>
                         <div class="form-group row col-md-6">
@@ -52,8 +52,24 @@
                             <textarea name="Descripcion" id="Descripcion" cols="30" rows="10" class="form-control"></textarea>
 
                         </div>
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            &nbsp;
+                        </div>
+                        <div class="col-md-3">&nbsp;</div>
+                        <div class="form-group row col-md-6">
+                            <label class="control-label" align="right">Pago Automatico</label>
+                            <input type="checkbox" name="PagoAutomatico" value="1" class="js-switch" />
 
+                            <div class="form-group row col-md-6">
+                                <label class="control-label" align="right">Declaracion Jurada</label>
+                                <input type="checkbox" name="DeclaracionJurada" value="1" class="js-switch" />
 
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            &nbsp;
+                        </div>
+                        <div class="col-md-3">&nbsp;</div>
 
 
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -65,7 +81,7 @@
 
                     </div>
                 </form>
-   
+
 
 
             </div>

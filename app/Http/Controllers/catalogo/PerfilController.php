@@ -39,9 +39,13 @@ class PerfilController extends Controller
      */
     public function store(Request $request)
     {
+
+        //dd($request->DeclaracionJurada);
         $perfiles = new Perfil();
         $perfiles->Descripcion = $request->get('Descripcion');
         $perfiles->Aseguradora = $request->get('Aseguradora');
+        $perfiles->PagoAutomatico = $request->get('PagoAutomatico');
+        $perfiles->DeclaracionJurada = $request->get('DeclaracionJurada');
         $perfiles->save();
 
         return back();
@@ -83,6 +87,8 @@ class PerfilController extends Controller
         $perfiles = Perfil::findOrFail($id);
         $perfiles->Descripcion = $request->get('Descripcion');
         $perfiles->Aseguradora = $request->get('Aseguradora');
+        $perfiles->PagoAutomatico = $request->get('PagoAutomatico');
+        $perfiles->DeclaracionJurada = $request->get('DeclaracionJurada');
         $perfiles->update();
 
         return redirect('catalogo/perfiles');

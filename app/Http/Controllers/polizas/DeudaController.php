@@ -1203,7 +1203,7 @@ class DeudaController extends Controller
             Log::error('Error al guardar extraprimado: ' . $e->getMessage());
 
             // Mensaje de error para el usuario
-            alert()->error('Error al guardar el registro (verificar si el registro ya fue agregado anteriormente).');
+            alert()->error('Error al guardar el registro (verificar si el registro ya fue agregado anteriormente).')->persistent('Ok');
             return redirect()->back()->withInput();
         }
     }
@@ -2305,11 +2305,28 @@ class DeudaController extends Controller
         PolizaDeudaTempCartera::where('PolizaDeuda', $request->deuda_id)->delete();
         return redirect('polizas/deuda/' . $request->deuda_id . '/edit');
     }
+    public function anular_pago($id)
+    {
+        $detalle = DeudaDetalle::findOrFail($id);
+        $detalle->Activo = 0;
+        $detalle->update();
+    //recibo anulado
+        DeudaHistorialRecibo::where('PolizaDeudaDetalle',$id)->update(['Activo',0]);
+
+        PolizaDeudaTempCartera::where('PolizaDeudaDetalle',$id)->delete();
+        alert()->success('El registro ha sido ingresado correctamente');
+        return back();
+    }
+
     public function delete_pago($id)
     {
         $detalle = DeudaDetalle::findOrFail($id);
         $detalle->Activo = 0;
         $detalle->update();
+        // recibo eliminado
+        DeudaHistorialRecibo::where('PolizaDeudaDetalle',$id)->delete();
+
+        PolizaDeudaTempCartera::where('PolizaDeudaDetalle',$id)->delete();
         alert()->success('El registro ha sido ingresado correctamente');
         return back();
     }
@@ -2498,22 +2515,22 @@ class DeudaController extends Controller
                     'sm.Abreviatura as Abreviatura',
                     'tc.nombre AS TipoCarteraNombre' // Agregar el nombre de la TipoCartera
                 )
-
                 ->where('pdtc.NoValido', 1)
                 ->where('pdtc.EdadDesembloso', '<', $deuda->EdadMaximaTerminacion)
                 ->where('pdtc.PolizaDeuda', $poliza)
+                ->where('pdtc.Poliza', $poliza)
                 ->groupBy('pdtc.Dui')
                 ->get();
         } else {
-
             $tipo = 1;
             if ($request->buscar) {
                 $tipo = $request->buscar;
             }
 
-            if ($tipo == 1) {
+            if ($tipo == 1) {  //creditos con requisitos
 
                 $poliza_cumulos = PolizaDeudaTempCartera::join('poliza_deuda_creditos as pdc', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'pdc.Id')
+                    ->leftJoin('poliza_deuda_validados as pdv', 'pdv.NumeroReferencia', '=', 'poliza_deuda_temp_cartera.NumeroReferencia')
                     ->select(
                         'poliza_deuda_temp_cartera.Id',
                         'poliza_deuda_temp_cartera.Dui',
@@ -2540,9 +2557,10 @@ class DeudaController extends Controller
                     ->where('poliza_deuda_temp_cartera.NoValido', 0)
                     ->where('poliza_deuda_temp_cartera.PolizaDeuda', $poliza)
                     ->where('poliza_deuda_temp_cartera.OmisionPerfil', 0)
+                    ->whereNull('pdv.NumeroReferencia') // Filtra registros que no están en la tabla pdv
                     ->groupBy('poliza_deuda_temp_cartera.Dui')
                     ->get();
-            } elseif ($tipo == 2) {
+            } elseif ($tipo == 2) { // creditos validos
                 $poliza_cumulos = PolizaDeudaTempCartera::join('poliza_deuda_creditos as pdc', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'pdc.Id')
                     ->select(
                         'poliza_deuda_temp_cartera.Id',
@@ -2572,7 +2590,7 @@ class DeudaController extends Controller
                     ->where('poliza_deuda_temp_cartera.OmisionPerfil', 1)
                     ->groupBy('poliza_deuda_temp_cartera.Dui')
                     ->get();
-            } elseif ($tipo == 3) {
+            } elseif ($tipo == 3) { // creditos rehabilitados
                 $poliza_cumulos = PolizaDeudaTempCartera::join('poliza_deuda_creditos as pdc', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'pdc.Id')
                     ->select(
                         'poliza_deuda_temp_cartera.Id',
@@ -2600,7 +2618,7 @@ class DeudaController extends Controller
                     ->where('poliza_deuda_temp_cartera.PolizaDeuda', $poliza)
                     ->where('poliza_deuda_temp_cartera.Rehabilitado', 1)
                     ->get();
-            } elseif ($tipo == 4) {
+            } elseif ($tipo == 4) { // creditos fuera del monto limite
 
                 $poliza_cumulos = DB::table('poliza_deuda_temp_cartera')
                     ->join('poliza_deuda_creditos as pdc', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'pdc.Id')

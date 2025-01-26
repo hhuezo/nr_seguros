@@ -23,6 +23,8 @@
                         <tr>
                             <th>Nombre</th>
                             <th>Aseguradora</th>
+                            <th>Pago Automatico</th>
+                            <th>Declaracion Jurada</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
@@ -31,6 +33,8 @@
                             <tr>
                                 <td>{{ $obj->Descripcion }}</td>
                                 <td>{{$obj->aseguradoras->Nombre    }}</td>
+                                <td><input type="checkbox"  class="js-switch" {{$obj->PagoAutomatico == 1 ? 'checked':''}}></td>
+                                <td><input type="checkbox" class="js-switch" {{$obj->DeclaracionJurada == 1 ? 'checked' : ''}} ></td>
                                 <td align="center">
 
                                     @can('edit users')

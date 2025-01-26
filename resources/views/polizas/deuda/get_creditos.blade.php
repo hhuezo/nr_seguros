@@ -105,7 +105,7 @@
                 <th>Fecha otorgamiento</th>
                 <th>Requisitos</th>
                 <th>Cúmulo</th>
-                <th>Detalle</th>
+                <th style="display: {{$tipo == 1 ? 'block' : 'none' }}">Detalle</th>
             </tr>
 
 
@@ -166,7 +166,7 @@
 
                         </td>
                         {{-- <td>{{ $registro->Existe }}</td> --}}
-                        <td><button type="button" class="btn btn-primary" data-toggle="modal"
+                        <td style="display: {{$tipo ==1 ? 'block':'none' }}"><button type="button" class="btn btn-primary" data-toggle="modal"
                                 data-target=".bs-example-modal-lg"
                                 onclick="get_creditos_detalle('{{ $registro->Dui }}')"><i
                                     class="fa fa-eye"></i></button></td>
@@ -175,62 +175,6 @@
                     @php $i++ @endphp
 
             @endforeach
-
-
-
-            {{-- @foreach ($poliza_cumulos->where('NoValido', 0)->where('OmisionPerfil', 0)->where('Excluido', 0)->sortBy('Rehabilitado')->reverse() as $registro)
-                @if (isset($filtro) && $filtro == 1 && trim($registro->Perfiles) == 'Declaracion de salud Jurada')
-                @else
-                    <tr class="table-warning">
-                        <td>
-                            @php
-                                $referencias = !empty($registro->ConcatenatedNumeroReferencia)
-                                    ? explode(',', $registro->ConcatenatedNumeroReferencia)
-                                    : [];
-                            @endphp
-                            {{ !empty($referencias) ? implode(', ', $referencias) : '' }}
-                        </td>
-                        <td>{{ $registro->Dui }}</td>
-                        <td>{{ $registro->Nit }}</td>
-                        <td>{{ $registro->PrimerNombre }}
-                            {{ $registro->SegundoNombre }}
-                            {{ $registro->PrimerApellido }}
-                            {{ $registro->SegundoApellido }}
-                            {{ $registro->ApellidoCasada }}
-                        </td>
-                        <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
-                        </td>
-                        <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
-                        <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }}
-                            Años</td>
-                        <td>{{ $registro->FechaOtorgamiento ? $registro->FechaOtorgamiento : '' }}
-                        </td>
-                        <td>
-                            @php
-                                $perfilesArreglo = explode(',', $registro->Perfiles);
-                                $uniquePerfiles = array_unique($perfilesArreglo);
-                            @endphp
-
-                            @foreach ($uniquePerfiles as $key => $perfil)
-                                {{ $perfil }}{{ $loop->last ? '' : ', ' }}
-                            @endforeach
-                        </td>
-                        <td class="text-right">
-                            ${{ number_format($registro->total_saldo, 2, '.', ',') }}</td>
-                        <td>{{ $registro->TipoCarteraNombre }} {{ $registro->Abreviatura }}</td>
-                        <td><button type="button" class="btn btn-primary" data-toggle="modal"
-                                data-target=".bs-example-modal-lg"
-                                onclick="get_creditos_detalle('{{ $registro->Dui }}')"><i
-                                    class="fa fa-eye"></i></button></td>
-                    </tr>
-                    @php $i++ @endphp
-                @endif
-            @endforeach --}}
-
-
-
-
-
 
 
 

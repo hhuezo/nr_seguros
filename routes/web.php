@@ -250,6 +250,7 @@ Route::post('poliza/deuda/delete_excluido',[DeudaCarteraController::class,'delet
 Route::post('polizas/deuda/agregar_pago', [DeudaController::class, 'agregar_pago']);
 Route::get('polizas/deuda/get_pago/{id}', [DeudaController::class, 'get_pago']);
 Route::post('polizas/deuda/edit_pago', [DeudaController::class, 'edit_pago']);
+Route::post('polizas/deuda/anular_pago/{id}', [DeudaController::class, 'anular_pago']);
 Route::post('polizas/deuda/delete_pago/{id}', [DeudaController::class, 'delete_pago']);
 Route::post('polizas/deuda/actualizar', [DeudaController::class, 'actualizar']);
 Route::post('agregar_credito', [DeudaController::class, 'agregar_credito']);

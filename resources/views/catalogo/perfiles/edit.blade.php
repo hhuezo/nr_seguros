@@ -50,7 +50,17 @@
                                 <textarea class="form-control" name="Descripcion" type="text" rows="10" >{{$perfil->Descripcion}} </textarea>
                             </div>
                         </div>
-     
+                        <div class="col-md-3">&nbsp;</div>
+                        <div class="form-group row col-md-6">
+                            <label class="control-label" align="right">Pago Automatico</label>
+                            <input type="checkbox" name="PagoAutomatico" value="1" {{$perfil->PagoAutomatico == 1 ? 'checked':''}} class="js-switch" />
+
+                            <div class="form-group row col-md-6">
+                                <label class="control-label" align="right">Declaracion Jurada</label>
+                                <input type="checkbox" name="DeclaracionJurada" value="1"  {{$perfil->DeclaracionJurada == 1 ? 'checked':''}} class="js-switch" />
+
+                            </div>
+                        </div>
 
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <div class="form-group" align="center">
