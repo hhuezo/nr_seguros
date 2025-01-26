@@ -108,7 +108,7 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
         </tr>
         <tr>
             <td colspan="4">&nbsp;</td>
-            <td colspan="3">
+            <td colspan="3" style="text-align: center;">
                 <p>Aviso de Cobro: AC {{ str_pad($recibo_historial->NumeroRecibo, 6, "0", STR_PAD_LEFT)}} {{ date('Y') }}</p>
             </td>
         </tr>
@@ -116,7 +116,7 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
 
     <table width="900px" border="1" cellpadding="0">
         <tr>
-            <td colspan="3">Compañia aseguradora</td>
+            <td colspan="3" >Compañia aseguradora</td>
             <td colspan="4" class="col-wide">Producto de seguros</td>
         </tr>
         <tr>
@@ -157,56 +157,64 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
     </table>
     <table width="700" border="0">
         <tr>
-            <td colspan="6">
-                <center>Detalles del cobro generado</center>
+            <td colspan="7" tyle="text-align: center;">
+                Detalles del cobro generado
             </td>
         </tr>
         <tr>
             <td>Monto de Cartera</td>
-            <td colspan="2" style="text-align: right;">${{number_format($recibo_historial->MontoCartera,2,'.',',')}}</td>
+            <td style="text-align: right;">${{number_format($recibo_historial->MontoCartera,2,'.',',')}}</td>
+            <td colspan="2">&nbsp;</td>
             <td colspan="3" style="text-align: center;">Estructura del CCF de comisión</td>
         </tr>
         <tr>
             <td>Prima calculada</td>
-            <td colspan="2" style="text-align: right;">${{number_format($recibo_historial->PrimaCalculada,2,'.',',')}}</td>
-            <td colspan="2">Porcentaje de comisión</td>
+            <td  style="text-align: right;">${{number_format($recibo_historial->PrimaCalculada,2,'.',',')}}</td>
+            <td colspan="2"></td>
+            <td >Porcentaje de comisión</td>
             <td colspan="2" style="text-align: right;">{{$deuda->TasaComision == '' ? 0: $deuda->TasaComision}}%</td>
         </tr>
         <tr>
             <td>Extra Prima</td>
-            <td colspan="2" style="text-align: right;">${{number_format($recibo_historial->ExtraPrima,2,'.',',')}}</td>
-            <td colspan="2">(=) Prima descontada</td>
+            <td style="text-align: right;">${{number_format($recibo_historial->ExtraPrima,2,'.',',')}}</td>
+            <td colspan="2"></td>
+            <td>(=) Prima descontada</td>
             <td colspan="2" style="width: 150px; text-align: right;">${{number_format($recibo_historial->PrimaDescontada,2,'.',',')}}</td>
         </tr>
         <tr>
             <td>(-) Descuento rentabilidad (0%)</td>
-            <td colspan="2" style="text-align: right;">${{number_format($recibo_historial->Descuento,2,'.',',')}}</td>
-            <td colspan="2">Valor de la comisión </td>
+            <td style="text-align: right;">${{number_format($recibo_historial->Descuento,2,'.',',')}}</td>
+            <td colspan="2"></td>
+            <td >Valor de la comisión </td>
             <td colspan="2" style="width: 150px; text-align: right;">${{number_format($recibo_historial->Comision,2,'.',',')}}</td>
         </tr>
         <tr>
             <td>(=) Prima descontada</td>
-            <td colspan="2" style="text-align: right;">${{number_format($recibo_historial->PrimaDescontada,2,'.',',')}}</td>
-            <td colspan="2">(+) 13% IVA</td>
+            <td style="text-align: right;">${{number_format($recibo_historial->PrimaDescontada,2,'.',',')}}</td>
+            <td colspan="2"></td>
+            <td >(+) 13% IVA</td>
             <td colspan="2" style="width: 150px; text-align: right;">${{number_format($recibo_historial->IvaSobreComision,2,'.',',')}}</td>
         </tr>
         <tr>
             <td>(-) Estructura CCF de Comisión</td>
-            <td colspan="2" style="text-align: right;">(${{number_format($recibo_historial->ValorCCF,2,'.',',')}})</td>
-            <td colspan="2">Sub Total de comision</td>
+            <td style="text-align: right;">(${{number_format($recibo_historial->ValorCCF,2,'.',',')}})</td>
+            <td colspan="2"></td>
+            <td>Sub Total de comision</td>
             <td colspan="2" style="width: 150px; text-align: right;">${{number_format($recibo_historial->IvaSobreComision + $recibo_historial->Comision,2,'.',',')}}</td>
         </tr>
 
         <tr>
             <td>Total a pagar</td>
-            <td colspan="2" style="text-align: right;"><b>${{number_format($recibo_historial->APagar,2,'.',',')}}</b></td>
-            <td colspan="2">Retencion 1% </td>
+            <td style="text-align: right;"><b>${{number_format($recibo_historial->APagar,2,'.',',')}}</b></td>
+            <td colspan="2"></td>
+            <td >Retencion 1% </td>
             <td colspan="2" style="width: 150px; text-align: right;">${{number_format($recibo_historial->Retencion,2,'.',',')}}</td>
         </tr>
         <tr>
             <td>&nbsp;</td>
-            <td colspan="2" style="text-align: right;">&nbsp;</td>
-            <td colspan="2">Valor del CCF por Comisión</td>
+            <td style="text-align: right;">&nbsp;</td>
+            <td colspan="2"></td>
+            <td >Valor del CCF por Comisión</td>
             <td colspan="2" style="width: 150px; text-align: right;">${{number_format($recibo_historial->ValorCCF,2,'.',',')}}</td>
         </tr>
     </table>

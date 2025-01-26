@@ -1010,9 +1010,10 @@ class DeudaController extends Controller
 
     public function get_recibo($id, $exportar)
     {
-        if (isset($exportar)) {
+        if (!isset($exportar)) {
             $exportar = 1;
         }
+        //dd($exportar);
         $detalle = DeudaDetalle::findOrFail($id);
 
         $deuda = Deuda::findOrFail($detalle->Deuda);

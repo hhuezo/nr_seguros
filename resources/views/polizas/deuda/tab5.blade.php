@@ -45,8 +45,8 @@
                             @if($obj->Activo <> 0)
                                 <a href="{{ url('poliza/deuda/get_recibo') }}/{{ $obj->Id }}/1" target="_blank" class="btn btn-info"><span class="fa fa-print"></span></a>
                                  &nbsp;
-                              {{--  <a href="{{ url('poliza/deuda/get_recibo') }}/{{ $obj->Id }}/2" target="_blank" class="btn btn-info"><span class="fa fa-file"></span></a>
-                                &nbsp; --}}
+                                <a href="{{ url('poliza/deuda/get_recibo') }}/{{ $obj->Id }}/2" target="_blank" class="btn btn-success"><span class="fa fa-file-excel-o fa-lg"></span></a>
+                                &nbsp; 
                                 <a href="{{ url('poliza/deuda/get_recibo_edit') }}/{{ $obj->Id }}" target="_blank" class="btn btn-warning"><span class="fa fa-pencil"></span></a>
                             @endif
                         </td>

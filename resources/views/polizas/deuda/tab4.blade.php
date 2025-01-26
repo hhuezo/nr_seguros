@@ -88,12 +88,12 @@
                     
                         @if ($obj->Activo == 1)
                             <a href="" data-target="#modal-anular-{{ $obj->Id }}" data-toggle="modal" title="Anular Aviso de Cobro">
-                                <button class="btn btn-danger">
-                                    <i class="fa fa-trash fa-lg"></i>
+                                <button class="btn btn-danger" style="background-color: #ff5733;">
+                                    <i class="fa fa-close fa-lg"></i>
                                 </button>
                             </a>
 
-                            <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal" title="Anular Aviso de Cobro">
+                            <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal" title="Eliminar Aviso de Cobro">
                                 <button class="btn btn-danger">
                                     <i class="fa fa-trash fa-lg"></i>
                                 </button>
