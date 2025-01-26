@@ -71,7 +71,6 @@
         .col-narrow {
             width: 100px;
         }
-
     </style>
 </head>
 
@@ -116,7 +115,7 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
 
     <table width="900px" border="1" cellpadding="0">
         <tr>
-            <td colspan="3" >Compañia aseguradora</td>
+            <td colspan="3">Compañia aseguradora</td>
             <td colspan="4" class="col-wide">Producto de seguros</td>
         </tr>
         <tr>
@@ -169,9 +168,9 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
         </tr>
         <tr>
             <td>Prima calculada</td>
-            <td  style="text-align: right;">${{number_format($recibo_historial->PrimaCalculada,2,'.',',')}}</td>
+            <td style="text-align: right;">${{number_format($recibo_historial->PrimaCalculada,2,'.',',')}}</td>
             <td colspan="2"></td>
-            <td >Porcentaje de comisión</td>
+            <td>Porcentaje de comisión</td>
             <td colspan="2" style="text-align: right;">{{$deuda->TasaComision == '' ? 0: $deuda->TasaComision}}%</td>
         </tr>
         <tr>
@@ -185,14 +184,14 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
             <td>(-) Descuento rentabilidad (0%)</td>
             <td style="text-align: right;">${{number_format($recibo_historial->Descuento,2,'.',',')}}</td>
             <td colspan="2"></td>
-            <td >Valor de la comisión </td>
+            <td>Valor de la comisión </td>
             <td colspan="2" style="width: 150px; text-align: right;">${{number_format($recibo_historial->Comision,2,'.',',')}}</td>
         </tr>
         <tr>
             <td>(=) Prima descontada</td>
             <td style="text-align: right;">${{number_format($recibo_historial->PrimaDescontada,2,'.',',')}}</td>
             <td colspan="2"></td>
-            <td >(+) 13% IVA</td>
+            <td>(+) 13% IVA</td>
             <td colspan="2" style="width: 150px; text-align: right;">${{number_format($recibo_historial->IvaSobreComision,2,'.',',')}}</td>
         </tr>
         <tr>
@@ -207,14 +206,14 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
             <td>Total a pagar</td>
             <td style="text-align: right;"><b>${{number_format($recibo_historial->APagar,2,'.',',')}}</b></td>
             <td colspan="2"></td>
-            <td >Retencion 1% </td>
+            <td>Retencion 1% </td>
             <td colspan="2" style="width: 150px; text-align: right;">${{number_format($recibo_historial->Retencion,2,'.',',')}}</td>
         </tr>
         <tr>
             <td>&nbsp;</td>
             <td style="text-align: right;">&nbsp;</td>
             <td colspan="2"></td>
-            <td >Valor del CCF por Comisión</td>
+            <td>Valor del CCF por Comisión</td>
             <td colspan="2" style="width: 150px; text-align: right;">${{number_format($recibo_historial->ValorCCF,2,'.',',')}}</td>
         </tr>
     </table>
@@ -244,6 +243,71 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
             <td style="text-align: right;">${{number_format($recibo_historial->ValorCCF,2,'.',',')}}</td>
             <td></td>
             <td style="text-align: right;">${{number_format(($recibo_historial->APagar),2,'.',',')}}</td>
+        </tr>
+    </table>
+
+    <table border="0" cellspacing="0" style="width: 100%;">
+        <tr>
+            <td colspan="7">&nbsp;</td>
+        </tr>
+        <tr>
+
+            <td colspan="7" style="text-align: justify;">
+               Es importante que posee 30 días adiciones después de la fecha de
+                    vencimiento para el pago de sus primas, caso contrario la compañía de seguros no se hará responsable
+                    por la cobertura del bien asegurado en caso de un reclamo.
+                    <br>
+                    Además hacemos de su conocimiento que en caso que usted no pueda presentarse a la compañía de seguros a realizar los pagos de
+                    las cuotas de su póliza puede hacerlo a través de nuestra empresa, comunicándose a nuestras oficinas a los teléfonos 2521-3700 o 7601-2895
+                    para programar el día y la hora en la cual nuestra área de mensajería se hará presente al lugar convenido a retirar los cheques o
+                    dinero en efectivo por el pago de sus seguros enviándole posteriormente, la factura o comprobante de crédito fiscal emitido y
+                    cancelado por la compañía aseguradora.
+
+                    <br>
+                    Esperando lo anterior sea de satisfacción, nos ponemos a sus apreciables órdenes por cualquier consulta adicional al respecto.
+
+
+            
+            </td>
+        </tr>
+    </table>
+    <table border="0" cellspacing="0" style="width: 40%;" align="right">
+        <tr style="text-align: right;">
+            <td colspan="5"></td>
+            <td>Firma cliente </td>
+            <td>_______________________</td>
+        </tr>
+        <tr style="text-align: right;">
+            <td colspan="5"></td>
+            <td>Nombre cliente </td>
+            <td>_______________________</td>
+        </tr>
+        <tr style="text-align: right;">
+            <td colspan="5"></td>
+            <td>Fecha Recibido </td>
+            <td>_______________________</td>
+        </tr>
+        <tr style="text-align: right;">
+            <td colspan="5"></td>
+            <td>Elaborado por:</td>
+            <td>{{$detalle->usuarios->name}}</td>
+        </tr>
+        <tr style="text-align: right;">
+            <td colspan="5"></td>
+            <td>Fecha</td>
+            <td>{{date('d/m/Y h:m:s A')}}</td>
+        </tr>
+
+    </table>
+    <table style="width: 100%; text-align: center;">
+        <tr>
+            <td colspan="7" style="text-align: center;">
+                NR Seguros, S.A. de C.V
+                <br>
+                Colonia San Ernesto, pasaje San Carlos #154, Bulevar de los Heroes, San Salvador Centro. <br>
+                Oficina escalón: 11 Calle poniente entre 79 y 81 avenida norte #3 Colonia Escalón.
+
+            </td>
         </tr>
     </table>
 

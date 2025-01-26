@@ -690,7 +690,7 @@ class DeudaController extends Controller
             $ejecutivo = Ejecutivo::where('Activo', 1)->get();
             $productos = Producto::where('Activo', 1)->get();
             $planes = Plan::where('Activo', 1)->get();
-            $detalle = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1)->orderBy('Id', 'desc')->get();
+            $detalle = DeudaDetalle::where('Deuda', $deuda->Id)->orderBy('Id', 'desc')->get();
             $ultimo_pago = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1) //->where('PagoAplicado', '<>', null)
                 ->orderBy('Id', 'desc')->first();
             // dd($ultimo_pago,$detalle);
@@ -2312,9 +2312,9 @@ class DeudaController extends Controller
         $detalle->Activo = 0;
         $detalle->update();
     //recibo anulado
-        DeudaHistorialRecibo::where('PolizaDeudaDetalle',$id)->update(['Activo',0]);
+        DeudaHistorialRecibo::where('PolizaDeudaDetalle',$id)->update(['Activo' => 0]);
 
-        PolizaDeudaTempCartera::where('PolizaDeudaDetalle',$id)->delete();
+        PolizaDeudaCartera::where('PolizaDeudaDetalle',$id)->delete();
         alert()->success('El registro ha sido ingresado correctamente');
         return back();
     }
@@ -2322,12 +2322,12 @@ class DeudaController extends Controller
     public function delete_pago($id)
     {
         $detalle = DeudaDetalle::findOrFail($id);
-        $detalle->Activo = 0;
-        $detalle->update();
+
         // recibo eliminado
         DeudaHistorialRecibo::where('PolizaDeudaDetalle',$id)->delete();
 
-        PolizaDeudaTempCartera::where('PolizaDeudaDetalle',$id)->delete();
+        PolizaDeudaCartera::where('PolizaDeudaDetalle',$id)->delete();
+        $detalle->delete();
         alert()->success('El registro ha sido ingresado correctamente');
         return back();
     }

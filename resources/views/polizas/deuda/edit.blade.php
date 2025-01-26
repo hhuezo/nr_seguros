@@ -9,6 +9,12 @@
         }
     </style>
     <style>
+        .row-error {
+            background-color:rgb(242, 102, 114) !important;
+            /* Color naranja sólido */
+            color: #F1FAEE;
+            /* Texto negro */
+        }
     #loading-overlay-modal {
         display: none;
         position: fixed;

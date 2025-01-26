@@ -235,14 +235,15 @@ class DeudaReciboExport implements FromView, WithStyles, ShouldAutoSize
         ];
 
         // Aplicar un fondo blanco a todo el cuerpo
-        $sheet->getStyle('A1:G32')->applyFromArray($fillWhiteBackground);
+        $sheet->getStyle('A1:G42')->applyFromArray($fillWhiteBackground);
 
         // Estilos específicos
         $sheet->getStyle('A9:G9')->applyFromArray(array_merge($bordersThinBlack, $fillGrayBackground));
         $sheet->getStyle('A11:G11')->applyFromArray(array_merge($bordersThinBlack, $fillGrayBackground));
         $sheet->getStyle('A13:A17')->applyFromArray(array_merge($bordersThinBlack, $fillGrayBackground));
         $sheet->getStyle('A9:G17')->applyFromArray($bordersThinBlack);
-
+        $sheet->getRowDimension(34)->setRowHeight(70);
+        $sheet->getRowDimension(42)->setRowHeight(60);
         // Estilo con bordes negros gruesos
         $bordersThickBlack = [
             'borders' => [

@@ -1,5 +1,5 @@
 <div class="x_title">
-    <h2>Estado de Pagos<small></small>
+    <h2>Estado de Pagos <small></small>
     </h2>
     <div class="clearfix"></div>
 </div>
@@ -60,7 +60,7 @@
                         </td>
                     @endif
                     @if ($obj->Activo == 0)
-                        <td style="text-align: center;">Anulado</td>
+                        <td style="text-align: center;" class="row-error">Anulado</td>
                     @elseif(!$obj->PagoAplicado)
                         <td style="text-align: center;">Pendiente</td>
                     @elseif($obj->PagoAplicado)
@@ -82,11 +82,12 @@
                             </button>
                         @endif
                     
-                        <button class="btn btn-warning" data-target="#modal-view-{{ $obj->Id }}" data-toggle="modal">
-                            <i class="fa fa-eye" align="center" title="Ver Actividad de Aviso de cobro"></i>
-                        </button>
+                       
                     
                         @if ($obj->Activo == 1)
+                            <button class="btn btn-warning" data-target="#modal-view-{{ $obj->Id }}" data-toggle="modal">
+                                <i class="fa fa-eye" align="center" title="Ver Actividad de Aviso de cobro"></i>
+                            </button> 
                             <a href="" data-target="#modal-anular-{{ $obj->Id }}" data-toggle="modal" title="Anular Aviso de Cobro">
                                 <button class="btn btn-danger" style="background-color: #ff5733;">
                                     <i class="fa fa-close fa-lg"></i>
@@ -98,16 +99,17 @@
                                     <i class="fa fa-trash fa-lg"></i>
                                 </button>
                             </a>
+                            <form action="{{ url('exportar_excel') }}" method="POST" style="display: inline-block; vertical-align: middle;">
+                                @csrf
+                                <input type="hidden" value="{{ $deuda->Id }}" name="Deuda">
+                                <input type="hidden" value="{{ $obj->Id }}" name="DeudaDetalle">
+                                <button class="btn btn-success" style="margin-top: 15px">
+                                    <i class="fa fa-file-excel-o" align="center" title="Descargar Cartera a excel"></i>
+                                </button>
+                            </form>
                         @endif
                     
-                        <form action="{{ url('exportar_excel') }}" method="POST" style="display: inline-block; vertical-align: middle;">
-                            @csrf
-                            <input type="hidden" value="{{ $deuda->Id }}" name="Deuda">
-                            <input type="hidden" value="{{ $obj->Id }}" name="DeudaDetalle">
-                            <button class="btn btn-success" style="margin-top: 15px">
-                                <i class="fa fa-file-excel-o" align="center" title="Descargar Cartera a excel"></i>
-                            </button>
-                        </form>
+                       
                     </td>
                     
 
