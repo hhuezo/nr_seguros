@@ -928,7 +928,6 @@ class DeudaCarteraController extends Controller
 
     public function store_poliza(Request $request)
     {
-
         // // Convertir la cadena en un objeto Carbon (la clase de fecha en Laravel)
         // $fecha = \Carbon\Carbon::parse($request->MesActual);
 
@@ -949,14 +948,14 @@ class DeudaCarteraController extends Controller
             ->where('PolizaDeuda', $request->Deuda)
             ->get();
 
-        $tempDataValidados = PolizaDeudaTempCartera::join('poliza_deuda_validados', 'poliza_deuda_validados.NumeroReferencia', '=', 'poliza_deuda_temp_cartera.NumeroReferencia')->where('poliza_deuda_temp_cartera.Axo', $anio)
+        $tempDataValidados = PolizaDeudaTempCartera::join('poliza_deuda_validados', 'poliza_deuda_validados.NumeroReferencia', '=', 'poliza_deuda_temp_cartera.NumeroReferencia')
+        ->where('poliza_deuda_temp_cartera.Axo', $anio)
             ->where('poliza_deuda_temp_cartera.Mes', $mes + 0)
             ->where('poliza_deuda_temp_cartera.User', auth()->user()->id)
             ->where('poliza_deuda_temp_cartera.OmisionPerfil', 0)
             ->where('NoValido', 0)
             ->where('poliza_deuda_temp_cartera.PolizaDeuda', $request->Deuda)
             ->get();
-
 
         if (!empty($request->Eliminados)) {
             $eliminadosArray = explode(', ', $request->Eliminados);

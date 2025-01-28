@@ -804,7 +804,7 @@
             , type: 'GET'
             , data: {
                 buscar: buscar
-                , pcion: opcion
+                , opcion: opcion
             }
             , success: function(response) {
                 // Aquí manejas la respuesta. Por ejemplo, podrías imprimir la respuesta en la consola:

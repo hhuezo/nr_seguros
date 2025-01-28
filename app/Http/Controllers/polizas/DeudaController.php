@@ -2481,6 +2481,7 @@ class DeudaController extends Controller
         $requisitos = $deuda->requisitos;
 
         if ($opcion == 1) {
+
             $poliza_cumulos = DB::table('poliza_deuda_temp_cartera as pdtc')
                 ->join('poliza_deuda_creditos as pdc', 'pdtc.LineaCredito', '=', 'pdc.Id')
                 ->join('saldos_montos as sm', 'pdc.saldos', '=', 'sm.id')
@@ -2517,11 +2518,12 @@ class DeudaController extends Controller
                     'tc.nombre AS TipoCarteraNombre' // Agregar el nombre de la TipoCartera
                 )
                 ->where('pdtc.NoValido', 1)
-                ->where('pdtc.EdadDesembloso', '<', $deuda->EdadMaximaTerminacion)
+                ->where('pdtc.Edad', '<', $deuda->EdadMaximaTerminacion)
                 ->where('pdtc.PolizaDeuda', $poliza)
-                ->where('pdtc.Poliza', $poliza)
                 ->groupBy('pdtc.Dui')
                 ->get();
+
+                return view('polizas.deuda.get_creditos', compact('poliza_cumulos', 'opcion', 'requisitos'));
         } else {
             $tipo = 1;
             if ($request->buscar) {
