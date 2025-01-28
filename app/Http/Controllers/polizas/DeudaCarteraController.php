@@ -573,24 +573,31 @@ class DeudaCarteraController extends Controller
 
 
 
-
         //registros que no existen en el mes anterior
-        $registros_eliminados = PolizaDeudaTempCartera::leftJoin(
-            DB::raw('(
-                    SELECT DISTINCT NumeroReferencia
-                    FROM poliza_deuda_cartera
-                    WHERE Mes = ' . (int)$mesAnterior . ' AND Axo = ' . (int)$axoAnterior . '
-                    and PolizaDeuda = ' . $request->Deuda . '
-                ) AS valid_references'),
-            'poliza_deuda_temp_cartera.NumeroReferencia',
-            '=',
-            'valid_references.NumeroReferencia'
-        )
-            ->where('poliza_deuda_temp_cartera.User', auth()->user()->id)
-            ->where('poliza_deuda_temp_cartera.PolizaDeuda', $request->Deuda)
-            ->whereNull('valid_references.NumeroReferencia') // Solo los que no coinciden
-            ->select('poliza_deuda_temp_cartera.*') // Selecciona columnas principales
-            ->get();
+        $count_data_cartera = PolizaDeudaCartera::where('PolizaDeuda', $poliza_id)->count();
+        if ($count_data_cartera > 0) {
+            $registros_eliminados = PolizaDeudaTempCartera::leftJoin(
+                DB::raw('(
+                        SELECT DISTINCT NumeroReferencia
+                        FROM poliza_deuda_cartera
+                        WHERE Mes = ' . (int)$mesAnterior . ' AND Axo = ' . (int)$axoAnterior . '
+                        and PolizaDeuda = ' . $request->Deuda . '
+                    ) AS valid_references'),
+                'poliza_deuda_temp_cartera.NumeroReferencia',
+                '=',
+                'valid_references.NumeroReferencia'
+            )
+                ->where('poliza_deuda_temp_cartera.User', auth()->user()->id)
+                ->where('poliza_deuda_temp_cartera.PolizaDeuda', $request->Deuda)
+                ->whereNull('valid_references.NumeroReferencia') // Solo los que no coinciden
+                ->select('poliza_deuda_temp_cartera.*') // Selecciona columnas principales
+                ->get();
+        }
+        else{
+            $registros_eliminados =  PolizaDeudaTempCartera::where('Id',0)->get();
+        }
+
+
 
 
         $nuevos_registros = PolizaDeudaTempCartera::leftJoin(
@@ -604,7 +611,7 @@ class DeudaCarteraController extends Controller
             'valid_references.NumeroReferencia'
         )
             ->where('poliza_deuda_temp_cartera.User', auth()->user()->id) // Filtra por el usuario autenticado
-            ->where('poliza_deuda_temp_cartera.PolizaDeuda', $request->Deuda) // Asegúrate de comparar por PolizaDeuda
+            ->where('poliza_deuda_temp_cartera.PolizaDeuda', $request->Deuda)
             ->whereNull('valid_references.NumeroReferencia') // Los registros que no coinciden
             ->select('poliza_deuda_temp_cartera.*') // Selecciona columnas de la tabla principal
             ->get();
@@ -942,9 +949,7 @@ class DeudaCarteraController extends Controller
             ->where('PolizaDeuda', $request->Deuda)
             ->get();
 
-        $tempDataValidados = PolizaDeudaTempCartera::
-        join('poliza_deuda_validados','poliza_deuda_validados.NumeroReferencia','=','poliza_deuda_temp_cartera.NumeroReferencia')->
-        where('poliza_deuda_temp_cartera.Axo', $anio)
+        $tempDataValidados = PolizaDeudaTempCartera::join('poliza_deuda_validados', 'poliza_deuda_validados.NumeroReferencia', '=', 'poliza_deuda_temp_cartera.NumeroReferencia')->where('poliza_deuda_temp_cartera.Axo', $anio)
             ->where('poliza_deuda_temp_cartera.Mes', $mes + 0)
             ->where('poliza_deuda_temp_cartera.User', auth()->user()->id)
             ->where('poliza_deuda_temp_cartera.OmisionPerfil', 0)
@@ -1040,7 +1045,7 @@ class DeudaCarteraController extends Controller
             $poliza->save();
         }
 
-      //  dd($tempDataValidados);
+        //  dd($tempDataValidados);
         foreach ($tempDataValidados as $tempRecordV) {
             $poliza = new PolizaDeudaCartera();
             //$poliza->Id = $tempRecord->Id;
