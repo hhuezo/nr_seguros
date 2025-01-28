@@ -2532,7 +2532,16 @@ class DeudaController extends Controller
             if ($tipo == 1) {  //creditos con requisitos
 
                 $poliza_cumulos = PolizaDeudaTempCartera::join('poliza_deuda_creditos as pdc', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'pdc.Id')
-                    ->leftJoin('poliza_deuda_validados as pdv', 'pdv.NumeroReferencia', '=', 'poliza_deuda_temp_cartera.NumeroReferencia')
+                ->leftJoin(
+                    DB::raw('(
+                                SELECT DISTINCT NumeroReferencia
+                                FROM poliza_deuda_cartera
+                                WHERE PolizaDeuda = ' . $poliza. '
+                            ) AS valid_references'),
+                    'poliza_deuda_temp_cartera.NumeroReferencia',
+                    '=',
+                    'valid_references.NumeroReferencia'
+                )
                     ->select(
                         'poliza_deuda_temp_cartera.Id',
                         'poliza_deuda_temp_cartera.Dui',
@@ -2559,7 +2568,6 @@ class DeudaController extends Controller
                     ->where('poliza_deuda_temp_cartera.NoValido', 0)
                     ->where('poliza_deuda_temp_cartera.PolizaDeuda', $poliza)
                     ->where('poliza_deuda_temp_cartera.OmisionPerfil', 0)
-                    //->whereNull('pdv.NumeroReferencia') // Filtra registros que no están en la tabla pdv
                     ->groupBy('poliza_deuda_temp_cartera.Dui')
                     ->get();
 
