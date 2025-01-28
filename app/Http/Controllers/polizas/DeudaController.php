@@ -2528,6 +2528,7 @@ class DeudaController extends Controller
                 $tipo = $request->buscar;
             }
 
+
             if ($tipo == 1) {  //creditos con requisitos
 
                 $poliza_cumulos = PolizaDeudaTempCartera::join('poliza_deuda_creditos as pdc', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'pdc.Id')
@@ -2558,9 +2559,11 @@ class DeudaController extends Controller
                     ->where('poliza_deuda_temp_cartera.NoValido', 0)
                     ->where('poliza_deuda_temp_cartera.PolizaDeuda', $poliza)
                     ->where('poliza_deuda_temp_cartera.OmisionPerfil', 0)
-                    ->whereNull('pdv.NumeroReferencia') // Filtra registros que no están en la tabla pdv
+                    //->whereNull('pdv.NumeroReferencia') // Filtra registros que no están en la tabla pdv
                     ->groupBy('poliza_deuda_temp_cartera.Dui')
                     ->get();
+
+                    dd($poliza_cumulos );
             } elseif ($tipo == 2) { // creditos validos
                 $poliza_cumulos = PolizaDeudaTempCartera::join('poliza_deuda_creditos as pdc', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'pdc.Id')
                     ->select(
