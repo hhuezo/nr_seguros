@@ -743,6 +743,27 @@
     }
 
 
+    function get_creditos(id) {
+            $.ajax({
+                url: "{{ url('polizas/deuda/get_referencia_creditos') }}/" + id,
+                type: 'GET',
+                success: function(response) {
+                    // Aquí manejas la respuesta. Por ejemplo, podrías imprimir la respuesta en la consola:
+                    console.log(response);
+                    var _select = '<option value=""> Seleccione ... </option>';
+                    for (var i = 0; i < response.length; i++)
+                        _select += '<option value="' + response[i].Id + '"  >' + response[i].NumeroReferencia +
+                        '</option>';
+                    $("#creditos").html(_select);
+                },
+                error: function(error) {
+                    // Aquí manejas el error, si ocurre alguno durante la petición
+                    console.error(error);
+                }
+            });
+        }
+
+
     function agregarValidos() {
         var id = document.getElementById('creditos').value;
 
