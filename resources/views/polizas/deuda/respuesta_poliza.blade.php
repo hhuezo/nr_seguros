@@ -528,7 +528,7 @@
 
 
 
-        {{-- <div class="modal fade" id="modal_cambio_credito_valido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
+       <div class="modal fade" id="modal_cambio_credito_valido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
             <div class="modal-dialog modal-md" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -560,7 +560,7 @@
                     </div>
                 </div>
             </div>
-        </div> --}}
+        </div>
 
 
 
