@@ -2571,7 +2571,6 @@ class DeudaController extends Controller
                     ->groupBy('poliza_deuda_temp_cartera.Dui')
                     ->get();
 
-                    dd($poliza_cumulos );
             } elseif ($tipo == 2) { // creditos validos
                 $poliza_cumulos = PolizaDeudaTempCartera::join('poliza_deuda_creditos as pdc', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'pdc.Id')
                     ->select(
