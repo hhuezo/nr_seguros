@@ -120,79 +120,138 @@
 
 
     </thead>
-    @php $i=1 @endphp
     <tbody>
 
         @if($poliza_cumulos)
-        @foreach ($poliza_cumulos->sortBy('Rehabilitado')->reverse() as $registro)
+            @foreach ($poliza_cumulos->sortBy('Rehabilitado')->reverse() as $registro)
 
-        <tr class="{{ $tipo == 3 ? 'row-warning' : '' }}">
-            {{-- <td>{{ $registro->ConcatenatedNumeroReferencia }} </td> --}}
-            <td>
-                @php
-                $referencias = !empty($registro->ConcatenatedNumeroReferencia)
-                ? explode(',', $registro->ConcatenatedNumeroReferencia)
-                : [];
-                @endphp
+                <tr class="{{ $tipo == 3 ? 'row-warning' : '' }}">
+                    {{-- <td>{{ $registro->ConcatenatedNumeroReferencia }} </td> --}}
+                    <td>
+                        @php
+                        $referencias = !empty($registro->ConcatenatedNumeroReferencia)
+                        ? explode(',', $registro->ConcatenatedNumeroReferencia)
+                        : [];
+                        @endphp
 
-                @if (count($referencias) > 1)
-                @foreach ($referencias as $index => $referencia)
-                @if ($index == count($referencias) - 1 && $tipo == 1)
-                <span style="color: red;">{{ $referencia }}</span>
-                @else
-                {{ $referencia }},
-                @endif
+                        @if (count($referencias) > 1)
+                        @foreach ($referencias as $index => $referencia)
+                        @if ($index == count($referencias) - 1 && $tipo == 1)
+                        <span style="color: red;">{{ $referencia }}</span>
+                        @else
+                        {{ $referencia }},
+                        @endif
+                        @endforeach
+                        @else
+                        {{ implode(', ', $referencias) }}
+                        @endif
+                    </td>
+                    <td>
+                        {{
+                                        $registro->Dui && $registro->Nit && $registro->Dui !== $registro->Nit
+                                        ? $registro->Dui . ' - ' . $registro->Nit
+                                        : ($registro->Dui ?? $registro->Nit)
+                                    }}
+                    </td>
+
+
+                    <td>{{ $registro->PrimerNombre }}
+                        {{ $registro->SegundoNombre }}
+                        {{ $registro->PrimerApellido }}
+                        {{ $registro->SegundoApellido }}
+                        {{ $registro->ApellidoCasada }}
+                    </td>
+                    <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}</td>
+                    <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
+                    <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }} Años</td>
+                    <td>{{ $registro->FechaOtorgamiento ? date('d/m/Y', strtotime($registro->FechaOtorgamiento)) : '' }}
+                    </td>
+
+                    <td>
+                        @php
+                        $perfilesArreglo = explode(',', $registro->Perfiles);
+                        $uniquePerfiles = array_unique($perfilesArreglo);
+                        @endphp
+
+                        @foreach ($uniquePerfiles as $key => $perfil)
+                        {{ $perfil }}{{ $loop->last ? '' : ', ' }}
+                        @endforeach
+                    </td>
+                    <td class="text-right">
+                        ${{ number_format($registro->saldo_total, 2, '.', ',') }}
+                        {{-- <i
+                                        class="{{ $registro->MontoMaximoIndividual <= $registro->saldo_total ? 'btn btn-danger fa fa-warning' : '' }}"></i> --}}
+
+
+
+                    </td>
+                    {{-- <td>{{ $registro->Existe }}</td> --}}
+                    <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-lg" onclick="get_creditos_detalle('{{ $registro->Dui }}',{{$deuda->Id}})"><i class="fa fa-eye"></i></button></td>
+
+                </tr>
+
+            @endforeach
+
+            @if(isset($poliza_cumulos_validados))
+                @foreach ($poliza_cumulos_validados as $registro)
+                    <tr class="warning">
+
+                        <td>
+                            @php
+                                $referencias = !empty($registro->ConcatenatedNumeroReferencia)
+                                    ? explode(',', $registro->ConcatenatedNumeroReferencia)
+                                    : [];
+                            @endphp
+
+                            {{ implode(', ', $referencias) }}
+                        </td>
+
+                        <td>
+                            {{
+                                            $registro->Dui && $registro->Nit && $registro->Dui !== $registro->Nit
+                                            ? $registro->Dui . ' - ' . $registro->Nit
+                                            : ($registro->Dui ?? $registro->Nit)
+                                        }}
+                        </td>
+
+
+                        <td>{{ $registro->PrimerNombre }}
+                            {{ $registro->SegundoNombre }}
+                            {{ $registro->PrimerApellido }}
+                            {{ $registro->SegundoApellido }}
+                            {{ $registro->ApellidoCasada }}
+                        </td>
+                        <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}</td>
+                        <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
+                        <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }} Años</td>
+                        <td>{{ $registro->FechaOtorgamiento ? date('d/m/Y', strtotime($registro->FechaOtorgamiento)) : '' }}
+                        </td>
+
+                        <td>
+                            @php
+                            $perfilesArreglo = explode(',', $registro->Perfiles);
+                            $uniquePerfiles = array_unique($perfilesArreglo);
+                            @endphp
+
+                            @foreach ($uniquePerfiles as $key => $perfil)
+                            {{ $perfil }}{{ $loop->last ? '' : ', ' }}
+                            @endforeach
+                        </td>
+                        <td class="text-right">
+                            ${{ number_format($registro->saldo_total, 2, '.', ',') }}
+                            {{-- <i
+                                            class="{{ $registro->MontoMaximoIndividual <= $registro->saldo_total ? 'btn btn-danger fa fa-warning' : '' }}"></i> --}}
+
+
+
+                        </td>
+                        {{-- <td>{{ $registro->Existe }}</td> --}}
+                        <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-lg" onclick="get_creditos_detalle('{{ $registro->Dui }}',{{$deuda->Id}})"><i class="fa fa-eye"></i></button></td>
+
+                    </tr>
                 @endforeach
-                @else
-                {{ implode(', ', $referencias) }}
-                @endif
-            </td>
-            <td>
-                {{
-                                $registro->Dui && $registro->Nit && $registro->Dui !== $registro->Nit
-                                ? $registro->Dui . ' - ' . $registro->Nit
-                                : ($registro->Dui ?? $registro->Nit)
-                            }}
-            </td>
+            @endif
 
-
-            <td>{{ $registro->PrimerNombre }}
-                {{ $registro->SegundoNombre }}
-                {{ $registro->PrimerApellido }}
-                {{ $registro->SegundoApellido }}
-                {{ $registro->ApellidoCasada }}
-            </td>
-            <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}</td>
-            <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
-            <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }} Años</td>
-            <td>{{ $registro->FechaOtorgamiento ? date('d/m/Y', strtotime($registro->FechaOtorgamiento)) : '' }}
-            </td>
-
-            <td>
-                @php
-                $perfilesArreglo = explode(',', $registro->Perfiles);
-                $uniquePerfiles = array_unique($perfilesArreglo);
-                @endphp
-
-                @foreach ($uniquePerfiles as $key => $perfil)
-                {{ $perfil }}{{ $loop->last ? '' : ', ' }}
-                @endforeach
-            </td>
-            <td class="text-right">
-                ${{ number_format($registro->saldo_total, 2, '.', ',') }}
-                {{-- <i
-                                class="{{ $registro->MontoMaximoIndividual <= $registro->saldo_total ? 'btn btn-danger fa fa-warning' : '' }}"></i> --}}
-
-
-
-            </td>
-            {{-- <td>{{ $registro->Existe }}</td> --}}
-            <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-lg" onclick="get_creditos_detalle('{{ $registro->Dui }}',{{$deuda->Id}})"><i class="fa fa-eye"></i></button></td>
-
-        </tr>
-        @php $i++ @endphp
-
-        @endforeach
         @endif
 
 
@@ -206,7 +265,7 @@
     $(document).ready(function() {
         $('#MyTable4').DataTable().destroy();
         $('#MyTable4').DataTable({
-            //ordering: false, // Desactiva el ordenamiento
+            ordering: false, // Desactiva el ordenamiento
             paging: false // Desactiva la paginación
         });
 

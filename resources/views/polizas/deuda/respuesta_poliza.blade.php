@@ -311,7 +311,7 @@
                                                     <th>Nombre</th>
                                                     <th>Fecha nacimiento</th>
                                                     <th>Edad Actual</th>
-                                                    <th>Total {{$deuda->EdadMaximaTerminacion}}</th>
+                                                    <th>Total</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
