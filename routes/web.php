@@ -212,7 +212,7 @@ Route::get('poliza/vida/usuario/{id}', [VidaController::class, 'getUsuario']);
 
 Route::get('polizas/deuda/get_referencia_creditos/{id}', [DeudaController::class, 'get_referencia_creditos']);
 Route::get('polizas/deuda/get_creditos/{id}', [DeudaController::class, 'get_creditos']);
-Route::get('polizas/deuda/get_creditos_detalle/{documento}', [DeudaController::class, 'get_creditos_detalle']);
+Route::get('polizas/deuda/get_creditos_detalle/{documento}/{poliza}', [DeudaController::class, 'get_creditos_detalle']);
 
 Route::post('exportar/extraprimados_excluidos/{id}',[DeudaController::class,'extraprimados_excluidos']);
 Route::post('exportar/nuevos_registros/{id}',[DeudaController::class,'exportar_nuevos_registros']);

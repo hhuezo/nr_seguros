@@ -183,6 +183,7 @@
                                                         <th>Nombre</th>
                                                         <th>Fecha nacimiento</th>
                                                         <th>Edad Actual</th>
+                                                        <th>Total</th>
                                                         <th style="text-align: center;">Excluir</th>
                                                     </tr>
                                                 </thead>
@@ -201,6 +202,7 @@
                                                         <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
                                                         </td>
                                                         <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
+                                                        <td>${{ number_format($registro->saldo_total, 2) }}</td>
                                                         <td>
                                                             <input type="checkbox" onchange="excluir({{ $registro->Id }},0,1)" class="js-switch" {{ $registro->Excluido > 0 ? 'checked' : '' }}>
                                                             <input type="hidden" id="id_excluido-{{ $registro->Id }}" value="{{ $registro->Excluido }}">
@@ -309,7 +311,7 @@
                                                     <th>Nombre</th>
                                                     <th>Fecha nacimiento</th>
                                                     <th>Edad Actual</th>
-                                                    <th>Total</th>
+                                                    <th>Total {{$deuda->EdadMaximaTerminacion}}</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -430,7 +432,7 @@
                                                     <option value="1">Creditos con requisitos</option>
                                                     <option value="2">Creditos válidos</option>
                                                     <option value="3">Creditos rehabilitados</option>
-                                                    <option value="4">Creditos fuera del monto límite</option>
+                                                    {{-- <option value="4">Creditos fuera del monto límite</option> --}}
                                                 </select>
                                             </div>
 
@@ -867,10 +869,10 @@
     });
 
 
-    function get_creditos_detalle(documento) {
+    function get_creditos_detalle(documento,poliza) {
         console.log(documento)
         $.ajax({
-            url: "{{ url('polizas/deuda/get_creditos_detalle') }}/" + documento
+            url: "{{ url('polizas/deuda/get_creditos_detalle') }}/" + documento+"/"+poliza
             , type: 'GET'
             , success: function(response) {
                 console.log(response);

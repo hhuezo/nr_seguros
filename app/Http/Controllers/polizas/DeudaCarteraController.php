@@ -576,25 +576,21 @@ class DeudaCarteraController extends Controller
         //registros que no existen en el mes anterior
         $count_data_cartera = PolizaDeudaCartera::where('PolizaDeuda', $poliza_id)->count();
         if ($count_data_cartera > 0) {
-            $registros_eliminados = PolizaDeudaTempCartera::leftJoin(
-                DB::raw('(
-                        SELECT DISTINCT NumeroReferencia
-                        FROM poliza_deuda_cartera
-                        WHERE Mes = ' . (int)$mesAnterior . ' AND Axo = ' . (int)$axoAnterior . '
-                        and PolizaDeuda = ' . $request->Deuda . '
-                    ) AS valid_references'),
-                'poliza_deuda_temp_cartera.NumeroReferencia',
-                '=',
-                'valid_references.NumeroReferencia'
-            )
-                ->where('poliza_deuda_temp_cartera.User', auth()->user()->id)
-                ->where('poliza_deuda_temp_cartera.PolizaDeuda', $request->Deuda)
-                ->whereNull('valid_references.NumeroReferencia') // Solo los que no coinciden
-                ->select('poliza_deuda_temp_cartera.*') // Selecciona columnas principales
-                ->get();
-        }
-        else{
-            $registros_eliminados =  PolizaDeudaTempCartera::where('Id',0)->get();
+            //dd($mesAnterior,$axoAnterior,$request->Deuda);
+            $registros_eliminados = DB::table('poliza_deuda_cartera AS pdc')
+            ->leftJoin('poliza_deuda_temp_cartera AS pdtc', function ($join) {
+                $join->on('pdc.NumeroReferencia', '=', 'pdtc.NumeroReferencia')
+                    ->where('pdtc.User', auth()->user()->id);
+            })
+            ->where('pdc.Mes', (int)$mesAnterior)
+            ->where('pdc.Axo', (int)$axoAnterior)
+            ->where('pdc.PolizaDeuda', $request->Deuda)
+            ->whereNull('pdtc.NumeroReferencia') // Solo los que no están en poliza_deuda_temp_cartera
+            ->select('pdc.*') // Selecciona columnas principales
+            ->get();
+
+        } else {
+            $registros_eliminados =  PolizaDeudaTempCartera::where('Id', 0)->get();
         }
 
 
@@ -643,6 +639,9 @@ class DeudaCarteraController extends Controller
         // Ordenar la colección por OmicionPerfil de forma descendente
         $requisitos = $requisitos->sortByDesc('OmicionPerfil');
 
+
+
+
         foreach ($requisitos as $requisito) {
             $data_dui_cartera = $poliza_cumulos->where('Edad', '>=', $requisito->EdadInicial)->where('Edad', '<=', $requisito->EdadFinal)
                 ->where('saldo_total', '>=', $requisito->MontoInicial)->where('saldo_total', '<=', $requisito->MontoFinal)
@@ -659,7 +658,31 @@ class DeudaCarteraController extends Controller
                 ]);
         }
 
-        //dd($requisitos->take(10));
+
+        //inicializamos los no validos a cero
+        PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
+        ->update(['NoValido' => 0]);
+
+        $edades = DB::table('poliza_deuda_requisitos')
+        ->where('Deuda', $request->Deuda)
+        ->selectRaw('MIN(EdadInicial) as EdadInicial, MAX(EdadFinal) as EdadFinal,MIN(MontoInicial) as MontoInicial,MAX(MontoFinal) as MontoFinal')
+        ->first();
+        if( $edades)
+        {
+            PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
+            ->where('Edad','<',$edades->EdadInicial)
+            ->orWhere('Edad','>',$edades->EdadFinal)
+            ->update(['NoValido' => 1]);
+
+            PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
+            ->where('saldo_total','>',$edades->MontoFinal)
+            ->update(['NoValido' => 1]);
+        }
+
+        $novalidos = PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('NoValido', 1)->get();
+        //dd($novalidos);
+
+            //dd($requisitos->take(10));
         //update para los que son mayores a la edad inicial
         PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
             ->where('NoValido', 0)
@@ -949,7 +972,7 @@ class DeudaCarteraController extends Controller
             ->get();
 
         $tempDataValidados = PolizaDeudaTempCartera::join('poliza_deuda_validados', 'poliza_deuda_validados.NumeroReferencia', '=', 'poliza_deuda_temp_cartera.NumeroReferencia')
-        ->where('poliza_deuda_temp_cartera.Axo', $anio)
+            ->where('poliza_deuda_temp_cartera.Axo', $anio)
             ->where('poliza_deuda_temp_cartera.Mes', $mes + 0)
             ->where('poliza_deuda_temp_cartera.User', auth()->user()->id)
             ->where('poliza_deuda_temp_cartera.OmisionPerfil', 0)
