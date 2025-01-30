@@ -105,6 +105,12 @@
                                             @if ($residencia->aseguradoras->Diario == 1) checked @endif disabled>
 
                                     </div>
+                                    <div class="col-md-4 ocultar">
+                                        <label class="control-label">Cálculo Diario</label>
+                                        <input type="checkbox" id="Dias365" class="form-control" readonly
+                                            @if ($residencia->aseguradoras->Dias365 == 1) checked @endif disabled>
+
+                                    </div>
                                     <div class="col-sm-8">
                                         <label class="control-label">Asegurado</label>
                                         <input type="text" value="{{ $residencia->clientes->Nombre }}"
@@ -1164,7 +1170,13 @@
 
                 var sub = parseFloat(monto) * parseFloat(tasaFinal);
                 if (document.getElementById('Diario').checked == true) {
-                    var sub = ((parseFloat(monto) * parseFloat(tasaFinal)) / dias_axo) * dias_mes;
+                    if (document.getElementById('Dias365').checked == true) {
+                        var sub = ((parseFloat(monto) * parseFloat(tasaFinal)) / 365) * dias_mes;
+                    }else{
+                        var sub = ((parseFloat(monto) * parseFloat(tasaFinal)) / dias_axo) * dias_mes;
+                    }
+
+                    
                 } else {
                     var sub = parseFloat(monto) * parseFloat(tasaFinal);
                 }

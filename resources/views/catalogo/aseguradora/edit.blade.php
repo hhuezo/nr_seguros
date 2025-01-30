@@ -147,9 +147,13 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-3">
                                         <label for="DireccionResidencia" class="form-label">Calculo Diario</label>
-                                        <input type="checkbox" name="Diario" id="Diario" class="form-control" @if($aseguradora->Diario == 1) checked @endif>
+                                        <input type="checkbox" name="Diario" id="Diario" class="form-control" onclick="dias_365(this.value)" @if($aseguradora->Diario == 1) checked @endif>
+                                    </div>
+                                    <div class="col-sm-3" id="diario_365" style="display: {{$aseguradora->Diario == 1 ? 'block':'none'}};">
+                                        <label for="DireccionResidencia" class="form-label">¿Son 365 dias?</label>
+                                        <input type="checkbox" name="Dias365" id="Dias365" {{$aseguradora->Dias365 ? 'checked':''}} class="form-control" >
                                     </div>
                                 </div>
 
@@ -654,6 +658,17 @@
     });
 
 
+    function dias_365(id){
+
+        const diario = document.getElementById('Diario').checked;
+        if(diario == true){
+            $("#diario_365").show();
+        }else{
+            $("#diario_365").hide();
+
+        }
+        console.log(document.getElementById('Diario').checked);
+    }
     function addCargo() {
         $('#modal_addCargo').modal('show');
     }

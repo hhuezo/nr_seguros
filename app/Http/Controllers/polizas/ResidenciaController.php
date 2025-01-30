@@ -653,7 +653,7 @@ class ResidenciaController extends Controller
         $inicio = Carbon::parse($detalle->FechaInicio);
         $final = Carbon::parse($detalle->FechaFinal);
         $tasa = $residencia->Tasa;
-        $dias_axo = $desde->diffInDays($hasta);
+        $dias_axo = $residencia->aseguradoras->Dias365 == 1 ? 365 : $desde->diffInDays($hasta);
         $dias_mes = $final->diffInDays($inicio);
 
 
@@ -679,7 +679,7 @@ class ResidenciaController extends Controller
 
 
         if ($residencia->aseguradoras->Diario == 1) {
-            $prima_calculada = (($monto * $tasaFinal) / $dias_axo) * $dias_mes;
+                $prima_calculada = (($monto * $tasaFinal) / $dias_axo) * $dias_mes;
         } else {
             $prima_calculada = $monto * $tasaFinal;
         }

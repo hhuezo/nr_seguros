@@ -142,6 +142,7 @@ class AseguradoraController extends Controller
         $aseguradora->Activo = 1;
         if($request->get('Diario') == 'on'){
             $aseguradora->Diario = 1;
+            $aseguradora->Dias365 = $request->get('Dias365') == 'on' ? 1:0;
         }else{
             $aseguradora->Diario = 0;
         }
