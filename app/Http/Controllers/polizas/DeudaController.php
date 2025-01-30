@@ -2571,7 +2571,7 @@ class DeudaController extends Controller
                         DB::raw('MAX(poliza_deuda_temp_cartera.FechaOtorgamientoDate) as FechaOtorgamiento'),
                         'poliza_deuda_temp_cartera.Excluido',
                         'poliza_deuda_temp_cartera.OmisionPerfil',
-                        'poliza_deuda_temp_cartera.saldo_total',
+                        DB::raw('SUM(poliza_deuda_temp_cartera.saldo_total) as saldo_total'),
                         'pdc.MontoMaximoIndividual as MontoMaximoIndividual'
                     )
                     ->where('poliza_deuda_temp_cartera.Edad', '<', $deuda->EdadMaximaTerminacion)
