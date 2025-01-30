@@ -2648,7 +2648,11 @@ class DeudaController extends Controller
 
 
             } elseif ($tipo == 3) { // creditos rehabilitados
-                $poliza_cumulos = PolizaDeudaTempCartera::join('poliza_deuda_creditos as pdc', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'pdc.Id')
+
+                    $poliza_cumulos = PolizaDeudaTempCartera::join('poliza_deuda_creditos as pdc', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'pdc.Id')
+                    ->where('poliza_deuda_temp_cartera.PolizaDeuda', $poliza)
+                    ->where('poliza_deuda_temp_cartera.NoValido', 0)
+                    ->where('poliza_deuda_temp_cartera.Rehabilitado', 1)
                     ->select(
                         'poliza_deuda_temp_cartera.Id',
                         'poliza_deuda_temp_cartera.PolizaDeuda',
@@ -2664,17 +2668,16 @@ class DeudaController extends Controller
                         'poliza_deuda_temp_cartera.NumeroReferencia as ConcatenatedNumeroReferencia',
                         'poliza_deuda_temp_cartera.NoValido',
                         'poliza_deuda_temp_cartera.Perfiles',
-                        DB::raw('MAX(poliza_deuda_temp_cartera.EdadDesembloso) as EdadDesembloso'),
+                         DB::raw('MAX(poliza_deuda_temp_cartera.EdadDesembloso) as EdadDesembloso'),
                         DB::raw('MAX(poliza_deuda_temp_cartera.FechaOtorgamientoDate) as FechaOtorgamiento'),
                         'poliza_deuda_temp_cartera.Excluido',
                         'poliza_deuda_temp_cartera.OmisionPerfil',
                         'poliza_deuda_temp_cartera.saldo_total',
                         'pdc.MontoMaximoIndividual as MontoMaximoIndividual'
                     )
-                    ->where('poliza_deuda_temp_cartera.NoValido', 0)
-                    ->where('poliza_deuda_temp_cartera.PolizaDeuda', $poliza)
-                    ->where('poliza_deuda_temp_cartera.Rehabilitado', 1)
+                    ->groupBy('poliza_deuda_temp_cartera.Dui')
                     ->get();
+
                 $poliza_cumulos =  $poliza_cumulos->where('Id', '<>', null);
             } elseif ($tipo == 4) { // creditos fuera del monto limite
 

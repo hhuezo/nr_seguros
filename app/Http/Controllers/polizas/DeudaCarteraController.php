@@ -534,16 +534,10 @@ class DeudaCarteraController extends Controller
             ->get();
 
 
-
-        foreach ($datos_rehabilitado  as $dato) {
-            $habilitar = $dato->creditoRehabilitado($dato->NumeroReferencia, $temp_data_fisrt->Axo, $temp_data_fisrt->Mes);
-
-            if ($habilitar == 1) {
+            foreach ($datos_rehabilitado  as $dato) {
                 $dato->Rehabilitado = 1;
                 $dato->save();
             }
-        }
-
 
 
         //estableciendo fecha de nacimiento date y calculando edad
@@ -617,7 +611,17 @@ class DeudaCarteraController extends Controller
         $extra_primados = $deuda->extra_primados;
 
         foreach ($extra_primados as $extra_primado) {
-            $extra_primado->Existe = PolizaDeudaTempCartera::where('NumeroReferencia', $extra_primado->NumeroReferencia)->count();
+            //$extra_primado->Existe =
+            $registro  = PolizaDeudaTempCartera::where('NumeroReferencia', $extra_primado->NumeroReferencia)
+            ->sum('saldo_total') ?? 0;
+            if($registro > 0)
+            {
+                $extra_primado->Existe = 1;
+                $extra_primado->MontoOtorgamiento = $registro;
+            }
+            else{
+                $extra_primado->Existe = 0;
+            }
         }
 
 
