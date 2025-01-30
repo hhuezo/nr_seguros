@@ -58,8 +58,8 @@ class AseguradoraController extends Controller
 
     public function agregar_documento(Request $request)
     {
-        $archivo = $request->file('Archivo'); 
-        
+        $archivo = $request->file('Archivo');
+
         $id = uniqid();
         $filePath =  $id . $archivo->getClientOriginalName();
         $archivo->move(public_path("documentos/aseguradoras/"), $filePath);
@@ -103,7 +103,7 @@ class AseguradoraController extends Controller
                 'Nit.required' => 'El campo NIT es requerido',
                 'Nit.unique' => 'El Nit ya existe',
             ];
-    
+
             $request->validate([
                 'Nombre' => 'required:aseguradora',
                 'Nit' => 'required|unique:aseguradora',
@@ -116,7 +116,7 @@ class AseguradoraController extends Controller
                 'Nit.required' => 'El campo NIT es requerido',
                 'Nit.unique' => 'El Nit ya existe',
             ];
-    
+
             $request->validate([
                 'Nombre' => 'required|unique:aseguradora',
                 'Nit' => 'required|unique:aseguradora',
@@ -247,6 +247,14 @@ class AseguradoraController extends Controller
         }else{
             $aseguradora->Diario = 0;
         }
+
+        if($request->Dias365 != null){
+            $aseguradora->Dias365 = 1;
+        }else{
+            $aseguradora->Dias365 = 0;
+        }
+
+
         $aseguradora->update();
         session(['tab1' => '1']);
         alert()->success('El registro ha sido creado correctamente');
