@@ -514,30 +514,35 @@ class DeudaCarteraController extends Controller
         //dejar valores a cero
         DB::table('poliza_deuda_temp_cartera')
             ->where('User', auth()->user()->id)
+            ->where('PolizaDeuda', $poliza_id)
             ->update(['Rehabilitado' => 0]);
 
 
-        //calcular rehabilitados
-        $datos_rehabilitado = PolizaDeudaTempCartera::leftJoin(
-            DB::raw('(
-                SELECT DISTINCT NumeroReferencia
-                FROM poliza_deuda_cartera
-                WHERE Mes = ' . $mesAnterior . ' AND Axo = ' . $axoAnterior . '
-            ) AS valid_references'),
-            'poliza_deuda_temp_cartera.NumeroReferencia',
-            '=',
-            'valid_references.NumeroReferencia'
-        )
-            ->where('poliza_deuda_temp_cartera.User', auth()->user()->id)
-            ->whereNull('valid_references.NumeroReferencia')
-            ->select('poliza_deuda_temp_cartera.*') // Selecciona las columnas de la tabla principal
-            ->get();
+        $count_cartera = PolizaDeudaCartera::where('PolizaDeuda', $poliza_id)->count();
 
+        if ($count_cartera > 0) {
+            //calcular rehabilitados
+            $datos_rehabilitado = PolizaDeudaTempCartera::leftJoin(
+                DB::raw('(
+        SELECT DISTINCT NumeroReferencia
+        FROM poliza_deuda_cartera
+        WHERE Mes = ' . $mesAnterior . ' AND Axo = ' . $axoAnterior . '
+    ) AS valid_references'),
+                'poliza_deuda_temp_cartera.NumeroReferencia',
+                '=',
+                'valid_references.NumeroReferencia'
+            )
+                ->where('poliza_deuda_temp_cartera.User', auth()->user()->id)
+                ->whereNull('valid_references.NumeroReferencia')
+                ->select('poliza_deuda_temp_cartera.*') // Selecciona las columnas de la tabla principal
+                ->get();
 
             foreach ($datos_rehabilitado  as $dato) {
                 $dato->Rehabilitado = 1;
                 $dato->save();
             }
+        }
+
 
 
         //estableciendo fecha de nacimiento date y calculando edad
@@ -613,13 +618,11 @@ class DeudaCarteraController extends Controller
         foreach ($extra_primados as $extra_primado) {
             //$extra_primado->Existe =
             $registro  = PolizaDeudaTempCartera::where('NumeroReferencia', $extra_primado->NumeroReferencia)
-            ->sum('saldo_total') ?? 0;
-            if($registro > 0)
-            {
+                ->sum('saldo_total') ?? 0;
+            if ($registro > 0) {
                 $extra_primado->Existe = 1;
                 $extra_primado->MontoOtorgamiento = $registro;
-            }
-            else{
+            } else {
                 $extra_primado->Existe = 0;
             }
         }
@@ -743,9 +746,9 @@ class DeudaCarteraController extends Controller
         $anio = $request->AxoActual;
 
 
-         // eliminando datos de la cartera si existieran
-         $tempData = PolizaDeudaCartera::where('Axo', $anio)
-         ->where('Mes', $mes + 0) ->where('PolizaDeuda', $request->Deuda)->delete();
+        // eliminando datos de la cartera si existieran
+        $tempData = PolizaDeudaCartera::where('Axo', $anio)
+            ->where('Mes', $mes + 0)->where('PolizaDeuda', $request->Deuda)->delete();
 
 
         // Obtener los datos de la tabla temporal
@@ -759,10 +762,9 @@ class DeudaCarteraController extends Controller
 
 
 
-        $tempDataValidados = PolizaDeudaTempCartera::
-            join('poliza_deuda_validados', 'poliza_deuda_validados.NumeroReferencia', '=', 'poliza_deuda_temp_cartera.NumeroReferencia')
+        $tempDataValidados = PolizaDeudaTempCartera::join('poliza_deuda_validados', 'poliza_deuda_validados.NumeroReferencia', '=', 'poliza_deuda_temp_cartera.NumeroReferencia')
             ->where('poliza_deuda_temp_cartera.Axo', $anio)
-            ->where('poliza_deuda_temp_cartera.Mes',$mes + 0)
+            ->where('poliza_deuda_temp_cartera.Mes', $mes + 0)
             ->where('poliza_deuda_temp_cartera.User', auth()->user()->id)
             ->where('poliza_deuda_temp_cartera.OmisionPerfil', 0)
             ->where('NoValido', 0)

@@ -179,14 +179,8 @@
                     </td>
                     <td class="text-right">
                         ${{ number_format($registro->saldo_total, 2, '.', ',') }}
-                        {{-- <i
-                                        class="{{ $registro->MontoMaximoIndividual <= $registro->saldo_total ? 'btn btn-danger fa fa-warning' : '' }}"></i> --}}
-
-
-
                     </td>
-                    {{-- <td>{{ $registro->Existe }}</td> --}}
-                    <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-lg" onclick="get_creditos_detalle('{{ $registro->Dui }}',{{$deuda->Id}})"><i class="fa fa-eye"></i></button></td>
+                    <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-lg" onclick="get_creditos_detalle('{{ $registro->Dui }}',{{$deuda->Id}},{{$tipo}})"><i class="fa fa-eye"></i></button></td>
 
                 </tr>
 
@@ -246,7 +240,7 @@
 
                         </td>
                         {{-- <td>{{ $registro->Existe }}</td> --}}
-                        <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-lg" onclick="get_creditos_detalle('{{ $registro->Dui }}',{{$deuda->Id}})"><i class="fa fa-eye"></i></button></td>
+                        <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-lg" onclick="get_creditos_detalle('{{ $registro->Dui }}',{{$deuda->Id}},{{$tipo}})"><i class="fa fa-eye"></i></button></td>
 
                     </tr>
                 @endforeach

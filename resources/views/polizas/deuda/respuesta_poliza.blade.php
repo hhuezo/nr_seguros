@@ -869,10 +869,10 @@
     });
 
 
-    function get_creditos_detalle(documento,poliza) {
+    function get_creditos_detalle(documento,poliza,tipo) {
         console.log(documento)
         $.ajax({
-            url: "{{ url('polizas/deuda/get_creditos_detalle') }}/" + documento+"/"+poliza
+            url: "{{ url('polizas/deuda/get_creditos_detalle') }}/" + documento+"/"+poliza+"/"+tipo
             , type: 'GET'
             , success: function(response) {
                 console.log(response);

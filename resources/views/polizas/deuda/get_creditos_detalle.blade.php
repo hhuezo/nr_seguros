@@ -7,7 +7,10 @@
             <th>Edad otorgamiento</th>
             <th>Tipo cartera</th>
             <th>Total</th>
+            @if($tipo == 1)
             <th>Validado</th>
+            @endif
+
         </tr>
     </thead>
     <tbody>
@@ -32,12 +35,14 @@
             <td class="text-right">
                 ${{ number_format($obj->saldo_total, 2, '.', ',') }}
             </td>
+            @if($tipo == 1)
             <td>
                 <label class="switch">
                     <input type="checkbox" onchange="registroValidado('{{$obj->NumeroReferencia}}')" {{ $obj->Validado > 0 ? 'checked' : '' }}>
                     <span class="slider round"></span>
                 </label>
             </td>
+            @endif
             @php($total += $obj->saldo_total)
         </tr>
         @endforeach

@@ -2716,7 +2716,7 @@ class DeudaController extends Controller
     }
 
 
-    public function get_creditos_detalle($documento, $poliza)
+    public function get_creditos_detalle($documento, $poliza,$tipo)
     {
         $data = PolizaDeudaTempCartera::with('linea_credito.tipoCarteras')
             ->where('NoValido', 0)
@@ -2734,7 +2734,7 @@ class DeudaController extends Controller
 
 
         //dd($data);
-        return view('polizas.deuda.get_creditos_detalle', compact('data'));
+        return view('polizas.deuda.get_creditos_detalle', compact('data','tipo'));
     }
 
 
