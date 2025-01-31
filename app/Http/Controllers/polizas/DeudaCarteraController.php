@@ -518,7 +518,7 @@ class DeudaCarteraController extends Controller
             ->update(['Rehabilitado' => 0]);
 
 
-        $count_cartera = PolizaDeudaCartera::where('PolizaDeuda', $poliza_id)->where('Mes','<>',$mesAnterior)->where('Mes','<>',$mesAnterior)->count();
+        $count_cartera = PolizaDeudaCartera::where('PolizaDeuda', $poliza_id)->where('Mes', '<>', $mesAnterior)->where('Mes', '<>', $mesAnterior)->count();
 
 
         if ($count_cartera > 0) {
@@ -631,7 +631,10 @@ class DeudaCarteraController extends Controller
 
 
         //cumulos por dui
-        $poliza_cumulos = PolizaDeudaTempCartera::get();
+        $poliza_cumulos = PolizaDeudaTempCartera::selectRaw('*, SUM(saldo_total) as saldo_total')
+            ->groupBy('Dui')
+            ->get();
+
 
         foreach ($requisitos as $requisito) {
             if ($requisito->perfil->PagoAutomatico == 1 || $requisito->perfil->DeclaracionJurada == 1) {
