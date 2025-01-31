@@ -86,7 +86,7 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
             </td>
             <td rowspan="6" colspan="3" width="300px">
                 <center>
-                    <img src="{{ public_path('img/logo.jpg') }}" alt="logo" width="80">
+                    <img src="{{ public_path('img/logo.jpg') }}" alt="logo" width="150">
                 </center>
             </td>
         </tr>
@@ -204,7 +204,7 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
 
         <tr>
             <td>Total a pagar</td>
-            <td style="text-align: right;"><b>${{number_format($recibo_historial->APagar,2,'.',',')}}</b></td>
+            <td style="text-align: right;"><b>${{number_format($recibo_historial->TotalAPagar,2,'.',',')}}</b></td>
             <td colspan="2"></td>
             <td>Retencion 1% </td>
             <td colspan="2" style="width: 150px; text-align: right;">${{number_format($recibo_historial->Retencion,2,'.',',')}}</td>
@@ -235,14 +235,14 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
             <td style="text-align: right;">${{number_format($recibo_historial->PrimaDescontada,2,'.',',')}}</td>
             <td style="text-align: right;">${{number_format(($recibo_historial->ValorCCF ),2,'.',',')}}</td>
             <td style="text-align: right;">${{number_format($recibo_historial->Otros,2,'.',',')}}</td>
-            <td style="text-align: right;">${{number_format($recibo_historial->APagar,2,'.',',')}}</td>
+            <td style="text-align: right;">${{number_format($recibo_historial->TotalAPagar,2,'.',',')}}</td>
         </tr>
         <tr>
             <td colspan="3" align="center">TOTAL </td>
             <td style="text-align: right;">${{number_format($recibo_historial->PrimaDescontada,2,'.',',')}}</td>
             <td style="text-align: right;">${{number_format($recibo_historial->ValorCCF,2,'.',',')}}</td>
             <td></td>
-            <td style="text-align: right;">${{number_format(($recibo_historial->APagar),2,'.',',')}}</td>
+            <td style="text-align: right;">${{number_format(($recibo_historial->TotalAPagar),2,'.',',')}}</td>
         </tr>
     </table>
 
@@ -267,7 +267,7 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
                     Esperando lo anterior sea de satisfacción, nos ponemos a sus apreciables órdenes por cualquier consulta adicional al respecto.
 
 
-            
+
             </td>
         </tr>
     </table>
