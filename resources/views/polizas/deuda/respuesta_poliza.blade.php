@@ -488,7 +488,7 @@
                                                     <th>Nombre</th>
                                                     <th>DUI</th>
                                                     <th>Fecha Otorgamiento</th>
-                                                    <th>Monto Otorgamiento</th>
+                                                    <th>Saldo</th>
                                                     <th>Porcentaje EP</th>
                                                 </tr>
                                             </thead>
