@@ -9,6 +9,7 @@ use App\Exports\EdadMaximaExport;
 use App\Exports\ExtraPrimadosExcluidosExport;
 use App\Exports\HistoricoPagosExport;
 use App\Exports\RegistroRequisitosExport;
+use App\Exports\RegistroRequisitosReciboExport;
 use App\Exports\RegistrosEliminadosExport;
 use App\Exports\RegistrosNuevosExport;
 use App\Exports\ResponsabilidadMaximaExport;
@@ -1364,6 +1365,10 @@ class DeudaController extends Controller
     public function registros_requisitos($id)
     {
         return Excel::download(new RegistroRequisitosExport($id), 'creditos_con requisitos.xlsx');
+    }
+    public function registros_requisitos_recibos($id)
+    {
+        return Excel::download(new RegistroRequisitosReciboExport($id), 'creditos_con requisitos.xlsx');
     }
 
     public function extraprimados_excluidos($id)

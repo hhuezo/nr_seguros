@@ -164,6 +164,7 @@ set_time_limit(30000);
             <!-- <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal_pago">
                 Subir Archivo Excel
             </button> -->
+            <a href="{{url('polizas/deuda/recibo_complementario')}}/{{$deuda->Id}}" class="btn btn-warning"> Recibo complementario</a>
             <a href="{{url('polizas/deuda/subir_cartera')}}/{{$deuda->Id}}" class="btn btn-info"> Subir Archivos Excel</a>
         </div>
 

@@ -10,31 +10,32 @@
     </style>
     <style>
         .row-error {
-            background-color:rgb(242, 102, 114) !important;
+            background-color: rgb(242, 102, 114) !important;
             /* Color naranja sólido */
             color: #F1FAEE;
             /* Texto negro */
         }
-    #loading-overlay-modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(255, 255, 255, 0.8);
-        z-index: 9999;
-        justify-content: center;
-        align-items: center;
-    }
 
-    #loading-overlay-modal img {
-        width: 50px;
-        /* Ajusta el tamaño de la imagen según tus necesidades */
-        height: 50px;
-        /* Ajusta el tamaño de la imagen según tus necesidades */
-    }
-</style>
+        #loading-overlay-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #loading-overlay-modal img {
+            width: 50px;
+            /* Ajusta el tamaño de la imagen según tus necesidades */
+            height: 50px;
+            /* Ajusta el tamaño de la imagen según tus necesidades */
+        }
+    </style>
 
     @php
     $tab = request()->has('tab') ? request('tab') : 1;
@@ -76,7 +77,7 @@
                             <li role="presentation" class="{{ $tab == 7 ? 'active' : '' }}"><a href="#tab_content7" role="tab" id="extra-prima-tab" data-toggle="tab" aria-expanded="false">Extra
                                     Prima <br> {{ $deuda->NumeroPoliza }}</a>
                             </li>
-                            <li role="presentation" class=""><a href="#tab_content3" role="tab" id="creditos-tab" data-toggle="tab" aria-expanded="false">Hoja de  <br> Cartera
+                            <li role="presentation" class=""><a href="#tab_content3" role="tab" id="creditos-tab" data-toggle="tab" aria-expanded="false">Hoja de <br> Cartera
                                     {{ $deuda->NumeroPoliza }}</a>
                             </li>
                             <li role="presentation" class="{{ $tab == 4 ? 'active' : '' }}"><a href="#tab_content4" role="tab" id="pagos-tab" data-toggle="tab" aria-expanded="false">Estados <br> de Pago</a>
@@ -142,9 +143,9 @@
 
 </div>
 
-<div id="loading-overlay-modal" >
-        <img src="{{ asset('img/ajax-loader.gif') }}" alt="Loading..." />
-    </div>
+<div id="loading-overlay-modal">
+    <img src="{{ asset('img/ajax-loader.gif') }}" alt="Loading..." />
+</div>
 
 
 @include('sweetalert::alert')
@@ -242,25 +243,25 @@
     }
 
     function mostrar_historial(axo, mes, fechaInicio, fechaFinal, polizaDeuda) {
-    $.ajax({
-        url: "{{ url('polizas/deuda/get_historico') }}",
-        type: 'GET',
-        data: {
-            Axo: axo,
-            Mes: mes,
-            FechaInicio: encodeURIComponent(fechaInicio),  // Codifica las fechas
-            FechaFinal: encodeURIComponent(fechaFinal),     // Codifica las fechas
-            PolizaDeuda: polizaDeuda
-        },
-        success: function(response) {
-            $('#historial_table').html(response);
-            $("#modal_historial").modal('show');
-        },
-        error: function(error) {
-            console.error(error);
-        }
-    });
-}
+        $.ajax({
+            url: "{{ url('polizas/deuda/get_historico') }}",
+            type: 'GET',
+            data: {
+                Axo: axo,
+                Mes: mes,
+                FechaInicio: encodeURIComponent(fechaInicio), // Codifica las fechas
+                FechaFinal: encodeURIComponent(fechaFinal), // Codifica las fechas
+                PolizaDeuda: polizaDeuda
+            },
+            success: function(response) {
+                $('#historial_table').html(response);
+                $("#modal_historial").modal('show');
+            },
+            error: function(error) {
+                console.error(error);
+            }
+        });
+    }
 
 
 

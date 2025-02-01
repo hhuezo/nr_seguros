@@ -219,14 +219,17 @@ Route::post('exportar/nuevos_registros/{id}',[DeudaController::class,'exportar_n
 Route::post('exportar/registros_eliminados/{id}',[DeudaController::class,'exportar_registros_eliminados']);
 Route::post('exportar/registros_no_validos/{id}', [DeudaController::class, 'registros_no_validos']);
 Route::post('exportar/registros_requisitos/{id}',[DeudaController::class,'registros_requisitos']);
+Route::post('exportar/registros_requisitos_recibos/{id}',[DeudaController::class,'registros_requisitos_recibos']);
 Route::post('exportar/registros_edad_maxima/{id}',[DeudaController::class,'registros_edad_maxima']);
 Route::post('exportar/registros_responsabilidad_maxima/{id}',[DeudaController::class,'registros_responsabilidad_maxima']);
 Route::get('polizas/deuda/get_historico', [DeudaController::class, 'get_historico']);
 Route::post('polizas/deuda/agregar_valido', [DeudaController::class, 'agregar_valido']);
 Route::post('polizas/deuda/agregar_validado', [DeudaController::class, 'agregar_validado']);
 Route::post('polizas/deuda/create_pago', [DeudaCarteraController::class, 'create_pago']);
+Route::post('polizas/deuda/create_pago_recibo', [DeudaCarteraController::class, 'create_pago_recibo']);
 Route::post('polizas/deuda/validar_poliza', [DeudaCarteraController::class, 'validar_poliza']);
-Route::get('polizas/deuda/subir_cartera/{id}', [DeudaCarteraController::class, 'subir_cartera']);
+Route::post('polizas/deuda/validar_poliza_recibos', [DeudaCarteraController::class, 'validar_poliza_recibos']);
+Route::get('polizas/deuda/recibo_complementario/{id}', [DeudaCarteraController::class, 'recibo_complementario']);
 Route::post('polizas/deuda/delete_temp', [DeudaCarteraController::class, 'deleteLineaCredito']);
 Route::post('deuda/cancelar_pago', [DeudaController::class, 'cancelar_pago']);
 Route::post('deuda/validar_poliza', [DeudaCarteraController::class, 'validar_poliza']);
@@ -235,6 +238,7 @@ Route::get('polizas/deuda/get_extraprimado/{poliza}/{dui}', [DeudaController::cl
 Route::post('polizas/deuda/store_extraprimado', [DeudaController::class, 'store_extraprimado']);
 Route::post('polizas/deuda/update_extraprimado', [DeudaController::class, 'update_extraprimado']);
 Route::post('polizas/deuda/store_poliza', [DeudaCarteraController::class, 'store_poliza']);
+Route::post('polizas/deuda/store_poliza_recibo', [DeudaCarteraController::class, 'store_poliza_recibo']);
 Route::post('polizas/deuda/store_requisitos', [DeudaController::class, 'store_requisitos']);
 Route::get('polizas/deuda/get_requisitos', [DeudaController::class, 'get_requisitos']);
 Route::resource('polizas/deuda', DeudaController::class);
