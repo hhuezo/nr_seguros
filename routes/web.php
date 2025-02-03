@@ -229,10 +229,10 @@ Route::post('polizas/deuda/create_pago', [DeudaCarteraController::class, 'create
 Route::post('polizas/deuda/create_pago_recibo', [DeudaCarteraController::class, 'create_pago_recibo']);
 Route::post('polizas/deuda/validar_poliza', [DeudaCarteraController::class, 'validar_poliza']);
 Route::post('polizas/deuda/validar_poliza_recibos', [DeudaCarteraController::class, 'validar_poliza_recibos']);
+Route::get('polizas/deuda/subir_cartera/{id}', [DeudaCarteraController::class, 'subir_cartera']);
 Route::get('polizas/deuda/recibo_complementario/{id}', [DeudaCarteraController::class, 'recibo_complementario']);
 Route::post('polizas/deuda/delete_temp', [DeudaCarteraController::class, 'deleteLineaCredito']);
 Route::post('deuda/cancelar_pago', [DeudaController::class, 'cancelar_pago']);
-Route::post('deuda/validar_poliza', [DeudaCarteraController::class, 'validar_poliza']);
 Route::post('polizas/deuda/eliminar_extraprima', [DeudaController::class, 'eliminar_extraprima']);
 Route::get('polizas/deuda/get_extraprimado/{poliza}/{dui}', [DeudaController::class, 'get_extraprimado']);
 Route::post('polizas/deuda/store_extraprimado', [DeudaController::class, 'store_extraprimado']);
