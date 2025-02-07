@@ -248,6 +248,7 @@ Route::post('exportar_excel', [DeudaController::class, 'exportar_excel']);
 
 Route::post('poliza/deuda/aumentar_techo',[DeudaCarteraController::class, 'aumentar_techo']);
 Route::post('poliza/deuda/add_excluidos',[DeudaCarteraController::class, 'add_excluidos']);
+Route::post('poliza/deuda/add_excluidos_responsabilidad',[DeudaCarteraController::class, 'add_excluidos_responsabilidad']);
 Route::post('poliza/deuda/delete_excluido',[DeudaCarteraController::class,'delete_excluido']);
 
 

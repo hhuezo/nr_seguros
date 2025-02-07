@@ -4,6 +4,7 @@ namespace App\Models\temp;
 
 use App\Models\polizas\Deuda;
 use App\Models\polizas\DeudaCredito;
+use App\Models\polizas\DeudaExcluidos;
 use App\Models\polizas\PolizaDeudaCartera;
 use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -125,5 +126,19 @@ class PolizaDeudaTempCartera extends Model
         } catch (\Exception $e) {
             return 0;
         }
+    }
+
+    public function excluidoEdad()
+    {
+        $excluido = DeudaExcluidos::where('NumeroReferencia',$this->NumeroReferencia)->where('EdadMaxima','<>',null)->count();
+
+        return $excluido;
+    }
+
+    public function excluidoResponsabilidad()
+    {
+        $excluido = DeudaExcluidos::where('NumeroReferencia',$this->NumeroReferencia)->where('ResponsabilidadMaxima','<>',null)->count();
+
+        return $excluido;
     }
 }

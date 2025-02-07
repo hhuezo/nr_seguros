@@ -109,9 +109,9 @@
                                             <input type="hidden" name="MesAnterior" value="{{ $mesAnterior }}">
                                             <input type="hidden" name="AxoAnterior" value="{{ $axoAnterior }}">
 
-                                            {{-- <button id="btnGuardarCartera" type="submit" class="btn btn-primary" {{ $conteo_excluidos > 0 ? 'disabled' : '' }}> --}}
-                                             <button id="btnGuardarCartera" type="submit" class="btn btn-primary">
-                                            Guardar en cartera
+
+                                            <button id="btnGuardarCartera" type="submit" class="btn btn-primary" {{ ($deuda->conteoEdadMaxima() > 0 ) ? 'disabled' : '' }}>
+                                                Guardar en cartera
                                             </button>
 
                                         </form>
@@ -163,7 +163,7 @@
                                             <h4>Edad Maxima de Terminación {{ $deuda->EdadMaximaTerminacion }} años
                                             </h4>
                                         </div>
-                                        <div class="col-md-6 col-sm-6 col-xs-12" align="right" id="btn_expo" style="display:{{ $poliza_edad_maxima->count() > 0 ? 'block' : 'none' }}">
+                                        <div class="col-md-6 col-sm-6 col-xs-12" align="right" id="btn_expo" style="display:{{ $deuda->conteoEdadMaxima() > 0 ? 'block' : 'none' }}">
 
                                             <form action="{{ url('exportar/registros_edad_maxima') }}/{{$deuda->Id}}" method="POST">
                                                 @csrf
@@ -182,7 +182,7 @@
                                                         <th>NIT</th>
                                                         <th>Nombre</th>
                                                         <th>Fecha nacimiento</th>
-                                                        <th>Edad Actual</th>
+                                                        <th>Edad Otorgamiento</th>
                                                         <th>Total</th>
                                                         <th style="text-align: center;">Excluir</th>
                                                     </tr>
@@ -201,10 +201,10 @@
                                                         </td>
                                                         <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
                                                         </td>
-                                                        <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
+                                                        <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }} Años</td>
                                                         <td>${{ number_format($registro->saldo_total, 2) }}</td>
                                                         <td>
-                                                            <input type="checkbox" onchange="excluir({{ $registro->Id }},0,1)" class="js-switch" {{ $registro->Excluido > 0 ? 'checked' : '' }}>
+                                                            <input type="checkbox" onchange="excluir({{ $registro->Id }},0,1)" class="js-switch" {{ $registro->excluidoEdad() > 0 ? 'checked' : '' }}>
                                                             <input type="hidden" id="id_excluido-{{ $registro->Id }}" value="{{ $registro->Excluido }}">
                                                         </td>
                                                         <!-- <td style="text-align: center;"><button class="btn btn-primary"><i class="fa fa-exchange"></i></button></td> -->
@@ -278,7 +278,7 @@
                                                         Años</td>
                                                     <td>${{ number_format($registro->saldo_total, 2) }}</td>
                                                     <td style="text-align: center;">
-                                                        <input type="checkbox" onchange="excluir_dinero({{ $registro->Id }},0,1)" class="js-switch" {{ $registro->Excluido > 0 ? 'checked' : '' }}>
+                                                        <input type="checkbox" onchange="excluir_dinero({{ $registro->Id }},{{$registro->saldo_total}},1)" class="js-switch" {{ $registro->excluidoResponsabilidad() > 0 ? 'checked' : '' }}>
                                                         <input type="hidden" id="id_excluido_dinero-{{ $registro->Id }}" value="{{ $registro->Excluido }}">
                                                     </td>
 
@@ -530,7 +530,7 @@
 
 
 
-       <div class="modal fade" id="modal_cambio_credito_valido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
+        <div class="modal fade" id="modal_cambio_credito_valido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
             <div class="modal-dialog modal-md" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -623,147 +623,138 @@
 
     function excluir(id, subtotal, val) {
         let id_ex = document.getElementById('id_excluido-' + id).value;
-        //alert(id_ex);
-        if (id_ex == 0) {
-            // alert('si');
-            $.ajax({
-                url: "{{ url('poliza/deuda/add_excluidos') }}", // Asegúrate de que esta sintaxis se procese correctamente en tu archivo .blade.php
-                type: 'POST'
-                , data: {
-                    id: id
-                    , subtotal: subtotal
-                    , val: val,
-                    //tipo_cartera: ' $tipo_cartera',
-                    _token: '{{ csrf_token() }}' // Necesario para la protección CSRF de Laravel
-                }
-                , success: function(response) {
-                    // Aquí manejas lo que suceda después de la respuesta exitosa
-                    console.log(response);
-                    if (response.excluido > 0) {
-                        $("#btn_expo").show();
-                        $("#btn_expo2").show();
-                        document.getElementById('id_excluido-' + id).value = response.excluido;
-                        //btnGuardarCartera
 
+        $.ajax({
+            url: "{{ url('poliza/deuda/add_excluidos') }}"
+            , type: 'POST'
+            , data: {
+                id: id
+                , subtotal: subtotal
+                , val: val
+                , _token: '{{ csrf_token() }}' // Necesario para la protección CSRF de Laravel
+            }
+            , success: function(response) {
+                console.log(response.conteo);
 
-                    }
-
-
-                    if (response.conteo_excluidos) {
-                        document.getElementById("btnGuardarCartera").disabled = true;
-                    } else {
-                        document.getElementById("btnGuardarCartera").disabled = false;
-                    }
-
+                if (response.conteo == 0) {
+                    $('#btnGuardarCartera').prop('disabled', false);
+                } else {
+                    $('#btnGuardarCartera').prop('disabled', true);
                 }
-                , error: function(xhr, status, error) {
-                    // Aquí manejas los errores
-                    console.error(error);
-                }
-            });
-        } else {
-            // alert('no');
-            $.ajax({
-                url: "{{ url('poliza/deuda/delete_excluido') }}", // Asegúrate de que esta sintaxis se procese correctamente en tu archivo .blade.php
-                type: 'POST'
-                , data: {
-                    id: id
-                    , id_ex: id_ex,
-                    //tipo_cartera: ' $tipo_cartera',
-                    _token: '{{ csrf_token() }}' // Necesario para la protección CSRF de Laravel
-                }
-                , success: function(response) {
-                    // Aquí manejas lo que suceda después de la respuesta exitosa
-                    console.log(response);
-                    document.getElementById('id_excluido-' + id).value = response.excluido;
-                    document.getElementById("btnGuardarCartera").disabled = true;
-                }
-                , error: function(xhr, status, error) {
-                    // Aquí manejas los errores
-                    console.error(error);
-                }
-            });
-        }
-
+            }
+            , error: function(error) {
+                // Aquí manejas el error, si ocurre alguno durante la petición
+                console.error(error);
+            }
+        });
 
     }
 
     function excluir_dinero(id, subtotal, val) {
         let id_ex = document.getElementById('id_excluido_dinero-' + id).value;
-        //alert(id_ex);
-        if (id_ex == 0) {
-            //alert('si');
-            $.ajax({
-                url: "{{ url('poliza/deuda/add_excluidos') }}", // Asegúrate de que esta sintaxis se procese correctamente en tu archivo .blade.php
-                type: 'POST'
-                , data: {
-                    id: id
-                    , subtotal: subtotal
-                    , val: val,
-                    //tipo_cartera: ' $tipo_cartera',
-                    _token: '{{ csrf_token() }}' // Necesario para la protección CSRF de Laravel
-                }
-                , success: function(response) {
-                    // Aquí manejas lo que suceda después de la respuesta exitosa
-                    console.log(response);
-                    if (response.excluido > 0) {
-                        $("#btn_expo").show();
-                        $("#btn_expo2").show();
-                        document.getElementById('id_excluido_dinero-' + id).value = response.excluido;
-                    }
 
-                }
-                , error: function(xhr, status, error) {
-                    // Aquí manejas los errores
-                    console.error(error);
-                }
-            });
-        } else {
-            //alert('no');
-            $.ajax({
-                url: "{{ url('poliza/deuda/delete_excluido') }}", // Asegúrate de que esta sintaxis se procese correctamente en tu archivo .blade.php
-                type: 'POST'
-                , data: {
-                    id: id
-                    , id_ex: id_ex,
-                    //tipo_cartera: ' $tipo_cartera',
-                    _token: '{{ csrf_token() }}' // Necesario para la protección CSRF de Laravel
-                }
-                , success: function(response) {
-                    // Aquí manejas lo que suceda después de la respuesta exitosa
-                    console.log(response);
-                    document.getElementById('id_excluido_dinero-' + id).value = response.excluido;
-                }
-                , error: function(xhr, status, error) {
-                    // Aquí manejas los errores
-                    console.error(error);
-                }
-            });
-        }
+        $.ajax({
+            url: "{{ url('poliza/deuda/add_excluidos_responsabilidad') }}"
+            , type: 'POST'
+            , data: {
+                id: id
+                , subtotal: subtotal
+                , val: val
+                , _token: '{{ csrf_token() }}' // Necesario para la protección CSRF de Laravel
+            }
+            , success: function(response) {
+                console.log(response.conteo);
 
+                if (response.conteo == 0) {
+                    $('#btnGuardarCartera').prop('disabled', false);
+                } else {
+                    $('#btnGuardarCartera').prop('disabled', true);
+                }
+            }
+            , error: function(error) {
+                // Aquí manejas el error, si ocurre alguno durante la petición
+                console.error(error);
+            }
+        });
 
     }
 
+    // function excluir_dinero(id, subtotal, val) {
+    //     let id_ex = document.getElementById('id_excluido_dinero-' + id).value;
+    //     //alert(id_ex);
+    //     if (id_ex == 0) {
+    //         //alert('si');
+    //         $.ajax({
+    //             url: "{{ url('poliza/deuda/add_excluidos') }}", // Asegúrate de que esta sintaxis se procese correctamente en tu archivo .blade.php
+    //             type: 'POST'
+    //             , data: {
+    //                 id: id
+    //                 , subtotal: subtotal
+    //                 , val: val,
+    //                 //tipo_cartera: ' $tipo_cartera',
+    //                 _token: '{{ csrf_token() }}' // Necesario para la protección CSRF de Laravel
+    //             }
+    //             , success: function(response) {
+    //                 // Aquí manejas lo que suceda después de la respuesta exitosa
+    //                 console.log(response);
+    //                 if (response.excluido > 0) {
+    //                     $("#btn_expo").show();
+    //                     $("#btn_expo2").show();
+    //                     document.getElementById('id_excluido_dinero-' + id).value = response.excluido;
+    //                 }
+
+    //             }
+    //             , error: function(xhr, status, error) {
+    //                 // Aquí manejas los errores
+    //                 console.error(error);
+    //             }
+    //         });
+    //     } else {
+    //         //alert('no');
+    //         $.ajax({
+    //             url: "{{ url('poliza/deuda/delete_excluido') }}", // Asegúrate de que esta sintaxis se procese correctamente en tu archivo .blade.php
+    //             type: 'POST'
+    //             , data: {
+    //                 id: id
+    //                 , id_ex: id_ex,
+    //                 //tipo_cartera: ' $tipo_cartera',
+    //                 _token: '{{ csrf_token() }}' // Necesario para la protección CSRF de Laravel
+    //             }
+    //             , success: function(response) {
+    //                 // Aquí manejas lo que suceda después de la respuesta exitosa
+    //                 console.log(response);
+    //                 document.getElementById('id_excluido_dinero-' + id).value = response.excluido;
+    //             }
+    //             , error: function(xhr, status, error) {
+    //                 // Aquí manejas los errores
+    //                 console.error(error);
+    //             }
+    //         });
+    //     }
+
+
+    // }
+
 
     function get_creditos(id) {
-            $.ajax({
-                url: "{{ url('polizas/deuda/get_referencia_creditos') }}/" + id,
-                type: 'GET',
-                success: function(response) {
-                    // Aquí manejas la respuesta. Por ejemplo, podrías imprimir la respuesta en la consola:
-                    console.log(response);
-                    var _select = '<option value=""> Seleccione ... </option>';
-                    for (var i = 0; i < response.length; i++)
-                        _select += '<option value="' + response[i].Id + '"  >' + response[i].NumeroReferencia +
-                        '</option>';
-                    $("#creditos").html(_select);
-                },
-                error: function(error) {
-                    // Aquí manejas el error, si ocurre alguno durante la petición
-                    console.error(error);
-                }
-            });
-        }
+        $.ajax({
+            url: "{{ url('polizas/deuda/get_referencia_creditos') }}/" + id
+            , type: 'GET'
+            , success: function(response) {
+                // Aquí manejas la respuesta. Por ejemplo, podrías imprimir la respuesta en la consola:
+                console.log(response);
+                var _select = '<option value=""> Seleccione ... </option>';
+                for (var i = 0; i < response.length; i++)
+                    _select += '<option value="' + response[i].Id + '"  >' + response[i].NumeroReferencia +
+                    '</option>';
+                $("#creditos").html(_select);
+            }
+            , error: function(error) {
+                // Aquí manejas el error, si ocurre alguno durante la petición
+                console.error(error);
+            }
+        });
+    }
 
 
     function agregarValidos() {
@@ -869,10 +860,10 @@
     });
 
 
-    function get_creditos_detalle(documento,poliza,tipo) {
+    function get_creditos_detalle(documento, poliza, tipo) {
         console.log(documento)
         $.ajax({
-            url: "{{ url('polizas/deuda/get_creditos_detalle') }}/" + documento+"/"+poliza+"/"+tipo
+            url: "{{ url('polizas/deuda/get_creditos_detalle') }}/" + documento + "/" + poliza + "/" + tipo
             , type: 'GET'
             , success: function(response) {
                 console.log(response);

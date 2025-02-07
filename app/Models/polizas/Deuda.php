@@ -4,6 +4,7 @@ namespace App\Models\polizas;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Deuda extends Model
 {
@@ -72,5 +73,35 @@ class Deuda extends Model
     public function extra_primados()
     {
         return $this->hasMany(PolizaDeudaExtraPrimados::class, 'PolizaDeuda', 'Id');
+    }
+
+    public function conteoEdadMaxima()
+    {
+        $count_edad_maxima =  DB::table('poliza_deuda_temp_cartera as temp')
+        ->leftJoin('poliza_deuda_excluidos as excluidos', function($join) {
+            $join->on('temp.NumeroReferencia', '=', 'excluidos.NumeroReferencia')
+                 ->where('excluidos.EdadMaxima', '=', 1);
+        })
+        ->whereNull('excluidos.NumeroReferencia')
+        ->where('temp.PolizaDeuda', $this->Id)
+        ->where('temp.User', auth()->user()->id)
+        ->where('temp.EdadDesembloso', '>', $this->EdadMaximaTerminacion)
+        ->count();
+
+
+        $count_responsabilidad_maxima =  DB::table('poliza_deuda_temp_cartera as temp')
+        ->leftJoin('poliza_deuda_excluidos as excluidos', function($join) {
+            $join->on('temp.NumeroReferencia', '=', 'excluidos.NumeroReferencia')
+                 ->where('excluidos.ResponsabilidadMaxima', '=', 1);
+        })
+        ->whereNull('excluidos.NumeroReferencia')
+        ->where('temp.PolizaDeuda', $this->Id)
+        ->where('temp.User', auth()->user()->id)
+        ->where('temp.saldo_total', '>', $this->ResponsabilidadMaxima)
+        ->count();
+
+        $total = $count_edad_maxima + $count_responsabilidad_maxima;
+
+        return $total;
     }
 }

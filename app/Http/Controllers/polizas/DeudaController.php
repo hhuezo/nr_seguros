@@ -1969,7 +1969,6 @@ class DeudaController extends Controller
     {
 
 
-
         $credito = $request->get('LineaCredito');
 
         $deuda_credito = DeudaCredito::findOrFail($request->get('LineaCredito'));
@@ -2129,7 +2128,10 @@ class DeudaController extends Controller
                 $obj->Errores = $errores_array;
             }
 
+
+
             $data_error = $cartera_temp->where('TipoError', '<>', 0);
+
 
             if ($data_error->count() > 0) {
                 return view('polizas.deuda.respuesta_poliza_error', compact('data_error', 'deuda'));
