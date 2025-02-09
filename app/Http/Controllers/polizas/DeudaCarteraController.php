@@ -45,7 +45,6 @@ class DeudaCarteraController extends Controller
         $ultimo_pago = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1)->orderBy('Id', 'desc')->first();
 
 
-
         //inicializando valores
         // Primer día del mes anterior
         $fecha_inicial = Carbon::now()->subMonth()->startOfMonth()->format('Y-m-d');
@@ -853,28 +852,38 @@ class DeudaCarteraController extends Controller
 
         $count_cartera = PolizaDeudaCartera::where('PolizaDeuda', $poliza_id)->where('Mes', '<>', $mesAnterior)->where('Mes', '<>', $mesAnterior)->count();
 
-
+        $mesAnteriorString = $axoAnterior.'-'.$mesAnterior;
         if ($count_cartera > 0) {
             //calcular rehabilitados
-            $datos_rehabilitado = PolizaDeudaTempCartera::leftJoin(
-                DB::raw('(
-            SELECT DISTINCT NumeroReferencia
-            FROM poliza_deuda_cartera
-            WHERE Mes = ' . $mesAnterior . ' AND Axo = ' . $axoAnterior . '
-        ) AS valid_references'),
-                'poliza_deuda_temp_cartera.NumeroReferencia',
-                '=',
-                'valid_references.NumeroReferencia'
-            )
-                ->where('poliza_deuda_temp_cartera.User', auth()->user()->id)
-                ->whereNull('valid_references.NumeroReferencia')
-                ->select('poliza_deuda_temp_cartera.*') // Selecciona las columnas de la tabla principal
-                ->get();
+            $referenciasAnteriores = DB::table('poliza_deuda_cartera')
+            ->where('PolizaDeuda', $poliza_id)
+            ->where('User', auth()->user()->id)
+            ->whereRaw('CONCAT(Axo, "-", Mes) <> ?', [$mesAnteriorString])
+            ->pluck('NumeroReferencia')
+            ->toArray();
 
-            foreach ($datos_rehabilitado  as $dato) {
-                $dato->Rehabilitado = 1;
-                $dato->save();
+
+            $referenciasMesAterior = DB::table('poliza_deuda_cartera')
+            ->where('PolizaDeuda', $poliza_id)
+            ->where('User', auth()->user()->id)
+            ->where('Axo', $axoAnterior)
+            ->where('Mes', $mesAnterior)
+            ->pluck('NumeroReferencia')
+            ->toArray();
+
+
+            $temp = PolizaDeudaTempCartera::where('User', auth()->user()->id)
+            ->where('PolizaDeuda', $poliza_id)->get();
+
+
+            foreach ($temp as $item) {
+                // Verifica si el NumeroReferencia está en referenciasAnteriores pero no en referenciasMesAterior
+                if (in_array($item->NumeroReferencia, $referenciasAnteriores) && !in_array($item->NumeroReferencia, $referenciasMesAterior)) {
+                    $item->Rehabilitado = 1;
+                    $item->save();
+                }
             }
+
         }
 
 
@@ -1398,6 +1407,9 @@ class DeudaCarteraController extends Controller
             ->select('poliza_deuda_temp_cartera.*')
             ->get();
 
+
+
+
         if (!empty($request->Eliminados)) {
             $eliminadosArray = explode(', ', $request->Eliminados);
         } else {
@@ -1473,7 +1485,7 @@ class DeudaCarteraController extends Controller
                 $poliza->InteresesCovid = $tempRecord->InteresesCovid;
                 $poliza->InteresesMoratorios = $tempRecord->InteresesMoratorios;
                 $poliza->MontoNominal = $tempRecord->MontoNominal;
-                $poliza->SaldoTotal = $tempRecord->SaldoTotal;
+                $poliza->saldo_total = $tempRecord->saldo_total;
                 $poliza->User = $tempRecord->User;
                 $poliza->Axo = $tempRecord->Axo;
                 $poliza->Mes = $tempRecord->Mes;
@@ -1523,7 +1535,7 @@ class DeudaCarteraController extends Controller
                 $poliza->InteresesCovid = $tempRecordV->InteresesCovid;
                 $poliza->InteresesMoratorios = $tempRecordV->InteresesMoratorios;
                 $poliza->MontoNominal = $tempRecordV->MontoNominal;
-                $poliza->SaldoTotal = $tempRecordV->SaldoTotal;
+                $poliza->saldo_total = $tempRecordV->saldo_total;
                 $poliza->User = $tempRecordV->User;
                 $poliza->Axo = $tempRecordV->Axo;
                 $poliza->Mes = $tempRecordV->Mes;

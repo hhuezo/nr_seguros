@@ -432,7 +432,7 @@
                                                     <option value="1">Creditos con requisitos</option>
                                                     <option value="2">Creditos válidos</option>
                                                     <option value="3">Creditos rehabilitados</option>
-                                                    {{-- <option value="4">Creditos fuera del monto límite</option> --}}
+                                                    <option value="4">Histórico de validados</option>
                                                 </select>
                                             </div>
 
@@ -445,7 +445,7 @@
                                             <br>
                                             <div style="display: flex; align-items: center;">
                                                 <div style="width: 20px; height: 20px; background-color: #b12020; margin-right: 10px;"></div>
-                                                <span>Los montos resaltados en rojo han pasado el monto limite por linea.</span>
+                                                <span>Los montos resaltados en rojo deben redimir evaluación.</span>
                                             </div>
                                             <br>
 
@@ -745,7 +745,7 @@
                 console.log(response);
                 var _select = '<option value=""> Seleccione ... </option>';
                 for (var i = 0; i < response.length; i++)
-                    _select += '<option value="' + response[i].Id + '"  >' + response[i].NumeroReferencia +
+                    _select += '<option value="' + response[i].Id + '"  >' + response[i].NumeroReferencia + ' <strong>($' +response[i].saldo_total +  ')</strong>'+
                     '</option>';
                 $("#creditos").html(_select);
             }

@@ -447,7 +447,7 @@ set_time_limit(30000);
                     </div>
 
                 </form>
-                <!-- 
+                <!--
                 <div align="center">
                     <form action="{{url('polizas/deuda/validar_poliza')}}" method="POST">
                         @method('POST')
