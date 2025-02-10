@@ -373,16 +373,10 @@ class DeudaCarteraController extends Controller
     public function create_pago_recibo(Request $request)
     {
 
-        // dd('holi');
 
         $credito = $request->get('LineaCredito');
         $deuda = Deuda::findOrFail($request->Id);
 
-        // $date_submes = Carbon::create($request->Axo, $request->Mes, "01");
-        // $date = Carbon::create($request->Axo, $request->Mes, "01");
-        // $date_mes = $date_submes->subMonth();
-        // $date_anterior = Carbon::create($request->Axo, $request->Mes, "01");
-        // $date_mes_anterior = $date_anterior->subMonth();
 
         $requisitos = $deuda->requisitos;
         if ($requisitos->count() == 0) {
@@ -550,25 +544,6 @@ class DeudaCarteraController extends Controller
             return view('polizas.deuda.respuesta_poliza_error', compact('data_error', 'deuda', 'credito'));
         }
 
-        /*
-        // Convertir la cadena en un objeto Carbon (la clase de fecha en Laravel)
-        $fecha = \Carbon\Carbon::parse($date);
-
-        // Obtener el mes y el año
-        $mes = $fecha->format('m'); // El formato 'm' devuelve el mes con ceros iniciales (por ejemplo, "02")
-        $anio = $fecha->format('Y');
-
-
-
-        // Obtener los datos de la tabla temporal
-        $tempData = PolizaDeudaTempCartera::where('Axo', $anio)
-            ->where('Mes', $mes + 0)
-            ->where('User', auth()->user()->id)
-            ->where('NoValido', 0)
-            ->where('LineaCredito', '=', $credito)
-            ->get();
-
-        //dd($tempData->take(20));*/
 
         alert()->success('Exito', 'La cartera fue subida con exito');
 
@@ -576,7 +551,7 @@ class DeudaCarteraController extends Controller
         return back();
 
 
-        return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date', 'tipo_cartera', 'nombre_cartera'));
+//        return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date', 'tipo_cartera', 'nombre_cartera'));
     }
 
 
@@ -1116,13 +1091,6 @@ class DeudaCarteraController extends Controller
                 'EdadDesembloso' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaOtorgamientoDate)"),
             ]);
 
-        //consultamos si ya tenemos validos en esta poliza 
-        $validos = PolizaDeudaTempCartera::where('NoValido',0)->where('PolizaDeuda', $deuda->Id)->count();
-        if(!$validos > 0){
-            //inicializamos los no validos a cero 
-              PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
-            ->update(['NoValido' => 1]);
-        }
 
         $poliza_cumulos = PolizaDeudaTempCartera::join('poliza_deuda_creditos as pdc', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'pdc.Id')
             ->select(
