@@ -119,8 +119,8 @@
 
                             <br>
                             <div class="col-md-6 col-sm-12" align="left">
-                     
-                               <h4>Registros con requisitos</h4> 
+
+                               <h4>Registros con requisitos</h4>
                             </div>
                             <div class="col-md-6 col-sm-12" align="right">
                                 <form method="POST" action="{{ url('exportar/registros_requisitos_recibos') }}/{{ $deuda->Id }}">
@@ -152,113 +152,104 @@
 
 
                                     </thead>
+
                                     <tbody>
-
-                                        @if($poliza_cumulos)
-                                        @foreach ($poliza_cumulos->sortBy('Rehabilitado')->reverse() as $registro)
-
+                                        @foreach ($data_error as $registro)
                                         <tr>
-
                                             <td>
-                                                @php
-                                                $referencias = !empty($registro->ConcatenatedNumeroReferencia)
-                                                ? explode(',', $registro->ConcatenatedNumeroReferencia)
-                                                : [];
-                                                @endphp
-
-                                                @if (count($referencias) > 1)
-                                                @foreach ($referencias as $index => $referencia)
-                                                @if ($index == count($referencias) - 1 && $tipo == 1)
-                                                <span style="color: red;">{{ $referencia }}</span>
-                                                @else
-                                                {{ $referencia }},
+                                                @if(in_array(1, $registro->Errores))
+                                                <span style="color: red;">Formato de fecha de nacimiento no válido</span>
                                                 @endif
-                                                @endforeach
+
+                                                @if(in_array(2, $registro->Errores))
+                                                <span style="color: red;">Formato de DUI no válido</span>
+                                                @endif
+
+                                                @if (in_array(4, $registro->Errores))
+                                                @if (!$registro->PrimerNombre)
+                                                <span style="color: red;">&nbsp;Falta el primer nombre</span>
+                                                @endif
+                                                @if (!$registro->PrimerApellido)
+                                                <span style="color: red;">&nbsp;Falta el primer apellido</span>
+                                                @endif
+                                                @endif
+
+                                                @if(in_array(5, $registro->Errores))
+                                                <span style="color: red;">Formato de fecha de otorgamiento no válido</span>
+                                                @endif
+
+                                                @if(in_array(7, $registro->Errores))
+                                                <span style="color: red;">Número de referecia no válido</span>
+                                                @endif
+
+                                                @if(in_array(8, $registro->Errores))
+                                                <span style="color: red;">Pasaporte no válido</span>
+                                                @endif
+
+                                            </td>
+                                            <td>
+                                                @if(in_array(2, $registro->Errores))
+                                                <strong><span style="color: red;">{{ $registro->Dui }}</span></strong>
                                                 @else
-                                                {{ implode(', ', $referencias) }}
+                                                {{ $registro->Dui }}
+                                                @endif
+                                            </td>
+
+                                            <td>{{ $registro->Nit }}</td>
+
+                                            <td>
+                                                @if (in_array(4, $registro->Errores))
+                                                <strong><span style="color: red;">
+                                                        {{ $registro->PrimerNombre }}
+                                                        {{ $registro->SegundoNombre }}
+                                                        {{ $registro->PrimerApellido }}
+                                                        {{ $registro->SegundoApellido }}
+                                                        {{ $registro->ApellidoCasada }}
+                                                    </span></strong>
+                                                @else
+                                                {{ $registro->PrimerNombre }} {{ $registro->SegundoNombre }}
+                                                {{ $registro->PrimerApellido }} {{ $registro->SegundoApellido }}
+                                                {{ $registro->ApellidoCasada }}
                                                 @endif
                                             </td>
                                             <td>
-                                                {{
-                                        $registro->Dui && $registro->Nit && $registro->Dui !== $registro->Nit
-                                        ? $registro->Dui . ' - ' . $registro->Nit
-                                        : ($registro->Dui ?? $registro->Nit)
-                                    }}
+                                                @if (in_array(1, $registro->Errores))
+                                                <strong><span style="color: red;">{{ $registro->FechaNacimiento }}</span></strong>
+                                                @else
+                                                {{ $registro->FechaNacimiento }}
+                                                @endif
                                             </td>
-
-
-                                            <td>{{ $registro->PrimerNombre }}
-                                                {{ $registro->SegundoNombre }}
-                                                {{ $registro->PrimerApellido }}
-                                                {{ $registro->SegundoApellido }}
-                                                {{ $registro->ApellidoCasada }}
-                                            </td>
-                                            <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}</td>
-                                            <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
-                                            <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }} Años</td>
-                                            <td>{{ $registro->FechaOtorgamiento ? date('d/m/Y', strtotime($registro->FechaOtorgamiento)) : '' }}
-                                            </td>
-                                            <td>{{$meses[$registro->Mes]}}</td>
-                                            <td>{{$registro->Axo}}</td>
-
-
-                                            <td class="text-right">
-                                                ${{ number_format($registro->saldo_total, 2, '.', ',') }}
-                                            </td>
-                                            <td>      <input type="checkbox" name="valido_{{$registro->Id}}" value="1" class="js-switch" onchange="agregarValidos({{$registro->Id}})" {{
-                                                $registro->NoValido == 0 ? 'checked' : '' }} /></td>
-
-
-                                        </tr>
-
-                                        @endforeach
-
-                                        @if(isset($poliza_cumulos_validados))
-                                        @foreach ($poliza_cumulos_validados as $registro)
-                                        <tr class="warning">
-
                                             <td>
-                                                @php
-                                                $referencias = !empty($registro->ConcatenatedNumeroReferencia)
-                                                ? explode(',', $registro->ConcatenatedNumeroReferencia)
-                                                : [];
-                                                @endphp
-
-                                                {{ implode(', ', $referencias) }}
+                                                @if (in_array(5, $registro->Errores))
+                                                <strong><span style="color: red;">{{ $registro->FechaOtorgamiento }}</span></strong>
+                                                @else
+                                                {{ $registro->FechaOtorgamiento }}
+                                                @endif
                                             </td>
-
+                                            <td class="{{ in_array(6, $registro->Errores) ? 'alert alert-danger alert-dismissible' : '' }}" role="alert">
+                                                @if (in_array(6, $registro->Errores))
+                                                <strong><span style="color: red;">{{ $registro->FechaVencimiento }}</span></strong>
+                                                @else
+                                                {{ $registro->FechaVencimiento }}
+                                                @endif
+                                            </td>
                                             <td>
-                                                {{
-                                            $registro->Dui && $registro->Nit && $registro->Dui !== $registro->Nit
-                                            ? $registro->Dui . ' - ' . $registro->Nit
-                                            : ($registro->Dui ?? $registro->Nit)
-                                        }}
+                                                @if (in_array(7, $registro->Errores))
+                                                <strong><span style="color: red;">{{ $registro->NumeroReferencia }}</span></strong>
+                                                @else
+                                                {{ $registro->NumeroReferencia }}
+                                                @endif
                                             </td>
-
-
-                                            <td>{{ $registro->PrimerNombre }}
-                                                {{ $registro->SegundoNombre }}
-                                                {{ $registro->PrimerApellido }}
-                                                {{ $registro->SegundoApellido }}
-                                                {{ $registro->ApellidoCasada }}
+                                            <td>
+                                                @if (in_array(8, $registro->Errores))
+                                                <strong><span style="color: red;">{{ $registro->Pasaporte }}</span></strong>
+                                                @else
+                                                {{ $registro->Pasaporte }}
+                                                @endif
                                             </td>
-                                            <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}</td>
-                                            <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
-                                            <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }} Años</td>
-                                            <td>{{ $registro->FechaOtorgamiento ? date('d/m/Y', strtotime($registro->FechaOtorgamiento)) : '' }}
-                                            </td>
-
-                                            <td class="text-right">
-                                                ${{ number_format($registro->saldo_total, 2, '.', ',') }}
-                                            </td>
-                                            <td></td>
+                                            <td> {{ $registro->Nacionalidad }}</td>
                                         </tr>
                                         @endforeach
-                                        @endif
-
-                                        @endif
-
-
 
 
                                     </tbody>
@@ -440,7 +431,7 @@
 
 
     function agregarValidos(id) {
-    
+
 
         var loadingOverlay = document.getElementById('loading-overlay'); // Cambiado para coincidir con el HTML
 

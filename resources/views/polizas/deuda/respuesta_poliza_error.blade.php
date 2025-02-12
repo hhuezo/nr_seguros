@@ -31,6 +31,7 @@
                         <table class="table table-striped" id="example">
                             <thead>
                                 <tr>
+                                    <th>Error</th>
                                     <th>DUI</th>
                                     <th>NIT</th>
                                     <th>Nombre</th>
@@ -45,9 +46,40 @@
                             <tbody>
                                 @foreach ($data_error as $registro)
                                 <tr>
-                                    <td class="{{ in_array(2, $registro->Errores) ? 'alert alert-danger alert-dismissible' : '' }}" role="alert">
-                                        @if (in_array(2, $registro->Errores))
-                                        <strong> {{ $registro->Dui }}</strong>
+                                    <td>
+                                        @if(in_array(1, $registro->Errores))
+                                        <span style="color: red;">Formato de fecha de nacimiento no válido</span>
+                                        @endif
+
+                                        @if(in_array(2, $registro->Errores))
+                                        <span style="color: red;">Formato de DUI no válido</span>
+                                        @endif
+
+                                        @if (in_array(4, $registro->Errores))
+                                        @if (!$registro->PrimerNombre)
+                                        <span style="color: red;">&nbsp;Falta el primer nombre</span>
+                                        @endif
+                                        @if (!$registro->PrimerApellido)
+                                        <span style="color: red;">&nbsp;Falta el primer apellido</span>
+                                        @endif
+                                        @endif
+
+                                        @if(in_array(5, $registro->Errores))
+                                        <span style="color: red;">Formato de fecha de otorgamiento no válido</span>
+                                        @endif
+
+                                        @if(in_array(7, $registro->Errores))
+                                        <span style="color: red;">Número de referecia no válido</span>
+                                        @endif
+
+                                        @if(in_array(8, $registro->Errores))
+                                        <span style="color: red;">Pasaporte no válido</span>
+                                        @endif
+
+                                    </td>
+                                    <td>
+                                        @if(in_array(2, $registro->Errores))
+                                        <strong><span style="color: red;">{{ $registro->Dui }}</span></strong>
                                         @else
                                         {{ $registro->Dui }}
                                         @endif
@@ -55,50 +87,52 @@
 
                                     <td>{{ $registro->Nit }}</td>
 
-                                    <td class="{{ in_array(4, $registro->Errores) ? 'alert alert-danger alert-dismissible' : '' }}" role="alert">
+                                    <td>
                                         @if (in_array(4, $registro->Errores))
-                                        {{ $registro->PrimerNombre ? $registro->PrimerNombre : '(Falta el primer nombre)' }}
-                                        {{ $registro->SegundoNombre }}
-                                        {{ $registro->PrimerApellido ? $registro->PrimerApellido : '(Falta el primer apellido)' }}
-                                        {{ $registro->SegundoApellido }}
-                                        {{ $registro->ApellidoCasada }}
+                                        <strong><span style="color: red;">
+                                                {{ $registro->PrimerNombre }}
+                                                {{ $registro->SegundoNombre }}
+                                                {{ $registro->PrimerApellido }}
+                                                {{ $registro->SegundoApellido }}
+                                                {{ $registro->ApellidoCasada }}
+                                            </span></strong>
                                         @else
                                         {{ $registro->PrimerNombre }} {{ $registro->SegundoNombre }}
                                         {{ $registro->PrimerApellido }} {{ $registro->SegundoApellido }}
                                         {{ $registro->ApellidoCasada }}
                                         @endif
                                     </td>
-                                    <td class="{{ in_array(1, $registro->Errores) ? 'alert alert-danger alert-dismissible' : '' }}" role="alert">
+                                    <td>
                                         @if (in_array(1, $registro->Errores))
-                                        <strong>{{ $registro->FechaNacimiento }}</strong>
+                                        <strong><span style="color: red;">{{ $registro->FechaNacimiento }}</span></strong>
                                         @else
                                         {{ $registro->FechaNacimiento }}
                                         @endif
                                     </td>
-                                    <td class="{{ in_array(5, $registro->Errores) ? 'alert alert-danger alert-dismissible' : '' }}" role="alert">
+                                    <td>
                                         @if (in_array(5, $registro->Errores))
-                                        <strong>{{ $registro->FechaOtorgamiento }}</strong>
+                                        <strong><span style="color: red;">{{ $registro->FechaOtorgamiento }}</span></strong>
                                         @else
                                         {{ $registro->FechaOtorgamiento }}
                                         @endif
                                     </td>
                                     <td class="{{ in_array(6, $registro->Errores) ? 'alert alert-danger alert-dismissible' : '' }}" role="alert">
                                         @if (in_array(6, $registro->Errores))
-                                        <strong>{{ $registro->FechaVencimiento }}</strong>
+                                        <strong><span style="color: red;">{{ $registro->FechaVencimiento }}</span></strong>
                                         @else
                                         {{ $registro->FechaVencimiento }}
                                         @endif
                                     </td>
-                                    <td class="{{ in_array(7, $registro->Errores) ? 'alert alert-danger alert-dismissible' : '' }}" role="alert">
+                                    <td>
                                         @if (in_array(7, $registro->Errores))
-                                        <strong>{{ $registro->NumeroReferencia }}</strong>
+                                        <strong><span style="color: red;">{{ $registro->NumeroReferencia }}</span></strong>
                                         @else
                                         {{ $registro->NumeroReferencia }}
                                         @endif
                                     </td>
-                                    <td class="{{ in_array(8, $registro->Errores) ? 'alert alert-danger alert-dismissible' : '' }}" role="alert">
+                                    <td>
                                         @if (in_array(8, $registro->Errores))
-                                        Pasaporte no válido {{ $registro->Pasaporte }}
+                                        <strong><span style="color: red;">{{ $registro->Pasaporte }}</span></strong>
                                         @else
                                         {{ $registro->Pasaporte }}
                                         @endif
