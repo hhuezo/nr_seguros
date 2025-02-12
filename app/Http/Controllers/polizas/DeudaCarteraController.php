@@ -852,28 +852,28 @@ class DeudaCarteraController extends Controller
 
         $count_cartera = PolizaDeudaCartera::where('PolizaDeuda', $poliza_id)->where('Mes', '<>', $mesAnterior)->where('Mes', '<>', $mesAnterior)->count();
 
-        $mesAnteriorString = $axoAnterior.'-'.$mesAnterior;
+        $mesAnteriorString = $axoAnterior . '-' . $mesAnterior;
         if ($count_cartera > 0) {
             //calcular rehabilitados
             $referenciasAnteriores = DB::table('poliza_deuda_cartera')
-            ->where('PolizaDeuda', $poliza_id)
-            ->where('User', auth()->user()->id)
-            ->whereRaw('CONCAT(Axo, "-", Mes) <> ?', [$mesAnteriorString])
-            ->pluck('NumeroReferencia')
-            ->toArray();
+                ->where('PolizaDeuda', $poliza_id)
+                ->where('User', auth()->user()->id)
+                ->whereRaw('CONCAT(Axo, "-", Mes) <> ?', [$mesAnteriorString])
+                ->pluck('NumeroReferencia')
+                ->toArray();
 
 
             $referenciasMesAterior = DB::table('poliza_deuda_cartera')
-            ->where('PolizaDeuda', $poliza_id)
-            ->where('User', auth()->user()->id)
-            ->where('Axo', $axoAnterior)
-            ->where('Mes', $mesAnterior)
-            ->pluck('NumeroReferencia')
-            ->toArray();
+                ->where('PolizaDeuda', $poliza_id)
+                ->where('User', auth()->user()->id)
+                ->where('Axo', $axoAnterior)
+                ->where('Mes', $mesAnterior)
+                ->pluck('NumeroReferencia')
+                ->toArray();
 
 
             $temp = PolizaDeudaTempCartera::where('User', auth()->user()->id)
-            ->where('PolizaDeuda', $poliza_id)->get();
+                ->where('PolizaDeuda', $poliza_id)->get();
 
 
             foreach ($temp as $item) {
@@ -883,7 +883,6 @@ class DeudaCarteraController extends Controller
                     $item->save();
                 }
             }
-
         }
 
 
@@ -975,10 +974,21 @@ class DeudaCarteraController extends Controller
 
 
         //cumulos por dui
-        $poliza_cumulos = PolizaDeudaTempCartera::selectRaw('*, SUM(saldo_total) as saldo_total')
-            ->groupBy('Dui')
-            ->get();
+        // $poliza_cumulos = PolizaDeudaTempCartera::selectRaw('*, SUM(saldo_total) as saldo_total')
+        //     ->groupBy('Dui')
+        //     ->get();
 
+        DB::statement("
+            UPDATE poliza_deuda_temp_cartera p1
+            JOIN (
+                SELECT Dui, SUM(saldo_total) AS total_saldo_cumulo
+                FROM poliza_deuda_temp_cartera
+                GROUP BY Dui
+            ) p2 ON p1.Dui = p2.Dui
+            SET p1.SaldoCumulo = p2.total_saldo_cumulo
+        ");
+
+        $poliza_cumulos = PolizaDeudaTempCartera::where('User', auth()->user()->id)->where('PolizaDeuda', $request->Deuda)->get();
 
         foreach ($requisitos as $requisito) {
             if ($requisito->perfil->PagoAutomatico == 1 || $requisito->perfil->DeclaracionJurada == 1) {
@@ -999,8 +1009,9 @@ class DeudaCarteraController extends Controller
 
         foreach ($requisitos as $requisito) {
             $data_dui_cartera = $poliza_cumulos->where('EdadDesembloso', '>=', $requisito->EdadInicial)->where('EdadDesembloso', '<=', $requisito->EdadFinal)
-                ->where('saldo_total', '>=', $requisito->MontoInicial)->where('saldo_total', '<=', $requisito->MontoFinal)
+                ->where('SaldoCumulo', '>=', $requisito->MontoInicial)->where('SaldoCumulo', '<=', $requisito->MontoFinal)
                 ->pluck('Dui')->toArray();
+
 
             PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
                 ->whereIn('Dui', $data_dui_cartera)
@@ -1029,7 +1040,7 @@ class DeudaCarteraController extends Controller
                 ->update(['NoValido' => 1]);
 
             PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
-                ->where('saldo_total', '>', $edades->MontoFinal)
+                ->where('SaldoCumulo', '>', $edades->MontoFinal)
                 ->update(['NoValido' => 1]);
         }
 

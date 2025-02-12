@@ -2499,9 +2499,9 @@ class DeudaController extends Controller
 
             foreach ($poliza_cumulos as $cumulo) {
                 if ($cumulo->EdadDesembloso < $edades->EdadInicial || $cumulo->EdadDesembloso > $edades->EdadFinal) {
-                    $cumulo->Motivo = 'La edad del usuario se encuentra fuera del rango de la tabla de asegurabilidad';
+                    $cumulo->Motivo = 'La persona excede el limite de edad de otorgamiento';
                 } else if ($cumulo->saldo_total > $edades->MontoFinal) {
-                    $cumulo->Motivo = 'El monto del usuario se encuentra fuera del rango de la tabla de asegurabilidad';
+                    $cumulo->Motivo = 'La persona excede el límite de suma del rango de asegurabilidad';
                 } else {
                     $cumulo->Motivo = 'La persona se encuentra fuera del rango de asegurabilidad';
                 }
@@ -2571,7 +2571,7 @@ class DeudaController extends Controller
                         DB::raw('MAX(poliza_deuda_temp_cartera.FechaOtorgamientoDate) as FechaOtorgamiento'),
                         'poliza_deuda_temp_cartera.Excluido',
                         'poliza_deuda_temp_cartera.OmisionPerfil',
-                        'poliza_deuda_temp_cartera.saldo_total',
+                        'poliza_deuda_temp_cartera.SaldoCumulo as saldo_total',
                         'pdc.MontoMaximoIndividual as MontoMaximoIndividual'
                     )
                     ->where('poliza_deuda_temp_cartera.EdadDesembloso', '<=', $deuda->EdadMaximaTerminacion)
