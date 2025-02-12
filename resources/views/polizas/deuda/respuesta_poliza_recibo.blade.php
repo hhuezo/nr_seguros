@@ -117,265 +117,163 @@
                     <div class="x_content">
                         <div class="col-md-12 col-sm-12 ">
 
-                            <div class="" role="tabpanel" data-example-id="togglable-tabs">
-                                <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
+                            <br>
+                            <div class="col-md-6 col-sm-12" align="left">
+                     
+                               <h4>Registros con requisitos</h4> 
+                            </div>
+                            <div class="col-md-6 col-sm-12" align="right">
+                                <form method="POST" action="{{ url('exportar/registros_requisitos_recibos') }}/{{ $deuda->Id }}">
+                                    @csrf
+                                    <button class="btn btn-success">Descargar Excel</button>
+                                </form>
+                                <br>
 
-                                    <li role="presentation" class=""><a href="#tab_content3" role="tab" id="profile-tab2" data-toggle="tab" aria-expanded="false">Registros <br> con
-                                            requisitos</a>
-                                    </li>
-
-                                </ul>
-                                <div id="myTabContent" class="tab-content">
-                                    <br>
-                                    <!--con requisitos-->
-                                    <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="profile-tab">
-
-                                        <br>
-                                        <div class="col-md-6 col-sm-12">
-
-                                            <!-- <div class="form-group row">
-                                                <label class="control-label">Opciones</label>
-
-                                                <select class="form-control" onchange="loadCreditos(2,this.value)">
-                                                    <option value="1">Creditos con requisitos</option>
-                                                    <option value="2">Creditos válidos</option>
-                                                    <option value="3">Creditos rehabilitados</option>
-                                                    {{-- <option value="4">Creditos fuera del monto límite</option> --}}
-                                                </select>
-                                            </div> -->
-
-                                        </div>
-                                        <div class="col-md-6 col-sm-12" align="right">
-                                            <form method="POST" action="{{ url('exportar/registros_requisitos_recibos') }}/{{ $deuda->Id }}">
-                                                @csrf
-                                                <button class="btn btn-success">Descargar Excel</button>
-                                            </form>
-                                            <br>
-
-                                        </div>
-                                        <br>
-                                        <br>
-                                        <div id="creditos_validos">
-                                            <table class="table table-striped" id="MyTable4">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Número crédito</th>
-                                                        <th>DUI/NIT</th>
-                                                        <th>Nombre</th>
-                                                        <th>Fecha nacimiento</th>
-                                                        <th>Edad actual</th>
-                                                        <th>Edad otorgamiento</th>
-                                                        <th>Fecha otorgamiento</th>
-                                                        <th>Mes</th>
-                                                        <th>Año</th>
-                                                        <!-- <th>Requisitos</th> -->
-                                                        <th>Cúmulo</th>
-                                                        <!-- <th>Detalle</th> -->
-                                                    </tr>
+                            </div>
+                            <br>
+                            <br>
+                            <div id="creditos_validos">
+                                <table class="table table-striped" id="MyTable4">
+                                    <thead>
+                                        <tr>
+                                            <th>Número crédito</th>
+                                            <th>DUI/NIT</th>
+                                            <th>Nombre</th>
+                                            <th>Fecha nacimiento</th>
+                                            <th>Edad actual</th>
+                                            <th>Edad otorgamiento</th>
+                                            <th>Fecha otorgamiento</th>
+                                            <th>Mes</th>
+                                            <th>Año</th>
+                                            <!-- <th>Requisitos</th> -->
+                                            <th>Cúmulo</th>
+                                            <th>Opciones</th>
+                                        </tr>
 
 
-                                                </thead>
-                                                <tbody>
+                                    </thead>
+                                    <tbody>
 
-                                                    @if($poliza_cumulos)
-                                                    @foreach ($poliza_cumulos->sortBy('Rehabilitado')->reverse() as $registro)
+                                        @if($poliza_cumulos)
+                                        @foreach ($poliza_cumulos->sortBy('Rehabilitado')->reverse() as $registro)
 
-                                                    <tr >
-                                                        
-                                                        <td>
-                                                            @php
-                                                            $referencias = !empty($registro->ConcatenatedNumeroReferencia)
-                                                            ? explode(',', $registro->ConcatenatedNumeroReferencia)
-                                                            : [];
-                                                            @endphp
+                                        <tr>
 
-                                                            @if (count($referencias) > 1)
-                                                            @foreach ($referencias as $index => $referencia)
-                                                            @if ($index == count($referencias) - 1 && $tipo == 1)
-                                                            <span style="color: red;">{{ $referencia }}</span>
-                                                            @else
-                                                            {{ $referencia }},
-                                                            @endif
-                                                            @endforeach
-                                                            @else
-                                                            {{ implode(', ', $referencias) }}
-                                                            @endif
-                                                        </td>
-                                                        <td>
-                                                            {{
+                                            <td>
+                                                @php
+                                                $referencias = !empty($registro->ConcatenatedNumeroReferencia)
+                                                ? explode(',', $registro->ConcatenatedNumeroReferencia)
+                                                : [];
+                                                @endphp
+
+                                                @if (count($referencias) > 1)
+                                                @foreach ($referencias as $index => $referencia)
+                                                @if ($index == count($referencias) - 1 && $tipo == 1)
+                                                <span style="color: red;">{{ $referencia }}</span>
+                                                @else
+                                                {{ $referencia }},
+                                                @endif
+                                                @endforeach
+                                                @else
+                                                {{ implode(', ', $referencias) }}
+                                                @endif
+                                            </td>
+                                            <td>
+                                                {{
                                         $registro->Dui && $registro->Nit && $registro->Dui !== $registro->Nit
                                         ? $registro->Dui . ' - ' . $registro->Nit
                                         : ($registro->Dui ?? $registro->Nit)
                                     }}
-                                                        </td>
+                                            </td>
 
 
-                                                        <td>{{ $registro->PrimerNombre }}
-                                                            {{ $registro->SegundoNombre }}
-                                                            {{ $registro->PrimerApellido }}
-                                                            {{ $registro->SegundoApellido }}
-                                                            {{ $registro->ApellidoCasada }}
-                                                        </td>
-                                                        <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}</td>
-                                                        <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
-                                                        <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }} Años</td>
-                                                        <td>{{ $registro->FechaOtorgamiento ? date('d/m/Y', strtotime($registro->FechaOtorgamiento)) : '' }}
-                                                        </td>
-                                                        <td>{{$meses[$registro->Mes]}}</td>
-                                                        <td>{{$registro->Axo}}</td>
+                                            <td>{{ $registro->PrimerNombre }}
+                                                {{ $registro->SegundoNombre }}
+                                                {{ $registro->PrimerApellido }}
+                                                {{ $registro->SegundoApellido }}
+                                                {{ $registro->ApellidoCasada }}
+                                            </td>
+                                            <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}</td>
+                                            <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
+                                            <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }} Años</td>
+                                            <td>{{ $registro->FechaOtorgamiento ? date('d/m/Y', strtotime($registro->FechaOtorgamiento)) : '' }}
+                                            </td>
+                                            <td>{{$meses[$registro->Mes]}}</td>
+                                            <td>{{$registro->Axo}}</td>
 
-                                                        
-                                                        <td class="text-right">
-                                                            ${{ number_format($registro->saldo_total, 2, '.', ',') }}
-                                                        </td>
 
-                                                    </tr>
+                                            <td class="text-right">
+                                                ${{ number_format($registro->saldo_total, 2, '.', ',') }}
+                                            </td>
+                                            <td>      <input type="checkbox" name="valido_{{$registro->Id}}" value="1" class="js-switch" onchange="agregarValidos({{$registro->Id}})" {{
+                                                $registro->NoValido == 0 ? 'checked' : '' }} /></td>
 
-                                                    @endforeach
 
-                                                    @if(isset($poliza_cumulos_validados))
-                                                    @foreach ($poliza_cumulos_validados as $registro)
-                                                    <tr class="warning">
+                                        </tr>
 
-                                                        <td>
-                                                            @php
-                                                            $referencias = !empty($registro->ConcatenatedNumeroReferencia)
-                                                            ? explode(',', $registro->ConcatenatedNumeroReferencia)
-                                                            : [];
-                                                            @endphp
+                                        @endforeach
 
-                                                            {{ implode(', ', $referencias) }}
-                                                        </td>
+                                        @if(isset($poliza_cumulos_validados))
+                                        @foreach ($poliza_cumulos_validados as $registro)
+                                        <tr class="warning">
 
-                                                        <td>
-                                                            {{
+                                            <td>
+                                                @php
+                                                $referencias = !empty($registro->ConcatenatedNumeroReferencia)
+                                                ? explode(',', $registro->ConcatenatedNumeroReferencia)
+                                                : [];
+                                                @endphp
+
+                                                {{ implode(', ', $referencias) }}
+                                            </td>
+
+                                            <td>
+                                                {{
                                             $registro->Dui && $registro->Nit && $registro->Dui !== $registro->Nit
                                             ? $registro->Dui . ' - ' . $registro->Nit
                                             : ($registro->Dui ?? $registro->Nit)
                                         }}
-                                                        </td>
+                                            </td>
 
 
-                                                        <td>{{ $registro->PrimerNombre }}
-                                                            {{ $registro->SegundoNombre }}
-                                                            {{ $registro->PrimerApellido }}
-                                                            {{ $registro->SegundoApellido }}
-                                                            {{ $registro->ApellidoCasada }}
-                                                        </td>
-                                                        <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}</td>
-                                                        <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
-                                                        <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }} Años</td>
-                                                        <td>{{ $registro->FechaOtorgamiento ? date('d/m/Y', strtotime($registro->FechaOtorgamiento)) : '' }}
-                                                        </td>
+                                            <td>{{ $registro->PrimerNombre }}
+                                                {{ $registro->SegundoNombre }}
+                                                {{ $registro->PrimerApellido }}
+                                                {{ $registro->SegundoApellido }}
+                                                {{ $registro->ApellidoCasada }}
+                                            </td>
+                                            <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}</td>
+                                            <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
+                                            <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }} Años</td>
+                                            <td>{{ $registro->FechaOtorgamiento ? date('d/m/Y', strtotime($registro->FechaOtorgamiento)) : '' }}
+                                            </td>
 
-                                                        <!-- <td>
-                                                            @php
-                                                            $perfilesArreglo = explode(',', $registro->Perfiles);
-                                                            $uniquePerfiles = array_unique($perfilesArreglo);
-                                                            @endphp
+                                            <td class="text-right">
+                                                ${{ number_format($registro->saldo_total, 2, '.', ',') }}
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                        @endforeach
+                                        @endif
 
-                                                            @foreach ($uniquePerfiles as $key => $perfil)
-                                                            {{ $perfil }}{{ $loop->last ? '' : ', ' }}
-                                                            @endforeach
-                                                        </td> -->
-                                                        <td class="text-right">
-                                                            ${{ number_format($registro->saldo_total, 2, '.', ',') }}
-                                                        </td>
-                                                    </tr>
-                                                    @endforeach
-                                                    @endif
-
-                                                    @endif
+                                        @endif
 
 
 
 
-                                                </tbody>
-                                            </table>
+                                    </tbody>
+                                </table>
 
-                                        </div>
-
-
-                                    </div>
-                                </div>
                             </div>
+
+
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-
-
-
-        <div class="modal fade" id="modal_cambio_credito_valido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
-            <div class="modal-dialog modal-md" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
-                            <h5 class="modal-title" id="exampleModalLabel">Excluir crédito no válido</h5>
-                        </div>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="box-body">
-                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Seleccione credito</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <select id="creditos" class="form-control">
-
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="clearfix"></div>
-                    <div class="modal-footer" align="center">
-                        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
-                        <button type="button" onclick="agregarValidos()" class="btn btn-primary">Aceptar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-
-        <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-
-                    <div class="modal-header">
-                        <div class="col-md-6">
-                            <h4 class="modal-title" id="myModalLabel">Detalle créditos</h4>
-                        </div>
-                        <div class="col-md-6">
-                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="modal-body" id="modal-creditos">
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-warning" data-dismiss="modal">Cerrar</button>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-
-
-
-
-
-
-
     </div>
+
 </div>
 
 <script type="text/javascript">
@@ -394,6 +292,7 @@
 
 
     });
+
 
     function excluir(id, subtotal, val) {
         let id_ex = document.getElementById('id_excluido-' + id).value;
@@ -540,8 +439,8 @@
     }
 
 
-    function agregarValidos() {
-        var id = document.getElementById('creditos').value;
+    function agregarValidos(id) {
+    
 
         var loadingOverlay = document.getElementById('loading-overlay'); // Cambiado para coincidir con el HTML
 
@@ -549,7 +448,7 @@
             loadingOverlay.style.display = 'flex'; // Mostrar overlay
         }
 
-        if (id != '') {
+      //  if (id != '') {
             $.ajax({
                 url: "{{ url('polizas/deuda/agregar_valido') }}",
                 type: 'POST',
@@ -559,9 +458,6 @@
                 },
                 success: function(response) {
                     console.log(response);
-                    $('#modal_cambio_credito_valido').modal('hide');
-                    loadCreditos(1, "");
-                    loadCreditos(2, "");
                 },
                 error: function(xhr, status, error) {
                     console.error(error);
@@ -574,18 +470,18 @@
                 }
             });
 
-        } else {
+     /*   } else {
             Swal.fire({
                 title: 'Error!',
                 text: 'Debe de seleccionar el credito',
                 icon: 'error',
                 confirmButtonText: 'Aceptar'
             });
+        }*/
 
             if (loadingOverlay) {
                 loadingOverlay.style.display = 'none'; // Ocultar overlay si no se seleccionó un crédito
             }
-        }
     }
 
 
