@@ -248,7 +248,12 @@ class DeudaCarteraController extends Controller
             if ($request->validacion_dui == 'on') {
                 $validador_dui = true;
             } else {
-                if ($obj->Nacionalidad == 'SAL' || $obj->Nacionalidad == 'Sal' || $obj->Nacionalidad == 'sal') {
+                if (empty($obj->Nacionalidad)) {
+                    $obj->TipoError = 9;
+                    $obj->update();
+
+                    array_push($errores_array, 9);
+                } else if ($obj->Nacionalidad == 'SAL' || $obj->Nacionalidad == 'Sal' || $obj->Nacionalidad == 'sal') {
                     $validador_dui = $this->validarDocumento($obj->Dui, "dui");
 
                     if ($validador_dui == false) {
@@ -333,6 +338,15 @@ class DeudaCarteraController extends Controller
                 $obj->update();
 
                 array_push($errores_array, 7);
+            }
+
+
+             // 10 error sexo
+             if (trim($obj->Sexo) == "" || ($obj->Sexo != "M" && $obj->Sexo != "F")) {
+                $obj->TipoError = 10;
+                $obj->update();
+
+                array_push($errores_array, 10);
             }
 
             $obj->Errores = $errores_array;
@@ -453,7 +467,12 @@ class DeudaCarteraController extends Controller
             if ($request->validacion_dui == 'on') {
                 $validador_dui = true;
             } else {
-                if ($obj->Nacionalidad == 'SAL' || $obj->Nacionalidad == 'Sal' || $obj->Nacionalidad == 'sal') {
+                if (empty($obj->Nacionalidad)) {
+                    $obj->TipoError = 9;
+                    $obj->update();
+
+                    array_push($errores_array, 9);
+                } else if ($obj->Nacionalidad == 'SAL' || $obj->Nacionalidad == 'Sal' || $obj->Nacionalidad == 'sal') {
                     $validador_dui = $this->validarDocumento($obj->Dui, "dui");
 
                     if ($validador_dui == false) {
@@ -540,6 +559,15 @@ class DeudaCarteraController extends Controller
                 array_push($errores_array, 7);
             }
 
+
+             // 10 error sexo
+             if (trim($obj->Sexo) == "" || ($obj->Sexo != "M" && $obj->Sexo != "F")) {
+                $obj->TipoError = 10;
+                $obj->update();
+
+                array_push($errores_array, 10);
+            }
+
             $obj->Errores = $errores_array;
         }
 
@@ -558,7 +586,7 @@ class DeudaCarteraController extends Controller
         return back();
 
 
-//        return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date', 'tipo_cartera', 'nombre_cartera'));
+        //        return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date', 'tipo_cartera', 'nombre_cartera'));
     }
 
 
@@ -1352,8 +1380,7 @@ class DeudaCarteraController extends Controller
 
 
         // Obtener los datos de la tabla temporal
-        $tempData = PolizaDeudaTempCartera::
-            where('User', auth()->user()->id)
+        $tempData = PolizaDeudaTempCartera::where('User', auth()->user()->id)
             ->where('NoValido', 0)
             ->where('PolizaDeuda', $request->Deuda)
             ->get();

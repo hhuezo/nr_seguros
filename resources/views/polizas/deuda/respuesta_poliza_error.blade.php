@@ -76,6 +76,14 @@
                                         <span style="color: red;">Pasaporte no válido</span>
                                         @endif
 
+                                        @if(in_array(9, $registro->Errores))
+                                        <span style="color: red;">El dato de la nacionalidad esta vacia</span>
+                                        @endif
+
+                                        @if(in_array(10, $registro->Errores))
+                                        <span style="color: red;">El género no es válido</span>
+                                        @endif
+
                                     </td>
                                     <td>
                                         @if(in_array(2, $registro->Errores))
