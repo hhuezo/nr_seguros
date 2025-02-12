@@ -102,15 +102,15 @@ class ClienteController extends Controller
             'Nombre' => 'required',
             'DireccionCorrespondencia' => 'required|max:255',
             'TelefonoCelular' => 'required|size:9',
-            'CorreoPrincipal' => 'required|email|max:255',
+            //'CorreoPrincipal' => 'required|email|max:255',
             'FechaVinculacion' => 'required|date',
             'Estado' => 'required|integer',
             'Genero' => 'required|integer',
             'TipoContribuyente' => 'required|integer',
             'UbicacionCobro' => 'required|integer',
-            'Departamento' => 'required|integer',
-            'Municipio' => 'required|integer',
-            'Distrito' => 'required|integer',
+            //'Departamento' => 'required|integer',
+            //'Municipio' => 'required|integer',
+            //'Distrito' => 'required|integer',
         ];
 
         if ($request->get('TipoPersona') == 1) {
@@ -234,7 +234,9 @@ class ClienteController extends Controller
         $cliente->Genero = $request->get('Genero');
         $cliente->TipoContribuyente = $request->get('TipoContribuyente');
         $cliente->Referencia = $request->get('Referencia');
-        $cliente->Distrito = $request->get('Distrito');
+        if ($request->filled('Distrito')) {
+            $cliente->Distrito = $request->get('Distrito');
+        }
         $cliente->Comentarios = $request->get('Comentarios');
         $cliente->FechaIngreso = $time->toDateTimeString();
         $cliente->UsuarioIngreso = auth()->user()->id;
@@ -483,6 +485,7 @@ class ClienteController extends Controller
         $cliente->SmartWatch = $request->get('SmartWatch');
         $cliente->DispositivosOtros = $request->get('DispositivosOtros');
         $cliente->Informarse = $request->get('Informarse');
+        $cliente->EnvioInformacion = $request->get('EnvioInformacion');
         $cliente->Instagram = $request->get('Instagram');
         $cliente->TieneMascota = $request->get('TieneMascota');
         $cliente->MotivoEleccion = $request->get('MotivoEleccion');
@@ -496,7 +499,7 @@ class ClienteController extends Controller
         $cliente->Informacion = $request->get('Informacion');
         $cliente->update();
 
-        session(['tab1' => '2']);
+        return redirect('catalogo/cliente/' . $request->Id . '/edit?tab=4');
 
         alert()->success('El registro ha sido modificado correctamente');
         return back();
@@ -513,8 +516,8 @@ class ClienteController extends Controller
         $contacto->save();
         alert()->success('El registro ha sido creado correctamente');
 
-        session(['tab1' => '4']);
-        return back();
+        return redirect('catalogo/cliente/' . $request->Cliente . '/edit?tab=3');
+        //return back();
     }
 
     public function edit_contacto(Request $request)
@@ -529,18 +532,17 @@ class ClienteController extends Controller
         $contacto->save();
         alert()->success('El registro ha sido modificado correctamente');
 
-        session(['tab1' => '4']);
-        return back();
+        return redirect('catalogo/cliente/' . $request->Cliente . '/edit?tab=3');
     }
 
     public function delete_contacto(Request $request)
     {
         $contacto = ClienteContactoFrecuente::findOrFail($request->Id);
+        $Id = $contacto->Cliente;
         $contacto->delete();
         alert()->error('El registro ha sido eliminado correctamente');
 
-        session(['tab1' => '4']);
-        return back();
+        return redirect('catalogo/cliente/' .  $Id . '/edit?tab=3');
     }
 
 
@@ -555,19 +557,17 @@ class ClienteController extends Controller
         $tarjeta->save();
         alert()->success('El registro ha sido creado correctamente');
 
-        session(['tab1' => '3']);
-        return back();
+        return redirect('catalogo/cliente/' . $request->Cliente . '/edit?tab=2');
     }
 
     public function delete_tarjeta(Request $request)
     {
         $tarjeta = ClienteTarjetaCredito::findOrFail($request->Id);
-        //dd($tarjeta) ;
+        $Id =  $tarjeta->Cliente;
         $tarjeta->delete();
         alert()->error('El registro ha sido eliminado correctamente');
 
-        session(['tab1' => '3']);
-        return back();
+        return redirect('catalogo/cliente/' . $Id . '/edit?tab=2');
     }
 
     public function edit_tarjeta(Request $request)
@@ -581,8 +581,7 @@ class ClienteController extends Controller
         $tarjeta->save();
         alert()->success('El registro ha sido creado correctamente');
 
-        session(['tab1' => '3']);
-        return back();
+        return redirect('catalogo/cliente/' . $request->Cliente . '/edit?tab=2');
     }
 
 
@@ -590,8 +589,6 @@ class ClienteController extends Controller
     {
 
         $archivo = $request->file('Archivo');
-
-
 
         $id = uniqid();
         $filePath =  $id . $archivo->getClientOriginalName();
@@ -604,26 +601,22 @@ class ClienteController extends Controller
         $documento->Activo = 1;
         $documento->save();
 
-
-
-
-
         // Storage::disk('public')->put($filePath, file_get_contents($archivo));
         alert()->success('El registro ha sido creado correctamente');
-        session(['tab1' => '7']);
-        return back();
+        return redirect('catalogo/cliente/' . $request->Cliente . '/edit?tab=7');
     }
 
 
     public function eliminar_documento($id)
     {
         $documento = ClienteDocumento::findOrFail($id);
+        $Id = $documento->Cliente;
         $documento->Activo = 0;
         $documento->save();
 
         alert()->success('El registro ha sido eliminado correctamente');
-        session(['tab1' => '7']);
-        return back();
+        return redirect('catalogo/cliente/' . $Id . '/edit?tab=7');
+
     }
 
 
@@ -640,8 +633,8 @@ class ClienteController extends Controller
         $habito->save();
         alert()->success('El registro ha sido creado correctamente');
 
-        session(['tab1' => '5']);
-        return back();
+        return redirect('catalogo/cliente/' . $request->Cliente . '/edit?tab=5');
+
     }
 
     public function edit_habito(Request $request)
@@ -655,8 +648,7 @@ class ClienteController extends Controller
         $habito->save();
         alert()->success('El registro ha sido modificado correctamente');
 
-        session(['tab1' => '5']);
-        return back();
+        return redirect('catalogo/cliente/' . $request->Cliente . '/edit?tab=5');
     }
 
 
@@ -664,12 +656,11 @@ class ClienteController extends Controller
     public function delete_habito(Request $request)
     {
         $habito = ClienteHabitoConsumo::findOrFail($request->Id);
-        //dd($tarjeta) ;
+        $Id = $habito->Cliente;
         $habito->delete();
         alert()->error('El registro ha sido eliminado correctamente');
 
-        session(['tab1' => '5']);
-        return back();
+        return redirect('catalogo/cliente/' . $Id. '/edit?tab=5');
     }
 
     public function add_retroalimentacion(Request $request)
@@ -683,8 +674,9 @@ class ClienteController extends Controller
         $retroalimentacion->QueQuisiera = $request->QueQuisiera;
         $retroalimentacion->ServicioCliente = $request->ServicioCliente;
         $retroalimentacion->save();
-        session(['tab1' => '6']);
+
         alert()->success('El registro ha sido creado correctamente');
+        return redirect('catalogo/cliente/' . $request->Cliente . '/edit?tab=6');
         return back();
     }
 
@@ -699,20 +691,18 @@ class ClienteController extends Controller
         $retroalimentacion->QueQuisiera = $request->QueQuisiera;
         $retroalimentacion->ServicioCliente = $request->ServicioCliente;
         $retroalimentacion->update();
-        session(['tab1' => '6']);
         alert()->success('El registro ha sido modificado correctamente');
+        return redirect('catalogo/cliente/' . $request->Cliente . '/edit?tab=6');
         return back();
     }
 
     public function delete_retroalimentacion(Request $request)
     {
         $retroalimentacion = ClienteRetroalimentacion::findOrFail($request->Id);
-        //dd($tarjeta) ;
+        $Id = $retroalimentacion->Cliente;
         $retroalimentacion->delete();
         alert()->error('El registro ha sido eliminado correctamente');
-
-        session(['tab1' => '6']);
-        return back();
+        return redirect('catalogo/cliente/' . $Id  . '/edit?tab=6');
     }
 
 

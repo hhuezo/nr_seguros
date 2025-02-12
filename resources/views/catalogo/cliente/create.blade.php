@@ -174,9 +174,9 @@
                                             data-inputmask="'mask': ['9999-9999']" data-mask type="text">
                                     </div>
                                     <div class="form-group">
-                                        <label for="CorreoPrincipal" class="form-label">Correo Principal *</label>
+                                        <label for="CorreoPrincipal" class="form-label">Correo Principal</label>
                                         <input class="form-control" name="CorreoPrincipal" id="CorreoPrincipal"
-                                            value="{{ old('CorreoPrincipal') }}" type="email" required>
+                                            value="{{ old('CorreoPrincipal') }}" type="email">
                                     </div>
                                     <div class="form-group">
                                         <label for="CorreoSecundario" class="form-label">Correo Secundario</label>
@@ -268,10 +268,10 @@
                                                 Ruta
                                             </div>
                                             <div class="form-group">
-                                                <label for="DireccionResidencia" class="form-label">Departamento *
+                                                <label for="DireccionResidencia" class="form-label">Departamento
                                                 </label>
                                                 <select id="Departamento" class="form-control select2"
-                                                    style="width: 100%" required>
+                                                    style="width: 100%">
                                                     <option value="" disabled selected>Seleccione</option>
                                                     @foreach ($departamentos as $obj)
                                                         <option value="{{ $obj->Id }}"
@@ -282,8 +282,8 @@
                                                 </select>
                                             </div>
                                             <div class="form-group">
-                                                <label for="DireccionResidencia" class="form-label">Municipio * </label>
-                                                <select name="Municipio" id="Municipio" required
+                                                <label for="DireccionResidencia" class="form-label">Municipio</label>
+                                                <select name="Municipio" id="Municipio"
                                                     class="form-control select2" style="width: 100%" disabled>
                                                     <option value="">Seleccione</option>
                                                     @foreach ($municipios as $obj)
@@ -295,9 +295,9 @@
                                                 </select>
                                             </div>
                                             <div class="form-group">
-                                                <label for="DireccionResidencia" class="form-label">Distrito *</label>
+                                                <label for="DireccionResidencia" class="form-label">Distrito</label>
                                                 <select id="Distrito" name="Distrito" class="form-control select2"
-                                                    style="width: 100%" required disabled>
+                                                    style="width: 100%" disabled>
                                                     <option value="">Seleccione</option>
                                                     @foreach ($distritos as $obj)
                                                         <option value="{{ $obj->Id }}"
