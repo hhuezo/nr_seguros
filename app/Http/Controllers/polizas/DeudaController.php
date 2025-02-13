@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\polizas;
 
 use App\Exports\CreditosNoValidoExport;
+use App\Exports\DeudaErroneosExport;
 use App\Exports\DeudaExport;
 use App\Exports\DeudaReciboExport;
 use App\Exports\EdadMaximaExport;
@@ -1380,6 +1381,12 @@ class DeudaController extends Controller
     {
         return Excel::download(new EdadMaximaExport($id), 'creditos_edad_maxima.xlsx');
     }
+
+    public function registros_erroneos($id)
+    {
+        return Excel::download(new DeudaErroneosExport($id), 'creditos_erroneos.xlsx');
+    }
+
 
 
     public function registros_responsabilidad_maxima($id)

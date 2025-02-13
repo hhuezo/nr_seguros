@@ -13,18 +13,21 @@
                         <div class="col-md-6 col-sm-6 col-xs-12">
                             <h2>Error<small>Cartera con registros erroneos</small> </h2>
                         </div>
-                        <div class="col-md-6 col-sm-6 col-xs-12" align="right">
-                            <form method="POST" action="{{ url('polizas/deuda/delete_temp') }}">
+                        <div class="col-md-6 col-sm-6 col-xs-12" style="text-align: right;">
+                            <form action="{{ url('exportar/registros_erroneos') }}/{{$deuda->Id}}" method="POST" style="display: inline-block; margin-right: 10px;">
+                                @csrf
+                                <button class="btn btn-success">Descargar Excel</button>
+                            </form>
+                            <form method="POST" action="{{ url('polizas/deuda/delete_temp') }}" style="display: inline-block;">
                                 @csrf
                                 <input type="hidden" name="LineaCredito" value="{{ $credito }}">
                                 <input type="hidden" name="DeudaId" value="{{ $deuda->Id }}">
-
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fa fa-arrow-left"></i>
                                 </button>
-
                             </form>
                         </div>
+
                         <div class="clearfix"></div>
                     </div>
                     <div class="x_content">
@@ -41,6 +44,7 @@
                                     <th>No De Referencia Del Crédito </th>
                                     <th>Pasaporte</th>
                                     <th>Nacionalidad</th>
+                                    <th>Género</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -146,6 +150,7 @@
                                         @endif
                                     </td>
                                     <td> {{ $registro->Nacionalidad }}</td>
+                                    <td> {{ $registro->Sexo }}</td>
                                 </tr>
                                 @endforeach
 

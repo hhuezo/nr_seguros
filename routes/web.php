@@ -221,6 +221,7 @@ Route::post('exportar/registros_no_validos/{id}', [DeudaController::class, 'regi
 Route::post('exportar/registros_requisitos/{id}',[DeudaController::class,'registros_requisitos']);
 Route::post('exportar/registros_requisitos_recibos/{id}',[DeudaController::class,'registros_requisitos_recibos']);
 Route::post('exportar/registros_edad_maxima/{id}',[DeudaController::class,'registros_edad_maxima']);
+Route::post('exportar/registros_erroneos/{id}',[DeudaController::class,'registros_erroneos']);
 Route::post('exportar/registros_responsabilidad_maxima/{id}',[DeudaController::class,'registros_responsabilidad_maxima']);
 Route::get('polizas/deuda/get_historico', [DeudaController::class, 'get_historico']);
 Route::post('polizas/deuda/agregar_valido', [DeudaController::class, 'agregar_valido']);
