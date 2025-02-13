@@ -2655,18 +2655,16 @@ class DeudaController extends Controller
                             'poliza_deuda_temp_cartera.NumeroReferencia',
                             'poliza_deuda_temp_cartera.NoValido',
                             'poliza_deuda_temp_cartera.Perfiles',
-                            DB::raw("GROUP_CONCAT(DISTINCT poliza_deuda_temp_cartera.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
-                            DB::raw('MAX(poliza_deuda_temp_cartera.EdadDesembloso) as EdadDesembloso'),
-                            DB::raw('MAX(poliza_deuda_temp_cartera.FechaOtorgamientoDate) as FechaOtorgamiento'),
+                            'poliza_deuda_temp_cartera.NumeroReferencia  AS ConcatenatedNumeroReferencia',
+                            'poliza_deuda_temp_cartera.EdadDesembloso as EdadDesembloso',
+                            'poliza_deuda_temp_cartera.FechaOtorgamientoDate as FechaOtorgamiento',
                             'poliza_deuda_temp_cartera.Excluido',
                             'poliza_deuda_temp_cartera.OmisionPerfil',
                             'poliza_deuda_temp_cartera.saldo_total',
                             'pdc.MontoMaximoIndividual as MontoMaximoIndividual'
                         )
-                        ->where('poliza_deuda_temp_cartera.EdadDesembloso', '<=', $deuda->EdadMaximaTerminacion)
                         ->where('poliza_deuda_temp_cartera.PolizaDeuda', $poliza)
                         ->whereIn('poliza_deuda_temp_cartera.NumeroReferencia', $registrosValidados)
-                        ->groupBy('poliza_deuda_temp_cartera.Dui')
                         ->get();
                 } else {
                     $poliza_cumulos = PolizaDeudaTempCartera::where('Id', 0)->get();
