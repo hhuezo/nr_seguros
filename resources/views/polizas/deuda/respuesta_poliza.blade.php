@@ -183,6 +183,7 @@
                                                         <th>Nombre</th>
                                                         <th>Fecha nacimiento</th>
                                                         <th>Edad Otorgamiento</th>
+                                                        <th>Edad Actual</th>
                                                         <th>Total</th>
                                                         <th style="text-align: center;">Excluir</th>
                                                     </tr>
@@ -202,6 +203,7 @@
                                                         <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
                                                         </td>
                                                         <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }} Años</td>
+                                                        <td>{{ $registro->EdadDesembloso ? $registro->Edad : '' }} Años</td>
                                                         <td>${{ number_format($registro->saldo_total, 2) }}</td>
                                                         <td>
                                                             <input type="checkbox" onchange="excluir({{ $registro->Id }},0,1)" class="js-switch" {{ $registro->excluidoEdad() > 0 ? 'checked' : '' }}>
