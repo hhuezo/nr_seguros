@@ -15,7 +15,7 @@
     </thead>
     <tbody>
         @php($total = 0)
-        @foreach ($data->sortBy('EdadDesembloso') as $obj)
+        @foreach ($data as $obj)
         <tr>
             <td>{{ $obj->NumeroReferencia }}</td>
             <td>

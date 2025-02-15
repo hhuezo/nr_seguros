@@ -113,6 +113,35 @@ class PolizaDeudaTempCartera extends Model
         }
     }
 
+
+    public function getNumerosReferencia()
+    {
+        $data = PolizaDeudaTempCartera::where('Dui', $this->Dui)
+            ->where('PolizaDeuda', $this->PolizaDeuda)
+            ->orderBy('FechaOtorgamientoDate')
+            ->get();
+
+        $concatenatedReferences = '';
+
+        foreach ($data as $obj) {
+            $isSingleRecord = $data->count() === 1;
+
+            $style = ($isSingleRecord || is_null($obj->MontoRequisito) || is_null($obj->EdadRequisito))
+                ? '<span style="color: black;">' . $obj->NumeroReferencia . '</span>'
+                : '<span style="color: red;">' . $obj->NumeroReferencia . '</span>';
+
+            $concatenatedReferences .= $style . ', ';
+        }
+
+        // Elimina la última coma y espacio
+        $concatenatedReferences = rtrim($concatenatedReferences, ', ');
+
+
+
+        // Retorna el resultado
+        return $concatenatedReferences;
+    }
+
     public function creditoRehabilitado($numeroReferencia, $axoAnterior, $mesAnterior)
     {
         try {
@@ -130,14 +159,14 @@ class PolizaDeudaTempCartera extends Model
 
     public function excluidoEdad()
     {
-        $excluido = DeudaExcluidos::where('NumeroReferencia',$this->NumeroReferencia)->where('EdadMaxima','<>',null)->count();
+        $excluido = DeudaExcluidos::where('NumeroReferencia', $this->NumeroReferencia)->where('EdadMaxima', '<>', null)->count();
 
         return $excluido;
     }
 
     public function excluidoResponsabilidad()
     {
-        $excluido = DeudaExcluidos::where('NumeroReferencia',$this->NumeroReferencia)->where('ResponsabilidadMaxima','<>',null)->count();
+        $excluido = DeudaExcluidos::where('NumeroReferencia', $this->NumeroReferencia)->where('ResponsabilidadMaxima', '<>', null)->count();
 
         return $excluido;
     }

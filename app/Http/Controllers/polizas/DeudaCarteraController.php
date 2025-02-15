@@ -1029,9 +1029,24 @@ class DeudaCarteraController extends Controller
                     'Perfiles' => DB::raw(
                         'IF(Perfiles IS NULL OR Perfiles = "","' . $requisito->perfil->Descripcion . '", CONCAT(Perfiles, ",","' . $requisito->perfil->Descripcion . '"))'
                     ),
-                    'OmisionPerfil' =>   $requisito->OmicionPerfil
+                    'OmisionPerfil' =>   $requisito->OmicionPerfil,
+                    'MontoRequisito' =>  null,
+                    'EdadRequisito' =>  null
                     //,'NoValido' =>   $requisito->NoValido
                 ]);
+
+
+                PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
+                ->whereIn('Dui', $data_dui_cartera)
+                ->where('saldo_total', '>=', $requisito->MontoInicial)->where('saldo_total', '<=', $requisito->MontoFinal)
+                ->where('EdadDesembloso', '>=', $requisito->EdadInicial)->where('EdadDesembloso', '<=', $requisito->EdadFinal)
+                ->update([
+                    'MontoRequisito' =>  $requisito->MontoInicial,
+                    'EdadRequisito' =>  $requisito->EdadInicial
+                    //,'NoValido' =>   $requisito->NoValido
+                ]);
+
+
         }
 
 

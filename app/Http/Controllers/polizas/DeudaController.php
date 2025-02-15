@@ -2530,6 +2530,7 @@ class DeudaController extends Controller
                     })
                     ->select(
                         'poliza_deuda_temp_cartera.Id',
+                        'poliza_deuda_temp_cartera.PolizaDeuda',
                         'poliza_deuda_temp_cartera.Dui',
                         'poliza_deuda_temp_cartera.Edad',
                         'poliza_deuda_temp_cartera.Nit',
@@ -2542,7 +2543,7 @@ class DeudaController extends Controller
                         'poliza_deuda_temp_cartera.NumeroReferencia',
                         'poliza_deuda_temp_cartera.NoValido',
                         'poliza_deuda_temp_cartera.Perfiles',
-                        DB::raw("GROUP_CONCAT(DISTINCT poliza_deuda_temp_cartera.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
+                        //DB::raw("GROUP_CONCAT(DISTINCT poliza_deuda_temp_cartera.NumeroReferencia ORDER BY poliza_deuda_temp_cartera.FechaOtorgamientoDate ASC SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
                         DB::raw('MAX(poliza_deuda_temp_cartera.EdadDesembloso) as EdadDesembloso'),
                         DB::raw('MAX(poliza_deuda_temp_cartera.FechaOtorgamientoDate) as FechaOtorgamiento'),
                         'poliza_deuda_temp_cartera.Excluido',
@@ -2557,6 +2558,7 @@ class DeudaController extends Controller
                     ->whereNull('pdcart.NumeroReferencia') // Filtra solo los que no tienen coincidencia en poliza_deuda_cartera
                     ->groupBy('poliza_deuda_temp_cartera.Dui')
                     ->get();
+
             } elseif ($tipo == 2) { // creditos validos
                 $poliza_cumulos = PolizaDeudaTempCartera::join('poliza_deuda_creditos as pdc', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'pdc.Id')
                     ->select(
@@ -2617,10 +2619,21 @@ class DeudaController extends Controller
                     //->groupBy('poliza_deuda_temp_cartera.NumeroReferencia')
                     ->get();
 
-                    $meses = array(
-                        "", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-                        "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
-                    );
+                $meses = array(
+                    "",
+                    "Enero",
+                    "Febrero",
+                    "Marzo",
+                    "Abril",
+                    "Mayo",
+                    "Junio",
+                    "Julio",
+                    "Agosto",
+                    "Septiembre",
+                    "Octubre",
+                    "Noviembre",
+                    "Diciembre"
+                );
 
 
                 foreach ($poliza_cumulos as $cumulo) {
@@ -2689,6 +2702,7 @@ class DeudaController extends Controller
                 $query->where('Dui', $documento)
                     ->orWhere('Nit', $documento);
             })
+            ->orderBy('FechaOtorgamientoDate')
             ->get();
 
         foreach ($data as $obj) {

@@ -109,6 +109,9 @@
 
         <tr class="{{ $tipo == 3 ? 'row-warning' : '' }}">
             {{-- <td>{{ $registro->ConcatenatedNumeroReferencia }} </td> --}}
+            @if ($tipo == 1)
+            <td>{!!$registro->getNumerosReferencia()!!}</td>
+            @else
             <td>
                 @php
                 $referencias = !empty($registro->ConcatenatedNumeroReferencia)
@@ -128,6 +131,8 @@
                 {{ implode(', ', $referencias) }}
                 @endif
             </td>
+            @endif
+
             <td>
                 {{
                                         $registro->Dui && $registro->Nit && $registro->Dui !== $registro->Nit
