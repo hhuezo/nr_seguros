@@ -43,7 +43,12 @@
             <td class="text-right">
                 ${{ number_format($registro->saldo_total, 2, '.', ',') }}
             </td>
-            <td>{{ $registro->Motivo }}</td>
+            @if ($registro->MontoMaximoIndividual == 1)
+            <td> Registro supera monto maximo individual</td>
+            @else
+            <td> {{ $registro->Motivo }}</td>
+            @endif
+
             <td align="center" data-target="#modal_cambio_credito_valido" data-toggle="modal" onclick="get_creditos({{ $registro->Id }})">
                 <button class="btn btn-primary">
                     <i class="fa fa-exchange"></i>

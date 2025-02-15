@@ -57,8 +57,12 @@ class PolizaDeudaTempCartera extends Model
         'NoValido',
         'EdadDesembloso',
         'FechaOtorgamientoDate',
-        'Rehabilitado'
+        'Rehabilitado',
+        'EdadRequisito',
+        'MontoRequisito',
+        'MontoMaximoIndividual'
     ];
+
 
     public function linea_credito()
     {

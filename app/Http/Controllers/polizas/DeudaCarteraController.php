@@ -169,6 +169,8 @@ class DeudaCarteraController extends Controller
         $credito = $request->get('LineaCredito');
         $deuda = Deuda::findOrFail($request->Id);
 
+
+
         $date_submes = Carbon::create($request->Axo, $request->Mes, "01");
         $date = Carbon::create($request->Axo, $request->Mes, "01");
         $date_mes = $date_submes->subMonth();
@@ -341,8 +343,8 @@ class DeudaCarteraController extends Controller
             }
 
 
-             // 10 error sexo
-             if (trim($obj->Sexo) == "" || ($obj->Sexo != "M" && $obj->Sexo != "F")) {
+            // 10 error sexo
+            if (trim($obj->Sexo) == "" || ($obj->Sexo != "M" && $obj->Sexo != "F")) {
                 $obj->TipoError = 10;
                 $obj->update();
 
@@ -354,6 +356,9 @@ class DeudaCarteraController extends Controller
 
 
 
+
+
+
         $data_error = $cartera_temp->where('TipoError', '<>', 0);
 
         //dd($data_error);
@@ -362,25 +367,31 @@ class DeudaCarteraController extends Controller
             return view('polizas.deuda.respuesta_poliza_error', compact('data_error', 'deuda', 'credito'));
         }
 
-        /*
-        // Convertir la cadena en un objeto Carbon (la clase de fecha en Laravel)
-        $fecha = \Carbon\Carbon::parse($date);
-
-        // Obtener el mes y el año
-        $mes = $fecha->format('m'); // El formato 'm' devuelve el mes con ceros iniciales (por ejemplo, "02")
-        $anio = $fecha->format('Y');
 
 
+        $linea_credito = DeudaCredito::find($credito);
 
-        // Obtener los datos de la tabla temporal
-        $tempData = PolizaDeudaTempCartera::where('Axo', $anio)
-            ->where('Mes', $mes + 0)
-            ->where('User', auth()->user()->id)
-            ->where('NoValido', 0)
-            ->where('LineaCredito', '=', $credito)
-            ->get();
+        $MontoMaximoIndividual = $linea_credito->MontoMaximoIndividual;
+        if (isset($MontoMaximoIndividual) && $MontoMaximoIndividual > 0) {
+            $duis = PolizaDeudaTempCartera::selectRaw('Dui')
+                ->where('User', auth()->user()->id)
+                ->where('LineaCredito', $credito)
+                ->groupBy('Dui')
+                ->havingRaw('SUM(saldo_total) >= ?', [$MontoMaximoIndividual])
+                ->pluck('Dui'); // Obtiene solo los valores de la columna Dui
 
-        //dd($tempData->take(20));*/
+            // Realiza el update en los registros con los DUI filtrados
+            if ($duis->isNotEmpty()) {
+                PolizaDeudaTempCartera::whereIn('Dui', $duis)
+                    ->update([
+                        'MontoMaximoIndividual' => 1,
+                        'NoValido' => 1
+                    ]);
+            }
+        }
+
+
+
 
         alert()->success('Exito', 'La cartera fue subida con exito');
 
@@ -560,8 +571,8 @@ class DeudaCarteraController extends Controller
             }
 
 
-             // 10 error sexo
-             if (trim($obj->Sexo) == "" || ($obj->Sexo != "M" && $obj->Sexo != "F")) {
+            // 10 error sexo
+            if (trim($obj->Sexo) == "" || ($obj->Sexo != "M" && $obj->Sexo != "F")) {
                 $obj->TipoError = 10;
                 $obj->update();
 
@@ -1036,7 +1047,7 @@ class DeudaCarteraController extends Controller
                 ]);
 
 
-                PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
+            PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
                 ->whereIn('Dui', $data_dui_cartera)
                 ->where('saldo_total', '>=', $requisito->MontoInicial)->where('saldo_total', '<=', $requisito->MontoFinal)
                 ->where('EdadDesembloso', '>=', $requisito->EdadInicial)->where('EdadDesembloso', '<=', $requisito->EdadFinal)
@@ -1045,13 +1056,11 @@ class DeudaCarteraController extends Controller
                     'EdadRequisito' =>  $requisito->EdadInicial
                     //,'NoValido' =>   $requisito->NoValido
                 ]);
-
-
         }
 
 
         //inicializamos los no validos a cero
-        PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
+        PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('MontoMaximoIndividual',0)
             ->update(['NoValido' => 0]);
 
         $edades = DB::table('poliza_deuda_requisitos')

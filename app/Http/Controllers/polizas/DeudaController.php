@@ -2482,10 +2482,11 @@ class DeudaController extends Controller
                     'pdtc.FechaOtorgamiento',
                     'pdtc.NoValido',
                     'pdtc.Excluido',
+                    'pdtc.MontoMaximoIndividual',
                     DB::raw("sum(pdtc.saldo_total) as saldo_total"),
                     DB::raw("GROUP_CONCAT(DISTINCT pdtc.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
                     DB::raw("GROUP_CONCAT(DISTINCT FORMAT(pdtc.saldo_total, 2) SEPARATOR '- ') AS ConcatenatedMonto"),
-                    'pdc.MontoMaximoIndividual as MontoMaximoIndividual',
+                    //'pdc.MontoMaximoIndividual as MontoMaximoIndividual',
                     'sm.Abreviatura as Abreviatura',
                     'tc.nombre AS TipoCarteraNombre' // Agregar el nombre de la TipoCartera
                 )
@@ -2495,7 +2496,6 @@ class DeudaController extends Controller
                 ->where('pdtc.PolizaDeuda', $poliza)
                 ->groupBy('pdtc.Dui')
                 ->get();
-            //dd($poliza_cumulos);
 
             $edades = DB::table('poliza_deuda_requisitos')
                 ->where('Deuda', $poliza)
