@@ -194,15 +194,15 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
       <td style="text-align: center;">01/01</td>
       <td>{{$detalle->NumeroCorrelativo}}</td>
       <td>{{ \Carbon\Carbon::parse($detalle->FechaInicio)->format('d/m/Y') }}</td>
-      <td style="text-align: right;">${{number_format($detalle->SubTotal,2,'.',',')}}</td>
-      <td style="text-align: right;">${{number_format(($detalle->Comision ),2,'.',',')}}</td>
+      <td style="text-align: right;">${{number_format(($detalle->SubTotal+$detalle->Iva),2,'.',',')}}</td>
+      <td style="text-align: right;">${{number_format(($detalle->ValorCCF ),2,'.',',')}}</td>
       <td style="text-align: right;">${{number_format($detalle->Otros,2,'.',',')}}</td>
       <td style="text-align: right;">${{number_format($detalle->APagar,2,'.',',')}}</td>
     </tr>
     <tr>
       <td colspan="3" align="center">TOTAL </td>
-      <td style="text-align: right;">${{number_format($detalle->SubTotal,2,'.',',')}}</td>
-      <td style="text-align: right;">${{number_format($detalle->Comision,2,'.',',')}}</td>
+      <td style="text-align: right;">${{number_format(($detalle->SubTotal+$detalle->Iva),2,'.',',')}}</td>
+      <td style="text-align: right;">${{number_format($detalle->ValorCCF,2,'.',',')}}</td>
       <td></td>
       <td style="text-align: right;">${{number_format(($detalle->APagar),2,'.',',')}}</td>
     </tr>

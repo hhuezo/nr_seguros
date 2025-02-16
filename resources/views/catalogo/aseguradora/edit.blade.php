@@ -149,11 +149,19 @@
                                     </div>
                                     <div class="col-sm-3">
                                         <label for="DireccionResidencia" class="form-label">Calculo Diario</label>
-                                        <input type="checkbox" name="Diario" id="Diario" class="form-control" onclick="dias_365(this.value)" @if($aseguradora->Diario == 1) checked @endif>
+                                        <!-- <input type="checkbox" name="Diario" id="Diario" class="form-control" onclick="dias_365(this.value)" > -->
+                                        <label class="switch">
+                                            <input type="checkbox" name="Diario" id="Diario" onclick="dias_365(this.value)" @if($aseguradora->Diario == 1) checked @endif>
+                                            <span class="slider round"></span>
+                                        </label>
                                     </div>
                                     <div class="col-sm-3" id="diario_365" style="display: {{$aseguradora->Diario == 1 ? 'block':'none'}};">
                                         <label for="DireccionResidencia" class="form-label">¿Son 365 dias?</label>
-                                        <input type="checkbox" name="Dias365" id="Dias365" {{$aseguradora->Dias365 ? 'checked':''}} class="form-control" >
+                                        <!-- <input type="checkbox" name="Dias365" id="Dias365"  class="form-control"> -->
+                                        <label class="switch">
+                                            <input type="checkbox" name="Dias365" id="Dias365" {{$aseguradora->Dias365 ? 'checked':''}}>
+                                            <span class="slider round"></span>
+                                        </label>
                                     </div>
                                 </div>
 
@@ -658,17 +666,18 @@
     });
 
 
-    function dias_365(id){
+    function dias_365(id) {
 
         const diario = document.getElementById('Diario').checked;
-        if(diario == true){
+        if (diario == true) {
             $("#diario_365").show();
-        }else{
+        } else {
             $("#diario_365").hide();
 
         }
         console.log(document.getElementById('Diario').checked);
     }
+
     function addCargo() {
         $('#modal_addCargo').modal('show');
     }
