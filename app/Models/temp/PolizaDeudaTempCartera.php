@@ -42,6 +42,7 @@ class PolizaDeudaTempCartera extends Model
         'Intereses',
         'InteresesMoratorios',
         'SaldoTotal',
+        'MoraCapital',
         'User',
         'Axo',
         'Mes',

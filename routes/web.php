@@ -26,6 +26,7 @@ use App\Http\Controllers\catalogo\RutaController;
 use App\Http\Controllers\catalogo\TipoCobroController;
 use App\Http\Controllers\polizas\DesempleoController;
 use App\Http\Controllers\polizas\DeudaCarteraController;
+use App\Http\Controllers\polizas\DeudaCarteraFedeController;
 use App\Http\Controllers\polizas\DeudaController;
 use App\Http\Controllers\polizas\VidaController;
 use App\Http\Controllers\polizas\ResidenciaController;
@@ -243,6 +244,11 @@ Route::post('polizas/deuda/store_poliza_recibo', [DeudaCarteraController::class,
 Route::post('polizas/deuda/store_requisitos', [DeudaController::class, 'store_requisitos']);
 Route::get('polizas/deuda/get_requisitos', [DeudaController::class, 'get_requisitos']);
 Route::resource('polizas/deuda', DeudaController::class);
+
+Route::post('polizas/deuda/fede/create_pago', [DeudaCarteraFedeController::class, 'create_pago']);
+Route::post('polizas/deuda/fede/create_pago_recibo', [DeudaCarteraFedeController::class, 'create_pago_recibo']);
+
+
 
 Route::post('polizas/deuda/borrar_proceso_actual', [DeudaController::class, 'borrar_proceso_actual']);
 Route::post('exportar_excel', [DeudaController::class, 'exportar_excel']);
