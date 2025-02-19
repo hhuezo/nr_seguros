@@ -53,7 +53,7 @@ class PolizaDeudaTempCarteraFedeImport implements ToModel, /*WithStartRow,*/ Ski
                 'PrimerApellido' => $row[1],
                 'SegundoApellido' => $row[2],
                 'PrimerNombre' => $row[3],
-                'SegundoNombre' => $row[3],
+               // 'SegundoNombre' => implode(' ', array_slice($row[3], 1, 7)),
                 'FechaNacimiento' => $row[4],
                 'Sexo' => $row[5],
                 'NumeroReferencia' => $row[6],
