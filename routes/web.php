@@ -214,6 +214,10 @@ Route::get('polizas/deuda/get_referencia_creditos/{id}', [DeudaController::class
 Route::get('polizas/deuda/get_creditos/{id}', [DeudaController::class, 'get_creditos']);
 Route::get('polizas/deuda/get_creditos_detalle/{documento}/{poliza}/{tipo}', [DeudaController::class, 'get_creditos_detalle']);
 
+Route::get('polizas/deuda/tasa_diferenciada/{id}',[DeudaController::class,'tasa_diferenciada']);
+Route::put('polizas/deuda/tasa_diferenciada/{id}',[DeudaController::class,'tasa_diferenciada_update']);
+Route::delete('polizas/deuda/tasa_diferenciada/{id}', [DeudaController::class, 'tasa_diferenciada_destroy']);
+Route::post('polizas/deuda/tasa_diferenciada',[DeudaController::class,'tasa_diferenciada_store']);
 Route::post('exportar/extraprimados_excluidos/{id}',[DeudaController::class,'extraprimados_excluidos']);
 Route::post('exportar/nuevos_registros/{id}',[DeudaController::class,'exportar_nuevos_registros']);
 Route::post('exportar/registros_eliminados/{id}',[DeudaController::class,'exportar_registros_eliminados']);

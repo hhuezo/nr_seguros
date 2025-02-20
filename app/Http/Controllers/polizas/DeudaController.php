@@ -44,6 +44,7 @@ use App\Models\polizas\DeudaValidados;
 use App\Models\polizas\DeudaVida;
 use App\Models\polizas\PolizaDeudaCartera;
 use App\Models\polizas\PolizaDeudaExtraPrimadosMensual;
+use App\Models\polizas\PolizaDeudaTasaDiferenciada;
 use App\Models\temp\PolizaDeudaTempCartera;
 use Carbon\Carbon;
 use Exception;
@@ -408,6 +409,7 @@ class DeudaController extends Controller
         $tipoCobro = TipoCobro::where('Activo', 1)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
         $creditos = DeudaCredito::where('Activo', 1)->where('Deuda', $id)->get();
+        //dd( $creditos);
         $saldos = SaldoMontos::where('Activo', 1)->get();
         $planes = Plan::where('Activo', 1)->get();
         $perfiles = Perfil::where('Activo', 1)->where('Aseguradora', '=', $deuda->Aseguradora)->get();
@@ -469,6 +471,156 @@ class DeudaController extends Controller
             return back();
         }
     }
+
+
+    public function tasa_diferenciada($id)
+    {
+        $deuda_credito = DeudaCredito::find($id);
+        $deuda = Deuda::find($deuda_credito->Deuda);
+        $tipoCartera = TipoCartera::where('Activo', 1)->where('Poliza', 2)->get(); //deuda
+        $saldos = SaldoMontos::where('Activo', 1)->get();
+
+        return view('polizas.deuda.tasa_diferenciada', compact('deuda', 'deuda_credito', 'tipoCartera', 'saldos'));
+    }
+
+    public function tasa_diferenciada_store(Request $request)
+    {
+        // Validación dinámica según el valor de TipoCalculo
+        $rules = [
+            'TipoCalculo' => 'required|in:1,2', // Debe ser 1 o 2
+            'Tasa' => 'required|numeric|min:0', // Siempre requerido
+        ];
+
+        if ($request->TipoCalculo == 1) {
+            // Si es 1, FechaDesde y FechaHasta son requeridos
+            $rules['FechaDesde'] = 'required|date';
+            $rules['FechaHasta'] = 'required|date|after_or_equal:FechaDesde';
+        }
+
+        if ($request->TipoCalculo == 2) {
+            // Si es 2, EdadDesde y EdadHasta son requeridos
+            $rules['EdadDesde'] = 'required|integer|min:0';
+            $rules['EdadHasta'] = 'required|integer|gte:EdadDesde';
+        }
+
+        $messages = [
+            'TipoCalculo.required' => 'El campo Tipo de Cálculo es requerido.',
+            'TipoCalculo.in' => 'Seleccione un tipo de cálculo válido.',
+            'FechaDesde.required' => 'La fecha de inicio es obligatoria.',
+            'FechaHasta.required' => 'La fecha final es obligatoria.',
+            'FechaHasta.after_or_equal' => 'La fecha final debe ser igual o posterior a la fecha de inicio.',
+            'EdadDesde.required' => 'La edad de inicio es obligatoria.',
+            'EdadHasta.required' => 'La edad final es obligatoria.',
+            'EdadHasta.min' => 'La edad final debe ser mayor o igual a la edad de inicio.',
+            'Tasa.required' => 'La tasa es obligatoria.',
+            'Tasa.numeric' => 'La tasa debe ser un número.',
+            'Tasa.min' => 'La tasa debe ser mayor o igual a 0.',
+        ];
+
+        $request->validate($rules, $messages);
+
+        $tasa_diferenciada = new PolizaDeudaTasaDiferenciada();
+        $tasa_diferenciada->PolizaDuedaCredito = $request->Id;
+        $tasa_diferenciada->TipoCalculo = $request->TipoCalculo;
+
+        if ($request->TipoCalculo == 1) {
+            $tasa_diferenciada->FechaDesde = $request->FechaDesde;
+            $tasa_diferenciada->FechaHasta = $request->FechaHasta;
+        } else {
+            $tasa_diferenciada->FechaDesde = null;
+            $tasa_diferenciada->FechaHasta = null;
+        }
+
+        if ($request->TipoCalculo == 2) {
+            $tasa_diferenciada->EdadDesde = $request->EdadDesde;
+            $tasa_diferenciada->EdadHasta = $request->EdadHasta;
+        } else {
+            $tasa_diferenciada->EdadDesde = null;
+            $tasa_diferenciada->EdadHasta = null;
+        }
+
+        $tasa_diferenciada->Tasa = $request->Tasa;
+        $tasa_diferenciada->Usuario = auth()->user()->id;
+        $tasa_diferenciada->save();
+
+        alert()->success('El registro ha sido configurado correctamente');
+        return back();
+    }
+
+    public function tasa_diferenciada_update(Request $request, $id)
+    {
+
+        // Validación dinámica según el valor de TipoCalculo
+        $rules = [
+            'TipoCalculo' => 'required|in:1,2', // Debe ser 1 o 2
+            'Tasa' => 'required|numeric|min:0', // Siempre requerido
+        ];
+
+        if ($request->TipoCalculo == 1) {
+            // Si es 1, FechaDesde y FechaHasta son requeridos
+            $rules['FechaDesde'] = 'required|date';
+            $rules['FechaHasta'] = 'required|date|after_or_equal:FechaDesde';
+        }
+
+        if ($request->TipoCalculo == 2) {
+            // Si es 2, EdadDesde y EdadHasta son requeridos
+            $rules['EdadDesde'] = 'required|integer|min:0';
+            $rules['EdadHasta'] = 'required|integer|gte:EdadDesde';
+        }
+
+        $messages = [
+            'TipoCalculo.required' => 'El campo Tipo de Cálculo es requerido.',
+            'TipoCalculo.in' => 'Seleccione un tipo de cálculo válido.',
+            'FechaDesde.required' => 'La fecha de inicio es obligatoria.',
+            'FechaHasta.required' => 'La fecha final es obligatoria.',
+            'FechaHasta.after_or_equal' => 'La fecha final debe ser igual o posterior a la fecha de inicio.',
+            'EdadDesde.required' => 'La edad de inicio es obligatoria.',
+            'EdadHasta.required' => 'La edad final es obligatoria.',
+            'EdadHasta.min' => 'La edad final debe ser mayor o igual a la edad de inicio.',
+            'Tasa.required' => 'La tasa es obligatoria.',
+            'Tasa.numeric' => 'La tasa debe ser un número.',
+            'Tasa.min' => 'La tasa debe ser mayor o igual a 0.',
+        ];
+
+        $request->validate($rules, $messages);
+
+        $tasa_diferenciada = PolizaDeudaTasaDiferenciada::find($id);
+        $tasa_diferenciada->PolizaDuedaCredito = $request->Id;
+        $tasa_diferenciada->TipoCalculo = $request->TipoCalculo;
+
+        if ($request->TipoCalculo == 1) {
+            $tasa_diferenciada->FechaDesde = $request->FechaDesde;
+            $tasa_diferenciada->FechaHasta = $request->FechaHasta;
+        } else {
+            $tasa_diferenciada->FechaDesde = null;
+            $tasa_diferenciada->FechaHasta = null;
+        }
+
+        if ($request->TipoCalculo == 2) {
+            $tasa_diferenciada->EdadDesde = $request->EdadDesde;
+            $tasa_diferenciada->EdadHasta = $request->EdadHasta;
+        } else {
+            $tasa_diferenciada->EdadDesde = null;
+            $tasa_diferenciada->EdadHasta = null;
+        }
+
+        $tasa_diferenciada->Tasa = $request->Tasa;
+        $tasa_diferenciada->Usuario = auth()->user()->id;
+        $tasa_diferenciada->save();
+
+        alert()->success('El registro ha sido configurado correctamente');
+        return back();
+    }
+
+    public function tasa_diferenciada_destroy($id)
+    {
+        $tasa = PolizaDeudaTasaDiferenciada::find($id);
+        $tasa->delete();
+        alert()->success('El registro ha sido eliminado correctamente');
+        return back();
+    }
+
+
 
 
     public function datos_asegurabilidad(Request $request)
@@ -2558,7 +2710,6 @@ class DeudaController extends Controller
                     ->whereNull('pdcart.NumeroReferencia') // Filtra solo los que no tienen coincidencia en poliza_deuda_cartera
                     ->groupBy('poliza_deuda_temp_cartera.Dui')
                     ->get();
-
             } elseif ($tipo == 2) { // creditos validos
                 $poliza_cumulos = PolizaDeudaTempCartera::join('poliza_deuda_creditos as pdc', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'pdc.Id')
                     ->select(

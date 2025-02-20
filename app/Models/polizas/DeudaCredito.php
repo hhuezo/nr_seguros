@@ -41,4 +41,10 @@ class DeudaCredito extends Model
         return $this->belongsTo(SaldoMontos::class, 'Saldos', 'Id');
     }
 
+     // Relación con PolizaDeudaTasaDiferenciada (una crédito puede tener varias tasas diferenciadas)
+     public function tasasDiferenciadas()
+     {
+         return $this->hasMany(PolizaDeudaTasaDiferenciada::class, 'PolizaDuedaCredito');
+     }
+
 }
