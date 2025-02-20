@@ -1,0 +1,434 @@
+<?php
+
+namespace App\Http\Controllers\polizas;
+
+use App\Http\Controllers\Controller;
+use App\Imports\PolizaDeudaTempCarteraFedeComImport;
+use App\Imports\PolizaDeudaTempCarteraFedeImport;
+use App\Models\polizas\Deuda;
+use App\Models\polizas\DeudaCredito;
+use App\Models\temp\PolizaDeudaTempCartera;
+use Carbon\Carbon;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use Throwable;
+
+class DeudaCarteraFedeController extends Controller
+{
+    //
+    public function create_pago(Request $request)
+    {
+
+        $credito = $request->get('LineaCredito');
+        $deuda = Deuda::findOrFail($request->Id);
+
+
+
+        $date_submes = Carbon::create($request->Axo, $request->Mes, "01");
+        $date = Carbon::create($request->Axo, $request->Mes, "01");
+        $date_mes = $date_submes->subMonth();
+        $date_anterior = Carbon::create($request->Axo, $request->Mes, "01");
+        $date_mes_anterior = $date_anterior->subMonth();
+
+        $requisitos = $deuda->requisitos;
+        if ($requisitos->count() == 0) {
+            alert()->error('No se han definido requisitos minimos de asegurabilidad');
+            $deuda->Configuracion = 0;
+            $deuda->update();
+            session(['tab' => 3]);
+            return redirect('polizas/deuda/' . $deuda->Id);
+        }
+
+
+
+        try {
+            $archivo = $request->Archivo;
+
+            $excel = IOFactory::load($archivo);
+//dd($excel);
+            // Verifica si hay al menos dos hojas
+            $sheetsCount = $excel->getSheetCount();
+           // dd($sheetsCount);
+            if ($sheetsCount > 1) {
+                // El archivo tiene al menos dos hojas
+                alert()->error('La cartera solo puede contener un solo libro de Excel (sheet)');
+                return back();
+            }
+
+            PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('LineaCredito', '=', $credito)->delete();
+            Excel::import(new PolizaDeudaTempCarteraFedeImport($date->year, $date->month, $deuda->Id, $request->FechaInicio, $request->FechaFinal, $credito), $archivo);
+        } catch (Throwable $e) {
+            Log::error('Problema al procesar el archivo Excel: ' . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            alert()->error('Problema al procesar el archivo excel');
+            return back();
+        }
+
+
+
+
+        //calculando errores de cartera
+        $cartera_temp = PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('LineaCredito', '=', $credito)->get();
+      //  dd($cartera_temp);
+
+
+
+
+
+        foreach ($cartera_temp as $obj) {
+            $errores_array = [];
+            // 1 error formato fecha nacimiento
+            $validador_fecha_nacimiento = $this->validarFormatoFecha($obj->FechaNacimiento);
+            if ($validador_fecha_nacimiento == false) {
+                //trata de convertir la fecha excel en fecha y luego comprobar nuevamente si la fecha convertida es una fecha.
+                $fecha_excel_convertida = $this->convertDate($obj->FechaNacimiento);
+                $validador_fecha_nacimiento = $this->validarFormatoFecha($fecha_excel_convertida);
+
+                if ($validador_fecha_nacimiento == false || trim($obj->FechaNacimiento) == "") {
+                    $obj->TipoError = 1;
+                    $obj->update();
+
+                    array_push($errores_array, 1);
+                } else {
+                    $obj->FechaNacimiento = $fecha_excel_convertida;
+                    $obj->update();
+                }
+            }
+
+
+
+            // 2 error formato de dui
+            if ($obj->Dui == null || $obj->Dui == '') {
+                $validador_dui = false;
+                if ($validador_dui == false) {
+                    $obj->TipoError = 8;
+                    $obj->update();
+
+                    array_push($errores_array, 8);
+                }
+            } else {
+                $validador_dui = true;
+            }
+
+
+            $obj->saldo_total = $obj->calculoTodalSaldo();
+            $obj->update();
+
+
+
+            // 4 nombre o apellido
+            if (trim($obj->PrimerApellido) == "" || trim($obj->PrimerNombre) == "") {
+                $obj->TipoError = 4;
+                $obj->update();
+
+                array_push($errores_array, 4);
+            }
+
+            //$obj->Errores = $errores_array;
+
+            //5 error formato fecha Otorgamiento
+            $validador_fecha_otorgamiento = $this->validarFormatoFecha($obj->FechaOtorgamiento);
+            if ($validador_fecha_otorgamiento == false) {
+                //trata de convertir la fecha excel en fecha y luego comprobar nuevamente si la fecha convertida es una fecha.
+                $fecha_excel_convertida_otorgamiento = $this->convertDate($obj->FechaOtorgamiento);
+                //dd($obj->FechaOtorgamiento, $fecha_excel_convertida_otorgamiento);
+                $validador_fecha_otorgamiento = $this->validarFormatoFecha($fecha_excel_convertida_otorgamiento);
+
+                if ($validador_fecha_otorgamiento == false || trim($obj->FechaOtorgamiento) == "") {
+                    $obj->TipoError = 5;
+                    $obj->update();
+
+                    array_push($errores_array, 5);
+                } else {
+                    //dd($fecha_excel_convertida_otorgamiento, $obj->FechaOtorgamiento);
+                    $obj->FechaOtorgamiento = $fecha_excel_convertida_otorgamiento;
+                    $obj->update();
+                }
+            }
+
+            // 7 referencia si va vacia.
+            if (trim($obj->NumeroReferencia) == "") {
+                $obj->TipoError = 7;
+                $obj->update();
+
+                array_push($errores_array, 7);
+            }
+
+
+            // 10 error sexo
+            if (trim($obj->Sexo) == "" || ($obj->Sexo != "M" && $obj->Sexo != "F")) {
+                $obj->TipoError = 10;
+                $obj->update();
+
+                array_push($errores_array, 10);
+            }
+
+            $obj->Errores = $errores_array;
+        }
+
+        $data_error = $cartera_temp->where('TipoError', '<>', 0);
+
+        //dd($data_error);
+
+        if ($data_error->count() > 0) {
+            return view('polizas.deuda.respuesta_poliza_error', compact('data_error', 'deuda', 'credito'));
+        }
+
+
+
+        $linea_credito = DeudaCredito::find($credito);
+
+        $MontoMaximoIndividual = $linea_credito->MontoMaximoIndividual;
+        if (isset($MontoMaximoIndividual) && $MontoMaximoIndividual > 0) {
+            $duis = PolizaDeudaTempCartera::selectRaw('Dui')
+                ->where('User', auth()->user()->id)
+                ->where('LineaCredito', $credito)
+                ->groupBy('Dui')
+                ->havingRaw('SUM(saldo_total) >= ?', [$MontoMaximoIndividual])
+                ->pluck('Dui'); // Obtiene solo los valores de la columna Dui
+
+            // Realiza el update en los registros con los DUI filtrados
+            if ($duis->isNotEmpty()) {
+                PolizaDeudaTempCartera::whereIn('Dui', $duis)
+                    ->update([
+                        'MontoMaximoIndividual' => 1,
+                        'NoValido' => 1
+                    ]);
+            }
+        }
+
+
+
+
+        alert()->success('Exito', 'La cartera fue subida con exito');
+
+
+        return back();
+
+
+        //        return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date', 'tipo_cartera', 'nombre_cartera'));
+    }
+
+    public function create_pago_recibo(Request $request)
+    {
+
+
+        $credito = $request->get('LineaCredito');
+        $deuda = Deuda::findOrFail($request->Id);
+
+
+        $requisitos = $deuda->requisitos;
+        if ($requisitos->count() == 0) {
+            alert()->error('No se han definido requisitos minimos de asegurabilidad');
+            $deuda->Configuracion = 0;
+            $deuda->update();
+            session(['tab' => 3]);
+            return redirect('polizas/deuda/' . $deuda->Id);
+        }
+
+
+
+        try {
+            $archivo = $request->Archivo;
+
+            $excel = IOFactory::load($archivo);
+
+            // Verifica si hay al menos dos hojas
+            $sheetsCount = $excel->getSheetCount();
+
+            if ($sheetsCount > 1) {
+                // El archivo tiene al menos dos hojas
+                alert()->error('La cartera solo puede contener un solo libro de Excel (sheet)');
+                return back();
+            }
+
+            PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('LineaCredito', '=', $credito)->delete();
+            Excel::import(new PolizaDeudaTempCarteraFedeComImport($deuda->Id, $request->FechaInicio, $request->FechaFinal, $credito), $archivo);
+        } catch (Throwable $e) {
+            alert()->error('Problema al procesar el archivo excel');
+            return back();
+        }
+
+
+
+
+        //calculando errores de cartera
+        $cartera_temp = PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('LineaCredito', '=', $credito)->get();
+
+
+
+
+
+        foreach ($cartera_temp as $obj) {
+            $errores_array = [];
+            // 1 error formato fecha nacimiento
+            $validador_fecha_nacimiento = $this->validarFormatoFecha($obj->FechaNacimiento);
+            if ($validador_fecha_nacimiento == false) {
+                //trata de convertir la fecha excel en fecha y luego comprobar nuevamente si la fecha convertida es una fecha.
+                $fecha_excel_convertida = $this->convertDate($obj->FechaNacimiento);
+                $validador_fecha_nacimiento = $this->validarFormatoFecha($fecha_excel_convertida);
+
+                if ($validador_fecha_nacimiento == false || trim($obj->FechaNacimiento) == "") {
+                    $obj->TipoError = 1;
+                    $obj->update();
+
+                    array_push($errores_array, 1);
+                } else {
+                    $obj->FechaNacimiento = $fecha_excel_convertida;
+                    $obj->update();
+                }
+            }
+
+
+
+               // 2 error formato de dui
+               if ($obj->Dui == null || $obj->Dui == '') {
+                $validador_dui = false;
+                if ($validador_dui == false) {
+                    $obj->TipoError = 8;
+                    $obj->update();
+
+                    array_push($errores_array, 8);
+                }
+            } else {
+                $validador_dui = true;
+            }
+
+
+            $obj->saldo_total = $obj->calculoTodalSaldo();
+            $obj->update();
+
+
+
+            // 4 nombre o apellido
+            if (trim($obj->PrimerApellido) == "" || trim($obj->PrimerNombre) == "") {
+                $obj->TipoError = 4;
+                $obj->update();
+
+                array_push($errores_array, 4);
+            }
+
+            //$obj->Errores = $errores_array;
+
+            //5 error formato fecha Otorgamiento
+            $validador_fecha_otorgamiento = $this->validarFormatoFecha($obj->FechaOtorgamiento);
+            if ($validador_fecha_otorgamiento == false) {
+                //trata de convertir la fecha excel en fecha y luego comprobar nuevamente si la fecha convertida es una fecha.
+                $fecha_excel_convertida_otorgamiento = $this->convertDate($obj->FechaOtorgamiento);
+                //dd($obj->FechaOtorgamiento, $fecha_excel_convertida_otorgamiento);
+                $validador_fecha_otorgamiento = $this->validarFormatoFecha($fecha_excel_convertida_otorgamiento);
+
+                if ($validador_fecha_otorgamiento == false || trim($obj->FechaOtorgamiento) == "") {
+                    $obj->TipoError = 5;
+                    $obj->update();
+
+                    array_push($errores_array, 5);
+                } else {
+                    //dd($fecha_excel_convertida_otorgamiento, $obj->FechaOtorgamiento);
+                    $obj->FechaOtorgamiento = $fecha_excel_convertida_otorgamiento;
+                    $obj->update();
+                }
+            }
+
+
+            // 7 referencia si va vacia.
+            if (trim($obj->NumeroReferencia) == "") {
+                $obj->TipoError = 7;
+                $obj->update();
+
+                array_push($errores_array, 7);
+            }
+
+
+            // 10 error sexo
+            if (trim($obj->Sexo) == "" || ($obj->Sexo != "M" && $obj->Sexo != "F")) {
+                $obj->TipoError = 10;
+                $obj->update();
+
+                array_push($errores_array, 10);
+            }
+
+            $obj->Errores = $errores_array;
+        }
+
+
+
+        $data_error = $cartera_temp->where('TipoError', '<>', 0);
+
+        if ($data_error->count() > 0) {
+            return view('polizas.deuda.respuesta_poliza_error', compact('data_error', 'deuda', 'credito'));
+        }
+
+
+        alert()->success('Exito', 'La cartera fue subida con exito');
+
+
+        return back();
+
+
+        //        return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date', 'tipo_cartera', 'nombre_cartera'));
+    }
+
+
+    public function validarFormatoFecha($data)
+    {
+        try {
+            // Intenta crear un objeto Carbon a partir de la cadena de fecha
+            $fechaCarbon = Carbon::createFromFormat('d/m/Y', $data);
+
+            // Comprueba si la cadena de fecha tiene el formato correcto
+            return $fechaCarbon && $fechaCarbon->format('d/m/Y') === $data;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    public function validarDocumento($documento, $tipo)
+    {
+        if ($tipo == "dui") {
+            // Define las reglas de validación para el formato 000000000
+            $reglaFormato = '/^\d{9}$/';
+
+            return preg_match($reglaFormato, $documento) === 1;
+        } else if ($tipo == "nit") {
+            // Define las reglas de validación para el formato 000000000
+            $reglaFormato = '/^\d{14}$/';
+
+            return preg_match($reglaFormato, $documento) === 1;
+        }
+    }
+
+    public function convertDate($dateValue)
+    {
+        try {
+            // Si el valor es un número, asume que es una fecha de Excel y conviértelo
+            if (is_numeric($dateValue)) {
+                $unixDate = (intval($dateValue) - 25569) * 86400;
+                return gmdate("d/m/Y", $unixDate);
+            }
+
+            // Si el valor es una cadena en formato d/m/Y, conviértelo al formato d/m/Y
+            if (Carbon::hasFormat($dateValue, 'd/m/Y')) {
+                $fechaCarbon = Carbon::createFromFormat('d/m/Y', $dateValue);
+                return $fechaCarbon->format('d/m/Y');
+            }
+
+            // Si el valor es una cadena en formato Y/m/d, conviértelo al formato d/m/Y
+            if (Carbon::hasFormat($dateValue, 'Y/m/d')) {
+                $fechaCarbon = Carbon::createFromFormat('Y/m/d', $dateValue);
+                return $fechaCarbon->format('d/m/Y');
+            }
+
+            // Si no coincide con ninguno de los formatos, devolver false
+            return false;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+}

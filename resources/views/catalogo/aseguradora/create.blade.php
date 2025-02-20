@@ -127,12 +127,21 @@
                         </div>
                         <div class="col-sm-3">
                             <label for="DireccionResidencia" class="form-label">Calculo Diario</label>
-                            <input type="checkbox" name="Diario" id="Diario" class="form-control" onclick="dias_365(this.value)" >
+                            <!-- <input type="checkbox"  class="js-switch" > -->
+
+                            <label class="switch">
+                                <input type="checkbox" name="Diario" id="Diario" onclick="dias_365(this.value)">
+                                <span class="slider round"></span>
+                            </label>
                         </div>
                      
                         <div class="col-sm-3" id="diario_365" style="display: none;">
                             <label for="DireccionResidencia" class="form-label">¿Son 365 dias?</label>
-                            <input type="checkbox" name="Dias365" id="Dias365" class="form-control" >
+                            <label class="switch">
+                                <input type="checkbox" name="Dias365" id="Dias365">
+                                <span class="slider round"></span>
+                            </label>
+                            <!-- <input type="checkbox"  class="js-switch" > -->
                         </div>
                     </div>
                     

@@ -150,14 +150,19 @@
                                 <td align="right">${{ number_format($obj->Total, 2, '.', ',') }}
                                 </td>
                                 <td align="center">
-                                    <a data-target="#modal-add-{{ $obj->Id }}" data-toggle="modal">
+                                    @if($deuda->Aseguradora == 3)
+                                    <a data-target="#modal-add-fede-{{ $obj->Id }}" data-toggle="modal">
                                         <button class="btn btn-default"><i class="fa fa-upload fa-lg"></i></button> </a>
-
+                                    @else
+                                    <a data-target="#modal-add{{ $obj->Id }}" data-toggle="modal-fede">
+                                        <button class="btn btn-default"><i class="fa fa-upload fa-lg"></i></button> </a>
+                                    @endif
                                 </td>
 
 
                             </tr>
                             @include('polizas.deuda.add_cartera')
+                            @include('polizas.deuda.add_cartera_fede')
                         @endforeach
                     </tbody>
                 </table>

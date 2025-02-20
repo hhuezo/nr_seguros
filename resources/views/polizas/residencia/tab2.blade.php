@@ -428,7 +428,7 @@ set_time_limit(30000);
                                 </tr>
                                <tr>
                                     <td>13% Iva</td>
-                                    <td class="numeric editable"><span id="iva"></span></td>
+                                    <td class="numeric total" contenteditable="true" id="iva" onblur="actualizarIva()"></td>
                                 </tr>
                         <!--  <tr>
                             <td>Total Factura</td>
@@ -440,7 +440,7 @@ set_time_limit(30000);
                                 </tr>
                                 <tr>
                                     <td>A pagar</td>
-                                    <td class="numeric editable"><span id="liquido_pagar"></span></td>
+                                    <td class="numeric total" contenteditable="true" id="liquido_pagar" onblur="actualizarTotal()"></td>
                                 </tr>
                                 <tr>
                                     <td>Total factura</td>
@@ -708,6 +708,33 @@ set_time_limit(30000);
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2
                 });
+            }
+
+            function actualizarIva(){
+                let iva = document.getElementById('iva').innerText;
+                let sub_total = document.getElementById('SubTotalDetalle').value;
+                let comision_ccf = document.getElementById('comision').innerText;
+                let liquido_pagar = (parseFloat(sub_total) + parseFloat(iva) - parseFloat(comision_ccf));
+                document.getElementById('liquido_pagar').textContent = formatearCantidad(liquido_pagar);
+
+                let total_factura = (parseFloat(sub_total) + parseFloat(iva));
+                document.getElementById('total_factura').textContent = formatearCantidad(total_factura);
+                document.getElementById('ValorCCFDetalle').value = parseFloat(comision_ccf);
+                document.getElementById('APagarDetalle').value = parseFloat(liquido_pagar);
+                document.getElementById('IvaDetalle').value = parseFloat(iva);
+                document.getElementById('SubTotalDetalle').value = parseFloat(sub_total);
+
+            }
+
+            function actualizarTotal(){
+                let iva = document.getElementById('IvaDetalle').value;
+                let sub_total = document.getElementById('SubTotalDetalle').value;
+                let liquido_pagar = document.getElementById('liquido_pagar').innerText;
+                let total_factura = (parseFloat(sub_total) + parseFloat(iva));
+                document.getElementById('total_factura').textContent = formatearCantidad(total_factura);
+                document.getElementById('APagarDetalle').value = parseFloat(liquido_pagar);
+
+
             }
             
         $(document).ready(function() {
