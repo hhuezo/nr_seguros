@@ -188,7 +188,7 @@ class DeudaCarteraController extends Controller
 
 
 
-        try {
+        // try {
             $archivo = $request->Archivo;
 
             $excel = IOFactory::load($archivo);
@@ -204,15 +204,15 @@ class DeudaCarteraController extends Controller
 
             PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('LineaCredito', '=', $credito)->delete();
             Excel::import(new PolizaDeudaTempCarteraImport($date->year, $date->month, $deuda->Id, $request->FechaInicio, $request->FechaFinal, $credito), $archivo);
-        } catch (Throwable $e) {
-            Log::error('Problema al procesar el archivo Excel: ' . $e->getMessage(), [
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-            alert()->error('Problema al procesar el archivo excel');
-            return back();
-        }
+        // } catch (Throwable $e) {
+        //     Log::error('Problema al procesar el archivo Excel: ' . $e->getMessage(), [
+        //         'file' => $e->getFile(),
+        //         'line' => $e->getLine(),
+        //         'trace' => $e->getTraceAsString(),
+        //     ]);
+        //     alert()->error('Problema al procesar el archivo excel');
+        //     return back();
+        // }
 
 
 

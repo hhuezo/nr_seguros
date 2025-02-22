@@ -2,6 +2,44 @@
 @section('contenido')
     @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        .table-simulated {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: contents;
+            background-color: #343a40 !important;
+            color: rgb(122, 122, 122);
+            font-weight: bold;
+        }
+
+        .table-header div {
+            padding: 10px;
+            border-bottom: 2px solid #dee2e6;
+            text-align: center;
+        }
+
+        .table-row {
+            display: contents;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .table-row div {
+            padding: 10px;
+            border-bottom: 1px solid #dee2e6;
+            text-align: center;
+        }
+
+        .table-row:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+    </style>
     <div class="x_panel">
         <div class="clearfix"></div>
         <div class="row">
@@ -340,7 +378,7 @@
                         <div role="tabpanel" class="tab-pane fade {{ session('tab') == 2 ? 'active in' : '' }}"
                             id="tab_content2" aria-labelledby="lineas-tab">
                             <div class="col-md-12 text-right">
-                                <a href="" data-target="#modal-finalizar" data-toggle="modal"
+                                <a href="" data-target="#modal-credito-create" data-toggle="modal"
                                     class="btn btn-primary">Nuevo</a>
                             </div>
 
@@ -352,7 +390,7 @@
                                 <br>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
-                             <table width="100%" class="table table-striped">
+                                    <table width="100%" class="table table-striped">
                                         <thead>
                                             <tr>
                                                 <th>Línea de Crédito</th>
@@ -369,17 +407,26 @@
                                                     <td>{{ $obj->TipoCartera == null ? '' : $obj->tipoCarteras->Nombre }}
                                                     </td>
                                                     <td>{{ $obj->Saldos == null ? '' : $obj->saldos->Abreviatura }}</td>
-                                                    <td>{{ $obj->TasaFecha == null && $obj->TasaMonto == null && $obj->TasaEdad == null ? $deuda->Tasa : '0' }}</td>
+                                                    <td>{{ $deuda->Tasa }}</td>
 
                                                     <td>{{ isset($obj->MontoMaximoIndividual) ? '$' . number_format($obj->MontoMaximoIndividual, 2, '.', ',') : '' }}
                                                     </td>
-                                                    <td><a href="" data-target="#modal-delete-{{ $obj->Id }}"
+                                                    <td>
+
+                                                        <a href=""
+                                                            data-target="#modal-creditos-show-{{ $obj->Id }}"
+                                                            data-toggle="modal"><i class="fa fa-eye fa-lg"></i></a>
+
+                                                        &nbsp;&nbsp;
+                                                        <a
+                                                            href="{{ url('polizas/deuda/tasa_diferenciada') }}/{{ $obj->Id }}"><i
+                                                                class="fa fa-edit fa-lg"></i></a>
+
+
+                                                        &nbsp;&nbsp;
+                                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}"
                                                             data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
-                                                            &nbsp;&nbsp;
-                                                            <a href="{{url('polizas/deuda/tasa_diferenciada')}}/{{ $obj->Id }}"><i class="fa fa-edit fa-lg"></i></a>
-
-
-                                                        </td>
+                                                    </td>
                                                 </tr>
                                                 <div class="modal fade modal-slide-in-right" aria-hidden="true"
                                                     role="dialog" tabindex="-1" id="modal-delete-{{ $obj->Id }}">
@@ -411,6 +458,9 @@
                                                     </form>
 
                                                 </div>
+
+
+                                                @include('polizas.deuda.tasa_diferenciada_modal_show')
                                             @endforeach
                                         </tbody>
                                     </table>
@@ -579,6 +629,67 @@
             </div>
         </div>
     </div>
+
+
+
+    <div class="modal fade" id="modal-credito-create" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true" data-tipo="1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="{{ url('polizas/deuda/agregar_credito') }}" method="POST">
+                    @csrf
+                    <div class="modal-header">
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                            <h5 class="modal-title" id="exampleModalLabel">Nueva linea de credito</h5>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label class="control-label ">Línea de Crédito</label>
+                                <input class="form-control" type="hidden" name="Deuda" value="{{$deuda->Id}}">
+                                <select name="TipoCartera" class="form-control" required>
+                                    <option value="">Seleccione...</option>
+                                    @foreach ($tipoCartera as $obj)
+                                        <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Saldos y Montos</label>
+                                <select name="Saldos" class="form-control" required>
+                                    <option value="">Seleccione...</option>
+                                    @foreach ($saldos as $obj)
+                                        <option value="{{ $obj->Id }}">
+                                            {{ $obj->Abreviatura }} -
+                                            {{ $obj->Descripcion }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label">Monto Máximo</label>
+                                <input class="form-control" type="number" min="1.00" step="any"
+                                    name="MontoMaximoIndividual">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="modal-footer" align="center">
+                        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Aceptar</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
 
 
 

@@ -154,7 +154,7 @@
                                     <a data-target="#modal-add-fede-{{ $obj->Id }}" data-toggle="modal">
                                         <button class="btn btn-default"><i class="fa fa-upload fa-lg"></i></button> </a>
                                     @else
-                                    <a data-target="#modal-add{{ $obj->Id }}" data-toggle="modal-fede">
+                                    <a data-target="#modal-add-{{ $obj->Id }}" data-toggle="modal">
                                         <button class="btn btn-default"><i class="fa fa-upload fa-lg"></i></button> </a>
                                     @endif
                                 </td>

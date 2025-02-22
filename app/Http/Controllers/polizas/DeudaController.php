@@ -45,6 +45,7 @@ use App\Models\polizas\DeudaVida;
 use App\Models\polizas\PolizaDeudaCartera;
 use App\Models\polizas\PolizaDeudaExtraPrimadosMensual;
 use App\Models\polizas\PolizaDeudaTasaDiferenciada;
+use App\Models\polizas\PolizaDeudaTasaDiferenciadaTemp;
 use App\Models\temp\PolizaDeudaTempCartera;
 use Carbon\Carbon;
 use Exception;
@@ -693,15 +694,6 @@ class DeudaController extends Controller
             $credito = new DeudaCredito();
             $credito->Deuda = $request->Deuda;
             $credito->Saldos = $request->Saldos;
-            $credito->FechaDesde = $request->FechaDesde;
-            $credito->FechaHasta = $request->FechaHasta;
-            $credito->MontoDesde = $request->MontoDesde;
-            $credito->MontoHasta = $request->MontoHasta;
-            $credito->EdadDesde = $request->EdadDesde;
-            $credito->EdadHasta = $request->EdadHasta;
-            $credito->TasaFecha = $request->TasaFecha;
-            $credito->TasaMonto = $request->TasaMonto;
-            $credito->TasaEdad = $request->TasaEdad;
             $credito->TipoCartera = $request->TipoCartera;
             $credito->MontoMaximoIndividual = $request->MontoMaximoIndividual;
             $credito->Activo = 1;
@@ -712,6 +704,25 @@ class DeudaController extends Controller
         session(['tab' => 2]);
         return redirect('polizas/deuda/' . $request->Deuda);
     }
+
+
+    public function update_credito(Request $request, $id)
+    {
+        $credito = DeudaCredito::findOrFail($id);
+        $credito->Saldos = $request->Saldos;
+        $credito->TipoCartera = $request->TipoCartera;
+        $credito->MontoMaximoIndividual = $request->MontoMaximoIndividual;
+        //$credito->TasaGeneral = $request->Tasa;
+        $credito->save();
+        alert()->success('El registro de poliza ha sido ingresado correctamente');
+        return back();
+    }
+
+
+
+
+
+
 
     public function eliminar_extraprima(Request $request)
     {
@@ -788,12 +799,179 @@ class DeudaController extends Controller
                 $i++;
             }
 
-            $creditos = DeudaCredito::where('Deuda', $deuda->Id)->get();
+            $creditos = DeudaCredito::where('Deuda', $deuda->Id)->where('Activo', 1)->get();
+
+            PolizaDeudaTasaDiferenciadaTemp::where('PolizaDueda', $deuda->Id)->delete();
 
 
 
+            foreach ($creditos as $credito) {
+
+                if ($credito->tasasDiferenciadas->count() > 0) {
+                    foreach ($credito->tasasDiferenciadas as $tasa_diferenciada) {
+
+                        $temp = new PolizaDeudaTasaDiferenciadaTemp();
+                        $temp->PolizaDuedaCredito = $credito->Id;
+                        $temp->PolizaDueda = $deuda->Id;
+                        $temp->FechaDesde = $tasa_diferenciada->FechaDesde;
+                        $temp->FechaHasta = $tasa_diferenciada->FechaHasta;
+                        $temp->EdadDesde = $tasa_diferenciada->EdadDesde;
+                        $temp->EdadHasta = $tasa_diferenciada->EdadHasta;
+                        $temp->TipoCalculo = $tasa_diferenciada->TipoCalculo;
+                        $temp->Tasa = $tasa_diferenciada->Tasa;
+                        $temp->EsTasaDiferenciada = 1;
+                        $temp->Usuario = auth()->user()->id;
+                        $temp->save();
+                    }
+                } else {
+                    $temp = new PolizaDeudaTasaDiferenciadaTemp();
+                    $temp->PolizaDuedaCredito = $credito->Id;
+                    $temp->PolizaDueda = $deuda->Id;
+                    $temp->Tasa = $deuda->Tasa;
+                    $temp->EsTasaDiferenciada = 0;
+                    $temp->Usuario = auth()->user()->id;
+                    $temp->save();
+                }
+            }
+
+            $tempTasaDiferenciada = PolizaDeudaTasaDiferenciadaTemp::where('PolizaDueda', $deuda->Id)->get();
+
+            //dd($tempTasaDiferenciada);
+            $lineas_credito = collect(); // Inicializa una colección vacía
+
+            foreach ($tempTasaDiferenciada as $temp) {
+                if ($temp->EsTasaDiferenciada == 1) {
+                    // 1- Por fecha
+                    if ($temp->TipoCalculo == 1) {
+                        $result = DB::table('poliza_deuda_cartera as poliza')
+                            ->join('poliza_deuda_creditos as creditos', 'poliza.LineaCredito', '=', 'creditos.Id')
+                            ->join('saldos_montos as saldos', 'creditos.Saldos', '=', 'saldos.Id')
+                            ->join('tipo_cartera as tipo', 'creditos.TipoCartera', '=', 'tipo.Id')
+                            ->select(
+                                'poliza.LineaCredito',
+                                'saldos.Descripcion',
+                                'saldos.Abreviatura as Abrev',
+                                DB::raw("CONCAT(saldos.Abreviatura, poliza.LineaCredito,".$temp.") as Abreviatura"),
+                                'tipo.Nombre as tipo',
+                                DB::raw("IFNULL(sum(poliza.MontoOtorgado), '0.00') as MontoOtorgado"),
+                                DB::raw("IFNULL(sum(poliza.SaldoCapital), '0.00') as SaldoCapital"),
+                                DB::raw("IFNULL(sum(poliza.Intereses), '0.00') as Intereses"),
+                                DB::raw("IFNULL(sum(poliza.MontoNominal), '0.00') as MontoNominal"),
+                                DB::raw("IFNULL(sum(poliza.InteresesCovid), '0.00') as InteresesCovid"),
+                                DB::raw("IFNULL(sum(poliza.InteresesMoratorios), '0.00') as InteresesMoratorios"),
+                                DB::raw("IFNULL(sum(poliza.saldo_total), '0.00') as saldo_total")
+                            )
+                            ->where(function ($query) {
+                                $query->where('PolizaDeudaDetalle', null)
+                                    ->orWhere('PolizaDeudaDetalle', 0);
+                            })
+                            ->where('poliza.PolizaDeuda', $id)
+                            ->where('poliza.LineaCredito', $temp->PolizaDuedaCredito)
+                            ->whereBetween('poliza.FechaOtorgamiento', [$temp->FechaDesde, $temp->FechaHasta])
+                            ->get();
+
+                        // Agregar Tasa a cada elemento del resultado
+                        if ($result->first()->LineaCredito != null) {
+                            foreach ($result as $item) {
+                                $item->Tasa = $temp->Tasa;
+                                $item->TipoCalculo = $temp->TipoCalculo;
+                                $item->FechaDesde = $temp->FechaDesde;
+                                $item->FechaHasta = $temp->FechaHasta;
+                                $item->EdadDesde = $temp->EdadDesde;
+                                $item->EdadHasta = $temp->EdadHasta;
+                                $item->EsTasaDiferenciada = $temp->EsTasaDiferenciada;
+                                $item->Abreviatura = $temp->Abreviatura.$temp->Id;
+                            }
+
+                            $lineas_credito = $lineas_credito->merge($result);
+                        }
+                    }
+                    // 2- Por edad
+                    else if ($temp->TipoCalculo == 2) {
+                        $result = DB::table('poliza_deuda_cartera as poliza')
+                            ->join('poliza_deuda_creditos as creditos', 'poliza.LineaCredito', '=', 'creditos.Id')
+                            ->join('saldos_montos as saldos', 'creditos.Saldos', '=', 'saldos.Id')
+                            ->join('tipo_cartera as tipo', 'creditos.TipoCartera', '=', 'tipo.Id')
+                            ->select(
+                                'poliza.LineaCredito',
+                                'saldos.Descripcion',
+                                'saldos.Abreviatura as Abrev',
+                                DB::raw("CONCAT(saldos.Abreviatura, poliza.LineaCredito) as Abreviatura"),
+                                'tipo.Nombre as tipo',
+                                DB::raw("IFNULL(sum(poliza.MontoOtorgado), '0.00') as MontoOtorgado"),
+                                DB::raw("IFNULL(sum(poliza.SaldoCapital), '0.00') as SaldoCapital"),
+                                DB::raw("IFNULL(sum(poliza.Intereses), '0.00') as Intereses"),
+                                DB::raw("IFNULL(sum(poliza.MontoNominal), '0.00') as MontoNominal"),
+                                DB::raw("IFNULL(sum(poliza.InteresesCovid), '0.00') as InteresesCovid"),
+                                DB::raw("IFNULL(sum(poliza.InteresesMoratorios), '0.00') as InteresesMoratorios"),
+                                DB::raw("IFNULL(sum(poliza.saldo_total), '0.00') as saldo_total")
+                            )
+                            ->where(function ($query) {
+                                $query->where('PolizaDeudaDetalle', null)
+                                    ->orWhere('PolizaDeudaDetalle', 0);
+                            })
+                            ->where('poliza.PolizaDeuda', $id)
+                            ->where('poliza.LineaCredito', $temp->PolizaDuedaCredito)
+                            ->whereBetween('poliza.Edad', [$temp->EdadDesde, $temp->EdadHasta])
+                            ->get();
+
+                            // Agregar Tasa a cada elemento del resultado
+                        if ($result->first()->LineaCredito != null) {
+                            foreach ($result as $item) {
+                                $item->Tasa = $temp->Tasa;
+                                $item->TipoCalculo = $temp->TipoCalculo;
+                                $item->FechaDesde = $temp->FechaDesde;
+                                $item->FechaHasta = $temp->FechaHasta;
+                                $item->EdadDesde = $temp->EdadDesde;
+                                $item->EdadHasta = $temp->EdadHasta;
+                                $item->EsTasaDiferenciada = $temp->EsTasaDiferenciada;
+                                $item->Abreviatura = $item->Abreviatura.$temp->Id;
+                            }
+                            $lineas_credito = $lineas_credito->merge($result);
+                        }
 
 
+                    }
+                } else {
+                    $result = DB::table('poliza_deuda_cartera as poliza')
+                        ->join('poliza_deuda_creditos as creditos', 'poliza.LineaCredito', '=', 'creditos.Id')
+                        ->join('saldos_montos as saldos', 'creditos.Saldos', '=', 'saldos.Id')
+                        ->join('tipo_cartera as tipo', 'creditos.TipoCartera', '=', 'tipo.Id')
+                        ->select(
+                            'poliza.LineaCredito',
+                            'saldos.Descripcion',
+                            'saldos.Abreviatura as Abrev',
+                            DB::raw("CONCAT(saldos.Abreviatura, poliza.LineaCredito) as Abreviatura"),
+                            'tipo.Nombre as tipo',
+                            DB::raw("IFNULL(sum(poliza.MontoOtorgado), 0.00) as MontoOtorgado"),
+                            DB::raw("IFNULL(sum(poliza.SaldoCapital), 0.00) as SaldoCapital"),
+                            DB::raw("IFNULL(sum(poliza.Intereses), 0.00) as Intereses"),
+                            DB::raw("IFNULL(sum(poliza.MontoNominal), 0.00) as MontoNominal"),
+                            DB::raw("IFNULL(sum(poliza.InteresesCovid), 0.00) as InteresesCovid"),
+                            DB::raw("IFNULL(sum(poliza.InteresesMoratorios), 0.00) as InteresesMoratorios"),
+                            DB::raw("IFNULL(sum(poliza.saldo_total), 0.00) as saldo_total")
+                        )
+                        ->where('poliza.PolizaDeuda', $id)
+                        ->where(function ($query) {
+                            $query->whereNull('poliza.PolizaDeudaDetalle')
+                                ->orWhere('poliza.PolizaDeudaDetalle', 0);
+                        })
+                        ->where('poliza.LineaCredito', $temp->PolizaDuedaCredito)
+                        ->get();
+
+
+                    if ($result->first()->LineaCredito != null) {
+                        foreach ($result as $item) {
+                            $item->EsTasaDiferenciada = 0;
+                        }
+
+                        $lineas_credito = $lineas_credito->merge($result);
+                    }
+                }
+            }
+            //dd($lineas_credito);
+
+            /*;
 
             $lineas_credito = DB::table('poliza_deuda_cartera as poliza')
                 ->join('poliza_deuda_creditos as creditos', 'poliza.LineaCredito', '=', 'creditos.Id')
@@ -810,7 +988,8 @@ class DeudaController extends Controller
                     DB::raw("IFNULL(sum(poliza.Intereses), '0.00') as Intereses"),
                     DB::raw("IFNULL(sum(poliza.MontoNominal), '0.00') as MontoNominal"),
                     DB::raw("IFNULL(sum(poliza.InteresesCovid), '0.00') as InteresesCovid"),
-                    DB::raw("IFNULL(sum(poliza.InteresesMoratorios), '0.00') as InteresesMoratorios")
+                    DB::raw("IFNULL(sum(poliza.InteresesMoratorios), '0.00') as InteresesMoratorios"),
+                    DB::raw("IFNULL(sum(poliza.saldo_total), '0.00') as saldo_total")
                 )
                 ->where('poliza.PolizaDeuda', $id)
                 ->where(function ($query) {
@@ -820,8 +999,11 @@ class DeudaController extends Controller
                 ->groupBy('poliza.LineaCredito')
                 ->get();
 
+            //dd($lineas_credito);*/
+
 
             $lineas_abreviatura = $lineas_credito->pluck('Abreviatura')->toArray();
+            //dd($lineas_abreviatura);
 
 
             $videuda = DeudaVida::where('Deuda', $deuda->Id)->first();

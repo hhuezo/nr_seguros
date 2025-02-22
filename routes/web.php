@@ -215,10 +215,7 @@ Route::get('polizas/deuda/get_referencia_creditos/{id}', [DeudaController::class
 Route::get('polizas/deuda/get_creditos/{id}', [DeudaController::class, 'get_creditos']);
 Route::get('polizas/deuda/get_creditos_detalle/{documento}/{poliza}/{tipo}', [DeudaController::class, 'get_creditos_detalle']);
 
-Route::get('polizas/deuda/tasa_diferenciada/{id}',[DeudaController::class,'tasa_diferenciada']);
-Route::put('polizas/deuda/tasa_diferenciada/{id}',[DeudaController::class,'tasa_diferenciada_update']);
-Route::delete('polizas/deuda/tasa_diferenciada/{id}', [DeudaController::class, 'tasa_diferenciada_destroy']);
-Route::post('polizas/deuda/tasa_diferenciada',[DeudaController::class,'tasa_diferenciada_store']);
+
 Route::post('exportar/extraprimados_excluidos/{id}',[DeudaController::class,'extraprimados_excluidos']);
 Route::post('exportar/nuevos_registros/{id}',[DeudaController::class,'exportar_nuevos_registros']);
 Route::post('exportar/registros_eliminados/{id}',[DeudaController::class,'exportar_registros_eliminados']);
@@ -269,8 +266,16 @@ Route::post('polizas/deuda/edit_pago', [DeudaController::class, 'edit_pago']);
 Route::post('polizas/deuda/anular_pago/{id}', [DeudaController::class, 'anular_pago']);
 Route::post('polizas/deuda/delete_pago/{id}', [DeudaController::class, 'delete_pago']);
 Route::post('polizas/deuda/actualizar', [DeudaController::class, 'actualizar']);
-Route::post('agregar_credito', [DeudaController::class, 'agregar_credito']);
+
+
+Route::get('polizas/deuda/tasa_diferenciada/{id}',[DeudaController::class,'tasa_diferenciada']);
+Route::put('polizas/deuda/tasa_diferenciada/{id}',[DeudaController::class,'tasa_diferenciada_update']);
+Route::delete('polizas/deuda/tasa_diferenciada/{id}', [DeudaController::class, 'tasa_diferenciada_destroy']);
+Route::post('polizas/deuda/tasa_diferenciada',[DeudaController::class,'tasa_diferenciada_store']);
+Route::post('polizas/deuda/agregar_credito', [DeudaController::class, 'agregar_credito']);
+Route::put('polizas/deuda/update_credito/{id}', [DeudaController::class, 'update_credito']);
 Route::post('eliminar_credito/{id}', [DeudaController::class, 'eliminar_credito']);
+
 Route::post('datos_asegurabilidad', [DeudaController::class, 'datos_asegurabilidad']);
 Route::post('polizas/deuda/eliminar_requisito', [DeudaController::class, 'eliminar_requisito']);
 Route::post('polizas/deuda/update_requisito', [DeudaController::class, 'update_requisito']);

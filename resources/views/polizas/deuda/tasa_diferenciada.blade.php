@@ -6,7 +6,7 @@
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
 
                 <div class="x_title">
-                    <h2>Nueva aseguradora <small></small></h2>
+                    <h2>Tasa diferenciada</h2>
 
                     <div class="clearfix"></div>
                 </div>
@@ -19,7 +19,8 @@
                         </ul>
                     </div>
                 @endif
-                <form action="{{ url('catalogo/aseguradoras') }}" method="POST" class="forms-sample">
+                <form action="{{ url('polizas/deuda/update_credito') }}/{{$deuda_credito->Id}}" method="POST" class="forms-sample">
+                    @method('PUT')
                     @csrf
                     <div class="x_content">
                         <br />
@@ -51,13 +52,12 @@
                         </div>
                         <div class="row" style="padding-top: 15px!important;">
                             <div class="col-sm-6">
-                                <label class="control-label ">Tasa General</label>
-                                <input class="form-control" type="number" step="any" name="Tasa"
-                                    value="{{ $deuda_credito->deuda->Tasa }}">
+                                <label class="control-label ">Tasa</label>
+                                <input class="form-control" type="number" step="any" readonly value="{{ $deuda_credito->deuda->Tasa }}">
                             </div>
                             <div class="col-sm-6">
                                 <label class="control-label ">Monto Máximo</label>
-                                <input class="form-control" type="number" step="any" name="MontoMaximoIndividual"
+                                <input class="form-control" type="number" min="1.00 step="any" name="MontoMaximoIndividual"
                                     value="{{ $deuda_credito->MontoMaximoIndividual }}">
                             </div>
                         </div>
@@ -67,7 +67,7 @@
                     </div>
                     <div class="form-group" align="center">
                         <button class="btn btn-success" type="submit">Guardar</button>
-                        <a href="{{ url('catalogo/aseguradoras/') }}"><button class="btn btn-primary"
+                        <a href="{{ url('polizas/deuda') }}/{{$deuda_credito->Deuda}}"><button class="btn btn-primary"
                                 type="button">Cancelar</button></a>
                     </div>
                 </form>
@@ -211,7 +211,7 @@
 
                                 <div class="form-group row" id="divTasa" style="display: none">
                                     <label class="control-label">Tasa</label>
-                                    <input type="number" step="0.01" name="Tasa" class="form-control"
+                                    <input type="number" step="0.00001" name="Tasa" class="form-control"
                                         value="{{ old('Tasa') }}">
                                 </div>
 

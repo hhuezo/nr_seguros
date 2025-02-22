@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Models\temp\PolizaDeudaTempCartera;
+use Carbon\Carbon;
 use Exception;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -58,7 +59,7 @@ class PolizaDeudaTempCarteraImport implements ToModel, /*WithStartRow,*/ SkipsEm
             // $row[6] = str_replace(" ", ",", $row[6]);
             // $row[7] = str_replace(" ", ",", $row[7]);
             // $row[8] = str_replace(" ", ",", $row[8]);
-            // $row[9] = str_replace(" ", ",", $row[9]);            
+            // $row[9] = str_replace(" ", ",", $row[9]);
             // $row[10] = str_replace(" ", ",", $row[10]);
 
 
@@ -67,7 +68,7 @@ class PolizaDeudaTempCarteraImport implements ToModel, /*WithStartRow,*/ SkipsEm
                 'Dui' => $row[1],
                 'Pasaporte' => $row[2],
                 'Nacionalidad' => $row[3],
-                'FechaNacimiento' => $row[4],
+                'FechaNacimiento' => $this->convertirFecha($row[4]),
                 'TipoPersona' => $row[5],
                 'PrimerApellido' => $row[6],
                 'SegundoApellido' => $row[7],
@@ -76,8 +77,8 @@ class PolizaDeudaTempCarteraImport implements ToModel, /*WithStartRow,*/ SkipsEm
                 'SegundoNombre' => $row[10],
                 'NombreSociedad' => $row[11],
                 'Sexo' => $row[12],
-                'FechaOtorgamiento' => $row[13],
-                'FechaVencimiento' => $row[14],
+                'FechaOtorgamiento' => $this->convertirFecha($row[13]),
+                'FechaVencimiento' => $this->convertirFecha($row[14]),
                 'Ocupacion' => $row[15],
                 'NumeroReferencia' => $row[16],
                 'MontoOtorgado' => $row[17],
@@ -96,5 +97,27 @@ class PolizaDeudaTempCarteraImport implements ToModel, /*WithStartRow,*/ SkipsEm
                 'LineaCredito' => $this->credito,
             ]);
         }
+    }
+
+
+    private function convertirFecha($fechaExcel)
+    {
+        // Verificar si es un número (fecha en formato Excel)
+        if (is_numeric($fechaExcel)) {
+            return Carbon::createFromDate(1900, 1, 1)->addDays($fechaExcel - 2)->format('d/m/Y');
+        }
+
+        // Verificar si es un string en formato de fecha (dd/mm/yyyy o similar)
+        if (preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $fechaExcel)) {
+            return Carbon::createFromFormat('d/m/Y', $fechaExcel)->format('d/m/Y');
+        }
+
+        // Verificar si es un string en formato de fecha (Y-m-d)
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $fechaExcel)) {
+            return Carbon::createFromFormat('Y-m-d', $fechaExcel)->format('d/m/Y');
+        }
+
+        // Si no es un número de Excel ni un formato de fecha válido, devolver null
+        return null;
     }
 }

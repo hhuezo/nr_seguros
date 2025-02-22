@@ -1,8 +1,8 @@
 <div>
-@php
-ini_set('max_execution_time', 30000);
-set_time_limit(30000);
-@endphp
+    @php
+        ini_set('max_execution_time', 30000);
+        set_time_limit(30000);
+    @endphp
 
     <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 
@@ -164,23 +164,25 @@ set_time_limit(30000);
             <!-- <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal_pago">
                 Subir Archivo Excel
             </button> -->
-            <a href="{{url('polizas/deuda/recibo_complementario')}}/{{$deuda->Id}}" class="btn btn-warning"> Recibo complementario</a>
-            <a href="{{url('polizas/deuda/subir_cartera')}}/{{$deuda->Id}}" class="btn btn-info"> Subir Archivos Excel</a>
+            <a href="{{ url('polizas/deuda/recibo_complementario') }}/{{ $deuda->Id }}" class="btn btn-warning">
+                Recibo complementario</a>
+            <a href="{{ url('polizas/deuda/subir_cartera') }}/{{ $deuda->Id }}" class="btn btn-info"> Subir Archivos
+                Excel</a>
         </div>
 
     </div>
 
     <input type="hidden" id="Tasa" value="{{ $deuda->Tasa }}">
-    @if($deuda->ComisionIva == 1)
-    @php($var = $deuda->TasaComision / 1.13)
-    <input type="hidden" id="TasaComisionDetalle" value="{{ $var}}">
+    @if ($deuda->ComisionIva == 1)
+        @php($var = $deuda->TasaComision / 1.13)
+        <input type="hidden" id="TasaComisionDetalle" value="{{ $var }}">
     @else
-    <input type="hidden" id="TasaComisionDetalle" value="{{ $deuda->TasaComision}}">
+        <input type="hidden" id="TasaComisionDetalle" value="{{ $deuda->TasaComision }}">
     @endif
     <input type="hidden" id="ExtraPrima" value="{{ $total_extrapima }}">
     <input type="hidden" id="TipoContribuyente" value="{{ $deuda->clientes->TipoContribuyente }}">
     <input type="hidden" id="ComisionIva" value="{{ $deuda->ComisionIva }}">
-    <input type="hidden" id="DescuentoRentabilidad" value="{{$deuda->Descuento}}">
+    <input type="hidden" id="DescuentoRentabilidad" value="{{ $deuda->Descuento }}">
 
 
 
@@ -188,6 +190,125 @@ set_time_limit(30000);
         <div class="box-body row">
 
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <table class="excel-like-table">
+                    <thead>
+                        <tr>
+                            <th>Lineas de crédito</th>
+                            <th>Tasa interés</th>
+                            <th>Edad</th>
+                            <th>Fecha</th>
+                            <th>Monto Otorgado</th>
+                            <th>Saldo capital</th>
+                            <th>Intereses corrientes</th>
+                            <th>Interes COVID</th>
+                            <th>Intereses Moratorios</th>
+                            <th>Monto nominal</th>
+                            <th>Suma asegurada</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($lineas_credito as $lineas)
+                            @if ($lineas->Abrev == 'INS1' . $lineas->LineaCredito)
+                                @php($total = $lineas->SaldoCapital)
+                                @php($saldo_capital = $lineas->SaldoCapital)
+                                @php($monto_nominal = 0.0)
+                                @php($intereses = 0.0)
+                                @php($intereses_covid = 0.0)
+                                @php($intereses_moratorios = 0.0)
+                                @php($monto_otorgado = 0)
+                            @elseif($lineas->Abrev == 'INS2')
+                                @php($total = $lineas->SaldoCapital + $lineas->Intereses)
+                                @php($saldo_capital = $lineas->SaldoCapital)
+                                @php($monto_nominal = 0)
+                                @php($intereses = $lineas->Intereses)
+                                @php($intereses_covid = 0)
+                                @php($intereses_moratorios = 0)
+                                @php($monto_otorgado = 0)
+                            @elseif($lineas->Abrev == 'INS3')
+                                @php($total = $lineas->SaldoCapital + $lineas->Intereses + $lineas->InteresesCovid)
+                                @php($saldo_capital = $lineas->SaldoCapital)
+                                @php($monto_nominal = 0)
+                                @php($intereses = $lineas->Intereses)
+                                @php($intereses_covid = $lineas->InteresesCovid)
+                                @php($intereses_moratorios = 0)
+                                @php($monto_otorgado = 0)
+                            @elseif($lineas->Abrev == 'INS4')
+                                @php($total = $lineas->SaldoCapital + $lineas->Intereses + $lineas->InteresesCovid + $lineas->InteresesMoratorios)
+                                @php($saldo_capital = $lineas->SaldoCapital)
+                                @php($monto_nominal = 0)
+                                @php($intereses = $lineas->Intereses)
+                                @php($intereses_covid = $lineas->InteresesCovid)
+                                @php($intereses_moratorios = $lineas->InteresesMoratorios)
+                                @php($monto_otorgado = 0)
+                            @elseif($lineas->Abrev == 'INS5')
+                                @php($total = $lineas->MontoNominal)
+                                @php($saldo_capital = 0)
+                                @php($monto_nominal = $lineas->MontoNominal)
+                                @php($intereses = 0)
+                                @php($intereses_covid = 0)
+                                @php($intereses_moratorios = 0)
+                                @php($monto_otorgado = 0)
+                            @elseif($lineas->Abrev == 'INS6')
+                                @php($total = $lineas->MontoOtorgado)
+                                @php($saldo_capital = 0)
+                                @php($monto_nominal = 0)
+                                @php($intereses = 0)
+                                @php($intereses_covid = 0)
+                                @php($intereses_moratorios = 0)
+                                @php($monto_otorgado = $lineas->MontoOtorgado)
+                            @endif
+                            <tr>
+                                <td>{{ $lineas->tipo }} {{ $lineas->Abrev }}</td>
+                                <td>{{ $lineas->EsTasaDiferenciada == 1 ? $lineas->Tasa : $deuda->Tasa }} %</td>
+                                <td>{{ $lineas->EsTasaDiferenciada == 1 ? $lineas->EdadDesde.' - '.$lineas->EdadHasta.' Años' : '' }}</td>
+                                <td>{{ $lineas->EsTasaDiferenciada == 1 ? $lineas->FechaDesde.' - '.$lineas->FechaHasta : '' }}</td>
+                                <td class="numeric editable" contenteditable="true"
+                                    id="{{ $lineas->Abreviatura }}_monto_otorgado">
+
+                                    {{ $monto_otorgado != 0 ? number_format($monto_otorgado, 2, '.', ',') : 0 }}
+                                </td>
+                                <td class="numeric editable" contenteditable="true"
+                                    id="{{ $lineas->Abreviatura }}_saldo_capital">
+                                    {{ $saldo_capital != 0 ? number_format($saldo_capital, 2, '.', ',') : 0 }}
+                                </td>
+                                <td class="numeric editable" contenteditable="true"
+                                    id="{{ $lineas->Abreviatura }}_interes">
+                                    {{ $intereses != 0 ? number_format($intereses, 2, '.', ',') : 0 }}
+                                </td>
+                                <td class="numeric editable" contenteditable="true"
+                                    id="{{ $lineas->Abreviatura }}_interes_covid">
+                                    {{ $intereses_covid != 0 ? number_format($intereses_covid, 2, '.', ',') : 0 }}
+                                </td>
+                                <td class="numeric editable" contenteditable="true"
+                                    id="{{ $lineas->Abreviatura }}_interes_moratorio">
+                                    {{ $intereses_moratorios != 0 ? number_format($intereses_moratorios, 2, '.', ',') : 0 }}
+                                </td>
+                                <td class="numeric editable" contenteditable="true"
+                                    id="{{ $lineas->Abreviatura }}_monto_nominal">
+                                    {{ $monto_nominal != 0 ? number_format($monto_nominal, 2, '.', ',') : 0 }}
+                                </td>
+                                <td class="numeric total" id="{{ $lineas->Abreviatura }}_suma_asegurada">
+                                    {{ number_format($total, 2, '.', ',') }}
+                                </td>
+                            </tr>
+                        @endforeach
+
+                        <tr>
+                            <th colspan="4">Totales</th>
+                            <td class="numeric"><span id="total_monto_otorgado"></span></td>
+                            <td class="numeric"><span id="total_saldo_capital"></span></td>
+                            <td class="numeric"><span id="total_interes"></span></td>
+                            <td class="numeric"><span id="total_interes_covid"></span></td>
+                            <td class="numeric"><span id="total_interes_moratorio"></span></td>
+                            <td class="numeric"><span id="total_monto_nominal"></span></td>
+                            <td class="numeric"><span id="total_suma_asegurada"></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+
+                {{--
                 <table class="excel-like-table">
                     <thead>
                         <tr>
@@ -204,81 +325,87 @@ set_time_limit(30000);
                     </thead>
                     <tbody>
                         @foreach ($lineas_credito as $lineas)
-                        @if ($lineas->Abreviatura == 'INS1'.$lineas->LineaCredito)
-                        @php($total = $lineas->SaldoCapital)
-                        @php($saldo_capital = $lineas->SaldoCapital)
-                        @php($monto_nominal = 0.0)
-                        @php($intereses = 0.0)
-                        @php($intereses_covid = 0.0)
-                        @php($intereses_moratorios = 0.0)
-                        @php($monto_otorgado = 0)
-                        @elseif($lineas->Abreviatura == 'INS2'.$lineas->LineaCredito)
-                        @php($total = $lineas->SaldoCapital + $lineas->Intereses)
-                        @php($saldo_capital = $lineas->SaldoCapital)
-                        @php($monto_nominal = 0)
-                        @php($intereses = $lineas->Intereses)
-                        @php($intereses_covid = 0)
-                        @php($intereses_moratorios = 0)
-                        @php($monto_otorgado = 0)
-                        @elseif($lineas->Abreviatura == 'INS3'.$lineas->LineaCredito)
-                        @php($total = $lineas->SaldoCapital + $lineas->Intereses + $lineas->InteresesCovid)
-                        @php($saldo_capital = $lineas->SaldoCapital)
-                        @php($monto_nominal = 0)
-                        @php($intereses = $lineas->Intereses)
-                        @php($intereses_covid = $lineas->InteresesCovid)
-                        @php($intereses_moratorios = 0)
-                        @php($monto_otorgado = 0)
-                        @elseif($lineas->Abreviatura == 'INS4'.$lineas->LineaCredito)
-                        @php($total = $lineas->SaldoCapital + $lineas->Intereses + $lineas->InteresesCovid + $lineas->InteresesMoratorios)
-                        @php($saldo_capital = $lineas->SaldoCapital)
-                        @php($monto_nominal = 0)
-                        @php($intereses = $lineas->Intereses)
-                        @php($intereses_covid = $lineas->InteresesCovid)
-                        @php($intereses_moratorios = $lineas->InteresesMoratorios)
-                        @php($monto_otorgado = 0)
-                        @elseif($lineas->Abreviatura == 'INS5'.$lineas->LineaCredito)
-                        @php($total = $lineas->MontoNominal)
-                        @php($saldo_capital = 0)
-                        @php($monto_nominal = $lineas->MontoNominal)
-                        @php($intereses = 0)
-                        @php($intereses_covid = 0)
-                        @php($intereses_moratorios = 0)
-                        @php($monto_otorgado = 0)
-                        @elseif($lineas->Abreviatura == 'INS6'.$lineas->LineaCredito)
-                        @php($total = $lineas->MontoOtorgado)
-                        @php($saldo_capital = 0)
-                        @php($monto_nominal = 0)
-                        @php($intereses = 0)
-                        @php($intereses_covid = 0)
-                        @php($intereses_moratorios = 0)
-                        @php($monto_otorgado = $lineas->MontoOtorgado)
-                        @endif
-                        <tr>
-                            <td>{{ $lineas->tipo }} {{ $lineas->Abrev }}</td>
-                            <td>{{ $deuda->Tasa }} %</td>
-                            <td class="numeric editable" contenteditable="true" id="{{ $lineas->Abreviatura }}_monto_otorgado">
+                            @if ($lineas->Abreviatura == 'INS1' . $lineas->LineaCredito)
+                                @php($total = $lineas->SaldoCapital)
+                                @php($saldo_capital = $lineas->SaldoCapital)
+                                @php($monto_nominal = 0.0)
+                                @php($intereses = 0.0)
+                                @php($intereses_covid = 0.0)
+                                @php($intereses_moratorios = 0.0)
+                                @php($monto_otorgado = 0)
+                            @elseif($lineas->Abreviatura == 'INS2' . $lineas->LineaCredito)
+                                @php($total = $lineas->SaldoCapital + $lineas->Intereses)
+                                @php($saldo_capital = $lineas->SaldoCapital)
+                                @php($monto_nominal = 0)
+                                @php($intereses = $lineas->Intereses)
+                                @php($intereses_covid = 0)
+                                @php($intereses_moratorios = 0)
+                                @php($monto_otorgado = 0)
+                            @elseif($lineas->Abreviatura == 'INS3' . $lineas->LineaCredito)
+                                @php($total = $lineas->SaldoCapital + $lineas->Intereses + $lineas->InteresesCovid)
+                                @php($saldo_capital = $lineas->SaldoCapital)
+                                @php($monto_nominal = 0)
+                                @php($intereses = $lineas->Intereses)
+                                @php($intereses_covid = $lineas->InteresesCovid)
+                                @php($intereses_moratorios = 0)
+                                @php($monto_otorgado = 0)
+                            @elseif($lineas->Abreviatura == 'INS4' . $lineas->LineaCredito)
+                                @php($total = $lineas->SaldoCapital + $lineas->Intereses + $lineas->InteresesCovid + $lineas->InteresesMoratorios)
+                                @php($saldo_capital = $lineas->SaldoCapital)
+                                @php($monto_nominal = 0)
+                                @php($intereses = $lineas->Intereses)
+                                @php($intereses_covid = $lineas->InteresesCovid)
+                                @php($intereses_moratorios = $lineas->InteresesMoratorios)
+                                @php($monto_otorgado = 0)
+                            @elseif($lineas->Abreviatura == 'INS5' . $lineas->LineaCredito)
+                                @php($total = $lineas->MontoNominal)
+                                @php($saldo_capital = 0)
+                                @php($monto_nominal = $lineas->MontoNominal)
+                                @php($intereses = 0)
+                                @php($intereses_covid = 0)
+                                @php($intereses_moratorios = 0)
+                                @php($monto_otorgado = 0)
+                            @elseif($lineas->Abreviatura == 'INS6' . $lineas->LineaCredito)
+                                @php($total = $lineas->MontoOtorgado)
+                                @php($saldo_capital = 0)
+                                @php($monto_nominal = 0)
+                                @php($intereses = 0)
+                                @php($intereses_covid = 0)
+                                @php($intereses_moratorios = 0)
+                                @php($monto_otorgado = $lineas->MontoOtorgado)
+                            @endif
+                            <tr>
+                                <td>{{ $lineas->tipo }} {{ $lineas->Abrev }}</td>
+                                <td>{{ $deuda->Tasa }} %</td>
+                                <td class="numeric editable" contenteditable="true"
+                                    id="{{ $lineas->Abreviatura }}_monto_otorgado">
 
-                                {{ $monto_otorgado != 0 ? number_format($monto_otorgado, 2, '.', ',') : 0 }}
-                            </td>
-                            <td class="numeric editable" contenteditable="true" id="{{ $lineas->Abreviatura }}_saldo_capital">
-                                {{ $saldo_capital != 0 ? number_format($saldo_capital, 2, '.', ',') : 0 }}
-                            </td>
-                            <td class="numeric editable" contenteditable="true" id="{{ $lineas->Abreviatura }}_interes">
-                                {{ $intereses != 0 ? number_format($intereses, 2, '.', ',') : 0 }}
-                            </td>
-                            <td class="numeric editable" contenteditable="true" id="{{ $lineas->Abreviatura }}_interes_covid">
-                                {{ $intereses_covid != 0 ? number_format($intereses_covid, 2, '.', ',') : 0 }}
-                            </td>
-                            <td class="numeric editable" contenteditable="true" id="{{ $lineas->Abreviatura }}_interes_moratorio">
-                                {{ $intereses_moratorios != 0 ? number_format($intereses_moratorios, 2, '.', ',') : 0 }}
-                            </td>
-                            <td class="numeric editable" contenteditable="true" id="{{ $lineas->Abreviatura }}_monto_nominal">
-                                {{ $monto_nominal != 0 ? number_format($monto_nominal, 2, '.', ',') : 0 }}
-                            </td>
-                            <td class="numeric total" id="{{ $lineas->Abreviatura }}_suma_asegurada">
-                                {{ number_format($total, 2, '.', ',') }}
-                            </td>
-                        </tr>
+                                    {{ $monto_otorgado != 0 ? number_format($monto_otorgado, 2, '.', ',') : 0 }}
+                                </td>
+                                <td class="numeric editable" contenteditable="true"
+                                    id="{{ $lineas->Abreviatura }}_saldo_capital">
+                                    {{ $saldo_capital != 0 ? number_format($saldo_capital, 2, '.', ',') : 0 }}
+                                </td>
+                                <td class="numeric editable" contenteditable="true"
+                                    id="{{ $lineas->Abreviatura }}_interes">
+                                    {{ $intereses != 0 ? number_format($intereses, 2, '.', ',') : 0 }}
+                                </td>
+                                <td class="numeric editable" contenteditable="true"
+                                    id="{{ $lineas->Abreviatura }}_interes_covid">
+                                    {{ $intereses_covid != 0 ? number_format($intereses_covid, 2, '.', ',') : 0 }}
+                                </td>
+                                <td class="numeric editable" contenteditable="true"
+                                    id="{{ $lineas->Abreviatura }}_interes_moratorio">
+                                    {{ $intereses_moratorios != 0 ? number_format($intereses_moratorios, 2, '.', ',') : 0 }}
+                                </td>
+                                <td class="numeric editable" contenteditable="true"
+                                    id="{{ $lineas->Abreviatura }}_monto_nominal">
+                                    {{ $monto_nominal != 0 ? number_format($monto_nominal, 2, '.', ',') : 0 }}
+                                </td>
+                                <td class="numeric total" id="{{ $lineas->Abreviatura }}_suma_asegurada">
+                                    {{ number_format($total, 2, '.', ',') }}
+                                </td>
+                            </tr>
                         @endforeach
 
                         <tr>
@@ -292,7 +419,7 @@ set_time_limit(30000);
                             <td class="numeric"><span id="total_suma_asegurada"></span></td>
                         </tr>
                     </tbody>
-                </table>
+                </table> --}}
             </div>
             <div class="col-md-12">&nbsp;
 
@@ -311,8 +438,10 @@ set_time_limit(30000);
                             <td>USD</td>
                         </tr>
                         <tr>
-                            <td>Porcentaje de Comisión {{$deuda->ComisionIva == 1 ? 'Iva Incluido': ''}} </td>
-                            <td class="numeric editable"><span>{{$deuda->ComisionIva == 1 ? number_format($deuda->TasaComision / 1.13,2,".",",") : $deuda->TasaComision}}%</span></td>
+                            <td>Porcentaje de Comisión {{ $deuda->ComisionIva == 1 ? 'Iva Incluido' : '' }} </td>
+                            <td class="numeric editable">
+                                <span>{{ $deuda->ComisionIva == 1 ? number_format($deuda->TasaComision / 1.13, 2, '.', ',') : $deuda->TasaComision }}%</span>
+                            </td>
                         </tr>
                         <tr>
                             <td>Prima a cobrar</td>
@@ -371,7 +500,8 @@ set_time_limit(30000);
                             <td class="numeric editable"><span id="sub_total_extra_prima"></span></td>
                         </tr>
                         <tr>
-                            <td>(-) Descuento rentabilidad ({{$deuda->Descuento == '' ? 0 : $deuda->Descuento}}%)</td>
+                            <td>(-) Descuento rentabilidad ({{ $deuda->Descuento == '' ? 0 : $deuda->Descuento }}%)
+                            </td>
                             <td class="numeric editable"><span id="descuento_rentabilidad"></span></td>
                         </tr>
                         <tr>
@@ -387,7 +517,9 @@ set_time_limit(30000);
                             <td class="numeric editable"><span id="total_factura"></span></td>
                         </tr> -->
                         <tr>
-                            <td>(-) Estructura CCF de Comisión ({{$deuda->ComisionIva == 1 ? number_format($deuda->TasaComision / 1.13,2,".",",") : $deuda->TasaComision}}%)</td>
+                            <td>(-) Estructura CCF de Comisión
+                                ({{ $deuda->ComisionIva == 1 ? number_format($deuda->TasaComision / 1.13, 2, '.', ',') : $deuda->TasaComision }}%)
+                            </td>
                             <td class="numeric editable"><span id="comision"></span></td>
                         </tr>
                         <tr>
@@ -419,7 +551,8 @@ set_time_limit(30000);
                     <input type="hidden" name="ValorCCF" id="ValorCCFDetalle">
                     <input type="hidden" name="APagar" id="APagarDetalle">
                     <input type="hidden" name="ExtraPrima" value="{{ $total_extrapima }}">
-                    <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-aplicar">
+                    <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
+                        id="modal-aplicar">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -432,7 +565,8 @@ set_time_limit(30000);
                                     <p>¿Desea generar el aviso de cobro?</p>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                    <button type="button" class="btn btn-default"
+                                        data-dismiss="modal">Cerrar</button>
                                     <button id="boton_pago" class="btn btn-primary">Generar Aviso de cobro</button>
                                 </div>
                             </div>
@@ -442,24 +576,27 @@ set_time_limit(30000);
 
                     <div align="center">
                         <br><br><br>
-                        <a class="btn btn-default" data-target="#modal-cancelar" data-toggle="modal" onclick="cancelarpago()">Cancelar Cobro</a>
-                        <a class="btn btn-primary" data-target="#modal-aplicar" data-toggle="modal" onclick="aplicarpago()">Generar Cobro</a>
+                        <a class="btn btn-default" data-target="#modal-cancelar" data-toggle="modal"
+                            onclick="cancelarpago()">Cancelar Cobro</a>
+                        <a class="btn btn-primary" data-target="#modal-aplicar" data-toggle="modal"
+                            onclick="aplicarpago()">Generar Cobro</a>
                     </div>
 
                 </form>
                 <!--
                 <div align="center">
-                    <form action="{{url('polizas/deuda/validar_poliza')}}" method="POST">
+                    <form action="{{ url('polizas/deuda/validar_poliza') }}" method="POST">
                         @method('POST')
                         @csrf
-                        <input type="hidden" name="Deuda" value="{{$deuda->Id}}">
+                        <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
                         <button type="submit">Validar Poliza</button>
                     </form>
                 </div> -->
 
             </div>
 
-            <div class="modal fade" id="modal-cancelar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
+            <div class="modal fade" id="modal-cancelar" tabindex="-1" role="dialog"
+                aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
                 <div class="modal-dialog">
                     <form action="{{ url('deuda/cancelar_pago') }}" method="POST">
                         @method('POST')
@@ -472,8 +609,10 @@ set_time_limit(30000);
                                 <h4 class="modal-title">Cancelar Cobro</h4>
 
                                 <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
-                                <input type="hidden" name="MesCancelar" value="{{ isset($fecha) ? $fecha->Mes : '' }}">
-                                <input type="hidden" name="AxoCancelar" value="{{ isset($fecha) ? $fecha->Axo : '' }}">
+                                <input type="hidden" name="MesCancelar"
+                                    value="{{ isset($fecha) ? $fecha->Mes : '' }}">
+                                <input type="hidden" name="AxoCancelar"
+                                    value="{{ isset($fecha) ? $fecha->Axo : '' }}">
                             </div>
                             <div class="modal-body">
                                 <p>¿Esta seguro/a que desea cancelar el cobro?</p>
@@ -547,7 +686,8 @@ set_time_limit(30000);
                     //console.log(linea + "_interes_moratorio: ", interes_moratorio);
 
                     elemento = document.getElementById(linea + "_suma_asegurada");
-                    let suma_asegurada = convertirANumero(saldo_capital) + convertirANumero(monto_nominal) + convertirANumero(monto_otorgado) +
+                    let suma_asegurada = convertirANumero(saldo_capital) + convertirANumero(monto_nominal) +
+                        convertirANumero(monto_otorgado) +
                         convertirANumero(interes) + convertirANumero(interes_covid) + convertirANumero(
                             interes_moratorio);
 
@@ -595,7 +735,7 @@ set_time_limit(30000);
                 let tasa = document.getElementById('Tasa').value;
                 let comision_iva = document.getElementById('ComisionIva').value;
                 let tasa_comision = document.getElementById('TasaComisionDetalle').value;
-                let tipo_contribuyente = {{$deuda->clientes->TipoContribuyente}};
+                let tipo_contribuyente = {{ $deuda->clientes->TipoContribuyente }};
                 console.log(tasa_comision);
                 let extra_prima = document.getElementById('ExtraPrima').value;
 
@@ -614,7 +754,8 @@ set_time_limit(30000);
 
 
 
-                let descuento = (parseFloat(sub_total) + parseFloat(extra_prima)) * parseFloat(parseFloat(document.getElementById('DescuentoRentabilidad').value) / 100);
+                let descuento = (parseFloat(sub_total) + parseFloat(extra_prima)) * parseFloat(parseFloat(document
+                    .getElementById('DescuentoRentabilidad').value) / 100);
                 document.getElementById('descuento_rentabilidad').textContent = formatearCantidad(descuento);
                 document.getElementById('DescuentoDetalle').value = parseFloat(descuento);
                 prima_a_cobrar = (parseFloat(sub_total) + parseFloat(extra_prima)) - parseFloat(descuento);
