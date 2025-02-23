@@ -99,7 +99,11 @@
                                     <i class="fa fa-trash fa-lg"></i>
                                 </button>
                             </a>
-                            <form action="{{ url('exportar_excel') }}" method="POST" style="display: inline-block; vertical-align: middle;">
+                            @if($deuda->Aseguradora == 3)
+                                <form action="{{ url('exportar_excel_fede') }}" method="POST" style="display: inline-block; vertical-align: middle;">
+                            @else
+                                <form action="{{ url('exportar_excel') }}" method="POST" style="display: inline-block; vertical-align: middle;">
+                            @endif
                                 @csrf
                                 <input type="hidden" value="{{ $deuda->Id }}" name="Deuda">
                                 <input type="hidden" value="{{ $obj->Id }}" name="DeudaDetalle">

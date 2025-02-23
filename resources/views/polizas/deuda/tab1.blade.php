@@ -1,3 +1,40 @@
+<style>
+     .table-simulated {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: contents;
+            background-color: #343a40 !important;
+            color: rgb(122, 122, 122);
+            font-weight: bold;
+        }
+
+        .table-header div {
+            padding: 10px;
+            border-bottom: 2px solid #dee2e6;
+            text-align: center;
+        }
+
+        .table-row {
+            display: contents;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .table-row div {
+            padding: 10px;
+            border-bottom: 1px solid #dee2e6;
+            text-align: center;
+        }
+
+        .table-row:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+</style>
 <div class="row">
     <div class="col-md-12 col-sm-12 ">
         <div class="x_panel">
@@ -176,7 +213,7 @@
                         &nbsp;
                     </div>
                     <div class="col-sm-2">
-                        <label class="control-label" align="right">%  de Comisión </label>
+                        <label class="control-label" align="right">% de Comisión </label>
                         <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" value="{{ $deuda->TasaComision }}" readonly>
                     </div>
                     <div class="col-sm-2"><br>
@@ -221,50 +258,78 @@
                         <table width="100%" class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>Linea Carteras</th>
+                                    <th>Línea de Crédito</th>
                                     <th>Saldos y Montos</th>
                                     <th>Tasa General</th>
-                                    <th>Fecha Desde</th>
-                                    <th>Fecha Hasta</th>
-                                    <th>Tasa Fechas</th>
-                                    <th>Monto Desde</th>
-                                    <th>Monto Hasta</th>
-                                    <th>Tasa Monto</th>
-                                    <th>Edad Desde</th>
-                                    <th>Edad Hasta</th>
-                                    <th>Tasa por Edad</th>
-                                    <th>Valor máximo</th>
 
+                                    <th>Monto Máximo</th>
+                                    <th>Opciones</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($creditos as $obj)
+                                @foreach ($creditos as $obj)
                                 <tr>
                                     <td>{{ $obj->TipoCartera == null ? '' : $obj->tipoCarteras->Nombre }}
                                     </td>
                                     <td>{{ $obj->Saldos == null ? '' : $obj->saldos->Abreviatura }}</td>
-                                    <td>{{ $obj->TasaFecha == null && $obj->TasaMonto == null && $obj->TasaEdad == null ? $deuda->Tasa  : '0' }}
+                                    <td>{{ $deuda->Tasa }}</td>
+
+                                    <td>{{ isset($obj->MontoMaximoIndividual) ? '$' . number_format($obj->MontoMaximoIndividual, 2, '.', ',') : '' }}
                                     </td>
-                                    <td>{{ isset($obj->FechaDesde) ? date('d/m/Y', strtotime($obj->FechaDesde)) : '' }}
+                                    <td>
+
+                                        <a href=""
+                                            data-target="#modal-creditos-show-{{ $obj->Id }}"
+                                            data-toggle="modal"><i class="fa fa-eye fa-lg"></i></a>
+
+                                        &nbsp;&nbsp;
+                                        <a
+                                            href="{{ url('polizas/deuda/tasa_diferenciada') }}/{{ $obj->Id }}"><i
+                                                class="fa fa-edit fa-lg"></i></a>
+
+
+                                        &nbsp;&nbsp;
+                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}"
+                                            data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
                                     </td>
-                                    <td>{{ isset($obj->FechaHasta) ? date('d/m/Y', strtotime($obj->FechaHasta)) : '' }}
-                                    </td>
-                                    <td>{{ isset($obj->TasaFecha) ? $obj->TasaFecha . '%' : '' }} </td>
-                                    <td>{{ isset($obj->MontoDesde) ? '$' . number_format($obj->MontoDesde, 2, '.', ',') : '' }}
-                                    </td>
-                                    <td>{{ isset($obj->MontoHasta) ? '$' . number_format($obj->MontoHasta, 2, '.', ',') : '' }}
-                                    </td>
-                                    <td>{{ isset($obj->TasaMonto) ? $obj->TasaMonto . '%' : '' }} </td>
-                                    <td>{{ isset($obj->EdadDesde) ? $obj->EdadDesde . 'años' : '' }}</td>
-                                    <td>{{ isset($obj->EdadHasta) ? $obj->EdadHasta . 'años' : '' }}</td>
-                                    <td>{{ isset($obj->TasaEdad) ? $obj->TasaEdad . '%' : '' }} </td>
-                                    <td>{{ isset($obj->MontoMaximoIndividual) ? '$' . number_format($obj->MontoMaximoIndividual, 2, '.', ',') : '' }}</td>
                                 </tr>
+                                <div class="modal fade modal-slide-in-right" aria-hidden="true"
+                                    role="dialog" tabindex="-1" id="modal-delete-{{ $obj->Id }}">
+
+                                    <form method="POST"
+                                        action="{{ url('eliminar_credito', $obj->Id) }}">
+                                        @method('POST')
+                                        @csrf
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close"
+                                                        data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">×</span>
+                                                    </button>
+                                                    <h4 class="modal-title">Eliminar Registro</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>Confirme si desea Eliminar el Registro</p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default"
+                                                        data-dismiss="modal">Cerrar</button>
+                                                    <button type="submit"
+                                                        class="btn btn-primary">Confirmar</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+
+                                </div>
 
 
+                                @include('polizas.deuda.tasa_diferenciada_modal_show')
                                 @endforeach
                             </tbody>
                         </table>
+
                     </div>
                 </div>
             </div>

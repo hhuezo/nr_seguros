@@ -5,6 +5,7 @@ namespace App\Http\Controllers\polizas;
 use App\Exports\CreditosNoValidoExport;
 use App\Exports\DeudaErroneosExport;
 use App\Exports\DeudaExport;
+use App\Exports\DeudaFedeExport;
 use App\Exports\DeudaReciboExport;
 use App\Exports\EdadMaximaExport;
 use App\Exports\ExtraPrimadosExcluidosExport;
@@ -1457,6 +1458,15 @@ class DeudaController extends Controller
         //  dd($cartera->take(25),$request->Deuda,$request->DeudaDetalle);
     }
 
+    public function exportar_excel_fede(Request $request)
+    {
+        $deuda = $request->Deuda;
+        $detalle = $request->DeudaDetalle;
+        $cartera = PolizaDeudaCartera::where('PolizaDeudaDetalle', $detalle)->where('PolizaDeuda', $deuda)->where('NoValido', 0)->get();
+
+        return Excel::download(new DeudaFedeExport($cartera), 'Cartera.xlsx');
+        //  dd($cartera->take(25),$request->Deuda,$request->DeudaDetalle);
+    }
 
     public function agregar_comentario(Request $request)
     {

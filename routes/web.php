@@ -253,6 +253,7 @@ Route::post('polizas/deuda/fede/create_pago_recibo', [DeudaCarteraFedeController
 
 Route::post('polizas/deuda/borrar_proceso_actual', [DeudaController::class, 'borrar_proceso_actual']);
 Route::post('exportar_excel', [DeudaController::class, 'exportar_excel']);
+Route::post('exportar_excel_fede', [DeudaController::class, 'exportar_excel_fede']);
 
 Route::post('poliza/deuda/aumentar_techo',[DeudaCarteraController::class, 'aumentar_techo']);
 Route::post('poliza/deuda/add_excluidos',[DeudaCarteraController::class, 'add_excluidos']);

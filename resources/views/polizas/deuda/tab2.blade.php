@@ -524,7 +524,8 @@
                         </tr>
                         <tr>
                             <td>Total a pagar</td>
-                            <td class="numeric editable"><span id="liquido_pagar"></span></td>
+                            <td class="numeric total" contenteditable="true" id="liquido_pagar" onblur="total()">
+                              </td>
                         </tr>
                     </tbody>
                 </table>
@@ -832,6 +833,12 @@
                 });
             }
         });
+
+        function total(){
+                let val = document.getElementById('liquido_pagar').innerText;
+                //alert(val);
+                document.getElementById('APagarDetalle').value = parseFloat(val);
+            }
     </script>
 
 </div>
