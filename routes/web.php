@@ -243,6 +243,9 @@ Route::post('polizas/deuda/update_extraprimado', [DeudaController::class, 'updat
 Route::post('polizas/deuda/store_poliza', [DeudaCarteraController::class, 'store_poliza']);
 Route::post('polizas/deuda/store_poliza_recibo', [DeudaCarteraController::class, 'store_poliza_recibo']);
 Route::post('polizas/deuda/store_requisitos', [DeudaController::class, 'store_requisitos']);
+Route::get('polizas/deuda/renovar/{id}',[DeudaController::class,'renovar']);
+Route::post('polizas/deuda/renovar',[DeudaController::class,'save_renovar']);
+Route::get('poliza/deuda/configuracion_renovar/{id}',[DeudaController::class,'conf_renovar']);
 Route::get('polizas/deuda/get_requisitos', [DeudaController::class, 'get_requisitos']);
 Route::resource('polizas/deuda', DeudaController::class);
 

@@ -45,6 +45,7 @@ use App\Models\polizas\DeudaValidados;
 use App\Models\polizas\DeudaVida;
 use App\Models\polizas\PolizaDeudaCartera;
 use App\Models\polizas\PolizaDeudaExtraPrimadosMensual;
+use App\Models\polizas\PolizaDeudaHistorica;
 use App\Models\polizas\PolizaDeudaTasaDiferenciada;
 use App\Models\polizas\PolizaDeudaTasaDiferenciadaTemp;
 use App\Models\temp\PolizaDeudaTempCartera;
@@ -63,9 +64,201 @@ use Throwable;
 class DeudaController extends Controller
 {
 
+
     public function __construct()
     {
         $this->middleware('auth');
+    }
+
+    public function renovar($id)
+    {
+        $deuda = Deuda::findOrFail($id);
+        $estadoPoliza = EstadoPoliza::get();
+        $ejecutivo = Ejecutivo::where('Activo', 1)->get();
+        $creditos = DeudaCredito::where('Activo', 1)->where('Deuda', $id)->get();
+        $perfiles = Perfil::where('Activo', 1)->where('Aseguradora', '=', $deuda->Aseguradora)->get();
+        // Estructura de la tabla
+        $tabla = [];
+        $requisitos = DeudaRequisitos::where('Activo', 1)->where('Deuda', $id)->get();
+        foreach ($requisitos as $requisito) {
+            $perfil = $requisito->perfil->Descripcion;
+            $perfilId = $requisito->Perfil;
+            $edadRango = "{$requisito->EdadInicial}-{$requisito->EdadFinal}";
+            $montoRango = "{$requisito->MontoInicial}-{$requisito->MontoFinal}";
+
+            // Guardar el id del requisito para su uso posterior
+            $tabla[$perfil][$edadRango] = [
+                'monto' => $montoRango,
+                'id' => $requisito->Id,
+                'perfilId'  => $perfilId,
+            ];
+        }
+
+        // Obtener los rangos de edad para las columnas
+        $columnas = [];
+        foreach ($tabla as $filas) {
+            $columnas = array_merge($columnas, array_keys($filas));
+        }
+        $columnas = array_unique($columnas);
+        sort($columnas);
+        $tipoCartera = TipoCartera::where('Activo', 1)->where('Poliza', 2)->get(); //deuda
+        $saldos = SaldoMontos::where('Activo', 1)->get();
+        $aseguradora = Aseguradora::where('Activo', 1)->get();
+        $productos = Producto::where('Activo', 1)->get();
+        $planes = Plan::where('Activo', 1)->get();
+        $cliente = Cliente::where('Activo', 1)->get();
+        session(['tab' => 1]);
+
+        return view('polizas.deuda.renovar', compact('cliente', 'planes', 'productos', 'aseguradora', 'deuda', 'estadoPoliza', 'ejecutivo', 'creditos', 'perfiles', 'columnas', 'tabla', 'columnas', 'tipoCartera', 'saldos'));
+    }
+    public function renovar_conf($id)
+    {
+        $deuda = Deuda::findOrFail($id);
+        $estadoPoliza = EstadoPoliza::get();
+        $ejecutivo = Ejecutivo::where('Activo', 1)->get();
+        $creditos = DeudaCredito::where('Activo', 1)->where('Deuda', $id)->get();
+        $perfiles = Perfil::where('Activo', 1)->where('Aseguradora', '=', $deuda->Aseguradora)->get();
+        // Estructura de la tabla
+        $tabla = [];
+        $requisitos = DeudaRequisitos::where('Activo', 1)->where('Deuda', $id)->get();
+        foreach ($requisitos as $requisito) {
+            $perfil = $requisito->perfil->Descripcion;
+            $perfilId = $requisito->Perfil;
+            $edadRango = "{$requisito->EdadInicial}-{$requisito->EdadFinal}";
+            $montoRango = "{$requisito->MontoInicial}-{$requisito->MontoFinal}";
+
+            // Guardar el id del requisito para su uso posterior
+            $tabla[$perfil][$edadRango] = [
+                'monto' => $montoRango,
+                'id' => $requisito->Id,
+                'perfilId'  => $perfilId,
+            ];
+        }
+
+        // Obtener los rangos de edad para las columnas
+        $columnas = [];
+        foreach ($tabla as $filas) {
+            $columnas = array_merge($columnas, array_keys($filas));
+        }
+        $columnas = array_unique($columnas);
+        sort($columnas);
+        $tipoCartera = TipoCartera::where('Activo', 1)->where('Poliza', 2)->get(); //deuda
+        $saldos = SaldoMontos::where('Activo', 1)->get();
+        $aseguradora = Aseguradora::where('Activo', 1)->get();
+        $productos = Producto::where('Activo', 1)->get();
+        $planes = Plan::where('Activo', 1)->get();
+        $cliente = Cliente::where('Activo', 1)->get();
+        session(['tab' => 2]);
+
+        return view('polizas.deuda.renovar', compact('cliente', 'planes', 'productos', 'aseguradora', 'deuda', 'estadoPoliza', 'ejecutivo', 'creditos', 'perfiles', 'columnas', 'tabla', 'columnas', 'tipoCartera', 'saldos'));
+    }
+
+    public function save_renovar(Request $request)
+    {
+        //dd('holi');
+
+        $deuda = Deuda::findOrFail($request->Id);
+        if (($deuda->VigenciaDesde == $request->VigenciaDesde && $deuda->VigenciaHasta == $request->VigenciaHasta)
+            || $deuda->VigenciaDesde == $request->VigenciaDesde || $deuda->VigenciaHasta == $request->VigenciaHasta
+        ) {
+            alert()->error('Debe cambiar las fechas de vigencia para la renovación');
+            return back();
+        }
+
+        //     dd('holi');
+
+        $creditos = DeudaCredito::where('Deuda', $deuda->Id)->get();
+        $detalle = DeudaDetalle::where('Deuda', $deuda->Id)->get();
+        $tabla_diferencia = PolizaDeudaTasaDiferenciada::whereIn('PolizaDuedaCredito', $creditos->pluck('Id')->toArray())->get();
+        $requisitos = DeudaRequisitos::where('Deuda', $deuda->Id)->get();
+        //guardar todo en una tabla historica
+        $historica = new PolizaDeudaHistorica();
+        $historica->Deuda = $deuda->Id;
+        $historica->DatosDeuda = json_encode($deuda);
+        $historica->DatosCreditos = json_encode($creditos);
+        $historica->DatosTablaDiferenciada = json_encode($tabla_diferencia);
+        $historica->DeudaDetalle = json_encode($detalle);
+        $historica->Requisito = json_encode($requisitos);
+        $historica->Fecha = Carbon::now('America/El_Salvador')->format('Y-m-d H:i:s');
+        $historica->Usuario = auth()->user()->id;
+        $historica->save();
+
+        //actualizar los datos de la renovacion
+        $deuda->Ejecutivo = $request->Ejecutivo;
+        $deuda->VigenciaDesde = $request->VigenciaDesde;
+        $deuda->VigenciaHasta = $request->VigenciaHasta;
+        $deuda->Tasa = $request->Tasa;
+        $deuda->Beneficios = $request->Beneficios;
+        $deuda->ClausulasEspeciales = $request->ClausulasEspeciales;
+        $deuda->Concepto = $request->Concepto;
+        $deuda->EstadoPoliza = $request->EstadoPoliza;
+        $deuda->Descuento = $request->Descuento;
+        $deuda->TasaComision = $request->TasaComision;
+        $deuda->FechaIngreso = $request->FechaIngreso;
+        $deuda->Activo = 1;
+        $deuda->Vida = $request->Vida;
+        $deuda->Mensual = $request->tipoTasa;
+        $deuda->Desempleo = $request->Desempleo;
+        $deuda->EdadMaximaTerminacion = $request->EdadMaximaTerminacion;
+        $deuda->ResponsabilidadMaxima = $request->ResponsabilidadMaxima;
+        $deuda->Configuracion = 0; // se habilita para configurar nuevamente
+        if ($request->ComisionIva == 'on') {
+            $deuda->ComisionIva = 1;
+        } else {
+            $deuda->ComisionIva = 0;
+        }
+        $deuda->Usuario = auth()->user()->id;
+        $deuda->FechaIngreso = Carbon::now('America/El_Salvador');
+        $deuda->update();
+
+
+
+        return redirect('poliza/deuda/configuracion_renovar/'.$deuda->Id);
+       // return view('polizas.deuda.renovar_conf', compact('cliente', 'planes', 'productos', 'aseguradora', 'deuda', 'estadoPoliza', 'ejecutivo', 'creditos', 'perfiles', 'columnas', 'tabla', 'columnas', 'tipoCartera', 'saldos'));
+    }
+
+    public function conf_renovar($id)
+    {
+       // dd('holi');
+        //enviar a la vista
+        $deuda = Deuda::findOrFail($id);
+        $id = $deuda->Id;
+        $estadoPoliza = EstadoPoliza::get();
+        $ejecutivo = Ejecutivo::where('Activo', 1)->get();
+        $creditos = DeudaCredito::where('Activo', 1)->where('Deuda', $id)->get();
+        $perfiles = Perfil::where('Activo', 1)->where('Aseguradora', '=', $deuda->Aseguradora)->get();
+        // Estructura de la tabla
+        $tabla = [];
+        $requisitos = DeudaRequisitos::where('Activo', 1)->where('Deuda', $id)->get();
+        foreach ($requisitos as $requisito) {
+            $perfil = $requisito->perfil->Descripcion;
+            $perfilId = $requisito->Perfil;
+            $edadRango = "{$requisito->EdadInicial}-{$requisito->EdadFinal}";
+            $montoRango = "{$requisito->MontoInicial}-{$requisito->MontoFinal}";
+
+            // Guardar el id del requisito para su uso posterior
+            $tabla[$perfil][$edadRango] = [
+                'monto' => $montoRango,
+                'id' => $requisito->Id,
+                'perfilId'  => $perfilId,
+            ];
+        }
+
+        // Obtener los rangos de edad para las columnas
+        $columnas = [];
+        foreach ($tabla as $filas) {
+            $columnas = array_merge($columnas, array_keys($filas));
+        }
+        $columnas = array_unique($columnas);
+        sort($columnas);
+        $tipoCartera = TipoCartera::where('Activo', 1)->where('Poliza', 2)->get(); //deuda
+        $saldos = SaldoMontos::where('Activo', 1)->get();
+        $aseguradora = Aseguradora::where('Activo', 1)->get();
+        $productos = Producto::where('Activo', 1)->get();
+        $planes = Plan::where('Activo', 1)->get();
+        $cliente = Cliente::where('Activo', 1)->get();
+        session(['tab' => 2]);
+        return view('polizas.deuda.renovar_conf', compact('cliente', 'planes', 'productos', 'aseguradora', 'deuda', 'estadoPoliza', 'ejecutivo', 'creditos', 'perfiles', 'columnas', 'tabla', 'columnas', 'tipoCartera', 'saldos'));
     }
 
     public function index()
@@ -852,7 +1045,7 @@ class DeudaController extends Controller
                                 'poliza.LineaCredito',
                                 'saldos.Descripcion',
                                 'saldos.Abreviatura as Abrev',
-                                DB::raw("CONCAT(saldos.Abreviatura, poliza.LineaCredito,".$temp.") as Abreviatura"),
+                                DB::raw("CONCAT(saldos.Abreviatura, poliza.LineaCredito," . $temp . ") as Abreviatura"),
                                 'tipo.Nombre as tipo',
                                 DB::raw("IFNULL(sum(poliza.MontoOtorgado), '0.00') as MontoOtorgado"),
                                 DB::raw("IFNULL(sum(poliza.SaldoCapital), '0.00') as SaldoCapital"),
@@ -881,7 +1074,7 @@ class DeudaController extends Controller
                                 $item->EdadDesde = $temp->EdadDesde;
                                 $item->EdadHasta = $temp->EdadHasta;
                                 $item->EsTasaDiferenciada = $temp->EsTasaDiferenciada;
-                                $item->Abreviatura = $temp->Abreviatura.$temp->Id;
+                                $item->Abreviatura = $temp->Abreviatura . $temp->Id;
                             }
 
                             $lineas_credito = $lineas_credito->merge($result);
@@ -916,7 +1109,7 @@ class DeudaController extends Controller
                             ->whereBetween('poliza.Edad', [$temp->EdadDesde, $temp->EdadHasta])
                             ->get();
 
-                            // Agregar Tasa a cada elemento del resultado
+                        // Agregar Tasa a cada elemento del resultado
                         if ($result->first()->LineaCredito != null) {
                             foreach ($result as $item) {
                                 $item->Tasa = $temp->Tasa;
@@ -926,12 +1119,10 @@ class DeudaController extends Controller
                                 $item->EdadDesde = $temp->EdadDesde;
                                 $item->EdadHasta = $temp->EdadHasta;
                                 $item->EsTasaDiferenciada = $temp->EsTasaDiferenciada;
-                                $item->Abreviatura = $item->Abreviatura.$temp->Id;
+                                $item->Abreviatura = $item->Abreviatura . $temp->Id;
                             }
                             $lineas_credito = $lineas_credito->merge($result);
                         }
-
-
                     }
                 } else {
                     $result = DB::table('poliza_deuda_cartera as poliza')
@@ -1236,8 +1427,10 @@ class DeudaController extends Controller
                 $creditos1 = [];
             }
 
+            $now = Carbon::now('America/El_Salvador');
 
             return view('polizas.deuda.edit', compact(
+                'now',
                 'historico',
                 'creditos1',
                 'fecha',

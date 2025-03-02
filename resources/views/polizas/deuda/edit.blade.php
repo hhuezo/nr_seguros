@@ -52,6 +52,13 @@
                     <a href="{{ url('polizas/deuda') }}" class="btn btn-info">Atras</a>
                 </ul>
                 <div class="clearfix"></div>
+                <br>
+                @if($now > $deuda->VigenciaHasta)
+                <div class="alert alert-warning" role="alert" style="background-color: #fcf8e3; color: #ba813b">
+                    <b>¡Advertencia!</b> La poliza ya se vencio, puede renovarla ingresando
+                    <a href="{{ url('polizas/deuda/renovar') }}/{{ $deuda->Id }}" class="alert-link">Aqui</a>
+                </div>
+                @endif
             </div>
             @if (count($errors) > 0)
             <div class="alert alert-danger">

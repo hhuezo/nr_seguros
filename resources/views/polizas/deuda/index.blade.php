@@ -65,10 +65,10 @@
                                     <i class="fa fa-unlock fa-lg"></i></a>
                                 @endif
                                 <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal" class="btn btn-danger" title="Eliminar"><i class="fa fa-trash fa-lg"></i></a>
-                                @can('delete userss')
-                                <a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}/renovar" class="on-default edit-row btn btn-info" title="Renovar"><i class="fa fa-refresh fa-lg"></i></a>
-                                <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal" class="btn btn-danger" title="Eliminar"><i class="fa fa-trash fa-lg"></i></a>
-                                @endcan
+                                
+                                <a data-target="#modal-renovar-{{ $obj->Id }}" data-toggle="modal" class="on-default edit-row btn btn-info" title="Renovar"><i class="fa fa-refresh fa-lg"></i></a>
+                                <!-- <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal" class="btn btn-danger" title="Eliminar"><i class="fa fa-trash fa-lg"></i></a> -->
+                                
                             </div>
                         </td>
                         

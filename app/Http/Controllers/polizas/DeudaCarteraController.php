@@ -169,6 +169,11 @@ class DeudaCarteraController extends Controller
         $credito = $request->get('LineaCredito');
         $deuda = Deuda::findOrFail($request->Id);
 
+        if($request->FechaFinal > $deuda->VigenciaHasta){
+            alert()->error('La fecha final no debe ser mayor que la vigencia de la poliza');
+            return back();
+        }
+
 
 
         $date_submes = Carbon::create($request->Axo, $request->Mes, "01");
