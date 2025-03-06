@@ -299,5 +299,8 @@ Route::resource('polizas/validacion_cartera', ValidacionCarteraController::class
 
 
 
-//desempleo
+//desempleo store_poliza
+
+Route::post('polizas/desempleo/store_poliza/{id}', [DesempleoController::class,'store_poliza']);
+Route::post('polizas/desempleo/create_pago/{id}', [DesempleoController::class,'create_pago']);
 Route::resource('polizas/desempleo', DesempleoController::class);
