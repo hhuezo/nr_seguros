@@ -54,7 +54,7 @@
                         <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
                             final</label>
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                            <input class="form-control" name="FechaFinal" value="{{ $fecha_final}}" max="{{date('Y-m-d',strototime($deuda->VigenciaHasta))}}" type="date" required>
+                            <input class="form-control" name="FechaFinal" value="{{ $fecha_final}}" max="{{ !empty($deuda->VigenciaHasta) && strtotime($deuda->VigenciaHasta) ? date('Y-m-d', strtotime($deuda->VigenciaHasta)) : '' }}" type="date" required>
                         </div>
                     </div>
                     <div class="form-group row">
