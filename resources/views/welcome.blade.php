@@ -205,6 +205,7 @@
                                         <li id="li-poliza-residencia"><a href="{{ url('polizas/residencia') }}">Residencias</a></li>
                                         <!-- <li><a href="{{ url('polizas/vida') }}">Vida</a></li>-->
                                         <li id="li-poliza-deuda"><a href="{{ url('polizas/deuda') }}">Deuda</a></li>
+                                        <li id="li-poliza-desempleo"><a href="{{ url('polizas/desempleo') }}">Desempleo</a></li>
                                     </ul>
                                 </li>
 

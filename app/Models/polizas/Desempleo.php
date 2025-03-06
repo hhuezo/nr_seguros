@@ -2,6 +2,10 @@
 
 namespace App\Models\polizas;
 
+use App\Models\catalogo\Aseguradora;
+use App\Models\catalogo\Cliente;
+use App\Models\catalogo\Ejecutivo;
+use App\Models\catalogo\EstadoPoliza;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,32 +20,38 @@ class Desempleo extends Model
 
 
     protected $fillable = [
-        'Numero',
         'NumeroPoliza',
-        'Nit',
-        'Codigo',
         'Asegurado',
         'Aseguradora',
         'Ejecutivo',
         'VigenciaDesde',
         'VigenciaHasta',
         'Tasa',
-        'Beneficios',
-        'ClausulasEspeciales',
-        'Concepto',
+        'EdadMaximaInscripcion',
+        'EdadMaxima',
+        'TipoCalculo',
         'EstadoPoliza',
-        'Descuento',
-        'TasaComision',
-        'FechaIngreso',
         'Activo',
-        'EdadTerminacion',
-        'EdadMaxTerminacion',
-        'EdadIntermedia',
-        'Mensual',
-        'Deuda',
-        'Plan',
-        'Configuracion',
         'Usuario',
-        'ComisionIva',
     ];
+
+
+    public function cliente()
+    {
+        return $this->belongsTo(Cliente::class, 'Asegurado', 'Id');
+    }
+
+    public function aseguradora()
+    {
+        return $this->belongsTo(Aseguradora::class, 'Aseguradora', 'Id');
+    }
+
+    public function ejecutivo()
+    {
+        return $this->belongsTo(Ejecutivo::class, 'Ejecutivo', 'Id');
+    }
+    public function estadoPoliza()
+    {
+        return $this->belongsTo(EstadoPoliza::class, 'EstadoPoliza', 'Id');
+    }
 }
