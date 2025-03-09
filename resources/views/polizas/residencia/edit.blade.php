@@ -12,7 +12,7 @@
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
 
                 <div class="x_title">
-                    <h2>Pólizas / Residencia / Póliza de Residencia / {{$residencia->NumeroPoliza}} <small></small></h2>
+                    <h2>Pólizas / Residencia / Póliza de Residencia / {{ $residencia->NumeroPoliza }} <small></small></h2>
                     <ul class="nav navbar-right panel_toolbox">
                         <a href="{{ url('polizas/residencia') }}" class="btn btn-info fa fa-undo " style="color: white">
                             Atrás</a>
@@ -38,18 +38,21 @@
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
                 <div class="" role="tabpanel" data-example-id="togglable-tabs">
                     <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-                        <li role="presentation" class="{{ session('tab') == 1 ? 'active' : '' }}"><a href="#tab_content4"
-                                id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Datos de Póliza</a>
+                        <li role="presentation" class="{{ ($tab ?? session('tab')) == 1 ? 'active' : '' }}"><a
+                                href="#tab_content4" id="home-tab" role="tab" data-toggle="tab"
+                                aria-expanded="true">Datos de Póliza</a>
                         </li>
-                        <li role="presentation" class="{{ session('tab') == 2 ? 'active' : '' }} "><a href="#tab_content2"
-                                role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">Generar Cartera</a>
+                        <li role="presentation" class="{{ ($tab ?? session('tab')) == 2 ? 'active' : '' }} "><a
+                                href="#tab_content2" role="tab" id="profile-tab" data-toggle="tab"
+                                aria-expanded="false">Generar Cartera</a>
                         </li>
                         <li role="presentation" class=""><a href="#tab_content3" role="tab" id="creditos-tab"
                                 data-toggle="tab" aria-expanded="false">Hoja de Cálculo
                                 {{ $residencia->NumeroPoliza }}</a>
                         </li>
-                        <li role="presentation" class="{{ session('tab') == 4 ? 'active' : '' }}"><a href="#tab_content1"
-                                id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Estados de Cobro</a>
+                        <li role="presentation" class="{{ ($tab ?? session('tab')) == 4 ? 'active' : '' }}"><a
+                                href="#tab_content1" id="home-tab" role="tab" data-toggle="tab"
+                                aria-expanded="true">Estados de Cobro</a>
                         </li>
                         <li role="presentation" class=""><a href="#tab_content5" role="tab" id="recibos-tab"
                                 data-toggle="tab" aria-expanded="false">Ver Avisos</a>
@@ -60,7 +63,7 @@
                     </ul>
 
                     <div id="myTabContent" class="tab-content">
-                        <div role="tabpanel" class="tab-pane fade {{ session('tab') == 1 ? 'active in' : '' }}"
+                        <div role="tabpanel" class="tab-pane fade {{ ($tab ?? session('tab')) == 1 ? 'active in' : '' }}"
                             id="tab_content4" aria-labelledby="home-tab">
                             <form method="POST" action="{{ route('residencia.update', $residencia->Id) }}">
                                 @method('PUT')
@@ -161,10 +164,10 @@
                                         &nbsp;
                                     </div>
                                     <!-- <div class="col-sm-4">
-                                            <label class="control-label">Descuento de IVA</label>
-                                            <input class="form-control" name="DescuentoIva" type="checkbox" id="DescuentoIva" @if ($residencia->Modificar == 0) disabled @endif
-                                            @if ($residencia->DescuentoIva == 1) checked @endif>
-                                        </div> -->
+                                                <label class="control-label">Descuento de IVA</label>
+                                                <input class="form-control" name="DescuentoIva" type="checkbox" id="DescuentoIva" @if ($residencia->Modificar == 0) disabled @endif
+                                                @if ($residencia->DescuentoIva == 1) checked @endif>
+                                            </div> -->
                                     <div class="col-md-12">
                                         &nbsp;
                                     </div>
@@ -174,10 +177,13 @@
                                         <label class="control-label">Límite grupo $</label>
                                         <div class="form-group has-feedback">
                                             @if ($residencia->Modificar == 1)
-
-                                                    <input type="number" style="display: none"   name="LimiteGrupo" id="LimiteGrupo" value="{{ $residencia->LimiteGrupo }}" class="form-control"  onblur="changeGrupo(0)">
-                                                    <input type="text" style="text-align: right;"  id="LimiteGrupoDisplay" class="form-control" oninput="formatLimiteGrupo()" onblur="updateLimiteGrupo()" value="{{ number_format($residencia->LimiteGrupo, 2, '.', ',') }}">
-
+                                                <input type="number" style="display: none" name="LimiteGrupo"
+                                                    id="LimiteGrupo" value="{{ $residencia->LimiteGrupo }}"
+                                                    class="form-control" onblur="changeGrupo(0)">
+                                                <input type="text" style="text-align: right;" id="LimiteGrupoDisplay"
+                                                    class="form-control" oninput="formatLimiteGrupo()"
+                                                    onblur="updateLimiteGrupo()"
+                                                    value="{{ number_format($residencia->LimiteGrupo, 2, '.', ',') }}">
                                             @else
                                                 <input type="text" step="any" style="text-align: right;"
                                                     name="LimiteGrupo" id="LimiteGrupo"
@@ -192,10 +198,15 @@
                                         <label class="control-label">Límite Individual $</label>
                                         <div class="form-group has-feedback">
                                             @if ($residencia->Modificar == 1)
-                                            <input type="number" style="display: none" step="any" name="LimiteIndividual" id="LimiteIndividual" value="{{ $residencia->LimiteIndividual }}" class="form-control" >
+                                                <input type="number" style="display: none" step="any"
+                                                    name="LimiteIndividual" id="LimiteIndividual"
+                                                    value="{{ $residencia->LimiteIndividual }}" class="form-control">
 
-                                            <input type="text" step="any" style="text-align: right;" id="LimiteIndividualDisplay" value="{{ number_format($residencia->LimiteIndividual, 2, '.', ',') }}" class="form-control" onchange="changeIndividual()" oninput="validateLimiteIndividual()">
-
+                                                <input type="text" step="any" style="text-align: right;"
+                                                    id="LimiteIndividualDisplay"
+                                                    value="{{ number_format($residencia->LimiteIndividual, 2, '.', ',') }}"
+                                                    class="form-control" onchange="changeIndividual()"
+                                                    oninput="validateLimiteIndividual()">
                                             @else
                                                 <input type="text" step="any" style="text-align: right;"
                                                     name="LimiteIndividual" id="LimiteIndividual"
@@ -287,7 +298,7 @@
                                 </div>
                             </form>
                         </div>
-                        <div role="tabpanel" class="tab-pane fade {{ session('tab') == 4 ? 'active in' : '' }}"
+                        <div role="tabpanel" class="tab-pane fade {{ ($tab ?? session('tab')) == 4 ? 'active in' : '' }}"
                             id="tab_content1" aria-labelledby="home-tab">
                             <div class="x_title">
                                 <h2>Estado de Pagos<small></small>
@@ -325,29 +336,42 @@
                                                     $fileUrl = asset($obj->ExcelURL);
                                                 @endphp
                                                 <td style="text-align: center;">{{ $residencia->NumeroPoliza }}</td>
-                                                <td style="text-align: center;">{{ $obj->FechaInicio ? \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') : '' }}</td>
-                                                <td style="text-align: center;">{{ $obj->FechaFinal ?  \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') : '' }}</td>
-                                                <td style="text-align: center;">{{ $obj->ImpresionRecibo ?  \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') : '' }}</td>
-                                                <td style="text-align: center;">{{$obj->NumeroRecibo ? 'AC'.str_pad($obj->NumeroRecibo, 6, '0', STR_PAD_LEFT).' '.date('y'):'' }} </td>
-                                                <td style="text-align: center;">01/01</td>
-                                                <td style="text-align: center;">{{$obj->NumeroCorrelativo ? $obj->NumeroCorrelativo : ''}}</td>
-                                                <td style="text-align: center;">{{ $obj->FechaInicio ? \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') : ''}}</td>
-                                                <td style="text-align: center;">{{ $obj->PagoAplicado ?  \Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') : ''}}</td>
-                                                <td style="text-align: center;">{{ $obj->APagar ? number_format($obj->APagar, 2, '.', ',') :''}} 
-                                                        @php
-                                                            $total += $obj->APagar;
-                                                        @endphp
+                                                <td style="text-align: center;">
+                                                    {{ $obj->FechaInicio ? \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') : '' }}
                                                 </td>
                                                 <td style="text-align: center;">
-                                                @if ($obj->Activo == 0)
-                                                    Anulado
-                                                @elseif(!$obj->PagoAplicado)
-                                                    Pendiente
-                                                @elseif($obj->PagoAplicado)
-                                                    Pagado
-                                                @else
-                                                    
-                                                @endif
+                                                    {{ $obj->FechaFinal ? \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') : '' }}
+                                                </td>
+                                                <td style="text-align: center;">
+                                                    {{ $obj->ImpresionRecibo ? \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') : '' }}
+                                                </td>
+                                                <td style="text-align: center;">
+                                                    {{ $obj->NumeroRecibo ? 'AC' . str_pad($obj->NumeroRecibo, 6, '0', STR_PAD_LEFT) . ' ' . date('y') : '' }}
+                                                </td>
+                                                <td style="text-align: center;">01/01</td>
+                                                <td style="text-align: center;">
+                                                    {{ $obj->NumeroCorrelativo ? $obj->NumeroCorrelativo : '' }}</td>
+                                                <td style="text-align: center;">
+                                                    {{ $obj->FechaInicio ? \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') : '' }}
+                                                </td>
+                                                <td style="text-align: center;">
+                                                    {{ $obj->PagoAplicado ? \Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') : '' }}
+                                                </td>
+                                                <td style="text-align: center;">
+                                                    {{ $obj->APagar ? number_format($obj->APagar, 2, '.', ',') : '' }}
+                                                    @php
+                                                        $total += $obj->APagar;
+                                                    @endphp
+                                                </td>
+                                                <td style="text-align: center;">
+                                                    @if ($obj->Activo == 0)
+                                                        Anulado
+                                                    @elseif(!$obj->PagoAplicado)
+                                                        Pendiente
+                                                    @elseif($obj->PagoAplicado)
+                                                        Pagado
+                                                    @else
+                                                    @endif
 
                                                 </td>
                                                 <td style="text-align: center;">
@@ -358,22 +382,24 @@
                                                             title="Generar Aviso de Cobro" data-toggle="modal"><i
                                                                 class="fa fa-file-text-o" aria-hidden="true"></i></a>
                                                     @else
-                                                    <button class="btn btn-primary">
-                                                        <i class="fa fa-pencil fa-lg"
-                                                            onclick="modal_edit({{ $obj->Id }})"
-                                                            title="Actualizar Fechas de Cobro"></i>
-                                                    </button>
-                                                        
+                                                        <button class="btn btn-primary">
+                                                            <i class="fa fa-pencil fa-lg"
+                                                                onclick="modal_edit({{ $obj->Id }})"
+                                                                title="Actualizar Fechas de Cobro"></i>
+                                                        </button>
                                                     @endif
-                                                    
-                                                    <a href="{{ $fileUrl }}" class=" btn btn-success fa fa-file-excel-o"
-                                                        align="center" title="Descargar Cartera Excel"></a>
-                                                        <button class="btn btn-warning"><i data-target="#modal-view-{{ $obj->Id }}" data-toggle="modal"
-                                                        class="fa fa-eye" align="center"
-                                                        title="Ver Detalles"></i></button>
-                                                    
+
+                                                    <a href="{{ $fileUrl }}"
+                                                        class=" btn btn-success fa fa-file-excel-o" align="center"
+                                                        title="Descargar Cartera Excel"></a>
+                                                    <button class="btn btn-warning"><i
+                                                            data-target="#modal-view-{{ $obj->Id }}"
+                                                            data-toggle="modal" class="fa fa-eye" align="center"
+                                                            title="Ver Detalles"></i></button>
+
                                                     @if ($obj->Activo == 1)
-                                                        <a href="" class="btn btn-danger" data-target="#modal-delete-{{ $obj->Id }}"
+                                                        <a href="" class="btn btn-danger"
+                                                            data-target="#modal-delete-{{ $obj->Id }}"
                                                             data-toggle="modal" title="Anular Cobro"><i
                                                                 class="fa fa-trash fa-lg"></i></a>
                                                     @endif
@@ -399,7 +425,7 @@
 
 
                         </div>
-                       @include('polizas.residencia.tab2')
+                        @include('polizas.residencia.tab2')
                         <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="creditos-tab">
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div class="x_title">
@@ -499,9 +525,9 @@
                                             </td>
                                         </tr>
                                         <!-- <tr>
-                                                                    <td>Resultado 1</td>
-                                                                    <td><input type="text" id="Resultado2" value="@if ($ultimo_pago) {{ $ultimo_pago->MontoCartera }} @else 0 @endif"   class="form-group"></td>
-                                                                </tr> -->
+                                                                        <td>Resultado 1</td>
+                                                                        <td><input type="text" id="Resultado2" value="@if ($ultimo_pago) {{ $ultimo_pago->MontoCartera }} @else 0 @endif"   class="form-group"></td>
+                                                                    </tr> -->
                                         <tr>
                                             <td>Prima Calculada </td>
                                             <td>
@@ -516,7 +542,7 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td>(-) Descuento Rentabilidad {{ $residencia->TasaDescuento }}%</td>
+                                            <td>(-) Descuento Rentabilidad {{ $residencia->TasaDescuento }}% </td>
                                             <td>
                                                 <div class="col-md-9 col-sm-9  form-group has-feedback">
                                                     <input type="text" class="form-control has-feedback-left"
@@ -734,8 +760,10 @@
                                                 @foreach ($detalle as $obj)
                                                     @if ($obj->ImpresionRecibo != null)
                                                         <tr>
-                                                            <td>{{$obj->NumeroRecibo ? 'AC'.str_pad($obj->NumeroRecibo, 6, '0', STR_PAD_LEFT).' '.date('y'):'' }}</td>
-                                                            <td>{{$obj->NumeroCorrelativo ? $obj->NumeroCorrelativo : '' }} </td>
+                                                            <td>{{ $obj->NumeroRecibo ? 'AC' . str_pad($obj->NumeroRecibo, 6, '0', STR_PAD_LEFT) . ' ' . date('y') : '' }}
+                                                            </td>
+                                                            <td>{{ $obj->NumeroCorrelativo ? $obj->NumeroCorrelativo : '' }}
+                                                            </td>
                                                             <td>{{ \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}
                                                             </td>
                                                             <td>{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}
@@ -807,8 +835,7 @@
                                                         </td>
                                                         <td><a href=""
                                                                 data-target="#modal-delete-comentario-{{ $obj->Id }}"
-                                                                data-toggle="modal"><i
-                                                                    class="fa fa-trash fa-lg"></i></a>
+                                                                data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
                                                         </td>
                                                     </tr>
                                                     <div class="modal fade modal-slide-in-right" aria-hidden="true"
@@ -861,16 +888,14 @@
                                         <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
                                             <h5 class="modal-title" id="exampleModalLabel">Pago</h5>
                                         </div>
-                                        <button type="button" class="close" data-dismiss="modal"
-                                            aria-label="Close">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
                                     <div class="modal-body">
                                         <div class="box-body">
                                             @csrf
-                                            <input type="hidden" name="Id" id="ModalId"
-                                                class="form-control">
+                                            <input type="hidden" name="Id" id="ModalId" class="form-control">
                                             <div class="form-group">
                                                 <div class="col-sm-12">
                                                     <label class="control-label">Saldo a</label>
@@ -887,9 +912,9 @@
                                                         class="form-control" readonly>
                                                 </div>
                                                 <!-- <div class="col-sm-3">
-                                                                        <label class="control-label">&nbsp;</label>
-                                                                        <i class="btn btn-default fa fa-print form-control" id="btn_impresion"></i>
-                                                                    </div> -->
+                                                                            <label class="control-label">&nbsp;</label>
+                                                                            <i class="btn btn-default fa fa-print form-control" id="btn_impresion"></i>
+                                                                        </div> -->
                                             </div>
 
                                             <div class="form-group">
@@ -946,16 +971,15 @@
                                         <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
                                             <h5 class="modal-title" id="exampleModalLabel">Agregar Comentario</h5>
                                         </div>
-                                        <button type="button" class="close" data-dismiss="modal"
-                                            aria-label="Close">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
                                     <div class="modal-body">
                                         <div class="box-body">
                                             @csrf
-                                            <input type="hidden" name="ResidenciaComment"
-                                                value="{{ $residencia->Id }}" class="form-control">
+                                            <input type="hidden" name="ResidenciaComment" value="{{ $residencia->Id }}"
+                                                class="form-control">
 
                                             <div class="form-group">
                                                 <div class="col-sm-12">
@@ -1054,10 +1078,10 @@
         }
         $(document).ready(function() {
 
-           /* $("#MontoCarteraView").on('focus', function() {
-                $("#MontoCarteraView").hide();
-                $("#MontoCartera").show();
-            })*/
+            /* $("#MontoCarteraView").on('focus', function() {
+                 $("#MontoCarteraView").hide();
+                 $("#MontoCartera").show();
+             })*/
 
 
 
@@ -1083,35 +1107,35 @@
 
             })
 
-           // calculoPrimaCalculada();
-           /// calculoPrimaTotal();
-           // calculoDescuento();
-           // calculoSubTotal();
-           // calculoCCF();
+            // calculoPrimaCalculada();
+            /// calculoPrimaTotal();
+            // calculoDescuento();
+            // calculoSubTotal();
+            // calculoCCF();
 
-          /*  $('#MontoCartera').change(function() {
-                var monto = Number(document.getElementById('MontoCartera').value);
-                var grupal = Number(document.getElementById('LimiteGrupo').value);
-                if (grupal < monto) {
+            /*  $('#MontoCartera').change(function() {
+                  var monto = Number(document.getElementById('MontoCartera').value);
+                  var grupal = Number(document.getElementById('LimiteGrupo').value);
+                  if (grupal < monto) {
 
-                    swal('Su monto de cartera a superado al techo establecido en la póliza');
-                } else {
-                 //   calculoPrimaCalculada();
-                 //   calculoPrimaTotal();
-                  //  calculoDescuento();
-                   // calculoSubTotal();
-                  //  calculoCCF();
-                }
+                      swal('Su monto de cartera a superado al techo establecido en la póliza');
+                  } else {
+                   //   calculoPrimaCalculada();
+                   //   calculoPrimaTotal();
+                    //  calculoDescuento();
+                     // calculoSubTotal();
+                    //  calculoCCF();
+                  }
 
 
-            })
-            $("#PrimaCalculada").change(function() {
-                //  calculoPrimaCalculada();
-                calculoPrimaTotal();
-                calculoDescuento();
-                calculoSubTotal();
-                calculoCCF();
-            })*/
+              })
+              $("#PrimaCalculada").change(function() {
+                  //  calculoPrimaCalculada();
+                  calculoPrimaTotal();
+                  calculoDescuento();
+                  calculoSubTotal();
+                  calculoCCF();
+              })*/
 
 
             function calculoPrimaCalculada() {
@@ -1172,11 +1196,11 @@
                 if (document.getElementById('Diario').checked == true) {
                     if (document.getElementById('Dias365').checked == true) {
                         var sub = ((parseFloat(monto) * parseFloat(tasaFinal)) / 365) * dias_mes;
-                    }else{
+                    } else {
                         var sub = ((parseFloat(monto) * parseFloat(tasaFinal)) / dias_axo) * dias_mes;
                     }
 
-                    
+
                 } else {
                     var sub = parseFloat(monto) * parseFloat(tasaFinal);
                 }
@@ -1192,12 +1216,12 @@
 
             }
 
-           /*  $("#ExtPrima").change(function() {
-               calculoPrimaTotal();
-                calculoDescuento();
-                calculoSubTotal();
-                calculoCCF();
-            })*/
+            /*  $("#ExtPrima").change(function() {
+                calculoPrimaTotal();
+                 calculoDescuento();
+                 calculoSubTotal();
+                 calculoCCF();
+             })*/
 
             function calculoPrimaTotal() {
                 var sub = document.getElementById('PrimaCalculada').value;
@@ -1383,35 +1407,37 @@
         });
     </script>
 
-<script>
-    function formatLimiteGrupo() {
-        let input = document.getElementById('LimiteGrupoDisplay');
-        input.value = input.value.replace(/[^\d.,]/g, ''); // Solo permite números, coma y punto
-    }
+    <script>
+        function formatLimiteGrupo() {
+            let input = document.getElementById('LimiteGrupoDisplay');
+            input.value = input.value.replace(/[^\d.,]/g, ''); // Solo permite números, coma y punto
+        }
 
-    function updateLimiteGrupo() {
-        let inputDisplay = document.getElementById('LimiteGrupoDisplay');
-        let inputReal = document.getElementById('LimiteGrupo');
-        let value = inputDisplay.value.replace(/,/g, ''); // Elimina las comas
-        inputReal.value = parseFloat(value).toFixed(2); // Actualiza el valor en formato numérico
-        inputDisplay.value = parseFloat(value).toLocaleString().replace(/\./g, ','); // Formatea el valor con coma para separación de miles
-    }
-</script>
+        function updateLimiteGrupo() {
+            let inputDisplay = document.getElementById('LimiteGrupoDisplay');
+            let inputReal = document.getElementById('LimiteGrupo');
+            let value = inputDisplay.value.replace(/,/g, ''); // Elimina las comas
+            inputReal.value = parseFloat(value).toFixed(2); // Actualiza el valor en formato numérico
+            inputDisplay.value = parseFloat(value).toLocaleString().replace(/\./g,
+            ','); // Formatea el valor con coma para separación de miles
+        }
+    </script>
 
-<script>
-    function validateLimiteIndividual() {
-        let input = document.getElementById('LimiteIndividualDisplay');
-        input.value = input.value.replace(/[^\d.,]/g, ''); // Solo permite números, coma y punto
-    }
+    <script>
+        function validateLimiteIndividual() {
+            let input = document.getElementById('LimiteIndividualDisplay');
+            input.value = input.value.replace(/[^\d.,]/g, ''); // Solo permite números, coma y punto
+        }
 
-    function changeIndividual() {
-        let inputDisplay = document.getElementById('LimiteIndividualDisplay');
-        let inputReal = document.getElementById('LimiteIndividual');
-        let value = inputDisplay.value.replace(/,/g, ''); // Elimina las comas
-        inputReal.value = parseFloat(value); // Actualiza el valor en formato numérico
-        inputDisplay.value = parseFloat(value).toLocaleString().replace(/\./g, ','); // Formatea el valor con coma para separación de miles
-    }
-</script>
+        function changeIndividual() {
+            let inputDisplay = document.getElementById('LimiteIndividualDisplay');
+            let inputReal = document.getElementById('LimiteIndividual');
+            let value = inputDisplay.value.replace(/,/g, ''); // Elimina las comas
+            inputReal.value = parseFloat(value); // Actualiza el valor en formato numérico
+            inputDisplay.value = parseFloat(value).toLocaleString().replace(/\./g,
+            ','); // Formatea el valor con coma para separación de miles
+        }
+    </script>
 
 
 @endsection

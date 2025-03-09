@@ -187,7 +187,7 @@ class ResidenciaController extends Controller
         session(['ExcelURL' => null]);
 
         alert()->success('El cobro se ha eliminado correctamente');
-        return back();
+        return redirect('polizas/residencia/'.$request->Residencia.'/edit?tab=2');
     }
 
 
@@ -220,9 +220,10 @@ class ResidenciaController extends Controller
         return Redirect::to('polizas/residencia/' . $comen->Residencia . '/edit');
     }
 
-    public function edit($id)
+    public function edit(Request $request,$id)
     {
-        session(['tab' => 1]);
+        $tab = $request->tab ?? 1;
+
         $residencia = Residencia::findOrFail($id);
         $aseguradoras = Aseguradora::where('Nombre', 'like', '%fede%')->orWhere('Nombre', 'like', '%sisa%')->get();
         $estados_poliza = EstadoPoliza::where('Activo', '=', 1)->get();
@@ -300,7 +301,8 @@ class ResidenciaController extends Controller
             'meses',
             'ultimo_pago',
             'ultimo_pago_fecha_final',
-            'comentarios'
+            'comentarios',
+            'tab'
         ));
     }
 
@@ -402,7 +404,6 @@ class ResidenciaController extends Controller
 
     public function create_pago(Request $request)
     {
-        session(['tab' => 2]);
         $fecha = Carbon::create(null, $request->Mes, 1);
         $nombreMes = $fecha->locale('es')->monthName;
         $idUnicoCartera = Str::random(40);
@@ -483,8 +484,7 @@ class ResidenciaController extends Controller
 
             alert()->success('El registro ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
 
-
-            return back();
+            return redirect('polizas/residencia/'.$request->Id.'/edit?tab=2');
         } catch (Throwable $e) {
             print($e);
             return false;
