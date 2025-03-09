@@ -169,7 +169,7 @@ class DeudaCarteraController extends Controller
         $credito = $request->get('LineaCredito');
         $deuda = Deuda::findOrFail($request->Id);
 
-        if($request->FechaFinal > $deuda->VigenciaHasta){
+        if ($request->FechaFinal > $deuda->VigenciaHasta) {
             alert()->error('La fecha final no debe ser mayor que la vigencia de la poliza');
             return back();
         }
@@ -194,21 +194,22 @@ class DeudaCarteraController extends Controller
 
 
         // try {
-            $archivo = $request->Archivo;
+        $archivo = $request->Archivo;
 
-            $excel = IOFactory::load($archivo);
+        $excel = IOFactory::load($archivo);
 
-            // Verifica si hay al menos dos hojas
-            $sheetsCount = $excel->getSheetCount();
+        // Verifica si hay al menos dos hojas
+        $sheetsCount = $excel->getSheetCount();
 
-            if ($sheetsCount > 1) {
-                // El archivo tiene al menos dos hojas
-                alert()->error('La cartera solo puede contener un solo libro de Excel (sheet)');
-                return back();
-            }
+        if ($sheetsCount > 1) {
+            // El archivo tiene al menos dos hojas
+            alert()->error('La cartera solo puede contener un solo libro de Excel (sheet)');
+            return back();
+        }
 
-            PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('LineaCredito', '=', $credito)->delete();
-            Excel::import(new PolizaDeudaTempCarteraImport($date->year, $date->month, $deuda->Id, $request->FechaInicio, $request->FechaFinal, $credito), $archivo);
+
+        PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('LineaCredito', '=', $credito)->delete();
+        Excel::import(new PolizaDeudaTempCarteraImport($date->year, $date->month, $deuda->Id, $request->FechaInicio, $request->FechaFinal, $credito), $archivo);
         // } catch (Throwable $e) {
         //     Log::error('Problema al procesar el archivo Excel: ' . $e->getMessage(), [
         //         'file' => $e->getFile(),
@@ -263,6 +264,8 @@ class DeudaCarteraController extends Controller
                 } else if ($obj->Nacionalidad == 'SAL' || $obj->Nacionalidad == 'Sal' || $obj->Nacionalidad == 'sal') {
                     $validador_dui = $this->validarDocumento($obj->Dui, "dui");
 
+
+
                     if ($validador_dui == false) {
                         $obj->TipoError = 2;
                         $obj->update();
@@ -270,6 +273,7 @@ class DeudaCarteraController extends Controller
                         array_push($errores_array, 2);
                     }
                 } else {
+
                     if ($obj->Pasaporte == null || $obj->Pasaporte == '') {
                         $validador_dui = false;
                         if ($validador_dui == false) {
@@ -1048,30 +1052,28 @@ class DeudaCarteraController extends Controller
                     'OmisionPerfil' =>   $requisito->OmicionPerfil,
                     'MontoRequisito' =>  null,
                     'EdadRequisito' =>  null
-                    //,'NoValido' =>   $requisito->NoValido
                 ]);
-
 
             PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
                 ->whereIn('Dui', $data_dui_cartera)
-                ->where('saldo_total', '>=', $requisito->MontoInicial)->where('saldo_total', '<=', $requisito->MontoFinal)
+                ->where('SaldoCumulo', '>=', $requisito->MontoInicial)->where('SaldoCumulo', '<=', $requisito->MontoFinal)
                 ->where('EdadDesembloso', '>=', $requisito->EdadInicial)->where('EdadDesembloso', '<=', $requisito->EdadFinal)
                 ->update([
                     'MontoRequisito' =>  $requisito->MontoInicial,
                     'EdadRequisito' =>  $requisito->EdadInicial
-                    //,'NoValido' =>   $requisito->NoValido
                 ]);
         }
 
 
         //inicializamos los no validos a cero
-        PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('MontoMaximoIndividual',0)
+        PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('MontoMaximoIndividual', 0)
             ->update(['NoValido' => 0]);
 
         $edades = DB::table('poliza_deuda_requisitos')
             ->where('Deuda', $request->Deuda)
             ->selectRaw('MIN(EdadInicial) as EdadInicial, MAX(EdadFinal) as EdadFinal,MIN(MontoInicial) as MontoInicial,MAX(MontoFinal) as MontoFinal')
             ->first();
+
         if ($edades) {
             PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
                 ->where('EdadDesembloso', '<', $edades->EdadInicial)
@@ -1086,7 +1088,6 @@ class DeudaCarteraController extends Controller
         $novalidos = PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('NoValido', 1)->get();
         //dd($novalidos);
 
-        //dd($requisitos->take(10));
         //update para los que son mayores a la edad inicial
         PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
             ->where('NoValido', 0)
@@ -1335,6 +1336,7 @@ class DeudaCarteraController extends Controller
                 $poliza->TipoError = $tempRecord->TipoError;
                 $poliza->FechaNacimientoDate = $tempRecord->FechaNacimientoDate;
                 $poliza->Edad = $tempRecord->Edad;
+                $poliza->EdadDesembloso = $tempRecord->EdadDesembloso;
                 $poliza->LineaCredito = $tempRecord->LineaCredito;
                 $poliza->NoValido = $tempRecord->NoValido;
                 $poliza->save();

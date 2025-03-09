@@ -1106,7 +1106,7 @@ class DeudaController extends Controller
                             })
                             ->where('poliza.PolizaDeuda', $id)
                             ->where('poliza.LineaCredito', $temp->PolizaDuedaCredito)
-                            ->whereBetween('poliza.Edad', [$temp->EdadDesde, $temp->EdadHasta])
+                            ->whereBetween('poliza.EdadDesembloso', [$temp->EdadDesde, $temp->EdadHasta])
                             ->get();
 
                         // Agregar Tasa a cada elemento del resultado
@@ -3095,6 +3095,7 @@ class DeudaController extends Controller
                     ->whereNull('pdcart.NumeroReferencia') // Filtra solo los que no tienen coincidencia en poliza_deuda_cartera
                     ->groupBy('poliza_deuda_temp_cartera.Dui')
                     ->get();
+
             } elseif ($tipo == 2) { // creditos validos
                 $poliza_cumulos = PolizaDeudaTempCartera::join('poliza_deuda_creditos as pdc', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'pdc.Id')
                     ->select(
