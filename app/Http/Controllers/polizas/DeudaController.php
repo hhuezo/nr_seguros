@@ -94,6 +94,13 @@ class DeudaController extends Controller
             ];
         }
 
+        // Crear una instancia de Carbon a partir de la fecha
+        $fecha = Carbon::parse($deuda->VigenciaHasta);
+
+        // Agregar un año a la fecha
+        $nuevaFecha  = $fecha->copy()->addYear();
+        $fechaHastaRenovacion = $nuevaFecha->format('Y-m-d');
+
         // Obtener los rangos de edad para las columnas
         $columnas = [];
         foreach ($tabla as $filas) {
@@ -109,7 +116,7 @@ class DeudaController extends Controller
         $cliente = Cliente::where('Activo', 1)->get();
         session(['tab' => 1]);
 
-        return view('polizas.deuda.renovar', compact('cliente', 'planes', 'productos', 'aseguradora', 'deuda', 'estadoPoliza', 'ejecutivo', 'creditos', 'perfiles', 'columnas', 'tabla', 'columnas', 'tipoCartera', 'saldos'));
+        return view('polizas.deuda.renovar', compact('cliente', 'planes', 'productos', 'aseguradora', 'deuda','fechaHastaRenovacion', 'estadoPoliza', 'ejecutivo', 'creditos', 'perfiles', 'columnas', 'tabla', 'columnas', 'tipoCartera', 'saldos'));
     }
     public function renovar_conf($id)
     {
@@ -213,13 +220,13 @@ class DeudaController extends Controller
 
 
 
-        return redirect('poliza/deuda/configuracion_renovar/'.$deuda->Id);
-       // return view('polizas.deuda.renovar_conf', compact('cliente', 'planes', 'productos', 'aseguradora', 'deuda', 'estadoPoliza', 'ejecutivo', 'creditos', 'perfiles', 'columnas', 'tabla', 'columnas', 'tipoCartera', 'saldos'));
+        return redirect('poliza/deuda/configuracion_renovar/' . $deuda->Id);
+        // return view('polizas.deuda.renovar_conf', compact('cliente', 'planes', 'productos', 'aseguradora', 'deuda', 'estadoPoliza', 'ejecutivo', 'creditos', 'perfiles', 'columnas', 'tabla', 'columnas', 'tipoCartera', 'saldos'));
     }
 
     public function conf_renovar($id)
     {
-       // dd('holi');
+        // dd('holi');
         //enviar a la vista
         $deuda = Deuda::findOrFail($id);
         $id = $deuda->Id;
@@ -3095,7 +3102,6 @@ class DeudaController extends Controller
                     ->whereNull('pdcart.NumeroReferencia') // Filtra solo los que no tienen coincidencia en poliza_deuda_cartera
                     ->groupBy('poliza_deuda_temp_cartera.Dui')
                     ->get();
-
             } elseif ($tipo == 2) { // creditos validos
                 $poliza_cumulos = PolizaDeudaTempCartera::join('poliza_deuda_creditos as pdc', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'pdc.Id')
                     ->select(

@@ -181,12 +181,12 @@
                                 <div class="col-sm-4">
                                     <label class="control-label" align="right">Vigencia Desde de Renovación *</label>
                                     <input class="form-control" name="VigenciaDesde" type="date"
-                                        value="{{ $deuda->VigenciaDesde }}" required>
+                                        value="{{ $deuda->VigenciaHasta }}" required>
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label" align="right">Vigencia Hasta de Renovación *</label>
                                     <input class="form-control" name="VigenciaHasta" type="date"
-                                        value="{{ $deuda->VigenciaHasta }}" required>
+                                        value="{{ $fechaHastaRenovacion }}" required>
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label" align="right">Estado *</label>
