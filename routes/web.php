@@ -303,4 +303,5 @@ Route::resource('polizas/validacion_cartera', ValidacionCarteraController::class
 
 Route::post('polizas/desempleo/store_poliza/{id}', [DesempleoController::class,'store_poliza']);
 Route::post('polizas/desempleo/create_pago/{id}', [DesempleoController::class,'create_pago']);
+Route::post('polizas/desempleo/borrar_proceso_actual/{id}', [DesempleoController::class,'borrar_proceso_actual']);
 Route::resource('polizas/desempleo', DesempleoController::class);

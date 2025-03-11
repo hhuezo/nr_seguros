@@ -62,8 +62,12 @@
 
                                 <div class="" role="tabpanel" data-example-id="togglable-tabs">
                                     <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-                                        <li role="presentation" class="active"><a href="#tab_content6" id="edad-tab"
+                                        <li role="presentation" class="active"><a href="#tab_edad" id="edad-tab"
                                                 role="tab" data-toggle="tab" aria-expanded="false">Edad <br> Máxima </a>
+                                        </li>
+                                        <li role="presentation" class=""><a href="#tab_inscripcion"
+                                                id="inscripcion-tab" role="tab" data-toggle="tab"
+                                                aria-expanded="false">Edad <br> Inscripción </a>
                                         </li>
                                         <li role="presentation" class=""><a href="#tab_nuevos" id="home-tab"
                                                 role="tab" data-toggle="tab" aria-expanded="true">Nuevos <br>
@@ -84,7 +88,7 @@
                                     <div id="myTabContent" class="tab-content">
                                         <br>
                                         <!-- edad maxima -->
-                                        <div role="tabpanel" class="tab-pane active" id="tab_content6"
+                                        <div role="tabpanel" class="tab-pane active" id="tab_edad"
                                             aria-labelledby="edad-tab">
                                             <br>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
@@ -120,7 +124,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @foreach ($poliza_edad_maxima as $registro)
+                                                        @foreach ($poliza_edad_maxima->where('EdadDesembloso','>',$desempleo->EdadMaxima) as $registro)
                                                             <tr>
                                                                 <td>{{ $registro->NumeroReferencia }}</td>
                                                                 <td>{{ $registro->Dui }}</td>
@@ -131,7 +135,82 @@
                                                                     {{ $registro->SegundoApellido }}
                                                                     {{ $registro->ApellidoCasada }}
                                                                 </td>
-                                                                <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
+                                                                <td>{{ $registro->FechaNacimientoDate ? date('d/m/Y', strtotime($registro->FechaNacimientoDate))  : '' }}
+                                                                </td>
+                                                                <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }}
+                                                                    Años</td>
+                                                                <td>{{ $registro->EdadDesembloso ? $registro->Edad : '' }}
+                                                                    Años</td>
+                                                                <td>${{ number_format($registro->MontoOtorgado, 2) }}</td>
+                                                                <td>
+                                                                    <input type="checkbox"
+                                                                        onchange="excluir({{ $registro->Id }},0,1)"
+                                                                        class="js-switch">
+                                                                    <input type="hidden"
+                                                                        id="id_excluido-{{ $registro->Id }}"
+                                                                        value="{{ $registro->Excluido }}">
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+
+
+                                        </div>
+
+                                        <!-- edad inscripción -->
+                                        <div role="tabpanel" class="tab-pane" id="tab_inscripcion"
+                                            aria-labelledby="edad-tab">
+                                            <br>
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <h4>Edad maxima de inscripción {{ $desempleo->EdadMaximaInscripcion }} años
+                                                </h4>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6 col-xs-12" align="right" id="btn_expo"
+                                                style="display:">
+
+                                                <form
+                                                    action="{{ url('exportar/registros_edad_maxima') }}/{{ $desempleo->Id }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    <button style="text-align: right;" class="btn btn-success">Descargar
+                                                        Excel</button>
+                                                </form>
+
+                                            </div>
+                                            <br><br>
+                                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Número crédito</th>
+                                                            <th>DUI</th>
+                                                            <th>NIT</th>
+                                                            <th>Nombre</th>
+                                                            <th>Fecha nacimiento</th>
+                                                            <th>Edad Otorgamiento</th>
+                                                            <th>Edad Actual</th>
+                                                            <th>Total</th>
+                                                            <th style="text-align: center;">Excluir</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach ($poliza_edad_maxima->where('EdadDesembloso','<',$desempleo->EdadMaxima) as $registro)
+                                                            <tr>
+                                                                <td>{{ $registro->NumeroReferencia }}</td>
+                                                                <td>{{ $registro->Dui }}</td>
+                                                                <td>{{ $registro->Nit }}</td>
+                                                                <td>{{ $registro->PrimerNombre }}
+                                                                    {{ $registro->SegundoNombre }}
+                                                                    {{ $registro->PrimerApellido }}
+                                                                    {{ $registro->SegundoApellido }}
+                                                                    {{ $registro->ApellidoCasada }}
+                                                                </td>
+                                                                <td>{{ $registro->FechaNacimientoDate ? date('d/m/Y', strtotime($registro->FechaNacimientoDate))  : '' }}
                                                                 </td>
                                                                 <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }}
                                                                     Años</td>
@@ -159,7 +238,8 @@
                                         </div>
 
                                         <!-- nuevos registros -->
-                                        <div role="tabpanel" class="tab-pane  " id="tab_nuevos" aria-labelledby="home-tab">
+                                        <div role="tabpanel" class="tab-pane  " id="tab_nuevos"
+                                            aria-labelledby="home-tab">
                                             <div class="col-md-12 col-sm-12" align="right">
                                                 <form method="POST"
                                                     action="{{ url('exportar/nuevos_registros') }}/{{ $desempleo->Id }}">

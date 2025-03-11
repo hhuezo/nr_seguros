@@ -84,15 +84,6 @@
                         </select>
                     </div>
 
-                    <!-- Tipo de Cálculo -->
-                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                        <label class="control-label" align="right">Tipo cálculo</label>
-                        <select name="TipoCalculo" class="form-control" style="width: 100%" required>
-                            <option value="">Seleccione...</option>
-                            <option value="1" {{ old('TipoCalculo') == '1' ? 'selected' : '' }}>Por cabeza</option>
-                            <option value="2" {{ old('TipoCalculo') == '2' ? 'selected' : '' }}>Por crédito</option>
-                        </select>
-                    </div>
 
                     <div class="col-sm-12" style="padding: 0% !important">
 

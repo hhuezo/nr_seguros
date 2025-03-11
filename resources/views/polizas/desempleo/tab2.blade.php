@@ -163,9 +163,9 @@
                         <tr>
                             <th>Tasa Millar</th>
                             <th>Monto Cartera</th>
-                            <th>Prueba Decimales</th>
-                            <th>Prima Calculada</th>
-                            <th>Prima Mensual</th>
+                            {{-- <th>Prueba Decimales</th>
+                            <th>Prima Calculada</th> --}}
+                            <th>Prima por pagar</th>
                             <th>Descuento Rentabilidad
                                 {{ $desempleo->TasaDescuento ? $desempleo->TasaDescuento : '0' }} %</th>
                             <th>Prima Descontada</th>
@@ -224,16 +224,16 @@
                             onblur="actualizarCalculos()">
                             {{ number_format($data['montoCartera'], 2, '.', ',') }}
                         </td>
-                        <td class="numeric editable" contenteditable="false" id="prueba_decimales">
+                        {{-- <td class="numeric editable" contenteditable="false" id="prueba_decimales">
 
                         </td>
                         <td class="numeric editable" contenteditable="true" id="prima_calculada"
-                            onblur="actualizarCalculos()">
+                            onblur="actualizarCalculos()"> --}}
 
                         </td>
                         <td class="numeric editable" contenteditable="true" id="prima_mensual"
                             onblur="actualizarCalculos()">
-
+                            {{ number_format($data['primaPorPagar'], 2, '.', ',') }}
                         </td>
                         <td class="numeric editable" contenteditable="true" id="descuento"
                             onblur="actualizarCalculos()">
@@ -249,8 +249,8 @@
                     <tr>
                         <th>Totales</th>
                         <td class="numeric"><span id="total_monto_otorgado"></span></td>
-                        <td class="numeric"><span id="total_saldo_capital"></span></td>
-                        <td class="numeric"><span id="total_interes"></span></td>
+                        {{-- <td class="numeric"><span id="total_saldo_capital"></span></td>
+                        <td class="numeric"><span id="total_interes"></span></td> --}}
                         <td class="numeric"><span id="total_interes_covid"></span></td>
                         <td class="numeric"><span id="total_suma_asegurada"></span></td>
                     </tr>

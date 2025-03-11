@@ -17,8 +17,8 @@
 
         <ul class="nav nav-tabs bar_tabs" id="myTab" role="tablist">
             <li class="nav-item {{ isset($tab) && $tab == 1 ? 'active in' : '' }}">
-                <a class="nav-link" id="home-tab" data-toggle="tab" href="#home" role="tab"
-                    aria-controls="home" aria-selected="true">Póliza</a>
+                <a class="nav-link" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"
+                    aria-selected="true">Póliza</a>
             </li>
             <li class="nav-item {{ isset($tab) && $tab == 2 ? 'active in' : '' }}">
                 <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
@@ -30,7 +30,8 @@
             </li>
         </ul>
         <div class="tab-content" id="myTabContent">
-            <div class="tab-pane fade {{ isset($tab) && $tab == 1 ? 'active in' : '' }}" id="home" role="tabpanel" aria-labelledby="home-tab">
+            <div class="tab-pane fade {{ isset($tab) && $tab == 1 ? 'active in' : '' }}" id="home" role="tabpanel"
+                aria-labelledby="home-tab">
 
                 <div class="col-md-6">
                     <!-- Número de Póliza -->
@@ -99,7 +100,8 @@
                 </div>
 
             </div>
-            <div class="tab-pane fade {{ isset($tab) && $tab == 2 ? 'active in' : '' }}" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+            <div class="tab-pane fade {{ isset($tab) && $tab == 2 ? 'active in' : '' }}" id="profile" role="tabpanel"
+                aria-labelledby="profile-tab">
 
                 <ul class="nav navbar-right panel_toolbox">
                     <div class="btn btn-info float-right" data-toggle="modal" data-target="#modal_pago">
@@ -141,9 +143,10 @@
                         <div class="form-group row">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Año</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <select name="Axo" class="form-control">
+                                <select name="Axo" id="Axo" class="form-control">
                                     @foreach ($anios as $anio)
-                                        <option value="{{ $anio }}" {{ $anio == $anioSeleccionado ? 'selected' : '' }}>{{ $anio }}
+                                        <option value="{{ $anio }}"
+                                            {{ $anio == $anioSeleccionado ? 'selected' : '' }}>{{ $anio }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -152,7 +155,7 @@
                         <div class="form-group row">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Mes</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <select name="Mes" class="form-control">
+                                <select name="Mes" id="Mes" class="form-control">
                                     @for ($i = 1; $i < 12; $i++)
                                         @if ($mes == $i)
                                             <option value="{{ $i }}" selected>
@@ -173,7 +176,7 @@
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                 <input class="form-control" name="Id" value="{{ $desempleo->Id }}" type="hidden"
                                     required>
-                                <input class="form-control" type="date" name="FechaInicio"
+                                <input class="form-control" type="date" name="FechaInicio" id="FechaInicio"
                                     value="{{ $fechaInicio }}" required>
                             </div>
                         </div>
@@ -181,8 +184,8 @@
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
                                 final</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="FechaFinal" value="{{ $fechaFinal }}"
-                                    type="date" required>
+                                <input class="form-control" name="FechaFinal" id="FechaFinal"
+                                    value="{{ $fechaFinal }}" type="date" required>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -209,4 +212,38 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Obtener referencias a los elementos del formulario
+            const añoSelect = document.getElementById('Axo');
+            const mesSelect = document.getElementById('Mes');
+            const fechaInicioInput = document.getElementById('FechaInicio');
+            const fechaFinalInput = document.getElementById('FechaFinal');
+
+            // Función para actualizar las fechas
+            function actualizarFechas() {
+                // Obtener el año y mes seleccionados
+                const año = añoSelect.value;
+                const mes = mesSelect.value;
+
+                // Validar que ambos campos tengan valores
+                if (año && mes) {
+                    // Formatear el primer día del mes seleccionado
+                    const primerDiaMes = `${año}-${mes.padStart(2, '0')}-01`;
+                    fechaInicioInput.value = primerDiaMes;
+
+                    // Calcular el primer día del mes siguiente
+                    const fecha = new Date(año, mes - 1, 1); // Mes en JavaScript es 0-indexado
+                    fecha.setMonth(fecha.getMonth() + 1); // Sumar un mes
+                    const primerDiaMesSiguiente = fecha.toISOString().split('T')[0];
+                    fechaFinalInput.value = primerDiaMesSiguiente;
+                }
+            }
+
+            // Asignar la función al evento onchange de los selectores
+            añoSelect.addEventListener('change', actualizarFechas);
+            mesSelect.addEventListener('change', actualizarFechas);
+        });
+    </script>
 @endsection

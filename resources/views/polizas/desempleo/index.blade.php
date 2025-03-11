@@ -73,13 +73,13 @@
                             <!-- Opciones -->
                             <td align="center">
 
-                                    <a href="{{ url('polizas/desempleo') }}/{{ $obj->Id }}/edit" class="on-default edit-row">
+                                    {{-- <a href="{{ url('polizas/desempleo') }}/{{ $obj->Id }}/edit" class="on-default edit-row">
                                         <i class="fa fa-pencil fa-lg"></i>
-                                    </a>
+                                    </a> --}}
 
                                 <!-- Configuración -->
                                 <a href="{{ url('polizas/desempleo') }}/{{ $obj->Id }}" class="on-default edit-row">
-                                    <i class="fa fa-cog fa-lg"></i>
+                                    <i class="fa fa-pencil fa-lg"></i>
                                 </a>
 
                                 <!-- Eliminar -->
