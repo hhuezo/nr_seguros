@@ -137,7 +137,6 @@ class DesempleoController extends Controller
             $desempleo->Tasa = $request->Tasa;
             $desempleo->EdadMaximaInscripcion = $request->EdadMaximaInscripcion;
             $desempleo->EdadMaxima = $request->EdadTerminacion;
-            $desempleo->TipoCalculo = $request->TipoCalculo;
             $desempleo->EstadoPoliza = 1;
             $desempleo->Activo = 1;
             $desempleo->Usuario = auth()->id();
