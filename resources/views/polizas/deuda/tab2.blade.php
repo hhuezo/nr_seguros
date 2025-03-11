@@ -208,6 +208,13 @@
                     </thead>
                     <tbody>
                         @foreach ($lineas_credito as $lineas)
+                            @php($total = $lineas->SaldoCapital)
+                            @php($saldo_capital = 0.0)
+                            @php($monto_nominal = 0.0)
+                            @php($intereses = 0.0)
+                            @php($intereses_covid = 0.0)
+                            @php($intereses_moratorios = 0.0)
+                            @php($monto_otorgado = 0)
                             @if ($lineas->Abrev == 'INS1' . $lineas->LineaCredito)
                                 @php($total = $lineas->SaldoCapital)
                                 @php($saldo_capital = $lineas->SaldoCapital)
@@ -260,8 +267,10 @@
                             <tr>
                                 <td>{{ $lineas->tipo }} {{ $lineas->Abrev }}</td>
                                 <td>{{ $lineas->EsTasaDiferenciada == 1 ? $lineas->Tasa : $deuda->Tasa }} %</td>
-                                <td>{{ $lineas->EsTasaDiferenciada == 1 ? $lineas->EdadDesde.' - '.$lineas->EdadHasta.' Años' : '' }}</td>
-                                <td>{{ $lineas->EsTasaDiferenciada == 1 ? $lineas->FechaDesde.' - '.$lineas->FechaHasta : '' }}</td>
+                                <td>{{ $lineas->EsTasaDiferenciada == 1 ? $lineas->EdadDesde . ' - ' . $lineas->EdadHasta . ' Años' : '' }}
+                                </td>
+                                <td>{{ $lineas->EsTasaDiferenciada == 1 ? $lineas->FechaDesde . ' - ' . $lineas->FechaHasta : '' }}
+                                </td>
                                 <td class="numeric editable" contenteditable="true"
                                     id="{{ $lineas->Abreviatura }}_monto_otorgado">
 
@@ -527,7 +536,7 @@
                         <tr>
                             <td>Total a pagar</td>
                             <td class="numeric total" contenteditable="true" id="liquido_pagar" onblur="total()">
-                              </td>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -836,11 +845,11 @@
             }
         });
 
-        function total(){
-                let val = document.getElementById('liquido_pagar').innerText;
-                //alert(val);
-                document.getElementById('APagarDetalle').value = parseFloat(val);
-            }
+        function total() {
+            let val = document.getElementById('liquido_pagar').innerText;
+            //alert(val);
+            document.getElementById('APagarDetalle').value = parseFloat(val);
+        }
     </script>
 
 </div>
