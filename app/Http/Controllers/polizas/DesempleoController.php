@@ -155,7 +155,7 @@ class DesempleoController extends Controller
 
     public function show(Request $request, $id)
     {
-        try {
+       // try {
 
             $tab = $request->tab ?: 1;
 
@@ -207,10 +207,10 @@ class DesempleoController extends Controller
                 'anioSeleccionado',
                 'fechas'
             ));
-        } catch (\Exception $e) {
-            alert()->error('No se pudo encontrar la póliza de desempleo solicitada.');
-            return back();
-        }
+        // } catch (\Exception $e) {
+        //     alert()->error('No se pudo encontrar la póliza de desempleo solicitada.');
+        //     return back();
+        // }
     }
 
 
