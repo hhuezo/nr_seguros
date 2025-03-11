@@ -297,7 +297,7 @@ class DesempleoController extends Controller
                     $errores_array[] = 3; // Agregar error al array
                 }
                 // Validar si la nacionalidad es SAL (El Salvador)
-                else if (strtolower($obj->Nacionalidad) === 'sal') {
+                else if (strtolower(trim($obj->Nacionalidad)) == 'sal') {
                     $validador_dui = $this->validarDocumento($obj->Dui, "dui");
                     if (!$validador_dui) {
                         $obj->TipoError = 4;
@@ -307,6 +307,7 @@ class DesempleoController extends Controller
                 }
                 // Validar si el pasaporte está vacío para nacionalidades no SAL
                 else if (empty($obj->Pasaporte)) {
+                    dd($obj);
                     $validador_dui = false;
                     $obj->TipoError = 5;
                     $obj->update();
