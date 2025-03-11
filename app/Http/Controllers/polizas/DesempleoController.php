@@ -306,7 +306,7 @@ class DesempleoController extends Controller
                     }
                 }
                 // Validar si el pasaporte está vacío para nacionalidades no SAL
-                elseif (empty($obj->Pasaporte)) {
+                elseif (empty($obj->Pasaporte) && strtolower($obj->Nacionalidad) !== 'sal') {
                     $validador_dui = false;
                     $obj->TipoError = 5;
                     $obj->update();
