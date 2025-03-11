@@ -270,7 +270,8 @@
                                 </td>
                                 <td class="numeric editable" contenteditable="true"
                                     id="{{ $lineas->Abreviatura }}_saldo_capital">
-                                    {{ $saldo_capital != 0 ? number_format($saldo_capital, 2, '.', ',') : 0 }}
+                                    {{ isset($saldo_capital) && $saldo_capital != 0 ? number_format($saldo_capital, 2, '.', ',') : 0 }}
+
                                 </td>
                                 <td class="numeric editable" contenteditable="true"
                                     id="{{ $lineas->Abreviatura }}_interes">
