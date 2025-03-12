@@ -1300,6 +1300,7 @@ class DeudaCarteraController extends Controller
 
         // Iterar sobre los resultados y realizar la inserción en la tabla principal
         foreach ($tempData as $tempRecord) {
+
             try {
                 $poliza = new PolizaDeudaCartera();
                 //$poliza->Id = $tempRecord->Id;
@@ -1340,6 +1341,9 @@ class DeudaCarteraController extends Controller
                 $poliza->LineaCredito = $tempRecord->LineaCredito;
                 $poliza->NoValido = $tempRecord->NoValido;
                 $poliza->save();
+                if ($poliza->EdadDesembloso == 0) {
+                    dd($tempRecord);
+                }
             } catch (\Exception $e) {
                 // Captura errores y los guarda en el log
                 Log::error("Error al insertar en poliza_deuda_cartera: " . $e->getMessage(), [
@@ -1387,6 +1391,7 @@ class DeudaCarteraController extends Controller
                 $poliza->TipoError = $tempRecordV->TipoError;
                 $poliza->FechaNacimientoDate = $tempRecordV->FechaNacimientoDate;
                 $poliza->Edad = $tempRecordV->Edad;
+                $poliza->EdadDesembloso = $tempRecordV->EdadDesembloso;
                 $poliza->LineaCredito = $tempRecordV->LineaCredito;
                 $poliza->NoValido = $tempRecordV->NoValido;
                 $poliza->save();
