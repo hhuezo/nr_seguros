@@ -1041,7 +1041,11 @@ class DeudaController extends Controller
             $lineas_credito = collect(); // Inicializa una colección vacía
 
             foreach ($tempTasaDiferenciada as $temp) {
+
+
                 if ($temp->EsTasaDiferenciada == 1) {
+
+
                     // 1- Por fecha
                     if ($temp->TipoCalculo == 1) {
                         $result = DB::table('poliza_deuda_cartera as poliza')
@@ -1052,7 +1056,7 @@ class DeudaController extends Controller
                                 'poliza.LineaCredito',
                                 'saldos.Descripcion',
                                 'saldos.Abreviatura as Abrev',
-                                DB::raw("CONCAT(saldos.Abreviatura, poliza.LineaCredito," . $temp . ") as Abreviatura"),
+                                DB::raw("CONCAT(saldos.Abreviatura, poliza.LineaCredito) as Abreviatura"),
                                 'tipo.Nombre as tipo',
                                 DB::raw("IFNULL(sum(poliza.MontoOtorgado), '0.00') as MontoOtorgado"),
                                 DB::raw("IFNULL(sum(poliza.SaldoCapital), '0.00') as SaldoCapital"),
@@ -1070,6 +1074,8 @@ class DeudaController extends Controller
                             ->where('poliza.LineaCredito', $temp->PolizaDuedaCredito)
                             ->whereBetween('poliza.FechaOtorgamiento', [$temp->FechaDesde, $temp->FechaHasta])
                             ->get();
+
+
 
                         // Agregar Tasa a cada elemento del resultado
                         if ($result->first()->LineaCredito != null) {
