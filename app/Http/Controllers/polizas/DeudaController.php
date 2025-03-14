@@ -3050,7 +3050,7 @@ class DeudaController extends Controller
 
             foreach ($poliza_cumulos as $cumulo) {
                 if ($cumulo->EdadDesembloso < $edades->EdadInicial || $cumulo->EdadDesembloso > $edades->EdadFinal) {
-                    $cumulo->Motivo = 'La persona excede el limite de edad de otorgamiento';
+                    $cumulo->Motivo = 'Revisar edad ya que no se encuentra dentro de los rangos de asegurabilidad';
                 } else if ($cumulo->saldo_total > $edades->MontoFinal) {
                     $cumulo->Motivo = 'La persona excede el límite de suma del rango de asegurabilidad';
                 } else {
