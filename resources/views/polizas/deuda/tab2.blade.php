@@ -266,7 +266,8 @@
                             @endif
                             <tr>
                                 <td>{{ $lineas->tipo }} {{ $lineas->Abrev }}</td>
-                                <td>{{ $lineas->EsTasaDiferenciada == 1 ? $lineas->Tasa : $deuda->Tasa }} %</td>
+                                <td id="{{ $lineas->Abreviatura }}_tasa">
+                                    {{ $lineas->EsTasaDiferenciada == 1 ? $lineas->Tasa : $deuda->Tasa }} %</td>
                                 <td>{{ $lineas->EsTasaDiferenciada == 1 ? $lineas->EdadDesde . ' - ' . $lineas->EdadHasta . ' Años' : '' }}
                                 </td>
                                 <td>{{ $lineas->EsTasaDiferenciada == 1 ? $lineas->FechaDesde . ' - ' . $lineas->FechaHasta : '' }}
@@ -670,9 +671,12 @@
                 let total_interes_moratorio = 0;
                 let total_suma_asegurada = 0;
 
+                let sub_total = 0;
+
 
                 for (let i = 0; i < lineas.length; i++) {
                     let linea = lineas[i];
+                    //console.log(linea);
                     let elemento = document.getElementById(linea + "_saldo_capital");
 
                     let saldo_capital = elemento.innerText || elemento.textContent;
@@ -711,6 +715,16 @@
                     // Asigna la suma formateada al elemento
                     elemento.textContent = suma_asegurada_formateada;
 
+                    elemento = document.getElementById(linea + "_tasa");
+
+                    // Obtener el texto de la celda de interes
+                    let texto = elemento.textContent;
+
+                    // Eliminar el símbolo "%" y convertir a número
+                    let tasa_linea = parseFloat(texto.replace('%', ''));
+
+
+
 
                     total_saldo_capital += convertirANumero(saldo_capital);
                     total_monto_nominal += convertirANumero(monto_nominal);
@@ -719,6 +733,8 @@
                     total_interes_covid += convertirANumero(interes_covid);
                     total_interes_moratorio += convertirANumero(interes_moratorio);
                     total_suma_asegurada += suma_asegurada;
+
+                    sub_total += tasa_linea * suma_asegurada;
                 }
 
 
@@ -743,7 +759,7 @@
                 let total_suma_asegurada_formateada = formatearCantidad(total_suma_asegurada);
                 document.getElementById("total_suma_asegurada").textContent = total_suma_asegurada_formateada;
 
-
+                console.log("total_suma_asegurada: ", total_suma_asegurada);
                 let tasa = document.getElementById('Tasa').value;
                 let comision_iva = document.getElementById('ComisionIva').value;
                 let tasa_comision = document.getElementById('TasaComisionDetalle').value;
@@ -758,7 +774,7 @@
                     total_suma_asegurada) * parseFloat(tasa);
 
 
-                let sub_total = total_suma_asegurada * tasa;
+                //let sub_total = total_suma_asegurada * tasa;
 
                 document.getElementById("sub_total").textContent = formatearCantidad(sub_total);
                 document.getElementById('SubTotalDetalle').value = sub_total;
