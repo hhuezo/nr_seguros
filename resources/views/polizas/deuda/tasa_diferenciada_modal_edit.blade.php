@@ -67,7 +67,7 @@
 
                                 <div class="form-group row" id="divTasa{{$registro->Id}}" style="display: none">
                                     <label class="control-label">Tasa</label>
-                                    <input type="number" name="Tasa" value="{{$registro->Tasa}}" class="form-control"
+                                    <input type="number" name="Tasa" step="any" value="{{$registro->Tasa}}" class="form-control"
                                         value="">
                                 </div>
 
