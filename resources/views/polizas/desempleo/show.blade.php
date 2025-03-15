@@ -46,6 +46,12 @@
                         <input type="text" class="form-control" value="{{ $desempleo->cliente->Nombre }}" readonly>
                     </div>
 
+                    <!-- Nit -->
+                    <div class="form-group">
+                        <label>Nit</label>
+                        <input type="text" class="form-control" value="{{ $desempleo->cliente->Nit }}" readonly>
+                    </div>
+
                     <!-- Vigencia Desde -->
                     <div class="form-group">
                         <label>Vigencia Desde</label>
@@ -78,6 +84,14 @@
                         <label>Ejecutivo</label>
                         <input type="text" class="form-control" value="{{ $desempleo->ejecutivo->Nombre }}" readonly>
                     </div>
+
+
+                    <!-- Saldos y montos -->
+                    <div class="form-group">
+                        <label>Saldos y Montos</label>
+                        <input type="text" class="form-control" value="{{ $desempleo->saldos->Abreviatura }} - {{ $desempleo->saldos->Descripcion }}" readonly>
+                    </div>
+
 
                     <!-- Vigencia Hasta -->
                     <div class="form-group">

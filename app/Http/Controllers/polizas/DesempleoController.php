@@ -11,6 +11,7 @@ use App\Models\catalogo\EstadoPoliza;
 use App\Models\catalogo\Plan;
 use App\Models\catalogo\Producto;
 use App\Models\catalogo\Ruta;
+use App\Models\catalogo\SaldoMontos;
 use App\Models\catalogo\TipoCartera;
 use App\Models\catalogo\TipoCobro;
 use App\Models\catalogo\TipoContribuyente;
@@ -62,6 +63,7 @@ class DesempleoController extends Controller
         $estadoPoliza = EstadoPoliza::where('Activo', 1)->get();
         $tipoCobro = TipoCobro::where('Activo', 1)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
+        $saldos = SaldoMontos::where('Activo', 1)->get();
         return view('polizas.desempleo.create', compact(
             'aseguradora',
             'cliente',
@@ -73,7 +75,8 @@ class DesempleoController extends Controller
             'ejecutivo',
             'tipos_contribuyente',
             'rutas',
-            'ubicaciones_cobro'
+            'ubicaciones_cobro',
+            'saldos'
         ));
     }
 
@@ -86,6 +89,7 @@ class DesempleoController extends Controller
             'Asegurado' => 'required|exists:cliente,Id',
             'Nit' => 'required|string|max:255',
             'Ejecutivo' => 'required|exists:ejecutivo,Id',
+            'Saldos' => 'required',
             'VigenciaDesde' => 'required|date',
             'VigenciaHasta' => 'required|date|after_or_equal:VigenciaDesde',
             'EdadTerminacion' => 'required|numeric|min:18',
@@ -104,6 +108,7 @@ class DesempleoController extends Controller
             'Nit.string' => 'El campo Nit debe ser una cadena de texto.',
             'Nit.max' => 'El campo Nit no debe exceder los 255 caracteres.',
             'Ejecutivo.required' => 'Debes seleccionar un Ejecutivo.',
+            'Saldos.required' => 'Debes seleccionar una opcion de saldo y montos.',
             'Ejecutivo.exists' => 'El Ejecutivo seleccionado no es válido.',
             'VigenciaDesde.required' => 'El campo Vigencia inicial es obligatorio.',
             'VigenciaDesde.date' => 'El campo Vigencia inicial debe ser una fecha válida.',
@@ -132,12 +137,14 @@ class DesempleoController extends Controller
             $desempleo->Asegurado = $request->Asegurado;
             $desempleo->Aseguradora = $request->Aseguradora;
             $desempleo->Ejecutivo = $request->Ejecutivo;
+            $desempleo->Saldos = $request->Saldos;
             $desempleo->VigenciaDesde = $request->VigenciaDesde;
             $desempleo->VigenciaHasta = $request->VigenciaHasta;
             $desempleo->Tasa = $request->Tasa;
             $desempleo->EdadMaximaInscripcion = $request->EdadMaximaInscripcion;
             $desempleo->EdadMaxima = $request->EdadTerminacion;
             $desempleo->EstadoPoliza = 1;
+            $desempleo->Descuento = $request->Descuento;
             $desempleo->Activo = 1;
             $desempleo->Usuario = auth()->id();
             $desempleo->save();
@@ -154,58 +161,141 @@ class DesempleoController extends Controller
 
     public function show(Request $request, $id)
     {
-       // try {
+        // try {
 
-            $tab = $request->tab ?: 1;
+        $tab = $request->tab ?: 1;
 
-            // Buscar la póliza de desempleo por su ID
-            $desempleo = Desempleo::findOrFail($id);
-            $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        // Buscar la póliza de desempleo por su ID
+        $desempleo = Desempleo::findOrFail($id);
+        $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
-            $fechaInicio = Carbon::now()->subMonth()->startOfMonth()->toDateString();
-            $fechaFinal = Carbon::now()->startOfMonth()->toDateString();
+        $fechaInicio = Carbon::now()->subMonth()->startOfMonth()->toDateString();
+        $fechaFinal = Carbon::now()->startOfMonth()->toDateString();
 
-            // Extraer el mes y el año de $fechaFinal
-            $mes = Carbon::parse($fechaFinal)->month;
-            $anioSeleccionado = Carbon::parse($fechaFinal)->year;
+        // Extraer el mes y el año de $fechaFinal
+        $mes = Carbon::parse($fechaFinal)->month;
+        $anioSeleccionado = Carbon::parse($fechaFinal)->year;
 
-            // Fechas de ejemplo
-            $vigenciaDesde = Carbon::parse($desempleo->VigenciaDesde);
-            $vigenciaHasta = Carbon::parse($desempleo->VigenciaHasta);
+        // Fechas de ejemplo
+        $vigenciaDesde = Carbon::parse($desempleo->VigenciaDesde);
+        $vigenciaHasta = Carbon::parse($desempleo->VigenciaHasta);
 
-            $anios = [];
+        $anios = [];
 
-            for ($anio = $vigenciaDesde->year; $anio <= $vigenciaHasta->year; $anio++) {
-                $anios[] = $anio;
-            }
-
-
-            //seccion para guardar pago
-            $fechas = DesempleoCartera::select('Mes', 'Axo', 'FechaInicio', 'FechaFinal')
-                ->where('PolizaDesempleo', '=', $id)
-                ->orderByDesc('Id')->first();
-
-            $cartera = DesempleoCartera::where('PolizaDesempleo', '=', $id)->where('PolizaDesempleoDetalle', null)->get();
-
-            $montoCartera = $cartera->sum('MontoOtorgado');
-            $primaPorPagar = $montoCartera * $desempleo->Tasa;
-
-            $data = ["montoCartera" => $montoCartera,"primaPorPagar" => $primaPorPagar];
+        for ($anio = $vigenciaDesde->year; $anio <= $vigenciaHasta->year; $anio++) {
+            $anios[] = $anio;
+        }
 
 
-            // Retornar la vista con los datos de la póliza
-            return view('polizas.desempleo.show', compact(
-                'desempleo',
-                'data',
-                'tab',
-                'meses',
-                'fechaInicio',
-                'fechaFinal',
-                'mes',
-                'anios',
-                'anioSeleccionado',
-                'fechas'
-            ));
+        //seccion para guardar pago
+        $fechas = DesempleoCartera::select('Mes', 'Axo', 'FechaInicio', 'FechaFinal')
+            ->where('PolizaDesempleo', '=', $id)
+            ->orderByDesc('Id')->first();
+
+        $cartera = DesempleoCartera::where('PolizaDesempleo', '=', $id)
+            ->where('PolizaDesempleoDetalle', null)
+            ->select(
+                DB::raw("IFNULL(sum(MontoOtorgado), '0.00') as MontoOtorgado"),
+                DB::raw("IFNULL(sum(SaldoCapital), '0.00') as SaldoCapital"),
+                DB::raw("IFNULL(sum(Intereses), '0.00') as Intereses"),
+                DB::raw("IFNULL(sum(MontoNominal), '0.00') as MontoNominal"),
+                DB::raw("IFNULL(sum(InteresesCovid), '0.00') as InteresesCovid"),
+                DB::raw("IFNULL(sum(InteresesMoratorios), '0.00') as InteresesMoratorios")
+            )->first();
+
+        $saldoCapital = 0.00;
+        $intereses = 0.00;
+        $montoNominal = 0.00;
+        $interesesCovid = 0.00;
+        $interesesMoratorios = 0.00;
+        $total = 0;
+
+        if ($desempleo->Saldos == 1) {
+            $total = $cartera->SaldoCapital;
+            $saldoCapital = $cartera->SaldoCapital;
+        } else if ($desempleo->Saldos == 2) {
+            $total = $cartera->SaldoCapital + $cartera->Intereses;
+            $saldoCapital = $cartera->SaldoCapital;
+            $intereses = $cartera->Intereses;
+        } else if ($desempleo->Saldos == 3) {
+            $total = $cartera->SaldoCapital + $cartera->Intereses + $cartera->InteresesCovid;
+            $saldoCapital = $cartera->SaldoCapital;
+            $intereses = $cartera->Intereses;
+            $interesesCovid = $cartera->InteresesCovid;
+        } else if ($desempleo->Saldos == 4) {
+            $total = $cartera->SaldoCapital + $cartera->Intereses + $cartera->InteresesCovid + $cartera->InteresesMoratorios;
+            $saldoCapital = $cartera->SaldoCapital;
+            $intereses = $cartera->Intereses;
+            $interesesCovid = $cartera->InteresesCovid;
+            $interesesMoratorios = $cartera->interesesMoratorios;
+        } else if ($desempleo->Saldos == 5) {
+            $total = $cartera->MontoNominal;
+            $MontoNominal = $cartera->MontoNominal;
+        } else if ($desempleo->Saldos == 6) {
+            $total = $cartera->MontoOtorgado;
+            $MontoOtorgado = $cartera->MontoOtorgado;
+        }
+
+
+        $total = $total ?? 0;
+
+        // Calcular el subtotal
+        $subtotal = $total * ($desempleo->Tasa ?? 0);
+
+        // Asegurar que $extra_prima tenga un valor predeterminado de 0 si es null
+        $extraPrima =  0;
+
+        // Calcular el descuento
+        $descuento = ($subtotal + $extraPrima) * (($desempleo->Descuento ?? 0) / 100);
+
+        // Calcular la prima a cobrar
+        $primaCobrar = ($subtotal + $extraPrima - $descuento) ?? 0;
+
+        $comisionIva = ($desempleo->ComisionIva == 1)  ? round(($desempleo->TasaComision ?? 0) / 1.13, 2)  : ($desempleo->TasaComision ?? 0);
+
+
+        //({{ $deuda->ComisionIva == 1 ? number_format($deuda->TasaComision / 1.13, 2, '.', ',') : $deuda->TasaComision }}%)
+
+
+        // $tipo_contribuyente = $desempleo->cliente->TipoContribuyente ?? 0;
+
+        // if ($tipo_contribuyente != 4) {
+        //     $iva = 0;
+        // } else {
+        //     iva = 0;
+        // }
+
+
+
+
+
+        $data = [
+            "saldoCapital" => $saldoCapital,
+            "intereses" => $intereses,
+            "montoNominal" => $montoNominal,
+            "interesesCovid" => $interesesCovid,
+            "interesesMoratorios" => $interesesMoratorios,
+            "total" => $total,
+            "primaPorPagar" => $subtotal,
+            "descuento" => $descuento,
+            "extra_prima" => $extraPrima,
+            "primaCobrar" => $primaCobrar
+        ];
+
+
+        // Retornar la vista con los datos de la póliza
+        return view('polizas.desempleo.show', compact(
+            'desempleo',
+            'data',
+            'tab',
+            'meses',
+            'fechaInicio',
+            'fechaFinal',
+            'mes',
+            'anios',
+            'anioSeleccionado',
+            'fechas'
+        ));
         // } catch (\Exception $e) {
         //     alert()->error('No se pudo encontrar la póliza de desempleo solicitada.');
         //     return back();

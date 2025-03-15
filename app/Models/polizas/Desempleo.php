@@ -6,6 +6,7 @@ use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\Cliente;
 use App\Models\catalogo\Ejecutivo;
 use App\Models\catalogo\EstadoPoliza;
+use App\Models\catalogo\SaldoMontos;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -53,5 +54,9 @@ class Desempleo extends Model
     public function estadoPoliza()
     {
         return $this->belongsTo(EstadoPoliza::class, 'EstadoPoliza', 'Id');
+    }
+
+    public function saldos(){
+        return $this->belongsTo(SaldoMontos::class, 'Saldos', 'Id');
     }
 }

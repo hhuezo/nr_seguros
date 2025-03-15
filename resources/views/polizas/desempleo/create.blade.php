@@ -84,6 +84,19 @@
                         </select>
                     </div>
 
+                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                        <label class="control-label">Saldos y Montos</label>
+                        <select name="Saldos" class="form-control" required>
+                            <option value="">Seleccione...</option>
+                            @foreach ($saldos as $obj)
+                                <option value="{{ $obj->Id }}">
+                                    {{ $obj->Abreviatura }} -
+                                    {{ $obj->Descripcion }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
 
                     <div class="col-sm-12" style="padding: 0% !important">
 
@@ -119,6 +132,13 @@
                         <label class="control-label" align="right">Tasa Millar Mensual</label>
                         <input class="form-control" name="Tasa" type="number" step="any"
                             value="{{ old('Tasa') }}" required>
+                    </div>
+
+                     <!-- Tasa Millar Mensual -->
+                     <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                        <label class="control-label" align="right">Comisión</label>
+                        <input class="form-control" name="Descuento" type="number" step="any"
+                            value="{{ old('Descuento') }}">
                     </div>
 
                     <!-- Concepto -->
