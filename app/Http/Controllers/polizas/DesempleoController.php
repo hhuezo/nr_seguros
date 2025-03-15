@@ -612,7 +612,53 @@ class DesempleoController extends Controller
         return redirect('polizas/desempleo/' . $id . '?tab=2');
     }
 
+    public function get_no_valido($id)
+    {
+        try {
+            $desempleo = Desempleo::findOrFail($id);
 
+            $count = DesempleoCarteraTemp::where('User', auth()->user()->id)
+                ->where('PolizaDesempleo', $id)
+                ->where('EdadDesembloso', '>', $desempleo->EdadMaximaInscripcion)
+                ->where('NoValido', 0)
+                ->count();
+
+            return response()->json([
+                'success' => true,
+                'count' => $count,
+            ]);
+        } catch (\Exception $e) {
+            // Retornar error en caso de excepción
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage(),
+            ], 500); // Código de estado HTTP 500 para errores del servidor
+        }
+    }
+
+    public function agregar_no_valido($id)
+    {
+        try {
+
+            $temp = DesempleoCarteraTemp::findOrFail($id);
+
+            // Alternar el valor de NoValido entre 0 y 1
+            $temp->NoValido = $temp->NoValido == 0 ? 1 : 0;
+            $temp->save();
+
+            // Retornar éxito
+            return response()->json([
+                'success' => true,
+                'message' => 'Estado de NoValido actualizado correctamente.',
+            ]);
+        } catch (\Exception $e) {
+            // Retornar error en caso de excepción
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
 
 
     public function validarFormatoFecha($data)

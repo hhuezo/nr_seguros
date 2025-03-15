@@ -16,10 +16,6 @@
                                 <table>
                                     <tr>
                                         <td style="vertical-align: top;">
-                                            <a href="{{ url('polizas/desempleo') }}/{{ $desempleo->Id }}"
-                                                class="btn btn-info">Pausar Validación</a>
-                                        </td>
-                                        <td style="vertical-align: top;">
                                             <form method="post"
                                                 action="{{ url('polizas/desempleo/borrar_proceso_actual') }}/{{ $desempleo->Id }}">
                                                 @csrf
@@ -42,7 +38,8 @@
                                                 <input type="hidden" name="AxoAnterior" value="{{ $axoAnterior }}"> --}}
 
 
-                                                <button id="btnGuardarCartera" type="submit" class="btn btn-primary">
+                                                <button id="btnGuardarCartera" type="submit" class="btn btn-primary"
+                                                    disabled>
                                                     Guardar en cartera
                                                 </button>
 
@@ -124,7 +121,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @foreach ($poliza_edad_maxima->where('EdadDesembloso','>',$desempleo->EdadMaxima) as $registro)
+                                                        @foreach ($poliza_edad_maxima->where('EdadDesembloso', '>', $desempleo->EdadMaxima) as $registro)
                                                             <tr>
                                                                 <td>{{ $registro->NumeroReferencia }}</td>
                                                                 <td>{{ $registro->Dui }}</td>
@@ -135,20 +132,17 @@
                                                                     {{ $registro->SegundoApellido }}
                                                                     {{ $registro->ApellidoCasada }}
                                                                 </td>
-                                                                <td>{{ $registro->FechaNacimientoDate ? date('d/m/Y', strtotime($registro->FechaNacimientoDate))  : '' }}
+                                                                <td>{{ $registro->FechaNacimientoDate ? date('d/m/Y', strtotime($registro->FechaNacimientoDate)) : '' }}
                                                                 </td>
                                                                 <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }}
                                                                     Años</td>
                                                                 <td>{{ $registro->EdadDesembloso ? $registro->Edad : '' }}
                                                                     Años</td>
                                                                 <td>${{ number_format($registro->MontoOtorgado, 2) }}</td>
-                                                                <td>
+                                                                <td> {{$registro->NoValido}}
                                                                     <input type="checkbox"
-                                                                        onchange="excluir({{ $registro->Id }},0,1)"
+                                                                        onchange="agregarNoValido({{ $registro->Id }})"
                                                                         class="js-switch">
-                                                                    <input type="hidden"
-                                                                        id="id_excluido-{{ $registro->Id }}"
-                                                                        value="{{ $registro->Excluido }}">
                                                                 </td>
                                                             </tr>
                                                         @endforeach
@@ -199,7 +193,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @foreach ($poliza_edad_maxima->where('EdadDesembloso','<',$desempleo->EdadMaxima) as $registro)
+                                                        @foreach ($poliza_edad_maxima->where('EdadDesembloso', '<=', $desempleo->EdadMaxima) as $registro)
                                                             <tr>
                                                                 <td>{{ $registro->NumeroReferencia }}</td>
                                                                 <td>{{ $registro->Dui }}</td>
@@ -210,7 +204,7 @@
                                                                     {{ $registro->SegundoApellido }}
                                                                     {{ $registro->ApellidoCasada }}
                                                                 </td>
-                                                                <td>{{ $registro->FechaNacimientoDate ? date('d/m/Y', strtotime($registro->FechaNacimientoDate))  : '' }}
+                                                                <td>{{ $registro->FechaNacimientoDate ? date('d/m/Y', strtotime($registro->FechaNacimientoDate)) : '' }}
                                                                 </td>
                                                                 <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }}
                                                                     Años</td>
@@ -218,12 +212,10 @@
                                                                     Años</td>
                                                                 <td>${{ number_format($registro->MontoOtorgado, 2) }}</td>
                                                                 <td>
-                                                                    <input type="checkbox"
-                                                                        onchange="excluir({{ $registro->Id }},0,1)"
+                                                                    <input type="checkbox" {{$registro->NoValido == 1 ? 'checked':''}}
+                                                                        onchange="agregarNoValido({{ $registro->Id }})"
                                                                         class="js-switch">
-                                                                    <input type="hidden"
-                                                                        id="id_excluido-{{ $registro->Id }}"
-                                                                        value="{{ $registro->Excluido }}">
+
                                                                 </td>
                                                             </tr>
                                                         @endforeach
@@ -265,182 +257,168 @@
                                                 </thead>
                                                 <tbody>
                                                     @foreach ($nuevos_registros->where('Edad', '<=', $desempleo->EdadMaximaInscripcion) as $registro)
-                                                        <tr>
-                                                            <td>{{ $registro->NumeroReferencia }}</td>
-                                                            <td>{{ $registro->Dui }}</td>
-                                                            <td>{{ $registro->Nit }}</td>
-                                                            <td>{{ $registro->PrimerNombre }}
-                                                                {{ $registro->SegundoNombre }}
-                                                                {{ $registro->PrimerApellido }}
-                                                                {{ $registro->SegundoApellido }}
-                                                                {{ $registro->ApellidoCasada }}
-                                                            </td>
-                                                            <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
-                                                            </td>
-                                                            <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
-                                                            <td>${{ number_format($registro->MontoOtorgado, 2) }}</td>
-                                                        </tr>
-                                                    @endforeach
+                                                            <tr>
+                                                                <td>{{ $registro->NumeroReferencia }}</td>
+                                                                <td>{{ $registro->Dui }}</td>
+                                                                <td>{{ $registro->Nit }}</td>
+                                                                <td>{{ $registro->PrimerNombre }}
+                                                                    {{ $registro->SegundoNombre }}
+                                                                    {{ $registro->PrimerApellido }}
+                                                                    {{ $registro->SegundoApellido }}
+                                                                    {{ $registro->ApellidoCasada }}
+                                                                </td>
+                                                                <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
+                                                                </td>
+                                                                <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
+                                                                <td>${{ number_format($registro->MontoOtorgado, 2) }}</td>
+                                                            </tr>
+                                                        @endforeach
 
 
-                                                </tbody>
-                                            </table>
+                                                    </tbody>
+                                                </table>
 
-                                        </div>
-
-
-                                        <!-- registros eliminados -->
-                                        <div role="tabpanel5" class="tab-pane" id="tab_eliminados"
-                                            aria-labelledby="tab">
-
-
-                                            <div class="col-md-12 col-sm-12" align="right">
-                                                <form method="POST"
-                                                    action="{{ url('exportar/registros_eliminados') }}/{{ $desempleo->Id }}">
-                                                    @csrf
-                                                    <button class="btn btn-success"
-                                                        {{ $registros_eliminados->count() > 0 ? '' : 'disabled' }}>Descargar
-                                                        Excel</button>
-                                                </form>
                                             </div>
-                                            <br>
-                                            <table class="table table-striped" id="MyTable2">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Número crédito</th>
-                                                        <th>DUI</th>
-                                                        <th>NIT</th>
-                                                        <th>Nombre</th>
-                                                        <th>Fecha Nacimiento</th>
-                                                        <th>Fecha Otorgamiento</th>
-                                                        <th>Edad Actual</th>
-                                                        <th>Edad Desembolso</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach ($registros_eliminados as $registro)
+
+
+                                            <!-- registros eliminados -->
+                                            <div role="tabpanel5" class="tab-pane" id="tab_eliminados"
+                                                aria-labelledby="tab">
+
+
+                                                <div class="col-md-12 col-sm-12" align="right">
+                                                    <form method="POST"
+                                                        action="{{ url('exportar/registros_eliminados') }}/{{ $desempleo->Id }}">
+                                                        @csrf
+                                                        <button class="btn btn-success"
+                                                            {{ $registros_eliminados->count() > 0 ? '' : 'disabled' }}>Descargar
+                                                            Excel</button>
+                                                    </form>
+                                                </div>
+                                                <br>
+                                                <table class="table table-striped" id="MyTable2">
+                                                    <thead>
                                                         <tr>
-                                                            <td>{{ $registro->NumeroReferencia }}</td>
-                                                            <td>{{ $registro->Dui }}</td>
-                                                            <td>{{ $registro->Nit }}</td>
-                                                            <td>{{ $registro->PrimerNombre }}
-                                                                {{ $registro->SegundoNombre }}
-                                                                {{ $registro->PrimerApellido }}
-                                                                {{ $registro->SegundoApellido }}
-                                                                {{ $registro->ApellidoCasada }}
-                                                            </td>
-                                                            <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
-                                                            </td>
-                                                            <td>{{ $registro->FechaOtorgamiento ? $registro->FechaOtorgamiento : '' }}
-                                                            </td>
-                                                            <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
-                                                            <td>{{ $registro->Edad ? $registro->Edad : '' }}
-                                                                Años</td>
+                                                            <th>Número crédito</th>
+                                                            <th>DUI</th>
+                                                            <th>NIT</th>
+                                                            <th>Nombre</th>
+                                                            <th>Fecha Nacimiento</th>
+                                                            <th>Fecha Otorgamiento</th>
+                                                            <th>Edad Actual</th>
+                                                            <th>Edad Desembolso</th>
                                                         </tr>
-                                                    @endforeach
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach ($registros_eliminados as $registro)
+                                                            <tr>
+                                                                <td>{{ $registro->NumeroReferencia }}</td>
+                                                                <td>{{ $registro->Dui }}</td>
+                                                                <td>{{ $registro->Nit }}</td>
+                                                                <td>{{ $registro->PrimerNombre }}
+                                                                    {{ $registro->SegundoNombre }}
+                                                                    {{ $registro->PrimerApellido }}
+                                                                    {{ $registro->SegundoApellido }}
+                                                                    {{ $registro->ApellidoCasada }}
+                                                                </td>
+                                                                <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
+                                                                </td>
+                                                                <td>{{ $registro->FechaOtorgamiento ? $registro->FechaOtorgamiento : '' }}
+                                                                </td>
+                                                                <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
+                                                                <td>{{ $registro->Edad ? $registro->Edad : '' }}
+                                                                    Años</td>
+                                                            </tr>
+                                                        @endforeach
 
 
-                                                </tbody>
-                                            </table>
+                                                    </tbody>
+                                                </table>
 
+
+
+                                            </div>
 
 
                                         </div>
 
 
-                                    </div>
 
 
 
 
-
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-
-
-            {{-- <div class="modal fade" id="modal_cambio_credito_valido" tabindex="-1" role="dialog"
-                aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
-                <div class="modal-dialog modal-md" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
-                                <h5 class="modal-title" id="exampleModalLabel">Excluir crédito no válido</h5>
-                            </div>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="box-body">
-                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12"
-                                            align="right">Seleccione credito</label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            <select id="creditos" class="form-control">
-
-                                            </select>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="clearfix"></div>
-                        <div class="modal-footer" align="center">
-                            <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
-                            <button type="button" onclick="agregarValidos()" class="btn btn-primary">Aceptar</button>
-                        </div>
                     </div>
                 </div>
+
+
+
             </div>
-
-
-
-            <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-
-                        <div class="modal-header">
-                            <div class="col-md-6">
-                                <h4 class="modal-title" id="myModalLabel">Detalle créditos</h4>
-                            </div>
-                            <div class="col-md-6">
-                                <button type="button" class="close" data-dismiss="modal"><span
-                                        aria-hidden="true">×</span>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="modal-body" id="modal-creditos">
-
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-warning" data-dismiss="modal">Cerrar</button>
-                        </div>
-
-                    </div>
-                </div>
-            </div> --}}
-
-
-
-
-
-
-
-
         </div>
-    </div>
 
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $('#MyTable').DataTable();
-        });
-    </script>
-@endsection
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('#MyTable').DataTable();
+
+                getNoValido({{ $desempleo->Id }});
+            });
+
+            function getNoValido(id) {
+                const url = `{{ url('polizas/desempleo/get_no_valido') }}/${id}`;
+
+                // Hacer la solicitud GET con jQuery
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    success: function(response) {
+                        // Manejar la respuesta exitosa
+                        if (response.success) {
+                            console.log('Conteo de no válidos:', response.count);
+
+                            // Habilitar o deshabilitar el botón según el conteo
+                            if (response.count === 0) {
+                                $('#btnGuardarCartera').prop('disabled', false);
+                            } else {
+                                $('#btnGuardarCartera').prop('disabled', true);
+                            }
+                        } else {
+                            console.error('Error:', response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error en la solicitud:', error);
+                    }
+                });
+            }
+
+            function agregarNoValido(id) {
+                const url = `{{ url('polizas/desempleo/agregar_no_valido') }}/${id}`;
+
+                // Hacer la solicitud POST con jQuery
+                $.ajax({
+                    url: url,
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                    },
+                    success: function(response) {
+                        // Manejar la respuesta exitosa
+                        if (response.success) {
+                            console.log('Registro agregado correctamente:', response.message);
+                        } else {
+                            console.error('Error:', response.message);
+                        }
+
+                        getNoValido({{ $desempleo->Id }});
+                    },
+                    error: function(xhr, status, error) {
+                        // Manejar errores de la solicitud
+                        console.error('Error en la solicitud:', error);
+                    }
+                });
+            }
+        </script>
+    @endsection

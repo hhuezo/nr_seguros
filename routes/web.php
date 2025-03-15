@@ -301,6 +301,8 @@ Route::resource('polizas/validacion_cartera', ValidacionCarteraController::class
 
 //desempleo store_poliza
 
+Route::post('polizas/desempleo/agregar_no_valido/{id}', [DesempleoController::class,'agregar_no_valido']);
+Route::get('polizas/desempleo/get_no_valido/{id}', [DesempleoController::class,'get_no_valido']);
 Route::post('polizas/desempleo/store_poliza/{id}', [DesempleoController::class,'store_poliza']);
 Route::post('polizas/desempleo/create_pago/{id}', [DesempleoController::class,'create_pago']);
 Route::post('polizas/desempleo/borrar_proceso_actual/{id}', [DesempleoController::class,'borrar_proceso_actual']);
