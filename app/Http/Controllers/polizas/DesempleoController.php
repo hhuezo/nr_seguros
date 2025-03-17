@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Imports\DesempleoCarteraTempImport;
 use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\Cliente;
+use App\Models\catalogo\DatosGenerales;
 use App\Models\catalogo\Ejecutivo;
 use App\Models\catalogo\EstadoPoliza;
 use App\Models\catalogo\Plan;
@@ -16,9 +17,12 @@ use App\Models\catalogo\TipoCartera;
 use App\Models\catalogo\TipoCobro;
 use App\Models\catalogo\TipoContribuyente;
 use App\Models\catalogo\UbicacionCobro;
+use App\Models\polizas\Comentario;
 use App\Models\polizas\Desempleo;
 use App\Models\polizas\DesempleoCartera;
 use App\Models\polizas\DesempleoCarteraTemp;
+use App\Models\polizas\DesempleoDetalle;
+use App\Models\polizas\DesempleoHistorialRecibo;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -59,7 +63,7 @@ class DesempleoController extends Controller
         $planes = Plan::where('Activo', 1)->get();
         $aseguradora = Aseguradora::where('Activo', 1)->get();
         $cliente = Cliente::where('Activo', 1)->get();
-        $tipoCartera = TipoCartera::where('Activo', 1)->where('Poliza', 2)->get(); //deuda
+        $tipoCartera = TipoCartera::where('Activo', 1)->where('Poliza', 2)->get(); //desempleo
         $estadoPoliza = EstadoPoliza::where('Activo', 1)->get();
         $tipoCobro = TipoCobro::where('Activo', 1)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
@@ -253,21 +257,22 @@ class DesempleoController extends Controller
 
         $comisionIva = ($desempleo->ComisionIva == 1)  ? round(($desempleo->TasaComision ?? 0) / 1.13, 2)  : ($desempleo->TasaComision ?? 0);
 
+        $detalle = DesempleoDetalle::where('Desempleo', $desempleo->Id)->orderBy('Id', 'desc')->get();
 
-        //({{ $deuda->ComisionIva == 1 ? number_format($deuda->TasaComision / 1.13, 2, '.', ',') : $deuda->TasaComision }}%)
-
-
-        // $tipo_contribuyente = $desempleo->cliente->TipoContribuyente ?? 0;
-
-        // if ($tipo_contribuyente != 4) {
-        //     $iva = 0;
-        // } else {
-        //     iva = 0;
-        // }
-
-
-
-
+        $tipo_contribuyente = $desempleo->cliente->TipoContribuyente;
+        $retencion_comision = 0;
+        $valor_comision = $primaCobrar * ((float) ($desempleo->TasaComision ?? 0) / 100);
+        if ($tipo_contribuyente != 1) {
+            $retencion_comision = (float) $valor_comision * 0.01;
+        }
+        $iva_comision = $valor_comision * 0.13;
+        $sub_total_ccf = $valor_comision + $iva_comision;
+        $comision_ccf = $sub_total_ccf - $retencion_comision;
+        $liquidoApagar = $primaCobrar - $comision_ccf;
+        $prima_descontada = ($subtotal + $extraPrima) - $descuento;
+        $comentarios = Comentario::where('Desempleo', $desempleo->Id)->where('Activo', '=', 1)->get();
+        $ultimo_pago = DesempleoDetalle::where('Desempleo', $desempleo->Id)->where('Activo', 1) //->where('PagoAplicado', '<>', null)
+                ->orderBy('Id', 'desc')->first();
 
         $data = [
             "saldoCapital" => $saldoCapital,
@@ -279,9 +284,20 @@ class DesempleoController extends Controller
             "primaPorPagar" => $subtotal,
             "descuento" => $descuento,
             "extra_prima" => $extraPrima,
-            "primaCobrar" => $primaCobrar
+            "primaCobrar" => $primaCobrar,
+            "tasaComision" => $desempleo->TasaComision,
+            "valorComision" => $valor_comision,
+            "ivaComision" => $iva_comision,
+            "subTotalCcf" => $sub_total_ccf,
+            "retencionComision" => $retencion_comision,
+            "comisionCcf" => $comision_ccf,
+            "liquidoApagar" => $liquidoApagar,
+            "primaDescontada" => $prima_descontada
+            
         ];
 
+
+        //dd($detalle);
 
         // Retornar la vista con los datos de la póliza
         return view('polizas.desempleo.show', compact(
@@ -294,7 +310,10 @@ class DesempleoController extends Controller
             'mes',
             'anios',
             'anioSeleccionado',
-            'fechas'
+            'fechas',
+            'detalle',
+            'comentarios',
+            'ultimo_pago'
         ));
         // } catch (\Exception $e) {
         //     alert()->error('No se pudo encontrar la póliza de desempleo solicitada.');
@@ -302,6 +321,360 @@ class DesempleoController extends Controller
         // }
     }
 
+    public function recibo_pago($id, Request $request)
+    {
+
+        $detalle = DesempleoDetalle::findOrFail($id);
+        $desempleo = Desempleo::findOrFail($detalle->Desempleo);
+        $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        $detalle->SaldoA = $request->SaldoA;
+        $detalle->ImpresionRecibo = $request->ImpresionRecibo;
+        $detalle->Referencia = $request->Referencia;
+        $detalle->Anexo = $request->Anexo;
+        $detalle->NumeroCorrelativo = $request->NumeroCorrelativo;
+        $detalle->update();
+        //$calculo = $this->monto($residencia, $detalle);
+
+        $recibo_historial = $this->save_recibo($detalle, $desempleo);
+        $pdf = \PDF::loadView('polizas.desempleo.recibo', compact('recibo_historial', 'detalle', 'desempleo', 'meses'))->setWarnings(false)->setPaper('letter');
+        return $pdf->stream('Recibo.pdf');
+
+        //  return back();
+    }
+
+    public function save_recibo($detalle, $desempleo)
+    {
+        //      dd($detalle);
+        $recibo_historial = new DesempleoHistorialRecibo();
+        $recibo_historial->PolizaDesempleoDetalle = $detalle->Id;
+        $recibo_historial->ImpresionRecibo = $detalle->ImpresionRecibo; //Carbon::now();
+        $recibo_historial->NombreCliente = $desempleo->cliente->Nombre;
+        $recibo_historial->NitCliente = $desempleo->cliente->Nit;
+        $recibo_historial->DireccionResidencia = $desempleo->cliente->DireccionResidencia ?? '(vacio)';
+        $recibo_historial->Departamento = $desempleo->cliente->distrito->municipio->departamento->Nombre;
+        $recibo_historial->Municipio = $desempleo->cliente->distrito->municipio->Nombre;
+        $recibo_historial->NumeroRecibo = $detalle->NumeroRecibo;
+        $recibo_historial->CompaniaAseguradora = $desempleo->aseguradora->Nombre;
+        // $recibo_historial->ProductoSeguros = $desempleo->planes->productos->Nombre;
+        $recibo_historial->NumeroPoliza = $desempleo->NumeroPoliza;
+        $recibo_historial->VigenciaDesde = $desempleo->VigenciaDesde;
+        $recibo_historial->VigenciaHasta = $desempleo->VigenciaHasta;
+        $recibo_historial->FechaInicio = $detalle->FechaInicio;
+        $recibo_historial->FechaFin = $detalle->FechaFinal;
+        $recibo_historial->Anexo = $detalle->Anexo;
+        $recibo_historial->Referencia = $detalle->Referencia;
+        $recibo_historial->FacturaNombre = $desempleo->cliente->Nombre;
+        $recibo_historial->MontoCartera = $detalle->MontoCartera;
+        $recibo_historial->PrimaCalculada = $detalle->PrimaCalculada;
+        $recibo_historial->ExtraPrima = $detalle->ExtraPrima;
+        $recibo_historial->Descuento = $detalle->Descuento ?? 0;
+        $recibo_historial->PordentajeDescuento = $desempleo->Descuento;
+        $recibo_historial->PrimaDescontada = $detalle->PrimaDescontada;
+        $recibo_historial->ValorCCF = $detalle->ValorCCF;
+        $recibo_historial->TotalAPagar = $detalle->APagar;
+        $recibo_historial->TasaComision = $desempleo->TasaComision ?? 0;
+        $recibo_historial->Comision = $detalle->Comision;
+        $recibo_historial->IvaSobreComision = $detalle->IvaSobreComision;
+        $recibo_historial->SubTotalComision =  $detalle->IvaSobreComision + $detalle->Comision;
+        $recibo_historial->Retencion = $detalle->Retencion;
+        $recibo_historial->ValorCCF = $detalle->ValorCCF;
+        $recibo_historial->FechaVencimiento = $detalle->FechaInicio;
+        $recibo_historial->NumeroCorrelativo = $detalle->NumeroCorrelativo ?? '01';
+        $recibo_historial->Cuota = '01/01';
+        $recibo_historial->Otros = $detalle->Otros ?? 0;
+
+        $recibo_historial->Usuario = auth()->user()->id;
+
+        $recibo_historial->save();
+        return $recibo_historial;
+    }
+
+    
+    public function edit_pago(Request $request)
+    {
+
+        $detalle = DesempleoDetalle::findOrFail($request->Id);
+        //dd($detalle);
+
+        $desempleo = Desempleo::findOrFail($detalle->Desempleo);
+        $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+
+        if ($detalle->SaldoA == null && $detalle->ImpresionRecibo == null) {
+            $detalle->SaldoA = $request->SaldoA;
+            $detalle->ImpresionRecibo = $request->ImpresionRecibo;
+            $detalle->Comentario = $request->Comentario;
+            $detalle->update();
+
+            $recibo_historial = $this->save_recibo($detalle, $desempleo);
+            $pdf = \PDF::loadView('polizas.desempleo.recibo', compact('recibo_historial', 'detalle', 'desempleo', 'meses'))->setWarnings(false)->setPaper('letter');
+            return $pdf->stream('Recibo.pdf');
+
+            return back();
+        } else {
+
+            //dd($request->EnvioCartera .' 00:00:00');
+            if ($request->EnvioCartera) {
+                $detalle->EnvioCartera = $request->EnvioCartera;
+            }
+            if ($request->EnvioPago) {
+                $detalle->EnvioPago = $request->EnvioPago;
+            }
+            if ($request->PagoAplicado) {
+                $detalle->PagoAplicado = $request->PagoAplicado;
+            }
+            $detalle->Comentario = $request->Comentario;
+
+            /*$detalle->EnvioPago = $request->EnvioPago;
+            $detalle->PagoAplicado = $request->PagoAplicado;*/
+            $detalle->update();
+        }
+
+        $time = Carbon::now('America/El_Salvador');
+        $comen = new Comentario();
+        $comen->Comentario = $request->Comentario;
+        $comen->Activo = 1;
+        $comen->DetalleDesempleo = $detalle->Id;
+        $comen->Usuario = auth()->user()->id;
+        $comen->FechaIngreso = $time;
+        $comen->Desempleo = $detalle->Desempleo;
+        $comen->save();
+
+        alert()->success('El registro ha sido ingresado correctamente');
+        return back();
+    }
+
+    
+    public function get_pago($id)
+    {
+        return DesempleoDetalle::findOrFail($id);
+    }
+
+    public function anular_pago($id)
+    {
+        $detalle = DesempleoDetalle::findOrFail($id);
+        $detalle->Activo = 0;
+        $detalle->update();
+        //recibo anulado
+        DesempleoHistorialRecibo::where('PolizaDesempleoDetalle', $id)->update(['Activo' => 0]);
+
+        DesempleoCartera::where('PolizaDesempleoDetalle', $id)->delete();
+        alert()->success('El registro ha sido ingresado correctamente');
+        return back();
+    }
+
+    public function delete_pago($id)
+    {
+        $detalle = DesempleoDetalle::findOrFail($id);
+
+        // recibo eliminado
+        DesempleoHistorialRecibo::where('PolizaDesempleoDetalle', $id)->delete();
+
+        DesempleoCartera::where('PolizaDesempleoDetalle', $id)->delete();
+        $detalle->delete();
+        alert()->success('El registro ha sido ingresado correctamente');
+        return back();
+    }
+
+    public function get_recibo($id, $exportar)
+    {
+        if (!isset($exportar)) {
+            $exportar = 1;
+        }
+        //dd($exportar);
+        $detalle = DesempleoDetalle::findOrFail($id);
+
+        $desempleo = Desempleo::findOrFail($detalle->Desempleo);
+        $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+        $recibo_historial = DesempleoHistorialRecibo::where('PolizaDesempleoDetalle', $id)->orderBy('id', 'desc')->first();
+        //  $calculo = $this->monto($desempleo, $detalle);
+        if (!$recibo_historial) {
+            $recibo_historial = $this->save_recibo($detalle, $desempleo);
+            //dd("insert");
+        }
+
+      /*  if ($exportar == 2) {
+            return Excel::download(new DesempleoReciboExport($id), 'Recibo.xlsx');
+            //return view('polizas.desempleo.recibo', compact('recibo_historial','detalle', 'desempleo', 'meses','exportar'));
+        }*/
+
+
+        $pdf = \PDF::loadView('polizas.desempleo.recibo', compact('recibo_historial', 'detalle', 'desempleo', 'meses', 'exportar'))->setWarnings(false)->setPaper('letter');
+        //  dd($detalle);
+        return $pdf->stream('Recibos.pdf');
+    }
+
+    public function get_recibo_edit($id)
+    {
+        $detalle = DesempleoDetalle::findOrFail($id);
+        $desempleo = Desempleo::findOrFail($detalle->Desempleo);
+        $recibo_historial = DesempleoHistorialRecibo::where('PolizaDesempleoDetalle', $id)->orderBy('id', 'desc')->first();
+        if (!$recibo_historial) {
+            $recibo_historial = $this->save_recibo($detalle, $desempleo);
+            //dd("insert");
+        }
+        $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+        $recibo_historial = DesempleoHistorialRecibo::where('PolizaDesempleoDetalle', $id)->orderBy('id', 'desc')->first();
+        //dd($recibo_historial);
+        return view('polizas.desempleo.recibo_edit', compact('recibo_historial', 'meses'));
+    }
+
+    public function get_recibo_update(Request $request)
+    {
+        //modificación de ultimo recibo
+        $id = $request->id_desempleo_detalle;
+        $detalle = DesempleoDetalle::findOrFail($id);
+
+        $desempleo = Desempleo::findOrFail($detalle->Desempleo);
+        $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+        $impresion_recibo = $request->AxoImpresionRecibo . '-' . $request->MesImpresionRecibo . '-' . $request->DiaImpresionRecibo;
+
+        $recibo_historial = new DesempleoHistorialRecibo();
+        $recibo_historial->PolizaDesempleoDetalle = $id;
+        //este valor cambia por eso no se manda al metodo de save_recibo
+        $recibo_historial->ImpresionRecibo = Carbon::parse($impresion_recibo);
+        $recibo_historial->NombreCliente = $request->NombreCliente;
+        $recibo_historial->NitCliente = $request->NitCliente;
+        $recibo_historial->DireccionResidencia = $request->DireccionResidencia;
+        $recibo_historial->Departamento = $request->Departamento;
+        $recibo_historial->Municipio = $request->Municipio;
+        $recibo_historial->NumeroRecibo = $request->NumeroRecibo;
+        $recibo_historial->CompaniaAseguradora = $request->CompaniaAseguradora;
+        $recibo_historial->ProductoSeguros = $request->ProductoSeguros;
+        $recibo_historial->NumeroPoliza = $request->NumeroPoliza;
+        $recibo_historial->VigenciaDesde = $request->VigenciaDesde;
+        $recibo_historial->VigenciaHasta = $request->VigenciaHasta;
+        $recibo_historial->FechaInicio = $request->FechaInicio;
+        $recibo_historial->FechaFin = $request->FechaFin;
+        $recibo_historial->Anexo = $request->Anexo;
+        $recibo_historial->Referencia = $request->Referencia;
+        $recibo_historial->FacturaNombre = $request->FacturaNombre;
+        $recibo_historial->MontoCartera = $request->MontoCartera;
+        $recibo_historial->PrimaCalculada = $request->PrimaCalculada;
+        $recibo_historial->ExtraPrima = $request->ExtraPrima;
+        $recibo_historial->Descuento = $request->Descuento;
+        $recibo_historial->PordentajeDescuento = $request->PordentajeDescuento;
+        $recibo_historial->PrimaDescontada = $request->PrimaDescontada;
+        $recibo_historial->ValorCCF = $request->ValorCCF;
+        $recibo_historial->TotalAPagar = $request->TotalAPagar;
+        $recibo_historial->TasaComision = $request->TasaComision;
+        $recibo_historial->Comision = $request->Comision;
+        $recibo_historial->IvaSobreComision = $request->IvaSobreComision;
+        $recibo_historial->SubTotalComision = $request->SubTotalComision;
+        $recibo_historial->Retencion = $request->Retencion;
+        $recibo_historial->ValorCCF = $request->ValorCCF;
+        $recibo_historial->FechaVencimiento = $request->FechaVencimiento ?? $detalle->FechaInicio;
+        $recibo_historial->NumeroCorrelativo = $request->NumeroCorrelativo ??  '01';
+        $recibo_historial->Cuota = $request->Cuota ?? '01/01';
+        $recibo_historial->Otros = $detalle->Otros ?? 0;
+
+        $recibo_historial->Usuario = auth()->user()->id;
+
+        $recibo_historial->save();
+        //dd("insert");
+        alert()->success('Actualizacion de Recibo Exitoso');
+        return redirect('polizas/desempleo/' . $desempleo->Id . '/edit');
+    }
+
+
+    public function agregar_pago(Request $request)
+    {
+
+        $desempleo = Desempleo::findOrFail($request->Desempleo);
+        $time = Carbon::now('America/El_Salvador');
+
+        $recibo = DatosGenerales::orderByDesc('Id_recibo')->first();
+        // if (!$request->ExcelURL) {
+        //     alert()->error('No se puede generar el pago, falta subir cartera')->showConfirmButton('Aceptar', '#3085d6');
+        // } else {
+
+        $detalle = new DesempleoDetalle();
+        $detalle->FechaInicio = $request->FechaInicio;
+        $detalle->FechaFinal = $request->FechaFinal;
+        $detalle->MontoCartera = $request->MontoCartera;
+        $detalle->Desempleo = $request->Desempleo;
+        $detalle->Tasa = $request->Tasa;
+        $detalle->PrimaCalculada = $request->PrimaCalculada;
+        $detalle->Descuento = $request->Descuento;
+        $detalle->PrimaDescontada = $request->PrimaDescontada;
+        $detalle->ImpuestoBomberos = $request->ImpuestoBomberos;
+        $detalle->GastosEmision = $request->GastosEmision;
+        $detalle->Otros = $request->Otros;
+        // $detalle->SubTotal = $request->SubTotal;
+        // $detalle->Iva = $request->Iva;
+        $detalle->TasaComision = $request->TasaComision;
+        $detalle->Comision = $request->Comision;
+        $detalle->IvaSobreComision = $request->IvaSobreComision;
+        $detalle->Retencion = $request->Retencion;
+        $detalle->ValorCCF = $request->ValorCCF;
+        $detalle->Comentario = $request->Comentario;
+        $detalle->APagar = $request->APagar;
+
+        $detalle->PrimaTotal = $request->PrimaTotal;
+        $detalle->DescuentoIva = $request->DescuentoIva; //checked
+        $detalle->ExtraPrima = $request->ExtraPrima;
+        $detalle->ExcelURL = $request->ExcelURL;
+        $detalle->NumeroRecibo = ($recibo->Id_recibo) + 1;
+        $detalle->Usuario = auth()->user()->id;
+        $detalle->FechaIngreso = $time->format('Y-m-d');
+        $detalle->save();
+
+        DesempleoCarteraTemp::where('User', '=', auth()->user()->id)->where('PolizaDesempleo', $request->Desempleo)->delete();
+        $cartera = DesempleoCartera::where('FechaInicio', '=', $request->FechaInicio)->where('FechaFinal', '=', $request->FechaFinal)->update(['PolizaDesempleoDetalle' => $detalle->Id]);
+
+        $comen = new Comentario();
+        $comen->Comentario = 'Se agrego el pago de la cartera';
+        $comen->Activo = 1;
+        $comen->Usuario = auth()->user()->id;
+        $comen->FechaIngreso = $time;
+        $comen->Desempleo = $request->Desempleo;
+        $comen->DetalleDesempleo = $detalle->Id;
+        $comen->save();
+
+
+        $recibo->Id_recibo = ($recibo->Id_recibo) + 1;
+        $recibo->update();
+
+       /// $extraprimados = PolizaDesempleoExtraPrimados::where('PolizaDesempleo', $request->Desempleo)->get();
+        //$total_extrapima = 0;
+        /*foreach ($extraprimados as $extraprimado) {
+            //consultando calculos de extraprimados
+            $data_array = $extraprimado->getPagoEP($extraprimado->Id);
+
+            $extraprimado->total = $data_array['total'];
+            $extraprimado->saldo_capital = $data_array['saldo_capital'];
+            $extraprimado->interes = $data_array['interes'];
+            $extraprimado->prima_neta = $data_array['prima_neta'];
+            $extraprimado->extra_prima = $data_array['extra_prima'];
+            $total_extrapima += $data_array['extra_prima'];
+
+
+            $prima_mensual = new PolizaDesempleoExtraPrimadosMensual();
+            $prima_mensual->PolizaDesempleo = $request->Desempleo;
+            $prima_mensual->Dui = $extraprimado->Dui;
+            $prima_mensual->NumeroReferencia = $extraprimado->NumeroReferencia;
+            $prima_mensual->Nombre = $extraprimado->Nombre;
+            $prima_mensual->FechaOtorgamiento = $extraprimado->FechaOtorgamiento;
+            $prima_mensual->MontoOtorgamiento = $extraprimado->MontoOtorgamiento;
+            $prima_mensual->Tarifa = $extraprimado->Tarifa;
+            $prima_mensual->PorcentajeEP = $extraprimado->PorcentajeEP;
+            $prima_mensual->PagoEP = $extraprimado->PagoEP;
+            $prima_mensual->DesempleoDetalle = $detalle->Id;
+            $prima_mensual->save();
+        } */
+
+
+
+
+
+        //session(['MontoCartera' => 0]);
+        alert()->success('El Registro de cobro ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
+        // }
+        return back();
+    }
 
     public function create_pago(Request $request, $id)
     {
@@ -482,7 +855,7 @@ class DesempleoController extends Controller
         //registros que no existen en el mes anterior
         $count_data_cartera = DesempleoCartera::where('PolizaDesempleo', $id)->count();
         if ($count_data_cartera > 0) {
-            //dd($mesAnterior,$axoAnterior,$request->Deuda);
+            //dd($mesAnterior,$axoAnterior,$request->Desempleo);
             $registros_eliminados = DB::table('poliza_desempleo_cartera AS pdc')
                 ->leftJoin('poliza_desempleo_cartera_temp AS pdtc', function ($join) {
                     $join->on('pdc.NumeroReferencia', '=', 'pdtc.NumeroReferencia')
@@ -491,7 +864,7 @@ class DesempleoController extends Controller
                 ->where('pdc.Mes', (int)$mesAnterior)
                 ->where('pdc.Axo', (int)$axoAnterior)
                 ->where('pdc.PolizaDesempleo', $id)
-                ->whereNull('pdtc.NumeroReferencia') // Solo los que no están en poliza_deuda_temp_cartera
+                ->whereNull('pdtc.NumeroReferencia') // Solo los que no están en poliza_desempleo_temp_cartera
                 ->select('pdc.*') // Selecciona columnas principales
                 ->get();
         } else {
@@ -727,6 +1100,9 @@ class DesempleoController extends Controller
     public function update(Request $request, $id)
     {
         //
+
+
+
     }
 
     public function destroy($id)

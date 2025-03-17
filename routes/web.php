@@ -34,6 +34,7 @@ use App\Http\Controllers\polizas\ValidacionCarteraController;
 use App\Http\Controllers\seguridad\PermissionController;
 use App\Http\Controllers\seguridad\RoleController;
 use App\Models\catalogo\Aseguradora;
+use App\Models\polizas\Desempleo;
 use App\Models\polizas\Deuda;
 use App\Models\polizas\Residencia;
 
@@ -306,4 +307,15 @@ Route::get('polizas/desempleo/get_no_valido/{id}', [DesempleoController::class,'
 Route::post('polizas/desempleo/store_poliza/{id}', [DesempleoController::class,'store_poliza']);
 Route::post('polizas/desempleo/create_pago/{id}', [DesempleoController::class,'create_pago']);
 Route::post('polizas/desempleo/borrar_proceso_actual/{id}', [DesempleoController::class,'borrar_proceso_actual']);
+Route::post('polizas/desempleo/agregar_pago', [DesempleoController::class, 'agregar_pago']);
+Route::get('polizas/desempleo/get_pago/{id}', [DesempleoController::class, 'get_pago']);
+Route::post('poliza/desempleo/recibo/{id}', [DesempleoController::class, 'recibo_pago']);
+Route::post('polizas/desempleo/edit_pago', [DesempleoController::class, 'edit_pago']);
+Route::post('polizas/desempleo/anular_pago/{id}', [DesempleoController::class, 'anular_pago']);
+Route::post('polizas/desempleo/delete_pago/{id}', [DesempleoController::class, 'delete_pago']);
+
+Route::get('poliza/desempleo/get_recibo/{id}/{exportar}', [DesempleoController::class, 'get_recibo']);
+Route::get('poliza/desempleo/get_recibo_edit/{id}', [DesempleoController::class, 'get_recibo_edit']);
+Route::post('poliza/desempleo/get_recibo_edit', [DesempleoController::class, 'get_recibo_update']);
+
 Route::resource('polizas/desempleo', DesempleoController::class);

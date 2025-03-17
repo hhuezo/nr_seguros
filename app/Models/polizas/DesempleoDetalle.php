@@ -2,6 +2,7 @@
 
 namespace App\Models\polizas;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -59,4 +60,8 @@ class DesempleoDetalle extends Model
         'FechaIngreso',
         
     ];
+
+    public function usuarios(){
+        return $this->belongsTo(User::class, 'Usuario', 'id');
+    }
 }
