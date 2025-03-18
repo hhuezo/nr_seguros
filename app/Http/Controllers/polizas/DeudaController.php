@@ -94,8 +94,47 @@ class DeudaController extends Controller
             ];
         }
 
-        // Crear una instancia de Carbon a partir de la fecha
-        $fecha = Carbon::parse($deuda->VigenciaHasta);
+        $fechaDesdeRenovacion = $deuda->VigenciaHasta;
+
+
+         // Crear una instancia de Carbon a partir de la fecha
+         $fecha = Carbon::parse($deuda->VigenciaHasta);
+
+        $resultado = DB::table('poliza_deuda_historica as pdh')
+            ->where('pdh.Id', function ($query) {
+                $query->select(DB::raw('CASE
+                    WHEN EXISTS (
+                        SELECT 1
+                        FROM poliza_deuda_historica
+                        WHERE TipoRenovacion = 1
+                    ) THEN (
+                        SELECT MIN(Id)
+                        FROM poliza_deuda_historica
+                        WHERE TipoRenovacion = 2
+                        AND Id > (
+                            SELECT MAX(Id)
+                            FROM poliza_deuda_historica
+                            WHERE TipoRenovacion = 1
+                        )
+                    )
+                    ELSE (
+                        SELECT MIN(Id)
+                        FROM poliza_deuda_historica
+                        WHERE TipoRenovacion = 2
+                    )
+                END'));
+            })->first();
+
+            //dd( $resultado);
+
+            if($resultado)
+            {
+                $fechaDesdeRenovacion = $resultado->VigenciaHasta;
+                $fecha = Carbon::parse($resultado->VigenciaHasta);
+            }
+
+
+
 
         // Agregar un año a la fecha
         $nuevaFecha  = $fecha->copy()->addYear();
@@ -116,7 +155,7 @@ class DeudaController extends Controller
         $cliente = Cliente::where('Activo', 1)->get();
         session(['tab' => 1]);
 
-        return view('polizas.deuda.renovar', compact('cliente', 'planes', 'productos', 'aseguradora', 'deuda','fechaHastaRenovacion', 'estadoPoliza', 'ejecutivo', 'creditos', 'perfiles', 'columnas', 'tabla', 'columnas', 'tipoCartera', 'saldos'));
+        return view('polizas.deuda.renovar', compact('cliente', 'planes', 'productos', 'aseguradora', 'deuda', 'fechaDesdeRenovacion','fechaHastaRenovacion', 'estadoPoliza', 'ejecutivo', 'creditos', 'perfiles', 'columnas', 'tabla', 'columnas', 'tipoCartera', 'saldos'));
     }
     public function renovar_conf($id)
     {
@@ -165,11 +204,9 @@ class DeudaController extends Controller
         //dd('holi');
 
         $deuda = Deuda::findOrFail($request->Id);
-        if (($deuda->VigenciaDesde == $request->VigenciaDesde && $deuda->VigenciaHasta == $request->VigenciaHasta)
-            || $deuda->VigenciaDesde == $request->VigenciaDesde || $deuda->VigenciaHasta == $request->VigenciaHasta
-        ) {
-            alert()->error('Debe cambiar las fechas de vigencia para la renovación');
-            return back();
+        if (($deuda->VigenciaHasta == $request->VigenciaHasta) ) {
+            //alert()->error('Debe cambiar las fechas de vigencia para la renovación');
+            return back()->withErrors(['VigenciaDesde' => 'Las fechas de vigencia no son válidas.'])->withInput();
         }
 
         //     dd('holi');
@@ -181,6 +218,8 @@ class DeudaController extends Controller
         //guardar todo en una tabla historica
         $historica = new PolizaDeudaHistorica();
         $historica->Deuda = $deuda->Id;
+        $historica->VigenciaDesde = $deuda->VigenciaDesde;
+        $historica->VigenciaHasta = $deuda->VigenciaHasta;
         $historica->DatosDeuda = json_encode($deuda);
         $historica->DatosCreditos = json_encode($creditos);
         $historica->DatosTablaDiferenciada = json_encode($tabla_diferencia);
@@ -188,6 +227,7 @@ class DeudaController extends Controller
         $historica->Requisito = json_encode($requisitos);
         $historica->Fecha = Carbon::now('America/El_Salvador')->format('Y-m-d H:i:s');
         $historica->Usuario = auth()->user()->id;
+        $historica->TipoRenovacion = $request->TipoRenovacion;
         $historica->save();
 
         //actualizar los datos de la renovacion

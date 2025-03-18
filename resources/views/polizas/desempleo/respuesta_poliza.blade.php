@@ -139,7 +139,7 @@
                                                                 <td>{{ $registro->EdadDesembloso ? $registro->Edad : '' }}
                                                                     Años</td>
                                                                 <td>${{ number_format($registro->MontoOtorgado, 2) }}</td>
-                                                                <td> {{$registro->NoValido}}
+                                                                <td>
                                                                     <input type="checkbox"
                                                                         onchange="agregarNoValido({{ $registro->Id }})"
                                                                         class="js-switch">

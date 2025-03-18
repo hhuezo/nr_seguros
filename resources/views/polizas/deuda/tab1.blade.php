@@ -107,11 +107,11 @@
                     </div>
                     <div class="col-sm-2">
                         <label class="control-label">Productos</label>
-                        <input type="text" name="Productos" id="Productos" class="form-control" value="{{$deuda->planes->productos->Nombre}}" readonly>
+                        <input type="text" name="Productos" id="Productos" class="form-control" value="{{ $deuda->planes && $deuda->planes->productos ? $deuda->planes->productos->Nombre : '' }}" readonly>
                     </div>
                     <div class="col-sm-2">
                         <label class="control-label">Planes</label>
-                        <input type="text" name="Planes" id="Planes" class="form-control" value="{{$deuda->planes->Nombre}}" readonly>
+                        <input type="text" name="Planes" id="Planes" class="form-control" value="{{ $deuda->planes ? $deuda->planes->Nombre : '' }}" readonly>
                     </div>
                     <div class="col-sm-8">
                         <label class="control-label" align="right">Asegurado</label>
