@@ -68,6 +68,8 @@ class DesempleoController extends Controller
         $tipoCobro = TipoCobro::where('Activo', 1)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
         $saldos = SaldoMontos::where('Activo', 1)->get();
+
+        //dd($tipoCartera);
         return view('polizas.desempleo.create', compact(
             'aseguradora',
             'cliente',
@@ -293,7 +295,7 @@ class DesempleoController extends Controller
             "comisionCcf" => $comision_ccf,
             "liquidoApagar" => $liquidoApagar,
             "primaDescontada" => $prima_descontada
-            
+
         ];
 
 
@@ -389,7 +391,7 @@ class DesempleoController extends Controller
         return $recibo_historial;
     }
 
-    
+
     public function edit_pago(Request $request)
     {
 
@@ -444,7 +446,7 @@ class DesempleoController extends Controller
         return back();
     }
 
-    
+
     public function get_pago($id)
     {
         return DesempleoDetalle::findOrFail($id);

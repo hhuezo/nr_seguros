@@ -61,13 +61,14 @@ class Deuda extends Model
         return $this->belongsTo('App\Models\catalogo\EstadoPoliza', 'EstadoPoliza', 'Id');
     }
 
-    public function planes(){
+    public function planes()
+    {
         return $this->belongsTo('App\Models\catalogo\Plan', 'Plan', 'Id');
     }
 
     public function requisitos()
     {
-        return $this->hasMany(DeudaRequisitos::class,'Deuda', 'Id');
+        return $this->hasMany(DeudaRequisitos::class, 'Deuda', 'Id');
     }
 
     public function extra_primados()
@@ -78,30 +79,36 @@ class Deuda extends Model
     public function conteoEdadMaxima()
     {
         $count_edad_maxima =  DB::table('poliza_deuda_temp_cartera as temp')
-        ->leftJoin('poliza_deuda_excluidos as excluidos', function($join) {
-            $join->on('temp.NumeroReferencia', '=', 'excluidos.NumeroReferencia')
-                 ->where('excluidos.EdadMaxima', '=', 1);
-        })
-        ->whereNull('excluidos.NumeroReferencia')
-        ->where('temp.PolizaDeuda', $this->Id)
-        ->where('temp.User', auth()->user()->id)
-        ->where('temp.EdadDesembloso', '>', $this->EdadMaximaTerminacion)
-        ->count();
+            ->leftJoin('poliza_deuda_excluidos as excluidos', function ($join) {
+                $join->on('temp.NumeroReferencia', '=', 'excluidos.NumeroReferencia')
+                    ->where('excluidos.EdadMaxima', '=', 1);
+            })
+            ->whereNull('excluidos.NumeroReferencia')
+            ->where('temp.PolizaDeuda', $this->Id)
+            ->where('temp.User', auth()->user()->id)
+            ->where('temp.EdadDesembloso', '>', $this->EdadMaximaTerminacion)
+            ->count();
 
 
         $count_responsabilidad_maxima =  DB::table('poliza_deuda_temp_cartera as temp')
-        ->leftJoin('poliza_deuda_excluidos as excluidos', function($join) {
-            $join->on('temp.NumeroReferencia', '=', 'excluidos.NumeroReferencia')
-                 ->where('excluidos.ResponsabilidadMaxima', '=', 1);
-        })
-        ->whereNull('excluidos.NumeroReferencia')
-        ->where('temp.PolizaDeuda', $this->Id)
-        ->where('temp.User', auth()->user()->id)
-        ->where('temp.saldo_total', '>', $this->ResponsabilidadMaxima)
-        ->count();
+            ->leftJoin('poliza_deuda_excluidos as excluidos', function ($join) {
+                $join->on('temp.NumeroReferencia', '=', 'excluidos.NumeroReferencia')
+                    ->where('excluidos.ResponsabilidadMaxima', '=', 1);
+            })
+            ->whereNull('excluidos.NumeroReferencia')
+            ->where('temp.PolizaDeuda', $this->Id)
+            ->where('temp.User', auth()->user()->id)
+            ->where('temp.saldo_total', '>', $this->ResponsabilidadMaxima)
+            ->count();
 
         $total = $count_edad_maxima + $count_responsabilidad_maxima;
 
         return $total;
+    }
+
+
+    public function deuda_tipos_cartera()
+    {
+        return $this->hasMany(PolizaDeudaTipoCartera::class, 'PolizaDeuda', 'Id');
     }
 }

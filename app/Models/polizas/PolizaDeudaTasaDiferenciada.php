@@ -2,6 +2,7 @@
 
 namespace App\Models\polizas;
 
+use App\Models\catalogo\SaldoMontos;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,8 +18,8 @@ class PolizaDeudaTasaDiferenciada extends Model
     public $timestamps = false; // Deshabilitar timestamps si no tienes `created_at` y `updated_at`
 
     protected $fillable = [
-        'PolizaDuedaCredito',
-        'TipoCalculo',
+        'PolizaDuedaTipoCartera',
+        'LineaCredito',
         'FechaDesde',
         'FechaHasta',
         'MontoDesde',
@@ -37,5 +38,10 @@ class PolizaDeudaTasaDiferenciada extends Model
     public function usuario()
     {
         return $this->belongsTo(User::class, 'Usuario');
+    }
+
+    public function linea_credito()
+    {
+        return $this->belongsTo(SaldoMontos::class, 'LineaCredito');
     }
 }

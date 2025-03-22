@@ -632,7 +632,7 @@
 
 
 
-    <div class="modal fade" id="modal-credito-create" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    {{-- <div class="modal fade" id="modal-credito-create" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true" data-tipo="1">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -688,7 +688,7 @@
 
             </div>
         </div>
-    </div>
+    </div> --}}
 
 
 

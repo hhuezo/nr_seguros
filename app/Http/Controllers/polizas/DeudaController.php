@@ -48,6 +48,8 @@ use App\Models\polizas\PolizaDeudaExtraPrimadosMensual;
 use App\Models\polizas\PolizaDeudaHistorica;
 use App\Models\polizas\PolizaDeudaTasaDiferenciada;
 use App\Models\polizas\PolizaDeudaTasaDiferenciadaTemp;
+use App\Models\polizas\PolizaDeudaTipoCartera;
+use App\Models\polizas\PolizaDeudaTipoCarteraLineaCredito;
 use App\Models\temp\PolizaDeudaTempCartera;
 use Carbon\Carbon;
 use Exception;
@@ -97,8 +99,8 @@ class DeudaController extends Controller
         $fechaDesdeRenovacion = $deuda->VigenciaHasta;
 
 
-         // Crear una instancia de Carbon a partir de la fecha
-         $fecha = Carbon::parse($deuda->VigenciaHasta);
+        // Crear una instancia de Carbon a partir de la fecha
+        $fecha = Carbon::parse($deuda->VigenciaHasta);
 
         $resultado = DB::table('poliza_deuda_historica as pdh')
             ->where('pdh.Id', function ($query) {
@@ -125,13 +127,12 @@ class DeudaController extends Controller
                 END'));
             })->first();
 
-            //dd( $resultado);
+        //dd( $resultado);
 
-            if($resultado)
-            {
-                $fechaDesdeRenovacion = $resultado->VigenciaHasta;
-                $fecha = Carbon::parse($resultado->VigenciaHasta);
-            }
+        if ($resultado) {
+            $fechaDesdeRenovacion = $resultado->VigenciaHasta;
+            $fecha = Carbon::parse($resultado->VigenciaHasta);
+        }
 
 
 
@@ -155,7 +156,7 @@ class DeudaController extends Controller
         $cliente = Cliente::where('Activo', 1)->get();
         session(['tab' => 1]);
 
-        return view('polizas.deuda.renovar', compact('cliente', 'planes', 'productos', 'aseguradora', 'deuda', 'fechaDesdeRenovacion','fechaHastaRenovacion', 'estadoPoliza', 'ejecutivo', 'creditos', 'perfiles', 'columnas', 'tabla', 'columnas', 'tipoCartera', 'saldos'));
+        return view('polizas.deuda.renovar', compact('cliente', 'planes', 'productos', 'aseguradora', 'deuda', 'fechaDesdeRenovacion', 'fechaHastaRenovacion', 'estadoPoliza', 'ejecutivo', 'creditos', 'perfiles', 'columnas', 'tabla', 'columnas', 'tipoCartera', 'saldos'));
     }
     public function renovar_conf($id)
     {
@@ -204,7 +205,7 @@ class DeudaController extends Controller
         //dd('holi');
 
         $deuda = Deuda::findOrFail($request->Id);
-        if (($deuda->VigenciaHasta == $request->VigenciaHasta) ) {
+        if (($deuda->VigenciaHasta == $request->VigenciaHasta)) {
             //alert()->error('Debe cambiar las fechas de vigencia para la renovación');
             return back()->withErrors(['VigenciaDesde' => 'Las fechas de vigencia no son válidas.'])->withInput();
         }
@@ -651,7 +652,10 @@ class DeudaController extends Controller
         $tipoCobro = TipoCobro::where('Activo', 1)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
         $creditos = DeudaCredito::where('Activo', 1)->where('Deuda', $id)->get();
-        //dd( $creditos);
+        //dd( $creditos) esto se va eliminar ;
+
+
+
         $saldos = SaldoMontos::where('Activo', 1)->get();
         $planes = Plan::where('Activo', 1)->get();
         $perfiles = Perfil::where('Activo', 1)->where('Aseguradora', '=', $deuda->Aseguradora)->get();
@@ -717,37 +721,88 @@ class DeudaController extends Controller
 
     public function tasa_diferenciada($id)
     {
-        $deuda_credito = DeudaCredito::find($id);
+        $deuda = Deuda::find($id);
+        $tiposCartera = TipoCartera::where('Activo', 1)->where('Poliza', 2)->get();
+        $lineas_credito = SaldoMontos::where('Activo', 1)->get();
+
+        return view('polizas.deuda.tasa_diferenciada', compact('deuda', 'tiposCartera', 'lineas_credito'));
+
+        /*$deuda_credito = DeudaCredito::find($id);
         $deuda = Deuda::find($deuda_credito->Deuda);
         $tipoCartera = TipoCartera::where('Activo', 1)->where('Poliza', 2)->get(); //deuda
         $saldos = SaldoMontos::where('Activo', 1)->get();
 
-        return view('polizas.deuda.tasa_diferenciada', compact('deuda', 'deuda_credito', 'tipoCartera', 'saldos'));
+        return view('polizas.deuda.tasa_diferenciada', compact('deuda', 'deuda_credito', 'tipoCartera', 'saldos'));*/
     }
+
+    public function agregar_tipo_cartera(Request $request, $id)
+    {
+        try {
+            // Validar los datos del request
+            $request->validate([
+                'TipoCartera' => 'required|integer',
+                'TipoCalculo' => 'required|integer',
+            ], [
+                'TipoCartera.required' => 'El campo Tipo de Cartera es obligatorio.',
+                'TipoCartera.integer' => 'El campo Tipo de Cartera es obligatorio.',
+                'TipoCalculo.required' => 'El campo Tipo de Cálculo es obligatorio.',
+                'TipoCalculo.integer' => 'El campo Tipo de Cálculo es obligatorio.',
+            ]);
+
+
+            // Verificar si los datos ya existen en la base de datos
+            $existe = PolizaDeudaTipoCartera::where('PolizaDeuda', $id)
+                ->where('TipoCartera', $request->TipoCartera)
+                ->exists();
+
+            if ($existe) {
+                return redirect()->back()->withErrors(['error' => 'Este registro ya existe los registros.'])->withInput();
+            }
+
+
+            // Crear y guardar el nuevo tipo de cartera
+            $tipo_cartera = new PolizaDeudaTipoCartera();
+            $tipo_cartera->PolizaDeuda = $id;
+            $tipo_cartera->TipoCartera = $request->TipoCartera;
+            $tipo_cartera->TipoCalculo = $request->TipoCalculo;
+            $tipo_cartera->save();
+
+            return back()->with('success', 'Tipo de cartera agregado correctamente.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->errors())->withInput();
+        } catch (\Exception $e) {
+            return back()->with('error', 'Ocurrió un error: ' . $e->getMessage())->withInput();
+        }
+    }
+
 
     public function tasa_diferenciada_store(Request $request)
     {
+
         // Validación dinámica según el valor de TipoCalculo
         $rules = [
-            'TipoCalculo' => 'required|in:1,2', // Debe ser 1 o 2
+            'PolizaDuedaTipoCartera' => 'required|numeric', // Debe ser 1 o 2
             'Tasa' => 'required|numeric|min:0', // Siempre requerido
+            'LineaCredito' => 'required|integer',
         ];
 
-        if ($request->TipoCalculo == 1) {
+        $deuda_tipo_cartera = PolizaDeudaTipoCartera::findOrFail($request->PolizaDuedaTipoCartera);
+
+        if ($deuda_tipo_cartera->TipoCalculo == 1) {
             // Si es 1, FechaDesde y FechaHasta son requeridos
             $rules['FechaDesde'] = 'required|date';
             $rules['FechaHasta'] = 'required|date|after_or_equal:FechaDesde';
         }
 
-        if ($request->TipoCalculo == 2) {
+        if ($deuda_tipo_cartera->TipoCalculo == 2) {
             // Si es 2, EdadDesde y EdadHasta son requeridos
             $rules['EdadDesde'] = 'required|integer|min:0';
             $rules['EdadHasta'] = 'required|integer|gte:EdadDesde';
         }
 
         $messages = [
-            'TipoCalculo.required' => 'El campo Tipo de Cálculo es requerido.',
-            'TipoCalculo.in' => 'Seleccione un tipo de cálculo válido.',
+            'PolizaDuedaTipoCartera.required' => 'No se encontro el tipo de cartera asociado.',
+            'PolizaDuedaTipoCartera.numeric' => 'No se encontro el tipo de cartera asociado.',
             'FechaDesde.required' => 'La fecha de inicio es obligatoria.',
             'FechaHasta.required' => 'La fecha final es obligatoria.',
             'FechaHasta.after_or_equal' => 'La fecha final debe ser igual o posterior a la fecha de inicio.',
@@ -762,10 +817,10 @@ class DeudaController extends Controller
         $request->validate($rules, $messages);
 
         $tasa_diferenciada = new PolizaDeudaTasaDiferenciada();
-        $tasa_diferenciada->PolizaDuedaCredito = $request->Id;
-        $tasa_diferenciada->TipoCalculo = $request->TipoCalculo;
+        $tasa_diferenciada->PolizaDuedaTipoCartera = $request->PolizaDuedaTipoCartera;
+        $tasa_diferenciada->LineaCredito = $request->LineaCredito;
 
-        if ($request->TipoCalculo == 1) {
+        if ($deuda_tipo_cartera->TipoCalculo == 1) {
             $tasa_diferenciada->FechaDesde = $request->FechaDesde;
             $tasa_diferenciada->FechaHasta = $request->FechaHasta;
         } else {
@@ -773,7 +828,7 @@ class DeudaController extends Controller
             $tasa_diferenciada->FechaHasta = null;
         }
 
-        if ($request->TipoCalculo == 2) {
+        if ($deuda_tipo_cartera->TipoCalculo == 2) {
             $tasa_diferenciada->EdadDesde = $request->EdadDesde;
             $tasa_diferenciada->EdadHasta = $request->EdadHasta;
         } else {
