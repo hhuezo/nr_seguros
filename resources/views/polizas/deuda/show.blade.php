@@ -40,6 +40,33 @@
             background-color: #f8f9fa;
         }
     </style>
+
+
+
+
+    <style>
+        .subtareas-container {
+            display: none;
+            /* Ocultar subtareas por defecto */
+        }
+
+        .expand-icon {
+            cursor: pointer;
+            margin-right: 8px;
+        }
+
+        .warning-row {
+            border-left: 5px solid #ffc107;
+            /* Naranja (warning) */
+        }
+
+        .primary-row {
+            border-left: 5px solid #007bff;
+            /* Azul (primary) */
+        }
+    </style>
+
+
     <div class="x_panel">
         <div class="clearfix"></div>
         <div class="row">
@@ -378,7 +405,7 @@
                         <div role="tabpanel" class="tab-pane fade {{ session('tab') == 2 ? 'active in' : '' }}"
                             id="tab_content2" aria-labelledby="lineas-tab">
                             <div class="col-md-12 text-right">
-                                <a href="" data-target="#modal-credito-create" data-toggle="modal"
+                                <a href="" data-target="#modal-add-tipo-cartera" data-toggle="modal"
                                     class="btn btn-primary">Nuevo</a>
                             </div>
 
@@ -390,7 +417,7 @@
                                 <br>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
-                                    <table width="100%" class="table table-striped">
+                                    {{-- <table width="100%" class="table table-striped">
                                         <thead>
                                             <tr>
                                                 <th>Línea de Crédito</th>
@@ -463,7 +490,134 @@
                                                 @include('polizas.deuda.tasa_diferenciada_modal_show')
                                             @endforeach
                                         </tbody>
-                                    </table>
+                                    </table> --}}
+
+
+                                    @if ($deuda->deuda_tipos_cartera->count() > 0)
+                                        <table class="table table-bordered">
+                                            <thead class="table-dark">
+                                                <tr class="warning-row">
+                                                    <th style="width: 40%;">Tipo cartera</th>
+                                                    <th style="width: 20%;">Tipo cálculo</th>
+                                                    <th style="width: 20%;">Opciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+
+
+                                                @foreach ($deuda->deuda_tipos_cartera as $tipo)
+                                                    <tr class="tarea warning-row">
+                                                        <td>
+                                                            <span class="expand-icon">►</span>
+                                                            {{ $tipo->tipo_cartera?->Nombre ?? '' }}
+                                                        </td>
+                                                        <td>
+                                                            @if ($tipo->TipoCalculo == 1)
+                                                                {{ 'Fecha' }}
+                                                            @elseif ($tipo->TipoCalculo == 2)
+                                                                {{ 'Edad' }}
+                                                            @else
+                                                                {{ '' }}
+                                                            @endif
+                                                        </td>
+                                                        <td> <button class="btn btn-primary"><i
+                                                                    class="fa fa-edit"></i></button>
+                                                            <button class="btn btn-danger"><i
+                                                                    class="fa fa-trash"></i></button>
+                                                        </td>
+                                                    </tr>
+
+
+                                                    <tr class="subtareas-container">
+                                                        <td colspan="4" style="background-color: #f8fafc;">
+
+                                                            @if ($tipo->tasa_diferenciada->count() > 0)
+                                                                <br>
+                                                                <div
+                                                                    style="padding-left: 20px !important; padding-right: 20px !important;">
+                                                                    <table class="table table-sm table-bordered">
+                                                                        <thead class="table-light">
+                                                                            <tr class="primary-row">
+                                                                                <th>Linea credito</th>
+                                                                                @if ($tipo->TipoCalculo == 1)
+                                                                                    <th>Fecha inicio</th>
+                                                                                    <th>Fecha final</th>
+                                                                                @endif
+
+                                                                                @if ($tipo->TipoCalculo == 2)
+                                                                                    <th>Edad inicio</th>
+                                                                                    <th>Edad final</th>
+                                                                                @endif
+                                                                                <th>Tasa</th>
+                                                                                <th>Opciones</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            @foreach ($tipo->tasa_diferenciada as $tasa_diferenciada)
+                                                                                <tr class="primary-row">
+                                                                                    <td>
+                                                                                        {{ $tasa_diferenciada->linea_credito?->Abreviatura ?? '' }}
+                                                                                        {{ $tasa_diferenciada->linea_credito?->Descripcion ?? '' }}
+                                                                                    </td>
+                                                                                    @if ($tipo->TipoCalculo == 1)
+                                                                                        <td>
+                                                                                            {{ $tasa_diferenciada->FechaDesde ? date('d/m/Y', strtotime($tasa_diferenciada->FechaDesde)) : 'Sin fecha' }}
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            {{ $tasa_diferenciada->FechaHasta ? date('d/m/Y', strtotime($tasa_diferenciada->FechaHasta)) : 'Sin fecha' }}
+                                                                                        </td>
+                                                                                    @endif
+
+                                                                                    @if ($tipo->TipoCalculo == 2)
+                                                                                        <td>{{ $tasa_diferenciada->EdadDesde }}
+                                                                                            Años</td>
+                                                                                        <td>{{ $tasa_diferenciada->EdadHasta }}
+                                                                                            Años</td>
+                                                                                    @endif
+
+                                                                                    <td>{{ $tasa_diferenciada->Tasa }}%
+                                                                                    </td>
+                                                                                    <td><button class="btn btn-primary"><i
+                                                                                                class="fa fa-edit"></i></button>
+                                                                                        <button class="btn btn-danger"><i
+                                                                                                class="fa fa-trash"></i></button>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            @endforeach
+
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            @endif
+
+
+
+                                                            <div class="text-center">
+                                                                <button class="btn btn-primary" type="button"
+                                                                    data-target="#modal-tasa-diferenciada"
+                                                                    data-toggle="modal"
+                                                                    onclick="show_modal_tasa_diferenciada({{ $tipo->Id }},{{ $tipo->TipoCalculo }})"><i
+                                                                        class="fa fa-plus"></i></button>
+                                                            </div>
+
+
+                                                            <br>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+
+                                            </tbody>
+                                        </table>
+                                    @else
+                                        <div class="alert alert-warning">
+                                            <button type="button" class="close" data-dismiss="alert"
+                                                aria-label="Close"><span aria-hidden="true">×</span>
+                                            </button>
+
+                                            <strong>No hay datos</strong>
+                                        </div>
+                                    @endif
 
 
 
@@ -632,15 +786,15 @@
 
 
 
-    {{-- <div class="modal fade" id="modal-credito-create" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true" data-tipo="1">
+    <div class="modal fade" id="modal-add-tipo-cartera" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <form action="{{ url('polizas/deuda/agregar_credito') }}" method="POST">
+                <form action="{{ url('polizas/deuda/agregar_tipo_cartera') }}/{{ $deuda->Id }}" method="POST">
                     @csrf
                     <div class="modal-header">
                         <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
-                            <h5 class="modal-title" id="exampleModalLabel">Nueva linea de credito</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">Agregar tipo cartera</h5>
                         </div>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
@@ -648,36 +802,30 @@
                     </div>
                     <div class="modal-body">
                         <div class="box-body">
-                            <div class="form-group">
-                                <label class="control-label ">Línea de Crédito</label>
-                                <input class="form-control" type="hidden" name="Deuda" value="{{$deuda->Id}}">
-                                <select name="TipoCartera" class="form-control" required>
-                                    <option value="">Seleccione...</option>
-                                    @foreach ($tipoCartera as $obj)
-                                        <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label">Saldos y Montos</label>
-                                <select name="Saldos" class="form-control" required>
-                                    <option value="">Seleccione...</option>
-                                    @foreach ($saldos as $obj)
-                                        <option value="{{ $obj->Id }}">
-                                            {{ $obj->Abreviatura }} -
-                                            {{ $obj->Descripcion }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group row">
+                                    <label class="control-label">Tipo de Cartera</label>
+                                    <select class="form-control" name="TipoCartera">
+                                        @foreach ($tiposCartera as $tipo)
+                                            <option value="{{ $tipo->Id }}">{{ $tipo->Nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
 
-                            <div class="form-group">
-                                <label class="control-label">Monto Máximo</label>
-                                <input class="form-control" type="number" min="1.00" step="any"
-                                    name="MontoMaximoIndividual">
+                                <div class="form-group row">
+                                    <label class="control-label">Tipo cálculo</label>
+                                    <select name="TipoCalculo" class="form-control" required>
+                                        <option value="">Seleccione...</option>
+                                        <option value="1">Fecha
+                                        </option>
+                                        <option value="2">Edad
+                                        </option>
+                                    </select>
+                                </div>
+
+
                             </div>
                         </div>
-
                     </div>
                     <div class="clearfix"></div>
                     <div class="modal-footer" align="center">
@@ -688,9 +836,79 @@
 
             </div>
         </div>
-    </div> --}}
+    </div>
 
 
+
+
+    <div class="modal fade" id="modal-tasa-diferenciada" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="{{ url('polizas/deuda/tasa_diferenciada_store') }}" method="POST">
+                    @csrf
+                    <div class="modal-header">
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                            <h5 class="modal-title" id="exampleModalLabel">Agregar tasa diferenciada</h5>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="box-body">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <input type="hidden" name="PolizaDuedaTipoCartera" class="form-control">
+
+                                <div class="form-group row">
+                                    <label class="control-label">Tipo de Cartera</label>
+                                    <input type="hidden" name="PolizaDeudaTipoCartera">
+                                    <select class="form-control" name="LineaCredito">
+                                        @foreach ($lineas_credito as $linea)
+                                            <option value="{{ $linea->Id }}">
+                                                {{ $linea->Abreviatura }}-{{ $linea->Descripcion }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group row" id="divFechaDesde" style="display: none">
+                                    <label class="control-label">Fecha inicio</label>
+                                    <input type="date" name="FechaDesde" class="form-control">
+                                </div>
+
+                                <div class="form-group row" id="divFechaHasta" style="display: none">
+                                    <label class="control-label">Fecha final</label>
+                                    <input type="date" name="FechaHasta" class="form-control">
+                                </div>
+
+                                <div class="form-group row" id="divEdadDesde" style="display: none">
+                                    <label class="control-label">Edad inicio</label>
+                                    <input type="number" step="1" name="EdadDesde" class="form-control">
+                                </div>
+
+                                <div class="form-group row" id="divEdadHasta" style="display: none">
+                                    <label class="control-label">Edad final</label>
+                                    <input type="number" step="1" name="EdadHasta" class="form-control">
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="control-label">Tasa</label>
+                                    <input type="number" name="Tasa" step="any" class="form-control" required>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="modal-footer" align="center">
+                        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Aceptar</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
 
 
 
@@ -1087,168 +1305,48 @@
 
 
 
-    {{-- <th>Fecha Desde</th>
-                                            <th>Fecha Hasta</th>
-                                            <th>Tasa Fechas</th>
-                                            <th>Monto Desde</th>
-                                            <th>Monto Hasta</th>
-                                            <th>Tasa Monto</th>
-                                            <th>Edad Desde</th>
-                                            <th>Edad Hasta</th>
-                                            <th>Tasa por Edad</th> --}}
-
-
-    {{-- <td>{{ isset($obj->FechaDesde) ? date('d/m/Y', strtotime($obj->FechaDesde)) : '' }}
-                                            </td>
-                                            <td>{{ isset($obj->FechaHasta) ? date('d/m/Y', strtotime($obj->FechaHasta)) : '' }}
-                                            </td>
-                                            <td>{{ isset($obj->TasaFecha) ? $obj->TasaFecha : '' }} </td>
-                                            <td>{{ isset($obj->MontoDesde) ? '$' . number_format($obj->MontoDesde, 2, '.', ',') : '' }}
-                                            </td>
-                                            <td>{{ isset($obj->MontoHasta) ? '$' . number_format($obj->MontoHasta, 2, '.', ',') : '' }}
-                                            </td>
-                                            <td>{{ isset($obj->TasaMonto) ? $obj->TasaMonto : '' }} </td>
-                                            <td>{{ isset($obj->EdadDesde) ? $obj->EdadDesde . 'años' : '' }}</td>
-                                            <td>{{ isset($obj->EdadHasta) ? $obj->EdadHasta . 'años' : '' }}</td>
-                                            <td>{{ isset($obj->TasaEdad) ? $obj->TasaEdad : '' }} </td> --}}
 
 
 
+    <script>
+        $(document).ready(function() {
+            $(".expand-icon").click(function() {
+                let row = $(this).closest("tr");
+                let subtable = row.next(".subtareas-container");
+
+                // Alternar icono
+                $(this).text($(this).text() === "►" ? "▼" : "►");
+
+                // Mostrar u ocultar tabla de subtareas
+                subtable.toggle();
+            });
+        });
+
+        function show_modal_tasa_diferenciada(id, tipo) {
+
+            // limpiando los inputs
+            $('input[name="FechaDesde"]').val('');
+            $('input[name="FechaHasta"]').val('');
+            $('input[name="EdadDesde"]').val('');
+            $('input[name="EdadHasta"]').val('');
+
+            // Ocultar todos los divs de fecha y edad
+            $('#divFechaDesde, #divFechaHasta, #divEdadDesde, #divEdadHasta').hide();
+
+            // Mostrar los campos según el tipo
+            if (tipo == 1) {
+                $('#divFechaDesde, #divFechaHasta').show();
+            } else if (tipo == 2) {
+                $('#divEdadDesde, #divEdadHasta').show();
+            }
+
+            document.querySelector('input[name="PolizaDuedaTipoCartera"]').value = id;
 
 
-    {{-- <form action="{{ url('agregar_credito') }}" method="post">
-                        @csrf
-                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                            <h4>&nbsp;&nbsp; Tasa Diferenciada<small></small>
-                            </h4>
-                            <label style="font-size: 12px;">* Se pueden agregar n número de tasa
-                                diferenciada</label>
-                        </div>
-                        <div class="col-lg-3 col-md-4 col-sm-12 col-xs-12">
-                            <label class="control-label" align="center">Linea de crédito</label> <br>
-                            <select name="TipoCartera" id="TipoCartera" class="form-control" required>
-                                <option value="">Seleccione...</option>
-                                @foreach ($tipoCartera as $obj)
-                                <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-lg-3 col-md-4 col-sm-12 col-xs-12">
-                            <label class="control-label" align="center">Saldos y Montos</label> <br>
-                            <select name="Saldos" id="Saldos" class="form-control" required>
-                                <option value="">Seleccione...</option>
-                                @foreach ($saldos as $obj)
-                                <option value="{{ $obj->Id }}">{{ $obj->Abreviatura }} -
-                                    {{ $obj->Descripcion }}
-                                </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-lg-3 col-md-4 col-sm-12 col-xs-12">
-                            <label class="control-label" align="center">Monto máximo</label> <br>
-                            <div class=" form-group has-feedback">
-                                <input type="number" step="any" name="MontoMaximoIndividual" id="MontoMaximoIndividual" style="padding-left: 15%;display: none;" class="form-control" required onblur="MontoMaxIndividual(this.value)">
-                                <input type="text" step="any" style="padding-left: 15%; display: block;" id="MontoMaximoIndividualTexto" class="form-control" required onfocus="MontoMaxIndividualTexto(this.value)">
-                                <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                            <h4>&nbsp;&nbsp;
-                            </h4>
-                        </div>
+        }
+    </script>
 
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">&nbsp;</div>
-                        <div class="col-lg-1 col-md-1 col-sm-12 col-xs-12">
 
-                        </div>
-                        <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12">
-
-                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
-                                <label class="control-label" align="center"> Rangos por Fechas de
-                                    otorgamiento</label> <br>
-                                <input id="fechas" type="checkbox" class="js-switch" style="margin-left: 25%;" />
-                            </div>
-                            <div id="fecha_otorgamiento" style="display: none;">
-                                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                    <label class="control-label" align="center">Fecha Desde</label>
-                                    <input type="date" class="form-control" name="FechaDesde" id="FechaDesde" />
-                                </div>
-                                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                    <label class="control-label" align="center">Fecha Hasta</label>
-                                    <input type="date" class="form-control" name="FechaHasta" id="FechaHasta" />
-                                </div>
-                                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                    <label class="control-label" align="center">Tasa Fecha</label>
-                                    <input type="number" step="any" class="form-control" name="TasaFecha" id="TasaFecha" />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <hr>&nbsp;
-                        </div>
-
-                        <div class="col-lg-1 col-md-1 col-sm-12 col-xs-12">
-                        </div>
-                        <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12">
-                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                <label class="control-label" align="center"> Rangos por montos</label> <br>
-                                <input id="montos" type="checkbox" class="js-switch" style="margin-left: 25%;" />
-                            </div>
-                            <div id="monto_otorgamiento" style="display: none;">
-                                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                    <label class="control-label" align="center">Monto Desde</label>
-                                    <input type="number" step="0.01" class="form-control" name="MontoDesde" id="MontoDesde" />
-                                </div>
-                                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                    <label class="control-label" align="center">Monto Hasta</label>
-                                    <input type="number" step="0.01" class="form-control" name="MontoHasta" id="MontoHasta" />
-                                </div>
-                                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                    <label class="control-label" align="center">Tasa Monto</label>
-                                    <input type="number" step="any" class="form-control" name="TasaMonto" id="TasaMonto" />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        </div>
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <hr>&nbsp;
-                        </div>
-
-                        <div class="col-lg-1 col-md-1 col-sm-12 col-xs-12">
-                        </div>
-                        <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12">
-                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                <label class="control-label" align="center"> Rangos por Edad</label> <br>
-                                <input id="edad" type="checkbox" class="js-switch" style="margin-left: 25%;" />
-                            </div>
-                            <div id="edad_otorgamiento" style="display: none;">
-                                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                    <label class="control-label" align="center">Edad Desde</label>
-                                    <input type="number" class="form-control" name="EdadDesde" id="EdadDesde" min="18" />
-                                </div>
-                                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                    <label class="control-label" align="center">Edad Hasta</label>
-                                    <input type="number" class="form-control" name="EdadHasta" id="EdadHasta" />
-                                </div>
-                                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                    <label class="control-label" align="center">Tasa Edad</label>
-                                    <input type="number" step="any" class="form-control" name="TasaEdad" id="TasaEdad" />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        </div>
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <br><br>
-                            <div class="form-group" align="center">
-                                <button type="submit" class="btn btn-success" {{ $deuda->Configuracion == 1 ? 'disabled' : '' }}>Guardar y Continuar</button>
-                                <a href="{{ url('polizas/deuda') }}"><button type="button" class="btn btn-primary">Cancelar</button></a>
-                            </div>
-                        </div>
-                        </form> --}}
 
 
 @endsection

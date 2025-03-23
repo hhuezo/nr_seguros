@@ -20,7 +20,7 @@
                             </form>
                             <form method="POST" action="{{ url('polizas/deuda/delete_temp') }}" style="display: inline-block;">
                                 @csrf
-                                <input type="hidden" name="LineaCredito" value="{{ $credito }}">
+                                <input type="hidden" name="LineaCredito" value="">
                                 <input type="hidden" name="DeudaId" value="{{ $deuda->Id }}">
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fa fa-arrow-left"></i>

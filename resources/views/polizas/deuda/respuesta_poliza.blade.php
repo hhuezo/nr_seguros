@@ -204,7 +204,7 @@
                                                         </td>
                                                         <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }} Años</td>
                                                         <td>{{ $registro->EdadDesembloso ? $registro->Edad : '' }} Años</td>
-                                                        <td>${{ number_format($registro->saldo_total, 2) }}</td>
+                                                        <td>${{ number_format($registro->TotalCredito, 2) }}</td>
                                                         <td>
                                                             <input type="checkbox" onchange="excluir({{ $registro->Id }},0,1)" class="js-switch" {{ $registro->excluidoEdad() > 0 ? 'checked' : '' }}>
                                                             <input type="hidden" id="id_excluido-{{ $registro->Id }}" value="{{ $registro->Excluido }}">
@@ -278,9 +278,9 @@
                                                     <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
                                                     <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }}
                                                         Años</td>
-                                                    <td>${{ number_format($registro->saldo_total, 2) }}</td>
+                                                    <td>${{ number_format($registro->TotalCredito, 2) }}</td>
                                                     <td style="text-align: center;">
-                                                        <input type="checkbox" onchange="excluir_dinero({{ $registro->Id }},{{$registro->saldo_total}},1)" class="js-switch" {{ $registro->excluidoResponsabilidad() > 0 ? 'checked' : '' }}>
+                                                        <input type="checkbox" onchange="excluir_dinero({{ $registro->Id }},{{$registro->TotalCredito}},1)" class="js-switch" {{ $registro->excluidoResponsabilidad() > 0 ? 'checked' : '' }}>
                                                         <input type="hidden" id="id_excluido_dinero-{{ $registro->Id }}" value="{{ $registro->Excluido }}">
                                                     </td>
 
@@ -331,7 +331,7 @@
                                                         <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
                                                         </td>
                                                         <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
-                                                        <td>${{ number_format($registro->saldo_total, 2) }}</td>
+                                                        <td>${{ number_format($registro->TotalCredito, 2) }}</td>
                                                     </tr>
                                                     @endforeach
 

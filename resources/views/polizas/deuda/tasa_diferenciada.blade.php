@@ -1,10 +1,9 @@
 @extends ('welcome')
 @section('contenido')
     <style>
-        .subtareas-container {
+        /* .subtareas-container {
             display: none;
-            /* Ocultar subtareas por defecto */
-        }
+        } */
 
         .expand-icon {
             cursor: pointer;
@@ -70,7 +69,7 @@
                                 @foreach ($deuda->deuda_tipos_cartera as $tipo)
                                     <tr class="tarea warning-row">
                                         <td>
-                                            <span class="expand-icon">►</span> {{ $tipo->tipo_cartera?->Nombre ?? '' }}
+                                            <span class="expand-icon">▼</span> {{ $tipo->tipo_cartera?->Nombre ?? '' }}
                                         </td>
                                         <td>
                                             @if ($tipo->TipoCalculo == 1)
@@ -114,7 +113,7 @@
                                                             @foreach ($tipo->tasa_diferenciada as $tasa_diferenciada)
                                                                 <tr class="primary-row">
                                                                     <td>
-                                                                        {{ $tasa_diferenciada->linea_credito?->Abreviatura ?? '' }}
+                                                                        {{ $tasa_diferenciada->linea_credito?->Abreviatura ?? '' }} -
                                                                         {{ $tasa_diferenciada->linea_credito?->Descripcion ?? '' }}
                                                                     </td>
                                                                     @if ($tipo->TipoCalculo == 1)
@@ -208,7 +207,7 @@
                                 <div class="form-group row">
                                     <label class="control-label">Tipo cálculo</label>
                                     <select name="TipoCalculo" class="form-control" required>
-                                        <option value="">Seleccione...</option>
+                                        <option value="0">No aplica</option>
                                         <option value="1">Fecha
                                         </option>
                                         <option value="2">Edad
@@ -259,7 +258,7 @@
                                     <select class="form-control" name="LineaCredito">
                                         @foreach ($lineas_credito as $linea)
                                             <option value="{{ $linea->Id }}">
-                                                {{ $linea->Abreviatura }}-{{ $linea->Descripcion }}</option>
+                                                {{ $linea->Abreviatura }} - {{ $linea->Descripcion }}</option>
                                         @endforeach
                                     </select>
                                 </div>

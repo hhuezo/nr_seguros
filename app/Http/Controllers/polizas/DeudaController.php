@@ -660,6 +660,10 @@ class DeudaController extends Controller
         $planes = Plan::where('Activo', 1)->get();
         $perfiles = Perfil::where('Activo', 1)->where('Aseguradora', '=', $deuda->Aseguradora)->get();
 
+
+        $tiposCartera = TipoCartera::where('Activo', 1)->where('Poliza', 2)->get();
+        $lineas_credito = SaldoMontos::where('Activo', 1)->get();
+
         return view('polizas.deuda.show', compact(
             'requisitos',
             'planes',
@@ -675,7 +679,9 @@ class DeudaController extends Controller
             'tipoCartera',
             //'data',
             'tabla',
-            'columnas'
+            'columnas',
+            'tiposCartera',
+            'lineas_credito'
         ));
     }
 
@@ -1097,37 +1103,39 @@ class DeudaController extends Controller
 
             $creditos = DeudaCredito::where('Deuda', $deuda->Id)->where('Activo', 1)->get();
 
+
+
             PolizaDeudaTasaDiferenciadaTemp::where('PolizaDueda', $deuda->Id)->delete();
 
 
 
             foreach ($creditos as $credito) {
 
-                if ($credito->tasasDiferenciadas->count() > 0) {
-                    foreach ($credito->tasasDiferenciadas as $tasa_diferenciada) {
+                // if ($credito->tasasDiferenciadas->count() > 0) {
+                //     foreach ($credito->tasasDiferenciadas as $tasa_diferenciada) {
 
-                        $temp = new PolizaDeudaTasaDiferenciadaTemp();
-                        $temp->PolizaDuedaCredito = $credito->Id;
-                        $temp->PolizaDueda = $deuda->Id;
-                        $temp->FechaDesde = $tasa_diferenciada->FechaDesde;
-                        $temp->FechaHasta = $tasa_diferenciada->FechaHasta;
-                        $temp->EdadDesde = $tasa_diferenciada->EdadDesde;
-                        $temp->EdadHasta = $tasa_diferenciada->EdadHasta;
-                        $temp->TipoCalculo = $tasa_diferenciada->TipoCalculo;
-                        $temp->Tasa = $tasa_diferenciada->Tasa;
-                        $temp->EsTasaDiferenciada = 1;
-                        $temp->Usuario = auth()->user()->id;
-                        $temp->save();
-                    }
-                } else {
-                    $temp = new PolizaDeudaTasaDiferenciadaTemp();
-                    $temp->PolizaDuedaCredito = $credito->Id;
-                    $temp->PolizaDueda = $deuda->Id;
-                    $temp->Tasa = $deuda->Tasa;
-                    $temp->EsTasaDiferenciada = 0;
-                    $temp->Usuario = auth()->user()->id;
-                    $temp->save();
-                }
+                //         $temp = new PolizaDeudaTasaDiferenciadaTemp();
+                //         $temp->PolizaDuedaCredito = $credito->Id;
+                //         $temp->PolizaDueda = $deuda->Id;
+                //         $temp->FechaDesde = $tasa_diferenciada->FechaDesde;
+                //         $temp->FechaHasta = $tasa_diferenciada->FechaHasta;
+                //         $temp->EdadDesde = $tasa_diferenciada->EdadDesde;
+                //         $temp->EdadHasta = $tasa_diferenciada->EdadHasta;
+                //         $temp->TipoCalculo = $tasa_diferenciada->TipoCalculo;
+                //         $temp->Tasa = $tasa_diferenciada->Tasa;
+                //         $temp->EsTasaDiferenciada = 1;
+                //         $temp->Usuario = auth()->user()->id;
+                //         $temp->save();
+                //     }
+                // } else {
+                //     $temp = new PolizaDeudaTasaDiferenciadaTemp();
+                //     $temp->PolizaDuedaCredito = $credito->Id;
+                //     $temp->PolizaDueda = $deuda->Id;
+                //     $temp->Tasa = $deuda->Tasa;
+                //     $temp->EsTasaDiferenciada = 0;
+                //     $temp->Usuario = auth()->user()->id;
+                //     $temp->save();
+                // }
             }
 
             $tempTasaDiferenciada = PolizaDeudaTasaDiferenciadaTemp::where('PolizaDueda', $deuda->Id)->get();
@@ -1270,36 +1278,6 @@ class DeudaController extends Controller
                 }
             }
             //dd($lineas_credito);
-
-            /*;
-
-            $lineas_credito = DB::table('poliza_deuda_cartera as poliza')
-                ->join('poliza_deuda_creditos as creditos', 'poliza.LineaCredito', '=', 'creditos.Id')
-                ->join('saldos_montos as saldos', 'creditos.Saldos', '=', 'saldos.Id')
-                ->join('tipo_cartera as tipo', 'creditos.TipoCartera', '=', 'tipo.Id')
-                ->select(
-                    'poliza.LineaCredito',
-                    'saldos.Descripcion',
-                    'saldos.Abreviatura as Abrev',
-                    DB::raw("CONCAT(saldos.Abreviatura, poliza.LineaCredito) as Abreviatura"),
-                    'tipo.Nombre as tipo',
-                    DB::raw("IFNULL(sum(poliza.MontoOtorgado), '0.00') as MontoOtorgado"),
-                    DB::raw("IFNULL(sum(poliza.SaldoCapital), '0.00') as SaldoCapital"),
-                    DB::raw("IFNULL(sum(poliza.Intereses), '0.00') as Intereses"),
-                    DB::raw("IFNULL(sum(poliza.MontoNominal), '0.00') as MontoNominal"),
-                    DB::raw("IFNULL(sum(poliza.InteresesCovid), '0.00') as InteresesCovid"),
-                    DB::raw("IFNULL(sum(poliza.InteresesMoratorios), '0.00') as InteresesMoratorios"),
-                    DB::raw("IFNULL(sum(poliza.saldo_total), '0.00') as saldo_total")
-                )
-                ->where('poliza.PolizaDeuda', $id)
-                ->where(function ($query) {
-                    $query->where('PolizaDeudaDetalle', null)
-                        ->orWhere('PolizaDeudaDetalle', 0);
-                })
-                ->groupBy('poliza.LineaCredito')
-                ->get();
-
-            //dd($lineas_credito);*/
 
 
             $lineas_abreviatura = $lineas_credito->pluck('Abreviatura')->toArray();
@@ -3128,16 +3106,16 @@ class DeudaController extends Controller
                     'pdtc.NoValido',
                     'pdtc.Excluido',
                     'pdtc.MontoMaximoIndividual',
-                    DB::raw("sum(pdtc.saldo_total) as saldo_total"),
+                    DB::raw("sum(pdtc.TotalCredito) as saldo_total"),
                     DB::raw("GROUP_CONCAT(DISTINCT pdtc.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
-                    DB::raw("GROUP_CONCAT(DISTINCT FORMAT(pdtc.saldo_total, 2) SEPARATOR '- ') AS ConcatenatedMonto"),
+                    DB::raw("GROUP_CONCAT(DISTINCT FORMAT(pdtc.TotalCredito, 2) SEPARATOR '- ') AS ConcatenatedMonto"),
                     //'pdc.MontoMaximoIndividual as MontoMaximoIndividual',
                     'sm.Abreviatura as Abreviatura',
                     'tc.nombre AS TipoCarteraNombre' // Agregar el nombre de la TipoCartera
                 )
                 ->where('pdtc.NoValido', 1)
                 ->where('pdtc.EdadDesembloso', '<=', $deuda->EdadMaximaTerminacion)
-                ->where('pdtc.saldo_total', '<=', $deuda->ResponsabilidadMaxima)
+                ->where('pdtc.TotalCredito', '<=', $deuda->ResponsabilidadMaxima)
                 ->where('pdtc.PolizaDeuda', $poliza)
                 ->groupBy('pdtc.Dui')
                 ->get();
@@ -3193,7 +3171,7 @@ class DeudaController extends Controller
                         DB::raw('MAX(poliza_deuda_temp_cartera.FechaOtorgamientoDate) as FechaOtorgamiento'),
                         'poliza_deuda_temp_cartera.Excluido',
                         'poliza_deuda_temp_cartera.OmisionPerfil',
-                        DB::raw('SUM(poliza_deuda_temp_cartera.saldo_total) as saldo_total'),
+                        DB::raw('SUM(poliza_deuda_temp_cartera.TotalCredito) as saldo_total'),
                         'pdc.MontoMaximoIndividual as MontoMaximoIndividual'
                     )
                     ->where('poliza_deuda_temp_cartera.EdadDesembloso', '<=', $deuda->EdadMaximaTerminacion)
@@ -3258,7 +3236,7 @@ class DeudaController extends Controller
                         'poliza_deuda_temp_cartera.FechaOtorgamientoDate as FechaOtorgamiento',
                         'poliza_deuda_temp_cartera.Excluido',
                         'poliza_deuda_temp_cartera.OmisionPerfil',
-                        'poliza_deuda_temp_cartera.saldo_total'
+                        'poliza_deuda_temp_cartera.TotalCredito as saldo_total'
                     )
                     //->groupBy('poliza_deuda_temp_cartera.NumeroReferencia')
                     ->get();

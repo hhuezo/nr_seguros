@@ -98,7 +98,7 @@ class Deuda extends Model
             ->whereNull('excluidos.NumeroReferencia')
             ->where('temp.PolizaDeuda', $this->Id)
             ->where('temp.User', auth()->user()->id)
-            ->where('temp.saldo_total', '>', $this->ResponsabilidadMaxima)
+            ->where('temp.TotalCredito', '>', $this->ResponsabilidadMaxima)
             ->count();
 
         $total = $count_edad_maxima + $count_responsabilidad_maxima;

@@ -11,7 +11,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
+                {{-- <div class="modal-body">
                     <div class="table-simulated">
                         <div class="table-header">
                             <div>Tipo cálculo</div>
@@ -39,7 +39,7 @@
 
                             </div>
                         @endforeach
-                    </div>
+                    </div> --}}
                 </div>
                 <div class="clearfix"></div>
                 <div class="modal-footer" align="center">

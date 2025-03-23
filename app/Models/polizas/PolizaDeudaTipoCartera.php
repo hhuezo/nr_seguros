@@ -18,7 +18,9 @@ class PolizaDeudaTipoCartera extends Model
 
     protected $fillable = [
         'PolizaDeuda',
-        'TipoCartera'
+        'TipoCartera',
+        'TipoCalculo',
+        'MontoMaximoIndividual'
     ];
 
     public function poliza_deuda(){

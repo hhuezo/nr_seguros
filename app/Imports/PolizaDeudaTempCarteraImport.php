@@ -78,7 +78,7 @@ class PolizaDeudaTempCarteraImport implements ToModel, /*WithStartRow,*/ SkipsEm
                 'PolizaDeuda' =>  $this->PolizaDeuda,
                 'FechaInicio' =>  $this->FechaInicio,
                 'FechaFinal' =>  $this->FechaFinal,
-                'LineaCredito' => $this->credito,
+                'PolizaDeudaTipoCartera' => $this->credito,
             ]);
         }
     }

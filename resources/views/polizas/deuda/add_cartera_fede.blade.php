@@ -3,7 +3,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
-                    <h5 class="modal-title" id="exampleModalLabel">Subir archivo Excel Fede..</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Subir archivo Excel Fede</h5>
                 </div>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -13,11 +13,10 @@
                 @csrf
                 <div class="modal-body">
                     <div class="form-group row">
-                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Linea de
-                            Credito</label>
-                        <input type="hidden" name="LineaCredito" value="{{$obj->Id}}">
+                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo cartera</label>
+                        <input type="hidden" name="PolizaDeudaTipoCartera" value="{{ $obj->Id }}">
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                            <input type="text" class="form-control" value="{{$obj->saldos->Descripcion}}" readonly>
+                            <input type="text" class="form-control" value="{{$obj->tipo_cartera->Nombre}}" readonly>
                         </div>
 
                     </div>
@@ -63,7 +62,7 @@
                             <input class="form-control" name="Archivo" id="Archivo" type="file" required>
                         </div>
                     </div>
-                    
+
 
                 </div>
 

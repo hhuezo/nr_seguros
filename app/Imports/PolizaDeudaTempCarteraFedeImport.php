@@ -46,7 +46,7 @@ class PolizaDeudaTempCarteraFedeImport implements ToModel, /*WithStartRow,*/ Ski
         }
 
         if ($this->encabezados == 1 &&  trim($row[0]) != "DUI o documento de identidad") {
-           
+
 
             return new PolizaDeudaTempCartera([
                 'Dui' => $row[0],
@@ -70,7 +70,7 @@ class PolizaDeudaTempCarteraFedeImport implements ToModel, /*WithStartRow,*/ Ski
                 'PolizaDeuda' =>  $this->PolizaDeuda,
                 'FechaInicio' =>  $this->FechaInicio,
                 'FechaFinal' =>  $this->FechaFinal,
-                'LineaCredito' => $this->credito,
+                'PolizaDeudaTipoCartera' => $this->credito,
             ]);
         }
     }

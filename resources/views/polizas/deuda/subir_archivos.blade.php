@@ -142,15 +142,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($linea_credito as $obj)
+                        @foreach ($deuda_tipo_cartera as $obj)
                             <tr>
-                                <td>{{ $obj->tipoCarteras->Nombre }}</td>
-                                <td>{{ $obj->saldos->Abreviatura }}</td>
-                                <td>{{ $obj->saldos->Descripcion }}</td>
-                                <td align="right">${{ number_format($obj->Total, 2, '.', ',') }}
-                                </td>
+                                <td>{{ $obj->tipo_cartera->Nombre }}</td>
+                                <td>{{ $obj->Abreviatura }}</td>
+                                <td>{{ $obj->Descripcion }}</td>
+                                <td align="right">${{ number_format($obj->Total, 2, '.', ',') }}</td>
                                 <td align="center">
-                                    @if($deuda->Aseguradora == 3)
+                                    @if ($deuda->Aseguradora == 3)
                                     <a data-target="#modal-add-fede-{{ $obj->Id }}" data-toggle="modal">
                                         <button class="btn btn-default"><i class="fa fa-upload fa-lg"></i></button> </a>
                                     @else
@@ -158,9 +157,8 @@
                                         <button class="btn btn-default"><i class="fa fa-upload fa-lg"></i></button> </a>
                                     @endif
                                 </td>
-
-
                             </tr>
+
                             @include('polizas.deuda.add_cartera')
                             @include('polizas.deuda.add_cartera_fede')
                         @endforeach

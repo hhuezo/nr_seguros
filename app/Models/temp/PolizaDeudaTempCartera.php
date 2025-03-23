@@ -2,6 +2,7 @@
 
 namespace App\Models\temp;
 
+use App\Models\catalogo\SaldoMontos;
 use App\Models\polizas\Deuda;
 use App\Models\polizas\DeudaCredito;
 use App\Models\polizas\DeudaExcluidos;
@@ -54,7 +55,7 @@ class PolizaDeudaTempCartera extends Model
         'Edad',
         'InteresesCovid',
         'MontoNominal',
-        'LineaCredito',
+        'PolizaDeudaTipoCartera',
         'NoValido',
         'EdadDesembloso',
         'FechaOtorgamientoDate',
@@ -67,7 +68,7 @@ class PolizaDeudaTempCartera extends Model
 
     public function linea_credito()
     {
-        return $this->belongsTo(DeudaCredito::class, 'LineaCredito', 'Id');
+        return $this->belongsTo(SaldoMontos::class, 'LineaCredito', 'Id');
     }
 
     public function poliza_deuda()
@@ -80,7 +81,8 @@ class PolizaDeudaTempCartera extends Model
     {
 
         try {
-            $tipo_cartera = $this->linea_credito->Saldos;
+            $tipo_cartera = $this->LineaCredito;
+
             switch ($tipo_cartera) {
                 case '1':
                     # saldo a capital
