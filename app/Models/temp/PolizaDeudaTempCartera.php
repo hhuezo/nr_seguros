@@ -137,7 +137,7 @@ class PolizaDeudaTempCartera extends Model
 
         $sumaTotal = 0;
         foreach ($data as $obj) {
-            $sumaTotal += $obj->saldo_total;
+            $sumaTotal += $obj->TotalCredito;
 
             $style = ($sumaTotal < $montoRequisito)
                 ? '<span style="color: black;">' . $obj->NumeroReferencia . '</span>'

@@ -59,6 +59,7 @@
                                 <tr class="warning-row">
                                     <th style="width: 40%;">Tipo cartera</th>
                                     <th style="width: 20%;">Tipo cálculo</th>
+                                    <th style="width: 20%;">Monto máximo individual</th>
                                     <th style="width: 20%;">Opciones</th>
                                 </tr>
                             </thead>
@@ -79,6 +80,9 @@
                                             @else
                                                 {{ '' }}
                                             @endif
+                                        </td>
+                                        <td class="text-end">
+                                             ${{ $tipo->MontoMaximoIndividual }}
                                         </td>
                                         <td> <button class="btn btn-primary"><i class="fa fa-edit"></i></button>
                                             <button class="btn btn-danger"><i class="fa fa-trash"></i></button>
@@ -213,6 +217,13 @@
                                         <option value="2">Edad
                                         </option>
                                     </select>
+                                </div>
+
+
+                                <div class="form-group row">
+                                    <label class="control-label">Monto maximo individual</label>
+                                    <input type="number" step="any" min="0.00"  class="form-control" name="MontoMaximoIndividual" required>
+
                                 </div>
 
 

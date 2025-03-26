@@ -681,61 +681,6 @@
 
     }
 
-    // function excluir_dinero(id, subtotal, val) {
-    //     let id_ex = document.getElementById('id_excluido_dinero-' + id).value;
-    //     //alert(id_ex);
-    //     if (id_ex == 0) {
-    //         //alert('si');
-    //         $.ajax({
-    //             url: "{{ url('poliza/deuda/add_excluidos') }}", // Asegúrate de que esta sintaxis se procese correctamente en tu archivo .blade.php
-    //             type: 'POST'
-    //             , data: {
-    //                 id: id
-    //                 , subtotal: subtotal
-    //                 , val: val,
-    //                 //tipo_cartera: ' $tipo_cartera',
-    //                 _token: '{{ csrf_token() }}' // Necesario para la protección CSRF de Laravel
-    //             }
-    //             , success: function(response) {
-    //                 // Aquí manejas lo que suceda después de la respuesta exitosa
-    //                 console.log(response);
-    //                 if (response.excluido > 0) {
-    //                     $("#btn_expo").show();
-    //                     $("#btn_expo2").show();
-    //                     document.getElementById('id_excluido_dinero-' + id).value = response.excluido;
-    //                 }
-
-    //             }
-    //             , error: function(xhr, status, error) {
-    //                 // Aquí manejas los errores
-    //                 console.error(error);
-    //             }
-    //         });
-    //     } else {
-    //         //alert('no');
-    //         $.ajax({
-    //             url: "{{ url('poliza/deuda/delete_excluido') }}", // Asegúrate de que esta sintaxis se procese correctamente en tu archivo .blade.php
-    //             type: 'POST'
-    //             , data: {
-    //                 id: id
-    //                 , id_ex: id_ex,
-    //                 //tipo_cartera: ' $tipo_cartera',
-    //                 _token: '{{ csrf_token() }}' // Necesario para la protección CSRF de Laravel
-    //             }
-    //             , success: function(response) {
-    //                 // Aquí manejas lo que suceda después de la respuesta exitosa
-    //                 console.log(response);
-    //                 document.getElementById('id_excluido_dinero-' + id).value = response.excluido;
-    //             }
-    //             , error: function(xhr, status, error) {
-    //                 // Aquí manejas los errores
-    //                 console.error(error);
-    //             }
-    //         });
-    //     }
-
-
-    // }
 
 
     function get_creditos(id) {
@@ -744,7 +689,7 @@
             , type: 'GET'
             , success: function(response) {
                 // Aquí manejas la respuesta. Por ejemplo, podrías imprimir la respuesta en la consola:
-                console.log(response);
+                //console.log(response);
                 var _select = '<option value=""> Seleccione ... </option>';
                 for (var i = 0; i < response.length; i++)
                     _select += '<option value="' + response[i].Id + '"  >' + response[i].NumeroReferencia + ' <strong>($' +response[i].saldo_total +  ')</strong>'+
@@ -812,6 +757,8 @@
     function loadCreditos(opcion, buscar) {
         var loadingOverlay = document.getElementById('loading-overlay'); // Cambiado para coincidir con el HTML
 
+        console.log("opcion: ",opcion);
+
         if (loadingOverlay) {
             loadingOverlay.style.display = 'flex'; // Mostrar overlay
         }
@@ -868,7 +815,7 @@
             url: "{{ url('polizas/deuda/get_creditos_detalle') }}/" + documento + "/" + poliza + "/" + tipo
             , type: 'GET'
             , success: function(response) {
-                console.log(response);
+                //console.log(response);
                 $('#modal-creditos').html(response);
             }
             , error: function(error) {

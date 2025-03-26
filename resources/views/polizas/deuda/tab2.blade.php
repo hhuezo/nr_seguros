@@ -204,234 +204,80 @@
                             <th>Intereses Moratorios</th>
                             <th>Monto nominal</th>
                             <th>Suma asegurada</th>
+                            <th>Prima calculada</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($lineas_credito as $lineas)
-                            @php($total = $lineas->SaldoCapital)
-                            @php($saldo_capital = 0.0)
-                            @php($monto_nominal = 0.0)
-                            @php($intereses = 0.0)
-                            @php($intereses_covid = 0.0)
-                            @php($intereses_moratorios = 0.0)
-                            @php($monto_otorgado = 0)
-                            @if ($lineas->Abrev == 'INS1' . $lineas->LineaCredito)
-                                @php($total = $lineas->SaldoCapital)
-                                @php($saldo_capital = $lineas->SaldoCapital)
-                                @php($monto_nominal = 0.0)
-                                @php($intereses = 0.0)
-                                @php($intereses_covid = 0.0)
-                                @php($intereses_moratorios = 0.0)
-                                @php($monto_otorgado = 0)
-                            @elseif($lineas->Abrev == 'INS2')
-                                @php($total = $lineas->SaldoCapital + $lineas->Intereses)
-                                @php($saldo_capital = $lineas->SaldoCapital)
-                                @php($monto_nominal = 0)
-                                @php($intereses = $lineas->Intereses)
-                                @php($intereses_covid = 0)
-                                @php($intereses_moratorios = 0)
-                                @php($monto_otorgado = 0)
-                            @elseif($lineas->Abrev == 'INS3')
-                                @php($total = $lineas->SaldoCapital + $lineas->Intereses + $lineas->InteresesCovid)
-                                @php($saldo_capital = $lineas->SaldoCapital)
-                                @php($monto_nominal = 0)
-                                @php($intereses = $lineas->Intereses)
-                                @php($intereses_covid = $lineas->InteresesCovid)
-                                @php($intereses_moratorios = 0)
-                                @php($monto_otorgado = 0)
-                            @elseif($lineas->Abrev == 'INS4')
-                                @php($total = $lineas->SaldoCapital + $lineas->Intereses + $lineas->InteresesCovid + $lineas->InteresesMoratorios)
-                                @php($saldo_capital = $lineas->SaldoCapital)
-                                @php($monto_nominal = 0)
-                                @php($intereses = $lineas->Intereses)
-                                @php($intereses_covid = $lineas->InteresesCovid)
-                                @php($intereses_moratorios = $lineas->InteresesMoratorios)
-                                @php($monto_otorgado = 0)
-                            @elseif($lineas->Abrev == 'INS5')
-                                @php($total = $lineas->MontoNominal)
-                                @php($saldo_capital = 0)
-                                @php($monto_nominal = $lineas->MontoNominal)
-                                @php($intereses = 0)
-                                @php($intereses_covid = 0)
-                                @php($intereses_moratorios = 0)
-                                @php($monto_otorgado = 0)
-                            @elseif($lineas->Abrev == 'INS6')
-                                @php($total = $lineas->MontoOtorgado)
-                                @php($saldo_capital = 0)
-                                @php($monto_nominal = 0)
-                                @php($intereses = 0)
-                                @php($intereses_covid = 0)
-                                @php($intereses_moratorios = 0)
-                                @php($monto_otorgado = $lineas->MontoOtorgado)
-                            @endif
+
+                        @php($totalMontoOtorgado = 0)
+                        @php($totalSaldoCapital = 0)
+                        @php($totalInteres = 0)
+                        @php($totalInteresCovid = 0)
+                        @php($totalInteresMoratorio = 0)
+                        @php($totalMontoNominal = 0)
+                        @php($totalTotalCredito = 0)
+                        @php($totalPrimaCalculada = 0)
+
+
+                        @foreach ($dataPago as $item)
+                            @php($totalMontoOtorgado += $item['MontoOtorgado'])
+                            @php($totalSaldoCapital += $item['SaldoCapital'])
+                            @php($totalInteres += $item['Intereses'])
+                            @php($totalInteresCovid += $item['InteresesCovid'])
+                            @php($totalInteresMoratorio += $item['InteresesMoratorios'])
+                            @php($totalMontoNominal += $item['MontoNominal'])
+                            @php($totalTotalCredito += $item['TotalCredito'])
+                            @php($totalPrimaCalculada += $item['PrimaCalculada'])
+
                             <tr>
-                                <td>{{ $lineas->tipo }} {{ $lineas->Abrev }}</td>
-                                <td id="{{ $lineas->Abreviatura }}_tasa">
-                                    {{ $lineas->EsTasaDiferenciada == 1 ? $lineas->Tasa : $deuda->Tasa }} %</td>
-                                <td>{{ $lineas->EsTasaDiferenciada == 1 ? $lineas->EdadDesde . ' - ' . $lineas->EdadHasta . ' Años' : '' }}
+                                <td>{{ $item['DescripcionLineaCredito'] }} ({{ $item['AbreviaturaLineaCredito'] }})</td>
+                                <td>{{ $item['Tasa'] }}%</td>
+                                <td>{{ $item['Edad'] }}</td>
+                                <td>{{ $item['Fecha'] }}</td>
+                                <td style="text-align: right;">
+                                    {{number_format($item['MontoOtorgado'], 2, '.', ',')}}
                                 </td>
-                                <td>{{ $lineas->EsTasaDiferenciada == 1 ? $lineas->FechaDesde . ' - ' . $lineas->FechaHasta : '' }}
+                                <td style="text-align: right;">
+                                    {{number_format($item['SaldoCapital'], 2, '.', ',')}}
                                 </td>
-                                <td class="numeric editable" contenteditable="true"
-                                    id="{{ $lineas->Abreviatura }}_monto_otorgado">
-
-                                    {{ isset($monto_otorgado) && $monto_otorgado != 0 ? number_format($monto_otorgado, 2, '.', ',') : 0 }}
-
+                                <td style="text-align: right;">
+                                    {{number_format($item['Intereses'], 2, '.', ',') }}
                                 </td>
-                                <td class="numeric editable" contenteditable="true"
-                                    id="{{ $lineas->Abreviatura }}_saldo_capital">
-                                    {{ isset($saldo_capital) && $saldo_capital != 0 ? number_format($saldo_capital, 2, '.', ',') : 0 }}
-
+                                <td style="text-align: right;">
+                                    {{number_format($item['InteresesCovid'], 2, '.', ',') }}
                                 </td>
-                                <td class="numeric editable" contenteditable="true"
-                                    id="{{ $lineas->Abreviatura }}_interes">
-                                    {{ $intereses != 0 ? number_format($intereses, 2, '.', ',') : 0 }}
+                                <td style="text-align: right;">
+                                    {{number_format($item['InteresesMoratorios'], 2, '.', ',') }}
                                 </td>
-                                <td class="numeric editable" contenteditable="true"
-                                    id="{{ $lineas->Abreviatura }}_interes_covid">
-                                    {{ $intereses_covid != 0 ? number_format($intereses_covid, 2, '.', ',') : 0 }}
+                                <td style="text-align: right;">
+                                    {{number_format($item['MontoNominal'], 2, '.', ',') }}
                                 </td>
-                                <td class="numeric editable" contenteditable="true"
-                                    id="{{ $lineas->Abreviatura }}_interes_moratorio">
-                                    {{ $intereses_moratorios != 0 ? number_format($intereses_moratorios, 2, '.', ',') : 0 }}
+                                <td style="text-align: right;">
+                                    {{number_format($item['TotalCredito'], 2, '.', ',') }}
                                 </td>
-                                <td class="numeric editable" contenteditable="true"
-                                    id="{{ $lineas->Abreviatura }}_monto_nominal">
-                                    {{ $monto_nominal != 0 ? number_format($monto_nominal, 2, '.', ',') : 0 }}
-                                </td>
-                                <td class="numeric total" id="{{ $lineas->Abreviatura }}_suma_asegurada">
-                                    {{ number_format($total, 2, '.', ',') }}
+                                <td style="text-align: right;">
+                                    {{number_format($item['PrimaCalculada'], 2, '.', ',') }}
                                 </td>
                             </tr>
                         @endforeach
 
                         <tr>
                             <th colspan="4">Totales</th>
-                            <td class="numeric"><span id="total_monto_otorgado"></span></td>
-                            <td class="numeric"><span id="total_saldo_capital"></span></td>
-                            <td class="numeric"><span id="total_interes"></span></td>
-                            <td class="numeric"><span id="total_interes_covid"></span></td>
-                            <td class="numeric"><span id="total_interes_moratorio"></span></td>
-                            <td class="numeric"><span id="total_monto_nominal"></span></td>
-                            <td class="numeric"><span id="total_suma_asegurada"></span></td>
+                            <td class="numeric"><span id="total_monto_otorgado">{{ number_format($totalMontoOtorgado, 2, '.', ',') }}</span></td>
+                            <td class="numeric"><span id="total_saldo_capital">{{ number_format($totalSaldoCapital, 2, '.', ',') }}</span></td>
+                            <td class="numeric"><span id="total_interes">{{ number_format($totalInteres, 2, '.', ',') }}</span></td>
+                            <td class="numeric"><span id="total_interes_covid">{{ number_format($totalInteresCovid, 2, '.', ',') }}</span></td>
+                            <td class="numeric"><span id="total_interes_moratorio">{{ number_format($totalInteresMoratorio, 2, '.', ',') }}</span></td>
+                            <td class="numeric"><span id="total_monto_nominal">{{ number_format($totalMontoNominal, 2, '.', ',') }}</span></td>
+                            <td class="numeric"><span id="total_suma_asegurada">{{ number_format($totalTotalCredito, 2, '.', ',') }}</span></td>
+                            <td class="numeric"><span id="total_prima_calculada">{{ number_format($totalPrimaCalculada, 2, '.', ',') }}</span></td>
                         </tr>
                     </tbody>
                 </table>
 
 
 
-                {{--
-                <table class="excel-like-table">
-                    <thead>
-                        <tr>
-                            <th>Lineas de crédito</th>
-                            <th>Tasa interés</th>
-                            <th>Monto Otorgado</th>
-                            <th>Saldo capital</th>
-                            <th>Intereses corrientes</th>
-                            <th>Interes COVID</th>
-                            <th>Intereses Moratorios</th>
-                            <th>Monto nominal</th>
-                            <th>Suma asegurada</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($lineas_credito as $lineas)
-                            @if ($lineas->Abreviatura == 'INS1' . $lineas->LineaCredito)
-                                @php($total = $lineas->SaldoCapital)
-                                @php($saldo_capital = $lineas->SaldoCapital)
-                                @php($monto_nominal = 0.0)
-                                @php($intereses = 0.0)
-                                @php($intereses_covid = 0.0)
-                                @php($intereses_moratorios = 0.0)
-                                @php($monto_otorgado = 0)
-                            @elseif($lineas->Abreviatura == 'INS2' . $lineas->LineaCredito)
-                                @php($total = $lineas->SaldoCapital + $lineas->Intereses)
-                                @php($saldo_capital = $lineas->SaldoCapital)
-                                @php($monto_nominal = 0)
-                                @php($intereses = $lineas->Intereses)
-                                @php($intereses_covid = 0)
-                                @php($intereses_moratorios = 0)
-                                @php($monto_otorgado = 0)
-                            @elseif($lineas->Abreviatura == 'INS3' . $lineas->LineaCredito)
-                                @php($total = $lineas->SaldoCapital + $lineas->Intereses + $lineas->InteresesCovid)
-                                @php($saldo_capital = $lineas->SaldoCapital)
-                                @php($monto_nominal = 0)
-                                @php($intereses = $lineas->Intereses)
-                                @php($intereses_covid = $lineas->InteresesCovid)
-                                @php($intereses_moratorios = 0)
-                                @php($monto_otorgado = 0)
-                            @elseif($lineas->Abreviatura == 'INS4' . $lineas->LineaCredito)
-                                @php($total = $lineas->SaldoCapital + $lineas->Intereses + $lineas->InteresesCovid + $lineas->InteresesMoratorios)
-                                @php($saldo_capital = $lineas->SaldoCapital)
-                                @php($monto_nominal = 0)
-                                @php($intereses = $lineas->Intereses)
-                                @php($intereses_covid = $lineas->InteresesCovid)
-                                @php($intereses_moratorios = $lineas->InteresesMoratorios)
-                                @php($monto_otorgado = 0)
-                            @elseif($lineas->Abreviatura == 'INS5' . $lineas->LineaCredito)
-                                @php($total = $lineas->MontoNominal)
-                                @php($saldo_capital = 0)
-                                @php($monto_nominal = $lineas->MontoNominal)
-                                @php($intereses = 0)
-                                @php($intereses_covid = 0)
-                                @php($intereses_moratorios = 0)
-                                @php($monto_otorgado = 0)
-                            @elseif($lineas->Abreviatura == 'INS6' . $lineas->LineaCredito)
-                                @php($total = $lineas->MontoOtorgado)
-                                @php($saldo_capital = 0)
-                                @php($monto_nominal = 0)
-                                @php($intereses = 0)
-                                @php($intereses_covid = 0)
-                                @php($intereses_moratorios = 0)
-                                @php($monto_otorgado = $lineas->MontoOtorgado)
-                            @endif
-                            <tr>
-                                <td>{{ $lineas->tipo }} {{ $lineas->Abrev }}</td>
-                                <td>{{ $deuda->Tasa }} %</td>
-                                <td class="numeric editable" contenteditable="true"
-                                    id="{{ $lineas->Abreviatura }}_monto_otorgado">
 
-                                    {{ $monto_otorgado != 0 ? number_format($monto_otorgado, 2, '.', ',') : 0 }}
-                                </td>
-                                <td class="numeric editable" contenteditable="true"
-                                    id="{{ $lineas->Abreviatura }}_saldo_capital">
-                                    {{ $saldo_capital != 0 ? number_format($saldo_capital, 2, '.', ',') : 0 }}
-                                </td>
-                                <td class="numeric editable" contenteditable="true"
-                                    id="{{ $lineas->Abreviatura }}_interes">
-                                    {{ $intereses != 0 ? number_format($intereses, 2, '.', ',') : 0 }}
-                                </td>
-                                <td class="numeric editable" contenteditable="true"
-                                    id="{{ $lineas->Abreviatura }}_interes_covid">
-                                    {{ $intereses_covid != 0 ? number_format($intereses_covid, 2, '.', ',') : 0 }}
-                                </td>
-                                <td class="numeric editable" contenteditable="true"
-                                    id="{{ $lineas->Abreviatura }}_interes_moratorio">
-                                    {{ $intereses_moratorios != 0 ? number_format($intereses_moratorios, 2, '.', ',') : 0 }}
-                                </td>
-                                <td class="numeric editable" contenteditable="true"
-                                    id="{{ $lineas->Abreviatura }}_monto_nominal">
-                                    {{ $monto_nominal != 0 ? number_format($monto_nominal, 2, '.', ',') : 0 }}
-                                </td>
-                                <td class="numeric total" id="{{ $lineas->Abreviatura }}_suma_asegurada">
-                                    {{ number_format($total, 2, '.', ',') }}
-                                </td>
-                            </tr>
-                        @endforeach
-
-                        <tr>
-                            <th colspan="2">Totales</th>
-                            <td class="numeric"><span id="total_monto_otorgado"></span></td>
-                            <td class="numeric"><span id="total_saldo_capital"></span></td>
-                            <td class="numeric"><span id="total_interes"></span></td>
-                            <td class="numeric"><span id="total_interes_covid"></span></td>
-                            <td class="numeric"><span id="total_interes_moratorio"></span></td>
-                            <td class="numeric"><span id="total_monto_nominal"></span></td>
-                            <td class="numeric"><span id="total_suma_asegurada"></span></td>
-                        </tr>
-                    </tbody>
-                </table> --}}
             </div>
             <div class="col-md-12">&nbsp;
 
@@ -642,7 +488,7 @@
         </div>
     </div>
 
-    <script>
+    {{-- <script>
         $(document).ready(function() {
             let lineas = @json($lineas_abreviatura);
 
@@ -866,6 +712,6 @@
             //alert(val);
             document.getElementById('APagarDetalle').value = parseFloat(val);
         }
-    </script>
+    </script> --}}
 
 </div>

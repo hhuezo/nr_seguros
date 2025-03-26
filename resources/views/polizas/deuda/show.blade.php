@@ -417,81 +417,6 @@
                                 <br>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
-                                    {{-- <table width="100%" class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>Línea de Crédito</th>
-                                                <th>Saldos y Montos</th>
-                                                <th>Tasa General</th>
-
-                                                <th>Monto Máximo</th>
-                                                <th>Opciones</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($creditos as $obj)
-                                                <tr>
-                                                    <td>{{ $obj->TipoCartera == null ? '' : $obj->tipoCarteras->Nombre }}
-                                                    </td>
-                                                    <td>{{ $obj->Saldos == null ? '' : $obj->saldos->Abreviatura }}</td>
-                                                    <td>{{ $deuda->Tasa }}</td>
-
-                                                    <td>{{ isset($obj->MontoMaximoIndividual) ? '$' . number_format($obj->MontoMaximoIndividual, 2, '.', ',') : '' }}
-                                                    </td>
-                                                    <td>
-
-                                                        <a href=""
-                                                            data-target="#modal-creditos-show-{{ $obj->Id }}"
-                                                            data-toggle="modal"><i class="fa fa-eye fa-lg"></i></a>
-
-                                                        &nbsp;&nbsp;
-                                                        <a
-                                                            href="{{ url('polizas/deuda/tasa_diferenciada') }}/{{ $obj->Id }}"><i
-                                                                class="fa fa-edit fa-lg"></i></a>
-
-
-                                                        &nbsp;&nbsp;
-                                                        <a href="" data-target="#modal-delete-{{ $obj->Id }}"
-                                                            data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
-                                                    </td>
-                                                </tr>
-                                                <div class="modal fade modal-slide-in-right" aria-hidden="true"
-                                                    role="dialog" tabindex="-1" id="modal-delete-{{ $obj->Id }}">
-
-                                                    <form method="POST"
-                                                        action="{{ url('eliminar_credito', $obj->Id) }}">
-                                                        @method('POST')
-                                                        @csrf
-                                                        <div class="modal-dialog">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <button type="button" class="close"
-                                                                        data-dismiss="modal" aria-label="Close">
-                                                                        <span aria-hidden="true">×</span>
-                                                                    </button>
-                                                                    <h4 class="modal-title">Eliminar Registro</h4>
-                                                                </div>
-                                                                <div class="modal-body">
-                                                                    <p>Confirme si desea Eliminar el Registro</p>
-                                                                </div>
-                                                                <div class="modal-footer">
-                                                                    <button type="button" class="btn btn-default"
-                                                                        data-dismiss="modal">Cerrar</button>
-                                                                    <button type="submit"
-                                                                        class="btn btn-primary">Confirmar</button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-
-                                                </div>
-
-
-                                                @include('polizas.deuda.tasa_diferenciada_modal_show')
-                                            @endforeach
-                                        </tbody>
-                                    </table> --}}
-
 
                                     @if ($deuda->deuda_tipos_cartera->count() > 0)
                                         <table class="table table-bordered">
@@ -499,6 +424,7 @@
                                                 <tr class="warning-row">
                                                     <th style="width: 40%;">Tipo cartera</th>
                                                     <th style="width: 20%;">Tipo cálculo</th>
+                                                    <th style="width: 20%;">Monto máximo individual</th>
                                                     <th style="width: 20%;">Opciones</th>
                                                 </tr>
                                             </thead>
@@ -521,6 +447,10 @@
                                                                 {{ '' }}
                                                             @endif
                                                         </td>
+                                                        <td class="text-end">
+                                                            ${{ number_format($tipo->MontoMaximoIndividual, 2, '.', ',') }}
+                                                        </td>
+
                                                         <td> <button class="btn btn-primary"><i
                                                                     class="fa fa-edit"></i></button>
                                                             <button class="btn btn-danger"><i
@@ -822,6 +752,13 @@
                                         </option>
                                     </select>
                                 </div>
+
+                                <div class="form-group row">
+                                    <label class="control-label">Monto máximo individual</label>
+                                    <input type="number" step="any" min="0.00"  class="form-control" name="MontoMaximoIndividual" required>
+
+                                </div>
+
 
 
                             </div>

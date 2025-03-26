@@ -411,6 +411,17 @@ class DeudaCarteraController extends Controller
         $tasas_diferenciadas = $deuda_tipo_cartera->tasa_diferenciada;
 
         if ($deuda_tipo_cartera->TipoCalculo == 1) {
+
+            foreach ($tasas_diferenciadas as $tasa) {
+                //dd($tasa);
+                PolizaDeudaTempCartera::where('User', auth()->user()->id)
+                    ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                    ->whereBetween('FechaOtorgamientoDate', [$tasa->FechaDesde, $tasa->FechaHasta])
+                    ->update([
+                        'LineaCredito' => $tasa->LineaCredito,
+                        'Tasa' => $tasa->Tasa
+                    ]);
+            }
         } else  if ($deuda_tipo_cartera->TipoCalculo == 2) {
 
             foreach ($tasas_diferenciadas as $tasa) {
@@ -1262,7 +1273,7 @@ class DeudaCarteraController extends Controller
 
     public function store_poliza(Request $request)
     {
-
+        //dd("");
 
         $mes = $request->MesActual; // El formato 'm' devuelve el mes con ceros iniciales (por ejemplo, "02")
         $anio = $request->AxoActual;
@@ -1293,7 +1304,6 @@ class DeudaCarteraController extends Controller
             ->where('poliza_deuda_temp_cartera.PolizaDeuda', $request->Deuda)
             ->select('poliza_deuda_temp_cartera.*')
             ->get();
-
 
 
 
@@ -1373,7 +1383,6 @@ class DeudaCarteraController extends Controller
                 $poliza->InteresesCovid = $tempRecord->InteresesCovid;
                 $poliza->InteresesMoratorios = $tempRecord->InteresesMoratorios;
                 $poliza->MontoNominal = $tempRecord->MontoNominal;
-                $poliza->saldo_total = $tempRecord->saldo_total;
                 $poliza->User = $tempRecord->User;
                 $poliza->Axo = $tempRecord->Axo;
                 $poliza->Mes = $tempRecord->Mes;
@@ -1386,10 +1395,12 @@ class DeudaCarteraController extends Controller
                 $poliza->EdadDesembloso = $tempRecord->EdadDesembloso;
                 $poliza->LineaCredito = $tempRecord->LineaCredito;
                 $poliza->NoValido = $tempRecord->NoValido;
+                $poliza->PolizaDeudaTipoCartera = $tempRecord->PolizaDeudaTipoCartera;
+                $poliza->Tasa = $tempRecord->Tasa;
+                $poliza->TotalCredito = $tempRecord->TotalCredito;
+                $poliza->FechaOtorgamientoDate = $tempRecord->FechaOtorgamientoDate;
                 $poliza->save();
-                if ($poliza->EdadDesembloso == 0) {
-                    dd($tempRecord);
-                }
+
             } catch (\Exception $e) {
                 // Captura errores y los guarda en el log
                 Log::error("Error al insertar en poliza_deuda_cartera: " . $e->getMessage(), [
@@ -1427,7 +1438,6 @@ class DeudaCarteraController extends Controller
                 $poliza->InteresesCovid = $tempRecordV->InteresesCovid;
                 $poliza->InteresesMoratorios = $tempRecordV->InteresesMoratorios;
                 $poliza->MontoNominal = $tempRecordV->MontoNominal;
-                $poliza->saldo_total = $tempRecordV->saldo_total;
                 $poliza->User = $tempRecordV->User;
                 $poliza->Axo = $tempRecordV->Axo;
                 $poliza->Mes = $tempRecordV->Mes;
@@ -1440,10 +1450,13 @@ class DeudaCarteraController extends Controller
                 $poliza->EdadDesembloso = $tempRecordV->EdadDesembloso;
                 $poliza->LineaCredito = $tempRecordV->LineaCredito;
                 $poliza->NoValido = $tempRecordV->NoValido;
+                $poliza->TotalCredito = $tempRecordV->TotalCredito;
+                $poliza->PolizaDeudaTipoCartera = $tempRecord->PolizaDeudaTipoCartera;
+                $poliza->FechaOtorgamientoDate = $tempRecord->FechaOtorgamientoDate;
                 $poliza->save();
             } catch (\Exception $e) {
                 // Captura errores y los guarda en el log
-                Log::error("Error al insertar en poliza_deuda_cartera: " . $e->getMessage(), [
+                Log::error("Error al insertar en poliza_deuda_cartera2: " . $e->getMessage(), [
                     'NumeroReferencia' => $tempRecordV->NumeroReferencia,
                     'Usuario' => auth()->user()->id ?? 'N/A',
                     'Datos' => $tempRecordV
