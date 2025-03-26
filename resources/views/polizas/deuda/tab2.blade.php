@@ -230,47 +230,63 @@
                             @php($totalPrimaCalculada += $item['PrimaCalculada'])
 
                             <tr>
-                                <td>{{ $item['DescripcionLineaCredito'] }} ({{ $item['AbreviaturaLineaCredito'] }})</td>
+                                <td>{{ $item['DescripcionLineaCredito'] }} ({{ $item['AbreviaturaLineaCredito'] }})
+                                </td>
                                 <td>{{ $item['Tasa'] }}%</td>
                                 <td>{{ $item['Edad'] }}</td>
                                 <td>{{ $item['Fecha'] }}</td>
-                                <td style="text-align: right;">
-                                    {{number_format($item['MontoOtorgado'], 2, '.', ',')}}
+                                <td style="text-align: right;" class="numeric editable" contenteditable="true"
+                                    id="monto_otorgado_{{ $item['Id'] }}">
+                                    {{ number_format($item['MontoOtorgado'], 2, '.', ',') }}
                                 </td>
-                                <td style="text-align: right;">
-                                    {{number_format($item['SaldoCapital'], 2, '.', ',')}}
+                                <td style="text-align: right;" class="numeric editable" contenteditable="true"
+                                    id="saldo_capital_{{ $item['Id'] }}">
+                                    {{ number_format($item['SaldoCapital'], 2, '.', ',') }}
                                 </td>
-                                <td style="text-align: right;">
-                                    {{number_format($item['Intereses'], 2, '.', ',') }}
+                                <td style="text-align: right;" class="numeric editable" contenteditable="true"
+                                    id="interes_{{ $item['Id'] }}">
+                                    {{ number_format($item['Intereses'], 2, '.', ',') }}
                                 </td>
-                                <td style="text-align: right;">
-                                    {{number_format($item['InteresesCovid'], 2, '.', ',') }}
+                                <td style="text-align: right;" class="numeric editable" contenteditable="true"
+                                    id="interes_covid_{{ $item['Id'] }}">
+                                    {{ number_format($item['InteresesCovid'], 2, '.', ',') }}
                                 </td>
-                                <td style="text-align: right;">
-                                    {{number_format($item['InteresesMoratorios'], 2, '.', ',') }}
+                                <td style="text-align: right;" class="numeric editable" contenteditable="true"
+                                    id="interes_moratorio_{{ $item['Id'] }}">
+                                    {{ number_format($item['InteresesMoratorios'], 2, '.', ',') }}
                                 </td>
-                                <td style="text-align: right;">
-                                    {{number_format($item['MontoNominal'], 2, '.', ',') }}
+                                <td style="text-align: right;" class="numeric editable" contenteditable="true"
+                                    id="monto_nominal_{{ $item['Id'] }}">
+                                    {{ number_format($item['MontoNominal'], 2, '.', ',') }}
                                 </td>
-                                <td style="text-align: right;">
-                                    {{number_format($item['TotalCredito'], 2, '.', ',') }}
+                                <td style="text-align: right;" class="numeric editable" contenteditable="true"
+                                    id="suma_asegurada_{{ $item['Id'] }}">
+                                    {{ number_format($item['TotalCredito'], 2, '.', ',') }}
                                 </td>
-                                <td style="text-align: right;">
-                                    {{number_format($item['PrimaCalculada'], 2, '.', ',') }}
+                                <td style="text-align: right;" class="numeric editable" contenteditable="true"
+                                    id="prima_calculada_{{ $item['Id'] }}">
+                                    {{ number_format($item['PrimaCalculada'], 2, '.', ',') }}
                                 </td>
                             </tr>
                         @endforeach
 
                         <tr>
                             <th colspan="4">Totales</th>
-                            <td class="numeric"><span id="total_monto_otorgado">{{ number_format($totalMontoOtorgado, 2, '.', ',') }}</span></td>
-                            <td class="numeric"><span id="total_saldo_capital">{{ number_format($totalSaldoCapital, 2, '.', ',') }}</span></td>
-                            <td class="numeric"><span id="total_interes">{{ number_format($totalInteres, 2, '.', ',') }}</span></td>
-                            <td class="numeric"><span id="total_interes_covid">{{ number_format($totalInteresCovid, 2, '.', ',') }}</span></td>
-                            <td class="numeric"><span id="total_interes_moratorio">{{ number_format($totalInteresMoratorio, 2, '.', ',') }}</span></td>
-                            <td class="numeric"><span id="total_monto_nominal">{{ number_format($totalMontoNominal, 2, '.', ',') }}</span></td>
-                            <td class="numeric"><span id="total_suma_asegurada">{{ number_format($totalTotalCredito, 2, '.', ',') }}</span></td>
-                            <td class="numeric"><span id="total_prima_calculada">{{ number_format($totalPrimaCalculada, 2, '.', ',') }}</span></td>
+                            <td class="numeric"><span id="total_monto_otorgado"></span>
+                            </td>
+                            <td class="numeric"><span id="total_saldo_capital"></span>
+                            </td>
+                            <td class="numeric"><span id="total_interes"></span></td>
+                            <td class="numeric"><span id="total_interes_covid"></span>
+                            </td>
+                            <td class="numeric"><span id="total_interes_moratorio"></span>
+                            </td>
+                            <td class="numeric"><span id="total_monto_nominal"></span>
+                            </td>
+                            <td class="numeric"><span id="total_suma_asegurada"></span>
+                            </td>
+                            <td class="numeric"><span id="total_prima_calculada"></span>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -442,15 +458,6 @@
                     </div>
 
                 </form>
-                <!--
-                <div align="center">
-                    <form action="{{ url('polizas/deuda/validar_poliza') }}" method="POST">
-                        @method('POST')
-                        @csrf
-                        <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
-                        <button type="submit">Validar Poliza</button>
-                    </form>
-                </div> -->
 
             </div>
 
@@ -488,25 +495,13 @@
         </div>
     </div>
 
-    {{-- <script>
+    <script>
         $(document).ready(function() {
-            let lineas = @json($lineas_abreviatura);
+            let idRegistroArray = @json($dataPagoId);
 
-            //console.log(lineas);
-            calculoTotales();
-            // Calcula la suma de los valores de las columnas numéricas y muestra el resultado en la columna total
-            $('.editable').on('input', function() {
+            if (Array.isArray(idRegistroArray) && idRegistroArray.length > 0) {
                 calculoTotales();
-                // let sum = 0;
-                // $(this).closest('tr').find('.editable').each(function() {
-                //     const value = parseFloat($(this).text().replace(/[^0-9.-]+/g, ''));
-                //     if (!isNaN(value)) {
-                //         sum += value;
-                //     }
-                // });
-                // $(this).closest('tr').find('.total').text(sum.toFixed(2).replace(/\d(?=(\d{3})+\.)/g,
-                //     '$&,'));
-            });
+            }
 
             function calculoTotales() {
                 let total_saldo_capital = 0;
@@ -516,59 +511,44 @@
                 let total_interes_covid = 0;
                 let total_interes_moratorio = 0;
                 let total_suma_asegurada = 0;
+                let total_prima_calculada = 0;
 
                 let sub_total = 0;
 
+                for (let i = 0; i < idRegistroArray.length; i++) {
 
-                for (let i = 0; i < lineas.length; i++) {
-                    let linea = lineas[i];
-                    //console.log(linea);
-                    let elemento = document.getElementById(linea + "_saldo_capital");
+                    let idRegistro = idRegistroArray[i];
 
+                    let elemento = document.getElementById("saldo_capital_" + idRegistro);
                     let saldo_capital = elemento.innerText || elemento.textContent;
-                    // console.log(linea + "_saldo_capital :", saldo_capital);
 
-                    elemento = document.getElementById(linea + "_monto_nominal");
-                    let monto_nominal = elemento.innerText || elemento.textContent;
 
-                    elemento = document.getElementById(linea + "_monto_otorgado");
-                    let monto_otorgado = elemento.innerText || elemento.textContent;
-                    // console.log(linea + "_monto_otorgado: ", monto_otorgado);
+                    let elemento_monto_nominal = document.getElementById("monto_nominal_" + idRegistro);
+                    let monto_nominal = elemento_monto_nominal ? (elemento_monto_nominal.innerText || elemento_monto_nominal.textContent) : 0;
 
-                    elemento = document.getElementById(linea + "_interes");
-                    let interes = elemento.innerText || elemento.textContent;
-                    // console.log(linea + "_interes: ", interes);
 
-                    elemento = document.getElementById(linea + "_interes_covid");
-                    let interes_covid = elemento.innerText || elemento.textContent;
-                    // console.log(linea + "_interes_covid: ", interes_covid);
+                    let elemento_monto_otorgado = document.getElementById("monto_otorgado_" + idRegistro);
+                    let monto_otorgado = elemento_monto_otorgado ? (elemento_monto_otorgado.innerText || elemento_monto_otorgado.textContent) : 0;
 
-                    elemento = document.getElementById(linea + "_interes_moratorio");
-                    let interes_moratorio = elemento.innerText || elemento.textContent;
-                    //console.log(linea + "_interes_moratorio: ", interes_moratorio);
 
-                    elemento = document.getElementById(linea + "_suma_asegurada");
-                    let suma_asegurada = convertirANumero(saldo_capital) + convertirANumero(monto_nominal) +
-                        convertirANumero(monto_otorgado) +
-                        convertirANumero(interes) + convertirANumero(interes_covid) + convertirANumero(
-                            interes_moratorio);
+                    let elemento_interes = document.getElementById("interes_" + idRegistro);
+                    let interes = elemento_interes ? (elemento_interes.innerText || elemento_interes.textContent) : 0;
 
-                    let suma_asegurada_formateada = suma_asegurada.toLocaleString('en-US', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    });
 
-                    // Asigna la suma formateada al elemento
-                    elemento.textContent = suma_asegurada_formateada;
+                    let elemento_interes_covid = document.getElementById("interes_covid_" + idRegistro);
+                    let interes_covid = elemento_interes_covid ? (elemento_interes_covid.innerText || elemento_interes_covid.textContent) : 0;
 
-                    elemento = document.getElementById(linea + "_tasa");
 
-                    // Obtener el texto de la celda de interes
-                    let texto = elemento.textContent;
+                    let elemento_interes_moratorio = document.getElementById("interes_moratorio_" + idRegistro);
+                    let interes_moratorio = elemento_interes_moratorio ? (elemento_interes_moratorio.innerText || elemento_interes_moratorio.textContent) : 0;
 
-                    // Eliminar el símbolo "%" y convertir a número
-                    let tasa_linea = parseFloat(texto.replace('%', ''));
 
+                    let elemento_suma_asegurada = document.getElementById("suma_asegurada_" + idRegistro);
+                    let suma_asegurada = elemento_suma_asegurada ? (elemento_suma_asegurada.innerText || elemento_suma_asegurada.textContent) : 0;
+
+
+                    let elemento_prima_calculada = document.getElementById("prima_calculada_" + idRegistro);
+                    let prima_calculada = elemento_prima_calculada ? (elemento_prima_calculada.innerText || elemento_prima_calculada.textContent) : 0;
 
 
 
@@ -578,12 +558,14 @@
                     total_interes += convertirANumero(interes);
                     total_interes_covid += convertirANumero(interes_covid);
                     total_interes_moratorio += convertirANumero(interes_moratorio);
-                    total_suma_asegurada += suma_asegurada;
+                    total_suma_asegurada += convertirANumero(suma_asegurada);
+                    total_prima_calculada += convertirANumero(prima_calculada);
 
-                    sub_total += tasa_linea * suma_asegurada;
                 }
 
+                sub_total = total_prima_calculada;
 
+                //escribiendo totales
                 let total_saldo_capital_formateada = formatearCantidad(total_saldo_capital);
                 document.getElementById("total_saldo_capital").textContent = total_saldo_capital_formateada;
 
@@ -605,44 +587,41 @@
                 let total_suma_asegurada_formateada = formatearCantidad(total_suma_asegurada);
                 document.getElementById("total_suma_asegurada").textContent = total_suma_asegurada_formateada;
 
-                console.log("total_suma_asegurada: ", total_suma_asegurada);
+                let total_prima_calculada_formateada = formatearCantidad(total_prima_calculada);
+                document.getElementById("total_prima_calculada").textContent = total_prima_calculada_formateada;
+
                 let tasa = document.getElementById('Tasa').value;
                 let comision_iva = document.getElementById('ComisionIva').value;
-                let tasa_comision = document.getElementById('TasaComisionDetalle').value;
+
+                let tasa_comision = parseFloat(document.getElementById('TasaComisionDetalle')?.value) || 0;
                 let tipo_contribuyente = {{ $deuda->clientes->TipoContribuyente }};
-                console.log(tasa_comision);
-                let extra_prima = document.getElementById('ExtraPrima').value;
+                console.log("tasa_comision: " + tasa_comision);
+
 
                 //modificando valores de cuadros
                 document.getElementById("monto_total_cartera").textContent = total_suma_asegurada_formateada;
                 document.getElementById('MontoCarteraDetalle').value = parseFloat(total_suma_asegurada);
-                document.getElementById('PrimaCalculadaDetalle').value = parseFloat(
-                    total_suma_asegurada) * parseFloat(tasa);
+                document.getElementById('PrimaCalculadaDetalle').value = sub_total;
 
-
-                //let sub_total = total_suma_asegurada * tasa;
 
                 document.getElementById("sub_total").textContent = formatearCantidad(sub_total);
                 document.getElementById('SubTotalDetalle').value = sub_total;
+                let extra_prima = document.getElementById('ExtraPrima').value;
                 document.getElementById("sub_total_extra_prima").textContent = formatearCantidad(extra_prima);
 
 
-
-                let descuento = (parseFloat(sub_total) + parseFloat(extra_prima)) * parseFloat(parseFloat(document
-                    .getElementById('DescuentoRentabilidad').value) / 100);
+                let descuento = (parseFloat(sub_total) + parseFloat(extra_prima)) * parseFloat(parseFloat(document.getElementById('DescuentoRentabilidad').value) / 100);
                 document.getElementById('descuento_rentabilidad').textContent = formatearCantidad(descuento);
                 document.getElementById('DescuentoDetalle').value = parseFloat(descuento);
                 prima_a_cobrar = (parseFloat(sub_total) + parseFloat(extra_prima)) - parseFloat(descuento);
                 document.getElementById("prima_a_cobrar").textContent = formatearCantidad(prima_a_cobrar);
                 document.getElementById("prima_a_cobrar_ccf").textContent = formatearCantidad(prima_a_cobrar);
-                let iva = 0;
+
                 // no contribuyente no paga iva
-                if (tipo_contribuyente != 4) {
-                    iva = 0; //parseFloat(prima_a_cobrar) * 0.13;
-                } else {
-                    iva = 0;
-                }
+                iva = tipo_contribuyente !== 4 ? 0 : 0;
                 document.getElementById('PrimaDescontadaDetalle').value = parseFloat(prima_a_cobrar);
+
+
 
                 // document.getElementById('iva').textContent = formatearCantidad(iva);
                 document.getElementById('IvaDetalle').value = parseFloat(iva);
@@ -659,26 +638,18 @@
                 document.getElementById('valor_comision').textContent = formatearCantidad(valor_comision);
                 console.log(valor_comision);
                 document.getElementById('ComisionDetalle').value = parseFloat(valor_comision);
-                let iva_comision = 0;
-                if (tipo_contribuyente != 4) {
-                    iva_comision = parseFloat(valor_comision) * 0.13;
-                } else {
-                    iva_comision = 0;
-                }
+                let iva_comision = tipo_contribuyente !== 4 ? parseFloat(valor_comision) * 0.13 : 0;
                 document.getElementById('iva_comision').textContent = formatearCantidad(iva_comision);
                 document.getElementById('IvaComisionDetalle').value = parseFloat(iva_comision);
                 let retencion_comision = 0;
                 let sub_total_ccf = parseFloat(valor_comision) + parseFloat(iva_comision);
                 document.getElementById('sub_total_ccf').textContent = formatearCantidad(sub_total_ccf);
 
-                if (tipo_contribuyente != 1) {
-                    retencion_comision = parseFloat(valor_comision) * 0.01;
-                }
+                let retencion_comision = tipo_contribuyente !== 1 ? parseFloat(valor_comision) * 0.01 : 0;
+
                 console.log(tipo_contribuyente);
-                document.getElementById('retencion_comision').textContent = formatearCantidad(
-                    retencion_comision);
-                let comision_ccf = parseFloat(sub_total_ccf) - parseFloat(
-                    retencion_comision);
+                document.getElementById('retencion_comision').textContent = formatearCantidad(retencion_comision);
+                let comision_ccf = parseFloat(sub_total_ccf) - parseFloat(retencion_comision);
                 document.getElementById('comision_ccf').textContent = formatearCantidad(comision_ccf);
                 document.getElementById('comision').textContent = formatearCantidad(comision_ccf);
                 let liquido_pagar = parseFloat(prima_a_cobrar) - parseFloat(comision_ccf);
@@ -687,31 +658,24 @@
                 document.getElementById('ValorCCFDetalle').value = parseFloat(comision_ccf);
                 document.getElementById('APagarDetalle').value = parseFloat(liquido_pagar);
 
-
-
-                console.log(comision);
             }
 
-
-            // Función para convertir una cadena formateada a un número flotante
-            function convertirANumero(cadena) {
-                return parseFloat(cadena.replace(/,/g, ''));
-            }
-
-            function formatearCantidad(cantidad) {
-                let numero = Number(cantidad);
-                return numero.toLocaleString('en-US', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                });
-            }
         });
 
-        function total() {
-            let val = document.getElementById('liquido_pagar').innerText;
-            //alert(val);
-            document.getElementById('APagarDetalle').value = parseFloat(val);
+
+        // Función para convertir una cadena formateada a un número flotante
+        function convertirANumero(cadena) {
+            return parseFloat(cadena.replace(/,/g, ''));
         }
-    </script> --}}
+
+        function formatearCantidad(cantidad) {
+            let numero = Number(cantidad);
+            return numero.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+    </script>
+
 
 </div>

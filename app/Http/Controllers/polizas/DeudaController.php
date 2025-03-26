@@ -1109,12 +1109,13 @@ class DeudaController extends Controller
             //tab 2
 
             $dataPagoTemp = collect([]);
-
+            $dataPagoId = [];
 
             foreach ($deuda->deuda_tipos_cartera as $deuda_tipos_cartera) {
 
                 foreach ($deuda_tipos_cartera->tasa_diferenciada as $tasa_diferenciada) {
                     //dd($tasa_diferenciada);
+                    $dataPagoId[] = $tasa_diferenciada->Id;
 
                     $linea_credito = SaldoMontos::findOrFail($tasa_diferenciada->LineaCredito);
 
@@ -1131,8 +1132,6 @@ class DeudaController extends Controller
                                  ' - ' .
                                  Carbon::parse($tasa_diferenciada->FechaHasta)->format('d/m/Y');
                     }
-
-
 
                     $dataPagoTemp->push([
                         "Id" => $tasa_diferenciada->Id,
@@ -1497,7 +1496,8 @@ class DeudaController extends Controller
                 'data_temp_count',
                 'id',
                 //tab2
-                'dataPago'
+                'dataPago',
+                'dataPagoId'
             ));
         }
     }
