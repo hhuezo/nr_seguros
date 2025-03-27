@@ -225,15 +225,7 @@ class DeudaCarteraController extends Controller
 
         PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->delete();
         Excel::import(new PolizaDeudaTempCarteraImport($date->year, $date->month, $deuda->Id, $request->FechaInicio, $request->FechaFinal, $deuda_tipo_cartera->Id), $archivo);
-        // } catch (Throwable $e) {
-        //     Log::error('Problema al procesar el archivo Excel: ' . $e->getMessage(), [
-        //         'file' => $e->getFile(),
-        //         'line' => $e->getLine(),
-        //         'trace' => $e->getTraceAsString(),
-        //     ]);
-        //     alert()->error('Problema al procesar el archivo excel');
-        //     return back();
-        // }
+
 
 
 
@@ -385,10 +377,12 @@ class DeudaCarteraController extends Controller
 
         $data_error = $cartera_temp->where('TipoError', '<>', 0);
 
+
         //dd($data_error);
 
         if ($data_error->count() > 0) {
-            return view('polizas.deuda.respuesta_poliza_error', compact('data_error', 'deuda'));
+            $deuda_tipo_cartera_id = $deuda_tipo_cartera->Id;
+            return view('polizas.deuda.respuesta_poliza_error', compact('data_error', 'deuda','deuda_tipo_cartera_id'));
         }
 
 
@@ -683,8 +677,7 @@ class DeudaCarteraController extends Controller
 
     public function deleteLineaCredito(Request $request)
     {
-
-        PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('LineaCredito', '=', $request->LineaCredito)->delete();
+        PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $request->PolizaDeudaTipoCartera)->delete();
 
         return redirect('polizas/deuda/subir_cartera/' . $request->DeudaId);
     }
@@ -733,13 +726,6 @@ class DeudaCarteraController extends Controller
     }
 
 
-    public function limpiarNombre($nombre)
-    {
-        // Eliminar espacios en blanco y números
-        $nombreLimpio = preg_replace('/[\s\d]+/', '', $nombre);
-
-        return $nombreLimpio;
-    }
 
     public function add_excluidos(Request $request)
     {
