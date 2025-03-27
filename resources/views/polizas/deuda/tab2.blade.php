@@ -641,7 +641,7 @@
                 let iva_comision = tipo_contribuyente !== 4 ? parseFloat(valor_comision) * 0.13 : 0;
                 document.getElementById('iva_comision').textContent = formatearCantidad(iva_comision);
                 document.getElementById('IvaComisionDetalle').value = parseFloat(iva_comision);
-                let retencion_comision = 0;
+
                 let sub_total_ccf = parseFloat(valor_comision) + parseFloat(iva_comision);
                 document.getElementById('sub_total_ccf').textContent = formatearCantidad(sub_total_ccf);
 

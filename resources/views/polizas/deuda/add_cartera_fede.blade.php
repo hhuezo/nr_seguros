@@ -13,7 +13,8 @@
                 @csrf
                 <div class="modal-body">
                     <div class="form-group row">
-                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo cartera</label>
+                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Linea de
+                            Credito..</label>
                         <input type="hidden" name="PolizaDeudaTipoCartera" value="{{ $obj->Id }}">
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                             <input type="text" class="form-control" value="{{$obj->tipo_cartera->Nombre}}" readonly>
@@ -23,7 +24,7 @@
                     <div class="form-group row">
                         <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Año</label>
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                            <select name="Axo" class="form-control">
+                            <select name="Axo" id="AxoFede{{ $obj->Id }}" class="form-control" onchange="calcularFechas('AxoFede{{ $obj->Id }}', 'MesFede{{ $obj->Id }}', 'FechaInicioFede{{ $obj->Id }}', 'FechaFinalFede{{ $obj->Id }}')">
                                 @for ($i = date('Y'); $i >= 2022; $i--)
                                 <option value="{{ $i }}" {{ $axo == $i ? 'selected' : '' }}> {{ $i }}</option>
                                 @endfor
@@ -33,7 +34,7 @@
                     <div class="form-group row">
                         <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Mes</label>
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                            <select name="Mes" class="form-control">
+                            <select name="Mes" id="MesFede{{ $obj->Id }}" class="form-control" onchange="calcularFechas('AxoFede{{ $obj->Id }}', 'MesFede{{ $obj->Id }}', 'FechaInicioFede{{ $obj->Id }}', 'FechaFinalFede{{ $obj->Id }}')">
                                 @for ($i = 1; $i <= 12; $i++) <option value="{{ $i }}" {{ $mes == $i ? 'selected' : '' }}>
                                     {{ $meses[$i] }}
                                     </option>
@@ -46,14 +47,14 @@
                             inicio</label>
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                             <input class="form-control" name="Id" value="{{ $deuda->Id }}" type="hidden" required>
-                            <input class="form-control" type="date" name="FechaInicio" value="{{ $fecha_inicial}}" required>
+                            <input class="form-control" type="date" name="FechaInicio" id="FechaInicioFede{{ $obj->Id }}" value="{{ $fecha_inicial}}" required>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
                             final</label>
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                            <input class="form-control" name="FechaFinal" value="{{ $fecha_final}}" type="date" required>
+                            <input class="form-control" name="FechaFinal" id="FechaFinalFede{{ $obj->Id }}" value="{{ $fecha_final}}" type="date" required>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -84,4 +85,5 @@
     document.getElementById('uploadForm{{$obj->Id}}').addEventListener('submit', function() {
         document.getElementById('loading-overlay').style.display = 'flex'; // Muestra el overlay de carga
     });
+
 </script>

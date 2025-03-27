@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Models\temp\PolizaDeudaTempCartera;
+use Carbon\Carbon;
 use Exception;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -53,11 +54,10 @@ class PolizaDeudaTempCarteraFedeImport implements ToModel, /*WithStartRow,*/ Ski
                 'PrimerApellido' => $row[1],
                 'SegundoApellido' => $row[2],
                 'PrimerNombre' => $row[3],
-               // 'SegundoNombre' => implode(' ', array_slice($row[3], 1, 7)),
-                'FechaNacimiento' => $row[4],
+                'FechaNacimiento' => $this->convertirFecha($row[4]),
                 'Sexo' => $row[5],
                 'NumeroReferencia' => $row[6],
-                'FechaOtorgamiento' => $row[7],
+                'FechaOtorgamiento' => $this->convertirFecha($row[7]),
                 'MontoOtorgado' => $row[8],
                 'SaldoCapital' => $row[9],
                 'Intereses' => $row[10],
@@ -73,5 +73,26 @@ class PolizaDeudaTempCarteraFedeImport implements ToModel, /*WithStartRow,*/ Ski
                 'PolizaDeudaTipoCartera' => $this->credito,
             ]);
         }
+    }
+
+    private function convertirFecha($fechaExcel)
+    {
+        // Verificar si es un número (fecha en formato Excel)
+        if (is_numeric($fechaExcel)) {
+            return Carbon::createFromDate(1900, 1, 1)->addDays($fechaExcel - 2)->format('d/m/Y');
+        }
+
+        // Verificar si es un string en formato de fecha (dd/mm/yyyy o similar)
+        if (preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $fechaExcel)) {
+            return Carbon::createFromFormat('d/m/Y', $fechaExcel)->format('d/m/Y');
+        }
+
+        // Verificar si es un string en formato de fecha (Y-m-d)
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $fechaExcel)) {
+            return Carbon::createFromFormat('Y-m-d', $fechaExcel)->format('d/m/Y');
+        }
+
+        // Si no es un número de Excel ni un formato de fecha válido, devolver null
+        return null;
     }
 }

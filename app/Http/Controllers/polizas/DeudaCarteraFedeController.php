@@ -7,10 +7,12 @@ use App\Imports\PolizaDeudaTempCarteraFedeComImport;
 use App\Imports\PolizaDeudaTempCarteraFedeImport;
 use App\Models\polizas\Deuda;
 use App\Models\polizas\DeudaCredito;
+use App\Models\polizas\PolizaDeudaTipoCartera;
 use App\Models\temp\PolizaDeudaTempCartera;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -22,8 +24,14 @@ class DeudaCarteraFedeController extends Controller
     public function create_pago(Request $request)
     {
 
-        $credito = $request->get('LineaCredito');
+        $deuda_tipo_cartera = PolizaDeudaTipoCartera::findOrFail($request->PolizaDeudaTipoCartera);
         $deuda = Deuda::findOrFail($request->Id);
+
+        if ($request->FechaFinal > $deuda->VigenciaHasta) {
+            alert()->error('La fecha final no debe ser mayor que la vigencia de la poliza');
+            return back();
+        }
+
 
 
 
@@ -48,7 +56,7 @@ class DeudaCarteraFedeController extends Controller
             $archivo = $request->Archivo;
 
             $excel = IOFactory::load($archivo);
-//dd($excel);
+
             // Verifica si hay al menos dos hojas
             $sheetsCount = $excel->getSheetCount();
            // dd($sheetsCount);
@@ -58,8 +66,8 @@ class DeudaCarteraFedeController extends Controller
                 return back();
             }
 
-            PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('LineaCredito', '=', $credito)->delete();
-            Excel::import(new PolizaDeudaTempCarteraFedeImport($date->year, $date->month, $deuda->Id, $request->FechaInicio, $request->FechaFinal, $credito), $archivo);
+            PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->delete();
+            Excel::import(new PolizaDeudaTempCarteraFedeImport($date->year, $date->month, $deuda->Id, $request->FechaInicio, $request->FechaFinal, $deuda_tipo_cartera->Id), $archivo);
         } catch (Throwable $e) {
             Log::error('Problema al procesar el archivo Excel: ' . $e->getMessage(), [
                 'file' => $e->getFile(),
@@ -73,8 +81,10 @@ class DeudaCarteraFedeController extends Controller
 
 
 
+
+
         //calculando errores de cartera
-        $cartera_temp = PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('LineaCredito', '=', $credito)->get();
+        $cartera_temp = PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera',$deuda_tipo_cartera->Id)->get();
       //  dd($cartera_temp);
 
 
@@ -116,8 +126,6 @@ class DeudaCarteraFedeController extends Controller
                 $validador_dui = true;
             }
 
-
-            $obj->saldo_total = $obj->calculoTodalSaldo();
             $obj->update();
 
 
@@ -181,27 +189,77 @@ class DeudaCarteraFedeController extends Controller
         }
 
 
+             //calculando edades y fechas de nacimiento
+             PolizaDeudaTempCartera::where('User', auth()->user()->id)
+             ->where('PolizaDeuda', $deuda->Id)
+             ->update([
+                 'FechaNacimientoDate' => DB::raw("STR_TO_DATE(FechaNacimiento, '%d/%m/%Y')"),
+                 //'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, CURDATE())"),
+                 'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaFinal)"),
+                 'FechaOtorgamientoDate' => DB::raw("STR_TO_DATE(FechaOtorgamiento, '%d/%m/%Y')"),
+                 'EdadDesembloso' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaOtorgamientoDate)"),
+             ]);
 
-        $linea_credito = DeudaCredito::find($credito);
 
-        $MontoMaximoIndividual = $linea_credito->MontoMaximoIndividual;
-        if (isset($MontoMaximoIndividual) && $MontoMaximoIndividual > 0) {
-            $duis = PolizaDeudaTempCartera::selectRaw('Dui')
-                ->where('User', auth()->user()->id)
-                ->where('LineaCredito', $credito)
-                ->groupBy('Dui')
-                ->havingRaw('SUM(saldo_total) >= ?', [$MontoMaximoIndividual])
-                ->pluck('Dui'); // Obtiene solo los valores de la columna Dui
 
-            // Realiza el update en los registros con los DUI filtrados
-            if ($duis->isNotEmpty()) {
-                PolizaDeudaTempCartera::whereIn('Dui', $duis)
-                    ->update([
-                        'MontoMaximoIndividual' => 1,
-                        'NoValido' => 1
-                    ]);
-            }
-        }
+
+
+         //tasas diferenciadas
+         $tasas_diferenciadas = $deuda_tipo_cartera->tasa_diferenciada;
+
+         if ($deuda_tipo_cartera->TipoCalculo == 1) {
+
+             foreach ($tasas_diferenciadas as $tasa) {
+                 //dd($tasa);
+                 PolizaDeudaTempCartera::where('User', auth()->user()->id)
+                     ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                     ->whereBetween('FechaOtorgamientoDate', [$tasa->FechaDesde, $tasa->FechaHasta])
+                     ->update([
+                         'LineaCredito' => $tasa->LineaCredito,
+                         'Tasa' => $tasa->Tasa
+                     ]);
+             }
+         } else  if ($deuda_tipo_cartera->TipoCalculo == 2) {
+
+             foreach ($tasas_diferenciadas as $tasa) {
+                 PolizaDeudaTempCartera::where('User', auth()->user()->id)
+                     ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                     ->whereBetween('EdadDesembloso', [$tasa->EdadDesde, $tasa->EdadHasta])
+                     ->update([
+                         'LineaCredito' => $tasa->LineaCredito,
+                         'Tasa' => $tasa->Tasa
+                     ]);
+             }
+         }
+
+
+         $cartera_temp = PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->get();
+
+         foreach ($cartera_temp as $obj) {
+             $obj->TotalCredito = $obj->calculoTodalSaldo();
+             $obj->update();
+         }
+
+
+
+         $MontoMaximoIndividual = $deuda_tipo_cartera->MontoMaximoIndividual;
+         if (isset($MontoMaximoIndividual) && $MontoMaximoIndividual > 0) {
+             $duis = PolizaDeudaTempCartera::selectRaw('Dui')
+                 ->where('User', auth()->user()->id)
+                 ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                 ->groupBy('Dui')
+                 ->havingRaw('SUM(TotalCredito) >= ?', [$MontoMaximoIndividual])
+                 ->pluck('Dui'); // Obtiene solo los valores de la columna Dui
+
+             // Realiza el update en los registros con los DUI filtrados
+             if ($duis->isNotEmpty()) {
+                 PolizaDeudaTempCartera::whereIn('Dui', $duis)
+                     ->update([
+                         'MontoMaximoIndividual' => 1,
+                         'NoValido' => 1
+                     ]);
+             }
+         }
 
 
 
@@ -389,20 +447,6 @@ class DeudaCarteraFedeController extends Controller
         }
     }
 
-    public function validarDocumento($documento, $tipo)
-    {
-        if ($tipo == "dui") {
-            // Define las reglas de validación para el formato 000000000
-            $reglaFormato = '/^\d{9}$/';
-
-            return preg_match($reglaFormato, $documento) === 1;
-        } else if ($tipo == "nit") {
-            // Define las reglas de validación para el formato 000000000
-            $reglaFormato = '/^\d{14}$/';
-
-            return preg_match($reglaFormato, $documento) === 1;
-        }
-    }
 
     public function convertDate($dateValue)
     {
