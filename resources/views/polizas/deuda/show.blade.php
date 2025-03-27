@@ -546,7 +546,7 @@
 
                                             <strong>No hay datos</strong>
                                         </div>
-                                    @endif --}}
+                                    @endif
 
 
 
