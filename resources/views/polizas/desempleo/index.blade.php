@@ -30,76 +30,76 @@
                 </thead>
                 <tbody>
                     @foreach ($desempleo as $obj)
-                        <tr>
-                            <!-- Número de Póliza -->
-                            <td>{{ $obj->NumeroPoliza }}</td>
+                    <tr>
+                        <!-- Número de Póliza -->
+                        <td>{{ $obj->NumeroPoliza }}</td>
 
-                            <!-- Asegurado -->
-                            <td>
-                                @isset($obj->Asegurado)
-                                    {{ $obj->cliente->Nombre }}
-                                @else
-                                    Sin asegurado
-                                @endisset
-                            </td>
+                        <!-- Asegurado -->
+                        <td>
+                            @isset($obj->Asegurado)
+                            {{ $obj->cliente->Nombre }}
+                            @else
+                            Sin asegurado
+                            @endisset
+                        </td>
 
-                            <!-- Aseguradora -->
-                            <td>
-                                @isset($obj->Aseguradora)
-                                    {{ $obj->aseguradora->Nombre }}
-                                @else
-                                    Sin aseguradora
-                                @endisset
-                            </td>
+                        <!-- Aseguradora -->
+                        <td>
+                            @isset($obj->Aseguradora)
+                            {{ $obj->aseguradora->Nombre }}
+                            @else
+                            Sin aseguradora
+                            @endisset
+                        </td>
 
-                            <!-- Ejecutivo -->
-                            <td>
-                                @isset($obj->Ejecutivo)
-                                    {{ $obj->ejecutivo->Nombre }}
-                                @else
-                                    Sin ejecutivo
-                                @endisset
-                            </td>
+                        <!-- Ejecutivo -->
+                        <td>
+                            @isset($obj->Ejecutivo)
+                            {{ $obj->ejecutivo->Nombre }}
+                            @else
+                            Sin ejecutivo
+                            @endisset
+                        </td>
 
-                            <!-- Estado de la Póliza -->
-                            <td>
-                                @isset($obj->EstadoPoliza)
-                                    {{ $obj->estadoPoliza->Nombre }}
-                                @else
-                                    Sin estado
-                                @endisset
-                            </td>
+                        <!-- Estado de la Póliza -->
+                        <td>
+                            @isset($obj->EstadoPoliza)
+                            {{ $obj->estadoPoliza->Nombre }}
+                            @else
+                            Sin estado
+                            @endisset
+                        </td>
 
-                            <!-- Opciones -->
-                            <td align="center">
+                        <!-- Opciones -->
+                        <td align="center">
+                            @if($obj->Configuracion == 0)
+                            <a href="{{ url('polizas/desempleo') }}/{{ $obj->Id }}/edit" class="on-default edit-row">
+                                <i class="fa fa-pencil fa-lg"></i>
+                            </a>
+                            @else
+                            <!-- Configuración -->
+                            <a href="{{ url('polizas/desempleo') }}/{{ $obj->Id }}" class="on-default edit-row">
+                                <i class="fa fa-pencil fa-lg"></i>
+                            </a>
+                            @endif
+                            <!-- Eliminar -->
+                            &nbsp;&nbsp;
+                            <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal">
+                                <i class="fa fa-trash fa-lg"></i>
+                            </a>
 
-                                    {{-- <a href="{{ url('polizas/desempleo') }}/{{ $obj->Id }}/edit" class="on-default edit-row">
-                                        <i class="fa fa-pencil fa-lg"></i>
-                                    </a> --}}
+                            <!-- Renovar (solo para usuarios con permiso) -->
+                            @can('delete userss')
+                            &nbsp;&nbsp;
+                            <a href="{{ url('polizas/desempleo') }}/{{ $obj->Id }}/renovar" class="on-default edit-row">
+                                <i class="fa fa-refresh fa-lg"></i>
+                            </a>
+                            @endcan
+                        </td>
+                    </tr>
 
-                                <!-- Configuración -->
-                                <a href="{{ url('polizas/desempleo') }}/{{ $obj->Id }}" class="on-default edit-row">
-                                    <i class="fa fa-pencil fa-lg"></i>
-                                </a>
-
-                                <!-- Eliminar -->
-                                &nbsp;&nbsp;
-                                <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal">
-                                    <i class="fa fa-trash fa-lg"></i>
-                                </a>
-
-                                <!-- Renovar (solo para usuarios con permiso) -->
-                                @can('delete userss')
-                                    &nbsp;&nbsp;
-                                    <a href="{{ url('polizas/desempleo') }}/{{ $obj->Id }}/renovar" class="on-default edit-row">
-                                        <i class="fa fa-refresh fa-lg"></i>
-                                    </a>
-                                @endcan
-                            </td>
-                        </tr>
-
-                        <!-- Modal de eliminación -->
-                        @include('polizas.desempleo.modal')
+                    <!-- Modal de eliminación -->
+                    @include('polizas.desempleo.modal')
                     @endforeach
                 </tbody>
             </table>

@@ -321,6 +321,13 @@ Route::post('poliza/desempleo/recibo/{id}', [DesempleoController::class, 'recibo
 Route::post('polizas/desempleo/edit_pago', [DesempleoController::class, 'edit_pago']);
 Route::post('polizas/desempleo/anular_pago/{id}', [DesempleoController::class, 'anular_pago']);
 Route::post('polizas/desempleo/delete_pago/{id}', [DesempleoController::class, 'delete_pago']);
+Route::post('finalizar_configuracion_desempleo', [DesempleoController::class, 'finalizar_configuracion']);
+
+Route::post('exportar/desempleo/registros_edad_maxima/{id}',[DesempleoController::class,'registros_edad_maxima']);
+Route::post('exportar/desempleo/registros_responsabilidad_maxima/{id}',[DesempleoController::class,'registros_responsabilidad_maxima']);
+Route::post('exportar/desempleo/nuevos_registros/{id}',[DesempleoController::class,'exportar_nuevos_registros']);
+Route::post('exportar/desempleo/registros_eliminados/{id}',[DesempleoController::class,'exportar_registros_eliminados']);
+
 
 Route::get('poliza/desempleo/get_recibo/{id}/{exportar}', [DesempleoController::class, 'get_recibo']);
 Route::get('poliza/desempleo/get_recibo_edit/{id}', [DesempleoController::class, 'get_recibo_edit']);

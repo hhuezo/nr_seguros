@@ -52,6 +52,11 @@
                     <label>Asegurado</label>
                     <input type="text" class="form-control" value="{{ $desempleo->cliente->Nombre }}" readonly>
                 </div>
+                <!--Productos -->
+                <div class="form-group">
+                    <label>Productos</label>
+                    <input type="text" class="form-control" value="{{ $desempleo->planes && $desempleo->planes->productos ? $desempleo->planes->productos->Nombre : '' }}" readonly>
+                </div>
 
                 <!-- Nit -->
                 <div class="form-group">
@@ -92,6 +97,11 @@
                     <input type="text" class="form-control" value="{{ $desempleo->ejecutivo->Nombre }}" readonly>
                 </div>
 
+                <!-- Plan -->
+                <div class="form-group">
+                    <label>Planes</label>
+                    <input type="text" class="form-control" value="{{ $desempleo->planes ? $desempleo->planes->Nombre : '' }}" readonly>
+                </div>
 
                 <!-- Saldos y montos -->
                 <div class="form-group">
@@ -203,7 +213,7 @@
                             <input class="form-control" name="Id" value="{{ $desempleo->Id }}" type="hidden"
                                 required>
                             <input class="form-control" type="date" name="FechaInicio" id="FechaInicio"
-                                value="{{ $fechaInicio }}" required>
+                                value="{{ $fechaInicio }}" required min="{{$desempleo->VigenciaDesde}}">
                         </div>
                     </div>
                     <div class="form-group row">
@@ -211,7 +221,7 @@
                             final</label>
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                             <input class="form-control" name="FechaFinal" id="FechaFinal"
-                                value="{{ $fechaFinal }}" type="date" required>
+                                value="{{ $fechaFinal }}" type="date" required max="{{$desempleo->VigenciaHasta}}">
                         </div>
                     </div>
                     <div class="form-group row">

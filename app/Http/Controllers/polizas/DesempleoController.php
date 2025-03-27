@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers\polizas;
 
+use App\Exports\desempleo\EdadInscripcionExport;
+use App\Exports\desempleo\EdadMaximaExport;
+use App\Exports\desempleo\NuevosRegistrosExport;
+use App\Exports\desempleo\RegistrosEliminadosExport;
+use App\Exports\ResponsabilidadMaximaExport;
 use App\Http\Controllers\Controller;
 use App\Imports\DesempleoCarteraTempImport;
 use App\Models\catalogo\Aseguradora;
@@ -152,15 +157,35 @@ class DesempleoController extends Controller
             $desempleo->EstadoPoliza = 1;
             $desempleo->Descuento = $request->Descuento;
             $desempleo->Activo = 1;
+            $desempleo->Plan = $request->Planes;
             $desempleo->Usuario = auth()->id();
+            $desempleo->Configuracion = 0;  //no configurada
             $desempleo->save();
 
             alert()->success('Éxito', 'La póliza de desempleo se ha creado correctamente.');
-            return Redirect::to('polizas/desempleo');
+            return Redirect::to('polizas/desempleo'.$desempleo->Id.'/edit');
         } catch (\Exception $e) {
 
             alert()->error('Error', 'Ocurrió un error al crear la póliza de desempleo: ' . $e->getMessage());
             return back()->withInput();
+        }
+    }
+
+    public function finalizar_configuracion(Request $request)
+    {
+        $desempleo = Desempleo::findOrFail($request->desempleo);
+        if ($desempleo->Configuracion == 1) {
+            $desempleo->Configuracion = 0;
+            $desempleo->update();
+
+            alert()->success('El registro de poliza ha sido configurado correctamente');
+            return redirect('polizas/desempleo/' . $request->desempleo.'edit');
+        } else {
+            $desempleo->Configuracion = 1;
+            $desempleo->update();
+
+            alert()->success('El registro de poliza ha sido configurado correctamente');
+            return redirect('polizas/desempleo/' . $request->desempleo);
         }
     }
 
@@ -274,7 +299,7 @@ class DesempleoController extends Controller
         $prima_descontada = ($subtotal + $extraPrima) - $descuento;
         $comentarios = Comentario::where('Desempleo', $desempleo->Id)->where('Activo', '=', 1)->get();
         $ultimo_pago = DesempleoDetalle::where('Desempleo', $desempleo->Id)->where('Activo', 1) //->where('PagoAplicado', '<>', null)
-                ->orderBy('Id', 'desc')->first();
+            ->orderBy('Id', 'desc')->first();
 
         $data = [
             "saldoCapital" => $saldoCapital,
@@ -496,7 +521,7 @@ class DesempleoController extends Controller
             //dd("insert");
         }
 
-      /*  if ($exportar == 2) {
+        /*  if ($exportar == 2) {
             return Excel::download(new DesempleoReciboExport($id), 'Recibo.xlsx');
             //return view('polizas.desempleo.recibo', compact('recibo_historial','detalle', 'desempleo', 'meses','exportar'));
         }*/
@@ -640,7 +665,7 @@ class DesempleoController extends Controller
         $recibo->Id_recibo = ($recibo->Id_recibo) + 1;
         $recibo->update();
 
-       /// $extraprimados = PolizaDesempleoExtraPrimados::where('PolizaDesempleo', $request->Desempleo)->get();
+        /// $extraprimados = PolizaDesempleoExtraPrimados::where('PolizaDesempleo', $request->Desempleo)->get();
         //$total_extrapima = 0;
         /*foreach ($extraprimados as $extraprimado) {
             //consultando calculos de extraprimados
@@ -781,7 +806,8 @@ class DesempleoController extends Controller
                 }
             }
 
-
+            $obj->SaldoTotalTotal = $obj->calculoTodalSaldo();
+            $obj->update();
 
 
 
@@ -890,8 +916,16 @@ class DesempleoController extends Controller
             ->select('poliza_desempleo_cartera_temp.*') // Selecciona columnas de la tabla principal
             ->get();
 
+        $total = DesempleoCarteraTemp::where('User', auth()->user()->id)->sum('MontoOtorgado');
+        //falta calcular el total en base a saldos y montos , agregar campo SaldoTotal( table: cartera_desempleo_temp)
+        //registros rehabilitados, como en deuda.
+        //recibos tabla de configuracion
+        //quitar paginacion de datatable
+        //colocar loading en desempleo
+        
 
-        return view('polizas.desempleo.respuesta_poliza', compact('desempleo', 'poliza_edad_maxima', 'registros_eliminados', 'nuevos_registros', 'axoActual', 'mesActual'));
+
+        return view('polizas.desempleo.respuesta_poliza', compact('total', 'desempleo', 'poliza_edad_maxima', 'registros_eliminados', 'nuevos_registros', 'axoActual', 'mesActual'));
         // } catch (\Exception $e) {
         //     // Capturar cualquier excepción y retornar un mensaje de error
         //     return back()->with('error', 'Ocurrió un error al crear la póliza de desempleo: ' . $e->getMessage());
@@ -1096,19 +1130,142 @@ class DesempleoController extends Controller
 
     public function edit($id)
     {
-        //
+        $desempleo = Desempleo::findOrFail($id);
+        $tipos_contribuyente = TipoContribuyente::get();
+        $rutas = Ruta::where('Activo', '=', 1)->get();
+        $ubicaciones_cobro = UbicacionCobro::where('Activo', '=', 1)->get();
+
+
+        $productos = Producto::where('Activo', 1)->get();
+        $planes = Plan::where('Activo', 1)->get();
+        $aseguradora = Aseguradora::where('Activo', 1)->get();
+        $cliente = Cliente::where('Activo', 1)->get();
+        $tipoCartera = TipoCartera::where('Activo', 1)->where('Poliza', 2)->get(); //desempleo
+        $estadoPoliza = EstadoPoliza::where('Activo', 1)->get();
+        $tipoCobro = TipoCobro::where('Activo', 1)->get();
+        $ejecutivo = Ejecutivo::where('Activo', 1)->get();
+        $saldos = SaldoMontos::where('Activo', 1)->get();
+
+        //dd($tipoCartera);
+        return view('polizas.desempleo.edit', compact(
+            'desempleo',
+            'aseguradora',
+            'cliente',
+            'productos',
+            'planes',
+            'tipoCartera',
+            'estadoPoliza',
+            'tipoCobro',
+            'ejecutivo',
+            'tipos_contribuyente',
+            'rutas',
+            'ubicaciones_cobro',
+            'saldos'
+        ));
     }
 
     public function update(Request $request, $id)
     {
         //
+        $request->validate([
+            'NumeroPoliza' => 'required|string|max:255',
+            'Aseguradora' => 'required|exists:aseguradora,Id',
+            'Asegurado' => 'required|exists:cliente,Id',
+            'Nit' => 'required|string|max:255',
+            'Ejecutivo' => 'required|exists:ejecutivo,Id',
+            'Saldos' => 'required',
+            'VigenciaDesde' => 'required|date',
+            'VigenciaHasta' => 'required|date|after_or_equal:VigenciaDesde',
+            'EdadTerminacion' => 'required|numeric|min:18',
+            'EdadMaximaInscripcion' => 'required|numeric|min:18',
+            'Tasa' => 'required|numeric|min:0.00001',
+            'Concepto' => 'nullable|string|max:1000',
+        ], [
+            'NumeroPoliza.required' => 'El campo Número de Póliza es obligatorio.',
+            'NumeroPoliza.string' => 'El campo Número de Póliza debe ser una cadena de texto.',
+            'NumeroPoliza.max' => 'El campo Número de Póliza no debe exceder los 255 caracteres.',
+            'Aseguradora.required' => 'Debes seleccionar una Aseguradora.',
+            'Aseguradora.exists' => 'La Aseguradora seleccionada no es válida.',
+            'Asegurado.required' => 'Debes seleccionar un Asegurado.',
+            'Asegurado.exists' => 'El Asegurado seleccionado no es válido.',
+            'Nit.required' => 'El campo Nit es obligatorio.',
+            'Nit.string' => 'El campo Nit debe ser una cadena de texto.',
+            'Nit.max' => 'El campo Nit no debe exceder los 255 caracteres.',
+            'Ejecutivo.required' => 'Debes seleccionar un Ejecutivo.',
+            'Saldos.required' => 'Debes seleccionar una opcion de saldo y montos.',
+            'Ejecutivo.exists' => 'El Ejecutivo seleccionado no es válido.',
+            'VigenciaDesde.required' => 'El campo Vigencia inicial es obligatorio.',
+            'VigenciaDesde.date' => 'El campo Vigencia inicial debe ser una fecha válida.',
+            'VigenciaHasta.required' => 'El campo Vigencia final es obligatorio.',
+            'VigenciaHasta.date' => 'El campo Vigencia final debe ser una fecha válida.',
+            'VigenciaHasta.after_or_equal' => 'La fecha de Vigencia final debe ser igual o posterior a la fecha de Vigencia inicial.',
+            'EdadTerminacion.required' => 'El campo Edad Terminación es obligatorio.',
+            'EdadTerminacion.numeric' => 'El campo Edad Terminación debe ser un número.',
+            'EdadTerminacion.min' => 'El campo Edad Terminación debe ser al menos 18.',
+            'EdadMaximaInscripcion.required' => 'El campo Edad inscripción es obligatorio.',
+            'EdadMaximaInscripcion.numeric' => 'El campo Edad inscripción debe ser un número.',
+            'EdadMaximaInscripcion.min' => 'El campo Edad inscripción debe ser al menos 18.',
+            'Tasa.required' => 'El campo Tasa es obligatorio.',
+            'Tasa.numeric' => 'El campo Tasa debe ser un número.',
+            'Tasa.min' => 'El campo Tasa debe ser al menos 0.',
+            'Concepto.string' => 'El campo Concepto debe ser una cadena de texto.',
+            'Concepto.max' => 'El campo Concepto no debe exceder los 1000 caracteres.',
+        ]);
 
+        try {
+            // Crear una nueva instancia del modelo Desempleo
+            $desempleo = Desempleo::findOrFail($id);
 
+            // Asignar los valores del formulario a los atributos del modelo
+            $desempleo->NumeroPoliza = $request->NumeroPoliza;
+            $desempleo->Asegurado = $request->Asegurado;
+            $desempleo->Aseguradora = $request->Aseguradora;
+            $desempleo->Ejecutivo = $request->Ejecutivo;
+            $desempleo->Saldos = $request->Saldos;
+            $desempleo->VigenciaDesde = $request->VigenciaDesde;
+            $desempleo->VigenciaHasta = $request->VigenciaHasta;
+            $desempleo->Tasa = $request->Tasa;
+            $desempleo->EdadMaximaInscripcion = $request->EdadMaximaInscripcion;
+            $desempleo->EdadMaxima = $request->EdadTerminacion;
+            $desempleo->EstadoPoliza = 1;
+            $desempleo->Descuento = $request->Descuento;
+            $desempleo->Activo = 1;
+            $desempleo->Plan = $request->Planes;
+            //$desempleo->Usuario = auth()->id();
+            $desempleo->update();
 
+            alert()->success('Éxito', 'La póliza de desempleo se ha modificado correctamente.');
+            return Redirect::to('polizas/desempleo');
+        } catch (\Exception $e) {
+
+            alert()->error('Error', 'Ocurrió un error al crear la póliza de desempleo: ' . $e->getMessage())->persistent('Ok');
+            return back()->withInput();
+        }
     }
 
     public function destroy($id)
     {
         //
     }
+
+    public function registros_edad_maxima($id)
+    {
+        return Excel::download(new EdadMaximaExport($id), 'creditos_edad_maxima.xlsx');
+    }
+
+    public function registros_responsabilidad_maxima($id)
+    {
+        return Excel::download(new EdadInscripcionExport($id), 'creditos_responsabilidad_maxima.xlsx');
+    }
+
+    public function exportar_nuevos_registros($id)
+    {
+        return Excel::download(new NuevosRegistrosExport($id), 'nuevos_registros.xlsx');
+    }
+
+    public function exportar_registros_eliminados($id)
+    {
+        return Excel::download(new RegistrosEliminadosExport($id), 'registros_eliminados.xlsx');
+    }
+
 }

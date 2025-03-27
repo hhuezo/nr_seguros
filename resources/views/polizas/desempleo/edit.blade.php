@@ -11,9 +11,44 @@
                 <h2>Nuevo Poliza de Desempleo &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; VIDE - Seguro por Desempleo<small></small>
                 </h2>
                 <ul class="nav navbar-right panel_toolbox">
-
+                    @if ($desempleo->Configuracion == 0)
+                    <a href="" data-target="#modal-finalizar" data-toggle="modal"
+                        class="btn btn-success">Finalizar <br> Configuración</a>
+                    @else
+                    <a href="" data-target="#modal-finalizar" data-toggle="modal"
+                        class="btn btn-primary">Apertura <br> Configuración</a>
+                    @endif
                 </ul>
                 <div class="clearfix"></div>
+                <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
+                    id="modal-finalizar">
+
+                    <form method="POST" action="{{ url('finalizar_configuracion_desempleo') }}">
+                        @method('POST')
+                        @csrf
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                    <input type="hidden" name="desempleo" value="{{ $desempleo->Id }}">
+                                    <h4 class="modal-title">{{ $desempleo->Configuracion == 0 ? 'Finalizar' : 'Aperturar' }}
+                                        Configuración</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Confirme si desea {{ $desempleo->Configuracion == 0 ? 'finalizar' : 'aperturar' }} la
+                                        configuración de la poliza</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                    <button type="submit" class="btn btn-primary">Confirmar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
             </div>
             @if (count($errors) > 0)
             <div class="alert alert-danger">
@@ -26,14 +61,15 @@
             @endif
         </div>
 
-        <form action="{{ url('polizas/desempleo') }}" method="POST">
+        <form action="{{ route('desempleo.update', $desempleo->Id) }}" method="POST">
+            @method('PUT')
             @csrf
             <div class="x_content" style="font-size: 12px;">
                 <!-- Número de Póliza -->
                 <div class="col-sm-12 row">
                     <div class="col-sm-4 ">
                         <label class="control-label" align="right">Número de Póliza *</label>
-                        <input class="form-control" name="NumeroPoliza" id="NumeroPoliza" type="text" value="{{ old('NumeroPoliza') }}" required>
+                        <input class="form-control" name="NumeroPoliza" id="NumeroPoliza" type="text" value="{{ $desempleo->NumeroPoliza ?? '' }}" required>
                     </div>
 
                     <div class="col-sm-4" style="display: none !important;">
@@ -47,7 +83,7 @@
                     <select name="Aseguradora" id="Aseguradora" class="form-control select2" style="width: 100%" required>
                         <option value="">Seleccione...</option>
                         @foreach ($aseguradora as $obj)
-                        <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                        <option value="{{ $obj->Id }}" {{$desempleo->Aseguradora == $obj->Id ? 'selected':''}}>{{ $obj->Nombre }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -56,9 +92,9 @@
                 <div class="col-sm-2">
                     <label class="control-label">Productos *</label>
                     <select name="Productos" id="Productos" class="form-control select2" style="width: 100%" required>
-                        <option value="" selected disabled>Seleccione...</option>
+                        <!-- <option value="" selected disabled>Seleccione...</option> -->
                         @foreach ($productos as $obj)
-                        <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                        <option value="{{ $obj->Id }}" {{ $desempleo->Plan && ($desempleo->planes->Producto == $obj->Id) ? 'selected':''}}>{{ $obj->Nombre }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -66,9 +102,9 @@
                 <div class="col-sm-2">
                     <label class="control-label">Planes *</label>
                     <select name="Planes" id="Planes" class="form-control select2" style="width: 100%" required>
-                        <option value="" selected disabled>Seleccione...</option>
+                        <!-- <option value="" selected disabled>Seleccione...</option> -->
                         @foreach ($planes as $obj)
-                        <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                        <option value="{{ $obj->Id }}" {{ $desempleo->Plan && ($desempleo->Plan == $obj->Id) ? 'selected':''}}>{{ $obj->Nombre }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -83,7 +119,7 @@
                             <option value="">Seleccione...</option>
                             @foreach ($cliente as $obj)
                             <option value="{{ $obj->Id }}"
-                                {{ old('Asegurado') == $obj->Id ? 'selected' : '' }}>{{ $obj->Nombre }}</option>
+                                {{ $desempleo->Asegurado == $obj->Id ? 'selected' : '' }}>{{ $obj->Nombre }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -92,7 +128,7 @@
                     <div class="item form-group col-sm-12 col-md-6 col-lg-6">
                         <label class="control-label" align="right">Nit</label>
                         <input class="form-control" name="Nit" id="Nit" type="text"
-                            value="{{ old('Nit') }}" readonly>
+                            value="{{ $desempleo->cliente->Nit?? '' }}" readonly>
                     </div>
                 </div>
 
@@ -102,7 +138,7 @@
                     <select name="Ejecutivo" class="form-control select2" style="width: 100%" required>
                         <option value="">Seleccione...</option>
                         @foreach ($ejecutivo as $obj)
-                        <option value="{{ $obj->Id }}" {{ old('Ejecutivo') == $obj->Id ? 'selected' : '' }}>
+                        <option value="{{ $obj->Id }}" {{ $desempleo->Ejecutivo == $obj->Id ? 'selected' : '' }}>
                             {{ $obj->Nombre }}
                         </option>
                         @endforeach
@@ -114,7 +150,7 @@
                     <select name="Saldos" class="form-control" required>
                         <option value="">Seleccione...</option>
                         @foreach ($saldos as $obj)
-                        <option value="{{ $obj->Id }}">
+                        <option value="{{ $obj->Id }}" {{ $desempleo->Saldos == $obj->Id ? 'selected' : '' }}>
                             {{ $obj->Abreviatura }} -
                             {{ $obj->Descripcion }}
                         </option>
@@ -129,47 +165,47 @@
                     <div class="item form-group col-sm-12 col-md-6 col-lg-6">
                         <label class="control-label" align="right">Vigencia Desde</label>
                         <input class="form-control" name="VigenciaDesde" type="date"
-                            value="{{ old('VigenciaDesde') }}" required>
+                            value="{{ $desempleo->VigenciaDesde }}" required>
                     </div>
 
                     <!-- Vigencia Hasta -->
                     <div class="item form-group col-sm-12 col-md-6 col-lg-6">
                         <label class="control-label" align="right">Vigencia Hasta</label>
                         <input class="form-control" name="VigenciaHasta" type="date"
-                            value="{{ old('VigenciaHasta') }}" required>
+                            value="{{ $desempleo->VigenciaHasta }}" required>
                     </div>
                 </div>
 
                 <!-- Edad máxima de inscripción -->
                 <div class="item form-group col-sm-12 col-md-6 col-lg-6">
                     <label class="control-label" align="right">Edad máxima de inscripción</label>
-                    <input class="form-control" name="EdadMaximaInscripcion" type="number" step="any" value="{{ old('EdadMaximaInscripcion') }}" required>
+                    <input class="form-control" name="EdadMaximaInscripcion" type="number" step="any" value="{{ $desempleo->EdadMaximaInscripcion }}" required>
                 </div>
 
                 <!-- Edad Terminación -->
                 <div class="item form-group col-sm-12 col-md-6 col-lg-6">
                     <label class="control-label" align="right">Edad Terminación</label>
-                    <input class="form-control" name="EdadTerminacion" type="number" step="any" value="{{ old('EdadTerminacion') }}" required>
+                    <input class="form-control" name="EdadTerminacion" type="number" step="any" value="{{ $desempleo->EdadMaxima }}" required>
                 </div>
 
                 <!-- Tasa Millar Mensual -->
                 <div class="item form-group col-sm-12 col-md-6 col-lg-6">
                     <label class="control-label" align="right">Tasa Millar Mensual</label>
                     <input class="form-control" name="Tasa" type="number" step="any"
-                        value="{{ old('Tasa') }}" required>
+                        value="{{ $desempleo->Tasa }}" required>
                 </div>
 
                 <!-- Tasa Millar Mensual -->
                 <div class="item form-group col-sm-12 col-md-6 col-lg-6">
                     <label class="control-label" align="right">Comisión</label>
                     <input class="form-control" name="Descuento" type="number" step="any"
-                        value="{{ old('Descuento') }}">
+                        value="{{ $desempleo->Descuento ?? 0 }}">
                 </div>
 
                 <!-- Concepto -->
                 <div class="item form-group col-sm-12 col-md-6 col-lg-6">
                     <label class="control-label" align="right">Concepto</label>
-                    <textarea class="form-control" name="Concepto" rows="3" cols="4">{{ old('Concepto') }}</textarea>
+                    <textarea class="form-control" name="Concepto" rows="3" cols="4">{{ $desempleo->Concepto }}</textarea>
                 </div>
             </div>
 
@@ -177,10 +213,10 @@
             <br>
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="form-group" align="center">
-                    <button type="submit" class="btn btn-success">Guardar</button>
-                    <a href="{{ url('poliza/vida') }}">
-                        <button type="button" class="btn btn-primary">Cancelar</button>
-                    </a>
+                    <button type="submit" class="btn btn-success"
+                        {{ $desempleo->Configuracion == 1 ? 'disabled' : '' }}>Guardar y Continuar</button>
+                    <a href="{{ url('polizas/deuda') }}"><button type="button"
+                            class="btn btn-primary">Cancelar</button></a>
                 </div>
             </div>
         </form>

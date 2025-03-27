@@ -417,7 +417,6 @@
                                 <br>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
-
                                     @if ($deuda->deuda_tipos_cartera->count() > 0)
                                         <table class="table table-bordered">
                                             <thead class="table-dark">
@@ -547,7 +546,7 @@
 
                                             <strong>No hay datos</strong>
                                         </div>
-                                    @endif
+                                    @endif --}}
 
 
 
