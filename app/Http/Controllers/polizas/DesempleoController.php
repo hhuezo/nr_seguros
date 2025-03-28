@@ -6,11 +6,13 @@ use App\Exports\desempleo\EdadInscripcionExport;
 use App\Exports\desempleo\EdadMaximaExport;
 use App\Exports\desempleo\NuevosRegistrosExport;
 use App\Exports\desempleo\RegistrosEliminadosExport;
+use App\Exports\desempleo\RegistrosRehabilitadosExport;
 use App\Exports\ResponsabilidadMaximaExport;
 use App\Http\Controllers\Controller;
 use App\Imports\DesempleoCarteraTempImport;
 use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\Cliente;
+use App\Models\catalogo\ConfiguracionRecibo;
 use App\Models\catalogo\DatosGenerales;
 use App\Models\catalogo\Ejecutivo;
 use App\Models\catalogo\EstadoPoliza;
@@ -163,7 +165,7 @@ class DesempleoController extends Controller
             $desempleo->save();
 
             alert()->success('Éxito', 'La póliza de desempleo se ha creado correctamente.');
-            return Redirect::to('polizas/desempleo'.$desempleo->Id.'/edit');
+            return Redirect::to('polizas/desempleo' . $desempleo->Id . '/edit');
         } catch (\Exception $e) {
 
             alert()->error('Error', 'Ocurrió un error al crear la póliza de desempleo: ' . $e->getMessage());
@@ -179,7 +181,7 @@ class DesempleoController extends Controller
             $desempleo->update();
 
             alert()->success('El registro de poliza ha sido configurado correctamente');
-            return redirect('polizas/desempleo/' . $request->desempleo.'edit');
+            return redirect('polizas/desempleo/' . $request->desempleo . 'edit');
         } else {
             $desempleo->Configuracion = 1;
             $desempleo->update();
@@ -363,7 +365,8 @@ class DesempleoController extends Controller
         //$calculo = $this->monto($residencia, $detalle);
 
         $recibo_historial = $this->save_recibo($detalle, $desempleo);
-        $pdf = \PDF::loadView('polizas.desempleo.recibo', compact('recibo_historial', 'detalle', 'desempleo', 'meses'))->setWarnings(false)->setPaper('letter');
+        $configuracion = ConfiguracionRecibo::first();
+        $pdf = \PDF::loadView('polizas.desempleo.recibo', compact('configuracion','recibo_historial', 'detalle', 'desempleo', 'meses'))->setWarnings(false)->setPaper('letter');
         return $pdf->stream('Recibo.pdf');
 
         //  return back();
@@ -434,7 +437,8 @@ class DesempleoController extends Controller
             $detalle->update();
 
             $recibo_historial = $this->save_recibo($detalle, $desempleo);
-            $pdf = \PDF::loadView('polizas.desempleo.recibo', compact('recibo_historial', 'detalle', 'desempleo', 'meses'))->setWarnings(false)->setPaper('letter');
+            $configuracion = ConfiguracionRecibo::first();
+            $pdf = \PDF::loadView('polizas.desempleo.recibo', compact('configuracion','recibo_historial', 'detalle', 'desempleo', 'meses'))->setWarnings(false)->setPaper('letter');
             return $pdf->stream('Recibo.pdf');
 
             return back();
@@ -526,8 +530,8 @@ class DesempleoController extends Controller
             //return view('polizas.desempleo.recibo', compact('recibo_historial','detalle', 'desempleo', 'meses','exportar'));
         }*/
 
-
-        $pdf = \PDF::loadView('polizas.desempleo.recibo', compact('recibo_historial', 'detalle', 'desempleo', 'meses', 'exportar'))->setWarnings(false)->setPaper('letter');
+        $configuracion = ConfiguracionRecibo::first();
+        $pdf = \PDF::loadView('polizas.desempleo.recibo', compact('configuracion','recibo_historial', 'detalle', 'desempleo', 'meses', 'exportar'))->setWarnings(false)->setPaper('letter');
         //  dd($detalle);
         return $pdf->stream('Recibos.pdf');
     }
@@ -545,7 +549,9 @@ class DesempleoController extends Controller
 
         $recibo_historial = DesempleoHistorialRecibo::where('PolizaDesempleoDetalle', $id)->orderBy('id', 'desc')->first();
         //dd($recibo_historial);
-        return view('polizas.desempleo.recibo_edit', compact('recibo_historial', 'meses'));
+        $configuracion = ConfiguracionRecibo::first();
+
+        return view('polizas.desempleo.recibo_edit', compact('configuracion','recibo_historial', 'meses'));
     }
 
     public function get_recibo_update(Request $request)
@@ -752,8 +758,9 @@ class DesempleoController extends Controller
         //borrar datos de tabla temporal
         DesempleoCarteraTemp::where('User', auth()->user()->id)->where('PolizaDesempleo', $id)->delete();
 
+        $saldos = $desempleo->Saldos;
         //guardando datos de excel en base de datos
-        Excel::import(new DesempleoCarteraTempImport($request->Axo, $request->Mes, $id, $request->FechaInicio, $request->FechaFinal), $archivo);
+        Excel::import(new DesempleoCarteraTempImport($request->Axo, $request->Mes, $id, $request->FechaInicio, $request->FechaFinal, $saldos), $archivo);
 
 
 
@@ -916,16 +923,42 @@ class DesempleoController extends Controller
             ->select('poliza_desempleo_cartera_temp.*') // Selecciona columnas de la tabla principal
             ->get();
 
-        $total = DesempleoCarteraTemp::where('User', auth()->user()->id)->sum('MontoOtorgado');
-        //falta calcular el total en base a saldos y montos , agregar campo SaldoTotal( table: cartera_desempleo_temp)
-        //registros rehabilitados, como en deuda.
+        $total = DesempleoCarteraTemp::where('User', auth()->user()->id)->sum('SaldoTotalTotal');
         //recibos tabla de configuracion
-        //quitar paginacion de datatable
-        //colocar loading en desempleo
-        
+       
+
+        $temp = DesempleoCarteraTemp::where('User', auth()->user()->id)
+            ->where('PolizaDesempleo', $id)->get();
+        $mesAnteriorString = $axoAnterior . '-' . $mesAnterior;
+        //calcular rehabilitados
+        $referenciasAnteriores = DB::table('poliza_desempleo_cartera')
+            ->where('PolizaDesempleo', $id)
+            ->where('User', auth()->user()->id)
+            ->whereRaw('CONCAT(Axo, "-", Mes) <> ?', [$mesAnteriorString])
+            ->pluck('NumeroReferencia')
+            ->toArray();
 
 
-        return view('polizas.desempleo.respuesta_poliza', compact('total', 'desempleo', 'poliza_edad_maxima', 'registros_eliminados', 'nuevos_registros', 'axoActual', 'mesActual'));
+        $referenciasMesAterior = DB::table('poliza_desempleo_cartera')
+            ->where('PolizaDesempleo', $id)
+            ->where('User', auth()->user()->id)
+            ->where('Axo', $axoAnterior)
+            ->where('Mes', $mesAnterior)
+            ->pluck('NumeroReferencia')
+            ->toArray();
+
+
+        foreach ($temp as $item) {
+            // Verifica si el NumeroReferencia está en referenciasAnteriores pero no en referenciasMesAterior
+            if (in_array($item->NumeroReferencia, $referenciasAnteriores) && !in_array($item->NumeroReferencia, $referenciasMesAterior)) {
+                $item->Rehabilitado = 1;
+                $item->save();
+            }
+        }
+
+        $registros_rehabilitados = DesempleoCarteraTemp::where('User', auth()->user()->id)->where('PolizaDesempleo', $id)->where('Rehabilitado',1)->get();
+
+        return view('polizas.desempleo.respuesta_poliza', compact('total', 'desempleo', 'poliza_edad_maxima', 'registros_rehabilitados','registros_eliminados', 'nuevos_registros', 'axoActual', 'mesActual'));
         // } catch (\Exception $e) {
         //     // Capturar cualquier excepción y retornar un mensaje de error
         //     return back()->with('error', 'Ocurrió un error al crear la póliza de desempleo: ' . $e->getMessage());
@@ -1268,4 +1301,8 @@ class DesempleoController extends Controller
         return Excel::download(new RegistrosEliminadosExport($id), 'registros_eliminados.xlsx');
     }
 
+    public function exportar_registros_rehabilitados($id)
+    {
+        return Excel::download(new RegistrosRehabilitadosExport($id), 'registros_rehabilitados.xlsx');
+    }
 }

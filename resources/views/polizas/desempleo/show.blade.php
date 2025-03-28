@@ -1,6 +1,31 @@
 @extends ('welcome')
 @section('contenido')
+<style>
+        #loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #loading-overlay img {
+            width: 50px;
+            /* Ajusta el tamaño de la imagen según tus necesidades */
+            height: 50px;
+            /* Ajusta el tamaño de la imagen según tus necesidades */
+        }
+</style>
 <div class="x_panel">
+    <div id="loading-overlay">      
+        <img src="{{ asset('img/ajax-loader.gif') }}" alt="Loading..." />
+    </div>
+
 
     @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
     <div class="x_title">
@@ -235,7 +260,7 @@
                 <div class="clearfix"></div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Subir Cartera</button>
+                    <button type="submit" class="btn btn-primary" id="btnSubirCartera">Subir Cartera</button>
                 </div>
             </form>
 
@@ -250,6 +275,11 @@
 </div>
 
 <script>
+ 
+ 
+ document.getElementById('btnSubirCartera').addEventListener('click', function() {
+        document.getElementById('loading-overlay').style.display = 'flex';
+    });
     document.addEventListener('DOMContentLoaded', function() {
         // Obtener referencias a los elementos del formulario
         const añoSelect = document.getElementById('Axo');

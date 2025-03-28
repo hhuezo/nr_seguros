@@ -1,6 +1,32 @@
 @extends ('welcome')
 @section('contenido')
+<style>
+        #loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #loading-overlay img {
+            width: 50px;
+            /* Ajusta el tamaño de la imagen según tus necesidades */
+            height: 50px;
+            /* Ajusta el tamaño de la imagen según tus necesidades */
+        }
+</style>
 <div role="main">
+    <div id="loading-overlay">  
+        <img src="{{ asset('img/ajax-loader.gif') }}" alt="Loading..." />
+    </div>
+
+
     <div class="">
 
         <div class="clearfix"></div>
@@ -20,7 +46,6 @@
                             <table class="table table-striped" id="table1">
                                 <thead>
                                     <tr>
-                                        <th>Tipo de Cartera</th>
                                         <th>Abreviatura</th>
                                         <th>Descripcion</th>
                                         <th>Datos Ingresados</th>
@@ -29,9 +54,8 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
+                                        <td>{{$desempleo->saldos->Abreviatura}}</td>
+                                        <td>{{$desempleo->saldos->Descripcion}}</td>
                                         <td>${{ number_format($total, 2, '.', ',') }}</td>
                                         <!-- <td></td> -->
                                     </tr>
@@ -79,7 +103,7 @@
                                             <input type="hidden" name="AxoAnterior" value="{{ $axoAnterior }}"> --}}
 
 
-                                            <button id="btnGuardarCartera" type="submit" class="btn btn-primary"
+                                            <button id="btnGuardarCartera" type="submit" class="btn btn-primary" 
                                                 disabled>
                                                 Guardar en cartera
                                             </button>
@@ -116,7 +140,7 @@
                                             Eliminados</a>
                                     </li>
 
-                                    <li role="presentation" class=""><a href="#tab_content4" role="tab"
+                                    <li role="presentation" class=""><a href="#tab_rehabilitados" role="tab"
                                             id="profile-tab2" data-toggle="tab" aria-expanded="false">Registros
                                             <br />rehabilitados</a>
                                     </li>
@@ -269,7 +293,7 @@
                                     </div>
 
                                     <!-- nuevos registros -->
-                                    <div role="tabpanel" class="tab-pane  " id="tab_nuevos"  aria-labelledby="home-tab">
+                                    <div role="tabpanel" class="tab-pane  " id="tab_nuevos" aria-labelledby="home-tab">
                                         <div class="col-md-12 col-sm-12" align="right">
                                             <form method="POST"
                                                 action="{{ url('exportar/desempleo/nuevos_registros') }}/{{ $desempleo->Id }}">
@@ -320,7 +344,7 @@
 
 
                                     <!-- registros eliminados -->
-                                    <div role="tabpanel5" class="tab-pane" id="tab_eliminados"  aria-labelledby="tab">
+                                    <div role="tabpanel5" class="tab-pane" id="tab_eliminados" aria-labelledby="tab">
 
 
                                         <div class="col-md-12 col-sm-12" align="right">
@@ -376,13 +400,60 @@
 
                                     </div>
 
+                                    <!-- registros rehabilitados -->
+                                    <div role="tabpanel5" class="tab-pane" id="tab_rehabilitados" aria-labelledby="tab">
 
+
+                                        <div class="col-md-12 col-sm-12" align="right">
+                                            <form method="POST"
+                                                action="{{ url('exportar/desempleo/registros_rehabilitados') }}/{{ $desempleo->Id }}">
+                                                @csrf
+                                                <button class="btn btn-success"
+                                                    {{ $registros_rehabilitados->count() > 0 ? '' : 'disabled' }}>Descargar
+                                                    Excel</button>
+                                            </form>
+                                        </div>
+                                        <br>
+                                        <table class="table table-striped" id="table5">
+                                            <thead>
+                                                <tr>
+                                                    <th>Número crédito</th>
+                                                    <th>DUI</th>
+                                                    <th>NIT</th>
+                                                    <th>Nombre</th>
+                                                    <th>Fecha Nacimiento</th>
+                                                    <th>Fecha Otorgamiento</th>
+                                                    <th>Edad Actual</th>
+                                                    <th>Edad Desembolso</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($registros_rehabilitados as $registro)
+                                                <tr>
+                                                    <td>{{ $registro->NumeroReferencia }}</td>
+                                                    <td>{{ $registro->Dui }}</td>
+                                                    <td>{{ $registro->Nit }}</td>
+                                                    <td>{{ $registro->PrimerNombre }}
+                                                        {{ $registro->SegundoNombre }}
+                                                        {{ $registro->PrimerApellido }}
+                                                        {{ $registro->SegundoApellido }}
+                                                        {{ $registro->ApellidoCasada }}
+                                                    </td>
+                                                    <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
+                                                    </td>
+                                                    <td>{{ $registro->FechaOtorgamiento ? $registro->FechaOtorgamiento : '' }}
+                                                    </td>
+                                                    <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
+                                                    <td>{{ $registro->Edad ? $registro->Edad : '' }}
+                                                        Años</td>
+                                                </tr>
+                                                @endforeach
+
+
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-
-
-
-
-
 
                             </div>
                         </div>
@@ -398,16 +469,29 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#table1').DataTable();
-        $('#table2').DataTable();
-        $('#table3').DataTable();
-        $('#table4').DataTable();
-        $('#table5').DataTable();
+        $('#table1').DataTable({
+            paging: false
+        });
+        $('#table2').DataTable({
+            paging: false
+        });
+        $('#table3').DataTable({
+            paging: false
+        });
+        $('#table4').DataTable({
+            paging: false
+        });
+        $('#table5').DataTable({
+            paging: false
+        });
 
-        getNoValido({{$desempleo->Id}});
+        getNoValido({{ $desempleo->Id}});
+        document.getElementById('btnGuardarCartera').addEventListener('click', function() {
+            document.getElementById('loading-overlay').style.display = 'flex';
+        });
     });
 
-    function resumen(){
+    function resumen() {
         document.getElementById('subir_respuesta').style.display = 'none';
         document.getElementById('resumen').style.display = 'block';
     }
@@ -458,7 +542,7 @@
                     console.error('Error:', response.message);
                 }
 
-                getNoValido({{ $desempleo->Id}});
+                getNoValido({{$desempleo->Id }});
             },
             error: function(xhr, status, error) {
                 // Manejar errores de la solicitud

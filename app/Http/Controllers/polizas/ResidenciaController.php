@@ -7,6 +7,7 @@ use App\Imports\PolizaResidenciaTempCarteraImport;
 use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\Bombero;
 use App\Models\catalogo\Cliente;
+use App\Models\catalogo\ConfiguracionRecibo;
 use App\Models\catalogo\DatosGenerales;
 use App\Models\catalogo\Ejecutivo;
 use App\Models\catalogo\EstadoPoliza;
@@ -564,7 +565,8 @@ class ResidenciaController extends Controller
             $detalle->ImpresionRecibo = $request->ImpresionRecibo;
             $detalle->Comentario = $request->Comentario;
             $detalle->update();
-            $pdf = \PDF::loadView('polizas.residencia.recibo', compact('detalle', 'residencia'))->setWarnings(false)->setPaper('letter');
+            $configuracion = ConfiguracionRecibo::first();
+            $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion','detalle', 'residencia'))->setWarnings(false)->setPaper('letter');
             return $pdf->stream('Recibo.pdf');
 
             return back();
@@ -597,7 +599,7 @@ class ResidenciaController extends Controller
             /*$detalle->EnvioPago = $request->EnvioPago;
             $detalle->PagoAplicado = $request->PagoAplicado;*/
             $detalle->update();
-            alert()->success('El registro ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
+            alert()->success('El registro ha sid:o ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
         }
 
 
@@ -618,8 +620,8 @@ class ResidenciaController extends Controller
         $detalle->NumeroCorrelativo = $request->NumeroCorrelativo;
         $detalle->update();
         //$calculo = $this->monto($residencia, $detalle);
-
-        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('detalle', 'residencia', 'meses'))->setWarnings(false)->setPaper('letter');
+        $configuracion = ConfiguracionRecibo::first();
+        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion','detalle', 'residencia', 'meses'))->setWarnings(false)->setPaper('letter');
         return $pdf->stream('Recibo.pdf');
 
         //  return back();
@@ -633,7 +635,8 @@ class ResidenciaController extends Controller
         $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
         $calculo = $this->monto($residencia, $detalle);
         // dd($calculo);
-        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('detalle', 'residencia', 'meses', 'calculo'))->setWarnings(false)->setPaper('letter');
+        $configuracion = ConfiguracionRecibo::first();
+        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion','detalle', 'residencia', 'meses', 'calculo'))->setWarnings(false)->setPaper('letter');
         //  dd($detalle);
         return $pdf->stream('Recibos.pdf');
     }

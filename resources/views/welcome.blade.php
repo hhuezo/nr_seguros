@@ -159,6 +159,8 @@
                                 <li><a><i class="fa fa-folder"></i> Catálogos<span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
 
+
+                                        <li><a href="{{ url('catalogo/configuracion_recibo') }}">Configuración de Recibo</a></li>
                                         <li><a href="{{ url('catalogo/bombero') }}">Impuesto Bomberos</a></li>
                                         <li><a href="{{ url('catalogo/ejecutivos') }}">Ejecutivo</a></li>
                                         <li><a href="{{ url('catalogo/estado_polizas') }}">Estado Póliza</a></li>

@@ -18,15 +18,17 @@ class DesempleoCarteraTempImport implements ToModel, SkipsEmptyRows
     private $FechaInicio;
     private $FechaFinal;
     private $encabezados = 0;
+    private $saldos;
 
 
-    public function __construct($Axo, $Mes, $Poliza, $FechaInicio, $FechaFinal)
+    public function __construct($Axo, $Mes, $Poliza, $FechaInicio, $FechaFinal,$Saldos)
     {
         $this->Axo = $Axo;
         $this->Mes = $Mes;
         $this->Poliza = $Poliza;
         $this->FechaInicio = $FechaInicio;
         $this->FechaFinal = $FechaFinal;
+        $this->saldos = $Saldos;
     }
 
     public function model(array $row)
@@ -79,6 +81,7 @@ class DesempleoCarteraTempImport implements ToModel, SkipsEmptyRows
                     'NoValido' => 0, // Valor por defecto
                     'Excluido' => 0, // Valor por defecto
                     'Rehabilitado' => 0, // Valor por defecto
+                    'Saldos' => $this->saldos,
                 ]);
             }
         }
