@@ -22,9 +22,9 @@
                         <br>
                         Cálculo para el periodo de: <br>
                         @if ($ultimo_pago)
-                        {{ \Carbon\Carbon::parse($ultimo_pago->FechaInicio)->format('d/m/Y') }}
-                        al
-                        {{ \Carbon\Carbon::parse($ultimo_pago->FechaFinal)->format('d/m/Y') }}
+                            {{ \Carbon\Carbon::parse($ultimo_pago->FechaInicio)->format('d/m/Y') }}
+                            al
+                            {{ \Carbon\Carbon::parse($ultimo_pago->FechaFinal)->format('d/m/Y') }}
                         @endif
                     </th>
                     <th></th>
@@ -47,23 +47,27 @@
                     <center><strong>Base Cálculo de la Prima </strong></center>
                 </td>
             </tr>
-            @foreach($creditos1 as $obj)
-            <tr>
-                <td>{{$obj->tipoCarteras->Nombre}} {{$obj->saldos->Abreviatura}}</td>
-                <td style="text-align: right; "><span class="fa fa-dollar " aria-hidden="true"></span></td>
-                <td style="text-align: right; ">
-                    <label type="text" class="label-control has-feedback-left">{{ number_format($obj->TotalLiniaCredito, 2, '.', ',') }} </label>
-                </td>
-                <td></td>
-            </tr>
-
-            @endforeach
+            @if ($totalUltimoPago && $totalUltimoPago->isNotEmpty())
+                @foreach ($totalUltimoPago as $pago)
+                    <tr>
+                        <td>{{ $pago->TipoCarteraNombre }} {{ $pago->LineaCreditoAbreviatura }}</td>
+                        <td style="text-align: right; "><span class="fa fa-dollar " aria-hidden="true"></span></td>
+                        <td style="text-align: right; ">
+                            <label type="text"
+                                class="label-control has-feedback-left">{{ number_format($pago->TotalCredito, 2, '.', ',') }}
+                            </label>
+                        </td>
+                        <td></td>
+                    </tr>
+                @endforeach
+            @endif
             <tr>
 
                 <td> Monto Cartera</td>
                 <td style="text-align: right;"><span class="fa fa-dollar " aria-hidden="true"></span></td>
                 <td style="text-align: right;">
-                    <label class="label-control has-feedback-left"> {{ $ultimo_pago ? number_format($ultimo_pago->MontoCartera, 2, '.', ',') : 0}} </label>
+                    <label class="label-control has-feedback-left">
+                        {{ $ultimo_pago ? number_format($ultimo_pago->MontoCartera, 2, '.', ',') : 0 }} </label>
                 </td>
                 <td></td>
             </tr>
@@ -71,7 +75,8 @@
                 <td>Tasa mensual por millar</td>
                 <td style="text-align: right;"><span class="fa fa-dollar " aria-hidden="true"></span></td>
                 <td style="text-align: right;">
-                    <label class="label-control has-feedback-left" style="text-align: right;">{{ $deuda->Tasa }} </label>
+                    <label class="label-control has-feedback-left" style="text-align: right;">{{ $deuda->Tasa }}
+                    </label>
                 </td>
                 <td></td>
             </tr>
@@ -80,7 +85,9 @@
                 <td>Prima Calculada </td>
                 <td style="text-align: right;"><span class="fa fa-dollar " aria-hidden="true"></span></td>
                 <td style="text-align: right;">
-                    <label class="label-control has-feedback-left" style="text-align: right;">{{$ultimo_pago ?  number_format($ultimo_pago->PrimaCalculada, 2, '.', ',') : 0 }} </label>
+                    <label class="label-control has-feedback-left"
+                        style="text-align: right;">{{ $ultimo_pago ? number_format($ultimo_pago->PrimaCalculada, 2, '.', ',') : 0 }}
+                    </label>
                 </td>
                 <td></td>
             </tr>
@@ -88,7 +95,8 @@
                 <td>Extra Prima </td>
                 <td style="text-align: right;"><span class="fa fa-dollar " aria-hidden="true"></span></td>
                 <td style="text-align: right;">
-                    <label class="label-control has-feedback-left" style="text-align: right;"> {{$ultimo_pago ?  number_format($ultimo_pago->ExtraPrima, 2, '.', ',') : 0}} </label>
+                    <label class="label-control has-feedback-left" style="text-align: right;">
+                        {{ $ultimo_pago ? number_format($ultimo_pago->ExtraPrima, 2, '.', ',') : 0 }} </label>
                 </td>
                 <td></td>
             </tr>
@@ -96,7 +104,9 @@
                 <td>(-) Descuento Rentabilidad {{ $deuda->TasaDescuento }}%</td>
                 <td style="text-align: right;"><span class="fa fa-dollar " aria-hidden="true"></span></td>
                 <td style="text-align: right;">
-                    <label class="label-control has-feedback-left" style="text-align: right;">{{ $ultimo_pago ?  number_format($ultimo_pago->Descuento, 2, '.', ',') : 0}} </label>
+                    <label class="label-control has-feedback-left"
+                        style="text-align: right;">{{ $ultimo_pago ? number_format($ultimo_pago->Descuento, 2, '.', ',') : 0 }}
+                    </label>
                 </td>
                 <td></td>
             </tr>
@@ -104,7 +114,8 @@
                 <td>(=) Prima Descontada</td>
                 <td style="text-align: right;"><span class="fa fa-dollar " aria-hidden="true"></span></td>
                 <td style="text-align: right;">
-                    <label class="label-control has-feedback-left" style="text-align: right;"> {{ $ultimo_pago ? number_format($ultimo_pago->PrimaDescontada, 2, '.', ',') : 0}} </label>
+                    <label class="label-control has-feedback-left" style="text-align: right;">
+                        {{ $ultimo_pago ? number_format($ultimo_pago->PrimaDescontada, 2, '.', ',') : 0 }} </label>
                 </td>
                 <td></td>
             </tr>
@@ -113,22 +124,26 @@
                 <td>(-) Estructura CCF de Comisión</td>
                 <td style="text-align: right;"><span class="fa fa-dollar " aria-hidden="true"></span></td>
                 <td style="text-align: right;">
-                    <label class="label-control has-feedback-left" style="text-align: right;">{{ $ultimo_pago ? number_format($ultimo_pago->ValorCCF, 2, '.', ',') : 0}} </label>
+                    <label class="label-control has-feedback-left"
+                        style="text-align: right;">{{ $ultimo_pago ? number_format($ultimo_pago->ValorCCF, 2, '.', ',') : 0 }}
+                    </label>
                 </td>
                 <td></td>
             </tr>
             <tr>
                 <td>Prima total a Pagar @if ($ultimo_pago)
-                    <br>
-                    {{ \Carbon\Carbon::parse($ultimo_pago->FechaInicio)->format('d/m/Y') }}
-                    al
-                    {{ \Carbon\Carbon::parse($ultimo_pago->FechaFinal)->format('d/m/Y') }}
-                    <br>
+                        <br>
+                        {{ \Carbon\Carbon::parse($ultimo_pago->FechaInicio)->format('d/m/Y') }}
+                        al
+                        {{ \Carbon\Carbon::parse($ultimo_pago->FechaFinal)->format('d/m/Y') }}
+                        <br>
                     @endif
                 </td>
-                <td style="text-align: right; vertical-align: middle; "><span class="fa fa-dollar " aria-hidden="true"></span></td>
+                <td style="text-align: right; vertical-align: middle; "><span class="fa fa-dollar "
+                        aria-hidden="true"></span></td>
                 <td style="text-align: right; vertical-align: middle;">
-                    <label class="label-control has-feedback-left" style="text-align: right; font-size: 15px;"> {{ $ultimo_pago ? number_format($ultimo_pago->APagar, 2, '.', ',') : 0 }} </label>
+                    <label class="label-control has-feedback-left" style="text-align: right; font-size: 15px;">
+                        {{ $ultimo_pago ? number_format($ultimo_pago->APagar, 2, '.', ',') : 0 }} </label>
                 </td>
                 <td></td>
             </tr>
@@ -144,7 +159,8 @@
             <tr>
                 <td>Comisión</td>
                 <td style="text-align: left;" colspan="2"><span class="fa fa-percent " aria-hidden="true"></span>
-                    <label class="label-control has-feedback-left" style="padding-left: 25%;">{{$ultimo_pago ? $ultimo_pago->TasaComision : 0 }} </label>
+                    <label class="label-control has-feedback-left"
+                        style="padding-left: 25%;">{{ $ultimo_pago ? $ultimo_pago->TasaComision : 0 }} </label>
                 </td>
                 <td></td>
             </tr>
@@ -152,7 +168,9 @@
                 <td>(=) Prima a cobrar</td>
                 <td style="text-align: right;"><span class="fa fa-dollar " aria-hidden="true"></span></td>
                 <td style="text-align: right;">
-                    <label class="label-control has-feedback-left" style="text-align: right;">{{ $ultimo_pago ? number_format($ultimo_pago->PrimaDescontada, 2, '.', ',') : 0}} </label>
+                    <label class="label-control has-feedback-left"
+                        style="text-align: right;">{{ $ultimo_pago ? number_format($ultimo_pago->PrimaDescontada, 2, '.', ',') : 0 }}
+                    </label>
                 </td>
                 <td></td>
             </tr>
@@ -160,7 +178,9 @@
                 <td>Valor por Comisión</td>
                 <td style="text-align: right;"><span class="fa fa-dollar " aria-hidden="true"></span></td>
                 <td style="text-align: right;">
-                    <label class="label-control has-feedback-left" style="text-align: right;">{{ $ultimo_pago ?  number_format($ultimo_pago->Comision, 2, '.', ',') : 0}} </label>
+                    <label class="label-control has-feedback-left"
+                        style="text-align: right;">{{ $ultimo_pago ? number_format($ultimo_pago->Comision, 2, '.', ',') : 0 }}
+                    </label>
                 </td>
                 <td></td>
             </tr>
@@ -168,7 +188,9 @@
                 <td>Más 13% IVA sobre comisión</td>
                 <td style="text-align: right;"><span class="fa fa-dollar " aria-hidden="true"></span></td>
                 <td style="text-align: right;">
-                    <label class="label-control has-feedback-left" style="text-align: right;">{{ $ultimo_pago ? number_format($ultimo_pago->IvaSobreComision, 2, '.', ',') : 0}} </label>
+                    <label class="label-control has-feedback-left"
+                        style="text-align: right;">{{ $ultimo_pago ? number_format($ultimo_pago->IvaSobreComision, 2, '.', ',') : 0 }}
+                    </label>
                 </td>
                 <td></td>
             </tr>
@@ -176,7 +198,9 @@
                 <td>Sub Total Comisión</td>
                 <td style="text-align: right;"><span class="fa fa-dollar " aria-hidden="true"></span></td>
                 <td style="text-align: right;">
-                    <label class="label-control has-feedback-left" style="text-align: right;">{{ $ultimo_pago ? number_format($ultimo_pago->Comision + $ultimo_pago->IvaSobreComision, 2, '.', ',') : 0}} </label>
+                    <label class="label-control has-feedback-left"
+                        style="text-align: right;">{{ $ultimo_pago ? number_format($ultimo_pago->Comision + $ultimo_pago->IvaSobreComision, 2, '.', ',') : 0 }}
+                    </label>
                 </td>
                 <td></td>
             </tr>
@@ -184,7 +208,9 @@
                 <td>Menos 1% Retención</td>
                 <td style="text-align: right;"><span class="fa fa-dollar " aria-hidden="true"></span></td>
                 <td style="text-align: right;">
-                    <label class="label-control has-feedback-left" style="text-align: right;">{{ $ultimo_pago ? number_format($ultimo_pago->Retencion, 2, '.', ',') : 0}} </label>
+                    <label class="label-control has-feedback-left"
+                        style="text-align: right;">{{ $ultimo_pago ? number_format($ultimo_pago->Retencion, 2, '.', ',') : 0 }}
+                    </label>
                 </td>
                 <td></td>
             </tr>
@@ -192,7 +218,9 @@
                 <td>Valor CCF por Comisión</td>
                 <td style="text-align: right;"><span class="fa fa-dollar " aria-hidden="true"></span></td>
                 <td style="text-align: right;">
-                    <label class="label-control has-feedback-left" style="text-align: right;">{{ $ultimo_pago ? number_format($ultimo_pago->ValorCCF, 2, '.', ',') : 0}} </label>
+                    <label class="label-control has-feedback-left"
+                        style="text-align: right;">{{ $ultimo_pago ? number_format($ultimo_pago->ValorCCF, 2, '.', ',') : 0 }}
+                    </label>
                 </td>
                 <td></td>
             </tr>

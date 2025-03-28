@@ -2,19 +2,15 @@
 
 namespace App\Http\Controllers\polizas;
 
-use App\Exports\EdadMaximaExport;
 use App\Exports\ExcluidosExport;
 use App\Http\Controllers\Controller;
-use App\Imports\PolizaDeudaCarteraImport;
 use App\Imports\PolizaDeudaTempCarteraComImport;
 use App\Imports\PolizaDeudaTempCarteraImport;
 use App\Models\polizas\Deuda;
 use App\Models\polizas\DeudaCredito;
-use App\Models\polizas\DeudaCreditosValidos;
 use App\Models\polizas\DeudaDetalle;
 use App\Models\polizas\DeudaEliminados;
 use App\Models\polizas\DeudaExcluidos;
-use App\Models\polizas\DeudaRequisitos;
 use App\Models\polizas\PolizaDeudaCartera;
 use App\Models\polizas\PolizaDeudaTipoCartera;
 use App\Models\temp\PolizaDeudaTempCartera;
@@ -1254,9 +1250,6 @@ class DeudaCarteraController extends Controller
     }
 
 
-
-
-
     public function store_poliza(Request $request)
     {
         //dd("");
@@ -1436,6 +1429,7 @@ class DeudaCarteraController extends Controller
                 $poliza->EdadDesembloso = $tempRecordV->EdadDesembloso;
                 $poliza->LineaCredito = $tempRecordV->LineaCredito;
                 $poliza->NoValido = $tempRecordV->NoValido;
+                $poliza->Tasa = $tempRecord->Tasa;
                 $poliza->TotalCredito = $tempRecordV->TotalCredito;
                 $poliza->PolizaDeudaTipoCartera = $tempRecord->PolizaDeudaTipoCartera;
                 $poliza->FechaOtorgamientoDate = $tempRecord->FechaOtorgamientoDate;

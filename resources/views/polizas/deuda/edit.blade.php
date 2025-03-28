@@ -53,7 +53,7 @@
                 </ul>
                 <div class="clearfix"></div>
                 <br>
-                @if($now > $deuda->VigenciaHasta)
+                @if(now() > $deuda->VigenciaHasta)
                 <div class="alert alert-warning" role="alert" style="background-color: #fcf8e3; color: #ba813b">
                     <b>¡Advertencia!</b> La poliza ya se vencio, puede renovarla ingresando
                     <a href="{{ url('polizas/deuda/renovar') }}/{{ $deuda->Id }}" class="alert-link">Aqui</a>
