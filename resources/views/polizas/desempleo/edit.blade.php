@@ -65,51 +65,46 @@
             @method('PUT')
             @csrf
             <div class="x_content" style="font-size: 12px;">
-                <!-- Número de Póliza -->
-                <div class="col-sm-12 row">
-                    <div class="col-sm-4 ">
+                <div class="col-sm-12" style="padding: 0% !important">
+                    <!-- Número de Póliza -->
+                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
                         <label class="control-label" align="right">Número de Póliza *</label>
                         <input class="form-control" name="NumeroPoliza" id="NumeroPoliza" type="text" value="{{ $desempleo->NumeroPoliza ?? '' }}" required>
                     </div>
 
-                    <div class="col-sm-4" style="display: none !important;">
-                        <label class="control-label" align="right">Código *</label>
+                    <!-- Aseguradora -->
+                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                        <label class="control-label" align="right">Aseguradora *</label>
+                        <select name="Aseguradora" id="Aseguradora" class="form-control select2" style="width: 100%" required>
+                            <option value="">Seleccione...</option>
+                            @foreach ($aseguradora as $obj)
+                            <option value="{{ $obj->Id }}" {{$desempleo->Aseguradora == $obj->Id ? 'selected':''}}>{{ $obj->Nombre }}</option>
+                            @endforeach
+                        </select>
                     </div>
-                </div>
 
-                <!-- Aseguradora -->
-                <div class="col-sm-8">
-                    <label class="control-label" align="right">Aseguradora *</label>
-                    <select name="Aseguradora" id="Aseguradora" class="form-control select2" style="width: 100%" required>
-                        <option value="">Seleccione...</option>
-                        @foreach ($aseguradora as $obj)
-                        <option value="{{ $obj->Id }}" {{$desempleo->Aseguradora == $obj->Id ? 'selected':''}}>{{ $obj->Nombre }}</option>
-                        @endforeach
-                    </select>
-                </div>
+                    <!-- Productos -->
+                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                        <label class="control-label">Productos *</label>
+                        <select name="Productos" id="Productos" class="form-control select2" style="width: 100%" required>
+                            <!-- <option value="" selected disabled>Seleccione...</option> -->
+                            @foreach ($productos as $obj)
+                            <option value="{{ $obj->Id }}" {{ $desempleo->Plan && ($desempleo->planes->Producto == $obj->Id) ? 'selected':''}}>{{ $obj->Nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <!-- Planes -->
+                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                        <label class="control-label">Planes *</label>
+                        <select name="Planes" id="Planes" class="form-control select2" style="width: 100%" required>
+                            <!-- <option value="" selected disabled>Seleccione...</option> -->
+                            @foreach ($planes as $obj)
+                            <option value="{{ $obj->Id }}" {{ $desempleo->Plan && ($desempleo->Plan == $obj->Id) ? 'selected':''}}>{{ $obj->Nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
-                <!-- Productos -->
-                <div class="col-sm-2">
-                    <label class="control-label">Productos *</label>
-                    <select name="Productos" id="Productos" class="form-control select2" style="width: 100%" required>
-                        <!-- <option value="" selected disabled>Seleccione...</option> -->
-                        @foreach ($productos as $obj)
-                        <option value="{{ $obj->Id }}" {{ $desempleo->Plan && ($desempleo->planes->Producto == $obj->Id) ? 'selected':''}}>{{ $obj->Nombre }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <!-- Planes -->
-                <div class="col-sm-2">
-                    <label class="control-label">Planes *</label>
-                    <select name="Planes" id="Planes" class="form-control select2" style="width: 100%" required>
-                        <!-- <option value="" selected disabled>Seleccione...</option> -->
-                        @foreach ($planes as $obj)
-                        <option value="{{ $obj->Id }}" {{ $desempleo->Plan && ($desempleo->Plan == $obj->Id) ? 'selected':''}}>{{ $obj->Nombre }}</option>
-                        @endforeach
-                    </select>
-                </div>
 
-                <div class="col-sm-12" style="padding: 0% !important">
 
                     <!-- Asegurado -->
                     <div class="item form-group col-sm-12 col-md-6 col-lg-6">

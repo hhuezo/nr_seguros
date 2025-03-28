@@ -8,6 +8,7 @@ use App\Http\Controllers\catalogo\ClienteController;
 use App\Http\Controllers\catalogo\AseguradoraController;
 use App\Http\Controllers\catalogo\AsignacionNecesidadAseguradoraController;
 use App\Http\Controllers\catalogo\BomberoController;
+use App\Http\Controllers\catalogo\ConfiguracionReciboController;
 use App\Http\Controllers\catalogo\DepartamentoNRController;
 use App\Http\Controllers\catalogo\EjecutivoController;
 use App\Http\Controllers\catalogo\EstadoPolizaController;
@@ -166,6 +167,7 @@ Route::post('finalizar_configuracion', [DeudaController::class, 'finalizar_confi
 Route::resource('catalogo/tipo_cobro', TipoCobroController::class);
 Route::resource('catalogo/area_comercial', AreaComercialController::class);
 Route::resource('catalogo/bombero', BomberoController::class);
+Route::resource('catalogo/configuracion_recibo', ConfiguracionReciboController::class);
 Route::get('get_municipio/{id}', [ClienteController::class, 'get_municipio']);
 Route::get('get_distrito/{id}', [ClienteController::class, 'get_distrito']);
 
@@ -247,6 +249,8 @@ Route::post('polizas/deuda/store_requisitos', [DeudaController::class, 'store_re
 Route::get('polizas/deuda/renovar/{id}',[DeudaController::class,'renovar']);
 Route::post('polizas/deuda/renovar',[DeudaController::class,'save_renovar']);
 Route::get('poliza/deuda/configuracion_renovar/{id}',[DeudaController::class,'conf_renovar']);
+Route::get('renovacion_poliza',[DeudaController::class,'renovacion_poliza']);
+Route::get('get_fechas_renovacion',[DeudaController::class,'get_fechas_renovacion']);
 Route::get('polizas/deuda/get_requisitos', [DeudaController::class, 'get_requisitos']);
 Route::resource('polizas/deuda', DeudaController::class);
 
@@ -327,6 +331,7 @@ Route::post('exportar/desempleo/registros_edad_maxima/{id}',[DesempleoController
 Route::post('exportar/desempleo/registros_responsabilidad_maxima/{id}',[DesempleoController::class,'registros_responsabilidad_maxima']);
 Route::post('exportar/desempleo/nuevos_registros/{id}',[DesempleoController::class,'exportar_nuevos_registros']);
 Route::post('exportar/desempleo/registros_eliminados/{id}',[DesempleoController::class,'exportar_registros_eliminados']);
+Route::post('exportar/desempleo/registros_rehabilitados/{id}',[DesempleoController::class,'exportar_registros_rehabilitados']);
 
 
 Route::get('poliza/desempleo/get_recibo/{id}/{exportar}', [DesempleoController::class, 'get_recibo']);

@@ -57,14 +57,14 @@ class DesempleoCarteraTemp extends Model
         'Excluido',
         'Rehabilitado',
         'EdadRequisito',
+        'Saldos'
     ];
 
     public function calculoTodalSaldo()
     {
 
         try {
-            $tipo_cartera = $this->LineaCredito;
-
+            $tipo_cartera = $this->Saldos;
             switch ($tipo_cartera) {
                 case '1':
                     # saldo a capital
@@ -95,6 +95,8 @@ class DesempleoCarteraTemp extends Model
                     $saldo = $this->SaldoCapital;
                     break;
             }
+
+            ///dd($saldo);
 
             return $saldo;
         } catch (Exception $e) {

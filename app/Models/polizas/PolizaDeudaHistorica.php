@@ -21,6 +21,7 @@ class PolizaDeudaHistorica extends Model
         'DatosCreditos',
         'DeudaDetalle',
         'Requisito',
+        'TipoRenovacion',
         'Deuda',
         'Fecha',
         'Usuario',

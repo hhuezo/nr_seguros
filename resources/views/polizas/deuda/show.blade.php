@@ -130,6 +130,9 @@
                         <li role="presentation" class="{{ session('tab') == 1 ? 'active' : '' }}"><a href="#tab_content1"
                                 id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Datos de Póliza</a>
                         </li>
+                        <li role="presentation" class="{{ session('tab') == 4 ? 'active' : '' }}"><a href="#tab_content4"
+                                id="renovacion-tab" role="tab" data-toggle="tab" aria-expanded="true">Renovación </a>
+                        </li>
                         <li role="presentation" class="{{ session('tab') == 2 ? 'active' : '' }} "><a href="#tab_content2"
                                 id="lineas-tab" role="tab" data-toggle="tab" aria-expanded="true">Tasa diferencia</a>
                         </li>
@@ -137,6 +140,7 @@
                                 id="asegurabilidad-tab" role="tab" data-toggle="tab" aria-expanded="true">Requisitos
                                 Mínimos de Asegurabilidad </a>
                         </li>
+                       
 
 
                     </ul>

@@ -19,6 +19,7 @@ use App\Http\Controllers\Controller;
 use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\Bombero;
 use App\Models\catalogo\Cliente;
+use App\Models\catalogo\ConfiguracionRecibo;
 use App\Models\catalogo\DatosGenerales;
 use App\Models\catalogo\Ejecutivo;
 use App\Models\catalogo\EstadoPoliza;
@@ -151,6 +152,13 @@ class DeudaController extends Controller
 
         return view('polizas.deuda.renovar', compact('cliente', 'planes', 'productos', 'aseguradora', 'deuda', 'fechaDesdeRenovacion', 'fechaHastaRenovacion', 'estadoPoliza', 'ejecutivo', 'creditos', 'perfiles', 'columnas', 'tabla', 'columnas', 'tipoCartera', 'saldos'));
     }
+
+    public function get_fechas_renovacion(Request $request){
+        $deuda = Deuda::findOrFail($request->Deuda);
+        $historica = PolizaDeudaHistorica::where('Deuda',$deuda->Id)->get();
+
+    }
+
     public function renovar_conf($id)
     {
         $deuda = Deuda::findOrFail($id);
@@ -193,17 +201,18 @@ class DeudaController extends Controller
         return view('polizas.deuda.renovar', compact('cliente', 'planes', 'productos', 'aseguradora', 'deuda', 'estadoPoliza', 'ejecutivo', 'creditos', 'perfiles', 'columnas', 'tabla', 'columnas', 'tipoCartera', 'saldos'));
     }
 
+    public function renovacion_poliza(Request $request){
+        dd('Estamos trabajando :D ');
+    }
+
     public function save_renovar(Request $request)
     {
-        //dd('holi');
 
         $deuda = Deuda::findOrFail($request->Id);
         if (($deuda->VigenciaHasta == $request->VigenciaHasta)) {
             //alert()->error('Debe cambiar las fechas de vigencia para la renovación');
             return back()->withErrors(['VigenciaDesde' => 'Las fechas de vigencia no son válidas.'])->withInput();
         }
-
-        //     dd('holi');
 
         $creditos = DeudaCredito::where('Deuda', $deuda->Id)->get();
         $detalle = DeudaDetalle::where('Deuda', $deuda->Id)->get();
@@ -519,7 +528,9 @@ class DeudaController extends Controller
             $detalle->update();
 
             $recibo_historial = $this->save_recibo($detalle, $deuda);
-            $pdf = \PDF::loadView('polizas.deuda.recibo', compact('recibo_historial', 'detalle', 'deuda', 'meses'))->setWarnings(false)->setPaper('letter');
+            $configuracion = ConfiguracionRecibo::first();
+
+            $pdf = \PDF::loadView('polizas.deuda.recibo', compact('configuracion','recibo_historial', 'detalle', 'deuda', 'meses'))->setWarnings(false)->setPaper('letter');
             return $pdf->stream('Recibo.pdf');
 
             return back();
@@ -1535,7 +1546,8 @@ class DeudaController extends Controller
         //$calculo = $this->monto($residencia, $detalle);
 
         $recibo_historial = $this->save_recibo($detalle, $deuda);
-        $pdf = \PDF::loadView('polizas.deuda.recibo', compact('recibo_historial', 'detalle', 'deuda', 'meses'))->setWarnings(false)->setPaper('letter');
+        $configuracion = ConfiguracionRecibo::first();
+        $pdf = \PDF::loadView('polizas.deuda.recibo', compact('configuracion','recibo_historial', 'detalle', 'deuda', 'meses'))->setWarnings(false)->setPaper('letter');
         return $pdf->stream('Recibo.pdf');
 
         //  return back();
@@ -1611,8 +1623,9 @@ class DeudaController extends Controller
             //return view('polizas.deuda.recibo', compact('recibo_historial','detalle', 'deuda', 'meses','exportar'));
         }
 
+        $configuracion = ConfiguracionRecibo::first();
 
-        $pdf = \PDF::loadView('polizas.deuda.recibo', compact('recibo_historial', 'detalle', 'deuda', 'meses', 'exportar'))->setWarnings(false)->setPaper('letter');
+        $pdf = \PDF::loadView('polizas.deuda.recibo', compact('configuracion','recibo_historial', 'detalle', 'deuda', 'meses', 'exportar'))->setWarnings(false)->setPaper('letter');
         //  dd($detalle);
         return $pdf->stream('Recibos.pdf');
     }
