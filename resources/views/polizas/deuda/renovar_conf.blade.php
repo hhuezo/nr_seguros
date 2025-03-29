@@ -105,13 +105,16 @@
                     <li role="presentation" class="{{ session('tab') == 1 ? 'active' : '' }}"><a href="#tab_content1"
                             id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Datos de Póliza</a>
                     </li>
+                    <li role="presentation" class="{{ session('tab') == 4 ? 'active' : '' }}"><a href="#tab_content4"
+                            id="renovacion-tab" role="tab" data-toggle="tab" aria-expanded="true">Renovación </a>
+                    </li>
                     <li role="presentation" class="{{ session('tab') == 2 ? 'active' : '' }} "><a href="#tab_content2"
-                                id="lineas-tab" role="tab" data-toggle="tab" aria-expanded="true">Tasa diferencia</a>
-                        </li>
-                        <li role="presentation" class="{{ session('tab') == 3 ? 'active' : '' }}"><a href="#tab_content3"
-                                id="asegurabilidad-tab" role="tab" data-toggle="tab" aria-expanded="true">Requisitos
-                                Mínimos de Asegurabilidad </a>
-                        </li>
+                            id="lineas-tab" role="tab" data-toggle="tab" aria-expanded="true">Tasa diferencia</a>
+                    </li>
+                    <li role="presentation" class="{{ session('tab') == 3 ? 'active' : '' }}"><a href="#tab_content3"
+                            id="asegurabilidad-tab" role="tab" data-toggle="tab" aria-expanded="true">Requisitos
+                            Mínimos de Asegurabilidad </a>
+                    </li>
 
 
 
@@ -210,12 +213,12 @@
                                 <div class="col-sm-4">
                                     <label class="control-label" align="right">Vigencia Desde *</label>
                                     <input class="form-control" name="VigenciaDesde" type="date"
-                                        value="{{ $deuda->VigenciaDesde }}" required>
+                                        value="{{ $deuda->VigenciaDesde }}" readonly>
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label" align="right">Vigencia Hasta *</label>
                                     <input class="form-control" name="VigenciaHasta" type="date"
-                                        value="{{ $deuda->VigenciaHasta }}" required>
+                                        value="{{ $deuda->VigenciaHasta }}" readonly>
                                 </div>
                                 <div class="col-sm-4">
                                     <label class="control-label" align="right">Estado *</label>
@@ -628,6 +631,92 @@
 
                         </div>
                     </div>
+                    <div role="tabpanel" class="tab-pane fade {{ session('tab') == 4 ? 'active in' : '' }}"
+                        id="tab_content4" aria-labelledby="renovacion-tab">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+                            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                                <h5 id="exampleModalLabel">Renovación de Poliza </h5>
+                            </div>
+
+                            <div class="clearfix"></div>
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="col-sm-4">
+                                    <label class="control-label" align="right">Vigencia Desde</label>
+                                    <input class="form-control" type="date" value="{{ $deuda->VigenciaDesde }}"
+                                        readonly>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label" align="right">Vigencia Hasta</label>
+                                    <input class="form-control" type="date" value="{{ $deuda->VigenciaHasta }}"
+                                        readonly>
+                                </div>
+                            </div>
+
+                            <form action="{{url('renovacion_poliza')}}" method="POST">
+                                @csrf
+
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"> <br>
+                                    <input type="hidden" name="Deuda" id="Deuda" value="{{$deuda->Id}}">
+                                    <input type="hidden" name="id_historica" value="{{$historico_poliza->where('TipoRenovacion',1)->first()->Id ?? ''}}">
+                                    <div class="col-sm-4">
+                                        <label class="control-label" align="right">Tipo renovación *</label>
+                                        <select name="TipoRenovacion" id="TipoRenovacion" class="form-control" style="width: 100%">
+                                            <option value="1">Anual</option>
+                                            <option value="2">Parcial</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label" align="right">Vigencia Desde de Renovación *</label>
+                                        <input class="form-control" name="VigenciaDesde" id="VigenciaDesdeRenovacion" type="date"
+                                            value="{{ old('VigenciaDesde', $fechaDesdeRenovacion) }}" required readonly>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label" align="right">Vigencia Hasta de Renovación *</label>
+                                        <input class="form-control" name="VigenciaHasta" id="VigenciaHastaRenovacion" type="date"
+                                            value="{{ old('VigenciaHasta', $fechaHastaRenovacion) }}" required readonly>
+                                    </div>
+
+
+                                </div>
+
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"><br><br>
+                                    <div class="form-group" align="center">
+                                        <button type="submit" class="btn btn-success">Guardar y Continuar</button>
+                                        <a href="{{ url('polizas/deuda') }}"><button type="button"
+                                                class="btn btn-primary">Cancelar</button></a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+                            <table id="datatable" class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Tipo Renovacion</th>
+                                        <th>Vigencia Desde</th>
+                                        <th>Vigencia Hasta</th>
+                                        <!-- <th style="width: 30%;">Opciones</th> -->
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($historico_poliza as $obj)
+                                    <tr>
+                                        <td>{{ $obj->TipoRenovacion == 1 ? 'Anual':'Parcial' }}</td>
+                                        <td>{{ $obj->VigenciaDesde ? date('d/m/Y', strtotime($obj->VigenciaDesde)) : ''}}</td>
+                                        <td>{{ $obj->VigenciaHasta ? date('d/m/Y', strtotime($obj->VigenciaHasta)) : ''}}</td>
+                                        <!-- <td style="vertical-align: middle; text-align: center;"> <a href="{{ url('catalogo/configuracion_recibo') }}/{{ $obj->Id }}/edit"
+                                                class="on-default edit-row">
+                                                <i class="fa fa-pencil fa-lg"></i></a></td> -->
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+
                 </div>
 
             </div>
@@ -763,6 +852,42 @@
 
         //mostrar opcion en menu
         displayOption("ul-poliza", "li-poliza-deuda");
+
+        $("#TipoRenovacion").change(function() {
+            $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
+
+            var tipo = document.getElementById('TipoRenovacion').value;
+            var parametros = {
+                "TipoRenovacion": tipo,
+                "Deuda": document.getElementById('Deuda').value
+            };
+            $.ajax({
+                type: "get",
+                url: "{{ url('get_fechas_renovacion') }}",
+                data: parametros,
+                success: function(data) {
+                    console.log("Respuesta del servidor:", data);
+
+                    // Validar que los valores sean correctos antes de asignarlos
+                    if (data.data.VigenciaDesde && data.data.VigenciaHasta) {
+                        document.getElementById('VigenciaDesdeRenovacion').value = data.data.VigenciaDesde;
+                        document.getElementById('VigenciaHastaRenovacion').value = data.data.VigenciaHasta;
+                    } else {
+                        console.error("Error: Fechas inválidas recibidas del servidor.");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error en la petición AJAX:", error);
+                }
+            });
+            if (tipo == 1) {
+                document.getElementById('VigenciaDesdeRenovacion').setAttribute('readonly', true);
+                document.getElementById('VigenciaHastaRenovacion').setAttribute('readonly', true);
+            } else {
+                document.getElementById('VigenciaDesdeRenovacion').removeAttribute('readonly');
+                document.getElementById('VigenciaHastaRenovacion').removeAttribute('readonly');
+            }
+        });
 
         $("#fechas").change(function() {
             if (document.getElementById('fechas').checked == true) {
