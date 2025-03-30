@@ -44,8 +44,6 @@ use App\Models\polizas\DeudaVida;
 use App\Models\polizas\PolizaDeudaCartera;
 use App\Models\polizas\PolizaDeudaExtraPrimadosMensual;
 use App\Models\polizas\PolizaDeudaHistorica;
-use App\Models\polizas\PolizaDeudaTasaDiferenciada;
-use App\Models\polizas\PolizaDeudaTipoCartera;
 use App\Models\temp\PolizaDeudaTempCartera;
 use Carbon\Carbon;
 use Exception;
@@ -71,7 +69,6 @@ class DeudaController extends Controller
         $deuda = Deuda::findOrFail($id);
         $estadoPoliza = EstadoPoliza::get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
-        $creditos = DeudaCredito::where('Activo', 1)->where('Deuda', $id)->get();
         $perfiles = Perfil::where('Activo', 1)->where('Aseguradora', '=', $deuda->Aseguradora)->get();
         // Estructura de la tabla
         $tabla = [];
@@ -152,7 +149,7 @@ class DeudaController extends Controller
         $historico_poliza = PolizaDeudaHistorica::where('Deuda', $id)->orderBy('Fecha')->get();
         session(['tab' => 1]);
 
-        return view('polizas.deuda.renovar', compact('historico_poliza', 'cliente', 'planes', 'productos', 'aseguradora', 'deuda', 'fechaDesdeRenovacion', 'fechaHastaRenovacion', 'estadoPoliza', 'ejecutivo', 'creditos', 'perfiles', 'columnas', 'tabla', 'columnas', 'tipoCartera', 'saldos'));
+        return view('polizas.deuda.renovar', compact('historico_poliza', 'cliente', 'planes', 'productos', 'aseguradora', 'deuda', 'fechaDesdeRenovacion', 'fechaHastaRenovacion', 'estadoPoliza', 'ejecutivo',  'perfiles', 'columnas', 'tabla', 'columnas', 'tipoCartera', 'saldos'));
     }
 
     public function get_fechas_renovacion(Request $request)
