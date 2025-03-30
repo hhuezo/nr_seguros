@@ -247,7 +247,7 @@ Route::post('polizas/deuda/store_requisitos', [DeudaController::class, 'store_re
 Route::get('polizas/deuda/renovar/{id}',[DeudaController::class,'renovar']);
 Route::post('polizas/deuda/renovar',[DeudaController::class,'save_renovar']);
 Route::get('poliza/deuda/configuracion_renovar/{id}',[DeudaController::class,'conf_renovar']);
-Route::get('renovacion_poliza',[DeudaController::class,'renovacion_poliza']);
+Route::post('renovacion_poliza',[DeudaController::class,'renovacion_poliza']);
 Route::get('get_fechas_renovacion',[DeudaController::class,'get_fechas_renovacion']);
 Route::get('polizas/deuda/get_requisitos', [DeudaController::class, 'get_requisitos']);
 Route::resource('polizas/deuda', DeudaController::class);

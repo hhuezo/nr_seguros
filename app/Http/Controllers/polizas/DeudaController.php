@@ -119,7 +119,8 @@ class DeudaController extends Controller
                         WHERE TipoRenovacion = 2
                     )
                 END'));
-            })->first();
+            })->where('pdh.Deuda', $id) // Condición adicional
+            ->first();
 
         //dd( $resultado);
 
@@ -148,15 +149,86 @@ class DeudaController extends Controller
         $productos = Producto::where('Activo', 1)->get();
         $planes = Plan::where('Activo', 1)->get();
         $cliente = Cliente::where('Activo', 1)->get();
+        $historico_poliza = PolizaDeudaHistorica::where('Deuda', $id)->orderBy('Fecha')->get();
         session(['tab' => 1]);
 
-        return view('polizas.deuda.renovar', compact('cliente', 'planes', 'productos', 'aseguradora', 'deuda', 'fechaDesdeRenovacion', 'fechaHastaRenovacion', 'estadoPoliza', 'ejecutivo', 'creditos', 'perfiles', 'columnas', 'tabla', 'columnas', 'tipoCartera', 'saldos'));
+        return view('polizas.deuda.renovar', compact('historico_poliza', 'cliente', 'planes', 'productos', 'aseguradora', 'deuda', 'fechaDesdeRenovacion', 'fechaHastaRenovacion', 'estadoPoliza', 'ejecutivo', 'creditos', 'perfiles', 'columnas', 'tabla', 'columnas', 'tipoCartera', 'saldos'));
     }
 
-    public function get_fechas_renovacion(Request $request){
+    public function get_fechas_renovacion(Request $request)
+    {
+        //dd('holi');
+        // Buscar la deuda por ID
         $deuda = Deuda::findOrFail($request->Deuda);
-        $historica = PolizaDeudaHistorica::where('Deuda',$deuda->Id)->get();
 
+        // Verificar si 'VigenciaHasta' tiene un valor válido
+        if (!$deuda->VigenciaHasta) {
+            return response()->json(['error' => 'La fecha VigenciaHasta es inválida'], 400);
+        }
+
+        // Convertir la fecha a un objeto Carbon
+        $fecha = Carbon::parse($deuda->VigenciaHasta);
+        $fechaDesdeRenovacion = $deuda->VigenciaHasta;
+
+        // Obtener la poliza_deuda_historica más reciente según las condiciones
+        $resultado = DB::table('poliza_deuda_historica as pdh')
+            ->where('pdh.Id', function ($query) {
+                $query->select(DB::raw('CASE
+                WHEN EXISTS (
+                    SELECT 1
+                    FROM poliza_deuda_historica
+                    WHERE TipoRenovacion = 1
+                ) THEN (
+                    SELECT MIN(Id)
+                    FROM poliza_deuda_historica
+                    WHERE TipoRenovacion = 2
+                    AND Id > (
+                        SELECT MAX(Id)
+                        FROM poliza_deuda_historica
+                        WHERE TipoRenovacion = 1
+                    )
+                )
+                ELSE (
+                    SELECT MIN(Id)
+                    FROM poliza_deuda_historica
+                    WHERE TipoRenovacion = 2
+                )
+            END'));
+            })
+            ->where('pdh.Deuda', $deuda->id)
+            ->first();
+
+        // Si hay un resultado, actualizar la fecha
+        if ($request->TipoRenovacion == 2) {
+            //  dd('2');
+            if ($resultado && isset($resultado->VigenciaHasta)) {
+                $fechaDesdeRenovacion = $resultado->VigenciaHasta;
+                $fecha = Carbon::parse($resultado->VigenciaHasta);
+            }
+        } elseif ($request->TipoRenovacion == 1) {
+            //dd('1');
+            $fecha_renovacion = PolizaDeudaHistorica::where('Deuda', $deuda->Id)->where('TipoRenovacion', 2)->orderBy('Fecha')->first();
+            // dd($fecha_renovacion);
+            $fechaDesdeRenovacion = $fecha_renovacion->VigenciaHasta;
+            $fecha = Carbon::parse($fecha_renovacion->VigenciaHasta);
+        }
+
+        // Verificar si $fecha es válida antes de intentar sumarle años
+        if (!$fecha) {
+            return response()->json(['error' => 'No se pudo obtener una fecha válida'], 400);
+        }
+
+        // Agregar 2 años a la fecha
+        $nuevaFecha = $fecha->copy()->addYears();
+        $fechaHastaRenovacion = $nuevaFecha->format('Y-m-d');
+
+        // Crear la respuesta
+        $data = [
+            "VigenciaDesde" => $fechaDesdeRenovacion,
+            "VigenciaHasta" => $fechaHastaRenovacion
+        ];
+
+        return response()->json(['mensaje' => 'Se ha procesado con éxito', 'data' => $data]);
     }
 
     public function renovar_conf($id)
@@ -196,13 +268,58 @@ class DeudaController extends Controller
         $productos = Producto::where('Activo', 1)->get();
         $planes = Plan::where('Activo', 1)->get();
         $cliente = Cliente::where('Activo', 1)->get();
-        session(['tab' => 2]);
+        $historico_poliza = PolizaDeudaHistorica::where('Deuda', $id)->orderBy('Fecha')->get();
+        session(['tab' => 4]);
 
-        return view('polizas.deuda.renovar', compact('cliente', 'planes', 'productos', 'aseguradora', 'deuda', 'estadoPoliza', 'ejecutivo', 'creditos', 'perfiles', 'columnas', 'tabla', 'columnas', 'tipoCartera', 'saldos'));
+        return view('polizas.deuda.renovar', compact('historico_poliza', 'cliente', 'planes', 'productos', 'aseguradora', 'deuda', 'estadoPoliza', 'ejecutivo', 'creditos', 'perfiles', 'columnas', 'tabla', 'columnas', 'tipoCartera', 'saldos'));
     }
 
-    public function renovacion_poliza(Request $request){
-        dd('Estamos trabajando :D ');
+    public function renovacion_poliza(Request $request)
+    {
+
+        //Validar fechas 
+        if ($request->VigenciaDesde >= $request->VigenciaHasta) {
+            alert()->error('La vigencia desde es mayor a vigencia hasta');
+            return back();
+        }
+
+        $deuda = Deuda::findOrFail($request->Deuda);
+
+
+        $creditos = DeudaCredito::where('Deuda', $deuda->Id)->get();
+        $detalle = DeudaDetalle::where('Deuda', $deuda->Id)->get();
+        $tabla_diferencia = ''; // PolizaDeudaTasaDiferenciada::whereIn('PolizaDuedaCredito', $creditos->pluck('Id')->toArray())->get();
+        $requisitos = DeudaRequisitos::where('Deuda', $deuda->Id)->get();
+        $historico_poliza = PolizaDeudaHistorica::findOrFail($request->id_historica);
+        if ($historico_poliza->VigenciaDesde == null && $historico_poliza->VigenciaHasta == null) {
+            //actualiza el registro que no tenia vigencias
+            $historico_poliza->VigenciaDesde = $deuda->VigenciaDesde;
+            $historico_poliza->VigenciaHasta = $deuda->VigenciaHasta;
+            $historico_poliza->TipoRenovacion = $request->TipoRenovacion;
+            $historico_poliza->update();
+        } else {
+            //crea el registro de vigencia de tipo de renovacion parcial
+            $historico_poliza = new PolizaDeudaHistorica();
+            $historico_poliza->Deuda = $deuda->Id;
+            $historico_poliza->VigenciaDesde = $deuda->VigenciaDesde;
+            $historico_poliza->VigenciaHasta = $deuda->VigenciaHasta;
+            $historico_poliza->DatosDeuda = json_encode($deuda);
+            $historico_poliza->DatosCreditos = json_encode($creditos);
+            $historico_poliza->DatosTablaDiferenciada = json_encode($tabla_diferencia);
+            $historico_poliza->DeudaDetalle = json_encode($detalle);
+            $historico_poliza->Requisito = json_encode($requisitos);
+            $historico_poliza->Fecha = Carbon::now('America/El_Salvador')->format('Y-m-d H:i:s');
+            $historico_poliza->Usuario = auth()->user()->id;
+            $historico_poliza->TipoRenovacion = $request->TipoRenovacion;
+            $historico_poliza->save();
+        }
+        //actualizamos la vigencia de la poliza
+        $deuda->VigenciaDesde = $request->VigenciaDesde;
+        $deuda->VigenciaHasta = $request->VigenciaHasta;
+        $deuda->update();
+        session(['tab' => 4]);
+        alert()->success('Su poliza fue modificada');
+        return back();
     }
 
     public function save_renovar(Request $request)
@@ -216,13 +333,13 @@ class DeudaController extends Controller
 
         $creditos = DeudaCredito::where('Deuda', $deuda->Id)->get();
         $detalle = DeudaDetalle::where('Deuda', $deuda->Id)->get();
-        $tabla_diferencia = PolizaDeudaTasaDiferenciada::whereIn('PolizaDuedaCredito', $creditos->pluck('Id')->toArray())->get();
+        $tabla_diferencia = ''; // PolizaDeudaTasaDiferenciada::whereIn('PolizaDuedaCredito', $creditos->pluck('Id')->toArray())->get();
         $requisitos = DeudaRequisitos::where('Deuda', $deuda->Id)->get();
         //guardar todo en una tabla historica
         $historica = new PolizaDeudaHistorica();
         $historica->Deuda = $deuda->Id;
-        $historica->VigenciaDesde = $deuda->VigenciaDesde;
-        $historica->VigenciaHasta = $deuda->VigenciaHasta;
+        // $historica->VigenciaDesde = $deuda->VigenciaDesde;
+        // $historica->VigenciaHasta = $deuda->VigenciaHasta;
         $historica->DatosDeuda = json_encode($deuda);
         $historica->DatosCreditos = json_encode($creditos);
         $historica->DatosTablaDiferenciada = json_encode($tabla_diferencia);
@@ -230,13 +347,13 @@ class DeudaController extends Controller
         $historica->Requisito = json_encode($requisitos);
         $historica->Fecha = Carbon::now('America/El_Salvador')->format('Y-m-d H:i:s');
         $historica->Usuario = auth()->user()->id;
-        $historica->TipoRenovacion = $request->TipoRenovacion;
+        // $historica->TipoRenovacion = $request->TipoRenovacion;
         $historica->save();
 
         //actualizar los datos de la renovacion
         $deuda->Ejecutivo = $request->Ejecutivo;
-        $deuda->VigenciaDesde = $request->VigenciaDesde;
-        $deuda->VigenciaHasta = $request->VigenciaHasta;
+        // $deuda->VigenciaDesde = $request->VigenciaDesde;
+        // $deuda->VigenciaHasta = $request->VigenciaHasta;
         $deuda->Tasa = $request->Tasa;
         $deuda->Beneficios = $request->Beneficios;
         $deuda->ClausulasEspeciales = $request->ClausulasEspeciales;
@@ -307,8 +424,59 @@ class DeudaController extends Controller
         $productos = Producto::where('Activo', 1)->get();
         $planes = Plan::where('Activo', 1)->get();
         $cliente = Cliente::where('Activo', 1)->get();
-        session(['tab' => 2]);
-        return view('polizas.deuda.renovar_conf', compact('cliente', 'planes', 'productos', 'aseguradora', 'deuda', 'estadoPoliza', 'ejecutivo', 'creditos', 'perfiles', 'columnas', 'tabla', 'columnas', 'tipoCartera', 'saldos'));
+
+        $fechaDesdeRenovacion = $deuda->VigenciaHasta;
+
+
+        // Crear una instancia de Carbon a partir de la fecha
+        $fecha = Carbon::parse($deuda->VigenciaHasta);
+
+        $resultado = DB::table('poliza_deuda_historica as pdh')
+            ->where('pdh.Id', function ($query) {
+                $query->select(DB::raw('CASE
+                    WHEN EXISTS (
+                        SELECT 1
+                        FROM poliza_deuda_historica
+                        WHERE TipoRenovacion = 1
+                    ) THEN (
+                        SELECT MIN(Id)
+                        FROM poliza_deuda_historica
+                        WHERE TipoRenovacion = 2
+                        AND Id > (
+                            SELECT MAX(Id)
+                            FROM poliza_deuda_historica
+                            WHERE TipoRenovacion = 1
+                        )
+                    )
+                    ELSE (
+                        SELECT MIN(Id)
+                        FROM poliza_deuda_historica
+                        WHERE TipoRenovacion = 2
+                    )
+                END'));
+            })->where('pdh.Deuda', $id) // Condición adicional
+            ->first();
+
+        //dd( $resultado);
+
+        if ($resultado) {
+            $fechaDesdeRenovacion = $resultado->VigenciaHasta;
+            $fecha = Carbon::parse($resultado->VigenciaHasta);
+        } else {
+            $fecha_renovacion = PolizaDeudaHistorica::where('Deuda', $id)->where('TipoRenovacion', 2)->orderBy('Fecha')->first();
+            //dd($fecha_renovacion);
+            if ($fecha_renovacion <> null) {
+                $fechaDesdeRenovacion = $fecha_renovacion->VigenciaHasta;
+                $fecha = Carbon::parse($fecha_renovacion->VigenciaHasta);
+            }
+        }
+
+        $nuevaFecha = $fecha->copy()->addYears();
+        $fechaHastaRenovacion = $nuevaFecha->format('Y-m-d');
+        $historico_poliza = PolizaDeudaHistorica::where('Deuda', $id)->get();
+
+        session(['tab' => 4]);
+        return view('polizas.deuda.renovar_conf', compact('historico_poliza', 'fechaHastaRenovacion', 'fechaDesdeRenovacion', 'cliente', 'planes', 'productos', 'aseguradora', 'deuda', 'estadoPoliza', 'ejecutivo', 'creditos', 'perfiles', 'columnas', 'tabla', 'columnas', 'tipoCartera', 'saldos'));
     }
 
     public function index()
@@ -530,7 +698,7 @@ class DeudaController extends Controller
             $recibo_historial = $this->save_recibo($detalle, $deuda);
             $configuracion = ConfiguracionRecibo::first();
 
-            $pdf = \PDF::loadView('polizas.deuda.recibo', compact('configuracion','recibo_historial', 'detalle', 'deuda', 'meses'))->setWarnings(false)->setPaper('letter');
+            $pdf = \PDF::loadView('polizas.deuda.recibo', compact('configuracion', 'recibo_historial', 'detalle', 'deuda', 'meses'))->setWarnings(false)->setPaper('letter');
             return $pdf->stream('Recibo.pdf');
 
             return back();
@@ -621,7 +789,6 @@ class DeudaController extends Controller
         }
 
         $requisitos = DeudaRequisitos::where('Activo', 1)->where('Deuda', $id)->get();
-
         // Estructura de la tabla
         $tabla = [];
         foreach ($requisitos as $requisito) {
@@ -668,8 +835,11 @@ class DeudaController extends Controller
 
         $tiposCartera = TipoCartera::where('Activo', 1)->where('Poliza', 2)->get();
         $lineas_credito = SaldoMontos::where('Activo', 1)->get();
+        $historico_poliza = PolizaDeudaHistorica::where('Deuda', $id)->get();
+
 
         return view('polizas.deuda.show', compact(
+            'historico_poliza',
             'requisitos',
             'planes',
             'productos',
@@ -1188,7 +1358,7 @@ class DeudaController extends Controller
 
         $recibo_historial = $this->save_recibo($detalle, $deuda);
         $configuracion = ConfiguracionRecibo::first();
-        $pdf = \PDF::loadView('polizas.deuda.recibo', compact('configuracion','recibo_historial', 'detalle', 'deuda', 'meses'))->setWarnings(false)->setPaper('letter');
+        $pdf = \PDF::loadView('polizas.deuda.recibo', compact('configuracion', 'recibo_historial', 'detalle', 'deuda', 'meses'))->setWarnings(false)->setPaper('letter');
         return $pdf->stream('Recibo.pdf');
 
         //  return back();
@@ -1266,7 +1436,7 @@ class DeudaController extends Controller
 
         $configuracion = ConfiguracionRecibo::first();
 
-        $pdf = \PDF::loadView('polizas.deuda.recibo', compact('configuracion','recibo_historial', 'detalle', 'deuda', 'meses', 'exportar'))->setWarnings(false)->setPaper('letter');
+        $pdf = \PDF::loadView('polizas.deuda.recibo', compact('configuracion', 'recibo_historial', 'detalle', 'deuda', 'meses', 'exportar'))->setWarnings(false)->setPaper('letter');
         //  dd($detalle);
         return $pdf->stream('Recibos.pdf');
     }

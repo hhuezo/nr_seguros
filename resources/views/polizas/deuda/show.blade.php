@@ -710,6 +710,36 @@
 
                             </div>
                         </div>
+                        <div role="tabpanel" class="tab-pane fade {{ session('tab') == 4 ? 'active in' : '' }}"
+                        id="tab_content4" aria-labelledby="renovacion-tab">
+                    
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+                            <table id="datatable" class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Tipo Renovacion</th>
+                                        <th>Vigencia Desde</th>
+                                        <th>Vigencia Hasta</th>
+                                        <!-- <th style="width: 30%;">Opciones</th> -->
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($historico_poliza as $obj)
+                                    <tr>
+                                        <td>{{ $obj->TipoRenovacion == 1 ? 'Anual':'Parcial' }}</td>
+                                        <td>{{ $obj->VigenciaDesde ? date('d/m/Y', strtotime($obj->VigenciaDesde)) : ''}}</td>
+                                        <td>{{ $obj->VigenciaHasta ? date('d/m/Y', strtotime($obj->VigenciaHasta)) : ''}}</td>
+                                        <!-- <td style="vertical-align: middle; text-align: center;"> <a href="{{ url('catalogo/configuracion_recibo') }}/{{ $obj->Id }}/edit"
+                                                class="on-default edit-row">
+                                                <i class="fa fa-pencil fa-lg"></i></a></td> -->
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
                     </div>
 
                 </div>
