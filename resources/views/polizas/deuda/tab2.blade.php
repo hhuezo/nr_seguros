@@ -409,23 +409,23 @@
             <div>
                 <form action="{{ url('polizas/deuda/agregar_pago') }}" method="POST">
                     @csrf
-                    <input type="text" name="FechaInicio" value="{{ isset($ultimaCartera) ? $ultimaCartera->FechaInicio : '' }}">
-                    <input type="text" name="FechaFinal" value="{{ isset($ultimaCartera) ? $ultimaCartera->FechaFinal : '' }}">
-                    <input type="text" name="MontoCartera" id="MontoCarteraDetalle">
-                    <input type="text" name="Deuda" value="{{ $deuda->Id }}">
-                    <input type="text" name="Tasa" value="{{ $deuda->Tasa }}">
-                    <input type="text" name="PrimaCalculada" id="PrimaCalculadaDetalle">
-                    <input type="text" name="PrimaDescontada" id="PrimaDescontadaDetalle">
-                    <input type="text" name="SubTotal" id="SubTotalDetalle">
-                    <input type="text" name="Iva" id="IvaDetalle">
-                    <input type="text" name="TasaComision" value="{{ $deuda->TasaComision }}">
-                    <input type="text" name="Comision" id="ComisionDetalle">
-                    <input type="text" name="IvaSobreComision" id="IvaComisionDetalle">
-                    <input type="text" name="Descuento" id="DescuentoDetalle">
-                    <input type="text" name="Retencion" id="RetencionDetalle">
-                    <input type="text" name="ValorCCF" id="ValorCCFDetalle">
-                    <input type="text" name="APagar" id="APagarDetalle">
-                    <input type="text" name="ExtraPrima" value="{{ $total_extrapima }}">
+                    <input type="hidden" name="FechaInicio" value="{{ isset($ultimaCartera) ? $ultimaCartera->FechaInicio : '' }}">
+                    <input type="hidden" name="FechaFinal" value="{{ isset($ultimaCartera) ? $ultimaCartera->FechaFinal : '' }}">
+                    <input type="hidden" name="MontoCartera" id="MontoCarteraDetalle">
+                    <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
+                    <input type="hidden" name="Tasa" value="{{ $deuda->Tasa }}">
+                    <input type="hidden" name="PrimaCalculada" id="PrimaCalculadaDetalle">
+                    <input type="hidden" name="PrimaDescontada" id="PrimaDescontadaDetalle">
+                    <input type="hidden" name="SubTotal" id="SubTotalDetalle">
+                    <input type="hidden" name="Iva" id="IvaDetalle">
+                    <input type="hidden" name="TasaComision" value="{{ $deuda->TasaComision }}">
+                    <input type="hidden" name="Comision" id="ComisionDetalle">
+                    <input type="hidden" name="IvaSobreComision" id="IvaComisionDetalle">
+                    <input type="hidden" name="Descuento" id="DescuentoDetalle">
+                    <input type="hidden" name="Retencion" id="RetencionDetalle">
+                    <input type="hidden" name="ValorCCF" id="ValorCCFDetalle">
+                    <input type="hidden" name="APagar" id="APagarDetalle">
+                    <input type="hidden" name="ExtraPrima" value="{{ $total_extrapima }}">
                     <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
                         id="modal-aplicar">
                         <div class="modal-dialog">

@@ -2,8 +2,8 @@
 @section('contenido')
     <style>
         /* .subtareas-container {
-            display: none;
-        } */
+                                        display: none;
+                                    } */
 
         .expand-icon {
             cursor: pointer;
@@ -82,12 +82,19 @@
                                             @endif
                                         </td>
                                         <td class="text-end">
-                                             ${{ $tipo->MontoMaximoIndividual }}
+                                            ${{ $tipo->MontoMaximoIndividual }}
                                         </td>
-                                        <td> <button class="btn btn-primary"><i class="fa fa-edit"></i></button>
-                                            <button class="btn btn-danger"><i class="fa fa-trash"></i></button>
+                                        <td> <button class="btn btn-primary"
+                                                data-target="#modal-tipo-cartera-edit-{{ $tipo->Id }}"
+                                                data-toggle="modal"><i class="fa fa-edit"></i></button>
+                                            <button class="btn btn-danger" data-target="#modal-delete-tipo-cartera"
+                                                data-toggle="modal"
+                                                onclick="show_modal_delete_tipo_cartera({{ $tipo->Id }})"><i
+                                                    class="fa fa-trash"></i></button>
                                         </td>
                                     </tr>
+
+                                    @include('polizas.deuda.tipo_cartera_modal_edit')
 
 
                                     <tr class="subtareas-container">
@@ -117,7 +124,8 @@
                                                             @foreach ($tipo->tasa_diferenciada as $tasa_diferenciada)
                                                                 <tr class="primary-row">
                                                                     <td>
-                                                                        {{ $tasa_diferenciada->linea_credito?->Abreviatura ?? '' }} -
+                                                                        {{ $tasa_diferenciada->linea_credito?->Abreviatura ?? '' }}
+                                                                        -
                                                                         {{ $tasa_diferenciada->linea_credito?->Descripcion ?? '' }}
                                                                     </td>
                                                                     @if ($tipo->TipoCalculo == 1)
@@ -137,7 +145,10 @@
                                                                     <td>{{ $tasa_diferenciada->Tasa }}%</td>
                                                                     <td><button class="btn btn-primary"><i
                                                                                 class="fa fa-edit"></i></button>
-                                                                        <button class="btn btn-danger"><i
+                                                                        <button class="btn btn-danger"
+                                                                            data-target="#modal-delete-tasa-diferenciada"
+                                                                            data-toggle="modal"
+                                                                            onclick="show_modal_delete_tasa_diferenciada({{ $tasa_diferenciada->Id }})"><i
                                                                                 class="fa fa-trash"></i></button>
                                                                     </td>
                                                                 </tr>
@@ -222,7 +233,8 @@
 
                                 <div class="form-group row">
                                     <label class="control-label">Monto maximo individual</label>
-                                    <input type="number" step="any" min="0.00"  class="form-control" name="MontoMaximoIndividual" required>
+                                    <input type="number" step="any" min="0.00" class="form-control"
+                                        name="MontoMaximoIndividual" required>
 
                                 </div>
 
@@ -242,13 +254,44 @@
     </div>
 
 
+    <div class="modal fade" id="modal-delete-tipo-cartera" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="{{ url('polizas/deuda/delete_tipo_cartera') }}" method="POST">
+                    @csrf
+                    <div class="modal-header">
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                            <h5 class="modal-title" id="exampleModalLabel">Eliminar tipo cartera</h5>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="box-body">
+                            <input type="hidden" name="TipoCarteraId" id="TipoCarteraId">
+                            <h5>¿Desea eliminar el registro?</h5>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="modal-footer" align="center">
+                        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Aceptar</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
 
 
     <div class="modal fade" id="modal-tasa-diferenciada" tabindex="-1" role="dialog"
         aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <form action="{{ url('polizas/deuda/tasa_diferenciada_store') }}" method="POST">
+                <form action="{{ url('polizas/deuda/tasa_diferenciada') }}" method="POST">
                     @csrf
                     <div class="modal-header">
                         <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
@@ -314,6 +357,38 @@
     </div>
 
 
+    <div class="modal fade" id="modal-delete-tasa-diferenciada" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="{{ url('polizas/deuda/delete_tasa_diferenciada') }}" method="POST">
+                    @csrf
+                    <div class="modal-header">
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                            <h5 class="modal-title" id="exampleModalLabel">Eliminar tasa diferenciada</h5>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="box-body">
+                            <input type="hidden" name="TasaDiferenciadaId" id="TasaDiferenciadaId">
+                            <h5>¿Desea eliminar el registro?</h5>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="modal-footer" align="center">
+                        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Aceptar</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+
 
     <script>
         $(document).ready(function() {
@@ -350,6 +425,14 @@
             document.querySelector('input[name="PolizaDuedaTipoCartera"]').value = id;
 
 
+        }
+
+        function show_modal_delete_tasa_diferenciada(id) {
+            document.getElementById('TasaDiferenciadaId').value = id;
+        }
+
+        function show_modal_delete_tipo_cartera(id) {
+            document.getElementById('TipoCarteraId').value = id;
         }
     </script>
 @endsection
