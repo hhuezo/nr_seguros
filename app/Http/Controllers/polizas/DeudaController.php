@@ -277,7 +277,7 @@ class DeudaController extends Controller
     public function renovacion_poliza(Request $request)
     {
 
-        //Validar fechas 
+        //Validar fechas
         if ($request->VigenciaDesde >= $request->VigenciaHasta) {
             alert()->error('La vigencia desde es mayor a vigencia hasta');
             return back();
@@ -823,7 +823,7 @@ class DeudaController extends Controller
         $estadoPoliza = EstadoPoliza::where('Activo', 1)->get();
         $tipoCobro = TipoCobro::where('Activo', 1)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
-        $creditos = DeudaCredito::where('Activo', 1)->where('Deuda', $id)->get();
+        //$creditos = DeudaCredito::where('Activo', 1)->where('Deuda', $id)->get();
         //dd( $creditos) esto se va eliminar ;
 
 
@@ -850,7 +850,7 @@ class DeudaController extends Controller
             'cliente',
             'estadoPoliza',
             'ejecutivo',
-            'creditos',
+            //'creditos',
             'tipoCartera',
             //'data',
             'tabla',
@@ -1028,8 +1028,6 @@ class DeudaController extends Controller
 
                 $i++;
             }
-
-            $creditos = DeudaCredito::where('Deuda', $deuda->Id)->where('Activo', 1)->get();
 
 
             //tab 2
@@ -1316,7 +1314,6 @@ class DeudaController extends Controller
                 'detalle',
                 'videuda',
                 'deuda',
-                'creditos',
                 'requisitos',
                 'aseguradora',
                 'cliente',
