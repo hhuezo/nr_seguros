@@ -46,8 +46,8 @@
 
     <style>
         .subtareas-container {
-            display: none;
-            /* Ocultar subtareas por defecto */
+            /* display: none;
+                /* Ocultar subtareas por defecto */
         }
 
         .expand-icon {
@@ -409,12 +409,22 @@
                         <div role="tabpanel" class="tab-pane fade {{ session('tab') == 2 ? 'active in' : '' }}"
                             id="tab_content2" aria-labelledby="lineas-tab">
 
+
+                            <div class="x_title">
+
+                                <ul class="nav navbar-right panel_toolbox">
+                                        <a href="{{url('polizas/deuda/tasa_diferenciada')}}/{{$deuda->Id}}" class="btn btn-primary"><i class="fa fa-edit"></i></a>
+                                </ul>
+                                <div class="clearfix"></div>
+
+                            </div>
+
                             <hr>
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
                                     <table width="100%" class="table table-striped">
-                                        <thead>
+                                        {{-- <thead>
                                             <tr>
                                                 <th>Línea de Crédito</th>
                                                 <th>Saldos y Montos</th>
@@ -423,7 +433,7 @@
                                                 <th>Monto Máximo</th>
                                                 <th>Opciones</th>
                                             </tr>
-                                        </thead>
+                                        </thead> --}}
                                         <tbody>
 
                                             @if ($deuda->deuda_tipos_cartera->count() > 0)
@@ -442,7 +452,7 @@
                                                         @foreach ($deuda->deuda_tipos_cartera as $tipo)
                                                             <tr class="tarea warning-row">
                                                                 <td>
-                                                                    <span class="expand-icon">►</span>
+                                                                    <span class="expand-icon">▼</span>
                                                                     {{ $tipo->tipo_cartera?->Nombre ?? '' }}
                                                                 </td>
                                                                 <td>
@@ -698,31 +708,52 @@
                             id="tab_content4" aria-labelledby="renovacion-tab">
 
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-
-                                <table id="datatable" class="table table-striped table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Tipo Renovacion</th>
-                                            <th>Vigencia Desde</th>
-                                            <th>Vigencia Hasta</th>
-                                            <!-- <th style="width: 30%;">Opciones</th> -->
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($historico_poliza as $obj)
+                                <br>
+                                @if ($historico_poliza->count() > 0)
+                                    <table class="table table-striped table-bordered">
+                                        <thead>
                                             <tr>
-                                                <td>{{ $obj->TipoRenovacion == 1 ? 'Anual' : 'Parcial' }}</td>
-                                                <td>{{ $obj->VigenciaDesde ? date('d/m/Y', strtotime($obj->VigenciaDesde)) : '' }}
-                                                </td>
-                                                <td>{{ $obj->VigenciaHasta ? date('d/m/Y', strtotime($obj->VigenciaHasta)) : '' }}
-                                                </td>
-                                                <!-- <td style="vertical-align: middle; text-align: center;"> <a href="{{ url('catalogo/configuracion_recibo') }}/{{ $obj->Id }}/edit"
-                                                    class="on-default edit-row">
-                                                    <i class="fa fa-pencil fa-lg"></i></a></td> -->
+                                                <th>Tipo Renovacion</th>
+                                                <th>Vigencia Desde</th>
+                                                <th>Vigencia Hasta</th>
+                                                <!-- <th style="width: 30%;">Opciones</th> -->
                                             </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            @if ($registroInicial)
+                                                <tr>
+                                                    <td>Registro inicial</td>
+                                                    <td>{{ $registroInicial->VigenciaDesde ? date('d/m/Y', strtotime($registroInicial->VigenciaDesde)) : '' }}
+                                                    </td>
+                                                    <td>{{ $registroInicial->VigenciaHasta ? date('d/m/Y', strtotime($registroInicial->VigenciaHasta)) : '' }}
+                                                    </td>
+                                                </tr>
+                                            @endif
+
+                                            @foreach ($historico_poliza as $obj)
+                                                <tr>
+                                                    <td>{{ $obj->TipoRenovacion == 1 ? 'Anual' : 'Parcial' }}</td>
+                                                    <td>{{ $obj->VigenciaDesde ? date('d/m/Y', strtotime($obj->VigenciaDesde)) : '' }}
+                                                    </td>
+                                                    <td>{{ $obj->VigenciaHasta ? date('d/m/Y', strtotime($obj->VigenciaHasta)) : '' }}
+                                                    </td>
+                                                    <!-- <td style="vertical-align: middle; text-align: center;"> <a href="{{ url('catalogo/configuracion_recibo') }}/{{ $obj->Id }}/edit"
+                                                                class="on-default edit-row">
+                                                                <i class="fa fa-pencil fa-lg"></i></a></td> -->
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                @else
+                                    <br>
+                                    <div class="alert alert-danger alert-dismissible " role="alert">
+                                        <button type="button" class="close" data-dismiss="alert"
+                                            aria-label="Close"><span aria-hidden="true">×</span>
+                                        </button>
+                                        <strong>Sin registros</strong>
+                                    </div>
+                                @endif
+
                             </div>
 
                         </div>

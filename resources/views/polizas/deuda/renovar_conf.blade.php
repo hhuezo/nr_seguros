@@ -408,7 +408,7 @@
                                             <th>Opciones</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    {{-- <tbody>
                                         @foreach ($creditos as $obj)
                                         <tr>
                                             <td>{{ $obj->TipoCartera == null ? '' : $obj->tipoCarteras->Nombre }}
@@ -469,7 +469,7 @@
 
                                         @include('polizas.deuda.tasa_diferenciada_modal_show')
                                         @endforeach
-                                    </tbody>
+                                    </tbody> --}}
                                 </table>
 
 

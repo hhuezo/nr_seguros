@@ -111,4 +111,9 @@ class Deuda extends Model
     {
         return $this->hasMany(PolizaDeudaTipoCartera::class, 'PolizaDeuda', 'Id');
     }
+
+    public function renovaciones()
+    {
+        return $this->hasMany(PolizaDeudaHistorica::class, 'Deuda', 'Id');
+    }
 }
