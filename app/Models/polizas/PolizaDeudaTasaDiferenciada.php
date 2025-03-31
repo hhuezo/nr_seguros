@@ -44,4 +44,8 @@ class PolizaDeudaTasaDiferenciada extends Model
     {
         return $this->belongsTo(SaldoMontos::class, 'LineaCredito');
     }
+
+    public function poliza_deuda_tipo_cartera(){
+        return $this->belongsTo(PolizaDeudaTipoCartera::class, 'PolizaDuedaTipoCartera', 'Id');
+    }
 }

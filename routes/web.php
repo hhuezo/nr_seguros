@@ -276,9 +276,10 @@ Route::post('polizas/deuda/actualizar', [DeudaController::class, 'actualizar']);
 
 
 
-Route::post('polizas/deuda/delete_tasa_diferenciada', [DeudaTasaDiferenciadaController::class, 'destroy']);
+Route::POST('polizas/deuda/delete_tasa_diferenciada', [DeudaTasaDiferenciadaController::class, 'destroy']);
 Route::get('polizas/deuda/tasa_diferenciada/{id}',[DeudaTasaDiferenciadaController::class,'show']);
-Route::post('polizas/deuda/tasa_diferenciada',[DeudaTasaDiferenciadaController::class,'store']);
+Route::post('polizas/deuda/tasa_diferenciada',[DeudaTasaDiferenciadaController::class,'store'])->name('tasa_diferenciada.store');
+Route::put('polizas/deuda/tasa_diferenciada/{id}',[DeudaTasaDiferenciadaController::class,'update']);
 
 
 Route::post('polizas/deuda/agregar_tipo_cartera/{id}', [DeudaTasaDiferenciadaController::class, 'agregar_tipo_cartera']);

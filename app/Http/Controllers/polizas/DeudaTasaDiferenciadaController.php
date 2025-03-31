@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\polizas;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\DeudaTasaDiferenciadaRequestV1;
+use App\Http\Requests\DeudaTasaDiferenciadaRequestV2;
 use App\Models\catalogo\SaldoMontos;
 use App\Models\catalogo\TipoCartera;
 use App\Models\polizas\Deuda;
@@ -131,64 +133,29 @@ class DeudaTasaDiferenciadaController extends Controller
 
 
 
-    public function store(Request $request)
+    public function store(DeudaTasaDiferenciadaRequestV1 $request)
     {
 
-        // Validación dinámica según el valor de TipoCalculo
-        $rules = [
-            'PolizaDuedaTipoCartera' => 'required|numeric', // Debe ser 1 o 2
-            'Tasa' => 'required|numeric|min:0', // Siempre requerido
-            'LineaCredito' => 'required|integer',
-        ];
-
         $deuda_tipo_cartera = PolizaDeudaTipoCartera::findOrFail($request->PolizaDuedaTipoCartera);
-
-        if ($deuda_tipo_cartera->TipoCalculo == 1) {
-            // Si es 1, FechaDesde y FechaHasta son requeridos
-            $rules['FechaDesde'] = 'required|date';
-            $rules['FechaHasta'] = 'required|date|after_or_equal:FechaDesde';
-        }
-
-        if ($deuda_tipo_cartera->TipoCalculo == 2) {
-            // Si es 2, EdadDesde y EdadHasta son requeridos
-            $rules['EdadDesde'] = 'required|integer|min:0';
-            $rules['EdadHasta'] = 'required|integer|gte:EdadDesde';
-        }
-
-        $messages = [
-            'PolizaDuedaTipoCartera.required' => 'No se encontro el tipo de cartera asociado.',
-            'PolizaDuedaTipoCartera.numeric' => 'No se encontro el tipo de cartera asociado.',
-            'FechaDesde.required' => 'La fecha de inicio es obligatoria.',
-            'FechaHasta.required' => 'La fecha final es obligatoria.',
-            'FechaHasta.after_or_equal' => 'La fecha final debe ser igual o posterior a la fecha de inicio.',
-            'EdadDesde.required' => 'La edad de inicio es obligatoria.',
-            'EdadHasta.required' => 'La edad final es obligatoria.',
-            'EdadHasta.min' => 'La edad final debe ser mayor o igual a la edad de inicio.',
-            'Tasa.required' => 'La tasa es obligatoria.',
-            'Tasa.numeric' => 'La tasa debe ser un número.',
-            'Tasa.min' => 'La tasa debe ser mayor o igual a 0.',
-        ];
-
-        $request->validate($rules, $messages);
 
         $tasa_diferenciada = new PolizaDeudaTasaDiferenciada();
         $tasa_diferenciada->PolizaDuedaTipoCartera = $request->PolizaDuedaTipoCartera;
         $tasa_diferenciada->LineaCredito = $request->LineaCredito;
 
         if ($deuda_tipo_cartera->TipoCalculo == 1) {
+            if ($this->compColisionFechasDTasaDiferencial(null,  $deuda_tipo_cartera->Id, $request->FechaDesde,  $request->FechaHasta)) {
+                return back()->withErrors(['error' => 'Ya existe una línea de crédito que cubre total o parcialmente el rango de fechas que desea registrar.']);
+            }
             $tasa_diferenciada->FechaDesde = $request->FechaDesde;
             $tasa_diferenciada->FechaHasta = $request->FechaHasta;
-        } else {
-            $tasa_diferenciada->FechaDesde = null;
-            $tasa_diferenciada->FechaHasta = null;
         }
 
         if ($deuda_tipo_cartera->TipoCalculo == 2) {
+            if ($this->compColisionEdadesDTasaDiferencial(null, $deuda_tipo_cartera->Id, $request->EdadDesde,  $request->EdadHasta)) {
+                return back()->withErrors(['error' => 'Ya existe una línea de crédito que cubre total o parcialmente el rango de edad que desea registrar.']);
+            }
             $tasa_diferenciada->EdadDesde = $request->EdadDesde;
             $tasa_diferenciada->EdadHasta = $request->EdadHasta;
-        } else {
-            $tasa_diferenciada->EdadDesde = null;
-            $tasa_diferenciada->EdadHasta = null;
         }
 
         $tasa_diferenciada->Tasa = $request->Tasa;
@@ -196,7 +163,7 @@ class DeudaTasaDiferenciadaController extends Controller
         $tasa_diferenciada->save();
 
         alert()->success('El registro ha sido configurado correctamente');
-        return back();
+        return back()->with('success', 'El registro ha sido creado correctamente.');
     }
 
     public function destroy(Request $request)
@@ -208,5 +175,80 @@ class DeudaTasaDiferenciadaController extends Controller
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Ocurrió un error al eliminar el registro.']);
         }
+    }
+
+    public function update(DeudaTasaDiferenciadaRequestV2 $request, $id)
+    {
+        try {
+
+            $poliza_actualizar = PolizaDeudaTasaDiferenciada::findOrFail($id);
+            //dd($request);
+
+            if ($poliza_actualizar->poliza_deuda_tipo_cartera->TipoCalculo == 1) {
+                if ($this->compColisionFechasDTasaDiferencial($id, $poliza_actualizar->PolizaDuedaTipoCartera, $request->FechaDesdeEdit,  $request->FechaHastaEdit)) {
+                    return back()->withErrors(['error' => 'Ya existe una línea de crédito que cubre total o parcialmente el rango de fechas que desea registrar.']);
+                }
+                $poliza_actualizar->FechaDesde = $request->FechaDesdeEdit;
+                $poliza_actualizar->FechaHasta = $request->FechaHastaEdit;
+            }
+
+            if ($poliza_actualizar->poliza_deuda_tipo_cartera->TipoCalculo == 2) {
+                if ($this->compColisionEdadesDTasaDiferencial($id, $poliza_actualizar->PolizaDuedaTipoCartera, $request->EdadDesdeEdit,  $request->EdadHastaEdit)) {
+                    return back()->withErrors(['error' => 'Ya existe una línea de crédito que cubre total o parcialmente el rango de edad que desea registrar.']);
+                }
+                $poliza_actualizar->EdadDesde = $request->EdadDesdeEdit;
+                $poliza_actualizar->EdadHasta = $request->EdadHastaEdit;
+            }
+            $poliza_actualizar->LineaCredito = $request->LineaCreditoEdit;
+            $poliza_actualizar->Tasa = $request->TasaEdit;
+            //$poliza_actualizar->Usuario = auth()->user()->id;
+            $poliza_actualizar->update();
+
+            return back()->with('success', 'El registro ha sido actualizado correctamente.');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Ocurrió un error al actualizar el registro.']);
+        }
+    }
+
+    private function compColisionEdadesDTasaDiferencial($PolizaDeudaTasaDiferenciadaId, $tipoCarteraId, $edadDesdeRequest, $edadHastaRequest)
+    {
+        // Verificar colisión de rangos
+        return PolizaDeudaTasaDiferenciada::query()
+            ->where('PolizaDuedaTipoCartera', $tipoCarteraId)
+            // Condición opcional para excluir un ID (si se proporciona, de lo contrario se deja null)
+            ->when($PolizaDeudaTasaDiferenciadaId, function ($query) use ($PolizaDeudaTasaDiferenciadaId) {
+                $query->where('Id', '!=', $PolizaDeudaTasaDiferenciadaId);
+            })
+            ->where(function ($query) use ($edadDesdeRequest, $edadHastaRequest) {
+                $query->where(function ($q) use ($edadDesdeRequest, $edadHastaRequest) {
+                    // Caso 1: Rango nuevo empieza dentro de un rango existente
+                    $q->where('EdadDesde', '<=', $edadHastaRequest)
+                        ->where('EdadHasta', '>=', $edadDesdeRequest);
+                })->orWhere(function ($q) use ($edadDesdeRequest, $edadHastaRequest) {
+                    // Caso 2: Rango existente está dentro del nuevo rango
+                    $q->where('EdadDesde', '>=', $edadDesdeRequest)
+                        ->where('EdadHasta', '<=', $edadHastaRequest);
+                });
+            })->exists();
+    }
+
+    private function compColisionFechasDTasaDiferencial($PolizaDeudaTasaDiferenciadaId, $tipoCarteraId, $fechaDesdeRequest, $fechaHastaRequest) {
+        return PolizaDeudaTasaDiferenciada::query()
+            ->where('PolizaDuedaTipoCartera', $tipoCarteraId)
+            ->when($PolizaDeudaTasaDiferenciadaId, function ($query) use ($PolizaDeudaTasaDiferenciadaId) {
+                $query->where('Id', '!=', $PolizaDeudaTasaDiferenciadaId);
+            })
+            ->where(function ($query) use ($fechaDesdeRequest, $fechaHastaRequest) {
+                $query->where(function ($q) use ($fechaDesdeRequest, $fechaHastaRequest) {
+                    // Caso 1: Rango nuevo se superpone con rangos existentes
+                    $q->where('FechaDesde', '<=', $fechaHastaRequest)
+                      ->where('FechaHasta', '>=', $fechaDesdeRequest);
+                })->orWhere(function ($q) use ($fechaDesdeRequest, $fechaHastaRequest) {
+                    // Caso 2: Rango existente está completamente dentro del nuevo rango
+                    $q->where('FechaDesde', '>=', $fechaDesdeRequest)
+                      ->where('FechaHasta', '<=', $fechaHastaRequest);
+                });
+            })
+            ->exists();
     }
 }
