@@ -140,7 +140,7 @@
                                 id="asegurabilidad-tab" role="tab" data-toggle="tab" aria-expanded="true">Requisitos
                                 Mínimos de Asegurabilidad </a>
                         </li>
-                       
+
 
 
                     </ul>
@@ -408,150 +408,134 @@
                         </div>
                         <div role="tabpanel" class="tab-pane fade {{ session('tab') == 2 ? 'active in' : '' }}"
                             id="tab_content2" aria-labelledby="lineas-tab">
-                            <div class="col-md-12 text-right">
-                                <a href="" data-target="#modal-add-tipo-cartera" data-toggle="modal"
-                                    class="btn btn-primary">Nuevo</a>
-                            </div>
 
-
-
-                            <br>
                             <hr>
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                <br>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
-                                    @if ($deuda->deuda_tipos_cartera->count() > 0)
-                                        <table class="table table-bordered">
-                                            <thead class="table-dark">
-                                                <tr class="warning-row">
-                                                    <th style="width: 40%;">Tipo cartera</th>
-                                                    <th style="width: 20%;">Tipo cálculo</th>
-                                                    <th style="width: 20%;">Monto máximo individual</th>
-                                                    <th style="width: 20%;">Opciones</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
+                                    <table width="100%" class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Línea de Crédito</th>
+                                                <th>Saldos y Montos</th>
+                                                <th>Tasa General</th>
+
+                                                <th>Monto Máximo</th>
+                                                <th>Opciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                            @if ($deuda->deuda_tipos_cartera->count() > 0)
+                                                <table class="table table-bordered">
+                                                    <thead class="table-dark">
+                                                        <tr class="warning-row">
+                                                            <th style="width: 40%;">Tipo cartera</th>
+                                                            <th style="width: 20%;">Tipo cálculo</th>
+                                                            <th style="width: 20%;">Monto máximo individual</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
 
 
 
-                                                @foreach ($deuda->deuda_tipos_cartera as $tipo)
-                                                    <tr class="tarea warning-row">
-                                                        <td>
-                                                            <span class="expand-icon">►</span>
-                                                            {{ $tipo->tipo_cartera?->Nombre ?? '' }}
-                                                        </td>
-                                                        <td>
-                                                            @if ($tipo->TipoCalculo == 1)
-                                                                {{ 'Fecha' }}
-                                                            @elseif ($tipo->TipoCalculo == 2)
-                                                                {{ 'Edad' }}
-                                                            @else
-                                                                {{ '' }}
-                                                            @endif
-                                                        </td>
-                                                        <td class="text-end">
-                                                            ${{ number_format($tipo->MontoMaximoIndividual, 2, '.', ',') }}
-                                                        </td>
+                                                        @foreach ($deuda->deuda_tipos_cartera as $tipo)
+                                                            <tr class="tarea warning-row">
+                                                                <td>
+                                                                    <span class="expand-icon">►</span>
+                                                                    {{ $tipo->tipo_cartera?->Nombre ?? '' }}
+                                                                </td>
+                                                                <td>
+                                                                    @if ($tipo->TipoCalculo == 1)
+                                                                        {{ 'Fecha' }}
+                                                                    @elseif ($tipo->TipoCalculo == 2)
+                                                                        {{ 'Edad' }}
+                                                                    @else
+                                                                        {{ '' }}
+                                                                    @endif
+                                                                </td>
+                                                                <td class="text-end">
+                                                                    ${{ $tipo->MontoMaximoIndividual }}
+                                                                </td>
+                                                            </tr>
 
-                                                        <td> <button class="btn btn-primary"><i
-                                                                    class="fa fa-edit"></i></button>
-                                                            <button class="btn btn-danger"><i
-                                                                    class="fa fa-trash"></i></button>
-                                                        </td>
-                                                    </tr>
+                                                            <tr class="subtareas-container">
+                                                                <td colspan="4" style="background-color: #f8fafc;">
 
+                                                                    @if ($tipo->tasa_diferenciada->count() > 0)
+                                                                        <br>
+                                                                        <div
+                                                                            style="padding-left: 20px !important; padding-right: 20px !important;">
+                                                                            <table class="table table-sm table-bordered">
+                                                                                <thead class="table-light">
+                                                                                    <tr class="primary-row">
+                                                                                        <th>Linea credito</th>
+                                                                                        @if ($tipo->TipoCalculo == 1)
+                                                                                            <th>Fecha inicio</th>
+                                                                                            <th>Fecha final</th>
+                                                                                        @endif
 
-                                                    <tr class="subtareas-container">
-                                                        <td colspan="4" style="background-color: #f8fafc;">
+                                                                                        @if ($tipo->TipoCalculo == 2)
+                                                                                            <th>Edad inicio</th>
+                                                                                            <th>Edad final</th>
+                                                                                        @endif
+                                                                                        <th>Tasa</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    @foreach ($tipo->tasa_diferenciada as $tasa_diferenciada)
+                                                                                        <tr class="primary-row">
+                                                                                            <td>
+                                                                                                {{ $tasa_diferenciada->linea_credito?->Abreviatura ?? '' }}
+                                                                                                -
+                                                                                                {{ $tasa_diferenciada->linea_credito?->Descripcion ?? '' }}
+                                                                                            </td>
+                                                                                            @if ($tipo->TipoCalculo == 1)
+                                                                                                <td>
+                                                                                                    {{ $tasa_diferenciada->FechaDesde ? date('d/m/Y', strtotime($tasa_diferenciada->FechaDesde)) : 'Sin fecha' }}
+                                                                                                </td>
+                                                                                                <td>
+                                                                                                    {{ $tasa_diferenciada->FechaHasta ? date('d/m/Y', strtotime($tasa_diferenciada->FechaHasta)) : 'Sin fecha' }}
+                                                                                                </td>
+                                                                                            @endif
 
-                                                            @if ($tipo->tasa_diferenciada->count() > 0)
-                                                                <br>
-                                                                <div
-                                                                    style="padding-left: 20px !important; padding-right: 20px !important;">
-                                                                    <table class="table table-sm table-bordered">
-                                                                        <thead class="table-light">
-                                                                            <tr class="primary-row">
-                                                                                <th>Linea credito</th>
-                                                                                @if ($tipo->TipoCalculo == 1)
-                                                                                    <th>Fecha inicio</th>
-                                                                                    <th>Fecha final</th>
-                                                                                @endif
+                                                                                            @if ($tipo->TipoCalculo == 2)
+                                                                                                <td>{{ $tasa_diferenciada->EdadDesde }}
+                                                                                                    Años</td>
+                                                                                                <td>{{ $tasa_diferenciada->EdadHasta }}
+                                                                                                    Años</td>
+                                                                                            @endif
 
-                                                                                @if ($tipo->TipoCalculo == 2)
-                                                                                    <th>Edad inicio</th>
-                                                                                    <th>Edad final</th>
-                                                                                @endif
-                                                                                <th>Tasa</th>
-                                                                                <th>Opciones</th>
-                                                                            </tr>
-                                                                        </thead>
-                                                                        <tbody>
-                                                                            @foreach ($tipo->tasa_diferenciada as $tasa_diferenciada)
-                                                                                <tr class="primary-row">
-                                                                                    <td>
-                                                                                        {{ $tasa_diferenciada->linea_credito?->Abreviatura ?? '' }}
-                                                                                        {{ $tasa_diferenciada->linea_credito?->Descripcion ?? '' }}
-                                                                                    </td>
-                                                                                    @if ($tipo->TipoCalculo == 1)
-                                                                                        <td>
-                                                                                            {{ $tasa_diferenciada->FechaDesde ? date('d/m/Y', strtotime($tasa_diferenciada->FechaDesde)) : 'Sin fecha' }}
-                                                                                        </td>
-                                                                                        <td>
-                                                                                            {{ $tasa_diferenciada->FechaHasta ? date('d/m/Y', strtotime($tasa_diferenciada->FechaHasta)) : 'Sin fecha' }}
-                                                                                        </td>
-                                                                                    @endif
+                                                                                            <td>{{ $tasa_diferenciada->Tasa }}%
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                    @endforeach
 
-                                                                                    @if ($tipo->TipoCalculo == 2)
-                                                                                        <td>{{ $tasa_diferenciada->EdadDesde }}
-                                                                                            Años</td>
-                                                                                        <td>{{ $tasa_diferenciada->EdadHasta }}
-                                                                                            Años</td>
-                                                                                    @endif
-
-                                                                                    <td>{{ $tasa_diferenciada->Tasa }}%
-                                                                                    </td>
-                                                                                    <td><button class="btn btn-primary"><i
-                                                                                                class="fa fa-edit"></i></button>
-                                                                                        <button class="btn btn-danger"><i
-                                                                                                class="fa fa-trash"></i></button>
-                                                                                    </td>
-                                                                                </tr>
-                                                                            @endforeach
-
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div>
-                                                            @endif
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div>
+                                                                    @endif
 
 
+                                                                    <br>
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
 
-                                                            <div class="text-center">
-                                                                <button class="btn btn-primary" type="button"
-                                                                    data-target="#modal-tasa-diferenciada"
-                                                                    data-toggle="modal"
-                                                                    onclick="show_modal_tasa_diferenciada({{ $tipo->Id }},{{ $tipo->TipoCalculo }})"><i
-                                                                        class="fa fa-plus"></i></button>
-                                                            </div>
+                                                    </tbody>
+                                                </table>
+                                            @else
+                                                <div class="alert alert-warning">
+                                                    <button type="button" class="close" data-dismiss="alert"
+                                                        aria-label="Close"><span aria-hidden="true">×</span>
+                                                    </button>
 
+                                                    <strong>No hay datos</strong>
+                                                </div>
+                                            @endif
 
-                                                            <br>
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-
-                                            </tbody>
-                                        </table>
-                                    @else
-                                        <div class="alert alert-warning">
-                                            <button type="button" class="close" data-dismiss="alert"
-                                                aria-label="Close"><span aria-hidden="true">×</span>
-                                            </button>
-
-                                            <strong>No hay datos</strong>
-                                        </div>
-                                    @endif
-
+                                        </tbody>
+                                    </table>
 
 
                                 </div>
@@ -711,35 +695,37 @@
                             </div>
                         </div>
                         <div role="tabpanel" class="tab-pane fade {{ session('tab') == 4 ? 'active in' : '' }}"
-                        id="tab_content4" aria-labelledby="renovacion-tab">
-                    
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            id="tab_content4" aria-labelledby="renovacion-tab">
 
-                            <table id="datatable" class="table table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Tipo Renovacion</th>
-                                        <th>Vigencia Desde</th>
-                                        <th>Vigencia Hasta</th>
-                                        <!-- <th style="width: 30%;">Opciones</th> -->
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($historico_poliza as $obj)
-                                    <tr>
-                                        <td>{{ $obj->TipoRenovacion == 1 ? 'Anual':'Parcial' }}</td>
-                                        <td>{{ $obj->VigenciaDesde ? date('d/m/Y', strtotime($obj->VigenciaDesde)) : ''}}</td>
-                                        <td>{{ $obj->VigenciaHasta ? date('d/m/Y', strtotime($obj->VigenciaHasta)) : ''}}</td>
-                                        <!-- <td style="vertical-align: middle; text-align: center;"> <a href="{{ url('catalogo/configuracion_recibo') }}/{{ $obj->Id }}/edit"
-                                                class="on-default edit-row">
-                                                <i class="fa fa-pencil fa-lg"></i></a></td> -->
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+                                <table id="datatable" class="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Tipo Renovacion</th>
+                                            <th>Vigencia Desde</th>
+                                            <th>Vigencia Hasta</th>
+                                            <!-- <th style="width: 30%;">Opciones</th> -->
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($historico_poliza as $obj)
+                                            <tr>
+                                                <td>{{ $obj->TipoRenovacion == 1 ? 'Anual' : 'Parcial' }}</td>
+                                                <td>{{ $obj->VigenciaDesde ? date('d/m/Y', strtotime($obj->VigenciaDesde)) : '' }}
+                                                </td>
+                                                <td>{{ $obj->VigenciaHasta ? date('d/m/Y', strtotime($obj->VigenciaHasta)) : '' }}
+                                                </td>
+                                                <!-- <td style="vertical-align: middle; text-align: center;"> <a href="{{ url('catalogo/configuracion_recibo') }}/{{ $obj->Id }}/edit"
+                                                    class="on-default edit-row">
+                                                    <i class="fa fa-pencil fa-lg"></i></a></td> -->
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+
                         </div>
-
-                    </div>
                     </div>
 
                 </div>
@@ -788,7 +774,8 @@
 
                                 <div class="form-group row">
                                     <label class="control-label">Monto máximo individual</label>
-                                    <input type="number" step="any" min="0.00"  class="form-control" name="MontoMaximoIndividual" required>
+                                    <input type="number" step="any" min="0.00" class="form-control"
+                                        name="MontoMaximoIndividual" required>
 
                                 </div>
 
