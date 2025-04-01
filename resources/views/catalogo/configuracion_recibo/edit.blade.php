@@ -59,7 +59,7 @@
 
 
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <div class="form-group" align="center">
+                            <div class="form-group text-right" >
                                 <button type="submit" class="btn btn-success">Aceptar</button>
                                 {{-- <a href="{{ url('catalogo/configuracion_recibo') }}"><button type="button" class="btn btn-primary">Cancelar</button></a> --}}
                             </div>

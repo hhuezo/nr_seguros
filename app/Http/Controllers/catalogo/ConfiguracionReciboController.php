@@ -77,7 +77,7 @@ class ConfiguracionReciboController extends Controller
         $configuracion_recibo->Nota = $request->Nota;
         $configuracion_recibo->Pie = $request->Pie;
         $configuracion_recibo->save();
-
+        alert()->success('El registro ha sido modificados correctamente');
         return back();
     }
 

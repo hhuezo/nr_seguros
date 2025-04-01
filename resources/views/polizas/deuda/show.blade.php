@@ -737,9 +737,6 @@
                                                     </td>
                                                     <td>{{ $obj->VigenciaHasta ? date('d/m/Y', strtotime($obj->VigenciaHasta)) : '' }}
                                                     </td>
-                                                    <!-- <td style="vertical-align: middle; text-align: center;"> <a href="{{ url('catalogo/configuracion_recibo') }}/{{ $obj->Id }}/edit"
-                                                                class="on-default edit-row">
-                                                                <i class="fa fa-pencil fa-lg"></i></a></td> -->
                                                 </tr>
                                             @endforeach
                                         </tbody>
