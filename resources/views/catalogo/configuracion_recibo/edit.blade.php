@@ -14,7 +14,7 @@
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
 
             <div class="x_title">
-                <h2>Configuracion de Recibo</h2>
+                <h2>Configuración de Recibo</h2>
                 <ul class="nav navbar-right panel_toolbox">
 
                 </ul>
