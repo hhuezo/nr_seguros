@@ -14,7 +14,7 @@
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
 
             <div class="x_title">
-                <h2>Editar Configuracion de Recibo <small></small></h2>
+                <h2>Configuracion de Recibo</h2>
                 <ul class="nav navbar-right panel_toolbox">
 
                 </ul>
@@ -43,7 +43,7 @@
                         <div class="form-group row">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Nota</label>
                             <div class="col-lg-6 col-md-9 col-sm-12 col-xs-12">
-                     
+
                                 <textarea id="summernote_nota" name="Nota" >{{$configuracion_recibo->Nota}}</textarea>
                             </div>
                         </div>
@@ -52,7 +52,7 @@
                         <div class="form-group row">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Pie</label>
                             <div class="col-lg-6 col-md-9 col-sm-12 col-xs-12">
-                     
+
                                 <textarea id="summernote_pie" name="Pie">{{$configuracion_recibo->Pie}}</textarea>
                             </div>
                         </div>

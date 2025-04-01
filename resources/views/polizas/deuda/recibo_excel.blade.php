@@ -226,7 +226,7 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
             <td style="width: 200px;">Prima A Cobrar</td>
             <td style="width: 200px;">Total Comisión</td>
             <td style="width: 200px;">Otros</td>
-            <td style="width: 200px;">Pago liquido de prima </td>
+            <td style="width: 200px;">Pago líquido de prima </td>
         </tr>
         <tr>
             <td style="text-align: center;">01/01</td>

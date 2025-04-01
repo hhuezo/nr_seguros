@@ -170,7 +170,7 @@
                                 </div>
                                 @endif
 
-                                <div class="text-center" style="display: {{$tipo->TipoCalculo == 0 && $tasa_diferenciada->count() > 0 ? 'none':'block' }}">
+                                <div class="text-center" style="display: {{isset($tipo) && isset($tasa_diferenciada) && $tipo->TipoCalculo == 0 && $tasa_diferenciada->count() > 0 ? 'none':'block' }}">
                                     <button class="btn btn-primary" type="button" data-target="#modal-tasa-diferenciada"
                                         data-toggle="modal"
                                         onclick="show_modal_tasa_diferenciada({{ $tipo->Id }},{{ $tipo->TipoCalculo }},{{ $tipo->TipoCalculo}})"><i
@@ -344,7 +344,7 @@
 
                             <div class="form-group row">
                                 <label class="control-label">Tasa</label>
-                                <input type="number" name="Tasa" step="any" class="form-control" required>
+                                <input type="number" name="Tasa" step="any" value="{{$deuda->Tasa}}" class="form-control" required>
                             </div>
 
 

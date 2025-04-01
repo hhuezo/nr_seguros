@@ -246,7 +246,7 @@
             <td>Prima A Cobrar</td>
             <td>Total Comisión</td>
             <td>Otros</td>
-            <td>Pago liquido de prima</td>
+            <td>Pago líquido de prima</td>
           </tr>
           <tr>
             <td class="center"><input type="text" placeholder="Cuota" value="{{$recibo_historial->Cuota}}" name="Cuota"></td>

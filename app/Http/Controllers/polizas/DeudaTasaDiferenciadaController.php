@@ -125,7 +125,7 @@ class DeudaTasaDiferenciadaController extends Controller
             $tipo_cartera->MontoMaximoIndividual = $request->MontoMaximoIndividual;
             $tipo_cartera->save();
 
-            return back()->with('success', 'El registro ha sido configurado correctamente.');
+            return back();
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Ocurrió un error al actualizar el tipo de cartera.']);
         }
@@ -163,7 +163,7 @@ class DeudaTasaDiferenciadaController extends Controller
         $tasa_diferenciada->save();
 
         alert()->success('El registro ha sido configurado correctamente');
-        return back()->with('success', 'El registro ha sido creado correctamente.');
+        return back();
     }
 
     public function destroy(Request $request)
@@ -171,7 +171,7 @@ class DeudaTasaDiferenciadaController extends Controller
         try {
             $tasa = PolizaDeudaTasaDiferenciada::findOrFail($request->TasaDiferenciadaId);
             $tasa->delete();
-            return back()->with('success', 'El registro ha sido eliminado correctamente.');
+            return back();
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Ocurrió un error al eliminar el registro.']);
         }
@@ -204,7 +204,7 @@ class DeudaTasaDiferenciadaController extends Controller
             //$poliza_actualizar->Usuario = auth()->user()->id;
             $poliza_actualizar->update();
 
-            return back()->with('success', 'El registro ha sido actualizado correctamente.');
+            return back();
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Ocurrió un error al actualizar el registro.']);
         }

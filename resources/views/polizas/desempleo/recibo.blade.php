@@ -191,7 +191,7 @@ $prima_calculada = $detalle->MontoCartera * $desempleo->Tasa;
             <th style="width: 14.28%;">Prima A Cobrar</th>
             <th style="width: 14.28%;">Total Comisión</th>
             <th style="width: 14.28%;">Otros</th>
-            <th style="width: 14.28%;">Pago liquido de prima</th>
+            <th style="width: 14.28%;">Pago líquido de prima</th>
         </tr>
 
         <tr>

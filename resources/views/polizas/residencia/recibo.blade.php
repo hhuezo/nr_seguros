@@ -108,7 +108,7 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
             <td style="width: 65%;">Prima calculada</td>
             <td style="width: 35%; text-align: right;">${{number_format($detalle->PrimaCalculada,2,'.',',')}}</td>
           </tr>
-     
+
           <tr>
             <td>(-) Descuento rentabilidad ({{$residencia->TasaDescuento == '' ? 0 : $residencia->TasaDescuento}}%)</td>
             <td style="width: 35%; text-align: right;">${{number_format($detalle->Descuento,2,'.',',')}}</td>
@@ -188,7 +188,7 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
       <th>Prima A Cobrar</th>
       <th>Total Comisión</th>
       <th>Otros</th>
-      <th>Pago liquido de prima</th>
+      <th>Pago líquido de prima</th>
     </tr>
     <tr>
       <td style="text-align: center;">01/01</td>

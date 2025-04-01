@@ -1393,7 +1393,8 @@ class DeudaController extends Controller
                 'InteresesMoratorios',
                 'MontoNominal',
                 'TotalCredito',
-            )->where('PolizaDeuda', '=', $id)->where('PolizaDeudaDetalle', '=', 0)->orWhere('PolizaDeudaDetalle', '=', null)->groupBy('NumeroReferencia')->get();
+            )->where('PolizaDeuda', '=', $id)->where('PolizaDeudaDetalle', '=', 0)
+            ->orWhere('PolizaDeudaDetalle', '=', null)->groupBy('NumeroReferencia')->get();
 
              //dd($clientes->take(20));
 
@@ -1519,7 +1520,7 @@ class DeudaController extends Controller
         $recibo_historial->PrimaDescontada = $detalle->PrimaDescontada;
         $recibo_historial->ValorCCF = $detalle->ValorCCF;
         $recibo_historial->TotalAPagar = $detalle->APagar;
-        $recibo_historial->TasaComision = $deuda->TasaComision;
+        $recibo_historial->TasaComision = $deuda->TasaComision ?? 0;
         $recibo_historial->Comision = $detalle->Comision;
         $recibo_historial->IvaSobreComision = $detalle->IvaSobreComision;
         $recibo_historial->SubTotalComision =  $detalle->IvaSobreComision + $detalle->Comision;
