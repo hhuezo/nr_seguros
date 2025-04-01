@@ -89,9 +89,8 @@ class RegistrosEliminadosExport implements FromCollection, WithHeadings
         $data = PolizaDeudaCartera::where('PolizaDeuda', $this->id)
             ->where('Mes', $registro_cartera->Mes)->where('Axo', $registro_cartera->Axo)
             ->whereNotIn('NumeroReferencia', $poliza_temporal_array)
-            ->join('poliza_deuda_creditos as pdc', 'poliza_deuda_cartera.LineaCredito', '=', 'pdc.Id')
-            ->join('saldos_montos as sm', 'pdc.saldos', '=', 'sm.id')
-            ->join('tipo_cartera as tc', 'pdc.TipoCartera', '=', 'tc.id')
+            ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
+            ->join('tipo_cartera as tc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'tc.Id')
             ->select([
                 'Nit',
                 'Dui',
@@ -117,7 +116,7 @@ class RegistrosEliminadosExport implements FromCollection, WithHeadings
                 DB::raw("IF(InteresesCovid IS NULL, '', ROUND(InteresesCovid, 2)) AS InteresesCovid"),
                 DB::raw("IF(MontoNominal IS NULL, '', ROUND(MontoNominal, 2)) AS MontoNominal"),
                 DB::raw("IF(SaldoTotal IS NULL, '', ROUND(SaldoTotal, 2)) AS SaldoTotal"),
-                DB::raw("IF(total_saldo IS NULL, '', ROUND(total_saldo, 2)) AS total_saldo"), // Prima Mensual
+                DB::raw("IF(TotalCredito IS NULL, '', ROUND(TotalCredito, 2)) AS total_saldo"), // Prima Mensual
                 'tc.Nombre as TipoCartera',
                 DB::raw("CONCAT(sm.Abreviatura, ' - ', sm.Descripcion) AS LineaCredito"),
                 // '' // Porcentaje Extraprima cambiar

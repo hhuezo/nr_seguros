@@ -160,7 +160,7 @@
                                     <ul class="nav child_menu">
 
 
-                                        <li><a href="{{ url('catalogo/configuracion_recibo') }}">Configuración de Recibo</a></li>
+                                        <li><a href="{{ url('catalogo/configuracion_recibo/1/edit') }}">Configuración de Recibo</a></li>
                                         <li><a href="{{ url('catalogo/bombero') }}">Impuesto Bomberos</a></li>
                                         <li><a href="{{ url('catalogo/ejecutivos') }}">Ejecutivo</a></li>
                                         <li><a href="{{ url('catalogo/estado_polizas') }}">Estado Póliza</a></li>

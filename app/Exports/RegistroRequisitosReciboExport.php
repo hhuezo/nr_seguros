@@ -43,13 +43,13 @@ class RegistroRequisitosReciboExport implements FromCollection, WithHeadings
              'poliza_deuda_temp_cartera.NoValido',
              'poliza_deuda_temp_cartera.Perfiles',
              'poliza_deuda_temp_cartera.Mes',
-             'poliza_deuda_temp_cartera.Axo',                        
+             'poliza_deuda_temp_cartera.Axo',
              DB::raw("GROUP_CONCAT(DISTINCT poliza_deuda_temp_cartera.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
              DB::raw('MAX(poliza_deuda_temp_cartera.EdadDesembloso) as EdadDesembloso'),
              DB::raw('MAX(poliza_deuda_temp_cartera.FechaOtorgamientoDate) as FechaOtorgamiento'),
              'poliza_deuda_temp_cartera.Excluido',
              'poliza_deuda_temp_cartera.OmisionPerfil',
-             "poliza_deuda_temp_cartera.saldo_total",
+             "poliza_deuda_temp_cartera.TotalCredito as saldo_total",
              'pdc.MontoMaximoIndividual as MontoMaximoIndividual'
          )
       //   ->where('poliza_deuda_temp_cartera.Edad', '<', $deuda->EdadMaximaTerminacion)

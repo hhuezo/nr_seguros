@@ -56,7 +56,7 @@ class HistoricoPagosExport implements FromCollection, WithHeadings
                 DB::raw("IF(InteresesCovid IS NULL, '', ROUND(InteresesCovid, 2)) AS InteresesCovid"),
                 DB::raw("IF(MontoNominal IS NULL, '', ROUND(MontoNominal, 2)) AS MontoNominal"),
                 DB::raw("IF(SaldoTotal IS NULL, '', ROUND(SaldoTotal, 2)) AS SaldoTotal"),
-                DB::raw("IF(total_saldo IS NULL, '', ROUND(total_saldo, 2)) AS total_saldo"), // Prima Mensual
+                DB::raw("IF(TotalCredito IS NULL, '', ROUND(TotalCredito, 2)) AS total_saldo"), // Prima Mensual
                 'tc.Nombre as TipoCartera',
                 DB::raw("CONCAT(sm.Abreviatura, ' - ', sm.Descripcion) AS LineaCredito"),
                 // '' // Porcentaje Extraprima cambiar

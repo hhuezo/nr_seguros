@@ -84,7 +84,7 @@
                                 @elseif ($tipo->TipoCalculo == 2)
                                 {{ 'Edad' }}
                                 @else
-                                {{ '' }}
+                                {{ 'No aplica' }}
                                 @endif
                             </td>
                             <td class="text-end">
@@ -170,9 +170,7 @@
                                 </div>
                                 @endif
 
-
-
-                                <div class="text-center">
+                                <div class="text-center" style="display: {{$tipo->TipoCalculo == 0 && $tasa_diferenciada->count() > 0 ? 'none':'block' }}">
                                     <button class="btn btn-primary" type="button" data-target="#modal-tasa-diferenciada"
                                         data-toggle="modal"
                                         onclick="show_modal_tasa_diferenciada({{ $tipo->Id }},{{ $tipo->TipoCalculo }},{{ $tipo->TipoCalculo}})"><i

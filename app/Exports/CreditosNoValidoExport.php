@@ -29,9 +29,8 @@ class CreditosNoValidoExport implements FromCollection, WithHeadings
         //where('NoValido', 1)->where('User', auth()->user()->id)->groupBy('Dui')->get();
         $data = PolizaDeudaTempCartera::where('PolizaDeuda', $this->id)
             ->where('NoValido', 1)->where('User', auth()->user()->id)
-            ->join('poliza_deuda_creditos as pdc', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'pdc.Id')
-            ->join('saldos_montos as sm', 'pdc.saldos', '=', 'sm.id')
-            ->join('tipo_cartera as tc', 'pdc.TipoCartera', '=', 'tc.id')
+            ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
+            ->join('tipo_cartera as tc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'tc.Id')
             ->select([
                 'Nit',
                 'Dui',

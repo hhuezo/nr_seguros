@@ -163,7 +163,7 @@
                                             <h4>Edad Maxima de Terminación {{ $deuda->EdadMaximaTerminacion }} años
                                             </h4>
                                         </div>
-                                        <div class="col-md-6 col-sm-6 col-xs-12" align="right" id="btn_expo" style="display:{{ $deuda->conteoEdadMaxima() > 0 ? 'block' : 'none' }}">
+                                        <div class="col-md-6 col-sm-6 col-xs-12" align="right" id="btn_expo" style="display:{{ $poliza_edad_maxima->count() > 0 ? 'block' : 'none' }}">
 
                                             <form action="{{ url('exportar/registros_edad_maxima') }}/{{$deuda->Id}}" method="POST">
                                                 @csrf
