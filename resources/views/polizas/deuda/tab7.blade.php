@@ -28,7 +28,8 @@
                         <td>{{ $obj->Dui }}</td>
                         <td>{{ $obj->Nombre }}</td>
                         <td>{{ $obj->NumeroReferencia }}</td>
-                        @if($obj->linia_credito->Saldos == 1)
+                        <td>{{ $obj->TotalCredito }}</td>
+                        {{-- @if($obj->linia_credito->Saldos == 1)
                         <td>${{ number_format($obj->SaldoCapital, 2, '.', ',') }} </td>
                         @elseif($obj->linia_credito->Saldos == 2)
                         @php($linea2 = $obj->SaldoCapital + $obj->Intereses)
@@ -39,7 +40,7 @@
                         <td>${{ number_format(($obj->SaldoCapital + $obj->Intereses + $obj->InteresesCovid + $obj->InteresesMoratorios), 2, '.', ',') }} </td>
                         @else
                         <td>${{ number_format($obj->MontoNominal, 2, '.', ',') }} </td>
-                        @endif
+                        @endif --}}
                     </tr>
                     @endif
                     @endforeach

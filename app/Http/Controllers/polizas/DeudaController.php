@@ -104,12 +104,10 @@ class DeudaController extends Controller
 
         $registroInicial = $historicoDeuda->isNotEmpty() ? $historicoDeuda->first() : null;
 
-        $fechaDesdeRenovacionAnual = $registroInicial ? $registroInicial->VigenciaHasta: $deuda->VigenciaHasta;
+        $fechaDesdeRenovacionAnual = $registroInicial ? $registroInicial->VigenciaHasta : $deuda->VigenciaHasta;
 
-        foreach($historicoDeuda->sortByDesc('Id') as $historico)
-        {
-            if($historico->TipoRenovacion == 1)
-            {
+        foreach ($historicoDeuda->sortByDesc('Id') as $historico) {
+            if ($historico->TipoRenovacion == 1) {
                 $fechaDesdeRenovacionAnual = $historico->FechaHastaRenovacion;
                 break; // Salir del bucle si la condición se cumple
             }
@@ -186,8 +184,26 @@ class DeudaController extends Controller
         $historico_poliza = PolizaDeudaHistorica::where('Deuda', $id)->orderBy('Fecha')->get();
         session(['tab' => 1]);
 
-        return view('polizas.deuda.renovar', compact('historico_poliza', 'cliente', 'planes', 'productos', 'aseguradora', 'deuda',
-        'fechaDesdeRenovacion', 'fechaHastaRenovacion','registroInicial','fechaDesdeRenovacionAnual', 'estadoPoliza', 'ejecutivo',  'perfiles', 'columnas', 'tabla', 'columnas', 'tipoCartera', 'saldos'));
+        return view('polizas.deuda.renovar', compact(
+            'historico_poliza',
+            'cliente',
+            'planes',
+            'productos',
+            'aseguradora',
+            'deuda',
+            'fechaDesdeRenovacion',
+            'fechaHastaRenovacion',
+            'registroInicial',
+            'fechaDesdeRenovacionAnual',
+            'estadoPoliza',
+            'ejecutivo',
+            'perfiles',
+            'columnas',
+            'tabla',
+            'columnas',
+            'tipoCartera',
+            'saldos'
+        ));
     }
 
 
@@ -1112,10 +1128,11 @@ class DeudaController extends Controller
             $dataPagoTemp = collect([]);
             $dataPagoId = [];
 
+
             foreach ($deuda->deuda_tipos_cartera as $deuda_tipos_cartera) {
 
                 foreach ($deuda_tipos_cartera->tasa_diferenciada as $tasa_diferenciada) {
-                    //dd($tasa_diferenciada);
+
                     $dataPagoId[] = $tasa_diferenciada->Id;
 
                     $linea_credito = SaldoMontos::findOrFail($tasa_diferenciada->LineaCredito);
@@ -1133,6 +1150,8 @@ class DeudaController extends Controller
                             ' - ' .
                             Carbon::parse($tasa_diferenciada->FechaHasta)->format('d/m/Y');
                     }
+
+
 
                     $dataPagoTemp->push([
                         "Id" => $tasa_diferenciada->Id,
@@ -1161,10 +1180,11 @@ class DeudaController extends Controller
 
             $dataPago = collect([]);
 
+
             foreach ($dataPagoTemp as $item) {
 
                 //dd($item);
-
+                //por fechas
                 if ($item['TipoCalculo'] == 1) {
 
                     $total = DB::table('poliza_deuda_cartera')
@@ -1196,7 +1216,9 @@ class DeudaController extends Controller
                         ? $item['TotalCredito'] * $item['Tasa'] : 0;
 
                     $dataPago->push($item);
-                } else if ($item['TipoCalculo'] == 2) {
+                }
+                //por edad
+                else if ($item['TipoCalculo'] == 2) {
                     $total = DB::table('poliza_deuda_cartera')
                         ->selectRaw('
                             COALESCE(SUM(MontoOtorgado), 0) as MontoOtorgado,
@@ -1226,9 +1248,38 @@ class DeudaController extends Controller
                         ? $item['TotalCredito'] * $item['Tasa'] : 0;
 
                     $dataPago->push($item);
+                } else {
+                    $total = DB::table('poliza_deuda_cartera')
+                        ->selectRaw('
+                    COALESCE(SUM(MontoOtorgado), 0) as MontoOtorgado,
+                    COALESCE(SUM(SaldoCapital), 0) as SaldoCapital,
+                    COALESCE(SUM(Intereses), 0) as Intereses,
+                    COALESCE(SUM(InteresesMoratorios), 0) as InteresesMoratorios,
+                    COALESCE(SUM(InteresesCovid), 0) as InteresesCovid,
+                    COALESCE(SUM(MontoNominal), 0) as MontoNominal,
+                    COALESCE(SUM(TotalCredito), 0) as TotalCredito
+                ')
+                        ->where('PolizaDeudaDetalle', 0)
+                        ->where('PolizaDeuda', $id)
+                        ->where('PolizaDeudaTipoCartera', $item['PolizaDuedaTipoCartera'])
+                        ->where('LineaCredito', $item['LineaCredito'])
+                        //->whereBetween('FechaOtorgamientoDate', [$item['FechaDesde'], $item['FechaHasta']])
+                        ->first();
+
+                    // Si $total es null, aseguramos que los valores sean 0
+                    $item['MontoOtorgado'] = $total->MontoOtorgado ?? 0;
+                    $item['SaldoCapital'] = $total->SaldoCapital ?? 0;
+                    $item['Intereses'] = $total->Intereses ?? 0;
+                    $item['InteresesMoratorios'] = $total->InteresesMoratorios ?? 0;
+                    $item['InteresesCovid'] = $total->InteresesCovid ?? 0;
+                    $item['MontoNominal'] = $total->MontoNominal ?? 0;
+                    $item['TotalCredito'] = $total->TotalCredito ?? 0;
+                    $item['PrimaCalculada'] = ($item['TotalCredito'] > 0 && $item['Tasa'] > 0)
+                        ? $item['TotalCredito'] * $item['Tasa'] : 0;
+
+                    $dataPago->push($item);
                 }
             }
-
 
             $videuda = DeudaVida::where('Deuda', $deuda->Id)->first();
             $requisitos = DeudaRequisitos::where('Deuda', $deuda->Id)->get();
@@ -1341,9 +1392,10 @@ class DeudaController extends Controller
                 'InteresesCovid',
                 'InteresesMoratorios',
                 'MontoNominal',
+                'TotalCredito',
             )->where('PolizaDeuda', '=', $id)->where('PolizaDeudaDetalle', '=', 0)->orWhere('PolizaDeudaDetalle', '=', null)->groupBy('NumeroReferencia')->get();
 
-            // dd($clientes->take(20));
+             //dd($clientes->take(20));
 
 
             $ultimo_pago = DeudaDetalle::where('Deuda', $id)->orderBy('Id', 'desc')->first() ?? null; // Si no hay datos, asigna null

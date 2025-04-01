@@ -2,6 +2,7 @@
 
 namespace App\Models\polizas;
 
+use App\Models\catalogo\SaldoMontos;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -59,8 +60,8 @@ class PolizaDeudaCartera extends Model
         return $this->belongsTo(Deuda::class, 'PolizaDeuda', 'Id');
     }
 
-    public function linia_credito()
+    public function linea_credito()
     {
-        return $this->belongsTo(DeudaCredito::class, 'LineaCredito', 'Id');
+        return $this->belongsTo(SaldoMontos::class, 'LineaCredito', 'Id');
     }
 }
