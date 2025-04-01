@@ -170,7 +170,7 @@
                                 </div>
                                 @endif
 
-                                <div class="text-center" style="display: {{isset($tipo) && isset($tasa_diferenciada) && $tipo->TipoCalculo == 0 && $tasa_diferenciada->count() > 0 ? 'none':'block' }}">
+                                <div class="text-center">
                                     <button class="btn btn-primary" type="button" data-target="#modal-tasa-diferenciada"
                                         data-toggle="modal"
                                         onclick="show_modal_tasa_diferenciada({{ $tipo->Id }},{{ $tipo->TipoCalculo }},{{ $tipo->TipoCalculo}})"><i
