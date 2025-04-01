@@ -1,6 +1,6 @@
 @extends ('welcome')
 @section('contenido')
-
+    @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
     <div class="x_panel">
         <div class="clearfix"></div>
         <div class="row">
@@ -285,7 +285,7 @@
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                         <br>
                         <div class="form-group" align="center">
-                            <button type="submit" class="btn btn-success">Guardar y Continuar</button>
+                            <button type="submit" class="btn btn-success">Guardar</button>
                             <a href="{{ url('polizas/deuda') }}"><button type="button"
                                     class="btn btn-primary">Cancelar</button></a>
                         </div>
@@ -316,7 +316,7 @@
                                 </td>
                             </tr>
                             @foreach ($historico_poliza as $obj)
-                                <tr>
+                                <tr @if($obj->TipoRenovacion == 1) style="background-color: #e8f5ee;"  @endif>
                                     <td>{{ $obj->TipoRenovacion == 1 ? 'Anual' : 'Parcial' }}</td>
                                     <td>{{ $obj->FechaDesdeRenovacion ? date('d/m/Y', strtotime($obj->FechaDesdeRenovacion)) : '' }}
                                     </td>
