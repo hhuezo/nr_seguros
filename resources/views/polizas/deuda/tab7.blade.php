@@ -28,7 +28,7 @@
                         <td>{{ $obj->Dui }}</td>
                         <td>{{ $obj->Nombre }}</td>
                         <td>{{ $obj->NumeroReferencia }}</td>
-                        <td>{{ $obj->TotalCredito }}</td>
+                        <td>${{ number_format($obj->TotalCredito, 2, '.', ',') }}</td>
                         {{-- @if($obj->linia_credito->Saldos == 1)
                         <td>${{ number_format($obj->SaldoCapital, 2, '.', ',') }} </td>
                         @elseif($obj->linia_credito->Saldos == 2)
