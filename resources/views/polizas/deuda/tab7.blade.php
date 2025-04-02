@@ -158,21 +158,8 @@
                 document.getElementById('ExtraprimadosNombre').value = data.Nombre;
                 document.getElementById('ExtraprimadosFechaOtorgamiento').value = data.FechaOtorgamiento;
                 document.getElementById('ExtraprimadosNumeroReferencia').value = NumeroReferencia;
-                if (data.hasOwnProperty('MontoOtorgado')) {
-                    console.log(data.Linea);
-                    if (data.Linea == 1) {
-                        document.getElementById('ExtraprimadosMontoOtorgamiento').value = parseFloat(data.SaldoCapital).toFixed(2);
-                    } else if (data.Linea == 2) {
-                        document.getElementById('ExtraprimadosMontoOtorgamiento').value = (parseFloat(data.SaldoCapital) + parseFloat(data.Intereses)).toFixed(2);
-                    } else if (data.Linea == 3) {
-                        document.getElementById('ExtraprimadosMontoOtorgamiento').value = (parseFloat(data.SaldoCapital) + parseFloat(data.Intereses) + parseFloat(data.InteresesCovid)).toFixed(2);
-                    } else if (data.Linea == 4) {
-                        document.getElementById('ExtraprimadosMontoOtorgamiento').value = (parseFloat(data.SaldoCapital) + parseFloat(data.Intereses) + parseFloat(data.InteresesCovid) + parseFloat(data.InteresesMoratorios)).toFixed(2);
-                    } else {
-                        document.getElementById('ExtraprimadosMontoOtorgamiento').value = parseFloat(data.MontoNominal).toFixed(2);
-                    }
-                    console.log(document.getElementById('ExtraprimadosMontoOtorgamiento').value);
-                }
+                document.getElementById('ExtraprimadosMontoOtorgamiento').value = parseFloat(data.TotalCredito).toFixed(2);
+
             })
             .fail(function() {
                 // Manejar errores si es necesario

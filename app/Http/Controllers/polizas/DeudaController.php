@@ -1725,12 +1725,7 @@ class DeudaController extends Controller
                 'poliza_deuda_cartera.Dui',
                 'sal.Id as Linea',
                 'poliza_deuda_cartera.NumeroReferencia',
-                'poliza_deuda_cartera.MontoOtorgado',
-                'poliza_deuda_cartera.SaldoCapital',
-                'poliza_deuda_cartera.Intereses',
-                'poliza_deuda_cartera.InteresesCovid',
-                'poliza_deuda_cartera.InteresesMoratorios',
-                'poliza_deuda_cartera.MontoNominal',
+                'poliza_deuda_cartera.TotalCredito',
                 'poliza_deuda_cartera.FechaOtorgamiento',
 
             )
