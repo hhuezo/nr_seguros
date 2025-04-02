@@ -45,6 +45,7 @@ use App\Models\polizas\DeudaVida;
 use App\Models\polizas\PolizaDeudaCartera;
 use App\Models\polizas\PolizaDeudaExtraPrimadosMensual;
 use App\Models\polizas\PolizaDeudaHistorica;
+use App\Models\polizas\PolizaDeudaTasaDiferenciada;
 use App\Models\polizas\Vida;
 use App\Models\temp\PolizaDeudaTempCartera;
 use Carbon\Carbon;
@@ -1435,6 +1436,11 @@ class DeudaController extends Controller
                         ->orWhere('PolizaDeudaDetalle', '=', null);
                 })->orderByDesc('Id')->first();
 
+            //conteo por si existe tasa diferenciada
+            $count_tasas_diferencidas = PolizaDeudaTasaDiferenciada::
+                join('poliza_deuda_tipo_cartera','poliza_deuda_tipo_cartera.Id','=','poliza_deuda_tasa_diferenciada.PolizaDuedaTipoCartera')
+                ->where('poliza_deuda_tipo_cartera.PolizaDeuda',$id)
+                ->whereIn('poliza_deuda_tipo_cartera.TipoCalculo',[1,2])->count();
 
 
             return view('polizas.deuda.edit', compact(
@@ -1473,7 +1479,8 @@ class DeudaController extends Controller
                 'id',
                 //tab2
                 'dataPago',
-                'dataPagoId'
+                'dataPagoId',
+                'count_tasas_diferencidas'
             ));
         }
     }

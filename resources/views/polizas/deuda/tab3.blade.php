@@ -12,19 +12,27 @@
         <table class="table table-striped jambo_table bulk_action" style="font-size: 13px;">
             <thead>
                 <tr>
-                    <th>{{ $deuda->aseguradoras->Nombre }} <br>
-                        {{ $deuda->clientes->Nombre }} <br>
-                        N° Póliza: {{ $deuda->NumeroPoliza }} <br>
-                        Vigencia:
-                        {{ \Carbon\Carbon::parse($deuda->VigenciaDesde)->format('d/m/Y') }}
-                        al
-                        {{ \Carbon\Carbon::parse($deuda->VigenciaHasta)->format('d/m/Y') }}
-                        <br>
+                    <th>
+                        {{ $deuda->aseguradoras->Nombre ?? '' }}<br>
+                        {{ $deuda->clientes->Nombre ?? '' }}<br>
+                        @if($deuda->NumeroPoliza ?? false)
+                            N° Póliza: {{ $deuda->NumeroPoliza }}<br>
+                        @endif
+                        @if($deuda->VigenciaDesde ?? false)
+                            Vigencia:
+                            {{ \Carbon\Carbon::parse($deuda->VigenciaDesde)->format('d/m/Y') }} al
+                            @if($deuda->VigenciaHasta ?? false)
+                                {{ \Carbon\Carbon::parse($deuda->VigenciaHasta)->format('d/m/Y') }}
+                            @endif
+                            <br>
+                        @endif
+
                         Cálculo para el periodo de: <br>
-                        @if ($ultimo_pago)
-                            {{ \Carbon\Carbon::parse($ultimo_pago->FechaInicio)->format('d/m/Y') }}
-                            al
-                            {{ \Carbon\Carbon::parse($ultimo_pago->FechaFinal)->format('d/m/Y') }}
+                        @if(isset($ultimo_pago) && ($ultimo_pago->FechaInicio ?? false))
+                            {{ \Carbon\Carbon::parse($ultimo_pago->FechaInicio)->format('d/m/Y') }} al
+                            @if($ultimo_pago->FechaFinal ?? false)
+                                {{ \Carbon\Carbon::parse($ultimo_pago->FechaFinal)->format('d/m/Y') }}
+                            @endif
                         @endif
                     </th>
                     <th></th>
@@ -75,7 +83,7 @@
                 <td>Tasa mensual por millar</td>
                 <td style="text-align: right;"><span class="fa fa-dollar " aria-hidden="true"></span></td>
                 <td style="text-align: right;">
-                    <label class="label-control has-feedback-left" style="text-align: right;">{{ $deuda->Tasa }}
+                    <label class="label-control has-feedback-left" style="text-align: right;">{{ $count_tasas_diferencidas == 0 ? $deuda->Tasa : 'TASA DIFERENCIADA' }}
                     </label>
                 </td>
                 <td></td>

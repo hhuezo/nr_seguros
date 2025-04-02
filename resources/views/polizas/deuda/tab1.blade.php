@@ -264,6 +264,9 @@
                         <input type="hidden" name="ComisionIva" id="ComisionIva"
                             value="{{ $deuda->ComisionIva }}">
                     </div>
+                    <div class="col-sm-12">
+                        &nbsp;
+                    </div>
                     <div class="col-sm-6">
                         <div>
                             <label class="control-label">Póliza Vida</label>
@@ -278,9 +281,7 @@
                         </div>
 
                     </div>
-                    <div class="col-sm-12">
-                        &nbsp;
-                    </div>
+
 
                     <div class="col-sm-6">
                         <div>
@@ -297,6 +298,7 @@
                         </div>
 
                     </div>
+
                 </div>
             </div>
         </div>
@@ -356,7 +358,7 @@
                                                         @elseif ($tipo->TipoCalculo == 2)
                                                             {{ 'Edad' }}
                                                         @else
-                                                            {{ '' }}
+                                                            {{ 'No aplica' }}
                                                         @endif
                                                     </td>
                                                     <td class="text-end">
