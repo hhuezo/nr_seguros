@@ -55,7 +55,7 @@ class PolizaDeudaExtraPrimados extends Model
                 $total = $registro->TotalCredito;
 
                 $data_array = [
-                    "total" => $total, "saldo_capital" => $registro->SaldoCapital, "prima_neta" => $total * $registro->poliza_deuda->Tasa,
+                    "total" => $total, "saldo_capital" => $registro->SaldoCapital, "prima_neta" => $total * $registro->Tasa,
                     "extra_prima" => ($total * $registro->poliza_deuda->Tasa) * ($extraprimado->PorcentajeEP / 100), "interes" => $registro->Intereses
                 ];
             }
