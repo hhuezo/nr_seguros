@@ -52,19 +52,7 @@ class PolizaDeudaExtraPrimados extends Model
 
             if ($registro) {
                 //Saldos tradiciona, popular ,etc
-                $tipo = $registro->linia_credito->Saldos;
-
-                if ($tipo == 1) {
-                    $total = $registro->SaldoCapital;  //($pago * $deuda->Tasa) * ($extraprimado->PorcentajeEP/100)
-                } else if ($tipo == 2) {
-                    $total = ($registro->SaldoCapital + $registro->Intereses);
-                } else if ($tipo == 3) {
-                    $total = ($registro->SaldoCapital + $registro->Intereses  + $registro->InteresesCovid);
-                } else if ($tipo == 4) {
-                    $total = ($registro->SaldoCapital + $registro->Intereses  + $registro->InteresesCovid + $registro->InteresesMoratorios);
-                } else if ($tipo == 5) {
-                    $total = ($registro->MontoNominal);
-                }
+                $total = $registro->TotalCredito;
 
                 $data_array = [
                     "total" => $total, "saldo_capital" => $registro->SaldoCapital, "prima_neta" => $total * $registro->poliza_deuda->Tasa,
