@@ -59,7 +59,7 @@ class DeudaCarteraFedeController extends Controller
 
             // Verifica si hay al menos dos hojas
             $sheetsCount = $excel->getSheetCount();
-           // dd($sheetsCount);
+            // dd($sheetsCount);
             if ($sheetsCount > 1) {
                 // El archivo tiene al menos dos hojas
                 alert()->error('La cartera solo puede contener un solo libro de Excel (sheet)');
@@ -84,8 +84,8 @@ class DeudaCarteraFedeController extends Controller
 
 
         //calculando errores de cartera
-        $cartera_temp = PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera',$deuda_tipo_cartera->Id)->get();
-      //  dd($cartera_temp);
+        $cartera_temp = PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)->get();
+        //  dd($cartera_temp);
 
 
 
@@ -189,77 +189,86 @@ class DeudaCarteraFedeController extends Controller
         }
 
 
-             //calculando edades y fechas de nacimiento
-             PolizaDeudaTempCartera::where('User', auth()->user()->id)
-             ->where('PolizaDeuda', $deuda->Id)
-             ->update([
-                 'FechaNacimientoDate' => DB::raw("STR_TO_DATE(FechaNacimiento, '%d/%m/%Y')"),
-                 //'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, CURDATE())"),
-                 'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaFinal)"),
-                 'FechaOtorgamientoDate' => DB::raw("STR_TO_DATE(FechaOtorgamiento, '%d/%m/%Y')"),
-                 'EdadDesembloso' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaOtorgamientoDate)"),
-             ]);
+        //calculando edades y fechas de nacimiento
+        PolizaDeudaTempCartera::where('User', auth()->user()->id)
+            ->where('PolizaDeuda', $deuda->Id)
+            ->update([
+                'FechaNacimientoDate' => DB::raw("STR_TO_DATE(FechaNacimiento, '%d/%m/%Y')"),
+                //'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, CURDATE())"),
+                'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaFinal)"),
+                'FechaOtorgamientoDate' => DB::raw("STR_TO_DATE(FechaOtorgamiento, '%d/%m/%Y')"),
+                'EdadDesembloso' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaOtorgamientoDate)"),
+            ]);
 
 
 
 
 
-         //tasas diferenciadas
-         $tasas_diferenciadas = $deuda_tipo_cartera->tasa_diferenciada;
+        //tasas diferenciadas
+        $tasas_diferenciadas = $deuda_tipo_cartera->tasa_diferenciada;
 
-         if ($deuda_tipo_cartera->TipoCalculo == 1) {
+        if ($deuda_tipo_cartera->TipoCalculo == 1) {
 
-             foreach ($tasas_diferenciadas as $tasa) {
-                 //dd($tasa);
-                 PolizaDeudaTempCartera::where('User', auth()->user()->id)
-                     ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
-                     ->whereBetween('FechaOtorgamientoDate', [$tasa->FechaDesde, $tasa->FechaHasta])
-                     ->update([
-                         'LineaCredito' => $tasa->LineaCredito,
-                         'Tasa' => $tasa->Tasa
-                     ]);
-             }
-         } else  if ($deuda_tipo_cartera->TipoCalculo == 2) {
+            foreach ($tasas_diferenciadas as $tasa) {
+                //dd($tasa);
+                PolizaDeudaTempCartera::where('User', auth()->user()->id)
+                    ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                    ->whereBetween('FechaOtorgamientoDate', [$tasa->FechaDesde, $tasa->FechaHasta])
+                    ->update([
+                        'LineaCredito' => $tasa->LineaCredito,
+                        'Tasa' => $tasa->Tasa
+                    ]);
+            }
+        } else  if ($deuda_tipo_cartera->TipoCalculo == 2) {
 
-             foreach ($tasas_diferenciadas as $tasa) {
-                 PolizaDeudaTempCartera::where('User', auth()->user()->id)
-                     ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
-                     ->whereBetween('EdadDesembloso', [$tasa->EdadDesde, $tasa->EdadHasta])
-                     ->update([
-                         'LineaCredito' => $tasa->LineaCredito,
-                         'Tasa' => $tasa->Tasa
-                     ]);
-             }
-         }
+            foreach ($tasas_diferenciadas as $tasa) {
+                PolizaDeudaTempCartera::where('User', auth()->user()->id)
+                    ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                    ->whereBetween('EdadDesembloso', [$tasa->EdadDesde, $tasa->EdadHasta])
+                    ->update([
+                        'LineaCredito' => $tasa->LineaCredito,
+                        'Tasa' => $tasa->Tasa
+                    ]);
+            }
+        } else {
+            foreach ($tasas_diferenciadas as $tasa) {
+                PolizaDeudaTempCartera::where('User', auth()->user()->id)
+                    ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                    ->update([
+                        'LineaCredito' => $tasa->LineaCredito,
+                        'Tasa' => $deuda->Tasa
+                    ]);
+            }
+        }
 
 
-         $cartera_temp = PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->get();
+        $cartera_temp = PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->get();
 
-         foreach ($cartera_temp as $obj) {
-             $obj->TotalCredito = $obj->calculoTodalSaldo();
-             $obj->update();
-         }
+        foreach ($cartera_temp as $obj) {
+            $obj->TotalCredito = $obj->calculoTodalSaldo();
+            $obj->update();
+        }
 
 
 
-         $MontoMaximoIndividual = $deuda_tipo_cartera->MontoMaximoIndividual;
-         if (isset($MontoMaximoIndividual) && $MontoMaximoIndividual > 0) {
-             $duis = PolizaDeudaTempCartera::selectRaw('Dui')
-                 ->where('User', auth()->user()->id)
-                 ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
-                 ->groupBy('Dui')
-                 ->havingRaw('SUM(TotalCredito) >= ?', [$MontoMaximoIndividual])
-                 ->pluck('Dui'); // Obtiene solo los valores de la columna Dui
+        $MontoMaximoIndividual = $deuda_tipo_cartera->MontoMaximoIndividual;
+        if (isset($MontoMaximoIndividual) && $MontoMaximoIndividual > 0) {
+            $duis = PolizaDeudaTempCartera::selectRaw('Dui')
+                ->where('User', auth()->user()->id)
+                ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                ->groupBy('Dui')
+                ->havingRaw('SUM(TotalCredito) >= ?', [$MontoMaximoIndividual])
+                ->pluck('Dui'); // Obtiene solo los valores de la columna Dui
 
-             // Realiza el update en los registros con los DUI filtrados
-             if ($duis->isNotEmpty()) {
-                 PolizaDeudaTempCartera::whereIn('Dui', $duis)
-                     ->update([
-                         'MontoMaximoIndividual' => 1,
-                         'NoValido' => 1
-                     ]);
-             }
-         }
+            // Realiza el update en los registros con los DUI filtrados
+            if ($duis->isNotEmpty()) {
+                PolizaDeudaTempCartera::whereIn('Dui', $duis)
+                    ->update([
+                        'MontoMaximoIndividual' => 1,
+                        'NoValido' => 1
+                    ]);
+            }
+        }
 
 
 
@@ -345,8 +354,8 @@ class DeudaCarteraFedeController extends Controller
 
 
 
-               // 2 error formato de dui
-               if ($obj->Dui == null || $obj->Dui == '') {
+            // 2 error formato de dui
+            if ($obj->Dui == null || $obj->Dui == '') {
                 $validador_dui = false;
                 if ($validador_dui == false) {
                     $obj->TipoError = 8;

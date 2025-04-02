@@ -38,7 +38,6 @@
 
 
 <style>
-
     .expand-icon {
         cursor: pointer;
         margin-right: 8px;
@@ -252,47 +251,51 @@
                         <input class="form-control" name="Tasa" type="number" id="Tasa" step="any"
                             value="{{ $deuda->Tasa }}" readonly>
                     </div>
-                    <div class="col-sm-4" align="center">
-                        <br>
-                        <label class="control-label" align="center">Vida</label>
-                        <input id="Vida" type="checkbox" class="js-switch" readonly
-                            {{ $deuda->Vida != '' ? 'checked' : '' }} />
-                    </div>
-                    <div class="col-sm-4" align="center">
-                        <br>
-                        <label class="control-label" align="center">Desempleo</label>
-                        <input id="Desempleo" type="checkbox" class="js-switch" readonly
-                            {{ $deuda->Desempleo != '' ? 'checked' : '' }} />
-                    </div>
-                    <div class="col-sm-12">
-                        &nbsp;
-                    </div>
-                    <div class="col-sm-2">
+
+                    <div class="col-sm-4">
                         <label class="control-label" align="right">% de Comisión </label>
                         <input class="form-control" name="TasaComision" id="TasaComision" type="number"
                             step="any" value="{{ $deuda->TasaComision }}" readonly>
                     </div>
-                    <div class="col-sm-2"><br>
+                    <div class="col-sm-4"><br>
                         <label class="control-label" align="right">¿IVA incluido?</label>
                         <input type="checkbox" readonly class="js-switch"
                             {{ $deuda->ComisionIva == 1 ? 'checked' : '' }}>
                         <input type="hidden" name="ComisionIva" id="ComisionIva"
                             value="{{ $deuda->ComisionIva }}">
                     </div>
-                    <div class="col-sm-4">
-                        <div id="poliza_vida" style="display: {{ $deuda->Vida != '' ? 'block' : 'none' }};">
-                            <label class="control-label">Numero de Poliza Vida</label>
-                            <input name="Vida" type="text" class="form-control" value="{{ $deuda->Vida }}"
-                                readonly />
+                    <div class="col-sm-6">
+                        <div>
+                            <label class="control-label">Póliza Vida</label>
+                            <select class="form-control" name="PolizaVida">
+                                <option value="" selected>SELECCIONE</option>
+                                @foreach ($polizas_vida as $obj)
+                                    <option value="{{ $obj->Id }}"
+                                        {{ $deuda->PolizaVida == $obj->Id ? 'selected' : '' }}>{{ $obj->Codigo }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
+
                     </div>
-                    <div class="col-sm-4">
-                        <div id="poliza_desempleo"
-                            style="display:  {{ $deuda->Desempleo != '' ? 'block' : 'none' }};">
-                            <label class="control-label">Numero de Poliza Desempleo</label>
-                            <input name="Desempleo" type="text" class="form-control"
-                                value="{{ $deuda->Desempleo }}" />
+                    <div class="col-sm-12">
+                        &nbsp;
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div>
+                            <label class="control-label">Póliza Desempleo</label>
+                            <select class="form-control" name="PolizaDesempleo">
+                                <option value="" selected>SELECCIONE</option>
+                                @foreach ($polizas_desempleo as $obj)
+                                    <option value="{{ $obj->Id }}"
+                                        {{ $deuda->PolizaDesempleo == $obj->Id ? 'selected' : '' }}>
+                                        {{ $obj->NumeroPoliza }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
+
                     </div>
                 </div>
             </div>

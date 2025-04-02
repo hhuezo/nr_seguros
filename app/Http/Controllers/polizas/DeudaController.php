@@ -34,6 +34,7 @@ use App\Models\catalogo\TipoCobro;
 use App\Models\catalogo\TipoContribuyente;
 use App\Models\catalogo\UbicacionCobro;
 use App\Models\polizas\Comentario;
+use App\Models\polizas\Desempleo;
 use App\Models\polizas\Deuda;
 use App\Models\polizas\DeudaCredito;
 use App\Models\polizas\DeudaDetalle;
@@ -44,6 +45,7 @@ use App\Models\polizas\DeudaVida;
 use App\Models\polizas\PolizaDeudaCartera;
 use App\Models\polizas\PolizaDeudaExtraPrimadosMensual;
 use App\Models\polizas\PolizaDeudaHistorica;
+use App\Models\polizas\Vida;
 use App\Models\temp\PolizaDeudaTempCartera;
 use Carbon\Carbon;
 use Exception;
@@ -914,6 +916,9 @@ class DeudaController extends Controller
         //$creditos = DeudaCredito::where('Activo', 1)->where('Deuda', $id)->get();
         //dd( $creditos) esto se va eliminar ;
 
+        $polizas_vida = Vida::get();
+        $polizas_desempleo = Desempleo::get();
+
 
 
         $saldos = SaldoMontos::where('Activo', 1)->get();
@@ -932,6 +937,8 @@ class DeudaController extends Controller
         return view('polizas.deuda.show', compact(
             'historico_poliza',
             'registroInicial',
+            'polizas_vida',
+            'polizas_desempleo',
             'requisitos',
             'planes',
             'productos',
@@ -1040,6 +1047,8 @@ class DeudaController extends Controller
         $deuda->Mensual = $request->tipoTasa;
         $deuda->EdadMaximaTerminacion = $request->EdadMaximaTerminacion;
         $deuda->ResponsabilidadMaxima = $request->ResponsabilidadMaxima;
+        $deuda->PolizaVida = $request->PolizaVida;
+        $deuda->PolizaDesempleo = $request->PolizaDesempleo;
         if ($request->ComisionIva == 'on') {
             $deuda->ComisionIva = 1;
         } else {
@@ -1281,7 +1290,8 @@ class DeudaController extends Controller
                 }
             }
 
-            $videuda = DeudaVida::where('Deuda', $deuda->Id)->first();
+            $polizas_vida = Vida::get();
+            $polizas_desempleo = Desempleo::get();
             $requisitos = DeudaRequisitos::where('Deuda', $deuda->Id)->get();
             $tipos_contribuyente = TipoContribuyente::get();
             $rutas = Ruta::where('Activo', '=', 1)->get();
@@ -1431,7 +1441,6 @@ class DeudaController extends Controller
                 'historico',
                 'totalUltimoPago',
                 'ultimaCartera',
-                //'fecha',
                 'total_extrapima',
                 //'saldo',
                 'clientes',
@@ -1441,7 +1450,8 @@ class DeudaController extends Controller
                 'primerDia',
                 'ultimoDia',
                 'detalle',
-                'videuda',
+                'polizas_vida',
+                'polizas_desempleo',
                 'deuda',
                 'requisitos',
                 'aseguradora',

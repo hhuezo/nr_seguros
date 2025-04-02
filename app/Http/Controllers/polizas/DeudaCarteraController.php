@@ -429,7 +429,7 @@ class DeudaCarteraController extends Controller
                     ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
                     ->update([
                         'LineaCredito' => $tasa->LineaCredito,
-                        'Tasa' => $tasa->Tasa
+                        'Tasa' => $deuda->Tasa
                     ]);
             }
         }
