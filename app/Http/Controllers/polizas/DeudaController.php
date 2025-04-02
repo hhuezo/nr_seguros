@@ -1711,8 +1711,7 @@ class DeudaController extends Controller
 
     public function get_extraprimado($id, $dui)
     {
-        $cliente = PolizaDeudaCartera::join('poliza_deuda_creditos as cred', 'cred.Id', '=', 'poliza_deuda_cartera.LineaCredito')
-            ->join('saldos_montos as sal', 'sal.Id', '=', 'cred.Saldos')
+        $cliente = PolizaDeudaCartera::join('saldos_montos as sal', 'sal.Id', '=', 'poliza_deuda_cartera.LineaCredito')
             ->select(
                 'poliza_deuda_cartera.Id',
                 // DB::raw("CONCAT(poliza_deuda_cartera.PrimerNombre, ' ', poliza_deuda_cartera.SegundoNombre, ' ', poliza_deuda_cartera.PrimerApellido, ' ', poliza_deuda_cartera.SegundoApellido, ' ', ' ', poliza_deuda_cartera.ApellidoCasada) as Nombre"),
@@ -1736,7 +1735,6 @@ class DeudaController extends Controller
 
             )
             ->where('PolizaDeuda', $id)->where('Dui', $dui)->first();
-        // dd($cliente);
 
         return response()->json($cliente);
     }
