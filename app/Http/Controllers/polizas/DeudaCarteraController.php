@@ -1438,7 +1438,7 @@ class DeudaCarteraController extends Controller
                 $poliza->EdadDesembloso = $tempRecordV->EdadDesembloso;
                 $poliza->LineaCredito = $tempRecordV->LineaCredito;
                 $poliza->NoValido = $tempRecordV->NoValido;
-                $poliza->Tasa = $tempRecord->Tasa;
+                $poliza->Tasa = $tempRecordV->Tasa;
                 $poliza->TotalCredito = $tempRecordV->TotalCredito;
                 $poliza->PolizaDeudaTipoCartera = $tempRecord->PolizaDeudaTipoCartera;
                 $poliza->FechaOtorgamientoDate = $tempRecord->FechaOtorgamientoDate;
@@ -1453,7 +1453,10 @@ class DeudaCarteraController extends Controller
             }
         }
 
-
+        PolizaDeudaTempCartera::where('Axo', $anio)
+        ->where('Mes', $mes + 0)
+        ->where('User', auth()->user()->id)
+        ->where('PolizaDeuda', $request->Deuda)->delete();
 
         alert()->success('El registro de poliza ha sido ingresado correctamente');
         return redirect('polizas/deuda/' . $request->Deuda . '/edit?tab=2');

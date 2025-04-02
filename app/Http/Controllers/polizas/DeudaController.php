@@ -693,6 +693,7 @@ class DeudaController extends Controller
             //consultando calculos de extraprimados
             $data_array = $extraprimado->getPagoEP($extraprimado->Id);
 
+
             $extraprimado->total = $data_array['total'];
             $extraprimado->saldo_capital = $data_array['saldo_capital'];
             $extraprimado->interes = $data_array['interes'];
