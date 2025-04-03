@@ -131,6 +131,22 @@
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
+                @if (session('error'))
+                    <div class="alert alert-danger">
+                        {{ session('error') }}
+                    </div>
+                @endif
+
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <table class="table table-striped table-bordered">
                     <thead>
                         <tr>
@@ -150,11 +166,11 @@
                                 <td align="right">${{ number_format($obj->Total, 2, '.', ',') }}</td>
                                 <td align="center">
                                     @if ($deuda->Aseguradora == 3)
-                                    <a data-target="#modal-add-fede-{{ $obj->Id }}" data-toggle="modal">
-                                        <button class="btn btn-default"><i class="fa fa-upload fa-lg"></i></button> </a>
+                                        <a data-target="#modal-add-fede-{{ $obj->Id }}" data-toggle="modal">
+                                            <button class="btn btn-default"><i class="fa fa-upload fa-lg"></i></button> </a>
                                     @else
-                                    <a data-target="#modal-add-{{ $obj->Id }}" data-toggle="modal">
-                                        <button class="btn btn-default"><i class="fa fa-upload fa-lg"></i></button> </a>
+                                        <a data-target="#modal-add-{{ $obj->Id }}" data-toggle="modal">
+                                            <button class="btn btn-default"><i class="fa fa-upload fa-lg"></i></button> </a>
                                     @endif
                                 </td>
                             </tr>

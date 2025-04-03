@@ -14,6 +14,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Throwable;
@@ -51,32 +52,38 @@ class DeudaCarteraFedeController extends Controller
         }
 
 
+        $archivo = $request->Archivo;
 
-        try {
-            $archivo = $request->Archivo;
+        $excel = IOFactory::load($archivo);
 
-            $excel = IOFactory::load($archivo);
 
-            // Verifica si hay al menos dos hojas
-            $sheetsCount = $excel->getSheetCount();
-            // dd($sheetsCount);
-            if ($sheetsCount > 1) {
-                // El archivo tiene al menos dos hojas
-                alert()->error('La cartera solo puede contener un solo libro de Excel (sheet)');
-                return back();
-            }
+        // Validar estructura
+        $validator = Validator::make([], []); // Creamos un validador vacío
 
-            PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->delete();
-            Excel::import(new PolizaDeudaTempCarteraFedeImport($date->year, $date->month, $deuda->Id, $request->FechaInicio, $request->FechaFinal, $deuda_tipo_cartera->Id), $archivo);
-        } catch (Throwable $e) {
-            Log::error('Problema al procesar el archivo Excel: ' . $e->getMessage(), [
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-            alert()->error('Problema al procesar el archivo excel');
-            return back();
+        // 1. Validar número de hojas
+        if ($excel->getSheetCount() > 1) {
+            $validator->errors()->add('Archivo', 'La cartera solo puede contener un solo libro de Excel (sheet)');
+            return back()->withErrors($validator);
         }
+
+        // 2. Validar primera fila
+        $firstRow = $excel->getActiveSheet()->rangeToArray('A1:Z1')[0];
+
+        if (!isset($firstRow[0])) {
+            $validator->errors()->add('Archivo', 'El archivo está vacío o no tiene el formato esperado');
+            return back()->withErrors($validator);
+        }
+
+        if (trim($firstRow[0]) !== "DUI o documento de identidad") {
+            $validator->errors()->add('Archivo', 'Error de formato del archivo, La primera columna de la primera fila debe ser "DUI o documento de identidad"');
+            return back()->withErrors($validator);
+        }
+
+
+
+        PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->delete();
+        Excel::import(new PolizaDeudaTempCarteraFedeImport($date->year, $date->month, $deuda->Id, $request->FechaInicio, $request->FechaFinal, $deuda_tipo_cartera->Id), $archivo);
+
 
 
 

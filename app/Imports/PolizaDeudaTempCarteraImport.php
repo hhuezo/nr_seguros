@@ -4,23 +4,13 @@ namespace App\Imports;
 
 use App\Models\temp\PolizaDeudaTempCartera;
 use Carbon\Carbon;
-use Exception;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\ToModel;
-use Maatwebsite\Excel\Concerns\WithStartRow;
+use Maatwebsite\Excel\Events\BeforeImport;
+use Maatwebsite\Excel\Imports\HeadingRowFormatter;
 
 class PolizaDeudaTempCarteraImport implements ToModel, /*WithStartRow,*/ SkipsEmptyRows
 {
-    /**
-     * @param array $row
-     *
-     * @return \Illuminate\Database\Eloquent\Model|null
-     */
-    /*public function startRow(): int
-    {
-        return 2;
-    }*/
-
     private $Axo;
     private $Mes;
     private $PolizaDeuda;
@@ -39,6 +29,8 @@ class PolizaDeudaTempCarteraImport implements ToModel, /*WithStartRow,*/ SkipsEm
         $this->FechaFinal = $FechaFinal;
         $this->credito = $credito;
     }
+
+
     public function model(array $row)
     {
         if (trim($row[0]) == "NIT" && trim($row[1]) == "DUI") {

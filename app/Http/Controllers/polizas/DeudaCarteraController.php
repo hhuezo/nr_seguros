@@ -19,6 +19,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Throwable;
@@ -177,6 +178,7 @@ class DeudaCarteraController extends Controller
 
     public function create_pago(Request $request)
     {
+
         $deuda_tipo_cartera = PolizaDeudaTipoCartera::findOrFail($request->PolizaDeudaTipoCartera);
         $deuda = Deuda::findOrFail($request->Id);
 
@@ -209,20 +211,47 @@ class DeudaCarteraController extends Controller
 
         $excel = IOFactory::load($archivo);
 
-        // Verifica si hay al menos dos hojas
-        $sheetsCount = $excel->getSheetCount();
+          // Validar estructura
+          $validator = Validator::make([], []); // Creamos un validador vacío
 
-        if ($sheetsCount > 1) {
-            // El archivo tiene al menos dos hojas
-            alert()->error('La cartera solo puede contener un solo libro de Excel (sheet)');
-            return back();
-        }
+          // 1. Validar número de hojas
+          if ($excel->getSheetCount() > 1) {
+              $validator->errors()->add('Archivo', 'La cartera solo puede contener un solo libro de Excel (sheet)');
+              return back()->withErrors($validator);
+          }
+
+          // 2. Validar primera fila
+          $firstRow = $excel->getActiveSheet()->rangeToArray('A1:Z1')[0];
+
+          if (!isset($firstRow[0])) {
+              $validator->errors()->add('Archivo', 'El archivo está vacío o no tiene el formato esperado');
+              return back()->withErrors($validator);
+          }
+
+          if (trim($firstRow[0]) !== "NIT") {
+              $validator->errors()->add('Archivo', 'Error de formato del archivo, La primera columna de la primera fila debe ser "NIT"');
+              return back()->withErrors($validator);
+          }
+
+          if (!isset($firstRow[1])) {
+              $validator->errors()->add('Archivo', 'Error de formato del archivo, El archivo no contiene la columna DUI');
+              return back()->withErrors($validator);
+          }
 
 
         PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->delete();
-        Excel::import(new PolizaDeudaTempCarteraImport($date->year, $date->month, $deuda->Id, $request->FechaInicio, $request->FechaFinal, $deuda_tipo_cartera->Id), $archivo);
 
+        try {
+            Excel::import(new PolizaDeudaTempCarteraImport($date->year, $date->month, $deuda->Id, $request->FechaInicio, $request->FechaFinal, $deuda_tipo_cartera->Id), $archivo);
+        } catch (\Exception $e) {
+            // Filtramos solo nuestros errores de validación
+            if (strpos($e->getMessage(), 'VALIDATION_ERROR:') === 0) {
+                return back()->with('error', str_replace('VALIDATION_ERROR: ', '', $e->getMessage()));
+            }
 
+            // Otros errores
+            return back()->with('error', 'Ocurrió un error al procesar el archivo');
+        }
 
 
 
@@ -378,7 +407,7 @@ class DeudaCarteraController extends Controller
 
         if ($data_error->count() > 0) {
             $deuda_tipo_cartera_id = $deuda_tipo_cartera->Id;
-            return view('polizas.deuda.respuesta_poliza_error', compact('data_error', 'deuda','deuda_tipo_cartera_id'));
+            return view('polizas.deuda.respuesta_poliza_error', compact('data_error', 'deuda', 'deuda_tipo_cartera_id'));
         }
 
 
@@ -423,7 +452,7 @@ class DeudaCarteraController extends Controller
                         'Tasa' => $tasa->Tasa
                     ]);
             }
-        } else{
+        } else {
             foreach ($tasas_diferenciadas as $tasa) {
                 PolizaDeudaTempCartera::where('User', auth()->user()->id)
                     ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
@@ -1388,7 +1417,6 @@ class DeudaCarteraController extends Controller
                 $poliza->TotalCredito = $tempRecord->TotalCredito;
                 $poliza->FechaOtorgamientoDate = $tempRecord->FechaOtorgamientoDate;
                 $poliza->save();
-
             } catch (\Exception $e) {
                 // Captura errores y los guarda en el log
                 Log::error("Error al insertar en poliza_deuda_cartera: " . $e->getMessage(), [
@@ -1454,9 +1482,9 @@ class DeudaCarteraController extends Controller
         }
 
         PolizaDeudaTempCartera::where('Axo', $anio)
-        ->where('Mes', $mes + 0)
-        ->where('User', auth()->user()->id)
-        ->where('PolizaDeuda', $request->Deuda)->delete();
+            ->where('Mes', $mes + 0)
+            ->where('User', auth()->user()->id)
+            ->where('PolizaDeuda', $request->Deuda)->delete();
 
         alert()->success('El registro de poliza ha sido ingresado correctamente');
         return redirect('polizas/deuda/' . $request->Deuda . '/edit?tab=2');
