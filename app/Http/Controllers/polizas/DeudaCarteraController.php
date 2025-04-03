@@ -211,32 +211,32 @@ class DeudaCarteraController extends Controller
 
         $excel = IOFactory::load($archivo);
 
-          // Validar estructura
-          $validator = Validator::make([], []); // Creamos un validador vacío
+        // Validar estructura
+        $validator = Validator::make([], []); // Creamos un validador vacío
 
-          // 1. Validar número de hojas
-          if ($excel->getSheetCount() > 1) {
-              $validator->errors()->add('Archivo', 'La cartera solo puede contener un solo libro de Excel (sheet)');
-              return back()->withErrors($validator);
-          }
+        // 1. Validar número de hojas
+        if ($excel->getSheetCount() > 1) {
+            $validator->errors()->add('Archivo', 'La cartera solo puede contener un solo libro de Excel (sheet)');
+            return back()->withErrors($validator);
+        }
 
-          // 2. Validar primera fila
-          $firstRow = $excel->getActiveSheet()->rangeToArray('A1:Z1')[0];
+        // 2. Validar primera fila
+        $firstRow = $excel->getActiveSheet()->rangeToArray('A1:Z1')[0];
 
-          if (!isset($firstRow[0])) {
-              $validator->errors()->add('Archivo', 'El archivo está vacío o no tiene el formato esperado');
-              return back()->withErrors($validator);
-          }
+        if (!isset($firstRow[0])) {
+            $validator->errors()->add('Archivo', 'El archivo está vacío o no tiene el formato esperado');
+            return back()->withErrors($validator);
+        }
 
-          if (trim($firstRow[0]) !== "NIT") {
-              $validator->errors()->add('Archivo', 'Error de formato del archivo, La primera columna de la primera fila debe ser "NIT"');
-              return back()->withErrors($validator);
-          }
+        if (trim($firstRow[0]) !== "NIT") {
+            $validator->errors()->add('Archivo', 'Error de formato del archivo, La primera columna de la primera fila debe ser "NIT"');
+            return back()->withErrors($validator);
+        }
 
-          if (!isset($firstRow[1])) {
-              $validator->errors()->add('Archivo', 'Error de formato del archivo, El archivo no contiene la columna DUI');
-              return back()->withErrors($validator);
-          }
+        if (!isset($firstRow[1])) {
+            $validator->errors()->add('Archivo', 'Error de formato del archivo, El archivo no contiene la columna DUI');
+            return back()->withErrors($validator);
+        }
 
 
         PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->delete();
@@ -252,6 +252,30 @@ class DeudaCarteraController extends Controller
             // Otros errores
             return back()->with('error', 'Ocurrió un error al procesar el archivo');
         }
+
+
+
+        //verificando creditos repetidos
+
+        $repetidos = PolizaDeudaTempCartera::where('User', auth()->user()->id)
+            ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+            ->groupBy('NumeroReferencia')
+            ->havingRaw('COUNT(*) > 1')
+            ->get();
+
+        $numerosRepetidos = $repetidos->isNotEmpty() ? $repetidos->pluck('NumeroReferencia') : null;
+
+        if ($numerosRepetidos) {
+            PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->delete();
+            // Convertir la colección a string para mostrarla en el error
+            $numerosStr = $numerosRepetidos->implode(', ');
+
+            $validator->errors()->add('Archivo', "Existen números de crédito repetidos: $numerosStr");
+            return back()->withErrors($validator);
+        }
+
+
+
 
 
 
