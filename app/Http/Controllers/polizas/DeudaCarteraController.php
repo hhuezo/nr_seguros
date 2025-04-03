@@ -1468,8 +1468,8 @@ class DeudaCarteraController extends Controller
                 $poliza->NoValido = $tempRecordV->NoValido;
                 $poliza->Tasa = $tempRecordV->Tasa;
                 $poliza->TotalCredito = $tempRecordV->TotalCredito;
-                $poliza->PolizaDeudaTipoCartera = $tempRecord->PolizaDeudaTipoCartera;
-                $poliza->FechaOtorgamientoDate = $tempRecord->FechaOtorgamientoDate;
+                $poliza->PolizaDeudaTipoCartera = $tempRecordV->PolizaDeudaTipoCartera;
+                $poliza->FechaOtorgamientoDate = $tempRecordV->FechaOtorgamientoDate;
                 $poliza->save();
             } catch (\Exception $e) {
                 // Captura errores y los guarda en el log
