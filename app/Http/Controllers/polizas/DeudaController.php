@@ -1405,14 +1405,15 @@ class DeudaController extends Controller
                 'InteresesMoratorios',
                 'MontoNominal',
                 'TotalCredito',
+                'Axo',
+                'Mes'
             )->where('PolizaDeuda', '=', $id)->where('PolizaDeudaDetalle', '=', 0)
-            ->orWhere('PolizaDeudaDetalle', '=', null)->groupBy('NumeroReferencia')->get();
+                ->orWhere('PolizaDeudaDetalle', '=', null)->groupBy('NumeroReferencia')->get();
 
-             //dd($clientes->take(20));
+            //dd($clientes->take(20));
 
 
             $ultimo_pago = DeudaDetalle::where('Deuda', $id)->orderBy('Id', 'desc')->first() ?? null; // Si no hay datos, asigna null
-
 
 
             $totalUltimoPago = null;
@@ -1438,10 +1439,9 @@ class DeudaController extends Controller
                 })->orderByDesc('Id')->first();
 
             //conteo por si existe tasa diferenciada
-            $count_tasas_diferencidas = PolizaDeudaTasaDiferenciada::
-                join('poliza_deuda_tipo_cartera','poliza_deuda_tipo_cartera.Id','=','poliza_deuda_tasa_diferenciada.PolizaDuedaTipoCartera')
-                ->where('poliza_deuda_tipo_cartera.PolizaDeuda',$id)
-                ->whereIn('poliza_deuda_tipo_cartera.TipoCalculo',[1,2])->count();
+            $count_tasas_diferencidas = PolizaDeudaTasaDiferenciada::join('poliza_deuda_tipo_cartera', 'poliza_deuda_tipo_cartera.Id', '=', 'poliza_deuda_tasa_diferenciada.PolizaDuedaTipoCartera')
+                ->where('poliza_deuda_tipo_cartera.PolizaDeuda', $id)
+                ->whereIn('poliza_deuda_tipo_cartera.TipoCalculo', [1, 2])->count();
 
 
             return view('polizas.deuda.edit', compact(
@@ -1449,10 +1449,8 @@ class DeudaController extends Controller
                 'totalUltimoPago',
                 'ultimaCartera',
                 'total_extrapima',
-                //'saldo',
                 'clientes',
                 'extraprimados',
-                //'ultimo_pago_fecha_final',
                 'meses',
                 'primerDia',
                 'ultimoDia',
@@ -1904,18 +1902,20 @@ class DeudaController extends Controller
 
     public function cancelar_pago(Request $request)
     {
-        // dd($request->Deuda);
-        //  dd($request->MesCancelar);
+
         try {
-            $poliza_temp = PolizaDeudaTempCartera::where('PolizaDeuda', '=', $request->Deuda)->where('User', '=', auth()->user()->id)->first();
-            $poliza = PolizaDeudaCartera::where('PolizaDeuda', '=', $request->Deuda)->where('Mes', '=', $poliza_temp->Mes)
-                ->where('Axo', '=', $poliza_temp->Axo)->where('User', '=', auth()->user()->id)
+
+            //eliminando datos de cartera
+            PolizaDeudaCartera::where('PolizaDeuda',  $request->Deuda)
+                ->where('PolizaDeudaDetalle', 0)
                 ->delete();
 
-            PolizaDeudaTempCartera::where('PolizaDeuda', '=', $request->Deuda)->delete();
-            // dd($poliza);
+            //eliminando temp
+            PolizaDeudaTempCartera::where('PolizaDeuda',  $request->Deuda)
+                ->delete();
         } catch (\Throwable $th) {
-            //throw $th;
+            alert()->error('Error al eliminar el registro');
+            return back();
         }
 
 

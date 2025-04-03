@@ -473,13 +473,8 @@
                                     <span aria-hidden="true">×</span>
                                 </button>
                                 <h4 class="modal-title">Cancelar Cobro</h4>
-
                                 <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
-                                <input type="hidden" name="MesCancelar"
-                                    value="{{ isset($ultimo_pago) ? $ultimo_pago->Mes : '' }}">
-                                <input type="hidden" name="AxoCancelar"
-                                    value="{{ isset($ultimo_pago) ? $ultimo_pago->Axo : '' }}">
-                            </div>
+                                         </div>
                             <div class="modal-body">
                                 <p>¿Esta seguro/a que desea cancelar el cobro?</p>
                             </div>
