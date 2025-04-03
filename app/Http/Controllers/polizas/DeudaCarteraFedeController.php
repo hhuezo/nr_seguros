@@ -264,7 +264,7 @@ class DeudaCarteraFedeController extends Controller
                 ->where('User', auth()->user()->id)
                 ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
                 ->groupBy('Dui')
-                ->havingRaw('SUM(TotalCredito) >= ?', [$MontoMaximoIndividual])
+                ->havingRaw('SUM(TotalCredito) > ?', [$MontoMaximoIndividual])
                 ->pluck('Dui'); // Obtiene solo los valores de la columna Dui
 
             // Realiza el update en los registros con los DUI filtrados
