@@ -746,7 +746,7 @@
                                             @endif
 
                                             @foreach ($historico_poliza as $obj)
-                                                <tr>
+                                                <tr @if($obj->TipoRenovacion == 1) style="background-color: #e8f5ee;" @endif>
                                                     <td>{{ $obj->TipoRenovacion == 1 ? 'Anual' : 'Parcial' }}</td>
                                                     <td>{{ $obj->VigenciaDesde ? date('d/m/Y', strtotime($obj->VigenciaDesde)) : '' }}
                                                     </td>
