@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use App\Models\catalogo\ConfiguracionRecibo;
 use App\Models\polizas\Deuda;
 use App\Models\polizas\DeudaDetalle;
 use Illuminate\Contracts\View\View;
@@ -33,8 +34,9 @@ class DeudaReciboExport implements FromView, WithStyles, ShouldAutoSize
         $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
         $recibo_historial = DeudaHistorialRecibo::where('PolizaDeudaDetalle', $id)->orderBy('id', 'desc')->first();
+        $configuracion = ConfiguracionRecibo::first();
 
-        return view('polizas.deuda.recibo_excel', compact('recibo_historial', 'detalle', 'deuda', 'meses'));
+        return view('polizas.deuda.recibo_excel', compact('recibo_historial', 'detalle', 'deuda', 'meses','configuracion'));
     }
 
 
