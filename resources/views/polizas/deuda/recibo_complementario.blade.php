@@ -144,11 +144,11 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($linea_credito as $obj)
+                    @foreach ($deuda_tipo_cartera as $obj)
                     <tr>
-                        <td>{{ $obj->tipoCarteras->Nombre }}</td>
-                        <td>{{ $obj->saldos->Abreviatura }}</td>
-                        <td>{{ $obj->saldos->Descripcion }}</td>
+                        <td>{{ $obj->tipo_cartera->Nombre }}</td>
+                        <td>{{ $obj->Abreviatura }}</td>
+                        <td>{{ $obj->Descripcion }}</td>
                         <td align="right">${{ number_format($obj->Total, 2, '.', ',') }}
                         </td>
                         <td align="center">
@@ -157,7 +157,7 @@
                                 <button class="btn btn-default"><i class="fa fa-upload fa-lg"></i></button> </a>
                             @else
                             <a data-target="#modal-add-{{ $obj->Id }}" data-toggle="modal">
-                            <button class="btn btn-default"><i class="fa fa-upload fa-lg"></i></button> </a>
+                                <button class="btn btn-default"><i class="fa fa-upload fa-lg"></i></button> </a>
                             @endif
 
                         </td>
@@ -180,10 +180,10 @@
                                     <div class="modal-body">
                                         <div class="form-group row">
                                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Linea de
-                                                Credito</label>
-                                            <input type="hidden" name="LineaCredito" value="{{$obj->Id}}">
+                                                Credito..</label>
+                                            <input type="hidden" name="PolizaDeudaTipoCartera" value="{{ $obj->Id }}">
                                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input type="text" class="form-control" value="{{$obj->saldos->Descripcion}}" readonly>
+                                                <input type="text" class="form-control" value="{{$obj->tipo_cartera->Nombre}}" readonly>
                                             </div>
 
                                         </div>
@@ -241,10 +241,10 @@
                                     <div class="modal-body">
                                         <div class="form-group row">
                                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Linea de
-                                                Credito</label>
-                                            <input type="hidden" name="LineaCredito" value="{{$obj->Id}}">
+                                                Credito..</label>
+                                            <input type="hidden" name="PolizaDeudaTipoCartera" value="{{ $obj->Id }}">
                                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                <input type="text" class="form-control" value="{{$obj->saldos->Descripcion}}" readonly>
+                                                <input type="text" class="form-control" value="{{$obj->tipo_cartera->Nombre}}" readonly>
                                             </div>
 
                                         </div>

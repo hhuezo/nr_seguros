@@ -91,7 +91,7 @@ class PolizaDeudaTempCarteraFedeComImport implements ToModel, /*WithStartRow,*/ 
                 'PolizaDeuda' =>  $this->PolizaDeuda,
                 'FechaInicio' =>  $this->FechaInicio,
                 'FechaFinal' =>  $this->FechaFinal,
-                'LineaCredito' => $this->credito,
+                'PolizaDeudaTipoCartera' => $this->credito,
                 'NoValido' => 1,
             ]);
         }

@@ -313,8 +313,10 @@ class DeudaCarteraFedeController extends Controller
     {
 
 
-        $credito = $request->get('LineaCredito');
+        $deuda_tipo_cartera = PolizaDeudaTipoCartera::findOrFail($request->PolizaDeudaTipoCartera);
         $deuda = Deuda::findOrFail($request->Id);
+
+        //no lleva validacion de fecha por ser complementarios
 
 
         $requisitos = $deuda->requisitos;
@@ -328,32 +330,56 @@ class DeudaCarteraFedeController extends Controller
 
 
 
+        $archivo = $request->Archivo;
+
+        $excel = IOFactory::load($archivo);
+
+        // Validar estructura
+        $validator = Validator::make([], []); // Creamos un validador vacío
+
+        // 1. Validar número de hojas
+        if ($excel->getSheetCount() > 1) {
+            $validator->errors()->add('Archivo', 'La cartera solo puede contener un solo libro de Excel (sheet)');
+            return back()->withErrors($validator);
+        }
+
+        // 2. Validar primera fila
+        $firstRow = $excel->getActiveSheet()->rangeToArray('A1:Z1')[0];
+
+        if (!isset($firstRow[0])) {
+            $validator->errors()->add('Archivo', 'El archivo está vacío o no tiene el formato esperado');
+            return back()->withErrors($validator);
+        }
+
+        if (trim($firstRow[0]) !== "NIT") {
+            $validator->errors()->add('Archivo', 'Error de formato del archivo, La primera columna de la primera fila debe ser "NIT"');
+            return back()->withErrors($validator);
+        }
+
+        if (!isset($firstRow[1])) {
+            $validator->errors()->add('Archivo', 'Error de formato del archivo, El archivo no contiene la columna DUI');
+            return back()->withErrors($validator);
+        }
         try {
-            $archivo = $request->Archivo;
 
-            $excel = IOFactory::load($archivo);
+            PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->delete();
 
-            // Verifica si hay al menos dos hojas
-            $sheetsCount = $excel->getSheetCount();
-
-            if ($sheetsCount > 1) {
-                // El archivo tiene al menos dos hojas
-                alert()->error('La cartera solo puede contener un solo libro de Excel (sheet)');
-                return back();
+            Excel::import(new PolizaDeudaTempCarteraFedeComImport($deuda->Id, $request->FechaInicio, $request->FechaFinal, $deuda_tipo_cartera->Id), $archivo);
+        } catch (Throwable $e) {
+            // Filtramos solo nuestros errores de validación
+            if (strpos($e->getMessage(), 'VALIDATION_ERROR:') === 0) {
+                return back()->with('error', str_replace('VALIDATION_ERROR: ', '', $e->getMessage()));
             }
 
-            PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('LineaCredito', '=', $credito)->delete();
-            Excel::import(new PolizaDeudaTempCarteraFedeComImport($deuda->Id, $request->FechaInicio, $request->FechaFinal, $credito), $archivo);
-        } catch (Throwable $e) {
-            alert()->error('Problema al procesar el archivo excel');
-            return back();
+            // Otros errores
+            return back()->with('error', 'Ocurrió un error al procesar el archivo');
         }
 
 
 
 
         //calculando errores de cartera
-        $cartera_temp = PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('LineaCredito', '=', $credito)->get();
+        $cartera_temp = PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('LineaCredito', '=', $deuda_tipo_cartera->Id)->get();
 
 
 
@@ -394,8 +420,6 @@ class DeudaCarteraFedeController extends Controller
                 $validador_dui = true;
             }
 
-
-            $obj->saldo_total = $obj->calculoTodalSaldo();
             $obj->update();
 
 
@@ -459,6 +483,62 @@ class DeudaCarteraFedeController extends Controller
             return view('polizas.deuda.respuesta_poliza_error', compact('data_error', 'deuda', 'credito'));
         }
 
+        //calculando edades y fechas de nacimiento
+        PolizaDeudaTempCartera::where('User', auth()->user()->id)
+            ->where('PolizaDeuda', $deuda->Id)
+            ->update([
+                'FechaNacimientoDate' => DB::raw("STR_TO_DATE(FechaNacimiento, '%d/%m/%Y')"),
+                //'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, CURDATE())"),
+                'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaFinal)"),
+                'FechaOtorgamientoDate' => DB::raw("STR_TO_DATE(FechaOtorgamiento, '%d/%m/%Y')"),
+                'EdadDesembloso' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaOtorgamientoDate)"),
+            ]);
+
+
+        //tasas diferenciadas
+        $tasas_diferenciadas = $deuda_tipo_cartera->tasa_diferenciada;
+
+        if ($deuda_tipo_cartera->TipoCalculo == 1) {
+
+            foreach ($tasas_diferenciadas as $tasa) {
+                //dd($tasa);
+                PolizaDeudaTempCartera::where('User', auth()->user()->id)
+                    ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                    ->whereBetween('FechaOtorgamientoDate', [$tasa->FechaDesde, $tasa->FechaHasta])
+                    ->update([
+                        'LineaCredito' => $tasa->LineaCredito,
+                        'Tasa' => $tasa->Tasa
+                    ]);
+            }
+        } else  if ($deuda_tipo_cartera->TipoCalculo == 2) {
+
+            foreach ($tasas_diferenciadas as $tasa) {
+                PolizaDeudaTempCartera::where('User', auth()->user()->id)
+                    ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                    ->whereBetween('EdadDesembloso', [$tasa->EdadDesde, $tasa->EdadHasta])
+                    ->update([
+                        'LineaCredito' => $tasa->LineaCredito,
+                        'Tasa' => $tasa->Tasa
+                    ]);
+            }
+        } else {
+            foreach ($tasas_diferenciadas as $tasa) {
+                PolizaDeudaTempCartera::where('User', auth()->user()->id)
+                    ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                    ->update([
+                        'LineaCredito' => $tasa->LineaCredito,
+                        'Tasa' => $deuda->Tasa
+                    ]);
+            }
+        }
+
+
+        $cartera_temp = PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->get();
+
+        foreach ($cartera_temp as $obj) {
+            $obj->TotalCredito = $obj->calculoTodalSaldo();
+            $obj->update();
+        }
 
         alert()->success('Exito', 'La cartera fue subida con exito');
 
