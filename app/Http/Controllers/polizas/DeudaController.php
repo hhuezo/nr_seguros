@@ -566,15 +566,6 @@ class DeudaController extends Controller
     }
 
 
-    public function eliminar_extraprima(Request $request)
-    {
-        $extra = PolizaDeudaExtraPrimados::findOrFail($request->IdExtraPrima)->delete();
-        alert()->success('El registro ha sido eliminado correctamente');
-        return back();
-    }
-
-
-
     public function edit($id)
     {
         //  dd("holi");
@@ -1266,6 +1257,14 @@ class DeudaController extends Controller
         $extra_primado->update();
         alert()->success('El registro de poliza ha sido modificado correctamente');
         return redirect('polizas/deuda/' . $extra_primado->PolizaDeuda . '/edit?tab=7');
+    }
+
+
+    public function eliminar_extraprima(Request $request)
+    {
+        $extra = PolizaDeudaExtraPrimados::findOrFail($request->IdExtraPrima)->delete();
+        alert()->success('El registro ha sido eliminado correctamente');
+        return back();
     }
 
     public function update(Request $request, $id)
