@@ -173,11 +173,11 @@
             </div>
             <div class="tab-pane fade " id="hoja" role="tabpanel" aria-labelledby="hoja-tab">
 
-
+                @include('polizas.vida.tab3')
             </div>
             <div class="tab-pane fade " id="pagos" role="tabpanel" aria-labelledby="pagos-tab">
 
-
+                @include('polizas.vida.tab4')
             </div>
             <div class="tab-pane fade " id="contact" role="tabpanel" aria-labelledby="contact-tab">
 

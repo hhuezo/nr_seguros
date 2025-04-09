@@ -11,6 +11,7 @@ use App\Models\catalogo\EstadoPoliza;
 use App\Models\catalogo\Plan;
 use App\Models\catalogo\Producto;
 use App\Models\catalogo\TipoCobro;
+use App\Models\polizas\Comentario;
 use App\Models\polizas\Vida;
 use App\Models\polizas\VidaCartera;
 use App\Models\polizas\VidaDetalle;
@@ -271,8 +272,6 @@ class VidaController extends Controller
     public function show(Request $request, $id)
     {
         $poliza_vida = Vida::findOrFail($id);
-        $detalle = VidaDetalle::where('Vida', $poliza_vida->Id)->get();
-        $detalle_last = VidaDetalle::where('Vida', $poliza_vida->Id)->orderByDesc('PagoAplicado')->first();
         $aseguradora = Aseguradora::where('Activo', 1)->get();
         $cliente = Cliente::where('Activo', 1)->get();
         //$tipoCartera = TipoCartera::where('Activo', 1)->get();
@@ -324,13 +323,17 @@ class VidaController extends Controller
         )->first();
 
 
+        //tab 3
 
+        $ultimo_pago = VidaDetalle::where('PolizaVida', $id)->orderBy('Id', 'desc')->first();
+        $detalle = VidaDetalle::where('PolizaVida', $id)->orderBy('Id', 'desc')->get();
+        $comentarios = Comentario::where('Id', $id)->where('Activo', '=', 1)->get();
 
         return view('polizas.vida.show', compact(
             //'bomberos',
             'poliza_vida',
             'detalle',
-            'detalle_last',
+            //'detalle_last',
             'aseguradora',
             'cliente',
             'anios',
@@ -347,7 +350,11 @@ class VidaController extends Controller
 
             //tab2
             'fechas',
-            'cartera'
+            'cartera',
+            'comentarios',
+
+            //tab3
+            'ultimo_pago',
         ));
     }
 
