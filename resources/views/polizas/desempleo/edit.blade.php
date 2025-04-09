@@ -229,6 +229,10 @@
         Swal.fire('Debe guardar los datos inicial de la poliza');
     }
     $(document).ready(function() {
+
+         //mostrar opcion en menu
+         displayOption("ul-poliza", "li-poliza-desempleo");
+
         $("#Asegurado").change(function() {
             // alert(document.getElementById('Asegurado').value);
             $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');

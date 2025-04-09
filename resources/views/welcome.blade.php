@@ -205,7 +205,7 @@
                                 <li><a><i class="fa fa-folder-open"></i> Pólizas<span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu" id="ul-poliza">
                                         <li id="li-poliza-residencia"><a href="{{ url('polizas/residencia') }}">Residencias</a></li>
-                                        <!-- <li><a href="{{ url('polizas/vida') }}">Vida</a></li>-->
+                                        <li id="li-poliza-vida"><a href="{{ url('polizas/vida') }}">Vida</a></li>
                                         <li id="li-poliza-deuda"><a href="{{ url('polizas/deuda') }}">Deuda</a></li>
                                         <li id="li-poliza-desempleo"><a href="{{ url('polizas/desempleo') }}">Desempleo</a></li>
                                     </ul>

@@ -1,247 +1,221 @@
 @extends ('welcome')
 @section('contenido')
-@include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
+    @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
 
-<div class="x_panel">
-    <div class="clearfix"></div>
-    <div class="row">
-        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
+    <div class="x_panel">
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
 
-            <div class="x_title">
-                <h2>Nuevo Poliza de Vida &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; VICO - Vida Colectivo Seguros<small></small>
-                </h2>
-                <ul class="nav navbar-right panel_toolbox">
+                <div class="x_title">
+                    <h2>Nuevo Poliza de Vida &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; VICO - Vida Colectivo Seguros<small></small>
+                    </h2>
+                    <ul class="nav navbar-right panel_toolbox">
 
-                </ul>
-                <div class="clearfix"></div>
-            </div>
-            @if (count($errors) > 0)
-            <div class="alert alert-danger">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-            @endif
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                @if (count($errors) > 0)
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
-            <div class="x_content">
-                <br />
+                <div class="x_content">
+                    <br />
 
 
-                <div class="form-horizontal" style="font-size: 12px;">
-                    <form action="{{ url('polizas/vida') }}" method="POST">
-                        @csrf
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                        
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Número de Póliza</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="NumeroPoliza" id="NumeroPoliza" type="text" value="{{ old('NumeroPoliza') }}" required>
+
+
+                    <div class="form-horizontal" style="font-size: 12px;">
+                        <form action="{{ url('polizas/vida') }}" method="POST">
+                            @csrf
+
+                            <div class="x_content" style="font-size: 12px;">
+                                <div class="col-sm-12" style="padding: 0% !important">
+                                    <!-- Número de Póliza -->
+                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                        <label class="control-label" align="right">Número de Póliza *</label>
+                                        <input class="form-control" name="NumeroPoliza" id="NumeroPoliza" type="text"
+                                            value="{{ old('NumeroPoliza') }}" required>
                                     </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Aseguradora</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <select name="Aseguradora" class="form-control select2" style="width: 100%" required>
+
+
+                                    <!-- Aseguradora -->
+                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                        <label class="control-label" align="right">Aseguradora *</label>
+                                        <select name="Aseguradora" id="Aseguradora" class="form-control select2"
+                                            style="width: 100%" required>
                                             <option value="">Seleccione...</option>
                                             @foreach ($aseguradora as $obj)
-                                            <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                                <option value="{{ $obj->Id }}"
+                                                    {{ old('Aseguradora') == $obj->Id ? 'selected' : '' }}>
+                                                    {{ $obj->Nombre }}
+                                                </option>
                                             @endforeach
                                         </select>
+                                        @error('Aseguradora')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Asegurado</label>
-                                    <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
-                                        <select name="Asegurado" id="Asegurado" class="form-control select2" style="width: 100%" required>
+
+                                    <!-- Productos -->
+                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                        <label class="control-label">Productos *</label>
+                                        <select name="Productos" id="Productos" class="form-control select2"
+                                            style="width: 100%" required>
+                                            <option value="" selected disabled>Seleccione...</option>
+                                            @foreach ($productos as $obj)
+                                                <option value="{{ $obj->Id }}"
+                                                    {{ old('Productos') == $obj->Id ? 'selected' : '' }}>
+                                                    {{ $obj->Nombre }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('Productos')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Planes -->
+                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                        <label class="control-label">Planes *</label>
+                                        <select name="Planes" id="Planes" class="form-control select2"
+                                            style="width: 100%" required>
+                                            <option value="" selected disabled>Seleccione...</option>
+                                            @foreach ($planes as $obj)
+                                                <option value="{{ $obj->Id }}"
+                                                    {{ old('Planes') == $obj->Id ? 'selected' : '' }}>
+                                                    {{ $obj->Nombre }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('Planes')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+
+
+                                    <!-- Asegurado -->
+                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                        <label class="control-label" align="right">Asegurado</label>
+                                        <select name="Asegurado" id="Asegurado" class="form-control select2"
+                                            style="width: 100%" required>
                                             <option value="">Seleccione...</option>
                                             @foreach ($cliente as $obj)
-                                            <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                                <option value="{{ $obj->Id }}"
+                                                    {{ old('Asegurado') == $obj->Id ? 'selected' : '' }}>
+                                                    {{ $obj->Nombre }}</option>
                                             @endforeach
                                         </select>
                                     </div>
-                                    <!-- <div class="col-md-1 col-lg-1 col-sm-12 col-xs-12"><i onclick="modal_cliente();" class="fa fa-plus fa-lg" style="padding-top: 60%;"></i></div> -->
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Nit</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Nit" id="Nit" type="text" value="{{ old('Nit') }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Código</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Codigo" id="Codigo" type="text" value="{{ old('Codigo') }}" onblur="get_usuarios(this.value)" required>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Grupo
-                                        Asegurado</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <textarea class="form-control" name="GrupoAsegurado" row="3" col="4" value="{{ old('GrupoAsegurado') }}" required> </textarea>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Clausulas
-                                        Especiales</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <textarea class="form-control" name="ClausulasEspeciales" row="3" col="4" value="{{ old('ClausulasEspeciales') }}"> </textarea>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Beneficios
-                                        Adicionales</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <textarea class="form-control" name="BeneficiosAdicionales" row="3" col="4" value="{{ old('BeneficiosAdicionales') }}"> </textarea>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Concepto</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <textarea class="form-control" name="Concepto" row="3" col="4" value="{{ old('Concepto') }}" required> </textarea>
-                                    </div>
-                                </div>
-                                <div id="creditos" style="display: none;">
-                                    <div class="form-group">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12">Limite Menor</label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            <input type="number" step="any" name="LimiteGrupo" id="LimiteGrupo" value="{{ old('LimiteGrupo') }}" class="form-control">
-                                        </div>
-                                    </div>
 
-                                    <div class="form-group">
-                                        <label class="control-label col-md-3 col-sm-12 col-xs-12">Limite Mayor</label>
-                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                            <input type="number" step="any" name="LimiteIndividual" id="LimiteIndividual" value="{{ old('LimiteIndividual') }}" class="form-control">
-                                        </div>
-                                    </div>
-
-                                </div>
-
-
-                            </div>
-                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vigencia
-                                        Desde</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="VigenciaDesde" type="date" value="{{ old('VigenciaDesde') }}">
-
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vigencia
-                                        Hasta</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="VigenciaHasta" type="date" value="{{ old('VigenciaHasta') }}">
+                                    <!-- Nit -->
+                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                        <label class="control-label" align="right">Nit</label>
+                                        <input class="form-control" name="Nit" id="Nit" type="text"
+                                            value="{{ old('Nit') }}" readonly>
                                     </div>
                                 </div>
 
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo
-                                        Cartera</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <select name="TipoCartera" class="form-control select2" style="width: 100%" required>
-                                            <option value="">Seleccione...</option>
-                                            @foreach ($tipoCartera as $obj)
-                                            <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
+                                <!-- Ejecutivo -->
+                                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                    <label class="control-label" align="right">Ejecutivo</label>
+                                    <select name="Ejecutivo" class="form-control select2" style="width: 100%" required>
+                                        <option value="">Seleccione...</option>
+                                        @foreach ($ejecutivo as $obj)
+                                            <option value="{{ $obj->Id }}"
+                                                {{ old('Ejecutivo') == $obj->Id ? 'selected' : '' }}>
+                                                {{ $obj->Nombre }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Vendedor</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <select name="Ejecutivo" class="form-control select2" style="width: 100%" required>
-                                            <option value="">Seleccione...</option>
-                                            @foreach ($ejecutivo as $obj)
-                                            <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Estatus</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <select name="EstadoPoliza" class="form-control select2" style="width: 100%" required>
-                                            @foreach ($estadoPoliza as $obj)
-                                            @if ($obj->Id == 1)
-                                            <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
-                                            @endif
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo de
-                                        Cobro</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <select name="TipoCobro" class="form-control select2" id="TipoCobro" style="width: 100%" required>
-                                            <option value="">Seleccione...</option>
-                                            @foreach ($tipoCobro as $obj)
-                                            <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <br>
-                                <!-- radio button -->
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">&nbsp;
-                                    </label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                            <input type="radio" name="tipoTasa" id="Mensual" value="1" checked>
-                                            <label class="control-label">Tasa Millar Mensual</label>
-                                        </div>
 
-                                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                            <input type="radio" name="tipoTasa" id="Anual" value="0">
-                                            <label class="control-label">Tasa ‰ Millar Anual</label>
-                                        </div>
+                                {{-- <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                    <label class="control-label">Saldos y Montos</label>
+                                    <select name="Saldos" class="form-control" required>
+                                        <option value="">Seleccione...</option>
+                                        @foreach ($saldos as $obj)
+                                            <option value="{{ $obj->Id }}">
+                                                {{ $obj->Abreviatura }} -
+                                                {{ $obj->Descripcion }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div> --}}
+
+                                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                    <label class="control-label" align="right">Tipo cobro</label>
+                                    <select name="TipoCobro" class="form-control" required>
+                                        @foreach ($tipoCobro as $tipo)
+                                            <option value="{{ $tipo->Id }}">{{ $tipo->Nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+
+                                <div class="col-sm-12" style="padding: 0% !important">
+
+                                    <!-- Vigencia Desde -->
+                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                        <label class="control-label" align="right">Vigencia Desde</label>
+                                        <input class="form-control" name="VigenciaDesde" type="date"
+                                            value="{{ old('VigenciaDesde') }}" required>
+                                    </div>
+
+                                    <!-- Vigencia Hasta -->
+                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                        <label class="control-label" align="right">Vigencia Hasta</label>
+                                        <input class="form-control" name="VigenciaHasta" type="date"
+                                            value="{{ old('VigenciaHasta') }}" required>
                                     </div>
                                 </div>
 
-                                <!-- <div class="form-group row">
-                                    <input type="hidden" name="Bomberos" id="Bomberos" value="{{ $bomberos }}">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Monto
-                                        Cartera
-                                    </label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="MontoCartera" id="MontoCartera" type="number" step="any" value="{{ old('MontoCartera') }}" required>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <input type="hidden" name="Bomberos" id="Bomberos" value="{{ $bomberos }}">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Multi Tarifa
-                                    </label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Multitarifa" id="Multitarifa" type="checkbox" step="any" value="{{ old('Multitarifa') }}">
-                                    </div>
-                                </div> -->
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa ‰
-                                    </label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="Tasa" type="number" id="Tasa" step="any" value="{{ old('Tasa') }}" required>
-                                    </div>
+                                <!-- Edad máxima de inscripción -->
+                                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                    <label class="control-label" align="right">Edad máxima de inscripción</label>
+                                    <input class="form-control" name="EdadMaximaInscripcion" type="number"
+                                        min="18" max="100" step="any"
+                                        value="{{ old('EdadMaximaInscripcion') }}" required>
                                 </div>
 
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa Comision
-                                        %</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="TasaComision" id="TasaComision" type="number" step="any" value="{{ old('TasaComision') }}">
-                                    </div>
+                                <!-- Edad Terminación -->
+                                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                    <label class="control-label" align="right">Edad Terminación</label>
+                                    <input class="form-control" name="EdadTerminacion" type="number" step="any"
+                                        value="{{ old('EdadTerminacion') }}" min="18" max="100" required>
                                 </div>
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tasa Descuento
-                                        %</label>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <input class="form-control" name="TasaDescuento" id="TasaDescuento" type="number" step="any" value="{{ old('TasaDescuento') }}">
-                                    </div>
+
+                                <!-- Tasa Millar Mensual -->
+                                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                    <label class="control-label" align="right">Tasa Millar Mensual</label>
+                                    <input class="form-control" name="Tasa" type="number" step="any"
+                                        value="{{ old('Tasa') }}" required>
+                                </div>
+
+                                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                    <label class="control-label" align="right">Suma asegurada</label>
+                                    <input class="form-control" name="SumaAsegurada" type="number" step="any"
+                                        required value="{{ old('SumaAsegurada') }}" min="100">
+                                </div>
+
+                                <!-- Tasa Millar Mensual -->
+                                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                    <label class="control-label" align="right">Descuento</label>
+                                    <input class="form-control" name="TasaDescuento" type="number" step="any"
+                                        value="{{ old('TasaDescuento') }}">
+                                </div>
+
+                                <!-- Concepto -->
+                                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                    <label class="control-label" align="right">Concepto</label>
+                                    <textarea class="form-control" name="Concepto" rows="3" cols="4">{{ old('Concepto') }}</textarea>
                                 </div>
                             </div>
 
@@ -251,13 +225,14 @@
                                 <div class="clearfix"></div>
                             </div>
                             <br>
+                    </div>
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="form-group" align="center">
+                            <button type="submit" class="btn btn-success">Aceptar</button>
+                            <a href="{{ url('poliza/vida') }}"><button type="button"
+                                    class="btn btn-primary">Cancelar</button></a>
                         </div>
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <div class="form-group" align="center">
-                                <button type="submit" class="btn btn-success">Aceptar</button>
-                                <a href="{{ url('poliza/vida') }}"><button type="button" class="btn btn-primary">Cancelar</button></a>
-                            </div>
-                        </div>
+                    </div>
 
                     </form>
                 </div>
@@ -266,74 +241,55 @@
 
         </div>
     </div>
-</div>
+    </div>
 
 
+    <!-- jQuery -->
+    <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
 
+            //mostrar opcion en menu
+            displayOption("ul-poliza", "li-poliza-vida");
 
-@include('catalogo.cliente.modal_poliza')
+            $("#TipoCobro").change(function() {
+                if (document.getElementById('TipoCobro').value == 1) {
+                    document.getElementById('LimiteGrupo').removeAttribute('required');
+                    document.getElementById('LimiteIndividual').removeAttribute('required');
 
+                    $("#creditos").hide();
+                } else {
 
-@include('sweetalert::alert')
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<!-- jQuery -->
-<script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
-<script type="text/javascript">
-    $(document).ready(function() {
-
-        // if (document.getElementById('Multitarifa').checked == true) {
-        //     $('#Tasa').attr('readonly');
-        //     $('#Tasa').removeAttr('required');
-        // } else {
-        //     $('#Tasa').removeAttr('readonly');
-        //     $('#Tasa').attr('required');
-        // }
-
-        $("#TipoCobro").change(function() {
-            if (document.getElementById('TipoCobro').value == 1) {
-                document.getElementById('LimiteGrupo').removeAttribute('required');
-                document.getElementById('LimiteIndividual').removeAttribute('required');
-
-                $("#creditos").hide();
-            } else {
-             
-                $('#creditos').show();
-                $('#LimiteGrupo').attr('required', 'required');
-                $('#LimiteIndividual').attr('required', 'required');
-            }
-        })
-
-        $("#Asegurado").change(function() {
-            // alert(document.getElementById('Asegurado').value);
-            $('#response').html('<div><img src="{{ url(' / img / ajax - loader.gif ') }}"/></div>');
-            var parametros = {
-                "Cliente": document.getElementById('Asegurado').value
-            };
-            $.ajax({
-                type: "get",
-                //ruta para obtener el horario del doctor
-                url: "{{ url('get_cliente') }}",
-                data: parametros,
-                success: function(data) {
-                    console.log(data);
-                    document.getElementById('Nit').value = data.Nit;
-                    if (data.TipoContribuyente == 1) {
-                        document.getElementById('Retencion').setAttribute("readonly", true);
-                        document.getElementById('Retencion').value = 0;
-                        calculoCCF();
-                    }
-
-
+                    $('#creditos').show();
+                    $('#LimiteGrupo').attr('required', 'required');
+                    $('#LimiteIndividual').attr('required', 'required');
                 }
+            })
+
+            $("#Asegurado").change(function() {
+                // alert(document.getElementById('Asegurado').value);
+                $('#response').html('<div><img src="{{ url(' / img / ajax - loader.gif ') }}"/></div>');
+                var parametros = {
+                    "Cliente": document.getElementById('Asegurado').value
+                };
+                $.ajax({
+                    type: "get",
+                    //ruta para obtener el horario del doctor
+                    url: "{{ url('get_cliente') }}",
+                    data: parametros,
+                    success: function(data) {
+                        console.log(data);
+                        document.getElementById('Nit').value = data.Nit;
+                        if (data.TipoContribuyente == 1) {
+                            document.getElementById('Retencion').setAttribute("readonly", true);
+                            document.getElementById('Retencion').value = 0;
+                        }
+
+
+                    }
+                });
             });
+
         });
-
-    });
-
-    function modal_cliente() {
-        $('#modal_cliente').modal('show');
-    }
-</script>
+    </script>
 @endsection

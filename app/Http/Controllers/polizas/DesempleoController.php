@@ -61,9 +61,9 @@ class DesempleoController extends Controller
     public function create()
     {
 
-        $tipos_contribuyente = TipoContribuyente::get();
-        $rutas = Ruta::where('Activo', '=', 1)->get();
-        $ubicaciones_cobro = UbicacionCobro::where('Activo', '=', 1)->get();
+        // $tipos_contribuyente = TipoContribuyente::get();
+        // $rutas = Ruta::where('Activo', '=', 1)->get();
+        // $ubicaciones_cobro = UbicacionCobro::where('Activo', '=', 1)->get();
 
 
         $productos = Producto::where('Activo', 1)->get();
@@ -86,9 +86,9 @@ class DesempleoController extends Controller
             'estadoPoliza',
             'tipoCobro',
             'ejecutivo',
-            'tipos_contribuyente',
-            'rutas',
-            'ubicaciones_cobro',
+            // 'tipos_contribuyente',
+            // 'rutas',
+            // 'ubicaciones_cobro',
             'saldos'
         ));
     }
@@ -194,160 +194,160 @@ class DesempleoController extends Controller
 
     public function show(Request $request, $id)
     {
-        // try {
+        try {
 
-        $tab = $request->tab ?: 1;
+            $tab = $request->tab ?: 1;
 
-        // Buscar la póliza de desempleo por su ID
-        $desempleo = Desempleo::findOrFail($id);
-        $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+            // Buscar la póliza de desempleo por su ID
+            $desempleo = Desempleo::findOrFail($id);
+            $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
-        $fechaInicio = Carbon::now()->subMonth()->startOfMonth()->toDateString();
-        $fechaFinal = Carbon::now()->startOfMonth()->toDateString();
+            $fechaInicio = Carbon::now()->subMonth()->startOfMonth()->toDateString();
+            $fechaFinal = Carbon::now()->startOfMonth()->toDateString();
 
-        // Extraer el mes y el año de $fechaFinal
-        $mes = Carbon::parse($fechaFinal)->month;
-        $anioSeleccionado = Carbon::parse($fechaFinal)->year;
+            // Extraer el mes y el año de $fechaFinal
+            $mes = Carbon::parse($fechaFinal)->month;
+            $anioSeleccionado = Carbon::parse($fechaFinal)->year;
 
-        // Fechas de ejemplo
-        $vigenciaDesde = Carbon::parse($desempleo->VigenciaDesde);
-        $vigenciaHasta = Carbon::parse($desempleo->VigenciaHasta);
+            // Fechas de ejemplo
+            $vigenciaDesde = Carbon::parse($desempleo->VigenciaDesde);
+            $vigenciaHasta = Carbon::parse($desempleo->VigenciaHasta);
 
-        $anios = [];
+            $anios = [];
 
-        for ($anio = $vigenciaDesde->year; $anio <= $vigenciaHasta->year; $anio++) {
-            $anios[] = $anio;
+            for ($anio = $vigenciaDesde->year; $anio <= $vigenciaHasta->year; $anio++) {
+                $anios[] = $anio;
+            }
+
+
+            //seccion para guardar pago
+            $fechas = DesempleoCartera::select('Mes', 'Axo', 'FechaInicio', 'FechaFinal')
+                ->where('PolizaDesempleo', '=', $id)
+                ->orderByDesc('Id')->first();
+
+            $cartera = DesempleoCartera::where('PolizaDesempleo', '=', $id)
+                ->where('PolizaDesempleoDetalle', null)
+                ->select(
+                    DB::raw("IFNULL(sum(MontoOtorgado), '0.00') as MontoOtorgado"),
+                    DB::raw("IFNULL(sum(SaldoCapital), '0.00') as SaldoCapital"),
+                    DB::raw("IFNULL(sum(Intereses), '0.00') as Intereses"),
+                    DB::raw("IFNULL(sum(MontoNominal), '0.00') as MontoNominal"),
+                    DB::raw("IFNULL(sum(InteresesCovid), '0.00') as InteresesCovid"),
+                    DB::raw("IFNULL(sum(InteresesMoratorios), '0.00') as InteresesMoratorios")
+                )->first();
+
+            $saldoCapital = 0.00;
+            $intereses = 0.00;
+            $montoNominal = 0.00;
+            $interesesCovid = 0.00;
+            $interesesMoratorios = 0.00;
+            $total = 0;
+
+            if ($desempleo->Saldos == 1) {
+                $total = $cartera->SaldoCapital;
+                $saldoCapital = $cartera->SaldoCapital;
+            } else if ($desempleo->Saldos == 2) {
+                $total = $cartera->SaldoCapital + $cartera->Intereses;
+                $saldoCapital = $cartera->SaldoCapital;
+                $intereses = $cartera->Intereses;
+            } else if ($desempleo->Saldos == 3) {
+                $total = $cartera->SaldoCapital + $cartera->Intereses + $cartera->InteresesCovid;
+                $saldoCapital = $cartera->SaldoCapital;
+                $intereses = $cartera->Intereses;
+                $interesesCovid = $cartera->InteresesCovid;
+            } else if ($desempleo->Saldos == 4) {
+                $total = $cartera->SaldoCapital + $cartera->Intereses + $cartera->InteresesCovid + $cartera->InteresesMoratorios;
+                $saldoCapital = $cartera->SaldoCapital;
+                $intereses = $cartera->Intereses;
+                $interesesCovid = $cartera->InteresesCovid;
+                $interesesMoratorios = $cartera->interesesMoratorios;
+            } else if ($desempleo->Saldos == 5) {
+                $total = $cartera->MontoNominal;
+                $MontoNominal = $cartera->MontoNominal;
+            } else if ($desempleo->Saldos == 6) {
+                $total = $cartera->MontoOtorgado;
+                $MontoOtorgado = $cartera->MontoOtorgado;
+            }
+
+
+            $total = $total ?? 0;
+
+            // Calcular el subtotal
+            $subtotal = $total * ($desempleo->Tasa ?? 0);
+
+            // Asegurar que $extra_prima tenga un valor predeterminado de 0 si es null
+            $extraPrima =  0;
+
+            // Calcular el descuento
+            $descuento = ($subtotal + $extraPrima) * (($desempleo->Descuento ?? 0) / 100);
+
+            // Calcular la prima a cobrar
+            $primaCobrar = ($subtotal + $extraPrima - $descuento) ?? 0;
+
+            $comisionIva = ($desempleo->ComisionIva == 1)  ? round(($desempleo->TasaComision ?? 0) / 1.13, 2)  : ($desempleo->TasaComision ?? 0);
+
+            $detalle = DesempleoDetalle::where('Desempleo', $desempleo->Id)->orderBy('Id', 'desc')->get();
+
+            $tipo_contribuyente = $desempleo->cliente->TipoContribuyente;
+            $retencion_comision = 0;
+            $valor_comision = $primaCobrar * ((float) ($desempleo->TasaComision ?? 0) / 100);
+            if ($tipo_contribuyente != 1) {
+                $retencion_comision = (float) $valor_comision * 0.01;
+            }
+            $iva_comision = $valor_comision * 0.13;
+            $sub_total_ccf = $valor_comision + $iva_comision;
+            $comision_ccf = $sub_total_ccf - $retencion_comision;
+            $liquidoApagar = $primaCobrar - $comision_ccf;
+            $prima_descontada = ($subtotal + $extraPrima) - $descuento;
+            $comentarios = Comentario::where('Desempleo', $desempleo->Id)->where('Activo', '=', 1)->get();
+            $ultimo_pago = DesempleoDetalle::where('Desempleo', $desempleo->Id)->where('Activo', 1) //->where('PagoAplicado', '<>', null)
+                ->orderBy('Id', 'desc')->first();
+
+            $data = [
+                "saldoCapital" => $saldoCapital,
+                "intereses" => $intereses,
+                "montoNominal" => $montoNominal,
+                "interesesCovid" => $interesesCovid,
+                "interesesMoratorios" => $interesesMoratorios,
+                "total" => $total,
+                "primaPorPagar" => $subtotal,
+                "descuento" => $descuento,
+                "extra_prima" => $extraPrima,
+                "primaCobrar" => $primaCobrar,
+                "tasaComision" => $desempleo->TasaComision,
+                "valorComision" => $valor_comision,
+                "ivaComision" => $iva_comision,
+                "subTotalCcf" => $sub_total_ccf,
+                "retencionComision" => $retencion_comision,
+                "comisionCcf" => $comision_ccf,
+                "liquidoApagar" => $liquidoApagar,
+                "primaDescontada" => $prima_descontada
+
+            ];
+
+
+            //dd($detalle);
+
+            // Retornar la vista con los datos de la póliza
+            return view('polizas.desempleo.show', compact(
+                'desempleo',
+                'data',
+                'tab',
+                'meses',
+                'fechaInicio',
+                'fechaFinal',
+                'mes',
+                'anios',
+                'anioSeleccionado',
+                'fechas',
+                'detalle',
+                'comentarios',
+                'ultimo_pago'
+            ));
+        } catch (\Exception $e) {
+            alert()->error('No se pudo encontrar la póliza de desempleo solicitada.');
+            return back();
         }
-
-
-        //seccion para guardar pago
-        $fechas = DesempleoCartera::select('Mes', 'Axo', 'FechaInicio', 'FechaFinal')
-            ->where('PolizaDesempleo', '=', $id)
-            ->orderByDesc('Id')->first();
-
-        $cartera = DesempleoCartera::where('PolizaDesempleo', '=', $id)
-            ->where('PolizaDesempleoDetalle', null)
-            ->select(
-                DB::raw("IFNULL(sum(MontoOtorgado), '0.00') as MontoOtorgado"),
-                DB::raw("IFNULL(sum(SaldoCapital), '0.00') as SaldoCapital"),
-                DB::raw("IFNULL(sum(Intereses), '0.00') as Intereses"),
-                DB::raw("IFNULL(sum(MontoNominal), '0.00') as MontoNominal"),
-                DB::raw("IFNULL(sum(InteresesCovid), '0.00') as InteresesCovid"),
-                DB::raw("IFNULL(sum(InteresesMoratorios), '0.00') as InteresesMoratorios")
-            )->first();
-
-        $saldoCapital = 0.00;
-        $intereses = 0.00;
-        $montoNominal = 0.00;
-        $interesesCovid = 0.00;
-        $interesesMoratorios = 0.00;
-        $total = 0;
-
-        if ($desempleo->Saldos == 1) {
-            $total = $cartera->SaldoCapital;
-            $saldoCapital = $cartera->SaldoCapital;
-        } else if ($desempleo->Saldos == 2) {
-            $total = $cartera->SaldoCapital + $cartera->Intereses;
-            $saldoCapital = $cartera->SaldoCapital;
-            $intereses = $cartera->Intereses;
-        } else if ($desempleo->Saldos == 3) {
-            $total = $cartera->SaldoCapital + $cartera->Intereses + $cartera->InteresesCovid;
-            $saldoCapital = $cartera->SaldoCapital;
-            $intereses = $cartera->Intereses;
-            $interesesCovid = $cartera->InteresesCovid;
-        } else if ($desempleo->Saldos == 4) {
-            $total = $cartera->SaldoCapital + $cartera->Intereses + $cartera->InteresesCovid + $cartera->InteresesMoratorios;
-            $saldoCapital = $cartera->SaldoCapital;
-            $intereses = $cartera->Intereses;
-            $interesesCovid = $cartera->InteresesCovid;
-            $interesesMoratorios = $cartera->interesesMoratorios;
-        } else if ($desempleo->Saldos == 5) {
-            $total = $cartera->MontoNominal;
-            $MontoNominal = $cartera->MontoNominal;
-        } else if ($desempleo->Saldos == 6) {
-            $total = $cartera->MontoOtorgado;
-            $MontoOtorgado = $cartera->MontoOtorgado;
-        }
-
-
-        $total = $total ?? 0;
-
-        // Calcular el subtotal
-        $subtotal = $total * ($desempleo->Tasa ?? 0);
-
-        // Asegurar que $extra_prima tenga un valor predeterminado de 0 si es null
-        $extraPrima =  0;
-
-        // Calcular el descuento
-        $descuento = ($subtotal + $extraPrima) * (($desempleo->Descuento ?? 0) / 100);
-
-        // Calcular la prima a cobrar
-        $primaCobrar = ($subtotal + $extraPrima - $descuento) ?? 0;
-
-        $comisionIva = ($desempleo->ComisionIva == 1)  ? round(($desempleo->TasaComision ?? 0) / 1.13, 2)  : ($desempleo->TasaComision ?? 0);
-
-        $detalle = DesempleoDetalle::where('Desempleo', $desempleo->Id)->orderBy('Id', 'desc')->get();
-
-        $tipo_contribuyente = $desempleo->cliente->TipoContribuyente;
-        $retencion_comision = 0;
-        $valor_comision = $primaCobrar * ((float) ($desempleo->TasaComision ?? 0) / 100);
-        if ($tipo_contribuyente != 1) {
-            $retencion_comision = (float) $valor_comision * 0.01;
-        }
-        $iva_comision = $valor_comision * 0.13;
-        $sub_total_ccf = $valor_comision + $iva_comision;
-        $comision_ccf = $sub_total_ccf - $retencion_comision;
-        $liquidoApagar = $primaCobrar - $comision_ccf;
-        $prima_descontada = ($subtotal + $extraPrima) - $descuento;
-        $comentarios = Comentario::where('Desempleo', $desempleo->Id)->where('Activo', '=', 1)->get();
-        $ultimo_pago = DesempleoDetalle::where('Desempleo', $desempleo->Id)->where('Activo', 1) //->where('PagoAplicado', '<>', null)
-            ->orderBy('Id', 'desc')->first();
-
-        $data = [
-            "saldoCapital" => $saldoCapital,
-            "intereses" => $intereses,
-            "montoNominal" => $montoNominal,
-            "interesesCovid" => $interesesCovid,
-            "interesesMoratorios" => $interesesMoratorios,
-            "total" => $total,
-            "primaPorPagar" => $subtotal,
-            "descuento" => $descuento,
-            "extra_prima" => $extraPrima,
-            "primaCobrar" => $primaCobrar,
-            "tasaComision" => $desempleo->TasaComision,
-            "valorComision" => $valor_comision,
-            "ivaComision" => $iva_comision,
-            "subTotalCcf" => $sub_total_ccf,
-            "retencionComision" => $retencion_comision,
-            "comisionCcf" => $comision_ccf,
-            "liquidoApagar" => $liquidoApagar,
-            "primaDescontada" => $prima_descontada
-
-        ];
-
-
-        //dd($detalle);
-
-        // Retornar la vista con los datos de la póliza
-        return view('polizas.desempleo.show', compact(
-            'desempleo',
-            'data',
-            'tab',
-            'meses',
-            'fechaInicio',
-            'fechaFinal',
-            'mes',
-            'anios',
-            'anioSeleccionado',
-            'fechas',
-            'detalle',
-            'comentarios',
-            'ultimo_pago'
-        ));
-        // } catch (\Exception $e) {
-        //     alert()->error('No se pudo encontrar la póliza de desempleo solicitada.');
-        //     return back();
-        // }
     }
 
     public function recibo_pago($id, Request $request)
@@ -366,7 +366,7 @@ class DesempleoController extends Controller
 
         $recibo_historial = $this->save_recibo($detalle, $desempleo);
         $configuracion = ConfiguracionRecibo::first();
-        $pdf = \PDF::loadView('polizas.desempleo.recibo', compact('configuracion','recibo_historial', 'detalle', 'desempleo', 'meses'))->setWarnings(false)->setPaper('letter');
+        $pdf = \PDF::loadView('polizas.desempleo.recibo', compact('configuracion', 'recibo_historial', 'detalle', 'desempleo', 'meses'))->setWarnings(false)->setPaper('letter');
         return $pdf->stream('Recibo.pdf');
 
         //  return back();
@@ -438,7 +438,7 @@ class DesempleoController extends Controller
 
             $recibo_historial = $this->save_recibo($detalle, $desempleo);
             $configuracion = ConfiguracionRecibo::first();
-            $pdf = \PDF::loadView('polizas.desempleo.recibo', compact('configuracion','recibo_historial', 'detalle', 'desempleo', 'meses'))->setWarnings(false)->setPaper('letter');
+            $pdf = \PDF::loadView('polizas.desempleo.recibo', compact('configuracion', 'recibo_historial', 'detalle', 'desempleo', 'meses'))->setWarnings(false)->setPaper('letter');
             return $pdf->stream('Recibo.pdf');
 
             return back();
@@ -531,7 +531,7 @@ class DesempleoController extends Controller
         }*/
 
         $configuracion = ConfiguracionRecibo::first();
-        $pdf = \PDF::loadView('polizas.desempleo.recibo', compact('configuracion','recibo_historial', 'detalle', 'desempleo', 'meses', 'exportar'))->setWarnings(false)->setPaper('letter');
+        $pdf = \PDF::loadView('polizas.desempleo.recibo', compact('configuracion', 'recibo_historial', 'detalle', 'desempleo', 'meses', 'exportar'))->setWarnings(false)->setPaper('letter');
         //  dd($detalle);
         return $pdf->stream('Recibos.pdf');
     }
@@ -551,7 +551,7 @@ class DesempleoController extends Controller
         //dd($recibo_historial);
         $configuracion = ConfiguracionRecibo::first();
 
-        return view('polizas.desempleo.recibo_edit', compact('configuracion','recibo_historial', 'meses'));
+        return view('polizas.desempleo.recibo_edit', compact('configuracion', 'recibo_historial', 'meses'));
     }
 
     public function get_recibo_update(Request $request)
@@ -711,7 +711,7 @@ class DesempleoController extends Controller
 
     public function create_pago(Request $request, $id)
     {
-        // try {
+        try {
         $request->validate([
             'Axo' => 'required|integer',
             'Mes' => 'required|integer|between:1,12',
@@ -738,9 +738,6 @@ class DesempleoController extends Controller
         ]);
 
         $desempleo = Desempleo::findOrFail($id);
-
-
-
 
 
         $archivo = $request->Archivo;
@@ -923,12 +920,11 @@ class DesempleoController extends Controller
             ->select('poliza_desempleo_cartera_temp.*') // Selecciona columnas de la tabla principal
             ->get();
 
-        $total = DesempleoCarteraTemp::where('User', auth()->user()->id)->sum('SaldoTotalTotal');
+        $total = DesempleoCarteraTemp::where('PolizaDesempleo', $id)->sum('SaldoTotalTotal');
         //recibos tabla de configuracion
-       
 
-        $temp = DesempleoCarteraTemp::where('User', auth()->user()->id)
-            ->where('PolizaDesempleo', $id)->get();
+
+        $temp = DesempleoCarteraTemp::where('PolizaDesempleo', $id)->get();
         $mesAnteriorString = $axoAnterior . '-' . $mesAnterior;
         //calcular rehabilitados
         $referenciasAnteriores = DB::table('poliza_desempleo_cartera')
@@ -956,13 +952,13 @@ class DesempleoController extends Controller
             }
         }
 
-        $registros_rehabilitados = DesempleoCarteraTemp::where('User', auth()->user()->id)->where('PolizaDesempleo', $id)->where('Rehabilitado',1)->get();
+        $registros_rehabilitados = DesempleoCarteraTemp::where('User', auth()->user()->id)->where('PolizaDesempleo', $id)->where('Rehabilitado', 1)->get();
 
-        return view('polizas.desempleo.respuesta_poliza', compact('total', 'desempleo', 'poliza_edad_maxima', 'registros_rehabilitados','registros_eliminados', 'nuevos_registros', 'axoActual', 'mesActual'));
-        // } catch (\Exception $e) {
-        //     // Capturar cualquier excepción y retornar un mensaje de error
-        //     return back()->with('error', 'Ocurrió un error al crear la póliza de desempleo: ' . $e->getMessage());
-        // }
+        return view('polizas.desempleo.respuesta_poliza', compact('total', 'desempleo', 'poliza_edad_maxima', 'registros_rehabilitados', 'registros_eliminados', 'nuevos_registros', 'axoActual', 'mesActual'));
+        } catch (\Exception $e) {
+            // Capturar cualquier excepción y retornar un mensaje de error
+            return back()->with('error', 'Ocurrió un error al crear la póliza de desempleo: ' . $e->getMessage());
+        }
     }
 
     public function store_poliza(Request $request, $id)

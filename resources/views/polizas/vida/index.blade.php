@@ -21,34 +21,30 @@
                 <table id="datatable" class="table table-striped table-bordered">
                     <thead>
                         <tr>
+                            <th>Número Póliza</th>
                             <th>Asegurado</th>
-                            <th>Poliza</th>
-                            <th>Asegurada</th>
-                            <th>Activo</th>
+                            <th>Aseguradora</th>
+                            <th>Ejecutivo</th>
+                            <th>Estado</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($vida as $obj)
                             <tr>
-                                <td>{{ $obj->clientes->Nombre }}</td>
                                 <td>{{ $obj->NumeroPoliza }}</td>
-                                <td>{{ $obj->aseguradoras->Nombre }}</td>
-                                @if ($obj->Activo == 1)
-                                    <td align="center"><input type="checkbox" checked></td>
-                                @else
-                                    <td align="center"><input type="checkbox"></td>
-                                @endif
-                                
+                                <td>{{ $obj->cliente->Nombre ?? '' }}</td>
+                                <td>{{ $obj->aseguradora->Nombre ?? '' }}</td>
+                                <td>{{ $obj->ejecutivo->Nombre ?? '' }}</td>
+                                <td>{{ $obj->estadoPoliza->Nombre ?? '' }}</td>
+
                                 <td align="center">
 
                                     @can('edit users')
-                                        <a href="{{ url('polizas/vida') }}/{{ $obj->Id }}/edit"
+                                        <a href="{{ url('polizas/vida') }}/{{ $obj->Id }}"
                                             class="on-default edit-row">
                                             <i class="fa fa-pencil fa-lg"></i></a>
-                                    @endcan
-                                    &nbsp;&nbsp;<a href="{{ url('polizas/vida') }}/{{ $obj->Id }}/renovar"
-                                            class="on-default edit-row"><i class="fa fa-refresh fa-lg"></i></a>
+                                            @endcan
 
                                     @can('delete users')
                                         &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}"

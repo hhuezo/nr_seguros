@@ -22,7 +22,7 @@
         }
 </style>
 <div role="main">
-    <div id="loading-overlay">  
+    <div id="loading-overlay">
         <img src="{{ asset('img/ajax-loader.gif') }}" alt="Loading..." />
     </div>
 
@@ -43,7 +43,7 @@
 
                     <div class="x_content">
                         <div class="col-md-12 col-sm-12 ">
-                            <table class="table table-striped" id="table1">
+                            <table class="table table-striped">
                                 <thead>
                                     <tr>
                                         <th>Abreviatura</th>
@@ -103,7 +103,7 @@
                                             <input type="hidden" name="AxoAnterior" value="{{ $axoAnterior }}"> --}}
 
 
-                                            <button id="btnGuardarCartera" type="submit" class="btn btn-primary" 
+                                            <button id="btnGuardarCartera" type="submit" class="btn btn-primary"
                                                 disabled>
                                                 Guardar en cartera
                                             </button>
