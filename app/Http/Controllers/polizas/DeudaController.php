@@ -682,6 +682,7 @@ class DeudaController extends Controller
             $dataPago = collect([]);
 
 
+
             foreach ($dataPagoTemp as $item) {
 
                 //dd($item);
@@ -698,7 +699,7 @@ class DeudaController extends Controller
                         COALESCE(SUM(MontoNominal), 0) as MontoNominal,
                         COALESCE(SUM(TotalCredito), 0) as TotalCredito
                     ')
-                        ->where('PolizaDeudaDetalle', 0)
+                        ->where('PolizaDeudaDetalle', null)
                         ->where('PolizaDeuda', $id)
                         ->where('PolizaDeudaTipoCartera', $item['PolizaDuedaTipoCartera'])
                         ->where('LineaCredito', $item['LineaCredito'])
@@ -730,7 +731,7 @@ class DeudaController extends Controller
                             COALESCE(SUM(MontoNominal), 0) as MontoNominal,
                             COALESCE(SUM(TotalCredito), 0) as TotalCredito
                         ')
-                        ->where('PolizaDeudaDetalle', 0)
+                        ->where('PolizaDeudaDetalle', null)
                         ->where('PolizaDeuda', $id)
                         ->where('PolizaDeudaTipoCartera', $item['PolizaDuedaTipoCartera'])
                         ->where('LineaCredito', $item['LineaCredito'])
@@ -749,6 +750,7 @@ class DeudaController extends Controller
                         ? $item['TotalCredito'] * $item['Tasa'] : 0;
 
                     $dataPago->push($item);
+
                 } else {
                     $total = DB::table('poliza_deuda_cartera')
                         ->selectRaw('
@@ -760,7 +762,7 @@ class DeudaController extends Controller
                     COALESCE(SUM(MontoNominal), 0) as MontoNominal,
                     COALESCE(SUM(TotalCredito), 0) as TotalCredito
                 ')
-                        ->where('PolizaDeudaDetalle', 0)
+                        ->where('PolizaDeudaDetalle', null)
                         ->where('PolizaDeuda', $id)
                         ->where('PolizaDeudaTipoCartera', $item['PolizaDuedaTipoCartera'])
                         ->where('LineaCredito', $item['LineaCredito'])
@@ -781,6 +783,7 @@ class DeudaController extends Controller
                     $dataPago->push($item);
                 }
             }
+
 
             $polizas_vida = Vida::get();
             $polizas_desempleo = Desempleo::get();
@@ -866,7 +869,7 @@ class DeudaController extends Controller
                 'NumeroReferencia',
                 'MontoOtorgado',
                 'SaldoCapital'
-            )->where('PolizaDeudaDetalle', '=', 0);
+            )->where('PolizaDeudaDetalle',null);
 
             // Verificar si $array_dui tiene datos antes de agregar la condición whereNotIn
             if (!empty($array_dui)) {
@@ -1366,7 +1369,7 @@ class DeudaController extends Controller
     {
         // dd($request->deuda_id);
 
-        PolizaDeudaCartera::where('PolizaDeuda', $request->deuda_id)->where('PolizaDeudaDetalle', 0)->delete();
+        PolizaDeudaCartera::where('PolizaDeuda', $request->deuda_id)->where('PolizaDeudaDetalle',null)->delete();
 
         PolizaDeudaTempCartera::where('PolizaDeuda', $request->deuda_id)->delete();
         return redirect('polizas/deuda/' . $request->deuda_id . '/edit');
