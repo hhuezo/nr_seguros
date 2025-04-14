@@ -72,7 +72,7 @@ class Vida extends Model
 
     public function tipoCarteras()
     {
-        return $this->belongsTo('App\Models\catalogo\TipoCartera', 'TipoCartera', 'Id');
+        return $this->belongsTo(VidaTipoCartera::class, 'TipoCartera', 'Id');
     }
 
     public function ejecutivo()
@@ -87,5 +87,10 @@ class Vida extends Model
     public function tipoCobro()
     {
         return $this->belongsTo(TipoCobro::class, 'TipoCobro', 'Id');
+    }
+
+    public function vida_tipos_cartera()
+    {
+        return $this->hasMany(VidaTipoCartera::class, 'PolizaVida', 'Id');
     }
 }

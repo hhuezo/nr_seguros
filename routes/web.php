@@ -24,6 +24,7 @@ use App\Http\Controllers\catalogo\PerfilController;
 use App\Http\Controllers\catalogo\PlanController;
 use App\Http\Controllers\catalogo\ProductoController;
 use App\Http\Controllers\catalogo\RutaController;
+use App\Http\Controllers\catalogo\TipoCarteraVidaController;
 use App\Http\Controllers\catalogo\TipoCobroController;
 use App\Http\Controllers\polizas\DesempleoController;
 use App\Http\Controllers\polizas\DeudaCarteraController;
@@ -34,6 +35,7 @@ use App\Http\Controllers\polizas\DeudaTasaDiferenciadaController;
 use App\Http\Controllers\polizas\VidaController;
 use App\Http\Controllers\polizas\ResidenciaController;
 use App\Http\Controllers\polizas\ValidacionCarteraController;
+use App\Http\Controllers\polizas\VidaTasaDiferenciadaController;
 use App\Http\Controllers\seguridad\PermissionController;
 use App\Http\Controllers\seguridad\RoleController;
 
@@ -335,11 +337,24 @@ Route::middleware(['auth'])->group(function () {
     Route::post('polizas/vida/agregar_no_valido/{id}', [VidaController::class, 'agregar_no_valido']);
     Route::get('polizas/vida/get_no_valido/{id}', [VidaController::class, 'get_no_valido']);
     Route::post('polizas/vida/store_poliza/{id}', [VidaController::class, 'store_poliza']);
+    Route::get('polizas/vida/tasas/{id}',[VidaController::class,'tasas']);
+    Route::post('finalizar_configuracion_vida', [VidaController::class, 'finalizar_configuracion']);
 
+    
+    Route::POST('polizas/vida/delete_tasa_diferenciada', [VidaTasaDiferenciadaController::class, 'destroy']);
+    Route::get('polizas/vida/tasa_diferenciada/{id}', [VidaTasaDiferenciadaController::class, 'show']);
+    Route::post('polizas/vida/tasa_diferenciada', [VidaTasaDiferenciadaController::class, 'store'])->name('tasa_diferenciada_vida.store');
+    Route::put('polizas/vida/tasa_diferenciada/{id}', [VidaTasaDiferenciadaController::class, 'update']);
+
+    Route::post('polizas/vida/agregar_tipo_cartera/{id}', [VidaTasaDiferenciadaController::class, 'agregar_tipo_cartera']);
+    Route::post('polizas/vida/delete_tipo_cartera', [VidaTasaDiferenciadaController::class, 'delete_tipo_cartera']);
+    Route::put('polizas/vida/update_tipo_cartera/{id}', [VidaTasaDiferenciadaController::class, 'update_tipo_cartera']);
 
     Route::get('get_cliente', [VidaController::class, 'get_cliente']);
 
     Route::resource('polizas/vida', VidaController::class);
+
+    Route::resource('catalogo/tipo_cartera_vida', TipoCarteraVidaController::class);
     // Route::post('polizas/vida/edit_pago', [VidaController::class, 'edit_pago']);
     // Route::get('polizas/vida/get_pago/{id}', [VidaController::class, 'get_pago']);
 

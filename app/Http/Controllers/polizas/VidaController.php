@@ -8,6 +8,7 @@ use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\Cliente;
 use App\Models\catalogo\Ejecutivo;
 use App\Models\catalogo\EstadoPoliza;
+use App\Models\catalogo\Perfil;
 use App\Models\catalogo\Plan;
 use App\Models\catalogo\Producto;
 use App\Models\catalogo\TipoCobro;
@@ -15,6 +16,7 @@ use App\Models\polizas\Comentario;
 use App\Models\polizas\Vida;
 use App\Models\polizas\VidaCartera;
 use App\Models\polizas\VidaDetalle;
+use App\Models\polizas\VidaTipoCartera;
 use App\Models\polizas\VidaUsuario;
 use App\Models\temp\VidaCarteraTemp;
 use Carbon\Carbon;
@@ -122,7 +124,8 @@ class VidaController extends Controller
             DB::commit();
 
             alert()->success('El registro ha sido creado correctamente');
-            return back();
+            //return back();
+            return redirect('polizas/vida/' . $vida->Id.'/edit');
         } catch (ValidationException $e) {
             // Esto captura específicamente los errores de validación
             return back()
@@ -143,6 +146,85 @@ class VidaController extends Controller
                 ->withInput();
         }
     }
+
+    public function edit($id)
+    {
+        $vida = Vida::findOrFail($id);
+
+
+        if (!session()->has('tab')) {
+            session(['tab' => 2]);
+        }
+
+        $productos = Producto::where('Activo', 1)->get();
+        $planes = Plan::where('Activo', 1)->get();
+        $aseguradora = Aseguradora::where('Activo', 1)->get();
+        $cliente = Cliente::where('Activo', 1)->get();
+        $tipoCobro = TipoCobro::where('Activo', 1)->get();
+        $ejecutivo = Ejecutivo::where('Activo', 1)->get();
+        $tiposCartera = VidaTipoCartera::get();
+        // $historico_poliza = PolizaDeudaHistorica::where('Deuda', $id)->get();
+        // $registroInicial = $historico_poliza->isNotEmpty() ? $historico_poliza->first() : null;
+
+
+        return view('polizas.vida.edit', compact(
+            'vida',
+            'aseguradora',
+            'cliente',
+            'tipoCobro',
+            'ejecutivo',
+            'productos',
+            'planes',
+            'tiposCartera'
+        ));
+    }
+
+    public function finalizar_configuracion(Request $request)
+    {
+        $vida = Vida::findOrFail($request->vida);
+        if ($vida->Configuracion == 1) {
+            $vida->Configuracion = 0;
+            $vida->update();
+
+            alert()->success('El registro de poliza ha sido configurado correctamente');
+            return redirect('polizas/vida/' . $request->vida . 'edit');
+        } else {
+            $vida->Configuracion = 1;
+            $vida->update();
+
+            alert()->success('El registro de poliza ha sido configurado correctamente');
+            return redirect('polizas/vida/' . $request->vida);
+        }
+    }
+
+    public function update(Request $request, $id){
+       // dd('hli update');
+
+        $vida = Vida::findOrFail($id);
+        $vida->NumeroPoliza = $request->NumeroPoliza;
+        $vida->Nit = $request->Nit;
+        $vida->Aseguradora = $request->Aseguradora;
+        $vida->Producto = $request->Productos;
+        $vida->Plan = $request->Planes;
+        $vida->Asegurado = $request->Asegurado;
+        $vida->VigenciaDesde = $request->VigenciaDesde;
+        $vida->VigenciaHasta = $request->VigenciaHasta;
+        $vida->Concepto = $request->Concepto;
+        $vida->Ejecutivo = $request->Ejecutivo;
+        $vida->TipoCobro = $request->TipoCobro;
+        $vida->EstadoPoliza = 1;
+        $vida->Tasa = $request->Tasa;
+        $vida->SumaAsegurada = $request->SumaAsegurada;
+        $vida->TasaDescuento = $request->TasaDescuento ?? null;
+        $vida->EdadMaximaInscripcion = $request->EdadMaximaInscripcion;
+        $vida->EdadTerminacion = $request->EdadTerminacion;
+        $vida->Activo = 1;
+        $vida->update();
+
+        alert()->success('Registro modificado');
+        return back();
+    }
+
 
 
     // public function getUsuario($id)
@@ -313,14 +395,14 @@ class VidaController extends Controller
 
         // tab2
         $fechas = VidaCartera::select('Mes', 'Axo', 'FechaInicio', 'FechaFinal')
-        ->where('PolizaVida', '=', $id)
-        ->orderByDesc('Id')->first();
+            ->where('PolizaVida', '=', $id)
+            ->orderByDesc('Id')->first();
 
         $cartera = VidaCartera::where('PolizaVida', '=', $id)
-        ->where('PolizaVidaDetalle', null)
-        ->select(
-            DB::raw("IFNULL(sum(SumaAsegurada), '0.00') as SumaAsegurada")
-        )->first();
+            ->where('PolizaVidaDetalle', null)
+            ->select(
+                DB::raw("IFNULL(sum(SumaAsegurada), '0.00') as SumaAsegurada")
+            )->first();
 
 
         //tab 3
