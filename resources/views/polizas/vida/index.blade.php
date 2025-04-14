@@ -39,13 +39,15 @@
                                 <td>{{ $obj->estadoPoliza->Nombre ?? '' }}</td>
 
                                 <td align="center">
-
-                                    @can('edit users')
-                                        <a href="{{ url('polizas/vida') }}/{{ $obj->Id }}"
-                                            class="on-default edit-row">
-                                            <i class="fa fa-pencil fa-lg"></i></a>
-                                            @endcan
-
+                                @if($obj->Configuracion == 1)
+                                <a href="{{ url('polizas/vida') }}/{{ $obj->Id }}"  title="Generar Pago">
+                                    <i class="fa fa-file fa-lg"></i></a>
+                                <a href="{{ url('polizas/vida') }}/{{ $obj->Id }}/edit"  title="Configuracion">
+                                    <i class="fa fa-lock fa-lg"></i></a>
+                                @else
+                                <a href="{{ url('polizas/vida') }}/{{ $obj->Id }}/edit"  title="Configuracion">
+                                    <i class="fa fa-unlock fa-lg"></i></a>
+                                @endif
                                     @can('delete users')
                                         &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}"
                                             data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
