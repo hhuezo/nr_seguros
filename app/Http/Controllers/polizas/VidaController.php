@@ -27,7 +27,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use PhpOffice\PhpSpreadsheet\IOFactory;
-use Throwable;
 
 class VidaController extends Controller
 {
@@ -249,6 +248,65 @@ class VidaController extends Controller
             ->where('PolizaVidaDetalle', null)
             ->select(DB::raw("IFNULL(sum(SumaAsegurada), '0.00') as SumaAsegurada"))->first();
 
+        $tipos_cartera = $poliza_vida->vida_tipos_cartera;
+
+        $dataPago = collect();
+
+        foreach($tipos_cartera as $tipo)
+        {
+            foreach($tipo->tasa_diferenciada as $tasa)
+            {
+                //dd($tasa);
+                 //por fechas
+                 if ($tipo->TipoCalculo == 1) {
+
+                    $total = VidaCartera::where('PolizaVidaDetalle', null)
+                        ->where('PolizaVida', $id)
+                        ->where('PolizaVidaTipoCartera', $tipo->Id)
+                        ->whereBetween('FechaOtorgamientoDate', [$tasa->FechaDesde, $tasa->FechaHasta])
+                        ->sum('SumaAsegurada');
+
+                        $item['TipoCartera'] = $tipo->catalogo_tipo_cartera->Nombre;
+                        $item['Tasa'] = $tasa->Tasa;
+                        $item['Monto'] = "";
+                        $item['Fecha'] = $tasa->FechaDesde." - ".$tasa->FechaHasta;
+                        $item['SumaAsegurada'] =$total;
+                        $item['PrimaCalculada'] =$total* $tasa->Tasa;
+                        $dataPago->push($item);
+                }
+                //por monto
+                else if ($tipo->TipoCalculo == 2) {
+                    $total = VidaCartera::where('PolizaVidaDetalle', null)
+                        ->where('PolizaVida', $id)
+                        ->where('PolizaVidaTipoCartera', $tipo->Id)
+                        ->whereBetween('SumaAsegurada', [$tasa->MontoDesde, $tasa->MontoHasta])
+                        ->sum('SumaAsegurada');
+
+                        $item['TipoCartera'] = $tipo->catalogo_tipo_cartera->Nombre;
+                        $item['Tasa'] = $tasa->Tasa;
+                        $item['Monto'] = $tasa->MontoDesde." - ".$tasa->MontoHasta;
+                        $item['Fecha'] = "";
+                        $item['SumaAsegurada'] =$total;
+                        $item['PrimaCalculada'] =$total* $tasa->Tasa;
+                        $dataPago->push($item);
+
+                } else {
+                    $total = VidaCartera::where('PolizaVidaDetalle', null)
+                    ->where('PolizaVida', $id)
+                    ->where('PolizaVidaTipoCartera', $tipo->Id)
+                    ->sum('SumaAsegurada');
+
+                    $item['TipoCartera'] = $tipo->catalogo_tipo_cartera->Nombre;
+                    $item['Tasa'] = $tasa->Tasa;
+                    $item['Monto'] = "";
+                    $item['Fecha'] = "";
+                    $item['SumaAsegurada'] =$total;
+                    $item['PrimaCalculada'] =$total* $tasa->Tasa;
+                    $dataPago->push($item);
+                }
+            }
+        }
+
         //tab 3
 
         $ultimo_pago = VidaDetalle::where('PolizaVida', $id)->orderBy('Id', 'desc')->first();
@@ -256,29 +314,17 @@ class VidaController extends Controller
         $comentarios = Comentario::where('Id', $id)->where('Activo', '=', 1)->get();
 
         return view('polizas.vida.show', compact(
-            //'bomberos',
             'poliza_vida',
             'detalle',
-            //'detalle_last',
             'aseguradora',
             'cliente',
-            //'anios',
             'estadoPoliza',
             'tipoCobro',
             'ejecutivo',
-            // 'usuario_vidas',
-            // 'mes',
-            // 'meses',
-            // 'anioSeleccionado',
-            // 'fechaInicio',
-            // 'fechaFinal',
             'tab',
-
-            //tab2
-            // 'fechas',
             'cartera',
             'comentarios',
-
+            'dataPago',
             //tab3
             'ultimo_pago',
         ));
@@ -321,9 +367,6 @@ class VidaController extends Controller
             'poliza_vida_tipo_cartera',
             'meses',
             'anios',
-            // 'fecha_inicial',
-            // 'fecha_final',
-            // 'axo',
             'mes'
         ));
     }
@@ -442,8 +485,6 @@ class VidaController extends Controller
             'axoActual',
             'mesActual'
         ));
-
-
     }
 
 
@@ -676,212 +717,6 @@ class VidaController extends Controller
 
 
         return back();
-
-        /*$axoActual =  $temp_data_fisrt->Axo;
-        $mesActual =  $temp_data_fisrt->Mes;
-
-
-        $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
-        $mesString = (isset($mesActual) && isset($meses[$mesActual])) ? $meses[$mesActual] : '';
-
-        // Calcular el mes pasado
-        if ($mesActual == 1) {
-            $mesAnterior = 12; // Diciembre
-            $axoAnterior = $axoActual - 1; // Año anterior
-        } else {
-            $mesAnterior = $mesActual - 1; // Mes anterior
-            $axoAnterior = $axoActual; // Mismo año
-        }
-
-        //estableciendo fecha de nacimiento date y calculando edad
-        VidaCarteraTemp::where('User', auth()->user()->id)
-            ->where('PolizaVida', $id)
-            ->update([
-                'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaFinal)"),
-                'EdadDesembloso' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaOtorgamientoDate)"),
-            ]);
-
-        $poliza_edad_maxima = VidaCarteraTemp::where('User', auth()->user()->id)->where('PolizaVida', $id)->where('EdadDesembloso', '>', $poliza_vida->EdadMaximaInscripcion)->get();
-
-
-
-        //registros que no existen en el mes anterior
-        $count_data_cartera = VidaCartera::where('PolizaVida', $id)->count();
-        if ($count_data_cartera > 0) {
-            //dd($mesAnterior,$axoAnterior,$request->Desempleo);
-            $registros_eliminados = DB::table('poliza_vida_cartera AS pdc')
-                ->leftJoin('poliza_vida_cartera_temp AS pdtc', function ($join) {
-                    $join->on('pdc.NumeroReferencia', '=', 'pdtc.NumeroReferencia')
-                        ->where('pdtc.User', auth()->user()->id);
-                })
-                ->where('pdc.Mes', (int)$mesAnterior)
-                ->where('pdc.Axo', (int)$axoAnterior)
-                ->where('pdc.PolizaVida', $id)
-                ->whereNull('pdtc.NumeroReferencia') // Solo los que no están en poliza_desempleo_temp_cartera
-                ->select('pdc.*') // Selecciona columnas principales
-                ->get();
-        } else {
-            $registros_eliminados =  VidaCarteraTemp::where('Id', 0)->get();
-        }
-
-
-        $nuevos_registros = VidaCarteraTemp::leftJoin(
-            DB::raw('(
-                        SELECT DISTINCT NumeroReferencia
-                        FROM poliza_vida_cartera
-                        WHERE PolizaVida = ' . $id . '
-                    ) AS valid_references'),
-            'poliza_vida_cartera_temp.NumeroReferencia',
-            '=',
-            'valid_references.NumeroReferencia')
-            ->where('poliza_vida_cartera_temp.User', auth()->user()->id) // Filtra por el usuario autenticado
-            ->where('poliza_vida_cartera_temp.PolizaVida', $id)
-            ->whereNull('valid_references.NumeroReferencia') // Los registros que no coinciden
-            ->select('poliza_vida_cartera_temp.*') // Selecciona columnas de la tabla principal
-            ->get();
-
-
-        $total = VidaCarteraTemp::where('PolizaVida', $id)->sum('SumaAsegurada');
-
-
-
-        $temp = VidaCarteraTemp::where('PolizaVida', $id)->get();
-        $mesAnteriorString = $axoAnterior . '-' . $mesAnterior;
-        //calcular rehabilitados
-        $referenciasAnteriores = DB::table('poliza_vida_cartera')
-            ->where('PolizaVida', $id)
-            ->where('User', auth()->user()->id)
-            ->whereRaw('CONCAT(Axo, "-", Mes) <> ?', [$mesAnteriorString])
-            ->pluck('NumeroReferencia')
-            ->toArray();
-
-
-        $referenciasMesAterior = DB::table('poliza_vida_cartera')
-            ->where('PolizaVida', $id)
-            ->where('User', auth()->user()->id)
-            ->where('Axo', $axoAnterior)
-            ->where('Mes', $mesAnterior)
-            ->pluck('NumeroReferencia')
-            ->toArray();
-
-
-        foreach ($temp as $item) {
-            // Verifica si el NumeroReferencia está en referenciasAnteriores pero no en referenciasMesAterior
-            if (in_array($item->NumeroReferencia, $referenciasAnteriores) && !in_array($item->NumeroReferencia, $referenciasMesAterior)) {
-                $item->Rehabilitado = 1;
-                $item->save();
-            }
-        }
-
-        $registros_rehabilitados = VidaCarteraTemp::where('User', auth()->user()->id)->where('PolizaVida', $id)->where('Rehabilitado', 1)->get();
-
-        return view('polizas.vida.respuesta_poliza', compact(
-            'total',
-            'poliza_vida',
-            'poliza_edad_maxima',
-            'registros_rehabilitados',
-            'registros_eliminados',
-            'nuevos_registros',
-            'mesString',
-            'axoActual',
-            'mesActual'
-        ));
-
-
-
-        dd($nuevos_registros);
-
-        // try {
-        //     $archivo = $request->Archivo;
-        //     TempCartera::where('Usuario', '=', auth()->user()->id)->delete();
-        //     Excel::import(new CarteraImport, $archivo);
-
-        //     $datos = DB::select("call dateFormat(" . auth()->user()->id . ")");
-
-        //     //$temp = TempCartera::where('Usuario', '=', auth()->user()->id)->get();
-
-        //     $calculo_saldo = $temp = TempCartera::where('Usuario', '=', auth()->user()->id)->sum('SaldoVigenteCapital');
-
-
-        //     //si hay validaciones
-        //     if ($request->Validar == "on") {
-        //         if ($calculo_saldo > $vida->LimiteGrupo) {
-        //             alert()->error('Error, el saldo supera el limite de grupo');
-        //             return back();
-        //         }
-
-        //         $calculo_limite_individual  = TempCartera::where('Usuario', '=', auth()->user()->id)
-        //             ->select(DB::raw('*,SUM(SaldoVigenteCapital) as suma'))
-        //             ->groupBy('Dui')
-        //             ->having('suma', '>', $vida->LimiteIndividual)
-        //             ->get();
-
-        //         if ($calculo_limite_individual->count() > 0) {
-        //             return view('polizas.validacion_cartera.resultado', compact('calculo_limite_individual'));
-        //         }
-
-
-        //         $nuevos = TempCartera::select('Id', 'Dui', 'Nit', 'PrimerApellido', 'SegundoApellido', 'CasadaApellido', 'PrimerNombre', 'SegundoNombre', 'SociedadNombre', 'NoRefereciaCredito', 'Edad', DB::raw('(select count(*) from cartera_mensual where
-        // (cartera_mensual.Dui = temp_cartera.Dui or cartera_mensual.Nit = temp_cartera.Nit) and temp_cartera.NoRefereciaCredito = cartera_mensual.NoRefereciaCredito
-        //  and cartera_mensual.Mes = ' . $mes_evaluar . ' and  cartera_mensual.Axo = ' . $axo . ') as conteo'))
-        //             ->where('Usuario', '=', auth()->user()->id)
-        //             ->having('conteo', '=', 0)
-        //             ->get();
-
-        //         return view('polizas.validacion_cartera.resultado', compact('nuevos'));
-        //     }
-        // } catch (Throwable $e) {
-        //     print($e);
-
-        //     return false;
-        // }
-
-        // //dd(auth()->user()->id,$request->FechaInicio,$request->FechaFinal );
-        // $insert = DB::select("call create_cartera_mensual(" . auth()->user()->id . ",'$request->FechaInicio','$request->FechaFinal')");
-
-        // $monto_cartera = CarteraMensual::where('Mes', '=', $mes_evaluar)->where('Axo', '=', $axo)->where('Vida', '=', $vida->Id)->sum('SaldoTotal');
-
-        // //74126861.7
-
-        // if ($vida->Mesual == 0) {
-        //     $tasaFinal = ($vida->Tasa / 1000) / 12;
-        // } else {
-        //     $tasaFinal = $vida->Tasa / 1000;
-        // }
-
-        // $sub_total = $monto_cartera * $tasaFinal;
-
-        // $prima_total = $sub_total;
-        // $prima_descontada = $sub_total * 2;
-
-        // $time = Carbon::now('America/El_Salvador');
-
-        // $detalle = new VidaDetalle();
-        // $detalle->SaldoA = $request->SaldoA;
-        // $detalle->Vida = $vida->Id;
-        // //$detalle->Comentario = $request->Comentario;
-        // $detalle->Tasa = $tasaFinal;
-        // //$detalle->Comision = $request->Comision;
-        // $detalle->PrimaTotal = $prima_total;
-        // //$detalle->Descuento = $request->Descuento;
-        // //$detalle->ExtraPrima = $request->ExtraPrima;
-        // //$detalle->ValorCCF = $request->ValorCCF;
-        // $detalle->APagar = $sub_total;
-        // //$detalle->TasaComision = $request->TasaComision;
-        // $detalle->MontoCartera = $monto_cartera;
-        // $detalle->PrimaDescontada = $prima_descontada;
-        // //$detalle->ValorDescuento = $request->ValorDescuento;
-        // //$detalle->Retencion = $request->Retencion;
-        // //$detalle->IvaSobreComision = $request->IvaSobreComision;
-        // //$detalle->ImpresionRecibo = $time->toDateTimeString();
-        // $detalle->save();
-        // /*$detalle->EnvioCartera = $request->EnvioCartera;
-        // $detalle->EnvioPago = $request->EnvioPago;
-        // $detalle->PagoAplicado = $request->PagoAplicado;
-
-
-        alert()->success('El registro ha sido ingresado correctamente');
-        return back();*/
     }
 
     public function delete_temp($id)
@@ -1018,6 +853,8 @@ class VidaController extends Controller
                 $poliza->FechaOtorgamientoDate = $tempRecord->FechaOtorgamientoDate ?? null;
                 $poliza->Edad = $tempRecord->Edad ?? null;
                 $poliza->EdadDesembloso = $tempRecord->EdadDesembloso ?? null;
+                $poliza->PolizaVidaTipoCartera = $tempRecord->PolizaVidaTipoCartera ?? null;
+                $poliza->Tasa = $tempRecord->Tasa ?? null;
 
                 $poliza->save();
             } catch (\Exception $e) {
@@ -1036,53 +873,4 @@ class VidaController extends Controller
         alert()->success('El registro de poliza ha sido ingresado correctamente');
         return redirect('polizas/vida/' . $id . '?tab=2');
     }
-
-    // public function edit_pago(Request $request)
-    // {
-    //     $detalle = VidaDetalle::findOrFail($request->Id);
-    //     //dd($request->EnvioCartera .' 00:00:00');
-    //     if ($request->EnvioCartera) {
-    //         $detalle->EnvioCartera = $request->EnvioCartera;
-    //     }
-    //     if ($request->EnvioPago) {
-    //         $detalle->EnvioPago = $request->EnvioPago;
-    //     }
-    //     if ($request->PagoAplicado) {
-    //         $detalle->PagoAplicado = $request->PagoAplicado;
-    //     }
-    //     $detalle->Comentario = $request->Comentario;
-
-    //     /*$detalle->EnvioPago = $request->EnvioPago;
-    //     $detalle->PagoAplicado = $request->PagoAplicado;*/
-    //     $detalle->update();
-    //     alert()->success('El registro ha sido ingresado correctamente');
-    //     return back();
-    // }
-
-    // public function get_pago($id)
-    // {
-    //     return VidaDetalle::findOrFail($id);
-    // }
-
-    // public function renovar($id)
-    // {
-    //     $vida = Vida::findOrFail($id);
-    //     $estados_poliza = EstadoPoliza::where('Activo', 1)->get();
-    //     $tipoCobro = TipoCobro::where('Activo', 1)->get();
-    //     return view('polizas.vida.renovar', compact('vida', 'tipoCobro', 'estados_poliza'));
-    // }
-    // public function renovarPoliza(Request $request, $id)
-    // {
-    //     $vida = Vida::findOrFail($id);
-    //     $vida->Mensual = $request->Mensual; //valor de radio button
-    //     $vida->EstadoPoliza = $request->EstadoPoliza;
-    //     $vida->VigenciaDesde = $request->VigenciaDesde;
-    //     $vida->VigenciaHasta = $request->VigenciaHasta;
-    //     $vida->MontoCartera = $request->MontoCartera;
-    //     $vida->Tasa = $request->Tasa;
-    //     $vida->update();
-
-    //     alert()->success('La poliza fue renovada correctamente');
-    //     return back();
-    // }
 }

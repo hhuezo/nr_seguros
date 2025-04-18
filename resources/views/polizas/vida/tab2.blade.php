@@ -58,18 +58,47 @@
                 <table class="excel-like-table">
                     <thead>
                         <tr>
-                            <th>Tasa Millar</th>
-                            <th>Suma asegurada</th>
-                            {{-- <th>Intereses corrientes</th>
-                            <th>Interes COVID</th>
-                            <th>Intereses Moratorios</th>
-                            <th>Monto nominal</th>
-                            <th>Monto Cartera</th> --}}
-                            <th>Prima por pagar</th>
+                            <th>Tipo Cartera</th>
+                            <th>Tasa millar</th>
+                            <th>Monto</th>
+                            <th>Fecha</th>
+                            <th>Suma Asegurada</th>
+                            <th>Prima Calculada</th>
                         </tr>
                     </thead>
 
-                    <tr>
+                    @php
+                        // Inicializar variables para totales
+                        $totalSumaAsegurada = 0;
+                        $totalPrimaCalculada = 0;
+                    @endphp
+
+                    @foreach ($dataPago as $item)
+                        @php
+                            // Convertir los valores formateados a números para sumar
+                            $sumaAsegurada = str_replace(',', '', $item['SumaAsegurada']);
+                            $primaCalculada = str_replace(',', '', $item['PrimaCalculada']);
+
+                            // Acumular totales
+                            $totalSumaAsegurada += floatval($sumaAsegurada);
+                            $totalPrimaCalculada += floatval($primaCalculada);
+                        @endphp
+                        <tr>
+                            <td contenteditable="true">{{ $item['TipoCartera'] }}</td>
+                            <td contenteditable="true">{{ $item['Tasa'] }}</td>
+                            <td contenteditable="true">{{ $item['Monto'] }}</td>
+                            <td contenteditable="true">{{ $item['Fecha'] }}</td>
+                            <td contenteditable="true" style="text-align: right;">{{ number_format($item['SumaAsegurada'], 2, '.', ',') }}</td>
+                            <td contenteditable="true" style="text-align: right;">{{ number_format($item['PrimaCalculada'], 2, '.', ',') }}</td>
+                        </tr>
+                    @endforeach
+                    <tr class="text-end">
+                        <th colspan="4">Totales</th>
+                        <td style="text-align: right;">{{ number_format($totalSumaAsegurada, 2, '.', ',') }}</td>
+                        <td style="text-align: right;">{{ number_format($totalPrimaCalculada, 2, '.', ',') }}</td>
+                    </tr>
+
+                    {{-- <tr>
                         <td contenteditable="true" id="tasa_millar">
                             {{ $poliza_vida->Tasa }}
                         </td>
@@ -85,7 +114,7 @@
                         </td>
 
 
-                        {{--
+
                         <td class="numeric editable" contenteditable="true" id="saldo_capital"
                             onblur="actualizarCalculos()">
                             {{ number_format($data['saldoCapital'], 2, '.', ',') }}
@@ -116,20 +145,22 @@
                         <td class="numeric editable" contenteditable="true" id="prima_por_pagar"
                             onblur="actualizarCalculos()">
                             {{ number_format($data['primaPorPagar'], 2, '.', ',') }}
-                        </td> --}}
+                        </td>
                     </tr>
 
 
                     <tr>
                         <th>Totales</th>
                         <td class="numeric editable" contenteditable="true">
-                            <span id="total_suma_asegurada">{{ number_format($cartera->SumaAsegurada, 2, '.', ',') }}</span>
+                            <span
+                                id="total_suma_asegurada">{{ number_format($cartera->SumaAsegurada, 2, '.', ',') }}</span>
                         </td>
 
                         <td class="numeric editable" contenteditable="true">
-                            <span id="total_prima_por_pagar">{{ number_format($cartera->SumaAsegurada * $poliza_vida->Tasa, 2, '.', ',') }}</span>
+                            <span
+                                id="total_prima_por_pagar">{{ number_format($cartera->SumaAsegurada * $poliza_vida->Tasa, 2, '.', ',') }}</span>
                         </td>
-                        {{-- <td class="numeric"><span
+                       <td class="numeric"><span
                                 id="total_saldo_capital">{{ number_format($data['saldoCapital'], 2, '.', ',') }}</span>
                         </td>
                         <td class="numeric"><span
@@ -147,8 +178,8 @@
                                 id="total_monto_cartera">{{ number_format($data['total'], 2, '.', ',') }}</span></td>
                         <td class="numeric"><span
                                 id="total_prima_por_pagar">{{ number_format($data['primaPorPagar'], 2, '.', ',') }}</span>
-                        </td> --}}
-                    </tr>
+                        </td>
+                    </tr> --}}
                     </tbody>
                 </table>
             </div>
@@ -171,7 +202,8 @@
                         <tr>
                             <td>Porcentaje de Comisión</td>
                             <td class="numeric editable">
-                                <span>{{ isset($data['tasaComision']) ? number_format($data['tasaComision'], 2, '.', '') : '0.00' }} %</span>
+                                <span>{{ isset($data['tasaComision']) ? number_format($data['tasaComision'], 2, '.', '') : '0.00' }}
+                                    %</span>
                             </td>
                         </tr>
                         <tr>
@@ -246,7 +278,7 @@
                             <td>Monto total cartera</td>
                             <td class="numeric editable">
                                 <span id="monto_total_cartera">
-                                    {{ isset($data['total']) ? number_format($data['total'], 2, '.', ',') : '0.00' }}
+                                    {{ isset($totalSumaAsegurada) ? number_format($totalSumaAsegurada, 2, '.', ',') : '0.00' }}
                                 </span>
                             </td>
                         </tr>
@@ -254,7 +286,7 @@
                             <td>Prima calculada</td>
                             <td class="numeric editable">
                                 <span id="sub_total">
-                                    {{ isset($data['primaPorPagar']) ? number_format($data['primaPorPagar'], 2, '.', ',') : '0.00' }}
+                                    {{ isset($totalPrimaCalculada) ? number_format($totalPrimaCalculada, 2, '.', ',') : '0.00' }}
                                 </span>
                             </td>
                         </tr>

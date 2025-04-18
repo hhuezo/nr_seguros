@@ -50,4 +50,10 @@ class VidaCartera extends Model
     public function poliza_vida(){
         return $this->belongsTo(Vida::class, 'PolizaVida', 'Id');
     }
+
+
+    public function vida_tipos_cartera()
+    {
+        return $this->hasMany(VidaTipoCartera::class, 'PolizaVida', 'Id');
+    }
 }
