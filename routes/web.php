@@ -333,6 +333,8 @@ Route::middleware(['auth'])->group(function () {
     //vida
 
     Route::post('polizas/vida/create_pago/{id}', [VidaController::class, 'create_pago']);
+    Route::get('polizas/vida/subir_cartera/{id}', [VidaController::class, 'subir_cartera']);
+    Route::post('polizas/vida/validar_poliza/{id}', [VidaController::class, 'validar_poliza']);
     Route::post('polizas/vida/delete_temp/{id}', [VidaController::class, 'delete_temp']);
     Route::post('polizas/vida/agregar_no_valido/{id}', [VidaController::class, 'agregar_no_valido']);
     Route::get('polizas/vida/get_no_valido/{id}', [VidaController::class, 'get_no_valido']);
@@ -340,7 +342,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('polizas/vida/tasas/{id}',[VidaController::class,'tasas']);
     Route::post('finalizar_configuracion_vida', [VidaController::class, 'finalizar_configuracion']);
 
-    
+
     Route::POST('polizas/vida/delete_tasa_diferenciada', [VidaTasaDiferenciadaController::class, 'destroy']);
     Route::get('polizas/vida/tasa_diferenciada/{id}', [VidaTasaDiferenciadaController::class, 'show']);
     Route::post('polizas/vida/tasa_diferenciada', [VidaTasaDiferenciadaController::class, 'store'])->name('tasa_diferenciada_vida.store');

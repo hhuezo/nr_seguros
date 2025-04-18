@@ -30,14 +30,14 @@ class VidaTasaDiferenciadaController extends Controller
             $request->validate([
                 'TipoCartera' => 'required|integer',
                 'TipoCalculo' => 'required|integer',
-                'MontoMaximoIndividual' => 'required|integer',
+                'MontoMaximoIndividual' => 'required|numeric',
             ], [
                 'TipoCartera.required' => 'El campo Tipo de Cartera es obligatorio.',
                 'TipoCartera.integer' => 'El campo Tipo de Cartera es obligatorio.',
                 'TipoCalculo.required' => 'El campo Tipo de Cálculo es obligatorio.',
                 'TipoCalculo.integer' => 'El campo Tipo de Cálculo es obligatorio.',
                 'MontoMaximoIndividual.required' => 'El monto máximo individual es obligatorio.',
-                'MontoMaximoIndividual.integer' => 'El monto máximo individual es obligatorio.',
+                'MontoMaximoIndividual.numeric' => 'El monto máximo individual no es válido.',
             ]);
 
 

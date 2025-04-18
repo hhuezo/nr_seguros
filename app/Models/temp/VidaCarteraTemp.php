@@ -42,7 +42,9 @@ class VidaCarteraTemp extends Model
         'FechaNacimientoDate',
         'Edad',
         'EdadDesembloso',
-        'FechaOtorgamientoDate'
+        'FechaOtorgamientoDate',
+        'PolizaVidaTipoCartera',
+        'Tasa',
     ];
 
     protected $guarded = [];

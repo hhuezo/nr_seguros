@@ -15,14 +15,16 @@ class VidaCarteraTempImport implements ToModel
     private $FechaInicio;
     private $FechaFinal;
     private $encabezados = 0;
+    private $PolizaVidaTipoCartera;
 
-    public function __construct($Axo, $Mes, $Poliza, $FechaInicio, $FechaFinal)
+    public function __construct($Axo, $Mes, $Poliza, $FechaInicio, $FechaFinal,$PolizaVidaTipoCartera)
     {
         $this->Axo = $Axo;
         $this->Mes = $Mes;
         $this->Poliza = $Poliza;
         $this->FechaInicio = $FechaInicio;
         $this->FechaFinal = $FechaFinal;
+        $this->PolizaVidaTipoCartera = $PolizaVidaTipoCartera;
     }
 
     public function model(array $row)
@@ -65,6 +67,7 @@ class VidaCarteraTempImport implements ToModel
                     'FechaFinal' => $this->FechaFinal,
                     'FechaNacimientoDate' => $this->convertirFecha($row[4] ?? null, 'Y-m-d'), // FECHA NACIMIENTO (formato Y-m-d)
                     'FechaOtorgamientoDate' => $this->convertirFecha($row[12] ?? null, 'Y-m-d'), // FECHA DE OTORGAMIENTO (formato Y-m-d)
+                    'PolizaVidaTipoCartera' => $this->PolizaVidaTipoCartera,
                 ]);
             }
         }

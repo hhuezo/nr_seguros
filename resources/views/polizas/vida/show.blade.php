@@ -163,8 +163,10 @@
                 aria-labelledby="profile-tab">
 
                 <ul class="nav navbar-right panel_toolbox">
-                    <div class="btn btn-info float-right" data-toggle="modal" data-target="#modal_pago">
-                        Subir Archivo Excel</div>
+                    <a href="{{url('polizas/vida/subir_cartera')}}/{{$poliza_vida->Id}}">
+                        <div class="btn btn-info float-right">
+                            Subir Archivo Excel</div>
+                    </a>
                 </ul>
 
 
@@ -189,7 +191,7 @@
 
 
 
-    <div class="modal fade bs-example-modal-lg" id="modal_pago" tabindex="-1" role="dialog"
+    {{-- <div class="modal fade bs-example-modal-lg" id="modal_pago" tabindex="-1" role="dialog"
         aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -278,7 +280,7 @@
 
             </div>
         </div>
-    </div>
+    </div> --}}
 
 
 

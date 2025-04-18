@@ -31,48 +31,9 @@
 
             <div class="clearfix"></div>
 
-            <div class="row" id="subir_respuesta" style="display: block;">
-                <div class="col-md-12 col-sm-12 ">
-                    <div class="x_panel">
-                        <div class="x_title">
-                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                <h3>Subir Carteras de <br> {{ $poliza_vida->NumeroPoliza }} |
-                                    {{ $poliza_vida->cliente->Nombre }} </h3>
-                            </div>
-                            <div class="clearfix"></div>
-                        </div>
 
-                        <div class="x_content">
-                            <div class="col-md-12 col-sm-12 ">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Año</th>
-                                            <th>Mes</th>
-                                            <th>Suma asegurada</th>
-                                            <!-- <th align="center">Carga de <br> archivo de cartera </th> -->
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>{{ $axoActual ?? '' }}</td>
-                                            <td>{{ $mesString ?? '' }}</td>
-                                            <td>${{ number_format($total, 2, '.', ',') }}</td>
-                                            <!-- <td></td> -->
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align: right;">
-                                <button class="btn btn-primary float-right" type="button" onclick="resumen()">Validar
-                                    póliza</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <div class="row" id="resumen" style="display: none;">
+            <div class="row">
                 <div class="col-md-12 col-sm-12 ">
                     <div class="x_panel">
                         <div class="x_title">

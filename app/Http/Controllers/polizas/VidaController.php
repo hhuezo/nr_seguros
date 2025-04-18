@@ -125,7 +125,7 @@ class VidaController extends Controller
 
             alert()->success('El registro ha sido creado correctamente');
             //return back();
-            return redirect('polizas/vida/' . $vida->Id.'/edit');
+            return redirect('polizas/vida/' . $vida->Id . '/edit');
         } catch (ValidationException $e) {
             // Esto captura específicamente los errores de validación
             return back()
@@ -197,8 +197,9 @@ class VidaController extends Controller
         }
     }
 
-    public function update(Request $request, $id){
-       // dd('hli update');
+    public function update(Request $request, $id)
+    {
+        // dd('hli update');
 
         $vida = Vida::findOrFail($id);
         $vida->NumeroPoliza = $request->NumeroPoliza;
@@ -226,131 +227,6 @@ class VidaController extends Controller
     }
 
 
-
-    // public function getUsuario($id)
-    // {
-    //     $usuario_vidas = VidaUsuario::where('Poliza', $id)->get();
-    //     return view('polizas.vida.tabla_usuario', compact('usuario_vidas'));
-    // }
-
-    // public function agregarUsuario(Request $request)
-    // {
-    //     //agregar form de agregar usuario
-
-    //     $usuario_vida = new VidaUsuario();
-    //     $usuario_vida->Vida = $request->Vida;
-    //     $usuario_vida->NumeroUsuario = $request->NumeroUsuario;
-    //     $usuario_vida->SumaAsegurada = $request->SumaAsegurada;
-    //     $usuario_vida->SubTotalAsegurado = $request->SubTotalAsegurado;
-    //     $usuario_vida->Tasa = $request->Tasa;
-    //     $usuario_vida->TotalAsegurado = $request->TotalAsegurado;
-    //     $usuario_vida->save();
-
-
-    //     $usuario_vidas = VidaUsuario::where('Vida', $request->Vida)->get();
-    //     return view('polizas.vida.tabla_usuario', compact('usuario_vidas'));
-    // }
-
-    // public function eliminarUsuario(Request $request)
-    // {
-    //     $usuario_vida = VidaUsuario::findOrFail($request->Id)->delete();
-    //     return 'ok';
-    // }
-
-    // public function editarUsuario(Request $request)
-    // {
-    //     $usuario_vida = VidaUsuario::findOrFail($request->Id);
-    //     $usuario_vida->Poliza = $request->Poliza;
-    //     $usuario_vida->Vida = $request->Vida;
-    //     $usuario_vida->NumeroUsuario = $request->NumeroUsuario;
-    //     $usuario_vida->SumaAsegurada = $request->SumaAsegurada;
-    //     $usuario_vida->SubTotalAsegurado = $request->SubTotalAsegurado;
-    //     $usuario_vida->Tasa = $request->Tasa;
-    //     $usuario_vida->TotalAsegurado = $request->TotalAsegurado;
-    //     $usuario_vida->update();
-
-    //     return 'ok';
-    //     /*$usuario_vidas = VidaUsuario::where('Poliza', $request->Poliza)->get();
-    //     alert()->success('Usuario Modificado');
-    //     return view('polizas.vida.tabla_usuario', compact('usuario_vidas'));*/
-    // }
-
-    // public function edit($id)
-    // {
-    //     $vida = Vida::findOrFail($id);
-    //     $detalle = VidaDetalle::where('Vida', $vida->Id)->get();
-    //     $detalle_last = VidaDetalle::where('Vida', $vida->Id)->orderByDesc('PagoAplicado')->first();
-    //     $aseguradora = Aseguradora::where('Activo', 1)->get();
-    //     $cliente = Cliente::where('Activo', 1)->get();
-    //     //$tipoCartera = TipoCartera::where('Activo', 1)->get();
-    //     $estadoPoliza = EstadoPoliza::where('Activo', 1)->get();
-    //     $tipoCobro = TipoCobro::where('Activo', 1)->get();
-    //     $ejecutivo = Ejecutivo::where('Activo', 1)->get();
-    //     // $bombero = Bombero::where('Activo', 1)->first();
-    //     // if ($bombero) {
-    //     //     $bomberos = $bombero->Valor;
-    //     // } else {
-    //     //     $bomberos = $bombero->Valor;
-    //     // }
-    //     $usuario_vidas = VidaUsuario::where('Vida', $id)->get();
-    //     $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
-
-    //     return view('polizas.vida.edit', compact(
-    //         //'bomberos',
-    //         'vida',
-    //         'detalle',
-    //         'detalle_last',
-    //         'aseguradora',
-    //         'cliente',
-    //         //'tipoCartera',
-    //         'estadoPoliza',
-    //         'tipoCobro',
-    //         'ejecutivo',
-    //         'usuario_vidas',
-    //         'meses'
-    //     ));
-    // }
-
-    // public function update(Request $request, $id)
-    // {
-    //     // dd($request->tipoTasa);
-    //     $vida = Vida::findOrFail($id);
-    //     $vida->NumeroPoliza = $request->NumeroPoliza;
-    //     $vida->Nit = $request->Nit;
-    //     $vida->Codigo = $request->Codigo;
-    //     $vida->Aseguradora = $request->Aseguradora;
-    //     $vida->Asegurado = $request->Asegurado;
-    //     $vida->GrupoAsegurado = $request->GrupoAsegurado;
-    //     $vida->VigenciaDesde = $request->VigenciaDesde;
-    //     $vida->VigenciaHasta = $request->VigenciaHasta;
-    //     $vida->BeneficiosAdicionales = $request->BeneficiosAdicionales;
-    //     $vida->ClausulasEspeciales = $request->ClausulasEspeciales;
-    //     $vida->Concepto = $request->Concepto;
-    //     $vida->Ejecutivo = $request->Ejecutivo;
-    //     $vida->TipoCartera = $request->TipoCartera;
-    //     $vida->EstadoPoliza = $request->EstadoPoliza;
-    //     $vida->TipoCobro = $request->TipoCobro;
-    //     $vida->Tasa = $request->Tasa;
-    //     $vida->MontoCartera = $request->MontoCartera;
-    //     $vida->Mensual = $request->tipoTasa;
-    //     $vida->TasaComision = $request->TasaComision;
-    //     $vida->EdadTerminacion = $request->EdadTerminacion;
-    //     $vida->EdadMaxTerminacion = $request->EdadMaxTerminacion;
-    //     $vida->EdadIntermedia = $request->EdadIntermedia;
-    //     $vida->LimiteMaxDeclaracion = $request->LimiteMaxDeclaracion;
-    //     $vida->LimiteIntermedioDeclaracion = $request->LimiteIntermedioDeclaracion;
-    //     $vida->LimiteGrupo = $request->LimiteGrupo;
-    //     $vida->LimiteIndividual = $request->LimiteIndividual;
-    //     $vida->Bomberos = $request->Bomberos;
-    //     $vida->LimiteMenDeclaracion = $request->LimiteMenDeclaracion;
-    //     $vida->TasaDescuento = $request->TasaDescuento;
-    //     $vida->Activo = 1;
-    //     $vida->update();
-
-    //     alert()->success('El registro ha sido modificado correctamente');
-    //     return back();
-    // }
-
     public function show(Request $request, $id)
     {
         $poliza_vida = Vida::findOrFail($id);
@@ -360,31 +236,6 @@ class VidaController extends Controller
         $estadoPoliza = EstadoPoliza::where('Activo', 1)->get();
         $tipoCobro = TipoCobro::where('Activo', 1)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
-        // $bombero = Bombero::where('Activo', 1)->first();
-        // if ($bombero) {
-        //     $bomberos = $bombero->Valor;
-        // } else {
-        //     $bomberos = $bombero->Valor;
-        // }
-        $usuario_vidas = VidaUsuario::where('Vida', $id)->get();
-        $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
-
-
-        $fechaInicio = Carbon::now()->subMonth()->startOfMonth()->toDateString();
-        $fechaFinal = Carbon::now()->startOfMonth()->toDateString();
-
-        // Extraer el mes y el año de $fechaFinal
-        $mes = Carbon::parse($fechaFinal)->month;
-        $anioSeleccionado = Carbon::parse($fechaFinal)->year;
-
-        $vigenciaDesde = Carbon::parse($poliza_vida->VigenciaDesde);
-        $vigenciaHasta = Carbon::parse($poliza_vida->VigenciaHasta);
-
-        $anios = [];
-
-        for ($anio = $vigenciaDesde->year; $anio <= $vigenciaHasta->year; $anio++) {
-            $anios[] = $anio;
-        }
 
         $tab = $request->tab ? $request->tab : 1;
 
@@ -394,16 +245,9 @@ class VidaController extends Controller
 
 
         // tab2
-        $fechas = VidaCartera::select('Mes', 'Axo', 'FechaInicio', 'FechaFinal')
-            ->where('PolizaVida', '=', $id)
-            ->orderByDesc('Id')->first();
-
         $cartera = VidaCartera::where('PolizaVida', '=', $id)
             ->where('PolizaVidaDetalle', null)
-            ->select(
-                DB::raw("IFNULL(sum(SumaAsegurada), '0.00') as SumaAsegurada")
-            )->first();
-
+            ->select(DB::raw("IFNULL(sum(SumaAsegurada), '0.00') as SumaAsegurada"))->first();
 
         //tab 3
 
@@ -418,20 +262,20 @@ class VidaController extends Controller
             //'detalle_last',
             'aseguradora',
             'cliente',
-            'anios',
+            //'anios',
             'estadoPoliza',
             'tipoCobro',
             'ejecutivo',
-            'usuario_vidas',
-            'mes',
-            'meses',
-            'anioSeleccionado',
-            'fechaInicio',
-            'fechaFinal',
+            // 'usuario_vidas',
+            // 'mes',
+            // 'meses',
+            // 'anioSeleccionado',
+            // 'fechaInicio',
+            // 'fechaFinal',
             'tab',
 
             //tab2
-            'fechas',
+            // 'fechas',
             'cartera',
             'comentarios',
 
@@ -441,15 +285,178 @@ class VidaController extends Controller
     }
 
 
+    public function subir_cartera($id)
+    {
+        $poliza_vida = Vida::findOrFail($id);
+        $poliza_vida_tipo_cartera = $poliza_vida->vida_tipos_cartera;
+
+        foreach ($poliza_vida_tipo_cartera as $item) {
+            $item->Total = VidaCarteraTemp::where('PolizaVida', $id)->where('PolizaVidaTipoCartera', $item->Id)->sum('SumaAsegurada');
+        }
+
+        $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
+
+
+        $fechaInicio = Carbon::now()->subMonth()->startOfMonth()->toDateString();
+        $fechaFinal = Carbon::now()->startOfMonth()->toDateString();
+
+        // Extraer el mes y el año de $fechaFinal
+        $mes = Carbon::parse($fechaFinal)->month;
+        $anioSeleccionado = Carbon::parse($fechaFinal)->year;
+
+        $vigenciaDesde = Carbon::parse($poliza_vida->VigenciaDesde);
+        $vigenciaHasta = Carbon::parse($poliza_vida->VigenciaHasta);
+
+        $anios = array_combine(
+            $years = range($vigenciaDesde->year, $vigenciaHasta->year),
+            $years
+        );
+
+        $fechas = VidaCartera::select('Mes', 'Axo', 'FechaInicio', 'FechaFinal')
+            ->where('PolizaVida', '=', $id)
+            ->orderByDesc('Id')->first();
+
+        return view('polizas.vida.subir_archivos', compact(
+            'poliza_vida',
+            'poliza_vida_tipo_cartera',
+            'meses',
+            'anios',
+            // 'fecha_inicial',
+            // 'fecha_final',
+            // 'axo',
+            'mes'
+        ));
+    }
+
+
+    public function validar_poliza($id)
+    {
+        $poliza_vida = Vida::findOrFail($id);
+
+
+        $temp_data_fisrt = VidaCarteraTemp::where('PolizaVida', $id)->where('User', auth()->user()->id)->first();
+
+        if (!$temp_data_fisrt) {
+            alert()->error('No se han cargado las carteras');
+            return back();
+        }
+
+        $axoActual =  $temp_data_fisrt->Axo;
+        $mesActual =  $temp_data_fisrt->Mes;
+
+
+        $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
+        $mesString = (isset($mesActual) && isset($meses[$mesActual])) ? $meses[$mesActual] : '';
+
+        // Calcular el mes pasado
+        if ($mesActual == 1) {
+            $mesAnterior = 12; // Diciembre
+            $axoAnterior = $axoActual - 1; // Año anterior
+        } else {
+            $mesAnterior = $mesActual - 1; // Mes anterior
+            $axoAnterior = $axoActual; // Mismo año
+        }
+
+        $poliza_edad_maxima = VidaCarteraTemp::where('User', auth()->user()->id)->where('PolizaVida', $id)->where('EdadDesembloso', '>', $poliza_vida->EdadMaximaInscripcion)->get();
+
+
+        //registros que no existen en el mes anterior
+        $count_data_cartera = VidaCartera::where('PolizaVida', $id)->count();
+        if ($count_data_cartera > 0) {
+            //dd($mesAnterior,$axoAnterior,$request->Desempleo);
+            $registros_eliminados = DB::table('poliza_vida_cartera AS pdc')
+                ->leftJoin('poliza_vida_cartera_temp AS pdtc', function ($join) {
+                    $join->on('pdc.NumeroReferencia', '=', 'pdtc.NumeroReferencia')
+                        ->where('pdtc.User', auth()->user()->id);
+                })
+                ->where('pdc.Mes', (int)$mesAnterior)
+                ->where('pdc.Axo', (int)$axoAnterior)
+                ->where('pdc.PolizaVida', $id)
+                ->whereNull('pdtc.NumeroReferencia') // Solo los que no están en poliza_desempleo_temp_cartera
+                ->select('pdc.*') // Selecciona columnas principales
+                ->get();
+        } else {
+            $registros_eliminados =  VidaCarteraTemp::where('Id', 0)->get();
+        }
+
+
+        $nuevos_registros = VidaCarteraTemp::leftJoin(
+            DB::raw('(
+                  SELECT DISTINCT NumeroReferencia
+                  FROM poliza_vida_cartera
+                  WHERE PolizaVida = ' . $id . '
+              ) AS valid_references'),
+            'poliza_vida_cartera_temp.NumeroReferencia',
+            '=',
+            'valid_references.NumeroReferencia'
+        )
+            ->where('poliza_vida_cartera_temp.User', auth()->user()->id) // Filtra por el usuario autenticado
+            ->where('poliza_vida_cartera_temp.PolizaVida', $id)
+            ->whereNull('valid_references.NumeroReferencia') // Los registros que no coinciden
+            ->select('poliza_vida_cartera_temp.*') // Selecciona columnas de la tabla principal
+            ->get();
+
+
+        $total = VidaCarteraTemp::where('PolizaVida', $id)->sum('SumaAsegurada');
+
+
+
+        $temp = VidaCarteraTemp::where('PolizaVida', $id)->get();
+        $mesAnteriorString = $axoAnterior . '-' . $mesAnterior;
+        //calcular rehabilitados
+        $referenciasAnteriores = DB::table('poliza_vida_cartera')
+            ->where('PolizaVida', $id)
+            ->where('User', auth()->user()->id)
+            ->whereRaw('CONCAT(Axo, "-", Mes) <> ?', [$mesAnteriorString])
+            ->pluck('NumeroReferencia')
+            ->toArray();
+
+
+        $referenciasMesAterior = DB::table('poliza_vida_cartera')
+            ->where('PolizaVida', $id)
+            ->where('User', auth()->user()->id)
+            ->where('Axo', $axoAnterior)
+            ->where('Mes', $mesAnterior)
+            ->pluck('NumeroReferencia')
+            ->toArray();
+
+
+        foreach ($temp as $item) {
+            // Verifica si el NumeroReferencia está en referenciasAnteriores pero no en referenciasMesAterior
+            if (in_array($item->NumeroReferencia, $referenciasAnteriores) && !in_array($item->NumeroReferencia, $referenciasMesAterior)) {
+                $item->Rehabilitado = 1;
+                $item->save();
+            }
+        }
+
+        $registros_rehabilitados = VidaCarteraTemp::where('User', auth()->user()->id)->where('PolizaVida', $id)->where('Rehabilitado', 1)->get();
+
+        return view('polizas.vida.respuesta_poliza', compact(
+            'total',
+            'poliza_vida',
+            'poliza_edad_maxima',
+            'registros_rehabilitados',
+            'registros_eliminados',
+            'nuevos_registros',
+            'mesString',
+            'axoActual',
+            'mesActual'
+        ));
+
+
+    }
+
+
+
     public function create_pago(Request $request)
     {
-
         $request->validate([
             'Axo' => 'required|integer',
             'Mes' => 'required|integer|between:1,12',
             'FechaInicio' => 'required|date',
             'FechaFinal' => 'required|date|after_or_equal:FechaInicio',
             'Archivo' => 'required|file|mimes:csv,xlsx,xls|max:2048',
+            'PolizaVidaTipoCartera' => 'required|integer',
         ], [
             'Axo.required' => 'El campo Año es obligatorio.',
             'Axo.integer' => 'El campo Año debe ser un número entero.',
@@ -467,6 +474,8 @@ class VidaController extends Controller
             'Archivo.file' => 'El campo Archivo debe ser un archivo válido.',
             'Archivo.mimes' => 'El archivo debe ser de tipo CSV, XLSX o XLS.',
             'Archivo.max' => 'El archivo no debe superar los 2MB.',
+            'PolizaVidaTipoCartera.required' => 'El campo tipo cartera es obligatorio.',
+            'PolizaVidaTipoCartera.integer' => 'El campo tipo cartera no válido.',
         ]);
 
         $id = $request->Id;
@@ -486,13 +495,37 @@ class VidaController extends Controller
         }
 
         //borrar datos de tabla temporal
-        VidaCarteraTemp::where('User', auth()->user()->id)->where('PolizaVida', $id)->delete();
+        VidaCarteraTemp::where('User', auth()->user()->id)->where('PolizaVida', $id)->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)->delete();
 
-        Excel::import(new VidaCarteraTempImport($request->Axo, $request->Mes, $id, $request->FechaInicio, $request->FechaFinal), $archivo);
+        Excel::import(new VidaCarteraTempImport($request->Axo, $request->Mes, $id, $request->FechaInicio, $request->FechaFinal, $request->PolizaVidaTipoCartera), $archivo);
+
+
+
+
+        //verificando creditos repetidos
+        /*$repetidos = VidaCarteraTemp::where('User', auth()->user()->id)
+            ->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)
+            ->groupBy('NumeroReferencia')
+            ->havingRaw('COUNT(*) > 1')
+            ->get();
+
+        $numerosRepetidos = $repetidos->isNotEmpty() ? $repetidos->pluck('NumeroReferencia') : null;
+
+        if ($numerosRepetidos) {
+            VidaCarteraTemp::where('User', auth()->user()->id)
+                ->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)
+                ->delete();
+
+            $numerosStr = $numerosRepetidos->implode(', ');
+
+            return back()
+                ->withErrors(['Archivo' => "Existen números de crédito repetidos: $numerosStr"]);
+        }*/
+
 
 
         //calculando errores de cartera
-        $cartera_temp = VidaCarteraTemp::where('User', '=', auth()->user()->id)->where('PolizaVida', $id)->get();
+        $cartera_temp = VidaCarteraTemp::where('User', '=', auth()->user()->id)->where('PolizaVida', $id)->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)->get();
 
 
         foreach ($cartera_temp as $obj) {
@@ -579,14 +612,72 @@ class VidaController extends Controller
         }
 
 
-        $temp_data_fisrt = VidaCarteraTemp::where('PolizaVida', $id)->where('User', auth()->user()->id)->first();
+        $temp_data_fisrt = VidaCarteraTemp::where('PolizaVida', $id)->where('User', auth()->user()->id)->where('PolizaVidaTipoCartera', '=', $request->PolizaVidaTipoCartera)->first();
 
         if (!$temp_data_fisrt) {
             alert()->error('No se han cargado las carteras');
             return back();
         }
 
-        $axoActual =  $temp_data_fisrt->Axo;
+
+
+        //calculando edades y fechas de nacimiento
+        VidaCarteraTemp::where('User', auth()->user()->id)
+            ->where('PolizaVida', $poliza_vida->Id)
+            ->update([
+                'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaFinal)"),
+                'EdadDesembloso' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaOtorgamientoDate)"),
+            ]);
+
+
+
+        //tasa diferenciada
+        $vida_tipo_cartera = VidaTipoCartera::findOrFail($request->PolizaVidaTipoCartera);
+
+        $tasas_diferenciadas = $vida_tipo_cartera->tasa_diferenciada;
+
+        if ($vida_tipo_cartera->TipoCalculo == 1) {
+
+            foreach ($tasas_diferenciadas as $tasa) {
+                //dd($tasa);
+                VidaCarteraTemp::where('User', auth()->user()->id)
+                    ->where('PolizaVidaTipoCartera', $vida_tipo_cartera->Id)
+                    ->whereBetween('FechaOtorgamientoDate', [$tasa->FechaDesde, $tasa->FechaHasta])
+                    ->update([
+                        //'LineaCredito' => $tasa->LineaCredito,
+                        'Tasa' => $tasa->Tasa
+                    ]);
+            }
+        } else  if ($vida_tipo_cartera->TipoCalculo == 2) {
+
+            foreach ($tasas_diferenciadas as $tasa) {
+                VidaCarteraTemp::where('User', auth()->user()->id)
+                    ->where('PolizaVidaTipoCartera', $vida_tipo_cartera->Id)
+                    ->whereBetween('SumaAsegurada', [$tasa->MontoDesde, $tasa->MontoHasta])
+                    ->update([
+                        //'LineaCredito' => $tasa->LineaCredito,
+                        'Tasa' => $tasa->Tasa
+                    ]);
+            }
+        } else {
+            foreach ($tasas_diferenciadas as $tasa) {
+                VidaCarteraTemp::where('User', auth()->user()->id)
+                    ->where('PolizaVidaTipoCartera', $vida_tipo_cartera->Id)
+                    ->update([
+                        //'LineaCredito' => $tasa->LineaCredito,
+                        'Tasa' => $poliza_vida->Tasa
+                    ]);
+            }
+        }
+
+        //agregar la validacion para las edades maximas de inscripcion
+
+        alert()->success('Exito', 'La cartera fue subida con exito');
+
+
+        return back();
+
+        /*$axoActual =  $temp_data_fisrt->Axo;
         $mesActual =  $temp_data_fisrt->Mes;
 
 
@@ -642,8 +733,7 @@ class VidaController extends Controller
                     ) AS valid_references'),
             'poliza_vida_cartera_temp.NumeroReferencia',
             '=',
-            'valid_references.NumeroReferencia'
-        )
+            'valid_references.NumeroReferencia')
             ->where('poliza_vida_cartera_temp.User', auth()->user()->id) // Filtra por el usuario autenticado
             ->where('poliza_vida_cartera_temp.PolizaVida', $id)
             ->whereNull('valid_references.NumeroReferencia') // Los registros que no coinciden
@@ -787,11 +877,11 @@ class VidaController extends Controller
         // $detalle->save();
         // /*$detalle->EnvioCartera = $request->EnvioCartera;
         // $detalle->EnvioPago = $request->EnvioPago;
-        // $detalle->PagoAplicado = $request->PagoAplicado;*/
+        // $detalle->PagoAplicado = $request->PagoAplicado;
 
 
         alert()->success('El registro ha sido ingresado correctamente');
-        return back();
+        return back();*/
     }
 
     public function delete_temp($id)
