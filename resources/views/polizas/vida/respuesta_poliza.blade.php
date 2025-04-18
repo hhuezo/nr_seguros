@@ -88,7 +88,7 @@
                                 <div class="" role="tabpanel" data-example-id="togglable-tabs">
                                     <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
                                         <li role="presentation" class="active"><a href="#tab_edad" id="edad-tab"
-                                                role="tab" data-toggle="tab" aria-expanded="false">Edad <br> Máxima </a>
+                                                role="tab" data-toggle="tab" aria-expanded="false">Monto máximo <br>individual</a>
                                         </li>
                                         <li role="presentation" class=""><a href="#tab_inscripcion"
                                                 id="inscripcion-tab" role="tab" data-toggle="tab"
@@ -115,11 +115,10 @@
                                         <!-- edad maxima -->
                                         <div role="tabpanel" class="tab-pane active" id="tab_edad"
                                             aria-labelledby="edad-tab">
+
+
                                             <br>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <h4>Edad Maxima {{ $poliza_vida->EdadTerminacion }} años
-                                                </h4>
-                                            </div>
+                                            <div class="col-md-6 col-sm-6 col-xs-12"></div>
                                             <div class="col-md-6 col-sm-6 col-xs-12" align="right" id="btn_expo"
                                                 style="display:">
 
@@ -145,11 +144,12 @@
                                                             <th>Edad Otorgamiento</th>
                                                             <th>Edad Actual</th>
                                                             <th>Total</th>
+                                                            <th>Monto máximo</th>
                                                             <th style="text-align: center;">Excluir</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @foreach ($poliza_edad_maxima->where('EdadDesembloso', '>', $poliza_vida->EdadTerminacion) as $registro)
+                                                        @foreach ($poliza_responsabilidad_maxima as $registro)
                                                             <tr>
                                                                 <td>{{ $registro->NumeroReferencia }}</td>
                                                                 <td>{{ $registro->Dui }}</td>
@@ -167,6 +167,7 @@
                                                                 <td>{{ $registro->EdadDesembloso ? $registro->Edad : '' }}
                                                                     Años</td>
                                                                 <td>${{ number_format($registro->SumaAsegurada, 2) }}</td>
+                                                                <td>${{ number_format($registro->MontoMaximoIndividual, 2) }}</td>
                                                                 <td>
                                                                     <input type="checkbox"
                                                                         onchange="agregarNoValido({{ $registro->Id }})"

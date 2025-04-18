@@ -403,6 +403,10 @@ class VidaController extends Controller
         $poliza_edad_maxima = VidaCarteraTemp::where('User', auth()->user()->id)->where('PolizaVida', $id)->where('EdadDesembloso', '>', $poliza_vida->EdadMaximaInscripcion)->get();
 
 
+        $poliza_responsabilidad_maxima = VidaCarteraTemp::where('User', auth()->user()->id)->where('PolizaVida', $id)
+        ->whereColumn('SumaAsegurada', '>', 'MontoMaximoIndividual')->get();
+
+
         //registros que no existen en el mes anterior
         $count_data_cartera = VidaCartera::where('PolizaVida', $id)->count();
         if ($count_data_cartera > 0) {
@@ -483,7 +487,8 @@ class VidaController extends Controller
             'nuevos_registros',
             'mesString',
             'axoActual',
-            'mesActual'
+            'mesActual',
+            'poliza_responsabilidad_maxima'
         ));
     }
 
@@ -685,7 +690,7 @@ class VidaController extends Controller
                     ->where('PolizaVidaTipoCartera', $vida_tipo_cartera->Id)
                     ->whereBetween('FechaOtorgamientoDate', [$tasa->FechaDesde, $tasa->FechaHasta])
                     ->update([
-                        //'LineaCredito' => $tasa->LineaCredito,
+                        'MontoMaximoIndividual' => $vida_tipo_cartera->MontoMaximoIndividual,
                         'Tasa' => $tasa->Tasa
                     ]);
             }
@@ -696,7 +701,7 @@ class VidaController extends Controller
                     ->where('PolizaVidaTipoCartera', $vida_tipo_cartera->Id)
                     ->whereBetween('SumaAsegurada', [$tasa->MontoDesde, $tasa->MontoHasta])
                     ->update([
-                        //'LineaCredito' => $tasa->LineaCredito,
+                        'MontoMaximoIndividual' => $vida_tipo_cartera->MontoMaximoIndividual,
                         'Tasa' => $tasa->Tasa
                     ]);
             }
@@ -705,7 +710,7 @@ class VidaController extends Controller
                 VidaCarteraTemp::where('User', auth()->user()->id)
                     ->where('PolizaVidaTipoCartera', $vida_tipo_cartera->Id)
                     ->update([
-                        //'LineaCredito' => $tasa->LineaCredito,
+                        'MontoMaximoIndividual' => $vida_tipo_cartera->MontoMaximoIndividual,
                         'Tasa' => $poliza_vida->Tasa
                     ]);
             }
