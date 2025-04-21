@@ -4,7 +4,7 @@
     <script type="text/javascript">
         $(document).ready(function() {
             //mostrar opcion en menu
-            displayOption("ul-poliza", "li-poliza-deuda");
+            displayOption("ul-poliza", "li-poliza-vida");
         });
     </script>
 

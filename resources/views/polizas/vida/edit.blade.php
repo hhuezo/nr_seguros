@@ -130,16 +130,11 @@
                     <li role="presentation" class="{{ session('tab') == 1 ? 'active' : '' }}"><a href="#tab_content1"
                             id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Datos de Póliza</a>
                     </li>
-                    <!-- <li role="presentation" class="{{ session('tab') == 4 ? 'active' : '' }}"><a href="#tab_content4"
-                                id="renovacion-tab" role="tab" data-toggle="tab" aria-expanded="true">Renovación </a>
-                        </li> -->
+
                     <li role="presentation" class="{{ session('tab') == 2 ? 'active' : '' }} "><a href="#tab_content2"
                             id="lineas-tab" role="tab" data-toggle="tab" aria-expanded="true">Tasa diferenciada</a>
                     </li>
-                    <!-- <li role="presentation" class="{{ session('tab') == 3 ? 'active' : '' }}"><a href="#tab_content3"
-                                id="asegurabilidad-tab" role="tab" data-toggle="tab" aria-expanded="true">Requisitos
-                                Mínimos de Asegurabilidad </a>
-                        </li> -->
+
 
 
 
@@ -218,7 +213,7 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                
+
                                     <!-- Nit -->
                                     <div class="form-group col-sm-12 col-md-6 col-lg-6">
                                         <label>Nit</label>
@@ -237,7 +232,7 @@
                                             @endforeach
                                         </select>
                                     </div>
-                              
+
                                 <!-- Tipo de cobro -->
                                 <div class="form-group col-sm-12 col-md-6">
                                     <label>Tipo de Cobro</label>
@@ -328,16 +323,7 @@
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
                                 <table width="100%" class="table table-striped">
-                                    {{-- <thead>
-                                            <tr>
-                                                <th>Línea de Crédito</th>
-                                                <th>Saldos y Montos</th>
-                                                <th>Tasa General</th>
 
-                                                <th>Monto Máximo</th>
-                                                <th>Opciones</th>
-                                            </tr>
-                                        </thead> --}}
                                     <tbody>
 
                                         @if ($vida->vida_tipos_cartera->count() > 0)
@@ -359,15 +345,7 @@
                                                         <span class="expand-icon">▼</span>
                                                         {{ $tipo->catalogo_tipo_cartera?->Nombre ?? '' }}
                                                     </td>
-                                                    <td>
-                                                        @if ($tipo->TipoCalculo == 1)
-                                                        {{ 'Fecha' }}
-                                                        @elseif ($tipo->TipoCalculo == 2)
-                                                        {{ 'Monto' }}
-                                                        @else
-                                                        {{ '' }}
-                                                        @endif
-                                                    </td>
+                                                    <td>{{ $tipo->TipoCalculo == 1 ? 'Fecha' : ($tipo->TipoCalculo == 2 ? 'Monto' : 'No aplica') }}</td>
                                                     <td class="text-end">
                                                         ${{ $tipo->MontoMaximoIndividual }}
                                                     </td>
@@ -702,7 +680,7 @@
     $(document).ready(function() {
 
         //mostrar opcion en menu
-        displayOption("ul-poliza", "li-poliza-deuda");
+        displayOption("ul-poliza", "li-poliza-vida");
 
         $("#fechas").change(function() {
             if (document.getElementById('fechas').checked == true) {

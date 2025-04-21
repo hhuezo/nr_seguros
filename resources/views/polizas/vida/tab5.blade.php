@@ -28,7 +28,7 @@
                         <td>{{ $obj->Dui }}</td>
                         <td>{{ $obj->Nombre }}</td>
                         <td>{{ $obj->NumeroReferencia }}</td>
-                        <td>${{ number_format($obj->TotalCredito, 2, '.', ',') }}</td>
+                        <td>${{ number_format($obj->SumaAsegurada, 2, '.', ',') }}</td>
                         {{-- @if($obj->linia_credito->Saldos == 1)
                         <td>${{ number_format($obj->SaldoCapital, 2, '.', ',') }} </td>
                         @elseif($obj->linia_credito->Saldos == 2)
@@ -81,7 +81,7 @@
                     @php($totalextraprima = 0)
                     @if ($extraprimados->count() > 0)
                     @foreach ($extraprimados as $obj)
-                    <tr  class=" {{$obj->Existe == 0 && $data_temp_count > 0 ? 'danger':''}}" >
+                    <tr >
                         <td align="center"><button class="btn btn-primary" data-target="#modal-edit-extraprimados-{{ $obj->Id }}" data-toggle="modal">
                                 <i class="fa fa-edit fa-lg"></i>
                             </button>
@@ -154,7 +154,7 @@
                 document.getElementById('ExtraprimadosNombre').value = data.Nombre;
                 document.getElementById('ExtraprimadosFechaOtorgamiento').value = data.FechaOtorgamiento;
                 document.getElementById('ExtraprimadosNumeroReferencia').value = NumeroReferencia;
-                document.getElementById('ExtraprimadosMontoOtorgamiento').value = parseFloat(data.TotalCredito).toFixed(2);
+                document.getElementById('ExtraprimadosVidaSumaAsegurada').value = parseFloat(data.SumaAsegurada).toFixed(2);
 
             })
             .fail(function() {
@@ -163,12 +163,4 @@
             });
     }
 
-    // function totalPago(deuda_tasa) {
-    //     //alert(deuda_tasa);
-    //     var total = document.getElementById('ExtraprimadosMontoOtorgamiento').value * deuda_tasa * document
-    //         .getElementById('PorcentajeEP').value;
-    //     console.log(total);
-    //     document.getElementById('PagoEP').value = total;
-
-    // }
 </script>

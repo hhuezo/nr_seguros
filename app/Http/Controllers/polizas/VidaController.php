@@ -352,7 +352,7 @@ class VidaController extends Controller
         return view('polizas.vida.show', compact(
             'extraprimados',
             'clientes',
-            'total_extrapima',  
+            'total_extrapima',
             'poliza_vida',
             'detalle',
             'aseguradora',
@@ -822,7 +822,7 @@ class VidaController extends Controller
             $count = VidaCarteraTemp::where('User', auth()->user()->id)
                 ->where('PolizaVida', $id)
                 //->where('EdadDesembloso', '>', $poliza_vida->EdadMaximaInscripcion) EdadTerminacion
-                ->where('EdadDesembloso', '>', $poliza_vida->EdadTerminacion)
+                ->where('EdadDesembloso', '>', $poliza_vida->EdadMaximaInscripcion)
                 ->where('NoValido', 0)
                 ->count();
 
@@ -988,7 +988,7 @@ class VidaController extends Controller
                 )) as Nombre"),
             'poliza_vida_cartera.Dui',
             'poliza_vida_cartera.NumeroReferencia',
-            'poliza_vida_cartera.TotalCredito',
+            'poliza_vida_cartera.SumaAsegurada',
             'poliza_vida_cartera.FechaOtorgamiento',
 
         )

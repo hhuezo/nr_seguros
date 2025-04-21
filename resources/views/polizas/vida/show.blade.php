@@ -221,39 +221,12 @@
             });
         });
 
+        $('#clientes-extra').DataTable();
+        $('#clientes').DataTable();
+
     });
 
-    document.addEventListener('DOMContentLoaded', function() {
-        // Obtener referencias a los elementos del formulario
-        const añoSelect = document.getElementById('Axo');
-        const mesSelect = document.getElementById('Mes');
-        const fechaInicioInput = document.getElementById('FechaInicio');
-        const fechaFinalInput = document.getElementById('FechaFinal');
 
-        // Función para actualizar las fechas
-        function actualizarFechas() {
-            // Obtener el año y mes seleccionados
-            const año = añoSelect.value;
-            const mes = mesSelect.value;
-
-            // Validar que ambos campos tengan valores
-            if (año && mes) {
-                // Formatear el primer día del mes seleccionado
-                const primerDiaMes = `${año}-${mes.padStart(2, '0')}-01`;
-                fechaInicioInput.value = primerDiaMes;
-
-                // Calcular el primer día del mes siguiente
-                const fecha = new Date(año, mes - 1, 1); // Mes en JavaScript es 0-indexado
-                fecha.setMonth(fecha.getMonth() + 1); // Sumar un mes
-                const primerDiaMesSiguiente = fecha.toISOString().split('T')[0];
-                fechaFinalInput.value = primerDiaMesSiguiente;
-            }
-        }
-
-        // Asignar la función al evento onchange de los selectores
-        añoSelect.addEventListener('change', actualizarFechas);
-        mesSelect.addEventListener('change', actualizarFechas);
-    });
 </script>
 
 @endsection
