@@ -35,6 +35,7 @@ use App\Http\Controllers\polizas\DeudaTasaDiferenciadaController;
 use App\Http\Controllers\polizas\VidaController;
 use App\Http\Controllers\polizas\ResidenciaController;
 use App\Http\Controllers\polizas\ValidacionCarteraController;
+use App\Http\Controllers\polizas\VidaFedeController;
 use App\Http\Controllers\polizas\VidaTasaDiferenciadaController;
 use App\Http\Controllers\seguridad\PermissionController;
 use App\Http\Controllers\seguridad\RoleController;
@@ -348,9 +349,19 @@ Route::middleware(['auth'])->group(function () {
     Route::post('polizas/vida/tasa_diferenciada', [VidaTasaDiferenciadaController::class, 'store'])->name('tasa_diferenciada_vida.store');
     Route::put('polizas/vida/tasa_diferenciada/{id}', [VidaTasaDiferenciadaController::class, 'update']);
 
+    Route::post('polizas/vida/fede/create_pago', [VidaFedeController::class, 'create_pago']);
+
     Route::post('polizas/vida/agregar_tipo_cartera/{id}', [VidaTasaDiferenciadaController::class, 'agregar_tipo_cartera']);
     Route::post('polizas/vida/delete_tipo_cartera', [VidaTasaDiferenciadaController::class, 'delete_tipo_cartera']);
     Route::put('polizas/vida/update_tipo_cartera/{id}', [VidaTasaDiferenciadaController::class, 'update_tipo_cartera']);
+
+    Route::post('polizas/vida/update_extraprimado', [VidaController::class, 'update_extraprimado']);
+    Route::post('polizas/vida/store_extraprimado', [VidaController::class, 'store_extraprimado']);
+    Route::get('polizas/vida/get_extraprimado/{poliza}/{dui}', [VidaController::class, 'get_extraprimado']);
+    Route::post('exportar/vida/extraprimados_excluidos/{id}', [VidaController::class, 'extraprimados_excluidos']);
+
+
+
 
     Route::get('get_cliente', [VidaController::class, 'get_cliente']);
 

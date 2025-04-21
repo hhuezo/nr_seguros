@@ -93,4 +93,9 @@ class Vida extends Model
     {
         return $this->hasMany(VidaTipoCartera::class, 'PolizaVida', 'Id');
     }
+
+    public function extra_primados()
+    {
+        return $this->hasMany(PolizaVidaExtraPrimados::class, 'PolizaVida', 'Id');
+    }
 }

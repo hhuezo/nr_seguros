@@ -150,8 +150,6 @@
                                             <br>
                                             excluidos</a>
                                     </li>
-                                    </li>
-
 
                                 </ul>
                                 <div id="myTabContent" class="tab-content">

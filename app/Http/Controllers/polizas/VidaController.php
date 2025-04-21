@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\polizas;
 
+use App\Exports\vida\ExtraPrimadosExcluidosExport;
 use App\Http\Controllers\Controller;
 use App\Imports\VidaCarteraTempImport;
 use App\Models\catalogo\Aseguradora;
@@ -13,6 +14,7 @@ use App\Models\catalogo\Plan;
 use App\Models\catalogo\Producto;
 use App\Models\catalogo\TipoCobro;
 use App\Models\polizas\Comentario;
+use App\Models\polizas\PolizaVidaExtraPrimados;
 use App\Models\polizas\Vida;
 use App\Models\polizas\VidaCartera;
 use App\Models\polizas\VidaDetalle;
@@ -252,13 +254,11 @@ class VidaController extends Controller
 
         $dataPago = collect();
 
-        foreach($tipos_cartera as $tipo)
-        {
-            foreach($tipo->tasa_diferenciada as $tasa)
-            {
+        foreach ($tipos_cartera as $tipo) {
+            foreach ($tipo->tasa_diferenciada as $tasa) {
                 //dd($tasa);
-                 //por fechas
-                 if ($tipo->TipoCalculo == 1) {
+                //por fechas
+                if ($tipo->TipoCalculo == 1) {
 
                     $total = VidaCartera::where('PolizaVidaDetalle', null)
                         ->where('PolizaVida', $id)
@@ -266,13 +266,13 @@ class VidaController extends Controller
                         ->whereBetween('FechaOtorgamientoDate', [$tasa->FechaDesde, $tasa->FechaHasta])
                         ->sum('SumaAsegurada');
 
-                        $item['TipoCartera'] = $tipo->catalogo_tipo_cartera->Nombre;
-                        $item['Tasa'] = $tasa->Tasa;
-                        $item['Monto'] = "";
-                        $item['Fecha'] = $tasa->FechaDesde." - ".$tasa->FechaHasta;
-                        $item['SumaAsegurada'] =$total;
-                        $item['PrimaCalculada'] =$total* $tasa->Tasa;
-                        $dataPago->push($item);
+                    $item['TipoCartera'] = $tipo->catalogo_tipo_cartera->Nombre;
+                    $item['Tasa'] = $tasa->Tasa;
+                    $item['Monto'] = "";
+                    $item['Fecha'] = $tasa->FechaDesde . " - " . $tasa->FechaHasta;
+                    $item['SumaAsegurada'] = $total;
+                    $item['PrimaCalculada'] = $total * $tasa->Tasa;
+                    $dataPago->push($item);
                 }
                 //por monto
                 else if ($tipo->TipoCalculo == 2) {
@@ -282,26 +282,25 @@ class VidaController extends Controller
                         ->whereBetween('SumaAsegurada', [$tasa->MontoDesde, $tasa->MontoHasta])
                         ->sum('SumaAsegurada');
 
-                        $item['TipoCartera'] = $tipo->catalogo_tipo_cartera->Nombre;
-                        $item['Tasa'] = $tasa->Tasa;
-                        $item['Monto'] = $tasa->MontoDesde." - ".$tasa->MontoHasta;
-                        $item['Fecha'] = "";
-                        $item['SumaAsegurada'] =$total;
-                        $item['PrimaCalculada'] =$total* $tasa->Tasa;
-                        $dataPago->push($item);
-
+                    $item['TipoCartera'] = $tipo->catalogo_tipo_cartera->Nombre;
+                    $item['Tasa'] = $tasa->Tasa;
+                    $item['Monto'] = $tasa->MontoDesde . " - " . $tasa->MontoHasta;
+                    $item['Fecha'] = "";
+                    $item['SumaAsegurada'] = $total;
+                    $item['PrimaCalculada'] = $total * $tasa->Tasa;
+                    $dataPago->push($item);
                 } else {
                     $total = VidaCartera::where('PolizaVidaDetalle', null)
-                    ->where('PolizaVida', $id)
-                    ->where('PolizaVidaTipoCartera', $tipo->Id)
-                    ->sum('SumaAsegurada');
+                        ->where('PolizaVida', $id)
+                        ->where('PolizaVidaTipoCartera', $tipo->Id)
+                        ->sum('SumaAsegurada');
 
                     $item['TipoCartera'] = $tipo->catalogo_tipo_cartera->Nombre;
                     $item['Tasa'] = $tasa->Tasa;
                     $item['Monto'] = "";
                     $item['Fecha'] = "";
-                    $item['SumaAsegurada'] =$total;
-                    $item['PrimaCalculada'] =$total* $tasa->Tasa;
+                    $item['SumaAsegurada'] = $total;
+                    $item['PrimaCalculada'] = $total * $tasa->Tasa;
                     $dataPago->push($item);
                 }
             }
@@ -313,7 +312,47 @@ class VidaController extends Controller
         $detalle = VidaDetalle::where('PolizaVida', $id)->orderBy('Id', 'desc')->get();
         $comentarios = Comentario::where('Id', $id)->where('Activo', '=', 1)->get();
 
+
+        //extraprima
+        $clientes = VidaCartera::select(
+            'Id',
+            'PrimerNombre',
+            DB::raw("TRIM(CONCAT(
+                    IFNULL(PrimerNombre, ''),
+                    IF(IFNULL(SegundoNombre, '') != '', CONCAT(' ', SegundoNombre), ''),
+                    IF(IFNULL(PrimerApellido, '') != '', CONCAT(' ', PrimerApellido), ''),
+                    IF(IFNULL(SegundoApellido, '') != '', CONCAT(' ', SegundoApellido), ''),
+                    IF(IFNULL(ApellidoCasada, '') != '', CONCAT(' ', ApellidoCasada), '')
+                )) as Nombre"),
+            'Dui',
+            'NumeroReferencia',
+            'SumaAsegurada',
+            'Axo',
+            'Mes'
+        )->where('PolizaVida', '=', $id)->where('PolizaVidaDetalle', '=', 0)
+            ->orWhere('PolizaVidaDetalle', '=', null)->groupBy('NumeroReferencia')->get();
+
+        $extraprimados = PolizaVidaExtraPrimados::where('PolizaVida', $id)->get();
+        $total_extrapima = 0;
+        foreach ($extraprimados as $extraprimado) {
+            //consultando calculos de extraprimados
+            $data_array = $extraprimado->getPagoEP($extraprimado->Id);
+
+            $extraprimado->total = $data_array['total'];
+            $extraprimado->saldo_capital = $data_array['saldo_capital'];
+            $extraprimado->interes = $data_array['interes'];
+            $extraprimado->prima_neta = $data_array['prima_neta'];
+            $extraprimado->extra_prima = $data_array['extra_prima'];
+            $total_extrapima += $data_array['extra_prima'];
+
+            $extraprimado->Existe = VidaCarteraTemp::where('NumeroReferencia', $extraprimado->NumeroReferencia)->count();
+        }
+
+
         return view('polizas.vida.show', compact(
+            'extraprimados',
+            'clientes',
+            'total_extrapima',  
             'poliza_vida',
             'detalle',
             'aseguradora',
@@ -404,7 +443,7 @@ class VidaController extends Controller
 
 
         $poliza_responsabilidad_maxima = VidaCarteraTemp::where('User', auth()->user()->id)->where('PolizaVida', $id)
-        ->whereColumn('SumaAsegurada', '>', 'MontoMaximoIndividual')->get();
+            ->whereColumn('SumaAsegurada', '>', 'MontoMaximoIndividual')->get();
 
 
         //registros que no existen en el mes anterior
@@ -478,6 +517,21 @@ class VidaController extends Controller
 
         $registros_rehabilitados = VidaCarteraTemp::where('User', auth()->user()->id)->where('PolizaVida', $id)->where('Rehabilitado', 1)->get();
 
+        $extra_primados = $poliza_vida->extra_primados;
+
+        foreach ($extra_primados as $extra_primado) {
+            //$extra_primado->Existe =
+            $registro  = VidaCarteraTemp::where('NumeroReferencia', $extra_primado->NumeroReferencia)
+                ->sum('TotalCredito') ?? 0;
+            if ($registro > 0) {
+                $extra_primado->Existe = 1;
+                $extra_primado->MontoOtorgamiento = $registro;
+            } else {
+                $extra_primado->Existe = 0;
+            }
+        }
+
+
         return view('polizas.vida.respuesta_poliza', compact(
             'total',
             'poliza_vida',
@@ -488,7 +542,8 @@ class VidaController extends Controller
             'mesString',
             'axoActual',
             'mesActual',
-            'poliza_responsabilidad_maxima'
+            'poliza_responsabilidad_maxima',
+            'extra_primados'
         ));
     }
 
@@ -877,5 +932,68 @@ class VidaController extends Controller
 
         alert()->success('El registro de poliza ha sido ingresado correctamente');
         return redirect('polizas/vida/' . $id . '?tab=2');
+    }
+
+    public function update_extraprimado(Request $request)
+    {
+        $extra_primado = PolizaVidaExtraPrimados::findOrFail($request->IdExtraPrima);
+        // dd($extra_primado);
+        $extra_primado->PorcentajeEP = $request->PorcentajeEP;
+        // $extra_primado->PagoEP = $request->PagoEP;
+        $extra_primado->update();
+        alert()->success('El registro de poliza ha sido modificado correctamente');
+        return redirect('polizas/vida/' . $extra_primado->PolizaVida . '/edit?tab=5');
+    }
+
+    public function extraprimados_excluidos($id)
+    {
+        return Excel::download(new ExtraPrimadosExcluidosExport($id), 'creditos_extraprimados.xlsx');
+    }
+
+    public function store_extraprimado(Request $request)
+    {
+        try {
+            $cliente = new PolizaVidaExtraPrimados();
+            $cliente->NumeroReferencia = $request->NumeroReferencia;
+            $cliente->PolizaVida = $request->PolizaVida;
+            $cliente->Nombre = $request->Nombre;
+            $cliente->FechaOtorgamiento = $request->FechaOtorgamiento;
+            $cliente->MontoOtorgamiento = $request->MontoOtorgamiento;
+            $cliente->PorcentajeEP = $request->PorcentajeEP;
+            $cliente->Dui = $request->Dui;
+            $cliente->save();
+
+            alert()->success('Extraprimado agregado correctamente.');
+            return redirect('polizas/vida/' . $request->PolizaVida . '/edit?tab=5');
+        } catch (\Exception $e) {
+            // Log del error para depuración
+            Log::error('Error al guardar extraprimado: ' . $e->getMessage());
+
+            // Mensaje de error para el usuario
+            alert()->error('Error al guardar el registro (verificar si el registro ya fue agregado anteriormente).')->persistent('Ok');
+            return redirect()->back()->withInput();
+        }
+    }
+
+    public function get_extraprimado($id, $dui)
+    {
+        $cliente = VidaCartera::select(
+            'poliza_vida_cartera.Id',
+            DB::raw("TRIM(CONCAT(
+                    IFNULL(poliza_vida_cartera.PrimerNombre, ''),
+                    IF(IFNULL(poliza_vida_cartera.SegundoNombre, '') != '', CONCAT(' ', poliza_vida_cartera.SegundoNombre), ''),
+                    IF(IFNULL(poliza_vida_cartera.PrimerApellido, '') != '', CONCAT(' ', poliza_vida_cartera.PrimerApellido), ''),
+                    IF(IFNULL(poliza_vida_cartera.SegundoApellido, '') != '', CONCAT(' ', poliza_vida_cartera.SegundoApellido), ''),
+                    IF(IFNULL(poliza_vida_cartera.ApellidoCasada, '') != '', CONCAT(' ', poliza_vida_cartera.ApellidoCasada), '')
+                )) as Nombre"),
+            'poliza_vida_cartera.Dui',
+            'poliza_vida_cartera.NumeroReferencia',
+            'poliza_vida_cartera.TotalCredito',
+            'poliza_vida_cartera.FechaOtorgamiento',
+
+        )
+            ->where('PolizaVida', $id)->where('Dui', $dui)->first();
+
+        return response()->json($cliente);
     }
 }
