@@ -46,16 +46,17 @@ class PolizaVidaExtraPrimados extends Model
                         ->orWhere('PolizaVidaDetalle', '=', null);
                 })->where('PolizaVida','=',$extraprimado->PolizaVida)->first();
 
-
+            //dd($registro);
 
             if ($registro) {
                 //Saldos tradiciona, popular ,etc
-                $total = $registro->TotalCredito;
+                $total = $registro->SumaAsegurada;
 
                 $data_array = [
-                    "total" => $total, "saldo_capital" => $registro->SaldoCapital, "prima_neta" => $total * $registro->Tasa,
-                    "extra_prima" => ($total * $registro->Tasa) * ($extraprimado->PorcentajeEP / 100), "interes" => $registro->Intereses
-                ];
+                    "SumaAsegurada" => $registro->SumaAsegurada,  "PrimaNeta" => $total * $registro->Tasa,
+                    "ExtraPrima" => ($total * $registro->Tasa) * ($extraprimado->PorcentajeEP / 100)];
+
+                //dd($data_array);
             }
 
             return $data_array;

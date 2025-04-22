@@ -656,7 +656,7 @@ class DesempleoController extends Controller
         $detalle->save();
 
         DesempleoCarteraTemp::where('User', '=', auth()->user()->id)->where('PolizaDesempleo', $request->Desempleo)->delete();
-        $cartera = DesempleoCartera::where('FechaInicio', '=', $request->FechaInicio)->where('FechaFinal', '=', $request->FechaFinal)->update(['PolizaDesempleoDetalle' => $detalle->Id]);
+        $cartera = DesempleoCartera::where('PolizaDesempleo', '=', $request->Desempleo)->where('FechaInicio', '=', $request->FechaInicio)->where('FechaFinal', '=', $request->FechaFinal)->update(['PolizaDesempleoDetalle' => $detalle->Id]);
 
         $comen = new Comentario();
         $comen->Comentario = 'Se agrego el pago de la cartera';

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Imports\VidaCarteraTempImport;
 use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\Cliente;
+use App\Models\catalogo\DatosGenerales;
 use App\Models\catalogo\Ejecutivo;
 use App\Models\catalogo\EstadoPoliza;
 use App\Models\catalogo\Perfil;
@@ -18,6 +19,7 @@ use App\Models\polizas\PolizaVidaExtraPrimados;
 use App\Models\polizas\Vida;
 use App\Models\polizas\VidaCartera;
 use App\Models\polizas\VidaDetalle;
+use App\Models\polizas\VidaTasaDiferenciada;
 use App\Models\polizas\VidaTipoCartera;
 use App\Models\polizas\VidaUsuario;
 use App\Models\temp\VidaCarteraTemp;
@@ -253,11 +255,15 @@ class VidaController extends Controller
         $tipos_cartera = $poliza_vida->vida_tipos_cartera;
 
         $dataPago = collect();
+        $dataPagoId = [];
 
         foreach ($tipos_cartera as $tipo) {
             foreach ($tipo->tasa_diferenciada as $tasa) {
+                $dataPagoId[] = $tasa->Id;
                 //dd($tasa);
                 //por fechas
+
+                $item['Id'] =  $tasa->Id;
                 if ($tipo->TipoCalculo == 1) {
 
                     $total = VidaCartera::where('PolizaVidaDetalle', null)
@@ -265,6 +271,7 @@ class VidaController extends Controller
                         ->where('PolizaVidaTipoCartera', $tipo->Id)
                         ->whereBetween('FechaOtorgamientoDate', [$tasa->FechaDesde, $tasa->FechaHasta])
                         ->sum('SumaAsegurada');
+
 
                     $item['TipoCartera'] = $tipo->catalogo_tipo_cartera->Nombre;
                     $item['Tasa'] = $tasa->Tasa;
@@ -329,24 +336,31 @@ class VidaController extends Controller
             'SumaAsegurada',
             'Axo',
             'Mes'
-        )->where('PolizaVida', '=', $id)->where('PolizaVidaDetalle', '=', 0)
+        )->where('PolizaVida', '=', $id)->where('PolizaVidaDetalle', null)
             ->orWhere('PolizaVidaDetalle', '=', null)->groupBy('NumeroReferencia')->get();
 
         $extraprimados = PolizaVidaExtraPrimados::where('PolizaVida', $id)->get();
-        $total_extrapima = 0;
+
         foreach ($extraprimados as $extraprimado) {
             //consultando calculos de extraprimados
             $data_array = $extraprimado->getPagoEP($extraprimado->Id);
 
-            $extraprimado->total = $data_array['total'];
-            $extraprimado->saldo_capital = $data_array['saldo_capital'];
-            $extraprimado->interes = $data_array['interes'];
-            $extraprimado->prima_neta = $data_array['prima_neta'];
-            $extraprimado->extra_prima = $data_array['extra_prima'];
-            $total_extrapima += $data_array['extra_prima'];
+            $extraprimado->SumaAsegurada = $data_array['SumaAsegurada'] ?? 0.00;
+            $extraprimado->PrimaNeta = $data_array['PrimaNeta'] ?? 0.00;
+            $extraprimado->ExtraPrima = $data_array['ExtraPrima'] ?? 0.00;
 
-            $extraprimado->Existe = VidaCarteraTemp::where('NumeroReferencia', $extraprimado->NumeroReferencia)->count();
+
+            // dd($data_array);
         }
+
+        $total_extrapima = $extraprimados->sum('ExtraPrima') ?? 0.00;
+
+        $fechas = VidaCartera::where('PolizaVida', '=', $id)->where('PolizaVidaDetalle', null)->first();
+
+        //conteo por si existe tasa diferenciada
+        $count_tasas_diferencidas = VidaTasaDiferenciada::join('poliza_vida_tipo_cartera', 'poliza_vida_tipo_cartera.Id', '=', 'poliza_vida_tasa_diferenciada.PolizaVidaTipoCartera')
+        ->where('poliza_vida_tipo_cartera.PolizaVida', $id)
+        ->whereIn('poliza_vida_tipo_cartera.TipoCalculo', [1, 2])->count();
 
 
         return view('polizas.vida.show', compact(
@@ -364,8 +378,11 @@ class VidaController extends Controller
             'cartera',
             'comentarios',
             'dataPago',
+            'dataPagoId',
+            'fechas',
             //tab3
             'ultimo_pago',
+            'count_tasas_diferencidas'
         ));
     }
 
@@ -522,7 +539,8 @@ class VidaController extends Controller
         foreach ($extra_primados as $extra_primado) {
             //$extra_primado->Existe =
             $registro  = VidaCarteraTemp::where('NumeroReferencia', $extra_primado->NumeroReferencia)
-                ->sum('TotalCredito') ?? 0;
+                ->sum('SumaAsegurada') ?? 0;
+
             if ($registro > 0) {
                 $extra_primado->Existe = 1;
                 $extra_primado->MontoOtorgamiento = $registro;
@@ -530,7 +548,6 @@ class VidaController extends Controller
                 $extra_primado->Existe = 0;
             }
         }
-
 
         return view('polizas.vida.respuesta_poliza', compact(
             'total',
@@ -795,6 +812,113 @@ class VidaController extends Controller
             return redirect('polizas/vida/' . $id . '?tab=2')
                 ->withErrors(['delete_error' => 'Error al eliminar registros: ' . $e->getMessage()]);
         }
+    }
+
+
+    public function agregar_pago(Request $request)
+    {
+
+        //$poliza_vida = Vida::findOrFail($request->PolizaVida);
+        $time = Carbon::now('America/El_Salvador');
+
+        $recibo = DatosGenerales::orderByDesc('Id_recibo')->first();
+
+        $detalle = new VidaDetalle();
+        $detalle->FechaInicio = $request->FechaInicio;
+        $detalle->FechaFinal = $request->FechaFinal;
+        $detalle->MontoCartera = $request->MontoCartera;
+        $detalle->PolizaVida = $request->PolizaVida;
+        $detalle->Tasa = $request->Tasa;
+        $detalle->PrimaCalculada = $request->PrimaCalculada;
+        $detalle->Descuento = $request->Descuento;
+        $detalle->PrimaDescontada = $request->PrimaDescontada;
+        //$detalle->ImpuestoBomberos = $request->ImpuestoBomberos;
+        //$detalle->GastosEmision = $request->GastosEmision;
+        //$detalle->Otros = $request->Otros;
+        // $detalle->SubTotal = $request->SubTotal;
+        // $detalle->Iva = $request->Iva;
+        $detalle->TasaComision = $request->TasaComision;
+        $detalle->Comision = $request->Comision;
+        $detalle->IvaSobreComision = $request->IvaSobreComision;
+        $detalle->Retencion = $request->Retencion;
+        $detalle->ValorCCF = $request->ValorCCF;
+        $detalle->Comentario = $request->Comentario;
+        $detalle->APagar = $request->APagar;
+
+        $detalle->PrimaTotal = $request->PrimaTotal;
+        $detalle->DescuentoIva = $request->DescuentoIva; //checked
+        $detalle->ExtraPrima = $request->ExtraPrima;
+        //$detalle->ExcelURL = $request->ExcelURL;
+        $detalle->NumeroRecibo = ($recibo->Id_recibo) + 1;
+        $detalle->Usuario = auth()->user()->id;
+        $detalle->FechaIngreso = $time->format('Y-m-d');
+        $detalle->save();
+
+        //DesempleoCarteraTemp::where('User', '=', auth()->user()->id)->where('PolizaDesempleo', $request->Desempleo)->delete();
+        VidaCartera::where('PolizaVida',$request->PolizaVida)->where('PolizaVidaDetalle',null)->update(['PolizaVidaDetalle' => $detalle->Id]);
+
+        $comen = new Comentario();
+        $comen->Comentario = 'Se agrego el pago de la cartera';
+        $comen->Activo = 1;
+        $comen->Usuario = auth()->user()->id;
+        $comen->FechaIngreso = $time;
+        $comen->Desempleo = $request->Desempleo;
+        $comen->DetalleDesempleo = $detalle->Id;
+        $comen->save();
+
+
+        $recibo->Id_recibo = ($recibo->Id_recibo) + 1;
+        $recibo->update();
+
+        /// $extraprimados = PolizaDesempleoExtraPrimados::where('PolizaDesempleo', $request->Desempleo)->get();
+        //$total_extrapima = 0;
+        /*foreach ($extraprimados as $extraprimado) {
+            //consultando calculos de extraprimados
+            $data_array = $extraprimado->getPagoEP($extraprimado->Id);
+
+            $extraprimado->total = $data_array['total'];
+            $extraprimado->saldo_capital = $data_array['saldo_capital'];
+            $extraprimado->interes = $data_array['interes'];
+            $extraprimado->prima_neta = $data_array['prima_neta'];
+            $extraprimado->extra_prima = $data_array['extra_prima'];
+            $total_extrapima += $data_array['extra_prima'];
+
+
+            $prima_mensual = new PolizaDesempleoExtraPrimadosMensual();
+            $prima_mensual->PolizaDesempleo = $request->Desempleo;
+            $prima_mensual->Dui = $extraprimado->Dui;
+            $prima_mensual->NumeroReferencia = $extraprimado->NumeroReferencia;
+            $prima_mensual->Nombre = $extraprimado->Nombre;
+            $prima_mensual->FechaOtorgamiento = $extraprimado->FechaOtorgamiento;
+            $prima_mensual->MontoOtorgamiento = $extraprimado->MontoOtorgamiento;
+            $prima_mensual->Tarifa = $extraprimado->Tarifa;
+            $prima_mensual->PorcentajeEP = $extraprimado->PorcentajeEP;
+            $prima_mensual->PagoEP = $extraprimado->PagoEP;
+            $prima_mensual->DesempleoDetalle = $detalle->Id;
+            $prima_mensual->save();
+        } */
+
+
+
+
+
+        //session(['MontoCartera' => 0]);
+        alert()->success('El Registro de cobro ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
+        // }
+        return back();
+    }
+
+    public function cancelar_pago(Request $request)
+    {
+        try {
+            VidaCarteraTemp::where('PolizaVida', '=', $request->PolizaVida)->delete();
+
+            VidaCartera::where('PolizaVida', '=', $request->PolizaVida)->where('User', auth()->user()->id)->where('PolizaVidaDetalle',null)->delete();
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+        alert()->success('El cobro se ha eliminado correctamente');
+        return redirect('polizas/vida/'.$request->PolizaVida.'?tab=2');
     }
 
 

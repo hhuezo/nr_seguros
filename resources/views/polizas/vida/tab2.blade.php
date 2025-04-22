@@ -38,6 +38,18 @@
 
     <br>
 
+
+    <input type="hidden" id="Tasa" value="{{ $poliza_vida->Tasa }}">
+    @php
+        $tasaComision = $poliza_vida->ComisionIva == 1 ? $poliza_vida->TasaComision / 1.13 : $poliza_vida->TasaComision;
+    @endphp
+
+    <input type="hidden" id="TasaComisionDetalle" value="{{ $tasaComision }}">
+    <input type="hidden" id="ExtraPrima" value="{{ $total_extrapima }}">
+   <input type="hidden" id="ComisionIva" value="{{ $poliza_vida->ComisionIva }}">
+    <input type="hidden" id="DescuentoRentabilidad" value="{{ $poliza_vida->Descuento ?? 0.00}}">
+    <input type="hidden" id="TipoContribuyente" value="{{ $poliza_vida->cliente->TipoContribuyente }}">
+
     <div class="modal-body">
         <div class="box-body row">
             <br>
@@ -84,102 +96,27 @@
                             $totalPrimaCalculada += floatval($primaCalculada);
                         @endphp
                         <tr>
-                            <td contenteditable="true">{{ $item['TipoCartera'] }}</td>
-                            <td contenteditable="true">{{ $item['Tasa'] }}</td>
-                            <td contenteditable="true">{{ $item['Monto'] }}</td>
-                            <td contenteditable="true">{{ $item['Fecha'] }}</td>
-                            <td contenteditable="true" style="text-align: right;">{{ number_format($item['SumaAsegurada'], 2, '.', ',') }}</td>
-                            <td contenteditable="true" style="text-align: right;">{{ number_format($item['PrimaCalculada'], 2, '.', ',') }}</td>
+                            <td>{{ $item['TipoCartera'] }}</td>
+                            <td>{{ $item['Tasa'] }}</td>
+                            <td>{{ $item['Monto'] }}</td>
+                            <td>{{ $item['Fecha'] }}</td>
+                            <td id="suma_asegurada_{{ $item['Id'] }}" contenteditable="true"
+                                style="text-align: right;">
+                                {{ number_format($item['SumaAsegurada'], 2, '.', ',') }}</td>
+                            <td id="prima_calculada_{{ $item['Id'] }}" contenteditable="true"
+                                style="text-align: right;">{{ number_format($item['PrimaCalculada'], 2, '.', ',') }}
+                            </td>
                         </tr>
                     @endforeach
                     <tr class="text-end">
                         <th colspan="4">Totales</th>
-                        <td style="text-align: right;">{{ number_format($totalSumaAsegurada, 2, '.', ',') }}</td>
-                        <td style="text-align: right;">{{ number_format($totalPrimaCalculada, 2, '.', ',') }}</td>
-                    </tr>
-
-                    {{-- <tr>
-                        <td contenteditable="true" id="tasa_millar">
-                            {{ $poliza_vida->Tasa }}
-                        </td>
-
-                        <td class="numeric editable" contenteditable="true" id="suma_asegurada"
-                            onblur="actualizarCalculos()">
-                            {{ number_format($cartera->SumaAsegurada, 2, '.', ',') }}
-                        </td>
-
-                        <td class="numeric editable" contenteditable="true" id="prima_por_pagar"
-                            onblur="actualizarCalculos()">
-                            {{ number_format($cartera->SumaAsegurada * $poliza_vida->Tasa, 2, '.', ',') }}
-                        </td>
-
-
-
-                        <td class="numeric editable" contenteditable="true" id="saldo_capital"
-                            onblur="actualizarCalculos()">
-                            {{ number_format($data['saldoCapital'], 2, '.', ',') }}
-                        </td>
-                        <td class="numeric total" contenteditable="true" id="intereses" onblur="actualizarCalculos()">
-                            {{ number_format($data['intereses'], 2, '.', ',') }}
-                        </td>
-
-                        <td class="numeric editable" contenteditable="true" id="intereses_covid"
-                            onblur="actualizarCalculos()">
-                            {{ number_format($data['interesesCovid'], 2, '.', ',') }}
-                        </td>
-
-                        <td class="numeric editable" contenteditable="true" id="intereses_moratorios"
-                            onblur="actualizarCalculos()">
-                            {{ number_format($data['interesesMoratorios'], 2, '.', ',') }}
-                        </td>
-                        <td class="numeric editable" contenteditable="true" id="monto_nominal"
-                            onblur="actualizarCalculos()">
-                            {{ number_format($data['montoNominal'], 2, '.', ',') }}
-                        </td>
-
-                        <td class="numeric editable" contenteditable="true" id="monto_cartera"
-                            onblur="actualizarCalculos()">
-                            {{ number_format($data['total'], 2, '.', ',') }}
-                        </td>
-
-                        <td class="numeric editable" contenteditable="true" id="prima_por_pagar"
-                            onblur="actualizarCalculos()">
-                            {{ number_format($data['primaPorPagar'], 2, '.', ',') }}
-                        </td>
+                        <td id="total_suma_asegurada" style="text-align: right;">
+                            {{ number_format($totalSumaAsegurada, 2, '.', ',') }}</td>
+                        <td id="total_prima_calculada" style="text-align: right;">
+                            {{ number_format($totalPrimaCalculada, 2, '.', ',') }}</td>
                     </tr>
 
 
-                    <tr>
-                        <th>Totales</th>
-                        <td class="numeric editable" contenteditable="true">
-                            <span
-                                id="total_suma_asegurada">{{ number_format($cartera->SumaAsegurada, 2, '.', ',') }}</span>
-                        </td>
-
-                        <td class="numeric editable" contenteditable="true">
-                            <span
-                                id="total_prima_por_pagar">{{ number_format($cartera->SumaAsegurada * $poliza_vida->Tasa, 2, '.', ',') }}</span>
-                        </td>
-                       <td class="numeric"><span
-                                id="total_saldo_capital">{{ number_format($data['saldoCapital'], 2, '.', ',') }}</span>
-                        </td>
-                        <td class="numeric"><span
-                                id="total_interes">{{ number_format($data['intereses'], 2, '.', ',') }}</span></td>
-                        <td class="numeric"><span
-                                id="total_interes_covid">{{ number_format($data['interesesCovid'], 2, '.', ',') }}</span>
-                        </td>
-                        <td class="numeric"><span
-                                id="total_interes_moratorios">{{ number_format($data['interesesMoratorios'], 2, '.', ',') }}</span>
-                        </td>
-                        <td class="numeric"><span
-                                id="total_monto_nominal">{{ number_format($data['montoNominal'], 2, '.', ',') }}</span>
-                        </td>
-                        <td class="numeric"><span
-                                id="total_monto_cartera">{{ number_format($data['total'], 2, '.', ',') }}</span></td>
-                        <td class="numeric"><span
-                                id="total_prima_por_pagar">{{ number_format($data['primaPorPagar'], 2, '.', ',') }}</span>
-                        </td>
-                    </tr> --}}
                     </tbody>
                 </table>
             </div>
@@ -294,7 +231,7 @@
                             <td>Extra Prima</td>
                             <td class="numeric editable">
                                 <span id="sub_total_extra_prima">
-                                    {{ isset($data['extra_prima']) ? number_format($data['extra_prima'], 2, '.', ',') : '0.00' }}
+                                    {{ number_format($total_extrapima, 2, '.', ',') }}
                                 </span>
                             </td>
                         </tr>
@@ -334,31 +271,25 @@
             </div>
 
             <div>
-                {{-- <form action="{{ url('polizas/desempleo/agregar_pago') }}" method="POST">
+                <form action="{{ url('polizas/vida/agregar_pago') }}" method="POST">
                     @csrf
                     <input type="hidden" name="FechaInicio" value="{{ isset($fechas) ? $fechas->FechaInicio : '' }}">
                     <input type="hidden" name="FechaFinal" value="{{ isset($fechas) ? $fechas->FechaFinal : '' }}">
-                    <input type="hidden" name="MontoCartera" id="MontoCarteraDetalle"
-                        value="{{ $data['total'] }}">
-                    <input type="hidden" name="Desempleo" value="{{ $poliza_vida->Id }}">
+                    <input type="hidden" name="MontoCartera" id="MontoCarteraDetalle">
+                    <input type="hidden" name="PolizaVida" value="{{ $poliza_vida->Id }}">
                     <input type="hidden" name="Tasa" value="{{ $poliza_vida->Tasa }}">
-                    <input type="hidden" name="PrimaCalculada" id="PrimaCalculadaDetalle"
-                        value="{{ $data['primaPorPagar'] }}">
-                    <input type="hidden" name="PrimaDescontada" id="PrimaDescontadaDetalle"
-                        value="{{ $data['primaDescontada'] }}">
-                    <!-- <input type="hidden" name="SubTotal" id="SubTotalDetalle" value="{{ $data['primaPorPagar'] }}" > -->
-                    <!-- <input type="hidden" name="Iva" id="IvaDetalle"> -->
+                    <input type="hidden" name="PrimaCalculada" id="PrimaCalculadaDetalle">
+                    <input type="hidden" name="PrimaDescontada" id="PrimaDescontadaDetalle">
+                    <input type="hidden" name="SubTotal" id="SubTotalDetalle">
+                    <input type="hidden" name="Iva" id="IvaDetalle">
                     <input type="hidden" name="TasaComision" value="{{ $poliza_vida->TasaComision }}">
-                    <input type="hidden" name="Comision" id="ComisionDetalle"
-                        value="{{ $data['valorComision'] }}">
-                    <input type="hidden" name="IvaSobreComision" id="IvaComisionDetalle"
-                        value="{{ $data['ivaComision'] }}">
-                    <input type="hidden" name="Descuento" id="DescuentoDetalle" value="{{ $data['descuento'] }}">
-                    <input type="hidden" name="Retencion" id="RetencionDetalle"
-                        value="{{ $data['retencionComision'] }}">
-                    <input type="hidden" name="ValorCCF" id="ValorCCFDetalle" value="{{ $data['comisionCcf'] }}">
-                    <input type="hidden" name="APagar" id="APagarDetalle" value="{{ $data['liquidoApagar'] }}">
-                    <input type="hidden" name="ExtraPrima" value="{{ $data['extra_prima'] }}">
+                    <input type="hidden" name="Comision" id="ComisionDetalle">
+                    <input type="hidden" name="IvaSobreComision" id="IvaComisionDetalle">
+                    <input type="hidden" name="Descuento" id="DescuentoDetalle">
+                    <input type="hidden" name="Retencion" id="RetencionDetalle">
+                    <input type="hidden" name="ValorCCF" id="ValorCCFDetalle">
+                    <input type="hidden" name="APagar" id="APagarDetalle">
+                    <input type="hidden" name="ExtraPrima" value="{{ $total_extrapima }}">
                     <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
                         id="modal-aplicar">
                         <div class="modal-dialog">
@@ -390,13 +321,13 @@
                             onclick="aplicarpago()">Generar Cobro</a>
                     </div>
 
-                </form> --}}
+                </form>
             </div>
 
             <div class="modal fade" id="modal-cancelar" tabindex="-1" role="dialog"
                 aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
                 <div class="modal-dialog">
-                    <form action="{{ url('polizas/residencia/cancelar_pago') }}" method="POST">
+                    <form action="{{ url('polizas/vida/cancelar_pago') }}" method="POST">
                         @method('POST')
                         @csrf
                         <div class="modal-content">
@@ -406,11 +337,8 @@
                                 </button>
                                 <h4 class="modal-title">Cancelar Cobro</h4>
 
-                                <input type="hidden" name="Residencia" value="{{ $poliza_vida->Id }}">
-                                <input type="hidden" name="MesCancelar"
-                                    value="{{ isset($fecha) ? $fecha->Mes : '' }}">
-                                <input type="hidden" name="AxoCancelar"
-                                    value="{{ isset($fecha) ? $fecha->Axo : '' }}">
+                                <input type="hidden" name="PolizaVida" value="{{ $poliza_vida->Id }}">
+
                             </div>
                             <div class="modal-body">
                                 <p>¿Esta seguro/a que desea cancelar el cobro?</p>
@@ -426,3 +354,146 @@
             </div>
         </div>
     </div>
+
+
+
+    <script>
+        $(document).ready(function() {
+            let idRegistroArray = @json($dataPagoId);
+
+            if (Array.isArray(idRegistroArray) && idRegistroArray.length > 0) {
+                calculoTotales();
+            }
+
+            function calculoTotales() {
+
+                let total_suma_asegurada = 0;
+                let total_prima_calculada = 0;
+
+                let sub_total = 0;
+
+                for (let i = 0; i < idRegistroArray.length; i++) {
+
+                    let idRegistro = idRegistroArray[i];
+
+
+                    let elemento_suma_asegurada = document.getElementById("suma_asegurada_" + idRegistro);
+                    let suma_asegurada = elemento_suma_asegurada ? (elemento_suma_asegurada.innerText ||
+                        elemento_suma_asegurada.textContent) : 0;
+
+
+
+
+                    let elemento_prima_calculada = document.getElementById("prima_calculada_" + idRegistro);
+                    let prima_calculada = elemento_prima_calculada ? (elemento_prima_calculada.innerText ||
+                        elemento_prima_calculada.textContent) : 0;
+
+
+                    total_suma_asegurada += convertirANumero(suma_asegurada);
+                    total_prima_calculada += convertirANumero(prima_calculada);
+
+                }
+
+                sub_total = total_prima_calculada;
+
+
+                //escribiendo totales
+                let total_suma_asegurada_formateada = formatearCantidad(total_suma_asegurada);
+                //console.log("elemento_suma_asegurada ", total_suma_asegurada_formateada);
+                document.getElementById("total_suma_asegurada").textContent = total_suma_asegurada_formateada;
+
+                let total_prima_calculada_formateada = formatearCantidad(total_prima_calculada);
+                document.getElementById("total_prima_calculada").textContent = total_prima_calculada_formateada;
+
+                let tasa = document.getElementById('Tasa').value;
+                let comision_iva = document.getElementById('ComisionIva').value;
+
+                let tasa_comision = parseFloat(document.getElementById('TasaComisionDetalle')?.value) || 0;
+                let tipo_contribuyente = {{ $poliza_vida->cliente->TipoContribuyente }};
+               //console.log("tasa_comision: " + tasa_comision);
+
+
+                //modificando valores de cuadros
+                document.getElementById("monto_total_cartera").textContent = total_suma_asegurada_formateada;
+                document.getElementById('MontoCarteraDetalle').value = parseFloat(total_suma_asegurada);
+                document.getElementById('PrimaCalculadaDetalle').value = sub_total;
+
+
+                document.getElementById("sub_total").textContent = formatearCantidad(sub_total);
+                document.getElementById('SubTotalDetalle').value = sub_total;
+                let extra_prima = document.getElementById('ExtraPrima').value;
+                document.getElementById("sub_total_extra_prima").textContent = formatearCantidad(extra_prima);
+
+
+                let descuento = (parseFloat(sub_total) + parseFloat(extra_prima)) * parseFloat(parseFloat(document.getElementById('DescuentoRentabilidad').value) / 100);
+
+
+
+                document.getElementById('descuento_rentabilidad').textContent = formatearCantidad(descuento);
+                document.getElementById('DescuentoDetalle').value = parseFloat(descuento);
+                prima_a_cobrar = (parseFloat(sub_total) + parseFloat(extra_prima)) - parseFloat(descuento);
+                document.getElementById("prima_a_cobrar").textContent = formatearCantidad(prima_a_cobrar);
+                document.getElementById("prima_a_cobrar_ccf").textContent = formatearCantidad(prima_a_cobrar);
+
+                // no contribuyente no paga iva
+                iva = tipo_contribuyente !== 4 ? 0 : 0;
+                document.getElementById('PrimaDescontadaDetalle').value = parseFloat(prima_a_cobrar);
+
+
+
+                // document.getElementById('iva').textContent = formatearCantidad(iva);
+                document.getElementById('IvaDetalle').value = parseFloat(iva);
+                let total_factura = parseFloat(iva) + parseFloat(prima_a_cobrar);
+
+
+                let valor_comision = parseFloat(prima_a_cobrar) * (parseFloat(tasa_comision) / 100);
+                document.getElementById('valor_comision').textContent = formatearCantidad(valor_comision);
+                console.log(valor_comision);
+                document.getElementById('ComisionDetalle').value = parseFloat(valor_comision);
+                let iva_comision = tipo_contribuyente !== 4 ? parseFloat(valor_comision) * 0.13 : 0;
+                document.getElementById('iva_comision').textContent = formatearCantidad(iva_comision);
+                document.getElementById('IvaComisionDetalle').value = parseFloat(iva_comision);
+
+                let sub_total_ccf = parseFloat(valor_comision) + parseFloat(iva_comision);
+                document.getElementById('sub_total_ccf').textContent = formatearCantidad(sub_total_ccf);
+
+                let retencion_comision = tipo_contribuyente !== 1 ? parseFloat(valor_comision) * 0.01 : 0;
+
+                console.log(tipo_contribuyente);
+                document.getElementById('retencion_comision').textContent = formatearCantidad(retencion_comision);
+                let comision_ccf = parseFloat(sub_total_ccf) - parseFloat(retencion_comision);
+                document.getElementById('comision_ccf').textContent = formatearCantidad(comision_ccf);
+                document.getElementById('comision').textContent = formatearCantidad(comision_ccf);
+                let liquido_pagar = parseFloat(prima_a_cobrar) - parseFloat(comision_ccf);
+                document.getElementById("liquido_pagar").textContent = formatearCantidad(liquido_pagar);
+                document.getElementById('RetencionDetalle').value = parseFloat(retencion_comision);
+                document.getElementById('ValorCCFDetalle').value = parseFloat(comision_ccf);
+                document.getElementById('APagarDetalle').value = parseFloat(liquido_pagar);
+
+            }
+
+        });
+
+
+        // Función para convertir una cadena formateada a un número flotante
+        function convertirANumero(cadena) {
+            if (typeof cadena !== 'string') {
+
+                if (typeof cadena === 'number') {
+                    return cadena;
+                }
+                return NaN; // or return 0; depending on your needs
+            }
+
+            // Remove commas and convert to number
+            return parseFloat(cadena.replace(/,/g, ''));
+        }
+
+        function formatearCantidad(cantidad) {
+            let numero = Number(cantidad);
+            return numero.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+    </script>

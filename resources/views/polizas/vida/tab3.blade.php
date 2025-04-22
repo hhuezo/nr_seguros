@@ -61,7 +61,7 @@
                 <td>Tasa mensual por millar</td>
                 <td style="text-align: right;"><span class="fa fa-dollar " aria-hidden="true"></span></td>
                 <td style="text-align: right;">
-                    <label class="label-control has-feedback-left" style="text-align: right;">{{ $poliza_vida->Tasa }} </label>
+                    <label class="label-control has-feedback-left" style="text-align: right;">{{ $count_tasas_diferencidas == 0 ? $poliza_vida->Tasa : 'TASA DIFERENCIADA' }} </label>
                 </td>
                 <td></td>
             </tr>

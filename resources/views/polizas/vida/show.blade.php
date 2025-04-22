@@ -1,5 +1,7 @@
 @extends ('welcome')
 @section('contenido')
+
+@include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
 <div class="x_panel">
     <div id="loading-overlay" style="display: none">
         <img src="{{ asset('img/ajax-loader.gif') }}" alt="Loading..." />
@@ -37,11 +39,11 @@
             <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
                 aria-controls="profile" aria-selected="false">Generar <br> cartera</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item {{ isset($tab) && $tab == 3 ? 'active in' : '' }}">
             <a class="nav-link" id="extra-prima-tab" data-toggle="tab" href="#extra-prima" role="tab" aria-controls="extra-prima"
                 aria-selected="false">Extra Prima <br> {{ $poliza_vida->NumeroPoliza }}</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item {{ isset($tab) && $tab == 4 ? 'active in' : '' }}">
             <a class="nav-link" id="hoja-tab" data-toggle="tab" href="#hoja" role="tab" aria-controls="hoja"
                 aria-selected="false">Hoja de Cartera <br> {{ $poliza_vida->NumeroPoliza }}</a>
         </li>
@@ -177,15 +179,15 @@
             @include('polizas.vida.tab2')
 
         </div>
-        <div class="tab-pane fade {{ isset($tab) && $tab == 5 ? 'active in' : '' }}" id="extra-prima" role="tabpanel" aria-labelledby="extra-prima-tab">
+        <div class="tab-pane fade {{ isset($tab) && $tab == 3 ? 'active in' : '' }}" id="extra-prima" role="tabpanel" aria-labelledby="extra-prima-tab">
             <br>
             @include('polizas.vida.tab5')
         </div>
-        <div class="tab-pane fade " id="hoja" role="tabpanel" aria-labelledby="hoja-tab">
+        <div class="tab-pane fade {{ isset($tab) && $tab == 4 ? 'active in' : '' }}" id="hoja" role="tabpanel" aria-labelledby="hoja-tab">
 
             @include('polizas.vida.tab3')
         </div>
-        <div class="tab-pane fade " id="pagos" role="tabpanel" aria-labelledby="pagos-tab">
+        <div class="tab-pane fade {{ isset($tab) && $tab == 5 ? 'active in' : '' }}" id="pagos" role="tabpanel" aria-labelledby="pagos-tab">
 
             @include('polizas.vida.tab4')
         </div>

@@ -70,15 +70,15 @@
                         <th>Nombre</th>
                         <th>Fecha de Otorgamiento</th>
                         <th>SA</th>
-                        <th>Interes</th>
-                        <th>Total</th>
+                        {{-- <th>Interes</th>
+                        <th>Total</th> --}}
                         <th>Prima neta</th>
                         <th>%EP</th>
                         <th>Extra prima</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @php($totalextraprima = 0)
+
                     @if ($extraprimados->count() > 0)
                     @foreach ($extraprimados as $obj)
                     <tr >
@@ -90,12 +90,12 @@
                         <td>{{ $obj->NumeroReferencia }}</td>
                         <td>{{ $obj->Nombre }}</td>
                         <td>{{ $obj->FechaOtorgamiento }}</td>
-                        <td>${{ number_format($obj->saldo_capital, 2, '.', ',') }}</td>
-                        <td>${{ number_format($obj->Intereses, 2, '.', ',') }}</td>
-                        <td align="right">${{ number_format($obj->total, 2, '.', ',') }}</td>
-                        <td align="right">${{ number_format($obj->prima_neta, 2, '.', ',') }}</td>
+                        <td>${{ number_format($obj->SumaAsegurada, 2, '.', ',') }}</td>
+                        {{-- <td>${{ number_format($obj->Intereses, 2, '.', ',') }}</td> --}}
+                        {{-- <td align="right">${{ number_format($obj->total, 2, '.', ',') }}</td> --}}
+                        <td align="right">${{ number_format($obj->PrimaNeta, 2, '.', ',') }}</td>
                         <td>{{ $obj->PorcentajeEP }}%</td>
-                        <td align="right">${{ number_format($obj->extra_prima, 2, '.', ',') }}</td>
+                        <td align="right">${{ number_format($obj->ExtraPrima, 2, '.', ',') }}</td>
                     </tr>
                     <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete_extraprima-{{ $obj->Id }}">
 
@@ -130,7 +130,7 @@
                 </tbody>
                 <tfoot>
                     <tr align="right">
-                        <td colspan="9">Total</td>
+                        <td colspan="7">Total</td>
                         <td>${{ number_format($total_extrapima, 2, '.', ',') }}</td>
                     </tr>
                 </tfoot>
