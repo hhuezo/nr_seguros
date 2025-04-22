@@ -942,7 +942,7 @@ class VidaController extends Controller
         // $extra_primado->PagoEP = $request->PagoEP;
         $extra_primado->update();
         alert()->success('El registro de poliza ha sido modificado correctamente');
-        return redirect('polizas/vida/' . $extra_primado->PolizaVida . '/edit?tab=5');
+        return redirect('polizas/vida/' . $extra_primado->PolizaVida . '?tab=5');
     }
 
     public function extraprimados_excluidos($id)
@@ -964,7 +964,7 @@ class VidaController extends Controller
             $cliente->save();
 
             alert()->success('Extraprimado agregado correctamente.');
-            return redirect('polizas/vida/' . $request->PolizaVida . '/edit?tab=5');
+            return redirect('polizas/vida/' . $request->PolizaVida . '?tab=5');
         } catch (\Exception $e) {
             // Log del error para depuración
             Log::error('Error al guardar extraprimado: ' . $e->getMessage());
