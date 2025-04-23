@@ -157,7 +157,7 @@
 
 
                                 <li><a><i class="fa fa-folder"></i> Catálogos<span class="fa fa-chevron-down"></span></a>
-                                    <ul class="nav child_menu">
+                                    <ul class="nav child_menu" id="ul-catalogo">
 
 
                                         <li><a href="{{ url('catalogo/configuracion_recibo/1/edit') }}">Configuración de Recibo</a></li>
@@ -167,7 +167,7 @@
                                         <li><a href="{{ url('catalogo/estado_venta') }}">Estado Venta</a></li>
                                         <li><a href="{{ url('catalogo/tipo_cartera') }}">Tipo de Credito (Deuda)</a></li>
                                         <li><a href="{{ url('catalogo/nr_cartera') }}">Tipo Cartera NR </a></li>
-                                        <li><a href="{{ url('catalogo/tipo_cartera_vida') }}">Tipo Cartera (Vida) </a></li>
+                                        <li id="li-catalogo-vida-tipo-cartera"><a href="{{ url('catalogo/tipo_cartera_vida') }}">Tipo Cartera (Vida) </a></li>
                                         <li><a href="{{ url('catalogo/tipo_negocio') }}">Tipo Negocio</a></li>
                                         <li><a href="{{ url('catalogo/tipo_cobro') }}">Tipo Cobro</a></li>
                                         <li><a href="{{ url('catalogo/tipo_poliza') }}">Tipo Póliza (ramo)</a></li>

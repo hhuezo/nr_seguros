@@ -226,7 +226,7 @@
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="form-group" align="center">
                                             <button type="submit" class="btn btn-success">Aceptar</button>
-                                            <a href="{{ url('poliza/vida') }}"><button type="button"
+                                            <a href="{{ url('polizas/vida') }}"><button type="button"
                                                     class="btn btn-primary">Cancelar</button></a>
                                         </div>
                                     </div>
