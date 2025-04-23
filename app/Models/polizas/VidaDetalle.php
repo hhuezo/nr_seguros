@@ -2,6 +2,7 @@
 
 namespace App\Models\polizas;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -42,5 +43,9 @@ class VidaDetalle extends Model
 
     public function vidas(){
         return $this->belongsTo('App\Models\polizas\Vida', 'Vida', 'Id');
+    }
+
+    public function usuario(){
+        return $this->belongsTo(User::class, 'Usuario', 'Id');
     }
 }

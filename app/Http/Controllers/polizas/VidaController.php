@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Imports\VidaCarteraTempImport;
 use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\Cliente;
+use App\Models\catalogo\ConfiguracionRecibo;
 use App\Models\catalogo\DatosGenerales;
 use App\Models\catalogo\Ejecutivo;
 use App\Models\catalogo\EstadoPoliza;
@@ -19,6 +20,7 @@ use App\Models\polizas\PolizaVidaExtraPrimados;
 use App\Models\polizas\Vida;
 use App\Models\polizas\VidaCartera;
 use App\Models\polizas\VidaDetalle;
+use App\Models\polizas\VidaHistorialRecibo;
 use App\Models\polizas\VidaTasaDiferenciada;
 use App\Models\polizas\VidaTipoCartera;
 use App\Models\polizas\VidaUsuario;
@@ -359,8 +361,8 @@ class VidaController extends Controller
 
         //conteo por si existe tasa diferenciada
         $count_tasas_diferencidas = VidaTasaDiferenciada::join('poliza_vida_tipo_cartera', 'poliza_vida_tipo_cartera.Id', '=', 'poliza_vida_tasa_diferenciada.PolizaVidaTipoCartera')
-        ->where('poliza_vida_tipo_cartera.PolizaVida', $id)
-        ->whereIn('poliza_vida_tipo_cartera.TipoCalculo', [1, 2])->count();
+            ->where('poliza_vida_tipo_cartera.PolizaVida', $id)
+            ->whereIn('poliza_vida_tipo_cartera.TipoCalculo', [1, 2])->count();
 
 
         return view('polizas.vida.show', compact(
@@ -855,7 +857,7 @@ class VidaController extends Controller
         $detalle->save();
 
         //DesempleoCarteraTemp::where('User', '=', auth()->user()->id)->where('PolizaDesempleo', $request->Desempleo)->delete();
-        VidaCartera::where('PolizaVida',$request->PolizaVida)->where('PolizaVidaDetalle',null)->update(['PolizaVidaDetalle' => $detalle->Id]);
+        VidaCartera::where('PolizaVida', $request->PolizaVida)->where('PolizaVidaDetalle', null)->update(['PolizaVidaDetalle' => $detalle->Id]);
 
         $comen = new Comentario();
         $comen->Comentario = 'Se agrego el pago de la cartera';
@@ -913,13 +915,113 @@ class VidaController extends Controller
         try {
             VidaCarteraTemp::where('PolizaVida', '=', $request->PolizaVida)->delete();
 
-            VidaCartera::where('PolizaVida', '=', $request->PolizaVida)->where('User', auth()->user()->id)->where('PolizaVidaDetalle',null)->delete();
+            VidaCartera::where('PolizaVida', '=', $request->PolizaVida)->where('User', auth()->user()->id)->where('PolizaVidaDetalle', null)->delete();
         } catch (\Throwable $th) {
             //throw $th;
         }
         alert()->success('El cobro se ha eliminado correctamente');
-        return redirect('polizas/vida/'.$request->PolizaVida.'?tab=2');
+        return redirect('polizas/vida/' . $request->PolizaVida . '?tab=2');
     }
+
+    public function recibo_pago($id, Request $request)
+    {
+        //try {
+            $detalle = VidaDetalle::findOrFail($id);
+            $poliza_vida = Vida::findOrFail($detalle->PolizaVida);
+
+            $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+            // Actualizar campos del detalle
+            $detalle->SaldoA = $request->SaldoA;
+            $detalle->ImpresionRecibo = $request->ImpresionRecibo;
+            $detalle->Referencia = $request->Referencia;
+            $detalle->Anexo = $request->Anexo;
+            $detalle->NumeroCorrelativo = $request->NumeroCorrelativo;
+
+            if (!$detalle->update()) {
+                throw new \Exception("Error al actualizar el detalle de la póliza");
+            }
+
+            $recibo_historial = $this->save_recibo($detalle, $poliza_vida);
+
+            if (!$recibo_historial) {
+                throw new \Exception("Error al guardar el historial del recibo");
+            }
+
+            $configuracion = ConfiguracionRecibo::first();
+
+            if (!$configuracion) {
+                throw new \Exception("No se encontró la configuración de recibos");
+            }
+
+            $pdf = \PDF::loadView('polizas.vida.recibo', compact('configuracion', 'recibo_historial', 'detalle', 'meses','poliza_vida'))
+                ->setWarnings(false)
+                ->setPaper('letter');
+
+            return $pdf->stream('Recibo.pdf');
+        // } catch (\Exception $e) {
+        //     // Mostrar información detallada del error
+        //     alert()->success('Erro al registrar el recibo');
+        //     //return back();
+        //     dd([
+        //         'error' => $e->getMessage(),
+        //         'file' => $e->getFile(),
+        //         'line' => $e->getLine(),
+        //         'request_data' => $request->all(),
+        //         'detalle_id' => $id,
+        //         'detalle_data' => isset($detalle) ? $detalle->toArray() : null
+        //     ]);
+        // }
+    }
+
+
+    public function save_recibo($detalle, $poliza_vida)
+    {
+        //      dd($detalle);
+        $recibo_historial = new VidaHistorialRecibo();
+        $recibo_historial->PolizaVidaDetalle = $detalle->Id;
+        $recibo_historial->ImpresionRecibo = $detalle->ImpresionRecibo; //Carbon::now();
+        $recibo_historial->NombreCliente = $poliza_vida->cliente->Nombre;
+        $recibo_historial->NitCliente = $poliza_vida->cliente->Nit;
+        $recibo_historial->DireccionResidencia = $poliza_vida->cliente->DireccionResidencia ?? '(vacio)';
+        $recibo_historial->Departamento = $poliza_vida->cliente->distrito->municipio->departamento->Nombre;
+        $recibo_historial->Municipio = $poliza_vida->cliente->distrito->municipio->Nombre;
+        $recibo_historial->NumeroRecibo = $detalle->NumeroRecibo;
+        $recibo_historial->CompaniaAseguradora = $poliza_vida->aseguradora->Nombre;
+        $recibo_historial->ProductoSeguros = $poliza_vida->planes->productos->Nombre;
+        $recibo_historial->NumeroPoliza = $poliza_vida->NumeroPoliza;
+        $recibo_historial->VigenciaDesde = $poliza_vida->VigenciaDesde;
+        $recibo_historial->VigenciaHasta = $poliza_vida->VigenciaHasta;
+        $recibo_historial->FechaInicio = $detalle->FechaInicio;
+        $recibo_historial->FechaFin = $detalle->FechaFinal;
+        $recibo_historial->Anexo = $detalle->Anexo;
+        $recibo_historial->Referencia = $detalle->Referencia;
+        $recibo_historial->FacturaNombre = $poliza_vida->cliente->Nombre;
+        $recibo_historial->MontoCartera = $detalle->MontoCartera;
+        $recibo_historial->PrimaCalculada = $detalle->PrimaCalculada;
+        $recibo_historial->ExtraPrima = $detalle->ExtraPrima;
+        $recibo_historial->Descuento = $detalle->Descuento ?? 0;
+        $recibo_historial->PordentajeDescuento = $poliza_vida->Descuento;
+        $recibo_historial->PrimaDescontada = $detalle->PrimaDescontada;
+        $recibo_historial->ValorCCF = $detalle->ValorCCF;
+        $recibo_historial->TotalAPagar = $detalle->APagar;
+        $recibo_historial->TasaComision = $poliza_vida->TasaComision ?? 0;
+        $recibo_historial->Comision = $detalle->Comision;
+        $recibo_historial->IvaSobreComision = $detalle->IvaSobreComision;
+        $recibo_historial->SubTotalComision =  $detalle->IvaSobreComision + $detalle->Comision;
+        $recibo_historial->Retencion = $detalle->Retencion;
+        $recibo_historial->ValorCCF = $detalle->ValorCCF;
+        $recibo_historial->FechaVencimiento = $detalle->FechaInicio;
+        $recibo_historial->NumeroCorrelativo = $detalle->NumeroCorrelativo ?? '01';
+        $recibo_historial->Cuota = '01/01';
+        $recibo_historial->Otros = $detalle->Otros ?? 0;
+
+        $recibo_historial->Usuario = auth()->user()->id;
+
+        $recibo_historial->save();
+        return $recibo_historial;
+    }
+
 
 
     public function validarDocumento($documento, $tipo)

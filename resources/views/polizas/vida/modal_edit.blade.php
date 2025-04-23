@@ -12,7 +12,7 @@
                     <h4 class="modal-title">Generar Recibo de la poliza</h4>
 
                     <div class="modal-body">
-                        <input type="hidden" value="{{ $poliza_vida->Id }}" name="Desempleo" id="Desempleo" class="form-control">
+                        <input type="hidden" value="{{ $poliza_vida->Id }}" name="Vida"  class="form-control">
                         <div class="form-group">
                             <div class="col-sm-12">
                                 <label class="control-label">Saldo a</label>

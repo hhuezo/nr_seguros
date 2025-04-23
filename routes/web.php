@@ -367,6 +367,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('polizas/vida/agregar_pago', [VidaController::class, 'agregar_pago']);
     Route::post('polizas/vida/cancelar_pago', [VidaController::class, 'cancelar_pago']);
+    Route::post('poliza/vida/recibo/{id}', [VidaController::class, 'recibo_pago']);
 
     Route::resource('polizas/vida', VidaController::class);
 
