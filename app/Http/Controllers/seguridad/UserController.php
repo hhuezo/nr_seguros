@@ -17,7 +17,9 @@ class UserController extends Controller
     }
     public function index()
     {
-        return view('seguridad.user.index', ['usuarios' => User::where('activo',1)->get()]);
+        $roles = Role::get();
+        $usuarios = User::get();
+        return view('seguridad.user.index', compact('usuarios','roles'));
     }
 
 

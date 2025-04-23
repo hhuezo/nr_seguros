@@ -25,8 +25,8 @@
                         <th>NIT</th>
                         <th>Fecha Constitución</th>
                         <th>Fecha Vinculación</th>
-                        <th>Teléfono Canal Comercial</th>
-                        <th>Contacto Canal Comercial</th>
+                        <th>Contacto de asistencia</th>
+                        <th>Whatsapp de asistencia</th>
                         <th>Opciones</th>
                     </tr>
                 </thead>
@@ -34,7 +34,7 @@
                     @foreach ($aseguradora as $obj)
                     <tr>
                         <td>{{ $obj->Id }}</td>
-                        <td>{{$obj->Nombre}}</td>
+                        <td>{{$obj->Abreviatura}} - {{$obj->Nombre}}</td>
                         <td>{{ $obj->Nit }}</td>
                         <td>{{ \Carbon\Carbon::parse($obj->FechaConstitucion)->format('d/m/Y') }}</td>
                         <td>{{ \Carbon\Carbon::parse($obj->FechaVinculacion)->format('d/m/Y') }}</td>
