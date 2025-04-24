@@ -148,8 +148,8 @@
                                 <li><a href="{{ url('/') }}"><i class="fa fa-bar-chart"></i>Control de Primas
                                         General</a></li>
                                 <li><a><i class="fa fa-users"></i> Seguridad <span class="fa fa-chevron-down"></span></a>
-                                    <ul class="nav child_menu">
-                                        <li><a href="{{ url('usuario/') }}">Usuario</a></li>
+                                    <ul class="nav child_menu" id="ul-seguridad">
+                                        <li id="li-catalogo-usuario"><a href="{{ url('usuario/') }}">Usuario</a></li>
                                         <li><a href="{{ url('permission/') }}">Permisos</a></li>
                                         <li><a href="{{ url('rol/') }}">Roles</a></li>
                                     </ul>

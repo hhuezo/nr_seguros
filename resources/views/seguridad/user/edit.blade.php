@@ -114,36 +114,42 @@
 
         <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
         <script type="text/javascript">
+            $(document).ready(function() {
+                //mostrar opcion en menu
+                displayOption("ul-seguridad", "li-catalogo-usuario");
+
+            });
+
             function updateUserRole(userId, roleId) {
                 // Construir la URL con los parámetros GET
-                const url = new URL('{{ url("usuario/rol_link") }}');
+                const url = new URL('{{ url('usuario/rol_link') }}');
                 url.searchParams.append('user_id', userId);
                 url.searchParams.append('role_id', roleId);
 
                 fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Error en la respuesta del servidor');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        //alert(data.message || 'Rol actualizado correctamente');
-                    } else {
-                        throw new Error(data.message || 'Error al actualizar');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert(error.message);
-                });
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error en la respuesta del servidor');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            //alert(data.message || 'Rol actualizado correctamente');
+                        } else {
+                            throw new Error(data.message || 'Error al actualizar');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert(error.message);
+                    });
             }
         </script>
     @endsection
