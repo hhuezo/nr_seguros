@@ -37,18 +37,20 @@
                     </div>
 
 
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">Clave</label>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                            <input type="text" name="password" class="form-control">
-                        </div>
-                        <label class="col-sm-3 control-label">&nbsp;</label>
-                    </div>
+
 
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Correo</label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
                             <input type="email" name="email" value="{{ $usuario->email }}" class="form-control">
+                        </div>
+                        <label class="col-sm-3 control-label">&nbsp;</label>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Clave</label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <input type="text" name="password" class="form-control">
                         </div>
                         <label class="col-sm-3 control-label">&nbsp;</label>
                     </div>
@@ -80,91 +82,21 @@
                         <div class="clearfix"></div>
                     </div>
                     <div class="x_content">
-                        <div class="form-horizontal form-label-left">
-                            <form method="POST" action="{{ url('usuario/rol_link') }}">
-                                @csrf
-                                <div class="form-group">
-                                    <div class="col-sm-12">
-                                        <div class="input-group">
-                                            <input type="hidden" name="Usuario" value="{{ $usuario->id }}">
-                                            <select name="Rol" class="form-control select2">
-                                                @foreach ($roles as $obj)
-                                                    <option value="{{ $obj->id }}">{{ $obj->name }}</option>
-                                                @endforeach
-                                            </select>
-                                            <span class="input-group-btn">
-                                                <button type="submit" class="btn btn-primary">Agregar</button>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                            <div class="divider-dashed"></div>
 
-                            <div class="form-group">
-                                <table class="table table-hover table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Registros</th>
-                                            <th><i class="fa fa-trash fa-lg"></i></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($user_has_rol as $obj)
-                                            <tr>
-                                                <td align="center">{{ $obj->name }}</td>
-                                                <td>
-                                                    <i class="fa fa-trash fa-lg"
-                                                        onclick="modal_delete_rol(<?php echo $obj->id; ?>)"></i>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-
-                                    </tbody>
-                                </table>
+                        @foreach ($roles as $rol)
+                            <div class="col-md-3 col-sm-12 col-xs-12"
+                                style="display: flex; align-items: center; gap: 10px;">
+                                <label class="switch">
+                                    <input type="checkbox"
+                                        onchange="updateUserRole({{ $usuario->id }}, {{ $rol->id }})"
+                                        {{ $usuario->hasRole($rol->name) ? 'checked' : '' }}>
+                                    <span class="slider round"></span>
+                                </label>
+                                <label class="control-label" style="margin-bottom: 0">{{ $rol->name }}</label>
                             </div>
-                        </div>
+                        @endforeach
                     </div>
                 </div>
-
-
-
-
-
-                <!-- Modal eliminar roles -->
-                <div class="modal fade" id="modal_delete_rol" tabindex="-1" role="dialog"
-                    aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <form action="{{ url('usuario/rol_unlink') }}" method="POST">
-                                <div class="modal-header">
-                                    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
-                                        <h5 class="modal-title" id="exampleModalLabel">Eliminar</h5>
-                                    </div>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <input type="hidden" id="RolModal" name="Rol">
-                                <input type="hidden" value="{{ $usuario->id }}" name="Usuario">
-                                <div class="modal-body">
-                                    <div class="box-body">
-                                        @csrf
-                                        ¿Desea eliminar el registro?
-                                    </div>
-                                </div>
-                                <div class="clearfix"></div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
-                                    <button type="submit" class="btn btn-primary">Aceptar</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-
-
 
 
             </div>
@@ -182,9 +114,36 @@
 
         <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
         <script type="text/javascript">
-            function modal_delete_rol(rol) {
-                document.getElementById('RolModal').value = rol;
-                $('#modal_delete_rol').modal('show');
+            function updateUserRole(userId, roleId) {
+                // Construir la URL con los parámetros GET
+                const url = new URL('{{ url("usuario/rol_link") }}');
+                url.searchParams.append('user_id', userId);
+                url.searchParams.append('role_id', roleId);
+
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la respuesta del servidor');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        //alert(data.message || 'Rol actualizado correctamente');
+                    } else {
+                        throw new Error(data.message || 'Error al actualizar');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert(error.message);
+                });
             }
         </script>
     @endsection

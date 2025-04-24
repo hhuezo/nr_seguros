@@ -2,7 +2,7 @@
 @section('contenido')
     <div class="x_panel">
 
-        <script src="{{ asset('vendors/sweetalert/sweetalert.min.js') }}"></script>
+        @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
         <div class="x_title">
             <div class="col-md-6 col-sm-6 col-xs-12">
                 <h3>Listado de usuarios </h3>
@@ -17,6 +17,15 @@
 
 
         <div class="row">
+            @if (count($errors) > 0)
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
                 <table id="datatable" class="table table-striped table-bordered">
@@ -37,7 +46,7 @@
                                 <td>{{ $obj->email }}</td>
                                 <td>
                                     <label class="switch">
-                                        <input type="checkbox" {{ $obj->activo == 1 ? 'checked' : '' }}>
+                                        <input type="checkbox" onchange="toggleUserActive({{$obj->id}})" {{ $obj->activo == 1 ? 'checked' : '' }} >
                                         <span class="slider round"></span>
                                     </label>
                                 </td>
@@ -51,7 +60,6 @@
 
                                 </td>
                             </tr>
-                            @include('seguridad.user.modal')
                         @endforeach
                     </tbody>
                 </table>
@@ -64,14 +72,14 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="myModalLabel2">Nuevo usuario</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
-                    </button>
-                  </div>
-                <div class="modal-header">
-                    <h4 class="modal-title">Nuevo usuario</h4>
-                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span>
-                    </button>
+                    <div class="col-md-6">
+                        <h4 class="modal-title">Nuevo usuario</h4>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">×</span>
+                        </button>
+                    </div>
                 </div>
                 <form action="{{ url('usuario') }}" method="POST">
                     @csrf
@@ -79,32 +87,37 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label class="control-label">Nombre</label>
-
                             <input type="text" name="name" value="{{ old('name') }}" required class="form-control"
-                                autofocus="true">
+                                autofocus>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label">Correo</label>
+                            <input type="email" required name="email" value="{{ old('email') }}" class="form-control"
+                                onblur="this.value = this.value.toLowerCase();">
                         </div>
 
                         <div class="form-group">
                             <label class="control-label">Clave</label>
-                                <input type="text" required name="password" value="{{ old('password') }}"
-                                    class="form-control">
-                        </div>
-
-
-                        <div class="form-group">
-                            <label class="control-label">Correo</label>
-                                <input type="email" required name="email" value="{{ old('email') }}"
-                                    class="form-control" onblur="this.value = this.value.toLowerCase();">
+                            <input type="text" required name="password" class="form-control">
+                            @if ($errors->has('password'))
+                                <small class="text-danger">{{ $errors->first('password') }}</small>
+                            @endif
                         </div>
 
                         <div class="form-group">
                             <label class="control-label">Rol</label>
-                                <select name="rol" required class="form-control">
-                                    @foreach ($roles as $obj)
-                                        <option value="{{ $obj->name }}" {{ old('rol') == $obj->id ?: '' }}>
-                                            {{ $obj->name }}</option>
-                                    @endforeach
-                                </select>
+                            <select name="role_id" required class="form-control">
+                                @foreach ($roles as $obj)
+                                    <option value="{{ $obj->id }}"
+                                        {{ old('role_id') == $obj->id ? 'selected' : '' }}>
+                                        {{ $obj->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @if ($errors->has('role_id'))
+                                <small class="text-danger">{{ $errors->first('role_id') }}</small>
+                            @endif
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -117,4 +130,34 @@
 
         </div>
     </div>
+
+    <script>
+        function toggleUserActive(id) {
+            fetch(`{{ url('usuario/active') }}/${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        _token: '{{ csrf_token() }}'
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Error en el servidor');
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+
+                    } else {
+                        throw new Error(data.message || 'Acción fallida');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert(error.message);
+                });
+        }
+    </script>
 @endsection
