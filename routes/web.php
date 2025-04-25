@@ -372,8 +372,18 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('polizas/vida', VidaController::class);
 
     Route::resource('catalogo/tipo_cartera_vida', TipoCarteraVidaController::class);
-    // Route::post('polizas/vida/edit_pago', [VidaController::class, 'edit_pago']);
-    // Route::get('polizas/vida/get_pago/{id}', [VidaController::class, 'get_pago']);
+    Route::post('polizas/vida/edit_pago', [VidaController::class, 'edit_pago']);
+    Route::get('polizas/vida/get_pago/{id}', [VidaController::class, 'get_pago']);
+
+    Route::post('polizas/vida/anular_pago/{id}', [VidaController::class, 'anular_pago']);
+    Route::post('polizas/vida/delete_pago/{id}', [VidaController::class, 'delete_pago']);
+
+    Route::get('poliza/vida/get_recibo/{id}/{exportar}', [VidaController::class, 'get_recibo']);
+    Route::get('poliza/vida/get_recibo_edit/{id}', [VidaController::class, 'get_recibo_edit']);
+    Route::post('poliza/vida/get_recibo_edit', [VidaController::class, 'get_recibo_update']);
+
+    Route::post('vida/exportar_excel', [VidaController::class, 'exportar_excel']);
+    Route::post('vida/exportar_excel_fede', [VidaController::class, 'exportar_excel_fede']);
 
     // Route::get('polizas/vida/{id}/renovar', [VidaController::class, 'renovar']);
     // Route::post('polizas/vida/renovar/{id}', [VidaController::class, 'renovarPoliza'])->name('vida.renovarPoliza');
