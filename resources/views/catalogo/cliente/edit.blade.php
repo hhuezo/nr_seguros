@@ -97,7 +97,7 @@ $annos->y;
                                             <!-- Campos para la columna izquierda -->
                                             <div class="form-group">
                                                 <label for="TipoPersona" class="form-label">Tipo Persona *</label>
-                                                <select name="TipoPersona" id="TipoPersona" onchange="validaciones.cboTipoPersona(this.value)" class="form-control" style="text-transform: uppercase">
+                                                <select name="TipoPersona" id="TipoPersona" onchange="validaciones.cboTipoPersona(this.value)" class="form-control" >
                                                     <option value="1" {{ $cliente->TipoPersona == 1 ? 'selected' : ''
                                                         }}>NATURAL
                                                     </option>
@@ -135,7 +135,7 @@ $annos->y;
                                             </div>
                                             <div class="form-group">
                                                 <label for="Nombre" class="form-label">Nombre o Razón Social *</label>
-                                                <input class="form-control" id="Nombre" name="Nombre" value="{{ strtoupper($cliente->Nombre) }}" type="text"
+                                                <input class="form-control" id="Nombre" name="Nombre" value="{{ strtoupper($cliente->Nombre) }}" type="text" 
                                                 oninput="this.value = this.value.toUpperCase()" 
                                                 style="text-transform: uppercase;"
                                                 ><!-- se agrego strtoupper, to uppercase, uppercase -->
@@ -249,8 +249,8 @@ $annos->y;
                                             <!-- Campos para la columna derecha -->
                                             <div class="form-group">
                                                 <label for="Genero" class="form-label">Estado Cliente *</label>
-                                                <select name="Estado" id="Estado" class="form-control" style="width: 100%; text-transform: uppercase;">
-                                                    <option value=""> SELECCIONE...</option>
+                                                <select name="Estado" id="Estado" class="form-control" style="width: 100%">
+                                                    <option value=""> Seleccione ...</option>
 
                                                     @foreach ($cliente_estados as $obj)
                                                     <option value="{{ $obj->Id }}" {{ $cliente->Estado == $obj->Id ?
@@ -276,8 +276,8 @@ $annos->y;
                                             </div>
                                             <div class="form-group">
                                                 <label for="Nombre" class="form-label">Tipo Contribuyente *</label>
-                                                <select name="TipoContribuyente" id="TipoContribuyente" class="form-control" onchange="validaciones.cboTipoContribuyente(this.value)" style="width: 100%; text-transform: uppercase;">
-                                                    <option value="" disabled selected>SELECCIONE ...</option>
+                                                <select name="TipoContribuyente" id="TipoContribuyente" class="form-control" onchange="validaciones.cboTipoContribuyente(this.value)" style="width: 100%">
+                                                    <option value="" disabled selected>seleccione ...</option>
                                                     @foreach ($tipos_contribuyente as $obj)
                                                     <option value="{{ $obj->Id }}" {{ $cliente->TipoContribuyente ==
                                                         $obj->Id ? 'selected' : '' }}>
@@ -307,7 +307,7 @@ $annos->y;
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="Genero" class="form-label">Ubicación de cobro *</label>
-                                                    <select name="UbicacionCobro" id="UbicacionCobro" class="form-control" style="width: 100%; text-transform: uppercase;">
+                                                    <select name="UbicacionCobro" id="UbicacionCobro" class="form-control" style="width: 100%">
                                                         <option value="" selected disabled>Seleccione ...</option>
                                                         @foreach ($ubicaciones_cobro as $obj)
                                                         <option value="{{ $obj->Id }}" {{ $cliente->UbicacionCobro ==
@@ -446,7 +446,7 @@ $annos->y;
                                     <div class="form-group row">
                                         <label class="control-label ">Necesidad Protección </label>
 
-                                        <select name="NecesidadProteccion" class="form-control" style="width: 100%; text-transform: uppercase;">
+                                        <select name="NecesidadProteccion" class="form-control" style="width: 100%">
                                             <option value="">Seleccione...</option>
                                             @foreach ($necesidades as $obj)
                                             <option value="{{ $obj->Id }}" {{ $cliente->NecesidadProteccion == $obj->Id
@@ -496,7 +496,7 @@ $annos->y;
                                     <div class="form-group row">
                                         <label class="control-label ">Le Gusta Informarse </label>
 
-                                        <select name="Informarse" class="form-control" style="width: 100%; text-transform: uppercase;">
+                                        <select name="Informarse" class="form-control" style="width: 100%">
                                             <option value=""> Seleccione...</option>
                                             @foreach ($informarse as $obj)
                                             <option value="{{ $obj->Id }}" {{ $cliente->Informarse == $obj->Id ?
@@ -530,7 +530,7 @@ $annos->y;
                                     <div class="form-group row">
                                         <label class="control-label ">Compañia de su Preferencia </label>
 
-                                        <select name="AseguradoraPreferencia" class="form-control" style="width: 100%; text-transform: uppercase;">
+                                        <select name="AseguradoraPreferencia" class="form-control" style="width: 100%">
                                             <option value=""> Seleccione...</option>
                                             @foreach ($aseguradoras as $obj)
                                             <option value="{{ $obj->Id }}" {{ $cliente->AseguradoraPreferencia ==
@@ -546,7 +546,7 @@ $annos->y;
                                     <div class="form-group row">
                                         <label class="control-label ">Motivo de Elección </label>
 
-                                        <select name="MotivoEleccion" id="MotivoEleccion" class="form-control col-md-4" style="width: 100%; text-transform: uppercase;">
+                                        <select name="MotivoEleccion" id="MotivoEleccion" class="form-control col-md-4" style="width: 100%">
                                             <option value=""> Seleccione...</option>
                                             @foreach ($motivo_eleccion as $obj)
                                             <option value="{{ $obj->Id }}" {{ $cliente->MotivoEleccion == $obj->Id ?
@@ -563,7 +563,7 @@ $annos->y;
                                     <div class="form-group row">
                                         <label class="control-label ">Preferencia de Compra </label>
 
-                                        <select name="PreferenciaCompra" id="PreferenciaCompra" class="form-control col-md-4" style="width: 100%; text-transform: uppercase;">
+                                        <select name="PreferenciaCompra" id="PreferenciaCompra" class="form-control col-md-4" style="width: 100%">
                                             <option value=""> Seleccione...</option>
                                             @foreach ($preferencia_compra as $obj)
                                             <option value="{{ $obj->Id }}" {{ $cliente->PreferenciaCompra == $obj->Id ?
@@ -651,7 +651,7 @@ $annos->y;
                                 <tr>
                                     <td>{{ $obj->Id }}</td>
                                     @if ($obj->MetodoPago)
-                                    <td>{{ strtoupper($obj->metodo_pago->Nombre) }}</td>
+                                    <td>{{ $obj->metodo_pago->Nombre }}</td>
                                     @else
                                     <td></td>
                                     @endif
@@ -708,7 +708,7 @@ $annos->y;
                                 <tr>
                                     <td>{{ $obj->Nombre }}</td>
                                     @if ($obj->cargo)
-                                    <td>{{ strtoupper($obj->cargo->Nombre) }}</td>
+                                    <td>{{ $obj->cargo->Nombre }}</td>
                                     @else
                                     <td></td>
                                     @endif
@@ -943,7 +943,7 @@ $annos->y;
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     Método Pago *
-                                    <select name="MetodoPago" class="form-control" id="MetodoPago" style="text-transform: uppercase;">
+                                    <select name="MetodoPago" class="form-control" id="MetodoPago" >
                                         @foreach ($metodos_pago as $obj)
                                         <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
                                         @endforeach
@@ -1150,15 +1150,16 @@ $annos->y;
                         <div class="form-group">
                             <div class="col-sm-6">
                                 Nombre *
-                                <input type="text" name="Nombre" id="ModalContactoNombre" class="form-control" required>
+                                <input type="text" name="Nombre" id="ModalContactoNombre" class="form-control"
+                                onblur="this.value = this.value.toUpperCase()"
+                                style="text-transform: uppercase;" required>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <div class="col-sm-6">
                                 Cargo *
-                                <select name="Cargo" id="ModalContactoCargo" class="form-control"
-                                style="text-transform: uppercase;" required>
+                                <select name="Cargo" id="ModalContactoCargo" class="form-control" required>
                                     @foreach ($cliente_contacto_cargos as $cargo)
                                     <option value="{{ $cargo->Id }}">{{ $cargo->Nombre }}</option>
                                     @endforeach
@@ -1183,7 +1184,8 @@ $annos->y;
                         <div class="form-group">
                             <div class="col-sm-6">
                                 Lugar Trabajo *
-                                <input type="text" name="LugarTrabajo" id="ModalContactoLugarTrabajo" class="form-control">
+                                <input type="text" name="LugarTrabajo" id="ModalContactoLugarTrabajo" class="form-control" 
+                                style="text-transform: uppercase;" onblur="this.value = this.value.toUpperCase()">
                             </div>
                         </div>
                         <div class="form-group"> * Campo requerido</div>
@@ -1329,7 +1331,8 @@ $annos->y;
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     Actividad Económica *
-                                    <input type="text" name="ActividadEconomica" id="ModalHabitoActividadEconomica" class="form-control" required>
+                                    <input type="text" name="ActividadEconomica" id="ModalHabitoActividadEconomica" class="form-control"
+                                    style="text-transform: uppercase;" onblur="this.value = this.value.toUpperCase()" required>
                                 </div>
                             </div>
                             <div class="col-sm-6">
@@ -1349,7 +1352,8 @@ $annos->y;
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     Nivel Educativo *
-                                    <input type="text" name="NivelEducativo" id="ModalHabitoNivelEducativo" class="form-control" required>
+                                    <input type="text" name="NivelEducativo" id="ModalHabitoNivelEducativo" class="form-control"
+                                    style="text-transform: uppercase;" onblur="this.value = this.value.toUpperCase()" required>
                                 </div>
                             </div>
                         </div>
@@ -1383,7 +1387,8 @@ $annos->y;
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     Producto de NR *
-                                    <input type="text" name="Producto" required oninput="this.value = this.value.toUpperCase()" class="form-control">
+                                    <input type="text" name="Producto" required oninput="this.value = this.value.toUpperCase()"
+                                     class="form-control">
                                 </div>
                             </div>
                             <div class="col-sm-6">
@@ -1462,7 +1467,8 @@ $annos->y;
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     Producto de NR *
-                                    <input type="text" name="Producto" id="ModalRetroProducto" required class="form-control">
+                                    <input type="text" name="Producto" id="ModalRetroProducto" required class="form-control" onblur="this.value = this.value.toUpperCase()"
+                                    style="text-transform: uppercase;">
                                 </div>
                             </div>
                             <div class="col-sm-6">
@@ -1482,13 +1488,15 @@ $annos->y;
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     Valores agregados *
-                                    <input type="text" name="ValoresAgregados" id="ModalRetroValoresAgregados" class="form-control" required>
+                                    <input type="text" name="ValoresAgregados" id="ModalRetroValoresAgregados" class="form-control" required onblur="this.value = this.value.toUpperCase()"
+                                    style="text-transform: uppercase;">
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     Competidores *
-                                    <input type="text" name="Competidores" id="ModalRetroCompetidores" class="form-control" required>
+                                    <input type="text" name="Competidores" id="ModalRetroCompetidores" class="form-control" required onblur="this.value = this.value.toUpperCase()"
+                                    style="text-transform: uppercase;">
                                 </div>
                             </div>
                         </div>
@@ -1496,7 +1504,8 @@ $annos->y;
                             <div class="col-sm-12">
                                 <div class="form-group">
                                     ¿Que quisiera de NR? *
-                                    <input type="text" name="QueQuisiera" id="ModalRetroQueQuisiera" class="form-control" required>
+                                    <input type="text" name="QueQuisiera" id="ModalRetroQueQuisiera" class="form-control" required onblur="this.value = this.value.toUpperCase()"
+                                    style="text-transform: uppercase;">
                                 </div>
                             </div>
                         </div>
@@ -1504,7 +1513,8 @@ $annos->y;
                             <div class="col-sm-12">
                                 <div class="form-group">
                                     Referidos *
-                                    <input type="text" name="Referidos" id="ModalRetroReferidos" class="form-control" required>
+                                    <input type="text" name="Referidos" id="ModalRetroReferidos" class="form-control" required onblur="this.value = this.value.toUpperCase()"
+                                    style="text-transform: uppercase;">
                                 </div>
                             </div>
                         </div>
@@ -1741,7 +1751,7 @@ $annos->y;
         document.getElementById('ModalHabitoActividadEconomica').value = actividad;
         document.getElementById('ModalHabitoIngresoPromedio').value = ingreso;
         document.getElementById('ModalHabitoGastoMensualSeguro').value = gasto;
-        document.getElementById('ModalHabitoNivelEducativo').value = nivel.toUpperCase();
+        document.getElementById('ModalHabitoNivelEducativo').value = nivel;
         //$('#modal_borrar_documento').modal('show');
     }
 

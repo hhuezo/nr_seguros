@@ -213,7 +213,7 @@
                                     <div class="form-group">
                                         <label for="Genero" class="form-label">Género *</label>
                                         <select name="Genero" id="Genero" class="form-control" required>
-                                            <option value="" selected disabled>SELECCIONE ...</option>
+                                            <option value="" selected disabled>Seleccione ...</option>
                                             <option value="1" {{ old('Genero') == 1 ? 'selected' : '' }}>MASCULINO
                                             </option>
                                             <option value="2" {{ old('Genero') == 2 ? 'selected' : '' }}>FEMENINO
@@ -226,7 +226,7 @@
                                         <label for="Nombre" class="form-label">Tipo Contribuyente * </label>
                                         <select name="TipoContribuyente" id="TipoContribuyente" required
                                             class="form-control" onchange="validaciones.cboTipoContribuyente(this.value)"
-                                            style="width: 100%; text-transform: uppercase;"> <!-- se agrego uppercase -->
+                                            style="width: 100%"> <!-- se quito uppercase -->
                                             <option value="" disabled selected>Seleccione ...</option>
                                             @foreach ($tipos_contribuyente as $obj)
                                                 <option value="{{ $obj->Id }}"
@@ -252,8 +252,8 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="Genero" class="form-label">Ubicación de cobro * </label>
-                                            <select name="UbicacionCobro" id="UbicacionCobro" class="form-control" style="width: 100%; text-transform: uppercase;" 
-                                                required> <!-- se agrego uppercase -->
+                                            <select name="UbicacionCobro" id="UbicacionCobro" class="form-control" style="width: 100%" 
+                                                required> <!-- se quito uppercase -->
                                                 <option value="" selected disabled>Seleccione ...</option>
                                                 @foreach ($ubicaciones_cobro as $obj)
                                                     <option value="{{ $obj->Id }}"

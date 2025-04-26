@@ -577,7 +577,7 @@ class ClienteController extends Controller
         //$tarjeta->NumeroTarjeta = $request->NumeroTarjeta;
         //$tarjeta->FechaVencimiento = $request->FechaVencimiento;
         $tarjeta->PolizaVinculada = $request->PolizaVinculada;
-        dd($request->PolizaVinculada);
+        
         //    $tarjeta->MetodoPago = $request->MetodoPago;
         $tarjeta->save();
         alert()->success('El registro ha sido creado correctamente');

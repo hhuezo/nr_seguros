@@ -19,7 +19,7 @@
                         <div class="form-group">
                             <label class="col-sm-3 control-label">Nombre *</label>
                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                <input type="text" name="Nombre" id="ModalNombreCargo" class="form-control" autofocus="true">
+                                <input type="text" name="Nombre" id="ModalNombreCargo" class="form-control" autofocus="true" oninput="this.value = this.value.toUpperCase()">
                             </div>
                             <label class="col-sm-3 control-label">&nbsp;</label>
                         </div>
