@@ -57,9 +57,9 @@
                                         <select name="TipoPersona" id="TipoPersona"
                                             onchange="validaciones.cboTipoPersona(this.value)" required
                                             class="form-control">
-                                            <option value="1" {{ old('TipoPersona') == 1 ? 'selected' : '' }}>Natural
+                                            <option value="1" {{ old('TipoPersona') == 1 ? 'selected' : '' }}>NATURAL
                                             </option>
-                                            <option value="2" {{ old('TipoPersona') == 2 ? 'selected' : '' }}>Jurídica
+                                            <option value="2" {{ old('TipoPersona') == 2 ? 'selected' : '' }}>JURIDICA
                                             </option>
                                         </select>
                                     </div>
@@ -94,7 +94,7 @@
                                     <div class="form-group">
                                         <label for="Nombre" class="form-label">Nombre o Razón Social *</label>
                                         <input class="form-control" id="Nombre" name="Nombre"
-                                            value="{{ old('Nombre') }}" type="text" required>
+                                            value="{{ old('Nombre') }}" type="text" required oninput="this.value = this.value.toUpperCase()"> <!-- se agrego toUpperCase -->
                                     </div>
                                     <div class="form-group">
                                         <label for="FechaNacimiento" class="form-label">Fecha de Nacimiento ó Fundación
@@ -111,17 +111,17 @@
                                         <label for="Genero" class="form-label">Estado Familiar</label>
                                         <select class="form-control" name="EstadoFamiliar" id="EstadoFamiliar" required>
                                             <option value="" selected disabled>Seleccione ...</option>
-                                            <option value="0" {{ old('TipoPersona') == 0 ? 'selected' : '' }}>No
-                                                Aplica
+                                            <option value="0" {{ old('TipoPersona') == 0 ? 'selected' : '' }}>NO
+                                                APLICA
                                             </option>
-                                            <option value="1" {{ old('TipoPersona') == 1 ? 'selected' : '' }}>Soltero
+                                            <option value="1" {{ old('TipoPersona') == 1 ? 'selected' : '' }}>SOLTERO
                                             </option>
-                                            <option value="2" {{ old('TipoPersona') == 2 ? 'selected' : '' }}>Casado
+                                            <option value="2" {{ old('TipoPersona') == 2 ? 'selected' : '' }}>CASADO
                                             </option>
                                             <option value="3" {{ old('TipoPersona') == 3 ? 'selected' : '' }}>
-                                                Divorciado
+                                                DIVORCIADO
                                             </option>
-                                            <option value="4" {{ old('TipoPersona') == 4 ? 'selected' : '' }}>Viudo
+                                            <option value="4" {{ old('TipoPersona') == 4 ? 'selected' : '' }}>VIUDO
                                             </option>
                                         </select>
                                     </div>
@@ -134,20 +134,20 @@
                                     <div class="form-group">
                                         <label for="Genero" class="form-label">Ocupación</label>
                                         <input class="form-control" id="Ocupacion" name="Ocupacion"
-                                            value="{{ old('Ocupacion') }}" required type="text">
+                                            value="{{ old('Ocupacion') }}" required type="text" oninput="this.value = this.value.toUpperCase()"> <!-- se agrego toUpperCase -->
                                     </div>
                                     <div class="form-group" style="padding-bottom: 38px;">
 
                                     </div>
                                     <div class="form-group">
                                         <label for="DireccionResidencia" class="form-label">Dirección Residencia</label>
-                                        <textarea class="form-control" name="DireccionResidencia" id="DireccionResidencia">{{ old('DireccionResidencia') }}</textarea>
-                                    </div>
+                                        <textarea class="form-control" name="DireccionResidencia" id="DireccionResidencia" oninput="this.value = this.value.toUpperCase()">{{ old('DireccionResidencia') }} </textarea>
+                                    </div><!-- se agrego toUpperCase -->
                                     <div class="form-group">
                                         <label for="DireccionResidencia" class="form-label">Dirección Correspondencia
                                             *</label>
-                                        <textarea class="form-control" name="DireccionCorrespondencia" id="DireccionCorrespondencia" required>{{ old('DireccionCorrespondencia') }}</textarea>
-                                    </div>
+                                        <textarea class="form-control" name="DireccionCorrespondencia" id="DireccionCorrespondencia" required oninput="this.value = this.value.toUpperCase()">{{ old('DireccionCorrespondencia') }}</textarea>
+                                    </div><!-- se agrego toUpperCase -->
                                     <div class="form-group">
                                         <label for="Referencia" class="form-label">Teléfono Principal *</label>
                                         <input class="form-control" name="TelefonoCelular" id="TelefonoCelular"
@@ -213,12 +213,12 @@
                                     <div class="form-group">
                                         <label for="Genero" class="form-label">Género *</label>
                                         <select name="Genero" id="Genero" class="form-control" required>
-                                            <option value="" selected disabled>Seleccione ...</option>
-                                            <option value="1" {{ old('Genero') == 1 ? 'selected' : '' }}>Masculino
+                                            <option value="" selected disabled>SELECCIONE ...</option>
+                                            <option value="1" {{ old('Genero') == 1 ? 'selected' : '' }}>MASCULINO
                                             </option>
-                                            <option value="2" {{ old('Genero') == 2 ? 'selected' : '' }}>Femenino
+                                            <option value="2" {{ old('Genero') == 2 ? 'selected' : '' }}>FEMENINO
                                             </option>
-                                            <option value="3" {{ old('Genero') == 2 ? 'selected' : '' }}>No Aplica
+                                            <option value="3" {{ old('Genero') == 2 ? 'selected' : '' }}>NO APLICA
                                             </option>
                                         </select>
                                     </div>
@@ -226,7 +226,7 @@
                                         <label for="Nombre" class="form-label">Tipo Contribuyente * </label>
                                         <select name="TipoContribuyente" id="TipoContribuyente" required
                                             class="form-control" onchange="validaciones.cboTipoContribuyente(this.value)"
-                                            style="width: 100%">
+                                            style="width: 100%; text-transform: uppercase;"> <!-- se agrego uppercase -->
                                             <option value="" disabled selected>Seleccione ...</option>
                                             @foreach ($tipos_contribuyente as $obj)
                                                 <option value="{{ $obj->Id }}"
@@ -240,7 +240,7 @@
                                         <label for="Referencia" class="form-label">Vinculado al Grupo o Referencia
                                             </label>
                                         <input class="form-control" name="Referencia" id="Referencia"
-                                            value="{{ old('Referencia') }}" type="text">
+                                            value="{{ old('Referencia') }}" type="text" oninput="this.value = this.value.toUpperCase()">
                                     </div>
 
                                     <div class="campo-container">
@@ -248,12 +248,12 @@
                                         <div class="form-group">
                                             <label for="Genero" class="form-label">Responsable de Pago  </label>
                                             <input class="form-control" id="ResponsablePago" name="ResponsablePago"
-                                                value="{{ old('ResponsablePago') }}" type="text">
+                                                value="{{ old('ResponsablePago') }}" type="text" oninput="this.value = this.value.toUpperCase()">
                                         </div>
                                         <div class="form-group">
                                             <label for="Genero" class="form-label">Ubicación de cobro * </label>
-                                            <select name="UbicacionCobro" id="UbicacionCobro" class="form-control" style="width: 100%"
-                                                required>
+                                            <select name="UbicacionCobro" id="UbicacionCobro" class="form-control" style="width: 100%; text-transform: uppercase;" 
+                                                required> <!-- se agrego uppercase -->
                                                 <option value="" selected disabled>Seleccione ...</option>
                                                 @foreach ($ubicaciones_cobro as $obj)
                                                     <option value="{{ $obj->Id }}"
@@ -311,7 +311,7 @@
                                                 <label for="BancoPrefencia" class="form-label">Banco de su Preferencia
                                                     </label>
                                                 <input class="form-control" name="BancoPrefencia"
-                                                    value="{{ old('BancoPrefencia') }}" type="text">
+                                                    value="{{ old('BancoPrefencia') }}" type="text" oninput="this.value = this.value.toUpperCase()">
                                             </div>
                                             <div class="form-group">
                                                 <label for="CuentasDevolucionPrimas" class="form-label">Cuentas para
@@ -329,7 +329,7 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="Comentarios" class="form-label">Comentarios</label>
-                                        <textarea class="form-control" name="Comentarios">{{ old('Comentarios') }}</textarea>
+                                        <textarea class="form-control" name="Comentarios" oninput="this.value = this.value.toUpperCase()">{{ old('Comentarios') }}</textarea>
                                     </div>
                                 </div>
                             </div>
