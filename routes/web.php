@@ -386,6 +386,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('vida/exportar_excel', [VidaController::class, 'exportar_excel']);
     Route::post('vida/exportar_excel_fede', [VidaController::class, 'exportar_excel_fede']);
 
+    Route::post('exportar/vida/registros_edad_maxima/{id}', [VidaController::class, 'registros_edad_maxima']);
+    Route::post('exportar/vida/registros_responsabilidad_maxima/{id}', [VidaController::class, 'registros_responsabilidad_maxima']);
+    Route::post('exportar/vida/registros_responsabilidad_terminacion/{id}', [VidaController::class, 'registros_responsabilidad_terminacion']);
+    Route::post('exportar/vida/nuevos_registros/{id}', [VidaController::class, 'exportar_nuevos_registros']);
     // Route::get('polizas/vida/{id}/renovar', [VidaController::class, 'renovar']);
     // Route::post('polizas/vida/renovar/{id}', [VidaController::class, 'renovarPoliza'])->name('vida.renovarPoliza');
 

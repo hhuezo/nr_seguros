@@ -2,7 +2,13 @@
 
 namespace App\Http\Controllers\polizas;
 
+use App\Exports\vida\EdadMaximaExport;
+use App\Exports\vida\EdadInscripcionExport;
+use App\Exports\vida\EdadTerminacionExport;
 use App\Exports\vida\ExtraPrimadosExcluidosExport;
+use App\Exports\vida\NuevosRegistrosExport;
+use App\Exports\vida\RegistrosEliminadosExport;
+use App\Exports\vida\RegistrosRehabilitadosExport;
 use App\Exports\vida\VidaExport;
 use App\Exports\vida\VidaFedeExport;
 use App\Http\Controllers\Controller;
@@ -461,6 +467,7 @@ class VidaController extends Controller
         }
 
         $poliza_edad_maxima = VidaCarteraTemp::where('User', auth()->user()->id)->where('PolizaVida', $id)->where('EdadDesembloso', '>', $poliza_vida->EdadMaximaInscripcion)->get();
+        $poliza_edad_terminacion = VidaCarteraTemp::where('User', auth()->user()->id)->where('PolizaVida', $id)->where('EdadDesembloso', '>', $poliza_vida->EdadTerminacion)->get();
 
 
         $poliza_responsabilidad_maxima = VidaCarteraTemp::where('User', auth()->user()->id)->where('PolizaVida', $id)
@@ -557,6 +564,7 @@ class VidaController extends Controller
             'total',
             'poliza_vida',
             'poliza_edad_maxima',
+            'poliza_edad_terminacion',
             'registros_rehabilitados',
             'registros_eliminados',
             'nuevos_registros',
@@ -1434,6 +1442,36 @@ class VidaController extends Controller
 
         return Excel::download(new VidaFedeExport($cartera), 'Cartera.xlsx');
         //  dd($cartera->take(25),$request->Deuda,$request->DeudaDetalle);
+    }
+    public function registros_edad_maxima($id)
+    {
+        return Excel::download(new EdadMaximaExport($id), 'creditos_edad_maxima.xlsx');
+    }
+
+
+    public function registros_responsabilidad_maxima($id)
+    {
+        return Excel::download(new EdadInscripcionExport($id), 'creditos_responsabilidad_maxima.xlsx');
+    }
+
+    public function registros_responsabilidad_terminacion($id)
+    {
+        return Excel::download(new EdadTerminacionExport($id), 'registros_responsabilidad_terminacion.xlsx');
+    }
+
+    public function exportar_nuevos_registros($id)
+    {
+        return Excel::download(new NuevosRegistrosExport($id), 'nuevos_registros.xlsx');
+    }
+
+    public function exportar_registros_eliminados($id)
+    {
+        return Excel::download(new RegistrosEliminadosExport($id), 'registros_eliminados.xlsx');
+    }
+
+    public function exportar_registros_rehabilitados($id)
+    {
+        return Excel::download(new RegistrosRehabilitadosExport($id), 'registros_rehabilitados.xlsx');
     }
 
 }
