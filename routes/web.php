@@ -72,7 +72,8 @@ Route::get('/home/getPrimaGeneral', [HomeController::class, 'getPrimaGeneral']);
 //security
 Route::middleware(['auth'])->group(function () {
     Route::post('usuario/rol_link', [UserController::class, 'rol_link']);
-    Route::post('usuario/rol_unlink', [UserController::class, 'rol_unlink']);
+    Route::post('usuario/active/{id}', [UserController::class, 'active']);
+    // Route::post('usuario/rol_unlink', [UserController::class, 'rol_unlink']);
     Route::resource('permission', PermissionController::class);
     Route::post('role/permission_unlink', [RoleController::class, 'permission_unlink']);
     Route::post('role/permission_link', [RoleController::class, 'permission_link']);
@@ -340,7 +341,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('polizas/vida/agregar_no_valido/{id}', [VidaController::class, 'agregar_no_valido']);
     Route::get('polizas/vida/get_no_valido/{id}', [VidaController::class, 'get_no_valido']);
     Route::post('polizas/vida/store_poliza/{id}', [VidaController::class, 'store_poliza']);
-    Route::get('polizas/vida/tasas/{id}',[VidaController::class,'tasas']);
+    Route::get('polizas/vida/tasas/{id}', [VidaController::class, 'tasas']);
     Route::post('finalizar_configuracion_vida', [VidaController::class, 'finalizar_configuracion']);
 
 

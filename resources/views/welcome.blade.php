@@ -148,10 +148,18 @@
                                 <li><a href="{{ url('/') }}"><i class="fa fa-bar-chart"></i>Control de Primas
                                         General</a></li>
                                 <li><a><i class="fa fa-users"></i> Seguridad <span class="fa fa-chevron-down"></span></a>
-                                    <ul class="nav child_menu">
-                                        <li><a href="{{ url('usuario/') }}">Usuario</a></li>
+                                    <ul class="nav child_menu" id="ul-seguridad">
+                                        <li id="li-catalogo-usuario"><a href="{{ url('usuario/') }}">Usuario</a></li>
                                         <li><a href="{{ url('permission/') }}">Permisos</a></li>
                                         <li><a href="{{ url('rol/') }}">Roles</a></li>
+                                    </ul>
+                                </li>
+
+                                <li><a><i class="fa fa-folder"></i> Configuracion<span class="fa fa-chevron-down"></span></a>
+                                    <ul class="nav child_menu" id="ul-configuracion">
+                                        <li><a href="{{ url('catalogo/configuracion_recibo/1/edit') }}">Configuración de Recibo</a></li>
+
+
                                     </ul>
                                 </li>
 
@@ -160,7 +168,6 @@
                                     <ul class="nav child_menu" id="ul-catalogo">
 
 
-                                        <li><a href="{{ url('catalogo/configuracion_recibo/1/edit') }}">Configuración de Recibo</a></li>
                                         <li><a href="{{ url('catalogo/bombero') }}">Impuesto Bomberos</a></li>
                                         <li><a href="{{ url('catalogo/ejecutivos') }}">Ejecutivo</a></li>
                                         <li><a href="{{ url('catalogo/estado_polizas') }}">Estado Póliza</a></li>
@@ -204,7 +211,7 @@
 
                                 <li><a><i class="fa fa-folder-open"></i> Pólizas<span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu" id="ul-poliza">
-                                        <li id="li-poliza-residencia"><a href="{{ url('polizas/residencia') }}">Residencias</a></li>
+                                        <li id="li-poliza-residencia"><a href="{{ url('polizas/residencia') }}">Residencia</a></li>
                                         <li id="li-poliza-vida"><a href="{{ url('polizas/vida') }}">Vida</a></li>
                                         <li id="li-poliza-deuda"><a href="{{ url('polizas/deuda') }}">Deuda</a></li>
                                         <li id="li-poliza-desempleo"><a href="{{ url('polizas/desempleo') }}">Desempleo</a></li>
