@@ -212,31 +212,82 @@ class VidaController extends Controller
 
     public function update(Request $request, $id)
     {
-        // dd('hli update');
+        $request->validate([
+            'NumeroPoliza' => 'required|string|max:255',
+            'Aseguradora' => 'required|exists:aseguradora,Id',
+            'Asegurado' => 'required|exists:cliente,Id',
+            'Nit' => 'required|string|max:255',
+            'Ejecutivo' => 'required|exists:ejecutivo,Id',
+            'Saldos' => 'required',
+            'VigenciaDesde' => 'required|date',
+            'VigenciaHasta' => 'required|date|after_or_equal:VigenciaDesde',
+            'EdadTerminacion' => 'required|numeric|min:18',
+            'EdadMaximaInscripcion' => 'required|numeric|min:18',
+            'Tasa' => 'required|numeric|min:0.00001',
+            'Concepto' => 'nullable|string|max:1000',
+        ], [
+            'NumeroPoliza.required' => 'El campo Número de Póliza es obligatorio.',
+            'NumeroPoliza.string' => 'El campo Número de Póliza debe ser una cadena de texto.',
+            'NumeroPoliza.max' => 'El campo Número de Póliza no debe exceder los 255 caracteres.',
+            'Aseguradora.required' => 'Debes seleccionar una Aseguradora.',
+            'Aseguradora.exists' => 'La Aseguradora seleccionada no es válida.',
+            'Asegurado.required' => 'Debes seleccionar un Asegurado.',
+            'Asegurado.exists' => 'El Asegurado seleccionado no es válido.',
+            'Nit.required' => 'El campo Nit es obligatorio.',
+            'Nit.string' => 'El campo Nit debe ser una cadena de texto.',
+            'Nit.max' => 'El campo Nit no debe exceder los 255 caracteres.',
+            'Ejecutivo.required' => 'Debes seleccionar un Ejecutivo.',
+            'Saldos.required' => 'Debes seleccionar una opcion de saldo y montos.',
+            'Ejecutivo.exists' => 'El Ejecutivo seleccionado no es válido.',
+            'VigenciaDesde.required' => 'El campo Vigencia inicial es obligatorio.',
+            'VigenciaDesde.date' => 'El campo Vigencia inicial debe ser una fecha válida.',
+            'VigenciaHasta.required' => 'El campo Vigencia final es obligatorio.',
+            'VigenciaHasta.date' => 'El campo Vigencia final debe ser una fecha válida.',
+            'VigenciaHasta.after_or_equal' => 'La fecha de Vigencia final debe ser igual o posterior a la fecha de Vigencia inicial.',
+            'EdadTerminacion.required' => 'El campo Edad Terminación es obligatorio.',
+            'EdadTerminacion.numeric' => 'El campo Edad Terminación debe ser un número.',
+            'EdadTerminacion.min' => 'El campo Edad Terminación debe ser al menos 18.',
+            'EdadMaximaInscripcion.required' => 'El campo Edad inscripción es obligatorio.',
+            'EdadMaximaInscripcion.numeric' => 'El campo Edad inscripción debe ser un número.',
+            'EdadMaximaInscripcion.min' => 'El campo Edad inscripción debe ser al menos 18.',
+            'Tasa.required' => 'El campo Tasa es obligatorio.',
+            'Tasa.numeric' => 'El campo Tasa debe ser un número.',
+            'Tasa.min' => 'El campo Tasa debe ser al menos 0.',
+            'Concepto.string' => 'El campo Concepto debe ser una cadena de texto.',
+            'Concepto.max' => 'El campo Concepto no debe exceder los 1000 caracteres.',
+        ]);
 
-        $vida = Vida::findOrFail($id);
-        $vida->NumeroPoliza = $request->NumeroPoliza;
-        $vida->Nit = $request->Nit;
-        $vida->Aseguradora = $request->Aseguradora;
-        $vida->Producto = $request->Productos;
-        $vida->Plan = $request->Planes;
-        $vida->Asegurado = $request->Asegurado;
-        $vida->VigenciaDesde = $request->VigenciaDesde;
-        $vida->VigenciaHasta = $request->VigenciaHasta;
-        $vida->Concepto = $request->Concepto;
-        $vida->Ejecutivo = $request->Ejecutivo;
-        $vida->TipoCobro = $request->TipoCobro;
-        $vida->EstadoPoliza = 1;
-        $vida->Tasa = $request->Tasa;
-        $vida->SumaAsegurada = $request->SumaAsegurada;
-        $vida->TasaDescuento = $request->TasaDescuento ?? null;
-        $vida->EdadMaximaInscripcion = $request->EdadMaximaInscripcion;
-        $vida->EdadTerminacion = $request->EdadTerminacion;
-        $vida->Activo = 1;
-        $vida->update();
+        try {
 
-        alert()->success('Registro modificado');
-        return back();
+
+            $vida = Vida::findOrFail($id);
+            $vida->NumeroPoliza = $request->NumeroPoliza;
+            $vida->Nit = $request->Nit;
+            $vida->Aseguradora = $request->Aseguradora;
+            $vida->Producto = $request->Productos;
+            $vida->Plan = $request->Planes;
+            $vida->Asegurado = $request->Asegurado;
+            $vida->VigenciaDesde = $request->VigenciaDesde;
+            $vida->VigenciaHasta = $request->VigenciaHasta;
+            $vida->Concepto = $request->Concepto;
+            $vida->Ejecutivo = $request->Ejecutivo;
+            $vida->TipoCobro = $request->TipoCobro;
+            $vida->EstadoPoliza = 1;
+            $vida->Tasa = $request->Tasa;
+            $vida->SumaAsegurada = $request->SumaAsegurada;
+            $vida->TasaDescuento = $request->TasaDescuento ?? null;
+            $vida->EdadMaximaInscripcion = $request->EdadMaximaInscripcion;
+            $vida->EdadTerminacion = $request->EdadTerminacion;
+            $vida->Activo = 1;
+            $vida->update();
+
+            alert()->success('Registro modificado');
+            return back();
+        } catch (\Exception $e) {
+
+            alert()->error('Error', 'Ocurrió un error al crear la póliza de desempleo: ' . $e->getMessage())->persistent('Ok');
+            return back()->withInput();
+        }
     }
 
 
@@ -936,39 +987,39 @@ class VidaController extends Controller
     public function recibo_pago($id, Request $request)
     {
         //try {
-            $detalle = VidaDetalle::findOrFail($id);
-            $poliza_vida = Vida::findOrFail($detalle->PolizaVida);
+        $detalle = VidaDetalle::findOrFail($id);
+        $poliza_vida = Vida::findOrFail($detalle->PolizaVida);
 
-            $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
-            // Actualizar campos del detalle
-            $detalle->SaldoA = $request->SaldoA;
-            $detalle->ImpresionRecibo = $request->ImpresionRecibo;
-            $detalle->Referencia = $request->Referencia;
-            $detalle->Anexo = $request->Anexo;
-            $detalle->NumeroCorrelativo = $request->NumeroCorrelativo;
+        // Actualizar campos del detalle
+        $detalle->SaldoA = $request->SaldoA;
+        $detalle->ImpresionRecibo = $request->ImpresionRecibo;
+        $detalle->Referencia = $request->Referencia;
+        $detalle->Anexo = $request->Anexo;
+        $detalle->NumeroCorrelativo = $request->NumeroCorrelativo;
 
-            if (!$detalle->update()) {
-                throw new \Exception("Error al actualizar el detalle de la póliza");
-            }
+        if (!$detalle->update()) {
+            throw new \Exception("Error al actualizar el detalle de la póliza");
+        }
 
-            $recibo_historial = $this->save_recibo($detalle, $poliza_vida);
+        $recibo_historial = $this->save_recibo($detalle, $poliza_vida);
 
-            if (!$recibo_historial) {
-                throw new \Exception("Error al guardar el historial del recibo");
-            }
+        if (!$recibo_historial) {
+            throw new \Exception("Error al guardar el historial del recibo");
+        }
 
-            $configuracion = ConfiguracionRecibo::first();
+        $configuracion = ConfiguracionRecibo::first();
 
-            if (!$configuracion) {
-                throw new \Exception("No se encontró la configuración de recibos");
-            }
+        if (!$configuracion) {
+            throw new \Exception("No se encontró la configuración de recibos");
+        }
 
-            $pdf = \PDF::loadView('polizas.vida.recibo', compact('configuracion', 'recibo_historial', 'detalle', 'meses','poliza_vida'))
-                ->setWarnings(false)
-                ->setPaper('letter');
+        $pdf = \PDF::loadView('polizas.vida.recibo', compact('configuracion', 'recibo_historial', 'detalle', 'meses', 'poliza_vida'))
+            ->setWarnings(false)
+            ->setPaper('letter');
 
-            return $pdf->stream('Recibo.pdf');
+        return $pdf->stream('Recibo.pdf');
         // } catch (\Exception $e) {
         //     // Mostrar información detallada del error
         //     alert()->success('Erro al registrar el recibo');
@@ -1339,7 +1390,8 @@ class VidaController extends Controller
     }
 
 
-    public function get_pago($id){
+    public function get_pago($id)
+    {
         return VidaDetalle::findOrFail($id);
     }
 
@@ -1352,7 +1404,7 @@ class VidaController extends Controller
         $vida = Vida::findOrFail($detalle->PolizaVida);
         $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
-       // dd($vida);
+        // dd($vida);
         if ($detalle->SaldoA == null && $detalle->ImpresionRecibo == null) {
             $detalle->SaldoA = $request->SaldoA;
             $detalle->ImpresionRecibo = $request->ImpresionRecibo;
@@ -1473,5 +1525,4 @@ class VidaController extends Controller
     {
         return Excel::download(new RegistrosRehabilitadosExport($id), 'registros_rehabilitados.xlsx');
     }
-
 }

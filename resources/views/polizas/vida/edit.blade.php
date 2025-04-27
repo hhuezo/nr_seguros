@@ -143,7 +143,8 @@
                 <div id="myTabContent" class="tab-content">
                     <div role="tabpanel" class="tab-pane fade {{ session('tab') == 1 ? 'active in' : '' }}"
                         id="tab_content1" aria-labelledby="home-tab">
-                        <form action="{{ url('polizas/vida/' . $vida->Id) }}" method="POST">
+                        <form action="{{ url('polizas/vida/')}}/{{$vida->Id}}" method="POST">
+                            @method('PUT')
                             @csrf
                             <div class="row">
                                 <!-- Número de Póliza -->
@@ -214,24 +215,24 @@
                                     </select>
                                 </div>
 
-                                    <!-- Nit -->
-                                    <div class="form-group col-sm-12 col-md-6 col-lg-6">
-                                        <label>Nit</label>
-                                        <input type="text" class="form-control" name="Nit" value="{{ trim($vida->cliente->Nit) }}" required>
-                                    </div>
+                                <!-- Nit -->
+                                <div class="form-group col-sm-12 col-md-6 col-lg-6">
+                                    <label>Nit</label>
+                                    <input type="text" class="form-control" name="Nit" value="{{ trim($vida->cliente->Nit) }}" required>
+                                </div>
 
-                                    <!-- Ejecutivo -->
-                                    <div class="form-group col-sm-12 col-md-6 col-lg-6">
-                                        <label>Ejecutivo</label>
-                                        <select name="Ejecutivo" class="form-control select2" style="width: 100%" required>
-                                            <option value="">Seleccione...</option>
-                                            @foreach ($ejecutivo as $obj)
-                                                <option value="{{ $obj->Id }}" {{ $vida->ejecutivo->Id == $obj->Id ? 'selected' : '' }}>
-                                                    {{ $obj->Nombre }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
+                                <!-- Ejecutivo -->
+                                <div class="form-group col-sm-12 col-md-6 col-lg-6">
+                                    <label>Ejecutivo</label>
+                                    <select name="Ejecutivo" class="form-control select2" style="width: 100%" required>
+                                        <option value="">Seleccione...</option>
+                                        @foreach ($ejecutivo as $obj)
+                                        <option value="{{ $obj->Id }}" {{ $vida->ejecutivo->Id == $obj->Id ? 'selected' : '' }}>
+                                            {{ $obj->Nombre }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </div>
 
                                 <!-- Tipo de cobro -->
                                 <div class="form-group col-sm-12 col-md-6">
@@ -284,13 +285,13 @@
                                 <!-- Descuento -->
                                 <div class="form-group col-sm-12 col-md-6">
                                     <label>Descuento</label>
-                                    <input type="number" class="form-control" name="TasaDescuento" value="{{ $vida->Descuento }}" required>
+                                    <input type="number" class="form-control" name="TasaDescuento" value="{{ $vida->TasaDescuento ?? 0 }}" required>
                                 </div>
 
                                 <!-- Concepto -->
                                 <div class="form-group col-sm-12 col-md-6">
                                     <label>Concepto</label>
-                                    <textarea class="form-control" name="Concepto" rows="3" required>{{ $vida->Concepto }}</textarea>
+                                    <textarea class="form-control" name="Concepto" rows="3">{{ $vida->Concepto }}</textarea>
                                 </div>
                             </div>
 
