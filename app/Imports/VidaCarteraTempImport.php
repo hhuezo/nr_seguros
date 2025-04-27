@@ -36,7 +36,7 @@ class VidaCarteraTempImport implements ToModel
         }
 
         // Procesar solo las filas de datos
-        if ($this->encabezados == 1 && (trim($row[0]) != "DUI")) {
+        if ($this->encabezados == 1 && (trim($row[0]) != "DUI" && trim($row[3]) != "NACIONALIDAD")) {
 
             // Verificar que al menos uno de los dos campos (NIT o DUI) tenga datos
             if (!empty(trim($row[0])) || !empty(trim($row[1]))) {

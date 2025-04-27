@@ -704,10 +704,18 @@ class VidaController extends Controller
         }*/
 
 
+        //calculando edades y fechas de nacimiento
+        VidaCarteraTemp::where('User', auth()->user()->id)
+            ->where('PolizaVida', $poliza_vida->Id)
+            ->update([
+                'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaFinal)"),
+                'EdadDesembloso' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaOtorgamientoDate)"),
+            ]);
 
         //calculando errores de cartera
         $cartera_temp = VidaCarteraTemp::where('User', '=', auth()->user()->id)->where('PolizaVida', $id)->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)->get();
 
+        //dd($cartera_temp->take(10));
 
         foreach ($cartera_temp as $obj) {
             $errores_array = [];
@@ -783,6 +791,13 @@ class VidaController extends Controller
                 $errores_array[] = 8; // Agregar error al array
             }
 
+            //11 error por edad de terminacion
+            if (trim($obj->Edad) > $poliza_vida->EdadTerminacion) {
+                $obj->TipoError = 9;
+                $obj->update();
+
+                array_push($errores_array, 9);
+            }
             $obj->Errores = $errores_array;
         }
 
@@ -802,13 +817,6 @@ class VidaController extends Controller
 
 
 
-        //calculando edades y fechas de nacimiento
-        VidaCarteraTemp::where('User', auth()->user()->id)
-            ->where('PolizaVida', $poliza_vida->Id)
-            ->update([
-                'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaFinal)"),
-                'EdadDesembloso' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaOtorgamientoDate)"),
-            ]);
 
 
 
