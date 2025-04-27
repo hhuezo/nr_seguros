@@ -27,6 +27,7 @@ use App\Models\catalogo\TipoContribuyente;
 use App\Models\catalogo\UbicacionCobro;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -292,8 +293,10 @@ class ClienteController extends Controller
         return Cliente::where('Activo', '=', 1)->get();
     }
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
+        $tab = $request->tab ?? 1;
+
         $cliente = Cliente::findOrFail($id);
         //  dd($cliente->Smartphone);
         if ($cliente->FechaNacimiento) {
@@ -338,6 +341,7 @@ class ClienteController extends Controller
 
 
         return view('catalogo.cliente.edit', compact(
+            'tab',
             'cliente',
             'tipos_contribuyente',
             'formas_pago',
@@ -393,197 +397,583 @@ class ClienteController extends Controller
 
     public function update(Request $request, $id)
     {
+        try {
+            $messages = [
+                'Dui.min' => 'El formato de DUI es incorrecto',
+                'Dui.unique' => 'El DUI ya existe en la base de datos',
+                'Nit.min' => 'El formato de NIT es incorrecto',
+                'Nit.unique' => 'El NIT ya existe en la base de datos',
+                'Nombre.required' => 'El campo Nombre es requerido',
+                'Dui.required' => 'El campo DUI es requerido',
+            ];
 
-        $messages = [
-            'Dui.min' => 'El formato de DUI es incorrecto',
-            'Dui.unique' => 'El DUI ya existe en la base de datos',
-            'Nit.min' => 'El formato de NIT es incorrecto',
-            'Nit.unique' => 'El NIT ya existe en la base de datos',
-        ];
+            // Limpiar formatos de DUI y NIT
+            $request->merge([
+                'Dui' => $this->string_replace($request->get('Dui')),
+                'Nit' => $this->string_replace($request->get('Nit'))
+            ]);
 
-        $request->merge(['Dui' => $this->string_replace($request->get('Dui'))]);
-        $request->merge(['Nit' => $this->string_replace($request->get('Nit'))]);
+            // Reglas base de validación
+            $rules = [
+                'Nombre' => 'required',
+            ];
 
-        $request->validate([
-            'Nombre' => 'required',
-        ], $messages);
+            // Validación condicional para DUI
+            if ($request->get('TipoPersona') == 1) {
+                $rules['Dui'] = 'required';
+            }
 
-        $count_dui = Cliente::where('Dui', '=', $request->get('Dui'))->where('Id', '<>', $id)->count();
-        $count_nit = Cliente::where('Nit', '=', $request->get('Nit'))->where('Id', '<>', $id)->count();
+            // Validación condicional para DUI existente
+            if ($request->filled('Dui')) {
+                $rules['Dui'] = array_merge($rules['Dui'] ?? [], ['min:10']);
 
-        if ($request->get('TipoPersona') == 1) {
-            $request->validate([
-                'Dui' => 'required',
-            ], $messages);
+                if (Cliente::where('Dui', $request->Dui)->where('Id', '<>', $id)->exists()) {
+                    $rules['Dui'][] = 'unique:cliente';
+                }
+            }
+
+            // Validación condicional para NIT existente
+            if ($request->filled('Nit')) {
+                $rules['Nit'] = ['min:17'];
+
+                if (Cliente::where('Nit', $request->Nit)->where('Id', '<>', $id)->exists()) {
+                    $rules['Nit'][] = 'unique:cliente';
+                }
+            }
+
+            // Validar todo en una sola llamada
+            $request->validate($rules, $messages);
+
+
+            $cliente = Cliente::findOrFail($id);
+            $cliente->Nit = $request->get('Nit');
+            $cliente->Dui = $request->get('Dui');
+            $cliente->Nombre = $request->get('Nombre');
+            $cliente->RegistroFiscal = $request->get('RegistroFiscal');
+            $cliente->FechaNacimiento = $request->get('FechaNacimiento');
+            $cliente->EstadoFamiliar = $request->get('EstadoFamiliar');
+            $cliente->NumeroDependientes = $request->get('NumeroDependientes');
+            $cliente->Ocupacion = $request->get('Ocupacion');
+            $cliente->DireccionResidencia = $request->get('DireccionResidencia');
+            $cliente->DireccionCorrespondencia = $request->get('DireccionCorrespondencia');
+            $cliente->TelefonoResidencia = $request->get('TelefonoResidencia');
+            $cliente->TelefonoOficina = $request->get('TelefonoOficina');
+            $cliente->TelefonoCelular = $request->get('TelefonoCelular');
+            $cliente->CorreoPrincipal = $request->get('CorreoPrincipal');
+            $cliente->CorreoSecundario = $request->get('CorreoSecundario');
+            $cliente->FechaVinculacion = $request->get('FechaVinculacion');
+            $cliente->FechaBaja = $request->get('FechaBaja');
+            $cliente->ResponsablePago = $request->get('ResponsablePago');
+            $cliente->UbicacionCobro = $request->get('UbicacionCobro');
+            //$cliente->FormaPago = $request->get('FormaPago');
+            $cliente->Estado = $request->get('Estado');
+            $cliente->TipoPersona = $request->get('TipoPersona');
+            $cliente->Genero = $request->get('Genero');
+            $cliente->Comentarios = $request->get('Comentarios');
+            $cliente->TipoContribuyente = $request->get('TipoContribuyente');
+            $cliente->Referencia = $request->get('Referencia');
+            $cliente->Distrito = $request->get('Distrito');
+            $cliente->TelefonoCelular2 = $request->get('TelefonoCelular2');
+            $cliente->BancoPrefencia = $request->get('BancoPrefencia');
+            $cliente->CuentasDevolucionPrimas = $request->get('CuentasDevolucionPrimas');
+            $cliente->update();
+
+            return redirect('catalogo/cliente/' . $id . '/edit?tab=1')->with('success', 'El registro ha sido modificado correctamente');
+        } catch (\Exception $e) {
+            Log::error('Error al guardar cliente: ' . $e->getMessage(), [
+                'exception' => $e,
+                'request_data' => $request->all()
+            ]);
+
+            // Redireccionar con mensaje genérico al usuario
+            return back()
+                ->with('error', 'Ocurrió un error al guardar el registro. Por favor intente nuevamente.');
         }
-
-        if ($request->get('Dui') != null && $count_dui > 0) {
-            $request->validate([
-                'Dui' => 'min:10|unique:cliente',
-            ], $messages);
-        }
-
-        if ($request->get('Nit') != null && $count_nit > 0) {
-            $request->validate([
-                'Nit' => 'min:17|unique:cliente',
-            ], $messages);
-        }
-
-
-        $cliente = Cliente::findOrFail($id);
-        $cliente->Nit = $request->get('Nit');
-        $cliente->Dui = $request->get('Dui');
-        $cliente->Nombre = $request->get('Nombre');
-        $cliente->RegistroFiscal = $request->get('RegistroFiscal');
-        $cliente->FechaNacimiento = $request->get('FechaNacimiento');
-        $cliente->EstadoFamiliar = $request->get('EstadoFamiliar');
-        $cliente->NumeroDependientes = $request->get('NumeroDependientes');
-        $cliente->Ocupacion = $request->get('Ocupacion');
-        $cliente->DireccionResidencia = $request->get('DireccionResidencia');
-        $cliente->DireccionCorrespondencia = $request->get('DireccionCorrespondencia');
-        $cliente->TelefonoResidencia = $request->get('TelefonoResidencia');
-        $cliente->TelefonoOficina = $request->get('TelefonoOficina');
-        $cliente->TelefonoCelular = $request->get('TelefonoCelular');
-        $cliente->CorreoPrincipal = $request->get('CorreoPrincipal');
-        $cliente->CorreoSecundario = $request->get('CorreoSecundario');
-        $cliente->FechaVinculacion = $request->get('FechaVinculacion');
-        $cliente->FechaBaja = $request->get('FechaBaja');
-        $cliente->ResponsablePago = $request->get('ResponsablePago');
-        $cliente->UbicacionCobro = $request->get('UbicacionCobro');
-        //$cliente->FormaPago = $request->get('FormaPago');
-        $cliente->Estado = $request->get('Estado');
-        $cliente->TipoPersona = $request->get('TipoPersona');
-        $cliente->Genero = $request->get('Genero');
-        $cliente->Comentarios = $request->get('Comentarios');
-        $cliente->TipoContribuyente = $request->get('TipoContribuyente');
-        $cliente->Referencia = $request->get('Referencia');
-        $cliente->Distrito = $request->get('Distrito');
-        $cliente->TelefonoCelular2 = $request->get('TelefonoCelular2');
-        $cliente->BancoPrefencia = $request->get('BancoPrefencia');
-        $cliente->CuentasDevolucionPrimas = $request->get('CuentasDevolucionPrimas');
-        $cliente->update();
-
-        session(['tab1' => '1']);
-
-        alert()->success('El registro ha sido modificado correctamente');
-        return back();
     }
 
 
-    public function red_social(Request $request)
-    {
-        $cliente = Cliente::findOrFail($request->Id);
-        $cliente->Facebook = $request->get('Facebook');
-        $cliente->ActividadesCreativas = $request->get('ActividadesCreativas');
-        $cliente->EstiloVida = $request->get('EstiloVida');
-        $cliente->SitioWeb = $request->get('SitioWeb');
-        $cliente->NecesidadProteccion = $request->get('NecesidadProteccion');
-        $cliente->Laptop = $request->get('Laptop');
-        $cliente->PC = $request->get('PC');
-        $cliente->Tablet = $request->get('Tablet');
-        $cliente->Smartphone = $request->get('Smartphone');
-        $cliente->SmartWatch = $request->get('SmartWatch');
-        $cliente->DispositivosOtros = $request->get('DispositivosOtros');
-        $cliente->Informarse = $request->get('Informarse');
-        $cliente->EnvioInformacion = $request->get('EnvioInformacion');
-        $cliente->Instagram = $request->get('Instagram');
-        $cliente->TieneMascota = $request->get('TieneMascota');
-        $cliente->MotivoEleccion = $request->get('MotivoEleccion');
-        $cliente->PreferenciaCompra = $request->get('PreferenciaCompra');
-        $cliente->AseguradoraPreferencia = $request->get('AseguradoraPreferencia');
-        $cliente->Efectivo = $request->get('Efectivo');
-        $cliente->TarjetaCredito = $request->get('TarjetaCredito');
-        $cliente->App = $request->get('App');
-        $cliente->MonederoEletronico = $request->get('MonederoEletronico');
-        $cliente->CompraOtros = $request->get('CompraOtros');
-        $cliente->Informacion = $request->get('Informacion');
-        $cliente->update();
 
-        return redirect('catalogo/cliente/' . $request->Id . '/edit?tab=4');
-
-        alert()->success('El registro ha sido modificado correctamente');
-        return back();
-    }
-    public function add_contacto(Request $request)
-    {
-        $contacto = new ClienteContactoFrecuente();
-        $contacto->Cliente = $request->Cliente;
-        $contacto->Nombre = $request->Nombre;
-        $contacto->Cargo = $request->Cargo;
-        $contacto->Telefono = $request->Telefono;
-        $contacto->Email = $request->Email;
-        $contacto->LugarTrabajo = $request->LugarTrabajo;
-        $contacto->save();
-        alert()->success('El registro ha sido creado correctamente');
-
-        return redirect('catalogo/cliente/' . $request->Cliente . '/edit?tab=3');
-        //return back();
-    }
-
-    public function edit_contacto(Request $request)
-    {
-        $contacto = ClienteContactoFrecuente::findOrFail($request->Id);
-        $contacto->Cliente = $request->Cliente;
-        $contacto->Nombre = $request->Nombre;
-        $contacto->Cargo = $request->Cargo;
-        $contacto->Telefono = $request->Telefono;
-        $contacto->Email = $request->Email;
-        $contacto->LugarTrabajo = $request->LugarTrabajo;
-        $contacto->save();
-        alert()->success('El registro ha sido modificado correctamente');
-
-        return redirect('catalogo/cliente/' . $request->Cliente . '/edit?tab=3');
-    }
-
-    public function delete_contacto(Request $request)
-    {
-        $contacto = ClienteContactoFrecuente::findOrFail($request->Id);
-        $Id = $contacto->Cliente;
-        $contacto->delete();
-        alert()->error('El registro ha sido eliminado correctamente');
-
-        return redirect('catalogo/cliente/' .  $Id . '/edit?tab=3');
-    }
-
-
+    //tab 2
     public function add_tarjeta(Request $request)
     {
-        $tarjeta = new ClienteTarjetaCredito();
-        $tarjeta->Cliente = $request->Cliente;
-        $tarjeta->NumeroTarjeta = $request->NumeroTarjeta;
-        $tarjeta->FechaVencimiento = $request->FechaVencimiento;
-        $tarjeta->PolizaVinculada = $request->PolizaVinculada;
-        $tarjeta->MetodoPago = $request->MetodoPago;
-        $tarjeta->save();
-        alert()->success('El registro ha sido creado correctamente');
+        try {
+            $tarjeta = new ClienteTarjetaCredito();
+            $tarjeta->Cliente = $request->Cliente;
+            $tarjeta->NumeroTarjeta = $request->NumeroTarjeta;
+            $tarjeta->FechaVencimiento = $request->FechaVencimiento;
+            $tarjeta->PolizaVinculada = $request->PolizaVinculada;
+            $tarjeta->MetodoPago = $request->MetodoPago;
+            $tarjeta->save();
 
-        return redirect('catalogo/cliente/' . $request->Cliente . '/edit?tab=2');
+            return redirect('catalogo/cliente/' . $request->Cliente . '/edit?tab=2')
+                ->with('success', 'El registro ha sido creado correctamente');
+        } catch (\Exception $e) {
+            Log::error('Error al guardar tarjeta: ' . $e->getMessage(), [
+                'exception' => $e,
+                'request_data' => $request->all()
+            ]);
+
+            return redirect('catalogo/cliente/' . $request->Cliente . '/edit?tab=2')
+                ->with('error', 'Ocurrió un error al guardar el registro. Por favor intente nuevamente.');
+        }
+    }
+
+
+    public function edit_tarjeta(Request $request)
+    {
+        try {
+            $tarjeta = ClienteTarjetaCredito::findOrFail($request->Id);
+            $tarjeta->PolizaVinculada = $request->PolizaVinculada;
+            $tarjeta->save();
+            return redirect('catalogo/cliente/' . $request->Cliente . '/edit?tab=2')
+                ->with('success', 'El registro ha sido creado correctamente');
+        } catch (\Exception $e) {
+            Log::error('Error al guardar tarjeta: ' . $e->getMessage(), [
+                'exception' => $e,
+                'request_data' => $request->all()
+            ]);
+
+            return redirect('catalogo/cliente/' . $request->Cliente . '/edit?tab=2')
+                ->with('error', 'Ocurrió un error al guardar el registro. Por favor intente nuevamente.');
+        }
     }
 
     public function delete_tarjeta(Request $request)
     {
-        $tarjeta = ClienteTarjetaCredito::findOrFail($request->Id);
-        $Id =  $tarjeta->Cliente;
-        $tarjeta->delete();
-        alert()->error('El registro ha sido eliminado correctamente');
+        try {
+            $tarjeta = ClienteTarjetaCredito::findOrFail($request->Id);
+            $tarjeta->delete();
+            return redirect('catalogo/cliente/' . $tarjeta->Cliente . '/edit?tab=2')
+                ->with('success', 'El registro ha sido creado correctamente');
+        } catch (\Exception $e) {
+            Log::error('Error al guardar tarjeta: ' . $e->getMessage(), [
+                'exception' => $e,
+                'request_data' => $request->all()
+            ]);
 
-        return redirect('catalogo/cliente/' . $Id . '/edit?tab=2');
+            return back()
+                ->with('error', 'Ocurrió un error al eliminar el registro. Por favor intente nuevamente.');
+        }
     }
 
-    public function edit_tarjeta(Request $request)
+
+
+    //tab 3
+    public function add_contacto(Request $request)
     {
-        $tarjeta = ClienteTarjetaCredito::findOrFail($request->Id);
-        //$tarjeta->Cliente = $request->Cliente;
-        //$tarjeta->NumeroTarjeta = $request->NumeroTarjeta;
-        //$tarjeta->FechaVencimiento = $request->FechaVencimiento;
-        $tarjeta->PolizaVinculada = $request->PolizaVinculada;
-        
-        //    $tarjeta->MetodoPago = $request->MetodoPago;
-        $tarjeta->save();
-        alert()->success('El registro ha sido creado correctamente');
+        try {
+            $contacto = new ClienteContactoFrecuente();
+            $contacto->Cliente = $request->Cliente;
+            $contacto->Nombre = $request->Nombre;
+            $contacto->Cargo = $request->Cargo;
+            $contacto->Telefono = $request->Telefono;
+            $contacto->Email = $request->Email;
+            $contacto->LugarTrabajo = $request->LugarTrabajo;
+            $contacto->save();
+            return redirect('catalogo/cliente/' . $request->Cliente . '/edit?tab=3')
+                ->with('success', 'El registro ha sido creado correctamente');
+        } catch (\Exception $e) {
+            Log::error('Error al guardar contacto: ' . $e->getMessage(), [
+                'exception' => $e,
+                'request_data' => $request->all()
+            ]);
 
-        return redirect('catalogo/cliente/' . $request->Cliente . '/edit?tab=2');
+            return back()
+                ->with('error', 'Ocurrió un error al guardar el registro. Por favor intente nuevamente.');
+        }
     }
+
+    public function edit_contacto(Request $request)
+    {
+        try {
+            $contacto = ClienteContactoFrecuente::findOrFail($request->Id);
+            $contacto->Cliente = $request->Cliente;
+            $contacto->Nombre = $request->Nombre;
+            $contacto->Cargo = $request->Cargo;
+            $contacto->Telefono = $request->Telefono;
+            $contacto->Email = $request->Email;
+            $contacto->LugarTrabajo = $request->LugarTrabajo;
+            $contacto->save();
+            return redirect('catalogo/cliente/' . $request->Cliente . '/edit?tab=3')
+                ->with('success', 'El registro ha sido creado correctamente');
+        } catch (\Exception $e) {
+            Log::error('Error al guardar contacto: ' . $e->getMessage(), [
+                'exception' => $e,
+                'request_data' => $request->all()
+            ]);
+
+            return back()
+                ->with('error', 'Ocurrió un error al guardar el registro. Por favor intente nuevamente.');
+        }
+    }
+
+    public function delete_contacto(Request $request)
+    {
+        try {
+            $contacto = ClienteContactoFrecuente::findOrFail($request->Id);
+            $contacto->delete();
+            return redirect('catalogo/cliente/' . $contacto->Cliente . '/edit?tab=3')
+                ->with('success', 'El registro ha sido eliminado correctamente');
+        } catch (\Exception $e) {
+            Log::error('Error al borrar contacto: ' . $e->getMessage(), [
+                'exception' => $e,
+                'request_data' => $request->all()
+            ]);
+
+            return back()
+                ->with('error', 'Ocurrió un error al guardar el registro. Por favor intente nuevamente.');
+        }
+    }
+
+    public function addCargo(Request $request)
+    {
+        $cargo = new ClienteContactoCargo();
+        $cargo->Nombre = $request->get('Nombre');
+        $cargo->Activo = '1';
+        $cargo->save();
+        return ClienteContactoCargo::where('Activo', '=', 1)->get();
+    }
+
+
+
+    //tab 4
+    public function red_social(Request $request)
+    {
+        try {
+            $cliente = Cliente::findOrFail($request->Id);
+            $cliente->Facebook = $request->get('Facebook');
+            $cliente->ActividadesCreativas = $request->get('ActividadesCreativas');
+            $cliente->EstiloVida = $request->get('EstiloVida');
+            $cliente->SitioWeb = $request->get('SitioWeb');
+            $cliente->NecesidadProteccion = $request->get('NecesidadProteccion');
+            $cliente->Laptop = $request->get('Laptop');
+            $cliente->PC = $request->get('PC');
+            $cliente->Tablet = $request->get('Tablet');
+            $cliente->Smartphone = $request->get('Smartphone');
+            $cliente->SmartWatch = $request->get('SmartWatch');
+            $cliente->DispositivosOtros = $request->get('DispositivosOtros');
+            $cliente->Informarse = $request->get('Informarse');
+            $cliente->EnvioInformacion = $request->get('EnvioInformacion');
+            $cliente->Instagram = $request->get('Instagram');
+            $cliente->TieneMascota = $request->get('TieneMascota');
+            $cliente->MotivoEleccion = $request->get('MotivoEleccion');
+            $cliente->PreferenciaCompra = $request->get('PreferenciaCompra');
+            $cliente->AseguradoraPreferencia = $request->get('AseguradoraPreferencia');
+            $cliente->Efectivo = $request->get('Efectivo');
+            $cliente->TarjetaCredito = $request->get('TarjetaCredito');
+            $cliente->App = $request->get('App');
+            $cliente->MonederoEletronico = $request->get('MonederoEletronico');
+            $cliente->CompraOtros = $request->get('CompraOtros');
+            $cliente->Informacion = $request->get('Informacion');
+            $cliente->update();
+
+            return redirect('catalogo/cliente/' . $request->Id . '/edit?tab=4')
+                ->with('success', 'El registro ha sido guardado correctamente');
+        } catch (\Exception $e) {
+            Log::error('Error al guardar red_social: ' . $e->getMessage(), [
+                'exception' => $e,
+                'request_data' => $request->all()
+            ]);
+
+            return back()
+                ->with('error', 'Ocurrió un error al guardar el registro. Por favor intente nuevamente.');
+        }
+    }
+
+
+    public function addMotivo(Request $request)
+    {
+        try {
+            $motivo = new ClienteMotivoEleccion();
+            $motivo->Nombre = $request->get('Nombre');
+            $motivo->Activo = '1';
+            $motivo->save();
+
+            return ClienteMotivoEleccion::where('Activo', '=', 1)->get();
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al agregar el motivo: ' . $e->getMessage(),
+                'error' => $e->getTraceAsString()
+            ], 500);
+        }
+    }
+
+
+
+    public function addPreferencia(Request $request)
+    {
+        try {
+            $preferencia = new ClientePrefereciaCompra();
+            $preferencia->Nombre = $request->get('Nombre');
+            $preferencia->Activo = '1';
+            $preferencia->save();
+            return ClientePrefereciaCompra::where('Activo', '=', 1)->get();
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al agregar el motivo: ' . $e->getMessage(),
+                'error' => $e->getTraceAsString()
+            ], 500);
+        }
+    }
+
+
+    //tab 5
+    public function add_habito(Request $request)
+    {
+        $request->validate([
+            // Campos requeridos
+            'Cliente'           => 'required|string',
+            'ActividadEconomica'  => 'required|string',
+            'NivelEducativo'      => 'required|string',
+
+            // Campos requeridos y mayores a cero
+            'IngresoPromedio'     => 'required|numeric|gt:0',
+            'GastoMensualSeguro'  => 'required|numeric|gt:0',
+        ], [
+            // Mensajes personalizados para campos requeridos
+            'Cliente.required'          => 'El campo Cliente es obligatorio.',
+            'ActividadEconomica.required' => 'El campo Actividad Económica es obligatorio.',
+            'NivelEducativo.required'     => 'El campo Nivel Educativo es obligatorio.',
+
+            // Mensajes para campos numéricos
+            'IngresoPromedio.required'    => 'El campo Ingreso Promedio es obligatorio.',
+            'IngresoPromedio.numeric'     => 'El Ingreso Promedio debe ser un número válido.',
+            'IngresoPromedio.gt'          => 'El Ingreso Promedio debe ser mayor que cero.',
+
+            'GastoMensualSeguro.required' => 'El campo Gasto Mensual en Seguros es obligatorio.',
+            'GastoMensualSeguro.numeric'  => 'El Gasto Mensual en Seguros debe ser un número válido.',
+            'GastoMensualSeguro.gt'       => 'El Gasto Mensual en Seguros debe ser mayor que cero.',
+        ]);
+
+        try {
+
+
+            $habito = new ClienteHabitoConsumo();
+            $habito->Cliente = $request->Cliente;
+            $habito->ActividadEconomica = $request->ActividadEconomica;
+            $habito->IngresoPromedio = $request->IngresoPromedio;
+            $habito->GastoMensualSeguro = $request->GastoMensualSeguro;
+            $habito->NivelEducativo = $request->NivelEducativo;
+            $habito->save();
+            return redirect('catalogo/cliente/' . $request->Cliente . '/edit?tab=5')
+                ->with('success', 'El registro ha sido guardado correctamente');
+        } catch (\Exception $e) {
+            Log::error('Error al guardar habito: ' . $e->getMessage(), [
+                'exception' => $e,
+                'request_data' => $request->all()
+            ]);
+
+            return back()
+                ->with('error', 'Ocurrió un error al guardar el registro. Por favor intente nuevamente.');
+        }
+    }
+
+    public function edit_habito(Request $request)
+    {
+        $request->validate([
+            // Campos requeridos
+            'Cliente'           => 'required|string',
+            'ActividadEconomica'  => 'required|string',
+            'NivelEducativo'      => 'required|string',
+
+            // Campos requeridos y mayores a cero
+            'IngresoPromedio'     => 'required|numeric|gt:0',
+            'GastoMensualSeguro'  => 'required|numeric|gt:0',
+        ], [
+            // Mensajes personalizados para campos requeridos
+            'Cliente.required'          => 'El campo Cliente es obligatorio.',
+            'ActividadEconomica.required' => 'El campo Actividad Económica es obligatorio.',
+            'NivelEducativo.required'     => 'El campo Nivel Educativo es obligatorio.',
+
+            // Mensajes para campos numéricos
+            'IngresoPromedio.required'    => 'El campo Ingreso Promedio es obligatorio.',
+            'IngresoPromedio.numeric'     => 'El Ingreso Promedio debe ser un número válido.',
+            'IngresoPromedio.gt'          => 'El Ingreso Promedio debe ser mayor que cero.',
+
+            'GastoMensualSeguro.required' => 'El campo Gasto Mensual en Seguros es obligatorio.',
+            'GastoMensualSeguro.numeric'  => 'El Gasto Mensual en Seguros debe ser un número válido.',
+            'GastoMensualSeguro.gt'       => 'El Gasto Mensual en Seguros debe ser mayor que cero.',
+        ]);
+
+        try {
+            $habito = ClienteHabitoConsumo::findOrFail($request->Id);
+            $habito->Cliente = $request->Cliente;
+            $habito->ActividadEconomica = $request->ActividadEconomica;
+            $habito->IngresoPromedio = $request->IngresoPromedio;
+            $habito->GastoMensualSeguro = $request->GastoMensualSeguro;
+            $habito->NivelEducativo = $request->NivelEducativo;
+            $habito->save();
+            return redirect('catalogo/cliente/' . $request->Cliente . '/edit?tab=5')
+                ->with('success', 'El registro ha sido guardado correctamente');
+        } catch (\Exception $e) {
+            Log::error('Error al guardar habito: ' . $e->getMessage(), [
+                'exception' => $e,
+                'request_data' => $request->all()
+            ]);
+
+            return back()
+                ->with('error', 'Ocurrió un error al guardar el registro. Por favor intente nuevamente.');
+        }
+    }
+
+
+
+    public function delete_habito(Request $request)
+    {
+        try {
+            $habito = ClienteHabitoConsumo::findOrFail($request->Id);
+            $habito->delete();
+            return redirect('catalogo/cliente/' . $habito->Cliente . '/edit?tab=5')
+                ->with('success', 'El registro ha sido eliminado correctamente');
+        } catch (\Exception $e) {
+            Log::error('Error al guardar habito: ' . $e->getMessage(), [
+                'exception' => $e,
+                'request_data' => $request->all()
+            ]);
+
+            return back()
+                ->with('error', 'Ocurrió un error al guardar el registro. Por favor intente nuevamente.');
+        }
+    }
+
+
+
+    //tab 6
+    public function add_retroalimentacion(Request $request)
+    {
+        $validatedData = $request->validate([
+            'Cliente' => 'required|integer',
+            'Producto' => 'required|string|max:255',
+            'ValoresAgregados' => 'required|string',
+            'Competidores' => 'required|string',
+            'Referidos' => 'required|string',
+            'QueQuisiera' => 'required|string',
+            'ServicioCliente' => 'required|string',
+        ], [
+            'Cliente.required' => 'El campo Cliente es obligatorio.',
+            'Cliente.integer' => 'El ID del cliente debe ser un número entero.',
+
+            'Producto.required' => 'El campo Producto es obligatorio.',
+            'Producto.string' => 'El Producto debe ser texto.',
+            'Producto.max' => 'El Producto no debe exceder los 255 caracteres.',
+
+            'ValoresAgregados.required' => 'Los Valores Agregados son información obligatoria.',
+            'ValoresAgregados.string' => 'Los Valores Agregados deben ser texto.',
+
+            'Competidores.required' => 'El campo Competidores es obligatorio.',
+            'Competidores.string' => 'Los Competidores deben ser texto.',
+
+            'Referidos.required' => 'El campo Referidos es obligatorio.',
+            'Referidos.string' => 'Los Referidos deben ser texto.',
+
+            'QueQuisiera.required' => 'El campo "Qué quisiera" es obligatorio.',
+            'QueQuisiera.string' => 'El campo "Qué quisiera" debe ser texto.',
+
+            'ServicioCliente.required' => 'La valoración del Servicio al Cliente es obligatoria.',
+            'ServicioCliente.string' => 'El Servicio al Cliente debe ser texto.',
+        ]);
+        try {
+            $retroalimentacion = new ClienteRetroalimentacion();
+            $retroalimentacion->Cliente = $request->Cliente;
+            $retroalimentacion->Producto = $request->Producto;
+            $retroalimentacion->ValoresAgregados = $request->ValoresAgregados;
+            $retroalimentacion->Competidores = $request->Competidores;
+            $retroalimentacion->Referidos = $request->Referidos;
+            $retroalimentacion->QueQuisiera = $request->QueQuisiera;
+            $retroalimentacion->ServicioCliente = $request->ServicioCliente;
+            $retroalimentacion->save();
+
+            return redirect('catalogo/cliente/' . $request->Cliente . '/edit?tab=6')
+                ->with('success', 'El registro ha sido guardado correctamente');
+        } catch (\Exception $e) {
+            Log::error('Error al guardar habito: ' . $e->getMessage(), [
+                'exception' => $e,
+                'request_data' => $request->all()
+            ]);
+
+            return back()
+                ->with('error', 'Ocurrió un error al guardar el registro. Por favor intente nuevamente.');
+        }
+    }
+
+    public function edit_retroalimentacion(Request $request)
+    {
+        $validatedData = $request->validate([
+            'Cliente' => 'required|integer',
+            'Producto' => 'required|string|max:255',
+            'ValoresAgregados' => 'required|string',
+            'Competidores' => 'required|string',
+            'Referidos' => 'required|string',
+            'QueQuisiera' => 'required|string',
+            'ServicioCliente' => 'required|string',
+        ], [
+            'Cliente.required' => 'El campo Cliente es obligatorio.',
+            'Cliente.integer' => 'El ID del cliente debe ser un número entero.',
+
+            'Producto.required' => 'El campo Producto es obligatorio.',
+            'Producto.string' => 'El Producto debe ser texto.',
+            'Producto.max' => 'El Producto no debe exceder los 255 caracteres.',
+
+            'ValoresAgregados.required' => 'Los Valores Agregados son información obligatoria.',
+            'ValoresAgregados.string' => 'Los Valores Agregados deben ser texto.',
+
+            'Competidores.required' => 'El campo Competidores es obligatorio.',
+            'Competidores.string' => 'Los Competidores deben ser texto.',
+
+            'Referidos.required' => 'El campo Referidos es obligatorio.',
+            'Referidos.string' => 'Los Referidos deben ser texto.',
+
+            'QueQuisiera.required' => 'El campo "Qué quisiera" es obligatorio.',
+            'QueQuisiera.string' => 'El campo "Qué quisiera" debe ser texto.',
+
+            'ServicioCliente.required' => 'La valoración del Servicio al Cliente es obligatoria.',
+            'ServicioCliente.string' => 'El Servicio al Cliente debe ser texto.',
+        ]);
+        try {
+            $retroalimentacion = ClienteRetroalimentacion::findOrFail($request->Id);
+            $retroalimentacion->Cliente = $request->Cliente;
+            $retroalimentacion->Producto = $request->Producto;
+            $retroalimentacion->ValoresAgregados = $request->ValoresAgregados;
+            $retroalimentacion->Competidores = $request->Competidores;
+            $retroalimentacion->Referidos = $request->Referidos;
+            $retroalimentacion->QueQuisiera = $request->QueQuisiera;
+            $retroalimentacion->ServicioCliente = $request->ServicioCliente;
+            $retroalimentacion->update();
+            return redirect('catalogo/cliente/' . $request->Cliente . '/edit?tab=6')
+                ->with('success', 'El registro ha sido guardado correctamente');
+        } catch (\Exception $e) {
+            Log::error('Error al guardar habito: ' . $e->getMessage(), [
+                'exception' => $e,
+                'request_data' => $request->all()
+            ]);
+
+            return back()
+                ->with('error', 'Ocurrió un error al guardar el registro. Por favor intente nuevamente.');
+        }
+    }
+
+    public function delete_retroalimentacion(Request $request)
+    {
+        try {
+            $retroalimentacion = ClienteRetroalimentacion::findOrFail($request->Id);
+            $retroalimentacion->delete();
+            return redirect('catalogo/cliente/' . $retroalimentacion->Cliente . '/edit?tab=6')
+                ->with('success', 'El registro ha sido eliminado correctamente');
+        } catch (\Exception $e) {
+            Log::error('Error al guardar habito: ' . $e->getMessage(), [
+                'exception' => $e,
+                'request_data' => $request->all()
+            ]);
+
+            return back()
+                ->with('error', 'Ocurrió un error al eliminar el registro. Por favor intente nuevamente.');
+        }
+    }
+
+
+
 
 
     public function agregar_documento(Request $request)
@@ -617,94 +1007,14 @@ class ClienteController extends Controller
 
         alert()->success('El registro ha sido eliminado correctamente');
         return redirect('catalogo/cliente/' . $Id . '/edit?tab=7');
-
     }
 
 
 
 
-    public function add_habito(Request $request)
-    {
-        $habito = new ClienteHabitoConsumo();
-        $habito->Cliente = $request->Cliente;
-        $habito->ActividadEconomica = $request->ActividadEconomica;
-        $habito->IngresoPromedio = $request->IngresoPromedio;
-        $habito->GastoMensualSeguro = $request->GastoMensualSeguro;
-        $habito->NivelEducativo = $request->NivelEducativo;
-        $habito->save();
-        alert()->success('El registro ha sido creado correctamente');
-
-        return redirect('catalogo/cliente/' . $request->Cliente . '/edit?tab=5');
-
-    }
-
-    public function edit_habito(Request $request)
-    {
-        $habito = ClienteHabitoConsumo::findOrFail($request->Id);
-        $habito->Cliente = $request->Cliente;
-        $habito->ActividadEconomica = $request->ActividadEconomica;
-        $habito->IngresoPromedio = $request->IngresoPromedio;
-        $habito->GastoMensualSeguro = $request->GastoMensualSeguro;
-        $habito->NivelEducativo = $request->NivelEducativo;
-        $habito->save();
-        alert()->success('El registro ha sido modificado correctamente');
-
-        return redirect('catalogo/cliente/' . $request->Cliente . '/edit?tab=5');
-    }
 
 
 
-    public function delete_habito(Request $request)
-    {
-        $habito = ClienteHabitoConsumo::findOrFail($request->Id);
-        $Id = $habito->Cliente;
-        $habito->delete();
-        alert()->error('El registro ha sido eliminado correctamente');
-
-        return redirect('catalogo/cliente/' . $Id. '/edit?tab=5');
-    }
-
-    public function add_retroalimentacion(Request $request)
-    {
-        $retroalimentacion = new ClienteRetroalimentacion();
-        $retroalimentacion->Cliente = $request->Cliente;
-        $retroalimentacion->Producto = $request->Producto;
-        $retroalimentacion->ValoresAgregados = $request->ValoresAgregados;
-        $retroalimentacion->Competidores = $request->Competidores;
-        $retroalimentacion->Referidos = $request->Referidos;
-        $retroalimentacion->QueQuisiera = $request->QueQuisiera;
-        $retroalimentacion->ServicioCliente = $request->ServicioCliente;
-        $retroalimentacion->save();
-
-        alert()->success('El registro ha sido creado correctamente');
-        return redirect('catalogo/cliente/' . $request->Cliente . '/edit?tab=6');
-        return back();
-    }
-
-    public function edit_retroalimentacion(Request $request)
-    {
-        $retroalimentacion = ClienteRetroalimentacion::findOrFail($request->Id);
-        $retroalimentacion->Cliente = $request->Cliente;
-        $retroalimentacion->Producto = $request->Producto;
-        $retroalimentacion->ValoresAgregados = $request->ValoresAgregados;
-        $retroalimentacion->Competidores = $request->Competidores;
-        $retroalimentacion->Referidos = $request->Referidos;
-        $retroalimentacion->QueQuisiera = $request->QueQuisiera;
-        $retroalimentacion->ServicioCliente = $request->ServicioCliente;
-        $retroalimentacion->update();
-        alert()->success('El registro ha sido modificado correctamente');
-        return redirect('catalogo/cliente/' . $request->Cliente . '/edit?tab=6');
-        return back();
-    }
-
-    public function delete_retroalimentacion(Request $request)
-    {
-        $retroalimentacion = ClienteRetroalimentacion::findOrFail($request->Id);
-        $Id = $retroalimentacion->Cliente;
-        $retroalimentacion->delete();
-        alert()->error('El registro ha sido eliminado correctamente');
-        return redirect('catalogo/cliente/' . $Id  . '/edit?tab=6');
-    }
 
 
     public function destroy($id)
@@ -727,32 +1037,5 @@ class ClienteController extends Controller
         alert()->success('El registro ha sido activado correctamente');
 
         return back();
-    }
-
-    public function addCargo(Request $request)
-    {
-        $cargo = new ClienteContactoCargo();
-        $cargo->Nombre = $request->get('Nombre');
-        $cargo->Activo = '1';
-        $cargo->save();
-        return ClienteContactoCargo::where('Activo', '=', 1)->get();
-    }
-
-    public function addMotivo(Request $request)
-    {
-        $motivo = new ClienteMotivoEleccion();
-        $motivo->Nombre = $request->get('Nombre');
-        $motivo->Activo = '1';
-        $motivo->save();
-        return ClienteMotivoEleccion::where('Activo', '=', 1)->get();
-    }
-
-    public function addPreferencia(Request $request)
-    {
-        $preferencia = new ClientePrefereciaCompra();
-        $preferencia->Nombre = $request->get('Nombre');
-        $preferencia->Activo = '1';
-        $preferencia->save();
-        return ClientePrefereciaCompra::where('Activo', '=', 1)->get();
     }
 }
