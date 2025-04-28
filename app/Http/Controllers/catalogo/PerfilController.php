@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\Perfil;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class PerfilController extends Controller
 {
@@ -16,8 +17,9 @@ class PerfilController extends Controller
      */
     public function index()
     {
-        $perfiles = Perfil::where('Activo',1)->get();
-        return view('catalogo.perfiles.index', compact('perfiles'));   
+        $perfiles = Perfil::where('Activo', 1)->get();
+        $aseguradoras = Aseguradora::where('Activo', 1)->get();
+        return view('catalogo.perfiles.index', compact('perfiles', 'aseguradoras'));
     }
 
     /**
@@ -27,86 +29,115 @@ class PerfilController extends Controller
      */
     public function create()
     {
-        $aseguradoras = Aseguradora::where('Activo',1)->get();
+        $aseguradoras = Aseguradora::where('Activo', 1)->get();
         return view('catalogo.perfiles.create', compact('aseguradoras'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
     public function store(Request $request)
     {
+        // Validación de los campos requeridos
+        $request->validate([
+            'Codigo' => 'required|unique:perfiles,Codigo',
+            'Descripcion' => 'required',
+            'Aseguradora' => 'required',
+        ], [
+            'Codigo.required' => 'El campo Código es obligatorio.',
+            'Descripcion.required' => 'El campo Descripción es obligatorio.',
+            'Aseguradora.required' => 'El campo Aseguradora es obligatorio.',
+        ]);
 
-        //dd($request->DeclaracionJurada);
-        $perfiles = new Perfil();
-        $perfiles->Descripcion = $request->get('Descripcion');
-        $perfiles->Aseguradora = $request->get('Aseguradora');
-        $perfiles->PagoAutomatico = $request->get('PagoAutomatico');
-        $perfiles->DeclaracionJurada = $request->get('DeclaracionJurada');
-        $perfiles->save();
+        try {
+            // Si pasa la validación, guardamos el nuevo perfil
+            $perfiles = new Perfil();
+            $perfiles->Codigo = $request->Codigo;
+            $perfiles->Descripcion = $request->Descripcion;
+            $perfiles->Aseguradora = $request->Aseguradora;
+            $perfiles->PagoAutomatico = $request->PagoAutomatico ?? 0;
+            $perfiles->DeclaracionJurada = $request->DeclaracionJurada ?? 0;
+            $perfiles->save();
 
-        return back();
+            // Redirigir con mensaje de éxito
+            return back()->with('success', 'Perfil creado exitosamente.');
+        } catch (\Exception $e) {
+            // Capturar el error y registrar el detalle
+            Log::error('Error al crear perfil: ' . $e->getMessage(), [
+                'exception' => $e,
+                'request_data' => $request->all()
+            ]);
+
+            // Redirigir con mensaje de error
+            return back()->with('error', 'Ocurrió un error al crear el perfil. Por favor, intente nuevamente.');
+        }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function edit($id)
     {
         $perfil = Perfil::findOrFail($id);
-        $aseguradoras = Aseguradora::where('Activo',1)->get();
-        return view('catalogo.perfiles.edit', compact('perfil','aseguradoras'));
+        $aseguradoras = Aseguradora::where('Activo', 1)->get();
+        return view('catalogo.perfiles.edit', compact('perfil', 'aseguradoras'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function update(Request $request, $id)
     {
-        $perfiles = Perfil::findOrFail($id);
-        $perfiles->Descripcion = $request->get('Descripcion');
-        $perfiles->Aseguradora = $request->get('Aseguradora');
-        $perfiles->PagoAutomatico = $request->get('PagoAutomatico');
-        $perfiles->DeclaracionJurada = $request->get('DeclaracionJurada');
-        $perfiles->update();
+        $request->validate([
+            'Codigo' => 'required|unique:perfiles,Codigo,' . $id,
+            'Descripcion' => 'required',
+            'Aseguradora' => 'required',
+        ], [
+            'Codigo.required' => 'El campo Código es obligatorio.',
+            'Descripcion.required' => 'El campo Descripción es obligatorio.',
+            'Aseguradora.required' => 'El campo Aseguradora es obligatorio.',
+        ]);
 
-        return redirect('catalogo/perfiles');
-        
+        try {
+            $perfiles = Perfil::findOrFail($id);
+            $perfiles->Descripcion = $request->get('Descripcion');
+            $perfiles->Aseguradora = $request->get('Aseguradora');
+            $perfiles->PagoAutomatico = $request->get('PagoAutomatico');
+            $perfiles->DeclaracionJurada = $request->get('DeclaracionJurada');
+            $perfiles->update();
+
+            // Redirigir con mensaje de éxito
+            return back()->with('success', 'Perfil modificado exitosamente.');
+        } catch (\Exception $e) {
+            // Capturar el error y registrar el detalle
+            Log::error('Error al guardar perfil: ' . $e->getMessage(), [
+                'exception' => $e,
+                'request_data' => $request->all()
+            ]);
+
+            // Redirigir con mensaje de error
+            return back()->with('error', 'Ocurrió un error al guardar el perfil. Por favor, intente nuevamente.');
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function destroy($id)
     {
-        $perfiles = Perfil::findOrFail($id);
-        $perfiles->Activo = 0;
-        $perfiles->update();
+        try {
+            $perfiles = Perfil::findOrFail($id);
+            $perfiles->Activo = 0;
+            $perfiles->update();
 
-        return redirect('catalogo/perfiles');
+            // Redirigir con mensaje de éxito
+            return back()->with('success', 'Perfil eliminado exitosamente.');
+        } catch (\Exception $e) {
+            // Capturar el error y registrar el detalle
+            Log::error('Error al eliminar perfil: ' . $e->getMessage(), [
+                'exception' => $e
+            ]);
+
+            // Redirigir con mensaje de error
+            return back()->with('error', 'Ocurrió un error al guardar el perfil. Por favor, intente nuevamente.');
+        }
     }
 }

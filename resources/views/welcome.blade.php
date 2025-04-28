@@ -180,7 +180,7 @@
                                         <li><a href="{{ url('catalogo/area_comercial') }}">Área Comercial</a></li>
                                         <li><a href="{{ url('catalogo/ubicacion_cobro') }}">Ubicación Cobro</a></li>
                                         <li><a href="{{ url('catalogo/necesidad_proteccion') }}">Ramos</a></li>
-                                        <li><a href="{{ url('catalogo/perfiles') }}">Perfiles</a></li>
+                                        <li><a href="{{ url('catalogo/perfiles') }}">Requisitos de asegurabilidad</a></li>
                                         <li><a href="{{ url('catalogo/departamento_nr') }}">Departamentos NR</a></li>
                                         <li><a href="{{ url('catalogo/producto') }}">Productos</a></li>
                                         <li><a href="{{ url('catalogo/plan') }}">Planes</a></li>
