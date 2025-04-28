@@ -281,8 +281,10 @@ class VidaController extends Controller
             $vida->Activo = 1;
             $vida->update();
 
-            alert()->success('Registro modificado');
-            return back();
+
+            return redirect('polizas/vida/' . $id . '/edit?tab=1')
+            ->with('success', 'El registro ha sido modificado correctamente');
+
         } catch (\Exception $e) {
 
             alert()->error('Error', 'Ocurrió un error al crear la póliza de desempleo: ' . $e->getMessage())->persistent('Ok');

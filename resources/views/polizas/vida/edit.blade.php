@@ -1,7 +1,13 @@
 @extends ('welcome')
 @section('contenido')
-    @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Toastr CSS -->
+    <link href="{{ asset('vendors/toast/toastr.min.css') }}" rel="stylesheet">
+
+    <!-- jQuery -->
+    <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
+
+    <!-- Toastr JS -->
+    <script src="{{ asset('vendors/toast/toastr.min.js') }}"></script>
 
     <style>
         .table-simulated {
@@ -47,7 +53,7 @@
     <style>
         .subtareas-container {
             /* display: none;
-                                                                        /* Ocultar subtareas por defecto */
+                                                                            /* Ocultar subtareas por defecto */
         }
 
         .expand-icon {
@@ -68,6 +74,18 @@
 
 
     <div class="x_panel">
+
+        @if (session('success'))
+            <script>
+                toastr.success("{{ session('success') }}");
+            </script>
+        @endif
+
+        @if (session('error'))
+            <script>
+                toastr.error("{{ session('error') }}");
+            </script>
+        @endif
         <div class="clearfix"></div>
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
@@ -402,10 +420,10 @@
                                                                                     @foreach ($tipo->tasa_diferenciada as $tasa_diferenciada)
                                                                                         <tr class="primary-row">
                                                                                             <!-- <td>
-                                                                                                                    {{ $tasa_diferenciada->linea_credito?->Abreviatura ?? '' }}
-                                                                                                                    -
-                                                                                                                    {{ $tasa_diferenciada->linea_credito?->Descripcion ?? '' }}
-                                                                                                                </td> -->
+                                                                                                                        {{ $tasa_diferenciada->linea_credito?->Abreviatura ?? '' }}
+                                                                                                                        -
+                                                                                                                        {{ $tasa_diferenciada->linea_credito?->Descripcion ?? '' }}
+                                                                                                                    </td> -->
                                                                                             @if ($tipo->TipoCalculo == 1)
                                                                                                 <td>
                                                                                                     {{ $tasa_diferenciada->FechaDesde ? date('d/m/Y', strtotime($tasa_diferenciada->FechaDesde)) : 'Sin fecha' }}
