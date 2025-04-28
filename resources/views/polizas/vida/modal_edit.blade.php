@@ -1,6 +1,6 @@
 <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-recibo-{{ $obj->Id }}">
 
-    <form method="POST" action="{{ url('poliza/vida/recibo', $obj->Id) }}" target="_blank">
+    <form method="POST" action="{{ url('poliza/vida/recibo', $obj->Id) }}" >
 
         @csrf
         <div class="modal-dialog">
@@ -9,10 +9,10 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
-                    <h4 class="modal-title">Generar Recibo de la poliza</h4>
+                    <h4 class="modal-title">Generar Recibo de la poliza </h4>
 
-                    <div class="modal-body">
-                        <input type="hidden" value="{{ $poliza_vida->Id }}" name="Vida"  class="form-control">
+                    <div class="modal-body" >
+                        <input type="hidden" value="{{ $poliza_vida->Id }}" name="Vida" class="form-control">
                         <div class="form-group">
                             <div class="col-sm-12">
                                 <label class="control-label">Saldo a</label>
@@ -46,11 +46,13 @@
                                 <input type="text" class="form-control" name="Referencia">
                             </div>
                         </div>
-
+                        <br>
                     </div>
+                    
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-primary" id="btn_confirmar_recibo" onclick="confirmar_recibo({{$obj->Id}})">Confirmar</button>
+                        
+                        <button type="button" style="margin-top: 10px !important;" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                        <button type="submit" style="margin-top: 10px !important;"  class="btn btn-primary" id="btn_confirmar_recibo" onclick="confirmar_recibo({{$obj->Id}})">Confirmar</button>
                     </div>
                 </div>
             </div>
@@ -61,7 +63,7 @@
 
 <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-anular-{{ $obj->Id }}">
 
-    <form method="POST" action="{{ url('polizas/desempleo/anular_pago', $obj->Id) }}">
+    <form method="POST" action="{{ url('polizas/vida/anular_pago', $obj->Id) }}">
         @method('POST')
         @csrf
         <div class="modal-dialog">
@@ -87,7 +89,7 @@
 
 <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-{{ $obj->Id }}">
 
-    <form method="POST" action="{{ url('polizas/desempleo/delete_pago', $obj->Id) }}">
+    <form method="POST" action="{{ url('polizas/vida/delete_pago', $obj->Id) }}">
         @method('POST')
         @csrf
         <div class="modal-dialog">
@@ -142,7 +144,7 @@
                     </div>
                     <hr>
                     @foreach($comentarios as $comen)
-                    <!-- @if($comen->Detalledesempleo == $obj->Id) -->
+                    <!-- @if($comen->DetalleVida == $obj->Id) -->
                     <div class="row">
                         <div class="col-sm-4">
                             <label for="" class="form-label">{{$comen->Comentario}}</label>
@@ -175,7 +177,7 @@
 
 <script>
     function confirmar_recibo(id) {
-        var desempleo = {{$poliza_vida->Id}};
+        var vida = {{ $poliza_vida->Id}};
         $("#modal-recibo-" + id).modal('hide');
         //alert(id);
 
@@ -190,7 +192,7 @@
 
                 // Retrasar la redirección para permitir que se muestre el overlay
                 setTimeout(() => {
-                    window.location.href = "{{url('polizas/desempleo/')}}/" + desempleo + '/edit?tab=4'; // Redirigir a otra URL
+                    window.location.href = "{{url('polizas/vida/')}}/" + vida + '/edit?tab=4'; // Redirigir a otra URL
                 }, 500); // 500ms de retraso (puedes ajustar este valor si es necesario)
             }
         });

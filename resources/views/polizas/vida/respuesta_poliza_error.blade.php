@@ -43,6 +43,7 @@
                                         {{-- <th>Fecha vencimiento</th> --}}
                                         <th>No De Referencia Del Crédito </th>
                                         <th>Pasaporte</th>
+                                        <th>Edad</th>
                                         <th>Nacionalidad</th>
                                         <th>Género</th>
                                     </tr>
@@ -99,6 +100,9 @@
                                                     <span style="color: red;">El género no es válido</span>
                                                 @endif
 
+                                                @if (in_array(9, $registro->Errores))
+                                                    <span style="color: red;">La Edad de terminación no válido</span>
+                                                @endif
                                             </td>
                                             <td>
                                                 @if (in_array(4, $registro->Errores))
@@ -164,6 +168,14 @@
                                                             style="color: red;">{{ $registro->Pasaporte }}</span></strong>
                                                 @else
                                                     {{ $registro->Pasaporte }}
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if (in_array(9, $registro->Errores))
+                                                    <strong><span
+                                                            style="color: red;">{{ $registro->Edad }}</span></strong>
+                                                @else
+                                                    {{ $registro->Edad }}
                                                 @endif
                                             </td>
                                             <td> {{ $registro->Nacionalidad }}</td>

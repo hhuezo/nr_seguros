@@ -55,6 +55,7 @@
             <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab"
                 aria-controls="contact" aria-selected="false">Ver <br> Aviso</a>
         </li>
+        <br><br>
     </ul>
     <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade {{ isset($tab) && $tab == 1 ? 'active in' : '' }}" id="home" role="tabpanel"
@@ -188,7 +189,7 @@
             @include('polizas.vida.tab3')
         </div>
         <div class="tab-pane fade {{ isset($tab) && $tab == 5 ? 'active in' : '' }}" id="pagos" role="tabpanel" aria-labelledby="pagos-tab">
-
+            <br>
             @include('polizas.vida.tab4')
         </div>
         <div class="tab-pane fade " id="contact" role="tabpanel" aria-labelledby="contact-tab">
@@ -227,8 +228,6 @@
         $('#clientes').DataTable();
 
     });
-
-
 </script>
 
 @endsection

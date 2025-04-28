@@ -181,7 +181,7 @@ class DesempleoController extends Controller
             $desempleo->update();
 
             alert()->success('El registro de poliza ha sido configurado correctamente');
-            return redirect('polizas/desempleo/' . $request->desempleo . 'edit');
+            return redirect('polizas/desempleo/' . $request->desempleo . '/edit');
         } else {
             $desempleo->Configuracion = 1;
             $desempleo->update();
@@ -1264,7 +1264,8 @@ class DesempleoController extends Controller
             $desempleo->update();
 
             alert()->success('Éxito', 'La póliza de desempleo se ha modificado correctamente.');
-            return Redirect::to('polizas/desempleo');
+            //return Redirect::to('polizas/desempleo');
+            return back();
         } catch (\Exception $e) {
 
             alert()->error('Error', 'Ocurrió un error al crear la póliza de desempleo: ' . $e->getMessage())->persistent('Ok');

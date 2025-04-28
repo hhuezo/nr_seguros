@@ -2,7 +2,15 @@
 
 namespace App\Http\Controllers\polizas;
 
+use App\Exports\vida\EdadMaximaExport;
+use App\Exports\vida\EdadInscripcionExport;
+use App\Exports\vida\EdadTerminacionExport;
 use App\Exports\vida\ExtraPrimadosExcluidosExport;
+use App\Exports\vida\NuevosRegistrosExport;
+use App\Exports\vida\RegistrosEliminadosExport;
+use App\Exports\vida\RegistrosRehabilitadosExport;
+use App\Exports\vida\VidaExport;
+use App\Exports\vida\VidaFedeExport;
 use App\Http\Controllers\Controller;
 use App\Imports\VidaCarteraTempImport;
 use App\Models\catalogo\Aseguradora;
@@ -204,31 +212,82 @@ class VidaController extends Controller
 
     public function update(Request $request, $id)
     {
-        // dd('hli update');
+        $request->validate([
+            'NumeroPoliza' => 'required|string|max:255',
+            'Aseguradora' => 'required|exists:aseguradora,Id',
+            'Asegurado' => 'required|exists:cliente,Id',
+            'Nit' => 'required|string|max:255',
+            'Ejecutivo' => 'required|exists:ejecutivo,Id',
+            //'Saldos' => 'required',
+            'VigenciaDesde' => 'required|date',
+            'VigenciaHasta' => 'required|date|after_or_equal:VigenciaDesde',
+            'EdadTerminacion' => 'required|numeric|min:18',
+            'EdadMaximaInscripcion' => 'required|numeric|min:18',
+            'Tasa' => 'required|numeric|min:0.00001',
+            'Concepto' => 'nullable|string|max:1000',
+        ], [
+            'NumeroPoliza.required' => 'El campo Número de Póliza es obligatorio.',
+            'NumeroPoliza.string' => 'El campo Número de Póliza debe ser una cadena de texto.',
+            'NumeroPoliza.max' => 'El campo Número de Póliza no debe exceder los 255 caracteres.',
+            'Aseguradora.required' => 'Debes seleccionar una Aseguradora.',
+            'Aseguradora.exists' => 'La Aseguradora seleccionada no es válida.',
+            'Asegurado.required' => 'Debes seleccionar un Asegurado.',
+            'Asegurado.exists' => 'El Asegurado seleccionado no es válido.',
+            'Nit.required' => 'El campo Nit es obligatorio.',
+            'Nit.string' => 'El campo Nit debe ser una cadena de texto.',
+            'Nit.max' => 'El campo Nit no debe exceder los 255 caracteres.',
+            'Ejecutivo.required' => 'Debes seleccionar un Ejecutivo.',
+            //'Saldos.required' => 'Debes seleccionar una opcion de saldo y montos.',
+            'Ejecutivo.exists' => 'El Ejecutivo seleccionado no es válido.',
+            'VigenciaDesde.required' => 'El campo Vigencia inicial es obligatorio.',
+            'VigenciaDesde.date' => 'El campo Vigencia inicial debe ser una fecha válida.',
+            'VigenciaHasta.required' => 'El campo Vigencia final es obligatorio.',
+            'VigenciaHasta.date' => 'El campo Vigencia final debe ser una fecha válida.',
+            'VigenciaHasta.after_or_equal' => 'La fecha de Vigencia final debe ser igual o posterior a la fecha de Vigencia inicial.',
+            'EdadTerminacion.required' => 'El campo Edad Terminación es obligatorio.',
+            'EdadTerminacion.numeric' => 'El campo Edad Terminación debe ser un número.',
+            'EdadTerminacion.min' => 'El campo Edad Terminación debe ser al menos 18.',
+            'EdadMaximaInscripcion.required' => 'El campo Edad inscripción es obligatorio.',
+            'EdadMaximaInscripcion.numeric' => 'El campo Edad inscripción debe ser un número.',
+            'EdadMaximaInscripcion.min' => 'El campo Edad inscripción debe ser al menos 18.',
+            'Tasa.required' => 'El campo Tasa es obligatorio.',
+            'Tasa.numeric' => 'El campo Tasa debe ser un número.',
+            'Tasa.min' => 'El campo Tasa debe ser al menos 0.',
+            'Concepto.string' => 'El campo Concepto debe ser una cadena de texto.',
+            'Concepto.max' => 'El campo Concepto no debe exceder los 1000 caracteres.',
+        ]);
 
-        $vida = Vida::findOrFail($id);
-        $vida->NumeroPoliza = $request->NumeroPoliza;
-        $vida->Nit = $request->Nit;
-        $vida->Aseguradora = $request->Aseguradora;
-        $vida->Producto = $request->Productos;
-        $vida->Plan = $request->Planes;
-        $vida->Asegurado = $request->Asegurado;
-        $vida->VigenciaDesde = $request->VigenciaDesde;
-        $vida->VigenciaHasta = $request->VigenciaHasta;
-        $vida->Concepto = $request->Concepto;
-        $vida->Ejecutivo = $request->Ejecutivo;
-        $vida->TipoCobro = $request->TipoCobro;
-        $vida->EstadoPoliza = 1;
-        $vida->Tasa = $request->Tasa;
-        $vida->SumaAsegurada = $request->SumaAsegurada;
-        $vida->TasaDescuento = $request->TasaDescuento ?? null;
-        $vida->EdadMaximaInscripcion = $request->EdadMaximaInscripcion;
-        $vida->EdadTerminacion = $request->EdadTerminacion;
-        $vida->Activo = 1;
-        $vida->update();
+        try {
 
-        alert()->success('Registro modificado');
-        return back();
+
+            $vida = Vida::findOrFail($id);
+            $vida->NumeroPoliza = $request->NumeroPoliza;
+            $vida->Nit = $request->Nit;
+            $vida->Aseguradora = $request->Aseguradora;
+            $vida->Producto = $request->Productos;
+            $vida->Plan = $request->Planes;
+            $vida->Asegurado = $request->Asegurado;
+            $vida->VigenciaDesde = $request->VigenciaDesde;
+            $vida->VigenciaHasta = $request->VigenciaHasta;
+            $vida->Concepto = $request->Concepto;
+            $vida->Ejecutivo = $request->Ejecutivo;
+            $vida->TipoCobro = $request->TipoCobro;
+            $vida->EstadoPoliza = 1;
+            $vida->Tasa = $request->Tasa;
+            $vida->SumaAsegurada = $request->SumaAsegurada;
+            $vida->TasaDescuento = $request->TasaDescuento ?? null;
+            $vida->EdadMaximaInscripcion = $request->EdadMaximaInscripcion;
+            $vida->EdadTerminacion = $request->EdadTerminacion;
+            $vida->Activo = 1;
+            $vida->update();
+
+            alert()->success('Registro modificado');
+            return back();
+        } catch (\Exception $e) {
+
+            alert()->error('Error', 'Ocurrió un error al crear la póliza de desempleo: ' . $e->getMessage())->persistent('Ok');
+            return back()->withInput();
+        }
     }
 
 
@@ -319,8 +378,8 @@ class VidaController extends Controller
 
         $ultimo_pago = VidaDetalle::where('PolizaVida', $id)->orderBy('Id', 'desc')->first();
         $detalle = VidaDetalle::where('PolizaVida', $id)->orderBy('Id', 'desc')->get();
-        $comentarios = Comentario::where('Id', $id)->where('Activo', '=', 1)->get();
-
+        $comentarios = Comentario::where('Vida', $poliza_vida->Id)->where('Activo', '=', 1)->get();
+        //dd($comentarios);
 
         //extraprima
         $clientes = VidaCartera::select(
@@ -459,6 +518,7 @@ class VidaController extends Controller
         }
 
         $poliza_edad_maxima = VidaCarteraTemp::where('User', auth()->user()->id)->where('PolizaVida', $id)->where('EdadDesembloso', '>', $poliza_vida->EdadMaximaInscripcion)->get();
+        $poliza_edad_terminacion = VidaCarteraTemp::where('User', auth()->user()->id)->where('PolizaVida', $id)->where('EdadDesembloso', '>', $poliza_vida->EdadTerminacion)->get();
 
 
         $poliza_responsabilidad_maxima = VidaCarteraTemp::where('User', auth()->user()->id)->where('PolizaVida', $id)
@@ -555,6 +615,7 @@ class VidaController extends Controller
             'total',
             'poliza_vida',
             'poliza_edad_maxima',
+            'poliza_edad_terminacion',
             'registros_rehabilitados',
             'registros_eliminados',
             'nuevos_registros',
@@ -643,10 +704,18 @@ class VidaController extends Controller
         }*/
 
 
+        //calculando edades y fechas de nacimiento
+        VidaCarteraTemp::where('User', auth()->user()->id)
+            ->where('PolizaVida', $poliza_vida->Id)
+            ->update([
+                'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaFinal)"),
+                'EdadDesembloso' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaOtorgamientoDate)"),
+            ]);
 
         //calculando errores de cartera
         $cartera_temp = VidaCarteraTemp::where('User', '=', auth()->user()->id)->where('PolizaVida', $id)->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)->get();
 
+        //dd($cartera_temp->take(10));
 
         foreach ($cartera_temp as $obj) {
             $errores_array = [];
@@ -722,6 +791,13 @@ class VidaController extends Controller
                 $errores_array[] = 8; // Agregar error al array
             }
 
+            //11 error por edad de terminacion
+            if (trim($obj->Edad) > $poliza_vida->EdadTerminacion) {
+                $obj->TipoError = 9;
+                $obj->update();
+
+                array_push($errores_array, 9);
+            }
             $obj->Errores = $errores_array;
         }
 
@@ -741,13 +817,6 @@ class VidaController extends Controller
 
 
 
-        //calculando edades y fechas de nacimiento
-        VidaCarteraTemp::where('User', auth()->user()->id)
-            ->where('PolizaVida', $poliza_vida->Id)
-            ->update([
-                'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaFinal)"),
-                'EdadDesembloso' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaOtorgamientoDate)"),
-            ]);
 
 
 
@@ -864,8 +933,8 @@ class VidaController extends Controller
         $comen->Activo = 1;
         $comen->Usuario = auth()->user()->id;
         $comen->FechaIngreso = $time;
-        $comen->Desempleo = $request->Desempleo;
-        $comen->DetalleDesempleo = $detalle->Id;
+        $comen->Vida = $request->PolizaVida;
+        $comen->DetalleVida = $detalle->Id;
         $comen->save();
 
 
@@ -926,39 +995,39 @@ class VidaController extends Controller
     public function recibo_pago($id, Request $request)
     {
         //try {
-            $detalle = VidaDetalle::findOrFail($id);
-            $poliza_vida = Vida::findOrFail($detalle->PolizaVida);
+        $detalle = VidaDetalle::findOrFail($id);
+        $poliza_vida = Vida::findOrFail($detalle->PolizaVida);
 
-            $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
-            // Actualizar campos del detalle
-            $detalle->SaldoA = $request->SaldoA;
-            $detalle->ImpresionRecibo = $request->ImpresionRecibo;
-            $detalle->Referencia = $request->Referencia;
-            $detalle->Anexo = $request->Anexo;
-            $detalle->NumeroCorrelativo = $request->NumeroCorrelativo;
+        // Actualizar campos del detalle
+        $detalle->SaldoA = $request->SaldoA;
+        $detalle->ImpresionRecibo = $request->ImpresionRecibo;
+        $detalle->Referencia = $request->Referencia;
+        $detalle->Anexo = $request->Anexo;
+        $detalle->NumeroCorrelativo = $request->NumeroCorrelativo;
 
-            if (!$detalle->update()) {
-                throw new \Exception("Error al actualizar el detalle de la póliza");
-            }
+        if (!$detalle->update()) {
+            throw new \Exception("Error al actualizar el detalle de la póliza");
+        }
 
-            $recibo_historial = $this->save_recibo($detalle, $poliza_vida);
+        $recibo_historial = $this->save_recibo($detalle, $poliza_vida);
 
-            if (!$recibo_historial) {
-                throw new \Exception("Error al guardar el historial del recibo");
-            }
+        if (!$recibo_historial) {
+            throw new \Exception("Error al guardar el historial del recibo");
+        }
 
-            $configuracion = ConfiguracionRecibo::first();
+        $configuracion = ConfiguracionRecibo::first();
 
-            if (!$configuracion) {
-                throw new \Exception("No se encontró la configuración de recibos");
-            }
+        if (!$configuracion) {
+            throw new \Exception("No se encontró la configuración de recibos");
+        }
 
-            $pdf = \PDF::loadView('polizas.vida.recibo', compact('configuracion', 'recibo_historial', 'detalle', 'meses','poliza_vida'))
-                ->setWarnings(false)
-                ->setPaper('letter');
+        $pdf = \PDF::loadView('polizas.vida.recibo', compact('configuracion', 'recibo_historial', 'detalle', 'meses', 'poliza_vida'))
+            ->setWarnings(false)
+            ->setPaper('letter');
 
-            return $pdf->stream('Recibo.pdf');
+        return $pdf->stream('Recibo.pdf');
         // } catch (\Exception $e) {
         //     // Mostrar información detallada del error
         //     alert()->success('Erro al registrar el recibo');
@@ -1221,5 +1290,247 @@ class VidaController extends Controller
             ->where('PolizaVida', $id)->where('Dui', $dui)->first();
 
         return response()->json($cliente);
+    }
+
+    public function get_recibo($id, $exportar)
+    {
+        if (!isset($exportar)) {
+            $exportar = 1;
+        }
+        //dd($exportar);
+        $detalle = VidaDetalle::findOrFail($id);
+
+        $vida = Vida::findOrFail($detalle->PolizaVida);
+        $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+        $recibo_historial = VidaHistorialRecibo::where('PolizaDesempleoDetalle', $id)->orderBy('id', 'desc')->first();
+        //  $calculo = $this->monto($desempleo, $detalle);
+        if (!$recibo_historial) {
+            $recibo_historial = $this->save_recibo($detalle, $vida);
+            //dd("insert");
+        }
+
+        /*  if ($exportar == 2) {
+            return Excel::download(new DesempleoReciboExport($id), 'Recibo.xlsx');
+            //return view('polizas.desempleo.recibo', compact('recibo_historial','detalle', 'desempleo', 'meses','exportar'));
+        }*/
+
+        $configuracion = ConfiguracionRecibo::first();
+        $pdf = \PDF::loadView('polizas.vida.recibo', compact('configuracion', 'recibo_historial', 'detalle', 'vida', 'meses', 'exportar'))->setWarnings(false)->setPaper('letter');
+        //  dd($detalle);
+        return $pdf->stream('Recibos.pdf');
+    }
+
+    public function get_recibo_edit($id)
+    {
+        $detalle = VidaDetalle::findOrFail($id);
+        $vida = Vida::findOrFail($detalle->PolizaVida);
+        $recibo_historial = VidaHistorialRecibo::where('PolizaVidaDetalle', $id)->orderBy('id', 'desc')->first();
+        if (!$recibo_historial) {
+            $recibo_historial = $this->save_recibo($detalle, $vida);
+            //dd("insert");
+        }
+        $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+        $recibo_historial = VidaHistorialRecibo::where('PolizaDesempleoDetalle', $id)->orderBy('id', 'desc')->first();
+        //dd($recibo_historial);
+        $configuracion = ConfiguracionRecibo::first();
+
+        return view('polizas.vida.recibo_edit', compact('configuracion', 'recibo_historial', 'meses'));
+    }
+
+    public function get_recibo_update(Request $request)
+    {
+        //modificación de ultimo recibo
+        $id = $request->id_desempleo_detalle;
+        $detalle = VidaDetalle::findOrFail($id);
+
+        $vida = Vida::findOrFail($detalle->PolizaVida);
+        $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+        $impresion_recibo = $request->AxoImpresionRecibo . '-' . $request->MesImpresionRecibo . '-' . $request->DiaImpresionRecibo;
+
+        $recibo_historial = new VidaHistorialRecibo();
+        $recibo_historial->PolizaVidaDetalle = $id;
+        //este valor cambia por eso no se manda al metodo de save_recibo
+        $recibo_historial->ImpresionRecibo = Carbon::parse($impresion_recibo);
+        $recibo_historial->NombreCliente = $request->NombreCliente;
+        $recibo_historial->NitCliente = $request->NitCliente;
+        $recibo_historial->DireccionResidencia = $request->DireccionResidencia;
+        $recibo_historial->Departamento = $request->Departamento;
+        $recibo_historial->Municipio = $request->Municipio;
+        $recibo_historial->NumeroRecibo = $request->NumeroRecibo;
+        $recibo_historial->CompaniaAseguradora = $request->CompaniaAseguradora;
+        $recibo_historial->ProductoSeguros = $request->ProductoSeguros;
+        $recibo_historial->NumeroPoliza = $request->NumeroPoliza;
+        $recibo_historial->VigenciaDesde = $request->VigenciaDesde;
+        $recibo_historial->VigenciaHasta = $request->VigenciaHasta;
+        $recibo_historial->FechaInicio = $request->FechaInicio;
+        $recibo_historial->FechaFin = $request->FechaFin;
+        $recibo_historial->Anexo = $request->Anexo;
+        $recibo_historial->Referencia = $request->Referencia;
+        $recibo_historial->FacturaNombre = $request->FacturaNombre;
+        $recibo_historial->MontoCartera = $request->MontoCartera;
+        $recibo_historial->PrimaCalculada = $request->PrimaCalculada;
+        $recibo_historial->ExtraPrima = $request->ExtraPrima;
+        $recibo_historial->Descuento = $request->Descuento;
+        $recibo_historial->PordentajeDescuento = $request->PordentajeDescuento;
+        $recibo_historial->PrimaDescontada = $request->PrimaDescontada;
+        $recibo_historial->ValorCCF = $request->ValorCCF;
+        $recibo_historial->TotalAPagar = $request->TotalAPagar;
+        $recibo_historial->TasaComision = $request->TasaComision;
+        $recibo_historial->Comision = $request->Comision;
+        $recibo_historial->IvaSobreComision = $request->IvaSobreComision;
+        $recibo_historial->SubTotalComision = $request->SubTotalComision;
+        $recibo_historial->Retencion = $request->Retencion;
+        $recibo_historial->ValorCCF = $request->ValorCCF;
+        $recibo_historial->FechaVencimiento = $request->FechaVencimiento ?? $detalle->FechaInicio;
+        $recibo_historial->NumeroCorrelativo = $request->NumeroCorrelativo ??  '01';
+        $recibo_historial->Cuota = $request->Cuota ?? '01/01';
+        $recibo_historial->Otros = $detalle->Otros ?? 0;
+
+        $recibo_historial->Usuario = auth()->user()->id;
+
+        $recibo_historial->save();
+        //dd("insert");
+        alert()->success('Actualizacion de Recibo Exitoso');
+        return redirect('polizas/vida/' . $vida->Id . '/edit');
+    }
+
+
+    public function get_pago($id)
+    {
+        return VidaDetalle::findOrFail($id);
+    }
+
+    public function edit_pago(Request $request)
+    {
+
+        $detalle = VidaDetalle::findOrFail($request->Id);
+        //dd($detalle);
+
+        $vida = Vida::findOrFail($detalle->PolizaVida);
+        $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+        // dd($vida);
+        if ($detalle->SaldoA == null && $detalle->ImpresionRecibo == null) {
+            $detalle->SaldoA = $request->SaldoA;
+            $detalle->ImpresionRecibo = $request->ImpresionRecibo;
+            $detalle->Comentario = $request->Comentario;
+            $detalle->update();
+
+            $recibo_historial = $this->save_recibo($detalle, $vida);
+            $configuracion = ConfiguracionRecibo::first();
+            $pdf = \PDF::loadView('polizas.vida.recibo', compact('configuracion', 'recibo_historial', 'detalle', 'vida', 'meses'))->setWarnings(false)->setPaper('letter');
+            return $pdf->stream('Recibo.pdf');
+
+            return back();
+        } else {
+
+            //dd($request->EnvioCartera .' 00:00:00');
+            if ($request->EnvioCartera) {
+                $detalle->EnvioCartera = $request->EnvioCartera;
+            }
+            if ($request->EnvioPago) {
+                $detalle->EnvioPago = $request->EnvioPago;
+            }
+            if ($request->PagoAplicado) {
+                $detalle->PagoAplicado = $request->PagoAplicado;
+            }
+            $detalle->Comentario = $request->Comentario;
+
+            /*$detalle->EnvioPago = $request->EnvioPago;
+            $detalle->PagoAplicado = $request->PagoAplicado;*/
+            $detalle->update();
+        }
+
+        $time = Carbon::now('America/El_Salvador');
+        $comen = new Comentario();
+        $comen->Comentario = $request->Comentario;
+        $comen->Activo = 1;
+        $comen->DetalleVida = $detalle->Id;
+        $comen->Usuario = auth()->user()->id;
+        $comen->FechaIngreso = $time;
+        $comen->Vida = $detalle->PolizaVida;
+        $comen->save();
+
+        alert()->success('El registro ha sido ingresado correctamente');
+        return back();
+    }
+
+    public function anular_pago($id)
+    {
+        $detalle = VidaDetalle::findOrFail($id);
+        $detalle->Activo = 0;
+        $detalle->update();
+        //recibo anulado
+        VidaHistorialRecibo::where('PolizaVidaDetalle', $id)->update(['Activo' => 0]);
+
+        VidaCartera::where('PolizaVidaDetalle', $id)->delete();
+        alert()->success('El registro ha sido ingresado correctamente');
+        return back();
+    }
+
+    public function delete_pago($id)
+    {
+        $detalle = VidaDetalle::findOrFail($id);
+
+        // recibo eliminado
+        VidaHistorialRecibo::where('PolizaVidaDetalle', $id)->delete();
+
+        VidaCartera::where('PolizaVidaDetalle', $id)->delete();
+        $detalle->delete();
+        alert()->success('El registro ha sido ingresado correctamente');
+        return back();
+    }
+
+    public function exportar_excel(Request $request)
+    {
+        $vida = $request->Vida;
+        $detalle = $request->VidaDetalle;
+        $cartera = VidaCartera::where('PolizaVidaDetalle', $detalle)->where('PolizaVida', $vida)->get();
+
+        return Excel::download(new VidaExport($cartera), 'Cartera.xlsx');
+        //  dd($cartera->take(25),$request->Deuda,$request->DeudaDetalle);
+    }
+
+    public function exportar_excel_fede(Request $request)
+    {
+        $vida = $request->Vida;
+        $detalle = $request->VidaDetalle;
+        $cartera = VidaCartera::where('PolizaVidaDetalle', $detalle)->where('PolizaVida', $vida)->get();
+
+        return Excel::download(new VidaFedeExport($cartera), 'Cartera.xlsx');
+        //  dd($cartera->take(25),$request->Deuda,$request->DeudaDetalle);
+    }
+    public function registros_edad_maxima($id)
+    {
+        return Excel::download(new EdadMaximaExport($id), 'creditos_edad_maxima.xlsx');
+    }
+
+
+    public function registros_responsabilidad_maxima($id)
+    {
+        return Excel::download(new EdadInscripcionExport($id), 'creditos_responsabilidad_maxima.xlsx');
+    }
+
+    public function registros_responsabilidad_terminacion($id)
+    {
+        return Excel::download(new EdadTerminacionExport($id), 'registros_responsabilidad_terminacion.xlsx');
+    }
+
+    public function exportar_nuevos_registros($id)
+    {
+        return Excel::download(new NuevosRegistrosExport($id), 'nuevos_registros.xlsx');
+    }
+
+    public function exportar_registros_eliminados($id)
+    {
+        return Excel::download(new RegistrosEliminadosExport($id), 'registros_eliminados.xlsx');
+    }
+
+    public function exportar_registros_rehabilitados($id)
+    {
+        return Excel::download(new RegistrosRehabilitadosExport($id), 'registros_rehabilitados.xlsx');
     }
 }
