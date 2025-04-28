@@ -5,7 +5,7 @@
         @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
         <div class="x_title">
             <div class="col-md-6 col-sm-6 col-xs-12">
-                <h3>Tipo de Cartera </h3>
+                <h3>Linea crédito (deuda) </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
                 <a href="{{ url('catalogo/tipo_cartera/create/') }}"><button class="btn btn-info float-right"> <i
