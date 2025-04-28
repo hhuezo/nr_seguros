@@ -176,7 +176,7 @@
                                                     <input class="form-control" id="Nombre" name="Nombre"
                                                         value="{{ strtoupper($cliente->Nombre) }}" type="text"
                                                         oninput="this.value = this.value.toUpperCase()"
-                                                        style="text-transform: uppercase;"><!-- se agrego strtoupper, to uppercase, uppercase -->
+                                                        ><!-- se agrego strtoupper, to uppercase, uppercase -->
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="FechaNacimiento" class="form-label">Fecha Nacimiento o
@@ -527,7 +527,7 @@
                                             <label class="control-label ">Necesidad Protección </label>
 
                                             <select name="NecesidadProteccion" class="form-control"
-                                                style="width: 100%; text-transform: uppercase;">
+                                                style="width: 100%">
                                                 <option value="">Seleccione...</option>
                                                 @foreach ($necesidades as $obj)
                                                     <option value="{{ $obj->Id }}"
@@ -630,7 +630,7 @@
                                             <label class="control-label ">Compañia de su Preferencia </label>
 
                                             <select name="AseguradoraPreferencia" class="form-control"
-                                                style="width: 100%; text-transform: uppercase;">
+                                                style="width: 100%">
                                                 <option value=""> Seleccione...</option>
                                                 @foreach ($aseguradoras as $obj)
                                                     <option value="{{ $obj->Id }}"
@@ -650,7 +650,7 @@
 
                                                 <select name="MotivoEleccion" id="MotivoEleccion"
                                                     class="form-control col-md-4"
-                                                    style="width: 100%; text-transform: uppercase;">
+                                                    style="width: 100%">
                                                     <option value=""> Seleccione...</option>
                                                     @foreach ($motivo_eleccion as $obj)
                                                         <option value="{{ $obj->Id }}"
@@ -673,7 +673,7 @@
 
                                                 <select name="PreferenciaCompra" id="PreferenciaCompra"
                                                     class="form-control col-md-4"
-                                                    style="width: 100%; text-transform: uppercase;">
+                                                    style="width: 100% ">
                                                     <option value=""> Seleccione...</option>
                                                     @foreach ($preferencia_compra as $obj)
                                                         <option value="{{ $obj->Id }}"

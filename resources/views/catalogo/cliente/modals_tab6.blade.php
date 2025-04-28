@@ -96,7 +96,7 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     Producto de NR *
-                                    <input type="text" name="Producto" id="ModalRetroProducto" required class="form-control">
+                                    <input type="text" name="Producto" id="ModalRetroProducto" required oninput="this.value = this.value.toUpperCase()" class="form-control">
                                 </div>
                             </div>
                             <div class="col-sm-6">
@@ -116,13 +116,13 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     Valores agregados *
-                                    <input type="text" name="ValoresAgregados" id="ModalRetroValoresAgregados" class="form-control" required>
+                                    <input type="text" name="ValoresAgregados" id="ModalRetroValoresAgregados" class="form-control" oninput="this.value = this.value.toUpperCase()"  required>
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     Competidores *
-                                    <input type="text" name="Competidores" id="ModalRetroCompetidores" class="form-control" required>
+                                    <input type="text" name="Competidores" id="ModalRetroCompetidores" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
                                 </div>
                             </div>
                         </div>
@@ -130,7 +130,7 @@
                             <div class="col-sm-12">
                                 <div class="form-group">
                                     ¿Que quisiera de NR? *
-                                    <input type="text" name="QueQuisiera" id="ModalRetroQueQuisiera" class="form-control" required>
+                                    <input type="text" name="QueQuisiera" id="ModalRetroQueQuisiera" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
                                 </div>
                             </div>
                         </div>
@@ -138,7 +138,7 @@
                             <div class="col-sm-12">
                                 <div class="form-group">
                                     Referidos *
-                                    <input type="text" name="Referidos" id="ModalRetroReferidos" class="form-control" required>
+                                    <input type="text" name="Referidos" id="ModalRetroReferidos" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
                                 </div>
                             </div>
                         </div>

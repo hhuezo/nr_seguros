@@ -89,7 +89,7 @@
                         <div class="form-group">
                             <div class="col-sm-6">
                                 Nombre *
-                                <input type="text" name="Nombre" id="ModalContactoNombre" class="form-control"
+                                <input type="text" name="Nombre" id="ModalContactoNombre" class="form-control" oninput="this.value = this.value.toUpperCase()"
                                     required>
                             </div>
                         </div>
@@ -124,7 +124,7 @@
                         <div class="form-group">
                             <div class="col-sm-6">
                                 Lugar Trabajo *
-                                <input type="text" name="LugarTrabajo" id="ModalContactoLugarTrabajo"
+                                <input type="text" name="LugarTrabajo" id="ModalContactoLugarTrabajo" oninput="this.value = this.value.toUpperCase()"
                                     class="form-control">
                             </div>
                         </div>

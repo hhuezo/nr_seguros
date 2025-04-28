@@ -126,7 +126,7 @@
 
                                     Póliza vinculada *
                                     <input type="text" name="PolizaVinculada" id="ModalPolizaVinculada" class="form-control"
-                                    style="text-transform: uppercase;" onblur="this.value = this.value.toUpperCase()" required>
+                                    oninput="this.value = this.value.toUpperCase()" required>
                                 </div>
                             </div>
                         </div>
