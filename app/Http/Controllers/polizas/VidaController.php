@@ -160,14 +160,13 @@ class VidaController extends Controller
         }
     }
 
-    public function edit($id)
+    public function edit($id, Request $request)
     {
         $vida = Vida::findOrFail($id);
 
 
-        if (!session()->has('tab')) {
-            session(['tab' => 2]);
-        }
+        $tab = $request->tab ?? 1;
+
 
         $productos = Producto::where('Activo', 1)->get();
         $planes = Plan::where('Activo', 1)->get();
@@ -188,7 +187,8 @@ class VidaController extends Controller
             'ejecutivo',
             'productos',
             'planes',
-            'tiposCartera'
+            'tiposCartera',
+            'tab'
         ));
     }
 
