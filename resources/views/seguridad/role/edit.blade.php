@@ -1,8 +1,30 @@
 @extends ('welcome')
 @section('contenido')
-    @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
+
+
+    <!-- Toastr CSS -->
+    <link href="{{ asset('vendors/toast/toastr.min.css') }}" rel="stylesheet">
+
+    <!-- jQuery -->
+    <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
+
+    <!-- Toastr JS -->
+    <script src="{{ asset('vendors/toast/toastr.min.js') }}"></script>
 
     <div class="x_panel">
+        @if (session('success'))
+            <script>
+                toastr.success("{{ session('success') }}");
+            </script>
+        @endif
+
+        @if (session('error'))
+            <script>
+                toastr.error("{{ session('error') }}");
+            </script>
+        @endif
+
+
         <div class="clearfix"></div>
         <div class="row">
             <div class="x_title">
@@ -53,114 +75,36 @@
         </div>
 
 
-
-
-
-
         <div class="row">
-            <div class="x_title">
-                <h2>Permisos</h2>
-
-                <ul class="nav navbar-right panel_toolbox">
-
-                </ul>
-                <div class="clearfix"></div>
-            </div>
-
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
-                <form method="POST" action="{{ url('role/permission_link') }}">
-                    @csrf
 
 
-                    <input type="hidden" name="Rol" value="{{ $role->id }}">
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">Permiso</label>
-                        <div class="col-md-7 col-sm-7 col-xs-12">
-                            <select name="Permiso" class="form-control select2">
-                                @foreach ($permisos as $obj)
-                                    <option value="{{ $obj->id }}">{{ $obj->name }}</option>
-                                @endforeach
-                            </select>
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2>Permisos</h2>
 
-                        </div>
-                        <div class="col-md-3 col-sm-3 col-xs-12">
-                            <button class="btn btn-success" type="submit">Agregar</button>
-                        </div>
+                        <div class="clearfix"></div>
                     </div>
-                </form>
-                <table id="datatable" class="table table-striped table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Id</th>
-                            <th>Descripción</th>
-                            <th><i class="fa fa-trash"></i></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if ($permisos_actuales)
-                            @foreach ($permisos_actuales as $obj)
-                                <tr>
-                                    <td align="center">{{ $obj->id }}</td>
-                                    <td>{{ $obj->name }}</td>
-                                    <td align="center">
-                                        <i class="fa fa-trash" onclick="delete_permiso(<?php echo $obj->id; ?>);"></i>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        @endif
+                    <div class="x_content">
 
-                    </tbody>
-                </table>
-
-            </div>
-
-
-
-
-
-
-
-
-
-
-            <!-- Modal eliminar permiso -->
-            <div class="modal fade" id="modal_delete_permiso" tabindex="-1" role="dialog"
-                aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <form action="{{ url('role/permission_unlink') }}" method="POST">
-                            @csrf
-                            <div class="modal-header">
-                                <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
-                                    <h5 class="modal-title" id="exampleModalLabel">Eliminar</h5>
-                                </div>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
+                        @foreach ($permisos as $permiso)
+                            <div class="col-md-3 col-sm-12 col-xs-12"
+                                style="display: flex; align-items: center; gap: 10px;">
+                                <label class="switch">
+                                    <input type="checkbox"
+                                        onchange="updateRolePermiso({{ $permiso->id }},{{ $role->id }})"
+                                        {{ in_array($permiso->id, $permisos_actuales) ? 'checked' : '' }}>
+                                    <span class="slider round"></span>
+                                </label>
+                                <label class="control-label" style="margin-bottom: 0">{{ $permiso->name }}</label>
                             </div>
-                            <input type="hidden" name="Rol" value="{{ $role->id }}">
-                            <input type="hidden" id="permiso" name="Permiso">
+                        @endforeach
 
-                            <div class="modal-body">
-                                <div class="box-body">
-
-                                    ¿Desea eliminar el archivo?
-                                </div>
-                            </div>
-                            <div class="clearfix"></div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
-                                <button type="submit" class="btn btn-primary">Aceptar</button>
-                            </div>
-                        </form>
                     </div>
                 </div>
+
+
             </div>
-
-
-
-
-
 
 
 
@@ -170,21 +114,49 @@
 
 
 
-
-
-
     </div>
 
 
-    <!-- jQuery -->
     <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
-
     <script type="text/javascript">
-        function delete_permiso(permiso) {
-            document.getElementById('permiso').value = permiso;
+        $(document).ready(function() {
+            //mostrar opcion en menu
+            displayOption("ul-seguridad", "li-catalogo-role");
 
-            $('#modal_delete_permiso').modal('show');
+        });
 
+        function updateRolePermiso(permisoId, roleId) {
+            // Construir la URL con los parámetros GET
+            const url = new URL('{{ url('role/permission_link') }}');
+            url.searchParams.append('permission_id', permisoId);
+            url.searchParams.append('role_id', roleId);
+
+            fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la respuesta del servidor');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        //alert(data.message || 'Rol actualizado correctamente');
+                    } else {
+                        throw new Error(data.message || 'Error al actualizar');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert(error.message);
+                });
         }
     </script>
+
+
 @endsection

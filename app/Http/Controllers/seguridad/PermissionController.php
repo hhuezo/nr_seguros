@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Permission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Spatie\Permission\Models\Permission as ModelPermission;
 
 class PermissionController extends Controller
 {
@@ -39,7 +40,7 @@ class PermissionController extends Controller
         try {
 
             // Si pasa la validación, se crea el permiso
-            $permission = Permission::create(['name' => $request->name]);
+            $permission = ModelPermission::create(['name' => $request->name]);
 
             return back()->with('success', 'El registro ha sido creado correctamente');
         } catch (\Exception $e) {
