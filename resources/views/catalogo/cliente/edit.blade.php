@@ -224,8 +224,7 @@
                                                     <label for="Genero" class="form-label">Ocupación </label>
                                                     <input class="form-control" id="Ocupacion" name="Ocupacion"
                                                         type="text" value="{{ strtoupper($cliente->Ocupacion) }}"
-                                                        oninput="this.value = this.value.toUpperCase()"
-                                                        style="text-transform: uppercase;">
+                                                        oninput="this.value = this.value.toUpperCase()">
                                                 </div>
                                                 <div class="form-group" style="padding-bottom: 38px;">
 
@@ -234,13 +233,13 @@
                                                     <label for="DireccionResidencia" class="form-label">Dirección
                                                         Residencia</label>
                                                     <textarea class="form-control" name="DireccionResidencia" oninput="this.value = this.value.toUpperCase()"
-                                                        style="text-transform: uppercase;">{{ strtoupper($cliente->DireccionResidencia) }}</textarea>
+                                                        >{{ strtoupper($cliente->DireccionResidencia) }}</textarea>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="DireccionResidencia" class="form-label">Dirección
                                                         Correspondencia *</label>
                                                     <textarea class="form-control" name="DireccionCorrespondencia" id="DireccionCorrespondencia"
-                                                        oninput="this.value = this.value.toUpperCase()" style="text-transform: uppercase;">{{ strtoupper($cliente->DireccionCorrespondencia) }}</textarea>
+                                                        oninput="this.value = this.value.toUpperCase()" >{{ strtoupper($cliente->DireccionCorrespondencia) }}</textarea>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="Referencia" class="form-label">Teléfono Principal Contacto
@@ -353,8 +352,7 @@
                                                         Referencia </label>
                                                     <input class="form-control" name="Referencia" id="Referencia"
                                                         value="{{ strtoupper($cliente->Referencia) }}" type="text"
-                                                        oninput="this.value = this.value.toUpperCase()"
-                                                        style="text-transform: uppercase;">
+                                                        oninput="this.value = this.value.toUpperCase()">
                                                 </div>
 
                                                 <div class="campo-container">
@@ -365,8 +363,7 @@
                                                         <input class="form-control" id="ResponsablePago"
                                                             name="ResponsablePago"
                                                             value="{{ strtoupper($cliente->ResponsablePago) }}"
-                                                            type="text" oninput="this.value = this.value.toUpperCase()"
-                                                            style="text-transform: uppercase;">
+                                                            type="text" oninput="this.value = this.value.toUpperCase()">
                                                     </div>
                                                     <div class="form-group">
                                                         <label for="Genero" class="form-label">Ubicación de cobro
@@ -434,8 +431,7 @@
                                                             Preferencia </label>
                                                         <input class="form-control" name="BancoPrefencia"
                                                             value="{{ strtoupper($cliente->BancoPrefencia) }}"
-                                                            type="text" oninput="this.value = this.value.toUpperCase()"
-                                                            style="text-transform: uppercase;">
+                                                            type="text" oninput="this.value = this.value.toUpperCase()">
                                                     </div>
                                                     <div class="form-group">
                                                         <label for="CuentasDevolucionPrimas" class="form-label">Cuentas
@@ -454,8 +450,8 @@
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label for="Comentarios" class="form-label">Comentarios</label>
-                                                    <textarea class="form-control" name="Comentarios" oninput="this.value = this.value.toUpperCase()"
-                                                        style="text-transform: uppercase;">{{ strtoupper($cliente->Comentarios) }}</textarea>
+                                                    <textarea class="form-control" name="Comentarios" oninput="this.value = this.value.toUpperCase()">
+                                                        {{ strtoupper($cliente->Comentarios) }}</textarea>
 
                                                 </div>
                                             </div>
@@ -774,7 +770,7 @@
                                             <tr>
                                                 <td>{{ $obj->Id }}</td>
                                                 @if ($obj->MetodoPago)
-                                                    <td>{{ strtoupper($obj->metodo_pago->Nombre) }}</td>
+                                                    <td>{{ $obj->metodo_pago->Nombre }}</td>
                                                 @else
                                                     <td></td>
                                                 @endif
@@ -839,7 +835,7 @@
                                             <tr>
                                                 <td>{{ $obj->Nombre }}</td>
                                                 @if ($obj->cargo)
-                                                    <td>{{ strtoupper($obj->cargo->Nombre) }}</td>
+                                                    <td>{{ $obj->cargo->Nombre }}</td>
                                                 @else
                                                     <td></td>
                                                 @endif
