@@ -383,7 +383,7 @@ class DeudaController extends Controller
         // Estructura de la tabla
         $tabla = [];
         foreach ($requisitos as $requisito) {
-            $perfil = $requisito->perfil->Descripcion;
+            $perfil = $requisito->perfil->Codigo. ' - ' .$requisito->perfil->Descripcion;
             $perfilId = $requisito->Perfil;
             $edadRango = "{$requisito->EdadInicial}-{$requisito->EdadFinal}";
             $montoRango = "{$requisito->MontoInicial}-{$requisito->MontoFinal}";

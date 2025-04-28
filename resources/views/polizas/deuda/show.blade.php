@@ -592,7 +592,7 @@
                                                             <option value="">Seleccione...</option>
                                                             @foreach ($perfiles as $obj)
                                                                 <option value="{{ $obj->Id }}">
-                                                                    {{ $obj->Descripcion }}
+                                                                    {{ $obj->Codigo }} - {{ $obj->Descripcion }}
                                                                 </option>
                                                             @endforeach
                                                         </select>
