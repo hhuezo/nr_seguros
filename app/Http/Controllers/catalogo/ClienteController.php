@@ -397,52 +397,41 @@ class ClienteController extends Controller
 
     public function update(Request $request, $id)
     {
+
+        $request->validate([
+            'Nombre' => 'required',
+            'Nit' => 'required',
+            'Dui' => 'required',
+        ], [
+            'Nombre.required' => 'El campo Nombre es obligatorio.',
+            'Nit.required' => 'El campo NIT es obligatorio.',
+            'Dui.required' => 'El campo DUI es obligatorio.',
+        ]);
+
+        // Aquí empieza la validación adicional que me pediste
+        if ($request->Homologado !== null) {
+            // Homologado NO es null -> formato NIT: 99999999-9
+            if (!preg_match('/^\d{8}-\d{1}$/', $request->Nit)) {
+                return back()->withErrors(['Nit' => 'El formato del NIT debe ser 99999999-9.'])->withInput();
+            }
+            // Dui siempre debe tener formato 99999999-9
+            if (!preg_match('/^\d{8}-\d{1}$/', $request->Dui)) {
+                return back()->withErrors(['Dui' => 'El formato del DUI debe ser 99999999-9.'])->withInput();
+            }
+        } else {
+            // Homologado ES null -> formato NIT: 9999-999999-999-9
+            if (!preg_match('/^\d{4}-\d{6}-\d{3}-\d{1}$/', $request->Nit)) {
+                return back()->withErrors(['Nit' => 'El formato del NIT debe ser 9999-999999-999-9.'])->withInput();
+            }
+            // Dui siempre debe tener formato 99999999-9
+            if (!preg_match('/^\d{8}-\d{1}$/', $request->Dui)) {
+                return back()->withErrors(['Dui' => 'El formato del DUI debe ser 99999999-9.'])->withInput();
+            }
+        }
+
+
+
         try {
-            $messages = [
-                'Dui.min' => 'El formato de DUI es incorrecto',
-                'Dui.unique' => 'El DUI ya existe en la base de datos',
-                'Nit.min' => 'El formato de NIT es incorrecto',
-                'Nit.unique' => 'El NIT ya existe en la base de datos',
-                'Nombre.required' => 'El campo Nombre es requerido',
-                'Dui.required' => 'El campo DUI es requerido',
-            ];
-
-            // Limpiar formatos de DUI y NIT
-            $request->merge([
-                'Dui' => $this->string_replace($request->get('Dui')),
-                'Nit' => $this->string_replace($request->get('Nit'))
-            ]);
-
-            // Reglas base de validación
-            $rules = [
-                'Nombre' => 'required',
-            ];
-
-            // Validación condicional para DUI
-            if ($request->get('TipoPersona') == 1) {
-                $rules['Dui'] = 'required';
-            }
-
-            // Validación condicional para DUI existente
-            if ($request->filled('Dui')) {
-                $rules['Dui'] = array_merge($rules['Dui'] ?? [], ['min:10']);
-
-                if (Cliente::where('Dui', $request->Dui)->where('Id', '<>', $id)->exists()) {
-                    $rules['Dui'][] = 'unique:cliente';
-                }
-            }
-
-            // Validación condicional para NIT existente
-            if ($request->filled('Nit')) {
-                $rules['Nit'] = ['min:17'];
-
-                if (Cliente::where('Nit', $request->Nit)->where('Id', '<>', $id)->exists()) {
-                    $rules['Nit'][] = 'unique:cliente';
-                }
-            }
-
-            // Validar todo en una sola llamada
-            $request->validate($rules, $messages);
 
 
             $cliente = Cliente::findOrFail($id);
