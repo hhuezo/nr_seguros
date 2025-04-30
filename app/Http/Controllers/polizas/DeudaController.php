@@ -245,7 +245,7 @@ class DeudaController extends Controller
         $deuda->TasaComision = $request->TasaComision;
         $deuda->FechaIngreso = $request->FechaIngreso;
         $deuda->Activo = 1;
-        $deuda->Vida = $request->Vida;
+        $deuda->PolizaVida = $request->Vida;
         $deuda->Mensual = $request->tipoTasa;
         $deuda->Desempleo = $request->Desempleo;
         $deuda->EdadMaximaTerminacion = $request->EdadMaximaTerminacion;
