@@ -151,11 +151,11 @@
                                     <ul class="nav child_menu" id="ul-seguridad">
                                         <li id="li-catalogo-usuario"><a href="{{ url('usuario/') }}">Usuario</a></li>
                                         <li><a href="{{ url('permission/') }}">Permisos</a></li>
-                                        <li><a href="{{ url('rol/') }}">Roles</a></li>
+                                        <li id="li-catalogo-role"><a href="{{ url('rol/') }}">Roles</a></li>
                                     </ul>
                                 </li>
 
-                                <li><a><i class="fa fa-folder"></i> Configuracion<span class="fa fa-chevron-down"></span></a>
+                                <li><a><i class="fa fa-cog"></i> Configuracion<span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu" id="ul-configuracion">
                                         <li><a href="{{ url('catalogo/configuracion_recibo/1/edit') }}">Configuración de Recibo</a></li>
 
@@ -172,16 +172,15 @@
                                         <li><a href="{{ url('catalogo/ejecutivos') }}">Ejecutivo</a></li>
                                         <li><a href="{{ url('catalogo/estado_polizas') }}">Estado Póliza</a></li>
                                         <li><a href="{{ url('catalogo/estado_venta') }}">Estado Venta</a></li>
-                                        <li><a href="{{ url('catalogo/tipo_cartera') }}">Tipo de Credito (Deuda)</a></li>
                                         <li><a href="{{ url('catalogo/nr_cartera') }}">Tipo Cartera NR </a></li>
-                                        <li id="li-catalogo-vida-tipo-cartera"><a href="{{ url('catalogo/tipo_cartera_vida') }}">Tipo Cartera (Vida) </a></li>
+
                                         <li><a href="{{ url('catalogo/tipo_negocio') }}">Tipo Negocio</a></li>
                                         <li><a href="{{ url('catalogo/tipo_cobro') }}">Tipo Cobro</a></li>
                                         <li><a href="{{ url('catalogo/tipo_poliza') }}">Tipo Póliza (ramo)</a></li>
                                         <li><a href="{{ url('catalogo/area_comercial') }}">Área Comercial</a></li>
                                         <li><a href="{{ url('catalogo/ubicacion_cobro') }}">Ubicación Cobro</a></li>
                                         <li><a href="{{ url('catalogo/necesidad_proteccion') }}">Ramos</a></li>
-                                        <li><a href="{{ url('catalogo/perfiles') }}">Perfiles</a></li>
+                                        <li><a href="{{ url('catalogo/perfiles') }}">Requisitos de asegurabilidad</a></li>
                                         <li><a href="{{ url('catalogo/departamento_nr') }}">Departamentos NR</a></li>
                                         <li><a href="{{ url('catalogo/producto') }}">Productos</a></li>
                                         <li><a href="{{ url('catalogo/plan') }}">Planes</a></li>
@@ -189,6 +188,25 @@
 
                                     </ul>
                                 </li>
+
+                                <li><a><i class="fa fa-folder-open"></i> Catálogos deuda<span class="fa fa-chevron-down"></span></a>
+                                    <ul class="nav child_menu" id="ul-poliza-deuda">
+                                        <li><a href="{{ url('catalogo/tipo_cartera') }}">Linea de crédito</a></li>
+
+
+                                    </ul>
+                                </li>
+
+
+                                <li><a><i class="fa fa-folder-o"></i> Catálogos vida<span class="fa fa-chevron-down"></span></a>
+                                    <ul class="nav child_menu" id="ul-poliza-vida">
+                                        <li id="li-catalogo-vida-tipo-cartera"><a href="{{ url('catalogo/tipo_cartera_vida') }}">Tipo Cartera </a></li>
+
+
+                                    </ul>
+                                </li>
+
+
                                 <li id="botonMenuCliente"><a><i class="fa fa-user"></i> Cliente <span class="fa fa-chevron-down"></span></a>
                                     <ul id="menuCliente" class="nav child_menu">
                                         <li id="opcionCliente"><a href="{{ url('catalogo/cliente') }}">Clientes</a>
@@ -209,7 +227,7 @@
                                     </ul>
                                 </li>
 
-                                <li><a><i class="fa fa-folder-open"></i> Pólizas<span class="fa fa-chevron-down"></span></a>
+                                <li><a><i class="fa fa-folder-open-o"></i> Pólizas<span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu" id="ul-poliza">
                                         <li id="li-poliza-residencia"><a href="{{ url('polizas/residencia') }}">Residencia</a></li>
                                         <li id="li-poliza-vida"><a href="{{ url('polizas/vida') }}">Vida</a></li>

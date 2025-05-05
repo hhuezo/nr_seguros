@@ -375,7 +375,7 @@
                                             <select class="form-control" name="PolizaVida">
                                                 <option value="" selected>SELECCIONE</option>
                                                 @foreach ($polizas_vida as $obj)
-                                                    <option value="{{ $obj->Id }}" {{$deuda->PolizaVida == $obj->Id ? 'selected':'' }}>{{ $obj->Codigo }}
+                                                    <option value="{{ $obj->Id }}" {{$deuda->PolizaVida == $obj->Id ? 'selected':'' }}>{{ $obj->NumeroPoliza }}
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -592,7 +592,7 @@
                                                             <option value="">Seleccione...</option>
                                                             @foreach ($perfiles as $obj)
                                                                 <option value="{{ $obj->Id }}">
-                                                                    {{ $obj->Descripcion }}
+                                                                    {{ $obj->Codigo }} - {{ $obj->Descripcion }}
                                                                 </option>
                                                             @endforeach
                                                         </select>

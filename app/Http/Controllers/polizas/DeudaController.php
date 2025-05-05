@@ -110,6 +110,8 @@ class DeudaController extends Controller
         $estadoPoliza = EstadoPoliza::where('Activo', 1)->get();
         $tipoCobro = TipoCobro::where('Activo', 1)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
+        $polizas_vida = Vida::get();
+        $polizas_desempleo = Desempleo::get();
         return view('polizas.deuda.create', compact(
             'aseguradora',
             'cliente',
@@ -123,7 +125,9 @@ class DeudaController extends Controller
             'rutas',
             'ubicaciones_cobro',
             'bomberos',
-            'ultimo'
+            'ultimo',
+            'polizas_vida',
+            'polizas_desempleo'
         ));
     }
 
@@ -245,9 +249,9 @@ class DeudaController extends Controller
         $deuda->TasaComision = $request->TasaComision;
         $deuda->FechaIngreso = $request->FechaIngreso;
         $deuda->Activo = 1;
-        $deuda->Vida = $request->Vida;
+        $deuda->PolizaVida = $request->PolizaVida;
         $deuda->Mensual = $request->tipoTasa;
-        $deuda->Desempleo = $request->Desempleo;
+        $deuda->PolizaDesempleo = $request->PolizaDesempleo;
         $deuda->EdadMaximaTerminacion = $request->EdadMaximaTerminacion;
         $deuda->ResponsabilidadMaxima = $request->ResponsabilidadMaxima;
         if ($request->ComisionIva == 'on') {
@@ -383,7 +387,7 @@ class DeudaController extends Controller
         // Estructura de la tabla
         $tabla = [];
         foreach ($requisitos as $requisito) {
-            $perfil = $requisito->perfil->Descripcion;
+            $perfil = $requisito->perfil->Codigo. ' - ' .$requisito->perfil->Descripcion;
             $perfilId = $requisito->Perfil;
             $edadRango = "{$requisito->EdadInicial}-{$requisito->EdadFinal}";
             $montoRango = "{$requisito->MontoInicial}-{$requisito->MontoFinal}";

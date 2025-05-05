@@ -1,83 +1,62 @@
-@extends ('welcome')
-@section('contenido')
-@include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
-<div class="x_panel">
-    <div class="clearfix"></div>
-    <div class="row">
-        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
 
-            <div class="x_title">
-                <h2>Editar Perfiles <small></small></h2>
-                <ul class="nav navbar-right panel_toolbox">
-
-                </ul>
-                <div class="clearfix"></div>
+<div class="modal fade" id="modal-edit-{{ $item->Id }}" tabindex="-1" user="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="col-md-6">
+                    <h4 class="modal-title">Modificar requisito</h4>
+                </div>
+                <div class="col-md-6">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span>
+                    </button>
+                </div>
             </div>
-            @if (count($errors) > 0)
-            <div class="alert alert-danger">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-            @endif
+            <form method="POST" action="{{ route('perfiles.update', $item->Id) }}">
+                @method('PUT')
+                @csrf
 
-            <div class="x_content">
-                <br />
-
-                <form method="POST" action="{{ route('perfiles.update', $perfil->Id) }}">
-                    @method('PUT')
-                    @csrf
-                    <div class="form-horizontal">
-                        <br>
-
-                        <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Aseguradora </label>
-                            <div class="col-lg-6 col-md-9 col-sm-12 col-xs-12">
-                            <select name="Aseguradora" class="form-control select2" style="width: 100%" required>
-                                    
-                                    @foreach ($aseguradoras as $obj)
-                                    <option value="{{ $obj->Id }}" {{ $perfil->Aseguradora == $obj->Id ? 'selected' : '' }}>{{ $obj->Nombre }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Descripcion</label>
-                            <div class="col-lg-6 col-md-9 col-sm-12 col-xs-12">
-                                <textarea class="form-control" name="Descripcion" type="text" rows="10" >{{$perfil->Descripcion}} </textarea>
-                            </div>
-                        </div>
-                        <div class="col-md-3">&nbsp;</div>
-                        <div class="form-group row col-md-6">
-                            <label class="control-label" align="right">Pago Automatico</label>
-                            <input type="checkbox" name="PagoAutomatico" value="1" {{$perfil->PagoAutomatico == 1 ? 'checked':''}} class="js-switch" />
-
-                            <div class="form-group row col-md-6">
-                                <label class="control-label" align="right">Declaracion Jurada</label>
-                                <input type="checkbox" name="DeclaracionJurada" value="1"  {{$perfil->DeclaracionJurada == 1 ? 'checked':''}} class="js-switch" />
-
-                            </div>
-                        </div>
-
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <div class="form-group" align="center">
-                                <button type="submit" class="btn btn-success">Aceptar</button>
-                                <a href="{{ url('catalogo/perfiles') }}"><button type="button" class="btn btn-primary">Cancelar</button></a>
-                            </div>
-                        </div>
-
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="control-label">Código</label>
+                        <input type="text" name="Codigo" value="{{ $item->Codigo }}" required class="form-control"
+                            autofocus>
                     </div>
-                </form>
 
+                    <div class="form-group">
+                        <label for="Aseguradora" class="form-label">Aseguradora</label>
+                        <select id="Aseguradora" name="Aseguradora" class="form-control select2" style="width: 100%">
+                            @foreach ($aseguradoras as $obj)
+                                <option value="{{ $obj->Id }}" {{ $item->Aseguradora == $obj->Id ? 'selected' : '' }}>
+                                    {{ $obj->Nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
+                    <div class="form-group">
+                        <label class="control-label" align="right">Descripción</label>
+                        <textarea name="Descripcion"  class="form-control" oninput="this.value = this.value.toUpperCase();">{{ $item->Descripcion }}</textarea>
+                    </div>
 
-            </div>
+                    <div class="form-group">
+                        <input type="checkbox" name="PagoAutomatico" value="1" class="js-switch" {{ $item->PagoAutomatico == 1 ? 'checked' : '' }} />&nbsp;
+                        <label class="control-label" align="right">Pago Automático</label>
+
+                        <div class="form-group row col-md-6">
+                            <input type="checkbox" name="DeclaracionJurada" value="1" class="js-switch" {{  $item->DeclaracionJurada == 1 ? 'checked' : '' }} />&nbsp;
+                            <label class="control-label" align="right">Declaración Jurada</label>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
 
         </div>
+
     </div>
 </div>
-@include('sweetalert::alert')
-@endsection
