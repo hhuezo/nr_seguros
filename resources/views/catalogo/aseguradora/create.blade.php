@@ -64,18 +64,19 @@
                     <div class="row" style="padding-top: 15px!important;">
                         <div class="col-sm-6">
                             <label class="control-label ">Nombre o Razon Social</label>
-                            <input type="text" name="Nombre" value="{{old('Nombre')}}" class="form-control" required autofocus="true">
+                            <input type="text" name="Nombre" value="{{old('Nombre')}}" class="form-control" required autofocus="true"
+                            oninput="this.value = this.value.toUpperCase()">
                         </div>
                         <div class="col-sm-6">
                             <label class="control-label">Dirección</label>
-                            <textarea name="Direccion" rows="1" class="form-control">{{old('Direccion')}}</textarea>
+                            <textarea name="Direccion" rows="1" class="form-control" oninput="this.value = this.value.toUpperCase()">{{old('Direccion')}}</textarea>
                         </div>
                     </div>
 
                     <div class="row" style="padding-top: 15px!important;">
                         <div class="col-sm-6">
                             <label class="control-label ">Abreviatura</label>
-                            <input type="text" name="Abreviatura" value="{{old('Abreviatura')}}" class="form-control">
+                            <input type="text" name="Abreviatura" value="{{old('Abreviatura')}}" class="form-control" oninput="this.value = this.value.toUpperCase()">
                         </div>
                         <div class="col-sm-6">
                             <label class="control-label">Teléfono fijo de asistencia</label>

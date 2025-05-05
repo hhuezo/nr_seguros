@@ -87,17 +87,20 @@
                                 <div class="row" style="padding-top: 15px!important;">
                                     <div class="col-sm-6">
                                         <label class="control-label ">Nombre o Razón Social</label>
-                                        <input type="text" name="Nombre" value="{{ $aseguradora->Nombre }}" class="form-control" required autofocus="true">
+                                        <input type="text" name="Nombre" value="{{ strtoupper($aseguradora->Nombre) }}" class="form-control" required autofocus="true"
+                                        oninput="this.value = this.value.toUpperCase()">
                                     </div>
                                     <div class="col-sm-6">
                                         <label class="control-label">Dirección</label>
-                                        <textarea name="Direccion" rows="1" class="form-control">{{ $aseguradora->Direccion }}</textarea>
+                                        <textarea name="Direccion" rows="1" class="form-control" oninput="this.value = this.value.toUpperCase()"
+                                        >{{ strtoupper($aseguradora->Direccion) }}</textarea>
                                     </div>
                                 </div>
                                 <div class="row" style="padding-top: 15px!important;">
                                     <div class="col-sm-6">
                                         <label class="control-label ">Abreviatura</label>
-                                        <input type="text" name="Abreviatura" value="{{ $aseguradora->Abreviatura }}" class="form-control">
+                                        <input type="text" name="Abreviatura" value="{{ strtoupper($aseguradora->Abreviatura) }}" class="form-control"
+                                        oninput="this.value = this.value.toUpperCase()">
                                     </div>
                                     <div class="col-sm-6">
                                         <label class="control-label">Teléfono fijo de asistencia</label>
@@ -416,39 +419,39 @@
                         </div>
                         <div class="modal-body">
                             <input type="hidden" name="Aseguradora" value="{{ $aseguradora->Id }}" class="form-control">
-                            <div class="form-group">
+
+                            
+                            <div class="row" style="padding-bottom: 15px;">
                                 <div class="col-sm-6">
-                                    Nombre
-                                    <input type="text" name="Nombre" class="form-control" required>
+                                    <label for="Nombre" class="form-label">Nombre</label>
+                                    <input type="text" name="Nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="Cargo" class="form-label">Cargo</label>
+                                    <div class="input-group">
+                                        <select name="Cargo" id="ModalCargo" class="form-control"  required>
+                                            @foreach ($cargos as $cargo)
+                                            <option value="{{ $cargo->Id }}">{{ $cargo->Nombre }}</option>
+                                            @endforeach
+                                        </select>
+                                        <span class="input-group-btn">
+                                            <button type="button" class="btn btn-primary" onclick="addCargo();" >+</button>
+                                        </span>
+                                    </div>        
                                 </div>
                             </div>
 
-                            <div class="form-group">
+                            <div class="row" style="padding-bottom: 15px;">
                                 <div class="col-sm-6">
-                                    Cargo <span class="fa fa-plus" onclick="addCargo();" class="col-md-2" style="padding-left: 75%;"></span>
-                                    <select name="Cargo" id="ModalCargo" class="form-control" required>
-                                        @foreach ($cargos as $cargo)
-                                        <option value="{{ $cargo->Id }}">{{ $cargo->Nombre }}</option>
-                                        @endforeach
-
-                                    </select>
-
-                                </div>
-                            </div>
-
-
-                            <div class="form-group">
-                                <div class="col-sm-6">
-                                    Telefono
+                                    <label for="Telefono" class="form-label">Telefono</label>
                                     <input type="text" name="Telefono" data-inputmask="'mask': ['9999-9999']" data-mask class="form-control" required>
                                 </div>
-                            </div>
-                            <div class="form-group">
                                 <div class="col-sm-6">
-                                    Email
+                                    <label for="Email" class="form-label">Email</label>
                                     <input type="email" class="form-control" required name="Email">
                                 </div>
                             </div>
+                            
 
                         </div>
                         <div>&nbsp; </div>
@@ -477,10 +480,13 @@
                         </div>
                         <div class="modal-body">
                             <input type="hidden" name="Aseguradora" value="{{ $aseguradora->Id }}" class="form-control">
+
+                            
                             <div class="form-group">
                                 <div class="col-sm-6">
                                     Nombre
-                                    <input type="text" name="Nombre" id="ModalContactoNombre" class="form-control" required>
+                                    <input type="text" name="Nombre" id="ModalContactoNombre" class="form-control" 
+                                    oninput="this.value = this.value.toUpperCase()" required>
                                 </div>
                             </div>
 
@@ -601,7 +607,8 @@
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">Nombre</label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <input type="text" name="Nombre" id="ModalNombreCargo" class="form-control" autofocus="true">
+                                    <input type="text" name="Nombre" id="ModalNombreCargo" class="form-control" 
+                                    oninput="this.value = this.value.toUpperCase()" autofocus="true">
                                 </div>
                                 <label class="col-sm-3 control-label">&nbsp;</label>
                             </div>
@@ -713,7 +720,7 @@
     function modal_edit_contacto(id, cargo, nombre, telefono, email) {
         document.getElementById('ModalContactoId').value = id;
         document.getElementById('ModalContactoCargo').value = cargo;
-        document.getElementById('ModalContactoNombre').value = nombre;
+        document.getElementById('ModalContactoNombre').value = nombre.toUpperCase();
         document.getElementById('ModalContactoTelefono').value = telefono;
         document.getElementById('ModalContactoEmail').value = email;
         //$('#modal_borrar_documento').modal('show');

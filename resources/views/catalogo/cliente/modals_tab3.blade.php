@@ -98,7 +98,7 @@
                             <div class="col-sm-6">
                                 Cargo *
                                 <select name="Cargo" id="ModalContactoCargo" class="form-control"
-                                    style="text-transform: uppercase;" required>
+                                    required>
                                     @foreach ($cliente_contacto_cargos as $cargo)
                                         <option value="{{ $cargo->Id }}">{{ $cargo->Nombre }}</option>
                                     @endforeach

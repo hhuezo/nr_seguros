@@ -173,10 +173,13 @@
                                                 <div class="form-group">
                                                     <label for="Nombre" class="form-label">Nombre o Razón Social
                                                         *</label>
-                                                    <input class="form-control" id="Nombre" name="Nombre"
-                                                        value="{{ strtoupper($cliente->Nombre) }}" type="text"
-                                                        oninput="this.value = this.value.toUpperCase()"
-                                                        ><!-- se agrego strtoupper, to uppercase, uppercase -->
+                                                    <input class="form-control"
+                                                     id="Nombre"
+                                                     name="Nombre"
+                                                     value="{{ strtoupper($cliente->Nombre) }}"
+                                                     type="text"
+                                                     oninput="this.value = this.value.toUpperCase()">
+                                                        <!-- se agrego strtoupper, to uppercase, uppercase -->
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="FechaNacimiento" class="form-label">Fecha Nacimiento o
@@ -304,8 +307,8 @@
                                                 <div class="form-group">
                                                     <label for="Genero" class="form-label">Estado Cliente *</label>
                                                     <select name="Estado" id="Estado" class="form-control"
-                                                        style="width: 100%; text-transform: uppercase;">
-                                                        <option value=""> SELECCIONE...</option>
+                                                        style="width: 100%;">
+                                                        <option value=""> Seleccione...</option>
 
                                                         @foreach ($cliente_estados as $obj)
                                                             <option value="{{ $obj->Id }}"
@@ -319,7 +322,7 @@
                                                     <label for="Genero" class="form-label">Género *</label>
                                                     <select name="Genero" id="Genero" class="form-control"
                                                         style="text-transform: uppercase;">
-                                                        <option value="" selected disabled>SELECCIONE ...</option>
+                                                        <option value="" selected disabled>Seleccione ...</option>
                                                         <option value="1"
                                                             {{ $cliente->Genero == 1 ? 'selected' : '' }}>MASCULINO
                                                         </option>
@@ -337,8 +340,8 @@
                                                     <select name="TipoContribuyente" id="TipoContribuyente"
                                                         class="form-control"
                                                         onchange="validaciones.cboTipoContribuyente(this.value)"
-                                                        style="width: 100%; text-transform: uppercase;">
-                                                        <option value="" disabled selected>SELECCIONE ...</option>
+                                                        style="width: 100%;">
+                                                        <option value="" disabled selected>Seleccione ...</option>
                                                         @foreach ($tipos_contribuyente as $obj)
                                                             <option value="{{ $obj->Id }}"
                                                                 {{ $cliente->TipoContribuyente == $obj->Id ? 'selected' : '' }}>
@@ -370,7 +373,7 @@
                                                             *</label>
                                                         <select name="UbicacionCobro" id="UbicacionCobro"
                                                             class="form-control"
-                                                            style="width: 100%; text-transform: uppercase;">
+                                                            style="width: 100%; ">
                                                             <option value="" selected disabled>Seleccione ...
                                                             </option>
                                                             @foreach ($ubicaciones_cobro as $obj)
@@ -586,7 +589,7 @@
                                             <label class="control-label ">Le Gusta Informarse </label>
 
                                             <select name="Informarse" class="form-control"
-                                                style="width: 100%; text-transform: uppercase;">
+                                                style="width: 100%; ">
                                                 <option value=""> Seleccione...</option>
                                                 @foreach ($informarse as $obj)
                                                     <option value="{{ $obj->Id }}"
@@ -1265,10 +1268,10 @@
         function modal_edit_contacto(id, cargo, nombre, telefono, email, lugar) {
             document.getElementById('ModalContactoId').value = id;
             document.getElementById('ModalContactoCargo').value = cargo;
-            document.getElementById('ModalContactoNombre').value = nombre;
+            document.getElementById('ModalContactoNombre').value = nombre.toUpperCase();
             document.getElementById('ModalContactoTelefono').value = telefono;
             document.getElementById('ModalContactoEmail').value = email;
-            document.getElementById('ModalContactoLugarTrabajo').value = lugar;
+            document.getElementById('ModalContactoLugarTrabajo').value = lugar.toUpperCase();
             //$('#modal_borrar_documento').modal('show');
         }
 
@@ -1285,7 +1288,7 @@
         function modal_edit_habito(id, actividad, ingreso, gasto, nivel) {
             //alert(ingreso);
             document.getElementById('ModalHabitoId').value = id;
-            document.getElementById('ModalHabitoActividadEconomica').value = actividad;
+            document.getElementById('ModalHabitoActividadEconomica').value = actividad.toUpperCase();
             document.getElementById('ModalHabitoIngresoPromedio').value = ingreso;
             document.getElementById('ModalHabitoGastoMensualSeguro').value = gasto;
             document.getElementById('ModalHabitoNivelEducativo').value = nivel.toUpperCase();
@@ -1300,11 +1303,11 @@
         function modal_edit_retroalimentacion(id, producto, valores, competidores, referidos, quisiera, servicio) {
 
             document.getElementById('ModalRetroId').value = id;
-            document.getElementById('ModalRetroProducto').value = producto;
-            document.getElementById('ModalRetroValoresAgregados').value = valores;
-            document.getElementById('ModalRetroCompetidores').value = competidores;
-            document.getElementById('ModalRetroReferidos').value = referidos;
-            document.getElementById('ModalRetroQueQuisiera').value = quisiera;
+            document.getElementById('ModalRetroProducto').value = producto.toUpperCase();
+            document.getElementById('ModalRetroValoresAgregados').value = valores.toUpperCase();
+            document.getElementById('ModalRetroCompetidores').value = competidores.toUpperCase();
+            document.getElementById('ModalRetroReferidos').value = referidos.toUpperCase();  
+            document.getElementById('ModalRetroQueQuisiera').value = quisiera.toUpperCase();
             document.getElementById('ModalRetroServicioCliente').value = servicio;
             modal_check_stars(servicio);
             //$('#modal_borrar_documento').modal('show');

@@ -60,7 +60,7 @@
                             <div class="col-sm-12">
                                 <div class="form-group">
                                     Referidos *
-                                    <input type="text" name="Referidos" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
+                                    <input type="text" name="Referidos" class="form-control"  oninput="this.value = this.value.toUpperCase()" required>
                                 </div>
                             </div>
                         </div>
@@ -138,7 +138,7 @@
                             <div class="col-sm-12">
                                 <div class="form-group">
                                     Referidos *
-                                    <input type="text" name="Referidos" id="ModalRetroReferidos" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
+                                    <input type="text" name="Referidos" id="ModalRetroReferidos" class="form-control"  oninput="this.value = this.value.toUpperCase()" required>
                                 </div>
                             </div>
                         </div>

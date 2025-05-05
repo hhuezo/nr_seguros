@@ -116,9 +116,12 @@
                                         <div class="col-md-6">
                                             <label for="NombreCliente" class="form-label">Nombre del cliente O
                                                 Prospecto</label>
-                                            <input class="form-control validarCredenciales" type="text"
-                                                value="{{$negocio->clientes->Nombre}}" name="NombreCliente"
-                                                id="NombreCliente">
+                                            <input class="form-control validarCredenciales"
+                                            name="NombreCliente"
+                                            id="NombreCliente" 
+                                            value="{{$negocio->clientes->Nombre}}"
+                                            type="text">
+                                            <!-- no se hizo conversion en mayusculas, viene de cliente y ya esta agregado el nombre del cliente -->
                                         </div>
 
                                         <div style="display: none;" class="col-md-4">
@@ -247,7 +250,7 @@
                                             <label for="Observacion" class="form-label">Observaciones o
                                                 anotaciones</label>
                                             <textarea name="Observacion" id="Observacion" rows="3"
-                                                class="form-control"> {{$negocio->Observacion}}</textarea>
+                                                class="form-control" oninput="this.value = this.value.toUpperCase()"> {{strtoupper($negocio->Observacion)}}</textarea>
 
                                         </div>
                                     </div>
@@ -264,6 +267,8 @@
                             </div>
 
                         </form>
+
+
                         <div>
                             <h4>Cotizaciones</h4>
                             <hr>
@@ -578,7 +583,7 @@
                         <div class="col-md-12" style="margin-top: 12px!important;">
                             <label for="Observacion" class="form-label">Observaciones o
                                 comentarios</label>
-                            <textarea name="Observaciones" id="Observaciones" rows="3" class="form-control"></textarea>
+                            <textarea name="Observaciones" id="Observaciones" rows="3" class="form-control" oninput="this.value = this.value.toUpperCase()"></textarea>
 
                         </div>
                         <div>&nbsp; </div>
@@ -650,7 +655,7 @@
                             <label for="Observacion" class="form-label">Observaciones o
                                 comentarios</label>
                             <textarea name="Observaciones" id="ModalCotizacionObservaciones" rows="3"
-                                class="form-control"></textarea>
+                                class="form-control" oninput="this.value = this.value.toUpperCase()"></textarea>
 
                         </div>
                         <div>&nbsp; </div>
@@ -723,12 +728,12 @@
                         <div class="form-group">
                             <div class="col-md-6">
                                 <label for="Contacto" class="form-label">Contacto</label>
-                                <input type="text" name="Contacto" id="Contacto" class="form-control" required>
+                                <input type="text" name="Contacto" id="Contacto" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
                             </div>
                             <div class="col-md-6">
                                 <label for="DescripcionOperacion" class="form-label">Descripción de la
                                     Operación</label>
-                                <input type="text" name="DescripcionOperacion" id="DescripcionOperacion"
+                                <input type="text" name="DescripcionOperacion" id="DescripcionOperacion" oninput="this.value = this.value.toUpperCase()"
                                     class="form-control" required>
                             </div>
                             <div class="col-md-6" style="margin-top: 12px!important;">
@@ -738,7 +743,7 @@
                             </div>
                             <div class="col-md-6" style="margin-top: 12px!important;">
                                 <label for="Contacto" class="form-label">Observación del Contacto</label>
-                                <textarea class="form-control" name="ObservacionContacto"
+                                <textarea class="form-control" name="ObservacionContacto" oninput="this.value = this.value.toUpperCase()"
                                     id="ObservacionContacto"></textarea>
                             </div>
                         </div>
@@ -777,13 +782,13 @@
                             <div class="col-md-6">
                                 <label for="Contacto" class="form-label">Contacto</label>
                                 <input type="text" name="Contacto" id="ModalContactoContacto" class="form-control"
-                                    required>
+                                oninput="this.value = this.value.toUpperCase()" required>
                             </div>
                             <div class="col-md-6">
                                 <label for="DescripcionOperacion" class="form-label">Descripción de la
                                     Operación</label>
                                 <input type="text" name="DescripcionOperacion" id="ModalContactoDescripcionOperacion"
-                                    class="form-control" required>
+                                    class="form-control" oninput="this.value = this.value.toUpperCase()" required>
                             </div>
                             <div class="col-md-6" style="margin-top: 12px!important;">
                                 <label for="Contacto" class="form-label">Teléfono de Contacto</label>
@@ -792,8 +797,8 @@
                             </div>
                             <div class="col-md-6" style="margin-top: 12px!important;">
                                 <label for="Contacto" class="form-label">Observación del Contacto</label>
-                                <textarea class="form-control" name="ObservacionContacto"
-                                    id="ModalContactoObservacionContacto"></textarea>
+                                <textarea class="form-control" name="ObservacionContacto" 
+                                    id="ModalContactoObservacionContacto" oninput="this.value = this.value.toUpperCase()"></textarea>
                             </div>
                         </div>
 
@@ -858,7 +863,7 @@
                             <div class="col-md-12">
                                 <label for="DescripcionActividad" class="form-label">Descripción de la actividad</label>
                                 <textarea class="form-control" name="DescripcionActividad"
-                                    id="DescripcionActividad"></textarea>
+                                    id="DescripcionActividad" oninput="this.value = this.value.toUpperCase()"></textarea>
                             </div>
                         </div>
 
@@ -896,7 +901,7 @@
                             <div class="col-md-12">
                                 <label for="DescripcionActividad" class="form-label">Descripción de la actividad</label>
                                 <textarea class="form-control" name="DescripcionActividad"
-                                    id="ModalGestionDescripcionActividad"></textarea>
+                                    id="ModalGestionDescripcionActividad" oninput="this.value = this.value.toUpperCase()"></textarea>
                             </div>
                         </div>
 
@@ -1183,7 +1188,7 @@
         $('#ModalCotizacionId').val(Id);
         $('#ModalCotizacionSumaAsegurada').val(Number(SumaAsegurada).toFixed(2));
         $('#ModalCotizacionPrimaNetaAnual').val(Number(PrimaNetaAnual).toFixed(2));
-        $('#ModalCotizacionObservaciones').val(Observaciones);
+        $('#ModalCotizacionObservaciones').val(Observaciones.toUpperCase());
 
         DatosTecnicos=JSON.parse(DatosTecnicos);
         productoDatosTecnicos=JSON.parse(productoDatosTecnicos);
@@ -1234,10 +1239,10 @@
 
     function modal_edit_informacion_negocio(Id, Contacto, DescripcionOperacion, TelefonoContacto,ObservacionContacto) {
         $('#ModalContactoId').val(Id);
-        $('#ModalContactoContacto').val(Contacto);
-        $('#ModalContactoDescripcionOperacion').val(DescripcionOperacion);
+        $('#ModalContactoContacto').val(Contacto.toUpperCase());
+        $('#ModalContactoDescripcionOperacion').val(DescripcionOperacion.toUpperCase());
         $('#ModalContactoTelefonoContacto').val(TelefonoContacto);
-        $('#ModalContactoObservacionContacto').val(ObservacionContacto);
+        $('#ModalContactoObservacionContacto').val(ObservacionContacto.toUpperCase());
     }
 
     function modal_delete_informacion_negocio(Id) {
@@ -1246,7 +1251,7 @@
 
     function modal_edit_gestion(Id, DescripcionActividad) {
         $('#ModalGestionId').val(Id);
-        $('#ModalGestionDescripcionActividad').val(DescripcionActividad);
+        $('#ModalGestionDescripcionActividad').val(DescripcionActividad.toUpperCase());
     }
 
     function modal_delete_gestion(Id) {

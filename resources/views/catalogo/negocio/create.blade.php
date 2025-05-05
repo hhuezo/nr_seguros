@@ -29,8 +29,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <label for="TipoCarteraNr" class="form-label">Cartera</label>
-                                    <select name="TipoCarteraNr" id="TipoCarteraNr" class="form-control select2"
-                                        style="width: 100%" required>
+                                    <select name="TipoCarteraNr" id="TipoCarteraNr" class="form-control select2" style="width: 100%" required>
                                         <option value="" selected disabled>Seleccione...</option>
                                         @foreach ($carteras as $obj)
                                             <option value="{{ $obj->Id }}">{{ $obj->Nombre }}
@@ -40,8 +39,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label for="EstadoVenta" class="form-label">Estado Venta</label>
-                                    <select name="EstadoVenta" id="EstadoVenta"
-                                        class="form-control select2" style="width: 100%" required>
+                                    <select name="EstadoVenta" id="EstadoVenta" class="form-control select2" style="width: 100%" required>
                                         <option value="" disabled selected>Seleccione...</option>
                                         @foreach ($estados_venta as $obj)
                                             <option value="{{ $obj->Id }}">{{ $obj->Nombre }}
@@ -56,8 +54,8 @@
                                     <select name="TipoPersona" id="TipoPersona" class="form-control"
                                         onchange="identificadorCliente();">
                                         <option value="" selected disabled>Seleccione ...</option>
-                                        <option value="1">Natural</option>
-                                        <option value="2">Juridico</option>
+                                        <option value="1">NATURAL</option>
+                                        <option value="2">JURIDICO</option>
                                     </select>
                                 </div>
                                 <div id="divDui" class="col-md-6">
@@ -84,7 +82,7 @@
                                 <div class="col-md-6">
                                     <label for="NombreCliente" class="form-label">Nombre del cliente O Prospecto</label>
                                     <input class="form-control validarCredenciales" type="text"
-                                        value="" name="NombreCliente" id="NombreCliente">
+                                        value="" name="NombreCliente" id="NombreCliente" oninput="this.value = this.value.toUpperCase()">
                                 </div>
                                 <div style="display: none;" class="col-md-4">
                                     <label for="Email" class="form-label">Email</label>
@@ -151,6 +149,7 @@
                                         class="form-control" name="FechaVenta" id="FechaVenta">
                                 </div>
                                 <div class="col-md-6">
+                                    {{-- NO SE LE AGREGO EL ONINPUT UPPER - NO SE SI TENDRA NUMEROS O TEXTO O COMBINADOS --}}
                                     <label for="NumeroPoliza" class="form-label">Número de póliza</label>
                                     <input class="form-control" type="text" value=""
                                         name="NumeroPoliza" id="NumeroPoliza">
@@ -168,10 +167,10 @@
                                     <select name="FormaPago" id="FormaPago" class="form-control select2"
                                         style="width: 100%" required>
                                         <option value="" selected disabled>Seleccione...</option>
-                                        <option value="1">Anual</option>
-                                        <option value="2">Semestral</option>
-                                        <option value="3">Trimestral</option>
-                                        <option value="4">Mensual</option>
+                                        <option value="1">ANUAL</option>
+                                        <option value="2">SEMESTRAL</option>
+                                        <option value="3">TRIMESTRAL</option>
+                                        <option value="4">MENSUAL</option>
                                     </select>
                                 </div>
                             </div>
@@ -197,7 +196,7 @@
                                 <div class="col-md-12">
                                     <label for="Observacion" class="form-label">Observaciones o
                                         anotaciones</label>
-                                    <textarea name="Observacion" id="Observacion" rows="3" class="form-control"></textarea>
+                                    <textarea name="Observacion" id="Observacion" rows="3" class="form-control" oninput="this.value = this.value.toUpperCase()"></textarea>
 
                                 </div>
                             </div>

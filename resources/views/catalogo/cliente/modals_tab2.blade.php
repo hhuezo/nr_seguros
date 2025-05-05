@@ -15,7 +15,7 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     Método Pago *
-                                    <select name="MetodoPago" class="form-control" id="MetodoPago" style="text-transform: uppercase;">
+                                    <select name="MetodoPago" class="form-control" id="MetodoPago">
                                         @foreach ($metodos_pago as $obj)
                                         <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
                                         @endforeach
@@ -99,7 +99,7 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     Método pago *
-                                    <select name="MetodoPago" id="ModalMetodoPago" class="form-control" style="text-transform: uppercase;" disabled>
+                                    <select name="MetodoPago" id="ModalMetodoPago" class="form-control" disabled>
                                         @foreach ($metodos_pago as $obj)
                                         <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
                                         @endforeach
