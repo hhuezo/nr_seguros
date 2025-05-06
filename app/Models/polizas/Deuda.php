@@ -116,4 +116,14 @@ class Deuda extends Model
     {
         return $this->hasMany(PolizaDeudaHistorica::class, 'Deuda', 'Id');
     }
+
+    public function vidas(){
+        return $this->belongsTo(Vida::class,'PolizaVida');
+    }
+
+    public function desempleos(){
+        return $this->belongsTo(Desempleo::class, 'PolizaDesempleo');
+    }
+
+
 }

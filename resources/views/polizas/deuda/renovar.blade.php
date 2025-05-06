@@ -220,35 +220,38 @@
                         &nbsp;
                     </div>
 
-                    <div class="col-sm-4" align="center" style="display:none">
+                    <div class="col-sm-4" align="center" style="display:show">
                         <br>
                         <label class="control-label" align="center">Vida</label>
-                        <input id="Vida" type="checkbox" class="js-switch"
-                            {{ $deuda->Vida != '' ? 'checked' : '' }} />
+                        <input id="Vida" name="checkedVida" type="checkbox" class="js-switch"
+                            {{ $deuda->PolizaVida != '' ? 'checked' : '' }} />
                     </div>
-                    <div class="col-sm-4" align="center" style="display:none">
+                    <div class="col-sm-4" align="center" style="display:show">
                         <br>
                         <label class="control-label" align="center">Desempleo</label>
-                        <input id="Desempleo" type="checkbox" class="js-switch"
-                            {{ $deuda->Desempleo != '' ? 'checked' : '' }} />
+                        <input id="Desempleo" name="checkedDesempleo" type="checkbox" class="js-switch"
+                            {{ $deuda->PolizaDesempleo != '' ? 'checked' : '' }} />
                     </div>
                     <div class="col-sm-12">
                         &nbsp;
                     </div>
 
-                    <div class="col-sm-4" style="display:none">
+                    <div class="col-sm-4" style="display:  {{ $deuda->PolizaVida != '' ? 'block' : 'none' }};" id="poliza_vida">
                         <label class="control-label">Numero de Poliza Vida *</label>
-                        <input name="Vida" type="text" class="form-control" value="{{ $deuda->Vida }}" />
+                        <input name="Vida" type="text" class="form-control" value="{{ $deuda->vidas->NumeroPoliza }}" readonly />
                     </div>
                     <div class="col-sm-4">
-                        <div id="poliza_desempleo"
-                            style="display:  {{ $deuda->Desempleo != '' ? 'block' : 'none' }};">
+                        <div id="poliza_desempleo"  style="display:  {{ $deuda->PolizaDesempleo != '' ? 'block' : 'none' }};">
                             <label class="control-label">Número de Póliza Desempleo *</label>
-                            <input name="Desempleo" type="text" class="form-control"
-                                value="{{ $deuda->Desempleo }}" />
+                            <input name="Desempleo" type="text" class="form-control"  value="{{ $deuda->desempleos->NumeroPoliza }}" readonly />
                         </div>
 
                     </div>
+                    <br>
+                    <div class="col-sm-12">
+                        &nbsp;
+                    </div>
+
 
                     <div class="col-sm-12">
                     </div>
@@ -412,6 +415,26 @@
 
 
 <script>
+    $(document).ready(function() {
+        //mostrar opcion en menu
+        displayOption("ul-poliza", "li-poliza-deuda");
+
+        $("#Vida").change(function() {
+            if (document.getElementById('Vida').checked == true) {
+                $('#poliza_vida').show();
+            } else {
+                $('#poliza_vida').hide();
+            }
+        })
+
+        $("#Desempleo").change(function() {
+            if (document.getElementById('Desempleo').checked == true) {
+                $('#poliza_desempleo').show();
+            } else {
+                $('#poliza_desempleo').hide();
+            }
+        })
+    })
     document.addEventListener("DOMContentLoaded", function() {
         toggleFechaHasta();
     });
