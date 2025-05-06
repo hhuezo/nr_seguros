@@ -640,11 +640,7 @@
                     console.error('Error:', response.message);
                 }
 
-                getNoValido({
-                    {
-                        $poliza_vida->Id
-                    }
-                });
+                getNoValido({{$poliza_vida->Id}});
             },
             error: function(xhr, status, error) {
                 // Manejar errores de la solicitud
