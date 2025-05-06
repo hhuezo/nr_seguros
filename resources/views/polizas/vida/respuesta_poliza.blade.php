@@ -642,7 +642,7 @@
 
                 getNoValido({
                     {
-                        $poliza_vida - > Id
+                        $poliza_vida->Id
                     }
                 });
             },
