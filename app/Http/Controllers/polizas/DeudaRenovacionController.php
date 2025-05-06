@@ -12,10 +12,12 @@ use App\Models\catalogo\Plan;
 use App\Models\catalogo\Producto;
 use App\Models\catalogo\SaldoMontos;
 use App\Models\catalogo\TipoCartera;
+use App\Models\polizas\Desempleo;
 use App\Models\polizas\Deuda;
 use App\Models\polizas\DeudaDetalle;
 use App\Models\polizas\DeudaRequisitos;
 use App\Models\polizas\PolizaDeudaHistorica;
+use App\Models\polizas\Vida;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -177,9 +179,9 @@ class DeudaRenovacionController extends Controller
             $deuda->TasaComision = $request->TasaComision;
             $deuda->FechaIngreso = $request->FechaIngreso;
             $deuda->Activo = 1;
-            $deuda->Vida = $request->Vida;
+            //$deuda->Vida = $request->Vida;
             $deuda->Mensual = $request->tipoTasa;
-            $deuda->Desempleo = $request->Desempleo;
+           // $deuda->Desempleo = $request->Desempleo;
             $deuda->EdadMaximaTerminacion = $request->EdadMaximaTerminacion;
             $deuda->ResponsabilidadMaxima = $numericValue;
             $deuda->Configuracion = 0; // Se habilita para configurar nuevamente ResponsabilidadMaxima
@@ -187,6 +189,22 @@ class DeudaRenovacionController extends Controller
             $deuda->Usuario = auth()->user()->id;
             $deuda->FechaIngreso = Carbon::now('America/El_Salvador');
             $deuda->update();
+
+            if($request->checkedVida == 'on'){
+                $vida = Vida::findOrFail($deuda->PolizaVida);
+                $vida->VigenciaDesde = $request->FechaDesdeRenovacion;
+                $vida->VigenciaHasta = $request->FechaHastaRenovacion;
+                $vida->update();
+            }
+
+            if($request->checkedDesempleo == 'on'){
+                $desempleo = Desempleo::findOrFail($deuda->PolizaDesempleo);
+                $desempleo->VigenciaDesde = $request->FechaDesdeRenovacion;
+                $desempleo->VigenciaHasta = $request->FechaHastaRenovacion;
+                $desempleo->update();
+            }
+
+
 
             alert()->success('Renovación realizada correctamente');
 
