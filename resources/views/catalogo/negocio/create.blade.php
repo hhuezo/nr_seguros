@@ -152,7 +152,7 @@
                                     {{-- NO SE LE AGREGO EL ONINPUT UPPER - NO SE SI TENDRA NUMEROS O TEXTO O COMBINADOS --}}
                                     <label for="NumeroPoliza" class="form-label">Número de póliza</label>
                                     <input class="form-control" type="text" value=""
-                                        name="NumeroPoliza" id="NumeroPoliza">
+                                        name="NumeroPoliza" id="NumeroPoliza" oninput="this.value = this.value.toUpperCase()">
                                 </div>
                             </div>
                             <div class="row" style="margin-top: 12px!important;">

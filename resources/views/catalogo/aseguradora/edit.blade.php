@@ -587,7 +587,7 @@
 
 
     <div class="modal fade" id="modal_addCargo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
-        <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
 
                 <div class="modal-header">
@@ -602,15 +602,15 @@
                     <div class="box-body">
 
                         <div class="x_content">
-                            <br />
+                           
 
                             <div class="form-group">
-                                <label class="col-sm-3 control-label">Nombre</label>
-                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                <label class="control-label">Nombre</label>
+                                
                                     <input type="text" name="Nombre" id="ModalNombreCargo" class="form-control" 
                                     oninput="this.value = this.value.toUpperCase()" autofocus="true">
-                                </div>
-                                <label class="col-sm-3 control-label">&nbsp;</label>
+                                
+                                
                             </div>
 
                         </div>

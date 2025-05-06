@@ -116,7 +116,7 @@
                                         <div class="col-md-6">
                                             <label for="NombreCliente" class="form-label">Nombre del cliente O
                                                 Prospecto</label>
-                                            <input class="form-control validarCredenciales"
+                                            <input class="form-control validarCredenciales" readonly
                                             name="NombreCliente"
                                             id="NombreCliente" 
                                             value="{{$negocio->clientes->Nombre}}"
@@ -197,8 +197,8 @@
                                         </div>
                                         <div class="col-md-6">
                                             <label for="NumeroPoliza" class="form-label">Número de póliza</label>
-                                            <input class="form-control" type="text" value="{{$negocio->NumeroPoliza}}"
-                                                name="NumeroPoliza" id="NumeroPoliza">
+                                            <input class="form-control" type="text" value="{{strtoupper($negocio->NumeroPoliza)}}"
+                                                name="NumeroPoliza" id="NumeroPoliza" oninput="this.value = this.value.toUpperCase()">
                                         </div>
                                     </div>
                                     <div class="row" style="margin-top: 12px!important;">
