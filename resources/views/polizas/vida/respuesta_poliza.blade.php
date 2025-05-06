@@ -579,11 +579,7 @@
             paging: false
         });
 
-        getNoValido({
-            {
-                $poliza_vida - > Id
-            }
-        });
+        getNoValido({{$poliza_vida->Id}});
         document.getElementById('btnGuardarCartera').addEventListener('click', function() {
             document.getElementById('loading-overlay').style.display = 'flex';
         });
