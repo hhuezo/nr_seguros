@@ -1123,13 +1123,19 @@ class VidaController extends Controller
     {
         try {
             $poliza_vida = Vida::findOrFail($id);
-
-            $count = VidaCarteraTemp::where('User', auth()->user()->id)
+            if($poliza_vida->TipoCobro == 1)
+            {
+                $count = VidaCarteraTemp::where('User', auth()->user()->id)
                 ->where('PolizaVida', $id)
                 //->where('EdadDesembloso', '>', $poliza_vida->EdadMaximaInscripcion) EdadTerminacion
                 ->where('EdadDesembloso', '>', $poliza_vida->EdadMaximaInscripcion)
                 ->where('NoValido', 0)
                 ->count();
+            }
+            else{
+                $count = 0;
+            }
+
 
             return response()->json([
                 'success' => true,
