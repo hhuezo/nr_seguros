@@ -523,8 +523,16 @@ class VidaController extends Controller
         $poliza_edad_terminacion = VidaCarteraTemp::where('User', auth()->user()->id)->where('PolizaVida', $id)->where('EdadDesembloso', '>', $poliza_vida->EdadTerminacion)->get();
 
 
-        $poliza_responsabilidad_maxima = VidaCarteraTemp::where('User', auth()->user()->id)->where('PolizaVida', $id)
+        if($poliza_vida->TipoCobro == 1)
+        {
+            $poliza_responsabilidad_maxima = VidaCarteraTemp::where('User', auth()->user()->id)->where('PolizaVida', $id)
             ->whereColumn('SumaAsegurada', '>', 'MontoMaximoIndividual')->get();
+        }
+        else{
+            $poliza_responsabilidad_maxima = VidaCarteraTemp::where('Id', 0)->get();
+        }
+
+
 
 
         //registros que no existen en el mes anterior
