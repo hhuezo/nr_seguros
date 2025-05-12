@@ -224,6 +224,10 @@
                                         <label class="control-label" align="right">¿IVA incluído?</label>
                                         <input name="ComisionIva" id="ComisionIva" type="checkbox" class="js-switch">
                                     </div>
+                                    <div class="col-sm-2"><br>
+                                        <label class="control-label" align="right">Cobro con tarifa excel&nbsp;</label>
+                                        <input name="TarifaExcel" type="checkbox" class="js-switch">
+                                    </div>
                                     <div class="col-sm-6">
                                         <div>
                                             <label class="control-label">Póliza Vida</label>

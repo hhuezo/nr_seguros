@@ -254,10 +254,17 @@ class DeudaController extends Controller
         $deuda->PolizaDesempleo = $request->PolizaDesempleo;
         $deuda->EdadMaximaTerminacion = $request->EdadMaximaTerminacion;
         $deuda->ResponsabilidadMaxima = $request->ResponsabilidadMaxima;
+
         if ($request->ComisionIva == 'on') {
             $deuda->ComisionIva = 1;
         } else {
             $deuda->ComisionIva = 0;
+        }
+
+        if ($request->TarifaExcel == 'on') {
+            $deuda->TarifaExcel = 1;
+        } else {
+            $deuda->TarifaExcel = 0;
         }
         $deuda->Usuario = auth()->user()->id;
         $deuda->FechaIngreso = Carbon::now('America/El_Salvador');
@@ -547,8 +554,8 @@ class DeudaController extends Controller
         $deuda->TasaComision = $request->TasaComision;
         $deuda->FechaIngreso = $request->FechaIngreso;
         $deuda->Activo = 1;
-        $deuda->Vida = $request->Vida;
-        $deuda->Desempleo = $request->Desempleo;
+        //$deuda->Vida = $request->Vida;
+        //$deuda->Desempleo = $request->Desempleo;
         $deuda->Mensual = $request->tipoTasa;
         $deuda->EdadMaximaTerminacion = $request->EdadMaximaTerminacion;
         $deuda->ResponsabilidadMaxima = $request->ResponsabilidadMaxima;
@@ -558,6 +565,12 @@ class DeudaController extends Controller
             $deuda->ComisionIva = 1;
         } else {
             $deuda->ComisionIva = 0;
+        }
+
+        if ($request->TarifaExcel == 'on') {
+            $deuda->TarifaExcel = 1;
+        } else {
+            $deuda->TarifaExcel = 0;
         }
         $deuda->Usuario = auth()->user()->id;
         // $deuda->FechaIngreso = Carbon::now('America/El_Salvador');
