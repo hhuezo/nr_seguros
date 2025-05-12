@@ -257,12 +257,16 @@
                         <input class="form-control" name="TasaComision" id="TasaComision" type="number"
                             step="any" value="{{ $deuda->TasaComision }}" readonly>
                     </div>
-                    <div class="col-sm-4"><br>
+                    <div class="col-sm-2"><br>
                         <label class="control-label" align="right">¿IVA incluido?</label>
                         <input type="checkbox" readonly class="js-switch"
                             {{ $deuda->ComisionIva == 1 ? 'checked' : '' }}>
                         <input type="hidden" name="ComisionIva" id="ComisionIva"
                             value="{{ $deuda->ComisionIva }}">
+                    </div>
+                    <div class="col-sm-2"><br>
+                        <label class="control-label" align="right">Cobro con tarifa excel&nbsp;</label>
+                        <input name="TarifaExcel" type="checkbox" class="js-switch" {{ $deuda->TarifaExcel == 1 ? 'checked' : '' }}>
                     </div>
                     <div class="col-sm-12">
                         &nbsp;
