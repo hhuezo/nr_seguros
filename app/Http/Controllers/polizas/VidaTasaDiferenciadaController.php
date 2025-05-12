@@ -132,10 +132,46 @@ class VidaTasaDiferenciadaController extends Controller
 
 
 
-    public function store(VidaTasaDiferenciadaRequestV1 $request)
+    public function store(Request $request)
     {
 
+        $messages = [
+            'Tasa.required' => 'El campo Tasa es obligatorio.',
+            'Tasa.numeric' => 'El campo Tasa debe ser un número.',
+
+            'FechaDesde.required' => 'La Fecha inicio es obligatoria cuando el tipo de cálculo es por periodo.',
+            'FechaHasta.required' => 'La Fecha final es obligatoria cuando el tipo de cálculo es por periodo.',
+            'FechaHasta.after_or_equal' => 'La Fecha final debe ser igual o posterior a la Fecha inicio.',
+
+            'MontoDesde.required' => 'El Monto inicio es obligatorio cuando el tipo de cálculo es por monto.',
+            'MontoHasta.required' => 'El Monto final es obligatorio cuando el tipo de cálculo es por monto.',
+            'MontoHasta.gte' => 'El Monto final debe ser mayor o igual al Monto inicio.',
+        ];
+
+        // Siempre validar Tasa
+        $request->validate([
+            'Tasa' => 'required|numeric',
+        ], $messages);
+
+        // Validar por periodo (TipoCalculoIngreso == 1)
+        if ($request->TipoCalculoIngreso == 1) {
+            $request->validate([
+                'FechaDesde' => 'required|date',
+                'FechaHasta' => 'required|date|after_or_equal:FechaDesde',
+            ], $messages);
+        }
+
+        // Validar por monto (TipoCalculoIngreso == 2)
+        if ($request->TipoCalculoIngreso == 2) {
+            $request->validate([
+                'MontoDesde' => 'required|numeric',
+                'MontoHasta' => 'required|numeric|gte:MontoDesde',
+            ], $messages);
+        }
+
+
         $vida_tipo_cartera = VidaTipoCartera::findOrFail($request->PolizaVidaTipoCartera);
+
 
         $tasa_diferenciada = new VidaTasaDiferenciada();
         $tasa_diferenciada->PolizaVidaTipoCartera = $request->PolizaVidaTipoCartera;
