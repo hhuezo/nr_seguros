@@ -368,6 +368,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('polizas/vida/cancelar_pago', [VidaController::class, 'cancelar_pago']);
     Route::post('poliza/vida/recibo/{id}', [VidaController::class, 'recibo_pago']);
 
+
+    Route::post('poliza/vida/validar_store', [VidaController::class, 'validar_store']);
+
     Route::resource('polizas/vida', VidaController::class);
 
     Route::resource('catalogo/tipo_cartera_vida', TipoCarteraVidaController::class);
@@ -388,17 +391,5 @@ Route::middleware(['auth'])->group(function () {
     Route::post('exportar/vida/registros_responsabilidad_maxima/{id}', [VidaController::class, 'registros_responsabilidad_maxima']);
     Route::post('exportar/vida/registros_responsabilidad_terminacion/{id}', [VidaController::class, 'registros_responsabilidad_terminacion']);
     Route::post('exportar/vida/nuevos_registros/{id}', [VidaController::class, 'exportar_nuevos_registros']);
-    // Route::get('polizas/vida/{id}/renovar', [VidaController::class, 'renovar']);
-    // Route::post('polizas/vida/renovar/{id}', [VidaController::class, 'renovarPoliza'])->name('vida.renovarPoliza');
-
-    // Route::post('poliza/vida/usuario_edit', [VidaController::class, 'editarUsuario']);
-    // Route::post('poliza/vida/usuario_delete', [VidaController::class, 'eliminarUsuario']);
-
-
-    // Route::get('poliza/vida/usuario_create', [VidaController::class, 'agregarUsuario']);
-    // Route::get('poliza/vida/usuario/{id}', [VidaController::class, 'getUsuario']);
-
-
-    // Route::resource('polizas/validacion_cartera', ValidacionCarteraController::class);
 
 });
