@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\polizas;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\VidaTasaDiferenciadaRequestV1;
-use App\Http\Requests\VidaTasaDiferenciadaRequestV2;
 use App\Models\polizas\Vida;
 use App\Models\polizas\VidaCatalogoTipoCartera;
 use App\Models\polizas\VidaTasaDiferenciada;
@@ -211,8 +209,41 @@ class VidaTasaDiferenciadaController extends Controller
         }
     }
 
-    public function update(VidaTasaDiferenciadaRequestV2 $request, $id)
+    public function update(Request $request, $id)
     {
+        $messages = [
+            'TasaEdit.required' => 'El campo Tasa es obligatorio.',
+            'TasaEdit.numeric' => 'El campo Tasa debe ser un número.',
+
+            'FechaDesdeEdit.required' => 'La Fecha inicio es obligatoria cuando el tipo de cálculo es por periodo.',
+            'FechaHastaEdit.required' => 'La Fecha final es obligatoria cuando el tipo de cálculo es por periodo.',
+            'FechaHastaEdit.after_or_equal' => 'La Fecha final debe ser igual o posterior a la Fecha inicio.',
+
+            'MontoDesdeEdit.required' => 'El Monto inicio es obligatorio cuando el tipo de cálculo es por monto.',
+            'MontoHastaEdit.required' => 'El Monto final es obligatorio cuando el tipo de cálculo es por monto.',
+            'MontoHastaEdit.gte' => 'El Monto final debe ser mayor o igual al Monto inicio.',
+        ];
+
+        // Siempre validar TasaEdit
+        $request->validate([
+            'TasaEdit' => 'required|numeric',
+        ], $messages);
+
+        // Validar por periodo (TipoCalculoIngreso == 1)
+        if ($request->TipoCalculoIngreso == 1) {
+            $request->validate([
+                'FechaDesdeEdit' => 'required|date',
+                'FechaHastaEdit' => 'required|date|after_or_equal:FechaDesdeEdit',
+            ], $messages);
+        }
+
+        // Validar por monto (TipoCalculoIngreso == 2)
+        if ($request->TipoCalculoIngreso == 2) {
+            $request->validate([
+                'MontoDesdeEdit' => 'required|numeric',
+                'MontoHastaEdit' => 'required|numeric|gte:MontoDesdeEdit',
+            ], $messages);
+        }
         try {
 
             $poliza_actualizar = VidaTasaDiferenciada::findOrFail($id);
