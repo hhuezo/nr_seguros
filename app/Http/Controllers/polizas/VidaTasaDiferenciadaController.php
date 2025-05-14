@@ -14,8 +14,8 @@ class VidaTasaDiferenciadaController extends Controller
     public function show($id)
     {
         $vida = Vida::find($id);
-       // dd($vida->vida_tipos_cartera);
-        $tiposCartera = VidaCatalogoTipoCartera::where('Activo',1)->get();
+        // dd($vida->vida_tipos_cartera);
+        $tiposCartera = VidaCatalogoTipoCartera::where('Activo', 1)->get();
         //dd($tiposCartera );
         return view('polizas.vida.tasa_diferenciada', compact('vida', 'tiposCartera'));
     }
@@ -23,21 +23,31 @@ class VidaTasaDiferenciadaController extends Controller
 
     public function agregar_tipo_cartera(Request $request, $id)
     {
+        $vida = Vida::findOrFail($id);
         try {
-            // Validar los datos del request
-            $request->validate([
+
+            $rules = [
                 'TipoCartera' => 'required|integer',
                 'TipoCalculo' => 'required|integer',
-                'MontoMaximoIndividual' => 'required|numeric',
-            ], [
-                'TipoCartera.required' => 'El campo Tipo de Cartera es obligatorio.',
-                'TipoCartera.integer' => 'El campo Tipo de Cartera es obligatorio.',
-                'TipoCalculo.required' => 'El campo Tipo de Cálculo es obligatorio.',
-                'TipoCalculo.integer' => 'El campo Tipo de Cálculo es obligatorio.',
-                'MontoMaximoIndividual.required' => 'El monto máximo individual es obligatorio.',
-                'MontoMaximoIndividual.numeric' => 'El monto máximo individual no es válido.',
-            ]);
+            ];
 
+            // Solo agregar MontoMaximoIndividual si TarifaExcel != 1
+            if ($vida->TarifaExcel != 1) {
+                $rules['MontoMaximoIndividual'] = 'required|integer';
+            }
+
+            // Mensajes personalizados
+            $messages = [
+                'TipoCartera.required' => 'El campo Tipo de Cartera es obligatorio.',
+                'TipoCartera.integer' => 'El campo Tipo de Cartera debe ser un número entero.',
+                'TipoCalculo.required' => 'El campo Tipo de Cálculo es obligatorio.',
+                'TipoCalculo.integer' => 'El campo Tipo de Cálculo debe ser un número entero.',
+                'MontoMaximoIndividual.required' => 'El monto máximo individual es obligatorio.',
+                'MontoMaximoIndividual.integer' => 'El monto máximo individual debe ser un número entero.',
+            ];
+
+            // Validar
+            $request->validate($rules, $messages);
 
 
             // Verificar si los datos ya existen en la base de datos
@@ -55,7 +65,7 @@ class VidaTasaDiferenciadaController extends Controller
             $tipo_cartera->PolizaVida = $id;
             $tipo_cartera->VidaTipoCartera = $request->TipoCartera;
             $tipo_cartera->TipoCalculo = $request->TipoCalculo;
-            $tipo_cartera->MontoMaximoIndividual = $request->MontoMaximoIndividual;
+            $tipo_cartera->MontoMaximoIndividual = $request->MontoMaximoIndividual ?? null;
             $tipo_cartera->save();
 
             return back()->with('success', 'Tipo de cartera agregado correctamente.');
@@ -84,13 +94,21 @@ class VidaTasaDiferenciadaController extends Controller
 
     public function update_tipo_cartera(Request $request, $id)
     {
+
+        $vida = Vida::findOrFail($id);
+
         try {
-            // Validación dinámica según el valor de TipoCalculo
+            // Reglas base
             $rules = [
                 'TipoCartera' => 'required|numeric',
-                'MontoMaximoIndividual' => 'required|numeric|min:0',
             ];
 
+            // Solo agregar MontoMaximoIndividual si TarifaExcel != 1
+            if ($vida->TarifaExcel != 1) {
+                $rules['MontoMaximoIndividual'] = 'required|numeric|min:0';
+            }
+
+            // Mensajes personalizados
             $messages = [
                 'TipoCartera.required' => 'El campo Tipo de Cálculo es requerido.',
                 'TipoCartera.numeric' => 'Seleccione un tipo de cálculo válido.',
@@ -99,27 +117,32 @@ class VidaTasaDiferenciadaController extends Controller
                 'MontoMaximoIndividual.min' => 'El monto máximo individual debe ser mayor o igual a 0.',
             ];
 
+            // Validación
             $request->validate($rules, $messages);
+
+            $id = $request->VidaTipoCartera;
 
             // Buscar el registro
             $tipo_cartera = VidaTipoCartera::findOrFail($id);
 
-            $count = VidaTipoCartera::where('VidaTipoCartera', $request->TipoCartera)->where('PolizaVida', $tipo_cartera->PolizaVida)->count();
-
-            // Verificar si ya existe otro registro con el mismo TipoCartera y PolizaVida
+            // Verificar duplicados (ignorando el actual)
             $count = VidaTipoCartera::where('VidaTipoCartera', $request->TipoCartera)
                 ->where('PolizaVida', $tipo_cartera->PolizaVida)
-                ->where('id', '<>', $id) // Ignorar el registro actual
+                ->where('id', '<>', $id)
                 ->count();
 
             if ($count > 0) {
                 return back()->withErrors(['TipoCartera' => 'Ya existe un registro con este Tipo de Cálculo en la misma Póliza de Vida.']);
             }
 
-
-
+            // Guardar cambios
             $tipo_cartera->VidaTipoCartera = $request->TipoCartera;
-            $tipo_cartera->MontoMaximoIndividual = $request->MontoMaximoIndividual;
+
+            // Solo actualizar MontoMaximoIndividual si aplica
+            if ($vida->TarifaExcel != 1) {
+                $tipo_cartera->MontoMaximoIndividual = $request->MontoMaximoIndividual;
+            }
+
             $tipo_cartera->save();
 
             return back();
@@ -127,6 +150,7 @@ class VidaTasaDiferenciadaController extends Controller
             return back()->withErrors(['error' => 'Ocurrió un error al actualizar el tipo de cartera.']);
         }
     }
+
 
 
 
@@ -247,7 +271,7 @@ class VidaTasaDiferenciadaController extends Controller
         try {
 
             $poliza_actualizar = VidaTasaDiferenciada::findOrFail($id);
-           // dd($poliza_actualizar);
+            // dd($poliza_actualizar);
 
             if ($poliza_actualizar->poliza_vida_tipo_cartera->TipoCalculo == 1) {
                 if ($this->compColisionFechasDTasaDiferencial($id, $poliza_actualizar->PolizaVidaTipoCartera, $request->FechaDesdeEdit,  $request->FechaHastaEdit)) {
@@ -296,7 +320,8 @@ class VidaTasaDiferenciadaController extends Controller
             })->exists();
     }
 
-    private function compColisionFechasDTasaDiferencial($PolizaVidaTasaDiferenciadaId, $tipoCarteraId, $fechaDesdeRequest, $fechaHastaRequest) {
+    private function compColisionFechasDTasaDiferencial($PolizaVidaTasaDiferenciadaId, $tipoCarteraId, $fechaDesdeRequest, $fechaHastaRequest)
+    {
         return VidaTasaDiferenciada::query()
             ->where('PolizaVidaTipoCartera', $tipoCarteraId)
             ->when($PolizaVidaTasaDiferenciadaId, function ($query) use ($PolizaVidaTasaDiferenciadaId) {
@@ -306,11 +331,11 @@ class VidaTasaDiferenciadaController extends Controller
                 $query->where(function ($q) use ($fechaDesdeRequest, $fechaHastaRequest) {
                     // Caso 1: Rango nuevo se superpone con rangos existentes
                     $q->where('FechaDesde', '<=', $fechaHastaRequest)
-                      ->where('FechaHasta', '>=', $fechaDesdeRequest);
+                        ->where('FechaHasta', '>=', $fechaDesdeRequest);
                 })->orWhere(function ($q) use ($fechaDesdeRequest, $fechaHastaRequest) {
                     // Caso 2: Rango existente está completamente dentro del nuevo rango
                     $q->where('FechaDesde', '>=', $fechaDesdeRequest)
-                      ->where('FechaHasta', '<=', $fechaHastaRequest);
+                        ->where('FechaHasta', '<=', $fechaHastaRequest);
                 });
             })
             ->exists();

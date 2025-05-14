@@ -187,12 +187,19 @@ class VidaController extends Controller
             }
 
 
+            if ($request->TarifaExcel == 'on') {
+                $vida->TarifaExcel = 1;
+            } else {
+                $vida->TarifaExcel = 0;
+            }
+
+
             $vida->save();
 
             DB::commit();
 
-            alert()->success('El registro ha sido creado correctamente');
-            return redirect('polizas/vida/' . $vida->Id . '/edit');
+            return redirect('polizas/vida/' . $vida->Id . '/edit?tab=1')
+                ->with('success', 'El registro ha sido creado correctamente');
         } catch (ValidationException $e) {
             return back()
                 ->withErrors($e->validator)
@@ -331,14 +338,15 @@ class VidaController extends Controller
             $vida->Configuracion = 0;
             $vida->update();
 
-            alert()->success('El registro de poliza ha sido configurado correctamente');
-            return redirect('polizas/vida/' . $request->vida . 'edit');
+            //alert()->success('El registro de poliza ha sido configurado correctamente');
+            return redirect('polizas/vida/' . $request->vida . '/edit')
+                ->with('El registro de poliza ha sido configurado correctamente');
         } else {
             $vida->Configuracion = 1;
             $vida->update();
 
-            alert()->success('El registro de poliza ha sido configurado correctamente');
-            return redirect('polizas/vida/' . $request->vida);
+            //alert()->success('El registro de poliza ha sido configurado correctamente');
+            return redirect('polizas/vida/' . $request->vida)->with('El registro de poliza ha sido configurado correctamente');
         }
     }
 
@@ -403,18 +411,36 @@ class VidaController extends Controller
             $vida->VigenciaHasta = $request->VigenciaHasta;
             $vida->Concepto = $request->Concepto;
             $vida->Ejecutivo = $request->Ejecutivo;
-            $vida->TipoCobro = $request->TipoCobro;
             $vida->EstadoPoliza = 1;
             $vida->Tasa = $request->Tasa;
-            $vida->SumaAsegurada = $request->SumaAsegurada;
             $vida->TasaDescuento = $request->TasaDescuento ?? null;
             $vida->EdadMaximaInscripcion = $request->EdadMaximaInscripcion;
             $vida->EdadTerminacion = $request->EdadTerminacion;
             $vida->Activo = 1;
+
+            if ($request->TipoCobro == 1) {
+                $vida->LimiteMaximoIndividual = $request->LimiteMaximoIndividual ?? null;
+            }
+
+            if ($request->TipoCobro == 2 && $request->TipoTarifa == 1) {
+                $vida->SumaAsegurada = $request->SumaAsegurada ?? null;
+            }
+
+            if ($request->TipoCobro == 2 && $request->TipoTarifa == 2) {
+                $vida->Multitarifa = $request->Multitarifa ?? null;
+            }
+
+
+            if ($request->TarifaExcel == 'on') {
+                $vida->TarifaExcel = 1;
+            } else {
+                $vida->TarifaExcel = 0;
+            }
+
             $vida->update();
 
 
-            return redirect('polizas/vida/' . $id . '/edit?tab=1')
+            return redirect('polizas/vida/' . $id . '/edit?tab=2')
                 ->with('success', 'El registro ha sido modificado correctamente');
         } catch (\Exception $e) {
 

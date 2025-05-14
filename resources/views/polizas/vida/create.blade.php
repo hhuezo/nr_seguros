@@ -192,7 +192,7 @@
                                                     id="div-sumaAsegurada">
                                                     <label class="control-label" align="right">Suma asegurada</label>
                                                     <input class="form-control" name="SumaAsegurada" type="number"
-                                                        step="any" required value="{{ old('SumaAsegurada') }}"
+                                                        step="any" value="{{ old('SumaAsegurada') }}"
                                                         min="100">
                                                 </div>
 
@@ -200,8 +200,7 @@
                                                     id="div-multitarifa" style="display: none">
                                                     <label class="control-label" align="right">Multitarifa</label>
                                                     <input class="form-control" name="Multitarifa" type="text"
-                                                        id="Multitarifa" min="1" step="any" required
-                                                        value="{{ old('Multitarifa') }}"
+                                                        id="Multitarifa" min="1" step="any" value="{{ old('Multitarifa') }}"
                                                         oninput="formatMultitarifa(this)">
                                                     <label id="multitarifa-error" class="text-danger"
                                                         style="display: none;">Formato inválido: use cantidades separadas
@@ -211,7 +210,7 @@
                                             </div>
 
                                             <!-- Edad máxima de inscripción -->
-                                            <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                            <div class="item form-group col-sm-12 col-md-3 col-lg-3">
                                                 <label class="control-label" align="right">Edad máxima de
                                                     inscripción</label>
                                                 <input class="form-control" name="EdadMaximaInscripcion" type="number"
@@ -221,11 +220,19 @@
 
 
                                             <!-- Edad Terminación -->
-                                            <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                            <div class="item form-group col-sm-12 col-md-3 col-lg-3">
                                                 <label class="control-label" align="right">Edad Terminación</label>
                                                 <input class="form-control" name="EdadTerminacion" type="number"
                                                     step="any" value="{{ old('EdadTerminacion') }}" min="18"
                                                     max="100" required>
+                                            </div>
+
+
+                                            <div class="col-sm-6"><br>
+
+                                                <input name="TarifaExcel" type="checkbox" class="js-switch">
+                                                  <label class="control-label" align="right">&nbsp;Cobro con tarifa
+                                                    excel</label>
                                             </div>
 
 

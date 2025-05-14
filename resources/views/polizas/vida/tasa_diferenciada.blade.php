@@ -2,8 +2,8 @@
 @section('contenido')
     <style>
         /* .subtareas-container {
-                                                    display: none;
-                                                } */
+                                                                display: none;
+                                                            } */
 
         .expand-icon {
             cursor: pointer;
@@ -65,7 +65,10 @@
                                 <tr class="warning-row">
                                     <th style="width: 40%;">Tipo cartera</th>
                                     <th style="width: 20%;">Tipo cálculo</th>
-                                    <th style="width: 20%;">Monto máximo individual</th>
+                                    @if ($vida->TarifaExcel != 1)
+                                        <th style="width: 20%;">Monto máximo individual</th>
+                                    @endif
+
                                     <th style="width: 20%;">Opciones</th>
                                 </tr>
                             </thead>
@@ -88,9 +91,11 @@
                                                 {{ 'No aplica' }}
                                             @endif
                                         </td>
-                                        <td class="text-end">
-                                            ${{ $tipo->MontoMaximoIndividual }}
-                                        </td>
+                                        @if ($vida->TarifaExcel != 1)
+                                            <td class="text-end">
+                                                ${{ $tipo->MontoMaximoIndividual }}
+                                            </td>
+                                        @endif
                                         <td> <button class="btn btn-primary"
                                                 data-target="#modal-tipo-cartera-edit-{{ $tipo->Id }}"
                                                 data-toggle="modal"><i class="fa fa-edit"></i></button>
@@ -233,13 +238,15 @@
                                     </select>
                                 </div>
 
+                                @if ($vida->TarifaExcel != 1)
+                                    <div class="form-group row">
+                                        <label class="control-label">Monto maximo individual</label>
+                                        <input type="number" step="any" min="0.00" class="form-control"
+                                            name="MontoMaximoIndividual" required>
 
-                                <div class="form-group row">
-                                    <label class="control-label">Monto maximo individual</label>
-                                    <input type="number" step="any" min="0.00" class="form-control"
-                                        name="MontoMaximoIndividual" required>
+                                    </div>
+                                @endif
 
-                                </div>
 
 
                             </div>
