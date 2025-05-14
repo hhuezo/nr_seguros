@@ -311,7 +311,7 @@ class VidaController extends Controller
         $planes = Plan::where('Activo', 1)->get();
         $aseguradora = Aseguradora::where('Activo', 1)->get();
         $cliente = Cliente::where('Activo', 1)->get();
-        $tipoCobro = TipoCobro::where('Activo', 1)->get();
+        $tipoCobro = TipoCobro::where('Activo', 1)->orderBy('Id', 'desc')->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
         $tiposCartera = VidaTipoCartera::get();
         // $historico_poliza = PolizaDeudaHistorica::where('Deuda', $id)->get();
@@ -352,7 +352,7 @@ class VidaController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $rules = [
             'NumeroPoliza' => 'required|string|max:255',
             'Aseguradora' => 'required|exists:aseguradora,Id',
             'Asegurado' => 'required|exists:cliente,Id',
@@ -365,7 +365,23 @@ class VidaController extends Controller
             'EdadMaximaInscripcion' => 'required|numeric|min:18',
             'Tasa' => 'required|numeric|min:0.00001',
             'Concepto' => 'nullable|string|max:1000',
-        ], [
+        ];
+
+        // Reglas condicionales
+        if ($request->TipoCobro == 1) {
+            $rules['LimiteMaximoIndividual'] = 'required|numeric|min:0.01';
+        }
+
+        if ($request->TipoCobro == 2 && $request->TipoTarifa == 1) {
+            $rules['SumaAsegurada'] = 'required|numeric|min:0.01';
+        }
+
+        if ($request->TipoCobro == 2 && $request->TipoTarifa == 2) {
+            $rules['Multitarifa'] = 'required|string'; // Ajusta el tipo si es diferente
+        }
+
+        // Mensajes personalizados
+        $messages = [
             'NumeroPoliza.required' => 'El campo Número de Póliza es obligatorio.',
             'NumeroPoliza.string' => 'El campo Número de Póliza debe ser una cadena de texto.',
             'NumeroPoliza.max' => 'El campo Número de Póliza no debe exceder los 255 caracteres.',
@@ -377,13 +393,12 @@ class VidaController extends Controller
             'Nit.string' => 'El campo Nit debe ser una cadena de texto.',
             'Nit.max' => 'El campo Nit no debe exceder los 255 caracteres.',
             'Ejecutivo.required' => 'Debes seleccionar un Ejecutivo.',
-            //'Saldos.required' => 'Debes seleccionar una opcion de saldo y montos.',
             'Ejecutivo.exists' => 'El Ejecutivo seleccionado no es válido.',
             'VigenciaDesde.required' => 'El campo Vigencia inicial es obligatorio.',
             'VigenciaDesde.date' => 'El campo Vigencia inicial debe ser una fecha válida.',
             'VigenciaHasta.required' => 'El campo Vigencia final es obligatorio.',
             'VigenciaHasta.date' => 'El campo Vigencia final debe ser una fecha válida.',
-            'VigenciaHasta.after_or_equal' => 'La fecha de Vigencia final debe ser igual o posterior a la fecha de Vigencia inicial.',
+            'VigenciaHasta.after_or_equal' => 'La fecha de Vigencia final debe ser igual o posterior a la inicial.',
             'EdadTerminacion.required' => 'El campo Edad Terminación es obligatorio.',
             'EdadTerminacion.numeric' => 'El campo Edad Terminación debe ser un número.',
             'EdadTerminacion.min' => 'El campo Edad Terminación debe ser al menos 18.',
@@ -395,58 +410,78 @@ class VidaController extends Controller
             'Tasa.min' => 'El campo Tasa debe ser al menos 0.',
             'Concepto.string' => 'El campo Concepto debe ser una cadena de texto.',
             'Concepto.max' => 'El campo Concepto no debe exceder los 1000 caracteres.',
-        ]);
 
-        try {
+            // Mensajes personalizados de los nuevos campos
+            'LimiteMaximoIndividual.required' => 'El campo Límite Máximo Individual es obligatorio.',
+            'LimiteMaximoIndividual.numeric' => 'El Límite Máximo Individual debe ser un número.',
+            'LimiteMaximoIndividual.min' => 'El Límite Máximo Individual debe ser mayor a 0.',
 
+            'SumaAsegurada.required' => 'El campo Suma Asegurada es obligatorio.',
+            'SumaAsegurada.numeric' => 'La Suma Asegurada debe ser un número.',
+            'SumaAsegurada.min' => 'La Suma Asegurada debe ser mayor a 0.',
 
-            $vida = Vida::findOrFail($id);
-            $vida->NumeroPoliza = $request->NumeroPoliza;
-            $vida->Nit = $request->Nit;
-            $vida->Aseguradora = $request->Aseguradora;
-            $vida->Producto = $request->Productos;
-            $vida->Plan = $request->Planes;
-            $vida->Asegurado = $request->Asegurado;
-            $vida->VigenciaDesde = $request->VigenciaDesde;
-            $vida->VigenciaHasta = $request->VigenciaHasta;
-            $vida->Concepto = $request->Concepto;
-            $vida->Ejecutivo = $request->Ejecutivo;
-            $vida->EstadoPoliza = 1;
-            $vida->Tasa = $request->Tasa;
-            $vida->TasaDescuento = $request->TasaDescuento ?? null;
-            $vida->EdadMaximaInscripcion = $request->EdadMaximaInscripcion;
-            $vida->EdadTerminacion = $request->EdadTerminacion;
-            $vida->Activo = 1;
+            'Multitarifa.required' => 'El campo Multitarifa es obligatorio.',
+            'Multitarifa.string' => 'El campo Multitarifa debe ser una cadena.',
+        ];
 
-            if ($request->TipoCobro == 1) {
-                $vida->LimiteMaximoIndividual = $request->LimiteMaximoIndividual ?? null;
-            }
+        // Ejecutar validación
+        $request->validate($rules, $messages);
 
-            if ($request->TipoCobro == 2 && $request->TipoTarifa == 1) {
-                $vida->SumaAsegurada = $request->SumaAsegurada ?? null;
-            }
-
-            if ($request->TipoCobro == 2 && $request->TipoTarifa == 2) {
-                $vida->Multitarifa = $request->Multitarifa ?? null;
-            }
+        // try {
 
 
-            if ($request->TarifaExcel == 'on') {
-                $vida->TarifaExcel = 1;
-            } else {
-                $vida->TarifaExcel = 0;
-            }
+        $vida = Vida::findOrFail($id);
+        $vida->NumeroPoliza = $request->NumeroPoliza;
+        $vida->Nit = $request->Nit;
+        $vida->Aseguradora = $request->Aseguradora;
+        $vida->Producto = $request->Productos;
+        $vida->Plan = $request->Planes;
+        $vida->Asegurado = $request->Asegurado;
+        $vida->VigenciaDesde = $request->VigenciaDesde;
+        $vida->VigenciaHasta = $request->VigenciaHasta;
+        $vida->Concepto = $request->Concepto;
+        $vida->Ejecutivo = $request->Ejecutivo;
+        $vida->EstadoPoliza = 1;
+        $vida->Tasa = $request->Tasa;
+        $vida->TasaDescuento = $request->TasaDescuento ?? null;
+        $vida->EdadMaximaInscripcion = $request->EdadMaximaInscripcion;
+        $vida->EdadTerminacion = $request->EdadTerminacion;
+        $vida->TipoCobro = $request->TipoCobro;
+        $vida->TipoTarifa = $request->TipoTarifa;
+        $vida->Activo = 1;
 
-            $vida->update();
 
-
-            return redirect('polizas/vida/' . $id . '/edit?tab=2')
-                ->with('success', 'El registro ha sido modificado correctamente');
-        } catch (\Exception $e) {
-
-            alert()->error('Error', 'Ocurrió un error al crear la póliza de desempleo: ' . $e->getMessage())->persistent('Ok');
-            return back()->withInput();
+        if ($request->TipoCobro == 1) {
+            $vida->LimiteMaximoIndividual = $request->LimiteMaximoIndividual ?? null;
         }
+
+        if ($request->TipoCobro == 2 && $request->TipoTarifa == 1) {
+            $vida->SumaAsegurada = $request->SumaAsegurada ?? null;
+            $vida->Multitarifa = null;
+        }
+
+        if ($request->TipoCobro == 2 && $request->TipoTarifa == 2) {
+            $vida->Multitarifa = $request->Multitarifa ?? null;
+            $vida->SumaAsegurada = null;
+        }
+
+
+        if ($request->TarifaExcel == 'on') {
+            $vida->TarifaExcel = 1;
+        } else {
+            $vida->TarifaExcel = 0;
+        }
+
+        $vida->update();
+
+
+        return redirect('polizas/vida/' . $id . '/edit?tab=2')
+            ->with('success', 'El registro ha sido modificado correctamente');
+        // } catch (\Exception $e) {
+
+        //     alert()->error('Error', 'Ocurrió un error al crear la póliza de desempleo: ' . $e->getMessage())->persistent('Ok');
+        //     return back()->withInput();
+        // }
     }
 
 
@@ -556,7 +591,7 @@ class VidaController extends Controller
 
 
                 foreach ($calculo_totales as $calculo) {
-                    $item['Id'] =  $tipo->Id.$calculo->Tasa;
+                    $item['Id'] =  $tipo->Id . $calculo->Tasa;
                     $item['TipoCartera'] = $tipo->catalogo_tipo_cartera->Nombre;
                     $item['Tasa'] = $calculo->Tasa;
                     $item['Monto'] = "";
@@ -565,8 +600,6 @@ class VidaController extends Controller
                     $item['PrimaCalculada'] = $calculo->total * $calculo->Tasa;
                     $dataPago->push($item);
                 }
-
-
             }
         }
 

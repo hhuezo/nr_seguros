@@ -53,7 +53,7 @@
     <style>
         .subtareas-container {
             /* display: none;
-                                                                                                                                                /* Ocultar subtareas por defecto */
+                                                                                                                                                        /* Ocultar subtareas por defecto */
         }
 
         .expand-icon {
@@ -283,8 +283,7 @@
                                 <div class="col-sm-12" style="padding: 0% !important" id="div-cobro-creditos">
 
                                     <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                                        <label class="control-label" align="right">Tipo tarifa
-                                            {{ $vida->TipoTarifa }}</label>
+                                        <label class="control-label" align="right">Tipo tarifa</label>
                                         <select name="TipoTarifa" class="form-control"
                                             onchange="showMultitarifa(this.value)" required>
                                             <option value="1" {{ $vida->TipoTarifa == 1 ? 'selected' : '' }}>Suma
@@ -298,16 +297,19 @@
                                     <div class="item form-group col-sm-12 col-md-6 col-lg-6" id="div-sumaAsegurada"
                                         style="display: {{ $vida->TipoTarifa == 1 ? '' : 'none' }}">
                                         <label class="control-label" align="right">Suma asegurada</label>
+
                                         <input type="number" class="form-control" name="SumaAsegurada" min="0.001"
-                                            value="{{ $vida->SumaAsegurada }}">
+                                            value="{{ $vida->SumaAsegurada }}" step="any">
+
                                     </div>
+
 
 
                                     <div class="item form-group col-sm-12 col-md-6 col-lg-6" id="div-multitarifa"
                                         style="display: {{ $vida->TipoTarifa == 2 ? '' : 'none' }}">
                                         <label class="control-label" align="right">Multitarifa</label>
                                         <input class="form-control" name="Multitarifa" type="text" id="Multitarifa"
-                                            min="1" step="any"  value="{{ $vida->Multitarifa }}"
+                                            min="1" step="any" value="{{ $vida->Multitarifa }}"
                                             oninput="formatMultitarifa(this)">
                                         <label id="multitarifa-error" class="text-danger" style="display: none;">Formato
                                             inválido: use cantidades separadas
@@ -330,7 +332,8 @@
 
                                 <div class="col-sm-6"><br>
 
-                                    <input name="TarifaExcel" type="checkbox" {{$vida->TarifaExcel == 1 ? 'checked':''}} class="js-switch">
+                                    <input name="TarifaExcel" type="checkbox"
+                                        {{ $vida->TarifaExcel == 1 ? 'checked' : '' }} class="js-switch">
                                     <label class="control-label" align="right">&nbsp;Cobro con tarifa
                                         excel</label>
                                 </div>
@@ -459,10 +462,10 @@
                                                                                     @foreach ($tipo->tasa_diferenciada as $tasa_diferenciada)
                                                                                         <tr class="primary-row">
                                                                                             <!-- <td>
-                                                                                                                                                                                            {{ $tasa_diferenciada->linea_credito?->Abreviatura ?? '' }}
-                                                                                                                                                                                            -
-                                                                                                                                                                                            {{ $tasa_diferenciada->linea_credito?->Descripcion ?? '' }}
-                                                                                                                                                                                        </td> -->
+                                                                                                                                                                                                    {{ $tasa_diferenciada->linea_credito?->Abreviatura ?? '' }}
+                                                                                                                                                                                                    -
+                                                                                                                                                                                                    {{ $tasa_diferenciada->linea_credito?->Descripcion ?? '' }}
+                                                                                                                                                                                                </td> -->
                                                                                             @if ($tipo->TipoCalculo == 1)
                                                                                                 <td>
                                                                                                     {{ $tasa_diferenciada->FechaDesde ? date('d/m/Y', strtotime($tasa_diferenciada->FechaDesde)) : 'Sin fecha' }}
