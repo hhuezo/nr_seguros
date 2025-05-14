@@ -427,7 +427,7 @@ class VidaController extends Controller
         // Ejecutar validación
         $request->validate($rules, $messages);
 
-        // try {
+         try {
 
 
         $vida = Vida::findOrFail($id);
@@ -477,11 +477,11 @@ class VidaController extends Controller
 
         return redirect('polizas/vida/' . $id . '/edit?tab=2')
             ->with('success', 'El registro ha sido modificado correctamente');
-        // } catch (\Exception $e) {
+        } catch (\Exception $e) {
 
-        //     alert()->error('Error', 'Ocurrió un error al crear la póliza de desempleo: ' . $e->getMessage())->persistent('Ok');
-        //     return back()->withInput();
-        // }
+            alert()->error('Error', 'Ocurrió un error al crear la póliza de desempleo: ' . $e->getMessage())->persistent('Ok');
+            return back()->withInput();
+        }
     }
 
 
