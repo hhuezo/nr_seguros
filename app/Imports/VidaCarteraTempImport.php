@@ -16,8 +16,9 @@ class VidaCarteraTempImport implements ToModel
     private $FechaFinal;
     private $encabezados = 0;
     private $PolizaVidaTipoCartera;
+    private $TarifaExcel;
 
-    public function __construct($Axo, $Mes, $Poliza, $FechaInicio, $FechaFinal,$PolizaVidaTipoCartera)
+    public function __construct($Axo, $Mes, $Poliza, $FechaInicio, $FechaFinal, $PolizaVidaTipoCartera, $TarifaExcel)
     {
         $this->Axo = $Axo;
         $this->Mes = $Mes;
@@ -25,6 +26,7 @@ class VidaCarteraTempImport implements ToModel
         $this->FechaInicio = $FechaInicio;
         $this->FechaFinal = $FechaFinal;
         $this->PolizaVidaTipoCartera = $PolizaVidaTipoCartera;
+        $this->TarifaExcel = $TarifaExcel;
     }
 
     public function model(array $row)
@@ -40,6 +42,11 @@ class VidaCarteraTempImport implements ToModel
 
             // Verificar que al menos uno de los dos campos (NIT o DUI) tenga datos
             if (!empty(trim($row[0])) || !empty(trim($row[1]))) {
+                $Tasa = null;
+                if ($this->TarifaExcel == 1) {
+                     $Tasa =  $row[16] ?? null;
+                }
+
                 return new TempVidaCarteraTemp([
                     'PolizaVida' => $this->Poliza,
                     //'Nit' => $row[0] ?? null,
@@ -68,6 +75,9 @@ class VidaCarteraTempImport implements ToModel
                     'FechaNacimientoDate' => $this->convertirFecha($row[4] ?? null, 'Y-m-d'), // FECHA NACIMIENTO (formato Y-m-d)
                     'FechaOtorgamientoDate' => $this->convertirFecha($row[12] ?? null, 'Y-m-d'), // FECHA DE OTORGAMIENTO (formato Y-m-d)
                     'PolizaVidaTipoCartera' => $this->PolizaVidaTipoCartera,
+                    'Tasa' => $Tasa,
+
+
                 ]);
             }
         }

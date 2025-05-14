@@ -843,13 +843,13 @@ class VidaController extends Controller
         //borrar datos de tabla temporal
         VidaCarteraTemp::where('User', auth()->user()->id)->where('PolizaVida', $id)->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)->delete();
 
-        Excel::import(new VidaCarteraTempImport($request->Axo, $request->Mes, $id, $request->FechaInicio, $request->FechaFinal, $request->PolizaVidaTipoCartera), $archivo);
+        Excel::import(new VidaCarteraTempImport($request->Axo, $request->Mes, $id, $request->FechaInicio, $request->FechaFinal, $request->PolizaVidaTipoCartera, $poliza_vida->TarifaExcel), $archivo);
 
 
 
 
         //verificando creditos repetidos
-        /*$repetidos = VidaCarteraTemp::where('User', auth()->user()->id)
+        $repetidos = VidaCarteraTemp::where('User', auth()->user()->id)
             ->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)
             ->groupBy('NumeroReferencia')
             ->havingRaw('COUNT(*) > 1')
@@ -866,7 +866,7 @@ class VidaController extends Controller
 
             return back()
                 ->withErrors(['Archivo' => "Existen números de crédito repetidos: $numerosStr"]);
-        }*/
+        }
 
 
         //calculando edades y fechas de nacimiento
@@ -881,6 +881,13 @@ class VidaController extends Controller
         $cartera_temp = VidaCarteraTemp::where('User', '=', auth()->user()->id)->where('PolizaVida', $id)->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)->get();
 
         //dd($cartera_temp->take(10));
+
+        //arreglo para la multicategoria
+        if ($poliza_vida->TarifaExcel == 0) {
+            $montos = [$poliza_vida->SumaAsegurada];
+        } else {
+            $montos = explode(',', $poliza_vida->Multitarifa);
+        }
 
         foreach ($cartera_temp as $obj) {
             $errores_array = [];
@@ -963,6 +970,23 @@ class VidaController extends Controller
 
                 array_push($errores_array, 9);
             }
+
+
+
+            //validar cantidad asegurada o multi categoria error 10
+
+            if (!in_array($obj->SumaAsegurada, $montos)) {
+                $obj->TipoError = 10;
+                $obj->update();
+
+                array_push($errores_array, 10);
+            }
+
+
+
+
+
+
             $obj->Errores = $errores_array;
         }
 

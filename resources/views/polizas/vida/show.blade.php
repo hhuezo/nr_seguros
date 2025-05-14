@@ -171,8 +171,8 @@
 
             <ul class="nav navbar-right panel_toolbox">
                 <a href="{{url('polizas/vida/subir_cartera')}}/{{$poliza_vida->Id}}">
-                    <div class="btn btn-info float-right">
-                        Subir Archivo Excel</div>
+                    <button type="button" class="btn btn-info float-right">
+                        Subir Archivo Excel</button>
                 </a>
             </ul>
 

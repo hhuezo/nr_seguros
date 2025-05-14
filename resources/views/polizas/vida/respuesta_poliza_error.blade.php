@@ -14,12 +14,12 @@
                                 <h2>Error<small>Cartera con registros erroneos</small> </h2>
                             </div>
                             <div class="col-md-6 col-sm-6 col-xs-12" style="text-align: right;">
-                                <form action="{{ url('exportar/registros_erroneos') }}/{{ $poliza_vida->Id }}" method="POST"
-                                    style="display: inline-block; margin-right: 10px;">
+                                <form action="{{ url('exportar/registros_erroneos') }}/{{ $poliza_vida->Id }}"
+                                    method="POST" style="display: inline-block; margin-right: 10px;">
                                     @csrf
                                     <button class="btn btn-success">Descargar Excel</button>
                                 </form>
-                                <form method="POST" action="{{ url('polizas/vida/delete_temp') }}/{{$poliza_vida->Id}}"
+                                <form method="POST" action="{{ url('polizas/vida/delete_temp') }}/{{ $poliza_vida->Id }}"
                                     style="display: inline-block;">
                                     @csrf
                                     <button type="submit" class="btn btn-primary">
@@ -46,6 +46,7 @@
                                         <th>Edad</th>
                                         <th>Nacionalidad</th>
                                         <th>Género</th>
+                                        <th>Suma asegurada</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -103,6 +104,11 @@
                                                 @if (in_array(9, $registro->Errores))
                                                     <span style="color: red;">La Edad de terminación no válido</span>
                                                 @endif
+
+                                                @if (in_array(10, $registro->Errores))
+                                                    <span style="color: red;">La suma asegurada es diferente a la
+                                                        configurada en la póliza</span>
+                                                @endif
                                             </td>
                                             <td>
                                                 @if (in_array(4, $registro->Errores))
@@ -145,15 +151,7 @@
                                                     {{ $registro->FechaOtorgamiento }}
                                                 @endif
                                             </td>
-                                            {{-- <td class="{{ in_array(6, $registro->Errores) ? 'alert alert-danger alert-dismissible' : '' }}"
-                                                role="alert">
-                                                @if (in_array(6, $registro->Errores))
-                                                    <strong><span
-                                                            style="color: red;">{{ $registro->FechaVencimiento }}</span></strong>
-                                                @else
-                                                    {{ $registro->FechaVencimiento }}
-                                                @endif
-                                            </td> --}}
+
                                             <td>
                                                 @if (in_array(7, $registro->Errores))
                                                     <strong><span
@@ -172,14 +170,24 @@
                                             </td>
                                             <td>
                                                 @if (in_array(9, $registro->Errores))
-                                                    <strong><span
-                                                            style="color: red;">{{ $registro->Edad }}</span></strong>
+                                                    <strong><span style="color: red;">{{ $registro->Edad }}</span></strong>
                                                 @else
                                                     {{ $registro->Edad }}
                                                 @endif
                                             </td>
                                             <td> {{ $registro->Nacionalidad }}</td>
                                             <td> {{ $registro->Sexo }}</td>
+
+                                            <td class="{{ in_array(10, $registro->Errores) ? 'alert alert-danger alert-dismissible' : '' }}"
+                                                role="alert" style="text-align: right">
+                                                @if (in_array(6, $registro->Errores))
+                                                    <strong><span
+                                                            style="color: red;">${{ number_format($registro->SumaAsegurada, 2, '.', ',') }}</span></strong>
+                                                @else
+                                                    ${{ number_format($registro->SumaAsegurada, 2, '.', ',') }}
+                                                @endif
+                                            </td>
+
                                         </tr>
                                     @endforeach
 
