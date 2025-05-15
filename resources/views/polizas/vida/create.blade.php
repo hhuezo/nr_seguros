@@ -179,11 +179,11 @@
                                                 id="div-cobro-creditos">
 
                                                 <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                                                    <label class="control-label" align="right">Tipo tarifa</label>
+                                                    <label class="control-label" align="right">Tipo de suma</label>
                                                     <select name="TipoTarifa" class="form-control"
                                                         onchange="showMultitarifa(this.value)" required>
                                                         <option value="1">Suma uniforme</option>
-                                                        <option value="2">Multitarifa</option>
+                                                        <option value="2">Multicategoria</option>
                                                     </select>
                                                 </div>
 
@@ -198,7 +198,7 @@
 
                                                 <div class="item form-group col-sm-12 col-md-6 col-lg-6"
                                                     id="div-multitarifa" style="display: none">
-                                                    <label class="control-label" align="right">Multitarifa</label>
+                                                    <label class="control-label" align="right">Multicategoria</label>
                                                     <input class="form-control" name="Multitarifa" type="text"
                                                         id="Multitarifa" min="1" step="any" value="{{ old('Multitarifa') }}"
                                                         oninput="formatMultitarifa(this)">

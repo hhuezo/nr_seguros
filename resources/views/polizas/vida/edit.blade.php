@@ -283,13 +283,13 @@
                                 <div class="col-sm-12" style="padding: 0% !important" id="div-cobro-creditos">
 
                                     <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                                        <label class="control-label" align="right">Tipo tarifa</label>
+                                        <label class="control-label" align="right">Tipo de suma</label>
                                         <select name="TipoTarifa" class="form-control"
                                             onchange="showMultitarifa(this.value)" required>
                                             <option value="1" {{ $vida->TipoTarifa == 1 ? 'selected' : '' }}>Suma
                                                 uniforme</option>
                                             <option value="2" {{ $vida->TipoTarifa == 2 ? 'selected' : '' }}>
-                                                Multitarifa</option>
+                                                Multicategoria</option>
                                         </select>
                                     </div>
 
@@ -307,7 +307,7 @@
 
                                     <div class="item form-group col-sm-12 col-md-6 col-lg-6" id="div-multitarifa"
                                         style="display: {{ $vida->TipoTarifa == 2 ? '' : 'none' }}">
-                                        <label class="control-label" align="right">Multitarifa</label>
+                                        <label class="control-label" align="right">Multicategoria</label>
                                         <input class="form-control" name="Multitarifa" type="text" id="Multitarifa"
                                             min="1" step="any" value="{{ $vida->Multitarifa }}"
                                             oninput="formatMultitarifa(this)">
