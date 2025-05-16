@@ -361,6 +361,8 @@
         $(document).ready(function() {
             let idRegistroArray = @json($dataPagoId);
 
+
+
             if (Array.isArray(idRegistroArray) && idRegistroArray.length > 0) {
                 calculoTotales();
             }

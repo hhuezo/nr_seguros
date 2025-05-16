@@ -573,7 +573,7 @@
             paging: false
         });
         $('#table4').DataTable({
-            paging: false
+            //paging: false
         });
         $('#table5').DataTable({
             paging: false

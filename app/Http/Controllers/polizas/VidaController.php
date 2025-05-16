@@ -427,56 +427,56 @@ class VidaController extends Controller
         // Ejecutar validación
         $request->validate($rules, $messages);
 
-         try {
+        try {
 
 
-        $vida = Vida::findOrFail($id);
-        $vida->NumeroPoliza = $request->NumeroPoliza;
-        $vida->Nit = $request->Nit;
-        $vida->Aseguradora = $request->Aseguradora;
-        $vida->Producto = $request->Productos;
-        $vida->Plan = $request->Planes;
-        $vida->Asegurado = $request->Asegurado;
-        $vida->VigenciaDesde = $request->VigenciaDesde;
-        $vida->VigenciaHasta = $request->VigenciaHasta;
-        $vida->Concepto = $request->Concepto;
-        $vida->Ejecutivo = $request->Ejecutivo;
-        $vida->EstadoPoliza = 1;
-        $vida->Tasa = $request->Tasa;
-        $vida->TasaDescuento = $request->TasaDescuento ?? null;
-        $vida->EdadMaximaInscripcion = $request->EdadMaximaInscripcion;
-        $vida->EdadTerminacion = $request->EdadTerminacion;
-        $vida->TipoCobro = $request->TipoCobro;
-        $vida->TipoTarifa = $request->TipoTarifa;
-        $vida->Activo = 1;
+            $vida = Vida::findOrFail($id);
+            $vida->NumeroPoliza = $request->NumeroPoliza;
+            $vida->Nit = $request->Nit;
+            $vida->Aseguradora = $request->Aseguradora;
+            $vida->Producto = $request->Productos;
+            $vida->Plan = $request->Planes;
+            $vida->Asegurado = $request->Asegurado;
+            $vida->VigenciaDesde = $request->VigenciaDesde;
+            $vida->VigenciaHasta = $request->VigenciaHasta;
+            $vida->Concepto = $request->Concepto;
+            $vida->Ejecutivo = $request->Ejecutivo;
+            $vida->EstadoPoliza = 1;
+            $vida->Tasa = $request->Tasa;
+            $vida->TasaDescuento = $request->TasaDescuento ?? null;
+            $vida->EdadMaximaInscripcion = $request->EdadMaximaInscripcion;
+            $vida->EdadTerminacion = $request->EdadTerminacion;
+            $vida->TipoCobro = $request->TipoCobro;
+            $vida->TipoTarifa = $request->TipoTarifa;
+            $vida->Activo = 1;
 
 
-        if ($request->TipoCobro == 1) {
-            $vida->LimiteMaximoIndividual = $request->LimiteMaximoIndividual ?? null;
-        }
+            if ($request->TipoCobro == 1) {
+                $vida->LimiteMaximoIndividual = $request->LimiteMaximoIndividual ?? null;
+            }
 
-        if ($request->TipoCobro == 2 && $request->TipoTarifa == 1) {
-            $vida->SumaAsegurada = $request->SumaAsegurada ?? null;
-            $vida->Multitarifa = null;
-        }
+            if ($request->TipoCobro == 2 && $request->TipoTarifa == 1) {
+                $vida->SumaAsegurada = $request->SumaAsegurada ?? null;
+                $vida->Multitarifa = null;
+            }
 
-        if ($request->TipoCobro == 2 && $request->TipoTarifa == 2) {
-            $vida->Multitarifa = $request->Multitarifa ?? null;
-            $vida->SumaAsegurada = null;
-        }
-
-
-        if ($request->TarifaExcel == 'on') {
-            $vida->TarifaExcel = 1;
-        } else {
-            $vida->TarifaExcel = 0;
-        }
-
-        $vida->update();
+            if ($request->TipoCobro == 2 && $request->TipoTarifa == 2) {
+                $vida->Multitarifa = $request->Multitarifa ?? null;
+                $vida->SumaAsegurada = null;
+            }
 
 
-        return redirect('polizas/vida/' . $id . '/edit?tab=2')
-            ->with('success', 'El registro ha sido modificado correctamente');
+            if ($request->TarifaExcel == 'on') {
+                $vida->TarifaExcel = 1;
+            } else {
+                $vida->TarifaExcel = 0;
+            }
+
+            $vida->update();
+
+
+            return redirect('polizas/vida/' . $id . '/edit?tab=2')
+                ->with('success', 'El registro ha sido modificado correctamente');
         } catch (\Exception $e) {
 
             alert()->error('Error', 'Ocurrió un error al crear la póliza de desempleo: ' . $e->getMessage())->persistent('Ok');
@@ -591,6 +591,7 @@ class VidaController extends Controller
 
 
                 foreach ($calculo_totales as $calculo) {
+                    $dataPagoId[] = $tipo->Id . $calculo->Tasa;
                     $item['Id'] =  $tipo->Id . $calculo->Tasa;
                     $item['TipoCartera'] = $tipo->catalogo_tipo_cartera->Nombre;
                     $item['Tasa'] = $calculo->Tasa;
@@ -1372,16 +1373,13 @@ class VidaController extends Controller
     {
         try {
             $poliza_vida = Vida::findOrFail($id);
-            if ($poliza_vida->TipoCobro == 1) {
-                $count = VidaCarteraTemp::where('User', auth()->user()->id)
-                    ->where('PolizaVida', $id)
-                    //->where('EdadDesembloso', '>', $poliza_vida->EdadMaximaInscripcion) EdadTerminacion
-                    ->where('EdadDesembloso', '>', $poliza_vida->EdadMaximaInscripcion)
-                    ->where('NoValido', 0)
-                    ->count();
-            } else {
-                $count = 0;
-            }
+
+            $count = VidaCarteraTemp::where('PolizaVida', $id)
+                //->where('EdadDesembloso', '>', $poliza_vida->EdadMaximaInscripcion) EdadTerminacion
+                ->where('EdadDesembloso', '>', $poliza_vida->EdadMaximaInscripcion)
+                ->where('NoValido', 0)
+                ->count();
+
 
 
             return response()->json([
