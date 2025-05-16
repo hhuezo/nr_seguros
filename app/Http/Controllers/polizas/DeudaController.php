@@ -394,7 +394,7 @@ class DeudaController extends Controller
         // Estructura de la tabla
         $tabla = [];
         foreach ($requisitos as $requisito) {
-            $perfil = $requisito->perfil->Codigo. ' - ' .$requisito->perfil->Descripcion;
+            $perfil = $requisito->perfil->Codigo . ' - ' . $requisito->perfil->Descripcion;
             $perfilId = $requisito->Perfil;
             $edadRango = "{$requisito->EdadInicial}-{$requisito->EdadFinal}";
             $montoRango = "{$requisito->MontoInicial}-{$requisito->MontoFinal}";
@@ -643,71 +643,74 @@ class DeudaController extends Controller
 
             //tab 2
 
+
+
             $dataPagoTemp = collect([]);
             $dataPagoId = [];
 
+            //para datos que no tengan la tasa en archivo excel
+            if ($deuda->TarifaExcel != 1) {
+                foreach ($deuda->deuda_tipos_cartera as $deuda_tipos_cartera) {
 
-            foreach ($deuda->deuda_tipos_cartera as $deuda_tipos_cartera) {
+                    foreach ($deuda_tipos_cartera->tasa_diferenciada as $tasa_diferenciada) {
 
-                foreach ($deuda_tipos_cartera->tasa_diferenciada as $tasa_diferenciada) {
+                        $dataPagoId[] = $tasa_diferenciada->Id;
 
-                    $dataPagoId[] = $tasa_diferenciada->Id;
+                        $linea_credito = SaldoMontos::findOrFail($tasa_diferenciada->LineaCredito);
 
-                    $linea_credito = SaldoMontos::findOrFail($tasa_diferenciada->LineaCredito);
+                        $edad = '';
 
-                    $edad = '';
+                        if ($deuda_tipos_cartera->TipoCalculo == 2) {
+                            $edad = $tasa_diferenciada->EdadDesde . ' - ' . $tasa_diferenciada->EdadHasta . ' años';
+                        }
 
-                    if ($deuda_tipos_cartera->TipoCalculo == 2) {
-                        $edad = $tasa_diferenciada->EdadDesde . ' - ' . $tasa_diferenciada->EdadHasta . ' años';
+                        $fecha = '';
+
+                        if ($deuda_tipos_cartera->TipoCalculo == 1) {
+                            $fecha = Carbon::parse($tasa_diferenciada->FechaDesde)->format('d/m/Y') .
+                                ' - ' .
+                                Carbon::parse($tasa_diferenciada->FechaHasta)->format('d/m/Y');
+                        }
+
+
+
+                        $dataPagoTemp->push([
+                            "Id" => $tasa_diferenciada->Id,
+                            "PolizaDeuda" => $deuda_tipos_cartera->PolizaDeuda,
+                            "TipoCartera" => $deuda_tipos_cartera->TipoCartera,
+                            "DescripcionTipoCartera" => $deuda_tipos_cartera->TipoCartera,
+                            "TipoCalculo" => $deuda_tipos_cartera->TipoCalculo,
+                            "MontoMaximoIndividual" => $deuda_tipos_cartera->MontoMaximoIndividual,
+                            // Agregando los nuevos campos
+                            "PolizaDuedaTipoCartera" => $tasa_diferenciada->PolizaDuedaTipoCartera,
+                            "LineaCredito" => $tasa_diferenciada->LineaCredito,
+                            "DescripcionLineaCredito" => $linea_credito ? $linea_credito->Descripcion : '',
+                            "AbreviaturaLineaCredito" => $linea_credito ? $linea_credito->Abreviatura : '',
+                            "Fecha" => $fecha,
+                            "Edad" => $edad,
+                            "FechaDesde" => $tasa_diferenciada->FechaDesde ?? null,
+                            "FechaHasta" => $tasa_diferenciada->FechaHasta ?? null,
+                            "EdadDesde" => $tasa_diferenciada->EdadDesde ?? null,
+                            "EdadHasta" => $tasa_diferenciada->EdadHasta ?? null,
+
+                            "Tasa" => $tasa_diferenciada->Tasa,
+                        ]);
                     }
-
-                    $fecha = '';
-
-                    if ($deuda_tipos_cartera->TipoCalculo == 1) {
-                        $fecha = Carbon::parse($tasa_diferenciada->FechaDesde)->format('d/m/Y') .
-                            ' - ' .
-                            Carbon::parse($tasa_diferenciada->FechaHasta)->format('d/m/Y');
-                    }
-
-
-
-                    $dataPagoTemp->push([
-                        "Id" => $tasa_diferenciada->Id,
-                        "PolizaDeuda" => $deuda_tipos_cartera->PolizaDeuda,
-                        "TipoCartera" => $deuda_tipos_cartera->TipoCartera,
-                        "DescripcionTipoCartera" => $deuda_tipos_cartera->TipoCartera,
-                        "TipoCalculo" => $deuda_tipos_cartera->TipoCalculo,
-                        "MontoMaximoIndividual" => $deuda_tipos_cartera->MontoMaximoIndividual,
-                        // Agregando los nuevos campos
-                        "PolizaDuedaTipoCartera" => $tasa_diferenciada->PolizaDuedaTipoCartera,
-                        "LineaCredito" => $tasa_diferenciada->LineaCredito,
-                        "DescripcionLineaCredito" => $linea_credito ? $linea_credito->Descripcion : '',
-                        "AbreviaturaLineaCredito" => $linea_credito ? $linea_credito->Abreviatura : '',
-                        "Fecha" => $fecha,
-                        "Edad" => $edad,
-                        "FechaDesde" => $tasa_diferenciada->FechaDesde ?? null,
-                        "FechaHasta" => $tasa_diferenciada->FechaHasta ?? null,
-                        "EdadDesde" => $tasa_diferenciada->EdadDesde ?? null,
-                        "EdadHasta" => $tasa_diferenciada->EdadHasta ?? null,
-
-                        "Tasa" => $tasa_diferenciada->Tasa,
-                    ]);
                 }
-            }
 
 
-            $dataPago = collect([]);
+                $dataPago = collect([]);
 
 
 
-            foreach ($dataPagoTemp as $item) {
+                foreach ($dataPagoTemp as $item) {
 
-                //dd($item);
-                //por fechas
-                if ($item['TipoCalculo'] == 1) {
+                    //dd($item);
+                    //por fechas
+                    if ($item['TipoCalculo'] == 1) {
 
-                    $total = DB::table('poliza_deuda_cartera')
-                        ->selectRaw('
+                        $total = DB::table('poliza_deuda_cartera')
+                            ->selectRaw('
                         COALESCE(SUM(MontoOtorgado), 0) as MontoOtorgado,
                         COALESCE(SUM(SaldoCapital), 0) as SaldoCapital,
                         COALESCE(SUM(Intereses), 0) as Intereses,
@@ -716,30 +719,30 @@ class DeudaController extends Controller
                         COALESCE(SUM(MontoNominal), 0) as MontoNominal,
                         COALESCE(SUM(TotalCredito), 0) as TotalCredito
                     ')
-                        ->where('PolizaDeudaDetalle', null)
-                        ->where('PolizaDeuda', $id)
-                        ->where('PolizaDeudaTipoCartera', $item['PolizaDuedaTipoCartera'])
-                        ->where('LineaCredito', $item['LineaCredito'])
-                        ->whereBetween('FechaOtorgamientoDate', [$item['FechaDesde'], $item['FechaHasta']])
-                        ->first();
+                            ->where('PolizaDeudaDetalle', null)
+                            ->where('PolizaDeuda', $id)
+                            ->where('PolizaDeudaTipoCartera', $item['PolizaDuedaTipoCartera'])
+                            ->where('LineaCredito', $item['LineaCredito'])
+                            ->whereBetween('FechaOtorgamientoDate', [$item['FechaDesde'], $item['FechaHasta']])
+                            ->first();
 
-                    // Si $total es null, aseguramos que los valores sean 0
-                    $item['MontoOtorgado'] = $total->MontoOtorgado ?? 0;
-                    $item['SaldoCapital'] = $total->SaldoCapital ?? 0;
-                    $item['Intereses'] = $total->Intereses ?? 0;
-                    $item['InteresesMoratorios'] = $total->InteresesMoratorios ?? 0;
-                    $item['InteresesCovid'] = $total->InteresesCovid ?? 0;
-                    $item['MontoNominal'] = $total->MontoNominal ?? 0;
-                    $item['TotalCredito'] = $total->TotalCredito ?? 0;
-                    $item['PrimaCalculada'] = ($item['TotalCredito'] > 0 && $item['Tasa'] > 0)
-                        ? $item['TotalCredito'] * $item['Tasa'] : 0;
+                        // Si $total es null, aseguramos que los valores sean 0
+                        $item['MontoOtorgado'] = $total->MontoOtorgado ?? 0;
+                        $item['SaldoCapital'] = $total->SaldoCapital ?? 0;
+                        $item['Intereses'] = $total->Intereses ?? 0;
+                        $item['InteresesMoratorios'] = $total->InteresesMoratorios ?? 0;
+                        $item['InteresesCovid'] = $total->InteresesCovid ?? 0;
+                        $item['MontoNominal'] = $total->MontoNominal ?? 0;
+                        $item['TotalCredito'] = $total->TotalCredito ?? 0;
+                        $item['PrimaCalculada'] = ($item['TotalCredito'] > 0 && $item['Tasa'] > 0)
+                            ? $item['TotalCredito'] * $item['Tasa'] : 0;
 
-                    $dataPago->push($item);
-                }
-                //por edad
-                else if ($item['TipoCalculo'] == 2) {
-                    $total = DB::table('poliza_deuda_cartera')
-                        ->selectRaw('
+                        $dataPago->push($item);
+                    }
+                    //por edad
+                    else if ($item['TipoCalculo'] == 2) {
+                        $total = DB::table('poliza_deuda_cartera')
+                            ->selectRaw('
                             COALESCE(SUM(MontoOtorgado), 0) as MontoOtorgado,
                             COALESCE(SUM(SaldoCapital), 0) as SaldoCapital,
                             COALESCE(SUM(Intereses), 0) as Intereses,
@@ -748,29 +751,28 @@ class DeudaController extends Controller
                             COALESCE(SUM(MontoNominal), 0) as MontoNominal,
                             COALESCE(SUM(TotalCredito), 0) as TotalCredito
                         ')
-                        ->where('PolizaDeudaDetalle', null)
-                        ->where('PolizaDeuda', $id)
-                        ->where('PolizaDeudaTipoCartera', $item['PolizaDuedaTipoCartera'])
-                        ->where('LineaCredito', $item['LineaCredito'])
-                        ->whereBetween('EdadDesembloso', [$item['EdadDesde'], $item['EdadHasta']])
-                        ->first();
+                            ->where('PolizaDeudaDetalle', null)
+                            ->where('PolizaDeuda', $id)
+                            ->where('PolizaDeudaTipoCartera', $item['PolizaDuedaTipoCartera'])
+                            ->where('LineaCredito', $item['LineaCredito'])
+                            ->whereBetween('EdadDesembloso', [$item['EdadDesde'], $item['EdadHasta']])
+                            ->first();
 
-                    // Si $total es null, aseguramos que los valores sean 0
-                    $item['MontoOtorgado'] = $total->MontoOtorgado ?? 0;
-                    $item['SaldoCapital'] = $total->SaldoCapital ?? 0;
-                    $item['Intereses'] = $total->Intereses ?? 0;
-                    $item['InteresesMoratorios'] = $total->InteresesMoratorios ?? 0;
-                    $item['InteresesCovid'] = $total->InteresesCovid ?? 0;
-                    $item['MontoNominal'] = $total->MontoNominal ?? 0;
-                    $item['TotalCredito'] = $total->TotalCredito ?? 0;
-                    $item['PrimaCalculada'] = ($item['TotalCredito'] > 0 && $item['Tasa'] > 0)
-                        ? $item['TotalCredito'] * $item['Tasa'] : 0;
+                        // Si $total es null, aseguramos que los valores sean 0
+                        $item['MontoOtorgado'] = $total->MontoOtorgado ?? 0;
+                        $item['SaldoCapital'] = $total->SaldoCapital ?? 0;
+                        $item['Intereses'] = $total->Intereses ?? 0;
+                        $item['InteresesMoratorios'] = $total->InteresesMoratorios ?? 0;
+                        $item['InteresesCovid'] = $total->InteresesCovid ?? 0;
+                        $item['MontoNominal'] = $total->MontoNominal ?? 0;
+                        $item['TotalCredito'] = $total->TotalCredito ?? 0;
+                        $item['PrimaCalculada'] = ($item['TotalCredito'] > 0 && $item['Tasa'] > 0)
+                            ? $item['TotalCredito'] * $item['Tasa'] : 0;
 
-                    $dataPago->push($item);
-
-                } else {
-                    $total = DB::table('poliza_deuda_cartera')
-                        ->selectRaw('
+                        $dataPago->push($item);
+                    } else {
+                        $total = DB::table('poliza_deuda_cartera')
+                            ->selectRaw('
                     COALESCE(SUM(MontoOtorgado), 0) as MontoOtorgado,
                     COALESCE(SUM(SaldoCapital), 0) as SaldoCapital,
                     COALESCE(SUM(Intereses), 0) as Intereses,
@@ -779,23 +781,66 @@ class DeudaController extends Controller
                     COALESCE(SUM(MontoNominal), 0) as MontoNominal,
                     COALESCE(SUM(TotalCredito), 0) as TotalCredito
                 ')
-                        ->where('PolizaDeudaDetalle', null)
-                        ->where('PolizaDeuda', $id)
-                        ->where('PolizaDeudaTipoCartera', $item['PolizaDuedaTipoCartera'])
-                        ->where('LineaCredito', $item['LineaCredito'])
-                        //->whereBetween('FechaOtorgamientoDate', [$item['FechaDesde'], $item['FechaHasta']])
-                        ->first();
+                            ->where('PolizaDeudaDetalle', null)
+                            ->where('PolizaDeuda', $id)
+                            ->where('PolizaDeudaTipoCartera', $item['PolizaDuedaTipoCartera'])
+                            ->where('LineaCredito', $item['LineaCredito'])
+                            //->whereBetween('FechaOtorgamientoDate', [$item['FechaDesde'], $item['FechaHasta']])
+                            ->first();
 
-                    // Si $total es null, aseguramos que los valores sean 0
-                    $item['MontoOtorgado'] = $total->MontoOtorgado ?? 0;
-                    $item['SaldoCapital'] = $total->SaldoCapital ?? 0;
-                    $item['Intereses'] = $total->Intereses ?? 0;
-                    $item['InteresesMoratorios'] = $total->InteresesMoratorios ?? 0;
-                    $item['InteresesCovid'] = $total->InteresesCovid ?? 0;
-                    $item['MontoNominal'] = $total->MontoNominal ?? 0;
-                    $item['TotalCredito'] = $total->TotalCredito ?? 0;
-                    $item['PrimaCalculada'] = ($item['TotalCredito'] > 0 && $item['Tasa'] > 0)
-                        ? $item['TotalCredito'] * $item['Tasa'] : 0;
+                        // Si $total es null, aseguramos que los valores sean 0
+                        $item['MontoOtorgado'] = $total->MontoOtorgado ?? 0;
+                        $item['SaldoCapital'] = $total->SaldoCapital ?? 0;
+                        $item['Intereses'] = $total->Intereses ?? 0;
+                        $item['InteresesMoratorios'] = $total->InteresesMoratorios ?? 0;
+                        $item['InteresesCovid'] = $total->InteresesCovid ?? 0;
+                        $item['MontoNominal'] = $total->MontoNominal ?? 0;
+                        $item['TotalCredito'] = $total->TotalCredito ?? 0;
+                        $item['PrimaCalculada'] = ($item['TotalCredito'] > 0 && $item['Tasa'] > 0)
+                            ? $item['TotalCredito'] * $item['Tasa'] : 0;
+
+                        $dataPago->push($item);
+                    }
+                }
+            } else {
+                 //para datos que tengan la tasa en archivo excel
+                $dataPago = collect([]);
+                $cartera_data = PolizaDeudaCartera::with('linea_credito')
+                    ->whereNull('PolizaDeudaDetalle')
+                    ->where('PolizaDeuda', $id)
+                    ->selectRaw('LineaCredito,
+                    Tasa,
+                    COALESCE(SUM(MontoOtorgado), 0) as MontoOtorgado,
+                    COALESCE(SUM(SaldoCapital), 0) as SaldoCapital,
+                    COALESCE(SUM(Intereses), 0) as Intereses,
+                    COALESCE(SUM(InteresesMoratorios), 0) as InteresesMoratorios,
+                    COALESCE(SUM(InteresesCovid), 0) as InteresesCovid,
+                    COALESCE(SUM(MontoNominal), 0) as MontoNominal,
+                    COALESCE(SUM(TotalCredito), 0) as TotalCredito
+                ')
+                    ->groupBy('LineaCredito')
+                    ->groupBy('Tasa')
+                    ->get();
+
+
+                foreach ($cartera_data as $cartera) {
+                    $dataPagoId[] = $cartera->LineaCredito . $cartera->Tasa;
+                    $item['Id'] =   $cartera->LineaCredito . $cartera->Tasa;
+                    $item['MontoOtorgado'] = $cartera->MontoOtorgado ?? 0;
+                    $item['SaldoCapital'] = $cartera->SaldoCapital ?? 0;
+                    $item['Intereses'] = $cartera->Intereses ?? 0;
+                    $item['InteresesMoratorios'] = $cartera->InteresesMoratorios ?? 0;
+                    $item['InteresesCovid'] = $cartera->InteresesCovid ?? 0;
+                    $item['MontoNominal'] = $cartera->MontoNominal ?? 0;
+                    $item['TotalCredito'] = $cartera->TotalCredito ?? 0;
+                    $item['Tasa'] = $cartera->Tasa ?? null;
+                    $item['PrimaCalculada'] = ($cartera->TotalCredito > 0 && $cartera->Tasa > 0)
+                        ? $cartera->TotalCredito * $cartera->Tasa : 0;
+
+                    $item['DescripcionLineaCredito'] =  $cartera->linea_credito->Descripcion ?? '';
+                    $item['AbreviaturaLineaCredito'] =  $cartera->linea_credito->Abreviatura ?? '';
+                    $item['Edad'] =   '';
+                    $item['Fecha'] =   '';
 
                     $dataPago->push($item);
                 }
@@ -886,7 +931,7 @@ class DeudaController extends Controller
                 'NumeroReferencia',
                 'MontoOtorgado',
                 'SaldoCapital'
-            )->where('PolizaDeudaDetalle',null);
+            )->where('PolizaDeudaDetalle', null);
 
             // Verificar si $array_dui tiene datos antes de agregar la condición whereNotIn
             if (!empty($array_dui)) {
@@ -1386,7 +1431,7 @@ class DeudaController extends Controller
     {
         // dd($request->deuda_id);
 
-        PolizaDeudaCartera::where('PolizaDeuda', $request->deuda_id)->where('PolizaDeudaDetalle',null)->delete();
+        PolizaDeudaCartera::where('PolizaDeuda', $request->deuda_id)->where('PolizaDeudaDetalle', null)->delete();
 
         PolizaDeudaTempCartera::where('PolizaDeuda', $request->deuda_id)->delete();
         return redirect('polizas/deuda/' . $request->deuda_id . '/edit');

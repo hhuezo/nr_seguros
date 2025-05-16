@@ -503,7 +503,7 @@ class VidaController extends Controller
 
 
         // tab2 si no es multi categoria
-        if ($poliza_vida->TarifaExcel == 0) {
+        if ($poliza_vida->TarifaExcel != 1) {
             $cartera = VidaCartera::where('PolizaVida', '=', $id)
                 ->where('PolizaVidaDetalle', null)
                 ->select(DB::raw("IFNULL(sum(SumaAsegurada), '0.00') as SumaAsegurada"))->first();
