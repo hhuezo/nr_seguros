@@ -228,7 +228,7 @@ class DeudaCarteraController extends Controller
         PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->delete();
 
         try {
-            Excel::import(new PolizaDeudaTempCarteraImport($date->year, $date->month, $deuda->Id, $request->FechaInicio, $request->FechaFinal, $deuda_tipo_cartera->Id), $archivo);
+            Excel::import(new PolizaDeudaTempCarteraImport($date->year, $date->month, $deuda->Id, $request->FechaInicio, $request->FechaFinal, $deuda_tipo_cartera->Id, $deuda->TarifaExcel), $archivo);
         } catch (\Exception $e) {
             // Filtramos solo nuestros errores de validación
             if (strpos($e->getMessage(), 'VALIDATION_ERROR:') === 0) {
@@ -436,43 +436,55 @@ class DeudaCarteraController extends Controller
 
 
 
-        //tasas diferenciadas
-        $tasas_diferenciadas = $deuda_tipo_cartera->tasa_diferenciada;
+        //tasas diferenciadas solo los que no traen la tarifa en el excel
+        if ($deuda->TarifaExcel != 1) {
+            $tasas_diferenciadas = $deuda_tipo_cartera->tasa_diferenciada;
 
-        if ($deuda_tipo_cartera->TipoCalculo == 1) {
+            if ($deuda_tipo_cartera->TipoCalculo == 1) {
 
-            foreach ($tasas_diferenciadas as $tasa) {
-                //dd($tasa);
-                PolizaDeudaTempCartera::where('User', auth()->user()->id)
-                    ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
-                    ->whereBetween('FechaOtorgamientoDate', [$tasa->FechaDesde, $tasa->FechaHasta])
-                    ->update([
-                        'LineaCredito' => $tasa->LineaCredito,
-                        'Tasa' => $tasa->Tasa
-                    ]);
-            }
-        } else  if ($deuda_tipo_cartera->TipoCalculo == 2) {
+                foreach ($tasas_diferenciadas as $tasa) {
+                    //dd($tasa);
+                    PolizaDeudaTempCartera::where('User', auth()->user()->id)
+                        ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                        ->whereBetween('FechaOtorgamientoDate', [$tasa->FechaDesde, $tasa->FechaHasta])
+                        ->update([
+                            'LineaCredito' => $tasa->LineaCredito,
+                            'Tasa' => $tasa->Tasa
+                        ]);
+                }
+            } else  if ($deuda_tipo_cartera->TipoCalculo == 2) {
 
-            foreach ($tasas_diferenciadas as $tasa) {
-                PolizaDeudaTempCartera::where('User', auth()->user()->id)
-                    ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
-                    ->whereBetween('EdadDesembloso', [$tasa->EdadDesde, $tasa->EdadHasta])
-                    ->update([
-                        'LineaCredito' => $tasa->LineaCredito,
-                        'Tasa' => $tasa->Tasa
-                    ]);
+                foreach ($tasas_diferenciadas as $tasa) {
+                    PolizaDeudaTempCartera::where('User', auth()->user()->id)
+                        ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                        ->whereBetween('EdadDesembloso', [$tasa->EdadDesde, $tasa->EdadHasta])
+                        ->update([
+                            'LineaCredito' => $tasa->LineaCredito,
+                            'Tasa' => $tasa->Tasa
+                        ]);
+                }
+            } else {
+                foreach ($tasas_diferenciadas as $tasa) {
+                    PolizaDeudaTempCartera::where('User', auth()->user()->id)
+                        ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                        ->update([
+                            'LineaCredito' => $tasa->LineaCredito,
+                            'Tasa' => $deuda->Tasa
+                        ]);
+                }
             }
         } else {
+             //tasas diferenciadas solo los que si traen la tarifa en el excel
+            $tasas_diferenciadas = $deuda_tipo_cartera->tasa_diferenciada;
             foreach ($tasas_diferenciadas as $tasa) {
                 PolizaDeudaTempCartera::where('User', auth()->user()->id)
                     ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
                     ->update([
                         'LineaCredito' => $tasa->LineaCredito,
-                        'Tasa' => $deuda->Tasa
+                        //'Tasa' => $deuda->Tasa
                     ]);
             }
         }
-
 
         $cartera_temp = PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->get();
 
@@ -725,66 +737,66 @@ class DeudaCarteraController extends Controller
             return view('polizas.deuda.respuesta_poliza_error', compact('data_error', 'deuda', 'credito'));
         }
 
-          //calculando edades y fechas de nacimiento
-          PolizaDeudaTempCartera::where('User', auth()->user()->id)
-          ->where('PolizaDeuda', $deuda->Id)
-          ->update([
-              'FechaNacimientoDate' => DB::raw("STR_TO_DATE(FechaNacimiento, '%d/%m/%Y')"),
-              //'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, CURDATE())"),
-              'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaFinal)"),
-              'FechaOtorgamientoDate' => DB::raw("STR_TO_DATE(FechaOtorgamiento, '%d/%m/%Y')"),
-              'EdadDesembloso' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaOtorgamientoDate)"),
-          ]);
+        //calculando edades y fechas de nacimiento
+        PolizaDeudaTempCartera::where('User', auth()->user()->id)
+            ->where('PolizaDeuda', $deuda->Id)
+            ->update([
+                'FechaNacimientoDate' => DB::raw("STR_TO_DATE(FechaNacimiento, '%d/%m/%Y')"),
+                //'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, CURDATE())"),
+                'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaFinal)"),
+                'FechaOtorgamientoDate' => DB::raw("STR_TO_DATE(FechaOtorgamiento, '%d/%m/%Y')"),
+                'EdadDesembloso' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaOtorgamientoDate)"),
+            ]);
 
 
 
 
-         //tasas diferenciadas
-         $tasas_diferenciadas = $deuda_tipo_cartera->tasa_diferenciada;
+        //tasas diferenciadas
+        $tasas_diferenciadas = $deuda_tipo_cartera->tasa_diferenciada;
         // dd($deuda_tipo_cartera, $tasas_diferenciadas);
 
-         if ($deuda_tipo_cartera->TipoCalculo == 1) {
- 
-             foreach ($tasas_diferenciadas as $tasa) {
-                 //dd($tasa);
-                 PolizaDeudaTempCartera::where('User', auth()->user()->id)
-                     ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
-                     ->whereBetween('FechaOtorgamientoDate', [$tasa->FechaDesde, $tasa->FechaHasta])
-                     ->update([
-                         'LineaCredito' => $tasa->LineaCredito,
-                         'Tasa' => $tasa->Tasa
-                     ]);
-             }
-         } else  if ($deuda_tipo_cartera->TipoCalculo == 2) {
- 
-             foreach ($tasas_diferenciadas as $tasa) {
+        if ($deuda_tipo_cartera->TipoCalculo == 1) {
 
-                 PolizaDeudaTempCartera::where('User', auth()->user()->id)
-                     ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
-                     ->whereBetween('EdadDesembloso', [$tasa->EdadDesde, $tasa->EdadHasta])
-                     ->update([
-                         'LineaCredito' => $tasa->LineaCredito,
-                         'Tasa' => $tasa->Tasa
-                     ]);
-             }
-         } else {
-             foreach ($tasas_diferenciadas as $tasa) {
-                 PolizaDeudaTempCartera::where('User', auth()->user()->id)
-                     ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
-                     ->update([
-                         'LineaCredito' => $tasa->LineaCredito,
-                         'Tasa' => $deuda->Tasa
-                     ]);
-             }
-         }
- 
- 
-         $cartera_temp = PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->get();
- 
-         foreach ($cartera_temp as $obj) {
-             $obj->TotalCredito = $obj->calculoTodalSaldo();
-             $obj->update();
-         }
+            foreach ($tasas_diferenciadas as $tasa) {
+                //dd($tasa);
+                PolizaDeudaTempCartera::where('User', auth()->user()->id)
+                    ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                    ->whereBetween('FechaOtorgamientoDate', [$tasa->FechaDesde, $tasa->FechaHasta])
+                    ->update([
+                        'LineaCredito' => $tasa->LineaCredito,
+                        'Tasa' => $tasa->Tasa
+                    ]);
+            }
+        } else  if ($deuda_tipo_cartera->TipoCalculo == 2) {
+
+            foreach ($tasas_diferenciadas as $tasa) {
+
+                PolizaDeudaTempCartera::where('User', auth()->user()->id)
+                    ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                    ->whereBetween('EdadDesembloso', [$tasa->EdadDesde, $tasa->EdadHasta])
+                    ->update([
+                        'LineaCredito' => $tasa->LineaCredito,
+                        'Tasa' => $tasa->Tasa
+                    ]);
+            }
+        } else {
+            foreach ($tasas_diferenciadas as $tasa) {
+                PolizaDeudaTempCartera::where('User', auth()->user()->id)
+                    ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                    ->update([
+                        'LineaCredito' => $tasa->LineaCredito,
+                        'Tasa' => $deuda->Tasa
+                    ]);
+            }
+        }
+
+
+        $cartera_temp = PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->get();
+
+        foreach ($cartera_temp as $obj) {
+            $obj->TotalCredito = $obj->calculoTodalSaldo();
+            $obj->update();
+        }
 
         alert()->success('Exito', 'La cartera fue subida con exito');
 

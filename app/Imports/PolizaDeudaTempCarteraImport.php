@@ -18,9 +18,11 @@ class PolizaDeudaTempCarteraImport implements ToModel, /*WithStartRow,*/ SkipsEm
     private $FechaFinal;
     private $credito;
     private $encabezados = 0;
+    private $TarifaExcel;
 
 
-    public function __construct($Axo, $Mes, $PolizaDeuda, $FechaInicio, $FechaFinal, $credito)
+
+    public function __construct($Axo, $Mes, $PolizaDeuda, $FechaInicio, $FechaFinal, $credito, $TarifaExcel)
     {
         $this->Axo = $Axo;
         $this->Mes = $Mes;
@@ -28,6 +30,7 @@ class PolizaDeudaTempCarteraImport implements ToModel, /*WithStartRow,*/ SkipsEm
         $this->FechaInicio = $FechaInicio;
         $this->FechaFinal = $FechaFinal;
         $this->credito = $credito;
+        $this->TarifaExcel = $TarifaExcel;
     }
 
 
@@ -38,6 +41,11 @@ class PolizaDeudaTempCarteraImport implements ToModel, /*WithStartRow,*/ SkipsEm
         }
 
         if ($this->encabezados == 1 && (trim($row[0]) != "NIT" && trim($row[1]) != "DUI")) {
+
+            $Tasa = null;
+            if ($this->TarifaExcel == 1) {
+                $Tasa =  $row[24] ?? null;
+            }
 
             return new PolizaDeudaTempCartera([
                 'Nit' => $row[0],
@@ -71,6 +79,7 @@ class PolizaDeudaTempCarteraImport implements ToModel, /*WithStartRow,*/ SkipsEm
                 'FechaInicio' =>  $this->FechaInicio,
                 'FechaFinal' =>  $this->FechaFinal,
                 'PolizaDeudaTipoCartera' => $this->credito,
+                'Tasa' => $Tasa,
             ]);
         }
     }

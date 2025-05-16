@@ -62,7 +62,8 @@ class PolizaDeudaTempCartera extends Model
         'Rehabilitado',
         'EdadRequisito',
         'MontoRequisito',
-        'MontoMaximoIndividual'
+        'MontoMaximoIndividual',
+        'Tasa'
     ];
 
 
