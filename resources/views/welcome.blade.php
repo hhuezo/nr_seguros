@@ -189,6 +189,23 @@
                                     </ul>
                                 </li>
 
+                                
+                                <li><a><i class="fa fa-folder"></i> Suscripciones<span class="fa fa-chevron-down"></span></a>
+                                    <ul class="nav child_menu" id="ul-suscripciones">
+
+
+                                        <li><a href="{{url('suscripciones')}}">Suscripciones</a></li>
+                                        <li><a href="">Compania</a></li>
+                                        <li><a href="">Estado del Caso</a></li>
+                                        <li><a href="">Tipo de Orden Medica</a></li>
+                                        <li><a href="">Tipo de IMC</a></li>
+                                        <li><a href="">Tipo de Cliente </a></li>
+
+
+
+                                    </ul>
+                                </li>
+
                                 <li><a><i class="fa fa-folder-open"></i> Catálogos deuda<span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu" id="ul-poliza-deuda">
                                         <li><a href="{{ url('catalogo/tipo_cartera') }}">Linea de crédito</a></li>

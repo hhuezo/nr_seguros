@@ -39,7 +39,7 @@ use App\Http\Controllers\polizas\VidaFedeController;
 use App\Http\Controllers\polizas\VidaTasaDiferenciadaController;
 use App\Http\Controllers\seguridad\PermissionController;
 use App\Http\Controllers\seguridad\RoleController;
-
+use App\Http\Controllers\suscripcion\SuscripcionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -392,4 +392,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('exportar/vida/registros_responsabilidad_terminacion/{id}', [VidaController::class, 'registros_responsabilidad_terminacion']);
     Route::post('exportar/vida/nuevos_registros/{id}', [VidaController::class, 'exportar_nuevos_registros']);
 
+
+    //suscripciones
+
+    Route::get('get_imc', [SuscripcionController::class, 'get_imc']);
+    Route::post('suscripciones/agregar_comentario', [SuscripcionController::class, 'agregar_comentario']);
+    Route::post('suscripciones_update', [SuscripcionController::class, 'update']);
+    Route::resource('suscripciones', SuscripcionController::class);
 });
