@@ -8,8 +8,11 @@
                 <h3>Ubicación de Cobro </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
-                <a href="{{ url('catalogo/ubicacion_cobro/create/') }}"><button class="btn btn-info float-right"> <i
-                            class="fa fa-plus"></i> Nuevo</button></a>
+                {{-- <a href="{{ url('catalogo/ubicacion_cobro/create/') }}"><button class="btn btn-info float-right"> <i
+                            class="fa fa-plus"></i> Nuevo</button></a> --}}
+                <button class="btn btn-info float-right" data-target="#modal-create" data-toggle="modal"> <i
+                        class="fa fa-plus"></i>
+                    Nuevo</button>
             </div>
             <div class="clearfix"></div>
         </div>
@@ -21,34 +24,71 @@
                 <table id="datatable" class="table table-striped table-bordered">
                     <thead>
                         <tr>
-                            <th>Nombre</th>
-                            <th>Opciones</th>
+                            <th width="5%">No</th>
+                            <th width="75%">Nombre</th>
+                            <th width="20%">Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($ubicacion_cobro as $obj)
                             <tr>
+                                <td>{{ $loop->iteration }}</td>
                                 <td>{{ $obj->Nombre }}</td>
                                 <td align="center">
 
                                     @can('edit users')
-                                        <a href="{{ url('catalogo/ubicacion_cobro') }}/{{ $obj->Id }}/edit"
+                                        {{-- <a href="{{ url('catalogo/ubicacion_cobro') }}/{{ $obj->Id }}/edit"
                                             class="on-default edit-row">
-                                            <i class="fa fa-pencil fa-lg"></i></a>
+                                            <i class="fa fa-pencil fa-lg"></i></a> --}}
+                                        <a href="#" data-target="#modal-edit-{{ $obj->Id }}" data-toggle="modal"
+                                            class="on-default edit-row"><button class="btn btn-primary"><i
+                                                    class="fa fa-pencil fa-lg"></i></button></a>
                                     @endcan
-
-
                                     @can('delete users')
-                                        &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}"
-                                            data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
+                                        {{-- &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}"
+                                            data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a> --}}
+                                        <a href="#" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal">
+                                            <button class="btn btn-danger"><i class="fa fa-trash fa-lg"></i></button></a>
                                     @endcan
                                 </td>
                             </tr>
                             @include('catalogo.ubicacion_cobro.modal')
+                            @include('catalogo.ubicacion_cobro.edit')
                         @endforeach
                     </tbody>
                 </table>
 
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modal-create" tabindex="-1" user="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="col-md-6">
+                        <h4 class="modal-title">Nueva Ubicación de Cobro</h4>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                </div>
+                <form action="{{ url('catalogo/ubicacion_cobro') }}" method="POST">
+                    @csrf
+
+                    <div class="modal-body">
+                        <div class="form-group row">
+                            <label class="control-label">Nombre</label>
+                            <input class="form-control" name="Nombre" type="text" autofocus
+                                oninput="this.value = this.value.toUpperCase()">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
