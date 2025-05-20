@@ -1,62 +1,36 @@
-@extends ('welcome')
-@section('contenido')
-@include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
-<div class="x_panel">
-    <div class="clearfix"></div>
-    <div class="row">
-        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
-
-            <div class="x_title">
-                <h2>Editar Impuesto Bomberos <small></small></h2>
-                <ul class="nav navbar-right panel_toolbox">
-
-                </ul>
-                <div class="clearfix"></div>
-            </div>
-            @if (count($errors) > 0)
-            <div class="alert alert-danger">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-            @endif
-
-            <div class="x_content">
-                <br />
-
-                <form method="POST" action="{{ route('bombero.update', $bombero->Id) }}">
-                    @method('PUT')
-                    @csrf
-                    <div class="form-horizontal">
-                        <br>
-
-
-                        <div class="form-group row">
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Porcentaje de Impuesto</label>
-                            <div class="col-lg-6 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="Valor" type="text" value="{{$bombero->Valor}}" >
-                            </div>
-                        </div>
-
-
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <div class="form-group" align="center">
-                                <button type="submit" class="btn btn-success">Aceptar</button>
-                                <a href="{{ url('catalogo/bombero') }}"><button type="button" class="btn btn-primary">Cancelar</button></a>
-                            </div>
-                        </div>
-
+<div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
+    id="modal-edit-{{ $obj->Id }}">
+    <form method="POST" action="{{ route('bombero.update', $obj->Id) }}">
+        @method('PUT')
+        @csrf
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="col-md-6">
+                        <h4 class="modal-title">Modificar registro</h4>
                     </div>
-                </form>
+                    <div class="col-md-6">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-body">
 
 
+                    <div class="form-group">
+                        <label class="control-label">Valor</label>
+                        <input type="number" min="1" name="Valor" class="form-control" value="{{ $obj->Valor }}" required>
+                    </div>
 
+
+                    &nbsp;
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary">Confirmar</button>
+                    </div>
+                </div>
             </div>
+    </form>
 
-        </div>
-    </div>
 </div>
-@include('sweetalert::alert')
-@endsection

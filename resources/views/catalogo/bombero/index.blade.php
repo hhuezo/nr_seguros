@@ -42,7 +42,8 @@
 
                                     @can('edit users')
                                         <a href="{{ url('catalogo/bombero') }}/{{ $obj->Id }}/edit"
-                                            class="on-default edit-row">
+                                            class="on-default edit-row" data-target="#modal-edit-{{ $obj->Id }}"
+                                            data-toggle="modal">
                                             <i class="fa fa-pencil fa-lg"></i></a>
                                     @endcan
 
@@ -54,6 +55,7 @@
                                 </td>
                             </tr>
                             @include('catalogo.bombero.modal')
+                             @include('catalogo.bombero.edit')
                         @endforeach
                     </tbody>
                 </table>
