@@ -19,11 +19,11 @@ class EjecutivoController extends Controller
 
     public function index()
     {
-
+        $area_comercial = AreaComercial::where('Activo',1)->get();
         $ejecutivo = Ejecutivo::with('areaComercial')->where('Activo',1)->get();
         $identificador_carrito = session('idCarrito');
 
-        return view('catalogo.ejecutivo.index',compact('ejecutivo'));
+        return view('catalogo.ejecutivo.index',compact('ejecutivo','area_comercial'));
     }
 
     /**
