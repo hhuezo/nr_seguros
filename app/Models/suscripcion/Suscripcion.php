@@ -18,7 +18,7 @@ class Suscripcion extends Model
 
     protected $fillable = [
         'FechaIngreso',
-        'Gestor',
+        'GestorId',
         'CompaniaId',
         'Contratante',
         'PolizaDeuda',

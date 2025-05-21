@@ -79,7 +79,7 @@ class SuscripcionController extends Controller
     {
         $suscripcion = new Suscripcion();
         $suscripcion->FechaIngreso = $request->FechaIngreso;
-        $suscripcion->Gestor = $request->Gestor;
+        $suscripcion->GestorId = $request->Gestor;
         $suscripcion->CompaniaId = $request->CompaniaId;
         $suscripcion->Contratante = $request->Contratante;
         $suscripcion->PolizaDeuda = $request->PolizaDeuda;
@@ -207,7 +207,13 @@ class SuscripcionController extends Controller
         $tipo_clientes = TipoCliente::get();
         $tipo_orden = OrdenMedica::get();
         $estados = EstadoCaso::get();
-        return view('suscripciones.suscripcion.edit', compact('companias', 'tipo_clientes', 'tipo_orden', 'suscripcion', 'estados'));
+        $ejecutivos = User::role('ejecutivo')->where('activo', 1)->get();
+        $clientes = Cliente::where('activo', 1)->get();
+        $polizas_deuda = Deuda::get();
+        $polizas_vida = Vida::get();
+        $tipos_imc = TipoImc::get();
+        $resumen_gestion = ResumenGestion::get();
+        return view('suscripciones.suscripcion.edit', compact('tipos_imc','resumen_gestion','polizas_vida','polizas_deuda','clientes', 'ejecutivos', 'companias', 'tipo_clientes', 'tipo_orden', 'suscripcion', 'estados'));
     }
 
     /**
@@ -221,7 +227,7 @@ class SuscripcionController extends Controller
     {
         $suscripcion = Suscripcion::findOrFail($request->Id);
         $suscripcion->FechaIngreso = $request->FechaIngreso;
-        $suscripcion->Gestor = $request->Gestor;
+        $suscripcion->GestorId = $request->Gestor;
         $suscripcion->CompaniaId = $request->CompaniaId;
         $suscripcion->Contratante = $request->Contratante;
         $suscripcion->PolizaDeuda = $request->PolizaDeuda;
