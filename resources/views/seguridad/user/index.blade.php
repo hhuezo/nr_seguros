@@ -34,6 +34,7 @@
                             <th>Id</th>
                             <th>Nombre</th>
                             <th>Correo</th>
+                            <th>Roles</th>
                             <th>Activo</th>
                             <th>Opciones</th>
                         </tr>
@@ -45,8 +46,13 @@
                                 <td>{{ $obj->name }}</td>
                                 <td>{{ $obj->email }}</td>
                                 <td>
+                                    {{ $obj->user_has_role->pluck('name')->implode(', ') }}
+                                </td>
+
+                                <td>
                                     <label class="switch">
-                                        <input type="checkbox" onchange="toggleUserActive({{$obj->id}})" {{ $obj->activo == 1 ? 'checked' : '' }} >
+                                        <input type="checkbox" onchange="toggleUserActive({{ $obj->id }})"
+                                            {{ $obj->activo == 1 ? 'checked' : '' }}>
                                         <span class="slider round"></span>
                                     </label>
                                 </td>
@@ -55,7 +61,7 @@
 
                                     @can('edit users')
                                         <a href="{{ url('usuario') }}/{{ $obj->id }}/edit" class="on-default edit-row">
-                                           <button class="btn btn-primary"><i class="fa fa-pencil fa-lg"></i></button> </a>
+                                            <button class="btn btn-primary"><i class="fa fa-pencil fa-lg"></i></button> </a>
                                     @endcan
 
                                 </td>

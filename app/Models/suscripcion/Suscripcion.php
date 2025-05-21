@@ -71,6 +71,11 @@ class Suscripcion extends Model
         return $this->belongsTo(EstadoCaso::class, 'EstadoId');
     }
 
+      public function resumenGestion()
+    {
+        return $this->belongsTo(ResumenGestion::class, 'ResumenGestion');
+    }
+
     public function comentarios()
     {
         return $this->hasMany(Comentarios::class, 'SuscripcionId');

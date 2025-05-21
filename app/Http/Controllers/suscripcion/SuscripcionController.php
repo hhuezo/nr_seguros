@@ -3,14 +3,19 @@
 namespace App\Http\Controllers\suscripcion;
 
 use App\Http\Controllers\Controller;
+use App\Models\catalogo\Cliente;
 use App\Models\polizas\Comentario;
+use App\Models\polizas\Deuda;
+use App\Models\polizas\Vida;
 use App\Models\suscripcion\Comentarios;
 use App\Models\suscripcion\Compania;
 use App\Models\suscripcion\EstadoCaso;
 use App\Models\suscripcion\OrdenMedica;
+use App\Models\suscripcion\ResumenGestion;
 use App\Models\suscripcion\Suscripcion;
 use App\Models\suscripcion\TipoCliente;
 use App\Models\suscripcion\TipoImc;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -24,6 +29,8 @@ class SuscripcionController extends Controller
     public function index()
     {
         $suscripciones = Suscripcion::get();
+
+
         return view('suscripciones.suscripcion.index', compact('suscripciones'));
     }
 
@@ -38,7 +45,28 @@ class SuscripcionController extends Controller
         $tipo_clientes = TipoCliente::get();
         $tipo_orden = OrdenMedica::get();
         $estados = EstadoCaso::get();
-        return view('suscripciones.suscripcion.create', compact('companias', 'tipo_clientes', 'tipo_orden', 'estados'));
+
+        $ejecutivos = User::role('ejecutivo')->where('activo', 1)->get();
+        $clientes = Cliente::where('activo', 1)->get();
+        $polizas_deuda = Deuda::get();
+        $polizas_vida = Vida::get();
+
+        $tipos_imc = TipoImc::get();
+        $resumen_gestion = ResumenGestion::get();
+
+
+        return view('suscripciones.suscripcion.create', compact(
+            'companias',
+            'tipo_clientes',
+            'tipo_orden',
+            'estados',
+            'ejecutivos',
+            'clientes',
+            'polizas_deuda',
+            'polizas_vida',
+            'tipos_imc',
+            'resumen_gestion'
+        ));
     }
 
     /**
@@ -139,9 +167,24 @@ class SuscripcionController extends Controller
 
     public function agregar_comentario(Request $request)
     {
+        // Validación
+        $request->validate([
+            'SuscripcionId' => 'required|integer|exists:suscripcion,id',
+            'Comentario'    => 'required|string|max:500',
+        ], [
+            'SuscripcionId.required' => 'El campo Suscripción es obligatorio.',
+            'SuscripcionId.integer'  => 'El campo Suscripción debe ser un número entero.',
+            'SuscripcionId.exists'   => 'La suscripción seleccionada no existe en la base de datos.',
+            'Comentario.required'    => 'Debe ingresar un comentario.',
+            'Comentario.string'      => 'El comentario debe ser una cadena de texto.',
+            'Comentario.max'         => 'El comentario no debe exceder los 500 caracteres.',
+        ]);
+
+
+        // Guardado
         $comentario = new Comentarios();
         $comentario->SuscripcionId = $request->SuscripcionId;
-        $comentario->Usuario = $request->Gestor;
+        $comentario->Usuario = auth()->user()->name ?? '';
         $comentario->FechaCreacion = Carbon::now();
         $comentario->Activo = 1;
         $comentario->Comentario = $request->Comentario;
@@ -219,12 +262,9 @@ class SuscripcionController extends Controller
     public function destroy($id)
     {
         //
-        Comentarios::where('SuscripcionId',$id)->delete();
+        Comentarios::where('SuscripcionId', $id)->delete();
         Suscripcion::findOrFail($id)->delete();
-         alert()->success('El registro ha sido eliminado correctamente');
+        alert()->success('El registro ha sido eliminado correctamente');
         return back();
-
-        
-
     }
 }
