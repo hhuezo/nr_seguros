@@ -132,12 +132,12 @@
 
                             <div class="col-sm-2">
                                 <label for="DireccionResidencia" class="form-label">Peso (lb)</label>
-                                <input type="text" name="Peso" value="{{ old('Peso') }}" id="Peso"
+                                <input type="number" name="Peso" value="{{ old('Peso') }}" id="Peso"
                                     class="form-control" onchange="calculo()">
                             </div>
                             <div class="col-sm-2">
                                 <label for="DireccionResidencia" class="form-label">Estatura (m) </label>
-                                <input type="text" name="Estatura" value="{{ old('Estatura') }}" id="Estatura"
+                                <input type="number" name="Estatura" value="{{ old('Estatura') }}" id="Estatura"
                                     class="form-control" onchange="calculo()">
                             </div>
                             <div class="col-sm-2">
