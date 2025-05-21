@@ -229,7 +229,7 @@ class SuscripcionController extends Controller
         $suscripcion->FechaIngreso = $request->FechaIngreso;
         $suscripcion->GestorId = $request->Gestor;
         $suscripcion->CompaniaId = $request->CompaniaId;
-        $suscripcion->Contratante = $request->Contratante;
+        $suscripcion->ContratanteId = $request->ContratanteId;
         $suscripcion->PolizaDeuda = $request->PolizaDeuda;
         $suscripcion->PolizaVida = $request->PolizaVida;
         $suscripcion->Asegurado = $request->Asegurado;

@@ -272,12 +272,14 @@
 
                 var total = subTotalPeso / subTotalEstatura;
 
+                console.log("subTotalPeso " + subTotalPeso);
+                console.log("subTotalEstatura " + subTotalEstatura);
+                console.log("total " + total);
 
-                let formatted = formatToTwoNonZeroDecimals(total);
 
-                document.getElementById('Imc').value = formatted;
+                document.getElementById('Imc').value = total.toFixed(2);
 
-                total = total * 10000;
+
 
                 let tipo_imc = 1;
 

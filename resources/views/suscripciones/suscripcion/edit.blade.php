@@ -60,7 +60,7 @@
 
                         <div class="col-sm-6">
                             <label class="control-label ">Contratante</label>
-                            <select name="Contratante" class="form-control select2">
+                            <select name="ContratanteId" class="form-control select2">
 
                                 @foreach ($clientes as $cliente)
                                 <option value="{{ $cliente->Id }}" {{$suscripcion->Contratante == $cliente->Nombre ? 'selected':''}}>{{ $cliente->Nombre }}</option>
@@ -72,7 +72,7 @@
                             <select name="PolizaDeuda" class="form-control select2">
 
                                 @foreach ($polizas_deuda as $deuda)
-                                <option value="{{ $deuda->Id }}" {{$suscripcion->PolizaDeuda == $deuda->Id}}>{{ $deuda->NumeroPoliza }}</option>
+                                <option value="{{ $deuda->Id }}" {{$suscripcion->PolizaDeuda == $deuda->Id ? 'selected':''}}>{{ $deuda->NumeroPoliza }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -82,7 +82,7 @@
                             <select name="PolizaVida" class="form-control select2">
 
                                 @foreach ($polizas_vida as $vida)
-                                <option value="{{ $vida->Id }}" {{$suscripcion->PolizaVida == $vida->Id}}>{{ $vida->NumeroPoliza }}</option>
+                                <option value="{{ $vida->Id }}" {{$suscripcion->PolizaVida == $vida->Id ? 'selected':''}}>{{ $vida->NumeroPoliza }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -97,8 +97,7 @@
                         </div>
                         <div class="col-sm-3">
                             <label class="control-label">Dui</label>
-                            <input type="text" name="Dui" rows="1" class="form-control"
-                                oninput="this.value = this.value.toUpperCase()" value="{{ $suscripcion->Dui }}"
+                            <input type="text" name="Dui" rows="1" class="form-control" value="{{ $suscripcion->Dui }}"
                                 data-inputmask="'mask': ['99999999-9']">
                         </div>
                         <div class="col-sm-3">
@@ -164,8 +163,8 @@
                         </div>
                         <div class="col-sm-3">
                             <label for="DireccionResidencia" class="form-label">Tipo de IMC</label>
-                     
-                              <select name="TipoImcId" id="TipoImcId" class="form-control">
+
+                              <select name="TipoIMCId" id="TipoImcId" class="form-control">
                                     <option value="">Seleccione...</option>
                                     @foreach ($tipos_imc as $tipo)
                                         <option value="{{ $tipo->Id }}" {{$suscripcion->TipoIMCId == $tipo->Id ? 'selected':''}}>{{ $tipo->Nombre }}</option>
@@ -231,11 +230,11 @@
 
                     </div>
 
-     
+
 
                     <div class="row" style="padding-top: 15px!important;">
 
-                 
+
                         <div class="col-sm-3">
                             <label for="DireccionResidencia" class="form-label">Fecha de Resolución</label>
                             <input type="date" name="FechaResolucion"
@@ -247,9 +246,9 @@
                             <input type="number" name="ValorExtraPrima" value="{{ $suscripcion->ValorExtraPrima }}"
                                 id="ValorExtraPrima" class="form-control">
                         </div>
-                       
 
-                   
+
+
                         <div class="col-sm-6">
                             <label for="DireccionResidencia" class="form-label">Estado del Caso</label>
                             <!-- <input type="text" name="TipoOrdenMedicaId" value="{{ old('TipoOrdenMedicaId') }}" id="TipoOrdenMedicaId" class="form-control"> -->
