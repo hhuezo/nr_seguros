@@ -355,67 +355,69 @@
 
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
-    function calculo() {
-        const peso = document.getElementById('Peso').value;
-        const estatura = document.getElementById('Estatura').value;
+      function calculo() {
+            const peso = document.getElementById('Peso').value;
+            const estatura = document.getElementById('Estatura').value;
 
-        if (peso !== '' && estatura !== '') {
+            if (peso !== '' && estatura !== '') {
 
-            var subTotalPeso = peso / 2.2;
-            var subTotalEstatura = estatura * estatura;
+                var subTotalPeso = peso / 2.2;
+                var subTotalEstatura = estatura * estatura;
 
-            var total = subTotalPeso / subTotalEstatura;
+                var total = subTotalPeso / subTotalEstatura;
 
-
-            let formatted = formatToTwoNonZeroDecimals(total);
-
-            document.getElementById('Imc').value = formatted;
-
-            total = total * 10000;
-
-            let tipo_imc = 1;
-
-            if (total < 18.5) {
-                tipo_imc = 1;
-            } else if (total >= 18.5 && total < 24.9) {
-                tipo_imc = 2;
-            } else if (total >= 25 && total < 29.9) {
-                tipo_imc = 3;
-            } else if (total >= 30 && total < 34.9) {
-                tipo_imc = 4;
-            } else if (total >= 35 && total < 39.9) {
-                tipo_imc = 5;
-            } else if (total >= 40 && total < 49.9) {
-                tipo_imc = 6;
-            } else {
-                tipo_imc = 7;
-            }
-
-            document.getElementById('TipoImcId').value = tipo_imc;
-
-        }
+                console.log("subTotalPeso " + subTotalPeso);
+                console.log("subTotalEstatura " + subTotalEstatura);
+                console.log("total " + total);
 
 
-        function formatToTwoNonZeroDecimals(num) {
-            const decimals = num.toString().split('.')[1] || '';
-            let count = 0;
-            let result = '';
+                document.getElementById('Imc').value = total.toFixed(2);
 
-            for (let i = 0; i < decimals.length; i++) {
-                if (decimals[i] !== '0') {
-                    result += decimals[i];
-                    count++;
-                    if (count === 2) break;
+
+
+                let tipo_imc = 1;
+
+                if (total < 18.5) {
+                    tipo_imc = 1;
+                } else if (total >= 18.5 && total < 24.9) {
+                    tipo_imc = 2;
+                } else if (total >= 25 && total < 29.9) {
+                    tipo_imc = 3;
+                } else if (total >= 30 && total < 34.9) {
+                    tipo_imc = 4;
+                } else if (total >= 35 && total < 39.9) {
+                    tipo_imc = 5;
+                } else if (total >= 40 && total < 49.9) {
+                    tipo_imc = 6;
                 } else {
-                    result += decimals[i];
+                    tipo_imc = 7;
                 }
+
+                document.getElementById('TipoImcId').value = tipo_imc;
+
             }
 
-            return '0.' + result.padEnd(2, '0');
+
+            function formatToTwoNonZeroDecimals(num) {
+                const decimals = num.toString().split('.')[1] || '';
+                let count = 0;
+                let result = '';
+
+                for (let i = 0; i < decimals.length; i++) {
+                    if (decimals[i] !== '0') {
+                        result += decimals[i];
+                        count++;
+                        if (count === 2) break;
+                    } else {
+                        result += decimals[i];
+                    }
+                }
+
+                return '0.' + result.padEnd(2, '0');
+            }
+
+
         }
-
-
-    }
 </script>
 
 @endsection
