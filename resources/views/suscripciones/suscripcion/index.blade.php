@@ -41,11 +41,11 @@
                             <tr>
                                 <td>{{ date('d/m/Y', strtotime($obj->FechaIngreso)) }}</td>
                                 <td>{{ $i }}</td>
-                                <td>{{ $obj->Gestor }}</td>
+                                <td>{{ $obj->gestor->name ?? '' }}</td>
                                 <td>{{ $obj->compania->Nombre ?? '' }}</td>
-                                <td>{{ $obj->Contratante }}</td>
-                                <td>{{ $obj->PolizaDeuda }}</td>
-                                <td>{{ $obj->PolizaVida }}</td>
+                                <td>{{ $obj->contratante->Nombre ?? '' }}</td>
+                                <td>{{ $obj->polizaDeuda->NumeroPoliza ?? '' }}</td>
+                                <td>{{ $obj->polizaVida->NumeroPoliza ?? '' }}</td>
                                 <td>{{ $obj->Asegurado }}</td>
                                 <td class="bg-{{$obj->resumenGestion->Color ?? ''}}">{{ $obj->resumenGestion->Nombre ?? '' }}</td>
 

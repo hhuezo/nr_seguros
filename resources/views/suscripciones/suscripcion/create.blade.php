@@ -3,26 +3,28 @@
     @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
     <div class="x_panel">
         <div class="row">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
+            <form action="{{ url('suscripciones') }}" method="POST" class="forms-sample">
+                @csrf
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
 
-                <div class="x_title">
-                    <h2>Nuevo registro <small></small></h2>
-                    <ul class="nav navbar-right panel_toolbox">
-                        <a href="{{ url('suscripciones') }}" class="btn btn-info fa fa-undo " style="color: white">Atrás</a>
-                    </ul>
-                    <div class="clearfix"></div>
-                </div>
-                @if (count($errors) > 0)
-                    <div class="alert alert-danger">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
+                    <div class="x_title">
+                        <h2>Nuevo registro <small></small></h2>
+                        <ul class="nav navbar-right panel_toolbox">
+                            <a href="{{ url('suscripciones') }}" class="btn btn-info fa fa-undo "
+                                style="color: white">Atrás</a>
                         </ul>
+                        <div class="clearfix"></div>
                     </div>
-                @endif
-                <form action="{{ url('suscripciones') }}" method="POST" class="forms-sample">
-                    @csrf
+                    @if (count($errors) > 0)
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
                     <div class="x_content">
                         <div class="row">
                             <div class="col-sm-3">
@@ -52,7 +54,7 @@
 
                             <div class="col-sm-6">
                                 <label class="control-label ">Contratante</label>
-                                <select name="Contratante" class="form-control select2">
+                                <select name="ContratanteId" class="form-control select2">
                                     <option value="">Seleccione</option>
                                     @foreach ($clientes as $cliente)
                                         <option value="{{ $cliente->Id }}">{{ $cliente->Nombre }}</option>
@@ -137,8 +139,8 @@
                             </div>
                             <div class="col-sm-2">
                                 <label for="DireccionResidencia" class="form-label">Estatura (m) </label>
-                                <input type="number" name="Estatura" value="{{ old('Estatura') }}" id="Estatura"
-                                    class="form-control" onchange="calculo()">
+                                <input type="decimal" name="Estatura" value="{{ old('Estatura') }}" id="Estatura"
+                                    step="any" class="form-control" onchange="calculo()">
                             </div>
                             <div class="col-sm-2">
                                 <label for="DireccionResidencia" class="form-label">IMC</label>
@@ -148,7 +150,7 @@
                             </div>
                             <div class="col-sm-3">
                                 <label for="DireccionResidencia" class="form-label">Tipo de IMC</label>
-                                <select name="TipoImcId" id="TipoImcId" class="form-control">
+                                <select name="TipoIMCId" id="TipoImcId" class="form-control">
                                     <option value="">Seleccione...</option>
                                     @foreach ($tipos_imc as $tipo)
                                         <option value="{{ $tipo->Id }}">{{ $tipo->Nombre }}</option>
@@ -180,7 +182,7 @@
 
                             <div class="col-sm-6">
                                 <label for="DireccionResidencia" class="form-label">Comentarios NR</label>
-                                <textarea name="Comentarios" id="Comentarios" class="form-control">{{ old('Comentarios') }}</textarea>
+                                <textarea name="Comentarios" class="form-control">{{ old('Comentarios') }}</textarea>
 
                             </div>
 
@@ -247,12 +249,12 @@
 
                     </div>
 
-            </div>
-            <div class="form-group" align="center">
-                <button class="btn btn-success" type="submit">Guardar</button>
-                <a href="{{ url('catalogo/aseguradoras/') }}"><button class="btn btn-primary"
-                        type="button">Cancelar</button></a>
-            </div>
+                </div>
+                <div class="form-group" align="center">
+                    <button class="btn btn-success" type="submit">Guardar</button>
+                    <a href="{{ url('catalogo/aseguradoras/') }}"><button class="btn btn-primary"
+                            type="button">Cancelar</button></a>
+                </div>
             </form>
 
 

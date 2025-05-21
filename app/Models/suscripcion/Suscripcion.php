@@ -2,7 +2,11 @@
 
 namespace App\Models\suscripcion;
 
+use App\Models\catalogo\Cliente;
 use App\Models\polizas\Comentario;
+use App\Models\polizas\Deuda;
+use App\Models\polizas\Vida;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -71,9 +75,29 @@ class Suscripcion extends Model
         return $this->belongsTo(EstadoCaso::class, 'EstadoId');
     }
 
-      public function resumenGestion()
+    public function resumenGestion()
     {
         return $this->belongsTo(ResumenGestion::class, 'ResumenGestion');
+    }
+
+    public function gestor()
+    {
+        return $this->belongsTo(User::class, 'GestorId');
+    }
+
+    public function contratante()
+    {
+        return $this->belongsTo(Cliente::class, 'ContratanteId');
+    }
+
+    public function polizaDeuda()
+    {
+        return $this->belongsTo(Deuda::class, 'PolizaDeuda');
+    }
+
+    public function polizaVida()
+    {
+        return $this->belongsTo(Vida::class, 'PolizaVida');
     }
 
     public function comentarios()
