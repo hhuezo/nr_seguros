@@ -34,10 +34,10 @@
                                     autofocus="true">
                             </div>
                             <div class="col-sm-3">
-                                <label class="control-label ">Compania</label>
+                                <label class="control-label ">Aseguradora</label>
                                 <select name="CompaniaId" id="CompaniaId" class="form-control">
                                     <option value="">Seleccione...</option>
-                                    @foreach ($companias as $cia)
+                                    @foreach ($aseguradoras as $cia)
                                         <option value="{{ $cia->Id }}"
                                             {{ $suscripcion->CompaniaId == $cia->Id ? 'selected' : '' }}>{{ $cia->Nombre }}
                                         </option>
@@ -45,14 +45,14 @@
                                 </select>
                             </div>
                             <div class="col-sm-6">
-                                <label class="control-label">Gestor</label>
+                                <label class="control-label">Ejecutivo </label>
                                 {{-- <input type="text" name="Gestor" value="{{old('Gestor')}}" class="form-control"> --}}
                                 <select name="Gestor" class="form-control">
-
+            
                                     @foreach ($ejecutivos as $ejecutivo)
                                         <option value="{{ $ejecutivo->id }}"
-                                            {{ $suscripcion->GestorId == $ejecutivo->Id ? 'selected' : '' }}>
-                                            {{ $ejecutivo->name }}</option>
+                                            {{ $suscripcion->GestorId == $ejecutivo->id ? 'selected' : '' }}>
+                                           {{ $ejecutivo->name }}</option>
                                     @endforeach
                                 </select>
 
@@ -66,7 +66,7 @@
 
                                     @foreach ($clientes as $cliente)
                                         <option value="{{ $cliente->Id }}"
-                                            {{ $suscripcion->Contratante == $cliente->Nombre ? 'selected' : '' }}>
+                                            {{ $suscripcion->ContratanteId == $cliente->Id ? 'selected' : '' }}>
                                             {{ $cliente->Nombre }}</option>
                                     @endforeach
                                 </select>

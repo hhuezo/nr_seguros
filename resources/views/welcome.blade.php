@@ -195,7 +195,7 @@
 
 
                                         <li><a href="{{url('suscripciones')}}">Suscripciones</a></li>
-                                        <li><a href="">Compania</a></li>
+                                        <!-- <li><a href="">Compania</a></li> -->
                                         <li><a href="">Estado del Caso</a></li>
                                         <li><a href="">Tipo de Orden Medica</a></li>
                                         <li><a href="">Tipo de IMC</a></li>

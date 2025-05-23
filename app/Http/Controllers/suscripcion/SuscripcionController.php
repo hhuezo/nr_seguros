@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\suscripcion;
 
 use App\Http\Controllers\Controller;
+use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\Cliente;
 use App\Models\polizas\Comentario;
 use App\Models\polizas\Deuda;
@@ -50,15 +51,18 @@ class SuscripcionController extends Controller
 
         $ejecutivos = User::role('ejecutivo')->where('activo', 1)->get();
         $clientes = Cliente::where('activo', 1)->get();
-        $polizas_deuda = Deuda::get();
-        $polizas_vida = Vida::get();
+        $polizas_deuda = Deuda::where('activo', 1)->get();
+        $polizas_vida = Vida::where('activo', 1)->get();
 
         $tipos_imc = TipoImc::get();
         $resumen_gestion = ResumenGestion::get();
 
+        //observaciones 22-5-25
+        $aseguradoras = Aseguradora::where('activo',1)->get();
+
 
         return view('suscripciones.suscripcion.create', compact(
-            'companias',
+            'aseguradoras',
             'tipo_clientes',
             'tipo_orden',
             'estados',
@@ -83,7 +87,7 @@ class SuscripcionController extends Controller
         $request->validate([
             'FechaIngreso'         => 'required|date',
             'Gestor'               => 'nullable|integer|exists:users,id',
-            'CompaniaId'           => 'nullable|integer|exists:sus_compania,Id',
+            'CompaniaId'           => 'nullable|integer|exists:aseguradora,Id',
             'ContratanteId'        => 'nullable|integer|exists:cliente,Id',
             'PolizaDeuda'          => 'nullable|integer|exists:poliza_deuda,Id',
             'PolizaVida'           => 'nullable|integer|exists:poliza_vida,Id',
@@ -165,7 +169,7 @@ class SuscripcionController extends Controller
 
 
             alert()->success('El registro ha sido creado correctamente');
-            return redirect('suscripciones');
+            return redirect('suscripciones/'.$suscripcion->Id.'/edit');
 
           //  DB::commit();
         // } catch (Exception $e) {
@@ -266,11 +270,15 @@ class SuscripcionController extends Controller
         $estados = EstadoCaso::get();
         $ejecutivos = User::role('ejecutivo')->where('activo', 1)->get();
         $clientes = Cliente::where('activo', 1)->get();
-        $polizas_deuda = Deuda::get();
-        $polizas_vida = Vida::get();
+        $polizas_deuda = Deuda::where('activo', 1)->get();
+        $polizas_vida = Vida::where('activo', 1)->get();
         $tipos_imc = TipoImc::get();
         $resumen_gestion = ResumenGestion::get();
-        return view('suscripciones.suscripcion.edit', compact('tipos_imc', 'resumen_gestion', 'polizas_vida', 'polizas_deuda', 'clientes', 'ejecutivos', 'companias', 'tipo_clientes', 'tipo_orden', 'suscripcion', 'estados'));
+
+        //observaciones 22-5-25
+        $aseguradoras = Aseguradora::where('activo',1)->get();
+
+        return view('suscripciones.suscripcion.edit', compact('aseguradoras','tipos_imc', 'resumen_gestion', 'polizas_vida', 'polizas_deuda', 'clientes', 'ejecutivos', 'companias', 'tipo_clientes', 'tipo_orden', 'suscripcion', 'estados'));
     }
 
     /**

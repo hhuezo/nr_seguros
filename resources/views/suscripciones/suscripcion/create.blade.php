@@ -35,8 +35,8 @@
                                 <label class="control-label ">Compania</label>
                                 <select name="CompaniaId" id="CompaniaId" class="form-control">
                                     <option value="">Seleccione...</option>
-                                    @foreach ($companias as $cia)
-                                        <option value="{{ $cia->Id }}">{{ $cia->Nombre }}</option>
+                                    @foreach ($aseguradoras as $cia)
+                                        <option value="{{ $cia->Id }}">{{$cia->Id}}{{ $cia->Nombre }}</option>
                                     @endforeach
                                 </select>
                             </div>
