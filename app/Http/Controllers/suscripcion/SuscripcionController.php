@@ -24,11 +24,7 @@ use Illuminate\Support\Facades\DB;
 
 class SuscripcionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
         $suscripciones = Suscripcion::get();
@@ -37,11 +33,6 @@ class SuscripcionController extends Controller
         return view('suscripciones.suscripcion.index', compact('suscripciones'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         $companias = Compania::get();
@@ -75,12 +66,6 @@ class SuscripcionController extends Controller
         ));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
 
@@ -169,7 +154,7 @@ class SuscripcionController extends Controller
 
 
             alert()->success('El registro ha sido creado correctamente');
-            return redirect('suscripciones/'.$suscripcion->Id.'/edit');
+            return back();
 
           //  DB::commit();
         // } catch (Exception $e) {
@@ -215,12 +200,7 @@ class SuscripcionController extends Controller
         return response()->json(['data' => $data], 200);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function show($id)
     {
         //
@@ -252,17 +232,13 @@ class SuscripcionController extends Controller
         $comentario->save();
 
         alert()->success('El registro ha sido creado correctamente');
-        return back();
+        return redirect('suscripciones/' . $request->SuscripcionId . '/edit?tab=2');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+
+    public function edit(Request $request,$id)
     {
+        $tab = $request->tab ?? 1;
         $suscripcion = Suscripcion::findOrFail($id);
         $companias = Compania::get();
         $tipo_clientes = TipoCliente::get();
@@ -278,16 +254,10 @@ class SuscripcionController extends Controller
         //observaciones 22-5-25
         $aseguradoras = Aseguradora::where('activo',1)->get();
 
-        return view('suscripciones.suscripcion.edit', compact('aseguradoras','tipos_imc', 'resumen_gestion', 'polizas_vida', 'polizas_deuda', 'clientes', 'ejecutivos', 'companias', 'tipo_clientes', 'tipo_orden', 'suscripcion', 'estados'));
+        return view('suscripciones.suscripcion.edit', compact('aseguradoras','tipos_imc', 'resumen_gestion', 'polizas_vida', 'polizas_deuda', 'clientes', 'ejecutivos', 'companias', 'tipo_clientes', 'tipo_orden', 'suscripcion', 'estados','tab'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function update(Request $request)
     {
         $suscripcion = Suscripcion::findOrFail($request->Id);
@@ -324,12 +294,6 @@ class SuscripcionController extends Controller
          return redirect('suscripciones');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         //

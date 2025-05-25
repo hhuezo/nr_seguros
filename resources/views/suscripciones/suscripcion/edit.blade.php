@@ -1,30 +1,37 @@
 @extends ('welcome')
 @section('contenido')
-    @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
     <div class="x_panel">
-        <div class="row">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
 
-                <div class="x_title">
-                    <h2>Editar Suscripción <small></small></h2>
-                    <ul class="nav navbar-right panel_toolbox">
-                        <a href="{{ url('suscripciones') }}" class="btn btn-info fa fa-undo " style="color: white">Atrás</a>
-                    </ul>
-                    <div class="clearfix"></div>
-                </div>
-                @if (count($errors) > 0)
-                    <div class="alert alert-danger">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
+        <div class="x_title">
+            <div class="col-md-6 col-sm-6 col-xs-12">
+                <h4>Editar Suscripción </h4>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12" align="right">
+                <a href="{{ url('suscripciones') }}"><button class="btn btn-info float-right"> <i
+                            class="fa fa-arrow-left"></i></button></a>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+
+        <ul class="nav nav-tabs bar_tabs" id="myTab" role="tablist">
+            <li class="nav-item {{ $tab == 1 ? 'active in' : '' }}">
+                <a class="nav-link" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"
+                    aria-selected="true">General</a>
+            </li>
+            <li class="nav-item {{ $tab == 2 ? 'active in' : '' }}">
+                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
+                    aria-controls="profile" aria-selected="false">Comentarios</a>
+            </li>
+
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade {{ $tab == 1 ? 'active in' : '' }}" id="home" role="tabpanel"
+                aria-labelledby="home-tab">
+
                 <form action="{{ url('suscripciones_update') }}" method="POST" class="forms-sample">
                     @csrf
                     <div class="x_content">
-                        <br />
                         <input type="hidden" value="{{ $suscripcion->Id }}" name="Id">
                         <div class="row">
                             <div class="col-sm-3">
@@ -39,7 +46,8 @@
                                     <option value="">Seleccione...</option>
                                     @foreach ($aseguradoras as $cia)
                                         <option value="{{ $cia->Id }}"
-                                            {{ $suscripcion->CompaniaId == $cia->Id ? 'selected' : '' }}>{{ $cia->Nombre }}
+                                            {{ $suscripcion->CompaniaId == $cia->Id ? 'selected' : '' }}>
+                                            {{ $cia->Nombre }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -48,22 +56,22 @@
                                 <label class="control-label">Ejecutivo </label>
                                 {{-- <input type="text" name="Gestor" value="{{old('Gestor')}}" class="form-control"> --}}
                                 <select name="Gestor" class="form-control">
-            
+                                    <option value="">Seleccione...</option>
                                     @foreach ($ejecutivos as $ejecutivo)
                                         <option value="{{ $ejecutivo->id }}"
                                             {{ $suscripcion->GestorId == $ejecutivo->id ? 'selected' : '' }}>
-                                           {{ $ejecutivo->name }}</option>
+                                            {{ $ejecutivo->name }}</option>
                                     @endforeach
                                 </select>
 
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row" style="padding-top: 15px!important;">
 
                             <div class="col-sm-6">
                                 <label class="control-label ">Contratante</label>
                                 <select name="ContratanteId" class="form-control select2">
-
+                                    <option value="">Seleccione...</option>
                                     @foreach ($clientes as $cliente)
                                         <option value="{{ $cliente->Id }}"
                                             {{ $suscripcion->ContratanteId == $cliente->Id ? 'selected' : '' }}>
@@ -74,7 +82,7 @@
                             <div class="col-sm-3">
                                 <label class="control-label ">Número de Poliza Deuda</label>
                                 <select name="PolizaDeuda" class="form-control select2">
-
+                                    <option value="">Seleccione...</option>
                                     @foreach ($polizas_deuda as $deuda)
                                         <option value="{{ $deuda->Id }}"
                                             {{ $suscripcion->PolizaDeuda == $deuda->Id ? 'selected' : '' }}>
@@ -86,7 +94,7 @@
                             <div class="col-sm-3">
                                 <label class="control-label">Número de Poliza Vida</label>
                                 <select name="PolizaVida" class="form-control select2">
-
+                                    <option value="">Seleccione...</option>
                                     @foreach ($polizas_vida as $vida)
                                         <option value="{{ $vida->Id }}"
                                             {{ $suscripcion->PolizaVida == $vida->Id ? 'selected' : '' }}>
@@ -96,7 +104,7 @@
                             </div>
 
                         </div>
-                        <div class="row">
+                        <div class="row" style="padding-top: 15px!important;">
 
                             <div class="col-sm-6">
                                 <label class="control-label ">Asegurado</label>
@@ -110,20 +118,22 @@
                             </div>
                             <div class="col-sm-3">
                                 <label class="control-label ">Edad</label>
-                                <input type="number" name="Edad" value="{{ $suscripcion->Edad }}" class="form-control"
-                                    oninput="this.value = this.value.toUpperCase()">
+                                <input type="number" name="Edad" value="{{ $suscripcion->Edad }}"
+                                    class="form-control" oninput="this.value = this.value.toUpperCase()">
                             </div>
                         </div>
 
 
-                        <div class="row">
+                        <div class="row" style="padding-top: 15px!important;">
 
 
                             <div class="col-sm-3">
                                 <label class="control-label">Genero</label>
                                 <select name="Genero" id="Genero" class="form-control">
-                                    <option value="1" {{ $suscripcion->Genero == 1 ? 'selected' : '' }}>F</option>
-                                    <option value="2" {{ $suscripcion->Genero == 2 ? 'selected' : '' }}>M</option>
+                                    <option value="1" {{ $suscripcion->Genero == 1 ? 'selected' : '' }}>F
+                                    </option>
+                                    <option value="2" {{ $suscripcion->Genero == 2 ? 'selected' : '' }}>M
+                                    </option>
                                 </select>
                             </div>
                             <div class="col-sm-3">
@@ -133,7 +143,8 @@
                                     class="form-control">
                             </div>
                             <div class="col-sm-3">
-                                <label class="control-label ">Suma Asegurada Evaluada vida colectivo usuarios</label>
+                                <label class="control-label ">Suma Asegurada Evaluada vida colectivo
+                                    usuarios</label>
                                 <input type="float" name="SumaAseguradaVida"
                                     value="{{ number_format($suscripcion->SumaAseguradaVida, 2, '.', ',') }}"
                                     class="form-control">
@@ -154,7 +165,7 @@
                         </div>
 
 
-                        <div class="row">
+                        <div class="row" style="padding-top: 15px!important;">
                             <div class="col-sm-2">
                                 <label for="DireccionResidencia" class="form-label">Peso (lb)</label>
                                 <input type="float" name="Peso" value="{{ $suscripcion->Peso }}" id="Peso"
@@ -189,6 +200,7 @@
                                 <label for="DireccionResidencia" class="form-label">Tipo de Orden Medica</label>
                                 <!-- <input type="text" name="TipoOrdenMedicaId" value="{{ $suscripcion->TipoOrdenMedicaId }}" id="TipoOrdenMedicaId" class="form-control"> -->
                                 <select name="TipoOrdenMedicaId" id="TipoOrdenMedicaId" class="form-control">
+                                    <option value="">Seleccione...</option>
                                     @foreach ($tipo_orden as $tipo)
                                         <option value="{{ $tipo->Id }}"
                                             {{ $suscripcion->TipoOrdenMedicaId == $tipo->Id ? 'selected' : '' }}>
@@ -279,7 +291,7 @@
                             </div>
                         </div>
 
-                        <br><br>
+                        <br>
                         <div class="form-group" align="center">
                             <button class="btn btn-success" type="submit">Guardar</button>
                             <a href="{{ url('catalogo/aseguradoras/') }}"><button class="btn btn-primary"
@@ -288,26 +300,21 @@
                     </div>
                 </form>
 
+
             </div>
-        </div>
-    </div>
+            <div class="tab-pane fade {{ $tab == 2 ? 'active in' : '' }}" id="profile" role="tabpanel"
+                aria-labelledby="profile-tab">
 
-    <div class="x_panel">
-        <div class="row">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
-                <div class="x_title">
-                    <h2>Comentarios <small></small></h2>
-                    <ul class="nav navbar-right panel_toolbox">
-                        <button type="button" class="btn btn-success" style="color: white" data-target="#modal-create"
-                            data-toggle="modal"> <i class="fa fa-plus"></i>
-                            Agregar</button>
-                    </ul>
-                    <div class="clearfix"></div>
-                </div>
+                <ul class="nav navbar-right panel_toolbox">
+                    <button type="button" class="btn btn-success" style="color: white" data-target="#modal-create"
+                        data-toggle="modal"> <i class="fa fa-plus"></i>
+                        Agregar</button>
+                </ul>
 
-                <table class="table table-striped jambo_table">
+                <table id="datatable" class="table table-striped table-bordered">
                     <thead>
                         <tr>
+                            <th>#</th>
                             <th>Fecha</th>
                             <th>Usuario</th>
                             <th>Comentario</th>
@@ -315,8 +322,10 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @php($i = 1)
                         @foreach ($suscripcion->comentarios as $comen)
                             <tr>
+                                <td>{{ $i }}</td>
                                 <td>{{ date('d/m/Y', strtotime($comen->FechaCreacion)) }}</td>
                                 <td>{{ $comen->usuario->name ?? '' }}</td>
                                 <td>{{ $comen->Comentario }}</td>
@@ -327,16 +336,19 @@
                                     <a href="#" class="btn btn-danger"><i class="fa fa-trash fa-lg"></i></a>
                                 </td>
                             </tr>
+                             @php($i++)
                         @endforeach
                     </tbody>
 
 
                 </table>
 
-            </div>
-        </div>
-    </div>
 
+            </div>
+
+        </div>
+
+    </div>
 
 
     <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-create">
@@ -433,5 +445,4 @@
 
         }
     </script>
-
 @endsection
