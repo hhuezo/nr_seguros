@@ -2,6 +2,14 @@
 @section('contenido')
     <div class="x_panel">
 
+        <style>
+            #datatable {
+                font-size: 12px;
+                /* Ajusta el tamaño según lo necesites */
+            }
+        </style>
+
+
         @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
         <div class="x_title">
             <div class="col-md-6 col-sm-6 col-xs-12">
@@ -22,16 +30,16 @@
                     <thead>
                         <tr>
 
-                            <th>FECHA DE INGRESO</th>
+                            <th>Fecha ingresao</th>
                             <th>No.</th>
-                            <th>GESTOR</th>
+                            <th>Gestor</th>
                             <th>CIA</th>
-                            <th>CONTRATANTE </th>
-                            <th>NUMERO <br>POLIZA DEUDA</th>
-                            <th>NUMERO <br> POLIZA VIDA</th>
-                            <th>ASEGURADO </th>
+                            <th>Contratante </th>
+                            <th>Número <br>póliza deuda</th>
+                            <th>Número <br>póliza vida</th>
+                            <th>Asegurado </th>
                             <th>Resumen de Gestión</th>
-                            <th>OPCIONES</th>
+                            <th>Opciones</th>
 
                         </tr>
                     </thead>
@@ -47,7 +55,8 @@
                                 <td>{{ $obj->polizaDeuda->NumeroPoliza ?? '' }}</td>
                                 <td>{{ $obj->polizaVida->NumeroPoliza ?? '' }}</td>
                                 <td>{{ $obj->Asegurado }}</td>
-                                <td class="bg-{{$obj->resumenGestion->Color ?? ''}}">{{ $obj->resumenGestion->Nombre ?? '' }}</td>
+                                <td class="bg-{{ $obj->resumenGestion->Color ?? '' }}">
+                                    {{ $obj->resumenGestion->Nombre ?? '' }}</td>
 
                                 <td align="center">
                                     @can('edit users')
@@ -56,8 +65,9 @@
                                             <i class="fa fa-pencil fa-lg"></i></a>
                                     @endcan
                                     @can('delete users')
-                                        &nbsp;&nbsp;<a href="#" class="btn btn-danger" data-target="#modal-delete-{{ $obj->Id }}"
-                                            data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
+                                        &nbsp;&nbsp;<a href="#" class="btn btn-danger"
+                                            data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i
+                                                class="fa fa-trash fa-lg"></i></a>
                                     @endcan
                                 </td>
                             </tr>
