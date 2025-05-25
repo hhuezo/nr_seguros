@@ -189,17 +189,17 @@
                                     </ul>
                                 </li>
 
-                                
+
                                 <li><a><i class="fa fa-folder"></i> Suscripciones<span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu" id="ul-suscripciones">
 
 
                                         <li><a href="{{url('suscripciones')}}">Suscripciones</a></li>
-                                        <!-- <li><a href="">Compania</a></li> -->
-                                        <li><a href="">Estado del Caso</a></li>
-                                        <li><a href="">Tipo de Orden Medica</a></li>
-                                        <li><a href="">Tipo de IMC</a></li>
-                                        <li><a href="">Tipo de Cliente </a></li>
+                                        <li><a href="{{url('companias')}}">Compania</a></li>
+                                        <li><a href="{{url('estadoscasos')}}">Estado del Caso</a></li>
+                                        <li><a href="{{url('tiposordenesmedicas')}}">Tipo de Orden Medica</a></li>
+                                        <li><a href="{{url('tiposimc')}}">Tipo de IMC</a></li>
+                                        <li><a href="{{url('tiposclientes')}}">Tipo de Cliente </a></li>
 
 
 

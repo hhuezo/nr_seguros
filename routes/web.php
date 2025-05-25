@@ -40,6 +40,11 @@ use App\Http\Controllers\polizas\VidaTasaDiferenciadaController;
 use App\Http\Controllers\seguridad\PermissionController;
 use App\Http\Controllers\seguridad\RoleController;
 use App\Http\Controllers\suscripcion\SuscripcionController;
+use App\Http\Controllers\suscripcion\CompaniaController;
+use App\Http\Controllers\suscripcion\EstadoCasoController;
+use App\Http\Controllers\suscripcion\TipoOrdenMedicaController;
+use App\Http\Controllers\suscripcion\TipoImcController;
+use App\Http\Controllers\suscripcion\TipoClienteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -399,4 +404,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('suscripciones/agregar_comentario', [SuscripcionController::class, 'agregar_comentario']);
     Route::post('suscripciones_update', [SuscripcionController::class, 'update']);
     Route::resource('suscripciones', SuscripcionController::class);
+    Route::resource('companias', CompaniaController::class);
+    Route::resource('estadoscasos', EstadoCasoController::class);
+    Route::resource('tiposordenesmedicas',TipoOrdenMedicaController::class);
+    Route::resource('tiposimc', TipoImcController::class);
+    Route::resource('tiposclientes', TipoClienteController::class);
+
+
+
 });
