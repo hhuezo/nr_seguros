@@ -403,6 +403,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('get_imc', [SuscripcionController::class, 'get_imc']);
     Route::post('suscripciones/agregar_comentario', [SuscripcionController::class, 'agregar_comentario']);
     Route::post('suscripciones_update', [SuscripcionController::class, 'update']);
+    Route::post('suscripciones/comentarios/update/{id}', [SuscripcionController::class, 'comentarios_update']);
+    Route::delete('suscripciones/comentarios/delete/{id}', [SuscripcionController::class, 'comentarios_delete']);
     Route::resource('suscripciones', SuscripcionController::class);
     Route::resource('companias', CompaniaController::class);
     Route::resource('estadoscasos', EstadoCasoController::class);

@@ -194,7 +194,7 @@
                                     <ul class="nav child_menu" id="ul-suscripciones">
 
 
-                                        <li><a href="{{url('suscripciones')}}">Suscripciones</a></li>
+                                        <li id="li-suscripciones"><a href="{{url('suscripciones')}}">Suscripciones</a></li>
                                         <li><a href="{{url('companias')}}">Compania</a></li>
                                         <li><a href="{{url('estadoscasos')}}">Estado del Caso</a></li>
                                         <li><a href="{{url('tiposordenesmedicas')}}">Tipo de Orden Medica</a></li>

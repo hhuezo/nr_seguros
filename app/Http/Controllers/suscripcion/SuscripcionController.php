@@ -49,7 +49,7 @@ class SuscripcionController extends Controller
         $resumen_gestion = ResumenGestion::get();
 
         //observaciones 22-5-25
-        $aseguradoras = Aseguradora::where('activo',1)->get();
+        $aseguradoras = Aseguradora::where('activo', 1)->get();
 
 
         return view('suscripciones.suscripcion.create', compact(
@@ -112,51 +112,50 @@ class SuscripcionController extends Controller
         // try {
         //     DB::beginTransaction();
 
-            $suscripcion = new Suscripcion();
-            $suscripcion->FechaIngreso = $request->FechaIngreso;
-            $suscripcion->GestorId = $request->Gestor;
-            $suscripcion->CompaniaId = $request->CompaniaId;
-            $suscripcion->ContratanteId = $request->ContratanteId;
-            $suscripcion->PolizaDeuda = $request->PolizaDeuda;
-            $suscripcion->PolizaVida = $request->PolizaVida;
-            $suscripcion->Asegurado = $request->Asegurado;
-            $suscripcion->Dui = $request->Dui;
-            $suscripcion->Edad = $request->Edad;
-            $suscripcion->Genero = $request->Genero;
-            $suscripcion->SumaAseguradaDeuda = $request->SumaAseguradaDeuda;
-            $suscripcion->SumaAseguradaVida = $request->SumaAseguradaVida;
-            $suscripcion->TipoClienteId = $request->TipoClienteId;
-            $suscripcion->Peso = $request->Peso;
-            $suscripcion->Estatura = $request->Estatura;
-            $suscripcion->Imc = $request->Imc;
-            $suscripcion->TipoIMCId = $request->TipoIMCId;
-            $suscripcion->Padecimiento = $request->Padecimiento;
-            $suscripcion->TipoOrdenMedicaId = $request->TipoOrdenMedicaId;
-            $suscripcion->EstadoId = $request->EstadoId;
-            $suscripcion->ResumenGestion = $request->ResumenGestion;
-            $suscripcion->FechaReportadoCia = $request->FechaReportadoCia;
-            $suscripcion->TareasEvaSisa = $request->TareasEvaSisa;
-            $suscripcion->FechaResolucion = $request->FechaResolucion;
-            $suscripcion->ResolucionFinal = $request->ResolucionFinal;
-            $suscripcion->ValorExtraPrima = $request->ValorExtraPrima;
-            $suscripcion->Activo = 1;
-            $suscripcion->save();
+        $suscripcion = new Suscripcion();
+        $suscripcion->FechaIngreso = $request->FechaIngreso;
+        $suscripcion->GestorId = $request->Gestor;
+        $suscripcion->CompaniaId = $request->CompaniaId;
+        $suscripcion->ContratanteId = $request->ContratanteId;
+        $suscripcion->PolizaDeuda = $request->PolizaDeuda;
+        $suscripcion->PolizaVida = $request->PolizaVida;
+        $suscripcion->Asegurado = $request->Asegurado;
+        $suscripcion->Dui = $request->Dui;
+        $suscripcion->Edad = $request->Edad;
+        $suscripcion->Genero = $request->Genero;
+        $suscripcion->SumaAseguradaDeuda = $request->SumaAseguradaDeuda;
+        $suscripcion->SumaAseguradaVida = $request->SumaAseguradaVida;
+        $suscripcion->TipoClienteId = $request->TipoClienteId;
+        $suscripcion->Peso = $request->Peso;
+        $suscripcion->Estatura = $request->Estatura;
+        $suscripcion->Imc = $request->Imc;
+        $suscripcion->TipoIMCId = $request->TipoIMCId;
+        $suscripcion->Padecimiento = $request->Padecimiento;
+        $suscripcion->TipoOrdenMedicaId = $request->TipoOrdenMedicaId;
+        $suscripcion->EstadoId = $request->EstadoId;
+        $suscripcion->ResumenGestion = $request->ResumenGestion;
+        $suscripcion->FechaReportadoCia = $request->FechaReportadoCia;
+        $suscripcion->TareasEvaSisa = $request->TareasEvaSisa;
+        $suscripcion->FechaResolucion = $request->FechaResolucion;
+        $suscripcion->ResolucionFinal = $request->ResolucionFinal;
+        $suscripcion->ValorExtraPrima = $request->ValorExtraPrima;
+        $suscripcion->Activo = 1;
+        $suscripcion->save();
 
-            if ($request->Comentarios != "") {
-                $comentario = new Comentarios();
-                $comentario->SuscripcionId = $suscripcion->Id;
-                $comentario->Usuario = $request->Gestor;
-                $comentario->FechaCreacion = Carbon::now();
-                $comentario->Activo = $request->Activo;
-                $comentario->Comentario = $request->Comentarios;
-                $comentario->save();
-            }
+        if ($request->Comentarios != "") {
+            $comentario = new Comentarios();
+            $comentario->SuscripcionId = $suscripcion->Id;
+            $comentario->Usuario = $request->Gestor;
+            $comentario->FechaCreacion = Carbon::now();
+            $comentario->Activo = $request->Activo;
+            $comentario->Comentario = $request->Comentarios;
+            $comentario->save();
+        }
+
+        return redirect('suscripciones/' . $suscripcion->Id . '/edit?tab=1')->with('success', 'El registro ha sido creado correctamente');
 
 
-            alert()->success('El registro ha sido creado correctamente');
-            return back();
-
-          //  DB::commit();
+        //  DB::commit();
         // } catch (Exception $e) {
         //     DB::rollBack();
         //     report($e); // Puedes también usar Log::error($e->getMessage());
@@ -230,13 +229,11 @@ class SuscripcionController extends Controller
         $comentario->Activo = 1;
         $comentario->Comentario = $request->Comentario;
         $comentario->save();
-
-        alert()->success('El registro ha sido creado correctamente');
-        return redirect('suscripciones/' . $request->SuscripcionId . '/edit?tab=2');
+        return redirect('suscripciones/' . $request->SuscripcionId . '/edit?tab=2')->with('success', 'El registro ha sido creado correctamente');
     }
 
 
-    public function edit(Request $request,$id)
+    public function edit(Request $request, $id)
     {
         $tab = $request->tab ?? 1;
         $suscripcion = Suscripcion::findOrFail($id);
@@ -252,9 +249,9 @@ class SuscripcionController extends Controller
         $resumen_gestion = ResumenGestion::get();
 
         //observaciones 22-5-25
-        $aseguradoras = Aseguradora::where('activo',1)->get();
+        $aseguradoras = Aseguradora::where('activo', 1)->get();
 
-        return view('suscripciones.suscripcion.edit', compact('aseguradoras','tipos_imc', 'resumen_gestion', 'polizas_vida', 'polizas_deuda', 'clientes', 'ejecutivos', 'companias', 'tipo_clientes', 'tipo_orden', 'suscripcion', 'estados','tab'));
+        return view('suscripciones.suscripcion.edit', compact('aseguradoras', 'tipos_imc', 'resumen_gestion', 'polizas_vida', 'polizas_deuda', 'clientes', 'ejecutivos', 'companias', 'tipo_clientes', 'tipo_orden', 'suscripcion', 'estados', 'tab'));
     }
 
 
@@ -289,9 +286,7 @@ class SuscripcionController extends Controller
         $suscripcion->ValorExtraPrima = $request->ValorExtraPrima;
         // $suscripcion->Activo = 1;
         $suscripcion->update();
-
-        alert()->success('El registro ha sido modificado correctamente');
-         return redirect('suscripciones');
+        return redirect('suscripciones/' . $request->Id . '/edit?tab=1')->with('success', 'El registro ha sido modificado correctamente');
     }
 
     public function destroy($id)
@@ -301,5 +296,22 @@ class SuscripcionController extends Controller
         Suscripcion::findOrFail($id)->delete();
         alert()->success('El registro ha sido eliminado correctamente');
         return back();
+    }
+
+
+    public function comentarios_update(Request $request, $id)
+    {
+        $comentario = Comentarios::findOrFail($id);
+        $comentario->Comentario = $request->Comentario;
+        $comentario->save();
+        return redirect('suscripciones/' . $comentario->SuscripcionId . '/edit?tab=2')->with('success', 'El registro ha sido modificado correctamente');
+    }
+
+
+    public function comentarios_delete($id)
+    {
+        $comentario = Comentarios::findOrFail($id);
+        $comentario->delete();
+        return redirect('suscripciones/' . $comentario->SuscripcionId . '/edit?tab=2')->with('success', 'El registro ha sido eliminado correctamente');
     }
 }

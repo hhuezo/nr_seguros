@@ -1,6 +1,26 @@
 @extends ('welcome')
 @section('contenido')
+    <!-- Toastr CSS -->
+    <link href="{{ asset('vendors/toast/toastr.min.css') }}" rel="stylesheet">
+
+    <!-- jQuery -->
+    <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
+
+    <!-- Toastr JS -->
+    <script src="{{ asset('vendors/toast/toastr.min.js') }}"></script>
     <div class="x_panel">
+
+        @if (session('success'))
+            <script>
+                toastr.success("{{ session('success') }}");
+            </script>
+        @endif
+
+        @if (session('error'))
+            <script>
+                toastr.error("{{ session('error') }}");
+            </script>
+        @endif
 
         <div class="x_title">
             <div class="col-md-6 col-sm-6 col-xs-12">
@@ -294,7 +314,7 @@
                         <br>
                         <div class="form-group" align="center">
                             <button class="btn btn-success" type="submit">Guardar</button>
-                            <a href="{{ url('catalogo/aseguradoras/') }}"><button class="btn btn-primary"
+                            <a href="{{ url('suscripciones/') }}"><button class="btn btn-primary"
                                     type="button">Cancelar</button></a>
                         </div>
                     </div>
@@ -323,20 +343,25 @@
                     </thead>
                     <tbody>
                         @php($i = 1)
-                        @foreach ($suscripcion->comentarios as $comen)
+                        @foreach ($suscripcion->comentarios as $comentario)
                             <tr>
                                 <td>{{ $i }}</td>
-                                <td>{{ date('d/m/Y', strtotime($comen->FechaCreacion)) }}</td>
-                                <td>{{ $comen->usuario->name ?? '' }}</td>
-                                <td>{{ $comen->Comentario }}</td>
+                                <td>{{ date('d/m/Y', strtotime($comentario->FechaCreacion)) }}</td>
+                                <td>{{ $comentario->usuario->name ?? '' }}</td>
+                                <td>{{ $comentario->Comentario }}</td>
 
                                 <td align="center">
-                                    <a class="btn btn-primary" class="on-default edit-row">
+                                    <a class="btn btn-primary" class="on-default edit-row"
+                                        data-target="#modal-edit-comentario-{{ $comentario->Id }}" data-toggle="modal">
                                         <i class="fa fa-pencil fa-lg"></i></a>
-                                    <a href="#" class="btn btn-danger"><i class="fa fa-trash fa-lg"></i></a>
+                                    <a href="#" class="btn btn-danger"><i class="fa fa-trash fa-lg"
+                                            data-target="#modal-delete-comentario-{{ $comentario->Id }}"
+                                            data-toggle="modal"> </i></a>
                                 </td>
                             </tr>
-                             @php($i++)
+                            @php($i++)
+                            @include('suscripciones.suscripcion.edit_comentario')
+                            @include('suscripciones.suscripcion.delete_comentario')
                         @endforeach
                     </tbody>
 
@@ -381,6 +406,12 @@
 
     <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
     <script type="text/javascript">
+        $(document).ready(function() {
+            //mostrar opcion en menu
+            displayOption("ul-suscripciones", "li-suscripciones");
+
+        });
+
         function calculo() {
             const peso = document.getElementById('Peso').value;
             const estatura = document.getElementById('Estatura').value;
