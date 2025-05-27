@@ -22,6 +22,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class SuscripcionController extends Controller
 {
@@ -97,7 +98,7 @@ class SuscripcionController extends Controller
             'FechaResolucion'      => 'nullable|date',
             'ResolucionFinal'      => 'nullable|string|max:1000',
             'ValorExtraPrima'      => 'nullable|numeric|min:0',
-            'Comentarios'          => 'nullable|string|max:1000',
+            'Comentarios'          => 'nullable|string|max:3000',
         ], [
             'required'             => 'El campo :attribute es obligatorio.',
             'date'                 => 'El campo :attribute debe ser una fecha válida.',
@@ -206,32 +207,7 @@ class SuscripcionController extends Controller
         //
     }
 
-    public function agregar_comentario(Request $request)
-    {
-        // Validación
-        $request->validate([
-            'SuscripcionId' => 'required|integer|exists:suscripcion,id',
-            'Comentario'    => 'required|string|max:500',
-        ], [
-            'SuscripcionId.required' => 'El campo Suscripción es obligatorio.',
-            'SuscripcionId.integer'  => 'El campo Suscripción debe ser un número entero.',
-            'SuscripcionId.exists'   => 'La suscripción seleccionada no existe en la base de datos.',
-            'Comentario.required'    => 'Debe ingresar un comentario.',
-            'Comentario.string'      => 'El comentario debe ser una cadena de texto.',
-            'Comentario.max'         => 'El comentario no debe exceder los 500 caracteres.',
-        ]);
 
-
-        // Guardado
-        $comentario = new Comentarios();
-        $comentario->SuscripcionId = $request->SuscripcionId;
-        $comentario->Usuario = auth()->user()->id ?? null;
-        $comentario->FechaCreacion = Carbon::now();
-        $comentario->Activo = 1;
-        $comentario->Comentario = $request->Comentario;
-        $comentario->save();
-        return redirect('suscripciones/' . $request->SuscripcionId . '/edit?tab=2')->with('success', 'El registro ha sido creado correctamente');
-    }
 
 
     public function edit(Request $request, $id)
@@ -300,9 +276,48 @@ class SuscripcionController extends Controller
     }
 
 
+    public function agregar_comentario(Request $request)
+    {
+        // Validación
+        $request->validate([
+            'SuscripcionId' => 'required|integer|exists:suscripcion,id',
+            'Comentario'    => 'required|string|max:3000',
+        ], [
+            'SuscripcionId.required' => 'El campo Suscripción es obligatorio.',
+            'SuscripcionId.integer'  => 'El campo Suscripción debe ser un número entero.',
+            'SuscripcionId.exists'   => 'La suscripción seleccionada no existe en la base de datos.',
+            'Comentario.required'    => 'Debe ingresar un comentario.',
+            'Comentario.string'      => 'El comentario debe ser una cadena de texto.',
+            'Comentario.max'         => 'El comentario no debe exceder los 3000 caracteres.',
+        ]);
+
+
+        // Guardado
+        $comentario = new Comentarios();
+        $comentario->SuscripcionId = $request->SuscripcionId;
+        $comentario->Usuario = auth()->user()->id ?? null;
+        $comentario->FechaCreacion = Carbon::now();
+        $comentario->Activo = 1;
+        $comentario->Comentario = $request->Comentario;
+        $comentario->save();
+        return redirect('suscripciones/' . $request->SuscripcionId . '/edit?tab=2')->with('success', 'El registro ha sido creado correctamente');
+    }
 
     public function comentarios_update(Request $request, $id)
     {
+        // Validación
+        $validated = $request->validate([
+            'Comentario' => [
+                'required',
+                'string',
+                'max:3000',
+            ],
+        ], [
+            'Comentario.required'    => 'Debe ingresar un comentario.',
+            'Comentario.string'      => 'El comentario debe ser una cadena de texto.',
+            'Comentario.max'         => 'El comentario no debe exceder los 3000 caracteres.',
+        ]);
+
         $comentario = Comentarios::findOrFail($id);
         $comentario->Comentario = $request->Comentario;
         $comentario->save();
@@ -313,10 +328,13 @@ class SuscripcionController extends Controller
     public function comentarios_get(Request $request, $id)
     {
         try {
-            $comentarios = Comentarios::join('users','users.id','=','sus_comentarios.Usuario')
-            ->select(DB::raw("DATE_FORMAT(sus_comentarios.FechaCreacion, '%d/%m/%Y %H:%i') as FechaCreacion"),
-            'sus_comentarios.Comentario','users.name as Usuario')
-            ->where('SuscripcionId', $id)->get();
+            $comentarios = Comentarios::join('users', 'users.id', '=', 'sus_comentarios.Usuario')
+                ->select(
+                    DB::raw("DATE_FORMAT(sus_comentarios.FechaCreacion, '%d/%m/%Y %H:%i') as FechaCreacion"),
+                    'sus_comentarios.Comentario',
+                    'users.name as Usuario'
+                )
+                ->where('SuscripcionId', $id)->get();
 
             return response()->json([
                 'success' => true,

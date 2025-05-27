@@ -22,6 +22,17 @@
             </script>
         @endif
 
+
+        @if (count($errors) > 0)
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <div class="x_title">
             <div class="col-md-6 col-sm-6 col-xs-12">
                 <h4>Editar Suscripción </h4>
@@ -352,7 +363,8 @@
 
                                 <td align="center">
                                     <a class="btn btn-primary" class="on-default edit-row"
-                                        data-target="#modal-edit-comentario-{{ $comentario->Id }}" onclick="showCountComentarioEditIni({{ $comentario->Id }})"  data-toggle="modal">
+                                        data-target="#modal-edit-comentario-{{ $comentario->Id }}"
+                                        onclick="showCountComentarioEditIni({{ $comentario->Id }})" data-toggle="modal">
                                         <i class="fa fa-pencil fa-lg"></i></a>
                                     <a href="#" class="btn btn-danger"><i class="fa fa-trash fa-lg"
                                             data-target="#modal-delete-comentario-{{ $comentario->Id }}"
@@ -425,16 +437,16 @@
         }
 
         function showCountComentarioEdit(id) {
-            const textarea = document.getElementById('Comentario-'+id);
-            const counter = document.getElementById('countComentario-'+id);
+            const textarea = document.getElementById('Comentario-' + id);
+            const counter = document.getElementById('countComentario-' + id);
             const maxLength = 3000;
             const length = textarea.value.length;
             counter.textContent = `${length}/${maxLength}`;
         }
 
         function showCountComentarioEditIni(id) {
-            const textarea = document.getElementById('Comentario-'+id);
-            const counter = document.getElementById('countComentario-'+id);
+            const textarea = document.getElementById('Comentario-' + id);
+            const counter = document.getElementById('countComentario-' + id);
             const maxLength = 3000;
             const length = textarea.value.length;
             counter.textContent = `${length}/${maxLength}`;
