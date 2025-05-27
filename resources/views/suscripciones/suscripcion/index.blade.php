@@ -125,7 +125,6 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary">Confirmar</button>
                 </div>
             </div>
         </div>
@@ -165,27 +164,6 @@
             });
 
         }
-        // $(document).ready(function() {
 
-
-
-        //     $("#Productos").change(function() {
-        //         $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
-        //         // var para la Departamento
-        //         var Productos = $(this).val();
-
-        //         //funcionpara las distritos
-        //         $.get("{{ url('get_plan') }}" + '/' + Productos, function(data) {
-        //             //esta el la peticion get, la cual se divide en tres partes. ruta,variables y funcion
-        //             console.log(data);
-        //             var _select = '<option value=""> Seleccione </option>';
-        //             for (var i = 0; i < data.length; i++)
-        //                 _select += '<option value="' + data[i].Id + '"  >' + data[i].Nombre +
-        //                 '</option>';
-        //             $("#Planes").html(_select);
-        //         });
-        //     })
-
-        // });
     </script>
 @endsection
