@@ -13,6 +13,8 @@
                 <h3>Suscripciones </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
+                <button class="btn btn-primary" data-target="#modal-filtro" data-toggle="modal"><i
+                        class="fa fa-filter"></i></button>
                 <a href="{{ url('suscripciones/create/') }}"><button class="btn btn-info float-right"> <i
                             class="fa fa-plus"></i> Nuevo</button></a>
             </div>
@@ -40,6 +42,8 @@
                             <th>Suma<br>Asegurada<br>Deuda</th>
                             <th>Suma<br>Asegurada<br>Vida</th>
                             <th>Tipo cliente</th>
+                            <th>Altura</th>
+                            <th>Peso</th>
                             <th>IMC</th>
                             <th>Padecimientos</th>
                             <th>Tipo de orden medica</th>
@@ -47,6 +51,8 @@
                             <th>Resumen de gestion</th>
                             <th>Fecha reportado cia</th>
                             <th>Tareas eva (sisa)</th>
+                            <th>% Extra prima</th>
+                            <th>Fecha Resolución</th>
                             <th>Opciones</th>
 
                         </tr>
@@ -56,7 +62,9 @@
                         @foreach ($suscripciones as $obj)
                             <tr>
                                 <td>{{ $i }}</td>
-                                <td>{{ date('d/m/Y', strtotime($obj->FechaIngreso)) }}</td>
+                                <td>
+                                    {{ $obj->FechaIngreso ? date('d/m/Y', strtotime($obj->FechaIngreso)) : '' }}
+                                </td>
                                 <td>{{ $obj->gestor->Nombre ?? '' }}</td>
                                 <td>{{ $obj->compania->Nombre ?? '' }}</td>
                                 <td>{{ $obj->contratante->Nombre ?? '' }}</td>
@@ -76,6 +84,8 @@
                                 </td>
 
                                 <td>{{ $obj->tipoCliente->Nombre ?? '' }}</td>
+                                <td>{{ $obj->Peso }} Lb</td>
+                                <td>{{ $obj->Estatura }} Mts</td>
                                 <td>{{ number_format($obj->Imc, 2) }}</td>
                                 <td>{{ $obj->Padecimiento }}</td>
                                 <td>{{ $obj->tipoOrdenMedica->Nombre ?? '' }}</td>
@@ -86,6 +96,11 @@
                                     {{ $obj->FechaReportadoCia ? date('d/m/Y', strtotime($obj->FechaReportadoCia)) : '' }}
                                 </td>
                                 <td>{{ $obj->TareasEvaSisa }}</td>
+                                <td>{{ $obj->ValorExtraPrima }}</td>
+                                <td>
+                                    {{ $obj->FechaResolucion ? date('d/m/Y', strtotime($obj->FechaResolucion)) : '' }}
+                                </td>
+
 
                                 <td align="center">
                                     <a href="{{ url('suscripciones') }}/{{ $obj->Id }}/edit" class="btn btn-primary"
@@ -113,6 +128,35 @@
 
 
 
+    <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-filtro">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="GET" action="{{url('suscripciones')}}">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                        <h4 class="modal-title">Filtrar</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="control-label ">Fecha inicio</label>
+                            <input type="date" name="FechaInicio" value="{{ $fecha_inicio }}" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label ">Fecha final</label>
+                            <input type="date" name="FechaFinal" value="{{ $fecha_final }}" class="form-control">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary">Aceptar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
 
     <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-comentario">
@@ -154,7 +198,7 @@
                         comentarios.forEach(comentario => {
                             ul.append(
                                 `<li><strong>${comentario.FechaCreacion} - ${comentario.Usuario}</strong> <br> ${comentario.Comentario}</li><br>`
-                                );
+                            );
                         });
 
                         contenedor.append(ul);

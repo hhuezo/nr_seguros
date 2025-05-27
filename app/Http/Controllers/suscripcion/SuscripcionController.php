@@ -27,12 +27,15 @@ use Illuminate\Validation\Rule;
 class SuscripcionController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        $suscripciones = Suscripcion::get();
+        $fecha_final = $request->FechaFinal ?? date('Y-m-d');
+        $fecha_inicio = $request->FechaInicio ?? date('Y-m-d', strtotime('-3 months'));
+
+        $suscripciones = Suscripcion::whereBetween(DB::raw('DATE(FechaIngreso)'), [$fecha_inicio, $fecha_final])->get();
 
 
-        return view('suscripciones.suscripcion.index', compact('suscripciones'));
+        return view('suscripciones.suscripcion.index', compact('suscripciones', 'fecha_inicio', 'fecha_final'));
     }
 
     public function create()
