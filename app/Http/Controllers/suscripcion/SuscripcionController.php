@@ -5,6 +5,7 @@ namespace App\Http\Controllers\suscripcion;
 use App\Http\Controllers\Controller;
 use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\Cliente;
+use App\Models\catalogo\Ejecutivo;
 use App\Models\polizas\Comentario;
 use App\Models\polizas\Deuda;
 use App\Models\polizas\Vida;
@@ -40,7 +41,7 @@ class SuscripcionController extends Controller
         $tipo_orden = OrdenMedica::get();
         $estados = EstadoCaso::get();
 
-        $ejecutivos = User::role('ejecutivo')->where('activo', 1)->get();
+        $ejecutivos = Ejecutivo::where('Activo',1)->get();
         $clientes = Cliente::where('activo', 1)->get();
         $polizas_deuda = Deuda::where('activo', 1)->get();
         $polizas_vida = Vida::where('activo', 1)->get();
@@ -241,7 +242,7 @@ class SuscripcionController extends Controller
         $tipo_clientes = TipoCliente::get();
         $tipo_orden = OrdenMedica::get();
         $estados = EstadoCaso::get();
-        $ejecutivos = User::role('ejecutivo')->where('activo', 1)->get();
+        $ejecutivos = Ejecutivo::where('Activo',1)->get();
         $clientes = Cliente::where('activo', 1)->get();
         $polizas_deuda = Deuda::where('activo', 1)->get();
         $polizas_vida = Vida::where('activo', 1)->get();

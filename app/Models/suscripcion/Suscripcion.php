@@ -2,7 +2,9 @@
 
 namespace App\Models\suscripcion;
 
+use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\Cliente;
+use App\Models\catalogo\Ejecutivo;
 use App\Models\polizas\Comentario;
 use App\Models\polizas\Deuda;
 use App\Models\polizas\Vida;
@@ -52,7 +54,7 @@ class Suscripcion extends Model
 
     public function compania()
     {
-        return $this->belongsTo(Compania::class, 'CompaniaId');
+        return $this->belongsTo(Aseguradora::class, 'CompaniaId');
     }
 
     public function tipoCliente()
@@ -82,7 +84,7 @@ class Suscripcion extends Model
 
     public function gestor()
     {
-        return $this->belongsTo(User::class, 'GestorId');
+        return $this->belongsTo(Ejecutivo::class, 'GestorId');
     }
 
     public function contratante()

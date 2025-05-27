@@ -78,9 +78,9 @@
                                 <select name="Gestor" class="form-control">
                                     <option value="">Seleccione...</option>
                                     @foreach ($ejecutivos as $ejecutivo)
-                                        <option value="{{ $ejecutivo->id }}"
-                                            {{ $suscripcion->GestorId == $ejecutivo->id ? 'selected' : '' }}>
-                                            {{ $ejecutivo->name }}</option>
+                                        <option value="{{ $ejecutivo->Id }}"
+                                            {{ $suscripcion->GestorId == $ejecutivo->Id ? 'selected' : '' }}>
+                                            {{ $ejecutivo->Nombre }}</option>
                                     @endforeach
                                 </select>
 
@@ -352,7 +352,7 @@
 
                                 <td align="center">
                                     <a class="btn btn-primary" class="on-default edit-row"
-                                        data-target="#modal-edit-comentario-{{ $comentario->Id }}" data-toggle="modal">
+                                        data-target="#modal-edit-comentario-{{ $comentario->Id }}" onclick="showCountComentarioEditIni({{ $comentario->Id }})"  data-toggle="modal">
                                         <i class="fa fa-pencil fa-lg"></i></a>
                                     <a href="#" class="btn btn-danger"><i class="fa fa-trash fa-lg"
                                             data-target="#modal-delete-comentario-{{ $comentario->Id }}"
@@ -389,9 +389,12 @@
                         <h4 class="modal-title">Nuevo comentario</h4>
                     </div>
                     <div class="modal-body">
-                        <label for="DireccionResidencia" class="form-label">Comentario</label>
+                        <label for="Comentario" class="form-label">
+                            Comentario <span id="countComentario">0/3000</span>
+                        </label>
                         <input type="hidden" value="{{ $suscripcion->Id }}" name="SuscripcionId">
-                        <textarea name="Comentario" class="form-control" rows="3" required>{{ old('Comentario') }}</textarea>
+                        <textarea name="Comentario" id="Comentario" class="form-control" rows="4" maxlength="3000" required
+                            oninput="showCountComentario()">{{ old('Comentario') }}</textarea>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
@@ -407,10 +410,35 @@
     <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function() {
-            //mostrar opcion en menu
+            // Mostrar opción en menú
             displayOption("ul-suscripciones", "li-suscripciones");
 
+
         });
+
+        function showCountComentario() {
+            const textarea = document.getElementById('Comentario');
+            const counter = document.getElementById('countComentario');
+            const maxLength = 3000;
+            const length = textarea.value.length;
+            counter.textContent = `${length}/${maxLength}`;
+        }
+
+        function showCountComentarioEdit(id) {
+            const textarea = document.getElementById('Comentario-'+id);
+            const counter = document.getElementById('countComentario-'+id);
+            const maxLength = 3000;
+            const length = textarea.value.length;
+            counter.textContent = `${length}/${maxLength}`;
+        }
+
+        function showCountComentarioEditIni(id) {
+            const textarea = document.getElementById('Comentario-'+id);
+            const counter = document.getElementById('countComentario-'+id);
+            const maxLength = 3000;
+            const length = textarea.value.length;
+            counter.textContent = `${length}/${maxLength}`;
+        }
 
         function calculo() {
             const peso = document.getElementById('Peso').value;

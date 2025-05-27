@@ -13,14 +13,15 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label class="control-label ">Comentario</label>
-                        <input type="text" name="Comentario" value="{{ $comentario->Comentario }}" required
-                            class="form-control">
+                        <label class="control-label ">Comentario <span
+                                id="countComentario-{{ $comentario->Id }}">0/3000</span></label>
+                        <textarea class="form-control" name="Comentario" id="Comentario-{{ $comentario->Id }}" rows="4" maxlength="3000"
+                           oninput="showCountComentarioEdit({{ $comentario->Id }})">{{ $comentario->Comentario }}</textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary">Confirmar</button>
+                    <button type="submit" class="btn btn-primary">Aceptar</button>
                 </div>
             </div>
         </div>
