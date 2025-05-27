@@ -8,9 +8,6 @@
                 /* Ajusta el tamaño según lo necesites */
             }
         </style>
-
-
-        @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
         <div class="x_title">
             <div class="col-md-6 col-sm-6 col-xs-12">
                 <h3>Suscripciones </h3>
@@ -88,16 +85,17 @@
                                 <td>{{ $obj->TareasEvaSisa }}</td>
 
                                 <td align="center">
-                                    @can('edit users')
-                                        <a href="{{ url('suscripciones') }}/{{ $obj->Id }}/edit" class="btn btn-primary"
-                                            class="on-default edit-row">
-                                            <i class="fa fa-pencil fa-lg"></i></a>
-                                    @endcan
-                                    @can('delete users')
-                                        <a href="#" class="btn btn-danger"
-                                            data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i
-                                                class="fa fa-trash fa-lg"></i></a>
-                                    @endcan
+                                    <a href="{{ url('suscripciones') }}/{{ $obj->Id }}/edit" class="btn btn-primary"
+                                        class="on-default edit-row">
+                                        <i class="fa fa-pencil fa-lg"></i></a>
+
+                                    <a href="#" class="btn btn-danger"
+                                        data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i
+                                            class="fa fa-trash fa-lg"></i></a>
+
+                                    <a href="#" class="btn btn-info" data-target="#modal-comentario"
+                                        data-toggle="modal" onclick="getComentarios({{ $obj->Id }})"><i
+                                            class="fa fa-book fa-lg"></i></a>
                                 </td>
                             </tr>
                             @include('suscripciones.suscripcion.modal')
@@ -109,5 +107,85 @@
             </div>
         </div>
     </div>
-    @include('sweetalert::alert')
+
+
+
+
+
+    <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-comentario">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <h4 class="modal-title">Comentarios</h4>
+                </div>
+                <div class="modal-body" id="listComentarios">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
+    <script type="text/javascript">
+        function noGuardardo() {
+            Swal.fire('Debe guardar los datos inicial de la poliza');
+        }
+
+        function getComentarios(id) {
+
+            $.get("{{ url('suscripciones/getComentarios') }}/" + id, function(data) {
+                if (data.success) {
+                    const comentarios = data.data;
+                    const contenedor = $('#listComentarios');
+                    contenedor.empty(); // Limpia el contenido anterior
+
+                    if (comentarios.length > 0) {
+                        const ul = $('<ul></ul>');
+
+                        comentarios.forEach(comentario => {
+                            ul.append(`<li><strong>${comentario.FechaCreacion} - ${comentario.Usuario}</strong> <br> ${comentario.Comentario}</li><br>`);
+                        });
+
+                        contenedor.append(ul);
+                    } else {
+                        contenedor.html('<p>No hay comentarios disponibles.</p>');
+                    }
+                } else {
+                    $('#listComentarios').html('<p>Error al cargar los comentarios.</p>');
+                }
+            }).fail(function() {
+                $('#listComentarios').html('<p>Error de conexión con el servidor.</p>');
+            });
+
+        }
+        // $(document).ready(function() {
+
+
+
+        //     $("#Productos").change(function() {
+        //         $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
+        //         // var para la Departamento
+        //         var Productos = $(this).val();
+
+        //         //funcionpara las distritos
+        //         $.get("{{ url('get_plan') }}" + '/' + Productos, function(data) {
+        //             //esta el la peticion get, la cual se divide en tres partes. ruta,variables y funcion
+        //             console.log(data);
+        //             var _select = '<option value=""> Seleccione </option>';
+        //             for (var i = 0; i < data.length; i++)
+        //                 _select += '<option value="' + data[i].Id + '"  >' + data[i].Nombre +
+        //                 '</option>';
+        //             $("#Planes").html(_select);
+        //         });
+        //     })
+
+        // });
+    </script>
 @endsection

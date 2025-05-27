@@ -41,7 +41,7 @@ class SuscripcionController extends Controller
         $tipo_orden = OrdenMedica::get();
         $estados = EstadoCaso::get();
 
-        $ejecutivos = Ejecutivo::where('Activo',1)->get();
+        $ejecutivos = Ejecutivo::where('Activo', 1)->get();
         $clientes = Cliente::where('activo', 1)->get();
         $polizas_deuda = Deuda::where('activo', 1)->get();
         $polizas_vida = Vida::where('activo', 1)->get();
@@ -242,7 +242,7 @@ class SuscripcionController extends Controller
         $tipo_clientes = TipoCliente::get();
         $tipo_orden = OrdenMedica::get();
         $estados = EstadoCaso::get();
-        $ejecutivos = Ejecutivo::where('Activo',1)->get();
+        $ejecutivos = Ejecutivo::where('Activo', 1)->get();
         $clientes = Cliente::where('activo', 1)->get();
         $polizas_deuda = Deuda::where('activo', 1)->get();
         $polizas_vida = Vida::where('activo', 1)->get();
@@ -300,6 +300,7 @@ class SuscripcionController extends Controller
     }
 
 
+
     public function comentarios_update(Request $request, $id)
     {
         $comentario = Comentarios::findOrFail($id);
@@ -307,6 +308,29 @@ class SuscripcionController extends Controller
         $comentario->save();
         return redirect('suscripciones/' . $comentario->SuscripcionId . '/edit?tab=2')->with('success', 'El registro ha sido modificado correctamente');
     }
+
+
+    public function comentarios_get(Request $request, $id)
+    {
+        try {
+            $comentarios = Comentarios::join('users','users.id','=','sus_comentarios.Usuario')
+            ->select(DB::raw("DATE_FORMAT(sus_comentarios.FechaCreacion, '%d/%m/%Y %H:%i') as FechaCreacion"),
+            'sus_comentarios.Comentario','users.name as Usuario')
+            ->where('SuscripcionId', $id)->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $comentarios
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ocurrió un error al obtener los comentarios.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 
 
     public function comentarios_delete($id)

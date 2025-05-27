@@ -405,13 +405,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('suscripciones_update', [SuscripcionController::class, 'update']);
     Route::post('suscripciones/comentarios/update/{id}', [SuscripcionController::class, 'comentarios_update']);
     Route::delete('suscripciones/comentarios/delete/{id}', [SuscripcionController::class, 'comentarios_delete']);
+    Route::get('suscripciones/getComentarios/{id}', [SuscripcionController::class, 'comentarios_get']);
     Route::resource('suscripciones', SuscripcionController::class);
     Route::resource('companias', CompaniaController::class);
     Route::resource('estadoscasos', EstadoCasoController::class);
-    Route::resource('tiposordenesmedicas',TipoOrdenMedicaController::class);
+    Route::resource('tiposordenesmedicas', TipoOrdenMedicaController::class);
     Route::resource('tiposimc', TipoImcController::class);
     Route::resource('tiposclientes', TipoClienteController::class);
-
-
-
 });
