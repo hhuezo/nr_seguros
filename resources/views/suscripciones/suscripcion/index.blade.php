@@ -68,10 +68,13 @@
                                 <td>
                                     {{ $obj->Genero == 1 ? 'F' : ($obj->Genero == 2 ? 'M' : '') }}
                                 </td>
-                                <td>{{ $obj->SumaAseguradaDeuda !== null && $obj->SumaAseguradaDeuda > 0 ? $obj->SumaAseguradaDeuda : '' }}
+                                <td>
+                                    {{ $obj->SumaAseguradaDeuda !== null && $obj->SumaAseguradaDeuda > 0 ? number_format($obj->SumaAseguradaDeuda, 2) : '' }}
                                 </td>
-                                <td>{{ $obj->SumaAseguradaVida !== null && $obj->SumaAseguradaVida > 0 ? $obj->SumaAseguradaVida : '' }}
+                                <td>
+                                    {{ $obj->SumaAseguradaVida !== null && $obj->SumaAseguradaVida > 0 ? number_format($obj->SumaAseguradaVida, 2) : '' }}
                                 </td>
+
                                 <td>{{ $obj->tipoCliente->Nombre ?? '' }}</td>
                                 <td>{{ number_format($obj->Imc, 2) }}</td>
                                 <td>{{ $obj->Padecimiento }}</td>
@@ -149,7 +152,9 @@
                         const ul = $('<ul></ul>');
 
                         comentarios.forEach(comentario => {
-                            ul.append(`<li><strong>${comentario.FechaCreacion} - ${comentario.Usuario}</strong> <br> ${comentario.Comentario}</li><br>`);
+                            ul.append(
+                                `<li><strong>${comentario.FechaCreacion} - ${comentario.Usuario}</strong> <br> ${comentario.Comentario}</li><br>`
+                                );
                         });
 
                         contenedor.append(ul);
@@ -164,6 +169,5 @@
             });
 
         }
-
     </script>
 @endsection
