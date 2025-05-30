@@ -803,7 +803,7 @@ class DeudaController extends Controller
                     }
                 }
             } else {
-                 //para datos que tengan la tasa en archivo excel
+                //para datos que tengan la tasa en archivo excel
                 $dataPago = collect([]);
                 $cartera_data = PolizaDeudaCartera::with('linea_credito')
                     ->whereNull('PolizaDeudaDetalle')
@@ -1465,12 +1465,11 @@ class DeudaController extends Controller
 
     public function cancelar_pago(Request $request)
     {
-
         try {
 
             //eliminando datos de cartera
             PolizaDeudaCartera::where('PolizaDeuda',  $request->Deuda)
-                ->where('PolizaDeudaDetalle', 0)
+                ->where('PolizaDeudaDetalle', 0)->orWhere('PolizaDeudaDetalle', null)
                 ->delete();
 
             //eliminando temp
