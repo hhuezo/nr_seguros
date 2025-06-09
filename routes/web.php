@@ -32,6 +32,7 @@ use App\Http\Controllers\polizas\DeudaCarteraFedeController;
 use App\Http\Controllers\polizas\DeudaController;
 use App\Http\Controllers\polizas\DeudaRenovacionController;
 use App\Http\Controllers\polizas\DeudaTasaDiferenciadaController;
+use App\Http\Controllers\polizas\PolizaSeguroController;
 use App\Http\Controllers\polizas\VidaController;
 use App\Http\Controllers\polizas\ResidenciaController;
 use App\Http\Controllers\polizas\ValidacionCarteraController;
@@ -412,4 +413,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('tiposordenesmedicas', TipoOrdenMedicaController::class);
     Route::resource('tiposimc', TipoImcController::class);
     Route::resource('tiposclientes', TipoClienteController::class);
+
+
+    //no declarativas
+    Route::resource('poliza/seguro', PolizaSeguroController::class);
 });

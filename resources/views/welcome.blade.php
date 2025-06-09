@@ -195,7 +195,7 @@
 
 
                                         <li id="li-suscripciones"><a href="{{url('suscripciones')}}">Suscripciones</a></li>
-                                        <li><a href="{{url('companias')}}">Compania</a></li>
+                                        {{-- <li><a href="{{url('companias')}}">Compania</a></li> --}}
                                         <li><a href="{{url('estadoscasos')}}">Estado del Caso</a></li>
                                         <li><a href="{{url('tiposordenesmedicas')}}">Tipo de Orden Medica</a></li>
                                         <li><a href="{{url('tiposimc')}}">Tipo de IMC</a></li>
@@ -250,6 +250,7 @@
                                         <li id="li-poliza-vida"><a href="{{ url('polizas/vida') }}">Vida</a></li>
                                         <li id="li-poliza-deuda"><a href="{{ url('polizas/deuda') }}">Deuda</a></li>
                                         <li id="li-poliza-desempleo"><a href="{{ url('polizas/desempleo') }}">Desempleo</a></li>
+                                        <li id="li-poliza-seguro"><a href="{{ url('poliza/seguro') }}">Polizas seguro</a></li>
                                     </ul>
                                 </li>
 
