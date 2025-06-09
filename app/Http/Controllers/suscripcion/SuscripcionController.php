@@ -6,23 +6,24 @@ use App\Http\Controllers\Controller;
 use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\Cliente;
 use App\Models\catalogo\Ejecutivo;
-use App\Models\polizas\Comentario;
 use App\Models\polizas\Deuda;
 use App\Models\polizas\Vida;
 use App\Models\suscripcion\Comentarios;
 use App\Models\suscripcion\Compania;
 use App\Models\suscripcion\EstadoCaso;
+use App\Models\suscripcion\FechasFeriadas;
+use App\Models\suscripcion\Ocupacion;
 use App\Models\suscripcion\OrdenMedica;
 use App\Models\suscripcion\ResumenGestion;
 use App\Models\suscripcion\Suscripcion;
 use App\Models\suscripcion\TipoCliente;
+use App\Models\suscripcion\TipoCredito;
 use App\Models\suscripcion\TipoImc;
-use App\Models\User;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
 
 class SuscripcionController extends Controller
 {
@@ -40,6 +41,8 @@ class SuscripcionController extends Controller
 
     public function create()
     {
+        $ocupaciones = Ocupacion::where('Activo', 1)->get();
+        $tipo_creditos = TipoCredito::where('Activo', 1)->get();
         $companias = Compania::get();
         $tipo_clientes = TipoCliente::get();
         $tipo_orden = OrdenMedica::get();
@@ -67,7 +70,9 @@ class SuscripcionController extends Controller
             'polizas_deuda',
             'polizas_vida',
             'tipos_imc',
-            'resumen_gestion'
+            'resumen_gestion',
+            'tipo_creditos',
+            'ocupaciones'
         ));
     }
 
@@ -102,6 +107,15 @@ class SuscripcionController extends Controller
             'ResolucionFinal'      => 'nullable|string|max:1000',
             'ValorExtraPrima'      => 'nullable|numeric|min:0',
             'Comentarios'          => 'nullable|string|max:3000',
+            'OcupacionId'          => 'nullable|integer|exists:sus_ocupacion,Id',
+            'TipoCreditoId'        => 'nullable|integer|exists:sus_tipo_credito,Id',
+            'FechaEntregaDocsCompletos' => 'nullable|date',
+            'DiasCompletarInfoCliente' => 'nullable|integer',
+            'TrabajadoEfectuadoDiaHabil' => 'nullable|integer',
+            'FechaCierreGestion'    => 'nullable|date',
+            'FechaRecepcionResuCIA'    => 'nullable|date|before_or_equal:FechaEnvioResoCliente',
+            'FechaEnvioResoCliente'    => 'nullable|date|after_or_equal:FechaRecepcionResuCIA',
+
         ], [
             'required'             => 'El campo :attribute es obligatorio.',
             'date'                 => 'El campo :attribute debe ser una fecha válida.',
@@ -111,7 +125,9 @@ class SuscripcionController extends Controller
             'min'                  => 'El campo :attribute debe ser al menos :min.',
             'in'                   => 'El valor seleccionado en :attribute no es válido.',
             'exists'               => 'El valor seleccionado en :attribute no existe.',
-            'regex'                => 'El formato de :attribute no es válido.'
+            'regex'                => 'El formato de :attribute no es válido.',
+            'FechaRecepcionResuCIA.before_or_equal' => 'La fecha de recepción de resolución de CIA no puede ser mayor a la fecha de envió de resolución al cliente',
+            'FechaEnvioResoCliente.after_or_equal' => 'La fecha de envió de resolución al cliente no puede ser menor a la fecha de recepción de resolución de CIA'
         ]);
 
         // try {
@@ -145,6 +161,19 @@ class SuscripcionController extends Controller
         $suscripcion->ResolucionFinal = $request->ResolucionFinal;
         $suscripcion->ValorExtraPrima = $request->ValorExtraPrima;
         $suscripcion->Activo = 1;
+        $suscripcion->OcupacionId = $request->OcupacionId;
+        $suscripcion->TipoCreditoId = $request->TipoCreditoId;
+        $suscripcion->FechaEntregaDocsCompletos = $request->FechaEntregaDocsCompletos;
+        $suscripcion->DiasCompletarInfoCliente = $request->DiasCompletarInfoCliente;
+        $suscripcion->TrabajadoEfectuadoDiaHabil = $request->TrabajadoEfectuadoDiaHabil;
+        $suscripcion->FechaCierreGestion = $request->FechaCierreGestion;
+        $suscripcion->FechaRecepcionResuCIA = $request->FechaRecepcionResuCIA;
+        $suscripcion->FechaEnvioResoCliente = $request->FechaEnvioResoCliente;
+
+        if ($suscripcion->FechaRecepcionResuCIA != null && $suscripcion->FechaEnvioResoCliente != null) {
+            $suscripcion->DiasProcesamientoResolucion = $this->calcularDiasHabiles($suscripcion->FechaRecepcionResuCIA,  $suscripcion->FechaEnvioResoCliente);
+        }
+
         $suscripcion->save();
 
         if ($request->Comentarios != "") {
@@ -218,7 +247,9 @@ class SuscripcionController extends Controller
         $tab = $request->tab ?? 1;
         $suscripcion = Suscripcion::findOrFail($id);
         $companias = Compania::get();
+        $ocupaciones = Ocupacion::where('Activo', 1)->get();
         $tipo_clientes = TipoCliente::get();
+        $tipo_creditos = TipoCredito::where('Activo', 1)->get();
         $tipo_orden = OrdenMedica::get();
         $estados = EstadoCaso::get();
         $ejecutivos = Ejecutivo::where('Activo', 1)->get();
@@ -231,7 +262,7 @@ class SuscripcionController extends Controller
         //observaciones 22-5-25
         $aseguradoras = Aseguradora::where('activo', 1)->get();
 
-        return view('suscripciones.suscripcion.edit', compact('aseguradoras', 'tipos_imc', 'resumen_gestion', 'polizas_vida', 'polizas_deuda', 'clientes', 'ejecutivos', 'companias', 'tipo_clientes', 'tipo_orden', 'suscripcion', 'estados', 'tab'));
+        return view('suscripciones.suscripcion.edit', compact('aseguradoras', 'tipos_imc', 'resumen_gestion', 'polizas_vida', 'polizas_deuda', 'clientes', 'ejecutivos', 'companias', 'ocupaciones', 'tipo_clientes', 'tipo_creditos', 'tipo_orden', 'suscripcion', 'estados', 'tab'));
     }
 
 
@@ -264,6 +295,19 @@ class SuscripcionController extends Controller
         $suscripcion->FechaResolucion = $request->FechaResolucion;
         $suscripcion->ResolucionFinal = $request->ResolucionFinal;
         $suscripcion->ValorExtraPrima = $request->ValorExtraPrima;
+        $suscripcion->OcupacionId = $request->OcupacionId;
+        $suscripcion->TipoCreditoId = $request->TipoCreditoId;
+        $suscripcion->FechaEntregaDocsCompletos = $request->FechaEntregaDocsCompletos;
+        $suscripcion->DiasCompletarInfoCliente = $request->DiasCompletarInfoCliente;
+        $suscripcion->TrabajadoEfectuadoDiaHabil = $request->TrabajadoEfectuadoDiaHabil;
+        $suscripcion->FechaCierreGestion = $request->FechaCierreGestion;
+        $suscripcion->FechaRecepcionResuCIA = $request->FechaRecepcionResuCIA;
+        $suscripcion->FechaEnvioResoCliente = $request->FechaEnvioResoCliente;
+
+        if ($suscripcion->FechaRecepcionResuCIA != null && $suscripcion->FechaEnvioResoCliente != null) {
+            $suscripcion->DiasProcesamientoResolucion = $this->calcularDiasHabiles($suscripcion->FechaRecepcionResuCIA,  $suscripcion->FechaEnvioResoCliente);
+        }
+
         // $suscripcion->Activo = 1;
         $suscripcion->update();
         return redirect('suscripciones/' . $request->Id . '/edit?tab=1')->with('success', 'El registro ha sido modificado correctamente');
@@ -359,5 +403,45 @@ class SuscripcionController extends Controller
         $comentario = Comentarios::findOrFail($id);
         $comentario->delete();
         return redirect('suscripciones/' . $comentario->SuscripcionId . '/edit?tab=2')->with('success', 'El registro ha sido eliminado correctamente');
+    }
+
+    public function calcularDiasHabiles($fechaInicio, $fechaFin)
+    {
+        // 1. Configurar zona horaria (El Salvador GMT-6)
+        $zonaHoraria = 'America/El_Salvador';
+
+        // 2. Parsear fechas con zona horaria
+        $inicio = Carbon::parse($fechaInicio)->setTimezone($zonaHoraria)->startOfDay();
+        $fin = Carbon::parse($fechaFin)->setTimezone($zonaHoraria)->endOfDay();
+
+        // 3. Obtener todos los feriados que solapan con el rango
+        $feriados = FechasFeriadas::where('FechaFinal', '>=', $inicio->toDateString())
+            ->where('FechaInicio', '<=', $fin->toDateString())
+            ->where('Activo', 1)
+            ->get(['FechaInicio', 'FechaFinal']);
+
+        // 4. Calcular días hábiles base (excluyendo fines de semana)
+        $diasHabiles = $inicio->diffInDaysFiltered(function (Carbon $fecha) {
+            return !$fecha->isWeekend(); // Excluye sábados y domingos
+        }, $fin->copy()->addDay()); // +1 para incluir fecha final
+
+        // 5. Filtrar y restar feriados que caen en días laborables
+        $diasFeriados = 0;
+
+        foreach ($feriados as $feriado) {
+            $periodoFeriado = CarbonPeriod::create(
+                Carbon::parse($feriado->FechaInicio)->setTimezone($zonaHoraria)->startOfDay(),
+                Carbon::parse($feriado->FechaFinal)->setTimezone($zonaHoraria)->endOfDay()
+            );
+
+            foreach ($periodoFeriado as $fechaFeriado) {
+                // Solo contar si está en el rango y es día laborable
+                if ($fechaFeriado->between($inicio, $fin) && !$fechaFeriado->isWeekend()) {
+                    $diasFeriados++;
+                }
+            }
+        }
+
+        return $diasHabiles - $diasFeriados;
     }
 }

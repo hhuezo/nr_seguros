@@ -200,6 +200,9 @@
                                         <li><a href="{{url('tiposordenesmedicas')}}">Tipo de Orden Medica</a></li>
                                         <li><a href="{{url('tiposimc')}}">Tipo de IMC</a></li>
                                         <li><a href="{{url('tiposclientes')}}">Tipo de Cliente </a></li>
+                                        <li><a href="{{url('ocupaciones')}}">Ocupación </a></li>
+                                        <li><a href="{{url('tipocreditos')}}">Tipos Crédito </a></li>
+                                        <li><a href="{{url('fechasferiadas')}}">Fechas Feriadas </a></li>
 
 
 
