@@ -86,7 +86,7 @@ class SuscripcionController extends Controller
             'ContratanteId'        => 'nullable|integer|exists:cliente,Id',
             'PolizaDeuda'          => 'nullable|integer|exists:poliza_deuda,Id',
             'PolizaVida'           => 'nullable|integer|exists:poliza_vida,Id',
-            'Asegurado'            => 'nullable|string|max:100',
+            'Asegurado'            => 'required|string|max:100',
             'Dui'                  => 'nullable|string|regex:/^\d{8}-\d{1}$/',
             'Edad'                 => 'nullable|integer|min:0|max:120',
             'Genero'               => 'nullable|in:1,2',
@@ -133,7 +133,16 @@ class SuscripcionController extends Controller
         // try {
         //     DB::beginTransaction();
 
+        $ultimo = Suscripcion::
+            selectRaw('MAX(CAST(SUBSTRING(NumeroTarea, LOCATE("TS-", NumeroTarea) + 3) AS UNSIGNED)) as ultimo')
+            ->whereRaw('LEFT(NumeroTarea, 2) = ?', [substr(date('Y'), -2)])
+            ->value('ultimo');
+
+        $nuevoCorrelativo = $ultimo ? $ultimo + 1 : 1;
+        $nuevaTarea = substr(date('Y'), -2) . 'TS-' . $nuevoCorrelativo;
+
         $suscripcion = new Suscripcion();
+        $suscripcion->NumeroTarea = $nuevaTarea;
         $suscripcion->FechaIngreso = $request->FechaIngreso;
         $suscripcion->GestorId = $request->Gestor;
         $suscripcion->CompaniaId = $request->CompaniaId;
