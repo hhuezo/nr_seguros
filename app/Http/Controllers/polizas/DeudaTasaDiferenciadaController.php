@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\polizas;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\DeudaTasaDiferenciadaRequestV1;
-use App\Http\Requests\DeudaTasaDiferenciadaRequestV2;
 use App\Models\catalogo\SaldoMontos;
 use App\Models\catalogo\TipoCartera;
 use App\Models\polizas\Deuda;

@@ -35,7 +35,6 @@ use App\Http\Controllers\polizas\DeudaTasaDiferenciadaController;
 use App\Http\Controllers\polizas\PolizaSeguroController;
 use App\Http\Controllers\polizas\VidaController;
 use App\Http\Controllers\polizas\ResidenciaController;
-use App\Http\Controllers\polizas\ValidacionCarteraController;
 use App\Http\Controllers\polizas\VidaFedeController;
 use App\Http\Controllers\polizas\VidaTasaDiferenciadaController;
 use App\Http\Controllers\seguridad\PermissionController;
@@ -43,9 +42,12 @@ use App\Http\Controllers\seguridad\RoleController;
 use App\Http\Controllers\suscripcion\SuscripcionController;
 use App\Http\Controllers\suscripcion\CompaniaController;
 use App\Http\Controllers\suscripcion\EstadoCasoController;
+use App\Http\Controllers\suscripcion\FechasFeriadasController;
+use App\Http\Controllers\suscripcion\OcupacionController;
 use App\Http\Controllers\suscripcion\TipoOrdenMedicaController;
 use App\Http\Controllers\suscripcion\TipoImcController;
 use App\Http\Controllers\suscripcion\TipoClienteController;
+use App\Http\Controllers\suscripcion\TipoCreditoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -414,7 +416,16 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('tiposimc', TipoImcController::class);
     Route::resource('tiposclientes', TipoClienteController::class);
 
+    Route::resource('ocupaciones', OcupacionController::class);
+    Route::resource('tipocreditos', TipoCreditoController::class);
+    Route::resource('fechasferiadas', FechasFeriadasController::class);
+
 
     //no declarativas
     Route::resource('poliza/seguro', PolizaSeguroController::class);
+
+
+
+
+
 });

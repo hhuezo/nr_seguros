@@ -24,18 +24,22 @@ class Suscripcion extends Model
 
     protected $fillable = [
         'FechaIngreso',
+        'FechaEntregaDocsCompletos',
+        'DiasCompletarInfoCliente',
         'GestorId',
         'CompaniaId',
         'Contratante',
         'PolizaDeuda',
         'PolizaVida',
         'Asegurado',
+        'OcupacionId',
         'Dui',
         'Edad',
         'Genero',
         'SumaAseguradaDeuda',
         'SumaAseguradaVida',
         'TipoClienteId',
+        'TipoCreditoId',
         'Imc',
         'TipoIMCId',
         'Padecimiento',
@@ -43,10 +47,15 @@ class Suscripcion extends Model
         'EstadoId ',
         'ResumenGestion',
         'FechaReportadoCia',
+        'TrabajadoEfectuadoDiaHabil',
         'TareasEvaSisa',
+        'FechaCierreGestion',
         'FechaResolucion',
         'ResolucionFinal',
         'ValorExtraPrima',
+        'FechaRecepcionResuCIA',
+        'FechaEnvioResoCliente',
+        'DiasProcesamientoResolucion',
         'Activo'
     ];
 
@@ -56,12 +65,18 @@ class Suscripcion extends Model
     {
         return $this->belongsTo(Aseguradora::class, 'CompaniaId');
     }
-
+    public function ocupacion()
+    {
+        return $this->belongsTo(Ocupacion::class, 'OcupacionId');
+    }
     public function tipoCliente()
     {
         return $this->belongsTo(TipoCliente::class, 'TipoClienteId');
     }
-
+    public function tipoCredito()
+    {
+        return $this->belongsTo(TipoCredito::class, 'TipoCreditoId');
+    }
     public function tipoOrdenMedica()
     {
         return $this->belongsTo(OrdenMedica::class, 'TipoOrdenMedicaId');
