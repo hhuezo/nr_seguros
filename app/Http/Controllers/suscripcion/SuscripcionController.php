@@ -103,7 +103,6 @@ class SuscripcionController extends Controller
             'ResumenGestion'       => 'nullable|integer|exists:sus_resumen_gestion,Id',
             'FechaReportadoCia'    => 'nullable|date',
             'TareasEvaSisa'        => 'nullable|string|max:255',
-            'FechaResolucion'      => 'nullable|date',
             'ResolucionFinal'      => 'nullable|string|max:1000',
             'ValorExtraPrima'      => 'nullable|numeric|min:0',
             'Comentarios'          => 'nullable|string|max:3000',
@@ -113,8 +112,8 @@ class SuscripcionController extends Controller
             'DiasCompletarInfoCliente' => 'nullable|integer',
             'TrabajadoEfectuadoDiaHabil' => 'nullable|integer',
             'FechaCierreGestion'    => 'nullable|date',
-            'FechaRecepcionResuCIA'    => 'nullable|date|before_or_equal:FechaEnvioResoCliente',
-            'FechaEnvioResoCliente'    => 'nullable|date|after_or_equal:FechaRecepcionResuCIA',
+            'FechaResolucion'    => 'nullable|date|before_or_equal:FechaEnvioResoCliente',
+            'FechaEnvioResoCliente'    => 'nullable|date|after_or_equal:FechaResolucion',
 
         ], [
             'required'             => 'El campo :attribute es obligatorio.',
@@ -126,7 +125,7 @@ class SuscripcionController extends Controller
             'in'                   => 'El valor seleccionado en :attribute no es válido.',
             'exists'               => 'El valor seleccionado en :attribute no existe.',
             'regex'                => 'El formato de :attribute no es válido.',
-            'FechaRecepcionResuCIA.before_or_equal' => 'La fecha de recepción de resolución de CIA no puede ser mayor a la fecha de envió de resolución al cliente',
+            'FechaResolucion.before_or_equal' => 'La fecha de recepción de resolución de CIA no puede ser mayor a la fecha de envió de resolución al cliente',
             'FechaEnvioResoCliente.after_or_equal' => 'La fecha de envió de resolución al cliente no puede ser menor a la fecha de recepción de resolución de CIA'
         ]);
 
@@ -176,11 +175,10 @@ class SuscripcionController extends Controller
         $suscripcion->DiasCompletarInfoCliente = $request->DiasCompletarInfoCliente;
         $suscripcion->TrabajadoEfectuadoDiaHabil = $request->TrabajadoEfectuadoDiaHabil;
         $suscripcion->FechaCierreGestion = $request->FechaCierreGestion;
-        $suscripcion->FechaRecepcionResuCIA = $request->FechaRecepcionResuCIA;
         $suscripcion->FechaEnvioResoCliente = $request->FechaEnvioResoCliente;
 
-        if ($suscripcion->FechaRecepcionResuCIA != null && $suscripcion->FechaEnvioResoCliente != null) {
-            $suscripcion->DiasProcesamientoResolucion = $this->calcularDiasHabiles($suscripcion->FechaRecepcionResuCIA,  $suscripcion->FechaEnvioResoCliente);
+        if ($suscripcion->FechaResolucion != null && $suscripcion->FechaEnvioResoCliente != null) {
+            $suscripcion->DiasProcesamientoResolucion = $this->calcularDiasHabiles($suscripcion->FechaResolucion,  $suscripcion->FechaEnvioResoCliente);
         }
 
         $suscripcion->save();
@@ -277,6 +275,57 @@ class SuscripcionController extends Controller
 
     public function update(Request $request)
     {
+
+        $request->validate([
+            'FechaIngreso'         => 'required|date',
+            'Gestor'               => 'nullable|integer|exists:users,id',
+            'CompaniaId'           => 'nullable|integer|exists:aseguradora,Id',
+            'ContratanteId'        => 'nullable|integer|exists:cliente,Id',
+            'PolizaDeuda'          => 'nullable|integer|exists:poliza_deuda,Id',
+            'PolizaVida'           => 'nullable|integer|exists:poliza_vida,Id',
+            'Asegurado'            => 'required|string|max:100',
+            'Dui'                  => 'nullable|string|regex:/^\d{8}-\d{1}$/',
+            'Edad'                 => 'nullable|integer|min:0|max:120',
+            'Genero'               => 'nullable|in:1,2',
+            'SumaAseguradaDeuda'   => 'nullable|numeric|min:0',
+            'SumaAseguradaVida'    => 'nullable|numeric|min:0',
+            'TipoClienteId'        => 'nullable|integer|exists:sus_tipo_cliente,Id',
+            'Peso'                 => 'nullable|numeric|min:0',
+            'Estatura'             => 'nullable|numeric|min:0',
+            'Imc'                  => 'nullable|numeric|min:0',
+            'TipoIMCId'            => 'nullable|integer|exists:sus_tipo_imc,Id',
+            'Padecimiento'         => 'nullable|string|max:500',
+            'TipoOrdenMedicaId'    => 'nullable|integer|exists:sus_orden_medica,Id',
+            'EstadoId'             => 'nullable|integer|exists:sus_estado_caso,Id',
+            'ResumenGestion'       => 'nullable|integer|exists:sus_resumen_gestion,Id',
+            'FechaReportadoCia'    => 'nullable|date',
+            'TareasEvaSisa'        => 'nullable|string|max:255',
+            'ResolucionFinal'      => 'nullable|string|max:1000',
+            'ValorExtraPrima'      => 'nullable|numeric|min:0',
+            'Comentarios'          => 'nullable|string|max:3000',
+            'OcupacionId'          => 'nullable|integer|exists:sus_ocupacion,Id',
+            'TipoCreditoId'        => 'nullable|integer|exists:sus_tipo_credito,Id',
+            'FechaEntregaDocsCompletos' => 'nullable|date',
+            'DiasCompletarInfoCliente' => 'nullable|integer',
+            'TrabajadoEfectuadoDiaHabil' => 'nullable|integer',
+            'FechaCierreGestion'    => 'nullable|date',
+            'FechaResolucion'    => 'nullable|date|before_or_equal:FechaEnvioResoCliente',
+            'FechaEnvioResoCliente'    => 'nullable|date|after_or_equal:FechaResolucion',
+
+        ], [
+            'required'             => 'El campo :attribute es obligatorio.',
+            'date'                 => 'El campo :attribute debe ser una fecha válida.',
+            'integer'              => 'El campo :attribute debe ser un número entero.',
+            'numeric'              => 'El campo :attribute debe ser numérico.',
+            'max'                  => 'El campo :attribute no debe ser mayor a :max caracteres.',
+            'min'                  => 'El campo :attribute debe ser al menos :min.',
+            'in'                   => 'El valor seleccionado en :attribute no es válido.',
+            'exists'               => 'El valor seleccionado en :attribute no existe.',
+            'regex'                => 'El formato de :attribute no es válido.',
+            'FechaResolucion.before_or_equal' => 'La fecha de recepción de resolución de CIA no puede ser mayor a la fecha de envió de resolución al cliente',
+            'FechaEnvioResoCliente.after_or_equal' => 'La fecha de envió de resolución al cliente no puede ser menor a la fecha de recepción de resolución de CIA'
+        ]);
+
         $suscripcion = Suscripcion::findOrFail($request->Id);
         $suscripcion->FechaIngreso = $request->FechaIngreso;
         $suscripcion->GestorId = $request->Gestor;
@@ -310,11 +359,10 @@ class SuscripcionController extends Controller
         $suscripcion->DiasCompletarInfoCliente = $request->DiasCompletarInfoCliente;
         $suscripcion->TrabajadoEfectuadoDiaHabil = $request->TrabajadoEfectuadoDiaHabil;
         $suscripcion->FechaCierreGestion = $request->FechaCierreGestion;
-        $suscripcion->FechaRecepcionResuCIA = $request->FechaRecepcionResuCIA;
         $suscripcion->FechaEnvioResoCliente = $request->FechaEnvioResoCliente;
 
-        if ($suscripcion->FechaRecepcionResuCIA != null && $suscripcion->FechaEnvioResoCliente != null) {
-            $suscripcion->DiasProcesamientoResolucion = $this->calcularDiasHabiles($suscripcion->FechaRecepcionResuCIA,  $suscripcion->FechaEnvioResoCliente);
+        if ($suscripcion->FechaResolucion != null && $suscripcion->FechaEnvioResoCliente != null) {
+            $suscripcion->DiasProcesamientoResolucion = $this->calcularDiasHabiles($suscripcion->FechaResolucion,  $suscripcion->FechaEnvioResoCliente);
         }
 
         // $suscripcion->Activo = 1;
@@ -414,6 +462,10 @@ class SuscripcionController extends Controller
         return redirect('suscripciones/' . $comentario->SuscripcionId . '/edit?tab=2')->with('success', 'El registro ha sido eliminado correctamente');
     }
 
+    /*
+    * metodo que retorna los dias habiles de un rango de fechas teniendo en cuenta
+    * fines de semana y dias feriado
+    */
     public function calcularDiasHabiles($fechaInicio, $fechaFin)
     {
         // 1. Configurar zona horaria (El Salvador GMT-6)
@@ -452,5 +504,22 @@ class SuscripcionController extends Controller
         }
 
         return $diasHabiles - $diasFeriados;
+    }
+
+    /*
+    metodo para ejecutar calcularDiasHabiles en una petición ajax
+    */
+    public function calcularDiasHabilesJson(Request $request){
+          $request->validate([
+            'fecha_inicio' => 'required|date',
+            'fecha_fin' => 'required|date|after_or_equal:fecha_inicio'
+        ]);
+
+        $dias = $this->calcularDiasHabiles(
+            $request->fecha_inicio,
+            $request->fecha_fin
+        );
+
+        return response()->json(['dias_habiles' => $dias]);
     }
 }

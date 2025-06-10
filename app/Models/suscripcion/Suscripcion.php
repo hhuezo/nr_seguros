@@ -53,7 +53,6 @@ class Suscripcion extends Model
         'FechaResolucion',
         'ResolucionFinal',
         'ValorExtraPrima',
-        'FechaRecepcionResuCIA',
         'FechaEnvioResoCliente',
         'DiasProcesamientoResolucion',
         'Activo'

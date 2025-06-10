@@ -39,11 +39,31 @@ class OcupacionController extends Controller
      */
     public function store(Request $request)
     {
+
+        //validaciones
+        $request->validate(
+            [
+                'Nombre' => 'required|unique:sus_ocupacion,Nombre'
+            ],
+            [
+                'Nombre.unique' => 'Esta ocupación ya existe',
+                'Nombre.required' => 'El nombre es requerido'
+            ]
+        );
         //
         $ocupaciones = new Ocupacion();
         $ocupaciones->Nombre = $request->Nombre;
         $ocupaciones->save();
 
+        // Si es AJAX, devuelve JSON
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'ocupacion' => $ocupaciones,
+                'message' => 'El registro ha sido creado correctamente'
+            ]);
+        }
+        // Si no es AJAX (fallback)
         alert()->success('El registro ha sido creado correctamente');
         return Redirect::to('ocupaciones');
     }

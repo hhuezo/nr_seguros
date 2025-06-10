@@ -64,6 +64,39 @@
                 @csrf
                 <div class="x_content">
                     <input type="hidden" value="{{ $suscripcion->Id }}" name="Id">
+
+                    <div class="col-sm-4">
+                        <label class="control-label "># Tarea</label>
+                        <input type="text" name="NumeroTarea" value="{{ $suscripcion->NumeroTarea }}" readonly
+                            class="form-control">
+                    </div>
+
+                    <div class="col-sm-4">
+                        <label class="control-label">Ejecutivo </label>
+                        {{-- <input type="text" name="Gestor" value="{{old('Gestor')}}" class="form-control"> --}}
+                        <select name="Gestor" class="form-control">
+                            <option value="">Seleccione...</option>
+                            @foreach ($ejecutivos as $ejecutivo)
+                            <option value="{{ $ejecutivo->Id }}" {{ $suscripcion->GestorId == $ejecutivo->Id ?
+                                'selected' : '' }}>
+                                {{ $ejecutivo->Nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <label for="DireccionResidencia" class="form-label">Estado del Caso</label>
+                        <!-- <input type="text" name="TipoOrdenMedicaId" value="{{ old('TipoOrdenMedicaId') }}" id="TipoOrdenMedicaId" class="form-control"> -->
+                        <select name="EstadoId" id="EstadoId" class="form-control">
+                            @foreach ($estados as $tipo)
+                            <option value="{{ $tipo->Id }}" {{ $suscripcion->EstadoId == $tipo->Id ? 'selected' : ''
+                                }}>
+                                {{ $tipo->Nombre }}
+                            </option>
+                            @endforeach
+                        </select>
+                    </div>
+
                     <div class="row">
                         <div class="col-sm-3">
                             <label class="control-label ">Fecha de Ingreso</label>
@@ -83,18 +116,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-sm-3">
-                            <label class="control-label">Ejecutivo </label>
-                            {{-- <input type="text" name="Gestor" value="{{old('Gestor')}}" class="form-control"> --}}
-                            <select name="Gestor" class="form-control">
-                                <option value="">Seleccione...</option>
-                                @foreach ($ejecutivos as $ejecutivo)
-                                <option value="{{ $ejecutivo->Id }}" {{ $suscripcion->GestorId == $ejecutivo->Id ?
-                                    'selected' : '' }}>
-                                    {{ $ejecutivo->Nombre }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+
                         <div class="col-sm-3">
                             <label class="control-label ">Tipo crédito</label>
                             <select name="TipoCreditoId" id="TipoCreditoId" class="form-control">
@@ -317,13 +339,7 @@
                     <div class="row" style="padding-top: 15px!important;">
 
 
-                        <div class="col-sm-3">
-                            <label for="DireccionResidencia" class="form-label">Fecha de Resolución</label>
-                            <input type="date" name="FechaResolucion"
-                                value="{{ $suscripcion->FechaResolucion ? date('Y-m-d', strtotime($suscripcion->FechaResolucion)) : '' }}"
-                                class="form-control">
 
-                        </div>
                         <div class="col-sm-3">
                             <label for="DireccionResidencia" class="form-label">% ExtraPrima</label>
                             <input type="number" name="ValorExtraPrima" value="{{ $suscripcion->ValorExtraPrima }}"
@@ -332,18 +348,7 @@
 
 
 
-                        <div class="col-sm-6">
-                            <label for="DireccionResidencia" class="form-label">Estado del Caso</label>
-                            <!-- <input type="text" name="TipoOrdenMedicaId" value="{{ old('TipoOrdenMedicaId') }}" id="TipoOrdenMedicaId" class="form-control"> -->
-                            <select name="EstadoId" id="EstadoId" class="form-control">
-                                @foreach ($estados as $tipo)
-                                <option value="{{ $tipo->Id }}" {{ $suscripcion->EstadoId == $tipo->Id ? 'selected' : ''
-                                    }}>
-                                    {{ $tipo->Nombre }}
-                                </option>
-                                @endforeach
-                            </select>
-                        </div>
+
                     </div>
                     <div class="row" style="padding-top: 15px!important;">
                         <div class="col-sm-3">
@@ -374,12 +379,14 @@
 
                     <div class="row" style="padding-top: 15px!important;">
                         <div class="col-sm-6">
-                            <label class="control-label ">Fecha de recepción de resolución de CIA</label>
-                            <input type="date" name="FechaRecepcionResuCIA"
-                                value="{{ $suscripcion->FechaRecepcionResuCIA ? date('Y-m-d', strtotime($suscripcion->FechaRecepcionResuCIA)) : '' }}"
-                                class="form-control" autofocus="true">
+                            <label for="DireccionResidencia" class="form-label">Fecha de recepción de resolución de
+                                CIA</label>
+                            <input type="date" name="FechaResolucion"
+                                value="{{ $suscripcion->FechaResolucion ? date('Y-m-d', strtotime($suscripcion->FechaResolucion)) : '' }}"
+                                class="form-control">
+
                         </div>
-                         <div class="col-sm-6">
+                        <div class="col-sm-6">
                             <label class="control-label ">Fecha de envió de resolución al cliente</label>
                             <input type="date" name="FechaEnvioResoCliente"
                                 value="{{ $suscripcion->FechaEnvioResoCliente ? date('Y-m-d', strtotime($suscripcion->FechaEnvioResoCliente)) : '' }}"
