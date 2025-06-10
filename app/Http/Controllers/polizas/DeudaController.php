@@ -882,6 +882,7 @@ class DeudaController extends Controller
             //tab 7
             $data_temp_count = PolizaDeudaTempCartera::where('PolizaDeuda', $id)->count();
             $extraprimados = PolizaDeudaExtraPrimados::where('PolizaDeuda', $id)->get();
+
             $total_extrapima = 0;
             foreach ($extraprimados as $extraprimado) {
                 //consultando calculos de extraprimados
@@ -1278,6 +1279,7 @@ class DeudaController extends Controller
                 'poliza_deuda_cartera.Dui',
                 'sal.Id as Linea',
                 'poliza_deuda_cartera.NumeroReferencia',
+                'poliza_deuda_cartera.Intereses',
                 'poliza_deuda_cartera.TotalCredito',
                 'poliza_deuda_cartera.FechaOtorgamiento',
 
@@ -1290,12 +1292,14 @@ class DeudaController extends Controller
     public function store_extraprimado(Request $request)
     {
         try {
+            $poliza_deuda_cartera = PolizaDeudaCartera::findOrFail($request->DeudaCarteraId);
             $cliente = new PolizaDeudaExtraPrimados();
             $cliente->NumeroReferencia = $request->NumeroReferencia;
             $cliente->PolizaDeuda = $request->PolizaDeuda;
             $cliente->Nombre = $request->Nombre;
             $cliente->FechaOtorgamiento = $request->FechaOtorgamiento;
             $cliente->MontoOtorgamiento = $request->MontoOtorgamiento;
+            $cliente->Intereses = $poliza_deuda_cartera->Intereses;
             $cliente->PorcentajeEP = $request->PorcentajeEP;
             $cliente->Dui = $request->Dui;
             $cliente->save();
@@ -1327,9 +1331,10 @@ class DeudaController extends Controller
 
     public function eliminar_extraprima(Request $request)
     {
-        $extra = PolizaDeudaExtraPrimados::findOrFail($request->IdExtraPrima)->delete();
+        $extra = PolizaDeudaExtraPrimados::findOrFail($request->IdExtraPrima);
+        $extra->delete();
         alert()->success('El registro ha sido eliminado correctamente');
-        return back();
+        return redirect('polizas/deuda/' . $extra->PolizaDeuda . '/edit?tab=7');
     }
 
     public function update(Request $request, $id)

@@ -153,12 +153,13 @@
 
         // Realizar la solicitud GET
         $.get(url, function(data) {
-                console.log(data);
+                //console.log(data);
                 document.getElementById('ExtraprimadosDui').value = data.Dui;
                 document.getElementById('ExtraprimadosNombre').value = data.Nombre;
                 document.getElementById('ExtraprimadosFechaOtorgamiento').value = data.FechaOtorgamiento;
                 document.getElementById('ExtraprimadosNumeroReferencia').value = NumeroReferencia;
                 document.getElementById('ExtraprimadosMontoOtorgamiento').value = parseFloat(data.TotalCredito).toFixed(2);
+                document.getElementById('DeudaCarteraId').value = data.Id;
 
             })
             .fail(function() {
