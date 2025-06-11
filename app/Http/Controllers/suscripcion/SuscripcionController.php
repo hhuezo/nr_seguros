@@ -32,11 +32,15 @@ class SuscripcionController extends Controller
     {
         $fecha_final = $request->FechaFinal ?? date('Y-m-d');
         $fecha_inicio = $request->FechaInicio ?? date('Y-m-d', strtotime('-3 months'));
+        $documento = '';
+        if ($request->filled('Documento')) {
+            $documento =  $request->Documento;
+            $suscripciones = Suscripcion::where('Dui', $documento)->get();
+        } else {
+            $suscripciones = Suscripcion::whereBetween(DB::raw('DATE(FechaIngreso)'), [$fecha_inicio, $fecha_final])->get();
+        }
 
-        $suscripciones = Suscripcion::whereBetween(DB::raw('DATE(FechaIngreso)'), [$fecha_inicio, $fecha_final])->get();
-
-
-        return view('suscripciones.suscripcion.index', compact('suscripciones', 'fecha_inicio', 'fecha_final'));
+        return view('suscripciones.suscripcion.index', compact('suscripciones', 'fecha_inicio', 'fecha_final', 'documento'));
     }
 
     public function create()
@@ -132,8 +136,7 @@ class SuscripcionController extends Controller
         // try {
         //     DB::beginTransaction();
 
-        $ultimo = Suscripcion::
-            selectRaw('MAX(CAST(SUBSTRING(NumeroTarea, LOCATE("TS-", NumeroTarea) + 3) AS UNSIGNED)) as ultimo')
+        $ultimo = Suscripcion::selectRaw('MAX(CAST(SUBSTRING(NumeroTarea, LOCATE("TS-", NumeroTarea) + 3) AS UNSIGNED)) as ultimo')
             ->whereRaw('LEFT(NumeroTarea, 2) = ?', [substr(date('Y'), -2)])
             ->value('ultimo');
 
@@ -509,8 +512,9 @@ class SuscripcionController extends Controller
     /*
     metodo para ejecutar calcularDiasHabiles en una petición ajax
     */
-    public function calcularDiasHabilesJson(Request $request){
-          $request->validate([
+    public function calcularDiasHabilesJson(Request $request)
+    {
+        $request->validate([
             'fecha_inicio' => 'required|date',
             'fecha_fin' => 'required|date|after_or_equal:fecha_inicio'
         ]);

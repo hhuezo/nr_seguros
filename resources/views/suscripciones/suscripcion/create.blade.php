@@ -154,7 +154,7 @@
 
                     <div class="col-sm-4">
                         <label class="control-label">DUI/Otro doc. de identidad</label>
-                        <input type="text" name="Dui" rows="1" class="form-control" value="{{ old('Dui') }}">
+                        <input type="text" name="Dui" id="Dui" rows="1" class="form-control" value="{{ old('Dui') }}">
                     </div>
 
 
@@ -409,6 +409,10 @@
 </div>
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
+    document.getElementById('Dui').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9\-]/g, '');
+        });
+
     function calculo() {
             const peso = document.getElementById('Peso').value;
             const estatura = document.getElementById('Estatura').value;

@@ -190,7 +190,7 @@
 
                     <div class="col-sm-4">
                         <label class="control-label">DUI/Otro doc. de identidad</label>
-                        <input type="text" name="Dui" rows="1" class="form-control" value="{{ $suscripcion->Dui }}">
+                        <input type="text" name="Dui" id="Dui" rows="1" class="form-control" value="{{ $suscripcion->Dui }}">
                     </div>
                     <div class="col-sm-4">
                         <label for="DireccionResidencia" class="form-label">Tipo de Cliente</label>
@@ -518,6 +518,10 @@
 </div>
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
+  document.getElementById('Dui').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9\-]/g, '');
+        });
+
     $(document).ready(function() {
             // Mostrar opción en menú
             displayOption("ul-suscripciones", "li-suscripciones");
