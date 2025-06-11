@@ -147,9 +147,9 @@
 
 <script type="text/javascript">
     function modalExtraprimados(poliza, dui, NumeroReferencia) {
-        console.log(poliza, dui);
+        console.log(poliza, dui, NumeroReferencia);
         // Construir la URL con los parámetros
-        var url = "{{ url('polizas/deuda/get_extraprimado') }}" + '/' + poliza + '/' + dui;
+        var url = "{{ url('polizas/deuda/get_extraprimado') }}" + '/' + poliza + '/' + dui+ '/' + NumeroReferencia;
 
         // Realizar la solicitud GET
         $.get(url, function(data) {

@@ -1263,7 +1263,7 @@ class DeudaController extends Controller
     }
 
 
-    public function get_extraprimado($id, $dui)
+    public function get_extraprimado($id, $dui,$numeroReferencia)
     {
         $cliente = PolizaDeudaCartera::join('saldos_montos as sal', 'sal.Id', '=', 'poliza_deuda_cartera.LineaCredito')
             ->select(
@@ -1284,7 +1284,7 @@ class DeudaController extends Controller
                 'poliza_deuda_cartera.FechaOtorgamiento',
 
             )
-            ->where('PolizaDeuda', $id)->where('Dui', $dui)->first();
+            ->where('PolizaDeuda', $id)->where('Dui', $dui)->where('poliza_deuda_cartera.NumeroReferencia', $numeroReferencia)->first();
 
         return response()->json($cliente);
     }
@@ -1293,6 +1293,7 @@ class DeudaController extends Controller
     {
         try {
             $poliza_deuda_cartera = PolizaDeudaCartera::findOrFail($request->DeudaCarteraId);
+
             $cliente = new PolizaDeudaExtraPrimados();
             $cliente->NumeroReferencia = $request->NumeroReferencia;
             $cliente->PolizaDeuda = $request->PolizaDeuda;

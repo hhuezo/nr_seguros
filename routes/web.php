@@ -236,7 +236,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('polizas/deuda/delete_temp', [DeudaCarteraController::class, 'deleteLineaCredito']);
     Route::post('deuda/cancelar_pago', [DeudaController::class, 'cancelar_pago']);
     Route::post('polizas/deuda/eliminar_extraprima', [DeudaController::class, 'eliminar_extraprima']);
-    Route::get('polizas/deuda/get_extraprimado/{poliza}/{dui}', [DeudaController::class, 'get_extraprimado']);
+    Route::get('polizas/deuda/get_extraprimado/{poliza}/{dui}/{numeroReferencia}', [DeudaController::class, 'get_extraprimado']);
     Route::post('polizas/deuda/store_extraprimado', [DeudaController::class, 'store_extraprimado']);
     Route::post('polizas/deuda/update_extraprimado', [DeudaController::class, 'update_extraprimado']);
     Route::post('polizas/deuda/store_poliza', [DeudaCarteraController::class, 'store_poliza']);
