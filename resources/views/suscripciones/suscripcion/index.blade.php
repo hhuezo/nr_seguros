@@ -25,10 +25,11 @@
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
-                <table id="datatable" class="table table-striped table-bordered">
+                <table id="sus_tabla" class="table table-striped table-bordered nowrap">
                     <thead>
                         <tr>
                             <th>No.</th>
+                            <th># Tarea</th>
                             <th>Fecha ingreso</th>
                             <th>Gestor</th>
                             <th>CIA</th>
@@ -55,6 +56,7 @@
                             <th>Fecha de recepción de resolución de CIA</th>
                             <th>Fecha de envió de resolución al cliente</th>
                             <th>Días de procesamiento de resolución</th>
+                            <th>Comentarios</th>
                             <th>Opciones</th>
 
                         </tr>
@@ -64,10 +66,11 @@
                         @foreach ($suscripciones as $obj)
                             <tr>
                                 <td>{{ $i }}</td>
+                                <td>{{ $obj->NumeroTarea }}</td>
                                 <td>
                                     {{ $obj->FechaIngreso ? date('d/m/Y', strtotime($obj->FechaIngreso)) : '' }}
                                 </td>
-                                <td>{{ $obj->gestor->Nombre ?? '' }}</td>
+                                <td>{{ $obj->gestor->Nombre ?? ' ' }}</td>
                                 <td>{{ $obj->compania->Nombre ?? '' }}</td>
                                 <td>{{ $obj->contratante->Nombre ?? '' }}</td>
                                 <td>{{ $obj->polizaDeuda->NumeroPoliza ?? '' }}</td>
@@ -109,12 +112,14 @@
                                 <td>
                                     {{ $obj->FechaEnvioResoCliente ? date('d/m/Y', strtotime($obj->FechaEnvioResoCliente)) : '' }}
                                 </td>
-                                <td class="resultado-dias" data-id="{{ $obj->Id }}"
-                                    data-fecha-inicio="{{ $obj->FechaResolucion }}"
-                                    data-fecha-fin="{{ $obj->FechaEnvioResoCliente }}">
-
+                                <td>
+                                     {{$obj->DiasProcesamientoResolucion ?? 0 }}
                                 </td>
-
+                                <td>
+                                    @foreach ($obj->comentarios as $comentario)
+                                        {{ $comentario->FechaCreacion }} - {{ $comentario->usuario->name }} - {{ $comentario->Comentario }};
+                                    @endforeach
+                                </td>
                                 <td align="center">
                                     <a href="{{ url('suscripciones') }}/{{ $obj->Id }}/edit" class="btn btn-primary"
                                         class="on-default edit-row">
@@ -257,6 +262,92 @@
                     $celda.text('0');
                 }
             });
+
+
+
+            if ($.fn.DataTable.isDataTable('#sus_tabla')) {
+                $('#sus_tabla').DataTable().destroy();
+            }
+            $('#sus_tabla').DataTable({
+                "language": {
+                    "sProcessing": "Procesando...",
+                    "sLengthMenu": "Mostrar _MENU_ registros",
+                    "sZeroRecords": "No se encontraron resultados",
+                    "sEmptyTable": "Ningún dato disponible en esta tabla",
+                    "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                    "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                    "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                    "sInfoPostFix": "",
+                    "sSearch": "Buscar:",
+                    "sUrl": "",
+                    "sInfoThousands": ",",
+                    "sLoadingRecords": "Cargando...",
+                    "oPaginate": {
+                        "sFirst": "Primero",
+                        "sLast": "Último",
+                        "sNext": "Siguiente",
+                        "sPrevious": "Anterior"
+                    },
+                    "oAria": {
+                        "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+                        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                    }
+                },
+                layout: {
+                    topStart: 'buttons',
+                    topEnd: 'search'
+                },
+                scrollX: true,
+                buttons: [{
+                        extend: 'copy',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+                                19, 20, 21, 22, 23, 24, 25, 26, 27, 28
+                            ] // Especifica los índices de las columnas que deseas exportar
+                        }
+                    },
+                    {
+                        extend: 'csv',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+                                19, 20, 21, 22, 23, 24, 25, 26, 27, 28
+                            ] // Especifica los índices de las columnas que deseas exportar
+                        }
+                    },
+                    {
+                        extend: 'excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+                                19, 20, 21, 22, 23, 24, 25, 26, 27, 28
+                            ] // Especifica los índices de las columnas que deseas exportar
+                        }
+                    }/*,
+                    {
+                        extend: 'pdf',
+                        orientation: 'landscape', // Configura la orientación a horizontal
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+                                19, 20, 21, 22, 23, 24, 25, 26, 27, 28
+                            ] // Especifica los índices de las columnas que deseas exportar
+                        }
+                    },
+                    {
+                        extend: 'print',
+                        text: 'Imprimir',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+                                19, 20, 21, 22, 23, 24, 25, 26, 27, 28
+                            ] // Especifica los índices de las columnas que deseas exportar
+                        }
+                    }*/
+                ],
+                columnDefs: [{
+                    targets: [28], // Índices de las columnas que deseas ocultar en la UI.
+                    visible: false // Esto hace que las columnas estén ocultas en la tabla.
+                }]
+            });
+
+
         });
     </script>
 @endsection

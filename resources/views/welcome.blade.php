@@ -31,7 +31,6 @@
             margin-bottom: 0;
             /* text-align: right; */
         }
-
     </style>
     <!-- jQuery -->
     <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
@@ -109,7 +108,6 @@
         .slider.round:before {
             border-radius: 50%;
         }
-
     </style>
 </head>
 
@@ -147,7 +145,8 @@
 
                                 <li><a href="{{ url('/') }}"><i class="fa fa-bar-chart"></i>Control de Primas
                                         General</a></li>
-                                <li><a><i class="fa fa-users"></i> Seguridad <span class="fa fa-chevron-down"></span></a>
+                                <li><a><i class="fa fa-users"></i> Seguridad <span
+                                            class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu" id="ul-seguridad">
                                         <li id="li-catalogo-usuario"><a href="{{ url('usuario/') }}">Usuario</a></li>
                                         <li><a href="{{ url('permission/') }}">Permisos</a></li>
@@ -155,16 +154,19 @@
                                     </ul>
                                 </li>
 
-                                <li><a><i class="fa fa-cog"></i> Configuracion<span class="fa fa-chevron-down"></span></a>
+                                <li><a><i class="fa fa-cog"></i> Configuracion<span
+                                            class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu" id="ul-configuracion">
-                                        <li><a href="{{ url('catalogo/configuracion_recibo/1/edit') }}">Configuración de Recibo</a></li>
+                                        <li><a href="{{ url('catalogo/configuracion_recibo/1/edit') }}">Configuración de
+                                                Recibo</a></li>
 
 
                                     </ul>
                                 </li>
 
 
-                                <li><a><i class="fa fa-folder"></i> Catálogos<span class="fa fa-chevron-down"></span></a>
+                                <li><a><i class="fa fa-folder"></i> Catálogos<span
+                                            class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu" id="ul-catalogo">
 
 
@@ -180,7 +182,8 @@
                                         <li><a href="{{ url('catalogo/area_comercial') }}">Área Comercial</a></li>
                                         <li><a href="{{ url('catalogo/ubicacion_cobro') }}">Ubicación Cobro</a></li>
                                         <li><a href="{{ url('catalogo/necesidad_proteccion') }}">Ramos</a></li>
-                                        <li><a href="{{ url('catalogo/perfiles') }}">Requisitos de asegurabilidad</a></li>
+                                        <li><a href="{{ url('catalogo/perfiles') }}">Requisitos de asegurabilidad</a>
+                                        </li>
                                         <li><a href="{{ url('catalogo/departamento_nr') }}">Departamentos NR</a></li>
                                         <li><a href="{{ url('catalogo/producto') }}">Productos</a></li>
                                         <li><a href="{{ url('catalogo/plan') }}">Planes</a></li>
@@ -190,11 +193,13 @@
                                 </li>
 
 
-                                <li><a><i class="fa fa-folder"></i> Suscripciones<span class="fa fa-chevron-down"></span></a>
+                                <li><a><i class="fa fa-folder"></i> Suscripciones<span
+                                            class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu" id="ul-suscripciones">
 
 
-                                        <li id="li-suscripciones"><a href="{{url('suscripciones')}}">Suscripciones</a></li>
+                                        <li id="li-suscripciones"><a href="{{url('suscripciones')}}">Suscripciones</a>
+                                        </li>
                                         {{-- <li><a href="{{url('companias')}}">Compania</a></li> --}}
                                         <li><a href="{{url('estadoscasos')}}">Estado del Caso</a></li>
                                         <li><a href="{{url('tiposordenesmedicas')}}">Tipo de Orden Medica</a></li>
@@ -209,7 +214,8 @@
                                     </ul>
                                 </li>
 
-                                <li><a><i class="fa fa-folder-open"></i> Catálogos deuda<span class="fa fa-chevron-down"></span></a>
+                                <li><a><i class="fa fa-folder-open"></i> Catálogos deuda<span
+                                            class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu" id="ul-poliza-deuda">
                                         <li><a href="{{ url('catalogo/tipo_cartera') }}">Linea de crédito</a></li>
 
@@ -218,28 +224,33 @@
                                 </li>
 
 
-                                <li><a><i class="fa fa-folder-o"></i> Catálogos vida<span class="fa fa-chevron-down"></span></a>
+                                <li><a><i class="fa fa-folder-o"></i> Catálogos vida<span
+                                            class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu" id="ul-poliza-vida">
-                                        <li id="li-catalogo-vida-tipo-cartera"><a href="{{ url('catalogo/tipo_cartera_vida') }}">Tipo Cartera </a></li>
+                                        <li id="li-catalogo-vida-tipo-cartera"><a
+                                                href="{{ url('catalogo/tipo_cartera_vida') }}">Tipo Cartera </a></li>
 
 
                                     </ul>
                                 </li>
 
 
-                                <li id="botonMenuCliente"><a><i class="fa fa-user"></i> Cliente <span class="fa fa-chevron-down"></span></a>
+                                <li id="botonMenuCliente"><a><i class="fa fa-user"></i> Cliente <span
+                                            class="fa fa-chevron-down"></span></a>
                                     <ul id="menuCliente" class="nav child_menu">
                                         <li id="opcionCliente"><a href="{{ url('catalogo/cliente') }}">Clientes</a>
                                         </li>
                                     </ul>
                                 </li>
 
-                                <li id="botonMenuNegocio"><a><i class="fa fa-solid fa-briefcase"></i> Cotizaciones <span class="fa fa-chevron-down"></span></a>
+                                <li id="botonMenuNegocio"><a><i class="fa fa-solid fa-briefcase"></i> Cotizaciones <span
+                                            class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu" id="menuNegocio">
                                         <li id="opcionNegocio"><a href="{{ url('catalogo/negocio') }}">Negocio</a></li>
                                     </ul>
                                 </li>
-                                <li><a><i class="fa fa-shield"></i> Aseguradoras <span class="fa fa-chevron-down"></span></a>
+                                <li><a><i class="fa fa-shield"></i> Aseguradoras <span
+                                            class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li><a href="{{ url('catalogo/aseguradoras') }}">Aseguradora </a></li>
                                         <!-- <li><a href="{{ url('catalogo/necesidad_aseguradora') }}">Asignar Necesidad de Protección <br>
@@ -247,13 +258,17 @@
                                     </ul>
                                 </li>
 
-                                <li><a><i class="fa fa-folder-open-o"></i> Pólizas<span class="fa fa-chevron-down"></span></a>
+                                <li><a><i class="fa fa-folder-open-o"></i> Pólizas<span
+                                            class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu" id="ul-poliza">
-                                        <li id="li-poliza-residencia"><a href="{{ url('polizas/residencia') }}">Residencia</a></li>
+                                        <li id="li-poliza-residencia"><a
+                                                href="{{ url('polizas/residencia') }}">Residencia</a></li>
                                         <li id="li-poliza-vida"><a href="{{ url('polizas/vida') }}">Vida</a></li>
                                         <li id="li-poliza-deuda"><a href="{{ url('polizas/deuda') }}">Deuda</a></li>
-                                        <li id="li-poliza-desempleo"><a href="{{ url('polizas/desempleo') }}">Desempleo</a></li>
-                                        <li id="li-poliza-seguro"><a href="{{ url('poliza/seguro') }}">Polizas seguro</a></li>
+                                        <li id="li-poliza-desempleo"><a
+                                                href="{{ url('polizas/desempleo') }}">Desempleo</a></li>
+                                        <li id="li-poliza-seguro"><a href="{{ url('poliza/seguro') }}">Polizas
+                                                seguro</a></li>
                                     </ul>
                                 </li>
 
@@ -291,7 +306,8 @@
 
                         <ul class="nav navbar-nav navbar-right">
                             <li class="">
-                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown"
+                                    aria-expanded="false">
                                     <img src="{{ asset('img/usuario.svg') }}" alt="">{{ auth()->user()->name }}
                                     <span class=" fa fa-angle-down"></span>
                                 </a>
@@ -317,7 +333,8 @@
             <!-- /top navigation -->
 
             <!-- page content -->
-            <div class="right_col" role="main" style=" background-repeat: no-repeat; background-size: 30% ; background-position-x:right ; background-position-y:bottom ;">
+            <div class="right_col" role="main"
+                style=" background-repeat: no-repeat; background-size: 30% ; background-position-x:right ; background-position-y:bottom ;">
 
                 @yield('contenido') <div class="x_content"></div>
 
@@ -338,8 +355,26 @@
     <!-- Custom Theme Scripts -->
     <script src="{{ asset('build/js/custom.min.js') }}"></script>
 
-    <script src="{{ asset('vendors/datatables.net/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('vendors/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+    <script src="https://cdn.datatables.net/2.1.4/js/dataTables.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/buttons/3.1.1/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.1/js/buttons.dataTables.js"></script>
+
+    <!-- JSZip para exportar a Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <!-- pdfmake para exportar a PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+    <!-- Botones HTML5 para DataTables -->
+    <script src="https://cdn.datatables.net/buttons/3.1.1/js/buttons.html5.min.js"></script>
+
+    <!-- Botones de impresión para DataTables -->
+    <script src="https://cdn.datatables.net/buttons/3.1.1/js/buttons.print.min.js"></script>
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.1.4/css/dataTables.dataTables.css">
+    <link href="https://cdn.datatables.net/buttons/3.1.1/css/buttons.dataTables.css" rel="stylesheet">ssssssss
 
     <!-- Switchery -->
     <script src="{{ asset('vendors/switchery/dist/switchery.min.js') }}"></script>
