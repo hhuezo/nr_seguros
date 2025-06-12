@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class FechasFeriadas extends Model
 {
     use HasFactory;
-        protected $table = 'sus_fechas_feriadas';
+    protected $table = 'sus_fechas_feriadas';
 
     protected $primaryKey = 'Id';
 
