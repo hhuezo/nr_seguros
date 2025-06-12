@@ -590,7 +590,7 @@
             if (inicio && fin) {
                 $.ajax({
                     url: "{{ route('calcular.dias.habiles.json') }}",
-                    type: 'POST',
+                    type: 'GET',
                     data: {
                         '_token': '{{ csrf_token() }}',
                         'fecha_inicio': inicio,
