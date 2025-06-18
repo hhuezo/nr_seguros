@@ -15,8 +15,8 @@
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
                 <button class="btn btn-primary" data-target="#modal-filtro-dui" data-toggle="modal"><i
                         class="fa fa-filter"></i></button>
-                <button class="btn btn-primary" data-target="#modal-filtro" data-toggle="modal"><i
-                        class="fa fa-filter"></i></button>
+                <button class="btn btn-warning" data-target="#modal-filtro" data-toggle="modal"><i
+                        class="fa fa-calendar"></i></button>
                 <a href="{{ url('suscripciones/create/') }}"><button class="btn btn-info float-right"> <i
                             class="fa fa-plus"></i> Nuevo</button></a>
             </div>
