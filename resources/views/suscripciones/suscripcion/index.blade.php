@@ -27,7 +27,7 @@
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
-                <table id="sus_tabla" class="table table-striped table-bordered nowrap">
+                <table id="datatable" class="table table-striped table-bordered">
                     <thead>
                         <tr>
                             <th>No.</th>
@@ -58,7 +58,7 @@
                             <th>Fecha de recepción de resolución de CIA</th>
                             <th>Fecha de envió de resolución al cliente</th>
                             <th>Días de procesamiento de resolución</th>
-                            <th>Comentarios</th>
+                            {{-- <th>Comentarios</th> --}}
                             <th>Opciones</th>
 
                         </tr>
@@ -117,7 +117,7 @@
                                 <td>
                                     {{ $obj->DiasProcesamientoResolucion ?? 0 }}
                                 </td>
-                                <td>
+                                {{-- <td>
                                     @if ($obj->comentarios->count() > 0)
                                         @foreach ($obj->comentarios as $comentario)
                                             {{ $comentario->FechaCreacion }} - {{ $comentario->usuario->name ?? '' }} -
@@ -125,7 +125,7 @@
                                         @endforeach
                                     @endif
 
-                                </td>
+                                </td> --}}
                                 <td align="center">
                                     <a href="{{ url('suscripciones') }}/{{ $obj->Id }}/edit" class="btn btn-primary"
                                         class="on-default edit-row">
@@ -196,7 +196,7 @@
                         <div class="form-group">
                             <label class="control-label ">DUI/Otro doc. de identidad</label>
                             <input type="text" name="Documento" id="Documento" rows="1" class="form-control"
-                                value="{{ $documento }}">
+                                value="{{ $documento }}" required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -231,15 +231,9 @@
 
 
     <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
+
+
     <script type="text/javascript">
-        document.getElementById('Documento').addEventListener('input', function(e) {
-            this.value = this.value.replace(/[^0-9\-]/g, '');
-        });
-
-        function noGuardardo() {
-            Swal.fire('Debe guardar los datos inicial de la poliza');
-        }
-
         function getComentarios(id) {
 
             $.get("{{ url('suscripciones/getComentarios') }}/" + id, function(data) {
@@ -269,6 +263,20 @@
             });
 
         }
+    </script>
+
+    {{--
+
+    <script type="text/javascript">
+        document.getElementById('Documento').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9\-]/g, '');
+        });
+
+        function noGuardardo() {
+            Swal.fire('Debe guardar los datos inicial de la poliza');
+        }
+
+
 
         $(document).ready(function() {
             // Procesar todas las filas al cargar la página
@@ -388,5 +396,5 @@
 
 
         });
-    </script>
+    </script> --}}
 @endsection

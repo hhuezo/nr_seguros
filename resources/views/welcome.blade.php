@@ -23,7 +23,7 @@
 
     <!-- Custom Theme Style -->
     <link href="{{ asset('build/css/custom.min.css') }}" rel="stylesheet">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    {{-- <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"> --}}
 
     <style>
         @media (min-width: 768px) .form-horizontal .control-label {
@@ -157,7 +157,8 @@
                                 <li><a><i class="fa fa-cog"></i> Configuracion<span
                                             class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu" id="ul-configuracion">
-                                        <li><a href="{{ url('catalogo/configuracion_recibo/1/edit') }}">Configuración de
+                                        <li><a href="{{ url('catalogo/configuracion_recibo/1/edit') }}">Configuración
+                                                de
                                                 Recibo</a></li>
 
 
@@ -198,16 +199,17 @@
                                     <ul class="nav child_menu" id="ul-suscripciones">
 
 
-                                        <li id="li-suscripciones"><a href="{{url('suscripciones')}}">Suscripciones</a>
+                                        <li id="li-suscripciones"><a
+                                                href="{{ url('suscripciones') }}">Suscripciones</a>
                                         </li>
-                                        {{-- <li><a href="{{url('companias')}}">Compania</a></li> --}}
-                                        <li><a href="{{url('estadoscasos')}}">Estado del Caso</a></li>
-                                        <li><a href="{{url('tiposordenesmedicas')}}">Tipo de Orden Medica</a></li>
-                                        <li><a href="{{url('tiposimc')}}">Tipo de IMC</a></li>
-                                        <li><a href="{{url('tiposclientes')}}">Tipo de Cliente </a></li>
-                                        <li><a href="{{url('ocupaciones')}}">Ocupación </a></li>
-                                        <li><a href="{{url('tipocreditos')}}">Tipos Crédito </a></li>
-                                        <li><a href="{{url('fechasferiadas')}}">Fechas Feriadas </a></li>
+                                       <li><a href="{{ url('fechasferiadas') }}">Fechas Feriadas </a></li>
+                                        <li><a href="{{ url('estadoscasos') }}">Estado del Caso</a></li>
+                                        <li><a href="{{ url('tiposordenesmedicas') }}">Tipo de Orden Medica</a></li>
+                                        <li><a href="{{ url('tiposimc') }}">Tipo de IMC</a></li>
+                                        <li><a href="{{ url('tiposclientes') }}">Tipo de Cliente </a></li>
+                                        <li><a href="{{ url('ocupaciones') }}">Ocupación </a></li>
+                                        <li><a href="{{ url('tipocreditos') }}">Tipos Crédito </a></li>
+
 
 
 
@@ -243,10 +245,11 @@
                                     </ul>
                                 </li>
 
-                                <li id="botonMenuNegocio"><a><i class="fa fa-solid fa-briefcase"></i> Cotizaciones <span
-                                            class="fa fa-chevron-down"></span></a>
+                                <li id="botonMenuNegocio"><a><i class="fa fa-solid fa-briefcase"></i> Cotizaciones
+                                        <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu" id="menuNegocio">
-                                        <li id="opcionNegocio"><a href="{{ url('catalogo/negocio') }}">Negocio</a></li>
+                                        <li id="opcionNegocio"><a href="{{ url('catalogo/negocio') }}">Negocio</a>
+                                        </li>
                                     </ul>
                                 </li>
                                 <li><a><i class="fa fa-shield"></i> Aseguradoras <span
@@ -308,14 +311,16 @@
                             <li class="">
                                 <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown"
                                     aria-expanded="false">
-                                    <img src="{{ asset('img/usuario.svg') }}" alt="">{{ auth()->user()->name }}
+                                    <img src="{{ asset('img/usuario.svg') }}"
+                                        alt="">{{ auth()->user()->name }}
                                     <span class=" fa fa-angle-down"></span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-usermenu pull-right">
 
 
 
-                                    <li> <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
+                                    <li> <a class="dropdown-item" href="{{ route('logout') }}"
+                                            onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
                                             {{ __('Salir') }}
                                         </a>
@@ -323,7 +328,8 @@
                                 </ul>
                             </li>
 
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                style="display: none;">
                                 @csrf
                             </form>
                         </ul>
@@ -355,26 +361,8 @@
     <!-- Custom Theme Scripts -->
     <script src="{{ asset('build/js/custom.min.js') }}"></script>
 
-    <script src="https://cdn.datatables.net/2.1.4/js/dataTables.min.js"></script>
-    <!-- DataTables JS -->
-    <script src="https://cdn.datatables.net/buttons/3.1.1/js/dataTables.buttons.js"></script>
-    <script src="https://cdn.datatables.net/buttons/3.1.1/js/buttons.dataTables.js"></script>
-
-    <!-- JSZip para exportar a Excel -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-
-    <!-- pdfmake para exportar a PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-
-    <!-- Botones HTML5 para DataTables -->
-    <script src="https://cdn.datatables.net/buttons/3.1.1/js/buttons.html5.min.js"></script>
-
-    <!-- Botones de impresión para DataTables -->
-    <script src="https://cdn.datatables.net/buttons/3.1.1/js/buttons.print.min.js"></script>
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.1.4/css/dataTables.dataTables.css">
-    <link href="https://cdn.datatables.net/buttons/3.1.1/css/buttons.dataTables.css" rel="stylesheet">ssssssss
+    <script src="{{ asset('vendors/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('vendors/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
 
     <!-- Switchery -->
     <script src="{{ asset('vendors/switchery/dist/switchery.min.js') }}"></script>
@@ -387,19 +375,18 @@
     <!-- mascara de entrada -->
     <script src="{{ asset('vendors/input-mask/jquery.inputmask.js') }}"></script>
 
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
+    {{-- <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> --}}
 
 </body>
 <script>
     $(function() {
         //clase para dar formato a las fechas
-        $(".formatoFecha").datepicker({
-            dateFormat: 'dd/mm/yy', // Formato de fecha dd-mm-yyyy
-            changeYear: true
-            , yearRange: 'c-100:c+100', // Rango de años permitidos
-            showButtonPanel: true
-        , });
+        // $(".formatoFecha").datepicker({
+        //     dateFormat: 'dd/mm/yy', // Formato de fecha dd-mm-yyyy
+        //     changeYear: true,
+        //     yearRange: 'c-100:c+100', // Rango de años permitidos
+        //     showButtonPanel: true,
+        // });
 
         //Initialize Select2 Elements
         $('.select2').select2()
@@ -426,7 +413,6 @@
             }
         }
     }
-
 </script>
 
 </html>

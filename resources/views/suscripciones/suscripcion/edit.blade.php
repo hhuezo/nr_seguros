@@ -1,528 +1,531 @@
 @extends ('welcome')
 @section('contenido')
-<!-- Toastr CSS -->
-<link href="{{ asset('vendors/toast/toastr.min.css') }}" rel="stylesheet">
+    <!-- Toastr CSS -->
+    <link href="{{ asset('vendors/toast/toastr.min.css') }}" rel="stylesheet">
 
-<!-- jQuery -->
-<script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
+    <!-- jQuery -->
+    <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 
-<!-- Toastr JS -->
-<script src="{{ asset('vendors/toast/toastr.min.js') }}"></script>
-<div class="x_panel">
+    <!-- Toastr JS -->
+    <script src="{{ asset('vendors/toast/toastr.min.js') }}"></script>
+    <div class="x_panel">
 
-    @if (session('success'))
-    <script>
-        toastr.success("{{ session('success') }}");
-    </script>
-    @endif
+        @if (session('success'))
+            <script>
+                toastr.success("{{ session('success') }}");
+            </script>
+        @endif
 
-    @if (session('error'))
-    <script>
-        toastr.error("{{ session('error') }}");
-    </script>
-    @endif
+        @if (session('error'))
+            <script>
+                toastr.error("{{ session('error') }}");
+            </script>
+        @endif
 
 
-    @if (count($errors) > 0)
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-            <li>{{ $error }}</li>
-            @endforeach
+        @if (count($errors) > 0)
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <div class="x_title">
+            <div class="col-md-6 col-sm-6 col-xs-12">
+                <h4>Editar Suscripción </h4>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12" align="right">
+                <a href="{{ url('suscripciones') }}"><button class="btn btn-info float-right"> <i
+                            class="fa fa-arrow-left"></i></button></a>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+
+        <ul class="nav nav-tabs bar_tabs" id="myTab" role="tablist">
+            <li class="nav-item {{ $tab == 1 ? 'active in' : '' }}">
+                <a class="nav-link" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"
+                    aria-selected="true">General</a>
+            </li>
+            <li class="nav-item {{ $tab == 2 ? 'active in' : '' }}">
+                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
+                    aria-controls="profile" aria-selected="false">Comentarios</a>
+            </li>
+
         </ul>
-    </div>
-    @endif
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade {{ $tab == 1 ? 'active in' : '' }}" id="home" role="tabpanel"
+                aria-labelledby="home-tab">
 
-    <div class="x_title">
-        <div class="col-md-6 col-sm-6 col-xs-12">
-            <h4>Editar Suscripción </h4>
-        </div>
-        <div class="col-md-6 col-sm-6 col-xs-12" align="right">
-            <a href="{{ url('suscripciones') }}"><button class="btn btn-info float-right"> <i
-                        class="fa fa-arrow-left"></i></button></a>
-        </div>
-        <div class="clearfix"></div>
-    </div>
+                <form action="{{ url('suscripciones_update') }}" method="POST" class="forms-sample">
+                    @csrf
+                    <div class="x_content">
+                        <input type="hidden" value="{{ $suscripcion->Id }}" name="Id">
 
+                        <div class="col-sm-4">
+                            <label class="control-label "># Tarea</label>
+                            <input type="text" name="NumeroTarea" value="{{ $suscripcion->NumeroTarea }}" readonly
+                                class="form-control">
+                        </div>
 
-    <ul class="nav nav-tabs bar_tabs" id="myTab" role="tablist">
-        <li class="nav-item {{ $tab == 1 ? 'active in' : '' }}">
-            <a class="nav-link" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"
-                aria-selected="true">General</a>
-        </li>
-        <li class="nav-item {{ $tab == 2 ? 'active in' : '' }}">
-            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile"
-                aria-selected="false">Comentarios</a>
-        </li>
-
-    </ul>
-    <div class="tab-content" id="myTabContent">
-        <div class="tab-pane fade {{ $tab == 1 ? 'active in' : '' }}" id="home" role="tabpanel"
-            aria-labelledby="home-tab">
-
-            <form action="{{ url('suscripciones_update') }}" method="POST" class="forms-sample">
-                @csrf
-                <div class="x_content">
-                    <input type="hidden" value="{{ $suscripcion->Id }}" name="Id">
-
-                    <div class="col-sm-4">
-                        <label class="control-label "># Tarea</label>
-                        <input type="text" name="NumeroTarea" value="{{ $suscripcion->NumeroTarea }}" readonly
-                            class="form-control">
-                    </div>
-
-                    <div class="col-sm-4">
-                        <label class="control-label">Ejecutivo </label>
-                        {{-- <input type="text" name="Gestor" value="{{old('Gestor')}}" class="form-control"> --}}
-                        <select name="Gestor" class="form-control">
-                            <option value="">Seleccione...</option>
-                            @foreach ($ejecutivos as $ejecutivo)
-                            <option value="{{ $ejecutivo->Id }}" {{ $suscripcion->GestorId == $ejecutivo->Id ?
-                                'selected' : '' }}>
-                                {{ $ejecutivo->Nombre }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="col-sm-4">
-                        <label for="DireccionResidencia" class="form-label">Estado del Caso</label>
-                        <!-- <input type="text" name="TipoOrdenMedicaId" value="{{ old('TipoOrdenMedicaId') }}" id="TipoOrdenMedicaId" class="form-control"> -->
-                        <select name="EstadoId" id="EstadoId" class="form-control">
-                            @foreach ($estados as $tipo)
-                            <option value="{{ $tipo->Id }}" {{ $suscripcion->EstadoId == $tipo->Id ? 'selected' : '' }}>
-                                {{ $tipo->Nombre }}
-                            </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="clearfix"></div>
-                    <br>
-                    <div class="x_title">
-                        <h2>Datos póliza</h2>
-
-                        <div class="clearfix"></div>
-                    </div>
-
-                    <div class="col-sm-4">
-                        <label class="control-label ">Fecha de Ingreso</label>
-                        <input type="date" name="FechaIngreso"
-                            value="{{ date('Y-m-d', strtotime($suscripcion->FechaIngreso)) }}" class="form-control"
-                            autofocus="true">
-                    </div>
-                    <div class="col-sm-4">
-                        <label class="control-label ">Días para completar información (cliente)</label>
-                        <input type="number" name="DiasCompletarInfoCliente"
-                            value="{{ $suscripcion->DiasCompletarInfoCliente }}" class="form-control"
-                            oninput="this.value = this.value.toUpperCase()">
-                    </div>
-                    <div class="col-sm-4">
-                        <label class="control-label ">Fecha entrega documentos completos</label>
-                        <input type="date" name="FechaEntregaDocsCompletos"
-                            value="{{ $suscripcion->FechaEntregaDocsCompletos ? date('Y-m-d', strtotime($suscripcion->FechaEntregaDocsCompletos)) : '' }}"
-                            class="form-control" autofocus="true">
-                    </div>
-
-                    <div class="col-sm-6">
-                        <label class="control-label ">Aseguradora</label>
-                        <select name="CompaniaId" id="CompaniaId" class="form-control">
-                            <option value="">Seleccione...</option>
-                            @foreach ($aseguradoras as $cia)
-                            <option value="{{ $cia->Id }}" {{ $suscripcion->CompaniaId == $cia->Id ? 'selected' : '' }}>
-                                {{ $cia->Nombre }}
-                            </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-sm-6">
-                        <label class="control-label ">Contratante</label>
-                        <select name="ContratanteId" class="form-control select2">
-                            <option value="">Seleccione...</option>
-                            @foreach ($clientes as $cliente)
-                            <option value="{{ $cliente->Id }}" {{ $suscripcion->ContratanteId == $cliente->Id ?
-                                'selected' : '' }}>
-                                {{ $cliente->Nombre }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-sm-6">
-                        <label class="control-label ">Número de Poliza Deuda</label>
-                        <select name="PolizaDeuda" class="form-control select2" required>
-                            <option value="">Seleccione...</option>
-                            @foreach ($polizas_deuda as $deuda)
-                            <option value="{{ $deuda->Id }}" {{ $suscripcion->PolizaDeuda == $deuda->Id ? 'selected' :
-                                '' }}>
-                                {{ $deuda->NumeroPoliza }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-sm-6">
-                        <label class="control-label">Número de Poliza Vida</label>
-                        <select name="PolizaVida" class="form-control select2">
-                            <option value="">Seleccione...</option>
-                            @foreach ($polizas_vida as $vida)
-                            <option value="{{ $vida->Id }}" {{ $suscripcion->PolizaVida == $vida->Id ? 'selected' : ''
-                                }}>
-                                {{ $vida->NumeroPoliza }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-sm-6">
-                        <label class="control-label ">Suma Asegurada Evaluada Deuda</label>
-                        <input type="float" name="SumaAseguradaDeuda"
-                            value="{{ number_format($suscripcion->SumaAseguradaDeuda, 2, '.', ',') }}"
-                            class="form-control">
-                    </div>
-                    <div class="col-sm-6">
-                        <label class="control-label ">Suma Asegurada Evaluada vida colectivo
-                            usuarios</label>
-                        <input type="float" name="SumaAseguradaVida"
-                            value="{{ number_format($suscripcion->SumaAseguradaVida, 2, '.', ',') }}"
-                            class="form-control">
-                    </div>
-
-                    <div class="clearfix"></div>
-                    <br>
-                    <div class="x_title">
-                        <h2>Datos cliente</h2>
-                        <div class="clearfix"></div>
-                    </div>
-
-                    <div class="col-sm-4">
-                        <label class="control-label">DUI/Otro doc. de identidad</label>
-                        <input type="text" name="Dui" id="Dui" rows="1" class="form-control" value="{{ $suscripcion->Dui }}">
-                    </div>
-                    <div class="col-sm-4">
-                        <label for="DireccionResidencia" class="form-label">Tipo de Cliente</label>
-                        <select name="TipoClienteId" id="TipoClienteId" class="form-control">
-                            <option value="">Seleccione...</option>
-                            @foreach ($tipo_clientes as $cliente)
-                            <option value="{{ $cliente->Id }}" {{ $suscripcion->TipoClienteId == $cliente->Id ?
-                                'selected' : '' }}>
-                                {{ $cliente->Nombre }}
-                            </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-sm-4">
-                        <label class="control-label ">Tipo crédito</label>
-                        <select name="TipoCreditoId" id="TipoCreditoId" class="form-control">
-                            <option value="">Seleccione...</option>
-                            @foreach ($tipo_creditos as $obj)
-                            <option value="{{ $obj->Id }}" {{ $suscripcion->TipoCreditoId == $obj->Id ? 'selected' : ''
-                                }}>
-                                {{ $obj->Nombre }}
-                            </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-sm-4">
-                        <label class="control-label ">Asegurado</label>
-                        <input type="text" name="Asegurado" value="{{ $suscripcion->Asegurado }}" class="form-control"
-                            autofocus="true" oninput="this.value = this.value.toUpperCase()">
-                    </div>
-                    <div class="col-sm-2">
-                        <label class="control-label ">Edad</label>
-                        <input type="number" name="Edad" value="{{ $suscripcion->Edad }}" class="form-control"
-                            oninput="this.value = this.value.toUpperCase()">
-                    </div>
-                    <div class="col-sm-2">
-                        <label class="control-label">Genero</label>
-                        <select name="Genero" id="Genero" class="form-control">
-                            <option value="1" {{ $suscripcion->Genero == 1 ? 'selected' : '' }}>F
-                            </option>
-                            <option value="2" {{ $suscripcion->Genero == 2 ? 'selected' : '' }}>M
-                            </option>
-                        </select>
-                    </div>
-                    <div class="col-sm-4">
-                        <label class="control-label ">Ocupación</label>
-                        <div class="input-group">
-                            <select name="OcupacionId" id="OcupacionId" class="form-control select2">
+                        <div class="col-sm-4">
+                            <label class="control-label">Ejecutivo </label>
+                            {{-- <input type="text" name="Gestor" value="{{old('Gestor')}}" class="form-control"> --}}
+                            <select name="Gestor" class="form-control">
                                 <option value="">Seleccione...</option>
-                                @foreach ($ocupaciones as $obj)
-                                <option value="{{ $obj->Id }}" {{ $suscripcion->OcupacionId == $obj->Id ? 'selected' :
-                                    '' }}>
-                                    {{ $obj->Nombre }}
-                                </option>
+                                @foreach ($ejecutivos as $ejecutivo)
+                                    <option value="{{ $ejecutivo->Id }}"
+                                        {{ $suscripcion->GestorId == $ejecutivo->Id ? 'selected' : '' }}>
+                                        {{ $ejecutivo->Nombre }}</option>
                                 @endforeach
                             </select>
-                            <span class="input-group-btn">
-                                <button type="button" class="btn btn-primary" data-target="#modal-create-ocupacion"
-                                    data-toggle="modal">+</button>
-                            </span>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <label for="DireccionResidencia" class="form-label">Estado del Caso</label>
+                            <!-- <input type="text" name="TipoOrdenMedicaId" value="{{ old('TipoOrdenMedicaId') }}" id="TipoOrdenMedicaId" class="form-control"> -->
+                            <select name="EstadoId" id="EstadoId" class="form-control">
+                                @foreach ($estados as $tipo)
+                                    <option value="{{ $tipo->Id }}"
+                                        {{ $suscripcion->EstadoId == $tipo->Id ? 'selected' : '' }}>
+                                        {{ $tipo->Nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="clearfix"></div>
+                        <br>
+                        <div class="x_title">
+                            <h2>Datos póliza</h2>
+
+                            <div class="clearfix"></div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <label class="control-label ">Fecha de Ingreso</label>
+                            <input type="date" name="FechaIngreso"
+                                value="{{ date('Y-m-d', strtotime($suscripcion->FechaIngreso)) }}" class="form-control"
+                                autofocus="true">
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="control-label ">Días para completar información (cliente)</label>
+                            <input type="number" name="DiasCompletarInfoCliente"
+                                value="{{ $suscripcion->DiasCompletarInfoCliente }}" class="form-control"
+                                oninput="this.value = this.value.toUpperCase()">
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="control-label ">Fecha entrega documentos completos</label>
+                            <input type="date" name="FechaEntregaDocsCompletos"
+                                value="{{ $suscripcion->FechaEntregaDocsCompletos ? date('Y-m-d', strtotime($suscripcion->FechaEntregaDocsCompletos)) : '' }}"
+                                class="form-control" autofocus="true">
+                        </div>
+
+                        <div class="col-sm-6">
+                            <label class="control-label ">Aseguradora</label>
+                            <select name="CompaniaId" id="CompaniaId" class="form-control">
+                                <option value="">Seleccione...</option>
+                                @foreach ($aseguradoras as $cia)
+                                    <option value="{{ $cia->Id }}"
+                                        {{ $suscripcion->CompaniaId == $cia->Id ? 'selected' : '' }}>
+                                        {{ $cia->Nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="control-label ">Contratante</label>
+                            <select name="ContratanteId" class="form-control select2">
+                                <option value="">Seleccione...</option>
+                                @foreach ($clientes as $cliente)
+                                    <option value="{{ $cliente->Id }}"
+                                        {{ $suscripcion->ContratanteId == $cliente->Id ? 'selected' : '' }}>
+                                        {{ $cliente->Nombre }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="control-label ">Número de Poliza Deuda</label>
+                            <select name="PolizaDeuda" class="form-control select2" required>
+                                <option value="">Seleccione...</option>
+                                @foreach ($polizas_deuda as $deuda)
+                                    <option value="{{ $deuda->Id }}"
+                                        {{ $suscripcion->PolizaDeuda == $deuda->Id ? 'selected' : '' }}>
+                                        {{ $deuda->NumeroPoliza }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="control-label">Número de Poliza Vida</label>
+                            <select name="PolizaVida" class="form-control select2">
+                                <option value="">Seleccione...</option>
+                                @foreach ($polizas_vida as $vida)
+                                    <option value="{{ $vida->Id }}"
+                                        {{ $suscripcion->PolizaVida == $vida->Id ? 'selected' : '' }}>
+                                        {{ $vida->NumeroPoliza }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="control-label ">Suma Asegurada Evaluada Deuda</label>
+                            <input type="float" name="SumaAseguradaDeuda"
+                                value="{{ number_format($suscripcion->SumaAseguradaDeuda, 2, '.', ',') }}"
+                                class="form-control">
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="control-label ">Suma Asegurada Evaluada vida colectivo
+                                usuarios</label>
+                            <input type="float" name="SumaAseguradaVida"
+                                value="{{ number_format($suscripcion->SumaAseguradaVida, 2, '.', ',') }}"
+                                class="form-control">
+                        </div>
+
+                        <div class="clearfix"></div>
+                        <br>
+                        <div class="x_title">
+                            <h2>Datos cliente</h2>
+                            <div class="clearfix"></div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <label class="control-label">DUI/Otro doc. de identidad</label>
+                            <input type="text" name="Dui" id="Dui" rows="1" class="form-control"
+                                value="{{ $suscripcion->Dui }}">
+                        </div>
+                        <div class="col-sm-4">
+                            <label for="DireccionResidencia" class="form-label">Tipo de Cliente</label>
+                            <select name="TipoClienteId" id="TipoClienteId" class="form-control">
+                                <option value="">Seleccione...</option>
+                                @foreach ($tipo_clientes as $cliente)
+                                    <option value="{{ $cliente->Id }}"
+                                        {{ $suscripcion->TipoClienteId == $cliente->Id ? 'selected' : '' }}>
+                                        {{ $cliente->Nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="control-label ">Tipo crédito</label>
+                            <select name="TipoCreditoId" id="TipoCreditoId" class="form-control">
+                                <option value="">Seleccione...</option>
+                                @foreach ($tipo_creditos as $obj)
+                                    <option value="{{ $obj->Id }}"
+                                        {{ $suscripcion->TipoCreditoId == $obj->Id ? 'selected' : '' }}>
+                                        {{ $obj->Nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="control-label ">Asegurado</label>
+                            <input type="text" name="Asegurado" value="{{ $suscripcion->Asegurado }}"
+                                class="form-control" autofocus="true" oninput="this.value = this.value.toUpperCase()">
+                        </div>
+                        <div class="col-sm-2">
+                            <label class="control-label ">Edad</label>
+                            <input type="number" name="Edad" value="{{ $suscripcion->Edad }}" class="form-control"
+                                oninput="this.value = this.value.toUpperCase()">
+                        </div>
+                        <div class="col-sm-2">
+                            <label class="control-label">Genero</label>
+                            <select name="Genero" id="Genero" class="form-control">
+                                <option value="1" {{ $suscripcion->Genero == 1 ? 'selected' : '' }}>F
+                                </option>
+                                <option value="2" {{ $suscripcion->Genero == 2 ? 'selected' : '' }}>M
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="control-label ">Ocupación</label>
+                            <div class="input-group">
+                                <select name="OcupacionId" id="OcupacionId" class="form-control select2">
+                                    <option value="">Seleccione...</option>
+                                    @foreach ($ocupaciones as $obj)
+                                        <option value="{{ $obj->Id }}"
+                                            {{ $suscripcion->OcupacionId == $obj->Id ? 'selected' : '' }}>
+                                            {{ $obj->Nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-primary" data-target="#modal-create-ocupacion"
+                                        data-toggle="modal">+</button>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="clearfix"></div>
+                        <br>
+                        <div class="x_title">
+                            <h2>Declaración de salud y evaluación</h2>
+                            <div class="clearfix"></div>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <label for="DireccionResidencia" class="form-label">Peso (lb)</label>
+                            <input type="float" name="Peso" value="{{ $suscripcion->Peso }}" id="Peso"
+                                class="form-control" onchange="calculo()">
+                        </div>
+                        <div class="col-sm-3">
+                            <label for="DireccionResidencia" class="form-label">Estatura (m) </label>
+                            <input type="float" name="Estatura" value="{{ $suscripcion->Estatura }}" id="Estatura"
+                                class="form-control" onchange="calculo()">
+                        </div>
+                        <div class="col-sm-3">
+                            <label for="DireccionResidencia" class="form-label">IMC</label>
+                            <!-- <input type="checkbox"  class="js-switch" > -->
+                            <input type="number" name="Imc"
+                                value="{{ number_format($suscripcion->Imc, 2, '.', ',') }}" id="Imc"
+                                class="form-control" readonly>
+                        </div>
+                        <div class="col-sm-3">
+                            <label for="DireccionResidencia" class="form-label">Tipo de IMC</label>
+
+                            <select name="TipoIMCId" id="TipoImcId" class="form-control">
+                                <option value="">Seleccione...</option>
+                                @foreach ($tipos_imc as $tipo)
+                                    <option value="{{ $tipo->Id }}"
+                                        {{ $suscripcion->TipoIMCId == $tipo->Id ? 'selected' : '' }}>
+                                        {{ $tipo->Nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="DireccionResidencia" class="form-label">Tipo de Orden Medica</label>
+                            <!-- <input type="text" name="TipoOrdenMedicaId" value="{{ $suscripcion->TipoOrdenMedicaId }}" id="TipoOrdenMedicaId" class="form-control"> -->
+                            <select name="TipoOrdenMedicaId" id="TipoOrdenMedicaId" class="form-control">
+                                <option value="">Seleccione...</option>
+                                @foreach ($tipo_orden as $tipo)
+                                    <option value="{{ $tipo->Id }}"
+                                        {{ $suscripcion->TipoOrdenMedicaId == $tipo->Id ? 'selected' : '' }}>
+                                        {{ $tipo->Nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="DireccionResidencia" class="form-label">Padecimientos</label>
+                            <textarea type="text" id="Padecimiento" name="Padecimiento" class="form-control">{{ $suscripcion->Padecimiento }}</textarea>
+                            <!-- <input type="checkbox"  class="js-switch" > -->
+                        </div>
+
+                        <div class="clearfix"></div>
+                        <br>
+                        <div class="x_title">
+                            <h2>Gestiones</h2>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="col-sm-12">
+                            <label for="DireccionResidencia" class="form-label">Resumen de Gestión</label>
+                            <select name="ResumenGestion" id="ResumenGestion" class="form-control">
+                                <option value="">SELECCIONE</option>
+                                @foreach ($resumen_gestion as $resumen)
+                                    <option value="{{ $resumen->Id }}" class="bg-{{ $resumen->Color }}"
+                                        {{ $suscripcion->ResumenGestion == $resumen->Id ? 'selected' : '' }}>
+                                        {{ $resumen->Nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="DireccionResidencia" class="form-label">Fecha de Reportado Cia</label>
+                            <input type="date" name="FechaReportadoCia"
+                                value="{{ isset($suscripcion->FechaReportadoCia) ? date('Y-m-d', strtotime($suscripcion->FechaReportadoCia)) : '' }}"
+                                class="form-control">
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="DireccionResidencia" class="form-label">Tareas Eva (Sisa)</label>
+                            <input type="text" name="TareasEvaSisa" value="{{ $suscripcion->TareasEvaSisa }}"
+                                id="TareasEvaSisa" class="form-control">
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="control-label ">Trabajo efectuado día hábil</label>
+                            <input type="number" name="TrabajadoEfectuadoDiaHabil"
+                                value="{{ $suscripcion->TrabajadoEfectuadoDiaHabil }}" class="form-control"
+                                oninput="this.value = this.value.toUpperCase()">
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="control-label ">Fecha cierre de gestión</label>
+                            <input type="date" name="FechaCierreGestion"
+                                value="{{ $suscripcion->FechaCierreGestion ? date('Y-m-d', strtotime($suscripcion->FechaCierreGestion)) : '' }}"
+                                class="form-control" autofocus="true">
+                        </div>
+
+                        <div class="clearfix"></div>
+                        <br>
+                        <div class="x_title">
+                            <h2>Resolución brindada</h2>
+                            <div class="clearfix"></div>
+                        </div>
+
+
+                        <div class="col-sm-6">
+                            <label for="DireccionResidencia" class="form-label">Resolución Oficial</label>
+                            <textarea name="ResolucionFinal" class="form-control" rows="4">{{ $suscripcion->ResolucionFinal }}</textarea>
+                        </div>
+                        <div class="col-sm-3">
+                            <label for="DireccionResidencia" class="form-label">Fecha de recepción de resolución de
+                                CIA</label>
+                            <input type="date" name="FechaResolucion" id="FechaResolucion"
+                                value="{{ $suscripcion->FechaResolucion ? date('Y-m-d', strtotime($suscripcion->FechaResolucion)) : '' }}"
+                                class="form-control">
+                        </div>
+                        <div class="col-sm-3">
+                            <label for="DireccionResidencia" class="form-label">% ExtraPrima</label>
+                            <input type="number" name="ValorExtraPrima" value="{{ $suscripcion->ValorExtraPrima }}"
+                                id="ValorExtraPrima" class="form-control">
+                        </div>
+                        <div class="col-sm-3">
+                            <label class="control-label ">Fecha de envió de resolución al cliente</label>
+                            <input type="date" name="FechaEnvioResoCliente" id="FechaEnvioResoCliente"
+                                value="{{ $suscripcion->FechaEnvioResoCliente ? date('Y-m-d', strtotime($suscripcion->FechaEnvioResoCliente)) : '' }}"
+                                class="form-control" autofocus="true">
+                        </div>
+                        <div class="col-sm-3">
+                            <label class="control-label ">Dias de procesamiento de resolución</label>
+                            <input type="number" name="DiasProcesamiento" id="DiasProcesamiento"
+                                value="{{ old('DiasProcesamiento') }}" readonly class="form-control" autofocus="true">
                         </div>
                     </div>
-
                     <div class="clearfix"></div>
                     <br>
-                    <div class="x_title">
-                        <h2>Declaración de salud y evaluación</h2>
-                        <div class="clearfix"></div>
+                    <div class="form-group" align="center">
+                        <button class="btn btn-success" type="submit">Guardar</button>
+                        <a href="{{ url('suscripciones/') }}"><button class="btn btn-primary"
+                                type="button">Cancelar</button></a>
                     </div>
-
-                    <div class="col-sm-3">
-                        <label for="DireccionResidencia" class="form-label">Peso (lb)</label>
-                        <input type="float" name="Peso" value="{{ $suscripcion->Peso }}" id="Peso" class="form-control"
-                            onchange="calculo()">
-                    </div>
-                    <div class="col-sm-3">
-                        <label for="DireccionResidencia" class="form-label">Estatura (m) </label>
-                        <input type="float" name="Estatura" value="{{ $suscripcion->Estatura }}" id="Estatura"
-                            class="form-control" onchange="calculo()">
-                    </div>
-                    <div class="col-sm-3">
-                        <label for="DireccionResidencia" class="form-label">IMC</label>
-                        <!-- <input type="checkbox"  class="js-switch" > -->
-                        <input type="number" name="Imc" value="{{ number_format($suscripcion->Imc, 2, '.', ',') }}"
-                            id="Imc" class="form-control" readonly>
-                    </div>
-                    <div class="col-sm-3">
-                        <label for="DireccionResidencia" class="form-label">Tipo de IMC</label>
-
-                        <select name="TipoIMCId" id="TipoImcId" class="form-control">
-                            <option value="">Seleccione...</option>
-                            @foreach ($tipos_imc as $tipo)
-                            <option value="{{ $tipo->Id }}" {{ $suscripcion->TipoIMCId == $tipo->Id ? 'selected' : ''
-                                }}>
-                                {{ $tipo->Nombre }}
-                            </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-sm-6">
-                        <label for="DireccionResidencia" class="form-label">Tipo de Orden Medica</label>
-                        <!-- <input type="text" name="TipoOrdenMedicaId" value="{{ $suscripcion->TipoOrdenMedicaId }}" id="TipoOrdenMedicaId" class="form-control"> -->
-                        <select name="TipoOrdenMedicaId" id="TipoOrdenMedicaId" class="form-control">
-                            <option value="">Seleccione...</option>
-                            @foreach ($tipo_orden as $tipo)
-                            <option value="{{ $tipo->Id }}" {{ $suscripcion->TipoOrdenMedicaId == $tipo->Id ? 'selected'
-                                : '' }}>
-                                {{ $tipo->Nombre }}
-                            </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-sm-6">
-                        <label for="DireccionResidencia" class="form-label">Padecimientos</label>
-                        <textarea type="text" id="Padecimiento" name="Padecimiento"
-                            class="form-control">{{ $suscripcion->Padecimiento }}</textarea>
-                        <!-- <input type="checkbox"  class="js-switch" > -->
-                    </div>
-
-                    <div class="clearfix"></div>
-                    <br>
-                    <div class="x_title">
-                        <h2>Gestiones</h2>
-                        <div class="clearfix"></div>
-                    </div>
-                    <div class="col-sm-12">
-                        <label for="DireccionResidencia" class="form-label">Resumen de Gestión</label>
-                        <select name="ResumenGestion" id="ResumenGestion" class="form-control">
-                            <option value="">SELECCIONE</option>
-                            @foreach ($resumen_gestion as $resumen)
-                            <option value="{{ $resumen->Id }}" class="bg-{{ $resumen->Color }}" {{ $suscripcion->
-                                ResumenGestion == $resumen->Id ? 'selected' : '' }}>
-                                {{ $resumen->Nombre }}
-                            </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-sm-6">
-                        <label for="DireccionResidencia" class="form-label">Fecha de Reportado Cia</label>
-                        <input type="date" name="FechaReportadoCia"
-                            value="{{ isset($suscripcion->FechaReportadoCia) ? date('Y-m-d', strtotime($suscripcion->FechaReportadoCia)) : '' }}"
-                            class="form-control">
-                    </div>
-                    <div class="col-sm-6">
-                        <label for="DireccionResidencia" class="form-label">Tareas Eva (Sisa)</label>
-                        <input type="text" name="TareasEvaSisa" value="{{ $suscripcion->TareasEvaSisa }}"
-                            id="TareasEvaSisa" class="form-control">
-                    </div>
-                    <div class="col-sm-6">
-                        <label class="control-label ">Trabajo efectuado día hábil</label>
-                        <input type="number" name="TrabajadoEfectuadoDiaHabil"
-                            value="{{ $suscripcion->TrabajadoEfectuadoDiaHabil }}" class="form-control"
-                            oninput="this.value = this.value.toUpperCase()">
-                    </div>
-                    <div class="col-sm-6">
-                        <label class="control-label ">Fecha cierre de gestión</label>
-                        <input type="date" name="FechaCierreGestion"
-                            value="{{ $suscripcion->FechaCierreGestion ? date('Y-m-d', strtotime($suscripcion->FechaCierreGestion)) : '' }}"
-                            class="form-control" autofocus="true">
-                    </div>
-
-                    <div class="clearfix"></div>
-                    <br>
-                    <div class="x_title">
-                        <h2>Resolución brindada</h2>
-                        <div class="clearfix"></div>
-                    </div>
+                </form>
 
 
-                    <div class="col-sm-6">
-                        <label for="DireccionResidencia" class="form-label">Resolución Oficial</label>
-                        <textarea name="ResolucionFinal" class="form-control"
-                            rows="4">{{ $suscripcion->ResolucionFinal }}</textarea>
-                    </div>
-                    <div class="col-sm-3">
-                        <label for="DireccionResidencia" class="form-label">Fecha de recepción de resolución de
-                            CIA</label>
-                        <input type="date" name="FechaResolucion" id="FechaResolucion"
-                            value="{{ $suscripcion->FechaResolucion ? date('Y-m-d', strtotime($suscripcion->FechaResolucion)) : '' }}"
-                            class="form-control">
-                    </div>
-                    <div class="col-sm-3">
-                        <label for="DireccionResidencia" class="form-label">% ExtraPrima</label>
-                        <input type="number" name="ValorExtraPrima" value="{{ $suscripcion->ValorExtraPrima }}"
-                            id="ValorExtraPrima" class="form-control">
-                    </div>
-                    <div class="col-sm-3">
-                        <label class="control-label ">Fecha de envió de resolución al cliente</label>
-                        <input type="date" name="FechaEnvioResoCliente" id="FechaEnvioResoCliente"
-                            value="{{ $suscripcion->FechaEnvioResoCliente ? date('Y-m-d', strtotime($suscripcion->FechaEnvioResoCliente)) : '' }}"
-                            class="form-control" autofocus="true">
-                    </div>
-                    <div class="col-sm-3">
-                        <label class="control-label ">Dias de procesamiento de resolución</label>
-                        <input type="number" name="DiasProcesamiento" id="DiasProcesamiento"
-                            value="{{ old('DiasProcesamiento') }}" readonly class="form-control" autofocus="true">
-                    </div>
-                </div>
-                <div class="clearfix"></div>
-                <br>
-                <div class="form-group" align="center">
-                    <button class="btn btn-success" type="submit">Guardar</button>
-                    <a href="{{ url('suscripciones/') }}"><button class="btn btn-primary"
-                            type="button">Cancelar</button></a>
-                </div>
-            </form>
+            </div>
+            <div class="tab-pane fade {{ $tab == 2 ? 'active in' : '' }}" id="profile" role="tabpanel"
+                aria-labelledby="profile-tab">
+
+                <ul class="nav navbar-right panel_toolbox">
+                    <button type="button" class="btn btn-success" style="color: white" data-target="#modal-create"
+                        data-toggle="modal"> <i class="fa fa-plus"></i>
+                        Agregar</button>
+                </ul>
+
+                <table id="datatable" class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Fecha</th>
+                            <th>Usuario</th>
+                            <th>Comentario</th>
+                            <th>Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @php($i = 1)
+                        @foreach ($suscripcion->comentarios as $comentario)
+                            <tr>
+                                <td>{{ $i }}</td>
+                                <td>{{ date('d/m/Y', strtotime($comentario->FechaCreacion)) }}</td>
+                                <td>{{ $comentario->usuario->name ?? '' }}</td>
+                                <td>{{ $comentario->Comentario }}</td>
+
+                                <td align="center">
+                                    <a class="btn btn-primary" class="on-default edit-row"
+                                        data-target="#modal-edit-comentario-{{ $comentario->Id }}"
+                                        onclick="showCountComentarioEditIni({{ $comentario->Id }})" data-toggle="modal">
+                                        <i class="fa fa-pencil fa-lg"></i></a>
+                                    <a href="#" class="btn btn-danger"><i class="fa fa-trash fa-lg"
+                                            data-target="#modal-delete-comentario-{{ $comentario->Id }}"
+                                            data-toggle="modal">
+                                        </i></a>
+                                </td>
+                            </tr>
+                            @php($i++)
+                            @include('suscripciones.suscripcion.edit_comentario')
+                            @include('suscripciones.suscripcion.delete_comentario')
+                        @endforeach
+                    </tbody>
 
 
-        </div>
-        <div class="tab-pane fade {{ $tab == 2 ? 'active in' : '' }}" id="profile" role="tabpanel"
-            aria-labelledby="profile-tab">
-
-            <ul class="nav navbar-right panel_toolbox">
-                <button type="button" class="btn btn-success" style="color: white" data-target="#modal-create"
-                    data-toggle="modal"> <i class="fa fa-plus"></i>
-                    Agregar</button>
-            </ul>
-
-            <table id="datatable" class="table table-striped table-bordered">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Fecha</th>
-                        <th>Usuario</th>
-                        <th>Comentario</th>
-                        <th>Opciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @php($i = 1)
-                    @foreach ($suscripcion->comentarios as $comentario)
-                    <tr>
-                        <td>{{ $i }}</td>
-                        <td>{{ date('d/m/Y', strtotime($comentario->FechaCreacion)) }}</td>
-                        <td>{{ $comentario->usuario->name ?? '' }}</td>
-                        <td>{{ $comentario->Comentario }}</td>
-
-                        <td align="center">
-                            <a class="btn btn-primary" class="on-default edit-row"
-                                data-target="#modal-edit-comentario-{{ $comentario->Id }}"
-                                onclick="showCountComentarioEditIni({{ $comentario->Id }})" data-toggle="modal">
-                                <i class="fa fa-pencil fa-lg"></i></a>
-                            <a href="#" class="btn btn-danger"><i class="fa fa-trash fa-lg"
-                                    data-target="#modal-delete-comentario-{{ $comentario->Id }}" data-toggle="modal">
-                                </i></a>
-                        </td>
-                    </tr>
-                    @php($i++)
-                    @include('suscripciones.suscripcion.edit_comentario')
-                    @include('suscripciones.suscripcion.delete_comentario')
-                    @endforeach
-                </tbody>
+                </table>
 
 
-            </table>
-
+            </div>
 
         </div>
 
     </div>
 
-</div>
 
+    <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-create">
 
-<div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-create">
+        <form action="{{ url('suscripciones/agregar_comentario') }}" method="POST" class="forms-sample">
+            @csrf
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                        <h4 class="modal-title">Nuevo comentario</h4>
+                    </div>
+                    <div class="modal-body">
+                        <label for="Comentario" class="form-label">
+                            Comentario <span id="countComentario">0/3000</span>
+                        </label>
+                        <input type="hidden" value="{{ $suscripcion->Id }}" name="SuscripcionId">
+                        <textarea name="Comentario" id="Comentario" class="form-control" rows="4" maxlength="3000" required
+                            oninput="showCountComentario()">{{ old('Comentario') }}</textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary">Confirmar</button>
+                    </div>
+                </div>
+            </div>
+        </form>
 
-    <form action="{{ url('suscripciones/agregar_comentario') }}" method="POST" class="forms-sample">
-        @csrf
+    </div>
+
+    <div class="modal fade" id="modal-create-ocupacion" tabindex="-1" user="dialog" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                    <h4 class="modal-title">Nuevo comentario</h4>
-                </div>
-                <div class="modal-body">
-                    <label for="Comentario" class="form-label">
-                        Comentario <span id="countComentario">0/3000</span>
-                    </label>
-                    <input type="hidden" value="{{ $suscripcion->Id }}" name="SuscripcionId">
-                    <textarea name="Comentario" id="Comentario" class="form-control" rows="4" maxlength="3000" required
-                        oninput="showCountComentario()">{{ old('Comentario') }}</textarea>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary">Confirmar</button>
-                </div>
-            </div>
-        </div>
-    </form>
-
-</div>
-
-<div class="modal fade" id="modal-create-ocupacion" tabindex="-1" user="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="col-md-6">
-                    <h4 class="modal-title">Nueva Ocupación</h4>
-                </div>
-                <div class="col-md-6">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">×</span>
-                    </button>
-                </div>
-            </div>
-            <form id="formCrearOcupacion">
-                @csrf
-
-                <div class="modal-body">
-                    <div class="form-group row">
-                        <label class="control-label">Nombre</label>
-                        <input class="form-control" name="Nombre" type="text" autofocus
-                            oninput="this.value = this.value.toUpperCase()">
+                    <div class="col-md-6">
+                        <h4 class="modal-title">Nueva Ocupación</h4>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">×</span>
+                        </button>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
-                </div>
-            </form>
+                <form id="formCrearOcupacion">
+                    @csrf
+
+                    <div class="modal-body">
+                        <div class="form-group row">
+                            <label class="control-label">Nombre</label>
+                            <input class="form-control" name="Nombre" type="text" autofocus
+                                oninput="this.value = this.value.toUpperCase()">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
-<script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
-<script type="text/javascript">
-  document.getElementById('Dui').addEventListener('input', function(e) {
+    <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
+    <script type="text/javascript">
+        document.getElementById('Dui').addEventListener('input', function(e) {
             this.value = this.value.replace(/[^0-9\-]/g, '');
         });
 
-    $(document).ready(function() {
+        $(document).ready(function() {
             // Mostrar opción en menú
             displayOption("ul-suscripciones", "li-suscripciones");
             calFechaHabil();
@@ -600,6 +603,7 @@
                         $('#DiasProcesamiento').val(response.dias_habiles);
                     },
                     error: function(xhr) {
+                        $('#DiasProcesamiento').val("");
                         console.error('Error:', xhr.responseJSON);
                     }
                 });
@@ -693,5 +697,5 @@
 
 
         }
-</script>
+    </script>
 @endsection

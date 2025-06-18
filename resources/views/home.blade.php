@@ -55,9 +55,8 @@
                     </div>
                 </form>
 
-                <div class="row">
+                {{-- <div class="row">
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        {{-- id="tablaPrimas" --}}
                         <table  id="tablaPrimas" class="table table-striped table-bordered">
                             <thead>
                                 <tr>
@@ -83,14 +82,14 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </div> --}}
 
             </div>
 
         </div>
     </div>
 </div>
-@include('sweetalert::alert')
+{{-- @include('sweetalert::alert')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
@@ -243,7 +242,7 @@ $(document).ready(function() {
     });
   });
 
-</script>
+</script> --}}
 
 
 
