@@ -116,7 +116,7 @@
 
                     <div class="col-sm-6">
                         <label class="control-label ">Número de Poliza Deuda</label>
-                        <select name="PolizaDeuda" class="form-control select2">
+                        <select name="PolizaDeuda" class="form-control select2" required>
                             <option value="">Seleccione</option>
                             @foreach ($polizas_deuda as $deuda)
                             <option value="{{ $deuda->Id }}">{{ $deuda->NumeroPoliza }}</option>
