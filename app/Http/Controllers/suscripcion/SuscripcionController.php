@@ -476,7 +476,7 @@ class SuscripcionController extends Controller
 
         // 2. Parsear fechas con zona horaria
         $inicio = Carbon::parse($fechaInicio)->setTimezone($zonaHoraria)->startOfDay();
-        $fin = Carbon::parse($fechaFin)->setTimezone($zonaHoraria)->endOfDay();
+        $fin = Carbon::parse($fechaFin)->setTimezone($zonaHoraria)->startOfDay();
 
         // 3. Obtener todos los feriados que solapan con el rango
         $feriados = FechasFeriadas::where('FechaFinal', '>=', $inicio->toDateString())
