@@ -289,7 +289,7 @@
                                     </select>
                                 </div>
                                 <div class="col-sm-6">
-                                    <label for="DireccionResidencia" class="form-label">Fecha de Reportado Cia</label>
+                                    <label for="DireccionResidencia" class="form-label">Fecha de Reportado Cia / Resolución Anticipada</label>
                                     <input type="date" name="FechaReportadoCia"
                                         value="{{ old('FechaReportadoCia') }}" id="FechaReportadoCia"
                                         class="form-control">
@@ -313,11 +313,31 @@
                                     <input type="date" name="FechaCierreGestion"
                                         value="{{ old('FechaCierreGestion') }}" class="form-control" autofocus="true">
                                 </div>
+                                <div class="col-sm-6">
+                                    <label class="control-label ">Fecha de envio de corrección</label>
+                                    <input type="date" name="FechaEnvioCorreccion"
+                                        value="{{ old('FechaEnvioCorreccion') }}" class="form-control" autofocus="true">
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="control-label ">Total dias ciclo de proceso</label>
+                                    <input type="text" name="TotalDiasProceso" readonly 
+                                        value="{{ old('TotalDiasProceso') }}" class="form-control" autofocus="true">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                    <label for="DireccionResidencia" class="form-label">Reproceso de NR</label>
+                                    <select name="ReprocesoId" id="ReprocesoId" class="form-control">
+                                        <option value="">SELECCIONE</option>
+                                        @foreach ($reprocesos as $repro)
+                                            <option value="{{ $repro->Id }}" >
+                                                {{ $repro->Nombre }}</option>
+                                        @endforeach
+                                    </select>
                             </div>
 
                             <div class="col-sm-6">
                                 <label for="DireccionResidencia" class="form-label">Comentarios NR</label>
-                                <textarea name="Comentarios" rows="4" class="form-control">{{ old('Comentarios') }}</textarea>
+                                <textarea name="Comentarios" rows="7" class="form-control">{{ old('Comentarios') }}</textarea>
 
                             </div>
 

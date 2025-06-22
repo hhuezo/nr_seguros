@@ -332,7 +332,7 @@
                             </select>
                         </div>
                         <div class="col-sm-6">
-                            <label for="DireccionResidencia" class="form-label">Fecha de Reportado Cia</label>
+                            <label for="DireccionResidencia" class="form-label">Fecha de Reportado Cia / / Resolución Anticipada</label>
                             <input type="date" name="FechaReportadoCia"
                                 value="{{ isset($suscripcion->FechaReportadoCia) ? date('Y-m-d', strtotime($suscripcion->FechaReportadoCia)) : '' }}"
                                 class="form-control">
@@ -352,6 +352,30 @@
                             <label class="control-label ">Fecha cierre de gestión</label>
                             <input type="date" name="FechaCierreGestion"
                                 value="{{ $suscripcion->FechaCierreGestion ? date('Y-m-d', strtotime($suscripcion->FechaCierreGestion)) : '' }}"
+                                class="form-control" autofocus="true">
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="control-label ">Fecha de envio de corrección</label>
+                            <input type="date" name="FechaEnvioCorreccion"
+                                value="{{ $suscripcion->FechaEnvioCorreccion ? date('Y-m-d', strtotime($suscripcion->FechaEnvioCorreccion)) : '' }}"
+                                class="form-control" autofocus="true">
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="DireccionResidencia" class="form-label">Reproceso</label>
+                            <select name="ReprocesoId" id="ReprocesoId" class="form-control">
+                                <option value="">SELECCIONE</option>
+                                @foreach ($reprocesos as $repro)
+                                    <option value="{{ $repro->Id }}" class="bg-{{ $repro->Color }}"
+                                        {{ $suscripcion->ReprocesoId == $repro->Id ? 'selected' : '' }}>
+                                        {{ $repro->Nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="control-label ">Total dias ciclo de proceso</label>
+                            <input type="text" name="TotalDiasProceso" readonly
+                                value="{{ $suscripcion->TotalDiasProceso ? date('Y-m-d', strtotime($suscripcion->TotalDiasProceso)) : '' }}"
                                 class="form-control" autofocus="true">
                         </div>
 

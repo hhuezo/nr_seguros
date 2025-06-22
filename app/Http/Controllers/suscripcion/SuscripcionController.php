@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\suscripcion;
 
+use App\Exports\suscripcion\SuscripcionesExport;
 use App\Http\Controllers\Controller;
 use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\Cliente;
@@ -14,6 +15,7 @@ use App\Models\suscripcion\EstadoCaso;
 use App\Models\suscripcion\FechasFeriadas;
 use App\Models\suscripcion\Ocupacion;
 use App\Models\suscripcion\OrdenMedica;
+use App\Models\suscripcion\Reproceso;
 use App\Models\suscripcion\ResumenGestion;
 use App\Models\suscripcion\Suscripcion;
 use App\Models\suscripcion\TipoCliente;
@@ -24,6 +26,7 @@ use Carbon\CarbonPeriod;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SuscripcionController extends Controller
 {
@@ -51,7 +54,7 @@ class SuscripcionController extends Controller
         $tipo_clientes = TipoCliente::get();
         $tipo_orden = OrdenMedica::get();
         $estados = EstadoCaso::get();
-
+        $reprocesos = Reproceso::get();
         $ejecutivos = Ejecutivo::where('Activo', 1)->get();
         $clientes = Cliente::where('activo', 1)->get();
         $polizas_deuda = Deuda::where('activo', 1)->get();
@@ -66,6 +69,7 @@ class SuscripcionController extends Controller
 
         return view('suscripciones.suscripcion.create', compact(
             'aseguradoras',
+            'reprocesos',
             'tipo_clientes',
             'tipo_orden',
             'estados',
@@ -111,11 +115,13 @@ class SuscripcionController extends Controller
             'ValorExtraPrima'      => 'nullable|numeric|min:0',
             'Comentarios'          => 'nullable|string|max:3000',
             'OcupacionId'          => 'nullable|integer|exists:sus_ocupacion,Id',
+            'ReprocesoId'          => 'nullable|integer|exists:sus_reproceso,Id',
             'TipoCreditoId'        => 'nullable|integer|exists:sus_tipo_credito,Id',
             'FechaEntregaDocsCompletos' => 'nullable|date',
             'DiasCompletarInfoCliente' => 'nullable|integer',
             'TrabajadoEfectuadoDiaHabil' => 'nullable|integer',
             'FechaCierreGestion'    => 'nullable|date',
+            'FechaEnvioCorreccion'    => 'nullable|date',
             'FechaResolucion'    => 'nullable|date|before_or_equal:FechaEnvioResoCliente',
             'FechaEnvioResoCliente'    => 'nullable|date|after_or_equal:FechaResolucion',
 
@@ -165,6 +171,7 @@ class SuscripcionController extends Controller
         $suscripcion->Padecimiento = $request->Padecimiento;
         $suscripcion->TipoOrdenMedicaId = $request->TipoOrdenMedicaId;
         $suscripcion->EstadoId = $request->EstadoId;
+        $suscripcion->ReprocesoId = $request->ReprocesoId;
         $suscripcion->ResumenGestion = $request->ResumenGestion;
         $suscripcion->FechaReportadoCia = $request->FechaReportadoCia;
         $suscripcion->TareasEvaSisa = $request->TareasEvaSisa;
@@ -179,6 +186,8 @@ class SuscripcionController extends Controller
         $suscripcion->TrabajadoEfectuadoDiaHabil = $request->TrabajadoEfectuadoDiaHabil;
         $suscripcion->FechaCierreGestion = $request->FechaCierreGestion;
         $suscripcion->FechaEnvioResoCliente = $request->FechaEnvioResoCliente;
+        $suscripcion->FechaEnvioCorreccion = $request->FechaEnvioCorreccion;
+        $suscripcion->TotalDiasProceso = $request->TotalDiasProceso;
 
         if ($suscripcion->FechaResolucion != null && $suscripcion->FechaEnvioResoCliente != null) {
             $suscripcion->DiasProcesamientoResolucion = $this->calcularDiasHabiles($suscripcion->FechaResolucion,  $suscripcion->FechaEnvioResoCliente);
@@ -268,11 +277,12 @@ class SuscripcionController extends Controller
         $polizas_vida = Vida::where('activo', 1)->get();
         $tipos_imc = TipoImc::get();
         $resumen_gestion = ResumenGestion::get();
+        $reprocesos = Reproceso::get();
 
         //observaciones 22-5-25
         $aseguradoras = Aseguradora::where('activo', 1)->get();
 
-        return view('suscripciones.suscripcion.edit', compact('aseguradoras', 'tipos_imc', 'resumen_gestion', 'polizas_vida', 'polizas_deuda', 'clientes', 'ejecutivos', 'companias', 'ocupaciones', 'tipo_clientes', 'tipo_creditos', 'tipo_orden', 'suscripcion', 'estados', 'tab'));
+        return view('suscripciones.suscripcion.edit', compact('reprocesos', 'aseguradoras', 'tipos_imc', 'resumen_gestion', 'polizas_vida', 'polizas_deuda', 'clientes', 'ejecutivos', 'companias', 'ocupaciones', 'tipo_clientes', 'tipo_creditos', 'tipo_orden', 'suscripcion', 'estados', 'tab'));
     }
 
 
@@ -300,8 +310,10 @@ class SuscripcionController extends Controller
             'Padecimiento'         => 'nullable|string|max:500',
             'TipoOrdenMedicaId'    => 'nullable|integer|exists:sus_orden_medica,Id',
             'EstadoId'             => 'nullable|integer|exists:sus_estado_caso,Id',
+            'ReprocesoId'             => 'nullable|integer|exists:sus_reproceso,Id',
             'ResumenGestion'       => 'nullable|integer|exists:sus_resumen_gestion,Id',
             'FechaReportadoCia'    => 'nullable|date',
+            'FechaEnvioCorreccion'    => 'nullable|date',
             'TareasEvaSisa'        => 'nullable|string|max:255',
             'ResolucionFinal'      => 'nullable|string|max:1000',
             'ValorExtraPrima'      => 'nullable|numeric|min:0',
@@ -350,6 +362,7 @@ class SuscripcionController extends Controller
         $suscripcion->Padecimiento = $request->Padecimiento;
         $suscripcion->TipoOrdenMedicaId = $request->TipoOrdenMedicaId;
         $suscripcion->EstadoId = $request->EstadoId;
+        $suscripcion->ReprocesoId = $request->ReprocesoId;
         $suscripcion->ResumenGestion = $request->ResumenGestion;
         $suscripcion->FechaReportadoCia = $request->FechaReportadoCia;
         $suscripcion->TareasEvaSisa = $request->TareasEvaSisa;
@@ -363,6 +376,8 @@ class SuscripcionController extends Controller
         $suscripcion->TrabajadoEfectuadoDiaHabil = $request->TrabajadoEfectuadoDiaHabil;
         $suscripcion->FechaCierreGestion = $request->FechaCierreGestion;
         $suscripcion->FechaEnvioResoCliente = $request->FechaEnvioResoCliente;
+        $suscripcion->FechaEnvioCorreccion = $request->FechaEnvioCorreccion;
+        $suscripcion->TotalDiasProceso = $request->TotalDiasProceso;
 
         if ($suscripcion->FechaResolucion != null && $suscripcion->FechaEnvioResoCliente != null) {
             $suscripcion->DiasProcesamientoResolucion = $this->calcularDiasHabiles($suscripcion->FechaResolucion,  $suscripcion->FechaEnvioResoCliente);
@@ -507,6 +522,22 @@ class SuscripcionController extends Controller
         }
 
         return $diasHabiles - $diasFeriados;
+    }
+
+    public function exportar(Request $request)
+    {
+
+        $fecha_final = $request->fecha_final;
+        $fecha_inicio = $request->fecha_inicio;
+        $documento = '';
+        if ($request->filled('Documento')) {
+            $documento =  $request->Documento;
+            $suscripciones = Suscripcion::where('Dui', $documento)->get();
+        } else {
+            $suscripciones = Suscripcion::whereBetween(DB::raw('DATE(FechaIngreso)'), [$fecha_inicio, $fecha_final])->get();
+        }
+       // return view('suscripciones.suscripcion.report', compact('suscripciones'));
+        return Excel::download(new SuscripcionesExport($suscripciones), 'suscripciones.xlsx');
     }
 
     /*

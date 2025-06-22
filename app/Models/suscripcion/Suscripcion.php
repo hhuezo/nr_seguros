@@ -55,7 +55,8 @@ class Suscripcion extends Model
         'ValorExtraPrima',
         'FechaEnvioResoCliente',
         'DiasProcesamientoResolucion',
-        'Activo'
+        'Activo',
+        'ReprocesoId'
     ];
 
     protected $guarded = [];
@@ -119,5 +120,9 @@ class Suscripcion extends Model
     public function comentarios()
     {
         return $this->hasMany(Comentarios::class, 'SuscripcionId');
+    }
+    public function reproceso()
+    {
+        return $this->hasMany(Reproceso::class, 'ReprocesoId');
     }
 }
