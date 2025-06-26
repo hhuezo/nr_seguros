@@ -35,7 +35,10 @@ class SuscripcionController extends Controller
     {
         $fecha_final = $request->FechaFinal ?? date('Y-m-d');
         $fecha_inicio = $request->FechaInicio ?? date('Y-m-d', strtotime('-3 months'));
-        $documento = '';
+        $documento = $request->documento ?? null;
+
+        $exportar = $request->Exportar ?? null;
+
         if ($request->filled('Documento')) {
             $documento =  $request->Documento;
             $suscripciones = Suscripcion::where('Dui', $documento)->get();
@@ -43,8 +46,30 @@ class SuscripcionController extends Controller
             $suscripciones = Suscripcion::whereBetween(DB::raw('DATE(FechaIngreso)'), [$fecha_inicio, $fecha_final])->get();
         }
 
+        if ($exportar) {
+            return Excel::download(new SuscripcionesExport($suscripciones), 'suscripciones.xlsx');
+        }
+
         return view('suscripciones.suscripcion.index', compact('suscripciones', 'fecha_inicio', 'fecha_final', 'documento'));
     }
+
+
+
+    // public function exportar(Request $request)
+    // {
+
+    //     $fecha_final = $request->fecha_final;
+    //     $fecha_inicio = $request->fecha_inicio;
+    //     $documento = '';
+    //     if ($request->filled('Documento')) {
+    //         $documento =  $request->Documento;
+    //         $suscripciones = Suscripcion::where('Dui', $documento)->get();
+    //     } else {
+    //         $suscripciones = Suscripcion::whereBetween(DB::raw('DATE(FechaIngreso)'), [$fecha_inicio, $fecha_final])->get();
+    //     }
+    //     // return view('suscripciones.suscripcion.report', compact('suscripciones'));
+    //     return Excel::download(new SuscripcionesExport($suscripciones), 'suscripciones.xlsx');
+    // }
 
     public function create()
     {
@@ -377,14 +402,22 @@ class SuscripcionController extends Controller
         $suscripcion->FechaCierreGestion = $request->FechaCierreGestion;
         $suscripcion->FechaEnvioResoCliente = $request->FechaEnvioResoCliente;
         $suscripcion->FechaEnvioCorreccion = $request->FechaEnvioCorreccion;
-        $suscripcion->TotalDiasProceso = $request->TotalDiasProceso;
+        //$suscripcion->DiasProcesamientoResolucion = $request->DiasProcesamiento;
+
 
         if ($suscripcion->FechaResolucion != null && $suscripcion->FechaEnvioResoCliente != null) {
             $suscripcion->DiasProcesamientoResolucion = $this->calcularDiasHabiles($suscripcion->FechaResolucion,  $suscripcion->FechaEnvioResoCliente);
         }
-
-        // $suscripcion->Activo = 1;
         $suscripcion->update();
+
+
+
+        if ($suscripcion->FechaReportadoCia != null && $suscripcion->FechaEntregaDocsCompletos != null) {
+            $suscripcion->TrabajadoEfectuadoDiaHabil = $this->calcularDiasHabiles($suscripcion->FechaReportadoCia,  $suscripcion->FechaEntregaDocsCompletos);
+        }
+        $suscripcion->update();
+
+
         return redirect('suscripciones/' . $request->Id . '/edit?tab=1')->with('success', 'El registro ha sido modificado correctamente');
     }
 
@@ -524,21 +557,7 @@ class SuscripcionController extends Controller
         return $diasHabiles - $diasFeriados;
     }
 
-    public function exportar(Request $request)
-    {
 
-        $fecha_final = $request->fecha_final;
-        $fecha_inicio = $request->fecha_inicio;
-        $documento = '';
-        if ($request->filled('Documento')) {
-            $documento =  $request->Documento;
-            $suscripciones = Suscripcion::where('Dui', $documento)->get();
-        } else {
-            $suscripciones = Suscripcion::whereBetween(DB::raw('DATE(FechaIngreso)'), [$fecha_inicio, $fecha_final])->get();
-        }
-       // return view('suscripciones.suscripcion.report', compact('suscripciones'));
-        return Excel::download(new SuscripcionesExport($suscripciones), 'suscripciones.xlsx');
-    }
 
     /*
     metodo para ejecutar calcularDiasHabiles en una petición ajax

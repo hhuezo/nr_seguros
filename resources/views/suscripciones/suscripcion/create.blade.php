@@ -90,7 +90,7 @@
 
                         <div class="col-sm-4">
                             <label class="control-label ">Fecha entrega documentos completos</label>
-                            <input type="date" name="FechaEntregaDocsCompletos"
+                            <input type="date" name="FechaEntregaDocsCompletos" id="FechaEntregaDocsCompletos"
                                 value="{{ old('FechaEntregaDocsCompletos') }}" class="form-control">
                         </div>
 
@@ -185,7 +185,7 @@
                         <div class="col-sm-4">
                             <label class="control-label ">Asegurado</label>
                             <input type="text" name="Asegurado" value="{{ old('Asegurado') }}" class="form-control"
-                                oninput="this.value = this.value.toUpperCase()">
+                                oninput="this.value = this.value.toUpperCase()" required>
                         </div>
 
                         <div class="col-sm-2">
@@ -289,7 +289,8 @@
                                     </select>
                                 </div>
                                 <div class="col-sm-6">
-                                    <label for="DireccionResidencia" class="form-label">Fecha de Reportado Cia / Resolución Anticipada</label>
+                                    <label for="DireccionResidencia" class="form-label">Fecha de Reportado Cia /
+                                        Resolución Anticipada</label>
                                     <input type="date" name="FechaReportadoCia"
                                         value="{{ old('FechaReportadoCia') }}" id="FechaReportadoCia"
                                         class="form-control">
@@ -305,34 +306,35 @@
                                 <div class="col-sm-6">
                                     <label class="control-label ">Trabajo efectuado día hábil</label>
                                     <input type="number" name="TrabajadoEfectuadoDiaHabil"
-                                        value="{{ old('TrabajadoEfectuadoDiaHabil') }}" class="form-control">
+                                        id="TrabajadoEfectuadoDiaHabil" value="{{ old('TrabajadoEfectuadoDiaHabil') }}"
+                                        class="form-control">
                                 </div>
 
                                 <div class="col-sm-6">
                                     <label class="control-label ">Fecha cierre de gestión</label>
                                     <input type="date" name="FechaCierreGestion"
-                                        value="{{ old('FechaCierreGestion') }}" class="form-control" autofocus="true">
+                                        value="{{ old('FechaCierreGestion') }}" class="form-control">
                                 </div>
                                 <div class="col-sm-6">
                                     <label class="control-label ">Fecha de envio de corrección</label>
                                     <input type="date" name="FechaEnvioCorreccion"
-                                        value="{{ old('FechaEnvioCorreccion') }}" class="form-control" autofocus="true">
+                                        value="{{ old('FechaEnvioCorreccion') }}" class="form-control">
                                 </div>
                                 <div class="col-sm-6">
                                     <label class="control-label ">Total dias ciclo de proceso</label>
-                                    <input type="text" name="TotalDiasProceso" readonly 
-                                        value="{{ old('TotalDiasProceso') }}" class="form-control" autofocus="true">
+                                    <input type="text" name="TotalDiasProceso" readonly
+                                        value="{{ old('TotalDiasProceso') }}" class="form-control">
                                 </div>
                             </div>
                             <div class="col-sm-6">
-                                    <label for="DireccionResidencia" class="form-label">Reproceso de NR</label>
-                                    <select name="ReprocesoId" id="ReprocesoId" class="form-control">
-                                        <option value="">SELECCIONE</option>
-                                        @foreach ($reprocesos as $repro)
-                                            <option value="{{ $repro->Id }}" >
-                                                {{ $repro->Nombre }}</option>
-                                        @endforeach
-                                    </select>
+                                <label for="DireccionResidencia" class="form-label">Reproceso de NR</label>
+                                <select name="ReprocesoId" id="ReprocesoId" class="form-control">
+                                    <option value="">SELECCIONE</option>
+                                    @foreach ($reprocesos as $repro)
+                                        <option value="{{ $repro->Id }}">
+                                            {{ $repro->Nombre }}</option>
+                                    @endforeach
+                                </select>
                             </div>
 
                             <div class="col-sm-6">
@@ -373,13 +375,13 @@
                         <div class="col-sm-3">
                             <label class="control-label ">Fecha de envió de resolución al cliente</label>
                             <input type="date" name="FechaEnvioResoCliente" id="FechaEnvioResoCliente"
-                                value="{{ old('FechaEnvioResoCliente') }}" class="form-control" autofocus="true">
+                                value="{{ old('FechaEnvioResoCliente') }}" class="form-control">
                         </div>
 
                         <div class="col-sm-3">
                             <label class="control-label ">Dias de procesamiento de resolución</label>
                             <input type="number" name="DiasProcesamiento" id="DiasProcesamiento"
-                                value="{{ old('DiasProcesamiento') }}" readonly class="form-control" autofocus="true">
+                                value="{{ old('DiasProcesamiento') }}" readonly class="form-control">
                         </div>
                     </div>
 

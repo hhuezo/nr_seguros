@@ -108,8 +108,7 @@
                         <div class="col-sm-4">
                             <label class="control-label ">Fecha de Ingreso</label>
                             <input type="date" name="FechaIngreso"
-                                value="{{ date('Y-m-d', strtotime($suscripcion->FechaIngreso)) }}" class="form-control"
-                                autofocus="true">
+                                value="{{ date('Y-m-d', strtotime($suscripcion->FechaIngreso)) }}" class="form-control">
                         </div>
                         <div class="col-sm-4">
                             <label class="control-label ">Días para completar información (cliente)</label>
@@ -119,9 +118,9 @@
                         </div>
                         <div class="col-sm-4">
                             <label class="control-label ">Fecha entrega documentos completos</label>
-                            <input type="date" name="FechaEntregaDocsCompletos"
+                            <input type="date" name="FechaEntregaDocsCompletos" id="FechaEntregaDocsCompletos"
                                 value="{{ $suscripcion->FechaEntregaDocsCompletos ? date('Y-m-d', strtotime($suscripcion->FechaEntregaDocsCompletos)) : '' }}"
-                                class="form-control" autofocus="true">
+                                class="form-control">
                         </div>
 
                         <div class="col-sm-6">
@@ -148,16 +147,18 @@
                             </select>
                         </div>
                         <div class="col-sm-6">
-                            <label class="control-label ">Número de Poliza Deuda</label>
+                            <label class="control-label">Número de Póliza Deuda</label>
                             <select name="PolizaDeuda" class="form-control select2" required>
                                 <option value="">Seleccione...</option>
                                 @foreach ($polizas_deuda as $deuda)
                                     <option value="{{ $deuda->Id }}"
-                                        {{ $suscripcion->PolizaDeuda == $deuda->Id ? 'selected' : '' }}>
-                                        {{ $deuda->NumeroPoliza }}</option>
+                                        {{ old('PolizaDeuda', $suscripcion->PolizaDeuda) == $deuda->Id ? 'selected' : '' }}>
+                                        {{ $deuda->NumeroPoliza }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
+
                         <div class="col-sm-6">
                             <label class="control-label">Número de Poliza Vida</label>
                             <select name="PolizaVida" class="form-control select2">
@@ -172,14 +173,14 @@
                         <div class="col-sm-6">
                             <label class="control-label ">Suma Asegurada Evaluada Deuda</label>
                             <input type="float" name="SumaAseguradaDeuda"
-                                value="{{ number_format($suscripcion->SumaAseguradaDeuda, 2, '.', ',') }}"
+                                value="{{ number_format($suscripcion->SumaAseguradaDeuda, 2, '.', '') }}"
                                 class="form-control">
                         </div>
                         <div class="col-sm-6">
                             <label class="control-label ">Suma Asegurada Evaluada vida colectivo
                                 usuarios</label>
                             <input type="float" name="SumaAseguradaVida"
-                                value="{{ number_format($suscripcion->SumaAseguradaVida, 2, '.', ',') }}"
+                                value="{{ number_format($suscripcion->SumaAseguradaVida, 2, '.', '') }}"
                                 class="form-control">
                         </div>
 
@@ -222,7 +223,7 @@
                         <div class="col-sm-4">
                             <label class="control-label ">Asegurado</label>
                             <input type="text" name="Asegurado" value="{{ $suscripcion->Asegurado }}"
-                                class="form-control" autofocus="true" oninput="this.value = this.value.toUpperCase()">
+                                class="form-control" oninput="this.value = this.value.toUpperCase()">
                         </div>
                         <div class="col-sm-2">
                             <label class="control-label ">Edad</label>
@@ -332,8 +333,9 @@
                             </select>
                         </div>
                         <div class="col-sm-6">
-                            <label for="DireccionResidencia" class="form-label">Fecha de Reportado Cia / / Resolución Anticipada</label>
-                            <input type="date" name="FechaReportadoCia"
+                            <label for="DireccionResidencia" class="form-label">Fecha de Reportado Cia / Resolución
+                                Anticipada</label>
+                            <input type="date" name="FechaReportadoCia" id="FechaReportadoCia"
                                 value="{{ isset($suscripcion->FechaReportadoCia) ? date('Y-m-d', strtotime($suscripcion->FechaReportadoCia)) : '' }}"
                                 class="form-control">
                         </div>
@@ -344,21 +346,20 @@
                         </div>
                         <div class="col-sm-6">
                             <label class="control-label ">Trabajo efectuado día hábil</label>
-                            <input type="number" name="TrabajadoEfectuadoDiaHabil"
-                                value="{{ $suscripcion->TrabajadoEfectuadoDiaHabil }}" class="form-control"
-                                oninput="this.value = this.value.toUpperCase()">
+                            <input type="number" name="TrabajadoEfectuadoDiaHabil" id="TrabajadoEfectuadoDiaHabil"
+                                value="{{ $suscripcion->TrabajadoEfectuadoDiaHabil }}" class="form-control">
                         </div>
                         <div class="col-sm-6">
                             <label class="control-label ">Fecha cierre de gestión</label>
                             <input type="date" name="FechaCierreGestion"
                                 value="{{ $suscripcion->FechaCierreGestion ? date('Y-m-d', strtotime($suscripcion->FechaCierreGestion)) : '' }}"
-                                class="form-control" autofocus="true">
+                                class="form-control">
                         </div>
                         <div class="col-sm-6">
                             <label class="control-label ">Fecha de envio de corrección</label>
                             <input type="date" name="FechaEnvioCorreccion"
                                 value="{{ $suscripcion->FechaEnvioCorreccion ? date('Y-m-d', strtotime($suscripcion->FechaEnvioCorreccion)) : '' }}"
-                                class="form-control" autofocus="true">
+                                class="form-control">
                         </div>
                         <div class="col-sm-6">
                             <label for="DireccionResidencia" class="form-label">Reproceso</label>
@@ -375,8 +376,8 @@
                         <div class="col-sm-6">
                             <label class="control-label ">Total dias ciclo de proceso</label>
                             <input type="text" name="TotalDiasProceso" readonly
-                                value="{{ $suscripcion->TotalDiasProceso ? date('Y-m-d', strtotime($suscripcion->TotalDiasProceso)) : '' }}"
-                                class="form-control" autofocus="true">
+                                value="{{ $suscripcion->TotalDiasProceso }}"
+                                class="form-control">
                         </div>
 
                         <div class="clearfix"></div>
@@ -407,12 +408,12 @@
                             <label class="control-label ">Fecha de envió de resolución al cliente</label>
                             <input type="date" name="FechaEnvioResoCliente" id="FechaEnvioResoCliente"
                                 value="{{ $suscripcion->FechaEnvioResoCliente ? date('Y-m-d', strtotime($suscripcion->FechaEnvioResoCliente)) : '' }}"
-                                class="form-control" autofocus="true">
+                                class="form-control">
                         </div>
                         <div class="col-sm-3">
                             <label class="control-label ">Dias de procesamiento de resolución</label>
                             <input type="number" name="DiasProcesamiento" id="DiasProcesamiento"
-                                value="{{ old('DiasProcesamiento') }}" readonly class="form-control" autofocus="true">
+                                value="{{ old('DiasProcesamiento') }}" readonly class="form-control">
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -552,10 +553,26 @@
         $(document).ready(function() {
             // Mostrar opción en menú
             displayOption("ul-suscripciones", "li-suscripciones");
-            calFechaHabil();
-            $('#FechaResolucion, #FechaEnvioResoCliente').change(function() {
-                calFechaHabil();
-            });
+
+            calFechaHabil($('#FechaResolucion').val(), $('#FechaEnvioResoCliente').val())
+                .then(function(dias) {
+                    $('#DiasProcesamiento').val(dias);
+                })
+                .catch(function(error) {
+                    console.error('Error al calcular días hábiles:', error);
+                    $('#DiasProcesamiento').val('');
+                });
+
+
+            calFechaHabil($('#FechaReportadoCia').val(), $('#FechaEntregaDocsCompletos').val())
+                .then(function(dias) {
+                    $('#TrabajadoEfectuadoDiaHabil').val(dias);
+                })
+                .catch(function(error) {
+                    console.error('Error al calcular días hábiles:', error);
+                    $('#TrabajadoEfectuadoDiaHabil').val('');
+                });
+
 
             // Enviar formulario via AJAX
             $('#formCrearOcupacion').submit(function(e) {
@@ -610,29 +627,70 @@
             });
         });
 
-        function calFechaHabil() {
-            var inicio = $('#FechaResolucion').val();
-            var fin = $('#FechaEnvioResoCliente').val();
+        $('#FechaResolucion, #FechaEnvioResoCliente').on('change', function() {
+            const inicio = $('#FechaResolucion').val();
+            const fin = $('#FechaEnvioResoCliente').val();
 
             if (inicio && fin) {
-                $.ajax({
-                    url: "{{ route('calcular.dias.habiles.json') }}",
-                    type: 'GET',
-                    data: {
-                        '_token': '{{ csrf_token() }}',
-                        'fecha_inicio': inicio,
-                        'fecha_fin': fin
-                    },
-                    success: function(response) {
-                        $('#DiasProcesamiento').val(response.dias_habiles);
-                    },
-                    error: function(xhr) {
-                        $('#DiasProcesamiento').val("");
-                        console.error('Error:', xhr.responseJSON);
-                    }
-                });
+                calFechaHabil(inicio, fin)
+                    .then(function(dias) {
+                        $('#DiasProcesamiento').val(dias);
+                    })
+                    .catch(function(error) {
+                        console.error('Error al calcular días hábiles:', error);
+                        $('#DiasProcesamiento').val('');
+                    });
+            } else {
+                // Si alguno está vacío, limpiar el campo de resultado
+                $('#DiasProcesamiento').val('');
             }
+        });
+
+
+        $('#FechaReportadoCia, #FechaEntregaDocsCompletos').on('change', function() {
+            const inicio = $('#FechaReportadoCia').val();
+            const fin = $('#FechaEntregaDocsCompletos').val();
+
+            if (inicio && fin) {
+                calFechaHabil(inicio, fin)
+                    .then(function(dias) {
+                        $('#TrabajadoEfectuadoDiaHabil').val(dias);
+                    })
+                    .catch(function(error) {
+                        console.error('Error al calcular días hábiles:', error);
+                        $('#TrabajadoEfectuadoDiaHabil').val('');
+                    });
+            } else {
+                // Si alguno está vacío, limpiar el campo de resultado
+                $('#TrabajadoEfectuadoDiaHabil').val('');
+            }
+        });
+
+
+        function calFechaHabil(inicio, fin) {
+            return new Promise((resolve, reject) => {
+                if (inicio && fin) {
+                    $.ajax({
+                        url: "{{ route('calcular.dias.habiles.json') }}",
+                        type: 'GET',
+                        data: {
+                            '_token': '{{ csrf_token() }}',
+                            'fecha_inicio': inicio,
+                            'fecha_fin': fin
+                        },
+                        success: function(response) {
+                            resolve(response.dias_habiles);
+                        },
+                        error: function(xhr) {
+                            reject(xhr.responseJSON ?? 'Error desconocido');
+                        }
+                    });
+                } else {
+                    resolve('');
+                }
+            });
         }
+
 
         function showCountComentario() {
             const textarea = document.getElementById('Comentario');
