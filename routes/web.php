@@ -410,6 +410,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('suscripciones/comentarios/delete/{id}', [SuscripcionController::class, 'comentarios_delete']);
     Route::get('suscripciones/getComentarios/{id}', [SuscripcionController::class, 'comentarios_get']);
     Route::post('suscripciones/exportar', [SuscripcionController::class, 'exportar']);
+    Route::post('suscripciones/importar', [SuscripcionController::class, 'importar']);
     Route::get('suscripciones/calcular_dias_habiles_json', [SuscripcionController::class, 'calcularDiasHabilesJson'])->name('calcular.dias.habiles.json');
     Route::resource('suscripciones', SuscripcionController::class);
     Route::resource('companias', CompaniaController::class);

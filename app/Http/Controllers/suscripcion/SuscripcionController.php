@@ -4,6 +4,7 @@ namespace App\Http\Controllers\suscripcion;
 
 use App\Exports\suscripcion\SuscripcionesExport;
 use App\Http\Controllers\Controller;
+use App\Imports\SuscripcionImport;
 use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\Cliente;
 use App\Models\catalogo\Ejecutivo;
@@ -18,6 +19,7 @@ use App\Models\suscripcion\OrdenMedica;
 use App\Models\suscripcion\Reproceso;
 use App\Models\suscripcion\ResumenGestion;
 use App\Models\suscripcion\Suscripcion;
+use App\Models\suscripcion\SuscripcionTemp;
 use App\Models\suscripcion\TipoCliente;
 use App\Models\suscripcion\TipoCredito;
 use App\Models\suscripcion\TipoImc;
@@ -575,5 +577,111 @@ class SuscripcionController extends Controller
         );
 
         return response()->json(['dias_habiles' => $dias]);
+    }
+
+    public function importar(Request $request)
+    {
+        $request->validate([
+            'Archivo' => 'required|file',
+        ]);
+
+        // try {
+
+        //eliminar los datos de suscripciones
+
+        SuscripcionTemp::where('Usuario', auth()->user()->id)->delete();
+        $import = new SuscripcionImport;
+        Excel::import($import, $request->file('Archivo'));
+
+        $failures = $import->failures(); // Errores de validaciones con reglas
+        $customFailures = collect($import->customFailures()); // Tus errores personalizados
+
+        //dd($customFailures);
+        if ($failures->isNotEmpty() || $customFailures->isNotEmpty()) {
+            return view('suscripciones.suscripcion.import_error', [
+                'failures' => $failures,
+                'customFailures' => $customFailures,
+            ]);
+        }
+
+        //no existen errores
+
+
+        $sus_temp = SuscripcionTemp::where('Usuario', auth()->user()->id)->get();
+
+
+        foreach ($sus_temp as $reg) {
+
+            $ultimo = Suscripcion::selectRaw('MAX(CAST(SUBSTRING(NumeroTarea, LOCATE("TS-", NumeroTarea) + 3) AS UNSIGNED)) as ultimo')
+                ->whereRaw('LEFT(NumeroTarea, 2) = ?', [substr(date('Y'), -2)])
+                ->value('ultimo');
+
+            $nuevoCorrelativo = $ultimo ? $ultimo + 1 : 1;
+            $nuevaTarea = substr(date('Y'), -2) . 'TS-' . $nuevoCorrelativo;
+            //valores por catalogo
+            $gestor = Ejecutivo::where('Nombre', 'like', '%' . $reg->Gestor . '%')->first();
+            $compania = Aseguradora::where('Nombre', 'like', '%' . $reg->Cia . '%')->first();
+            $cliente = Cliente::where('Nombre', 'like', '%' . $reg->Contratante . '%')->first();
+            $deuda = Deuda::where('NumeroPoliza', $reg->NumeroPolizaDeuda)->first();
+            $vida = Vida::where('NumeroPoliza', $reg->NumeroPolizaVida)->first();
+            $ocupacion = Ocupacion::where('Nombre', 'like', '%' . $reg->Ocupacion . '%')->first();
+            $tipo_cliente = TipoCliente::where('Nombre', 'like', '%' . $reg->TipoCliente . '%')->first();
+            $tipo_credito = TipoCredito::where('Nombre', 'like', '%' . $reg->TipoCredito . '%')->first();
+            $tipo_imc = TipoImc::where('Nombre', 'like', '%' . $reg->TipoImc . '%')->first();
+            $orden_medica = OrdenMedica::where('Nombre', 'like', '%' . $reg->TipoOrdenMedica . '%')->first();
+            $estado_caso = EstadoCaso::where('Nombre', 'like', '%' . $reg->EstatusDelCaso . '%')->first();
+            $resumen_gestion = ResumenGestion::where('Nombre', 'like', '%' . $reg->ResumenDeGestion . '%')->first();
+
+            //valor nuevo en suscripcion
+            $suscripcion = new Suscripcion();
+            $suscripcion->NumeroTarea = $nuevaTarea;
+            $suscripcion->FechaIngreso = $reg->FechaIngreso;
+            $suscripcion->FechaEntregaDocsCompletos = $reg->FechaEntregaDocsCompletos;
+            $suscripcion->DiasCompletarInfoCliente = $reg->DiasParaCompletarInfoCliente;
+            $suscripcion->GestorId = $gestor->Id ?? null;
+            $suscripcion->CompaniaId = $compania->Id ?? null;
+            $suscripcion->ContratanteId = $cliente->Id ?? null;
+            $suscripcion->PolizaDeuda = $deuda->Id ?? null;
+            $suscripcion->PolizaVida = $vida->Id ?? null;
+            $suscripcion->Asegurado = $reg->Asegurado;
+            $suscripcion->OcupacionId = $ocupacion->Id ?? null;
+            $suscripcion->Dui = $reg->DocumentoIdentidad;
+            $suscripcion->Edad = $reg->Edad;
+            $suscripcion->Genero = $reg->Genero == 'F' ? 1 : 2;
+            $suscripcion->SumaAseguradaDeuda = $reg->SumaAseguradaEvaluadaDeuda;
+            $suscripcion->SumaAseguradaVida = $reg->SumaAseguradaEvaluadaVida;
+            $suscripcion->TipoClienteId = $tipo_cliente->Id ?? null;
+            $suscripcion->TipoCreditoId = $tipo_credito->Id ?? null;
+            $suscripcion->Imc = $reg->Imc;
+            $suscripcion->TipoIMCId = $tipo_imc->Id ?? null;
+            $suscripcion->Padecimiento = $reg->Padecimientos;
+            $suscripcion->TipoOrdenMedicaId = $orden_medica->Id ?? null;
+            $suscripcion->EstadoId = $estado_caso->Id ?? null;
+            $suscripcion->ResumenGestion = $resumen_gestion->Id ?? null;
+            $suscripcion->FechaReportadoCia = $reg->FechaReportadoCia;
+            $suscripcion->TrabajadoEfectuadoDiaHabil = $reg->TrabajoEfectuadoDiaHabil;
+            $suscripcion->TareasEvaSisa = $reg->TareasEvaSisa;
+            $suscripcion->FechaCierreGestion = $reg->FechaCierreGestion;
+            $suscripcion->FechaResolucion = $reg->FechaRecepcionResolucionCia;
+            $suscripcion->ResolucionFinal = $reg->ResolucionOficial;
+            $suscripcion->FechaEnvioResoCliente = $reg->FechaEnvioResolucionCliente;
+            $suscripcion->DiasProcesamientoResolucion = $reg->DiasProcesamientoResolucion;
+            $suscripcion->ValorExtraPrima = $reg->PorcentajeExtraprima;
+            $suscripcion->save();
+
+            $comentario = new Comentarios();
+            $comentario->SuscripcionId = $suscripcion->Id;
+            $comentario->Usuario = auth()->user()->id;
+            $comentario->FechaCreacion = Carbon::now();
+            $comentario->Comentario = $reg->ComentariosNrSuscripcion;
+            $comentario->save();
+
+
+        }
+        alert()->success('Importación completada exitosamente.');
+        return redirect()->back()->with('success', 'Importación completada exitosamente.');
+        // } catch (\Exception $e) {
+        //     return redirect()->back()->withErrors(['error' => $e->getMessage()]);
+        // }
     }
 }

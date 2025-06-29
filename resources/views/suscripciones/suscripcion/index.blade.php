@@ -1,5 +1,8 @@
 @extends ('welcome')
 @section('contenido')
+
+
+    @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
     <div class="x_panel">
 
         <style>
@@ -20,6 +23,7 @@
                     <input type="hidden" name="fecha_inicio" value="{{ $fecha_inicio }}">
                     <button class="btn btn-success"><i class="fa fa fa-file-text-o"></i></button>
                 </form> --}}
+                <button class="btn btn-success" data-target="#modal-importar" data-toggle="modal"><i class="fa fa fa-file-text-o"></i></button>
                 <button class="btn btn-primary" data-target="#modal-filtro-dui" data-toggle="modal"><i
                         class="fa fa-filter"></i></button>
                 <button class="btn btn-warning" data-target="#modal-filtro" data-toggle="modal"><i
@@ -34,6 +38,15 @@
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
+                @if (count($errors) > 0)
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 <table id="datatable" class="table table-striped table-bordered">
                     <thead>
                         <tr>
@@ -76,9 +89,7 @@
                             <tr>
                                 <td>{{ $i }}</td>
                                 <td>{{ $obj->NumeroTarea }}</td>
-                                <td>
-                                    {{ $obj->FechaIngreso ? date('d/m/Y', strtotime($obj->FechaIngreso)) : '' }}
-                                </td>
+                                <td>{{ $obj->FechaIngreso ? date('d/m/Y', strtotime($obj->FechaIngreso)) : '' }}</td>
                                 <td>{{ $obj->gestor->Nombre ?? ' ' }}</td>
                                 <td>{{ $obj->compania->Nombre ?? '' }}</td>
                                 <td>{{ $obj->contratante->Nombre ?? '' }}</td>
@@ -87,20 +98,15 @@
                                 <td>{{ $obj->Asegurado }}</td>
                                 <td>{{ $obj->Dui }}</td>
                                 <td>{{ $obj->Edad }}</td>
-                                <td>
-                                    {{ $obj->Genero == 1 ? 'F' : ($obj->Genero == 2 ? 'M' : '') }}
-                                </td>
-                                <td>
-                                    {{ $obj->SumaAseguradaDeuda !== null && $obj->SumaAseguradaDeuda > 0
+                                <td>{{ $obj->Genero == 1 ? 'F' : ($obj->Genero == 2 ? 'M' : '') }} </td>
+                                <td>{{ $obj->SumaAseguradaDeuda !== null && $obj->SumaAseguradaDeuda > 0
                                         ? number_format($obj->SumaAseguradaDeuda, 2)
                                         : '' }}
                                 </td>
-                                <td>
-                                    {{ $obj->SumaAseguradaVida !== null && $obj->SumaAseguradaVida > 0
+                                <td>{{ $obj->SumaAseguradaVida !== null && $obj->SumaAseguradaVida > 0
                                         ? number_format($obj->SumaAseguradaVida, 2)
                                         : '' }}
                                 </td>
-
                                 <td>{{ $obj->tipoCliente->Nombre ?? '' }}</td>
                                 <td>{{ $obj->Peso }} Lb</td>
                                 <td>{{ $obj->Estatura }} Mts</td>
@@ -111,20 +117,12 @@
                                 <td class="bg-{{ $obj->resumenGestion->Color ?? '' }}">
                                     {{ $obj->resumenGestion->Nombre ?? '' }}
                                 </td>
-                                <td>
-                                    {{ $obj->FechaReportadoCia ? date('d/m/Y', strtotime($obj->FechaReportadoCia)) : '' }}
-                                </td>
+                                <td>{{ $obj->FechaReportadoCia ? date('d/m/Y', strtotime($obj->FechaReportadoCia)) : '' }} </td>
                                 <td>{{ $obj->TareasEvaSisa }}</td>
                                 <td>{{ $obj->ValorExtraPrima }}</td>
-                                <td>
-                                    {{ $obj->FechaResolucion ? date('d/m/Y', strtotime($obj->FechaResolucion)) : '' }}
-                                </td>
-                                <td>
-                                    {{ $obj->FechaEnvioResoCliente ? date('d/m/Y', strtotime($obj->FechaEnvioResoCliente)) : '' }}
-                                </td>
-                                <td>
-                                    {{ $obj->DiasProcesamientoResolucion ?? 0 }}
-                                </td>
+                                <td>{{ $obj->FechaResolucion ? date('d/m/Y', strtotime($obj->FechaResolucion)) : '' }}</td>
+                                <td>{{ $obj->FechaEnvioResoCliente ? date('d/m/Y', strtotime($obj->FechaEnvioResoCliente)) : '' }}</td>
+                                <td>{{ $obj->DiasProcesamientoResolucion ?? 0 }}</td>
                                 {{-- <td>
                                     @if ($obj->comentarios->count() > 0)
                                         @foreach ($obj->comentarios as $comentario)
@@ -241,6 +239,33 @@
             </div>
         </div>
     </div>
+
+     <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-importar">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="POST" action="{{ url('suscripciones/importar') }}" enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                        <h4 class="modal-title">Importar Archivo</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="control-label ">Archivo</label>
+                            <input type="file" name="Archivo" id="Archivo"  class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary">Aceptar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 
 
 
