@@ -1,8 +1,6 @@
 @extends ('welcome')
 @section('contenido')
 
-
-    @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
     <div class="x_panel">
 
         <style>
@@ -16,14 +14,7 @@
                 <h3>Suscripciones </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
-                {{-- <form action="{{ url('suscripciones/exportar') }}" method="post">
-                    @csrf
-                    <input type="hidden" name="documento" value="{{ $documento }}">
-                    <input type="hidden" name="fecha_final" value="{{ $fecha_final }}">
-                    <input type="hidden" name="fecha_inicio" value="{{ $fecha_inicio }}">
-                    <button class="btn btn-success"><i class="fa fa fa-file-text-o"></i></button>
-                </form> --}}
-                <button class="btn btn-success" data-target="#modal-importar" data-toggle="modal"><i class="fa fa fa-file-text-o"></i></button>
+                {{-- <button class="btn btn-success" data-target="#modal-importar" data-toggle="modal"><i class="fa fa fa-file-text-o"></i></button> --}}
                 <button class="btn btn-primary" data-target="#modal-filtro-dui" data-toggle="modal"><i
                         class="fa fa-filter"></i></button>
                 <button class="btn btn-warning" data-target="#modal-filtro" data-toggle="modal"><i

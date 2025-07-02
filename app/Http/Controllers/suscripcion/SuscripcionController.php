@@ -181,6 +181,7 @@ class SuscripcionController extends Controller
         $suscripcion->FechaIngreso = $request->FechaIngreso;
         $suscripcion->GestorId = $request->Gestor;
         $suscripcion->CompaniaId = $request->CompaniaId;
+        $suscripcion->CategoriaSisa = $request->CategoriaSisa;
         $suscripcion->ContratanteId = $request->ContratanteId;
         $suscripcion->PolizaDeuda = $request->PolizaDeuda;
         $suscripcion->PolizaVida = $request->PolizaVida;
@@ -372,6 +373,7 @@ class SuscripcionController extends Controller
         $suscripcion->FechaIngreso = $request->FechaIngreso;
         $suscripcion->GestorId = $request->Gestor;
         $suscripcion->CompaniaId = $request->CompaniaId;
+        $suscripcion->CategoriaSisa = $request->CategoriaSisa;
         $suscripcion->ContratanteId = $request->ContratanteId;
         $suscripcion->PolizaDeuda = $request->PolizaDeuda;
         $suscripcion->PolizaVida = $request->PolizaVida;
@@ -675,8 +677,6 @@ class SuscripcionController extends Controller
             $comentario->FechaCreacion = Carbon::now();
             $comentario->Comentario = $reg->ComentariosNrSuscripcion;
             $comentario->save();
-
-
         }
         alert()->success('Importación completada exitosamente.');
         return redirect()->back()->with('success', 'Importación completada exitosamente.');

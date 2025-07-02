@@ -123,7 +123,7 @@
                                 class="form-control">
                         </div>
 
-                        <div class="col-sm-6">
+                        <div class="col-sm-4">
                             <label class="control-label ">Aseguradora</label>
                             <select name="CompaniaId" id="CompaniaId" class="form-control">
                                 <option value="">Seleccione...</option>
@@ -135,7 +135,20 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-sm-6">
+
+                        <div class="col-sm-4">
+                            <label class="control-label ">Categoria</label>
+                            <select name="CategoriaSisa" id="CategoriaSisa" class="form-control">
+                                <option value="">Seleccione...</option>
+                                <option value="ALTERNA" {{ $suscripcion->CategoriaSisa == 'ALTERNA' ? 'selected' : '' }}>
+                                    ALTERNA</option>
+                                <option value="TRADICIONAL"
+                                    {{ $suscripcion->CategoriaSisa == 'TRADICIONAL' ? 'selected' : '' }}>TRADICIONAL
+                                </option>
+                            </select>
+
+                        </div>
+                        <div class="col-sm-4">
                             <label class="control-label ">Contratante</label>
                             <select name="ContratanteId" class="form-control select2">
                                 <option value="">Seleccione...</option>
@@ -322,14 +335,23 @@
                         </div>
                         <div class="col-sm-12">
                             <label for="DireccionResidencia" class="form-label">Resumen de Gestión</label>
-                            <select name="ResumenGestion" id="ResumenGestion" class="form-control">
+                            <select name="ResumenGestion" id="ResumenGestion" class="form-control"
+                                onchange="resumenGestionChanged(this.value)">
                                 <option value="">SELECCIONE</option>
+
                                 @foreach ($resumen_gestion as $resumen)
-                                    <option value="{{ $resumen->Id }}" class="bg-{{ $resumen->Color }}"
-                                        {{ $suscripcion->ResumenGestion == $resumen->Id ? 'selected' : '' }}>
-                                        {{ $resumen->Nombre }}
-                                    </option>
+                                    @if ($resumen->Id != 20)
+                                        <option value="{{ $resumen->Id }}" class=" bg-{{ $resumen->Color }}"
+                                            {{ $suscripcion->ResumenGestion == $resumen->Id ? 'selected' : '' }}>
+                                            {{ $resumen->Nombre }}</option>
+                                    @else
+                                        <option value="{{ $resumen->Id }}" style="background-color: #000;color: #fff;"
+                                            {{ $suscripcion->ResumenGestion == $resumen->Id ? 'selected' : '' }}>
+                                            {{ $resumen->Nombre }}</option>
+                                    @endif
                                 @endforeach
+
+
                             </select>
                         </div>
                         <div class="col-sm-6">
@@ -376,8 +398,7 @@
                         <div class="col-sm-6">
                             <label class="control-label ">Total dias ciclo de proceso</label>
                             <input type="text" name="TotalDiasProceso" readonly
-                                value="{{ $suscripcion->TotalDiasProceso }}"
-                                class="form-control">
+                                value="{{ $suscripcion->TotalDiasProceso }}" class="form-control">
                         </div>
 
                         <div class="clearfix"></div>
@@ -689,6 +710,15 @@
                     resolve('');
                 }
             });
+        }
+
+
+        function resumenGestionChanged(id) {
+            if (id > 8) {
+                document.getElementById('EstadoId').value = 2;
+            } else {
+                document.getElementById('EstadoId').value = 1;
+            }
         }
 
 

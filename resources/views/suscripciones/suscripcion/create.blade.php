@@ -94,7 +94,7 @@
                                 value="{{ old('FechaEntregaDocsCompletos') }}" class="form-control">
                         </div>
 
-                        <div class="col-sm-6">
+                        <div class="col-sm-4">
                             <label class="control-label ">Aseguradora</label>
                             <select name="CompaniaId" id="CompaniaId" class="form-control">
                                 <option value="">Seleccione...</option>
@@ -104,7 +104,15 @@
                             </select>
                         </div>
 
-                        <div class="col-sm-6">
+                        <div class="col-sm-4">
+                            <label class="control-label ">Categoria</label>
+                            <select name="CategoriaSisa" id="CategoriaSisa" class="form-control">
+                                <option value="">Seleccione...</option>
+                                <option value="ALTERNA">ALTERNA</option>
+                                <option value="TRADICIONAL">TRADICIONAL</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-4">
                             <label class="control-label ">Contratante</label>
                             <select name="ContratanteId" class="form-control select2">
                                 <option value="">Seleccione</option>
@@ -280,11 +288,18 @@
                             <div class="col-sm-6">
                                 <div class="col-sm-12">
                                     <label for="DireccionResidencia" class="form-label">Resumen de Gestión</label>
-                                    <select name="ResumenGestion" id="ResumenGestion" class="form-control">
+                                    <select name="ResumenGestion" id="ResumenGestion" class="form-control"
+                                        onchange="resumenGestionChanged(this.value)">
                                         <option value="">SELECCIONE</option>
                                         @foreach ($resumen_gestion as $resumen)
-                                            <option value="{{ $resumen->Id }}" class="bg-{{ $resumen->Color }}">
-                                                {{ $resumen->Nombre }}</option>
+                                            @if ($resumen->Id != 20)
+                                                <option value="{{ $resumen->Id }}" class=" bg-{{ $resumen->Color }}">
+                                                    {{ $resumen->Nombre }}</option>
+                                            @else
+                                                <option value="{{ $resumen->Id }}"
+                                                    style="background-color: #000;color: #fff;">
+                                                    {{ $resumen->Nombre }}</option>
+                                            @endif
                                         @endforeach
                                     </select>
                                 </div>
@@ -437,6 +452,15 @@
             this.value = this.value.replace(/[^0-9\-]/g, '');
         });
 
+
+        function resumenGestionChanged(id) {
+            if (id > 8) {
+                document.getElementById('EstadoId').value = 2;
+            } else {
+                document.getElementById('EstadoId').value = 1;
+            }
+        }
+
         function calculo() {
             const peso = document.getElementById('Peso').value;
             const estatura = document.getElementById('Estatura').value;
@@ -502,6 +526,10 @@
         }
 
         $(document).ready(function() {
+
+            // Mostrar opción en menú
+            displayOption("ul-suscripciones", "li-suscripciones");
+
             $('#FechaResolucion, #FechaEnvioResoCliente').change(function() {
                 var inicio = $('#FechaResolucion').val();
                 var fin = $('#FechaEnvioResoCliente').val();
