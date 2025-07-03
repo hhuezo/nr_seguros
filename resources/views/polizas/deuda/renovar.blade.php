@@ -238,12 +238,12 @@
 
                     <div class="col-sm-4" style="display:  {{ $deuda->PolizaVida != '' ? 'block' : 'none' }};" id="poliza_vida">
                         <label class="control-label">Numero de Poliza Vida *</label>
-                        <input name="Vida" type="text" class="form-control" value="{{ $deuda->vidas->NumeroPoliza }}" readonly />
+                        <input name="Vida" type="text" class="form-control" value="{{ $deuda->vidas->NumeroPoliza ?? '' }}" readonly />
                     </div>
                     <div class="col-sm-4">
                         <div id="poliza_desempleo"  style="display:  {{ $deuda->PolizaDesempleo != '' ? 'block' : 'none' }};">
                             <label class="control-label">Número de Póliza Desempleo *</label>
-                            <input name="Desempleo" type="text" class="form-control"  value="{{ $deuda->desempleos->NumeroPoliza }}" readonly />
+                            <input name="Desempleo" type="text" class="form-control"  value="{{ $deuda->desempleos->NumeroPoliza ?? '' }}" readonly />
                         </div>
 
                     </div>
