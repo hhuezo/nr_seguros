@@ -48,6 +48,7 @@ use App\Http\Controllers\suscripcion\TipoOrdenMedicaController;
 use App\Http\Controllers\suscripcion\TipoImcController;
 use App\Http\Controllers\suscripcion\TipoClienteController;
 use App\Http\Controllers\suscripcion\TipoCreditoController;
+use App\Models\polizas\PolizaSeguro;
 
 /*
 |--------------------------------------------------------------------------
@@ -425,10 +426,6 @@ Route::middleware(['auth'])->group(function () {
 
 
     //no declarativas
+    Route::get('get_oferta', [PolizaSeguroController::class, 'get_oferta']);
     Route::resource('poliza/seguro', PolizaSeguroController::class);
-
-
-
-
-
 });
