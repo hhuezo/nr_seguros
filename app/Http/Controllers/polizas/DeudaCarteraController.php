@@ -1110,7 +1110,7 @@ class DeudaCarteraController extends Controller
 
         //calcular los registros que pasan de la edad maxima
         $poliza_edad_maxima = PolizaDeudaTempCartera::where('PolizaDeuda', $request->Deuda)->where('User', auth()->user()->id)
-            ->where('EdadDesembloso', '>', $deuda->EdadMaximaTerminacion)->get();
+            ->where('Edad', '>', $deuda->EdadMaximaTerminacion)->get();
 
 
         //$deuda->ResponsabilidadMaxima = 25000;
