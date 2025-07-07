@@ -589,7 +589,7 @@
                 let comision_iva = document.getElementById('ComisionIva').value;
 
                 let tasa_comision = parseFloat(document.getElementById('TasaComisionDetalle')?.value) || 0;
-                let tipo_contribuyente = {{ $deuda->clientes->TipoContribuyente }};
+                let tipo_contribuyente = {{ $deuda->clientes->TipoContribuyente ?? 0 }};
                 console.log("tasa_comision: " + tasa_comision);
 
 
