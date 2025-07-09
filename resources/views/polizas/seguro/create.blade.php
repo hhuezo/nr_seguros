@@ -1,6 +1,30 @@
 @extends ('welcome')
 @section('contenido')
+<style>
+    #loading-overlay-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.8);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #loading-overlay-modal img {
+        width: 50px;
+        /* Ajusta el tamaño de la imagen según tus necesidades */
+        height: 50px;
+        /* Ajusta el tamaño de la imagen según tus necesidades */
+    }
+</style>
 <div class="x_panel">
+    <div id="loading-overlay-modal">
+        <img src="{{ asset('img/ajax-loader.gif') }}" alt="Loading..." />
+    </div>
     <div class="x_title">
         <div class="col-md-6 col-sm-6 col-xs-12">
             <h4>Nueva póliza de seguro</h4>
@@ -26,8 +50,8 @@
                     </select>
                 </div>
                 <div class="col-sm-6">
-                    <label class="control-label">Forma de Pago</label>
-                    <select name="FormaPago" id="FormaPago" class="form-control">
+                    <label class="control-label">Forma de Pago *</label>
+                    <select name="FormaPago" id="FormaPago" class="form-control" required>
                         @foreach($forma_pago as $pago)
                         <option value="{{ $loop->index }}">{{ $pago == '' ? 'Seleccione...' : $pago }}</option>
                         @endforeach
@@ -39,13 +63,13 @@
         <div class="row">
             <div class="form-horizontal">
                 <div class="col-sm-6">
-                    <label class="control-label">Número Póliza</label>
-                    <input type="text" name="NumeroPoliza" class="form-control">
+                    <label class="control-label">Número Póliza *</label>
+                    <input type="text" name="NumeroPoliza" class="form-control" required>
                 </div>
 
                 <div class="col-sm-6">
-                    <label class="control-label">Estado de Poliza</label>
-                    <select name="EstadoPoliza" id="EstadoPoliza" class="form-control">
+                    <label class="control-label">Estado de Poliza *</label>
+                    <select name="EstadoPoliza" id="EstadoPoliza" class="form-control" required>
                         @foreach($estado_poliza as $estado)
                         <option value="{{ $estado->Id }}">{{ $estado->Nombre }}</option>
                         @endforeach
@@ -74,12 +98,7 @@
                 </div>
 
                 <div class="col-sm-6">
-                    <label class="control-label">ID Cliente</label>
-                    <input type="text" name="IdCliente" id="IdCliente" class="form-control" id="IdCliente">
-                </div>
-
-                <div class="col-sm-6">
-                    <label class="control-label">Nombre Cliente</label>
+                    <label class="control-label">Nombre Cliente *</label>
                     <select name="Cliente" id="Cliente" class="form-control select2" style="width: 100%" required>
                         <option value="" selected disabled>Seleccione...</option>
                         @foreach ($clientes as $obj)
@@ -88,24 +107,33 @@
                     </select>
                 </div>
 
+                <div class="col-sm-6">
+                    <label class="control-label">ID Cliente *</label>
+                    <input type="text" name="IdCliente" id="IdCliente" class="form-control" id="IdCliente" readonly>
+                </div>
+            </div>
+        </div>
 
+        <div class="row">
+            <div class="form-horizontal">
                 <div class="col-sm-6">
                     <label class="control-label">Vigencia Desde *</label>
-                    <input class="form-control" name="VigenciaDesde" type="date" value="{{ old('VigenciaDesde') }}">
+                    <input class="form-control" id="vigencia_desde" name="VigenciaDesde" type="date" value="{{ old('VigenciaDesde') }}" required>
                 </div>
 
                 <div class="col-sm-3">
                     <label class="control-label">Vigencia Hasta *</label>
-                    <input class="form-control" name="VigenciaHasta" type="date" value="{{ old('VigenciaHasta') }}">
+                    <input class="form-control" id="vigencia_hasta" name="VigenciaHasta" type="date" value="{{ old('VigenciaHasta') }}" required>
+
                 </div>
 
                 <div class="col-sm-3">
                     <label class="control-label">Días</label>
-                    <input type="number" name="DiasVigencia" class="form-control" value="365">
+                    <input type="number" name="DiasVigencia" id="dias_vigencia" class="form-control" readonly>
                 </div>
                 <div class="col-sm-6">
                     <label class="control-label">Motivo Cancelación</label>
-                    <input type="text" name="MotivoCancelacion" class="form-control" value="365">
+                    <input type="text" name="MotivoCancelacion" class="form-control">
                 </div>
 
                 <div class="col-sm-6">
@@ -114,18 +142,26 @@
                 </div>
 
                 <div class="col-sm-6">
-                    <label class="control-label">Id Cancelación <small style="color: red;">(revisar)</small></label>
-                    <input type="text" name="MotivoCancelacion" class="form-control" value="365">
+                    <label class="control-label">Cod Cancelación</label>
+                    <select name="CodCancelacion" id="CodCancelacion" class="form-control select2" style="width: 100%">
+                        <option value="" selected disabled>Seleccione...</option>
+                        @foreach ($cancelacion as $obj)
+                        <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                        @endforeach
+                    </select>
                 </div>
 
                 <div class="col-sm-6">
                     <label class="control-label">Fecha Envío Anexo</label>
                     <input type="date" name="FechaEnvioAnexo" class="form-control">
                 </div>
-
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-horizontal">
                 <div class="col-sm-6">
-                    <label class="control-label">Reservacion Ren. <small style="color: red;">(revisar)</small></label>
-                    <input type="text" name="MotivoCancelacion" class="form-control" value="365">
+                    <label class="control-label">Observación Ren. </label>
+                    <input type="text" name="Observacion" class="form-control">
                 </div>
 
                 <div class="col-sm-6">
@@ -134,10 +170,10 @@
                 </div>
 
                 <div class="col-sm-6">
-                    <label class="control-label">Origen Poliza <small style="color: red;">(revisar)</small></label>
-                    <select name="Cliente" id="Cliente" class="form-control select2" style="width: 100%" required>
+                    <label class="control-label">Origen Poliza </label>
+                    <select name="OrigenPoliza" id="OrigenPoliza" class="form-control select2" style="width: 100%">
                         <option value="" selected disabled>Seleccione...</option>
-                        @foreach ($clientes as $obj)
+                        @foreach ($origen_poliza as $obj)
                         <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
                         @endforeach
                     </select>
@@ -154,10 +190,10 @@
             <div class="form-horizontal">
 
                 <div class="col-sm-6">
-                    <label class="control-label">Departamento <small style="color: red;">(revisar)</small></label>
-                    <select name="Cliente" id="Cliente" class="form-control select2" style="width: 100%" required>
+                    <label class="control-label">Departamento </label>
+                    <select name="DepartamentoNr" id="DepartamentoNr" class="form-control select2" style="width: 100%">
                         <option value="" selected disabled>Seleccione...</option>
-                        @foreach ($clientes as $obj)
+                        @foreach ($departamento_nr as $obj)
                         <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
                         @endforeach
                     </select>
@@ -172,8 +208,8 @@
         <div class="row">
             <div class="form-horizontal">
                 <div class="col-sm-6">
-                    <label class="control-label">Sustituida por póliza <small style="color: red;">(revisar)</small></label>
-                    <input type="date" name="FechaVinculacion" class="form-control">
+                    <label class="control-label">Sustituida por póliza</label>
+                    <input type="date" name="SustituidaPoliza" class="form-control">
                 </div>
 
                 <div class="col-sm-6">
@@ -183,7 +219,7 @@
 
                 <div class="col-sm-6">
                     <label class="control-label">Ejecutivo Cia</label>
-                    <select name="EjecutivoCia" id="EjecutivoCia" class="form-control select2" style="width: 100%" required>
+                    <select name="EjecutivoCia" id="EjecutivoCia" class="form-control select2" style="width: 100%">
                         <option value="" selected disabled>Seleccione...</option>
                         @foreach ($tipo_cartera_nr as $obj)
                         <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
@@ -201,8 +237,13 @@
             <div class="form-horizontal">
 
                 <div class="col-sm-6">
-                    <label class="control-label">Deducible</label>
-                    <input type="text" name="Deducible" class="form-control" value="Deducible por Vigencia">
+                    <label class="control-label">Tipo de Deducible</label>
+                    <select name="Deducible" id="Deducible" class="form-control select2" style="width: 100%">
+                        <option value="" selected disabled>Seleccione...</option>
+                        @foreach ($tipo_deducible as $obj)
+                        <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
         </div>
@@ -217,9 +258,29 @@
 </div>
 
 <script>
+    const desdeInput = document.getElementById('vigencia_desde');
+    const hastaInput = document.getElementById('vigencia_hasta');
+    const diasInput = document.getElementById('dias_vigencia');
+
+    function calcularDias() {
+        const desde = new Date(desdeInput.value);
+        const hasta = new Date(hastaInput.value);
+
+        if (!isNaN(desde.getTime()) && !isNaN(hasta.getTime())) {
+            const diferencia = Math.ceil((hasta - desde) / (1000 * 60 * 60 * 24));
+            diasInput.value = diferencia >= 0 ? diferencia : 0;
+        } else {
+            diasInput.value = '';
+        }
+    }
+
+    desdeInput.addEventListener('change', calcularDias);
+    hastaInput.addEventListener('change', calcularDias);
+
     function select_oferta(id) {
         // lógica para selección de oferta
-        $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
+        // $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
+        document.getElementById('loading-overlay-modal').style.display = 'flex';
         var parametros = {
             "Oferta": document.getElementById('Oferta').value
         };
@@ -229,15 +290,35 @@
             url: "{{ url('get_oferta') }}",
             data: parametros,
             success: function(data) {
+                document.getElementById('loading-overlay-modal').style.display = 'none';
+
                 console.log(data);
                 document.getElementById('FormaPago').value = data.oferta.forma_pago;
-                document.getElementById('Productos').value = data.oferta.productos;
-                document.getElementById('Planes').value = data.oferta.planes;
                 document.getElementById('IdCliente').value = data.oferta.dui_cliente;
-                // document.getElementById('Cliente').value = data.oferta.id_cliente;
                 $('#Cliente').val(data.oferta.id_cliente).trigger('change'); // <- Aquí el cambio
+                $('#Productos').val(data.oferta.productos).trigger('change'); // <- Aquí el cambio
+                $('#Planes').val(data.oferta.planes).trigger('change'); // <- Aquí el cambio
             }
         });
     }
+
+    $("#Cliente").change(function() {
+        // alert(document.getElementById('Asegurado').value);
+        $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
+        var parametros = {
+            "Cliente": document.getElementById('Cliente').value
+        };
+        $.ajax({
+            type: "get",
+            //ruta para obtener el horario del doctor
+            url: "{{ url('get_cliente') }}",
+            data: parametros,
+            success: function(data) {
+                console.log(data);
+                document.getElementById('IdCliente').value = data.Nit;
+
+            }
+        });
+    })
 </script>
 @endsection

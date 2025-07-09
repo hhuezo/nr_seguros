@@ -36,9 +36,9 @@ class SuscripcionImport implements ToModel, WithStartRow,  SkipsOnFailure, Skips
     public function model(array $row)
     {
 
-        // dd($row);
+        //dd($row);
 
-        if (trim($row[0]) != '' && trim($row[1]) != '' && trim($row[9]) != '') {
+        if (trim($row[0]) != '' && trim($row[1]) != '' && (array_key_exists(9, $row) && trim($row[9]) != '')) {
 
             // Verificar si todos los campos están vacíos
             if (collect($row)->filter(function ($item) {
