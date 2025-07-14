@@ -13,7 +13,6 @@
             <div class="clearfix"></div>
         </div>
 
-        <br><br>
         <div class="x_content">
 
             @if ($customFailures->count() > 0)
