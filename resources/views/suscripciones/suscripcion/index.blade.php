@@ -2,7 +2,7 @@
 @section('contenido')
 @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
     <style>
-    
+
         #loading-overlay-modal {
             display: none;
             position: fixed;
@@ -274,7 +274,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                        <button type="button" class="btn btn-primary" id="btn_importar">Aceptar</button>
+                        <button type="submit" class="btn btn-primary" id="btn_importar">Aceptar</button>
                     </div>
                 </form>
             </div>
