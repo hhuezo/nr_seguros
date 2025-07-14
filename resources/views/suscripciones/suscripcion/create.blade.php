@@ -2,7 +2,6 @@
 @section('contenido')
 
     @include('sweetalert::alert')
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <div class="x_panel">
         <div class="clearfix"></div>
         <div class="row">

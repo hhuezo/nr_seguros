@@ -50,22 +50,40 @@ class PolizaSeguroController extends Controller
 
     public function get_oferta(Request $request)
     {
-        $negocio = Negocio::findOrFail($request->Oferta);
-        // dd($negocio->cotizaciones->first()->planes->productos,$negocio);
+        try {
+            $negocio = Negocio::findOrFail($request->Oferta);
 
-        $oferta = [
-            'id' => $negocio->Id,
-            'id_cliente' => $negocio->clientes->Id,
-            'dui_cliente' => $negocio->clientes->Dui,
-            'nombre_cliente' => $negocio->clientes->Nombre,
-            'forma_pago' => $negocio->PeriodoPago,
-            'num_cuotas' => $negocio->NumCoutas,
-            'productos' => $negocio->cotizaciones->first()->planes->productos->Id,
-            'planes' => $negocio->cotizaciones->first()->planes->Id,
+            $cotizacion = $negocio->cotizaciones->first();
+            if (!$cotizacion || !$cotizacion->planes || !$cotizacion->planes->productos) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'El negocio no tiene cotización, plan o producto asociado.'
+                ], 200);
+            }
 
-        ];
-        return response()->json(['oferta' => $oferta]);
+            $oferta = [
+                'id' => $negocio->Id,
+                'id_cliente' => $negocio->clientes->Id ?? null,
+                'dui_cliente' => $negocio->clientes->Dui ?? '',
+                'nombre_cliente' => $negocio->clientes->Nombre ?? '',
+                'forma_pago' => $negocio->PeriodoPago,
+                'num_cuotas' => $negocio->NumCoutas,
+                'productos' => $cotizacion->planes->productos->Id,
+                'planes' => $cotizacion->planes->Id,
+            ];
+
+            return response()->json([
+                'success' => true,
+                'oferta' => $oferta
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener la oferta: ' . $e->getMessage()
+            ], 500);
+        }
     }
+
 
     public function store(Request $request)
     {
@@ -76,7 +94,7 @@ class PolizaSeguroController extends Controller
             'EstadoPoliza' => 'required|integer',
             'Productos' => 'required|integer',
             'Planes' => 'required|integer',
-            'IdCliente' => 'required',
+            //'IdCliente' => 'required',
             'Cliente' => 'required|integer',
             'VigenciaDesde' => 'required|date',
             'VigenciaHasta' => 'required|date|after_or_equal:VigenciaDesde',

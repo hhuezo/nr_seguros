@@ -426,7 +426,7 @@ Route::middleware(['auth'])->group(function () {
 
 
     //no declarativas
-    Route::get('get_oferta', [PolizaSeguroController::class, 'get_oferta']);
+    Route::get('poliza/seguro/get_oferta', [PolizaSeguroController::class, 'get_oferta']);
     Route::post('poliza/seguro/save/{id}',[PolizaSeguroController::class,'save']);
     Route::post('poliza/cobertura/update/{id}', [PolizaSeguroController::class, 'update_cobertura']);
     Route::post('poliza/datos_tecnicos/update/{id}', [PolizaSeguroController::class, 'update_datos_tecnicos']);
