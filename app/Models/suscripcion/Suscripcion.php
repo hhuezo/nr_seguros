@@ -59,6 +59,11 @@ class Suscripcion extends Model
         'ReprocesoId'
     ];
 
+    protected $casts = [
+        'FechaIngreso' => 'datetime',
+    ];
+
+
     protected $guarded = [];
 
     public function compania()

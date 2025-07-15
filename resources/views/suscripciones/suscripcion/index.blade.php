@@ -1,8 +1,7 @@
 @extends ('welcome')
 @section('contenido')
-@include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
+    @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
     <style>
-
         #loading-overlay-modal {
             display: none;
             position: fixed;
@@ -38,7 +37,8 @@
                 <h3>Suscripciones </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
-                <button class="btn btn-success" data-target="#modal-importar" data-toggle="modal"><i class="fa fa fa-file-text-o"></i></button>
+                <button class="btn btn-success" data-target="#modal-importar" data-toggle="modal"><i
+                        class="fa fa fa-file-text-o"></i></button>
                 <button class="btn btn-primary" data-target="#modal-filtro-dui" data-toggle="modal"><i
                         class="fa fa-filter"></i></button>
                 <button class="btn btn-warning" data-target="#modal-filtro" data-toggle="modal"><i
@@ -98,7 +98,7 @@
 
                         </tr>
                     </thead>
-                    <tbody>
+                    {{--  <tbody>
                         @php($i = 1)
                         @foreach ($suscripciones as $obj)
                             <tr>
@@ -115,12 +115,12 @@
                                 <td>{{ $obj->Edad }}</td>
                                 <td>{{ $obj->Genero == 1 ? 'F' : ($obj->Genero == 2 ? 'M' : '') }} </td>
                                 <td>{{ $obj->SumaAseguradaDeuda !== null && $obj->SumaAseguradaDeuda > 0
-                                        ? number_format($obj->SumaAseguradaDeuda, 2)
-                                        : '' }}
+                                    ? number_format($obj->SumaAseguradaDeuda, 2)
+                                    : '' }}
                                 </td>
                                 <td>{{ $obj->SumaAseguradaVida !== null && $obj->SumaAseguradaVida > 0
-                                        ? number_format($obj->SumaAseguradaVida, 2)
-                                        : '' }}
+                                    ? number_format($obj->SumaAseguradaVida, 2)
+                                    : '' }}
                                 </td>
                                 <td>{{ $obj->tipoCliente->Nombre ?? '' }}</td>
                                 <td>{{ $obj->Peso }} Lb</td>
@@ -132,21 +132,14 @@
                                 <td class="bg-{{ $obj->resumenGestion->Color ?? '' }}">
                                     {{ $obj->resumenGestion->Nombre ?? '' }}
                                 </td>
-                                <td>{{ $obj->FechaReportadoCia ? date('d/m/Y', strtotime($obj->FechaReportadoCia)) : '' }} </td>
+                                <td>{{ $obj->FechaReportadoCia ? date('d/m/Y', strtotime($obj->FechaReportadoCia)) : '' }}
+                                </td>
                                 <td>{{ $obj->TareasEvaSisa }}</td>
                                 <td>{{ $obj->ValorExtraPrima }}</td>
                                 <td>{{ $obj->FechaResolucion ? date('d/m/Y', strtotime($obj->FechaResolucion)) : '' }}</td>
-                                <td>{{ $obj->FechaEnvioResoCliente ? date('d/m/Y', strtotime($obj->FechaEnvioResoCliente)) : '' }}</td>
+                                <td>{{ $obj->FechaEnvioResoCliente ? date('d/m/Y', strtotime($obj->FechaEnvioResoCliente)) : '' }}
+                                </td>
                                 <td>{{ $obj->DiasProcesamientoResolucion ?? 0 }}</td>
-                                {{-- <td>
-                                    @if ($obj->comentarios->count() > 0)
-                                        @foreach ($obj->comentarios as $comentario)
-                                            {{ $comentario->FechaCreacion }} - {{ $comentario->usuario->name ?? '' }} -
-                        {{ $comentario->Comentario }};
-                        @endforeach
-                        @endif
-
-                        </td> --}}
                                 <td align="center">
                                     <a href="{{ url('suscripciones') }}/{{ $obj->Id }}/edit" class="btn btn-primary"
                                         class="on-default edit-row">
@@ -164,7 +157,7 @@
                             @include('suscripciones.suscripcion.modal')
                             @php($i++)
                         @endforeach
-                    </tbody>
+                    </tbody> --}}
                 </table>
 
             </div>
@@ -255,7 +248,7 @@
         </div>
     </div>
 
-     <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-importar">
+    <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-importar">
         <div class="modal-dialog">
             <div class="modal-content">
                 <form method="POST" action="{{ url('suscripciones/importar') }}" enctype="multipart/form-data">
@@ -269,7 +262,7 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label class="control-label ">Archivo</label>
-                            <input type="file" name="Archivo" id="Archivo"  class="form-control" required>
+                            <input type="file" name="Archivo" id="Archivo" class="form-control" required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -304,11 +297,174 @@
     </div>
 
 
+    <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete">
+
+        <form id="form-delete" method="POST">
+            @method('delete')
+            @csrf
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                        <h4 class="modal-title">Eliminar Registro</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Confirme si desea Eliminar el Registro</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary">Confirmar</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+
     <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 
 
+    <script>
+        $(document).ready(function() {
+            $('#datatable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: '{{ url('suscripciones/data') }}/{{ $fecha_inicio }}/{{ $fecha_final }}',
+                columns: [{
+                        data: 'Id',
+                        name: 'suscripcion.Id'
+                    },
+                    {
+                        data: 'NumeroTarea',
+                        name: 'suscripcion.NumeroTarea'
+                    },
+                    {
+                        data: 'FechaIngreso',
+                        name: 'suscripcion.FechaIngreso'
+                    },
+                    {
+                        data: 'Ejecutivo',
+                        name: 'ejecutivo.Nombre'
+                    },
+                    {
+                        data: 'Aseguradora',
+                        name: 'aseguradora.Nombre'
+                    },
+                    {
+                        data: 'Contratante',
+                        name: 'cliente.Nombre'
+                    },
+                    {
+                        data: 'PolizaDeuda',
+                        name: 'poliza_deuda.NumeroPoliza'
+                    },
+                    {
+                        data: 'PolizaVida',
+                        name: 'poliza_vida.NumeroPoliza'
+                    },
+                    {
+                        data: 'Asegurado',
+                        name: 'suscripcion.Asegurado'
+                    },
+                    {
+                        data: 'Dui',
+                        name: 'suscripcion.Dui'
+                    },
+                    {
+                        data: 'Edad',
+                        name: 'suscripcion.Edad'
+                    },
+                    {
+                        data: 'Genero',
+                        name: 'suscripcion.Genero'
+                    },
+                    {
+                        data: 'SumaAseguradaDeuda',
+                        name: 'suscripcion.SumaAseguradaDeuda'
+                    },
+                    {
+                        data: 'SumaAseguradaVida',
+                        name: 'suscripcion.SumaAseguradaVida'
+                    },
+                    {
+                        data: 'TipoCliente',
+                        name: 'sus_tipo_cliente.Nombre'
+                    },
+                    {
+                        data: 'Estatura',
+                        name: 'suscripcion.Estatura'
+                    }, // Aún si es CONCAT, usa la tabla base
+                    {
+                        data: 'Peso',
+                        name: 'suscripcion.Peso'
+                    },
+                    {
+                        data: 'Imc',
+                        name: 'suscripcion.Imc'
+                    },
+                    {
+                        data: 'Padecimiento',
+                        name: 'suscripcion.Padecimiento'
+                    },
+                    {
+                        data: 'TipoOrdenMedica',
+                        name: 'sus_orden_medica.Nombre'
+                    },
+                    {
+                        data: 'EstadoCaso',
+                        name: 'sus_estado_caso.Nombre'
+                    },
+                    {
+                        data: 'ResumenGestion',
+                        name: 'sus_resumen_gestion.Nombre',
+                        createdCell: function(td, cellData, rowData) {
+                            const color = rowData.Color || '';
+                            $(td).addClass('bg-' + color);
+                        }
+                    },
+                    {
+                        data: 'FechaReportadoCia',
+                        name: 'suscripcion.FechaReportadoCia'
+                    },
+                    {
+                        data: 'TareasEvaSisa',
+                        name: 'suscripcion.TareasEvaSisa'
+                    },
+                    {
+                        data: 'ValorExtraPrima',
+                        name: 'suscripcion.ValorExtraPrima'
+                    },
+                    {
+                        data: 'FechaResolucion',
+                        name: 'suscripcion.FechaResolucion'
+                    },
+                    {
+                        data: 'FechaEnvioResoCliente',
+                        name: 'suscripcion.FechaEnvioResoCliente'
+                    },
+                    {
+                        data: 'DiasProcesamientoResolucion',
+                        name: 'suscripcion.DiasProcesamientoResolucion'
+                    },
+                    {
+                        data: 'acciones',
+                        name: 'acciones',
+                        orderable: false,
+                        searchable: false
+                    },
+                ]
+            });
+
+        });
+    </script>
+
+
+
     <script type="text/javascript">
-        document.getElementById('btn_importar').addEventListener('click', function () {
+        document.getElementById('btn_importar').addEventListener('click', function() {
             document.getElementById('loading-overlay-modal').style.display = 'flex';
         });
 
@@ -340,6 +496,20 @@
                 $('#listComentarios').html('<p>Error de conexión con el servidor.</p>');
             });
 
+        }
+
+
+
+        function shoModalDelete(id) {
+            const baseUrl = '{{ url('suscripciones') }}';
+            // 1) Construimos la URL definitiva
+            const url = `${baseUrl}/${id}`;
+
+            // 2) Asignamos el action al form
+            document.getElementById('form-delete').action = url;
+
+            // 3) Mostramos el modal
+            $('#modal-delete').modal('show');
         }
     </script>
 @endsection

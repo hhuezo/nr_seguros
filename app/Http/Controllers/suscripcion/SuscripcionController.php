@@ -29,6 +29,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use Yajra\DataTables\Facades\DataTables;
 
 class SuscripcionController extends Controller
 {
@@ -56,22 +57,108 @@ class SuscripcionController extends Controller
     }
 
 
+    public function data($fechaInicio, $fechaFinal)
+    {
+        $suscripciones = Suscripcion::leftJoin('ejecutivo', 'ejecutivo.Id', '=', 'suscripcion.GestorId')
+            ->leftJoin('aseguradora', 'aseguradora.Id', '=', 'suscripcion.CompaniaId')
+            ->leftJoin('cliente', 'cliente.Id', '=', 'suscripcion.ContratanteId')
+            ->leftJoin('poliza_deuda', 'poliza_deuda.Id', '=', 'suscripcion.PolizaDeuda')
+            ->leftJoin('poliza_vida', 'poliza_vida.Id', '=', 'suscripcion.PolizaVida')
+            ->leftJoin('sus_tipo_cliente', 'sus_tipo_cliente.Id', '=', 'suscripcion.TipoClienteId')
+            ->leftJoin('sus_orden_medica', 'sus_orden_medica.Id', '=', 'suscripcion.TipoOrdenMedicaId')
+            ->leftJoin('sus_estado_caso', 'sus_estado_caso.Id', '=', 'suscripcion.EstadoId')
+            ->leftJoin('sus_resumen_gestion', 'sus_resumen_gestion.Id', '=', 'suscripcion.ResumenGestion')
+            ->whereBetween(DB::raw('DATE(suscripcion.FechaIngreso)'), [$fechaInicio, $fechaFinal])
+            ->select(
+                'suscripcion.Id',
+                'suscripcion.NumeroTarea',
+                'suscripcion.FechaIngreso',
+                'ejecutivo.Nombre as Ejecutivo',
+                'aseguradora.Nombre as Aseguradora',
+                'cliente.Nombre as Contratante',
+                'poliza_deuda.NumeroPoliza as PolizaDeuda',
+                'poliza_vida.NumeroPoliza as PolizaVida',
+                'suscripcion.Asegurado',
+                'suscripcion.Dui',
+                'suscripcion.Edad',
+                'suscripcion.Genero',
+                'suscripcion.SumaAseguradaDeuda',
+                'suscripcion.SumaAseguradaVida',
+                'sus_tipo_cliente.Nombre as TipoCliente',
+                DB::raw('CONCAT(suscripcion.Estatura, " Mts") as Estatura'),
+                DB::raw('CONCAT(suscripcion.Peso, " Lb") as Peso'),
+                DB::raw('FORMAT(suscripcion.Imc, 2) as Imc'),
+                'suscripcion.Padecimiento',
+                'sus_orden_medica.Nombre as TipoOrdenMedica',
+                'sus_estado_caso.Nombre as EstadoCaso',
+                'sus_resumen_gestion.Nombre as ResumenGestion',
+                'sus_resumen_gestion.Color',
+                'suscripcion.FechaReportadoCia',
+                'suscripcion.TareasEvaSisa',
+                'suscripcion.ValorExtraPrima',
+                'suscripcion.FechaResolucion',
+                'suscripcion.FechaEnvioResoCliente',
+                'suscripcion.DiasProcesamientoResolucion',
+            );
 
-    // public function exportar(Request $request)
-    // {
+        return DataTables::of($suscripciones)
+            ->editColumn('FechaIngreso', function ($row) {
+                return $row->FechaIngreso ? $row->FechaIngreso->format('d/m/Y') : '';
+            })
+            ->editColumn('Genero', function ($row) {
+                return $row->Genero == 1 ? 'F' : ($row->Genero == 2 ? 'M' : '');
+            })
+            ->editColumn('SumaAseguradaDeuda', function ($row) {
+                return $row->SumaAseguradaDeuda !== null && $row->SumaAseguradaDeuda > 0
+                    ? number_format($row->SumaAseguradaDeuda, 2)
+                    : '';
+            })
+            ->editColumn('SumaAseguradaVida', function ($row) {
+                return $row->SumaAseguradaVida !== null && $row->SumaAseguradaVida > 0
+                    ? number_format($row->SumaAseguradaVida, 2)
+                    : '';
+            })
+            ->editColumn('FechaReportadoCia', function ($row) {
+                return !empty($row->FechaReportadoCia)
+                    ? Carbon::parse($row->FechaReportadoCia)->format('d/m/Y')
+                    : '';
+            })
+            ->editColumn('ValorExtraPrima', function ($row) {
+                return $row->ValorExtraPrima !== null && $row->ValorExtraPrima > 0
+                    ? number_format($row->ValorExtraPrima, 2)
+                    : '';
+            })
+            ->editColumn('FechaResolucion', function ($row) {
+                return !empty($row->FechaResolucion)
+                    ? Carbon::parse($row->FechaResolucion)->format('d/m/Y')
+                    : '';
+            })
+            ->editColumn('FechaEnvioResoCliente', function ($row) {
+                return !empty($row->FechaEnvioResoCliente)
+                    ? Carbon::parse($row->FechaEnvioResoCliente)->format('d/m/Y')
+                    : '';
+            })
+            ->addColumn('acciones', function ($row) {
+                $id = $row->Id;
+                return '
+                    <a href="' . url("suscripciones/{$id}/edit") . '" class="btn btn-primary">
+                        <i class="fa fa-pencil fa-lg"></i>
+                    </a>
 
-    //     $fecha_final = $request->fecha_final;
-    //     $fecha_inicio = $request->fecha_inicio;
-    //     $documento = '';
-    //     if ($request->filled('Documento')) {
-    //         $documento =  $request->Documento;
-    //         $suscripciones = Suscripcion::where('Dui', $documento)->get();
-    //     } else {
-    //         $suscripciones = Suscripcion::whereBetween(DB::raw('DATE(FechaIngreso)'), [$fecha_inicio, $fecha_final])->get();
-    //     }
-    //     // return view('suscripciones.suscripcion.report', compact('suscripciones'));
-    //     return Excel::download(new SuscripcionesExport($suscripciones), 'suscripciones.xlsx');
-    // }
+                    <a href="#" class="btn btn-danger" onclick="shoModalDelete(' . $id . ')">
+                        <i class="fa fa-trash fa-lg"></i>
+                    </a>
+
+                    <a href="#" class="btn btn-info" data-toggle="modal" data-target="#modal-comentario" onclick="getComentarios(' . $id . ')">
+                        <i class="fa fa-book fa-lg"></i>
+                    </a>
+                ';
+            })->rawColumns(['acciones'])
+
+
+            ->make(true);
+    }
+
 
     public function create()
     {
