@@ -153,8 +153,8 @@ class PolizaSeguroController extends Controller
             $cobertura_poliza->save();
         }
 
-        alert()->success('Se creo la poliza de seguro');
-        return redirect('poliza/seguro/' . $poliza_seguro->Id);
+        //alert()->success('Se creo la poliza de seguro');
+        return redirect('poliza/seguro/' . $poliza_seguro->Id)->with('success', 'Se creo la poliza de seguro');
     }
 
 
