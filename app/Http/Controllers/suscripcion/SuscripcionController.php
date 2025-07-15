@@ -37,7 +37,7 @@ class SuscripcionController extends Controller
     public function index(Request $request)
     {
         $fecha_final = $request->FechaFinal ?? date('Y-m-d');
-        $fecha_inicio = $request->FechaInicio ?? date('Y-m-d', strtotime('-3 months'));
+        $fecha_inicio = $request->FechaInicio ?? date('Y-m-d', strtotime('-1 year'));
         $documento = $request->documento ?? null;
 
         $exportar = $request->Exportar ?? null;
