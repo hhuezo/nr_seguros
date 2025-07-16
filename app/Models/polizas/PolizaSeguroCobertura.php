@@ -17,14 +17,12 @@ class PolizaSeguroCobertura extends Model
 
 
     protected $fillable = [
-        'PolizaSeguro',
-        'Cobertura',
+        'PolizaSeguroId',
         'Valor',
+        'Nombre',
+        'Tarificacion',
+        'Descuento',
+        'Iva',
         'Activo'
     ];
-
-    public function cobertura()
-    {
-        return $this->belongsTo(Cobertura::class, 'Cobertura', 'Id');
-    }
 }

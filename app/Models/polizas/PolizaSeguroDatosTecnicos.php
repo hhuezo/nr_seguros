@@ -16,15 +16,10 @@ class PolizaSeguroDatosTecnicos extends Model
     public $timestamps = false;
 
 
-    protected $fillable = [
-        'PolizaSeguro',
-        'DatosTecnicos',
-        'Valor',
+   protected $fillable = [
+        'PolizaSeguroId',
+        'Nombre',
+        'Descripcion',
         'Activo'
     ];
-
-       public function datos_tecnicos()
-    {
-        return $this->belongsTo(DatosTecnicos::class, 'DatosTecnicos', 'Id');
-    }
 }

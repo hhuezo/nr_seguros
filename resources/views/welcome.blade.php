@@ -270,8 +270,8 @@
                                         <li id="li-poliza-deuda"><a href="{{ url('polizas/deuda') }}">Deuda</a></li>
                                         <li id="li-poliza-desempleo"><a
                                                 href="{{ url('polizas/desempleo') }}">Desempleo</a></li>
-                                        {{-- <li id="li-poliza-seguro"><a href="{{ url('poliza/seguro') }}">Polizas
-                                                seguro</a></li> --}}
+                                        <li id="li-poliza-seguro"><a href="{{ url('poliza/seguro') }}">Polizas
+                                                seguro</a></li>
                                     </ul>
                                 </li>
 

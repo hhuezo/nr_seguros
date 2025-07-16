@@ -413,7 +413,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('suscripciones/exportar', [SuscripcionController::class, 'exportar']);
     Route::post('suscripciones/importar', [SuscripcionController::class, 'importar']);
     Route::get('suscripciones/calcular_dias_habiles_json', [SuscripcionController::class, 'calcularDiasHabilesJson'])->name('calcular.dias.habiles.json');
-    Route::get('suscripciones/data/{fechaInicio}/{fechaFinal}', [SuscripcionController::class,'data']);
+    Route::get('suscripciones/data/{fechaInicio}/{fechaFinal}', [SuscripcionController::class, 'data']);
 
     Route::resource('suscripciones', SuscripcionController::class);
     Route::resource('companias', CompaniaController::class);
@@ -432,5 +432,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('poliza/seguro/save/{id}', [PolizaSeguroController::class, 'save']);
     Route::post('poliza/cobertura/update/{id}', [PolizaSeguroController::class, 'update_cobertura']);
     Route::post('poliza/datos_tecnicos/update/{id}', [PolizaSeguroController::class, 'update_datos_tecnicos']);
+
+    Route::post('poliza/seguro/cobertura_store/{id}', [PolizaSeguroController::class, 'cobertura_store']);
+    Route::post('poliza/seguro/dato_tecnico_store/{id}', [PolizaSeguroController::class, 'dato_tecnico_store']);
+    Route::delete('poliza/seguro/cobertura_delete/{id}', [PolizaSeguroController::class, 'cobertura_delete']);
+    Route::delete('poliza/seguro/dato_tecnico_delete/{id}', [PolizaSeguroController::class, 'dato_tecnico_delete']);
+
+
     Route::resource('poliza/seguro', PolizaSeguroController::class);
 });

@@ -20,12 +20,14 @@ use App\Models\polizas\PolizaSeguro;
 use App\Models\polizas\PolizaSeguroCobertura;
 use App\Models\polizas\PolizaSeguroDatosTecnicos;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class PolizaSeguroController extends Controller
 {
     public function index()
     {
-        return view('polizas.seguro.index');
+        $polizas = PolizaSeguro::get();
+        return view('polizas.seguro.index', compact('polizas'));
     }
 
 
@@ -139,30 +141,36 @@ class PolizaSeguroController extends Controller
         //agregar cobertura de producto de la poliza seguro
         foreach ($coberturas_producto as $cobertura) {
             $cobertura_poliza = new PolizaSeguroCobertura();
-            $cobertura_poliza->PolizaSeguro = $poliza_seguro->Id;
-            $cobertura_poliza->Cobertura = $cobertura->Id;
+            $cobertura_poliza->PolizaSeguroId = $poliza_seguro->Id;
+            //$cobertura_poliza->Cobertura = $cobertura->Id;
+            $cobertura_poliza->Nombre = $cobertura->Nombre;
+            $cobertura_poliza->Tarificacion = $cobertura->Tarificacion;
+            $cobertura_poliza->Descuento = $cobertura->Descuento;
+            $cobertura_poliza->Iva = $cobertura->Iva;
             $cobertura_poliza->save();
         }
 
         //agregar datos tecnicos de producto de la poliza seguro
 
         foreach ($datos_tecnicos as $datos) {
-            $cobertura_poliza = new PolizaSeguroDatosTecnicos();
-            $cobertura_poliza->PolizaSeguro = $poliza_seguro->Id;
-            $cobertura_poliza->DatosTecnicos = $datos->Id;
-            $cobertura_poliza->save();
+            $dato_tecnico = new PolizaSeguroDatosTecnicos();
+            $dato_tecnico->PolizaSeguroId = $poliza_seguro->Id;
+            $dato_tecnico->Nombre = $datos->Nombre;
+            $dato_tecnico->Descripcion = $datos->Descripcion;
+            $dato_tecnico->save();
         }
 
         //alert()->success('Se creo la poliza de seguro');
-        return redirect('poliza/seguro/' . $poliza_seguro->Id)->with('success', 'Se creo la poliza de seguro');
+        return redirect('poliza/seguro/' . $poliza_seguro->Id . '?tab=2')->with('success', 'Se creo la poliza de seguro');
     }
 
 
-    public function show($id)
+    public function show($id, Request $request)
     {
+        $tab = $request->tab ?? 1;
         $poliza_seguro = PolizaSeguro::findOrFail($id);
-        $coberturas = PolizaSeguroCobertura::where('PolizaSeguro', $id)->get();
-        $datos_tecnicos = PolizaSeguroDatosTecnicos::where('PolizaSeguro', $id)->get();
+        //$coberturas = PolizaSeguroCobertura::where('PolizaSeguro', $id)->get();
+        //$datos_tecnicos = PolizaSeguroDatosTecnicos::where('PolizaSeguro', $id)->get();
         $productos = Producto::where('Activo', 1)->get();
         $planes = Plan::where('Activo', 1)->get();
         $aseguradora = Aseguradora::where('Activo', 1)->get();
@@ -175,9 +183,9 @@ class PolizaSeguroController extends Controller
         $origen_poliza = OrigenPoliza::where('Activo', 1)->get();
         $tipo_deducible = Deducible::where('Activo', 1)->get();
         $departamento_nr = DepartamentoNR::where('Activo', 1)->get();
-        $tab = 1;
+
         //dd($poliza_seguro->oferta->clientes->Nombre);
-        return view('polizas.seguro.show', compact('tab', 'poliza_seguro', 'coberturas', 'datos_tecnicos', 'cancelacion', 'origen_poliza', 'tipo_deducible', 'departamento_nr', 'estado_poliza', 'forma_pago', 'tipo_cartera_nr', 'ofertas', 'productos', 'planes', 'aseguradora', 'clientes'));
+        return view('polizas.seguro.show', compact('tab', 'poliza_seguro', 'cancelacion', 'origen_poliza', 'tipo_deducible', 'departamento_nr', 'estado_poliza', 'forma_pago', 'tipo_cartera_nr', 'ofertas', 'productos', 'planes', 'aseguradora', 'clientes'));
     }
 
     public function update_cobertura(Request $request, $id)
@@ -251,6 +259,119 @@ class PolizaSeguroController extends Controller
         alert()->success('Se creo la poliza de seguro');
         return back();
     }
+
+    public function cobertura_store($id, Request $request)
+    {
+        // Validación (fuera del try)
+        $validator = Validator::make($request->all(), [
+            'Nombre' => 'required|string|max:150',
+            'Tarificacion' => 'required|boolean',
+            'Descuento' => 'required|boolean',
+            'Iva' => 'required|boolean',
+        ], [
+            'Nombre.required' => 'El campo Nombre es obligatorio.',
+            'Nombre.string' => 'El campo Nombre debe ser una cadena de texto.',
+            'Nombre.max' => 'El campo Nombre no debe exceder los 150 caracteres.',
+            'Tarificacion.required' => 'Debe indicar si hay tarificación.',
+            'Tarificacion.boolean' => 'El valor de Tarificación debe ser verdadero o falso.',
+            'Descuento.required' => 'Debe indicar si aplica descuento.',
+            'Descuento.boolean' => 'El valor de Descuento debe ser verdadero o falso.',
+            'Iva.required' => 'Debe indicar si aplica IVA.',
+            'Iva.boolean' => 'El valor de IVA debe ser verdadero o falso.',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        // Guardado (dentro del try)
+        try {
+            $poliza_cobertura = new PolizaSeguroCobertura();
+            $poliza_cobertura->PolizaSeguroId = $id;
+            $poliza_cobertura->Nombre = $request->Nombre;
+            $poliza_cobertura->Tarificacion = $request->Tarificacion;
+            $poliza_cobertura->Descuento = $request->Descuento;
+            $poliza_cobertura->Iva = $request->Iva;
+            $poliza_cobertura->save();
+
+            return redirect('poliza/seguro/' . $id . '?tab=2')
+                ->with('success', 'El registro ha sido guardado correctamente');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Ocurrió un error al guardar el registro: ' . $e->getMessage());
+        }
+    }
+
+
+
+    public function cobertura_delete($id)
+    {
+        try {
+            $poliza_cobertura = PolizaSeguroCobertura::findOrFail($id);
+            $poliza_cobertura->delete();
+
+            return redirect('poliza/seguro/' . $poliza_cobertura->PolizaSeguroId . '?tab=2')
+                ->with('success', 'El registro ha sido eliminado correctamente');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Ocurrió un error al eliminar el registro: ' . $e->getMessage());
+        }
+    }
+
+    public function dato_tecnico_store($id, Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'Nombre' => 'required|string|max:100',
+            'Descripcion' => 'nullable|string|max:255',
+        ], [
+            'Nombre.required' => 'El campo Nombre es obligatorio.',
+            'Nombre.string' => 'El campo Nombre debe ser una cadena de texto.',
+            'Nombre.max' => 'El campo Nombre no debe exceder los 100 caracteres.',
+            'Descripcion.string' => 'El campo Descripción debe ser una cadena de texto.',
+            'Descripcion.max' => 'El campo Descripción no debe exceder los 255 caracteres.',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        try {
+            $poliza_dato_tecnico = new PolizaSeguroDatosTecnicos();
+            $poliza_dato_tecnico->PolizaSeguroId = $id;
+            $poliza_dato_tecnico->Nombre = $request->Nombre;
+            $poliza_dato_tecnico->Descripcion = $request->Descripcion;
+            $poliza_dato_tecnico->save();
+
+            return redirect('poliza/seguro/' . $id . '?tab=3')
+                ->with('success', 'El registro ha sido eliminado correctamente');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Ocurrió un error al eliminar el registro: ' . $e->getMessage());
+        }
+    }
+
+    public function dato_tecnico_delete($id)
+    {
+        try {
+            $poliza_dato_tecnico = PolizaSeguroDatosTecnicos::findOrFail($id);
+            $poliza_dato_tecnico->delete();
+
+            return redirect('poliza/seguro/' . $poliza_dato_tecnico->PolizaSeguroId . '?tab=3')
+                ->with('success', 'El registro ha sido eliminado correctamente');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Ocurrió un error al eliminar el registro: ' . $e->getMessage());
+        }
+    }
+
+
+
+
+
 
     public function edit($id)
     {

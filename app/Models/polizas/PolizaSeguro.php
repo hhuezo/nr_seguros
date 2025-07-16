@@ -2,6 +2,7 @@
 
 namespace App\Models\polizas;
 
+use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\Cancelacion;
 use App\Models\catalogo\Cliente;
 use App\Models\catalogo\Departamento;
@@ -9,6 +10,8 @@ use App\Models\catalogo\DepartamentoNR;
 use App\Models\catalogo\EstadoPoliza;
 use App\Models\catalogo\FormaPago;
 use App\Models\catalogo\Negocio;
+use App\Models\catalogo\Plan;
+use App\Models\catalogo\Producto;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -82,5 +85,25 @@ class PolizaSeguro extends Model
     public function clientes()
     {
         return $this->belongsTo(Cliente::class, 'Cliente', 'Id');
+    }
+
+    public function producto()
+    {
+        return $this->belongsTo(Producto::class, 'Productos', 'Id');
+    }
+
+    public function plan()
+    {
+        return $this->belongsTo(Plan::class, 'Planes', 'Id');
+    }
+
+    public function coberturas()
+    {
+        return $this->hasMany(PolizaSeguroCobertura::class, 'PolizaSeguroId', 'Id');
+    }
+
+    public function datosTecnicos()
+    {
+        return $this->hasMany(PolizaSeguroDatosTecnicos::class, 'PolizaSeguroId', 'Id');
     }
 }

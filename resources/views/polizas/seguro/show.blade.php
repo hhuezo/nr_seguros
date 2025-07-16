@@ -1,26 +1,14 @@
 @extends ('welcome')
 @section('contenido')
-    <style>
-        #loading-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.8);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-        }
 
-        #loading-overlay img {
-            width: 50px;
-            /* Ajusta el tamaño de la imagen según tus necesidades */
-            height: 50px;
-            /* Ajusta el tamaño de la imagen según tus necesidades */
-        }
-    </style>
+    <!-- Toastr CSS -->
+    <link href="{{ asset('vendors/toast/toastr.min.css') }}" rel="stylesheet">
+
+    <!-- jQuery -->
+    <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
+
+    <!-- Toastr JS -->
+    <script src="{{ asset('vendors/toast/toastr.min.js') }}"></script>
 
     @if (session('success'))
         <script>
@@ -46,16 +34,13 @@
 
 
     <div class="x_panel">
-        <div id="loading-overlay">
-            <img src="{{ asset('img/ajax-loader.gif') }}" alt="Loading..." />
-        </div>
 
         <div class="x_title">
             <div class="col-md-6 col-sm-6 col-xs-12">
                 <h4>Polizas de Seguro </h4>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
-                <a href="{{ url('polizas/seguro/') }}"><button class="btn btn-info float-right"> <i
+                <a href="{{ url('poliza/seguro/') }}"><button class="btn btn-info float-right"> <i
                             class="fa fa-arrow-left"></i></button></a>
             </div>
             <div class="clearfix"></div>
@@ -69,7 +54,7 @@
                 <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
                     aria-controls="profile" aria-selected="false">Cobertura</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item {{ isset($tab) && $tab == 3 ? 'active in' : '' }}">
                 <a class="nav-link" id="hoja-tab" data-toggle="tab" href="#hoja" role="tab" aria-controls="hoja"
                     aria-selected="false">Datos Técnicos</a>
             </li>
@@ -345,14 +330,15 @@
             <div class="tab-pane fade {{ isset($tab) && $tab == 2 ? 'active in' : '' }}" id="profile" role="tabpanel"
                 aria-labelledby="profile-tab">
                 <div style="text-align: right">
-                    <button class="btn btn-primary">Agregar</button>
+                    <button class="btn btn-primary" data-toggle="modal"
+                        data-target="#modal-nuevo-cobertura">Agregar</button>
                 </div>
 
                 <table class="table table-striped table-bordered">
                     <thead>
                         <tr>
-                            <th>N</th>
-                            <th>Cobertura</th>
+                            <th>#</th>
+                            <th>Descripción</th>
                             <th>Tarificación</th>
                             <th>Descuento</th>
                             <th>IVA</th>
@@ -360,60 +346,60 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($coberturas as $obj)
+                        @foreach ($poliza_seguro->coberturas as $cobertura)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $obj->cobertura->Nombre ?? '' }}</td>
-                                <td>{{ $obj->Tarificacion ? 'Millar' : 'Porcentual' }}</td>
-                                <td>{{ $obj->Descuento ? 'Si' : 'No' }}</td>
-                                <td>{{ $obj->Iva ? 'Si' : 'No' }}</td>
+                                <td>{{ $cobertura->Nombre ?? '' }}</td>
+                                <td>{{ $cobertura->Tarificacion ? 'Millar' : 'Porcentual' }}</td>
+                                <td>{{ $cobertura->Descuento ? 'Si' : 'No' }}</td>
+                                <td>{{ $cobertura->Iva ? 'Si' : 'No' }}</td>
                                 <td style="text-align: center">
                                     <button class="btn btn-danger" type="button"
-                                        data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i
+                                        data-target="#modal-cobertura-delete-{{ $cobertura->Id }}" data-toggle="modal"><i
                                             class="fa fa-trash fa-lg"></i></button>
                                 </td>
                                 {{-- <td><input type="text" class="form-control"
                                         onchange="update_cobertura({{ $obj->Id }}, event)"
                                         value="{{ $obj->Valor }}"></td> --}}
                             </tr>
+                            @include('polizas.seguro.modal_coberura_delete')
                         @endforeach
                     </tbody>
                 </table>
 
 
             </div>
-            <div class="tab-pane fade " id="hoja" role="tabpanel" aria-labelledby="hoja-tab">
+            <div class="tab-pane fade {{ isset($tab) && $tab == 3 ? 'active in' : '' }}" id="hoja" role="tabpanel"
+                aria-labelledby="hoja-tab">
                 <div style="text-align: right">
-                    <button class="btn btn-primary">Agregar</button>
+                    <button class="btn btn-primary" data-toggle="modal"
+                        data-target="#modal-nuevo-dato_tecnico">Agregar</button>
                 </div>
                 <table class="table table-striped table-bordered">
                     <thead>
                         <tr>
-                            <th>N</th>
-                            <th>Datos Tecnicos</th>
-                            <th>Tarificación</th>
-                            <th>Descuento</th>
-                            <th>IVA</th>
-                            <th>Valor</th>
+                            <th>#</th>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($datos_tecnicos as $obj)
+                        @foreach ($poliza_seguro->datosTecnicos as $dato)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $obj->datos_tecnicos->Nombre ?? '' }}</td>
-                                <td>{{ $obj->Tarificacion ? 'Millar' : 'Porcentual' }}</td>
-                                <td>{{ $obj->Descuento ? 'Si' : 'No' }}</td>
-                                <td>{{ $obj->Iva ? 'Si' : 'No' }}</td>
+                                <td>{{ $dato->Nombre }}</td>
+                                <td>{{ $dato->Descripcion }}</td>
                                 <td style="text-align: center">
                                     <button class="btn btn-danger" type="button"
-                                        data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i
-                                            class="fa fa-trash fa-lg"></i></button>
+                                        data-target="#modal-dato-tecnico-delete-{{ $dato->Id }}"
+                                        data-toggle="modal"><i class="fa fa-trash fa-lg"></i></button>
                                 </td>
                                 {{-- <td><input type="text" class="form-control"
                                         onchange="update_datos_tecnicos({{ $obj->Id }}, event)"
                                         value="{{ $obj->Valor }}"></td> --}}
                             </tr>
+                            @include('polizas.seguro.modal_dato_tecnico_delete')
                         @endforeach
                     </tbody>
                 </table>
@@ -424,7 +410,121 @@
     </div>
 
 
-    <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
+
+
+    <div>
+        <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
+            id="modal-nuevo-cobertura">
+            <div class="modal-dialog modal-lg">
+                <form method="POST" action="{{ url('poliza/seguro/cobertura_store') }}/{{ $poliza_seguro->Id }}">
+                    @csrf
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="myModalLabel">Nueva cobertura</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    Nombre
+                                    <input type="text" name="Nombre" value="{{ old('Nombre') }}"
+                                        class="form-control" onblur="this.value = this.value.toUpperCase()" required>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    Tarificación
+                                    <select name="Tarificacion" class="form-control" required>
+                                        <option value="0" {{ old('Tarificacion') == '0' ? 'selected' : '' }}>
+                                            Porcentual</option>
+                                        <option value="1" {{ old('Tarificacion') == '1' ? 'selected' : '' }}>Millar
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>&nbsp; </div>
+
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    Descuento
+                                    <select name="Descuento" class="form-control" required>
+                                        <option value="0" {{ old('Descuento') == '0' ? 'selected' : '' }}>No</option>
+                                        <option value="1" {{ old('Descuento') == '1' ? 'selected' : '' }}>Si</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    IVA
+                                    <select name="Iva" class="form-control" required>
+                                        <option value="0" {{ old('Iva') == '0' ? 'selected' : '' }}>No</option>
+                                        <option value="1" {{ old('Iva') == '1' ? 'selected' : '' }}>Si</option>
+                                    </select>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div>&nbsp; </div>
+                        <div class="clearfix"></div>
+                        <br>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
+            id="modal-nuevo-dato_tecnico">
+            <div class="modal-dialog">
+                <form method="POST" action="{{ url('poliza/seguro/dato_tecnico_store') }}/{{ $poliza_seguro->Id }}">
+                    @csrf
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="myModalLabel">Nuevo dato técnico</h4>
+                        </div>
+                        <div class="modal-body">
+
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <div class="row">
+                                        Nombre
+                                        <input type="text" name="Nombre" class="form-control" onblur="this.value = this.value.toUpperCase()" required>
+                                    </div>
+                                </div>
+                                <div>&nbsp; </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        Descripción
+                                        <textarea class="form-control" name="Descripcion" onblur="this.value = this.value.toUpperCase()"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="clearfix"></div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+
     <script>
         $(document).ready(function() {
             //mostrar opcion en menu
