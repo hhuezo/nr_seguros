@@ -35,18 +35,18 @@
                     <tr>
                         <td>{{$obj->NumeroPoliza}}</td>
                         @if($obj->Asegurado)
-                        <td>{{ $obj->clientes->Nombre }}</td>
+                        <td>{{ $obj->clientes->Nombre ?? '' }}</td>
                         @else
                         <td></td>
                         @endif
                         <td>{{ $obj->aseguradoras->Nombre }}</td>
                         <td>{{ \Carbon\Carbon::parse($obj->VigenciaDesde)->format('d/m/Y') }}</td>
                         <td>{{ \Carbon\Carbon::parse($obj->VigenciaHasta)->format('d/m/Y') }}</td>
-                        <td>{{ $obj->estadoPolizas->Nombre}}</td>
-                        <td>{{ $obj->ejecutivos->Nombre }}</td>
+                        <td>{{ $obj->estadoPolizas->Nombre ?? ''}}</td>
+                        <td>{{ $obj->ejecutivos->Nombre ?? '' }}</td>
                         <td>
                             <div  style="display: flex; justify-content: center;">
-                               
+
                                     @can('edit users')
                                     <a href="{{ url('polizas/residencia') }}/{{ $obj->Id }}/edit" class="btn btn-success on-default edit-row" title="Generar Pago">
                                         <i class="fa fa-file fa-lg"></i>
@@ -54,14 +54,14 @@
                                     @endcan
                                     &nbsp;
                                     <a href="{{ url('polizas/residencia') }}/{{ $obj->Id }}/renovar" class="btn btn-primary on-default edit-row" title="Renovar o Cancelar "><i class="fa fa-refresh fa-lg"></i></a>
-                               
+
                             </div>
                             <div  style="display: flex; justify-content: center;">
                                 @can('delete users')
-                               
+
                                 <a href="" class="btn btn-danger" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal" title="Anular Poliza"><i class="fa fa-trash fa-lg"></i></a>
                                 @endcan
-                                @if($obj->Modificar == 1)                              
+                                @if($obj->Modificar == 1)
                                 <a href="" class="btn btn-danger" data-target="#modal-desactivar-{{ $obj->Id }}" data-toggle="modal" title="Desactivar modificación"><i class="fa fa-check-square fa-lg"></i></a>
                                 @else
                                 &nbsp;
@@ -69,8 +69,8 @@
                                 @endif
                             </div>
                         </td>
-                        
-                        
+
+
                     </tr>
                     @include('polizas.residencia.modal')
                     @endforeach
