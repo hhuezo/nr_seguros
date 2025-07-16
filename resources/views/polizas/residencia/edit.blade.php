@@ -116,7 +116,7 @@
                                     </div>
                                     <div class="col-sm-8">
                                         <label class="control-label">Asegurado</label>
-                                        <input type="text" value="{{ $residencia->clientes->Nombre }}"
+                                        <input type="text" value="{{ $residencia->clientes->Nombre ?? '' }}"
                                             class="form-control" readonly>
                                     </div>
                                     <div class="col-md-12">
