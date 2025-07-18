@@ -33,6 +33,7 @@ use App\Http\Controllers\polizas\DeudaController;
 use App\Http\Controllers\polizas\DeudaRenovacionController;
 use App\Http\Controllers\polizas\DeudaTasaDiferenciadaController;
 use App\Http\Controllers\polizas\PolizaSeguroController;
+use App\Http\Controllers\polizas\ReporteDeclarativasController;
 use App\Http\Controllers\polizas\VidaController;
 use App\Http\Controllers\polizas\ResidenciaController;
 use App\Http\Controllers\polizas\VidaFedeController;
@@ -72,10 +73,6 @@ Route::get('/', [HomeController::class, 'redirectToLogin']);
 
 
 Auth::routes();
-
-Route::get('/home', [HomeController::class, 'index'])->name('home');
-Route::get('/home/getPrimaGeneral', [HomeController::class, 'getPrimaGeneral']);
-
 
 
 //security
@@ -400,6 +397,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('exportar/vida/registros_responsabilidad_maxima/{id}', [VidaController::class, 'registros_responsabilidad_maxima']);
     Route::post('exportar/vida/registros_responsabilidad_terminacion/{id}', [VidaController::class, 'registros_responsabilidad_terminacion']);
     Route::post('exportar/vida/nuevos_registros/{id}', [VidaController::class, 'exportar_nuevos_registros']);
+
+
+    //reportes declarativas
+    Route::get('reportes/polizas_declarativas', [ReporteDeclarativasController::class, 'polizas_declarativas']);
 
 
     //suscripciones

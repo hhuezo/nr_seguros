@@ -50,6 +50,7 @@ use App\Models\polizas\Vida;
 use App\Models\temp\PolizaDeudaTempCartera;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -227,53 +228,145 @@ class DeudaController extends Controller
         return back();
     }
 
+
+    protected function limpiarNumero($valor)
+    {
+        if (is_null($valor)) return null;
+
+        // Eliminar espacios
+        $valor = trim($valor);
+
+        // Detectar cuál es el separador decimal: si la coma está después del punto, se considera decimal
+        if (strpos($valor, ',') !== false && strpos($valor, '.') !== false) {
+            if (strrpos($valor, ',') > strrpos($valor, '.')) {
+                // Coma decimal, punto miles
+                $valor = str_replace('.', '', $valor); // quitar puntos (miles)
+                $valor = str_replace(',', '.', $valor); // cambiar coma por punto decimal
+            } else {
+                // Punto decimal, coma miles
+                $valor = str_replace(',', '', $valor); // quitar comas (miles)
+            }
+        } else {
+            // Solo comas: asumir coma decimal
+            if (strpos($valor, ',') !== false) {
+                $valor = str_replace(',', '.', $valor);
+            }
+            // Solo puntos: asumimos que está correcto (punto decimal)
+            // si no tiene ninguno, queda igual
+        }
+
+        // Finalmente, eliminar todo carácter que no sea número, punto o signo menos (por si acaso)
+        $valor = preg_replace('/[^0-9.\-]/', '', $valor);
+
+        return $valor;
+    }
+
+
     public function store(Request $request)
     {
+        // Limpiar números formateados para que validación numeric funcione bien
+        $request->merge([
+            'Tasa' => $this->limpiarNumero($request->input('Tasa')),
+            'Descuento' => $this->limpiarNumero($request->input('Descuento')),
+            'TasaComision' => $this->limpiarNumero($request->input('TasaComision')),
+            'ResponsabilidadMaxima' => $this->limpiarNumero($request->input('ResponsabilidadMaxima')),
+        ]);
 
-        $deuda = new Deuda();
-        $deuda->NumeroPoliza = $request->NumeroPoliza;
-        $deuda->Nit = $request->Nit;
-        $deuda->Plan = $request->Planes;
-        $deuda->Codigo = $request->Codigo;
-        $deuda->Asegurado = $request->Asegurado;
-        $deuda->Aseguradora = $request->Aseguradora;
-        $deuda->Ejecutivo = $request->Ejecutivo;
-        $deuda->VigenciaDesde = $request->VigenciaDesde;
-        $deuda->VigenciaHasta = $request->VigenciaHasta;
-        $deuda->Tasa = $request->Tasa;
-        $deuda->Beneficios = $request->Beneficios;
-        $deuda->ClausulasEspeciales = $request->ClausulasEspeciales;
-        $deuda->Concepto = $request->Concepto;
-        $deuda->EstadoPoliza = $request->EstadoPoliza;
-        $deuda->Descuento = $request->Descuento;
-        $deuda->TasaComision = $request->TasaComision;
-        $deuda->FechaIngreso = $request->FechaIngreso;
-        $deuda->Activo = 1;
-        $deuda->PolizaVida = $request->PolizaVida;
-        $deuda->Mensual = $request->tipoTasa;
-        $deuda->PolizaDesempleo = $request->PolizaDesempleo;
-        $deuda->EdadMaximaTerminacion = $request->EdadMaximaTerminacion;
-        $deuda->ResponsabilidadMaxima = $request->ResponsabilidadMaxima;
+        $request->validate([
+            'NumeroPoliza' => 'required|string|max:100|unique:poliza_deuda,NumeroPoliza',
+            'Nit' => 'required|string|max:20',
+            'Planes' => 'required|numeric|exists:plan,Id',
+            'Codigo' => 'required|string|max:50',
+            'Asegurado' => 'required|numeric|exists:cliente,Id',
+            'Aseguradora' => 'required|numeric|exists:aseguradora,Id',
+            'Ejecutivo' => 'required|numeric|exists:ejecutivo,Id',
+            'VigenciaDesde' => 'required|date',
+            'VigenciaHasta' => 'required|date|after_or_equal:VigenciaDesde',
+            'Tasa' => 'required|numeric|min:0',
+            'Beneficios' => 'nullable|string|max:1000',
+            'ClausulasEspeciales' => 'nullable|string|max:1000',
+            'Concepto' => 'required|string|max:1000',
+            'EstadoPoliza' => 'required|numeric|exists:estado_poliza,Id',
+            'Descuento' => 'required|numeric|min:0',
+            'TasaComision' => 'nullable|numeric|min:0',
+            'PolizaVida' => 'nullable|numeric|exists:poliza_vida,Id',
+            'PolizaDesempleo' => 'nullable|numeric|exists:poliza_desempleo,Id',
+            'tipoTasa' => 'required|in:0,1',
+            'EdadMaximaTerminacion' => 'required|integer|min:0',
+            'ResponsabilidadMaxima' => 'required|numeric|min:0',
+            'ComisionIva' => 'nullable|in:on',
+            'TarifaExcel' => 'nullable|in:on',
+        ], [
+            'NumeroPoliza.required' => 'El campo Número de Póliza es obligatorio.',
+            'NumeroPoliza.unique' => 'Ya existe una póliza registrada con este número.',
+            'Nit.required' => 'El campo NIT es obligatorio.',
+            'Planes.required' => 'Debe seleccionar un plan.',
+            'Codigo.required' => 'El campo Código es obligatorio.',
+            'Asegurado.required' => 'Debe seleccionar un asegurado.',
+            'Aseguradora.required' => 'Debe seleccionar una aseguradora.',
+            'Ejecutivo.required' => 'Debe seleccionar un ejecutivo.',
+            'VigenciaDesde.required' => 'Debe ingresar la fecha de vigencia inicial.',
+            'VigenciaHasta.required' => 'Debe ingresar la fecha de vigencia final.',
+            'VigenciaHasta.after_or_equal' => 'La fecha de vigencia final no puede ser anterior a la inicial.',
+            'Tasa.required' => 'Debe ingresar la Tasa Millar Mensual.',
+            'Concepto.required' => 'Debe ingresar un concepto.',
+            'EstadoPoliza.required' => 'Debe seleccionar un estatus de póliza.',
+            'Descuento.required' => 'Debe ingresar el descuento de rentabilidad.',
+            'EdadMaximaTerminacion.required' => 'Debe ingresar la edad máxima de terminación.',
+            'ResponsabilidadMaxima.required' => 'Debe ingresar la responsabilidad máxima.',
+            'TasaComision.numeric' => 'El porcentaje de comisión debe ser un número.',
+            'tipoTasa.required' => 'Debe seleccionar el tipo de tasa.',
+        ]);
 
-        if ($request->ComisionIva == 'on') {
-            $deuda->ComisionIva = 1;
-        } else {
-            $deuda->ComisionIva = 0;
+
+        try {
+            $deuda = new Deuda();
+            $deuda->NumeroPoliza = $request->NumeroPoliza;
+            $deuda->Nit = $request->Nit;
+            $deuda->Plan = $request->Planes;
+            $deuda->Codigo = $request->Codigo;
+            $deuda->Asegurado = $request->Asegurado;
+            $deuda->Aseguradora = $request->Aseguradora;
+            $deuda->Ejecutivo = $request->Ejecutivo;
+            $deuda->VigenciaDesde = $request->VigenciaDesde;
+            $deuda->VigenciaHasta = $request->VigenciaHasta;
+            $deuda->Tasa = $request->Tasa;
+            $deuda->Beneficios = $request->Beneficios;
+            $deuda->ClausulasEspeciales = $request->ClausulasEspeciales;
+            $deuda->Concepto = $request->Concepto;
+            $deuda->EstadoPoliza = $request->EstadoPoliza;
+            $deuda->Descuento = $request->Descuento;
+            $deuda->TasaComision = $request->TasaComision;
+            $deuda->FechaIngreso = $request->FechaIngreso;
+            $deuda->Activo = 1;
+            $deuda->PolizaVida = $request->PolizaVida;
+            $deuda->Mensual = $request->tipoTasa;
+            $deuda->PolizaDesempleo = $request->PolizaDesempleo;
+            $deuda->EdadMaximaTerminacion = $request->EdadMaximaTerminacion;
+            $deuda->ResponsabilidadMaxima = $request->ResponsabilidadMaxima;
+
+            if ($request->ComisionIva == 'on') {
+                $deuda->ComisionIva = 1;
+            } else {
+                $deuda->ComisionIva = 0;
+            }
+
+            if ($request->TarifaExcel == 'on') {
+                $deuda->TarifaExcel = 1;
+            } else {
+                $deuda->TarifaExcel = 0;
+            }
+            $deuda->Usuario = auth()->user()->id;
+            $deuda->FechaIngreso = Carbon::now();
+            $deuda->save();
+
+            $tab = $request->tab ?? 1;
+
+            return redirect('polizas/deuda/' . $deuda->Id . '?tab=2')->with('success', 'El registro ha sido creado correctamente');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error al guardar la póliza: ' . $e->getMessage())
+                ->withInput();
         }
-
-        if ($request->TarifaExcel == 'on') {
-            $deuda->TarifaExcel = 1;
-        } else {
-            $deuda->TarifaExcel = 0;
-        }
-        $deuda->Usuario = auth()->user()->id;
-        $deuda->FechaIngreso = Carbon::now('America/El_Salvador');
-        $deuda->save();
-
-        alert()->success('El registro de poliza ha sido ingresado correctamente');
-        //  return view('polizas.deuda.create_edit',compact('deuda','tab','aseguradora','cliente','estadoPoliza','ejecutivo') );  //enviar show
-
-        return redirect('polizas/deuda/' . $deuda->Id);
     }
 
     public function get_pago($id)
@@ -386,9 +479,7 @@ class DeudaController extends Controller
     public function show(Request $request, $id)
     {
 
-        if (!session()->has('tab')) {
-            session(['tab' => 2]);
-        }
+        $tab = $request->tab ?? 1;
 
         $requisitos = DeudaRequisitos::where('Activo', 1)->where('Deuda', $id)->get();
         // Estructura de la tabla
@@ -447,6 +538,7 @@ class DeudaController extends Controller
 
 
         return view('polizas.deuda.show', compact(
+            'tab',
             'historico_poliza',
             'registroInicial',
             'polizas_vida',
@@ -481,41 +573,52 @@ class DeudaController extends Controller
         // return response()->json(['mensaje' => 'Se ha eliminado con exito', 'title' => 'Requisito!', 'icon' => 'success', 'showConfirmButton' => 'true']);
     }
 
+
     public function update_requisito(Request $request)
     {
+        // Validaciones
+        $request->validate([
+            'Id' => 'required|exists:poliza_deuda_requisitos,Id',
+            'EdadInicial' => 'required|integer|min:0',
+            'EdadFinal' => 'required|integer|min:0|gte:EdadInicial',
+            'MontoInicial' => 'required|numeric|min:0',
+            'MontoFinal' => 'required|numeric|min:0|gte:MontoInicial',
+            'Perfil' => 'required|exists:perfiles,Id',
+        ], [
+            'Id.required' => 'El ID del requisito es obligatorio.',
+            'Id.exists' => 'El requisito no existe.',
+            'EdadInicial.required' => 'La edad inicial es obligatoria.',
+            'EdadFinal.gte' => 'La edad final debe ser mayor o igual que la edad inicial.',
+            'MontoFinal.gte' => 'El monto final debe ser mayor o igual que el monto inicial.',
+            'Perfil.exists' => 'El perfil médico seleccionado no es válido.',
+        ]);
+
         try {
-            // Buscar el requisito por su ID
             $requisito = DeudaRequisitos::findOrFail($request->Id);
 
-            // Actualizar los datos del requisito
             $requisito->EdadInicial = $request->EdadInicial;
             $requisito->EdadFinal = $request->EdadFinal;
             $requisito->MontoInicial = $request->MontoInicial;
             $requisito->MontoFinal = $request->MontoFinal;
             $requisito->Perfil = $request->Perfil;
-
-            // Guardar los cambios
             $requisito->save();
+             return redirect('polizas/deuda/' . $requisito->Deuda . '?tab=3')->with('success', 'El registro ha sido modificado correctamente');
 
-            // Respuesta en caso de éxito
-            alert()->success('La póliza se configuró correctamente', '¡Éxito!');
+        } catch (ModelNotFoundException $e) {
+            alert()->error('Requisito no encontrado');
             return back();
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            // Si no se encuentra el requisito
-            alert()->success('Requisito no encontrado');
-            return back();
-        } catch (\Exception $e) {
-            // Cualquier otro error
-            alert()->success('Ocurrió un error al actualizar el requisito.');
+        } catch (Exception $e) {
+            alert()->error('Ocurrió un error al actualizar el requisito.');
             return back();
         }
     }
 
 
+
     public function datos_asegurabilidad(Request $request)
     {
         if ($request->EdadInicial < 18) {
-            alert()->error('Debe ser mayor a 18 años');
+            return back()->with('error', 'La edad debe ser mayor a 18 años');
         } else {
             $asegurabilidad = new DeudaRequisitos();
             $asegurabilidad->Deuda = $request->Deuda;
@@ -525,62 +628,11 @@ class DeudaController extends Controller
             $asegurabilidad->MontoInicial = $request->MontoInicial;
             $asegurabilidad->MontoFinal = $request->MontoFinal;
             $asegurabilidad->save();
-            alert()->success('El registro de poliza ha sido ingresado correctamente');
         }
 
-        session(['tab' => 3]);
-        return redirect('polizas/deuda/' . $request->Deuda);
+        return redirect('polizas/deuda/' . $request->Deuda . '?tab=3')->with('success', 'El registro ha sido ingresado correctamente');
     }
 
-    public function actualizar(Request $request)
-    {
-
-        $deuda = Deuda::findOrFail($request->Deuda);
-        $deuda->NumeroPoliza = $request->NumeroPoliza;
-        $deuda->Plan = $request->Planes;
-        $deuda->Nit = $request->Nit;
-        $deuda->Codigo = $request->Codigo;
-        $deuda->Asegurado = $request->Asegurado;
-        $deuda->Aseguradora = $request->Aseguradora;
-        $deuda->Ejecutivo = $request->Ejecutivo;
-        $deuda->VigenciaDesde = $request->VigenciaDesde;
-        $deuda->VigenciaHasta = $request->VigenciaHasta;
-        $deuda->Tasa = $request->Tasa;
-        $deuda->Beneficios = $request->Beneficios;
-        $deuda->ClausulasEspeciales = $request->ClausulasEspeciales;
-        $deuda->Concepto = $request->Concepto;
-        $deuda->EstadoPoliza = $request->EstadoPoliza;
-        $deuda->Descuento = $request->Descuento;
-        $deuda->TasaComision = $request->TasaComision;
-        $deuda->FechaIngreso = $request->FechaIngreso;
-        $deuda->Activo = 1;
-        //$deuda->Vida = $request->Vida;
-        //$deuda->Desempleo = $request->Desempleo;
-        $deuda->Mensual = $request->tipoTasa;
-        $deuda->EdadMaximaTerminacion = $request->EdadMaximaTerminacion;
-        $deuda->ResponsabilidadMaxima = $request->ResponsabilidadMaxima;
-        $deuda->PolizaVida = $request->PolizaVida;
-        $deuda->PolizaDesempleo = $request->PolizaDesempleo;
-        if ($request->ComisionIva == 'on') {
-            $deuda->ComisionIva = 1;
-        } else {
-            $deuda->ComisionIva = 0;
-        }
-
-        if ($request->TarifaExcel == 'on') {
-            $deuda->TarifaExcel = 1;
-        } else {
-            $deuda->TarifaExcel = 0;
-        }
-        $deuda->Usuario = auth()->user()->id;
-        // $deuda->FechaIngreso = Carbon::now('America/El_Salvador');
-        $deuda->update();
-
-        session(['tab' => 1]);
-
-        alert()->success('El registro de poliza ha sido ingresado correctamente');
-        return redirect('polizas/deuda/' . $deuda->Id);
-    }
 
 
     public function edit($id)
@@ -1263,7 +1315,7 @@ class DeudaController extends Controller
     }
 
 
-    public function get_extraprimado($id, $dui,$numeroReferencia)
+    public function get_extraprimado($id, $dui, $numeroReferencia)
     {
         $cliente = PolizaDeudaCartera::join('saldos_montos as sal', 'sal.Id', '=', 'poliza_deuda_cartera.LineaCredito')
             ->select(
@@ -1340,7 +1392,110 @@ class DeudaController extends Controller
 
     public function update(Request $request, $id)
     {
-        //
+
+        // Limpiar números formateados para que validación numeric funcione bien
+        $request->merge([
+            'Tasa' => $this->limpiarNumero($request->input('Tasa')),
+            'Descuento' => $this->limpiarNumero($request->input('Descuento')),
+            'TasaComision' => $this->limpiarNumero($request->input('TasaComision')),
+            'ResponsabilidadMaxima' => $this->limpiarNumero($request->input('ResponsabilidadMaxima')),
+        ]);
+
+
+        $request->validate([
+            'NumeroPoliza' => 'required|string|max:100|unique:poliza_deuda,NumeroPoliza,' . $id,
+            'Nit' => 'required|string|max:20',
+            'Planes' => 'required|numeric|exists:plan,Id',
+            'Codigo' => 'required|string|max:50',
+            'Asegurado' => 'required|numeric|exists:cliente,Id',
+            'Aseguradora' => 'required|numeric|exists:aseguradora,Id',
+            'Ejecutivo' => 'required|numeric|exists:ejecutivo,Id',
+            'VigenciaDesde' => 'required|date',
+            'VigenciaHasta' => 'required|date|after_or_equal:VigenciaDesde',
+            'Tasa' => 'required|numeric|min:0',
+            'Beneficios' => 'nullable|string|max:1000',
+            'ClausulasEspeciales' => 'nullable|string|max:1000',
+            'Concepto' => 'required|string|max:1000',
+            'EstadoPoliza' => 'required|numeric|exists:estado_poliza,Id',
+            'Descuento' => 'required|numeric|min:0',
+            'TasaComision' => 'nullable|numeric|min:0',
+            'PolizaVida' => 'nullable|numeric|exists:poliza_vida,Id',
+            'PolizaDesempleo' => 'nullable|numeric|exists:poliza_desempleo,Id',
+            'tipoTasa' => 'required|in:0,1',
+            'EdadMaximaTerminacion' => 'required|integer|min:0',
+            'ResponsabilidadMaxima' => 'required|numeric|min:0',
+            'ComisionIva' => 'nullable|in:on',
+            'TarifaExcel' => 'nullable|in:on',
+        ], [
+            'NumeroPoliza.required' => 'El campo Número de Póliza es obligatorio.',
+            'NumeroPoliza.unique' => 'Ya existe una póliza registrada con este número.',
+            'Nit.required' => 'El campo NIT es obligatorio.',
+            'Planes.required' => 'Debe seleccionar un plan.',
+            'Codigo.required' => 'El campo Código es obligatorio.',
+            'Asegurado.required' => 'Debe seleccionar un asegurado.',
+            'Aseguradora.required' => 'Debe seleccionar una aseguradora.',
+            'Ejecutivo.required' => 'Debe seleccionar un ejecutivo.',
+            'VigenciaDesde.required' => 'Debe ingresar la fecha de vigencia inicial.',
+            'VigenciaHasta.required' => 'Debe ingresar la fecha de vigencia final.',
+            'VigenciaHasta.after_or_equal' => 'La fecha de vigencia final no puede ser anterior a la inicial.',
+            'Tasa.required' => 'Debe ingresar la Tasa Millar Mensual.',
+            'Concepto.required' => 'Debe ingresar un concepto.',
+            'EstadoPoliza.required' => 'Debe seleccionar un estatus de póliza.',
+            'Descuento.required' => 'Debe ingresar el descuento de rentabilidad.',
+            'EdadMaximaTerminacion.required' => 'Debe ingresar la edad máxima de terminación.',
+            'ResponsabilidadMaxima.required' => 'Debe ingresar la responsabilidad máxima.',
+            'TasaComision.numeric' => 'El porcentaje de comisión debe ser un número.',
+            'tipoTasa.required' => 'Debe seleccionar el tipo de tasa.',
+        ]);
+
+
+        try {
+            $deuda = Deuda::findOrFail($id);
+            $deuda->NumeroPoliza = $request->NumeroPoliza;
+            $deuda->Plan = $request->Planes;
+            $deuda->Nit = $request->Nit;
+            $deuda->Codigo = $request->Codigo;
+            $deuda->Asegurado = $request->Asegurado;
+            $deuda->Aseguradora = $request->Aseguradora;
+            $deuda->Ejecutivo = $request->Ejecutivo;
+            $deuda->VigenciaDesde = $request->VigenciaDesde;
+            $deuda->VigenciaHasta = $request->VigenciaHasta;
+            $deuda->Tasa = $request->Tasa;
+            $deuda->Beneficios = $request->Beneficios;
+            $deuda->ClausulasEspeciales = $request->ClausulasEspeciales;
+            $deuda->Concepto = $request->Concepto;
+            $deuda->EstadoPoliza = $request->EstadoPoliza;
+            $deuda->Descuento = $request->Descuento;
+            $deuda->TasaComision = $request->TasaComision;
+            $deuda->FechaIngreso = $request->FechaIngreso;
+            $deuda->Activo = 1;
+            //$deuda->Vida = $request->Vida;
+            //$deuda->Desempleo = $request->Desempleo;
+            $deuda->Mensual = $request->tipoTasa;
+            $deuda->EdadMaximaTerminacion = $request->EdadMaximaTerminacion;
+            $deuda->ResponsabilidadMaxima = $request->ResponsabilidadMaxima;
+            $deuda->PolizaVida = $request->PolizaVida;
+            $deuda->PolizaDesempleo = $request->PolizaDesempleo;
+            if ($request->ComisionIva == 'on') {
+                $deuda->ComisionIva = 1;
+            } else {
+                $deuda->ComisionIva = 0;
+            }
+
+            if ($request->TarifaExcel == 'on') {
+                $deuda->TarifaExcel = 1;
+            } else {
+                $deuda->TarifaExcel = 0;
+            }
+            $deuda->Usuario = auth()->user()->id;
+            // $deuda->FechaIngreso = Carbon::now('America/El_Salvador');
+            $deuda->update();
+
+            return redirect('polizas/deuda/' . $id . '?tab=1')->with('success', 'El registro ha sido actualizado correctamente');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error al guardar la póliza: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     public function destroy($id)

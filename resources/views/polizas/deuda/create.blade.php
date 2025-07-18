@@ -1,25 +1,40 @@
 @extends ('welcome')
 @section('contenido')
-    @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style>
-        .ocultar {
-            display: none;
-        }
-    </style>
+
+    <!-- Toastr CSS -->
+    <link href="{{ asset('vendors/toast/toastr.min.css') }}" rel="stylesheet">
+
+    <!-- jQuery -->
+    <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
+
+    <!-- Toastr JS -->
+    <script src="{{ asset('vendors/toast/toastr.min.js') }}"></script>
     <div class="x_panel">
         <div class="clearfix"></div>
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
 
                 <div class="x_title">
-                    <h2>Pólizas / Deuda / Póliza de deuda / Nueva póliza<small></small>
+                    <h2>Pólizas / Deuda / Póliza de deuda / Nueva póliza
                     </h2>
                     <ul class="nav navbar-right panel_toolbox">
 
                     </ul>
                     <div class="clearfix"></div>
                 </div>
+                @if (session('success'))
+                    <script>
+                        toastr.success("{{ session('success') }}");
+                    </script>
+                @endif
+
+                @if (session('error'))
+                    <script>
+                        toastr.error("{{ session('error') }}");
+                    </script>
+                @endif
+
+
                 @if (count($errors) > 0)
                     <div class="alert alert-danger">
                         <ul>
@@ -36,9 +51,9 @@
                         <li role="presentation" class="active"><a href="#tab_content1" id="home-tab" role="tab"
                                 data-toggle="tab" aria-expanded="true">Datos de Póliza</a>
                         </li>
-                        <li role="presentation" class=" "><a onclick="noGuardardo();">Tasa diferencia</a>
+                        <li role="presentation" class=" "><a>Tasa diferencia</a>
                         </li>
-                        <li role="presentation" class=""><a onclick="noGuardardo();">Requisitos Minimos de
+                        <li role="presentation" class=""><a>Requisitos Minimos de
                                 Asegurabilidad </a>
                         </li>
 
@@ -69,7 +84,9 @@
                                             style="width: 100%" required>
                                             <option value="">Seleccione...</option>
                                             @foreach ($aseguradora as $obj)
-                                                <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                                <option value="{{ $obj->Id }}"
+                                                    {{ old('Aseguradora') == $obj->Id ? 'selected' : '' }}>
+                                                    {{ $obj->Nombre }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -79,7 +96,10 @@
                                             style="width: 100%" required>
                                             <option value="" selected disabled>Seleccione...</option>
                                             @foreach ($productos as $obj)
-                                                <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                                <option value="{{ $obj->Id }}"
+                                                    {{ old('Productos') == $obj->Id ? 'selected' : '' }}>
+                                                    {{ $obj->Nombre }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -89,7 +109,9 @@
                                             style="width: 100%" required>
                                             <option value="" selected disabled>Seleccione...</option>
                                             @foreach ($planes as $obj)
-                                                <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                                <option value="{{ $obj->Id }}"
+                                                    {{ old('Planes') == $obj->Id ? 'selected' : '' }}>{{ $obj->Nombre }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -99,7 +121,9 @@
                                             style="width: 100%" required>
                                             <option value="">Seleccione...</option>
                                             @foreach ($cliente as $obj)
-                                                <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                                <option value="{{ $obj->Id }}"
+                                                    {{ old('Asegurado') == $obj->Id ? 'selected' : '' }}>
+                                                    {{ $obj->Nombre }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -109,9 +133,8 @@
                                             value="{{ old('Nit') }}" readonly>
                                     </div>
 
-                                    <div class="col-sm-12">
-                                        &nbsp;
-                                    </div>
+                                    <div class="col-sm-12">&nbsp;</div>
+
                                     <div class="col-sm-4">
                                         <label class="control-label" align="right">Vigencia Desde *</label>
                                         <input class="form-control" name="VigenciaDesde" type="date"
@@ -128,18 +151,23 @@
                                             required>
                                             @foreach ($estadoPoliza as $obj)
                                                 @if ($obj->Id == 1)
-                                                    <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                                    <option value="{{ $obj->Id }}"
+                                                        {{ old('EstadoPoliza') == $obj->Id ? 'selected' : '' }}>
+                                                        {{ $obj->Nombre }}</option>
                                                 @endif
                                             @endforeach
                                         </select>
                                     </div>
+
                                     <div class="col-sm-4">
                                         <label class="control-label" align="right">Ejecutivo *</label>
                                         <select name="Ejecutivo" class="form-control select2" style="width: 100%"
                                             required>
                                             <option value="">Seleccione...</option>
                                             @foreach ($ejecutivo as $obj)
-                                                <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                                <option value="{{ $obj->Id }}"
+                                                    {{ old('Ejecutivo') == $obj->Id ? 'selected' : '' }}>
+                                                    {{ $obj->Nombre }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -148,68 +176,62 @@
                                         <input class="form-control" name="Descuento" type="number" step="any"
                                             id="Descuento" value="{{ old('Descuento') }}" required>
                                     </div>
-                                    <div class="col-sm-4">
-                                        &nbsp;
-                                    </div>
-                                    <div class="col-md-12">
-                                        &nbsp;
-                                    </div>
+
+                                    <div class="col-sm-4">&nbsp;</div>
+                                    <div class="col-md-12">&nbsp;</div>
+
                                     <div class="col-sm-4">
                                         <label class="control-label" align="right">Edad Máxima Terminación *</label>
-                                        <input type="number" name="EdadMaximaTerminacion" class="form-control" required>
+                                        <input type="number" name="EdadMaximaTerminacion" class="form-control"
+                                            value="{{ old('EdadMaximaTerminacion') }}" required>
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">Responsabilidad Máxima *</label>
-                                        <div class=" form-group has-feedback">
-                                            <input type="number" step="any" name="ResponsabilidadMaxima"
-                                                id="ResponsabilidadMaxima" style="padding-left: 15%;display: block;"
-                                                value="{{ old('ResponsabilidadMaxima') }}" class="form-control" required
-                                                onblur="ResponsabilidadMax(this.value)">
-                                            <input type="text" step="any"
-                                                style="padding-left: 15%; display: none;" id="ResponsabilidadMaximaTexto"
-                                                class="form-control" required
-                                                onfocus="ResponsabilidadMaxTexto(this.value)">
+                                        <div class="form-group has-feedback">
+                                            <input type="text" name="ResponsabilidadMaxima"
+                                                id="ResponsabilidadMaximaTexto" class="form-control"
+                                                style="padding-left: 15%; display: block;" required
+                                                value="{{ old('ResponsabilidadMaxima') }}"
+                                                oninput="this.value = this.value.replace(/[^0-9.,]/g, '')"
+                                                onblur="formatearCantidad(this)">
                                             <span class="fa fa-dollar form-control-feedback left"
                                                 aria-hidden="true"></span>
                                         </div>
                                     </div>
-                                    <div class="col-sm-4">
-                                        &nbsp;
-                                    </div>
-                                    <div class="col-md-12">
-                                        &nbsp;
-                                    </div>
+
+
+                                    <div class="col-sm-4">&nbsp;</div>
+                                    <div class="col-md-12">&nbsp;</div>
 
                                     <div class="col-sm-4">
-                                        <label class="control-label " align="right">Clausulas Especiales </label>
-                                        <textarea class="form-control" name="ClausulasEspeciales" row="3" col="4"
-                                            value="{{ old('ClausulasEspeciales') }}"> </textarea>
+                                        <label class="control-label" align="right">Clausulas Especiales </label>
+                                        <textarea class="form-control" name="ClausulasEspeciales">{{ old('ClausulasEspeciales') }}</textarea>
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label" align="right">Beneficios Adicionales </label>
-                                        <textarea class="form-control" name="Beneficios" row="3" col="4" value="{{ old('Beneficios') }}"> </textarea>
+                                        <textarea class="form-control" name="Beneficios">{{ old('Beneficios') }}</textarea>
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label" align="right">Concepto </label>
-                                        <textarea class="form-control" name="Concepto" row="3" col="4" value="{{ old('Concepto') }}"
-                                            required> </textarea>
+                                        <textarea class="form-control" name="Concepto" required>{{ old('Concepto') }}</textarea>
                                     </div>
 
                                     <div class="col-sm-4 ocultar" style="display: none !important;">
                                         <br>
                                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                            <input type="radio" name="tipoTasa" id="Mensual" value="1" checked>
+                                            <input type="radio" name="tipoTasa" id="Mensual" value="1"
+                                                {{ old('tipoTasa', '1') == '1' ? 'checked' : '' }}>
                                             <label class="control-label">Tasa Millar Mensual *</label>
                                         </div>
-
                                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                            <input type="radio" name="tipoTasa" id="Anual" value="0">
+                                            <input type="radio" name="tipoTasa" id="Anual" value="0"
+                                                {{ old('tipoTasa') == '0' ? 'checked' : '' }}>
                                             <label class="control-label">Tasa ‰ Millar Anual *</label>
                                         </div>
                                     </div>
-                                    <div class="col-sm-12">
-                                        &nbsp;
-                                    </div>
+
+                                    <div class="col-sm-12">&nbsp;</div>
+
                                     <div class="col-sm-4">
                                         <label class="control-label" align="right">Tasa Millar Mensual* </label>
                                         <input class="form-control" name="Tasa" type="number" id="Tasa"
@@ -218,16 +240,19 @@
                                     <div class="col-sm-4">
                                         <label class="control-label" align="right">% de Comisión *</label>
                                         <input class="form-control" name="TasaComision" id="TasaComision" type="number"
-                                            step="any">
+                                            step="any" value="{{ old('TasaComision') }}">
                                     </div>
                                     <div class="col-sm-2"><br>
                                         <label class="control-label" align="right">¿IVA incluído?</label>
-                                        <input name="ComisionIva" id="ComisionIva" type="checkbox" class="js-switch">
+                                        <input name="ComisionIva" id="ComisionIva" type="checkbox" class="js-switch"
+                                            {{ old('ComisionIva') ? 'checked' : '' }}>
                                     </div>
                                     <div class="col-sm-2"><br>
                                         <label class="control-label" align="right">Cobro con tarifa excel&nbsp;</label>
-                                        <input name="TarifaExcel" type="checkbox" class="js-switch">
+                                        <input name="TarifaExcel" type="checkbox" class="js-switch"
+                                            {{ old('TarifaExcel') ? 'checked' : '' }}>
                                     </div>
+
                                     <div class="col-sm-6">
                                         <div>
                                             <label class="control-label">Póliza Vida</label>
@@ -257,13 +282,10 @@
                                             </select>
                                         </div>
                                     </div>
-
-
                                 </div>
 
-
                                 <div class="x_title">
-                                    <h2> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<small></small></h2>
+                                    <h2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<small></small></h2>
                                     <div class="clearfix"></div>
                                 </div>
 
@@ -276,6 +298,7 @@
                                     </div>
                                 </div>
                             </form>
+
                         </div>
                     </div>
 
@@ -285,70 +308,27 @@
     </div>
 
 
-    @include('sweetalert::alert')
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- jQuery -->
     <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
     <script type="text/javascript">
-        function noGuardardo() {
-            Swal.fire('Debe guardar los datos inicial de la poliza');
-        }
-
-        function ResponsabilidadMax(id) {
-            document.getElementById('ResponsabilidadMaximaTexto').value = formatearCantidad(id);
-            $("#ResponsabilidadMaxima").hide();
-            $("#ResponsabilidadMaximaTexto").show();
-        }
-
-        function ResponsabilidadMaxTexto(id) {
-            // document.getElementById('ResponsabilidadMaxima').value = document.getElementById('ResponsabilidadMaximaTexto');
-            $("#ResponsabilidadMaxima").show();
-            $("#ResponsabilidadMaximaTexto").hide();
-        }
-
         $(document).ready(function() {
             //mostrar opcion en menu
             displayOption("ul-poliza", "li-poliza-deuda");
 
-            $("#Vida").change(function() {
-                if (document.getElementById('Vida').checked == true) {
-                    $('#poliza_vida').show();
-                } else {
-                    $('#poliza_vida').hide();
-                }
-            })
-
-            $("#Desempleo").change(function() {
-                if (document.getElementById('Desempleo').checked == true) {
-                    $('#poliza_desempleo').show();
-                } else {
-                    $('#poliza_desempleo').hide();
-                }
-            })
 
             $("#Asegurado").change(function() {
-                // alert(document.getElementById('Asegurado').value);
                 $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
                 var parametros = {
                     "Cliente": document.getElementById('Asegurado').value
                 };
                 $.ajax({
-                    type: "get",
-                    //ruta para obtener el horario del doctor
+                    type: "GET",
                     url: "{{ url('get_cliente') }}",
                     data: parametros,
                     success: function(data) {
                         console.log(data);
                         document.getElementById('Nit').value = data.Nit;
-                        // if (data.TipoContribuyente == 1) {
-                        //     document.getElementById('Retencion').setAttribute("readonly", true);
-                        //     document.getElementById('Retencion').value = 0;
-                        //     calculoCCF();
-                        // }
-
-
                     }
                 });
             });
@@ -356,10 +336,8 @@
 
             $("#Aseguradora").change(function() {
                 $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
-                // var para la Departamento
                 var Aseguradora = $(this).val();
 
-                //funcionpara las distritos
                 $.get("{{ url('get_producto') }}" + '/' + Aseguradora, function(data) {
                     //esta el la peticion get, la cual se divide en tres partes. ruta,variables y funcion
                     console.log(data);
@@ -373,10 +351,8 @@
 
             $("#Productos").change(function() {
                 $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
-                // var para la Departamento
                 var Productos = $(this).val();
 
-                //funcionpara las distritos
                 $.get("{{ url('get_plan') }}" + '/' + Productos, function(data) {
                     //esta el la peticion get, la cual se divide en tres partes. ruta,variables y funcion
                     console.log(data);
@@ -391,26 +367,60 @@
         });
 
 
-        function formatearCantidad(cantidad) {
-            let numero = Number(cantidad);
-            return numero.toLocaleString('en-US', {
+        function formatearCantidad(input) {
+            let valor = input.value.trim();
+
+            if (!valor) return;
+
+            // Contar cantidad de puntos y comas
+            const puntos = (valor.match(/\./g) || []).length;
+            const comas = (valor.match(/,/g) || []).length;
+
+            // Si no hay separador decimal, quitar todas las comas y puntos
+            // o si hay varios puntos y comas, alertar error
+            if (puntos + comas > 1) {
+                // Asumiremos que el separador decimal es el último de los dos caracteres (coma o punto)
+                let ultimoSeparadorIndex = Math.max(valor.lastIndexOf('.'), valor.lastIndexOf(','));
+                let separadorDecimal = valor.charAt(ultimoSeparadorIndex);
+
+                // Limpiar separadores de miles (todos menos el último separador decimal)
+                let parteEntera = valor.slice(0, ultimoSeparadorIndex).replace(/[.,]/g, '');
+                let parteDecimal = valor.slice(ultimoSeparadorIndex + 1);
+
+                // Reconstruir valor estándar, cambiando separador decimal a punto
+                valor = parteEntera + '.' + parteDecimal;
+            } else {
+                // Si sólo hay uno o ninguno separador, sustituimos coma por punto para decimal
+                valor = valor.replace(',', '.').replace(/,/g, '');
+            }
+
+            // Validar que ahora solo hay un punto decimal
+            const partes = valor.split('.');
+            if (partes.length > 2) {
+                toastr.error('Cantidad inválida: múltiples separadores decimales.', 'Error');
+                input.value = "";
+                return;
+            }
+
+            // Validar que sólo haya dígitos en partes
+            if (!partes.every(p => /^\d*$/.test(p))) {
+                toastr.error('Cantidad inválida: contiene caracteres no numéricos.', 'Error');
+                input.value = "";
+                return;
+            }
+
+            let numero = parseFloat(valor);
+            if (isNaN(numero)) {
+                toastr.error('Cantidad inválida.', 'Error');
+                input.value = "";
+                return;
+            }
+
+            // Formatear con miles (coma) y punto decimal
+            input.value = numero.toLocaleString('en-US', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             });
-        }
-
-
-
-        function modal_cliente() {
-            $('#modal_cliente').modal('show');
-        }
-
-        function modal_requisitos() {
-            $('#modal_requisitos').modal('show');
-        }
-
-        function modal_creditos() {
-            $('#modal_creditos').modal('show');
         }
     </script>
 @endsection
