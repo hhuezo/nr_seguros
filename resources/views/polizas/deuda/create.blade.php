@@ -293,7 +293,7 @@
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="form-group" align="center">
                                         <button type="submit" class="btn btn-success">Guardar y Continuar</button>
-                                        <a href="{{ url('poliza/vida') }}"><button type="button"
+                                        <a href="{{ url('polizas/deuda') }}"><button type="button"
                                                 class="btn btn-primary">Cancelar</button></a>
                                     </div>
                                 </div>
