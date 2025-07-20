@@ -25,7 +25,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use PDF;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -98,76 +97,166 @@ class ResidenciaController extends Controller
         ));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+
+    protected function limpiarNumero($valor)
     {
-        //  dd($request->Planes);
-        $messages = [
-            'NumeroPoliza.required' => 'El Número de poliza es requerido',
-            'LimiteGrupo.required' => 'El Límite Grupal es requerido',
-            'LimiteIndividual.required' => 'El Límite Individual es requerido',
-            'Tasa.required' => 'El valor de la Tasa es requerido',
-            'TasaDescuento.required' => 'El valor de la Tasa de Descuento es requerido',
-            'TasaComision.required' => 'El valor de la Tas de Comisión es requerido',
+        if (is_null($valor)) return null;
 
-        ];
+        // Eliminar espacios
+        $valor = trim($valor);
 
-        $request->validate([
-            'LimiteGrupo' => 'required',
-            'LimiteIndividual' => 'required',
-            'NumeroPoliza' => 'required',
-            'Tasa' => 'required',
-            'TasaDescuento' => 'required',
-            'TasaComision' => 'required'
-
-        ], $messages);
-
-
-        $residencia = new Residencia();
-        $residencia->Numero = 1;
-        $residencia->NumeroPoliza = $request->NumeroPoliza;
-        $residencia->Codigo = $request->Codigo;
-        $residencia->Aseguradora = $request->Aseguradora;
-        $residencia->Asegurado = $request->Asegurado;
-        $residencia->EstadoPoliza = $request->EstadoPoliza;
-        $residencia->VigenciaDesde = $request->VigenciaDesde;
-        $residencia->VigenciaHasta = $request->VigenciaHasta;
-        $residencia->LimiteGrupo = $request->LimiteGrupo;
-        $residencia->LimiteIndividual = $request->LimiteIndividual;
-        $residencia->Tasa = $request->Tasa;
-        $residencia->Ejecutivo = $request->Ejecutivo;
-        $residencia->TasaDescuento = $request->TasaDescuento;
-        $residencia->Nit = $request->Nit;
-        $residencia->Activo = 1;
-        if ($request->DescuentoIva == 'on') {
-            $residencia->DescuentoIva = 1;
+        // Detectar cuál es el separador decimal: si la coma está después del punto, se considera decimal
+        if (strpos($valor, ',') !== false && strpos($valor, '.') !== false) {
+            if (strrpos($valor, ',') > strrpos($valor, '.')) {
+                // Coma decimal, punto miles
+                $valor = str_replace('.', '', $valor); // quitar puntos (miles)
+                $valor = str_replace(',', '.', $valor); // cambiar coma por punto decimal
+            } else {
+                // Punto decimal, coma miles
+                $valor = str_replace(',', '', $valor); // quitar comas (miles)
+            }
         } else {
-            $residencia->DescuentoIva = 0;
+            // Solo comas: asumir coma decimal
+            if (strpos($valor, ',') !== false) {
+                $valor = str_replace(',', '.', $valor);
+            }
+            // Solo puntos: asumimos que está correcto (punto decimal)
+            // si no tiene ninguno, queda igual
         }
-        $residencia->Mensual = $request->tipoTasa;
-        $residencia->Plan = $request->Planes;
-        $residencia->Comision = $request->TasaComision;
-        if ($request->ComisionIva == 'on') {
-            $residencia->ComisionIva = 1;
-        } else {
-            $residencia->ComisionIva = 0;
-        }
-        $residencia->save();
 
-        alert()->success('El registro ha sido creado correctamente')->showConfirmButton('Aceptar', '#3085d6');
-        return Redirect::to('polizas/residencia/' . $residencia->Id . '/edit');
+        // Finalmente, eliminar todo carácter que no sea número, punto o signo menos (por si acaso)
+        $valor = preg_replace('/[^0-9.\-]/', '', $valor);
+
+        return $valor;
     }
 
-    /*
-    public function show($id)
+    public function store(Request $request)
     {
-    //
-    }*/
+
+        $request->merge([
+            'LimiteGrupo'         => $this->limpiarNumero($request->input('LimiteGrupo')),
+            'LimiteIndividual'    => $this->limpiarNumero($request->input('LimiteIndividual')),
+            'Tasa'                => $this->limpiarNumero($request->input('Tasa')),
+            'TasaDescuento'       => $this->limpiarNumero($request->input('TasaDescuento')),
+            'TasaComision'        => $this->limpiarNumero($request->input('TasaComision')),
+        ]);
+
+        //  dd($request->Planes);
+        $request->validate([
+            'NumeroPoliza'     => 'required|unique:poliza_residencia,NumeroPoliza',
+            'Asegurado'        => 'required|exists:cliente,id',
+            'Nit'              => 'nullable|string',
+            'Aseguradora'      => 'required|exists:aseguradora,id',
+            'Productos'        => 'required|exists:producto,id',
+            'Planes'           => 'required|exists:plan,id',
+            'VigenciaDesde'    => 'required|date',
+            'VigenciaHasta'    => 'required|date|after:VigenciaDesde',
+            'EstadoPoliza'     => 'required|exists:estado_poliza,id',
+            'Ejecutivo'        => 'required|exists:ejecutivo,id',
+
+            'TasaDescuento'    => 'required|numeric|min:0',
+            'LimiteGrupo'      => 'required|numeric|min:0',
+            'LimiteIndividual' => 'required|numeric|min:0',
+            'Tasa'             => 'required|numeric|min:0',
+            'TasaComision'     => 'required|numeric|min:0',
+
+            'tipoTasa'         => 'required|in:0,1',
+            //'ComisionIva'      => 'nullable|boolean',
+        ], [
+            'NumeroPoliza.required'     => 'El número de póliza es obligatorio.',
+            'NumeroPoliza.unique'       => 'Ya existe una póliza con ese número.',
+
+            'Asegurado.required'        => 'Debe seleccionar un asegurado.',
+            'Asegurado.exists'          => 'El asegurado seleccionado no es válido.',
+
+            'Aseguradora.required'      => 'Debe seleccionar una aseguradora.',
+            'Aseguradora.exists'        => 'La aseguradora seleccionada no es válida.',
+
+            'Productos.required'        => 'Debe seleccionar un producto.',
+            'Productos.exists'          => 'El producto seleccionado no es válido.',
+
+            'Planes.required'           => 'Debe seleccionar un plan.',
+            'Planes.exists'             => 'El plan seleccionado no es válido.',
+
+            'VigenciaDesde.required'    => 'Debe indicar la fecha de inicio de vigencia.',
+            'VigenciaDesde.date'        => 'La fecha de inicio no es válida.',
+
+            'VigenciaHasta.required'    => 'Debe indicar la fecha de fin de vigencia.',
+            'VigenciaHasta.date'        => 'La fecha de fin no es válida.',
+            'VigenciaHasta.after_or_equal' => 'La fecha de fin debe ser posterior o igual a la de inicio.',
+
+            'EstadoPoliza.required'     => 'Debe seleccionar un estado para la póliza.',
+            'EstadoPoliza.exists'       => 'El estado de póliza seleccionado no es válido.',
+
+            'Ejecutivo.required'        => 'Debe seleccionar un ejecutivo.',
+            'Ejecutivo.exists'          => 'El ejecutivo seleccionado no es válido.',
+
+            'TasaDescuento.required'    => 'Debe ingresar el porcentaje de descuento.',
+            'TasaDescuento.numeric'     => 'El porcentaje de descuento debe ser numérico.',
+            'TasaDescuento.min'         => 'El porcentaje de descuento no puede ser negativo.',
+
+            'LimiteGrupo.required'      => 'Debe ingresar el límite de grupo.',
+            'LimiteGrupo.numeric'       => 'El límite de grupo debe ser numérico.',
+            'LimiteGrupo.min'           => 'El límite de grupo no puede ser negativo.',
+
+            'LimiteIndividual.required' => 'Debe ingresar el límite individual.',
+            'LimiteIndividual.numeric'  => 'El límite individual debe ser numérico.',
+            'LimiteIndividual.min'      => 'El límite individual no puede ser negativo.',
+
+            'Tasa.required'             => 'Debe ingresar la tasa.',
+            'Tasa.numeric'              => 'La tasa debe ser numérica.',
+            'Tasa.min'                  => 'La tasa no puede ser negativa.',
+
+            'TasaComision.required'     => 'Debe ingresar el porcentaje de comisión.',
+            'TasaComision.numeric'      => 'El porcentaje de comisión debe ser numérico.',
+            'TasaComision.min'          => 'El porcentaje de comisión no puede ser negativo.',
+
+            'tipoTasa.required'         => 'Debe seleccionar el tipo de tasa.',
+            'tipoTasa.in'               => 'El tipo de tasa seleccionado no es válido.',
+        ]);
+
+        try {
+
+            $residencia = new Residencia();
+            $residencia->Numero = 1;
+            $residencia->NumeroPoliza = $request->NumeroPoliza;
+            $residencia->Codigo = $request->Codigo;
+            $residencia->Aseguradora = $request->Aseguradora;
+            $residencia->Asegurado = $request->Asegurado;
+            $residencia->EstadoPoliza = $request->EstadoPoliza;
+            $residencia->VigenciaDesde = $request->VigenciaDesde;
+            $residencia->VigenciaHasta = $request->VigenciaHasta;
+            $residencia->LimiteGrupo = $request->LimiteGrupo;
+            $residencia->LimiteIndividual = $request->LimiteIndividual;
+            $residencia->Tasa = $request->Tasa;
+            $residencia->Ejecutivo = $request->Ejecutivo;
+            $residencia->TasaDescuento = $request->TasaDescuento;
+            $residencia->Nit = $request->Nit;
+            $residencia->Activo = 1;
+            if ($request->DescuentoIva == 'on') {
+                $residencia->DescuentoIva = 1;
+            } else {
+                $residencia->DescuentoIva = 0;
+            }
+            $residencia->Mensual = $request->tipoTasa;
+            $residencia->Plan = $request->Planes;
+            $residencia->Comision = $request->TasaComision;
+            if ($request->ComisionIva == 'on') {
+                $residencia->DescuentoIva = 1;
+            } else {
+                $residencia->DescuentoIva = 0;
+            }
+            $residencia->save();
+
+
+            return redirect('polizas/residencia/' . $residencia->Id . '/edit?tab=2')->with('success', 'El registro ha sido creado correctamente');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error al guardar la póliza: ' . $e->getMessage())
+                ->withInput();
+        }
+    }
+
+
 
     public function cancelar_pago(Request $request)
     {
@@ -188,7 +277,7 @@ class ResidenciaController extends Controller
         session(['ExcelURL' => null]);
 
         alert()->success('El cobro se ha eliminado correctamente');
-        return redirect('polizas/residencia/'.$request->Residencia.'/edit?tab=2');
+        return redirect('polizas/residencia/' . $request->Residencia . '/edit?tab=2');
     }
 
 
@@ -221,7 +310,7 @@ class ResidenciaController extends Controller
         return Redirect::to('polizas/residencia/' . $comen->Residencia . '/edit');
     }
 
-    public function edit(Request $request,$id)
+    public function edit(Request $request, $id)
     {
         $tab = $request->tab ?? 1;
 
@@ -345,28 +434,7 @@ class ResidenciaController extends Controller
         $residencia->Modificar = 0;
         $residencia->update();
 
-        /*
-        $detalles = new DetalleResidencia();
-        $detalles->MontoCartera = $request->MontoCartera;
-        $detalles->Tasa = $request->Tasa;
-        $detalles->Prima = $request->ValorPrima;
-        $detalles->Descuento = $request->Descuento;
-        $detalles->Iva = $request->Iva;
-        $detalles->ValorCCF = $request->ValorCCF;
-        $detalles->APagar = $request->APagar;
-        $detalles->ComentariosDeCobro = $request->ComentariosdeCobro;
-        $detalles->DescuentoIva = $request->DescuentoIva;
-        $detalles->Comision = $request->Comision;
-        $detalles->IvaSobreComision = $request->IvaSobreComision;
-        $detalles->Retencion = $request->Retension;
-        $detalles->ImpresionRecibo = $request->ImpresionRecibo;
-        $detalles->EnvioCartera = $request->EnvioCartera;
-        $detalles->PagoAplicado = $request->PagoAplicado;
-        $detalles->SaldoA = $request->SaldoA;
-        $detalles->EnvioPago = $request->EnvioPago;
-        $detalles->Residencia = $residencia->Id;
-        $detalles->save();
-        */
+
         session(['tab' => 1]);
         return back();
     }
@@ -485,7 +553,7 @@ class ResidenciaController extends Controller
 
             alert()->success('El registro ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
 
-            return redirect('polizas/residencia/'.$request->Id.'/edit?tab=2');
+            return redirect('polizas/residencia/' . $request->Id . '/edit?tab=2');
         } catch (Throwable $e) {
             print($e);
             return false;
@@ -566,7 +634,7 @@ class ResidenciaController extends Controller
             $detalle->Comentario = $request->Comentario;
             $detalle->update();
             $configuracion = ConfiguracionRecibo::first();
-            $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion','detalle', 'residencia'))->setWarnings(false)->setPaper('letter');
+            $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion', 'detalle', 'residencia'))->setWarnings(false)->setPaper('letter');
             return $pdf->stream('Recibo.pdf');
 
             return back();
@@ -621,7 +689,7 @@ class ResidenciaController extends Controller
         $detalle->update();
         //$calculo = $this->monto($residencia, $detalle);
         $configuracion = ConfiguracionRecibo::first();
-        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion','detalle', 'residencia', 'meses'))->setWarnings(false)->setPaper('letter');
+        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion', 'detalle', 'residencia', 'meses'))->setWarnings(false)->setPaper('letter');
         return $pdf->stream('Recibo.pdf');
 
         //  return back();
@@ -636,7 +704,7 @@ class ResidenciaController extends Controller
         $calculo = $this->monto($residencia, $detalle);
         // dd($calculo);
         $configuracion = ConfiguracionRecibo::first();
-        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion','detalle', 'residencia', 'meses', 'calculo'))->setWarnings(false)->setPaper('letter');
+        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion', 'detalle', 'residencia', 'meses', 'calculo'))->setWarnings(false)->setPaper('letter');
         //  dd($detalle);
         return $pdf->stream('Recibos.pdf');
     }
@@ -682,7 +750,7 @@ class ResidenciaController extends Controller
 
 
         if ($residencia->aseguradoras->Diario == 1) {
-                $prima_calculada = (($monto * $tasaFinal) / $dias_axo) * $dias_mes;
+            $prima_calculada = (($monto * $tasaFinal) / $dias_axo) * $dias_mes;
         } else {
             $prima_calculada = $monto * $tasaFinal;
         }

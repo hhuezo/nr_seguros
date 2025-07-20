@@ -30,6 +30,17 @@
                 @endif
 
 
+                @if (session('success'))
+                    <script>
+                        toastr.success("{{ session('success') }}");
+                    </script>
+                @endif
+
+                @if (session('error'))
+                    <script>
+                        toastr.error("{{ session('error') }}");
+                    </script>
+                @endif
 
 
 
@@ -164,10 +175,10 @@
                                         &nbsp;
                                     </div>
                                     <!-- <div class="col-sm-4">
-                                                <label class="control-label">Descuento de IVA</label>
-                                                <input class="form-control" name="DescuentoIva" type="checkbox" id="DescuentoIva" @if ($residencia->Modificar == 0) disabled @endif
-                                                @if ($residencia->DescuentoIva == 1) checked @endif>
-                                            </div> -->
+                                                    <label class="control-label">Descuento de IVA</label>
+                                                    <input class="form-control" name="DescuentoIva" type="checkbox" id="DescuentoIva" @if ($residencia->Modificar == 0) disabled @endif
+                                                    @if ($residencia->DescuentoIva == 1) checked @endif>
+                                                </div> -->
                                     <div class="col-md-12">
                                         &nbsp;
                                     </div>
@@ -525,9 +536,9 @@
                                             </td>
                                         </tr>
                                         <!-- <tr>
-                                                                        <td>Resultado 1</td>
-                                                                        <td><input type="text" id="Resultado2" value="@if ($ultimo_pago) {{ $ultimo_pago->MontoCartera }} @else 0 @endif"   class="form-group"></td>
-                                                                    </tr> -->
+                                                                            <td>Resultado 1</td>
+                                                                            <td><input type="text" id="Resultado2" value="@if ($ultimo_pago) {{ $ultimo_pago->MontoCartera }} @else 0 @endif"   class="form-group"></td>
+                                                                        </tr> -->
                                         <tr>
                                             <td>Prima Calculada </td>
                                             <td>
@@ -912,9 +923,9 @@
                                                         class="form-control" readonly>
                                                 </div>
                                                 <!-- <div class="col-sm-3">
-                                                                            <label class="control-label">&nbsp;</label>
-                                                                            <i class="btn btn-default fa fa-print form-control" id="btn_impresion"></i>
-                                                                        </div> -->
+                                                                                <label class="control-label">&nbsp;</label>
+                                                                                <i class="btn btn-default fa fa-print form-control" id="btn_impresion"></i>
+                                                                            </div> -->
                                             </div>
 
                                             <div class="form-group">
@@ -978,8 +989,8 @@
                                     <div class="modal-body">
                                         <div class="box-body">
                                             @csrf
-                                            <input type="hidden" name="ResidenciaComment" value="{{ $residencia->Id }}"
-                                                class="form-control">
+                                            <input type="hidden" name="ResidenciaComment"
+                                                value="{{ $residencia->Id }}" class="form-control">
 
                                             <div class="form-group">
                                                 <div class="col-sm-12">
@@ -1419,7 +1430,7 @@
             let value = inputDisplay.value.replace(/,/g, ''); // Elimina las comas
             inputReal.value = parseFloat(value).toFixed(2); // Actualiza el valor en formato numérico
             inputDisplay.value = parseFloat(value).toLocaleString().replace(/\./g,
-            ','); // Formatea el valor con coma para separación de miles
+                ','); // Formatea el valor con coma para separación de miles
         }
     </script>
 
@@ -1435,7 +1446,7 @@
             let value = inputDisplay.value.replace(/,/g, ''); // Elimina las comas
             inputReal.value = parseFloat(value); // Actualiza el valor en formato numérico
             inputDisplay.value = parseFloat(value).toLocaleString().replace(/\./g,
-            ','); // Formatea el valor con coma para separación de miles
+                ','); // Formatea el valor con coma para separación de miles
         }
     </script>
 

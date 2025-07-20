@@ -8,13 +8,26 @@
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
 
                 <div class="x_title">
-                    <h2>Pólizas / Residencia / Póliza de Residencia / Nueva  <small></small></h2>
-                    <ul class="nav navbar-right panel_toolbox">
+                    <h2>Pólizas / Residencia / Póliza de Residencia / Nueva <small></small></h2>
+                    {{-- <ul class="nav navbar-right panel_toolbox">
                         <a href="{{ url('polizas/residencia') }}" class="btn btn-info fa fa-undo " style="color: white">
                             Atrás</a>
-                    </ul>
+                    </ul> --}}
                     <div class="clearfix"></div>
                 </div>
+                @if (session('success'))
+                    <script>
+                        toastr.success("{{ session('success') }}");
+                    </script>
+                @endif
+
+                @if (session('error'))
+                    <script>
+                        toastr.error("{{ session('error') }}");
+                    </script>
+                @endif
+
+
                 @if (count($errors) > 0)
                     <div class="alert alert-danger">
                         <ul>
@@ -24,14 +37,34 @@
                         </ul>
                     </div>
                 @endif
-                <form action="{{ url('polizas/residencia') }}" method="POST" class="forms-sample">
+
+                <form action="{{ route('residencia.store') }}" method="POST" class="forms-sample">
                     @csrf
-                    <div class="x_content" style="font-size: 12px;">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
                         <br />
-                        <div class="col-sm-4">
-                            <label class="control-label">Número de Póliza *</label>
-                            <input class="form-control" name="NumeroPoliza" id="NumeroPoliza" type="text"
-                                value="{{ old('NumeroPoliza') }}">
+                        <div class="col-sm-12 row">
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                <label class="control-label">Número de Póliza *</label>
+                                <input class="form-control" name="NumeroPoliza" id="NumeroPoliza" type="text"
+                                    value="{{ old('NumeroPoliza') }}" required>
+                            </div>
+
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                &nbsp;
+                            </div>
+                        </div>
+
+                        <div class="col-sm-8">
+                            <label class="control-label">Asegurado *</label>
+                            <select name="Asegurado" id="Asegurado" class="form-control select2" style="width: 100%"
+                                required>
+                                <option value="" disabled selected>Seleccione...</option>
+                                @foreach ($cliente as $obj)
+                                    <option value="{{ $obj->Id }}" @selected(old('Asegurado') == $obj->Id)>
+                                        {{ $obj->Nombre }} {{ $obj->Dui }} {{ $obj->Nit }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="col-sm-4">
                             <label class="control-label">NIT *</label>
@@ -50,7 +83,9 @@
                                 required>
                                 <option value="" selected disabled>Seleccione...</option>
                                 @foreach ($aseguradoras as $obj)
-                                    <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                    <option value="{{ $obj->Id }}" @selected(old('Aseguradora') == $obj->Id)>
+                                        {{ $obj->Nombre }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
@@ -60,7 +95,9 @@
                                 required>
                                 <option value="" selected disabled>Seleccione...</option>
                                 @foreach ($productos as $obj)
-                                    <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                    <option value="{{ $obj->Id }}" @selected(old('Productos') == $obj->Id)>
+                                        {{ $obj->Nombre }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
@@ -69,41 +106,33 @@
                             <select name="Planes" id="Planes" class="form-control select2" style="width: 100%" required>
                                 <option value="" selected disabled>Seleccione...</option>
                                 @foreach ($planes as $obj)
-                                    <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                    <option value="{{ $obj->Id }}" @selected(old('Planes') == $obj->Id)>
+                                        {{ $obj->Nombre }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
 
-                        <div class="col-sm-8">
-                            <label class="control-label">Asegurado *</label>
-                            <select name="Asegurado" id="Asegurado" class="form-control select2" style="width: 100%"
-                                required>
-                                <option value="" disabled selected>Seleccione...</option>
-                                @foreach ($cliente as $obj)
-                                    <option value="{{ $obj->Id }}"> {{ $obj->Nombre }}
-                                        {{ $obj->Dui }} {{ $obj->Nit }}</option>
-                                @endforeach
-                            </select>
-                        </div>
                         <div class="col-md-12">
                             &nbsp;
                         </div>
                         <div class="col-sm-4">
                             <label class="control-label">Vigencia Desde *</label>
                             <input class="form-control" name="VigenciaDesde" type="date"
-                                value="{{ old('VigenciaDesde') }}">
+                                value="{{ old('VigenciaDesde') }}" required>
                         </div>
                         <div class="col-sm-4">
                             <label class="control-label">Vigencia Hasta *</label>
                             <input class="form-control" name="VigenciaHasta" type="date" placeholder="dd/mm/yyyy"
-                                value="{{ old('VigenciaHasta') }}">
+                                value="{{ old('VigenciaHasta') }}" required>
                         </div>
                         <div class="col-sm-4">
                             <label class="control-label">Estatus *</label>
                             <select name="EstadoPoliza" class="form-control" style="width: 100%" required>
                                 @foreach ($estados_poliza as $obj)
                                     @if ($obj->Id == 1)
-                                        <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                        <option value="{{ $obj->Id }}" @selected(old('EstadoPoliza') == $obj->Id)>
+                                            {{ $obj->Nombre }}</option>
                                     @endif
                                 @endforeach
                             </select>
@@ -113,107 +142,102 @@
                             <select name="Ejecutivo" class="form-control select2" style="width: 100%" required>
                                 <option value="" disabled selected>Seleccione...</option>
                                 @foreach ($ejecutivo as $obj)
-                                    <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
+                                    <option value="{{ $obj->Id }}" @selected(old('Ejecutivo') == $obj->Id)>
+                                        {{ $obj->Nombre }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
+
+                        {{-- Descuento de Rentabilidad --}}
                         <div class="col-sm-4">
                             <label class="control-label">Descuento de Rentabilidad % *</label>
-
                             <div class="form-group has-feedback">
-                                <input class="form-control" name="TasaDescuento" style="padding-left: 15%;" type="number"
-                                    step="any" id="TasaDescuento" required min="0">
+                                <input type="text" name="TasaDescuento" id="TasaDescuento"
+                                    class="form-control cantidad-texto" required style="padding-left: 15%; display: block;"
+                                    value="{{ old('TasaDescuento') }}"
+                                    oninput="this.value = this.value.replace(/[^0-9.,]/g, '')"
+                                    onblur="formatearCantidad(this)">
                                 <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
                             </div>
                         </div>
-                        <div class="col-md-12">
-                            &nbsp;
-                        </div>
-                        <div class="col-sm-4">
-                            &nbsp;
-                        </div>
-                        <!-- <div class="col-sm-4">
-                            <label class="control-label">Descuento de IVA</label>
-                            <input class="form-control" name="DescuentoIva" type="checkbox" id="DescuentoIva">
-                        </div> -->
-                        <div class="col-md-12">
-                            &nbsp;
-                        </div>
+
                         <div class="col-sm-4">
                             <input type="hidden" name="Bomberos" id="Bomberos" value="{{ $bomberos }}">
                             <label class="control-label">Límite de Grupo *</label>
-                            <div class=" form-group has-feedback">
-                                <input type="number" step="any" name="LimiteGrupo"
-                                    style="padding-left: 15%; display: block;" id="LimiteGrupo"
-                                    value="{{ old('LimiteGrupo') }}" class="form-control" required
-                                    onblur="limiteGrupo(this.value)">
-                                <input type="text" step="any" style="padding-left: 15%; display: none;"
-                                    id="LimiteGrupoTexto" class="form-control" required
-                                    onfocus="limiteGrupoTexto(this.value)">
+                            <div class="form-group has-feedback">
+                                <input type="text" name="LimiteGrupo" id="LimiteGrupo"
+                                    class="form-control cantidad-texto" style="padding-left: 15%; display: block;"
+                                    value="{{ old('LimiteGrupo') }}" required
+                                    oninput="this.value = this.value.replace(/[^0-9.,]/g, '')"
+                                    onblur="formatearCantidad(this)">
                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                             </div>
                         </div>
+
+                        {{-- Límite Individual --}}
                         <div class="col-sm-4">
                             <label class="control-label">Límite Individual *</label>
-                            <div class=" form-group has-feedback">
-                                <input type="number" step="any" name="LimiteIndividual" id="LimiteIndividual"
-                                    style="padding-left: 15%;display: block;" value="{{ old('LimiteIndividual') }}"
-                                    class="form-control" required onblur="limiteIndividual(this.value)">
-                                <input type="text" step="any" style="padding-left: 15%; display: none;"
-                                    id="LimiteIndividualTexto" class="form-control" required
-                                    onfocus="limiteIndividualTexto(this.value)">
+                            <div class="form-group has-feedback">
+                                <input type="text" name="LimiteIndividual" id="LimiteIndividual"
+                                    class="form-control cantidad-texto" style="padding-left: 15%; display: block;"
+                                    value="{{ old('LimiteIndividual') }}" required
+                                    oninput="this.value = this.value.replace(/[^0-9.,]/g, '')"
+                                    onblur="formatearCantidad(this)">
                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                             </div>
                         </div>
-                        <div class="col-md-12">
-                            &nbsp;
-                        </div>
+
+                        {{-- Tasa --}}
                         <div class="col-sm-4">
                             <label class="control-label">Tasa % *</label>
-                            <div class=" form-group has-feedback">
-                                <input type="number" step="any" name="Tasa" id="Tasa"
-                                    value="{{ old('Tasa') }}" class="form-control" style="padding-left: 15%;" required
-                                    min="0" max="100">
+                            <div class="form-group has-feedback">
+                                <input type="text" name="Tasa" id="Tasa" class="form-control cantidad-texto"
+                                    style="padding-left: 15%; display: block;" value="{{ old('Tasa') }}" required
+                                    oninput="this.value = this.value.replace(/[^0-9.,]/g, '')"
+                                    onblur="formatearCantidad(this)">
                                 <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
                             </div>
                         </div>
-                        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
-                            <!-- radio button -->
-                            <div class="form-group row">
-                                <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">&nbsp;
-                                </label>
-                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                        <input type="radio" name="tipoTasa" id="Mensual" value="1" checked>
-                                        <label class="control-label">Tasa Millar Mensual *</label>
-                                    </div>
 
-                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                        <input type="radio" name="tipoTasa" id="Anual" value="0">
-                                        <label class="control-label">Tasa ‰ Millar Anual *</label>
-                                    </div>
+                        {{-- Comisión --}}
+                        <div class="col-sm-4">
+                            <label class="control-label">Porcentaje de comisión *</label>
+                            <div class="form-group has-feedback">
+                                <input type="text" name="TasaComision" id="TasaComision"
+                                    class="form-control cantidad-texto" style="padding-left: 15%; display: block;"
+                                    value="{{ old('TasaComision') }}" required
+                                    oninput="this.value = this.value.replace(/[^0-9.,]/g, '')"
+                                    onblur="formatearCantidad(this)">
+                                <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
+                            <div class="form-group row">
+                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                    <input type="radio" name="tipoTasa" id="tipoTasaMensual" value="1"
+                                        {{ old('tipoTasa', '1') == '1' ? 'checked' : '' }} required>
+                                    <label class="control-label" for="tipoTasaMensual">Tasa Millar Mensual *</label>
+                                </div>
+
+                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                    <input type="radio" name="tipoTasa" id="tipoTasaAnual" value="0"
+                                        {{ old('tipoTasa') == '0' ? 'checked' : '' }} required>
+                                    <label class="control-label" for="tipoTasaAnual">Tasa ‰ Millar Anual *</label>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-12">
-                            &nbsp;
-                        </div>
-                        <div class="col-sm-4">
-                            <label class="control-label">Porcentaje de comisión * </label>
-                            <div class=" form-group has-feedback">
-                                <input class="form-control" name="TasaComision" id="TasaComision" type="number"
-                                    step="any" style="padding-left: 15%;" required min="0" max="100">
-                                <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
-                            </div>
-                        </div>
-                        <div class="col-sm-2"><br>
+
+                        {{-- IVA incluido --}}
+                        <div class="col-sm-2">
+                            <input name="ComisionIva" id="ComisionIva" type="checkbox" class="js-switch"
+                                {{ old('ComisionIva') ? 'checked' : '' }}>
                             <label class="control-label" align="right">¿IVA incluído?</label>
-                            <input name="ComisionIva" id="ComisionIva" type="checkbox" class="js-switch">
                         </div>
+
                         <br><br>
                         <div class="col-sm-12 row">* Campo requerido</div>
-
-
 
                         <div class="x_title">
                             <h2> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<small></small></h2>
@@ -227,8 +251,10 @@
                         <a href="{{ url('polizas/residencia/') }}"><button class="btn btn-primary"
                                 type="button">Cancelar</button></a>
                     </div>
-
                 </form>
+
+
+
                 @include('catalogo.cliente.modal_poliza')
 
             </div>
@@ -241,42 +267,11 @@
     <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 
     <script type="text/javascript">
-        // func
-        function limiteGrupo(id) {
-            document.getElementById('LimiteGrupoTexto').value = formatearCantidad(id);
-            $("#LimiteGrupo").hide();
-            $("#LimiteGrupoTexto").show();
-        }
-
-        function limiteGrupoTexto(id) {
-            // document.getElementById('LimiteGrupo').value = document.getElementById('LimiteGrupoTexto');
-            $("#LimiteGrupo").show();
-            $("#LimiteGrupoTexto").hide();
-        }
-
-        function limiteIndividual(id) {
-            document.getElementById('LimiteIndividualTexto').value = formatearCantidad(id);
-            $("#LimiteIndividual").hide();
-            $("#LimiteIndividualTexto").show();
-        }
-
-        function limiteIndividualTexto(id) {
-            // document.getElementById('LimiteIndividual').value = document.getElementById('LimiteIndividualTexto');
-            $("#LimiteIndividual").show();
-            $("#LimiteIndividualTexto").hide();
-        }
-
-        function formatearCantidad(cantidad) {
-            let numero = Number(cantidad);
-            return numero.toLocaleString('en-US', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
-        }
-
         $(document).ready(function() {
             //mostrar opcion en menu
             displayOption("ul-poliza", "li-poliza-residencia");
+
+
 
             $("#Aseguradora").change(function() {
                 $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
@@ -310,40 +305,8 @@
                         '</option>';
                     $("#Planes").html(_select);
                 });
-            })
-
-
-            $("#btn_guardar").on('click', function() {
-                $("#btn_guardar").prop('disabled');
             });
 
-
-            $("#Tasa").change(function() {
-
-                if (document.getElementById('Tasa').value < 0 || document.getElementById('Tasa').value >
-                    100) {
-                    document.getElementById('Tasa').value = '';
-                    swal('La tasa no debe ser menor a 0 ni mayor de 100');
-                }
-            })
-
-            $("#TasaComision").change(function() {
-
-                if (document.getElementById('TasaComision').value < 0 || document.getElementById(
-                        'TasaComision').value > 100) {
-                    document.getElementById('TasaComision').value = '';
-                    swal('La tasa de comision no debe ser menor a 0 ni mayor de 100');
-                }
-            })
-
-            $("#TasaDescuento").change(function() {
-
-                if (document.getElementById('TasaDescuento').value < 0 || document.getElementById(
-                        'TasaDescuento').value > 100) {
-                    document.getElementById('TasaDescuento').value = '';
-                    swal('El descuento de rentabilidad no debe ser menor a 0 ni mayor de 100');
-                }
-            })
 
             $("#Asegurado").change(function() {
                 // alert(document.getElementById('Asegurado').value);
@@ -359,33 +322,64 @@
                     success: function(data) {
                         console.log(data);
                         document.getElementById('Nit').value = data.Nit;
-                        // if (data.TipoContribuyente == 1) {
-                        //     document.getElementById('Retencion').setAttribute("readonly", true);
-                        //     document.getElementById('Retencion').value = 0;
-                        //     calculoCCF();
-                        // }
-
-
                     }
                 });
             });
 
-            $('#LimiteIndividual').change(function() {
-                var individual = Number(document.getElementById('LimiteIndividual').value);
-                var grupal = Number(document.getElementById('LimiteGrupo').value);
-                if (individual >= grupal) {
-                    document.getElementById('LimiteIndividual').value = '';
-                    swal('El limite individual supera al limite grupal');
-                }
-            })
-
-
-
-
-
-
         });
+
+
+
+
+        function formatearCantidad(input) {
+            let valor = input.value.trim();
+
+            if (!valor) return;
+
+            const puntos = (valor.match(/\./g) || []).length;
+            const comas = (valor.match(/,/g) || []).length;
+
+            if (puntos + comas > 1) {
+                let ultimoSeparadorIndex = Math.max(valor.lastIndexOf('.'), valor.lastIndexOf(','));
+                let separadorDecimal = valor.charAt(ultimoSeparadorIndex);
+
+                let parteEntera = valor.slice(0, ultimoSeparadorIndex).replace(/[.,]/g, '');
+                let parteDecimal = valor.slice(ultimoSeparadorIndex + 1);
+
+                valor = parteEntera + '.' + parteDecimal;
+            } else {
+                valor = valor.replace(',', '.').replace(/,/g, '');
+            }
+
+            const partes = valor.split('.');
+            if (partes.length > 2) {
+                toastr.error('Cantidad inválida: múltiples separadores decimales.', 'Error');
+                input.value = "";
+                return;
+            }
+
+            if (!partes.every(p => /^\d*$/.test(p))) {
+                toastr.error('Cantidad inválida: contiene caracteres no numéricos.', 'Error');
+                input.value = "";
+                return;
+            }
+
+            let numero = parseFloat(valor);
+            if (isNaN(numero)) {
+                toastr.error('Cantidad inválida.', 'Error');
+                input.value = "";
+                return;
+            }
+
+            // ✅ Mostrar hasta 6 decimales pero sin cortar los necesarios
+            input.value = numero.toLocaleString('en-US', {
+                minimumFractionDigits: (numero % 1 !== 0) ? 3 : 0, // si hay decimales, mostrar al menos 3
+                maximumFractionDigits: 6
+            });
+        }
     </script>
+
+
 
 
 
