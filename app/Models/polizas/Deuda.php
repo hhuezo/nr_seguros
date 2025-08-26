@@ -117,13 +117,25 @@ class Deuda extends Model
         return $this->hasMany(PolizaDeudaHistorica::class, 'Deuda', 'Id');
     }
 
-    public function vidas(){
-        return $this->belongsTo(Vida::class,'PolizaVida');
+    public function vidas()
+    {
+        return $this->belongsTo(Vida::class, 'PolizaVida');
     }
 
-    public function desempleos(){
+    public function desempleos()
+    {
         return $this->belongsTo(Desempleo::class, 'PolizaDesempleo');
     }
 
 
+    public function control_cartera()
+    {
+        return $this->belongsTo(PolizaControlCartera::class, 'DeudaId', 'Id');
+    }
+
+
+    public function control_cartera_por_mes_anio()
+    {
+        return $this->hasOne(PolizaControlCartera::class, 'DeudaId', 'Id');
+    }
 }

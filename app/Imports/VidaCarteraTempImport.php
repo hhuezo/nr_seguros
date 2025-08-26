@@ -5,6 +5,7 @@ namespace App\Imports;
 use App\Models\temp\VidaCarteraTemp as TempVidaCarteraTemp;
 use App\Models\VidaCarteraTemp;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\ToModel;
 
 class VidaCarteraTempImport implements ToModel
@@ -31,55 +32,68 @@ class VidaCarteraTempImport implements ToModel
 
     public function model(array $row)
     {
-        // Saltar la fila de encabezados
-        if (trim($row[0]) == "DUI") {
-            $this->encabezados = 1;
-            return null;
-        }
-
-        // Procesar solo las filas de datos
-        if ($this->encabezados == 1 && (trim($row[0]) != "DUI" && trim($row[3]) != "NACIONALIDAD")) {
-
-            // Verificar que al menos uno de los dos campos (NIT o DUI) tenga datos
-            if (!empty(trim($row[0])) || !empty(trim($row[1]))) {
-                $Tasa = null;
-                if ($this->TarifaExcel == 1) {
-                     $Tasa =  $row[16] ?? null;
-                }
-
-                return new TempVidaCarteraTemp([
-                    'PolizaVida' => $this->Poliza,
-                    //'Nit' => $row[0] ?? null,
-                    'Dui' => $row[0] ?? null,
-                    'Pasaporte' => $row[1] ?? null,
-                    'Nacionalidad' => $row[3] ?? null,
-                    'FechaNacimiento' => $this->convertirFecha($row[4] ?? null),
-                    'TipoPersona' => $row[5] ?? null,
-                    'Sexo' => $row[6] ?? null,
-                    'PrimerApellido' => $row[7] ?? null,
-                    'SegundoApellido' => $row[8] ?? null,
-                    'ApellidoCasada' => $row[9] ?? null,
-                    'PrimerNombre' => $row[10] ?? null,
-                    'SegundoNombre' => $row[11] ?? null,
-
-                    'FechaOtorgamiento' => $this->convertirFecha($row[12] ?? null),
-                    'FechaVencimiento' => $this->convertirFecha($row[13] ?? null),
-                    'NumeroReferencia' => $row[14] ?? null,
-                    'SumaAsegurada' => $row[15] ?? null,
-
-                    'User' => auth()->id(),
-                    'Axo' => $this->Axo,
-                    'Mes' => $this->Mes,
-                    'FechaInicio' => $this->FechaInicio,
-                    'FechaFinal' => $this->FechaFinal,
-                    'FechaNacimientoDate' => $this->convertirFecha($row[4] ?? null, 'Y-m-d'), // FECHA NACIMIENTO (formato Y-m-d)
-                    'FechaOtorgamientoDate' => $this->convertirFecha($row[12] ?? null, 'Y-m-d'), // FECHA DE OTORGAMIENTO (formato Y-m-d)
-                    'PolizaVidaTipoCartera' => $this->PolizaVidaTipoCartera,
-                    'Tasa' => $Tasa,
-
-
-                ]);
+        try {
+            // Saltar la fila de encabezados
+            if (trim($row[0]) == "DUI") {
+                $this->encabezados = 1;
+                Log::info('Fila encabezado detectada y saltada');
+                return null;
             }
+
+            // Procesar solo las filas de datos
+            if ($this->encabezados == 1 && (trim($row[0]) != "DUI" && trim($row[3]) != "NACIONALIDAD")) {
+
+                // Verificar que al menos uno de los dos campos (NIT o DUI) tenga datos
+                if (!empty(trim($row[0])) || !empty(trim($row[1]))) {
+                    $Tasa = null;
+                    if ($this->TarifaExcel == 1) {
+                        $Tasa =  $row[16] ?? null;
+                    }
+
+                    $modelData = [
+                        'PolizaVida' => $this->Poliza,
+                        //'Nit' => $row[0] ?? null,
+                        'Dui' => $row[0] ?? null,
+                        'Pasaporte' => $row[1] ?? null,
+                        'Nacionalidad' => $row[3] ?? null,
+                        'FechaNacimiento' => $this->convertirFecha($row[4] ?? null),
+                        'TipoPersona' => $row[5] ?? null,
+                        'Sexo' => $row[6] ?? null,
+                        'PrimerApellido' => $row[7] ?? null,
+                        'SegundoApellido' => $row[8] ?? null,
+                        'ApellidoCasada' => $row[9] ?? null,
+                        'PrimerNombre' => $row[10] ?? null,
+                        'SegundoNombre' => $row[11] ?? null,
+                        'FechaOtorgamiento' => $this->convertirFecha($row[12] ?? null),
+                        'FechaVencimiento' => $this->convertirFecha($row[13] ?? null),
+                        'NumeroReferencia' => $row[14] ?? null,
+                        'SumaAsegurada' => $row[15] ?? null,
+                        'User' => auth()->id(),
+                        'Axo' => $this->Axo,
+                        'Mes' => $this->Mes,
+                        'FechaInicio' => $this->FechaInicio,
+                        'FechaFinal' => $this->FechaFinal,
+                        'FechaNacimientoDate' => $this->convertirFecha($row[4] ?? null, 'Y-m-d'),
+                        'FechaOtorgamientoDate' => $this->convertirFecha($row[12] ?? null, 'Y-m-d'),
+                        'PolizaVidaTipoCartera' => $this->PolizaVidaTipoCartera,
+                        'Tasa' => $Tasa,
+                    ];
+
+                    Log::info('Procesando fila', ['data' => $modelData]);
+
+                    return new TempVidaCarteraTemp($modelData);
+                } else {
+                    Log::warning('Fila omitida: DUI y Pasaporte vacíos', ['fila' => $row]);
+                }
+            } else {
+                Log::debug('Fila no procesada por encabezados o contenido inválido', ['fila' => $row]);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error al procesar fila en model()', [
+                'fila' => $row,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
         }
 
         return null;

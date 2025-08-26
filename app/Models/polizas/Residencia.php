@@ -36,32 +36,43 @@ class Residencia extends Model
         'Comision',
         'Activo',
         'TasaDescuento'
-        
+
     ];
 
     protected $guarded = [];
 
-    public function clientes(){
+    public function clientes()
+    {
         return $this->belongsTo('App\Models\catalogo\Cliente', 'Asegurado', 'Id');
     }
 
-    public function aseguradoras(){
+    public function aseguradoras()
+    {
         return $this->belongsTo('App\Models\catalogo\Aseguradora', 'Aseguradora', 'Id');
     }
 
-    public function tipoCarteras(){
+    public function tipoCarteras()
+    {
         return $this->belongsTo('App\Models\catalogo\TipoCartera', 'TipoCartera', 'Id');
     }
 
-    public function ejecutivos(){
+    public function ejecutivos()
+    {
         return $this->belongsTo('App\Models\catalogo\Ejecutivo', 'Ejecutivo', 'Id');
     }
-    public function estadoPolizas(){
+    public function estadoPolizas()
+    {
         return $this->belongsTo('App\Models\catalogo\EstadoPoliza', 'EstadoPoliza', 'Id');
     }
 
-    public function planes(){
+    public function planes()
+    {
         return $this->belongsTo('App\Models\catalogo\Plan', 'Plan', 'Id');
     }
 
+
+    public function control_cartera()
+    {
+        return $this->belongsTo(PolizaControlCartera::class, 'ResidenciaId', 'Id');
+    }
 }
