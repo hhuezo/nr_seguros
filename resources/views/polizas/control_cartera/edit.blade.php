@@ -327,9 +327,9 @@
                             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                 <div class="form-group row">
                                     <label class="control-label">Usuario</label>
-                                    <input class="form-control" name="Usuario"
-                                        value="{{ $poliza->control_cartera_por_mes_anio->Usuario ?? '' }}" type="number"
-                                        step="1">
+                                    <select name="Usuario" class="form-control">
+                                        <option value="">Seleccione...</option>
+                                    </select>
                                 </div>
                             </div>
 
@@ -421,12 +421,7 @@
                                     <label class="control-label">Anexo declaración</label>
                                     <select class="form-control" name="AnexoDeclaracion">
                                         <option value="">Seleccione...</option>
-                                        <option value="1"
-                                            {{ isset($poliza->control_cartera_por_mes_anio) && $poliza->control_cartera_por_mes_anio->AnexoDeclaracion == 1 ? 'selected' : '' }}>
-                                            Sí</option>
-                                        <option value="0"
-                                            {{ isset($poliza->control_cartera_por_mes_anio) && $poliza->control_cartera_por_mes_anio->AnexoDeclaracion == 0 ? 'selected' : '' }}>
-                                            No</option>
+
                                     </select>
                                 </div>
                             </div>
@@ -454,12 +449,7 @@
                                     <label class="control-label">Reproceso Nr</label>
                                     <select class="form-control" name="RepocesoNr">
                                         <option value="">Seleccione...</option>
-                                        <option value="1"
-                                            {{ isset($poliza->control_cartera_por_mes_anio) && $poliza->control_cartera_por_mes_anio->RepocesoNr == 1 ? 'selected' : '' }}>
-                                            Sí</option>
-                                        <option value="0"
-                                            {{ isset($poliza->control_cartera_por_mes_anio) && $poliza->control_cartera_por_mes_anio->RepocesoNr == 0 ? 'selected' : '' }}>
-                                            No</option>
+
                                     </select>
                                 </div>
                             </div>
@@ -527,4 +517,16 @@
             </div>
         </div>
     </div>
+
+    <!-- jQuery -->
+    <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+
+            //mostrar opcion en menu
+            displayOption("ul-poliza", "li-control-cartera");
+
+        });
+    </script>
 @endsection
