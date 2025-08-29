@@ -41,36 +41,36 @@ class PolizaDeudaTempCarteraImport implements ToModel, /*WithStartRow,*/ SkipsEm
             }
 
             if ($this->encabezados == 1) {
-                $Tasa = null;
-                if ($this->TarifaExcel == 1) {
-                    $Tasa = $row[23] ?? null; // PORCENTAJE EXTRAPRIMA está en la última columna
-                }
 
                 return new PolizaDeudaTempCartera([
-                    'Nit'                 => null, // ya no existe en Excel
                     'Dui'                 => $row[0],
                     'Pasaporte'           => $row[1],
+                    'CarnetResidencia'    => $row[2],
                     'Nacionalidad'        => $row[3],
                     'FechaNacimiento'     => $this->convertirFecha($row[4]),
                     'TipoPersona'         => $row[5],
+                    'Sexo'                => $row[6], // GENERO
                     'PrimerApellido'      => $row[7],
                     'SegundoApellido'     => $row[8],
                     'ApellidoCasada'      => $row[9],
                     'PrimerNombre'        => $row[10],
                     'SegundoNombre'       => $row[11],
                     'NombreSociedad'      => $row[12],
-                    'Sexo'                => $row[6], // GENERO
+
                     'FechaOtorgamiento'   => $this->convertirFecha($row[13]),
                     'FechaVencimiento'    => $this->convertirFecha($row[14]),
-                    'Ocupacion'           => null, // Excel ya no lo trae
                     'NumeroReferencia'    => $row[15],
                     'MontoOtorgado'       => $row[16],
                     'SaldoCapital'        => $row[17],
                     'Intereses'           => $row[18],
                     'InteresesMoratorios' => $row[19],
                     'InteresesCovid'      => $row[20],
-                    'MontoNominal'        => $row[21], // TARIFA
-                    'SaldoTotal'          => $row[22], // TIPO DE DEUDA
+
+                    'Tarifa'        => $row[21],
+                    'TipoDeuda'          => $row[22],
+                    'PorcentajeExtraprima'        => $row[23],
+
+
                     'User'                => auth()->user()->id,
                     'Axo'                 => $this->Axo,
                     'Mes'                 => $this->Mes,
@@ -78,7 +78,6 @@ class PolizaDeudaTempCarteraImport implements ToModel, /*WithStartRow,*/ SkipsEm
                     'FechaInicio'         => $this->FechaInicio,
                     'FechaFinal'          => $this->FechaFinal,
                     'PolizaDeudaTipoCartera' => $this->credito,
-                    'Tasa'                => $Tasa,
                 ]);
             }
 

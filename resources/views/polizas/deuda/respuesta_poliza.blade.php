@@ -177,7 +177,7 @@
                                                     <tr>
                                                         <th>Número crédito</th>
                                                         <th>DUI</th>
-                                                        <th>NIT</th>
+                                                        {{-- <th>NIT</th> --}}
                                                         <th>Nombre</th>
                                                         <th>Fecha nacimiento</th>
                                                         <th>Edad Otorgamiento</th>
@@ -191,7 +191,7 @@
                                                     <tr>
                                                         <td>{{ $registro->NumeroReferencia }}</td>
                                                         <td>{{ $registro->Dui }}</td>
-                                                        <td>{{ $registro->Nit }}</td>
+                                                        {{-- <td>{{ $registro->Nit }}</td> --}}
                                                         <td>{{ $registro->PrimerNombre }}
                                                             {{ $registro->SegundoNombre }}
                                                             {{ $registro->PrimerApellido }}
@@ -246,7 +246,7 @@
                                                 <tr>
                                                     <th>Número crédito</th>
                                                     <th>DUI</th>
-                                                    <th>NIT</th>
+                                                    {{-- <th>NIT</th> --}}
                                                     <th>Nombre</th>
                                                     <th>Fecha Nacimiento</th>
                                                     <th>Fecha Otorgamiento</th>
@@ -262,7 +262,7 @@
                                                     <td>{{ $registro->NumeroReferencia }} <br>
                                                     </td>
                                                     <td>{{ $registro->Dui }}</td>
-                                                    <td>{{ $registro->Nit }}</td>
+                                                    {{-- <td>{{ $registro->Nit }}</td> --}}
                                                     <td>{{ $registro->PrimerNombre }}
                                                         {{ $registro->SegundoNombre }}
                                                         {{ $registro->PrimerApellido }}
@@ -307,7 +307,7 @@
                                                 <tr>
                                                     <th>Número crédito</th>
                                                     <th>DUI</th>
-                                                    <th>NIT</th>
+                                                    {{-- <th>NIT</th> --}}
                                                     <th>Nombre</th>
                                                     <th>Fecha nacimiento</th>
                                                     <th>Edad Actual</th>
@@ -319,7 +319,7 @@
                                                     <tr>
                                                         <td>{{ $registro->NumeroReferencia }}</td>
                                                         <td>{{ $registro->Dui }}</td>
-                                                        <td>{{ $registro->Nit }}</td>
+                                                        {{-- <td>{{ $registro->Nit }}</td> --}}
                                                         <td>{{ $registro->PrimerNombre }}
                                                             {{ $registro->SegundoNombre }}
                                                             {{ $registro->PrimerApellido }}
@@ -359,7 +359,7 @@
                                                 <tr>
                                                     <th>Número crédito</th>
                                                     <th>DUI</th>
-                                                    <th>NIT</th>
+                                                    {{-- <th>NIT</th> --}}
                                                     <th>Nombre</th>
                                                     <th>Fecha Nacimiento</th>
                                                     <th>Fecha Otorgamiento</th>
@@ -372,7 +372,7 @@
                                                 <tr>
                                                     <td>{{ $registro->NumeroReferencia }}</td>
                                                     <td>{{ $registro->Dui }}</td>
-                                                    <td>{{ $registro->Nit }}</td>
+                                                    {{-- <td>{{ $registro->Nit }}</td> --}}
                                                     <td>{{ $registro->PrimerNombre }}
                                                         {{ $registro->SegundoNombre }}
                                                         {{ $registro->PrimerApellido }}

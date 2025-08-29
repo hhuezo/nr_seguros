@@ -1215,7 +1215,7 @@ class DeudaCarteraController extends Controller
 
         //$deuda->ResponsabilidadMaxima = 25000;
         //calcular los registros que pasan de la responsabilidad maxima
-        $poliza_responsabilidad_maxima = PolizaDeudaTempCartera::selectRaw('Id,Dui,NumeroReferencia,Edad,Nit,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento,Excluido,NoValido,TotalCredito,EdadDesembloso,Excluido,FechaOtorgamiento')
+        $poliza_responsabilidad_maxima = PolizaDeudaTempCartera::selectRaw('Id,Dui,NumeroReferencia,Edad,CarnetResidencia,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento,Excluido,NoValido,TotalCredito,EdadDesembloso,Excluido,FechaOtorgamiento')
             ->having('TotalCredito', '>', $deuda->ResponsabilidadMaxima)
             ->where('PolizaDeuda', $request->Deuda)
             ->where('User', auth()->user()->id)

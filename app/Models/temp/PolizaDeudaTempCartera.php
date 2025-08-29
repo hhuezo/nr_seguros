@@ -63,7 +63,10 @@ class PolizaDeudaTempCartera extends Model
         'EdadRequisito',
         'MontoRequisito',
         'MontoMaximoIndividual',
-        'Tasa'
+        'Tasa',
+        'Tarifa',
+        'TipoDeuda',
+        'PorcentajeExtraprima'
     ];
 
 

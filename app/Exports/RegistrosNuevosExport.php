@@ -79,43 +79,85 @@ class RegistrosNuevosExport implements FromCollection, WithHeadings
         $registro_mes_anterior = PolizaDeudaCartera::where('Mes', $registro_cartera->Mes)->where('Axo', $registro_cartera->Axo)->where('PolizaDeuda', $this->id)->get();
         $registro_mes_anterior_array = $registro_mes_anterior->pluck('NumeroReferencia')->toArray();
 
-        $data = PolizaDeudaTempCartera::
-            where('PolizaDeuda', $this->id)->where('User', auth()->user()->id)
+        // $data = PolizaDeudaTempCartera::
+        //     where('PolizaDeuda', $this->id)->where('User', auth()->user()->id)
+        //     ->whereNotIn('NumeroReferencia', $registro_mes_anterior_array)
+        //     ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
+        //     ->join('tipo_cartera as tc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'tc.Id')
+        //     ->select([
+        //         'Nit',
+        //         'Dui',
+        //         'Pasaporte',
+        //         'Nacionalidad',
+        //         'FechaNacimiento',
+        //         'TipoPersona',
+        //         'PrimerApellido',
+        //         'SegundoApellido',
+        //         'ApellidoCasada',
+        //         'PrimerNombre',
+        //         'SegundoNombre',
+        //         'NombreSociedad',
+        //         'Sexo',
+        //         'FechaOtorgamiento',
+        //         'FechaVencimiento',
+        //         'Ocupacion',
+        //         DB::raw("CONCAT(NumeroReferencia, ' ') AS NumeroReferencia"),
+        //         DB::raw("IF(MontoOtorgado IS NULL, '', ROUND(MontoOtorgado, 2)) AS MontoOtorgado"),
+        //         DB::raw("IF(SaldoCapital IS NULL, '', ROUND(SaldoCapital, 2)) AS SaldoCapital"),
+        //         DB::raw("IF(Intereses IS NULL, '', ROUND(Intereses, 2)) AS Intereses"),
+        //         DB::raw("IF(InteresesMoratorios IS NULL, '', ROUND(InteresesMoratorios, 2)) AS InteresesMoratorios"),
+        //         DB::raw("IF(InteresesCovid IS NULL, '', ROUND(InteresesCovid, 2)) AS InteresesCovid"),
+        //         DB::raw("IF(MontoNominal IS NULL, '', ROUND(MontoNominal, 2)) AS MontoNominal"),
+        //         DB::raw("IF(SaldoTotal IS NULL, '', ROUND(SaldoTotal, 2)) AS SaldoTotal"),
+        //         DB::raw("IF(TotalCredito IS NULL, '', ROUND(TotalCredito, 2)) AS total_saldo"), // Prima Mensual
+        //         'tc.Nombre as TipoCartera',
+        //         DB::raw("CONCAT(sm.Abreviatura, ' - ', sm.Descripcion) AS LineaCredito"),
+        //         // '' // Porcentaje Extraprima cambiar
+        //     ])
+        //     ->orderBy('NumeroReferencia')
+        //     ->get();
+
+
+
+
+        $data = PolizaDeudaTempCartera::where('PolizaDeuda', $this->id)
+            ->where('User', auth()->user()->id)
             ->whereNotIn('NumeroReferencia', $registro_mes_anterior_array)
             ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
             ->join('tipo_cartera as tc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'tc.Id')
             ->select([
-                'Nit',
-                'Dui',
-                'Pasaporte',
-                'Nacionalidad',
-                'FechaNacimiento',
-                'TipoPersona',
-                'PrimerApellido',
-                'SegundoApellido',
-                'ApellidoCasada',
-                'PrimerNombre',
-                'SegundoNombre',
-                'NombreSociedad',
-                'Sexo',
-                'FechaOtorgamiento',
-                'FechaVencimiento',
-                'Ocupacion',
-                DB::raw("CONCAT(NumeroReferencia, ' ') AS NumeroReferencia"),
-                DB::raw("IF(MontoOtorgado IS NULL, '', ROUND(MontoOtorgado, 2)) AS MontoOtorgado"),
-                DB::raw("IF(SaldoCapital IS NULL, '', ROUND(SaldoCapital, 2)) AS SaldoCapital"),
-                DB::raw("IF(Intereses IS NULL, '', ROUND(Intereses, 2)) AS Intereses"),
-                DB::raw("IF(InteresesMoratorios IS NULL, '', ROUND(InteresesMoratorios, 2)) AS InteresesMoratorios"),
-                DB::raw("IF(InteresesCovid IS NULL, '', ROUND(InteresesCovid, 2)) AS InteresesCovid"),
-                DB::raw("IF(MontoNominal IS NULL, '', ROUND(MontoNominal, 2)) AS MontoNominal"),
-                DB::raw("IF(SaldoTotal IS NULL, '', ROUND(SaldoTotal, 2)) AS SaldoTotal"),
+                'Dui',                                   // DUI
+                'Pasaporte',                             // PASAPORTE
+                DB::raw("'' AS CarnetResi"),             // CARNET RESI (campo vacío si no existe)
+                'Nacionalidad',                          // NACIONALIDAD
+                'FechaNacimiento',                       // FECNACIMIENTO
+                'TipoPersona',                           // TIPO PERSONA
+                'Sexo',                                  // GENERO
+                'PrimerApellido',                        // PRIMERAPELLIDO
+                'SegundoApellido',                       // SEGUNDOAPELLIDO
+                'ApellidoCasada',                        // APELLIDOCASADA
+                'PrimerNombre',                          // PRIMERNOMBRE
+                'SegundoNombre',                         // SEGUNDONOMBRE
+                'NombreSociedad',                        // NOMBRE SOCIEDAD
+                'FechaOtorgamiento',                     // FECOTORGAMIENTO
+                'FechaVencimiento',                      // FECHA DE VENCIMIENTO
+                DB::raw("NumeroReferencia AS NumReferencia"), // NUMREFERENCIA
+                DB::raw("IF(MontoOtorgado IS NULL, '', ROUND(MontoOtorgado, 2)) AS MontoOtorgado"), // MONTO OTORGADO
+                DB::raw("IF(SaldoCapital IS NULL, '', ROUND(SaldoCapital, 2)) AS SaldoCapital"),   // SALDO DE CAPITAL
+                DB::raw("IF(Intereses IS NULL, '', ROUND(Intereses, 2)) AS InteresCorrientes"),    // INTERES CORRIENTES
+                DB::raw("IF(InteresesMoratorios IS NULL, '', ROUND(InteresesMoratorios, 2)) AS InteresMoratorio"), // INTERES MORATORIO
+                DB::raw("IF(InteresesCovid IS NULL, '', ROUND(InteresesCovid, 2)) AS InteresCovid"), // INTERES COVID
+                DB::raw("IF(MontoNominal IS NULL, '', ROUND(MontoNominal, 2)) AS Tarifa"),         // TARIFA
+                'tc.Nombre AS TipoDeuda',                 // TIPO DE DEUDA
+                DB::raw("IF(Tasa IS NULL, '', ROUND(Tasa, 2)) AS PorcentajeExtraprima"),           // PORCENTAJE EXTRAPRIMA
                 DB::raw("IF(TotalCredito IS NULL, '', ROUND(TotalCredito, 2)) AS total_saldo"), // Prima Mensual
                 'tc.Nombre as TipoCartera',
                 DB::raw("CONCAT(sm.Abreviatura, ' - ', sm.Descripcion) AS LineaCredito"),
-                // '' // Porcentaje Extraprima cambiar
             ])
             ->orderBy('NumeroReferencia')
             ->get();
+
+
 
         return $data;
     }
@@ -151,7 +193,7 @@ class RegistrosNuevosExport implements FromCollection, WithHeadings
             'PRIMA MENSUAL',
             'TIPO CARTERA',
             'LINEA CREDITO',
-            //'PORCENTAJE EXTRAPRIMA'
+            'PORCENTAJE EXTRAPRIMA'
         ];
     }
 }
