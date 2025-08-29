@@ -98,4 +98,9 @@ class Vida extends Model
     {
         return $this->hasMany(PolizaVidaExtraPrimados::class, 'PolizaVida', 'Id');
     }
+
+    public function control_cartera()
+    {
+        return $this->belongsTo(PolizaControlCartera::class, 'VidaId', 'Id');
+    }
 }

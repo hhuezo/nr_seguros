@@ -6,8 +6,6 @@ use App\Models\temp\PolizaDeudaTempCartera;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\ToModel;
-use Maatwebsite\Excel\Events\BeforeImport;
-use Maatwebsite\Excel\Imports\HeadingRowFormatter;
 
 class PolizaDeudaTempCarteraImport implements ToModel, /*WithStartRow,*/ SkipsEmptyRows
 {
@@ -19,7 +17,6 @@ class PolizaDeudaTempCarteraImport implements ToModel, /*WithStartRow,*/ SkipsEm
     private $credito;
     private $encabezados = 0;
     private $TarifaExcel;
-
 
 
     public function __construct($Axo, $Mes, $PolizaDeuda, $FechaInicio, $FechaFinal, $credito, $TarifaExcel)
@@ -36,51 +33,58 @@ class PolizaDeudaTempCarteraImport implements ToModel, /*WithStartRow,*/ SkipsEm
 
     public function model(array $row)
     {
-        if (trim($row[0]) == "NIT" && trim($row[1]) == "DUI") {
-            $this->encabezados = 1;
-        }
-
-        if ($this->encabezados == 1 && (trim($row[0]) != "NIT" && trim($row[1]) != "DUI")) {
-
-            $Tasa = null;
-            if ($this->TarifaExcel == 1) {
-                $Tasa =  $row[24] ?? null;
+        try {
+            // Detectar encabezados (ya no viene "NIT", sino "DUI")
+            if (trim($row[0]) === "DUI") {
+                $this->encabezados = 1;
+                return null; // no insertar encabezado
             }
 
-            return new PolizaDeudaTempCartera([
-                'Nit' => $row[0],
-                'Dui' => trim($row[1]) !== "" ? $row[1] : $row[2],
-                'Pasaporte' => $row[2],
-                'Nacionalidad' => $row[3],
-                'FechaNacimiento' => $this->convertirFecha($row[4]),
-                'TipoPersona' => $row[5],
-                'PrimerApellido' => $row[6],
-                'SegundoApellido' => $row[7],
-                'ApellidoCasada' => $row[8],
-                'PrimerNombre' => $row[9],
-                'SegundoNombre' => $row[10],
-                'NombreSociedad' => $row[11],
-                'Sexo' => $row[12],
-                'FechaOtorgamiento' => $this->convertirFecha($row[13]),
-                'FechaVencimiento' => $this->convertirFecha($row[14]),
-                'Ocupacion' => $row[15],
-                'NumeroReferencia' => $row[16],
-                'MontoOtorgado' => $row[17],
-                'SaldoCapital' => $row[18],
-                'Intereses' => $row[19],
-                'InteresesMoratorios' => $row[20],
-                'InteresesCovid' => $row[21],
-                'MontoNominal' => $row[22],
-                'SaldoTotal' => $row[23],
-                'User' => auth()->user()->id,
-                'Axo' =>  $this->Axo,
-                'Mes' =>  $this->Mes,
-                'PolizaDeuda' =>  $this->PolizaDeuda,
-                'FechaInicio' =>  $this->FechaInicio,
-                'FechaFinal' =>  $this->FechaFinal,
-                'PolizaDeudaTipoCartera' => $this->credito,
-                'Tasa' => $Tasa,
-            ]);
+            if ($this->encabezados == 1) {
+                $Tasa = null;
+                if ($this->TarifaExcel == 1) {
+                    $Tasa = $row[23] ?? null; // PORCENTAJE EXTRAPRIMA está en la última columna
+                }
+
+                return new PolizaDeudaTempCartera([
+                    'Nit'                 => null, // ya no existe en Excel
+                    'Dui'                 => $row[0],
+                    'Pasaporte'           => $row[1],
+                    'Nacionalidad'        => $row[3],
+                    'FechaNacimiento'     => $this->convertirFecha($row[4]),
+                    'TipoPersona'         => $row[5],
+                    'PrimerApellido'      => $row[7],
+                    'SegundoApellido'     => $row[8],
+                    'ApellidoCasada'      => $row[9],
+                    'PrimerNombre'        => $row[10],
+                    'SegundoNombre'       => $row[11],
+                    'NombreSociedad'      => $row[12],
+                    'Sexo'                => $row[6], // GENERO
+                    'FechaOtorgamiento'   => $this->convertirFecha($row[13]),
+                    'FechaVencimiento'    => $this->convertirFecha($row[14]),
+                    'Ocupacion'           => null, // Excel ya no lo trae
+                    'NumeroReferencia'    => $row[15],
+                    'MontoOtorgado'       => $row[16],
+                    'SaldoCapital'        => $row[17],
+                    'Intereses'           => $row[18],
+                    'InteresesMoratorios' => $row[19],
+                    'InteresesCovid'      => $row[20],
+                    'MontoNominal'        => $row[21], // TARIFA
+                    'SaldoTotal'          => $row[22], // TIPO DE DEUDA
+                    'User'                => auth()->user()->id,
+                    'Axo'                 => $this->Axo,
+                    'Mes'                 => $this->Mes,
+                    'PolizaDeuda'         => $this->PolizaDeuda,
+                    'FechaInicio'         => $this->FechaInicio,
+                    'FechaFinal'          => $this->FechaFinal,
+                    'PolizaDeudaTipoCartera' => $this->credito,
+                    'Tasa'                => $Tasa,
+                ]);
+            }
+
+            return null; // si no es encabezado y no es data, saltar fila
+        } catch (\Exception $e) {
+           // dd("Error en model(): " . $e->getMessage(), $row);
         }
     }
 

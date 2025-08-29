@@ -88,6 +88,10 @@
                                         <span style="color: red;">El género no es válido</span>
                                         @endif
 
+                                        @if(in_array(11, $registro->Errores))
+                                        <span style="color: red;">El nombre debe contener solo letras</span>
+                                        @endif
+
                                     </td>
                                     <td>
                                         @if(in_array(2, $registro->Errores))
@@ -100,7 +104,7 @@
                                     <td>{{ $registro->Nit }}</td>
 
                                     <td>
-                                        @if (in_array(4, $registro->Errores))
+                                        @if (in_array(4, $registro->Errores) || in_array(11, $registro->Errores))
                                         <strong><span style="color: red;">
                                                 {{ $registro->PrimerNombre }}
                                                 {{ $registro->SegundoNombre }}

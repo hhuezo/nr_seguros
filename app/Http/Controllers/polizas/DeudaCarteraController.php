@@ -207,22 +207,58 @@ class DeudaCarteraController extends Controller
         }
 
         // 2. Validar primera fila
+        $expectedColumns = [
+            "DUI",
+            "PASAPORTE",
+            "CARNET RESI",
+            "NACIONALIDAD",
+            "FECNACIMIENTO",
+            "TIPO PERSONA",
+            "GENERO",
+            "PRIMERAPELLIDO",
+            "SEGUNDOAPELLIDO",
+            "APELLIDOCASADA",
+            "PRIMERNOMBRE",
+            "SEGUNDONOMBRE",
+            "NOMBRE SOCIEDAD",
+            "FECOTORGAMIENTO",
+            "FECHA DE VENCIMIENTO",
+            "NUMREFERENCIA",
+            "MONTO OTORGADO",
+            "SALDO DE CAPITAL",
+            "INTERES CORRIENTES",
+            "INTERES MORATORIO",
+            "INTERES COVID",
+            "TARIFA",
+            "TIPO DE DEUDA",
+            "PORCENTAJE EXTRAPRIMA",
+        ];
+
         $firstRow = $excel->getActiveSheet()->rangeToArray('A1:Z1')[0];
 
-        if (!isset($firstRow[0])) {
+        // Validar que no esté vacío
+        if (empty(array_filter($firstRow))) {
             $validator->errors()->add('Archivo', 'El archivo está vacío o no tiene el formato esperado');
             return back()->withErrors($validator);
         }
 
-        if (trim($firstRow[0]) !== "NIT") {
-            $validator->errors()->add('Archivo', 'Error de formato del archivo, La primera columna de la primera fila debe ser "NIT"');
+        // Normalizar (trim) para evitar espacios extras
+        $firstRow = array_map('trim', $firstRow);
+
+        // Validar cantidad de columnas
+        if (count($firstRow) < count($expectedColumns)) {
+            $validator->errors()->add('Archivo', 'Error de formato: faltan columnas en la primera fila');
             return back()->withErrors($validator);
         }
 
-        if (!isset($firstRow[1])) {
-            $validator->errors()->add('Archivo', 'Error de formato del archivo, El archivo no contiene la columna DUI');
-            return back()->withErrors($validator);
+        // Validar que todas las columnas sean iguales y en el mismo orden
+        foreach ($expectedColumns as $index => $expectedColumn) {
+            if (!isset($firstRow[$index]) || $firstRow[$index] !== $expectedColumn) {
+                $validator->errors()->add('Archivo', "Error de formato: la columna " . ($index + 1) . " debe ser '$expectedColumn'");
+                return back()->withErrors($validator);
+            }
         }
+
 
 
         PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->delete();
@@ -240,11 +276,11 @@ class DeudaCarteraController extends Controller
         }
 
 
-
         //verificando creditos repetidos
 
         $repetidos = PolizaDeudaTempCartera::where('User', auth()->user()->id)
             ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+            //->where('PolizaDeuda', $request->Id)
             ->groupBy('NumeroReferencia')
             ->havingRaw('COUNT(*) > 1')
             ->get();
@@ -402,6 +438,28 @@ class DeudaCarteraController extends Controller
                 array_push($errores_array, 10);
             }
 
+
+
+            // 11 error nombres o apellidos con caracteres inválidos
+            $regex = '/^[a-zA-ZÁÉÍÓÚáéíóúÑñ\s\.\'\-]+$/u'; // letras, espacios, punto, apóstrofe y guion
+            $campos = [
+                $obj->PrimerNombre,
+                $obj->SegundoNombre,
+                $obj->PrimerApellido,
+                $obj->SegundoApellido,
+                $obj->ApellidoCasada
+            ];
+
+            foreach ($campos as $valor) {
+                if ($valor && !preg_match($regex, $valor)) {
+                    $obj->TipoError = 11;
+                    $obj->update(); // guardamos inmediatamente
+                    array_push($errores_array, 11);
+                    break; // no necesitamos seguir revisando otros campos
+                }
+            }
+
+
             $obj->Errores = $errores_array;
         }
 
@@ -419,6 +477,48 @@ class DeudaCarteraController extends Controller
             $deuda_tipo_cartera_id = $deuda_tipo_cartera->Id;
             return view('polizas.deuda.respuesta_poliza_error', compact('data_error', 'deuda', 'deuda_tipo_cartera_id'));
         }
+
+
+
+        // Filtrar nombres y apellidos que contengan caracteres inválidos
+        $errores_nombre_apellido = $cartera_temp->filter(function ($item) {
+            // Solo letras, espacios y punto
+            $regex = '/^[a-zA-ZÁÉÍÓÚáéíóúÑñ\s\.]+$/u';
+
+            $campos = [
+                $item->PrimerNombre,
+                $item->SegundoNombre,
+                $item->PrimerApellido,
+                $item->SegundoApellido,
+                $item->ApellidoCasada
+            ];
+
+            foreach ($campos as $valor) {
+                if ($valor && !preg_match($regex, $valor)) {
+                    return true; // hay error
+                }
+            }
+
+            return false; // todos correctos
+        });
+
+        // Actualizar TipoError = 11 en los registros que tienen errores
+        foreach ($errores_nombre_apellido as $obj) {
+            $obj->TipoError = 11;
+            $obj->save();
+        }
+
+        // Si hay errores en nombres o apellidos
+        if ($errores_nombre_apellido->count() > 0) {
+            $deuda_tipo_cartera_id = $deuda_tipo_cartera->Id;
+            return view('polizas.deuda.respuesta_poliza_error', [
+                'data_error' => $errores_nombre_apellido,
+                'deuda' => $deuda,
+                'deuda_tipo_cartera_id' => $deuda_tipo_cartera_id
+            ]);
+        }
+
+
 
 
         //calculando edades y fechas de nacimiento
@@ -474,7 +574,7 @@ class DeudaCarteraController extends Controller
                 }
             }
         } else {
-             //tasas diferenciadas solo los que si traen la tarifa en el excel
+            //tasas diferenciadas solo los que si traen la tarifa en el excel
             $tasas_diferenciadas = $deuda_tipo_cartera->tasa_diferenciada;
             foreach ($tasas_diferenciadas as $tasa) {
                 PolizaDeudaTempCartera::where('User', auth()->user()->id)

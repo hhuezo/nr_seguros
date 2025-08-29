@@ -202,7 +202,7 @@
                                         <li id="li-suscripciones"><a
                                                 href="{{ url('suscripciones') }}">Suscripciones</a>
                                         </li>
-                                       <li><a href="{{ url('fechasferiadas') }}">Fechas Feriadas </a></li>
+                                        <li><a href="{{ url('fechasferiadas') }}">Fechas Feriadas </a></li>
                                         <li><a href="{{ url('estadoscasos') }}">Estado del Caso</a></li>
                                         <li><a href="{{ url('tiposordenesmedicas') }}">Tipo de Orden Medica</a></li>
                                         <li><a href="{{ url('tiposimc') }}">Tipo de IMC</a></li>
@@ -272,6 +272,7 @@
                                                 href="{{ url('polizas/desempleo') }}">Desempleo</a></li>
                                         <li id="li-poliza-seguro"><a href="{{ url('poliza/seguro') }}">Polizas
                                                 seguro</a></li>
+                                        <li id="li-control-cartera"><a href="{{ url('control_cartera') }}">Control carteras</a></li>
                                     </ul>
                                 </li>
 

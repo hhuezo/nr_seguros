@@ -57,12 +57,18 @@ class Desempleo extends Model
         return $this->belongsTo(EstadoPoliza::class, 'EstadoPoliza', 'Id');
     }
 
-    public function saldos(){
+    public function saldos()
+    {
         return $this->belongsTo(SaldoMontos::class, 'Saldos', 'Id');
     }
 
-    public function planes(){
+    public function planes()
+    {
         return $this->belongsTo(Plan::class, 'Plan', 'Id');
     }
 
+    public function control_cartera()
+    {
+        return $this->belongsTo(PolizaControlCartera::class, 'DesempleoId', 'Id');
+    }
 }

@@ -32,8 +32,8 @@ use App\Http\Controllers\polizas\DeudaCarteraFedeController;
 use App\Http\Controllers\polizas\DeudaController;
 use App\Http\Controllers\polizas\DeudaRenovacionController;
 use App\Http\Controllers\polizas\DeudaTasaDiferenciadaController;
+use App\Http\Controllers\polizas\PolizaControlCarteraController;
 use App\Http\Controllers\polizas\PolizaSeguroController;
-use App\Http\Controllers\polizas\ReporteDeclarativasController;
 use App\Http\Controllers\polizas\VidaController;
 use App\Http\Controllers\polizas\ResidenciaController;
 use App\Http\Controllers\polizas\VidaFedeController;
@@ -49,7 +49,6 @@ use App\Http\Controllers\suscripcion\TipoOrdenMedicaController;
 use App\Http\Controllers\suscripcion\TipoImcController;
 use App\Http\Controllers\suscripcion\TipoClienteController;
 use App\Http\Controllers\suscripcion\TipoCreditoController;
-use App\Models\polizas\PolizaSeguro;
 
 /*
 |--------------------------------------------------------------------------
@@ -400,8 +399,9 @@ Route::middleware(['auth'])->group(function () {
 
 
     //reportes declarativas
-    Route::get('reportes/polizas_declarativas', [ReporteDeclarativasController::class, 'polizas_declarativas']);
-
+    Route::get('control_cartera', [PolizaControlCarteraController::class, 'index']);
+    Route::get('control_cartera/{id}/{tipo}/{anio}/{mes}', [PolizaControlCarteraController::class, 'edit']);
+    Route::put('control_cartera/{id}', [PolizaControlCarteraController::class, 'update']);
 
     //suscripciones
 
