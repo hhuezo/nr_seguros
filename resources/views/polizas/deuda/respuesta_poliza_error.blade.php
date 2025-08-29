@@ -36,7 +36,7 @@
                                 <tr>
                                     <th>Error</th>
                                     <th>DUI</th>
-                                    <th>NIT</th>
+                                    {{-- <th>NIT</th> --}}
                                     <th>Nombre</th>
                                     <th>Fecha nacimiento</th>
                                     <th>Fecha otorgamiento</th>
@@ -101,7 +101,7 @@
                                         @endif
                                     </td>
 
-                                    <td>{{ $registro->Nit }}</td>
+                                    {{-- <td>{{ $registro->Nit }}</td> --}}
 
                                     <td>
                                         @if (in_array(4, $registro->Errores) || in_array(11, $registro->Errores))

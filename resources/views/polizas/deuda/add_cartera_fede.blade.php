@@ -9,12 +9,12 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form  action="{{ url('polizas/deuda/fede/create_pago') }}"  id="uploadForm{{$obj->Id}}" method="POST" enctype="multipart/form-data">
+            <form  action="{{ url('polizas/deuda/fede/create_pago') }}"  id="uploadFormFede{{$obj->Id}}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body">
                     <div class="form-group row">
                         <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Linea de
-                            Credito..</label>
+                            Credito</label>
                         <input type="hidden" name="PolizaDeudaTipoCartera" value="{{ $obj->Id }}">
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                             <input type="text" class="form-control" value="{{$obj->tipo_cartera->Nombre}}" readonly>
@@ -82,7 +82,7 @@
     </div>
 </div>
 <script>
-    document.getElementById('uploadForm{{$obj->Id}}').addEventListener('submit', function() {
+    document.getElementById('uploadFormFede{{$obj->Id}}').addEventListener('submit', function() {
         document.getElementById('loading-overlay').style.display = 'flex'; // Muestra el overlay de carga
     });
 

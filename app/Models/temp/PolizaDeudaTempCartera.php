@@ -66,7 +66,9 @@ class PolizaDeudaTempCartera extends Model
         'Tasa',
         'Tarifa',
         'TipoDeuda',
-        'PorcentajeExtraprima'
+        'PorcentajeExtraprima',
+        'TipoDocumento',
+        'SaldoInteresMora'
     ];
 
 

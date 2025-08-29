@@ -19,6 +19,9 @@ return new class extends Migration
             $table->string('Tarifa', 50)->nullable();
             $table->string('TipoDeuda', 50)->nullable();
             $table->string('PorcentajeExtraprima', 50)->nullable();
+            $table->string('TipoDocumento', 50)->nullable();
+            $table->decimal('SaldoInteresMora', 16, 4)->nullable();
+
 
             // Eliminar columna Ocupacion
             $table->dropColumn('Ocupacion');
@@ -35,7 +38,8 @@ return new class extends Migration
             $table->renameColumn('CarnetResidencia', 'Nit');
 
             // Eliminar las nuevas columnas
-            $table->dropColumn(['Tarifa', 'TipoDeuda', 'PorcentajeExtraprima']);
+            $table->dropColumn(['Tarifa', 'TipoDeuda', 'PorcentajeExtraprima','TipoDocumento','SaldoInteresMora']);
+
 
             // Restaurar columna Ocupacion
             $table->string('Ocupacion')->nullable();

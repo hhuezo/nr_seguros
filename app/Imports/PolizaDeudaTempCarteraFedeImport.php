@@ -42,28 +42,32 @@ class PolizaDeudaTempCarteraFedeImport implements ToModel, /*WithStartRow,*/ Ski
     public function model(array $row)
     {
          //dd($row[0]);
-        if (trim($row[0]) == "DUI o documento de identidad") {
+        if (trim($row[1]) == "DUI o documento de identidad") {
             $this->encabezados = 1;
         }
 
-        if ($this->encabezados == 1 &&  trim($row[0]) != "DUI o documento de identidad") {
+        if ($this->encabezados == 1 &&  trim($row[1]) != "DUI o documento de identidad") {
 
 
             return new PolizaDeudaTempCartera([
-                'Dui' => $row[0],
-                'PrimerApellido' => $row[1],
-                'SegundoApellido' => $row[2],
-                'PrimerNombre' => $row[3],
-                'FechaNacimiento' => $this->convertirFecha($row[4]),
-                'Sexo' => $row[5],
-                'NumeroReferencia' => $row[6],
-                'FechaOtorgamiento' => $this->convertirFecha($row[7]),
-                'MontoOtorgado' => $row[8],
-                'SaldoCapital' => $row[9],
-                'Intereses' => $row[10],
-                'MoraCapital' => $row[11],
-                'InteresesMoratorios' => $row[12],
-                'InteresesCovid' => $row[13],
+                'TipoDocumento' => $row[0],
+                'Dui' => $row[1],
+                'PrimerApellido' => $row[2],
+                'SegundoApellido' => $row[3],
+                'PrimerNombre' => $row[4],
+                'Nacionalidad' => $row[5],
+                'FechaNacimiento' => $this->convertirFecha($row[6]),
+                'Sexo' => $row[7],
+                'NumeroReferencia' => $row[8],
+                'FechaOtorgamiento' => $this->convertirFecha($row[9]),
+                'MontoOtorgado' => $row[10],
+                'SaldoCapital' => $row[11],
+                'Intereses' => $row[12],
+                'MoraCapital' => $row[13],
+                'SaldoInteresMora' => !empty($row[14]) ? $row[14] : null,
+                'InteresesCovid' => $row[15],
+                'PorcentajeExtraprima' => $row[16],
+                'Tarifa' => $row[17],
                 'User' => auth()->user()->id,
                 'Axo' =>  $this->Axo,
                 'Mes' =>  $this->Mes,

@@ -74,17 +74,59 @@ class DeudaCarteraFedeController extends Controller
             return back()->withErrors($validator);
         }
 
-        if (trim($firstRow[0]) !== "DUI o documento de identidad") {
-            $validator->errors()->add('Archivo', 'Error de formato del archivo, La primera columna de la primera fila debe ser "DUI o documento de identidad"');
-            return back()->withErrors($validator);
+
+        // Definir encabezados esperados
+        $expectedHeaders = [
+            "Tipo de documento",
+            "DUI o documento de identidad",
+            "Primer Apellido",
+            "Segundo Apellido",
+            "Nombres",
+            "Nacionalidad",
+            "Fecha de Nacimiento",
+            "Género",
+            "Nro. de Préstamo",
+            "Fecha de otorgamiento",
+            "Monto original de desembolso",
+            "Saldo de deuda capital actual",
+            "Saldo intereses corrientes",
+            "Mora capital",
+            "Saldo intereses por mora",
+            "Intereses Covid",
+            "Extra Prima",
+            "TARIFA",
+        ];
+
+
+        // Función para convertir índice (0=A, 1=B, ...) en letra de Excel
+        function columnLetter($index)
+        {
+            $letter = '';
+            while ($index >= 0) {
+                $letter = chr($index % 26 + 65) . $letter;
+                $index = floor($index / 26) - 1;
+            }
+            return $letter;
+        }
+
+        // Validar que coincidan sin importar mayúsculas/minúsculas
+        foreach ($expectedHeaders as $index => $header) {
+            $value = isset($firstRow[$index]) ? trim($firstRow[$index]) : null;
+
+            // Comparar en minúsculas
+            if (mb_strtolower($value) !== mb_strtolower($header)) {
+                $validator->errors()->add(
+                    'Archivo',
+                    "El encabezado en la columna " . columnLetter($index) . " debe ser '{$header}', encontrado: '{$value}'"
+                );
+                return back()->withErrors($validator);
+            }
         }
 
 
 
         PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->delete();
         Excel::import(new PolizaDeudaTempCarteraFedeImport($date->year, $date->month, $deuda->Id, $request->FechaInicio, $request->FechaFinal, $deuda_tipo_cartera->Id), $archivo);
-
-
 
 
         //verificando creditos repetidos
@@ -204,6 +246,27 @@ class DeudaCarteraFedeController extends Controller
                 array_push($errores_array, 10);
             }
 
+
+
+            // 11. error nombres o apellidos con caracteres inválidos
+            $regex = '/^[a-zA-ZÁÉÍÓÚáéíóúÑñ\s\.\'\-]+$/u'; // letras, espacios, punto, apóstrofe y guion
+            $campos = [
+                $obj->PrimerNombre,
+                $obj->SegundoNombre,
+                $obj->PrimerApellido,
+                $obj->SegundoApellido,
+                $obj->ApellidoCasada
+            ];
+
+            foreach ($campos as $valor) {
+                if ($valor && !preg_match($regex, $valor)) {
+                    $obj->TipoError = 11;
+                    $obj->update();
+                    array_push($errores_array, 11);
+                    break; // no revisar más campos
+                }
+            }
+
             $obj->Errores = $errores_array;
         }
 
@@ -212,7 +275,8 @@ class DeudaCarteraFedeController extends Controller
         //dd($data_error);
 
         if ($data_error->count() > 0) {
-            return view('polizas.deuda.respuesta_poliza_error', compact('data_error', 'deuda', 'credito'));
+            $deuda_tipo_cartera_id = $deuda_tipo_cartera->Id;
+            return view('polizas.deuda.respuesta_poliza_error', compact('data_error', 'deuda','deuda_tipo_cartera_id'));
         }
 
 
