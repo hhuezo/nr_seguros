@@ -26,42 +26,41 @@ class ResponsabilidadMaximaExport implements FromCollection, WithHeadings
         $deuda = Deuda::findOrFail($this->id);
         $responsabilidadMaxima = $deuda->ResponsabilidadMaxima ?? 1000000;
 
-        $data = PolizaDeudaTempCartera::where('PolizaDeuda', $this->id)->where('User', auth()->user()->id)
-            ->where('TotalCredito','>', $responsabilidadMaxima)
+        $data = PolizaDeudaTempCartera::where('PolizaDeuda', $this->id)
+            ->where('User', auth()->user()->id)
+            ->where('TotalCredito', '>', $responsabilidadMaxima)
             ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
             ->join('tipo_cartera as tc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'tc.Id')
             ->select([
-                'Nit',
-                'Dui',
-                'Pasaporte',
-                'Nacionalidad',
-                'FechaNacimiento',
-                'TipoPersona',
-                'PrimerApellido',
-                'SegundoApellido',
-                'ApellidoCasada',
-                'PrimerNombre',
-                'SegundoNombre',
-                'NombreSociedad',
-                'Sexo',
-                'FechaOtorgamiento',
-                'FechaVencimiento',
-                'Ocupacion',
-                DB::raw("CONCAT(NumeroReferencia, ' ') AS NumeroReferencia"),
-                DB::raw("IF(MontoOtorgado IS NULL, '', ROUND(MontoOtorgado, 2)) AS MontoOtorgado"),
-                DB::raw("IF(SaldoCapital IS NULL, '', ROUND(SaldoCapital, 2)) AS SaldoCapital"),
-                DB::raw("IF(Intereses IS NULL, '', ROUND(Intereses, 2)) AS Intereses"),
-                DB::raw("IF(InteresesMoratorios IS NULL, '', ROUND(InteresesMoratorios, 2)) AS InteresesMoratorios"),
-                DB::raw("IF(InteresesCovid IS NULL, '', ROUND(InteresesCovid, 2)) AS InteresesCovid"),
-                DB::raw("IF(MontoNominal IS NULL, '', ROUND(MontoNominal, 2)) AS MontoNominal"),
-                DB::raw("IF(SaldoTotal IS NULL, '', ROUND(SaldoTotal, 2)) AS SaldoTotal"),
-                DB::raw("IF(TotalCredito IS NULL, '', ROUND(TotalCredito, 2)) AS total_saldo"), // Prima Mensual
-                'tc.Nombre as TipoCartera',
-                DB::raw("CONCAT(sm.Abreviatura, ' - ', sm.Descripcion) AS LineaCredito"),
-                // '' // Porcentaje Extraprima cambiar
+                'Dui',                                 // DUI
+                'Pasaporte',                           // PASAPORTE
+                DB::raw("'' AS CarnetResi"),          // CARNET RESI (si no existe, lo dejamos vacío)
+                'Nacionalidad',                        // NACIONALIDAD
+                'FechaNacimiento',                      // FECNACIMIENTO
+                'TipoPersona',                         // TIPO PERSONA
+                'Sexo',                                // GENERO
+                'PrimerApellido',                      // PRIMERAPELLIDO
+                'SegundoApellido',                     // SEGUNDOAPELLIDO
+                'ApellidoCasada',                      // APELLIDOCASADA
+                'PrimerNombre',                        // PRIMERNOMBRE
+                'SegundoNombre',                       // SEGUNDONOMBRE
+                'NombreSociedad',                       // NOMBRE SOCIEDAD
+                'FechaOtorgamiento',                    // FECOTORGAMIENTO
+                'FechaVencimiento',                     // FECHA DE VENCIMIENTO
+                DB::raw("NumeroReferencia AS NumReferencia"),  // NUMREFERENCIA
+                'MontoOtorgado',                        // MONTO OTORGADO
+                'SaldoCapital',                         // SALDO DE CAPITAL
+                'Intereses AS InteresCorrientes',       // INTERES CORRIENTES
+                'InteresesMoratorios',                  // INTERES MORATORIO
+                'InteresesCovid',                        // INTERES COVID
+                'MontoNominal AS Tarifa',               // TARIFA
+                'tc.Nombre AS TipoDeuda',               // TIPO DE DEUDA
+                'Tasa AS PorcentajeExtraprima',        // PORCENTAJE EXTRAPRIMA
             ])
             ->orderBy('NumeroReferencia')
             ->get();
+
+
 
         return $data;
     }
@@ -70,6 +69,32 @@ class ResponsabilidadMaximaExport implements FromCollection, WithHeadings
     public function headings(): array
     {
         return [
+            'DUI',
+            'PASAPORTE',
+            'CARNET RESI',
+            'NACIONALIDAD',
+            'FECNACIMIENTO',
+            'TIPO PERSONA',
+            'GENERO',
+            'PRIMERAPELLIDO',
+            'SEGUNDOAPELLIDO',
+            'APELLIDOCASADA',
+            'PRIMERNOMBRE',
+            'SEGUNDONOMBRE',
+            'NOMBRE SOCIEDAD',
+            'FECOTORGAMIENTO',
+            'FECHA DE VENCIMIENTO',
+            'NUMREFERENCIA',
+            'MONTO OTORGADO',
+            'SALDO DE CAPITAL',
+            'INTERES CORRIENTES',
+            'INTERES MORATORIO',
+            'INTERES COVID',
+            'TARIFA',
+            'TIPO DE DEUDA',
+            'PORCENTAJE EXTRAPRIMA',
+        ];
+        /*return [
             'NIT',
             'DUI',
             'PASAPORTE O CARNET DE RESIDENTE ASEGURADO',
@@ -98,6 +123,6 @@ class ResponsabilidadMaximaExport implements FromCollection, WithHeadings
             'TIPO CARTERA',
             'LINEA CREDITO',
             //'PORCENTAJE EXTRAPRIMA'
-        ];
+        ];*/
     }
 }
