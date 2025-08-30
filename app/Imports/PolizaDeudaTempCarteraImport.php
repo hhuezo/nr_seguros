@@ -66,7 +66,9 @@ class PolizaDeudaTempCarteraImport implements ToModel, /*WithStartRow,*/ SkipsEm
                     'InteresesMoratorios' => $row[19],
                     'InteresesCovid'      => $row[20],
 
-                    'Tarifa'        => $row[21],
+                    'Tasa' => (isset($row[21]) && trim($row[21]) !== '' && is_numeric($row[21]))
+                        ? (float) $row[21] : null, // columna de tarifa
+
                     'TipoDeuda'          => $row[22],
                     'PorcentajeExtraprima'        => $row[23],
 
@@ -83,7 +85,7 @@ class PolizaDeudaTempCarteraImport implements ToModel, /*WithStartRow,*/ SkipsEm
 
             return null; // si no es encabezado y no es data, saltar fila
         } catch (\Exception $e) {
-           // dd("Error en model(): " . $e->getMessage(), $row);
+            // dd("Error en model(): " . $e->getMessage(), $row);
         }
     }
 

@@ -4,10 +4,8 @@ namespace App\Imports;
 
 use App\Models\temp\PolizaDeudaTempCartera;
 use Carbon\Carbon;
-use Exception;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\ToModel;
-use Maatwebsite\Excel\Concerns\WithStartRow;
 
 class PolizaDeudaTempCarteraFedeImport implements ToModel, /*WithStartRow,*/ SkipsEmptyRows
 {
@@ -41,7 +39,6 @@ class PolizaDeudaTempCarteraFedeImport implements ToModel, /*WithStartRow,*/ Ski
     }
     public function model(array $row)
     {
-         //dd($row[0]);
         if (trim($row[1]) == "DUI o documento de identidad") {
             $this->encabezados = 1;
         }
@@ -67,7 +64,10 @@ class PolizaDeudaTempCarteraFedeImport implements ToModel, /*WithStartRow,*/ Ski
                 'SaldoInteresMora' => !empty($row[14]) ? $row[14] : null,
                 'InteresesCovid' => $row[15],
                 'PorcentajeExtraprima' => $row[16],
-                'Tarifa' => $row[17],
+
+                'Tasa' => (isset($row[17]) && trim($row[17]) !== '' && is_numeric($row[17]))
+                        ? (float) $row[17] : null, // columna de tarifa
+
                 'User' => auth()->user()->id,
                 'Axo' =>  $this->Axo,
                 'Mes' =>  $this->Mes,
