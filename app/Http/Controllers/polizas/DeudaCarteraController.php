@@ -1489,8 +1489,6 @@ class DeudaCarteraController extends Controller
 
     public function store_poliza(Request $request)
     {
-        //dd("");
-
         $mes = $request->MesActual; // El formato 'm' devuelve el mes con ceros iniciales (por ejemplo, "02")
         $anio = $request->AxoActual;
 
@@ -1634,7 +1632,7 @@ class DeudaCarteraController extends Controller
         foreach ($tempDataValidados as $tempRecordV) {
             try {
                 $poliza = new PolizaDeudaCartera();
-                $poliza->Nit = $tempRecordV->Nit;
+                $poliza->CarnetResidencia = $tempRecordV->CarnetResidencia;
                 $poliza->Dui = $tempRecordV->Dui;
                 $poliza->Pasaporte = $tempRecordV->Pasaporte;
                 $poliza->Nacionalidad = $tempRecordV->Nacionalidad;
@@ -1649,7 +1647,6 @@ class DeudaCarteraController extends Controller
                 $poliza->Sexo = $tempRecordV->Sexo;
                 $poliza->FechaOtorgamiento = $tempRecordV->FechaOtorgamiento;
                 $poliza->FechaVencimiento = $tempRecordV->FechaVencimiento;
-                $poliza->Ocupacion = $tempRecordV->Ocupacion;
                 $poliza->NumeroReferencia = $tempRecordV->NumeroReferencia;
                 $poliza->MontoOtorgado = $tempRecordV->MontoOtorgado;
                 $poliza->SaldoCapital = $tempRecordV->SaldoCapital;
@@ -1669,10 +1666,15 @@ class DeudaCarteraController extends Controller
                 $poliza->EdadDesembloso = $tempRecordV->EdadDesembloso;
                 $poliza->LineaCredito = $tempRecordV->LineaCredito;
                 $poliza->NoValido = $tempRecordV->NoValido;
+                $poliza->PolizaDeudaTipoCartera = $tempRecordV->PolizaDeudaTipoCartera;
                 $poliza->Tasa = $tempRecordV->Tasa;
                 $poliza->TotalCredito = $tempRecordV->TotalCredito;
-                $poliza->PolizaDeudaTipoCartera = $tempRecordV->PolizaDeudaTipoCartera;
                 $poliza->FechaOtorgamientoDate = $tempRecordV->FechaOtorgamientoDate;
+
+                $poliza->TipoDeuda = $tempRecordV->TipoDeuda;
+                $poliza->PorcentajeExtraprima = $tempRecordV->PorcentajeExtraprima;
+                $poliza->TipoDocumento = $tempRecordV->TipoDocumento;
+                $poliza->SaldoInteresMora = $tempRecordV->SaldoInteresMora;
                 $poliza->save();
             } catch (\Exception $e) {
                 // Captura errores y los guarda en el log
