@@ -368,9 +368,9 @@ class VidaController extends Controller
         ];
 
         // Reglas condicionales
-        if ($request->TipoCobro == 1) {
-            $rules['LimiteMaximoIndividual'] = 'required|numeric|min:0.01';
-        }
+        // if ($request->TipoCobro == 1) {
+        //     $rules['LimiteMaximoIndividual'] = 'required|numeric|min:0.01';
+        // }
 
         if ($request->TipoCobro == 2 && $request->TipoTarifa == 1) {
             $rules['SumaAsegurada'] = 'required|numeric|min:0.01';
@@ -453,6 +453,7 @@ class VidaController extends Controller
 
             if ($request->TipoCobro == 1) {
                 $vida->LimiteMaximoIndividual = $request->LimiteMaximoIndividual ?? null;
+                $vida->SumaAsegurada = $request->SumaAsegurada ?? null;
             }
 
             if ($request->TipoCobro == 2 && $request->TipoTarifa == 1) {
@@ -867,6 +868,8 @@ class VidaController extends Controller
 
     public function create_pago(Request $request)
     {
+
+
         $request->validate([
             'Axo' => 'required|integer',
             'Mes' => 'required|integer|between:1,12',
@@ -895,6 +898,7 @@ class VidaController extends Controller
             'PolizaVidaTipoCartera.integer' => 'El campo tipo cartera no válido.',
         ]);
 
+
         $id = $request->Id;
 
         $poliza_vida = Vida::findOrFail($id);
@@ -911,11 +915,86 @@ class VidaController extends Controller
                 ->withErrors(['excel_file' => 'La cartera solo puede contener un solo libro de Excel']);
         }
 
+
+        // Crear validador vacío
+        $validator = Validator::make([], []);
+
+        // 2. Validar primera fila
+        $expectedColumns = [
+            "DUI",
+            "PASAPORTE",
+            "CARNET RESI",
+            "NACIONALIDAD",
+            "FECNACIMIENTO",
+            "TIPO PERSONA",
+            "GENERO",
+            "PRIMERAPELLIDO",
+            "SEGUNDOAPELLIDO",
+            "APELLIDOCASADA",
+            "PRIMERNOMBRE",
+            "SEGUNDONOMBRE",
+            "NOMBRE SOCIEDAD",
+            "FECOTORGAMIENTO",
+            "FECHA DE VENCIMIENTO",
+            "NUMREFERENCIA",
+            "SUMA ASEGURADA",
+            "SALDO DE CAPITAL",
+            "INTERES CORRIENTES",
+            "INTERES MORATORIO",
+            "INTERES COVID",
+            "TARIFA",
+            "TIPO DE DEUDA",
+            "PORCENTAJE EXTRAPRIMA",
+        ];
+
+        $firstRow = $excel->getActiveSheet()->rangeToArray('A1:Z1')[0];
+
+        // Validar que no esté vacío
+        if (empty(array_filter($firstRow))) {
+            $validator->errors()->add('Archivo', 'El archivo está vacío o no tiene el formato esperado');
+            return back()->withErrors($validator);
+        }
+
+        // Normalizar (trim) y pasar a minúsculas para ignorar mayúsculas
+        $firstRow = array_map(fn($v) => mb_strtolower(trim($v)), $firstRow);
+        $expectedColumnsLower = array_map(fn($v) => mb_strtolower($v), $expectedColumns);
+
+        // Función para convertir índice a letra (0 => A, 1 => B, etc.)
+        function columnLetter($index)
+        {
+            $letter = '';
+            while ($index >= 0) {
+                $letter = chr($index % 26 + 65) . $letter;
+                $index = floor($index / 26) - 1;
+            }
+            return $letter;
+        }
+
+        // Validar cantidad de columnas
+        if (count($firstRow) < count($expectedColumnsLower)) {
+            $validator->errors()->add('Archivo', 'Error de formato: faltan columnas en la primera fila');
+            return back()->withErrors($validator);
+        }
+
+        // Validar que todas las columnas sean iguales y en el mismo orden
+        foreach ($expectedColumnsLower as $index => $expectedColumn) {
+            if (!isset($firstRow[$index]) || $firstRow[$index] !== $expectedColumn) {
+                $validator->errors()->add(
+                    'Archivo',
+                    "Error de formato: la columna " . columnLetter($index) . " debe ser '{$expectedColumns[$index]}'"
+                );
+                return back()->withErrors($validator);
+            }
+        }
+
+
+
+
+
         //borrar datos de tabla temporal
         VidaCarteraTemp::where('User', auth()->user()->id)->where('PolizaVida', $id)->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)->delete();
 
         Excel::import(new VidaCarteraTempImport($request->Axo, $request->Mes, $id, $request->FechaInicio, $request->FechaFinal, $request->PolizaVidaTipoCartera, $poliza_vida->TarifaExcel), $archivo);
-
 
 
 
@@ -958,6 +1037,8 @@ class VidaController extends Controller
             $montos = [$poliza_vida->SumaAsegurada];
         } else {
             $montos = explode(',', $poliza_vida->Multitarifa);
+
+            dd($montos);
         }
 
         foreach ($cartera_temp as $obj) {
@@ -1054,7 +1135,24 @@ class VidaController extends Controller
             }
 
 
+             // 11 error nombres o apellidos con caracteres inválidos
+            $regex = '/^[a-zA-ZÁÉÍÓÚáéíóúÑñ\s\.\'\-]+$/u'; // letras, espacios, punto, apóstrofe y guion
+            $campos = [
+                $obj->PrimerNombre,
+                $obj->SegundoNombre,
+                $obj->PrimerApellido,
+                $obj->SegundoApellido,
+                $obj->ApellidoCasada
+            ];
 
+            foreach ($campos as $valor) {
+                if ($valor && !preg_match($regex, $valor)) {
+                    $obj->TipoError = 11;
+                    $obj->update(); // guardamos inmediatamente
+                    array_push($errores_array, 11);
+                    break; // no necesitamos seguir revisando otros campos
+                }
+            }
 
 
 

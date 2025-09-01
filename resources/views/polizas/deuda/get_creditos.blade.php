@@ -5,7 +5,6 @@
                 <th>Número crédito</th>
                 <th>Tipo cartera</th>
                 <th>DUI</th>
-                <th>NIT</th>
                 <th>Nombre</th>
                 <th>Fecha nacimiento</th>
                 <th>Fecha otorgamiento</th>
@@ -28,7 +27,6 @@
                         ({{ $registro->Abreviatura }})
                     </td>
                     <td>{{ $registro->Dui }}</td>
-                    <td>{{ $registro->Nit }}</td>
                     <td>{{ $registro->PrimerNombre }}
                         {{ $registro->SegundoNombre }}
                         {{ $registro->PrimerApellido }}
@@ -129,9 +127,7 @@
                         @endif
 
                         <td>
-                            {{ $registro->Dui && $registro->Nit && $registro->Dui !== $registro->Nit
-                                ? $registro->Dui . ' - ' . $registro->Nit
-                                : $registro->Dui ?? $registro->Nit }}
+                            {{ $registro->Dui ?? '' }}
                         </td>
 
 
@@ -165,13 +161,14 @@
                         @endif
                         <td>
                             @if ($tipo == 1)
-                            <button type="button" id="cumulo-{{ $registro->Dui }}" class="btn btn-{{$registro->Validado == 0 ? 'success':'primary'}}"
-                                data-toggle="modal" data-target=".bs-example-modal-lg"
-                                onclick="get_creditos_detalle('{{ $registro->Dui }}',{{ $deuda->Id }},{{ $tipo }})"><i
-                                    class="fa fa-eye"></i></button>
-                            @else
-                                <button type="button" class="btn btn-primary"
+                                <button type="button" id="cumulo-{{ $registro->Dui }}"
+                                    class="btn btn-{{ $registro->Validado == 0 ? 'success' : 'primary' }}"
                                     data-toggle="modal" data-target=".bs-example-modal-lg"
+                                    onclick="get_creditos_detalle('{{ $registro->Dui }}',{{ $deuda->Id }},{{ $tipo }})"><i
+                                        class="fa fa-eye"></i></button>
+                            @else
+                                <button type="button" class="btn btn-primary" data-toggle="modal"
+                                    data-target=".bs-example-modal-lg"
                                     onclick="get_creditos_detalle('{{ $registro->Dui }}',{{ $deuda->Id }},{{ $tipo }})"><i
                                         class="fa fa-eye"></i></button>
                             @endif

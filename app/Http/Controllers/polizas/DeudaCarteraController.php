@@ -1575,8 +1575,7 @@ class DeudaCarteraController extends Controller
 
             try {
                 $poliza = new PolizaDeudaCartera();
-                //$poliza->Id = $tempRecord->Id;
-                $poliza->Nit = $tempRecord->Nit;
+                $poliza->CarnetResidencia = $tempRecord->CarnetResidencia;
                 $poliza->Dui = $tempRecord->Dui;
                 $poliza->Pasaporte = $tempRecord->Pasaporte;
                 $poliza->Nacionalidad = $tempRecord->Nacionalidad;
@@ -1591,7 +1590,6 @@ class DeudaCarteraController extends Controller
                 $poliza->Sexo = $tempRecord->Sexo;
                 $poliza->FechaOtorgamiento = $tempRecord->FechaOtorgamiento;
                 $poliza->FechaVencimiento = $tempRecord->FechaVencimiento;
-                $poliza->Ocupacion = $tempRecord->Ocupacion;
                 $poliza->NumeroReferencia = $tempRecord->NumeroReferencia;
                 $poliza->MontoOtorgado = $tempRecord->MontoOtorgado;
                 $poliza->SaldoCapital = $tempRecord->SaldoCapital;
@@ -1615,6 +1613,12 @@ class DeudaCarteraController extends Controller
                 $poliza->Tasa = $tempRecord->Tasa;
                 $poliza->TotalCredito = $tempRecord->TotalCredito;
                 $poliza->FechaOtorgamientoDate = $tempRecord->FechaOtorgamientoDate;
+
+                $poliza->TipoDeuda = $tempRecord->TipoDeuda;
+                $poliza->PorcentajeExtraprima = $tempRecord->PorcentajeExtraprima;
+                $poliza->TipoDocumento = $tempRecord->TipoDocumento;
+                $poliza->SaldoInteresMora = $tempRecord->SaldoInteresMora;
+
                 $poliza->save();
             } catch (\Exception $e) {
                 // Captura errores y los guarda en el log

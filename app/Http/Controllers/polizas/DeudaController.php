@@ -602,8 +602,7 @@ class DeudaController extends Controller
             $requisito->MontoFinal = $request->MontoFinal;
             $requisito->Perfil = $request->Perfil;
             $requisito->save();
-             return redirect('polizas/deuda/' . $requisito->Deuda . '?tab=3')->with('success', 'El registro ha sido modificado correctamente');
-
+            return redirect('polizas/deuda/' . $requisito->Deuda . '?tab=3')->with('success', 'El registro ha sido modificado correctamente');
         } catch (ModelNotFoundException $e) {
             alert()->error('Requisito no encontrado');
             return back();
@@ -1762,7 +1761,7 @@ class DeudaController extends Controller
                     'pdtc.Id',
                     'pdtc.Dui',
                     'pdtc.Edad',
-                    'pdtc.Nit',
+                    //'pdtc.Nit',
                     'pdtc.PrimerNombre',
                     'pdtc.SegundoNombre',
                     'pdtc.PrimerApellido',
@@ -1828,7 +1827,7 @@ class DeudaController extends Controller
                         'poliza_deuda_temp_cartera.PolizaDeuda',
                         'poliza_deuda_temp_cartera.Dui',
                         'poliza_deuda_temp_cartera.Edad',
-                        'poliza_deuda_temp_cartera.Nit',
+                        //'poliza_deuda_temp_cartera.Nit',
                         'poliza_deuda_temp_cartera.PrimerNombre',
                         'poliza_deuda_temp_cartera.SegundoNombre',
                         'poliza_deuda_temp_cartera.PrimerApellido',
@@ -1874,7 +1873,7 @@ class DeudaController extends Controller
                         'poliza_deuda_temp_cartera.Id',
                         'poliza_deuda_temp_cartera.Dui',
                         'poliza_deuda_temp_cartera.Edad',
-                        'poliza_deuda_temp_cartera.Nit',
+                        //'poliza_deuda_temp_cartera.Nit',
                         'poliza_deuda_temp_cartera.PrimerNombre',
                         'poliza_deuda_temp_cartera.SegundoNombre',
                         'poliza_deuda_temp_cartera.PrimerApellido',
@@ -1909,7 +1908,7 @@ class DeudaController extends Controller
                         'poliza_deuda_temp_cartera.PolizaDeuda',
                         'poliza_deuda_temp_cartera.Dui',
                         'poliza_deuda_temp_cartera.Edad',
-                        'poliza_deuda_temp_cartera.Nit',
+                        //'poliza_deuda_temp_cartera.Nit',
                         'poliza_deuda_temp_cartera.PrimerNombre',
                         'poliza_deuda_temp_cartera.SegundoNombre',
                         'poliza_deuda_temp_cartera.PrimerApellido',
@@ -1967,7 +1966,7 @@ class DeudaController extends Controller
                             'poliza_deuda_temp_cartera.Id',
                             'poliza_deuda_temp_cartera.Dui',
                             'poliza_deuda_temp_cartera.Edad',
-                            'poliza_deuda_temp_cartera.Nit',
+                            //'poliza_deuda_temp_cartera.Nit',
                             'poliza_deuda_temp_cartera.PrimerNombre',
                             'poliza_deuda_temp_cartera.SegundoNombre',
                             'poliza_deuda_temp_cartera.PrimerApellido',
@@ -2008,12 +2007,10 @@ class DeudaController extends Controller
 
         $data = PolizaDeudaTempCartera::where('NoValido', 0)
             ->where('PolizaDeuda', $poliza)
-            ->where(function ($query) use ($documento) {
-                $query->where('Dui', $documento)
-                    ->orWhere('Nit', $documento);
-            })
+            ->where('Dui', $documento)
             ->orderBy('FechaOtorgamientoDate')
             ->get();
+
 
         foreach ($data as $obj) {
             $count = DeudaValidados::where('NumeroReferencia', $obj->NumeroReferencia)->where('Poliza', $obj->PolizaDeuda)->count();
@@ -2040,7 +2037,7 @@ class DeudaController extends Controller
                 'pdtc.Id',
                 'pdtc.Dui',
                 'pdtc.Edad',
-                'pdtc.Nit',
+                //'pdtc.Nit',
                 'pdtc.PrimerNombre',
                 'pdtc.SegundoNombre',
                 'pdtc.PrimerApellido',

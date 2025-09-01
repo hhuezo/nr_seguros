@@ -3,7 +3,6 @@
 namespace App\Imports;
 
 use App\Models\temp\VidaCarteraTemp as TempVidaCarteraTemp;
-use App\Models\VidaCarteraTemp;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -15,7 +14,6 @@ class VidaCarteraTempImport implements ToModel
     private $Poliza;
     private $FechaInicio;
     private $FechaFinal;
-    private $encabezados = 0;
     private $PolizaVidaTipoCartera;
     private $TarifaExcel;
 
@@ -33,60 +31,56 @@ class VidaCarteraTempImport implements ToModel
     public function model(array $row)
     {
         try {
-            // Saltar la fila de encabezados
-            if (trim($row[0]) == "DUI") {
-                $this->encabezados = 1;
-                Log::info('Fila encabezado detectada y saltada');
-                return null;
-            }
+            // Procesar todas las filas, ya que el encabezado fue validado antes
+            if (!empty(trim($row[0])) || !empty(trim($row[1]))) { // Al menos DUI o Pasaporte
 
-            // Procesar solo las filas de datos
-            if ($this->encabezados == 1 && (trim($row[0]) != "DUI" && trim($row[3]) != "NACIONALIDAD")) {
+                $modelData = [
 
-                // Verificar que al menos uno de los dos campos (NIT o DUI) tenga datos
-                if (!empty(trim($row[0])) || !empty(trim($row[1]))) {
-                    $Tasa = null;
-                    if ($this->TarifaExcel == 1) {
-                        $Tasa =  $row[16] ?? null;
-                    }
+                    'Dui' => $row[0] ?? null,
+                    'Pasaporte' => $row[1] ?? null,
+                    'CarnetResidencia' => $row[2] ?? null,
+                    'Nacionalidad' => $row[3] ?? null,
+                    'FechaNacimiento' => $this->convertirFecha($row[4] ?? null),
+                    'TipoPersona' => $row[5] ?? null,
+                    'Sexo' => $row[6] ?? null,
+                    'PrimerApellido' => $row[7] ?? null,
+                    'SegundoApellido' => $row[8] ?? null,
+                    'ApellidoCasada' => $row[9] ?? null,
+                    'PrimerNombre' => $row[10] ?? null,
+                    'SegundoNombre' => $row[11] ?? null,
+                    'NombreSociedad' => $row[12] ?? null,
+                    'FechaOtorgamiento' => $this->convertirFecha($row[13] ?? null),
+                    'FechaVencimiento' => $this->convertirFecha($row[14] ?? null),
+                    'NumeroReferencia' => $row[15] ?? null,
+                    'SumaAsegurada' => $row[16] ?? null,
 
-                    $modelData = [
-                        'PolizaVida' => $this->Poliza,
-                        //'Nit' => $row[0] ?? null,
-                        'Dui' => $row[0] ?? null,
-                        'Pasaporte' => $row[1] ?? null,
-                        'Nacionalidad' => $row[3] ?? null,
-                        'FechaNacimiento' => $this->convertirFecha($row[4] ?? null),
-                        'TipoPersona' => $row[5] ?? null,
-                        'Sexo' => $row[6] ?? null,
-                        'PrimerApellido' => $row[7] ?? null,
-                        'SegundoApellido' => $row[8] ?? null,
-                        'ApellidoCasada' => $row[9] ?? null,
-                        'PrimerNombre' => $row[10] ?? null,
-                        'SegundoNombre' => $row[11] ?? null,
-                        'FechaOtorgamiento' => $this->convertirFecha($row[12] ?? null),
-                        'FechaVencimiento' => $this->convertirFecha($row[13] ?? null),
-                        'NumeroReferencia' => $row[14] ?? null,
-                        'SumaAsegurada' => $row[15] ?? null,
-                        'User' => auth()->id(),
-                        'Axo' => $this->Axo,
-                        'Mes' => $this->Mes,
-                        'FechaInicio' => $this->FechaInicio,
-                        'FechaFinal' => $this->FechaFinal,
-                        'FechaNacimientoDate' => $this->convertirFecha($row[4] ?? null, 'Y-m-d'),
-                        'FechaOtorgamientoDate' => $this->convertirFecha($row[12] ?? null, 'Y-m-d'),
-                        'PolizaVidaTipoCartera' => $this->PolizaVidaTipoCartera,
-                        'Tasa' => $Tasa,
-                    ];
+                    'SaldoCapital'        => $row[17],
+                    'Intereses'           => $row[18],
+                    'InteresesMoratorios' => $row[19],
+                    'InteresesCovid'      => $row[20],
 
-                    Log::info('Procesando fila', ['data' => $modelData]);
+                    'Tasa' => (isset($row[21]) && trim($row[21]) !== '' && is_numeric($row[21]))
+                        ? (float) $row[21] : null, // columna de tarifa
 
-                    return new TempVidaCarteraTemp($modelData);
-                } else {
-                    Log::warning('Fila omitida: DUI y Pasaporte vacíos', ['fila' => $row]);
-                }
+                    'TipoDeuda'          => $row[22],
+                    'PorcentajeExtraprima'        => $row[23],
+
+                    'User' => auth()->id(),
+                    'Axo' => $this->Axo,
+                    'Mes' => $this->Mes,
+                    'FechaInicio' => $this->FechaInicio,
+                    'FechaFinal' => $this->FechaFinal,
+                    'FechaNacimientoDate' => $this->convertirFecha($row[4] ?? null, 'Y-m-d'),
+                    'FechaOtorgamientoDate' => $this->convertirFecha($row[12] ?? null, 'Y-m-d'),
+                    'PolizaVidaTipoCartera' => $this->PolizaVidaTipoCartera,
+
+                    'PolizaVida' => $this->Poliza,
+                ];
+
+
+                return new TempVidaCarteraTemp($modelData);
             } else {
-                Log::debug('Fila no procesada por encabezados o contenido inválido', ['fila' => $row]);
+                Log::warning('Fila omitida: DUI y Pasaporte vacíos', ['fila' => $row]);
             }
         } catch (\Exception $e) {
             Log::error('Error al procesar fila en model()', [
@@ -99,26 +93,20 @@ class VidaCarteraTempImport implements ToModel
         return null;
     }
 
-    private function convertirFecha($fechaExcel)
+    private function convertirFecha($fechaExcel, $format = 'd/m/Y')
     {
-
-        // Verificar si es un número (fecha en formato Excel)
         if (is_numeric($fechaExcel)) {
-            return Carbon::createFromDate(1900, 1, 1)->addDays($fechaExcel - 2)->format('Y-m-d');
+            return Carbon::createFromDate(1900, 1, 1)->addDays($fechaExcel - 2)->format($format);
         }
 
-        // Verificar si es un string en formato de fecha (dd/mm/yyyy o similar)
         if (preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $fechaExcel)) {
-            return Carbon::createFromFormat('d/m/Y', $fechaExcel)->format('Y-m-d');
+            return Carbon::createFromFormat('d/m/Y', $fechaExcel)->format($format);
         }
 
-        // Verificar si es un string en formato de fecha (Y-m-d)
         if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $fechaExcel)) {
-            return Carbon::createFromFormat('Y-m-d', $fechaExcel)->format('Y-m-d');
+            return Carbon::createFromFormat('Y-m-d', $fechaExcel)->format($format);
         }
 
-        //dd($fechaExcel,4);
-        // Si no es un número de Excel ni un formato de fecha válido, devolver null
         return null;
     }
 }
