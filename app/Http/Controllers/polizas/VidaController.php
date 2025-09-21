@@ -90,7 +90,7 @@ class VidaController extends Controller
                 'VigenciaHasta' => 'required|date|after_or_equal:VigenciaDesde',
                 'EdadMaximaInscripcion' => 'required|numeric|min:18|max:100',
                 'EdadTerminacion' => 'required|numeric|min:18|max:100|gte:EdadMaximaInscripcion',
-                'Tasa' => 'required|numeric|min:0',
+                //'Tasa' => 'required|numeric|min:0',
                 'TasaDescuento' => 'nullable|numeric|min:0|max:100',
                 'Concepto' => 'nullable|string|max:500'
             ];
@@ -112,6 +112,10 @@ class VidaController extends Controller
                     'string',
                     'regex:/^(\d+(\.\d{1,2})?)(,\d+(\.\d{1,2})?)*$/'
                 ];
+            }
+
+            if ($request->Opcion == 0) {
+                $rules['Tasa'] = 'required|numeric|min:0';
             }
 
             $messages = [
@@ -179,12 +183,12 @@ class VidaController extends Controller
                 $vida->Multitarifa = $request->Multitarifa ?? null;
             }
 
-            if ($request->TarifaExcel == 'on') {
-                $vida->TarifaExcel = 1;
-            } else {
+            //opcion 1 tasa diferenciada 2 tarifa excel
+            if ($request->Opcion == 1) {
+                $vida->TasaDiferenciada = 1;
+            } else if ($request->Opcion == 0) {
                 $vida->TarifaExcel = 0;
             }
-
 
             $vida->save();
 
@@ -225,9 +229,10 @@ class VidaController extends Controller
                 'VigenciaHasta' => 'required|date|after_or_equal:VigenciaDesde',
                 'EdadMaximaInscripcion' => 'required|numeric|min:18|max:100',
                 'EdadTerminacion' => 'required|numeric|min:18|max:100|gte:EdadMaximaInscripcion',
-                'Tasa' => 'required|numeric|min:0',
+                //'Tasa' => 'required|numeric|min:0',
                 'TasaDescuento' => 'nullable|numeric|min:0|max:100',
-                'Concepto' => 'nullable|string|max:500'
+                'Concepto' => 'nullable|string|max:500',
+                'Opcion' => 'required|numeric|min:0',
             ];
 
             // Reglas condicionales
@@ -246,6 +251,10 @@ class VidaController extends Controller
                     'string',
                     'regex:/^(\d+(\.\d{1,2})?)(,\d+(\.\d{1,2})?)*$/'
                 ];
+            }
+
+            if ($request->Opcion == 0) {
+                $rules['Tasa'] = 'required|numeric|min:0';
             }
 
             $messages = [
@@ -307,7 +316,7 @@ class VidaController extends Controller
                 'VigenciaHasta' => 'required|date|after_or_equal:VigenciaDesde',
                 'EdadMaximaInscripcion' => 'required|numeric|min:18|max:100',
                 'EdadTerminacion' => 'required|numeric|min:18|max:100|gte:EdadMaximaInscripcion',
-                'Tasa' => 'required|numeric|min:0',
+                //'Tasa' => 'required|numeric|min:0',
                 'TasaDescuento' => 'nullable|numeric|min:0|max:100',
                 'Concepto' => 'nullable|string|max:500'
             ];
@@ -328,6 +337,10 @@ class VidaController extends Controller
                     'string',
                     'regex:/^(\d+(\.\d{1,2})?)(,\d+(\.\d{1,2})?)*$/'
                 ];
+            }
+
+            if ($request->Opcion == 0) {
+                $rules['Tasa'] = 'required|numeric|min:0';
             }
 
             $messages = [
@@ -446,9 +459,10 @@ class VidaController extends Controller
                 'VigenciaHasta' => 'required|date|after_or_equal:VigenciaDesde',
                 'EdadMaximaInscripcion' => 'required|numeric|min:18|max:100',
                 'EdadTerminacion' => 'required|numeric|min:18|max:100|gte:EdadMaximaInscripcion',
-                'Tasa' => 'required|numeric|min:0',
+                //'Tasa' => 'required|numeric|min:0',
                 'TasaDescuento' => 'nullable|numeric|min:0|max:100',
-                'Concepto' => 'nullable|string|max:500'
+                'Concepto' => 'nullable|string|max:500',
+                'Opcion' => 'required|numeric|min:0',
             ];
 
             // Reglas condicionales
@@ -467,6 +481,10 @@ class VidaController extends Controller
                     'string',
                     'regex:/^(\d+(\.\d{1,2})?)(,\d+(\.\d{1,2})?)*$/'
                 ];
+            }
+
+            if ($request->Opcion == 0) {
+                $rules['Tasa'] = 'required|numeric|min:0';
             }
 
             $messages = [
@@ -538,9 +556,12 @@ class VidaController extends Controller
                 $vida->SumaMaxima    = null;
             }
 
-
-
-            $vida->TarifaExcel = $request->TarifaExcel == 'on' ? 1 : 0;
+            //opcion 1 tasa diferenciada 2 tarifa excel
+            if ($request->Opcion == 1) {
+                $vida->TasaDiferenciada = 1;
+            } else if ($request->Opcion == 0) {
+                $vida->TarifaExcel = 0;
+            }
 
             $vida->save();
 

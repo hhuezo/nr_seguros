@@ -53,7 +53,7 @@
     <style>
         .subtareas-container {
             /* display: none;
-                                                                                                                                                                                        /* Ocultar subtareas por defecto */
+                                                                                                                                                                                                            /* Ocultar subtareas por defecto */
         }
 
         .expand-icon {
@@ -325,7 +325,28 @@
                                 </div>
 
                                 <div class="col-sm-12" style="padding: 0% !important">
-                                    <!-- Edad máxima de inscripción -->
+
+
+
+                                    <div class="item form-group col-sm-12 col-md-3 col-lg-3">
+                                        <label class="control-label" align="right">Opcion</label>
+                                        <select name="Opcion" id="Opcion" class="form-control">
+                                            <option value="0">NO APLICA</option>
+                                            <option value="1" {{ $vida->TasaDiferenciada == 1 ? 'selected' : '' }}>TASA
+                                                DIFERENCIADA</option>
+                                            <option value="2" {{ $vida->TarifaExcel == 1 ? 'selected' : '' }}>COBRO CON
+                                                TARIFA EXCEL</option>
+                                        </select>
+
+                                    </div>
+
+                                    <div class="item form-group col-sm-12 col-md-3 col-lg-3">
+                                        <label class="control-label" align="right">Tasa Millar Mensual</label>
+                                        <input class="form-control" name="Tasa" id="Tasa" type="number" step="any"
+                                            value="{{ $vida->Tasa }}" required>
+                                    </div>
+
+
                                     <div class="item form-group col-sm-12 col-md-3 col-lg-3">
                                         <label class="control-label" align="right">Edad máxima de inscripción</label>
                                         <input class="form-control" name="EdadMaximaInscripcion" type="number"
@@ -340,12 +361,8 @@
                                             min="18" max="100" value="{{ $vida->EdadTerminacion }}" required>
                                     </div>
 
-                                    <div class="item form-group col-sm-6"><br>
-                                        <input name="TarifaExcel" type="checkbox" class="js-switch"
-                                            {{ $vida->TarifaExcel == 1 ? 'checked' : '' }}>
-                                        <label class="control-label" align="right">&nbsp;Cobro con tarifa excel</label>
-                                    </div>
                                 </div>
+
 
                                 <div class="col-sm-12" style="padding: 0% !important">
                                     <!-- Vigencia Desde -->
@@ -363,12 +380,8 @@
                                     </div>
                                 </div>
 
-                                <!-- Tasa -->
-                                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                                    <label class="control-label" align="right">Tasa Millar Mensual</label>
-                                    <input class="form-control" name="Tasa" type="number" step="any"
-                                        value="{{ $vida->Tasa }}" required>
-                                </div>
+
+
 
                                 <!-- Descuento -->
                                 <div class="item form-group col-sm-12 col-md-6 col-lg-6">
@@ -468,10 +481,10 @@
                                                                                     @foreach ($tipo->tasa_diferenciada as $tasa_diferenciada)
                                                                                         <tr class="primary-row">
                                                                                             <!-- <td>
-                                                                                                                                                                                                                                    {{ $tasa_diferenciada->linea_credito?->Abreviatura ?? '' }}
-                                                                                                                                                                                                                                    -
-                                                                                                                                                                                                                                    {{ $tasa_diferenciada->linea_credito?->Descripcion ?? '' }}
-                                                                                                                                                                                                                                </td> -->
+                                                                                                                                                                                                                                                        {{ $tasa_diferenciada->linea_credito?->Abreviatura ?? '' }}
+                                                                                                                                                                                                                                                        -
+                                                                                                                                                                                                                                                        {{ $tasa_diferenciada->linea_credito?->Descripcion ?? '' }}
+                                                                                                                                                                                                                                                    </td> -->
                                                                                             @if ($tipo->TipoCalculo == 1)
                                                                                                 <td>
                                                                                                     {{ $tasa_diferenciada->FechaDesde ? date('d/m/Y', strtotime($tasa_diferenciada->FechaDesde)) : 'Sin fecha' }}
@@ -617,6 +630,15 @@
             }
         });
 
+        $("#Opcion").change(function() {
+            if ($(this).val() == "0") {
+                $("#Tasa").prop('readonly', false);
+            } else {
+                $("#Tasa").val('').prop('readonly', true);
+            }
+        });
+
+
 
         async function validar(id) {
             const form = document.getElementById('form_edit');
@@ -678,6 +700,16 @@
 
             showTipoCobro(tipoCobro);
             showMultitarifa(tipoTarifa);
+
+
+
+            if ($("#Opcion").val() == "0") {
+                $("#Tasa").prop('readonly', false);
+            } else {
+                $("#Tasa").val('').prop('readonly', true);
+            }
+
+
         });
 
         function showTipoCobro(value) {

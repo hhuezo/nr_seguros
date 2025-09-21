@@ -204,6 +204,24 @@
 
                                 <div class="col-sm-12" style="padding: 0% !important">
 
+
+
+                                    <div class="item form-group col-sm-12 col-md-3 col-lg-3">
+                                        <label class="control-label" align="right">Opcion</label>
+                                        <select name="Opcion" id="Opcion" class="form-control">
+                                            <option value="0">NO APLICA</option>
+                                            <option value="1">TASA DIFERENCIADA</option>
+                                            <option value="2">COBRO CON TARIFA EXCEL</option>
+                                        </select>
+
+                                    </div>
+
+                                    <div class="item form-group col-sm-12 col-md-3 col-lg-3">
+                                        <label class="control-label" align="right">Tasa Millar Mensual</label>
+                                        <input class="form-control" name="Tasa" id="Tasa" type="number"
+                                            step="any" value="{{ old('Tasa') }}">
+                                    </div>
+
                                     <!-- Edad máxima de inscripción -->
                                     <div class="item form-group col-sm-12 col-md-3 col-lg-3">
                                         <label class="control-label" align="right">Edad máxima de
@@ -222,16 +240,8 @@
                                     </div>
 
 
-                                    <div class="item form-group col-sm-6"><br>
 
-                                        <input name="TarifaExcel" type="checkbox" class="js-switch">
-                                        <label class="control-label" align="right">&nbsp;Cobro con tarifa
-                                            excel</label>
-                                    </div>
                                 </div>
-
-
-
 
 
                                 <div class="col-sm-12" style="padding: 0% !important">
@@ -250,12 +260,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Tasa Millar Mensual -->
-                                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                                    <label class="control-label" align="right">Tasa Millar Mensual</label>
-                                    <input class="form-control" name="Tasa" type="number" step="any"
-                                        value="{{ old('Tasa') }}" required>
-                                </div>
 
 
                                 <!-- Tasa Millar Mensual -->
@@ -329,6 +333,16 @@
                 });
             });
 
+        });
+
+        $("#Opcion").change(function() {
+            if ($(this).val() == "0") {
+                // Si el valor del select es 0, input editable
+                $("#Tasa").prop('readonly', false);
+            } else {
+                // Si es otro valor, limpiar y poner readonly
+                $("#Tasa").val('').prop('readonly', true);
+            }
         });
 
         function showTipoCobro(id) {
