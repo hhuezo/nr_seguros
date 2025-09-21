@@ -1351,7 +1351,7 @@ class DeudaController extends Controller
             $cliente->Nombre = $request->Nombre;
             $cliente->FechaOtorgamiento = $request->FechaOtorgamiento;
             $cliente->MontoOtorgamiento = $request->MontoOtorgamiento;
-            $cliente->Intereses = $poliza_deuda_cartera->Intereses;
+            $cliente->Intereses = $poliza_deuda_cartera->Intereses ?? 0.00;
             $cliente->PorcentajeEP = $request->PorcentajeEP;
             $cliente->Dui = $request->Dui;
             $cliente->save();
