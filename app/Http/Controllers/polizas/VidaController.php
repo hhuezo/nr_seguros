@@ -57,7 +57,7 @@ class VidaController extends Controller
         $planes = Plan::where('Activo', 1)->get();
         $aseguradora = Aseguradora::where('Activo', 1)->get();
         $cliente = Cliente::where('Activo', 1)->get();
-        $tipoCobro = TipoCobro::where('Activo', 1)->orderBy('Id', 'desc')->get();
+        $tipoCobro = TipoCobro::where('Activo', 1)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
         return view('polizas.vida.create', compact(
             'aseguradora',
@@ -97,8 +97,10 @@ class VidaController extends Controller
 
             // Reglas condicionales
             if ($request->TipoCobro == 1) {
-                $rules['LimiteMaximoIndividual'] = 'required|numeric|min:0.01';
+                $rules['SumaMinima'] = 'required|numeric|min:0.01';
+                $rules['SumaMaxima'] = 'required|numeric|gt:SumaMinima';
             }
+
 
             if ($request->TipoCobro == 2 && $request->TipoTarifa == 1) {
                 $rules['SumaAsegurada'] = 'required|numeric|min:0.01';
@@ -123,35 +125,25 @@ class VidaController extends Controller
                 'VigenciaHasta.after_or_equal' => 'La fecha de fin debe ser igual o posterior a la fecha de inicio',
                 'EdadTerminacion.gte' => 'La edad de terminación debe ser mayor o igual a la edad máxima de inscripción',
                 'SumaAsegurada.min' => 'La suma asegurada mínima es 0.01',
-                'LimiteMaximoIndividual.min' => 'El límite máximo individual debe ser al menos 0.01',
                 'Multitarifa.required' => 'El campo multitarifa es obligatorio',
                 'Multitarifa.regex' => 'El formato de multitarifa es inválido. Use números separados por coma, con hasta 2 decimales.',
-                '*.exists' => 'El valor seleccionado no es válido',
-                '*.required' => 'Este campo es obligatorio',
-                '*.numeric' => 'Debe ser un valor numérico',
-                '*.date' => 'Debe ser una fecha válida'
+
+
+                // Mensajes para SumaMinima y SumaMaxima
+                'SumaMinima.required' => 'La suma mínima es obligatoria',
+                'SumaMinima.numeric' => 'La suma mínima debe ser un valor numérico',
+                'SumaMinima.min' => 'La suma mínima debe ser al menos 0.01',
+                'SumaMaxima.required' => 'La suma máxima es obligatoria',
+                'SumaMaxima.numeric' => 'La suma máxima debe ser un valor numérico',
+                'SumaMaxima.gt' => 'La suma máxima debe ser mayor que la suma mínima',
             ];
 
             // Validación
             $validatedData = Validator::make($request->all(), $rules, $messages)->validate();
 
+
+
             DB::beginTransaction();
-
-            if ($request->TipoCobro == 1) {
-                $rules['LimiteMaximoIndividual'] = 'required|numeric|min:0.01';
-            }
-
-            if ($request->TipoCobro == 2 && $request->TipoTarifa == 1) {
-                $rules['SumaAsegurada'] = 'required|numeric|min:0.01';
-            }
-
-            if ($request->TipoCobro == 2 && $request->TipoTarifa == 2) {
-                $rules['Multitarifa'] = [
-                    'required',
-                    'string',
-                    'regex:/^(\d+(\.\d{1,2})?)(,\d+(\.\d{1,2})?)*$/'
-                ];
-            }
 
             $vida = new Vida();
             $vida->NumeroPoliza = $request->NumeroPoliza;
@@ -175,7 +167,8 @@ class VidaController extends Controller
 
 
             if ($request->TipoCobro == 1) {
-                $vida->LimiteMaximoIndividual = $request->LimiteMaximoIndividual ?? null;
+                $vida->SumaMinima = $request->SumaMinima ?? null;
+                $vida->SumaMaxima = $request->SumaMaxima ?? null;
             }
 
             if ($request->TipoCobro == 2 && $request->TipoTarifa == 1) {
@@ -185,7 +178,6 @@ class VidaController extends Controller
             if ($request->TipoCobro == 2 && $request->TipoTarifa == 2) {
                 $vida->Multitarifa = $request->Multitarifa ?? null;
             }
-
 
             if ($request->TarifaExcel == 'on') {
                 $vida->TarifaExcel = 1;
@@ -240,7 +232,8 @@ class VidaController extends Controller
 
             // Reglas condicionales
             if ($request->TipoCobro == 1) {
-                $rules['LimiteMaximoIndividual'] = 'required|numeric|min:0.01';
+                $rules['SumaMinima'] = 'required|numeric|min:0.01';
+                $rules['SumaMaxima'] = 'required|numeric|gt:SumaMinima';
             }
 
             if ($request->TipoCobro == 2 && $request->TipoTarifa == 1) {
@@ -269,10 +262,98 @@ class VidaController extends Controller
                 'LimiteMaximoIndividual.min' => 'El límite máximo individual debe ser al menos 0.01',
                 'Multitarifa.required' => 'El campo multitarifa es obligatorio',
                 'Multitarifa.regex' => 'El formato de multitarifa es inválido. Use números separados por coma, con hasta 2 decimales.',
-                '*.exists' => 'El valor seleccionado no es válido',
-                '*.required' => 'Este campo es obligatorio',
-                '*.numeric' => 'Debe ser un valor numérico',
-                '*.date' => 'Debe ser una fecha válida'
+
+                // Mensajes para SumaMinima y SumaMaxima
+                'SumaMinima.required' => 'La suma mínima es obligatoria',
+                'SumaMinima.numeric' => 'La suma mínima debe ser un valor numérico',
+                'SumaMinima.min' => 'La suma mínima debe ser al menos 0.01',
+                'SumaMaxima.required' => 'La suma máxima es obligatoria',
+                'SumaMaxima.numeric' => 'La suma máxima debe ser un valor numérico',
+                'SumaMaxima.gt' => 'La suma máxima debe ser mayor que la suma mínima',
+
+
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            return response()->json(['success' => true, 'data' => $validator->validated()]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'errors' => ['server' => ['Error interno del servidor']]
+            ], 500);
+        }
+    }
+
+    public function validar_edit(Request $request, $id)
+    {
+        try {
+            $rules = [
+                'NumeroPoliza' => 'required|unique:poliza_vida,NumeroPoliza,' . $id . ',Id',
+                'Aseguradora' => 'required|exists:aseguradora,Id',
+                'Productos' => 'required|exists:producto,Id',
+                'Planes' => 'required|exists:plan,Id',
+                'Asegurado' => 'required|exists:cliente,Id',
+                'Ejecutivo' => 'required|exists:ejecutivo,Id',
+                'TipoCobro' => 'required|exists:tipo_cobro,Id',
+                'VigenciaDesde' => 'required|date',
+                'VigenciaHasta' => 'required|date|after_or_equal:VigenciaDesde',
+                'EdadMaximaInscripcion' => 'required|numeric|min:18|max:100',
+                'EdadTerminacion' => 'required|numeric|min:18|max:100|gte:EdadMaximaInscripcion',
+                'Tasa' => 'required|numeric|min:0',
+                'TasaDescuento' => 'nullable|numeric|min:0|max:100',
+                'Concepto' => 'nullable|string|max:500'
+            ];
+
+            // Reglas condicionales
+            if ($request->TipoCobro == 1) {
+                $rules['SumaMinima'] = 'required|numeric|min:0.01';
+                $rules['SumaMaxima'] = 'required|numeric|gt:SumaMinima';
+            }
+
+            if ($request->TipoCobro == 2 && $request->TipoTarifa == 1) {
+                $rules['SumaAsegurada'] = 'required|numeric|min:0.01';
+            }
+
+            if ($request->TipoCobro == 2 && $request->TipoTarifa == 2) {
+                $rules['Multitarifa'] = [
+                    'required',
+                    'string',
+                    'regex:/^(\d+(\.\d{1,2})?)(,\d+(\.\d{1,2})?)*$/'
+                ];
+            }
+
+            $messages = [
+                'NumeroPoliza.required' => 'El número de póliza es obligatorio',
+                'NumeroPoliza.unique' => 'Este número de póliza ya existe',
+                'Aseguradora.required' => 'Seleccione una aseguradora',
+                'Productos.required' => 'Seleccione un producto',
+                'Planes.required' => 'Seleccione un plan',
+                'Asegurado.required' => 'Seleccione un asegurado',
+                'Ejecutivo.required' => 'Seleccione un ejecutivo',
+                'VigenciaHasta.after_or_equal' => 'La fecha de fin debe ser igual o posterior a la fecha de inicio',
+                'EdadTerminacion.gte' => 'La edad de terminación debe ser mayor o igual a la edad máxima de inscripción',
+                'SumaAsegurada.min' => 'La suma asegurada mínima es 0.01',
+                'LimiteMaximoIndividual.min' => 'El límite máximo individual debe ser al menos 0.01',
+                'Multitarifa.required' => 'El campo multitarifa es obligatorio',
+                'Multitarifa.regex' => 'El formato de multitarifa es inválido. Use números separados por coma, con hasta 2 decimales.',
+
+                // Mensajes para SumaMinima y SumaMaxima
+                'SumaMinima.required' => 'La suma mínima es obligatoria',
+                'SumaMinima.numeric' => 'La suma mínima debe ser un valor numérico',
+                'SumaMinima.min' => 'La suma mínima debe ser al menos 0.01',
+                'SumaMaxima.required' => 'La suma máxima es obligatoria',
+                'SumaMaxima.numeric' => 'La suma máxima debe ser un valor numérico',
+                'SumaMaxima.gt' => 'La suma máxima debe ser mayor que la suma mínima',
+
+
             ];
 
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -352,138 +433,138 @@ class VidaController extends Controller
 
     public function update(Request $request, $id)
     {
-        $rules = [
-            'NumeroPoliza' => 'required|string|max:255',
-            'Aseguradora' => 'required|exists:aseguradora,Id',
-            'Asegurado' => 'required|exists:cliente,Id',
-            'Nit' => 'required|string|max:255',
-            'Ejecutivo' => 'required|exists:ejecutivo,Id',
-            //'Saldos' => 'required',
-            'VigenciaDesde' => 'required|date',
-            'VigenciaHasta' => 'required|date|after_or_equal:VigenciaDesde',
-            'EdadTerminacion' => 'required|numeric|min:18',
-            'EdadMaximaInscripcion' => 'required|numeric|min:18',
-            'Tasa' => 'required|numeric|min:0.00001',
-            'Concepto' => 'nullable|string|max:1000',
-        ];
-
-        // Reglas condicionales
-        // if ($request->TipoCobro == 1) {
-        //     $rules['LimiteMaximoIndividual'] = 'required|numeric|min:0.01';
-        // }
-
-        if ($request->TipoCobro == 2 && $request->TipoTarifa == 1) {
-            $rules['SumaAsegurada'] = 'required|numeric|min:0.01';
-        }
-
-        if ($request->TipoCobro == 2 && $request->TipoTarifa == 2) {
-            $rules['Multitarifa'] = 'required|string'; // Ajusta el tipo si es diferente
-        }
-
-        // Mensajes personalizados
-        $messages = [
-            'NumeroPoliza.required' => 'El campo Número de Póliza es obligatorio.',
-            'NumeroPoliza.string' => 'El campo Número de Póliza debe ser una cadena de texto.',
-            'NumeroPoliza.max' => 'El campo Número de Póliza no debe exceder los 255 caracteres.',
-            'Aseguradora.required' => 'Debes seleccionar una Aseguradora.',
-            'Aseguradora.exists' => 'La Aseguradora seleccionada no es válida.',
-            'Asegurado.required' => 'Debes seleccionar un Asegurado.',
-            'Asegurado.exists' => 'El Asegurado seleccionado no es válido.',
-            'Nit.required' => 'El campo Nit es obligatorio.',
-            'Nit.string' => 'El campo Nit debe ser una cadena de texto.',
-            'Nit.max' => 'El campo Nit no debe exceder los 255 caracteres.',
-            'Ejecutivo.required' => 'Debes seleccionar un Ejecutivo.',
-            'Ejecutivo.exists' => 'El Ejecutivo seleccionado no es válido.',
-            'VigenciaDesde.required' => 'El campo Vigencia inicial es obligatorio.',
-            'VigenciaDesde.date' => 'El campo Vigencia inicial debe ser una fecha válida.',
-            'VigenciaHasta.required' => 'El campo Vigencia final es obligatorio.',
-            'VigenciaHasta.date' => 'El campo Vigencia final debe ser una fecha válida.',
-            'VigenciaHasta.after_or_equal' => 'La fecha de Vigencia final debe ser igual o posterior a la inicial.',
-            'EdadTerminacion.required' => 'El campo Edad Terminación es obligatorio.',
-            'EdadTerminacion.numeric' => 'El campo Edad Terminación debe ser un número.',
-            'EdadTerminacion.min' => 'El campo Edad Terminación debe ser al menos 18.',
-            'EdadMaximaInscripcion.required' => 'El campo Edad inscripción es obligatorio.',
-            'EdadMaximaInscripcion.numeric' => 'El campo Edad inscripción debe ser un número.',
-            'EdadMaximaInscripcion.min' => 'El campo Edad inscripción debe ser al menos 18.',
-            'Tasa.required' => 'El campo Tasa es obligatorio.',
-            'Tasa.numeric' => 'El campo Tasa debe ser un número.',
-            'Tasa.min' => 'El campo Tasa debe ser al menos 0.',
-            'Concepto.string' => 'El campo Concepto debe ser una cadena de texto.',
-            'Concepto.max' => 'El campo Concepto no debe exceder los 1000 caracteres.',
-
-            // Mensajes personalizados de los nuevos campos
-            'LimiteMaximoIndividual.required' => 'El campo Límite Máximo Individual es obligatorio.',
-            'LimiteMaximoIndividual.numeric' => 'El Límite Máximo Individual debe ser un número.',
-            'LimiteMaximoIndividual.min' => 'El Límite Máximo Individual debe ser mayor a 0.',
-
-            'SumaAsegurada.required' => 'El campo Suma Asegurada es obligatorio.',
-            'SumaAsegurada.numeric' => 'La Suma Asegurada debe ser un número.',
-            'SumaAsegurada.min' => 'La Suma Asegurada debe ser mayor a 0.',
-
-            'Multitarifa.required' => 'El campo Multitarifa es obligatorio.',
-            'Multitarifa.string' => 'El campo Multitarifa debe ser una cadena.',
-        ];
-
-        // Ejecutar validación
-        $request->validate($rules, $messages);
-
         try {
+            $rules = [
+                'NumeroPoliza' => 'required|unique:poliza_vida,NumeroPoliza,' . $id . ',Id',
+                'Aseguradora' => 'required|exists:aseguradora,Id',
+                'Productos' => 'required|exists:producto,Id',
+                'Planes' => 'required|exists:plan,Id',
+                'Asegurado' => 'required|exists:cliente,Id',
+                'Ejecutivo' => 'required|exists:ejecutivo,Id',
+                'TipoCobro' => 'required|exists:tipo_cobro,Id',
+                'VigenciaDesde' => 'required|date',
+                'VigenciaHasta' => 'required|date|after_or_equal:VigenciaDesde',
+                'EdadMaximaInscripcion' => 'required|numeric|min:18|max:100',
+                'EdadTerminacion' => 'required|numeric|min:18|max:100|gte:EdadMaximaInscripcion',
+                'Tasa' => 'required|numeric|min:0',
+                'TasaDescuento' => 'nullable|numeric|min:0|max:100',
+                'Concepto' => 'nullable|string|max:500'
+            ];
 
+            // Reglas condicionales
+            if ($request->TipoCobro == 1) {
+                $rules['SumaMinima'] = 'required|numeric|min:0.01';
+                $rules['SumaMaxima'] = 'required|numeric|gt:SumaMinima';
+            }
+
+            if ($request->TipoCobro == 2 && $request->TipoTarifa == 1) {
+                $rules['SumaAsegurada'] = 'required|numeric|min:0.01';
+            }
+
+            if ($request->TipoCobro == 2 && $request->TipoTarifa == 2) {
+                $rules['Multitarifa'] = [
+                    'required',
+                    'string',
+                    'regex:/^(\d+(\.\d{1,2})?)(,\d+(\.\d{1,2})?)*$/'
+                ];
+            }
+
+            $messages = [
+                'NumeroPoliza.required' => 'El número de póliza es obligatorio',
+                'NumeroPoliza.unique' => 'Este número de póliza ya existe',
+                'Aseguradora.required' => 'Seleccione una aseguradora',
+                'Productos.required' => 'Seleccione un producto',
+                'Planes.required' => 'Seleccione un plan',
+                'Asegurado.required' => 'Seleccione un asegurado',
+                'Ejecutivo.required' => 'Seleccione un ejecutivo',
+                'VigenciaHasta.after_or_equal' => 'La fecha de fin debe ser igual o posterior a la fecha de inicio',
+                'EdadTerminacion.gte' => 'La edad de terminación debe ser mayor o igual a la edad máxima de inscripción',
+                'SumaAsegurada.min' => 'La suma asegurada mínima es 0.01',
+                'Multitarifa.required' => 'El campo multitarifa es obligatorio',
+                'Multitarifa.regex' => 'El formato de multitarifa es inválido. Use números separados por coma, con hasta 2 decimales.',
+                'SumaMinima.required' => 'La suma mínima es obligatoria',
+                'SumaMinima.numeric' => 'La suma mínima debe ser un valor numérico',
+                'SumaMinima.min' => 'La suma mínima debe ser al menos 0.01',
+                'SumaMaxima.required' => 'La suma máxima es obligatoria',
+                'SumaMaxima.numeric' => 'La suma máxima debe ser un valor numérico',
+                'SumaMaxima.gt' => 'La suma máxima debe ser mayor que la suma mínima',
+            ];
+
+            $validatedData = Validator::make($request->all(), $rules, $messages)->validate();
+
+            DB::beginTransaction();
 
             $vida = Vida::findOrFail($id);
             $vida->NumeroPoliza = $request->NumeroPoliza;
-            $vida->Nit = $request->Nit;
+            $vida->Nit = $request->Nit ?? null;
             $vida->Aseguradora = $request->Aseguradora;
             $vida->Producto = $request->Productos;
             $vida->Plan = $request->Planes;
             $vida->Asegurado = $request->Asegurado;
             $vida->VigenciaDesde = $request->VigenciaDesde;
             $vida->VigenciaHasta = $request->VigenciaHasta;
-            $vida->Concepto = $request->Concepto;
+            $vida->Concepto = $request->Concepto ?? null;
             $vida->Ejecutivo = $request->Ejecutivo;
-            $vida->EstadoPoliza = 1;
+            $vida->TipoCobro = $request->TipoCobro;
+            $vida->TipoTarifa = $request->TipoTarifa ?? null;
             $vida->Tasa = $request->Tasa;
             $vida->TasaDescuento = $request->TasaDescuento ?? null;
             $vida->EdadMaximaInscripcion = $request->EdadMaximaInscripcion;
             $vida->EdadTerminacion = $request->EdadTerminacion;
-            $vida->TipoCobro = $request->TipoCobro;
-            $vida->TipoTarifa = $request->TipoTarifa;
+            $vida->EstadoPoliza = 1;
             $vida->Activo = 1;
 
-
             if ($request->TipoCobro == 1) {
-                $vida->LimiteMaximoIndividual = $request->LimiteMaximoIndividual ?? null;
-                $vida->SumaAsegurada = $request->SumaAsegurada ?? null;
+                // Si es 1, solo aplica SumaMinima y SumaMaxima
+                $vida->SumaMinima   = $request->SumaMinima ?? null;
+                $vida->SumaMaxima   = $request->SumaMaxima ?? null;
+                $vida->SumaAsegurada = null;
+                $vida->Multitarifa   = null;
             }
 
             if ($request->TipoCobro == 2 && $request->TipoTarifa == 1) {
+                // Si es 2 y tarifa 1, aplica SumaAsegurada
                 $vida->SumaAsegurada = $request->SumaAsegurada ?? null;
-                $vida->Multitarifa = null;
+                $vida->Multitarifa   = null;
+                $vida->SumaMinima    = null;
+                $vida->SumaMaxima    = null;
             }
 
             if ($request->TipoCobro == 2 && $request->TipoTarifa == 2) {
-                $vida->Multitarifa = $request->Multitarifa ?? null;
+                // Si es 2 y tarifa 2, aplica Multitarifa
+                $vida->Multitarifa   = $request->Multitarifa ?? null;
                 $vida->SumaAsegurada = null;
+                $vida->SumaMinima    = null;
+                $vida->SumaMaxima    = null;
             }
 
 
-            if ($request->TarifaExcel == 'on') {
-                $vida->TarifaExcel = 1;
-            } else {
-                $vida->TarifaExcel = 0;
-            }
 
-            $vida->update();
+            $vida->TarifaExcel = $request->TarifaExcel == 'on' ? 1 : 0;
 
+            $vida->save();
 
-            return redirect('polizas/vida/' . $id . '/edit?tab=2')
+            DB::commit();
+
+            return redirect('polizas/vida/' . $vida->Id . '/edit?tab=2')
                 ->with('success', 'El registro ha sido modificado correctamente');
+        } catch (ValidationException $e) {
+            return back()
+                ->withErrors($e->validator)
+                ->withInput();
         } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error al actualizar póliza: ' . $e->getMessage());
 
-            alert()->error('Error', 'Ocurrió un error al crear la póliza de desempleo: ' . $e->getMessage())->persistent('Ok');
-            return back()->withInput();
+            $validator = Validator::make([], []);
+            $validator->errors()->add('general', 'Ocurrió un error: ' . $e->getMessage());
+
+            return back()
+                ->withErrors($validator)
+                ->withInput();
         }
     }
+
 
 
     public function show(Request $request, $id)
@@ -1135,7 +1216,7 @@ class VidaController extends Controller
             }
 
 
-             // 11 error nombres o apellidos con caracteres inválidos
+            // 11 error nombres o apellidos con caracteres inválidos
             $regex = '/^[a-zA-ZÁÉÍÓÚáéíóúÑñ\s\.\'\-]+$/u'; // letras, espacios, punto, apóstrofe y guion
             $campos = [
                 $obj->PrimerNombre,

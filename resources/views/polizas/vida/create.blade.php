@@ -1,6 +1,5 @@
 @extends ('welcome')
 @section('contenido')
-    @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
 
     <div class="x_panel">
         <div class="clearfix"></div>
@@ -15,303 +14,292 @@
                     </ul>
                     <div class="clearfix"></div>
                 </div>
-                @if (count($errors) > 0)
-                    <div class="alert alert-danger">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
+
 
                 <div class="x_content">
                     <br />
-                    <div class="" role="tabpanel" data-example-id="togglable-tabs">
-                        <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-                            <li role="presentation" class="active"><a href="#tab_content1" id="home-tab" role="tab"
-                                    data-toggle="tab" aria-expanded="true">Datos de Póliza</a>
-                            </li>
-                            <li role="presentation" class=" "><a onclick="noGuardardo();">Tasa diferencia</a>
-                            </li>
-                        </ul>
+                    @if (count($errors) > 0)
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    <div class="form-horizontal" style="font-size: 12px;">
+                        <form action="{{ url('polizas/vida') }}" method="POST" id="form_create">
+                            @csrf
+
+                            <div class="x_content" style="font-size: 12px;">
+                                <div class="col-sm-12" style="padding: 0% !important">
+                                    <!-- Número de Póliza -->
+                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                        <label class="control-label" align="right">Número de Póliza *</label>
+                                        <input class="form-control" name="NumeroPoliza" id="NumeroPoliza" type="text"
+                                            value="{{ old('NumeroPoliza') }}" required>
+                                    </div>
+
+
+                                    <!-- Aseguradora -->
+                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                        <label class="control-label" align="right">Aseguradora *</label>
+                                        <select name="Aseguradora" id="Aseguradora" class="form-control select2"
+                                            style="width: 100%" required>
+                                            <option value="">Seleccione...</option>
+                                            @foreach ($aseguradora as $obj)
+                                                <option value="{{ $obj->Id }}"
+                                                    {{ old('Aseguradora') == $obj->Id ? 'selected' : '' }}>
+                                                    {{ $obj->Nombre }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('Aseguradora')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Productos -->
+                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                        <label class="control-label">Productos *</label>
+                                        <select name="Productos" id="Productos" class="form-control select2"
+                                            style="width: 100%" required>
+                                            <option value="" selected disabled>Seleccione...</option>
+                                            @foreach ($productos as $obj)
+                                                <option value="{{ $obj->Id }}"
+                                                    {{ old('Productos') == $obj->Id ? 'selected' : '' }}>
+                                                    {{ $obj->Nombre }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('Productos')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Planes -->
+                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                        <label class="control-label">Planes *</label>
+                                        <select name="Planes" id="Planes" class="form-control select2"
+                                            style="width: 100%" required>
+                                            <option value="" selected disabled>Seleccione...</option>
+                                            @foreach ($planes as $obj)
+                                                <option value="{{ $obj->Id }}"
+                                                    {{ old('Planes') == $obj->Id ? 'selected' : '' }}>
+                                                    {{ $obj->Nombre }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('Planes')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
 
 
 
-                        <div id="myTabContent" class="tab-content">
-                            <div role="tabpanel" class="tab-pane fade active in" id="tab_content1"
-                                aria-labelledby="home-tab">
+                                    <!-- Asegurado -->
+                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                        <label class="control-label" align="right">Asegurado</label>
+                                        <select name="Asegurado" id="Asegurado" class="form-control select2"
+                                            style="width: 100%" required>
+                                            <option value="">Seleccione...</option>
+                                            @foreach ($cliente as $obj)
+                                                <option value="{{ $obj->Id }}"
+                                                    {{ old('Asegurado') == $obj->Id ? 'selected' : '' }}>
+                                                    {{ $obj->Nombre }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
 
-                                <div class="form-horizontal" style="font-size: 12px;">
-                                    <form action="{{ url('polizas/vida') }}" method="POST" id="form_create">
-                                        @csrf
+                                    <!-- Nit -->
+                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                        <label class="control-label" align="right">Nit</label>
+                                        <input class="form-control" name="Nit" id="Nit" type="text"
+                                            value="{{ old('Nit') }}" readonly>
+                                    </div>
+                                </div>
 
-                                        <div class="x_content" style="font-size: 12px;">
-                                            <div class="col-sm-12" style="padding: 0% !important">
-                                                <!-- Número de Póliza -->
-                                                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                                                    <label class="control-label" align="right">Número de Póliza *</label>
-                                                    <input class="form-control" name="NumeroPoliza" id="NumeroPoliza"
-                                                        type="text" value="{{ old('NumeroPoliza') }}" required>
-                                                </div>
+                                <!-- Ejecutivo -->
+                                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                    <label class="control-label" align="right">Ejecutivo</label>
+                                    <select name="Ejecutivo" class="form-control select2" style="width: 100%" required>
+                                        <option value="">Seleccione...</option>
+                                        @foreach ($ejecutivo as $obj)
+                                            <option value="{{ $obj->Id }}"
+                                                {{ old('Ejecutivo') == $obj->Id ? 'selected' : '' }}>
+                                                {{ $obj->Nombre }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
 
-
-                                                <!-- Aseguradora -->
-                                                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                                                    <label class="control-label" align="right">Aseguradora *</label>
-                                                    <select name="Aseguradora" id="Aseguradora" class="form-control select2"
-                                                        style="width: 100%" required>
-                                                        <option value="">Seleccione...</option>
-                                                        @foreach ($aseguradora as $obj)
-                                                            <option value="{{ $obj->Id }}"
-                                                                {{ old('Aseguradora') == $obj->Id ? 'selected' : '' }}>
-                                                                {{ $obj->Nombre }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                    @error('Aseguradora')
-                                                        <div class="text-danger">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-
-                                                <!-- Productos -->
-                                                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                                                    <label class="control-label">Productos *</label>
-                                                    <select name="Productos" id="Productos" class="form-control select2"
-                                                        style="width: 100%" required>
-                                                        <option value="" selected disabled>Seleccione...</option>
-                                                        @foreach ($productos as $obj)
-                                                            <option value="{{ $obj->Id }}"
-                                                                {{ old('Productos') == $obj->Id ? 'selected' : '' }}>
-                                                                {{ $obj->Nombre }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                    @error('Productos')
-                                                        <div class="text-danger">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-
-                                                <!-- Planes -->
-                                                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                                                    <label class="control-label">Planes *</label>
-                                                    <select name="Planes" id="Planes" class="form-control select2"
-                                                        style="width: 100%" required>
-                                                        <option value="" selected disabled>Seleccione...</option>
-                                                        @foreach ($planes as $obj)
-                                                            <option value="{{ $obj->Id }}"
-                                                                {{ old('Planes') == $obj->Id ? 'selected' : '' }}>
-                                                                {{ $obj->Nombre }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                    @error('Planes')
-                                                        <div class="text-danger">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
+                                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                    <label class="control-label" align="right">Tipo cobro</label>
+                                    <select name="TipoCobro" class="form-control" onchange="showTipoCobro(this.value)"
+                                        required>
+                                        @foreach ($tipoCobro as $tipo)
+                                            <option value="{{ $tipo->Id }}"
+                                                {{ old('TipoCobro', 2) == $tipo->Id ? 'selected' : '' }}>
+                                                {{ $tipo->Nombre }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
 
 
 
-                                                <!-- Asegurado -->
-                                                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                                                    <label class="control-label" align="right">Asegurado</label>
-                                                    <select name="Asegurado" id="Asegurado" class="form-control select2"
-                                                        style="width: 100%" required>
-                                                        <option value="">Seleccione...</option>
-                                                        @foreach ($cliente as $obj)
-                                                            <option value="{{ $obj->Id }}"
-                                                                {{ old('Asegurado') == $obj->Id ? 'selected' : '' }}>
-                                                                {{ $obj->Nombre }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-
-                                                <!-- Nit -->
-                                                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                                                    <label class="control-label" align="right">Nit</label>
-                                                    <input class="form-control" name="Nit" id="Nit" type="text"
-                                                        value="{{ old('Nit') }}" readonly>
-                                                </div>
-                                            </div>
-
-                                            <!-- Ejecutivo -->
-                                            <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                                                <label class="control-label" align="right">Ejecutivo</label>
-                                                <select name="Ejecutivo" class="form-control select2" style="width: 100%"
-                                                    required>
-                                                    <option value="">Seleccione...</option>
-                                                    @foreach ($ejecutivo as $obj)
-                                                        <option value="{{ $obj->Id }}"
-                                                            {{ old('Ejecutivo') == $obj->Id ? 'selected' : '' }}>
-                                                            {{ $obj->Nombre }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-
-                                            <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                                                <label class="control-label" align="right">Tipo cobro</label>
-                                                <select name="TipoCobro" class="form-control"
-                                                    onchange="showTipoCobro(this.value)" required>
-                                                    @foreach ($tipoCobro as $tipo)
-                                                        <option value="{{ $tipo->Id }}">{{ $tipo->Nombre }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
+                                <div class="col-sm-12" style="padding: 0% !important; display: none"
+                                    id="div-cobro-usuarios">
 
 
-                                            <div class="col-sm-12" style="padding: 0% !important; display: none"
-                                                id="div-cobro-usuarios">
-
-                                                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                                                    <label class="control-label" align="right">Limite máximo
-                                                        individual</label>
-                                                    <input class="form-control" name="LimiteMaximoIndividual"
-                                                        type="number" min="0.00" step="any"
-                                                        value="{{ old('LimiteMaximoIndividual') }}" required>
-                                                </div>
-
-                                            </div>
+                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                        <label class="control-label" align="right">Suma minima</label>
+                                        <input class="form-control" name="SumaMinima" type="number" min="0.00"
+                                            step="any" value="{{ old('SumaMinima') }}">
+                                    </div>
 
 
-                                            <div class="col-sm-12" style="padding: 0% !important"
-                                                id="div-cobro-creditos">
-
-                                                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                                                    <label class="control-label" align="right">Tipo de suma</label>
-                                                    <select name="TipoTarifa" class="form-control"
-                                                        onchange="showMultitarifa(this.value)" required>
-                                                        <option value="1">Suma uniforme</option>
-                                                        <option value="2">Multicategoria</option>
-                                                    </select>
-                                                </div>
+                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                        <label class="control-label" align="right">Suma máxima</label>
+                                        <input class="form-control" name="SumaMaxima" type="number" min="0.00"
+                                            step="any" value="{{ old('SumaMaxima') }}">
+                                    </div>
 
 
-                                                <div class="item form-group col-sm-12 col-md-6 col-lg-6"
-                                                    id="div-sumaAsegurada">
-                                                    <label class="control-label" align="right">Suma asegurada</label>
-                                                    <input class="form-control" name="SumaAsegurada" type="number"
-                                                        step="any" value="{{ old('SumaAsegurada') }}"
-                                                        min="100">
-                                                </div>
-
-                                                <div class="item form-group col-sm-12 col-md-6 col-lg-6"
-                                                    id="div-multitarifa" style="display: none">
-                                                    <label class="control-label" align="right">Multicategoria</label>
-                                                    <input class="form-control" name="Multitarifa" type="text"
-                                                        id="Multitarifa" min="1" step="any" value="{{ old('Multitarifa') }}"
-                                                        oninput="formatMultitarifa(this)">
-                                                    <label id="multitarifa-error" class="text-danger"
-                                                        style="display: none;">Formato inválido: use cantidades separadas
-                                                        por coma.</label>
-                                                </div>
-
-                                            </div>
-
-                                            <!-- Edad máxima de inscripción -->
-                                            <div class="item form-group col-sm-12 col-md-3 col-lg-3">
-                                                <label class="control-label" align="right">Edad máxima de
-                                                    inscripción</label>
-                                                <input class="form-control" name="EdadMaximaInscripcion" type="number"
-                                                    min="18" max="100" step="any"
-                                                    value="{{ old('EdadMaximaInscripcion') }}" required>
-                                            </div>
+                                </div>
 
 
-                                            <!-- Edad Terminación -->
-                                            <div class="item form-group col-sm-12 col-md-3 col-lg-3">
-                                                <label class="control-label" align="right">Edad Terminación</label>
-                                                <input class="form-control" name="EdadTerminacion" type="number"
-                                                    step="any" value="{{ old('EdadTerminacion') }}" min="18"
-                                                    max="100" required>
-                                            </div>
+                                <div class="col-sm-12" style="padding: 0% !important" id="div-cobro-creditos">
+
+                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                        <label class="control-label" align="right">Tipo de suma</label>
+                                        <select name="TipoTarifa" class="form-control"
+                                            onchange="showMultitarifa(this.value)">
+                                            <option value="1">Suma uniforme</option>
+                                            <option value="2">Multicategoria</option>
+                                        </select>
+                                    </div>
 
 
-                                            <div class="col-sm-6"><br>
+                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6" id="div-sumaAsegurada">
+                                        <label class="control-label" align="right">Suma asegurada</label>
+                                        <input class="form-control" name="SumaAsegurada" type="number" step="any"
+                                            value="{{ old('SumaAsegurada') }}" min="100">
+                                    </div>
 
-                                                <input name="TarifaExcel" type="checkbox" class="js-switch">
-                                                  <label class="control-label" align="right">&nbsp;Cobro con tarifa
-                                                    excel</label>
-                                            </div>
+                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6" id="div-multitarifa"
+                                        style="display: none">
+                                        <label class="control-label" align="right">Multicategoria</label>
+                                        <input class="form-control" name="Multitarifa" type="text" id="Multitarifa"
+                                            min="1" step="any" value="{{ old('Multitarifa') }}"
+                                            oninput="formatMultitarifa(this)">
+                                        <label id="multitarifa-error" class="text-danger" style="display: none;">Formato
+                                            inválido: use cantidades separadas
+                                            por coma.</label>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-sm-12" style="padding: 0% !important">
+
+                                    <!-- Edad máxima de inscripción -->
+                                    <div class="item form-group col-sm-12 col-md-3 col-lg-3">
+                                        <label class="control-label" align="right">Edad máxima de
+                                            inscripción</label>
+                                        <input class="form-control" name="EdadMaximaInscripcion" type="number"
+                                            min="18" max="100" step="any"
+                                            value="{{ old('EdadMaximaInscripcion') }}" required>
+                                    </div>
 
 
-                                            <div class="col-sm-12" style="padding: 0% !important">
-                                                <!-- Vigencia Desde -->
-                                                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                                                    <label class="control-label" align="right">Vigencia Desde</label>
-                                                    <input class="form-control" name="VigenciaDesde" type="date"
-                                                        value="{{ old('VigenciaDesde') }}" required>
-                                                </div>
-
-                                                <!-- Vigencia Hasta -->
-                                                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                                                    <label class="control-label" align="right">Vigencia Hasta</label>
-                                                    <input class="form-control" name="VigenciaHasta" type="date"
-                                                        value="{{ old('VigenciaHasta') }}" required>
-                                                </div>
-                                            </div>
-
-                                            <!-- Tasa Millar Mensual -->
-                                            <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                                                <label class="control-label" align="right">Tasa Millar Mensual</label>
-                                                <input class="form-control" name="Tasa" type="number" step="any"
-                                                    value="{{ old('Tasa') }}" required>
-                                            </div>
+                                    <!-- Edad Terminación -->
+                                    <div class="item form-group col-sm-12 col-md-3 col-lg-3">
+                                        <label class="control-label" align="right">Edad Terminación</label>
+                                        <input class="form-control" name="EdadTerminacion" type="number" step="any"
+                                            value="{{ old('EdadTerminacion') }}" min="18" max="100" required>
+                                    </div>
 
 
-                                            <!-- Tasa Millar Mensual -->
-                                            <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                                                <label class="control-label" align="right">Descuento</label>
-                                                <input class="form-control" name="TasaDescuento" type="number"
-                                                    step="any" value="{{ old('TasaDescuento') }}">
-                                            </div>
+                                    <div class="item form-group col-sm-6"><br>
 
-                                            <!-- Concepto -->
-                                            <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                                                <label class="control-label" align="right">Concepto</label>
-                                                <textarea class="form-control" name="Concepto" rows="3" cols="4">{{ old('Concepto') }}</textarea>
-                                            </div>
-                                        </div>
+                                        <input name="TarifaExcel" type="checkbox" class="js-switch">
+                                        <label class="control-label" align="right">&nbsp;Cobro con tarifa
+                                            excel</label>
+                                    </div>
+                                </div>
 
-                                        <br><br>
-                                        <div class="x_title">
-                                            <h2> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<small></small></h2>
-                                            <div class="clearfix"></div>
-                                        </div>
-                                        <br>
 
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                            <div class="form-group" align="center">
-                                                <button type="button" onclick="validar()"
-                                                    class="btn btn-success">Aceptar</button>
-                                                <a href="{{ url('polizas/vida') }}"><button type="button"
-                                                        class="btn btn-primary">Cancelar</button></a>
-                                            </div>
-                                        </div>
 
-                                    </form>
+
+
+                                <div class="col-sm-12" style="padding: 0% !important">
+                                    <!-- Vigencia Desde -->
+                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                        <label class="control-label" align="right">Vigencia Desde</label>
+                                        <input class="form-control" name="VigenciaDesde" type="date"
+                                            value="{{ old('VigenciaDesde') }}" required>
+                                    </div>
+
+                                    <!-- Vigencia Hasta -->
+                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                        <label class="control-label" align="right">Vigencia Hasta</label>
+                                        <input class="form-control" name="VigenciaHasta" type="date"
+                                            value="{{ old('VigenciaHasta') }}" required>
+                                    </div>
+                                </div>
+
+                                <!-- Tasa Millar Mensual -->
+                                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                    <label class="control-label" align="right">Tasa Millar Mensual</label>
+                                    <input class="form-control" name="Tasa" type="number" step="any"
+                                        value="{{ old('Tasa') }}" required>
+                                </div>
+
+
+                                <!-- Tasa Millar Mensual -->
+                                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                    <label class="control-label" align="right">Descuento</label>
+                                    <input class="form-control" name="TasaDescuento" type="number" step="any"
+                                        value="{{ old('TasaDescuento') }}">
+                                </div>
+
+                                <!-- Concepto -->
+                                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                    <label class="control-label" align="right">Concepto</label>
+                                    <textarea class="form-control" name="Concepto" rows="3" cols="4">{{ old('Concepto') }}</textarea>
                                 </div>
                             </div>
-                        </div>
 
+                            <br><br>
+                            <div class="x_title">
+                                <h2> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<small></small></h2>
+                                <div class="clearfix"></div>
+                            </div>
+                            <br>
+
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group" align="center">
+                                    <button type="button" onclick="validar()" class="btn btn-success">Aceptar</button>
+                                    <a href="{{ url('polizas/vida') }}"><button type="button"
+                                            class="btn btn-primary">Cancelar</button></a>
+                                </div>
+                            </div>
+
+                        </form>
                     </div>
 
+
                 </div>
+
             </div>
         </div>
     </div>
 
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- jQuery -->
     <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
     <script type="text/javascript">
-        function noGuardardo() {
-            Swal.fire('Debe guardar los datos inicial de la poliza');
-        }
-
-
         $(document).ready(function() {
 
             //mostrar opcion en menu
@@ -353,6 +341,9 @@
             } else if (id == 2) {
                 divUsuarios.style.display = 'none';
                 divCreditos.style.display = 'block';
+            } else if (id == 3) {
+                divUsuarios.style.display = 'none';
+                divCreditos.style.display = 'none';
             }
         }
 

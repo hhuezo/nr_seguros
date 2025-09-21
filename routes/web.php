@@ -375,6 +375,7 @@ Route::middleware(['auth'])->group(function () {
 
 
     Route::post('poliza/vida/validar_store', [VidaController::class, 'validar_store']);
+    Route::get('poliza/vida/validar_edit/{id}', [VidaController::class, 'validar_edit']);
 
     Route::resource('polizas/vida', VidaController::class);
 
