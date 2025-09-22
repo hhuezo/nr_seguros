@@ -1,10 +1,6 @@
 @extends ('welcome')
 @section('contenido')
     <style>
-        /* .subtareas-container {
-                                                                display: none;
-                                                            } */
-
         .expand-icon {
             cursor: pointer;
             margin-right: 8px;
@@ -17,9 +13,17 @@
 
         .primary-row {
             border-left: 5px solid #007bff;
-            /* Azul (primary) */
         }
     </style>
+
+    <!-- Toastr CSS -->
+    <link href="{{ asset('vendors/toast/toastr.min.css') }}" rel="stylesheet">
+
+    <!-- jQuery -->
+    <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
+
+    <!-- Toastr JS -->
+    <script src="{{ asset('vendors/toast/toastr.min.js') }}"></script>
 
     <div class="page-title">
         <div class="title_left">
@@ -35,6 +39,18 @@
     </div>
 
     <div class="x_panel">
+
+        @if (session('success'))
+            <script>
+                toastr.success("{{ session('success') }}");
+            </script>
+        @endif
+
+        @if (session('error'))
+            <script>
+                toastr.error("{{ session('error') }}");
+            </script>
+        @endif
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
 
@@ -53,21 +69,15 @@
                         </div>
                     @endif
 
-                    @if (session('success'))
-                        <div class="alert alert-success">
-                            {{ session('success') }}
-                        </div>
-                    @endif
-
                     @if ($vida->vida_tipos_cartera->count() > 0)
                         <table class="table table-bordered">
                             <thead class="table-dark">
                                 <tr class="warning-row">
                                     <th style="width: 40%;">Tipo cartera</th>
                                     <th style="width: 20%;">Tipo cálculo</th>
-                                    @if ($vida->TarifaExcel != 1)
+                                    {{-- @if ($vida->TarifaExcel != 1)
                                         <th style="width: 20%;">Monto máximo individual</th>
-                                    @endif
+                                    @endif --}}
 
                                     <th style="width: 20%;">Opciones</th>
                                 </tr>
@@ -91,11 +101,11 @@
                                                 {{ 'No aplica' }}
                                             @endif
                                         </td>
-                                        @if ($vida->TarifaExcel != 1)
+                                        {{-- @if ($vida->TarifaExcel != 1)
                                             <td class="text-end">
                                                 ${{ $tipo->MontoMaximoIndividual }}
                                             </td>
-                                        @endif
+                                        @endif --}}
                                         <td> <button class="btn btn-primary"
                                                 data-target="#modal-tipo-cartera-edit-{{ $tipo->Id }}"
                                                 data-toggle="modal"><i class="fa fa-edit"></i></button>
@@ -174,10 +184,14 @@
                                             @endif
 
                                             <div class="text-center">
-                                                <button class="btn btn-primary" type="button"
-                                                    data-target="#modal-tasa-diferenciada" data-toggle="modal"
-                                                    onclick="show_modal_tasa_diferenciada({{ $tipo->Id }},{{ $tipo->TipoCalculo }},{{ $tipo->TipoCalculo }})"><i
-                                                        class="fa fa-plus"></i></button>
+                                                @if ($tipo->VidaTipoCartera > 1 && $tipo->TipoCalculo > 0)
+                                                    <button class="btn btn-primary" type="button"
+                                                        data-target="#modal-tasa-diferenciada" data-toggle="modal"
+                                                        onclick="show_modal_tasa_diferenciada({{ $tipo->Id }},{{ $tipo->TipoCalculo }},{{ $tipo->TipoCalculo }})"><i
+                                                            class="fa fa-plus"></i></button>
+                                                @endif
+
+
                                             </div>
                                             <br>
                                         </td>
@@ -238,14 +252,12 @@
                                     </select>
                                 </div>
 
-                                @if ($vida->TarifaExcel != 1)
-                                    <div class="form-group row">
-                                        <label class="control-label">Monto maximo individual</label>
-                                        <input type="number" step="any" min="0.00" class="form-control"
-                                            name="MontoMaximoIndividual" required>
+                                {{-- <div class="form-group row">
+                                    <label class="control-label">Monto maximo individual</label>
+                                    <input type="number" step="any" min="0.00" class="form-control"
+                                        name="MontoMaximoIndividual" required>
 
-                                    </div>
-                                @endif
+                                </div> --}}
 
 
 

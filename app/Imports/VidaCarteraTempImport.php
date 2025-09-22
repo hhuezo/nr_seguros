@@ -6,8 +6,9 @@ use App\Models\temp\VidaCarteraTemp as TempVidaCarteraTemp;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithStartRow;
 
-class VidaCarteraTempImport implements ToModel
+class VidaCarteraTempImport implements ToModel, WithStartRow
 {
     private $Axo;
     private $Mes;
@@ -28,14 +29,20 @@ class VidaCarteraTempImport implements ToModel
         $this->TarifaExcel = $TarifaExcel;
     }
 
+    /**
+     * Indica que debe empezar a leer desde la fila 2
+     */
+    public function startRow(): int
+    {
+        return 2;
+    }
+
     public function model(array $row)
     {
         try {
-            // Procesar todas las filas, ya que el encabezado fue validado antes
             if (!empty(trim($row[0])) || !empty(trim($row[1]))) { // Al menos DUI o Pasaporte
 
                 $modelData = [
-
                     'Dui' => $row[0] ?? null,
                     'Pasaporte' => $row[1] ?? null,
                     'CarnetResidencia' => $row[2] ?? null,
@@ -63,7 +70,7 @@ class VidaCarteraTempImport implements ToModel
                         ? (float) $row[21] : null, // columna de tarifa
 
                     'TipoDeuda'          => $row[22],
-                    'PorcentajeExtraprima'        => $row[23],
+                    'PorcentajeExtraprima' => $row[23],
 
                     'User' => auth()->id(),
                     'Axo' => $this->Axo,
@@ -71,12 +78,10 @@ class VidaCarteraTempImport implements ToModel
                     'FechaInicio' => $this->FechaInicio,
                     'FechaFinal' => $this->FechaFinal,
                     'FechaNacimientoDate' => $this->convertirFecha($row[4] ?? null, 'Y-m-d'),
-                    'FechaOtorgamientoDate' => $this->convertirFecha($row[12] ?? null, 'Y-m-d'),
+                    'FechaOtorgamientoDate' => $this->convertirFecha($row[13] ?? null, 'Y-m-d'),
                     'PolizaVidaTipoCartera' => $this->PolizaVidaTipoCartera,
-
                     'PolizaVida' => $this->Poliza,
                 ];
-
 
                 return new TempVidaCarteraTemp($modelData);
             } else {

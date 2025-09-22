@@ -389,10 +389,6 @@ class VidaController extends Controller
 
 
 
-
-
-
-
     public function edit($id, Request $request)
     {
         $vida = Vida::findOrFail($id);
@@ -557,10 +553,16 @@ class VidaController extends Controller
             }
 
             //opcion 1 tasa diferenciada 2 tarifa excel
-            if ($request->Opcion == 1) {
-                $vida->TasaDiferenciada = 1;
-            } else if ($request->Opcion == 0) {
+
+            if ($request->Opcion == 0) {
                 $vida->TarifaExcel = 0;
+                $vida->TasaDiferenciada = 0;
+            } else if ($request->Opcion == 1) {
+                $vida->TasaDiferenciada = 1;
+                $vida->TarifaExcel = 0;
+            } else  if ($request->Opcion == 2) {
+                $vida->TasaDiferenciada = 0;
+                $vida->TarifaExcel = 1;
             }
 
             $vida->save();
@@ -601,12 +603,8 @@ class VidaController extends Controller
         $tab = $request->tab ? $request->tab : 1;
 
 
-
-
-
-
         // tab2 si no es multi categoria
-        if ($poliza_vida->TarifaExcel != 1) {
+        if ($poliza_vida->Multitarifa == 1) {
             $cartera = VidaCartera::where('PolizaVida', '=', $id)
                 ->where('PolizaVidaDetalle', null)
                 ->select(DB::raw("IFNULL(sum(SumaAsegurada), '0.00') as SumaAsegurada"))->first();
@@ -671,7 +669,7 @@ class VidaController extends Controller
                     }
                 }
             }
-        } else {
+        } else if ($poliza_vida->TarifaExcel == 1) {
 
             $cartera = VidaCartera::where('PolizaVida', '=', $id)
                 ->where('PolizaVidaDetalle', null)
@@ -705,6 +703,12 @@ class VidaController extends Controller
                     $dataPago->push($item);
                 }
             }
+        } else {
+            $cartera = VidaCartera::where('PolizaVida', '=', $id)
+                ->where('PolizaVidaDetalle', null)
+                ->select(DB::raw("IFNULL(sum(SumaAsegurada), '0.00') as SumaAsegurada"))->first();
+            $dataPago = collect();
+            $dataPagoId = [];
         }
 
         //tab 3

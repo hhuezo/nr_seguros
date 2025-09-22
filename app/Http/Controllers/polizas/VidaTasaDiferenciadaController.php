@@ -31,10 +31,6 @@ class VidaTasaDiferenciadaController extends Controller
                 'TipoCalculo' => 'required|integer',
             ];
 
-            // Solo agregar MontoMaximoIndividual si TarifaExcel != 1
-            if ($vida->TarifaExcel != 1) {
-                $rules['MontoMaximoIndividual'] = 'required|integer';
-            }
 
             // Mensajes personalizados
             $messages = [
@@ -65,10 +61,9 @@ class VidaTasaDiferenciadaController extends Controller
             $tipo_cartera->PolizaVida = $id;
             $tipo_cartera->VidaTipoCartera = $request->TipoCartera;
             $tipo_cartera->TipoCalculo = $request->TipoCalculo;
-            $tipo_cartera->MontoMaximoIndividual = $request->MontoMaximoIndividual ?? null;
             $tipo_cartera->save();
 
-            return back()->with('success', 'Tipo de cartera agregado correctamente.');
+            return back()->with('success', 'Registro agregado correctamente.');
         } catch (\Illuminate\Validation\ValidationException $e) {
             return back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {

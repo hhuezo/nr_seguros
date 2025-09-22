@@ -113,7 +113,6 @@
 
     <div class="x_panel">
 
-        @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
         <div class="x_title">
             <div class="col-md-10 col-sm-10 col-xs-12">
                 <h3>Subir Carteras de <br> {{ $poliza_vida->NumeroPoliza }} | {{ $poliza_vida->cliente->Nombre ?? '' }}
@@ -175,10 +174,12 @@
                                     @endif
                                 </td>
                             </tr>
-
                             @include('polizas.vida.add_cartera')
                             @include('polizas.vida.add_cartera_fede')
                         @endforeach
+
+
+
                     </tbody>
                 </table>
 
