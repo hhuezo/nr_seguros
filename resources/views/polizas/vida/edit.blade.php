@@ -53,7 +53,7 @@
     <style>
         .subtareas-container {
             /* display: none;
-                                                                                                                                                                                                                /* Ocultar subtareas por defecto */
+         /* Ocultar subtareas por defecto */
         }
 
         .expand-icon {

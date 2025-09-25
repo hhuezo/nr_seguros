@@ -109,6 +109,18 @@
                                                     <span style="color: red;">La suma asegurada es diferente a la
                                                         configurada en la póliza</span>
                                                 @endif
+                                                @if (in_array(12, $registro->Errores))
+                                                    <span style="color: red;">La suma asegurada es diferente a la
+                                                        configurada en la póliza en tarifa unica</span>
+                                                @endif
+                                                @if (in_array(13, $registro->Errores))
+                                                    <span style="color: red;">La suma asegurada es diferente a la
+                                                        configurada en la póliza en multitarifa</span>
+                                                @endif
+                                                @if (in_array(14, $registro->Errores))
+                                                    <span style="color: red;">La suma asegurada es diferente a la
+                                                        configurada en la póliza en los limites establecidos</span>
+                                                @endif
                                             </td>
                                             <td>
                                                 @if (in_array(4, $registro->Errores))

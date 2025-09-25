@@ -1144,7 +1144,7 @@ class VidaController extends Controller
         } else {
             $montos = explode(',', $poliza_vida->Multitarifa);
 
-            dd($montos);
+          //  dd($montos);
         }
 
         foreach ($cartera_temp as $obj) {
@@ -1260,10 +1260,56 @@ class VidaController extends Controller
                 }
             }
 
+            //error 12 tipo de cobro
+
+            if ($poliza_vida->TipoCobro == 1) {
+                //por credito
+                if ($poliza_vida->TipoTarifa == 1) {
+                    //tarifa uniforme
+                    if ($obj->SumaAsegurada != $poliza_vida->SumaAsegurada) {
+                        $obj->TipoError = 12;
+                        $obj->update();
+
+                        array_push($errores_array, 12);
+                    }
+                } else {
+                    //multitarifa de la poliza
+                    $multitarifas = array_map('intval', explode(",", $poliza_vida->Multitarifa));
+                    if (!in_array($obj->SumaAsegurada, $multitarifas)) {
+                        $obj->TipoError = 13;
+                        $obj->update();
+
+                        array_push($errores_array, 13);
+                    }
+                }
+            } else if ($poliza_vida->TipoCobro == 2) {
+                //suma abierta
+
+                $min = $poliza_vida->SumaMinima;
+                $max = $poliza_vida->SumaMaxima;
+
+                $sumasPorCliente = [];
+                foreach ($cartera_temp as $obj1) {
+                    if (!isset($sumasPorCliente[$obj1->Dui])) {
+                        $sumasPorCliente[$obj1->Dui] = 0;
+                    }
+                    $sumasPorCliente[$obj1->Dui] += $obj1->SumaAsegurada;
+                }
+
+                foreach ($sumasPorCliente as $cliente => $sumaTotal) {
+                    if ($min > $sumaTotal &&  $sumaTotal > $max) {
+                        $obj->TipoError = 14;
+                        $obj->update();
+
+                        array_push($errores_array, 14);
+                    }
+                }
+            }
 
 
             $obj->Errores = $errores_array;
         }
+
 
         $data_error = $cartera_temp->where('TipoError', '<>', 0);
 

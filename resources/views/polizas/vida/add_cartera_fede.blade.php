@@ -15,7 +15,7 @@
                     <div class="form-group row">
                         <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Linea de
                             Credito..</label>
-                        <input type="hidden" name="PolizaDeudaTipoCartera" value="{{ $obj->Id }}">
+                        <input type="hidden" name="PolizaVidaTipoCartera" value="{{ $obj->Id }}">
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                             <input type="text" class="form-control" value="{{$obj->catalogo_tipo_cartera->Nombre ?? ''}}" readonly>
                         </div>
