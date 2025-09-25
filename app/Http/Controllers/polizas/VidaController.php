@@ -975,7 +975,6 @@ class VidaController extends Controller
     public function create_pago(Request $request)
     {
 
-
         $request->validate([
             'Axo' => 'required|integer',
             'Mes' => 'required|integer|between:1,12',
@@ -1138,14 +1137,25 @@ class VidaController extends Controller
 
         //dd($cartera_temp->take(10));
 
-        //arreglo para la multicategoria
-        if ($poliza_vida->TarifaExcel == 0) {
-            $montos = [$poliza_vida->SumaAsegurada];
-        } else {
-            $montos = explode(',', $poliza_vida->Multitarifa);
 
-          //  dd($montos);
+        //tipo cobro 2 suma abierta
+        if ($poliza_vida->TipoCobro == 2) {
+            //tipo tarifa 1 suma uniforme
+            if ($poliza_vida->TipoTarifa == 1) {
+                $montos = [$poliza_vida->SumaAsegurada];
+            }
+            //tipo tarifa 2 multi categoria
+            else if ($poliza_vida->TipoTarifa == 2) {
+                $montos = explode(',', $poliza_vida->Multitarifa);
+            }
         }
+        else if ($poliza_vida->TipoCobro == 1) {
+            $montos = [$poliza_vida->SumaMinima,$poliza_vida->SumaMaxima];
+        }
+
+
+
+        // dd($montos,$poliza_vida->TipoTarifa);
 
         foreach ($cartera_temp as $obj) {
             $errores_array = [];
@@ -1262,7 +1272,8 @@ class VidaController extends Controller
 
             //error 12 tipo de cobro
 
-            if ($poliza_vida->TipoCobro == 1) {
+
+            if ($poliza_vida->TipoCobro == 2) {
                 //por credito
                 if ($poliza_vida->TipoTarifa == 1) {
                     //tarifa uniforme
@@ -1282,7 +1293,7 @@ class VidaController extends Controller
                         array_push($errores_array, 13);
                     }
                 }
-            } else if ($poliza_vida->TipoCobro == 2) {
+            } else if ($poliza_vida->TipoCobro == 1) {
                 //suma abierta
 
                 $min = $poliza_vida->SumaMinima;
@@ -1297,7 +1308,7 @@ class VidaController extends Controller
                 }
 
                 foreach ($sumasPorCliente as $cliente => $sumaTotal) {
-                    if ($min > $sumaTotal &&  $sumaTotal > $max) {
+                    if ( $sumaTotal < $min &&  $sumaTotal > $max) {
                         $obj->TipoError = 14;
                         $obj->update();
 
