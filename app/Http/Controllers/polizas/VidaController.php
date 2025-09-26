@@ -1308,7 +1308,7 @@ class VidaController extends Controller
                 }
 
                 foreach ($sumasPorCliente as $cliente => $sumaTotal) {
-                    if ( $sumaTotal < $min &&  $sumaTotal > $max) {
+                    if ( $sumaTotal < $min ||  $sumaTotal > $max) {
                         $obj->TipoError = 14;
                         $obj->update();
 
