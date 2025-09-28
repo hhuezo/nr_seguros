@@ -9,6 +9,7 @@ use App\Models\polizas\VidaTipoCartera;
 use App\Models\temp\VidaCarteraTemp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
@@ -17,6 +18,8 @@ class VidaFedeController extends Controller
     //
     public function create_pago(Request $request)
     {
+
+        // dd('holi');
         $request->validate([
             'Axo' => 'required|integer',
             'Mes' => 'required|integer|between:1,12',
@@ -45,6 +48,8 @@ class VidaFedeController extends Controller
             'PolizaVidaTipoCartera.integer' => 'El campo tipo cartera no válido.',
         ]);
 
+        // dd('holi');
+
         $id = $request->Id;
 
         $poliza_vida = Vida::findOrFail($id);
@@ -61,6 +66,67 @@ class VidaFedeController extends Controller
                 ->withErrors(['excel_file' => 'La cartera solo puede contener un solo libro de Excel']);
         }
 
+
+        // Crear validador vacío
+        $validator = Validator::make([], []);
+
+        // 2. Validar primera fila
+        $expectedColumns = [
+            "Tipo de documento",
+            "DUI o documento de identidad",
+            "Primer Apellido",
+            "Segundo Apellido",
+            "Nombres",
+            "Nacionalidad",
+            "Fecha de Nacimiento",
+            "Género",
+            "Nro. de Préstamo",
+            "Fecha de otorgamiento",
+            "Suma asegurada",
+            "Extra Prima",
+            "TARIFA",
+        ];
+
+        $firstRow = $excel->getActiveSheet()->rangeToArray('A1:Z1')[0];
+
+        // Validar que no esté vacío
+        if (empty(array_filter($firstRow))) {
+            $validator->errors()->add('Archivo', 'El archivo está vacío o no tiene el formato esperado');
+            return back()->withErrors($validator);
+        }
+
+        // Normalizar (trim) y pasar a minúsculas para ignorar mayúsculas
+        $firstRow = array_map(fn($v) => mb_strtolower(trim($v)), $firstRow);
+        $expectedColumnsLower = array_map(fn($v) => mb_strtolower($v), $expectedColumns);
+
+        // Función para convertir índice a letra (0 => A, 1 => B, etc.)
+        function columnLetter($index)
+        {
+            $letter = '';
+            while ($index >= 0) {
+                $letter = chr($index % 26 + 65) . $letter;
+                $index = floor($index / 26) - 1;
+            }
+            return $letter;
+        }
+
+        // Validar cantidad de columnas
+        if (count($firstRow) < count($expectedColumnsLower)) {
+            $validator->errors()->add('Archivo', 'Error de formato: faltan columnas en la primera fila');
+            return back()->withErrors($validator);
+        }
+
+        // Validar que todas las columnas sean iguales y en el mismo orden
+        foreach ($expectedColumnsLower as $index => $expectedColumn) {
+            if (!isset($firstRow[$index]) || $firstRow[$index] !== $expectedColumn) {
+                $validator->errors()->add(
+                    'Archivo',
+                    "Error de formato: la columna " . columnLetter($index) . " debe ser '{$expectedColumns[$index]}'"
+                );
+                return back()->withErrors($validator);
+            }
+        }
+
         //borrar datos de tabla temporal
         VidaCarteraTemp::where('User', auth()->user()->id)->where('PolizaVida', $id)->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)->delete();
 
@@ -68,9 +134,8 @@ class VidaFedeController extends Controller
 
 
 
-
         //verificando creditos repetidos
-        /*$repetidos = VidaCarteraTemp::where('User', auth()->user()->id)
+        $repetidos = VidaCarteraTemp::where('User', auth()->user()->id)
             ->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)
             ->groupBy('NumeroReferencia')
             ->havingRaw('COUNT(*) > 1')
@@ -87,13 +152,40 @@ class VidaFedeController extends Controller
 
             return back()
                 ->withErrors(['Archivo' => "Existen números de crédito repetidos: $numerosStr"]);
-        }*/
+        }
 
 
+        //calculando edades y fechas de nacimiento
+        VidaCarteraTemp::where('User', auth()->user()->id)
+            ->where('PolizaVida', $poliza_vida->Id)
+            ->update([
+                'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaFinal)"),
+                'EdadDesembloso' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaOtorgamientoDate)"),
+            ]);
 
         //calculando errores de cartera
         $cartera_temp = VidaCarteraTemp::where('User', '=', auth()->user()->id)->where('PolizaVida', $id)->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)->get();
 
+        //dd($cartera_temp->take(10));
+
+
+        //tipo cobro 2 suma abierta
+        if ($poliza_vida->TipoCobro == 2) {
+            //tipo tarifa 1 suma uniforme
+            if ($poliza_vida->TipoTarifa == 1) {
+                $montos = [$poliza_vida->SumaAsegurada];
+            }
+            //tipo tarifa 2 multi categoria
+            else if ($poliza_vida->TipoTarifa == 2) {
+                $montos = explode(',', $poliza_vida->Multitarifa);
+            }
+        } else if ($poliza_vida->TipoCobro == 1) {
+            $montos = [$poliza_vida->SumaMinima, $poliza_vida->SumaMaxima];
+        }
+
+
+
+        // dd($montos,$poliza_vida->TipoTarifa);
 
         foreach ($cartera_temp as $obj) {
             $errores_array = [];
@@ -103,6 +195,46 @@ class VidaFedeController extends Controller
                 $obj->update();
                 array_push($errores_array, 1);
             }
+
+
+            if ($obj->FechaOtorgamientoDate == null) {
+                $obj->TipoError = 2;
+                $obj->update();
+                array_push($errores_array, 1);
+            }
+
+            if ($request->validacion_dui == 'on') {
+                $validador_dui = true;
+            } else {
+                // Validar si la nacionalidad está vacía
+                if (empty($obj->Nacionalidad)) {
+                    $obj->TipoError = 3;
+                    $obj->update();
+                    $errores_array[] = 3; // Agregar error al array
+                }
+                // Validar si la nacionalidad es SAL (El Salvador)
+                else if (strtolower(trim($obj->Nacionalidad)) == 'el sal') {
+                    $validador_dui = $this->validarDocumento($obj->Dui, "dui");
+                    if (!$validador_dui) {
+                        $obj->TipoError = 4;
+                        $obj->update();
+                        $errores_array[] = 4; // Agregar error al array
+                    }
+                }
+                // // Validar si el pasaporte está vacío para nacionalidades no SAL
+                // else if (empty($obj->Pasaporte)) {
+                //     $validador_dui = false;
+                //     $obj->TipoError = 5;
+                //     $obj->update();
+                //     $errores_array[] = 5; // Agregar error al array
+                // }
+                 else {
+                    $validador_dui = true;
+                }
+            }
+
+
+
 
 
             // 4 nombre o apellido
@@ -130,8 +262,96 @@ class VidaFedeController extends Controller
                 $errores_array[] = 8; // Agregar error al array
             }
 
+            //11 error por edad de terminacion
+            if (trim($obj->Edad) > $poliza_vida->EdadTerminacion) {
+                $obj->TipoError = 9;
+                $obj->update();
+
+                array_push($errores_array, 9);
+            }
+
+
+
+            //validar cantidad asegurada o multi categoria error 10
+
+            if (!in_array($obj->SumaAsegurada, $montos)) {
+                $obj->TipoError = 10;
+                $obj->update();
+
+                array_push($errores_array, 10);
+            }
+
+
+            // 11 error nombres o apellidos con caracteres inválidos
+            $regex = '/^[a-zA-ZÁÉÍÓÚáéíóúÑñ\s\.\'\-]+$/u'; // letras, espacios, punto, apóstrofe y guion
+            $campos = [
+                $obj->PrimerNombre,
+                $obj->SegundoNombre,
+                $obj->PrimerApellido,
+                $obj->SegundoApellido,
+                $obj->ApellidoCasada
+            ];
+
+            foreach ($campos as $valor) {
+                if ($valor && !preg_match($regex, $valor)) {
+                    $obj->TipoError = 11;
+                    $obj->update(); // guardamos inmediatamente
+                    array_push($errores_array, 11);
+                    break; // no necesitamos seguir revisando otros campos
+                }
+            }
+
+            //error 12 tipo de cobro
+
+
+            if ($poliza_vida->TipoCobro == 2) {
+                //por credito
+                if ($poliza_vida->TipoTarifa == 1) {
+                    //tarifa uniforme
+                    if ($obj->SumaAsegurada != $poliza_vida->SumaAsegurada) {
+                        $obj->TipoError = 12;
+                        $obj->update();
+
+                        array_push($errores_array, 12);
+                    }
+                } else {
+                    //multitarifa de la poliza
+                    $multitarifas = array_map('intval', explode(",", $poliza_vida->Multitarifa));
+                    if (!in_array($obj->SumaAsegurada, $multitarifas)) {
+                        $obj->TipoError = 13;
+                        $obj->update();
+
+                        array_push($errores_array, 13);
+                    }
+                }
+            } else if ($poliza_vida->TipoCobro == 1) {
+                //suma abierta
+
+                $min = $poliza_vida->SumaMinima;
+                $max = $poliza_vida->SumaMaxima;
+
+                $sumasPorCliente = [];
+                foreach ($cartera_temp as $obj1) {
+                    if (!isset($sumasPorCliente[$obj1->Dui])) {
+                        $sumasPorCliente[$obj1->Dui] = 0;
+                    }
+                    $sumasPorCliente[$obj1->Dui] += $obj1->SumaAsegurada;
+                }
+
+                foreach ($sumasPorCliente as $cliente => $sumaTotal) {
+                    if ($sumaTotal < $min ||  $sumaTotal > $max) {
+                        $obj->TipoError = 14;
+                        $obj->update();
+
+                        array_push($errores_array, 14);
+                    }
+                }
+            }
+
+
             $obj->Errores = $errores_array;
         }
+
 
         $data_error = $cartera_temp->where('TipoError', '<>', 0);
 
@@ -141,7 +361,7 @@ class VidaFedeController extends Controller
 
 
         $temp_data_fisrt = VidaCarteraTemp::where('PolizaVida', $id)->where('User', auth()->user()->id)->where('PolizaVidaTipoCartera', '=', $request->PolizaVidaTipoCartera)->first();
-
+        dd($temp_data_fisrt);
         if (!$temp_data_fisrt) {
             alert()->error('No se han cargado las carteras');
             return back();
@@ -149,13 +369,6 @@ class VidaFedeController extends Controller
 
 
 
-        //calculando edades y fechas de nacimiento
-        VidaCarteraTemp::where('User', auth()->user()->id)
-            ->where('PolizaVida', $poliza_vida->Id)
-            ->update([
-                'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaFinal)"),
-                'EdadDesembloso' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaOtorgamientoDate)"),
-            ]);
 
 
 
@@ -198,12 +411,21 @@ class VidaFedeController extends Controller
             }
         }
 
-        //agregar la validacion para las edades maximas de inscripcion
-
-        alert()->success('Exito', 'La cartera fue subida con exito');
-
-
         return back();
     }
-    
+
+    public function validarDocumento($documento, $tipo)
+    {
+        if ($tipo == "dui") {
+            // Define las reglas de validación para el formato 000000000
+            $reglaFormato = '/^\d{9}$/';
+
+            return preg_match($reglaFormato, $documento) === 1;
+        } else if ($tipo == "nit") {
+            // Define las reglas de validación para el formato 000000000
+            $reglaFormato = '/^\d{14}$/';
+
+            return preg_match($reglaFormato, $documento) === 1;
+        }
+    }
 }

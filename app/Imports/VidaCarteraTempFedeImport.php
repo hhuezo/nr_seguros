@@ -31,34 +31,38 @@ class VidaCarteraTempFedeImport implements ToModel
     public function model(array $row)
     {
         // Saltar la fila de encabezados
-        if (trim($row[0]) == "DUI") {
+        if (trim($row[1]) == "DUI o documento de identidad") {
             $this->encabezados = 1;
             return null;
         }
-
+        
+        // dd($row);
         // Procesar solo las filas de datos
-        if ($this->encabezados == 1 && (trim($row[0]) != "DUI")) {
+        if ($this->encabezados == 1 && (trim($row[1]) != "DUI o documento de identidad")) {
 
             // Verificar que al menos uno de los dos campos (NIT o DUI) tenga datos
             if (!empty(trim($row[0])) || !empty(trim($row[1]))) {
                 return new VidaCarteraTemp([
                     'PolizaVida' => $this->Poliza,
                     //'Nit' => $row[0] ?? null,
-                    'Dui' => $row[0] ?? null,
-                    'PrimerApellido' => $row[1] ?? null,
-                    'SegundoApellido' => $row[2] ?? null,
-                    'PrimerNombre' => $row[3] ?? null,
-                    'FechaNacimiento' => $this->convertirFecha($row[4] ?? null),
-                    'Sexo' => $row[5] ?? null,
-                    'NumeroReferencia' => $row[6] ?? null,
-                    'SumaAsegurada' => $row[7] ?? null,
+                    'Dui' => $row[1] ?? null,
+                    'PrimerApellido' => $row[2] ?? null,
+                    'SegundoApellido' => $row[3] ?? null,
+                    'PrimerNombre' => $row[4] ?? null,
+                    'Nacionalidad' => $row[5] ?? null,
+                    'FechaNacimiento' => $this->convertirFecha($row[6] ?? null),
+                    'Sexo' => $row[7] ?? null,
+                    'NumeroReferencia' => $row[8] ?? null,
+                    'SumaAsegurada' => $row[10] ?? null,
                     'User' => auth()->id(),
                     'Axo' => $this->Axo,
                     'Mes' => $this->Mes,
                     'FechaInicio' => $this->FechaInicio,
                     'FechaFinal' => $this->FechaFinal,
-                    'FechaNacimientoDate' => $this->convertirFecha($row[4] ?? null, 'Y-m-d'), // FECHA NACIMIENTO (formato Y-m-d)
+                    'FechaNacimientoDate' => $this->convertirFecha($row[6] ?? null, 'Y-m-d'), // FECHA NACIMIENTO (formato Y-m-d)
                     'PolizaVidaTipoCartera' => $this->PolizaVidaTipoCartera,
+                    'FechaOtorgamiento' => $this->convertirFecha($row[9] ?? null),
+                    'FechaOtorgamientoDate' => $this->convertirFecha($row[9] ?? null, 'Y-m-d'),
                 ]);
             }
         }
