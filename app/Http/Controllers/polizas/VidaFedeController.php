@@ -361,7 +361,7 @@ class VidaFedeController extends Controller
 
 
         $temp_data_fisrt = VidaCarteraTemp::where('PolizaVida', $id)->where('User', auth()->user()->id)->where('PolizaVidaTipoCartera', '=', $request->PolizaVidaTipoCartera)->first();
-        dd($temp_data_fisrt);
+       // dd($temp_data_fisrt);
         if (!$temp_data_fisrt) {
             alert()->error('No se han cargado las carteras');
             return back();
