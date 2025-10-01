@@ -43,7 +43,7 @@
 
                         <div class="col-sm-4">
                             <label class="control-label "># Tarea</label>
-                            <input type="text" name="NumeroTarea" readonly class="form-control">
+                            <input type="text" name="NumeroTarea" class="form-control">
                         </div>
 
                         <div class="col-sm-4">

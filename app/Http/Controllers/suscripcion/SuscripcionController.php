@@ -264,7 +264,7 @@ class SuscripcionController extends Controller
         $nuevaTarea = substr(date('Y'), -2) . 'TS-' . $nuevoCorrelativo;
 
         $suscripcion = new Suscripcion();
-        $suscripcion->NumeroTarea = $nuevaTarea;
+        $suscripcion->NumeroTarea = $request->NumeroTarea;
         $suscripcion->FechaIngreso = $request->FechaIngreso;
         $suscripcion->GestorId = $request->Gestor;
         $suscripcion->CompaniaId = $request->CompaniaId;
