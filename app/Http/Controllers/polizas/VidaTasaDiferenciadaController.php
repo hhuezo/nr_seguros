@@ -23,14 +23,12 @@ class VidaTasaDiferenciadaController extends Controller
 
     public function agregar_tipo_cartera(Request $request, $id)
     {
-        $vida = Vida::findOrFail($id);
         try {
 
             $rules = [
                 'TipoCartera' => 'required|integer',
                 'TipoCalculo' => 'required|integer',
             ];
-
 
             // Mensajes personalizados
             $messages = [

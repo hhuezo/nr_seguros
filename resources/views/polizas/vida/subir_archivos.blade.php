@@ -152,7 +152,6 @@
                         <tr>
                             <th>Tipo de Cartera</th>
                             <th>Tipo cálculo</th>
-                            <th>Monto máximo individual</th>
                             <th>Datos Ingresados</th>
                             <th align="center">Carga de <br> archivo de cartera </th>
                         </tr>
@@ -162,7 +161,6 @@
                             <tr>
                                 <td>{{ $obj->catalogo_tipo_cartera->Nombre ?? '' }}</td>
                                 <td>{{ [1 => 'FECHA', 2 => 'MONTO'][$obj->TipoCalculo] ?? 'NO APLICA' }}</td>
-                                <td align="right">${{ number_format($obj->MontoMaximoIndividual, 2, '.', ',') }}</td>
                                 <td align="right">${{ number_format($obj->Total, 2, '.', ',') }}</td>
                                 <td align="center">
                                     @if ($poliza_vida->Aseguradora == 3)
