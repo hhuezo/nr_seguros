@@ -47,9 +47,12 @@ class AseguradoraController extends Controller
         $departamentos = Departamento::get();
         $municipios = Municipio::get();
         $distritos = Distrito::get();
-        $ultimoId = Aseguradora::where('Activo', '=', 1)->orderByDesc('Id')->first();
-        if (!$ultimoId) {
+        $ultimoregistro = Aseguradora::where('Activo', '=', 1)->orderByDesc('Id')->first();
+        if (!$ultimoregistro) {
             $ultimoId = 1;
+        }
+        else{
+             $ultimoId = $ultimoregistro->Id +1;
         }
         $tipo_contribuyente = TipoContribuyente::get();
         return view('catalogo.aseguradora.create', compact('ultimoId', 'tipo_contribuyente', 'departamentos', 'municipios', 'distritos'));

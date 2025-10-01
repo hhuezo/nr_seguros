@@ -28,7 +28,7 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <label class="control-label ">Código</label>
-                            <input type="text" name="Nombre" value="{{($ultimoId->Id) +1}}" class="form-control" readonly autofocus="true">
+                            <input type="text" name="Nombre" value="{{$ultimoId}}" class="form-control" readonly autofocus="true">
                         </div>
                         <div class="col-sm-6">
                             <label class="control-label">Tipo Contribuyente</label>
@@ -135,7 +135,7 @@
                                 <span class="slider round"></span>
                             </label>
                         </div>
-                     
+
                         <div class="col-sm-3" id="diario_365" style="display: none;">
                             <label for="DireccionResidencia" class="form-label">¿Son 365 dias?</label>
                             <label class="switch">
@@ -145,7 +145,7 @@
                             <!-- <input type="checkbox"  class="js-switch" > -->
                         </div>
                     </div>
-                    
+
                 </div>
                 <div class="form-group" align="center">
                     <button class="btn btn-success" type="submit">Guardar</button>
