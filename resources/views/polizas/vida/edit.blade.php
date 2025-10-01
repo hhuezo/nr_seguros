@@ -427,7 +427,6 @@
                                                         <tr class="warning-row">
                                                             <th style="width: 40%;">Tipo cartera</th>
                                                             <th style="width: 20%;">Tipo cálculo</th>
-                                                            <th style="width: 20%;">Monto máximo individual</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -442,9 +441,7 @@
                                                                 </td>
                                                                 <td>{{ $tipo->TipoCalculo == 1 ? 'Fecha' : ($tipo->TipoCalculo == 2 ? 'Monto' : 'No aplica') }}
                                                                 </td>
-                                                                <td class="text-end">
-                                                                    ${{ $tipo->MontoMaximoIndividual }}
-                                                                </td>
+
                                                             </tr>
 
                                                             <tr class="subtareas-container">
