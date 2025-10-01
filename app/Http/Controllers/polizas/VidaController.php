@@ -648,84 +648,85 @@ class VidaController extends Controller
 
             $dataPago = collect();
             $dataPagoId = [];
+            if ($tipos_cartera->count() > 0) {
+                if ($tipos_cartera->first()->TipoCalculo == 0) {
 
-            if ($tipos_cartera->first()->TipoCalculo == 0) {
+                    $total = VidaCartera::where('PolizaVidaDetalle', null)
+                        ->where('PolizaVida', $id)
+                        ->sum('SumaAsegurada');
 
-                $total = VidaCartera::where('PolizaVidaDetalle', null)
-                    ->where('PolizaVida', $id)
-                    ->sum('SumaAsegurada');
+                    $dataPagoId[] = $tipos_cartera->first()->Id;
 
-                $dataPagoId[] = $tipos_cartera->first()->Id;
+                    $item['Id'] =  $tipos_cartera->first()->Id;
+                    $item['TipoCartera'] = $tipos_cartera->first()->catalogo_tipo_cartera->Nombre;
+                    $item['Tasa'] = $poliza_vida->Tasa;
+                    $item['Monto'] = "";
+                    $item['Fecha'] = "";
+                    $item['SumaAsegurada'] = $total;
+                    $item['PrimaCalculada'] = $total * $poliza_vida->Tasa;
+                    $dataPago->push($item);
+                } else {
 
-                $item['Id'] =  $tipos_cartera->first()->Id;
-                $item['TipoCartera'] = $tipos_cartera->first()->catalogo_tipo_cartera->Nombre;
-                $item['Tasa'] = $poliza_vida->Tasa;
-                $item['Monto'] = "";
-                $item['Fecha'] = "";
-                $item['SumaAsegurada'] = $total;
-                $item['PrimaCalculada'] = $total * $poliza_vida->Tasa;
-                $dataPago->push($item);
-            } else {
+                    foreach ($tipos_cartera as $tipo) {
+                        foreach ($tipo->tasa_diferenciada as $tasa) {
+                            $dataPagoId[] = $tasa->Id;
+                            //dd($tasa);
+                            //por fechas
 
-                foreach ($tipos_cartera as $tipo) {
-                    foreach ($tipo->tasa_diferenciada as $tasa) {
-                        $dataPagoId[] = $tasa->Id;
-                        //dd($tasa);
-                        //por fechas
+                            $item['Id'] =  $tasa->Id;
+                            if ($tipo->TipoCalculo == 1) {
 
-                        $item['Id'] =  $tasa->Id;
-                        if ($tipo->TipoCalculo == 1) {
-
-                            $total = VidaCartera::where('PolizaVidaDetalle', null)
-                                ->where('PolizaVida', $id)
-                                ->where('PolizaVidaTipoCartera', $tipo->Id)
-                                ->whereBetween('FechaOtorgamientoDate', [$tasa->FechaDesde, $tasa->FechaHasta])
-                                ->sum('SumaAsegurada');
+                                $total = VidaCartera::where('PolizaVidaDetalle', null)
+                                    ->where('PolizaVida', $id)
+                                    ->where('PolizaVidaTipoCartera', $tipo->Id)
+                                    ->whereBetween('FechaOtorgamientoDate', [$tasa->FechaDesde, $tasa->FechaHasta])
+                                    ->sum('SumaAsegurada');
 
 
-                            $item['TipoCartera'] = $tipo->catalogo_tipo_cartera->Nombre;
-                            $item['Tasa'] = $tasa->Tasa;
-                            $item['Monto'] = "";
-                            //$item['Fecha'] = $tasa->FechaDesde . " - " . $tasa->FechaHasta;
-                            if (!empty($tasa->FechaDesde) && !empty($tasa->FechaHasta)) {
-                                $item['Fecha'] = Carbon::parse($tasa->FechaDesde)->format('d/m/Y')
-                                    . ' - ' .
-                                    Carbon::parse($tasa->FechaHasta)->format('d/m/Y');
-                            } else {
-                                $item['Fecha'] = null;
+                                $item['TipoCartera'] = $tipo->catalogo_tipo_cartera->Nombre;
+                                $item['Tasa'] = $tasa->Tasa;
+                                $item['Monto'] = "";
+                                //$item['Fecha'] = $tasa->FechaDesde . " - " . $tasa->FechaHasta;
+                                if (!empty($tasa->FechaDesde) && !empty($tasa->FechaHasta)) {
+                                    $item['Fecha'] = Carbon::parse($tasa->FechaDesde)->format('d/m/Y')
+                                        . ' - ' .
+                                        Carbon::parse($tasa->FechaHasta)->format('d/m/Y');
+                                } else {
+                                    $item['Fecha'] = null;
+                                }
+                                $item['SumaAsegurada'] = $total;
+                                $item['PrimaCalculada'] = $total * $tasa->Tasa;
+                                $dataPago->push($item);
                             }
-                            $item['SumaAsegurada'] = $total;
-                            $item['PrimaCalculada'] = $total * $tasa->Tasa;
-                            $dataPago->push($item);
-                        }
-                        //por monto
-                        else if ($tipo->TipoCalculo == 2) {
-                            $total = VidaCartera::where('PolizaVidaDetalle', null)
-                                ->where('PolizaVida', $id)
-                                ->where('PolizaVidaTipoCartera', $tipo->Id)
-                                ->whereBetween('SumaAsegurada', [$tasa->MontoDesde, $tasa->MontoHasta])
-                                ->sum('SumaAsegurada');
+                            //por monto
+                            else if ($tipo->TipoCalculo == 2) {
+                                $total = VidaCartera::where('PolizaVidaDetalle', null)
+                                    ->where('PolizaVida', $id)
+                                    ->where('PolizaVidaTipoCartera', $tipo->Id)
+                                    ->whereBetween('SumaAsegurada', [$tasa->MontoDesde, $tasa->MontoHasta])
+                                    ->sum('SumaAsegurada');
 
-                            $item['TipoCartera'] = $tipo->catalogo_tipo_cartera->Nombre;
-                            $item['Tasa'] = $tasa->Tasa;
-                            $item['Monto'] = $tasa->MontoDesde . " - " . $tasa->MontoHasta;
-                            $item['Fecha'] = "";
-                            $item['SumaAsegurada'] = $total;
-                            $item['PrimaCalculada'] = $total * $tasa->Tasa;
-                            $dataPago->push($item);
-                        } else {
-                            $total = VidaCartera::where('PolizaVidaDetalle', null)
-                                ->where('PolizaVida', $id)
-                                ->where('PolizaVidaTipoCartera', $tipo->Id)
-                                ->sum('SumaAsegurada');
+                                $item['TipoCartera'] = $tipo->catalogo_tipo_cartera->Nombre;
+                                $item['Tasa'] = $tasa->Tasa;
+                                $item['Monto'] = $tasa->MontoDesde . " - " . $tasa->MontoHasta;
+                                $item['Fecha'] = "";
+                                $item['SumaAsegurada'] = $total;
+                                $item['PrimaCalculada'] = $total * $tasa->Tasa;
+                                $dataPago->push($item);
+                            } else {
+                                $total = VidaCartera::where('PolizaVidaDetalle', null)
+                                    ->where('PolizaVida', $id)
+                                    ->where('PolizaVidaTipoCartera', $tipo->Id)
+                                    ->sum('SumaAsegurada');
 
-                            $item['TipoCartera'] = $tipo->catalogo_tipo_cartera->Nombre;
-                            $item['Tasa'] = $tasa->Tasa;
-                            $item['Monto'] = "";
-                            $item['Fecha'] = "";
-                            $item['SumaAsegurada'] = $total;
-                            $item['PrimaCalculada'] = $total * $tasa->Tasa;
-                            $dataPago->push($item);
+                                $item['TipoCartera'] = $tipo->catalogo_tipo_cartera->Nombre;
+                                $item['Tasa'] = $tasa->Tasa;
+                                $item['Monto'] = "";
+                                $item['Fecha'] = "";
+                                $item['SumaAsegurada'] = $total;
+                                $item['PrimaCalculada'] = $total * $tasa->Tasa;
+                                $dataPago->push($item);
+                            }
                         }
                     }
                 }
