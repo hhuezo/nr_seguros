@@ -686,7 +686,14 @@ class VidaController extends Controller
                             $item['TipoCartera'] = $tipo->catalogo_tipo_cartera->Nombre;
                             $item['Tasa'] = $tasa->Tasa;
                             $item['Monto'] = "";
-                            $item['Fecha'] = $tasa->FechaDesde . " - " . $tasa->FechaHasta;
+                            //$item['Fecha'] = $tasa->FechaDesde . " - " . $tasa->FechaHasta;
+                            if (!empty($tasa->FechaDesde) && !empty($tasa->FechaHasta)) {
+                                $item['Fecha'] = Carbon::parse($tasa->FechaDesde)->format('d/m/Y')
+                                    . ' - ' .
+                                    Carbon::parse($tasa->FechaHasta)->format('d/m/Y');
+                            } else {
+                                $item['Fecha'] = null;
+                            }
                             $item['SumaAsegurada'] = $total;
                             $item['PrimaCalculada'] = $total * $tasa->Tasa;
                             $dataPago->push($item);

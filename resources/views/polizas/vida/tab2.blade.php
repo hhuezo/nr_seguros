@@ -99,7 +99,7 @@
                             <td>{{ $item['TipoCartera'] }}</td>
                             <td>{{ $item['Tasa'] }}</td>
                             <td>{{ $item['Monto'] }}</td>
-                            <td>{{ $item['Fecha'] }}</td>
+                            <td>{{ $item['Fecha'] }} </td>
                             <td id="suma_asegurada_{{ $item['Id'] }}" contenteditable="true"
                                 style="text-align: right;">
                                 {{ number_format($item['SumaAsegurada'], 2, '.', ',') }}</td>
