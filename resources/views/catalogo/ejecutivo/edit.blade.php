@@ -40,7 +40,7 @@
                         <select name="AreaComercial" class="form-control select2" style="width: 100%">
                             @foreach ($area_comercial as $area)
                                 <option value="{{ $area->Id }}"
-                                    {{ $area->AreaComercial == $area->Id ? 'selected ="selected"' : '' }}>
+                                    {{ $area->AreaComercial == $area->Id ? 'selected' : '' }}>
                                     {{ $area->Nombre }}
                                 </option>
                             @endforeach
