@@ -97,7 +97,7 @@
                                             value="{{ old('Nombre') }}" type="text" required oninput="this.value = this.value.toUpperCase()"> <!-- se agrego toUpperCase -->
                                     </div>
                                     <div class="form-group">
-                                        <label for="FechaNacimiento" class="form-label">Fecha de Nacimiento ó Fundación
+                                        <label for="FechaNacimiento" class="form-label">Fecha de Nacimiento ó Fundación de persona Jurídica
                                             *</label>
                                         <input class="form-control" name="FechaNacimiento" id="FechaNacimiento" required
                                             value="{{ old('FechaNacimiento') }}" type="date">
@@ -251,8 +251,8 @@
                                                 value="{{ old('ResponsablePago') }}" type="text" oninput="this.value = this.value.toUpperCase()">
                                         </div>
                                         <div class="form-group">
-                                            <label for="Genero" class="form-label">Ubicación de cobro * </label>
-                                            <select name="UbicacionCobro" id="UbicacionCobro" class="form-control" style="width: 100%" 
+                                            <label for="Genero" class="form-label">Método de Pago * </label>
+                                            <select name="UbicacionCobro" id="UbicacionCobro" class="form-control" style="width: 100%"
                                                 required> <!-- se quito uppercase -->
                                                 <option value="" selected disabled>Seleccione ...</option>
                                                 @foreach ($ubicaciones_cobro as $obj)

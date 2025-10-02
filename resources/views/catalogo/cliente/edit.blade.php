@@ -178,12 +178,11 @@
                                                      name="Nombre"
                                                      value="{{ strtoupper($cliente->Nombre) }}"
                                                      type="text"
-                                                     oninput="this.value = this.value.toUpperCase()">
+                                                     oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                                                         <!-- se agrego strtoupper, to uppercase, uppercase -->
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="FechaNacimiento" class="form-label">Fecha Nacimiento o
-                                                        Fundación Sociedad *</label>
+                                                    <label for="FechaNacimiento" class="form-label">Fecha de Nacimiento ó Fundación de persona Jurídica *</label>
                                                     <input class="form-control" name="FechaNacimiento"
                                                         id="FechaNacimiento" value="{{ $cliente->FechaNacimiento }}"
                                                         type="date">
@@ -227,7 +226,7 @@
                                                     <label for="Genero" class="form-label">Ocupación </label>
                                                     <input class="form-control" id="Ocupacion" name="Ocupacion"
                                                         type="text" value="{{ strtoupper($cliente->Ocupacion) }}"
-                                                        oninput="this.value = this.value.toUpperCase()">
+                                                        oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                                                 </div>
                                                 <div class="form-group" style="padding-bottom: 38px;">
 
@@ -235,14 +234,14 @@
                                                 <div class="form-group">
                                                     <label for="DireccionResidencia" class="form-label">Dirección
                                                         Residencia</label>
-                                                    <textarea class="form-control" name="DireccionResidencia" oninput="this.value = this.value.toUpperCase()"
+                                                    <textarea class="form-control" name="DireccionResidencia" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)"
                                                         >{{ strtoupper($cliente->DireccionResidencia) }}</textarea>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="DireccionResidencia" class="form-label">Dirección
                                                         Correspondencia *</label>
                                                     <textarea class="form-control" name="DireccionCorrespondencia" id="DireccionCorrespondencia"
-                                                        oninput="this.value = this.value.toUpperCase()" >{{ strtoupper($cliente->DireccionCorrespondencia) }}</textarea>
+                                                        oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)" >{{ strtoupper($cliente->DireccionCorrespondencia) }}</textarea>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="Referencia" class="form-label">Teléfono Principal Contacto
@@ -355,7 +354,7 @@
                                                         Referencia </label>
                                                     <input class="form-control" name="Referencia" id="Referencia"
                                                         value="{{ strtoupper($cliente->Referencia) }}" type="text"
-                                                        oninput="this.value = this.value.toUpperCase()">
+                                                        oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                                                 </div>
 
                                                 <div class="campo-container">
@@ -366,10 +365,10 @@
                                                         <input class="form-control" id="ResponsablePago"
                                                             name="ResponsablePago"
                                                             value="{{ strtoupper($cliente->ResponsablePago) }}"
-                                                            type="text" oninput="this.value = this.value.toUpperCase()">
+                                                            type="text" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                                                     </div>
                                                     <div class="form-group">
-                                                        <label for="Genero" class="form-label">Ubicación de cobro
+                                                        <label for="Genero" class="form-label">Método de Pago
                                                             *</label>
                                                         <select name="UbicacionCobro" id="UbicacionCobro"
                                                             class="form-control"
@@ -434,7 +433,7 @@
                                                             Preferencia </label>
                                                         <input class="form-control" name="BancoPrefencia"
                                                             value="{{ strtoupper($cliente->BancoPrefencia) }}"
-                                                            type="text" oninput="this.value = this.value.toUpperCase()">
+                                                            type="text" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                                                     </div>
                                                     <div class="form-group">
                                                         <label for="CuentasDevolucionPrimas" class="form-label">Cuentas
@@ -453,7 +452,7 @@
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label for="Comentarios" class="form-label">Comentarios</label>
-                                                    <textarea class="form-control" name="Comentarios" oninput="this.value = this.value.toUpperCase()">
+                                                    <textarea class="form-control" name="Comentarios" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                                                         {{ strtoupper($cliente->Comentarios) }}</textarea>
 
                                                 </div>
@@ -499,18 +498,18 @@
                                                 name="Facebook">
                                         </div>
                                         <div class="form-group row">
-                                            <label class="control-label ">Actividades Creativas </label>
+                                            <label class="control-label ">Actividades Recreativas </label>
 
                                             <input class="form-control" value="{{ $cliente->ActividadesCreativas }}"
                                                 name="ActividadesCreativas"
-                                                oninput="this.value = this.value.toUpperCase()" type="text">
+                                                oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)" type="text">
 
                                         </div>
                                         <div class="form-group row">
                                             <label class="control-label ">Estilo Vida </label>
 
                                             <input class="form-control" value="{{ $cliente->EstiloVida }}"
-                                                name="EstiloVida" oninput="this.value = this.value.toUpperCase()"
+                                                name="EstiloVida" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)"
                                                 type="text">
 
                                         </div>
@@ -734,7 +733,7 @@
                                             style="text-align: left;">¿Que información desea recibir
                                             frecuentemente?</label>
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                            <textarea name="Informacion" class="form-control" oninput="this.value = this.value.toUpperCase()">{{ $cliente->Informacion }}</textarea>
+                                            <textarea name="Informacion" class="form-control" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">{{ $cliente->Informacion }}</textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -1306,7 +1305,7 @@
             document.getElementById('ModalRetroProducto').value = producto.toUpperCase();
             document.getElementById('ModalRetroValoresAgregados').value = valores.toUpperCase();
             document.getElementById('ModalRetroCompetidores').value = competidores.toUpperCase();
-            document.getElementById('ModalRetroReferidos').value = referidos.toUpperCase();  
+            document.getElementById('ModalRetroReferidos').value = referidos.toUpperCase();
             document.getElementById('ModalRetroQueQuisiera').value = quisiera.toUpperCase();
             document.getElementById('ModalRetroServicioCliente').value = servicio;
             modal_check_stars(servicio);

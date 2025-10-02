@@ -17,7 +17,7 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     Producto de NR *
-                                    <input type="text" name="Producto" required oninput="this.value = this.value.toUpperCase()" class="form-control">
+                                    <input type="text" name="Producto" required oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)" class="form-control">
                                 </div>
                             </div>
                             <div class="col-sm-6">
@@ -37,13 +37,13 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     Valores agregados *
-                                    <input type="text" name="ValoresAgregados" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
+                                    <input type="text" name="ValoresAgregados" class="form-control" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)" required>
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     Competidores *
-                                    <input type="text" name="Competidores" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
+                                    <input type="text" name="Competidores" class="form-control" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)" required>
                                 </div>
                             </div>
                         </div>
@@ -52,7 +52,7 @@
                             <div class="col-sm-12">
                                 <div class="form-group">
                                     ¿Que quisiera de NR? *
-                                    <input type="text" name="QueQuisiera" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
+                                    <input type="text" name="QueQuisiera" class="form-control" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)" required>
                                 </div>
                             </div>
                         </div>
@@ -60,11 +60,11 @@
                             <div class="col-sm-12">
                                 <div class="form-group">
                                     Referidos *
-                                    <input type="text" name="Referidos" class="form-control"  oninput="this.value = this.value.toUpperCase()" required>
+                                    <input type="text" name="Referidos" class="form-control"  oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)" required>
                                 </div>
                             </div>
                         </div>
-                        <div class="row"> * Campor requerido</div>
+                        <div class="row"> * Campo requerido</div>
                     </div>
                     <div class="clearfix"></div>
                     <div class="modal-footer">
@@ -96,7 +96,7 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     Producto de NR *
-                                    <input type="text" name="Producto" id="ModalRetroProducto" required oninput="this.value = this.value.toUpperCase()" class="form-control">
+                                    <input type="text" name="Producto" id="ModalRetroProducto" required oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)" class="form-control">
                                 </div>
                             </div>
                             <div class="col-sm-6">
@@ -116,13 +116,13 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     Valores agregados *
-                                    <input type="text" name="ValoresAgregados" id="ModalRetroValoresAgregados" class="form-control" oninput="this.value = this.value.toUpperCase()"  required>
+                                    <input type="text" name="ValoresAgregados" id="ModalRetroValoresAgregados" class="form-control" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)"  required>
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     Competidores *
-                                    <input type="text" name="Competidores" id="ModalRetroCompetidores" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
+                                    <input type="text" name="Competidores" id="ModalRetroCompetidores" class="form-control" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)" required>
                                 </div>
                             </div>
                         </div>
@@ -130,7 +130,7 @@
                             <div class="col-sm-12">
                                 <div class="form-group">
                                     ¿Que quisiera de NR? *
-                                    <input type="text" name="QueQuisiera" id="ModalRetroQueQuisiera" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
+                                    <input type="text" name="QueQuisiera" id="ModalRetroQueQuisiera" class="form-control" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)" required>
                                 </div>
                             </div>
                         </div>
@@ -138,7 +138,7 @@
                             <div class="col-sm-12">
                                 <div class="form-group">
                                     Referidos *
-                                    <input type="text" name="Referidos" id="ModalRetroReferidos" class="form-control"  oninput="this.value = this.value.toUpperCase()" required>
+                                    <input type="text" name="Referidos" id="ModalRetroReferidos" class="form-control"  oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)" required>
                                 </div>
                             </div>
                         </div>
