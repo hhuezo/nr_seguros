@@ -243,6 +243,8 @@ class ClienteController extends Controller
         $cliente->TelefonoCelular2 = $request->get('TelefonoCelular2');
         $cliente->BancoPrefencia = $request->get('BancoPrefencia');
         $cliente->CuentasDevolucionPrimas = $request->get('CuentasDevolucionPrimas');
+        $cliente->NumeroExtrajero = $request->get('NumeroExtrajero');
+
         $cliente->save();
 
         session(['tab1' => '1']);
@@ -472,6 +474,7 @@ class ClienteController extends Controller
             $cliente->TelefonoCelular2 = $request->get('TelefonoCelular2');
             $cliente->BancoPrefencia = $request->get('BancoPrefencia');
             $cliente->CuentasDevolucionPrimas = $request->get('CuentasDevolucionPrimas');
+            $cliente->NumeroExtrajero = $request->get('NumeroExtrajero');
             $cliente->update();
 
             return redirect('catalogo/cliente/' . $id . '/edit?tab=1')->with('success', 'El registro ha sido modificado correctamente');

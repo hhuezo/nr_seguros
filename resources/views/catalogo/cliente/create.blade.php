@@ -94,10 +94,12 @@
                                     <div class="form-group">
                                         <label for="Nombre" class="form-label">Nombre o Razón Social *</label>
                                         <input class="form-control" id="Nombre" name="Nombre"
-                                            value="{{ old('Nombre') }}" type="text" required oninput="this.value = this.value.toUpperCase()"> <!-- se agrego toUpperCase -->
+                                            value="{{ old('Nombre') }}" type="text" required
+                                            oninput="this.value = this.value.toUpperCase()"> <!-- se agrego toUpperCase -->
                                     </div>
                                     <div class="form-group">
-                                        <label for="FechaNacimiento" class="form-label">Fecha de Nacimiento ó Fundación de persona Jurídica
+                                        <label for="FechaNacimiento" class="form-label">Fecha de Nacimiento ó Fundación de
+                                            persona Jurídica
                                             *</label>
                                         <input class="form-control" name="FechaNacimiento" id="FechaNacimiento" required
                                             value="{{ old('FechaNacimiento') }}" type="date">
@@ -134,19 +136,22 @@
                                     <div class="form-group">
                                         <label for="Genero" class="form-label">Ocupación</label>
                                         <input class="form-control" id="Ocupacion" name="Ocupacion"
-                                            value="{{ old('Ocupacion') }}" required type="text" oninput="this.value = this.value.toUpperCase()"> <!-- se agrego toUpperCase -->
+                                            value="{{ old('Ocupacion') }}" required type="text"
+                                            oninput="this.value = this.value.toUpperCase()"> <!-- se agrego toUpperCase -->
                                     </div>
                                     <div class="form-group" style="padding-bottom: 38px;">
 
                                     </div>
                                     <div class="form-group">
                                         <label for="DireccionResidencia" class="form-label">Dirección Residencia</label>
-                                        <textarea class="form-control" name="DireccionResidencia" id="DireccionResidencia" oninput="this.value = this.value.toUpperCase()">{{ old('DireccionResidencia') }} </textarea>
+                                        <textarea class="form-control" name="DireccionResidencia" id="DireccionResidencia"
+                                            oninput="this.value = this.value.toUpperCase()">{{ old('DireccionResidencia') }} </textarea>
                                     </div><!-- se agrego toUpperCase -->
                                     <div class="form-group">
                                         <label for="DireccionResidencia" class="form-label">Dirección Correspondencia
                                             *</label>
-                                        <textarea class="form-control" name="DireccionCorrespondencia" id="DireccionCorrespondencia" required oninput="this.value = this.value.toUpperCase()">{{ old('DireccionCorrespondencia') }}</textarea>
+                                        <textarea class="form-control" name="DireccionCorrespondencia" id="DireccionCorrespondencia" required
+                                            oninput="this.value = this.value.toUpperCase()">{{ old('DireccionCorrespondencia') }}</textarea>
                                     </div><!-- se agrego toUpperCase -->
                                     <div class="form-group">
                                         <label for="Referencia" class="form-label">Teléfono Principal *</label>
@@ -164,14 +169,21 @@
                                     <div class="form-group">
                                         <label for="Referencia" class="form-label">Teléfono Oficina </label>
                                         <input class="form-control" name="TelefonoOficina"
-                                            value="{{ old('TelefonoOficina') }}"
-                                            data-inputmask="'mask': ['9999-9999']" data-mask type="text">
+                                            value="{{ old('TelefonoOficina') }}" data-inputmask="'mask': ['9999-9999']"
+                                            data-mask type="text">
                                     </div>
                                     <div class="form-group">
                                         <label for="TelefonoCelular2" class="form-label">Teléfono Celular</label>
                                         <input class="form-control" name="TelefonoCelular2"
-                                            value="{{ old('TelefonoCelular2') }}"
-                                            data-inputmask="'mask': ['9999-9999']" data-mask type="text">
+                                            value="{{ old('TelefonoCelular2') }}" data-inputmask="'mask': ['9999-9999']"
+                                            data-mask type="text">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="NumeroExtrajero" class="form-label">Número Extrajero</label>
+                                        <input class="form-control" name="NumeroExtrajero"
+                                            value="{{ old('NumeroExtrajero') }}"
+                                            data-mask type="text">
                                     </div>
                                     <div class="form-group">
                                         <label for="CorreoPrincipal" class="form-label">Correo Principal</label>
@@ -238,22 +250,24 @@
                                     </div>
                                     <div class="form-group" style="padding-bottom: 90px!important;">
                                         <label for="Referencia" class="form-label">Vinculado al Grupo o Referencia
-                                            </label>
+                                        </label>
                                         <input class="form-control" name="Referencia" id="Referencia"
-                                            value="{{ old('Referencia') }}" type="text" oninput="this.value = this.value.toUpperCase()">
+                                            value="{{ old('Referencia') }}" type="text"
+                                            oninput="this.value = this.value.toUpperCase()">
                                     </div>
 
                                     <div class="campo-container">
                                         <div class="titulo">Formas de pago</div>
                                         <div class="form-group">
-                                            <label for="Genero" class="form-label">Responsable de Pago  </label>
+                                            <label for="Genero" class="form-label">Responsable de Pago </label>
                                             <input class="form-control" id="ResponsablePago" name="ResponsablePago"
-                                                value="{{ old('ResponsablePago') }}" type="text" oninput="this.value = this.value.toUpperCase()">
+                                                value="{{ old('ResponsablePago') }}" type="text"
+                                                oninput="this.value = this.value.toUpperCase()">
                                         </div>
                                         <div class="form-group">
                                             <label for="Genero" class="form-label">Método de Pago * </label>
-                                            <select name="UbicacionCobro" id="UbicacionCobro" class="form-control" style="width: 100%"
-                                                required> <!-- se quito uppercase -->
+                                            <select name="UbicacionCobro" id="UbicacionCobro" class="form-control"
+                                                style="width: 100%" required> <!-- se quito uppercase -->
                                                 <option value="" selected disabled>Seleccione ...</option>
                                                 @foreach ($ubicaciones_cobro as $obj)
                                                     <option value="{{ $obj->Id }}"
@@ -283,8 +297,8 @@
                                             </div>
                                             <div class="form-group">
                                                 <label for="DireccionResidencia" class="form-label">Municipio</label>
-                                                <select name="Municipio" id="Municipio"
-                                                    class="form-control select2" style="width: 100%" disabled>
+                                                <select name="Municipio" id="Municipio" class="form-control select2"
+                                                    style="width: 100%" disabled>
                                                     <option value="">Seleccione</option>
                                                     @foreach ($municipios as $obj)
                                                         <option value="{{ $obj->Id }}"
@@ -309,9 +323,10 @@
                                             </div>
                                             <div class="form-group">
                                                 <label for="BancoPrefencia" class="form-label">Banco de su Preferencia
-                                                    </label>
+                                                </label>
                                                 <input class="form-control" name="BancoPrefencia"
-                                                    value="{{ old('BancoPrefencia') }}" type="text" oninput="this.value = this.value.toUpperCase()">
+                                                    value="{{ old('BancoPrefencia') }}" type="text"
+                                                    oninput="this.value = this.value.toUpperCase()">
                                             </div>
                                             <div class="form-group">
                                                 <label for="CuentasDevolucionPrimas" class="form-label">Cuentas para
@@ -603,11 +618,11 @@
                     console.error('Error en la solicitud:', error);
                 });
 
-                window.scrollTo({
+            window.scrollTo({
                 top: 0,
                 left: 0,
                 behavior: 'smooth'
-                });
+            });
         }
     </script>
 @endsection
