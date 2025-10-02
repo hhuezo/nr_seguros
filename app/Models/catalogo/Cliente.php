@@ -2,6 +2,7 @@
 
 namespace App\Models\catalogo;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -73,10 +74,10 @@ class Cliente extends Model
 
     protected $guarded = [];
 
-    /*public function ruta()
+    public function usuario()
     {
-        return $this->belongsTo('App\Models\catalogo\Ruta', 'Ruta', 'Id');
-    }*/
+        return $this->belongsTo(User::class, 'UsuarioIngreso', 'id');
+    }
 
     public function tipo_contribuyente()
     {
