@@ -150,11 +150,9 @@
                                         <select name="EstadoPoliza" class="form-control select2" style="width: 100%"
                                             required>
                                             @foreach ($estadoPoliza as $obj)
-                                                @if ($obj->Id == 1)
-                                                    <option value="{{ $obj->Id }}"
-                                                        {{ old('EstadoPoliza') == $obj->Id ? 'selected' : '' }}>
-                                                        {{ $obj->Nombre }}</option>
-                                                @endif
+                                                <option value="{{ $obj->Id }}"
+                                                    {{ old('EstadoPoliza') == $obj->Id ? 'selected' : '' }}>
+                                                    {{ $obj->Nombre }}</option>
                                             @endforeach
                                         </select>
                                     </div>
