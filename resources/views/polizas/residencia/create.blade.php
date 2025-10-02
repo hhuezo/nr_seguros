@@ -73,8 +73,7 @@
                         </div>
                         <div class="col-sm-4" style="display: none;">
                             <label class="control-label ">Código</label>
-                            <input class="form-control" name="Codigo" type="text" value="{{ $ultimo }}"
-                                readonly>
+                            <input class="form-control" name="Codigo" type="text" value="{{ $ultimo }}" readonly>
                         </div>
 
                         <div class="col-sm-8">
@@ -130,10 +129,8 @@
                             <label class="control-label">Estatus *</label>
                             <select name="EstadoPoliza" class="form-control" style="width: 100%" required>
                                 @foreach ($estados_poliza as $obj)
-                                    @if ($obj->Id == 1)
-                                        <option value="{{ $obj->Id }}" @selected(old('EstadoPoliza') == $obj->Id)>
-                                            {{ $obj->Nombre }}</option>
-                                    @endif
+                                    <option value="{{ $obj->Id }}" @selected(old('EstadoPoliza') == $obj->Id)>
+                                        {{ $obj->Nombre }}</option>
                                 @endforeach
                             </select>
                         </div>
