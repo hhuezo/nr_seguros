@@ -73,7 +73,7 @@
                         </div>
                         <div class="col-sm-4" style="display: none;">
                             <label class="control-label ">Código</label>
-                            <input class="form-control" name="Codigo" type="text" value="{{ $ultimo->Id + 1 }}"
+                            <input class="form-control" name="Codigo" type="text" value="{{ $ultimo }}"
                                 readonly>
                         </div>
 

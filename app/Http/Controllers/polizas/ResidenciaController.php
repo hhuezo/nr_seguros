@@ -71,9 +71,12 @@ class ResidenciaController extends Controller
         } else {
             $bomberos = 0;
         }
-        $ultimo = Residencia::where('Activo', 1)->orderByDesc('Id')->first();
-        if (!$ultimo) {
+        $ultimoRegistro = Residencia::where('Activo', 1)->orderByDesc('Id')->first();
+        if (!$ultimoRegistro) {
             $ultimo = 1;
+        }
+        else{
+             $ultimo =  $ultimoRegistro->Id +1;
         }
         $cliente = Cliente::where('Activo', 1)->get();
         $tipos_contribuyente = TipoContribuyente::get();
