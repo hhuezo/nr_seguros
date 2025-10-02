@@ -173,16 +173,14 @@
                                                 <div class="form-group">
                                                     <label for="Nombre" class="form-label">Nombre o Razón Social
                                                         *</label>
-                                                    <input class="form-control"
-                                                     id="Nombre"
-                                                     name="Nombre"
-                                                     value="{{ strtoupper($cliente->Nombre) }}"
-                                                     type="text"
-                                                     oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
-                                                        <!-- se agrego strtoupper, to uppercase, uppercase -->
+                                                    <input class="form-control" id="Nombre" name="Nombre"
+                                                        value="{{ strtoupper($cliente->Nombre) }}" type="text"
+                                                        oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
+                                                    <!-- se agrego strtoupper, to uppercase, uppercase -->
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="FechaNacimiento" class="form-label">Fecha de Nacimiento ó Fundación de persona Jurídica *</label>
+                                                    <label for="FechaNacimiento" class="form-label">Fecha de Nacimiento ó
+                                                        Fundación de persona Jurídica *</label>
                                                     <input class="form-control" name="FechaNacimiento"
                                                         id="FechaNacimiento" value="{{ $cliente->FechaNacimiento }}"
                                                         type="date">
@@ -234,14 +232,14 @@
                                                 <div class="form-group">
                                                     <label for="DireccionResidencia" class="form-label">Dirección
                                                         Residencia</label>
-                                                    <textarea class="form-control" name="DireccionResidencia" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)"
-                                                        >{{ strtoupper($cliente->DireccionResidencia) }}</textarea>
+                                                    <textarea class="form-control" name="DireccionResidencia"
+                                                        oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">{{ strtoupper($cliente->DireccionResidencia) }}</textarea>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="DireccionResidencia" class="form-label">Dirección
                                                         Correspondencia *</label>
                                                     <textarea class="form-control" name="DireccionCorrespondencia" id="DireccionCorrespondencia"
-                                                        oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)" >{{ strtoupper($cliente->DireccionCorrespondencia) }}</textarea>
+                                                        oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">{{ strtoupper($cliente->DireccionCorrespondencia) }}</textarea>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="Referencia" class="form-label">Teléfono Principal Contacto
@@ -268,6 +266,12 @@
                                                     <input class="form-control" name="TelefonoCelular2"
                                                         value="{{ $cliente->TelefonoCelular2 }}"
                                                         data-inputmask="'mask': ['9999-9999']" data-mask type="text">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="NumeroExtrajero" class="form-label">Número
+                                                        Extrajero</label>
+                                                    <input class="form-control" name="NumeroExtrajero"
+                                                        value="{{ $cliente->NumeroExtrajero }}" data-mask type="text">
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="CorreoPrincipal" class="form-label">Correo Principal
@@ -365,14 +369,14 @@
                                                         <input class="form-control" id="ResponsablePago"
                                                             name="ResponsablePago"
                                                             value="{{ strtoupper($cliente->ResponsablePago) }}"
-                                                            type="text" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
+                                                            type="text"
+                                                            oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                                                     </div>
                                                     <div class="form-group">
                                                         <label for="Genero" class="form-label">Método de Pago
                                                             *</label>
                                                         <select name="UbicacionCobro" id="UbicacionCobro"
-                                                            class="form-control"
-                                                            style="width: 100%; ">
+                                                            class="form-control" style="width: 100%; ">
                                                             <option value="" selected disabled>Seleccione ...
                                                             </option>
                                                             @foreach ($ubicaciones_cobro as $obj)
@@ -433,7 +437,8 @@
                                                             Preferencia </label>
                                                         <input class="form-control" name="BancoPrefencia"
                                                             value="{{ strtoupper($cliente->BancoPrefencia) }}"
-                                                            type="text" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
+                                                            type="text"
+                                                            oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                                                     </div>
                                                     <div class="form-group">
                                                         <label for="CuentasDevolucionPrimas" class="form-label">Cuentas
@@ -452,7 +457,8 @@
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label for="Comentarios" class="form-label">Comentarios</label>
-                                                    <textarea class="form-control" name="Comentarios" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
+                                                    <textarea class="form-control" name="Comentarios"
+                                                        oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                                                         {{ strtoupper($cliente->Comentarios) }}</textarea>
 
                                                 </div>
@@ -502,14 +508,16 @@
 
                                             <input class="form-control" value="{{ $cliente->ActividadesCreativas }}"
                                                 name="ActividadesCreativas"
-                                                oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)" type="text">
+                                                oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)"
+                                                type="text">
 
                                         </div>
                                         <div class="form-group row">
                                             <label class="control-label ">Estilo Vida </label>
 
                                             <input class="form-control" value="{{ $cliente->EstiloVida }}"
-                                                name="EstiloVida" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)"
+                                                name="EstiloVida"
+                                                oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)"
                                                 type="text">
 
                                         </div>
@@ -524,8 +532,7 @@
                                         <div class="form-group row">
                                             <label class="control-label ">Necesidad Protección </label>
 
-                                            <select name="NecesidadProteccion" class="form-control"
-                                                style="width: 100%">
+                                            <select name="NecesidadProteccion" class="form-control" style="width: 100%">
                                                 <option value="">Seleccione...</option>
                                                 @foreach ($necesidades as $obj)
                                                     <option value="{{ $obj->Id }}"
@@ -587,8 +594,7 @@
                                         <div class="form-group row">
                                             <label class="control-label ">Le Gusta Informarse </label>
 
-                                            <select name="Informarse" class="form-control"
-                                                style="width: 100%; ">
+                                            <select name="Informarse" class="form-control" style="width: 100%; ">
                                                 <option value=""> Seleccione...</option>
                                                 @foreach ($informarse as $obj)
                                                     <option value="{{ $obj->Id }}"
@@ -647,8 +653,7 @@
                                             <div class="input-group row">
 
                                                 <select name="MotivoEleccion" id="MotivoEleccion"
-                                                    class="form-control col-md-4"
-                                                    style="width: 100%">
+                                                    class="form-control col-md-4" style="width: 100%">
                                                     <option value=""> Seleccione...</option>
                                                     @foreach ($motivo_eleccion as $obj)
                                                         <option value="{{ $obj->Id }}"
@@ -670,8 +675,7 @@
                                             <div class="input-group row">
 
                                                 <select name="PreferenciaCompra" id="PreferenciaCompra"
-                                                    class="form-control col-md-4"
-                                                    style="width: 100% ">
+                                                    class="form-control col-md-4" style="width: 100% ">
                                                     <option value=""> Seleccione...</option>
                                                     @foreach ($preferencia_compra as $obj)
                                                         <option value="{{ $obj->Id }}"
@@ -733,7 +737,8 @@
                                             style="text-align: left;">¿Que información desea recibir
                                             frecuentemente?</label>
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                            <textarea name="Informacion" class="form-control" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">{{ $cliente->Informacion }}</textarea>
+                                            <textarea name="Informacion" class="form-control"
+                                                oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">{{ $cliente->Informacion }}</textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -1111,7 +1116,6 @@
 
 
     <script type="text/javascript">
-
         $(document).ready(function() {
             $("#opcionCliente").addClass("current-page");
             $("#botonMenuCliente").addClass("active");
