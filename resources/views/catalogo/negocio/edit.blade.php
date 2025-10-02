@@ -118,7 +118,7 @@
                                                 Prospecto</label>
                                             <input class="form-control validarCredenciales" readonly
                                             name="NombreCliente"
-                                            id="NombreCliente" 
+                                            id="NombreCliente"
                                             value="{{$negocio->clientes->Nombre}}"
                                             type="text">
                                             <!-- no se hizo conversion en mayusculas, viene de cliente y ya esta agregado el nombre del cliente -->
@@ -198,7 +198,7 @@
                                         <div class="col-md-6">
                                             <label for="NumeroPoliza" class="form-label">Número de póliza</label>
                                             <input class="form-control" type="text" value="{{strtoupper($negocio->NumeroPoliza)}}"
-                                                name="NumeroPoliza" id="NumeroPoliza" oninput="this.value = this.value.toUpperCase()">
+                                                name="NumeroPoliza" id="NumeroPoliza" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                                         </div>
                                     </div>
                                     <div class="row" style="margin-top: 12px!important;">
@@ -250,7 +250,7 @@
                                             <label for="Observacion" class="form-label">Observaciones o
                                                 anotaciones</label>
                                             <textarea name="Observacion" id="Observacion" rows="3"
-                                                class="form-control" oninput="this.value = this.value.toUpperCase()"> {{strtoupper($negocio->Observacion)}}</textarea>
+                                                class="form-control" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)"> {{strtoupper($negocio->Observacion)}}</textarea>
 
                                         </div>
                                     </div>
@@ -583,7 +583,7 @@
                         <div class="col-md-12" style="margin-top: 12px!important;">
                             <label for="Observacion" class="form-label">Observaciones o
                                 comentarios</label>
-                            <textarea name="Observaciones" id="Observaciones" rows="3" class="form-control" oninput="this.value = this.value.toUpperCase()"></textarea>
+                            <textarea name="Observaciones" id="Observaciones" rows="3" class="form-control" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)"></textarea>
 
                         </div>
                         <div>&nbsp; </div>
@@ -655,7 +655,7 @@
                             <label for="Observacion" class="form-label">Observaciones o
                                 comentarios</label>
                             <textarea name="Observaciones" id="ModalCotizacionObservaciones" rows="3"
-                                class="form-control" oninput="this.value = this.value.toUpperCase()"></textarea>
+                                class="form-control" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)"></textarea>
 
                         </div>
                         <div>&nbsp; </div>
@@ -728,12 +728,12 @@
                         <div class="form-group">
                             <div class="col-md-6">
                                 <label for="Contacto" class="form-label">Contacto</label>
-                                <input type="text" name="Contacto" id="Contacto" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
+                                <input type="text" name="Contacto" id="Contacto" class="form-control" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)" required>
                             </div>
                             <div class="col-md-6">
                                 <label for="DescripcionOperacion" class="form-label">Descripción de la
                                     Operación</label>
-                                <input type="text" name="DescripcionOperacion" id="DescripcionOperacion" oninput="this.value = this.value.toUpperCase()"
+                                <input type="text" name="DescripcionOperacion" id="DescripcionOperacion" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)"
                                     class="form-control" required>
                             </div>
                             <div class="col-md-6" style="margin-top: 12px!important;">
@@ -743,7 +743,7 @@
                             </div>
                             <div class="col-md-6" style="margin-top: 12px!important;">
                                 <label for="Contacto" class="form-label">Observación del Contacto</label>
-                                <textarea class="form-control" name="ObservacionContacto" oninput="this.value = this.value.toUpperCase()"
+                                <textarea class="form-control" name="ObservacionContacto" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)"
                                     id="ObservacionContacto"></textarea>
                             </div>
                         </div>
@@ -782,13 +782,13 @@
                             <div class="col-md-6">
                                 <label for="Contacto" class="form-label">Contacto</label>
                                 <input type="text" name="Contacto" id="ModalContactoContacto" class="form-control"
-                                oninput="this.value = this.value.toUpperCase()" required>
+                                oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)" required>
                             </div>
                             <div class="col-md-6">
                                 <label for="DescripcionOperacion" class="form-label">Descripción de la
                                     Operación</label>
                                 <input type="text" name="DescripcionOperacion" id="ModalContactoDescripcionOperacion"
-                                    class="form-control" oninput="this.value = this.value.toUpperCase()" required>
+                                    class="form-control" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)" required>
                             </div>
                             <div class="col-md-6" style="margin-top: 12px!important;">
                                 <label for="Contacto" class="form-label">Teléfono de Contacto</label>
@@ -797,8 +797,8 @@
                             </div>
                             <div class="col-md-6" style="margin-top: 12px!important;">
                                 <label for="Contacto" class="form-label">Observación del Contacto</label>
-                                <textarea class="form-control" name="ObservacionContacto" 
-                                    id="ModalContactoObservacionContacto" oninput="this.value = this.value.toUpperCase()"></textarea>
+                                <textarea class="form-control" name="ObservacionContacto"
+                                    id="ModalContactoObservacionContacto" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)"></textarea>
                             </div>
                         </div>
 
@@ -863,7 +863,7 @@
                             <div class="col-md-12">
                                 <label for="DescripcionActividad" class="form-label">Descripción de la actividad</label>
                                 <textarea class="form-control" name="DescripcionActividad"
-                                    id="DescripcionActividad" oninput="this.value = this.value.toUpperCase()"></textarea>
+                                    id="DescripcionActividad" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)"></textarea>
                             </div>
                         </div>
 
@@ -901,7 +901,7 @@
                             <div class="col-md-12">
                                 <label for="DescripcionActividad" class="form-label">Descripción de la actividad</label>
                                 <textarea class="form-control" name="DescripcionActividad"
-                                    id="ModalGestionDescripcionActividad" oninput="this.value = this.value.toUpperCase()"></textarea>
+                                    id="ModalGestionDescripcionActividad" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)"></textarea>
                             </div>
                         </div>
 

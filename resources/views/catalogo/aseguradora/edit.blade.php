@@ -88,11 +88,11 @@
                                     <div class="col-sm-6">
                                         <label class="control-label ">Nombre o Razón Social</label>
                                         <input type="text" name="Nombre" value="{{ strtoupper($aseguradora->Nombre) }}" class="form-control" required autofocus="true"
-                                        oninput="this.value = this.value.toUpperCase()">
+                                        oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                                     </div>
                                     <div class="col-sm-6">
                                         <label class="control-label">Dirección</label>
-                                        <textarea name="Direccion" rows="1" class="form-control" oninput="this.value = this.value.toUpperCase()"
+                                        <textarea name="Direccion" rows="1" class="form-control" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)"
                                         >{{ strtoupper($aseguradora->Direccion) }}</textarea>
                                     </div>
                                 </div>
@@ -100,7 +100,7 @@
                                     <div class="col-sm-6">
                                         <label class="control-label ">Abreviatura</label>
                                         <input type="text" name="Abreviatura" value="{{ strtoupper($aseguradora->Abreviatura) }}" class="form-control"
-                                        oninput="this.value = this.value.toUpperCase()">
+                                        oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                                     </div>
                                     <div class="col-sm-6">
                                         <label class="control-label">Teléfono fijo de asistencia</label>
@@ -420,11 +420,11 @@
                         <div class="modal-body">
                             <input type="hidden" name="Aseguradora" value="{{ $aseguradora->Id }}" class="form-control">
 
-                            
+
                             <div class="row" style="padding-bottom: 15px;">
                                 <div class="col-sm-6">
                                     <label for="Nombre" class="form-label">Nombre</label>
-                                    <input type="text" name="Nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
+                                    <input type="text" name="Nombre" class="form-control" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)" required>
                                 </div>
                                 <div class="col-sm-6">
                                     <label for="Cargo" class="form-label">Cargo</label>
@@ -437,7 +437,7 @@
                                         <span class="input-group-btn">
                                             <button type="button" class="btn btn-primary" onclick="addCargo();" >+</button>
                                         </span>
-                                    </div>        
+                                    </div>
                                 </div>
                             </div>
 
@@ -451,7 +451,7 @@
                                     <input type="email" class="form-control" required name="Email">
                                 </div>
                             </div>
-                            
+
 
                         </div>
                         <div>&nbsp; </div>
@@ -481,12 +481,13 @@
                         <div class="modal-body">
                             <input type="hidden" name="Aseguradora" value="{{ $aseguradora->Id }}" class="form-control">
 
-                            
+
                             <div class="form-group">
                                 <div class="col-sm-6">
-                                    Nombre
-                                    <input type="text" name="Nombre" id="ModalContactoNombre" class="form-control" 
-                                    oninput="this.value = this.value.toUpperCase()" required>
+                                    Nombre...
+                                    <input type="text" name="Nombre" id="ModalContactoNombre" class="form-control" required
+                                    oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
+
                                 </div>
                             </div>
 
@@ -602,15 +603,15 @@
                     <div class="box-body">
 
                         <div class="x_content">
-                           
+
 
                             <div class="form-group">
                                 <label class="control-label">Nombre</label>
-                                
-                                    <input type="text" name="Nombre" id="ModalNombreCargo" class="form-control" 
-                                    oninput="this.value = this.value.toUpperCase()" autofocus="true">
-                                
-                                
+
+                                    <input type="text" name="Nombre" id="ModalNombreCargo" class="form-control"
+                                    oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)" autofocus="true">
+
+
                             </div>
 
                         </div>
