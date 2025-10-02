@@ -147,7 +147,7 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label" align="right">Estatus *</label>
-                                        <select name="EstadoPoliza" class="form-control select2" style="width: 100%"
+                                        <select name="EstadoPoliza" class="form-control" style="width: 100%"
                                             required>
                                             @foreach ($estadoPoliza as $obj)
                                                 <option value="{{ $obj->Id }}"
