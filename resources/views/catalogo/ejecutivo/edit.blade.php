@@ -36,7 +36,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="control-label ">Área Comercial</label>
+                        <label class="control-label ">Cargo o puesto</label>
                         <select name="AreaComercial" class="form-control select2" style="width: 100%">
                             @foreach ($area_comercial as $obj)
                                 <option value="{{ $obj->Id }}"

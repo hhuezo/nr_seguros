@@ -52,7 +52,7 @@
                         </div>
                         <div class="form-group">
 
-                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Área Comercial</label>
+                            <label class="control-label col-md-3 col-sm-12 col-xs-12">Cargo o puesto</label>
                             <div class="col-lg-6 col-md-9 col-sm-12 col-xs-12">
                                 <select name="AreaComercial" class="form-control select2" style="width: 100%">
 

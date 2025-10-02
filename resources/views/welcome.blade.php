@@ -180,7 +180,7 @@
                                         <li><a href="{{ url('catalogo/tipo_negocio') }}">Tipo Negocio</a></li>
                                         <li><a href="{{ url('catalogo/tipo_cobro') }}">Tipo Cobro</a></li>
                                         <li><a href="{{ url('catalogo/tipo_poliza') }}">Tipo Póliza (ramo)</a></li>
-                                        <li><a href="{{ url('catalogo/area_comercial') }}">Área Comercial</a></li>
+                                        <li><a href="{{ url('catalogo/area_comercial') }}">Cargo o puesto</a></li>
                                         <li><a href="{{ url('catalogo/ubicacion_cobro') }}">Ubicación Cobro</a></li>
                                         <li><a href="{{ url('catalogo/necesidad_proteccion') }}">Ramos</a></li>
                                         <li><a href="{{ url('catalogo/perfiles') }}">Requisitos de asegurabilidad</a>
