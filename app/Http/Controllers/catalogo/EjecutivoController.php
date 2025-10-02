@@ -13,17 +13,17 @@ class EjecutivoController extends Controller
 {
     public function __construct()
     {
-          $this->middleware('auth');
-          session(['tab_menu' => 'ejecutivo']);
+        $this->middleware('auth');
+        session(['tab_menu' => 'ejecutivo']);
     }
 
     public function index()
     {
-        $area_comercial = AreaComercial::where('Activo',1)->get();
-        $ejecutivo = Ejecutivo::with('areaComercial')->where('Activo',1)->get();
+        $area_comercial = AreaComercial::where('Activo', 1)->get();
+        $ejecutivo = Ejecutivo::with('areaComercial')->where('Activo', 1)->get();
         $identificador_carrito = session('idCarrito');
 
-        return view('catalogo.ejecutivo.index',compact('ejecutivo','area_comercial'));
+        return view('catalogo.ejecutivo.index', compact('ejecutivo', 'area_comercial'));
     }
 
     /**
@@ -34,7 +34,7 @@ class EjecutivoController extends Controller
     public function create()
     {
         session(['tab_menu' => 'ejecutivo']);
-        $area_comercial = AreaComercial::where('Activo',1)->get();
+        $area_comercial = AreaComercial::where('Activo', 1)->get();
         return view('catalogo.ejecutivo.create', compact('area_comercial'));
     }
 
@@ -51,6 +51,7 @@ class EjecutivoController extends Controller
         $ejecutivo->Nombre = $request->Nombre;
         $ejecutivo->Codigo = $request->Codigo;
         $ejecutivo->Telefono = $request->Telefono;
+        $ejecutivo->Correo = $request->Correo;
         $ejecutivo->Activo = 1;
         $ejecutivo->AreaComercial = $request->AreaComercial;
         $ejecutivo->save();
@@ -78,9 +79,9 @@ class EjecutivoController extends Controller
      */
     public function edit($id)
     {
-        $area_comercial = AreaComercial::where('Activo',1)->get();
+        $area_comercial = AreaComercial::where('Activo', 1)->get();
         $ejecutivo = Ejecutivo::findOrFail($id);
-        return view('catalogo.ejecutivo.edit', compact('ejecutivo','area_comercial'));
+        return view('catalogo.ejecutivo.edit', compact('ejecutivo', 'area_comercial'));
     }
 
     /**
@@ -96,12 +97,12 @@ class EjecutivoController extends Controller
         $ejecutivo->Nombre = $request->Nombre;
         $ejecutivo->Codigo = $request->Codigo;
         $ejecutivo->Telefono = $request->Telefono;
+        $ejecutivo->Correo = $request->Correo;
         $ejecutivo->AreaComercial = $request->AreaComercial;
         $ejecutivo->update();
 
         alert()->success('El registro ha sido modificado correctamente');
         return Redirect::to('catalogo/ejecutivos');
-
     }
 
     /**

@@ -20,8 +20,9 @@ class Ejecutivo extends Model
         'Activo',
         'Telefono',
         'Codigo',
-        'AreaComercial'
-        
+        'AreaComercial',
+        'Correo'
+
     ];
 
     protected $guarded = [];

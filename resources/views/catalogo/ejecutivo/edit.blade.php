@@ -7,7 +7,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <div class="col-md-6">
-                        <h4 class="modal-title">Nuevo Ejecutivo</h4>
+                        <h4 class="modal-title">Modificar Ejecutivo</h4>
                     </div>
                     <div class="col-md-6">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
@@ -38,13 +38,17 @@
                     <div class="form-group">
                         <label class="control-label ">Cargo o puesto</label>
                         <select name="AreaComercial" class="form-control select2" style="width: 100%">
-                            @foreach ($area_comercial as $obj)
-                                <option value="{{ $obj->Id }}"
-                                    {{ $obj->AreaComercial == $obj->Id ? 'selected ="selected"' : '' }}>
-                                    {{ $obj->Nombre }}
+                            @foreach ($area_comercial as $area)
+                                <option value="{{ $area->Id }}"
+                                    {{ $area->AreaComercial == $area->Id ? 'selected ="selected"' : '' }}>
+                                    {{ $area->Nombre }}
                                 </option>
                             @endforeach
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Correo</label>
+                        <input type="text" required name="Correo" value="{{ $obj->Correo }}" class="form-control">
                     </div>
                     &nbsp;
                     <div class="modal-footer">

@@ -27,6 +27,7 @@
                             <th>Nombre</th>
                             <th>Teléfono</th>
                             <th>Cargo o puesto</th>
+                            <th>Correo</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
@@ -36,12 +37,8 @@
                                 <td>{{ $obj->Codigo }}</td>
                                 <td>{{ $obj->Nombre }}</td>
                                 <td>{{ $obj->Telefono }}</td>
-                                @if ($obj->areaComercial)
-                                    <td>{{ $obj->areaComercial->Nombre }}</td>
-                                @else
-                                    <td></td>
-                                @endif
-
+                                <td>{{ $obj->areaComercial ? $obj->areaComercial->Nombre : '' }}</td>
+                                <td>{{ $obj->Correo }}</td>
 
                                 <td align="center">
                                     @can('edit users')
@@ -108,6 +105,12 @@
                                     <option value="{{ $obj->Id }}">{{ $obj->Nombre }}</option>
                                 @endforeach
                             </select>
+                        </div>
+
+                          <div class="form-group">
+                            <label class="control-label">Correo</label>
+                            <input type="email" required name="Correo" value="{{ old('Correo') }}"
+                                class="form-control">
                         </div>
 
 
