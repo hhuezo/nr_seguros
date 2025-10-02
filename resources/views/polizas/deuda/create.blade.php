@@ -211,7 +211,7 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label" align="right">Concepto </label>
-                                        <textarea class="form-control" name="Concepto" required>{{ old('Concepto') }}</textarea>
+                                        <textarea class="form-control" name="Concepto">{{ old('Concepto') }}</textarea>
                                     </div>
 
                                     <div class="col-sm-4 ocultar" style="display: none !important;">

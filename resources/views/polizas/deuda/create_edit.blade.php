@@ -154,7 +154,7 @@
                                     <div class="col-sm-4">
                                         <label class="control-label" align="right">Concepto</label>
                                         <textarea class="form-control" name="Concepto" row="3" col="4" value="{{ $deuda->Concepto }}"
-                                            required> </textarea>
+                                            > </textarea>
                                     </div>
                                     <div class="col-sm-4">
                                         <br>
