@@ -74,7 +74,7 @@ class DesempleoController extends Controller
         $estadoPoliza = EstadoPoliza::where('Activo', 1)->get();
         $tipoCobro = TipoCobro::where('Activo', 1)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
-        $saldos = SaldoMontos::where('Activo', 1)->get();
+        //$saldos = SaldoMontos::where('Activo', 1)->get();
 
         //dd($tipoCartera);
         return view('polizas.desempleo.create', compact(
@@ -89,7 +89,7 @@ class DesempleoController extends Controller
             // 'tipos_contribuyente',
             // 'rutas',
             // 'ubicaciones_cobro',
-            'saldos'
+            //'saldos'
         ));
     }
 

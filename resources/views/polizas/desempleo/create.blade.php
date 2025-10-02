@@ -107,7 +107,7 @@
                 </div>
 
                 <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                    <label class="control-label">Saldos y Montos</label>
+                    {{-- <label class="control-label">Saldos y Montos</label>
                     <select name="Saldos" class="form-control" required>
                         <option value="">Seleccione...</option>
                         @foreach ($saldos as $obj)
@@ -116,7 +116,7 @@
                             {{ $obj->Descripcion }}
                         </option>
                         @endforeach
-                    </select>
+                    </select> --}}
                 </div>
 
 
