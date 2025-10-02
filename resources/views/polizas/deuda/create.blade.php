@@ -170,9 +170,9 @@
                                         </select>
                                     </div>
                                     <div class="col-sm-4">
-                                        <label class="control-label" align="right">Descuento de Rentabilidad *</label>
+                                        <label class="control-label" align="right">Descuento de Rentabilidad</label>
                                         <input class="form-control" name="Descuento" type="number" step="any"
-                                            id="Descuento" value="{{ old('Descuento') }}" required>
+                                            id="Descuento" value="{{ old('Descuento') }}">
                                     </div>
 
                                     <div class="col-sm-4">&nbsp;</div>
