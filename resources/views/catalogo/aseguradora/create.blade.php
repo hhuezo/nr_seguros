@@ -147,9 +147,8 @@
                     </div>
 
                 </div>
-                <div class="form-group" align="center">
+                <div class="form-group" style="text-align: right">
                     <button class="btn btn-success" type="submit">Guardar</button>
-                    <a href="{{ url('catalogo/aseguradoras/') }}"><button class="btn btn-primary" type="button">Cancelar</button></a>
                 </div>
             </form>
 
