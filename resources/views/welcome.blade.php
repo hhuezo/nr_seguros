@@ -254,8 +254,8 @@
                                 </li>
                                 <li><a><i class="fa fa-shield"></i> Aseguradoras <span
                                             class="fa fa-chevron-down"></span></a>
-                                    <ul class="nav child_menu">
-                                        <li><a href="{{ url('catalogo/aseguradoras') }}">Aseguradora </a></li>
+                                    <ul  id="ul-aseguradoras" class="nav child_menu">
+                                        <li id="li-catalogo-aseguradora"><a href="{{ url('catalogo/aseguradoras') }}">Aseguradora </a></li>
                                         <!-- <li><a href="{{ url('catalogo/necesidad_aseguradora') }}">Asignar Necesidad de Protección <br>
                                     Aseguradora</a></li> -->
                                     </ul>
