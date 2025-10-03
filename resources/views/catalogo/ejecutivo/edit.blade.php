@@ -48,7 +48,7 @@
                     </div>
                     <div class="form-group">
                         <label class="control-label">Correo</label>
-                        <input type="text" required name="Correo" value="{{ $obj->Correo }}" class="form-control">
+                        <input type="text" name="Correo" value="{{ $obj->Correo }}" class="form-control">
                     </div>
                     &nbsp;
                     <div class="modal-footer">

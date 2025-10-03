@@ -93,6 +93,10 @@ class ClienteController extends Controller
             'Dui.unique' => 'El DUI ya existe en la base de datos',
             'TelefonoCelular.required' => 'El teléfono principal es obligatorio',
             'TelefonoCelular.size' => 'El teléfono Principal es incorrecto',
+
+            // 👇 Mensajes personalizados para UbicacionCobro
+            'UbicacionCobro.required' => 'El Método de Pago es obligatorio',
+            'UbicacionCobro.integer'  => 'El Método de Pago debe ser un valor válido',
         ];
 
         $request->merge(['Dui' => $this->string_replace($request->get('Dui'))]);
