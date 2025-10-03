@@ -145,7 +145,6 @@ class ResidenciaController extends Controller
             'TasaComision'        => $this->limpiarNumero($request->input('TasaComision')),
         ]);
 
-          dd($request->input('LimiteGrupo'));
         $request->validate([
             'NumeroPoliza'     => 'required|unique:poliza_residencia,NumeroPoliza',
             'Asegurado'        => 'required|exists:cliente,id',
