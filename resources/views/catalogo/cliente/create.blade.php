@@ -95,7 +95,7 @@
                                         <label for="Nombre" class="form-label">Nombre o Razón Social *</label>
                                         <input class="form-control" id="Nombre" name="Nombre"
                                             value="{{ old('Nombre') }}" type="text" required
-                                            oninput="this.value = this.value.toUpperCase()"> <!-- se agrego toUpperCase -->
+                                            oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)"> <!-- se agrego toUpperCase -->
                                     </div>
                                     <div class="form-group">
                                         <label for="FechaNacimiento" class="form-label">Fecha de Nacimiento ó Fundación de
@@ -137,7 +137,7 @@
                                         <label for="Genero" class="form-label">Ocupación</label>
                                         <input class="form-control" id="Ocupacion" name="Ocupacion"
                                             value="{{ old('Ocupacion') }}" required type="text"
-                                            oninput="this.value = this.value.toUpperCase()"> <!-- se agrego toUpperCase -->
+                                            oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)"> <!-- se agrego toUpperCase -->
                                     </div>
                                     <div class="form-group" style="padding-bottom: 38px;">
 
@@ -145,13 +145,13 @@
                                     <div class="form-group">
                                         <label for="DireccionResidencia" class="form-label">Dirección Residencia</label>
                                         <textarea class="form-control" name="DireccionResidencia" id="DireccionResidencia"
-                                            oninput="this.value = this.value.toUpperCase()">{{ old('DireccionResidencia') }} </textarea>
+                                            oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">{{ old('DireccionResidencia') }} </textarea>
                                     </div><!-- se agrego toUpperCase -->
                                     <div class="form-group">
                                         <label for="DireccionResidencia" class="form-label">Dirección Correspondencia
                                             *</label>
                                         <textarea class="form-control" name="DireccionCorrespondencia" id="DireccionCorrespondencia" required
-                                            oninput="this.value = this.value.toUpperCase()">{{ old('DireccionCorrespondencia') }}</textarea>
+                                            oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">{{ old('DireccionCorrespondencia') }}</textarea>
                                     </div><!-- se agrego toUpperCase -->
                                     <div class="form-group">
                                         <label for="Referencia" class="form-label">Teléfono Principal *</label>
@@ -253,7 +253,7 @@
                                         </label>
                                         <input class="form-control" name="Referencia" id="Referencia"
                                             value="{{ old('Referencia') }}" type="text"
-                                            oninput="this.value = this.value.toUpperCase()">
+                                            oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                                     </div>
 
                                     <div class="campo-container">
@@ -262,7 +262,7 @@
                                             <label for="Genero" class="form-label">Responsable de Pago </label>
                                             <input class="form-control" id="ResponsablePago" name="ResponsablePago"
                                                 value="{{ old('ResponsablePago') }}" type="text"
-                                                oninput="this.value = this.value.toUpperCase()">
+                                                oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                                         </div>
                                         <div class="form-group">
                                             <label for="Genero" class="form-label">Método de Pago * </label>
@@ -326,7 +326,7 @@
                                                 </label>
                                                 <input class="form-control" name="BancoPrefencia"
                                                     value="{{ old('BancoPrefencia') }}" type="text"
-                                                    oninput="this.value = this.value.toUpperCase()">
+                                                    oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                                             </div>
                                             <div class="form-group">
                                                 <label for="CuentasDevolucionPrimas" class="form-label">Cuentas para
@@ -344,7 +344,7 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="Comentarios" class="form-label">Comentarios</label>
-                                        <textarea class="form-control" name="Comentarios" oninput="this.value = this.value.toUpperCase()">{{ old('Comentarios') }}</textarea>
+                                        <textarea class="form-control" name="Comentarios" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">{{ old('Comentarios') }}</textarea>
                                     </div>
                                 </div>
                             </div>

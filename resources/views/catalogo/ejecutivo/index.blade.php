@@ -84,7 +84,7 @@
                         <div class="form-group">
                             <label class="control-label">Nombre</label>
                             <input type="text" required name="Nombre" value="{{ old('Nombre') }}" class="form-control"
-                                autofocus oninput="this.value = this.value.toUpperCase()">
+                                autofocus oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                         </div>
 
                         <div class="form-group">

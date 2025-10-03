@@ -150,11 +150,9 @@
                         <div class="col-sm-4">
                             <label class="control-label">Descuento de Rentabilidad % *</label>
                             <div class="form-group has-feedback">
-                                <input type="text" name="TasaDescuento" id="TasaDescuento"
+                                <input type="number" step="any" name="TasaDescuento" id="TasaDescuento"
                                     class="form-control cantidad-texto" required style="padding-left: 15%; display: block;"
-                                    value="{{ old('TasaDescuento') }}"
-                                    oninput="this.value = this.value.replace(/[^0-9.,]/g, '')"
-                                    onblur="formatearCantidad(this)">
+                                    value="{{ old('TasaDescuento') }}">
                                 <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
                             </div>
                         </div>
@@ -163,11 +161,9 @@
                             <input type="hidden" name="Bomberos" id="Bomberos" value="{{ $bomberos }}">
                             <label class="control-label">Límite de Grupo *</label>
                             <div class="form-group has-feedback">
-                                <input type="text" name="LimiteGrupo" id="LimiteGrupo"
+                                <input type="number" step="any" name="LimiteGrupo" id="LimiteGrupo"
                                     class="form-control cantidad-texto" style="padding-left: 15%; display: block;"
-                                    value="{{ old('LimiteGrupo') }}" required
-                                    oninput="this.value = this.value.replace(/[^0-9.,]/g, '')"
-                                    onblur="formatearCantidad(this)">
+                                    value="{{ old('LimiteGrupo') }}" required>
                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                             </div>
                         </div>
@@ -176,11 +172,9 @@
                         <div class="col-sm-4">
                             <label class="control-label">Límite Individual *</label>
                             <div class="form-group has-feedback">
-                                <input type="text" name="LimiteIndividual" id="LimiteIndividual"
+                                <input type="number" step="any" name="LimiteIndividual" id="LimiteIndividual"
                                     class="form-control cantidad-texto" style="padding-left: 15%; display: block;"
-                                    value="{{ old('LimiteIndividual') }}" required
-                                    oninput="this.value = this.value.replace(/[^0-9.,]/g, '')"
-                                    onblur="formatearCantidad(this)">
+                                    value="{{ old('LimiteIndividual') }}" required>
                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                             </div>
                         </div>
@@ -189,10 +183,8 @@
                         <div class="col-sm-4">
                             <label class="control-label">Tasa % *</label>
                             <div class="form-group has-feedback">
-                                <input type="text" name="Tasa" id="Tasa" class="form-control cantidad-texto"
-                                    style="padding-left: 15%; display: block;" value="{{ old('Tasa') }}" required
-                                    oninput="this.value = this.value.replace(/[^0-9.,]/g, '')"
-                                    onblur="formatearCantidad(this)">
+                                <input type="number" step="any" name="Tasa" id="Tasa" class="form-control cantidad-texto"
+                                    style="padding-left: 15%; display: block;" value="{{ old('Tasa') }}" required>
                                 <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
                             </div>
                         </div>
@@ -201,11 +193,9 @@
                         <div class="col-sm-4">
                             <label class="control-label">Porcentaje de comisión *</label>
                             <div class="form-group has-feedback">
-                                <input type="text" name="TasaComision" id="TasaComision"
+                                <input type="number"  step="any"  name="TasaComision" id="TasaComision"
                                     class="form-control cantidad-texto" style="padding-left: 15%; display: block;"
-                                    value="{{ old('TasaComision') }}" required
-                                    oninput="this.value = this.value.replace(/[^0-9.,]/g, '')"
-                                    onblur="formatearCantidad(this)">
+                                    value="{{ old('TasaComision') }}" required>
                                 <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
                             </div>
                         </div>

@@ -39,7 +39,7 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     Póliza Vinculada *
-                                    <input type="text" name="PolizaVinculada" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
+                                    <input type="text" name="PolizaVinculada" class="form-control" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)" required>
                                 </div>
                             </div>
                         </div>
@@ -126,7 +126,7 @@
 
                                     Póliza vinculada *
                                     <input type="text" name="PolizaVinculada" id="ModalPolizaVinculada" class="form-control"
-                                    oninput="this.value = this.value.toUpperCase()" required>
+                                    oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)" required>
                                 </div>
                             </div>
                         </div>

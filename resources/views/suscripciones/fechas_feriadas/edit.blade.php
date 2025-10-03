@@ -29,7 +29,7 @@
                     <div class="form-group">
                         <label class="control-label">Descripción</label>
                         <input type="text" name="Descripcion" class="form-control" value="{{ $obj->Descripcion }}" required
-                            autofocus="true" oninput="this.value = this.value.toUpperCase()">
+                            autofocus="true" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                     </div>
 
 

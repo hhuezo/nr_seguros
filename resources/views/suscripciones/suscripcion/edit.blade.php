@@ -114,7 +114,7 @@
                             <label class="control-label ">Días para completar información (cliente)</label>
                             <input type="number" name="DiasCompletarInfoCliente"
                                 value="{{ $suscripcion->DiasCompletarInfoCliente }}" class="form-control"
-                                oninput="this.value = this.value.toUpperCase()">
+                                oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                         </div>
                         <div class="col-sm-4">
                             <label class="control-label ">Fecha entrega documentos completos</label>
@@ -236,12 +236,12 @@
                         <div class="col-sm-4">
                             <label class="control-label ">Asegurado</label>
                             <input type="text" name="Asegurado" value="{{ $suscripcion->Asegurado }}"
-                                class="form-control" oninput="this.value = this.value.toUpperCase()">
+                                class="form-control" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                         </div>
                         <div class="col-sm-2">
                             <label class="control-label ">Edad</label>
                             <input type="number" name="Edad" value="{{ $suscripcion->Edad }}" class="form-control"
-                                oninput="this.value = this.value.toUpperCase()">
+                                oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                         </div>
                         <div class="col-sm-2">
                             <label class="control-label">Genero</label>
@@ -554,7 +554,7 @@
                         <div class="form-group row">
                             <label class="control-label">Nombre</label>
                             <input class="form-control" name="Nombre" type="text" autofocus
-                                oninput="this.value = this.value.toUpperCase()">
+                                oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                         </div>
                     </div>
                     <div class="modal-footer">

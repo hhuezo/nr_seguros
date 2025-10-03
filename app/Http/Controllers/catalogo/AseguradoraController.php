@@ -14,8 +14,6 @@ use App\Models\catalogo\NecesidadProteccion;
 use App\Models\catalogo\TipoContribuyente;
 use App\Models\catalogo\TipoPoliza;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Storage;
 
 class AseguradoraController extends Controller
 {
@@ -35,11 +33,6 @@ class AseguradoraController extends Controller
         return view('catalogo.aseguradora.index', compact('aseguradora'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
 
@@ -151,11 +144,8 @@ class AseguradoraController extends Controller
         }
         $aseguradora->save();
 
-        session(['tab1' => '1']);
-
         alert()->success('El registro ha sido creado correctamente');
-        return redirect('catalogo/aseguradoras/' . $aseguradora->Id . '/edit');
-        //return Redirect::to('catalogo/aseguradoras/create');
+        return redirect('catalogo/aseguradoras/' . $aseguradora->Id . '/edit?tab=1');
     }
 
     public function show($id)
@@ -163,9 +153,9 @@ class AseguradoraController extends Controller
         //
     }
 
-    public function edit($id)
+    public function edit(Request $request,$id)
     {
-        session(['tab1' => '1']);
+        $tab = $request->tab ?? 1;
         $aseguradora = Aseguradora::findOrFail($id);
         $tipo_contribuyente = TipoContribuyente::get();
         $contactos = AseguradoraContacto::where('Aseguradora', '=', $id)->get();
@@ -186,9 +176,7 @@ class AseguradoraController extends Controller
         }
         $necesidades_proteccion = NecesidadProteccion::where('TipoPoliza', '=', 1)->get();
         $necesidades_proteccion_actual =  $aseguradora->aseguradora_has_necesidad;
-        if (!session('tab1')) {
-            session(['tab1' => '1']);
-        }
+
         return view('catalogo/aseguradora/edit', compact(
             'municipio_actual',
             'departamentos',
@@ -202,7 +190,8 @@ class AseguradoraController extends Controller
             'tipos_poliza',
             'necesidades_proteccion_actual',
             'necesidades_proteccion',
-            'documentos'
+            'documentos',
+            'tab'
         ));
     }
 

@@ -15,7 +15,7 @@
                                 <input type="hidden" name="Cliente" value="{{ $cliente->Id }}" class="form-control">
                                 <label for="Nombre" class="form-label">Nombre *</label>
                                 <input type="text" name="Nombre" required class="form-control"
-                                    oninput="this.value = this.value.toUpperCase()">
+                                    oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                             </div>
 
 
@@ -36,7 +36,7 @@
                             <div class="col-md-6">
                                 <label for="LugarTrabajo" class="form-label">Lugar de Trabajo</label>
                                 <input type="text" class="form-control" name="LugarTrabajo"
-                                    oninput="this.value = this.value.toUpperCase()">
+                                    oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                             </div>
 
                         </div>
@@ -192,7 +192,7 @@
                     <div class="x_content">
                         <div class="form-group">
                             <label class="control-label">Nombre *</label>
-                                <input type="text" name="Nombre" id="ModalNombreCargo" oninput="this.value = this.value.toUpperCase()" class="form-control" autofocus="true">
+                                <input type="text" name="Nombre" id="ModalNombreCargo" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)" class="form-control" autofocus="true">
                         </div>
                     </div>
 

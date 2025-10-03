@@ -17,7 +17,7 @@
                                     <label>Actividad Económica *</label>
                                     <input type="text" name="ActividadEconomica" class="form-control"
                                            value="{{ old('ActividadEconomica') }}"
-                                           oninput="this.value = this.value.toUpperCase()"
+                                           oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)"
                                            required>
                                     @error('ActividadEconomica')
                                         <div class="text-danger">{{ $message }}</div>
@@ -55,7 +55,7 @@
                                     <label>Nivel Educativo *</label>
                                     <input type="text" name="NivelEducativo" class="form-control"
                                            value="{{ old('NivelEducativo') }}"
-                                           oninput="this.value = this.value.toUpperCase()"
+                                           oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)"
                                            required>
                                     @error('NivelEducativo')
                                         <div class="text-danger">{{ $message }}</div>
@@ -96,7 +96,7 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     Actividad Económica *
-                                    <input type="text" name="ActividadEconomica" id="ModalHabitoActividadEconomica" oninput="this.value = this.value.toUpperCase()" class="form-control" required>
+                                    <input type="text" name="ActividadEconomica" id="ModalHabitoActividadEconomica" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)" class="form-control" required>
                                 </div>
                             </div>
                             <div class="col-sm-6">
@@ -116,7 +116,7 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     Nivel Educativo *
-                                    <input type="text" name="NivelEducativo" id="ModalHabitoNivelEducativo" oninput="this.value = this.value.toUpperCase()" class="form-control" required>
+                                    <input type="text" name="NivelEducativo" id="ModalHabitoNivelEducativo" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)" class="form-control" required>
                                 </div>
                             </div>
                         </div>

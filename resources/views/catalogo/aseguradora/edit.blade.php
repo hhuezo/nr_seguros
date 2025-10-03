@@ -6,7 +6,7 @@
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
 
             <div class="x_title">
-                <h2>Modificar aseguradora <small></small></h2>
+                <h2>Modificar aseguradora {{$tab}} <small></small></h2>
                 <ul class="nav navbar-right panel_toolbox">
                     <a href="{{url('catalogo/aseguradoras')}}" class="btn btn-info fa fa-undo " style="color: white"> Atrás</a>
                 </ul>
@@ -24,23 +24,23 @@
 
             <div class="" role="tabpanel" data-example-id="togglable-tabs">
                 <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-                    <li role="presentation" class="{{ session('tab1') == 1 ? 'active' : '' }}"><a href="#cliente" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Aseguradora</a>
+                    <li role="presentation" class="{{ $tab == 1 ? 'active' : '' }}"><a href="#cliente" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Aseguradora</a>
 
                     </li>
-                    <li role="presentation" class="{{ session('tab1') == 2 ? 'active' : '' }}"><a href="#redes" role="tab" id="profile-necesidad" data-toggle="tab" aria-expanded="false">Contactos
+                    <li role="presentation" class="{{ $tab == 2 ? 'active' : '' }}"><a href="#redes" role="tab" id="profile-necesidad" data-toggle="tab" aria-expanded="false">Contactos
                             frecuentes</a>
                     </li>
 
-                    <!-- <li role="presentation" class="{{ session('tab1') == 3 ? 'active' : '' }}"><a href="#necesidad" role="tab" id="profile-necesidad" data-toggle="tab" aria-expanded="false">Necesidades</a>
+                    <!-- <li role="presentation" class="{{ $tab == 3 ? 'active' : '' }}"><a href="#necesidad" role="tab" id="profile-necesidad" data-toggle="tab" aria-expanded="false">Necesidades</a>
                     </li> -->
-                    <li role="presentation" class="{{ session('tab1') == 4 ? 'active' : '' }}"><a href="#documentacion" role="tab" id="profile" data-toggle="tab" aria-expanded="false">Documentación</a>
+                    <li role="presentation" class="{{ $tab == 4 ? 'active' : '' }}"><a href="#documentacion" role="tab" id="profile" data-toggle="tab" aria-expanded="false">Documentación</a>
                     </li>
 
                 </ul>
 
 
                 <div id="myTabContent2" class="tab-content">
-                    <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 1 ? 'active in' : '' }} " id="cliente" aria-labelledby="home-tab">
+                    <div role="tabpanel" class="tab-pane fade {{ $tab == 1 ? 'active in' : '' }} " id="cliente" aria-labelledby="home-tab">
 
                         <form method="POST" action="{{ route('aseguradoras.update', $aseguradora->Id) }}">
                             @method('PUT')
@@ -177,7 +177,7 @@
                         </form>
 
                     </div>
-                    <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 2 ? 'active in' : '' }}" id="redes" aria-labelledby="home-tab">
+                    <div role="tabpanel" class="tab-pane fade {{ $tab == 2 ? 'active in' : '' }}" id="redes" aria-labelledby="home-tab">
                         <div class="col-12" style="text-align: right;">
                             <button class="btn btn-primary" data-toggle="modal" data-target=".bs-modal-nuevo-contacto"><i class="fa fa-plus fa-lg"></i>
                                 Nuevo</button>
@@ -228,7 +228,7 @@
                         @endif
                     </div>
 
-                    <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 3 ? 'active in' : '' }}" id="necesidad" aria-labelledby="home-tab">
+                    <div role="tabpanel" class="tab-pane fade {{ $tab == 3 ? 'active in' : '' }}" id="necesidad" aria-labelledby="home-tab">
 
 
 
@@ -321,7 +321,7 @@
                         </div>
                     </div>
 
-                    <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 4 ? 'active in' : '' }}" id="documentacion" aria-labelledby="home-tab">
+                    <div role="tabpanel" class="tab-pane fade {{ $tab == 4 ? 'active in' : '' }}" id="documentacion" aria-labelledby="home-tab">
                         <form id="FormArchivo" action="{{ url('catalogo/aseguradora/documento') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <input type="hidden" value="{{$aseguradora->Id}}" name="Aseguradora">

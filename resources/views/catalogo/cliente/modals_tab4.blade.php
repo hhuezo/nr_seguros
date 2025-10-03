@@ -18,7 +18,7 @@
                         <div class="form-group">
                             <label class="control-label">Motivo</label>
                             <input type="text" name="Nombre" id="ModalNombreMotivo" class="form-control"
-                                oninput="this.value = this.value.toUpperCase()">
+                                oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
 
                         </div>
 
@@ -57,7 +57,7 @@
                         <div class="form-group">
                             <label class="control-label">Nombre</label>
                             <input type="text" name="Nombre" id="ModalNombrePreferencia" class="form-control"
-                                oninput="this.value = this.value.toUpperCase()">
+                                oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                         </div>
 
                     </div>

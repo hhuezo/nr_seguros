@@ -192,7 +192,7 @@
                         <div class="col-sm-4">
                             <label class="control-label ">Asegurado</label>
                             <input type="text" name="Asegurado" value="{{ old('Asegurado') }}" class="form-control"
-                                oninput="this.value = this.value.toUpperCase()" required>
+                                oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)" required>
                         </div>
 
                         <div class="col-sm-2">
@@ -434,7 +434,7 @@
                         <div class="form-group row">
                             <label class="control-label">Nombre</label>
                             <input class="form-control" name="Nombre" type="text" autofocus
-                                oninput="this.value = this.value.toUpperCase()">
+                                oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                         </div>
                     </div>
                     <div class="modal-footer">

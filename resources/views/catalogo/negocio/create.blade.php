@@ -82,7 +82,7 @@
                                 <div class="col-md-6">
                                     <label for="NombreCliente" class="form-label">Nombre del cliente O Prospecto</label>
                                     <input class="form-control validarCredenciales" type="text"
-                                        value="" name="NombreCliente" id="NombreCliente" oninput="this.value = this.value.toUpperCase()">
+                                        value="" name="NombreCliente" id="NombreCliente" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                                 </div>
                                 <div style="display: none;" class="col-md-4">
                                     <label for="Email" class="form-label">Email</label>
@@ -152,7 +152,7 @@
                                     {{-- NO SE LE AGREGO EL ONINPUT UPPER - NO SE SI TENDRA NUMEROS O TEXTO O COMBINADOS --}}
                                     <label for="NumeroPoliza" class="form-label">Número de póliza</label>
                                     <input class="form-control" type="text" value=""
-                                        name="NumeroPoliza" id="NumeroPoliza" oninput="this.value = this.value.toUpperCase()">
+                                        name="NumeroPoliza" id="NumeroPoliza" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                                 </div>
                             </div>
                             <div class="row" style="margin-top: 12px!important;">
@@ -196,7 +196,7 @@
                                 <div class="col-md-12">
                                     <label for="Observacion" class="form-label">Observaciones o
                                         anotaciones</label>
-                                    <textarea name="Observacion" id="Observacion" rows="3" class="form-control" oninput="this.value = this.value.toUpperCase()"></textarea>
+                                    <textarea name="Observacion" id="Observacion" rows="3" class="form-control" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)"></textarea>
 
                                 </div>
                             </div>

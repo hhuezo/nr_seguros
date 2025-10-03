@@ -10,7 +10,7 @@
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
                 {{-- <a href="{{ url('catalogo/departamento_nr/create/') }}"><button class="btn btn-info float-right"> <i
                             class="fa fa-plus"></i> Nuevo</button></a> --}}
-                
+
                  <button class="btn btn-info float-right" data-target="#modal-create" data-toggle="modal"> <i
                         class="fa fa-plus"></i>
                     Nuevo</button>
@@ -86,7 +86,7 @@
                         <div class="form-group row">
                             <label class="control-label">Nombre</label>
                             <input class="form-control" name="Nombre" type="text" autofocus
-                                oninput="this.value = this.value.toUpperCase()">
+                                oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                         </div>
                     </div>
                     <div class="modal-footer">

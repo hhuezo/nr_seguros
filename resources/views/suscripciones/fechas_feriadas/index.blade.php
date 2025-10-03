@@ -101,7 +101,7 @@
                     <div class="form-group row">
                         <label class="control-label">Descripción</label>
                         <input class="form-control" name="Descripcion" type="text" autofocus
-                            oninput="this.value = this.value.toUpperCase()">
+                            oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                     </div>
                 </div>
                 <div class="modal-footer">

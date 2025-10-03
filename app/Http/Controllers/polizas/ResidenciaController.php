@@ -136,6 +136,7 @@ class ResidenciaController extends Controller
     public function store(Request $request)
     {
 
+
         $request->merge([
             'LimiteGrupo'         => $this->limpiarNumero($request->input('LimiteGrupo')),
             'LimiteIndividual'    => $this->limpiarNumero($request->input('LimiteIndividual')),
@@ -144,7 +145,7 @@ class ResidenciaController extends Controller
             'TasaComision'        => $this->limpiarNumero($request->input('TasaComision')),
         ]);
 
-        //  dd($request->Planes);
+          dd($request->input('LimiteGrupo'));
         $request->validate([
             'NumeroPoliza'     => 'required|unique:poliza_residencia,NumeroPoliza',
             'Asegurado'        => 'required|exists:cliente,id',
