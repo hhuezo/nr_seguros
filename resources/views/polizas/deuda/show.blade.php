@@ -389,8 +389,8 @@
 
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
-                                    <table width="100%" class="table table-striped">
-                                        {{-- <thead>
+                                <table width="100%" class="table table-striped">
+                                    {{-- <thead>
                                             <tr>
                                                 <th>Línea de Crédito</th>
                                                 <th>Saldos y Montos</th>
@@ -400,118 +400,118 @@
                                                 <th>Opciones</th>
                                             </tr>
                                         </thead> --}}
-                                        <tbody>
+                                    <tbody>
 
-                                            @if ($deuda->deuda_tipos_cartera->count() > 0)
-                                                <table class="table table-bordered">
-                                                    <thead class="table-dark">
-                                                        <tr class="warning-row">
-                                                            <th style="width: 40%;">Tipo cartera</th>
-                                                            <th style="width: 20%;">Tipo cálculo</th>
-                                                            <th style="width: 20%;">Monto máximo individual</th>
+                                        @if ($deuda->deuda_tipos_cartera->count() > 0)
+                                            <table class="table table-bordered">
+                                                <thead class="table-dark">
+                                                    <tr class="warning-row">
+                                                        <th style="width: 40%;">Tipo cartera</th>
+                                                        <th style="width: 20%;">Tipo cálculo</th>
+                                                        <th style="width: 20%;">Monto máximo individual</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+
+
+
+                                                    @foreach ($deuda->deuda_tipos_cartera as $tipo)
+                                                        <tr class="tarea warning-row">
+                                                            <td>
+                                                                <span class="expand-icon">▼</span>
+                                                                {{ $tipo->tipo_cartera?->Nombre ?? '' }}
+                                                            </td>
+                                                            <td>
+                                                                @if ($tipo->TipoCalculo == 1)
+                                                                    {{ 'Fecha' }}
+                                                                @elseif ($tipo->TipoCalculo == 2)
+                                                                    {{ 'Edad' }}
+                                                                @else
+                                                                    {{ '' }}
+                                                                @endif
+                                                            </td>
+                                                            <td class="text-end">
+                                                                ${{ $tipo->MontoMaximoIndividual }}
+                                                            </td>
                                                         </tr>
-                                                    </thead>
-                                                    <tbody>
 
+                                                        <tr class="subtareas-container">
+                                                            <td colspan="4" style="background-color: #f8fafc;">
 
+                                                                @if ($tipo->tasa_diferenciada->count() > 0)
+                                                                    <br>
+                                                                    <div
+                                                                        style="padding-left: 20px !important; padding-right: 20px !important;">
+                                                                        <table class="table table-sm table-bordered">
+                                                                            <thead class="table-light">
+                                                                                <tr class="primary-row">
+                                                                                    <th>Linea credito</th>
+                                                                                    @if ($tipo->TipoCalculo == 1)
+                                                                                        <th>Fecha inicio</th>
+                                                                                        <th>Fecha final</th>
+                                                                                    @endif
 
-                                                        @foreach ($deuda->deuda_tipos_cartera as $tipo)
-                                                            <tr class="tarea warning-row">
-                                                                <td>
-                                                                    <span class="expand-icon">▼</span>
-                                                                    {{ $tipo->tipo_cartera?->Nombre ?? '' }}
-                                                                </td>
-                                                                <td>
-                                                                    @if ($tipo->TipoCalculo == 1)
-                                                                        {{ 'Fecha' }}
-                                                                    @elseif ($tipo->TipoCalculo == 2)
-                                                                        {{ 'Edad' }}
-                                                                    @else
-                                                                        {{ '' }}
-                                                                    @endif
-                                                                </td>
-                                                                <td class="text-end">
-                                                                    ${{ $tipo->MontoMaximoIndividual }}
-                                                                </td>
-                                                            </tr>
-
-                                                            <tr class="subtareas-container">
-                                                                <td colspan="4" style="background-color: #f8fafc;">
-
-                                                                    @if ($tipo->tasa_diferenciada->count() > 0)
-                                                                        <br>
-                                                                        <div
-                                                                            style="padding-left: 20px !important; padding-right: 20px !important;">
-                                                                            <table class="table table-sm table-bordered">
-                                                                                <thead class="table-light">
+                                                                                    @if ($tipo->TipoCalculo == 2)
+                                                                                        <th>Edad inicio</th>
+                                                                                        <th>Edad final</th>
+                                                                                    @endif
+                                                                                    <th>Tasa</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                @foreach ($tipo->tasa_diferenciada as $tasa_diferenciada)
                                                                                     <tr class="primary-row">
-                                                                                        <th>Linea credito</th>
+                                                                                        <td>
+                                                                                            {{ $tasa_diferenciada->linea_credito?->Abreviatura ?? '' }}
+                                                                                            -
+                                                                                            {{ $tasa_diferenciada->linea_credito?->Descripcion ?? '' }}
+                                                                                        </td>
                                                                                         @if ($tipo->TipoCalculo == 1)
-                                                                                            <th>Fecha inicio</th>
-                                                                                            <th>Fecha final</th>
+                                                                                            <td>
+                                                                                                {{ $tasa_diferenciada->FechaDesde ? date('d/m/Y', strtotime($tasa_diferenciada->FechaDesde)) : 'Sin fecha' }}
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                {{ $tasa_diferenciada->FechaHasta ? date('d/m/Y', strtotime($tasa_diferenciada->FechaHasta)) : 'Sin fecha' }}
+                                                                                            </td>
                                                                                         @endif
 
                                                                                         @if ($tipo->TipoCalculo == 2)
-                                                                                            <th>Edad inicio</th>
-                                                                                            <th>Edad final</th>
+                                                                                            <td>{{ $tasa_diferenciada->EdadDesde }}
+                                                                                                Años</td>
+                                                                                            <td>{{ $tasa_diferenciada->EdadHasta }}
+                                                                                                Años</td>
                                                                                         @endif
-                                                                                        <th>Tasa</th>
+
+                                                                                        <td>{{ $tasa_diferenciada->Tasa }}%
+                                                                                        </td>
                                                                                     </tr>
-                                                                                </thead>
-                                                                                <tbody>
-                                                                                    @foreach ($tipo->tasa_diferenciada as $tasa_diferenciada)
-                                                                                        <tr class="primary-row">
-                                                                                            <td>
-                                                                                                {{ $tasa_diferenciada->linea_credito?->Abreviatura ?? '' }}
-                                                                                                -
-                                                                                                {{ $tasa_diferenciada->linea_credito?->Descripcion ?? '' }}
-                                                                                            </td>
-                                                                                            @if ($tipo->TipoCalculo == 1)
-                                                                                                <td>
-                                                                                                    {{ $tasa_diferenciada->FechaDesde ? date('d/m/Y', strtotime($tasa_diferenciada->FechaDesde)) : 'Sin fecha' }}
-                                                                                                </td>
-                                                                                                <td>
-                                                                                                    {{ $tasa_diferenciada->FechaHasta ? date('d/m/Y', strtotime($tasa_diferenciada->FechaHasta)) : 'Sin fecha' }}
-                                                                                                </td>
-                                                                                            @endif
+                                                                                @endforeach
 
-                                                                                            @if ($tipo->TipoCalculo == 2)
-                                                                                                <td>{{ $tasa_diferenciada->EdadDesde }}
-                                                                                                    Años</td>
-                                                                                                <td>{{ $tasa_diferenciada->EdadHasta }}
-                                                                                                    Años</td>
-                                                                                            @endif
-
-                                                                                            <td>{{ $tasa_diferenciada->Tasa }}%
-                                                                                            </td>
-                                                                                        </tr>
-                                                                                    @endforeach
-
-                                                                                </tbody>
-                                                                            </table>
-                                                                        </div>
-                                                                    @endif
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                @endif
 
 
-                                                                    <br>
-                                                                </td>
-                                                            </tr>
-                                                        @endforeach
+                                                                <br>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
 
-                                                    </tbody>
-                                                </table>
-                                            @else
-                                                <div class="alert alert-warning">
-                                                    <button type="button" class="close" data-dismiss="alert"
-                                                        aria-label="Close"><span aria-hidden="true">×</span>
-                                                    </button>
+                                                </tbody>
+                                            </table>
+                                        @else
+                                            <div class="alert alert-warning">
+                                                <button type="button" class="close" data-dismiss="alert"
+                                                    aria-label="Close"><span aria-hidden="true">×</span>
+                                                </button>
 
-                                                    <strong>No hay datos</strong>
-                                                </div>
-                                            @endif
+                                                <strong>No hay datos</strong>
+                                            </div>
+                                        @endif
 
-                                        </tbody>
-                                    </table>
+                                    </tbody>
+                                </table>
 
 
                             </div>
@@ -536,76 +536,11 @@
 
 
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                {{-- <table class="table table-striped table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>REQUISITOS</th>
-                                            @foreach ($columnas as $columna)
-                                                <th>DESDE {{ explode('-', $columna)[0] }} AÑOS HASTA
-                                                    {{ explode('-', $columna)[1] }} AÑOS</th>
-                                            @endforeach
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($tabla as $perfil => $montos)
-                                            <tr>
-                                                <td>{{ $perfil }}</td>
-                                                @foreach ($columnas as $columna)
-                                                    @php
-                                                        // Obtener el monto correspondiente al rango de edad
-                                                        $monto = $montos[$columna]['monto'] ?? null;
-                                                        $requisitoId = $montos[$columna]['id'] ?? null; // Obtener el id del requisito
-                                                        $perfilId = $montos[$columna]['perfilId'] ?? null; // Obtener el id del requisito
-                                                        $edades = explode('-', $columna);
-                                                        $edadInicial = $edades[0];
-                                                        $edadFinal = $edades[1];
-                                                    @endphp
-                                                    <td>
-                                                        @if ($monto)
-                                                            @php
-                                                                [$montoInicial, $montoFinal] = explode('-', $monto);
-                                                            @endphp
-                                                            Desde ${{ number_format($montoInicial, 2) }} HASTA
-                                                            ${{ number_format($montoFinal, 2) }}
-
-                                                            <div class="item form-group offset-md-3">
-                                                                <br>
-                                                                <div class="col-md-6">
-                                                                    <button class="btn btn-primary"
-                                                                        data-target="#modal-requisito-{{ $requisitoId }}"
-                                                                        data-toggle="modal">
-                                                                        <i class="fa fa-edit"></i>
-                                                                    </button>
-                                                                </div>
-
-                                                                <div class="col-md-6" style="text-align: right;">
-                                                                    <button class="btn btn-danger"
-                                                                        data-target="#modal-delete-{{ $requisitoId }}"
-                                                                        data-toggle="modal">
-                                                                        <i class="fa fa-trash"></i>
-                                                                    </button>
-                                                                </div>
-
-
-                                                            </div>
-                                                            @include('polizas.deuda.modal_edit_requisito')
-                                                            @include('polizas.deuda.modal_delete_requisito')
-                                                        @else
-                                                            -
-                                                        @endif
-                                                    </td>
-                                                @endforeach
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table> --}}
-
-
 
                                 <table class="table table-bordered table-hover" style="font-size: 14px;">
                                     <thead class="thead-dark">
                                         <tr class="text-center">
-                                            <th style="vertical-align: middle;">REQUISITOS</th>
+                                            <th style="vertical-align: middle; width: 50%;">REQUISITOS</th>
                                             @foreach ($columnas as $columna)
                                                 <th style="vertical-align: middle;">
                                                     DESDE {{ explode('-', $columna)[0] }} AÑOS <br>
