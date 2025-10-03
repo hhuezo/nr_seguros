@@ -207,7 +207,7 @@
 
 
                                     <div class="item form-group col-sm-12 col-md-3 col-lg-3">
-                                        <label class="control-label" align="right">Opcion</label>
+                                        <label class="control-label" align="right">Opcion tarifa</label>
                                         <select name="Opcion" id="Opcion" class="form-control">
                                             <option value="0">NO APLICA</option>
                                             <option value="1">TASA DIFERENCIADA</option>
