@@ -163,6 +163,7 @@ class VidaController extends Controller
             $vida->TipoCobro = $request->TipoCobro;
             $vida->TipoTarifa = $request->TipoTarifa ?? null;
             $vida->Tasa = $request->Tasa;
+            $vida->TasaComision = $request->TasaComision;
             $vida->TasaDescuento = $request->TasaDescuento ?? null;
             $vida->EdadMaximaInscripcion = $request->EdadMaximaInscripcion;
             $vida->EdadTerminacion = $request->EdadTerminacion;
@@ -522,6 +523,7 @@ class VidaController extends Controller
             $vida->TipoCobro = $request->TipoCobro;
             $vida->TipoTarifa = $request->TipoTarifa ?? null;
             $vida->Tasa = $request->Tasa;
+             $vida->TasaComision = $request->TasaComision;
             $vida->TasaDescuento = $request->TasaDescuento ?? null;
             $vida->EdadMaximaInscripcion = $request->EdadMaximaInscripcion;
             $vida->EdadTerminacion = $request->EdadTerminacion;

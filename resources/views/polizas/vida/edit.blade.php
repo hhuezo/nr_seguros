@@ -379,10 +379,16 @@
                                 </div>
 
 
-                                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                <div class="item form-group col-sm-12 col-md-3 col-lg-3">
                                     <label class="control-label" align="right">Descuento</label>
                                     <input class="form-control" name="TasaDescuento" type="number" step="any"
                                         value="{{ $vida->TasaDescuento }}">
+                                </div>
+
+                                  <div class="item form-group col-sm-12 col-md-3 col-lg-3">
+                                    <label class="control-label" align="right">% de Comisión *</label>
+                                    <input class="form-control" name="TasaComision" id="TasaComision" type="number"
+                                        step="any" value="{{ $vida->TasaComision }}" required>
                                 </div>
 
                                 <div class="item form-group col-sm-12 col-md-6 col-lg-6">
