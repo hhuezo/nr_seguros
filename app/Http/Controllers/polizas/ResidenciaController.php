@@ -145,6 +145,8 @@ class ResidenciaController extends Controller
             'TasaComision'        => $this->limpiarNumero($request->input('TasaComision')),
         ]);
 
+
+
         $request->validate([
             'NumeroPoliza'     => 'required|unique:poliza_residencia,NumeroPoliza',
             'Asegurado'        => 'required|exists:cliente,id',
@@ -199,11 +201,11 @@ class ResidenciaController extends Controller
             'TasaDescuento.min'         => 'El porcentaje de descuento no puede ser negativo.',
 
             'LimiteGrupo.required'      => 'Debe ingresar el límite de grupo.',
-            'LimiteGrupo.numeric'       => 'El límite de grupo debe ser numérico.',
+            'LimiteGrupo.numeric'       => 'El límite de grupo  tiene un formato no válido.',
             'LimiteGrupo.min'           => 'El límite de grupo no puede ser negativo.',
 
             'LimiteIndividual.required' => 'Debe ingresar el límite individual.',
-            'LimiteIndividual.numeric'  => 'El límite individual debe ser numérico.',
+            'LimiteIndividual.numeric'  => 'El límite individual tiene un formato no válido.',
             'LimiteIndividual.min'      => 'El límite individual no puede ser negativo.',
 
             'Tasa.required'             => 'Debe ingresar la tasa.',
@@ -211,7 +213,7 @@ class ResidenciaController extends Controller
             'Tasa.min'                  => 'La tasa no puede ser negativa.',
 
             'TasaComision.required'     => 'Debe ingresar el porcentaje de comisión.',
-            'TasaComision.numeric'      => 'El porcentaje de comisión debe ser numérico.',
+            'TasaComision.numeric'      => 'El porcentaje de comisión tiene un formato no válido.',
             'TasaComision.min'          => 'El porcentaje de comisión no puede ser negativo.',
 
             'tipoTasa.required'         => 'Debe seleccionar el tipo de tasa.',

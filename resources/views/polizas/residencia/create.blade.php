@@ -9,10 +9,10 @@
 
                 <div class="x_title">
                     <h2>Pólizas / Residencia / Póliza de Residencia / Nueva <small></small></h2>
-                    {{-- <ul class="nav navbar-right panel_toolbox">
+                    <ul class="nav navbar-right panel_toolbox">
                         <a href="{{ url('polizas/residencia') }}" class="btn btn-info fa fa-undo " style="color: white">
                             Atrás</a>
-                    </ul> --}}
+                    </ul>
                     <div class="clearfix"></div>
                 </div>
                 @if (session('success'))
@@ -146,77 +146,80 @@
                             </select>
                         </div>
 
-                        {{-- Descuento de Rentabilidad --}}
                         <div class="col-sm-4">
                             <label class="control-label">Descuento de Rentabilidad % *</label>
                             <div class="form-group has-feedback">
-                                <input type="number" step="any" name="TasaDescuento" id="TasaDescuento"
-                                    class="form-control cantidad-texto" required style="padding-left: 15%; display: block;"
-                                    value="{{ old('TasaDescuento') }}">
+                                <input type="text" step="any" name="TasaDescuento" id="TasaDescuento"
+                                    class="form-control cantidad-texto" style="padding-left: 15%; display: block;"
+                                    value="{{ old('TasaDescuento') }}" required>
                                 <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
                             </div>
                         </div>
+
 
                         <div class="col-sm-4">
                             <input type="hidden" name="Bomberos" id="Bomberos" value="{{ $bomberos }}">
                             <label class="control-label">Límite de Grupo *</label>
                             <div class="form-group has-feedback">
-                                <input type="number" step="any" name="LimiteGrupo" id="LimiteGrupo"
+                                <input type="text" name="LimiteGrupo" id="LimiteGrupo"
                                     class="form-control cantidad-texto" style="padding-left: 15%; display: block;"
-                                    value="{{ old('LimiteGrupo') }}" required>
+                                    value="{{ old('LimiteGrupo') }}" oninput="validarNumero(this)" required>
                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                             </div>
                         </div>
 
-                        {{-- Límite Individual --}}
                         <div class="col-sm-4">
                             <label class="control-label">Límite Individual *</label>
                             <div class="form-group has-feedback">
-                                <input type="number" step="any" name="LimiteIndividual" id="LimiteIndividual"
+                                <input type="text" name="LimiteIndividual" id="LimiteIndividual"
                                     class="form-control cantidad-texto" style="padding-left: 15%; display: block;"
-                                    value="{{ old('LimiteIndividual') }}" required>
+                                    value="{{ old('LimiteIndividual') }}" oninput="validarNumero(this)" required>
                                 <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
                             </div>
                         </div>
 
-                        {{-- Tasa --}}
+
                         <div class="col-sm-4">
                             <label class="control-label">Tasa % *</label>
                             <div class="form-group has-feedback">
-                                <input type="number" step="any" name="Tasa" id="Tasa" class="form-control cantidad-texto"
-                                    style="padding-left: 15%; display: block;" value="{{ old('Tasa') }}" required>
+                                <input type="text" step="any" name="Tasa" id="Tasa"
+                                    class="form-control cantidad-texto" style="padding-left: 15%; display: block;"
+                                    value="{{ old('Tasa') }}" required>
                                 <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
                             </div>
                         </div>
 
-                        {{-- Comisión --}}
                         <div class="col-sm-4">
                             <label class="control-label">Porcentaje de comisión *</label>
                             <div class="form-group has-feedback">
-                                <input type="number"  step="any"  name="TasaComision" id="TasaComision"
+                                <input type="text" step="any" name="TasaComision" id="TasaComision"
                                     class="form-control cantidad-texto" style="padding-left: 15%; display: block;"
                                     value="{{ old('TasaComision') }}" required>
                                 <span class="fa fa-percent form-control-feedback left" aria-hidden="true"></span>
                             </div>
                         </div>
 
-                        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 ">
+                        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                             <div class="form-group row">
                                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                     <input type="radio" name="tipoTasa" id="tipoTasaMensual" value="1"
                                         {{ old('tipoTasa', '1') == '1' ? 'checked' : '' }} required>
-                                    <label class="control-label" for="tipoTasaMensual">Tasa Millar Mensual *</label>
+                                    <label class="control-label" for="tipoTasaMensual">
+                                        <i class="fa fa-calendar"></i> Tasa Millar Mensual *
+                                    </label>
                                 </div>
 
                                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                     <input type="radio" name="tipoTasa" id="tipoTasaAnual" value="0"
                                         {{ old('tipoTasa') == '0' ? 'checked' : '' }} required>
-                                    <label class="control-label" for="tipoTasaAnual">Tasa ‰ Millar Anual *</label>
+                                    <label class="control-label" for="tipoTasaAnual">
+                                        <i class="fa fa-calendar-o"></i> Tasa ‰ Millar Anual *
+                                    </label>
                                 </div>
                             </div>
                         </div>
 
-                        {{-- IVA incluido --}}
+
                         <div class="col-sm-2">
                             <input name="ComisionIva" id="ComisionIva" type="checkbox" class="js-switch"
                                 {{ old('ComisionIva') ? 'checked' : '' }}>
@@ -233,16 +236,12 @@
                         <br>
                     </div>
 
-                    <div class="form-group" align="center">
+                    <div class="form-group" style="text-align: right">
                         <button class="btn btn-success" type="submit" id="btn-guardar">Guardar</button>
-                        <a href="{{ url('polizas/residencia/') }}"><button class="btn btn-primary"
-                                type="button">Cancelar</button></a>
+                        {{-- <a href="{{ url('polizas/residencia/') }}"><button class="btn btn-primary"
+                                type="button">Cancelar</button></a> --}}
                     </div>
                 </form>
-
-
-
-                @include('catalogo.cliente.modal_poliza')
 
             </div>
 
@@ -318,51 +317,20 @@
 
 
 
-        function formatearCantidad(input) {
-            let valor = input.value.trim();
+        function validarNumero(input) {
+            let valor = input.value;
 
-            if (!valor) return;
+            // ✅ Permitir solo números, puntos y comas
+            valor = valor.replace(/[^0-9.,]/g, '');
 
-            const puntos = (valor.match(/\./g) || []).length;
-            const comas = (valor.match(/,/g) || []).length;
-
-            if (puntos + comas > 1) {
-                let ultimoSeparadorIndex = Math.max(valor.lastIndexOf('.'), valor.lastIndexOf(','));
-                let separadorDecimal = valor.charAt(ultimoSeparadorIndex);
-
-                let parteEntera = valor.slice(0, ultimoSeparadorIndex).replace(/[.,]/g, '');
-                let parteDecimal = valor.slice(ultimoSeparadorIndex + 1);
-
-                valor = parteEntera + '.' + parteDecimal;
-            } else {
-                valor = valor.replace(',', '.').replace(/,/g, '');
-            }
-
-            const partes = valor.split('.');
+            // ✅ Evitar más de un separador decimal
+            const partes = valor.split(/[.,]/);
             if (partes.length > 2) {
-                toastr.error('Cantidad inválida: múltiples separadores decimales.', 'Error');
-                input.value = "";
-                return;
+                toastr.error('Solo se permite un separador decimal (punto o coma).', 'Error');
+                valor = partes[0] + '.' + partes[1]; // conservar solo el primer separador
             }
 
-            if (!partes.every(p => /^\d*$/.test(p))) {
-                toastr.error('Cantidad inválida: contiene caracteres no numéricos.', 'Error');
-                input.value = "";
-                return;
-            }
-
-            let numero = parseFloat(valor);
-            if (isNaN(numero)) {
-                toastr.error('Cantidad inválida.', 'Error');
-                input.value = "";
-                return;
-            }
-
-            // ✅ Mostrar hasta 6 decimales pero sin cortar los necesarios
-            input.value = numero.toLocaleString('en-US', {
-                minimumFractionDigits: (numero % 1 !== 0) ? 3 : 0, // si hay decimales, mostrar al menos 3
-                maximumFractionDigits: 6
-            });
+            input.value = valor;
         }
     </script>
 
