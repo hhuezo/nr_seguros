@@ -14,6 +14,7 @@ use App\Models\catalogo\NecesidadProteccion;
 use App\Models\catalogo\TipoContribuyente;
 use App\Models\catalogo\TipoPoliza;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class AseguradoraController extends Controller
 {
@@ -22,11 +23,7 @@ class AseguradoraController extends Controller
     {
         $this->middleware('auth');
     }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
         $aseguradora = Aseguradora::where('Activo', '=', 1)->get();
@@ -43,9 +40,8 @@ class AseguradoraController extends Controller
         $ultimoregistro = Aseguradora::where('Activo', '=', 1)->orderByDesc('Id')->first();
         if (!$ultimoregistro) {
             $ultimoId = 1;
-        }
-        else{
-             $ultimoId = $ultimoregistro->Id +1;
+        } else {
+            $ultimoId = $ultimoregistro->Id + 1;
         }
         $tipo_contribuyente = TipoContribuyente::get();
         return view('catalogo.aseguradora.create', compact('ultimoId', 'tipo_contribuyente', 'departamentos', 'municipios', 'distritos'));
@@ -71,8 +67,7 @@ class AseguradoraController extends Controller
         $filePath = 'documentos/aseguradoras/' . $archivo->getClientOriginalName();
 
         alert()->success('El registro ha sido creado correctamente');
-        session(['tab1' => '4']);
-        return back();
+        return Redirect::to('catalogo/aseguradoras/' . $request->Aseguradora . '/edit?tab=4');
     }
 
 
@@ -83,8 +78,7 @@ class AseguradoraController extends Controller
         $documento->save();
 
         alert()->success('El registro ha sido eliminado correctamente');
-        session(['tab1' => '4']);
-        return back();
+        return Redirect::to('catalogo/aseguradoras/' . $documento->Aseguradora . '/edit?tab=4');
     }
 
 
@@ -92,8 +86,8 @@ class AseguradoraController extends Controller
 
     public function store(Request $request)
     {
-        $nombre = Aseguradora::where('Nombre','=',$request->Nombre)->where('Activo','=',1)->first();
-        if($nombre){
+        $nombre = Aseguradora::where('Nombre', '=', $request->Nombre)->where('Activo', '=', 1)->first();
+        if ($nombre) {
             $messages = [
                 'Nombre.required' => 'El campo nombre es requerido',
                 'Nit.required' => 'El campo NIT es requerido',
@@ -104,7 +98,7 @@ class AseguradoraController extends Controller
                 'Nombre' => 'required:aseguradora',
                 'Nit' => 'required|unique:aseguradora',
             ], $messages);
-        }else{
+        } else {
 
             $messages = [
                 'Nombre.required' => 'El campo nombre es requerido',
@@ -136,10 +130,10 @@ class AseguradoraController extends Controller
         $aseguradora->TelefonoWhatsapp = $request->TelefonoWhatsapp;
         $aseguradora->Distrito = $request->Distrito;
         $aseguradora->Activo = 1;
-        if($request->get('Diario') == 'on'){
+        if ($request->get('Diario') == 'on') {
             $aseguradora->Diario = 1;
-            $aseguradora->Dias365 = $request->get('Dias365') == 'on' ? 1:0;
-        }else{
+            $aseguradora->Dias365 = $request->get('Dias365') == 'on' ? 1 : 0;
+        } else {
             $aseguradora->Diario = 0;
         }
         $aseguradora->save();
@@ -153,7 +147,7 @@ class AseguradoraController extends Controller
         //
     }
 
-    public function edit(Request $request,$id)
+    public function edit(Request $request, $id)
     {
         $tab = $request->tab ?? 1;
         $aseguradora = Aseguradora::findOrFail($id);
@@ -165,7 +159,7 @@ class AseguradoraController extends Controller
         $municipios = Municipio::get();
         $municipio_actual = 0;
         $departamento_actual = 0;
-        $documentos = AseguradoraDocumento::where('Aseguradora', $id)->where('Activo',1)->get();
+        $documentos = AseguradoraDocumento::where('Aseguradora', $id)->where('Activo', 1)->get();
         //  dd($cliente->Distrito);
         if ($aseguradora->Distrito) {
             $distritos = Distrito::where('Municipio', '=', $aseguradora->distrito->Municipio)->get();
@@ -234,24 +228,24 @@ class AseguradoraController extends Controller
         $aseguradora->TelefonoFijo = $request->TelefonoFijo;
         $aseguradora->TelefonoWhatsapp = $request->TelefonoWhatsapp;
         $aseguradora->Distrito = $request->Distrito;
-        if($request->get('Diario') == 'on'){
+        if ($request->get('Diario') == 'on') {
             $aseguradora->Diario = 1;
-        }else{
+        } else {
             $aseguradora->Diario = 0;
         }
 
-        if($request->Dias365 != null){
+        if ($request->Dias365 != null) {
             $aseguradora->Dias365 = 1;
-        }else{
+        } else {
             $aseguradora->Dias365 = 0;
         }
 
 
         $aseguradora->update();
-        session(['tab1' => '1']);
+
         alert()->success('El registro ha sido creado correctamente');
-        return back();
-        //return Redirect::to('catalogo/aseguradoras/' . $id . 'edit');
+
+        return Redirect::to('catalogo/aseguradoras/' . $id . '/edit?tab=1');
     }
 
     public function destroy($id)
@@ -283,8 +277,7 @@ class AseguradoraController extends Controller
         $contacto->save();
         alert()->success('El registro ha sido creado correctamente');
 
-        session(['tab1' => '2']);
-        return back();
+        return Redirect::to('catalogo/aseguradoras/' . $request->Aseguradora . '/edit?tab=2');
     }
 
     public function edit_contacto(Request $request)
@@ -298,8 +291,7 @@ class AseguradoraController extends Controller
         $contacto->save();
         alert()->success('El registro ha sido modificado correctamente');
 
-        session(['tab1' => '2']);
-        return back();
+        return Redirect::to('catalogo/aseguradoras/' . $request->Aseguradora . '/edit?tab=2');
     }
 
     public function delete_contacto(Request $request)
@@ -308,8 +300,8 @@ class AseguradoraController extends Controller
         $contacto->delete();
         alert()->error('El registro ha sido eliminado correctamente');
 
-        session(['tab1' => '2']);
-        return back();
+
+        return Redirect::to('catalogo/aseguradoras/' . $contacto->Aseguradora . '/edit?tab=2');
     }
 
     public function attach_necesidad_proteccion(Request $request)

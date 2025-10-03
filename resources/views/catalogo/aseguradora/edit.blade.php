@@ -6,7 +6,7 @@
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
 
             <div class="x_title">
-                <h2>Modificar aseguradora {{$tab}} <small></small></h2>
+                <h2>Modificar aseguradora <small></small></h2>
                 <ul class="nav navbar-right panel_toolbox">
                     <a href="{{url('catalogo/aseguradoras')}}" class="btn btn-info fa fa-undo " style="color: white"> Atrás</a>
                 </ul>
