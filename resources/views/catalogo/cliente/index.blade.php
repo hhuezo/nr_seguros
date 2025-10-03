@@ -22,7 +22,7 @@
                 <table id="tablaIndexClientes" class="table table-striped table-bordered">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th>#</th>
                             <th>Nombre o <br> Razón Social</th>
                             <th>DUI/NIT</th>
                             <th>Dirección de <br>Correspondencia</th>
@@ -37,7 +37,8 @@
                     <tbody>
                         @foreach ($clientes as $obj)
                             <tr>
-                                <td>{{ $obj->Id }}</td>
+                                {{-- <td>{{ $obj->Id }}</td> --}}
+                                <td>{{ $loop->iteration }}</td>
                                 <td>{{ $obj->Nombre }}</td>
                                 @if ($obj->TipoPersona == 1)
                                     <td>{{ $obj->Dui }}</td>
