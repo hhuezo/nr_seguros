@@ -293,7 +293,7 @@
                                         onchange="resumenGestionChanged(this.value)">
                                         <option value="">SELECCIONE</option>
                                         @foreach ($resumen_gestion as $resumen)
-                                            @if ($resumen->Id != 20)
+                                            @if ($resumen->Id != 19)
                                                 <option value="{{ $resumen->Id }}" class=" bg-{{ $resumen->Color }}">
                                                     {{ $resumen->Nombre }}</option>
                                             @else
