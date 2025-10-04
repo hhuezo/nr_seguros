@@ -58,7 +58,7 @@ class PlanController extends Controller
     }
 
     public function get_plan($id){
-        return Plan::where('Producto', '=', $id)->get();
+        return Plan::where('Producto', '=', $id)->where('Activo', 1)->get();
     }
 
 
