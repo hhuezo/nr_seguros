@@ -341,7 +341,7 @@
                                 <option value="">SELECCIONE</option>
 
                                 @foreach ($resumen_gestion as $resumen)
-                                    @if ($resumen->Id != 19)
+                                    @if ($resumen->Id != 18)
                                         <option value="{{ $resumen->Id }}" class=" bg-{{ $resumen->Color }}"
                                             {{ $suscripcion->ResumenGestion == $resumen->Id ? 'selected' : '' }}>
                                             {{ $resumen->Nombre }}</option>
