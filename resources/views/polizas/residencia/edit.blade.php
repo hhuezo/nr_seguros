@@ -374,6 +374,7 @@
                                                     {{ $obj->FechaFinal ? \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') : '' }}
                                                 </td>
                                                 <td style="text-align: center;">
+                                                    {{$obj->ImpresionRecibo}}
                                                     {{ $obj->ImpresionRecibo ? \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') : '' }}
                                                 </td>
                                                 <td style="text-align: center;">
@@ -503,13 +504,6 @@
                                     <table class="table table-striped jambo_table bulk_action" style="font-size: 13px;">
                                         <tr>
                                             <td>
-                                                <!-- Tasa @if ($residencia->Mensual == 1)
-    Mensual
-@else
-    Anual
-    @endif Millar : -->
-
-
                                                 Tasa Anual %.
                                             </td>
                                             <td>

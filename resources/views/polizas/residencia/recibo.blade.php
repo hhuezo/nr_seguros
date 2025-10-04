@@ -214,7 +214,7 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
     <tr>
 
       <td>
-      {{!!$configuracion->Nota!!}}
+      {!!$configuracion->Nota!!}
       </td>
     </tr>
   </table>
@@ -250,7 +250,7 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
     <table style="width: 100%; text-align: center;">
       <tr>
         <td>
-      {{!!$configuracion->Pie!!}}
+      {!!$configuracion->Pie!!}
         </td>
       </tr>
     </table>
