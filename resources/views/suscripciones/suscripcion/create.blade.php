@@ -78,12 +78,12 @@
 
                         <div class="col-sm-4">
                             <label class="control-label ">Fecha de Ingreso</label>
-                            <input type="date" name="FechaIngreso" value="{{ date('Y-m-d') }}" class="form-control">
+                            <input type="date" name="FechaIngreso" id="FechaIngreso"  value="{{ date('Y-m-d') }}" class="form-control">
                         </div>
 
                         <div class="col-sm-4">
                             <label class="control-label ">Días para completar información (cliente)</label>
-                            <input type="number" name="DiasCompletarInfoCliente"
+                            <input type="number" name="DiasCompletarInfoCliente" id="DiasCompletarInfoCliente"
                                 value="{{ old('DiasCompletarInfoCliente') }}" class="form-control">
                         </div>
 
@@ -548,6 +548,32 @@
                         error: function(xhr) {
                             console.error('Error:', xhr.responseJSON);
                             $('#DiasProcesamiento').val("");
+                        }
+                    });
+                }
+            });
+
+
+            $('#FechaIngreso, #FechaEntregaDocsCompletos').change(function() {
+
+                var inicio = $('#FechaIngreso').val();
+                var fin = $('#FechaEntregaDocsCompletos').val();
+
+                if (inicio && fin) {
+                    $.ajax({
+                        url: "{{ route('calcular.dias.habiles.json') }}",
+                        type: 'GET',
+                        data: {
+                            '_token': '{{ csrf_token() }}',
+                            'fecha_inicio': inicio,
+                            'fecha_fin': fin
+                        },
+                        success: function(response) {
+                            $('#DiasCompletarInfoCliente').val(response.dias_habiles);
+                        },
+                        error: function(xhr) {
+                            console.error('Error:', xhr.responseJSON);
+                            $('#DiasCompletarInfoCliente').val("");
                         }
                     });
                 }
