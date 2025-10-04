@@ -56,7 +56,7 @@
                                                 <i class="fa fa-edit fa-lg"></i>
                                             </a>
                                         @else
-                                            <a href="{{ url('polizas/residencia') }}/{{ $obj->Id }}/edit"
+                                            <a href="{{ url('polizas/residencia') }}/{{ $obj->Id }}/edit?tab=2"
                                                 class="btn btn-success on-default edit-row" title="Generar Pago">
                                                 <i class="fa fa-file fa-lg"></i>
                                         @endif
