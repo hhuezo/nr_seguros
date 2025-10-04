@@ -218,17 +218,23 @@
 
                 <div class="col-sm-12" style="padding: 0% !important">
                     <!-- Vigencia Desde -->
-                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                    <div class="item form-group col-sm-12 col-md-4 col-lg-4">
                         <label class="control-label" align="right">Vigencia Desde</label>
                         <input class="form-control" name="VigenciaDesde" type="date"
                             value="{{ $poliza_vida->VigenciaDesde }}" readonly>
                     </div>
 
                     <!-- Vigencia Hasta -->
-                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                    <div class="item form-group col-sm-12 col-md-4 col-lg-4">
                         <label class="control-label" align="right">Vigencia Hasta</label>
                         <input class="form-control" name="VigenciaHasta" type="date"
                             value="{{ $poliza_vida->VigenciaHasta }}" readonly>
+                    </div>
+
+                    <div class="item form-group col-sm-12 col-md-4 col-lg-4">
+                        <label class="control-label" align="right">Status </label>
+                        <input class="form-control" name="VigenciaHasta" type="text"
+                            value="{{ $poliza_vida->estadoPoliza->Nombre ?? '' }}" readonly>
                     </div>
                 </div>
 
@@ -257,8 +263,8 @@
 
                 <div class="item form-group col-sm-12 col-md-6 col-lg-6">
                     <label class="control-label" align="right">% de Comisión *</label>
-                    <input class="form-control" name="TasaComision" readonly id="TasaComision" type="number" step="any"
-                        value="{{ $poliza_vida->TasaComision }}" required>
+                    <input class="form-control" name="TasaComision" readonly id="TasaComision" type="number"
+                        step="any" value="{{ $poliza_vida->TasaComision }}" required>
                 </div>
 
 

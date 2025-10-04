@@ -40,7 +40,7 @@
 
                                 <td align="center">
                                 @if($obj->Configuracion == 1)
-                                <a href="{{ url('polizas/vida') }}/{{ $obj->Id }}"  title="Generar Pago">
+                                <a href="{{ url('polizas/vida') }}/{{ $obj->Id }}?tab=2"  title="Generar Pago">
                                     <i class="fa fa-file fa-lg"></i></a>
                                 <a href="{{ url('polizas/vida') }}/{{ $obj->Id }}/edit"  title="Configuracion">
                                     <i class="fa fa-lock fa-lg"></i></a>
