@@ -215,7 +215,7 @@
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="form-group" align="center">
                         <button type="submit" class="btn btn-success">Guardar</button>
-                        <a href="{{ url('poliza/vida') }}">
+                        <a href="{{ url('polizas/desempleo') }}">
                             <button type="button" class="btn btn-primary">Cancelar</button>
                         </a>
                     </div>
