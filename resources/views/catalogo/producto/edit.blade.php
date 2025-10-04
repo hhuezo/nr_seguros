@@ -335,6 +335,7 @@
                                     <select name="Tarificacion" id="Tarificacion" class="form-control" required>
                                         <option value="0" {{ old('Tarificacion') == "0" ? 'selected' : '' }}>Porcentual</option>
                                         <option value="1" {{ old('Tarificacion') == "1" ? 'selected' : '' }}>Millar</option>
+                                        <option value="1" {{ old('Tarificacion') == "2" ? 'selected' : '' }}>Prima</option>
                                     </select>
                                 </div>
                             </div>
@@ -399,6 +400,7 @@
                                     <select name="Tarificacion" id="ModalCoberturaTarificacion" class="form-control" required>
                                         <option value="0" {{ old('Tarificacion') == "0" ? 'selected' : '' }}>Porcentual</option>
                                         <option value="1" {{ old('Tarificacion') == "1" ? 'selected' : '' }}>Millar</option>
+                                        <option value="1" {{ old('Tarificacion') == "2" ? 'selected' : '' }}>Prima</option>
                                     </select>
                                 </div>
                             </div>
