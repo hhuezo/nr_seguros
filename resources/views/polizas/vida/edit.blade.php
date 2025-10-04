@@ -53,7 +53,7 @@
     <style>
         .subtareas-container {
             /* display: none;
-         /* Ocultar subtareas por defecto */
+             /* Ocultar subtareas por defecto */
         }
 
         .expand-icon {
@@ -148,7 +148,7 @@
                         <li role="presentation" class="{{ $tab == 1 ? 'active' : '' }}"><a href="#tab_content1"
                                 id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Datos de Póliza</a>
                         </li>
-                        @if ($vida->TasaDiferenciada != 2 )
+                        @if ($vida->TasaDiferenciada != 2)
                             <li role="presentation" class="{{ $tab == 2 ? 'active' : '' }} "><a href="#tab_content2"
                                     id="lineas-tab" role="tab" data-toggle="tab" aria-expanded="true">Lineas</a>
                             </li>
@@ -363,18 +363,25 @@
 
 
                                 <div class="col-sm-12" style="padding: 0% !important">
-                                    <!-- Vigencia Desde -->
-                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                    <div class="item form-group col-sm-12 col-md-3 col-lg-3">
                                         <label class="control-label" align="right">Vigencia Desde</label>
                                         <input class="form-control" name="VigenciaDesde" type="date"
                                             value="{{ $vida->VigenciaDesde }}" required>
                                     </div>
 
-                                    <!-- Vigencia Hasta -->
-                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                    <div class="item form-group col-sm-12 col-md-3 col-lg-3">
                                         <label class="control-label" align="right">Vigencia Hasta</label>
                                         <input class="form-control" name="VigenciaHasta" type="date"
                                             value="{{ $vida->VigenciaHasta }}" required>
+                                    </div>
+
+                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                        <label class="control-label" align="right">Status *</label>
+                                        <select name="EstadoPoliza" id="EstadoPoliza" class="form-control">
+                                            @foreach ($estados as $estado)
+                                                <option value="{{ $estado->Id }}" {{$vida->EstadoPoliza == $estado->Id ? 'selected':''}}>{{ $estado->Nombre }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
 
@@ -385,7 +392,7 @@
                                         value="{{ $vida->TasaDescuento }}">
                                 </div>
 
-                                  <div class="item form-group col-sm-12 col-md-3 col-lg-3">
+                                <div class="item form-group col-sm-12 col-md-3 col-lg-3">
                                     <label class="control-label" align="right">% de Comisión *</label>
                                     <input class="form-control" name="TasaComision" id="TasaComision" type="number"
                                         step="any" value="{{ $vida->TasaComision }}" required>
@@ -477,10 +484,10 @@
                                                                                     @foreach ($tipo->tasa_diferenciada as $tasa_diferenciada)
                                                                                         <tr class="primary-row">
                                                                                             <!-- <td>
-                                                                                                                                                                                                                                                            {{ $tasa_diferenciada->linea_credito?->Abreviatura ?? '' }}
-                                                                                                                                                                                                                                                            -
-                                                                                                                                                                                                                                                            {{ $tasa_diferenciada->linea_credito?->Descripcion ?? '' }}
-                                                                                                                                                                                                                                                        </td> -->
+                                                                                                                                                                                                                                                                {{ $tasa_diferenciada->linea_credito?->Abreviatura ?? '' }}
+                                                                                                                                                                                                                                                                -
+                                                                                                                                                                                                                                                                {{ $tasa_diferenciada->linea_credito?->Descripcion ?? '' }}
+                                                                                                                                                                                                                                                            </td> -->
                                                                                             @if ($tipo->TipoCalculo == 1)
                                                                                                 <td>
                                                                                                     {{ $tasa_diferenciada->FechaDesde ? date('d/m/Y', strtotime($tasa_diferenciada->FechaDesde)) : 'Sin fecha' }}

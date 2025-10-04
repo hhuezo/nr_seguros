@@ -1449,6 +1449,7 @@ class DeudaController extends Controller
 
 
         try {
+
             $deuda = Deuda::findOrFail($id);
             $deuda->NumeroPoliza = $request->NumeroPoliza;
             $deuda->Plan = $request->Planes;

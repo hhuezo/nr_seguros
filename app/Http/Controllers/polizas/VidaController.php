@@ -59,6 +59,7 @@ class VidaController extends Controller
         $cliente = Cliente::where('Activo', 1)->get();
         $tipoCobro = TipoCobro::where('Activo', 1)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
+        $estados = EstadoPoliza::where('Activo', 1)->get();
         return view('polizas.vida.create', compact(
             'aseguradora',
             'cliente',
@@ -66,6 +67,7 @@ class VidaController extends Controller
             'ejecutivo',
             'productos',
             'planes',
+            'estados'
         ));
     }
 
@@ -167,7 +169,7 @@ class VidaController extends Controller
             $vida->TasaDescuento = $request->TasaDescuento ?? null;
             $vida->EdadMaximaInscripcion = $request->EdadMaximaInscripcion;
             $vida->EdadTerminacion = $request->EdadTerminacion;
-            $vida->EstadoPoliza = 1;
+            $vida->EstadoPoliza = $request->EstadoPoliza;
             $vida->Activo = 1;
 
 
@@ -405,7 +407,7 @@ class VidaController extends Controller
         $tipoCobro = TipoCobro::where('Activo', 1)->orderBy('Id', 'desc')->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
         $tiposCartera = VidaTipoCartera::get();
-        // $historico_poliza = PolizaDeudaHistorica::where('Deuda', $id)->get();
+        $estados = EstadoPoliza::where('Activo', 1)->get();
         // $registroInicial = $historico_poliza->isNotEmpty() ? $historico_poliza->first() : null;
 
 
@@ -418,7 +420,8 @@ class VidaController extends Controller
             'productos',
             'planes',
             'tiposCartera',
-            'tab'
+            'tab',
+            'estados'
         ));
     }
 
@@ -523,11 +526,11 @@ class VidaController extends Controller
             $vida->TipoCobro = $request->TipoCobro;
             $vida->TipoTarifa = $request->TipoTarifa ?? null;
             $vida->Tasa = $request->Tasa;
-             $vida->TasaComision = $request->TasaComision;
+            $vida->TasaComision = $request->TasaComision;
             $vida->TasaDescuento = $request->TasaDescuento ?? null;
             $vida->EdadMaximaInscripcion = $request->EdadMaximaInscripcion;
             $vida->EdadTerminacion = $request->EdadTerminacion;
-            $vida->EstadoPoliza = 1;
+            $vida->EstadoPoliza = $request->EstadoPoliza;
             $vida->Activo = 1;
 
             if ($request->TipoCobro == 1) {

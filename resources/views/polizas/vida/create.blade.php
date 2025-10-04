@@ -246,17 +246,27 @@
 
                                 <div class="col-sm-12" style="padding: 0% !important">
                                     <!-- Vigencia Desde -->
-                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                    <div class="item form-group col-sm-12 col-md-3 col-lg-3">
                                         <label class="control-label" align="right">Vigencia Desde</label>
                                         <input class="form-control" name="VigenciaDesde" type="date"
                                             value="{{ old('VigenciaDesde') }}" required>
                                     </div>
 
                                     <!-- Vigencia Hasta -->
-                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                    <div class="item form-group col-sm-12 col-md-3 col-lg-3">
                                         <label class="control-label" align="right">Vigencia Hasta</label>
                                         <input class="form-control" name="VigenciaHasta" type="date"
                                             value="{{ old('VigenciaHasta') }}" required>
+                                    </div>
+
+
+                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                        <label class="control-label" align="right">Status *</label>
+                                        <select name="EstadoPoliza" id="EstadoPoliza" class="form-control">
+                                            @foreach ($estados as $estado)
+                                                <option value="{{$estado->Id}}">{{$estado->Nombre}}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
 

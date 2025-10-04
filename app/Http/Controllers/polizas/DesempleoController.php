@@ -74,7 +74,7 @@ class DesempleoController extends Controller
         $estadoPoliza = EstadoPoliza::where('Activo', 1)->get();
         $tipoCobro = TipoCobro::where('Activo', 1)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
-        //$saldos = SaldoMontos::where('Activo', 1)->get();
+        $saldos = SaldoMontos::where('Activo', 1)->get();
 
         //dd($tipoCartera);
         return view('polizas.desempleo.create', compact(
@@ -89,7 +89,7 @@ class DesempleoController extends Controller
             // 'tipos_contribuyente',
             // 'rutas',
             // 'ubicaciones_cobro',
-            //'saldos'
+            'saldos'
         ));
     }
 
@@ -156,7 +156,7 @@ class DesempleoController extends Controller
             $desempleo->Tasa = $request->Tasa;
             $desempleo->EdadMaximaInscripcion = $request->EdadMaximaInscripcion;
             $desempleo->EdadMaxima = $request->EdadTerminacion;
-            $desempleo->EstadoPoliza = 1;
+            $desempleo->EstadoPoliza = $request->EstadoPoliza;
             $desempleo->Descuento = $request->Descuento;
             $desempleo->Activo = 1;
             $desempleo->Plan = $request->Planes;
@@ -165,7 +165,7 @@ class DesempleoController extends Controller
             $desempleo->save();
 
             alert()->success('Éxito', 'La póliza de desempleo se ha creado correctamente.');
-            return Redirect::to('polizas/desempleo' . $desempleo->Id . '/edit');
+            return Redirect::to('polizas/desempleo/' . $desempleo->Id . '/edit');
         } catch (\Exception $e) {
 
             alert()->error('Error', 'Ocurrió un error al crear la póliza de desempleo: ' . $e->getMessage());
@@ -1258,8 +1258,8 @@ class DesempleoController extends Controller
             $desempleo->EdadMaxima = $request->EdadTerminacion;
             $desempleo->EstadoPoliza = 1;
             $desempleo->Descuento = $request->Descuento;
-            $desempleo->Activo = 1;
             $desempleo->Plan = $request->Planes;
+            $desempleo->EstadoPoliza = $request->EstadoPoliza;
             //$desempleo->Usuario = auth()->id();
             $desempleo->update();
 
