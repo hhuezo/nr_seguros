@@ -31,7 +31,7 @@
                     <tbody>
                         @foreach ($tiposordenesmedicas as $obj)
                             <tr>
-                                <td>{{ $obj->Id }}</td>
+                                <td>{{ $loop->iteration }}</td>
                                 <td>{{ $obj->Nombre }}</td>
 
                                 <td align="center">

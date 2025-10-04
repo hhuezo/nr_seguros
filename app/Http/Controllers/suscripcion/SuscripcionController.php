@@ -164,21 +164,21 @@ class SuscripcionController extends Controller
     {
         $ocupaciones = Ocupacion::where('Activo', 1)->get();
         $tipo_creditos = TipoCredito::where('Activo', 1)->get();
-        $companias = Compania::get();
-        $tipo_clientes = TipoCliente::get();
-        $tipo_orden = OrdenMedica::get();
-        $estados = EstadoCaso::get();
-        $reprocesos = Reproceso::get();
+        $companias = Compania::where('Activo', 1)->get();
+        $tipo_clientes = TipoCliente::where('Activo', 1)->get();
+        $tipo_orden = OrdenMedica::where('Activo', 1)->get();
+        $estados = EstadoCaso::where('Activo', 1)->get();
+        $reprocesos = Reproceso::where('Activo', 1)->get();
         $ejecutivos = Ejecutivo::where('Activo', 1)->get();
         $clientes = Cliente::where('activo', 1)->get();
-        $polizas_deuda = Deuda::where('activo', 1)->get();
-        $polizas_vida = Vida::where('activo', 1)->get();
+        $polizas_deuda = Deuda::where('Activo', 1)->get();
+        $polizas_vida = Vida::where('Activo', 1)->get();
 
-        $tipos_imc = TipoImc::get();
+        $tipos_imc = TipoImc::where('Activo',1)->get();
         $resumen_gestion = ResumenGestion::get();
 
         //observaciones 22-5-25
-        $aseguradoras = Aseguradora::where('activo', 1)->get();
+        $aseguradoras = Aseguradora::where('Activo', 1)->get();
 
 
         return view('suscripciones.suscripcion.create', compact(
@@ -380,22 +380,22 @@ class SuscripcionController extends Controller
     {
         $tab = $request->tab ?? 1;
         $suscripcion = Suscripcion::findOrFail($id);
-        $companias = Compania::get();
+        $companias = Compania::where('Activo', 1)->get();
         $ocupaciones = Ocupacion::where('Activo', 1)->get();
-        $tipo_clientes = TipoCliente::get();
+        $tipo_clientes = TipoCliente::where('Activo', 1)->get();
         $tipo_creditos = TipoCredito::where('Activo', 1)->get();
-        $tipo_orden = OrdenMedica::get();
-        $estados = EstadoCaso::get();
+        $tipo_orden = OrdenMedica::where('Activo', 1)->get();
+        $estados = EstadoCaso::where('Activo', 1)->get();
         $ejecutivos = Ejecutivo::where('Activo', 1)->get();
         $clientes = Cliente::where('activo', 1)->get();
         $polizas_deuda = Deuda::where('activo', 1)->get();
         $polizas_vida = Vida::where('activo', 1)->get();
-        $tipos_imc = TipoImc::get();
-        $resumen_gestion = ResumenGestion::get();
-        $reprocesos = Reproceso::get();
+        $tipos_imc = TipoImc::where('Activo', 1)->get();
+        $resumen_gestion = ResumenGestion::where('Activo', 1)->get();
+        $reprocesos = Reproceso::where('Activo', 1)->get();
 
         //observaciones 22-5-25
-        $aseguradoras = Aseguradora::where('activo', 1)->get();
+        $aseguradoras = Aseguradora::where('Activo', 1)->get();
 
         return view('suscripciones.suscripcion.edit', compact('reprocesos', 'aseguradoras', 'tipos_imc', 'resumen_gestion', 'polizas_vida', 'polizas_deuda', 'clientes', 'ejecutivos', 'companias', 'ocupaciones', 'tipo_clientes', 'tipo_creditos', 'tipo_orden', 'suscripcion', 'estados', 'tab'));
     }
@@ -645,7 +645,7 @@ class SuscripcionController extends Controller
             }
         }
 
-        return $diasHabiles - $diasFeriados;
+        return $diasHabiles - $diasFeriados -1;
     }
 
 
