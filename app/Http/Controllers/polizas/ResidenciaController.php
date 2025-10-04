@@ -319,9 +319,12 @@ class ResidenciaController extends Controller
         $tab = $request->tab ?? 1;
 
         $residencia = Residencia::findOrFail($id);
+
+
         $aseguradoras = Aseguradora::where('Activo', 1)->get();  //where('Nombre', 'like', '%fede%')->orWhere('Nombre', 'like', '%sisa%')->
         $estados_poliza = EstadoPoliza::where('Activo', '=', 1)->get();
         $cliente = Cliente::where('Activo', 1)->get();
+
         $tipos_contribuyente = TipoContribuyente::get();
         $rutas = Ruta::where('Activo', '=', 1)->get();
         $ubicaciones_cobro = UbicacionCobro::where('Activo', '=', 1)->get();
@@ -425,7 +428,7 @@ class ResidenciaController extends Controller
 
         ], $messages);
 
-         $residencia = Residencia::findOrFail($id);
+        $residencia = Residencia::findOrFail($id);
 
         $residencia->NumeroPoliza = $request->NumeroPoliza;
         $residencia->Aseguradora = $request->Aseguradora;

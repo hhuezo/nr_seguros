@@ -2,6 +2,7 @@
 
 namespace App\Models\polizas;
 
+use App\Models\catalogo\Cliente;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -43,7 +44,7 @@ class Residencia extends Model
 
     public function clientes()
     {
-        return $this->belongsTo('App\Models\catalogo\Cliente', 'Asegurado', 'Id');
+        return $this->belongsTo(Cliente::class, 'Asegurado', 'Id');
     }
 
     public function aseguradoras()

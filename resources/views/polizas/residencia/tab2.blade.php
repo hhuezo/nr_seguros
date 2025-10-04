@@ -623,7 +623,8 @@
             tasa_comision = var_com;
 
         }
-        let tipo_contribuyente = {{ $residencia->clientes->TipoContribuyente }};
+        let tipo_contribuyente = {{ $residencia->clientes->TipoContribuyente ?? 0 }};
+        console.log("tipo_contribuyente ",tipo_contribuyente);
         if (aseguradora == 3) {
             //fede
             millar = tasa / 1000;
@@ -715,7 +716,7 @@
         document.getElementById('sub_total_ccf').textContent = formatearCantidad(sub_total_ccf);
         let comision = 0;
         let retencion = 0;
-        if (tipo_contribuyente != 1) {
+        if (tipo_contribuyente == 1) {
             retencion = (parseFloat(valor_comision) * 0.01);
         }
 
