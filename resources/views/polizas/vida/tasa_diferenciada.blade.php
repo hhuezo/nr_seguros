@@ -32,8 +32,11 @@
 
         <div class="title_right text-right">
 
-            <button class="btn btn-primary" type="button" data-target="#modal-add-tipo-cartera" data-toggle="modal"><i
+            <button class="btn btn-success" type="button" data-target="#modal-add-tipo-cartera" data-toggle="modal"><i
                     class="fa fa-plus"></i></button>
+
+            <a href="{{url('polizas/vida')}}/{{$vida->Id}}/edit" class="btn btn-primary" type="button"><i
+                    class="fa fa-arrow-left"></i></a>
 
         </div>
     </div>

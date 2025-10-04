@@ -2,8 +2,8 @@
 @section('contenido')
     <style>
         /* .subtareas-container {
-                                                        display: none;
-                                                    } */
+                                                            display: none;
+                                                        } */
 
         .expand-icon {
             cursor: pointer;
@@ -28,8 +28,11 @@
 
         <div class="title_right text-right">
 
-            <button class="btn btn-primary" type="button" data-target="#modal-add-tipo-cartera" data-toggle="modal"><i
+            <button class="btn btn-success" type="button" data-target="#modal-add-tipo-cartera" data-toggle="modal"><i
                     class="fa fa-plus"></i></button>
+
+            <a href="{{ url('polizas/deuda') }}/{{ $deuda->Id }}" class="btn btn-primary" type="button"><i
+                    class="fa fa-arrow-left"></i></a>
 
         </div>
     </div>
@@ -122,7 +125,7 @@
                                                                     <th>Edad inicio</th>
                                                                     <th>Edad final</th>
                                                                 @endif
-                                                                   @if ($deuda->TarifaExcel != 1)
+                                                                @if ($deuda->TarifaExcel != 1)
                                                                     <th>Tasa</th>
                                                                 @endif
                                                                 <th>Opciones</th>
