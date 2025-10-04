@@ -170,6 +170,7 @@ class VidaController extends Controller
             $vida->EdadMaximaInscripcion = $request->EdadMaximaInscripcion;
             $vida->EdadTerminacion = $request->EdadTerminacion;
             $vida->Beneficios = $request->Beneficios;
+            $vida->EstadoPoliza = $request->EstadoPoliza;
 
             $vida->ClausulasEspeciales = $request->ClausulasEspeciales;
             $vida->Beneficios = $request->Beneficios;
