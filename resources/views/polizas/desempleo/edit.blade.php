@@ -229,7 +229,17 @@
                     </div>
 
                     <!-- Concepto -->
-                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                    <div class="item form-group col-sm-12 col-md-4 col-lg-4">
+                        <label class="control-label" align="right">Concepto</label>
+                        <textarea class="form-control" name="Concepto" rows="3" cols="4">{{ $desempleo->Concepto }}</textarea>
+                    </div>
+                     <div class="item form-group col-sm-12 col-md-4 col-lg-4">
+                        <label class="control-label" align="right">Beneficios Adicionales </label>
+                        <textarea class="form-control" name="Beneficios" rows="3" cols="4">{{ $desempleo->Beneficios }}</textarea>
+                    </div>
+
+                     <!-- Concepto -->
+                    <div class="item form-group col-sm-12 col-md-4 col-lg-4">
                         <label class="control-label" align="right">Concepto</label>
                         <textarea class="form-control" name="Concepto" rows="3" cols="4">{{ $desempleo->Concepto }}</textarea>
                     </div>

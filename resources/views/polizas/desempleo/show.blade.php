@@ -73,12 +73,6 @@
                         <input type="text" class="form-control" value="{{ $desempleo->NumeroPoliza }}" readonly>
                     </div>
 
-                    <!-- Asegurado -->
-                    <div class="form-group">
-                        <label>Asegurado</label>
-                        <input type="text" class="form-control" value="{{ $desempleo->cliente->Nombre }}" readonly>
-                    </div>
-                    <!--Productos -->
                     <div class="form-group">
                         <label>Productos</label>
                         <input type="text" class="form-control"
@@ -86,30 +80,15 @@
                             readonly>
                     </div>
 
-                    <!-- Nit -->
                     <div class="form-group">
-                        <label>Nit</label>
-                        <input type="text" class="form-control" value="{{ $desempleo->cliente->Nit }}" readonly>
+                        <label>Asegurado</label>
+                        <input type="text" class="form-control" value="{{ $desempleo->cliente->Nombre }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Ejecutivo</label>
+                        <input type="text" class="form-control" value="{{ $desempleo->ejecutivo->Nombre }}" readonly>
                     </div>
 
-                    <!-- Vigencia Desde -->
-                    <div class="form-group">
-                        <label>Vigencia Desde</label>
-                        <input type="date" class="form-control" value="{{ $desempleo->VigenciaDesde }}" readonly>
-                    </div>
-
-                    <!-- Edad Máxima de Inscripción -->
-                    <div class="form-group">
-                        <label>Edad Máxima de Inscripción</label>
-                        <input type="text" class="form-control" value="{{ $desempleo->EdadMaximaInscripcion }}"
-                            readonly>
-                    </div>
-
-                    <!-- Tasa -->
-                    <div class="form-group">
-                        <label>Tasa</label>
-                        <input type="text" class="form-control" value="{{ $desempleo->Tasa }}" readonly>
-                    </div>
                 </div>
 
                 <!-- Columna 2 -->
@@ -120,20 +99,16 @@
                         <input type="text" class="form-control" value="{{ $desempleo->aseguradora->Nombre }}" readonly>
                     </div>
 
-                    <!-- Ejecutivo -->
-                    <div class="form-group">
-                        <label>Ejecutivo</label>
-                        <input type="text" class="form-control" value="{{ $desempleo->ejecutivo->Nombre }}" readonly>
-                    </div>
-
-                    <!-- Plan -->
                     <div class="form-group">
                         <label>Planes</label>
                         <input type="text" class="form-control"
                             value="{{ $desempleo->planes ? $desempleo->planes->Nombre : '' }}" readonly>
                     </div>
+                    <div class="form-group">
+                        <label>Nit</label>
+                        <input type="text" class="form-control" value="{{ $desempleo->cliente->Nit }}" readonly>
+                    </div>
 
-                    <!-- Saldos y montos -->
                     <div class="form-group">
                         <label>Saldos y Montos</label>
                         <input type="text" class="form-control"
@@ -141,26 +116,88 @@
                             readonly>
                     </div>
 
+                </div>
 
-                    <!-- Vigencia Hasta -->
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Vigencia Desde</label>
+                        <input type="date" class="form-control" value="{{ $desempleo->VigenciaDesde }}" readonly>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
                     <div class="form-group">
                         <label>Vigencia Hasta</label>
                         <input type="date" class="form-control" value="{{ $desempleo->VigenciaHasta }}" readonly>
                     </div>
+                </div>
 
-                    <!-- Edad Máxima -->
+                <div class="col-md-6">
                     <div class="form-group">
-                        <label>Edad Máxima</label>
-                        <input type="text" class="form-control" value="{{ $desempleo->EdadMaxima }}" readonly>
-                    </div>
-
-                    <!-- Tipo de Cálculo -->
-                    <div class="form-group">
-                        <label>Tipo de Cálculo</label>
-                        <input type="text" class="form-control"
-                            value="{{ $desempleo->TipoCalculo == 1 ? 'Por cabeza' : 'Por crédito' }}" readonly>
+                        <label>Estado</label>
+                        <input type="text" class="form-control" value="{{ $desempleo->estadoPoliza->Nombre ?? '' }}"
+                            readonly>
                     </div>
                 </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Edad Máxima de Inscripción</label>
+                        <input type="text" class="form-control" value="{{ $desempleo->EdadMaximaInscripcion }}"
+                            readonly>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Edad Terminación</label>
+                        <input type="text" class="form-control" value="{{ $desempleo->EdadMaxima }}" readonly>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Tasa</label>
+                        <input type="text" class="form-control" value="{{ $desempleo->Tasa }}" readonly>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Comisión</label>
+                        <input type="text" class="form-control" value="{{ $desempleo->Descuento }}" readonly>
+                    </div>
+                </div>
+
+
+
+                <!-- Concepto -->
+                <div class="item form-group col-sm-12 col-md-4 col-lg-4">
+                    <label class="control-label" align="right">Concepto</label>
+                    <textarea class="form-control" name="Concepto" readonly rows="3" cols="4">{{ $desempleo->Concepto }}</textarea>
+                </div>
+                <div class="item form-group col-sm-12 col-md-4 col-lg-4">
+                    <label class="control-label" align="right">Beneficios Adicionales </label>
+                    <textarea class="form-control" name="Beneficios" readonly rows="3" cols="4">{{ $desempleo->Beneficios }}</textarea>
+                </div>
+
+                <!-- Concepto -->
+                <div class="item form-group col-sm-12 col-md-4 col-lg-4">
+                    <label class="control-label" align="right">Concepto</label>
+                    <textarea class="form-control" name="Concepto" readonly rows="3" cols="4">{{ $desempleo->Concepto }}</textarea>
+                </div>
+
+
+                <!-- Tipo de Cálculo -->
+                {{-- <div class="form-group">
+                    <label>Tipo de Cálculo</label>
+                    <input type="text" class="form-control"
+                        value="{{ $desempleo->TipoCalculo == 1 ? 'Por cabeza' : 'Por crédito' }}" readonly>
+                </div> --}}
+
+
+
+
 
             </div>
             <div class="tab-pane fade {{ isset($tab) && $tab == 2 ? 'active in' : '' }}" id="profile" role="tabpanel"

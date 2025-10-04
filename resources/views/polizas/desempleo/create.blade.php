@@ -161,6 +161,9 @@
                         </div>
                     </div>
 
+
+
+
                     <!-- Edad máxima de inscripción -->
                     <div class="item form-group col-sm-12 col-md-6 col-lg-6">
                         <label class="control-label" align="right">Edad máxima de inscripción</label>
@@ -189,11 +192,22 @@
                             value="{{ old('Descuento') }}">
                     </div>
 
-                    <!-- Concepto -->
-                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                     <div class="item form-group col-sm-12 col-md-4 col-lg-4">
+                        <label class="control-label" align="right">Clausulas Especiales </label>
+                        <textarea class="form-control" name="ClausulasEspeciales" rows="3" cols="4">{{ old('ClausulasEspeciales') }}</textarea>
+                    </div>
+                    <div class="item form-group col-sm-12 col-md-4 col-lg-4">
+                        <label class="control-label" align="right">Beneficios Adicionales </label>
+                        <textarea class="form-control" name="Beneficios" rows="3" cols="4">{{ old('Beneficios') }}</textarea>
+                    </div>
+
+                     <!-- Concepto -->
+                    <div class="item form-group col-sm-12 col-md-4 col-lg-4">
                         <label class="control-label" align="right">Concepto</label>
                         <textarea class="form-control" name="Concepto" rows="3" cols="4">{{ old('Concepto') }}</textarea>
                     </div>
+
+
                 </div>
 
                 <!-- Botones -->
