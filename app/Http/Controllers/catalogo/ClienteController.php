@@ -89,120 +89,156 @@ class ClienteController extends Controller
     public function validar(Request $request)
     {
         $messages = [
+            'Dui.required' => 'El campo DUI es obligatorio',
             'Dui.min' => 'El formato de DUI es incorrecto',
             'Dui.unique' => 'El DUI ya existe en la base de datos',
             'TelefonoCelular.required' => 'El teléfono principal es obligatorio',
             'TelefonoCelular.size' => 'El teléfono Principal es incorrecto',
-
-            // 👇 Mensajes personalizados para UbicacionCobro
             'UbicacionCobro.required' => 'El Método de Pago es obligatorio',
             'UbicacionCobro.integer'  => 'El Método de Pago debe ser un valor válido',
+            'Nit.required_without' => 'Debe ingresar al menos un NIT o un Pasaporte',
+            'Pasaporte.required_without' => 'Debe ingresar al menos un NIT o un Pasaporte',
         ];
 
-        $request->merge(['Dui' => $this->string_replace($request->get('Dui'))]);
-        $request->merge(['Nit' => $this->string_replace($request->get('Nit'))]);
-        $request->merge(['TelefonoCelular' => $this->string_replace($request->get('TelefonoCelular'))]);
-        //dd($request->get('Dui'));
+        // Limpiar campos
+        $request->merge([
+            'Dui' => $this->string_replace($request->get('Dui')),
+            'Nit' => $this->string_replace($request->get('Nit')),
+            'Pasaporte' => $this->string_replace($request->get('Pasaporte')),
+            'TelefonoCelular' => $this->string_replace($request->get('TelefonoCelular')),
+        ]);
+
+        // Convertir checkbox a boolean
+        $extranjero = $request->boolean('Extranjero'); // true si está marcado, false si no
+
+        // Reglas base
         $rules = [
             'Nombre' => 'required',
             'DireccionCorrespondencia' => 'required|max:255',
             'TelefonoCelular' => 'required|size:9',
-            //'CorreoPrincipal' => 'required|email|max:255',
             'FechaVinculacion' => 'required|date',
             'Estado' => 'required|integer',
             'Genero' => 'required|integer',
             'TipoContribuyente' => 'required|integer',
             'UbicacionCobro' => 'required|integer',
-            //'Departamento' => 'required|integer',
-            //'Municipio' => 'required|integer',
-            //'Distrito' => 'required|integer',
         ];
 
-        if ($request->get('TipoPersona') == 1) {
-            $rules['Dui'] = 'required';
-            $rules['FechaNacimiento'] = [
-                'required',
-                'date',
-                function ($attribute, $value, $fail) {
-                    $eighteenYearsAgo = now()->subYears(18)->format('Y-m-d');
-                    if ($value > $eighteenYearsAgo) {
-                        $fail('El cliente debe tener al menos 18 años.');
-                    }
-                }
-            ];
-        }
-
-        if ($request->get('Dui') != null) {
-            if ($request->get('ClienteId') != null) {
-                $rules['Dui'] = [
-                    'required',
-                    'min:10',
-                    Rule::unique('cliente')->ignore($request->get('ClienteId')),
-                ];
-            } else {
-                $rules['Dui'] = 'min:10|unique:cliente';
-            }
-        }
-
-        if ($request->TipoPersona <> 1) {
-            if ($request->get('Nit') != null) {
-
-                if ($request->get('ClienteId') != null) {
-                    $rules['Nit'] = [
-                        'required',
-                        'min:17',
-                        Rule::unique('cliente')->ignore($request->get('ClienteId')),
-                    ];
+        // Validación para NO extranjeros
+        if (!$extranjero) {
+            if ($request->get('TipoPersona') == 1) {
+                $duiRules = ['required', 'min:10'];
+                if ($request->get('ClienteId')) {
+                    $duiRules[] = Rule::unique('cliente')->ignore($request->get('ClienteId'));
                 } else {
-                    $rules['Nit'] = 'min:17|unique:cliente';
+                    $duiRules[] = 'unique:cliente';
                 }
+                $rules['Dui'] = $duiRules;
+
+                $rules['FechaNacimiento'] = [
+                    'required',
+                    'date',
+                    function ($attribute, $value, $fail) {
+                        $eighteenYearsAgo = now()->subYears(18)->format('Y-m-d');
+                        if ($value > $eighteenYearsAgo) {
+                            $fail('El cliente debe tener al menos 18 años.');
+                        }
+                    }
+                ];
             }
         }
 
+        // Validación para Extranjero: al menos Nit o Pasaporte debe tener dato
+        if ($extranjero) {
+            $rules['Nit'] = 'required_without:Pasaporte|min:17';
+            $rules['Pasaporte'] = 'required_without:Nit|max:100';
+        } else {
+            // Si no es extranjero y no es persona natural, Nit opcional pero válido si existe
+            if ($request->get('TipoPersona') != 1 && $request->get('Nit')) {
+                $nitRules = ['min:17'];
+                if ($request->get('ClienteId')) {
+                    $nitRules[] = Rule::unique('cliente')->ignore($request->get('ClienteId'));
+                } else {
+                    $nitRules[] = 'unique:cliente';
+                }
+                $rules['Nit'] = $nitRules;
+            }
+        }
+
+        // Ejecutar validator
         $validator = Validator::make($request->all(), $rules, $messages);
 
         if ($validator->fails()) {
             return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
 
-        // Si todas las validaciones pasan
         return response()->json(['success' => true, 'message' => 'Validación exitosa']);
     }
 
 
+
+
     public function store(Request $request)
     {
+        // Convertir checkbox a boolean: true si está marcado, false si no
+        $extranjero = $request->boolean('Extranjero'); // maneja "on" o null
+
         $messages = [
+            'Nombre.required' => 'El campo Nombre es obligatorio',
+            'FechaNacimiento.required' => 'El campo Fecha de Nacimiento es obligatorio',
+            'FechaNacimiento.date' => 'La Fecha de Nacimiento no es válida',
             'Dui.required' => 'El campo DUI es obligatorio para personas naturales',
             'Dui.min' => 'El formato de DUI es incorrecto',
             'Dui.unique' => 'El DUI ya existe en la base de datos',
             'Nit.min' => 'El formato de NIT es incorrecto',
             'Nit.unique' => 'El NIT ya existe en la base de datos',
+            'Nit.required_without' => 'Debe ingresar al menos un NIT o un Pasaporte',
+            'Pasaporte.required_without' => 'Debe ingresar al menos un NIT o un Pasaporte',
         ];
 
+        // Limpiar DUI y NIT
         $request->merge([
             'Dui' => $this->string_replace($request->get('Dui')),
             'Nit' => $this->string_replace($request->get('Nit')),
         ]);
 
-        // Validaciones comunes
-        $request->validate([
+        // Construir reglas base
+        $rules = [
             'Nombre' => 'required',
             'FechaNacimiento' => 'required|date',
-        ], $messages);
+        ];
 
-        // Validaciones condicionales
-        if ($request->get('TipoPersona') == 1) {
-            $request->validate([
-                'Dui' => 'required|min:10|unique:cliente',
-            ], $messages);
-        } else {
-            if ($request->get('Nit')) {
-                $request->validate([
-                    'Nit' => 'min:17|unique:cliente',
-                ], $messages);
+        // Reglas condicionales
+        if (!$extranjero) {
+            // No es extranjero → DUI obligatorio si TipoPersona es 1
+            if ($request->get('TipoPersona') == 1) {
+                $duiRules = ['required', 'min:10'];
+                if ($request->get('ClienteId')) {
+                    $duiRules[] = Rule::unique('cliente')->ignore($request->get('ClienteId'));
+                } else {
+                    $duiRules[] = 'unique:cliente';
+                }
+                $rules['Dui'] = $duiRules;
+            } else {
+                if ($request->get('Nit')) {
+                    $nitRules = ['min:17'];
+                    if ($request->get('ClienteId')) {
+                        $nitRules[] = Rule::unique('cliente')->ignore($request->get('ClienteId'));
+                    } else {
+                        $nitRules[] = 'unique:cliente';
+                    }
+                    $rules['Nit'] = $nitRules;
+                }
             }
+        } else {
+            // Es extranjero → al menos Nit o Pasaporte debe tener dato
+            $rules['Nit'] = 'required_without:Pasaporte|min:17';
+            $rules['Pasaporte'] = 'required_without:Nit|max:100';
         }
+
+        // Validar
+        $request->validate($rules, $messages);
+
+
 
 
 
@@ -248,6 +284,8 @@ class ClienteController extends Controller
         $cliente->BancoPrefencia = $request->get('BancoPrefencia');
         $cliente->CuentasDevolucionPrimas = $request->get('CuentasDevolucionPrimas');
         $cliente->NumeroExtrajero = $request->get('NumeroExtrajero');
+        $cliente->Extranjero = $request->boolean('Extranjero') ? 1 : 0;
+        $cliente->Pasaporte = $request->get('Pasaporte');
 
         $cliente->save();
 
@@ -479,6 +517,8 @@ class ClienteController extends Controller
             $cliente->BancoPrefencia = $request->get('BancoPrefencia');
             $cliente->CuentasDevolucionPrimas = $request->get('CuentasDevolucionPrimas');
             $cliente->NumeroExtrajero = $request->get('NumeroExtrajero');
+            $cliente->Extranjero = $request->boolean('Extranjero') ? 1 : 0;
+            $cliente->Pasaporte = $request->get('Pasaporte');
             $cliente->update();
 
             return redirect('catalogo/cliente/' . $id . '/edit?tab=1')->with('success', 'El registro ha sido modificado correctamente');
