@@ -70,19 +70,20 @@
                             @endisset
                         </td>
 
-                        <!-- Opciones -->
+
                         <td align="center">
-                            @if($obj->Configuracion == 0)
-                            <a href="{{ url('polizas/desempleo') }}/{{ $obj->Id }}/edit" class="on-default edit-row">
-                                <i class="fa fa-pencil fa-lg"></i>
-                            </a>
-                            @else
+
+
                             <!-- Configuración -->
-                            <a href="{{ url('polizas/desempleo') }}/{{ $obj->Id }}" class="on-default edit-row">
+                            <a href="{{ url('polizas/desempleo') }}/{{ $obj->Id }}?tab=2" class="on-default edit-row">
+                                <i class="fa fa-file fa-lg"></i>
+                            </a>
+
+                            &nbsp;&nbsp;
+                             <a href="{{ url('polizas/desempleo') }}/{{ $obj->Id }}/edit" class="on-default edit-row">
                                 <i class="fa fa-pencil fa-lg"></i>
                             </a>
-                            @endif
-                            <!-- Eliminar -->
+
                             &nbsp;&nbsp;
                             <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal">
                                 <i class="fa fa-trash fa-lg"></i>

@@ -234,11 +234,11 @@
                 <!-- Botones -->
                 <br>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <div class="form-group" align="center">
+                    <div class="form-group" style="text-align: right">
                         <button type="submit" class="btn btn-success"
                             {{ $desempleo->Configuracion == 1 ? 'disabled' : '' }}>Guardar y Continuar</button>
-                        <a href="{{ url('polizas/deuda') }}"><button type="button"
-                                class="btn btn-primary">Cancelar</button></a>
+                        {{-- <a href="{{ url('polizas/deuda') }}"><button type="button"
+                                class="btn btn-primary">Cancelar</button></a> --}}
                     </div>
                 </div>
             </form>
