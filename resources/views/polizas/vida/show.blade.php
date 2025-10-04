@@ -147,7 +147,8 @@
                     <div class="col-sm-12" style="padding: 0% !important;" id="div-cobro-creditos">
                         <div class="item form-group col-sm-12 col-md-6 col-lg-6">
                             <label class="control-label" align="right">Tipo de suma</label>
-                            <select name="TipoTarifa" class="form-control" onchange="showMultitarifa(this.value)" readonly>
+                            <select name="TipoTarifa" class="form-control" onchange="showMultitarifa(this.value)"
+                                readonly>
                                 <option value="1" {{ $poliza_vida->TipoTarifa == 1 ? 'selected' : '' }}>Suma
                                     uniforme</option>
                                 <option value="2" {{ $poliza_vida->TipoTarifa == 2 ? 'selected' : '' }}>
@@ -234,17 +235,30 @@
 
 
 
-                <!-- Descuento -->
-                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                    <label class="control-label" align="right">Descuento</label>
-                    <input class="form-control" name="TasaDescuento" type="number" step="any"
-                        value="{{ $poliza_vida->TasaDescuento == 0 ? '': $poliza_vida->TasaDescuento}}" readonly>
+                <div class="item form-group col-sm-12 col-md-4 col-lg-4">
+                    <label class="control-label" align="right">Clausulas Especiales </label>
+                    <textarea class="form-control" name="ClausulasEspeciales" readonly rows="3" cols="4">{{ $poliza_vida->ClausulasEspeciales }}</textarea>
+                </div>
+                <div class="item form-group col-sm-12 col-md-4 col-lg-4">
+                    <label class="control-label" align="right">Beneficios Adicionales </label>
+                    <textarea class="form-control" name="Beneficios" readonly rows="3" cols="4">{{ $poliza_vida->Beneficios }}</textarea>
                 </div>
 
-                <!-- Concepto -->
-                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                <div class="item form-group col-sm-12 col-md-4 col-lg-4">
                     <label class="control-label" align="right">Concepto</label>
-                    <textarea class="form-control" name="Concepto" rows="3" cols="4" readonly>{{ $poliza_vida->Concepto }}</textarea>
+                    <textarea class="form-control" name="Concepto" readonly rows="3" cols="4">{{ $poliza_vida->Concepto }}</textarea>
+                </div>
+
+                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                    <label class="control-label" align="right">Descuento</label>
+                    <input class="form-control" name="TasaDescuento" readonly type="number" step="any"
+                        value="{{ $poliza_vida->TasaDescuento }}">
+                </div>
+
+                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                    <label class="control-label" align="right">% de Comisión *</label>
+                    <input class="form-control" name="TasaComision" readonly id="TasaComision" type="number" step="any"
+                        value="{{ $poliza_vida->TasaComision }}" required>
                 </div>
 
 
