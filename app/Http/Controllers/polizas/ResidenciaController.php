@@ -334,7 +334,7 @@ class ResidenciaController extends Controller
         $planes = Plan::where('Activo', 1)->get();
 
         $comentarios = Comentario::where('Residencia', '=', $id)->where('Activo', 1)->get();
-        $fechas = PolizaResidenciaTempCartera::where('PolizaResidencia', $id)->where('User', auth()->user()->id)->first();
+        $fechas = PolizaResidenciaTempCartera::where('PolizaResidencia', $id)->first();
 
         $ultimo_pago_fecha_final = null;
         if ($ultimo_pago) {
