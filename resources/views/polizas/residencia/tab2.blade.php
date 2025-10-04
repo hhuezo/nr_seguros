@@ -624,7 +624,7 @@
 
         }
         let tipo_contribuyente = {{ $residencia->clientes->TipoContribuyente ?? 0 }};
-        console.log("tipo_contribuyente ",tipo_contribuyente);
+        console.log("tipo_contribuyente ", tipo_contribuyente);
         if (aseguradora == 3) {
             //fede
             millar = tasa / 1000;
@@ -724,6 +724,8 @@
         let comision_ccf = parseFloat(sub_total_ccf) - parseFloat(retencion);
         document.getElementById('comision_ccf').textContent = formatearCantidad(comision_ccf);
         document.getElementById('comision').textContent = formatearCantidad(comision_ccf);
+
+        console.log();
         let liquido_pagar = (parseFloat(sub_total) + parseFloat(iva) - parseFloat(comision_ccf));
         document.getElementById('liquido_pagar').textContent = formatearCantidad(liquido_pagar);
         let total_factura = (parseFloat(sub_total) + parseFloat(iva));
@@ -779,9 +781,14 @@
         let iva = document.getElementById('IvaDetalle').value;
         let sub_total = document.getElementById('SubTotalDetalle').value;
         let liquido_pagar = document.getElementById('liquido_pagar').innerText;
+
         let total_factura = (parseFloat(sub_total) + parseFloat(iva));
         document.getElementById('total_factura').textContent = formatearCantidad(total_factura);
-        document.getElementById('APagarDetalle').value = parseFloat(liquido_pagar);
+
+        // quitar comas y luego convertir
+        let numero = parseFloat(liquido_pagar.replace(/,/g, ''));
+
+        document.getElementById('APagarDetalle').value = numero;
 
 
     }
