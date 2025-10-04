@@ -174,7 +174,7 @@ class SuscripcionController extends Controller
         $polizas_deuda = Deuda::where('Activo', 1)->get();
         $polizas_vida = Vida::where('Activo', 1)->get();
 
-        $tipos_imc = TipoImc::where('Activo',1)->get();
+        $tipos_imc = TipoImc::where('Activo', 1)->get();
         $resumen_gestion = ResumenGestion::get();
 
         //observaciones 22-5-25
@@ -610,27 +610,34 @@ class SuscripcionController extends Controller
     */
     public function calcularDiasHabiles($fechaInicio, $fechaFin)
     {
-        // 1. Configurar zona horaria (El Salvador GMT-6)
         $zonaHoraria = 'America/El_Salvador';
 
-        // 2. Parsear fechas con zona horaria
         $inicio = Carbon::parse($fechaInicio)->setTimezone($zonaHoraria)->startOfDay();
         $fin = Carbon::parse($fechaFin)->setTimezone($zonaHoraria)->startOfDay();
 
-        // 3. Obtener todos los feriados que solapan con el rango
+        // 🚩 Caso especial: misma fecha
+        if ($inicio->equalTo($fin)) {
+            return $inicio->isWeekend() ? 0 : 1;
+        }
+
+        // 🚩 Caso especial: rango solo de fin de semana (ej. sábado → domingo)
+        if ($inicio->isWeekend() && $fin->isWeekend() && $inicio->diffInDays($fin) <= 1) {
+            return 0;
+        }
+
+        // 3. Obtener feriados que solapan con el rango
         $feriados = FechasFeriadas::where('FechaFinal', '>=', $inicio->toDateString())
             ->where('FechaInicio', '<=', $fin->toDateString())
             ->where('Activo', 1)
             ->get(['FechaInicio', 'FechaFinal']);
 
-        // 4. Calcular días hábiles base (excluyendo fines de semana)
+        // 4. Calcular días hábiles base (sin fines de semana)
         $diasHabiles = $inicio->diffInDaysFiltered(function (Carbon $fecha) {
-            return !$fecha->isWeekend(); // Excluye sábados y domingos
-        }, $fin->copy()->addDay()); // +1 para incluir fecha final
+            return !$fecha->isWeekend();
+        }, $fin->copy()->addDay());
 
-        // 5. Filtrar y restar feriados que caen en días laborables
+        // 5. Restar feriados que caen en días laborales
         $diasFeriados = 0;
-
         foreach ($feriados as $feriado) {
             $periodoFeriado = CarbonPeriod::create(
                 Carbon::parse($feriado->FechaInicio)->setTimezone($zonaHoraria)->startOfDay(),
@@ -638,7 +645,6 @@ class SuscripcionController extends Controller
             );
 
             foreach ($periodoFeriado as $fechaFeriado) {
-                // Solo contar si está en el rango y es día laborable
                 if ($fechaFeriado->between($inicio, $fin) && !$fechaFeriado->isWeekend()) {
                     $diasFeriados++;
                 }
