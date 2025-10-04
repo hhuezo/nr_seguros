@@ -81,38 +81,79 @@
                                 @csrf
                                 <div class="x_content" style="font-size: 12px;">
                                     <br />
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Número de Póliza</label>
-                                        <input class="form-control" name="NumeroPoliza" type="text"
-                                            value="{{ $residencia->NumeroPoliza }}" readonly>
+                                    <div class="col-sm-12 row">
+                                        <div class="col-md-6">
+                                            <label class="control-label">Número de Póliza</label>
+                                            <input class="form-control" name="NumeroPoliza" type="text"
+                                                value="{{ $residencia->NumeroPoliza }}">
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                            &nbsp;
+                                        </div>
+
                                     </div>
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Nit</label>
+
+                                    <div class="col-md-6">
+                                        <label class="control-label">Asegurado *</label>
+                                        <select name="Asegurado" id="Asegurado" class="form-control select2"
+                                            style="width: 100%" required>
+                                            <option value="" disabled selected>Seleccione...</option>
+                                            @foreach ($cliente as $obj)
+                                                <option value="{{ $obj->Id }}"
+                                                    {{ $residencia->Asegurado == $obj->Id ? 'selected' : '' }}>
+                                                    {{ $obj->Nombre }} {{ $obj->Dui }} {{ $obj->Nit }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="control-label">NIT *</label>
                                         <input class="form-control" name="Nit" id="Nit" type="text"
                                             value="{{ $residencia->Nit }}" readonly>
                                     </div>
-                                    <div class="col-sm-4 ocultar">
-                                        <label class="control-label">Código</label>
-                                        <input class="form-control" name="Codigo" id="Codigo" type="text"
-                                            value="{{ $residencia->Id }}" readonly>
+
+                                    <div class="col-md-12">
+                                        <div class="col-md-6">
+                                            <label class="control-label">Aseguradora *</label>
+                                            <select name="Aseguradora" id="Aseguradora" class="form-control select2"
+                                                style="width: 100%" required>
+                                                @foreach ($aseguradoras as $obj)
+                                                    <option value="{{ $obj->Id }}"
+                                                        {{ $residencia->Aseguradora == $obj->Id ? 'selected' : '' }}>
+                                                        {{ $obj->Nombre }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="control-label">Productos *</label>
+                                            <select name="Productos" id="Productos" class="form-control select2"
+                                                style="width: 100%" required>
+                                                @foreach ($productos as $obj)
+                                                    <option value="{{ $obj->Id }}"
+                                                        {{ old('Productos', optional($residencia->planes)->Producto) == $obj->Id ? 'selected' : '' }}>
+                                                        {{ $obj->Nombre }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+
+                                        <div class="col-md-3">
+                                            <label class="control-label">Planes *</label>
+                                            <select name="Plan" id="Planes" class="form-control select2"
+                                                style="width: 100%" required>
+                                                @foreach ($planes as $obj)
+                                                    <option value="{{ $obj->Id }}"
+                                                        {{ $residencia->Plan == $obj->Id ? 'selected' : '' }}>
+                                                        {{ $obj->Nombre }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
-                                    <div class="col-sm-8">
-                                        <label class="control-label">Aseguradora</label>
-                                        <input type="text" value="{{ $residencia->aseguradoras->Nombre }}"
-                                            class="form-control" id="NombreAseguradora" readonly>
-                                        <input type="hidden" value="{{ $residencia->aseguradoras->Id }}"
-                                            id="IdAseguradora" readonly>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <label class="control-label">Producto</label>
-                                        <input type="text" value="{{ $residencia->planes->productos->Nombre }}"
-                                            class="form-control" readonly>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <label class="control-label">Plan</label>
-                                        <input type="text" value="{{ $residencia->planes->Nombre }}"
-                                            class="form-control" readonly>
-                                    </div>
+
+
                                     <div class="col-md-4 ocultar">
                                         <label class="control-label">Cálculo Diario</label>
                                         <input type="checkbox" id="Diario" class="form-control" readonly
@@ -125,63 +166,49 @@
                                             @if ($residencia->aseguradoras->Dias365 == 1) checked @endif disabled>
 
                                     </div>
-                                    <div class="col-sm-8">
-                                        <label class="control-label">Asegurado</label>
-                                        <input type="text" value="{{ $residencia->clientes->Nombre ?? '' }}"
-                                            class="form-control" readonly>
-                                    </div>
-                                    <div class="col-md-12">
-                                        &nbsp;
-                                    </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">Vigencia Desde</label>
-                                        <input class="form-control" name="VigenciaDesde" type="text"
-                                            value="{{ date('d/m/Y', strtotime($residencia->VigenciaDesde)) }}" readonly>
-                                        <input type="hidden" id="VigenciaDesde"
-                                            value="{{ $residencia->VigenciaDesde }}">
+                                        <input class="form-control" name="VigenciaDesde" id="VigenciaDesde"
+                                            type="date" value="{{ $residencia->VigenciaDesde }}">
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">Vigencia Hasta</label>
-                                        <input class="form-control" name="VigenciaHasta" type="text"
-                                            value="{{ date('d/m/Y', strtotime($residencia->VigenciaHasta)) }}" readonly>
-                                        <input type="hidden" id="VigenciaHasta"
-                                            value="{{ $residencia->VigenciaHasta }}">
+                                        <input class="form-control" name="VigenciaHasta" id="VigenciaHasta"
+                                            type="date" value="{{ $residencia->VigenciaHasta }}">
                                     </div>
                                     <div class="col-sm-4">
-                                        <label class="control-label">Estatus</label>
-                                        <input type="text" value="{{ $residencia->estadoPolizas->Nombre }}"
-                                            class="form-control" readonly>
+                                        <label class="control-label">Estatus *</label>
+                                        <select name="EstadoPoliza" class="form-control" style="width: 100%" required>
+                                            @foreach ($estados_poliza as $obj)
+                                                <option value="{{ $obj->Id }}"
+                                                    {{ $residencia->EstadoPoliza == $obj->Id ? 'selected' : '' }}>
+                                                    {{ $obj->Nombre }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                     <div class="col-sm-4">
-                                        <label class="control-label">Vendedor</label>
-                                        <input type="text" value="{{ $residencia->ejecutivos->Nombre }}"
-                                            class="form-control" readonly>
+                                        <label class="control-label">Ejecutivo *</label>
+                                        <select name="Ejecutivo" class="form-control select2" style="width: 100%"
+                                            required>
+                                            @foreach ($ejecutivo as $obj)
+                                                <option value="{{ $obj->Id }}"
+                                                    {{ $residencia->Ejecutivo == $obj->Id ? 'selected' : '' }}>
+                                                    {{ $obj->Nombre }}
+                                                </option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">Descuento de Rentabilidad %</label>
                                         <div class="form-group has-feedback">
                                             <input type="number" step="any" name="TasaDescuento"
                                                 value="{{ $residencia->TasaDescuento }}" class="form-control"
-                                                style="padding-left: 15%;"
-                                                @if ($residencia->Modificar == 0) readonly @endif>
+                                                style="padding-left: 15%;">
                                             <span class="fa fa-percent form-control-feedback left"
                                                 aria-hidden="true"></span>
                                         </div>
                                     </div>
-                                    <div class="col-md-12">
-                                        &nbsp;
-                                    </div>
-                                    <div class="col-sm-4">
-                                        &nbsp;
-                                    </div>
-                                    <!-- <div class="col-sm-4">
-                                                    <label class="control-label">Descuento de IVA</label>
-                                                    <input class="form-control" name="DescuentoIva" type="checkbox" id="DescuentoIva" @if ($residencia->Modificar == 0) disabled @endif
-                                                    @if ($residencia->DescuentoIva == 1) checked @endif>
-                                                </div> -->
-                                    <div class="col-md-12">
-                                        &nbsp;
-                                    </div>
+
                                     <div class="col-sm-4">
                                         <input type="hidden" name="Bomberos" id="Bomberos"
                                             value="{{ $bomberos }}">
@@ -199,7 +226,7 @@
                                                 <input type="text" step="any" style="text-align: right;"
                                                     name="LimiteGrupo" id="LimiteGrupo"
                                                     value="{{ number_format($residencia->LimiteGrupo, 2, '.', ',') }}"
-                                                    class="form-control" readonly>
+                                                    class="form-control">
                                             @endif
                                             <span class="fa fa-dollar form-control-feedback left"
                                                 aria-hidden="true"></span>
@@ -222,34 +249,27 @@
                                                 <input type="text" step="any" style="text-align: right;"
                                                     name="LimiteIndividual" id="LimiteIndividual"
                                                     value="{{ number_format($residencia->LimiteIndividual, 2, '.', ',') }}"
-                                                    class="form-control" readonly>
+                                                    class="form-control">
                                             @endif
                                             <span class="fa fa-dollar form-control-feedback left"
                                                 aria-hidden="true"></span>
                                         </div>
                                     </div>
-                                    <div class="col-md-12">
-                                        &nbsp;
-                                    </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">Tasa Anual %</label>
                                         <div class="form-group has-feedback">
                                             <input type="number" style="padding-left: 15%;" step="any"
-                                                name="Tasa" value="{{ $residencia->Tasa }}" class="form-control"
-                                                @if ($residencia->Modificar == 0) readonly @endif>
+                                                name="Tasa" value="{{ $residencia->Tasa }}" class="form-control">
                                             <span class="fa fa-percent form-control-feedback left"
                                                 aria-hidden="true"></span>
                                         </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        &nbsp;
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">Porcentaje de Comisión</label>
                                         <div class="form-group has-feedback">
                                             <input type="number" style="padding-left: 15%;" step="any"
-                                                name="Comision" value="{{ $residencia->Comision }}" class="form-control"
-                                                @if ($residencia->Modificar == 0) readonly @endif>
+                                                name="Comision" value="{{ $residencia->Comision }}"
+                                                class="form-control">
                                             <span class="fa fa-percent form-control-feedback left"
                                                 aria-hidden="true"></span>
                                         </div>
@@ -263,29 +283,25 @@
                                                 @if ($residencia->Mensual == 1)
                                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                                         <input type="radio" name="tipoTasa" id="Mensual"
-                                                            value="1" checked
-                                                            @if ($residencia->Modificar == 0) disabled @endif>
+                                                            value="1" checked>
                                                         <label class="control-label">Tasa Millar Mensual</label>
                                                     </div>
 
                                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                                         <input type="radio" name="tipoTasa" id="Anual"
-                                                            value="0"
-                                                            @if ($residencia->Modificar == 0) disabled @endif>
+                                                            value="0">
                                                         <label class="control-label">Tasa ‰ Millar Anual</label>
                                                     </div>
                                                 @else
                                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                                         <input type="radio" name="tipoTasa" id="Mensual"
-                                                            value="1"
-                                                            @if ($residencia->Modificar == 0) disabled @endif>
+                                                            value="1">
                                                         <label class="control-label">Tasa Millar Mensual</label>
                                                     </div>
 
                                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                                         <input type="radio" name="tipoTasa" id="Anual"
-                                                            value="0" checked
-                                                            @if ($residencia->Modificar == 0) disabled @endif>
+                                                            value="0" checked>
                                                         <label class="control-label">Tasa ‰ Millar Anual</label>
                                                     </div>
                                                 @endif
@@ -294,16 +310,20 @@
                                         </div>
                                     </div>
 
+                                    <div class="col-md-3">
+                                        <input name="ComisionIva" id="ComisionIva" type="checkbox" class="js-switch"
+                                            {{ $residencia->DescuentoIva == 1 ? 'checked' : '' }}>
+                                        <label class="control-label" align="right">¿IVA incluído?</label>
+                                    </div>
+
                                     <br>
                                     &nbsp;
                                     <br>
                                     <!-- agregar rol de fatima -->
-                                    <div class="form-group col-md-12" align="center">
+                                    <div class="form-group col-md-12" style="text-align: right">
 
                                         <button class="btn btn-success" type="submit"
                                             @if ($residencia->Modificar == 0) disabled @endif>Modificar</button>
-                                        <a href="{{ url('polizas/residencia') }}"><button class="btn btn-primary"
-                                                type="button">Cancelar</button></a>
                                     </div>
                                     <!-- fin -->
                                 </div>
@@ -536,9 +556,9 @@
                                             </td>
                                         </tr>
                                         <!-- <tr>
-                                                                            <td>Resultado 1</td>
-                                                                            <td><input type="text" id="Resultado2" value="@if ($ultimo_pago) {{ $ultimo_pago->MontoCartera }} @else 0 @endif"   class="form-group"></td>
-                                                                        </tr> -->
+                                                                                                                            <td>Resultado 1</td>
+                                                                                                                            <td><input type="text" id="Resultado2" value="@if ($ultimo_pago) {{ $ultimo_pago->MontoCartera }} @else 0 @endif"   class="form-group"></td>
+                                                                                                                        </tr> -->
                                         <tr>
                                             <td>Prima Calculada </td>
                                             <td>
@@ -923,9 +943,9 @@
                                                         class="form-control" readonly>
                                                 </div>
                                                 <!-- <div class="col-sm-3">
-                                                                                <label class="control-label">&nbsp;</label>
-                                                                                <i class="btn btn-default fa fa-print form-control" id="btn_impresion"></i>
-                                                                            </div> -->
+                                                                                                                                <label class="control-label">&nbsp;</label>
+                                                                                                                                <i class="btn btn-default fa fa-print form-control" id="btn_impresion"></i>
+                                                                                                                            </div> -->
                                             </div>
 
                                             <div class="form-group">
@@ -1049,6 +1069,43 @@
                 "info": true,
             });
             $("#tblCobros").DataTable();
+
+
+            $("#Productos").change(function() {
+                $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
+                // var para la Departamento
+                var Productos = $(this).val();
+
+                //funcionpara las distritos
+                $.get("{{ url('get_plan') }}" + '/' + Productos, function(data) {
+                    //esta el la peticion get, la cual se divide en tres partes. ruta,variables y funcion
+                    console.log(data);
+                    var _select = '<option value=""> Seleccione </option>';
+                    for (var i = 0; i < data.length; i++)
+                        _select += '<option value="' + data[i].Id + '"  >' + data[i].Nombre +
+                        '</option>';
+                    $("#Planes").html(_select);
+                });
+            });
+
+
+            $("#Asegurado").change(function() {
+                // alert(document.getElementById('Asegurado').value);
+                $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
+                var parametros = {
+                    "Cliente": document.getElementById('Asegurado').value
+                };
+                $.ajax({
+                    type: "get",
+                    //ruta para obtener el horario del doctor
+                    url: "{{ url('get_cliente') }}",
+                    data: parametros,
+                    success: function(data) {
+                        console.log(data);
+                        document.getElementById('Nit').value = data.Nit;
+                    }
+                });
+            });
         });
 
         function formatearNumero(numero) {
