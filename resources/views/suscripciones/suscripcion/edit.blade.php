@@ -595,6 +595,15 @@
                     $('#TrabajadoEfectuadoDiaHabil').val('');
                 });
 
+            calFechaHabil($('#FechaIngreso').val(), $('#FechaEntregaDocsCompletos').val())
+                .then(function(dias) {
+                    $('#DiasCompletarInfoCliente').val(dias);
+                })
+                .catch(function(error) {
+                    console.error('Error al calcular días hábiles:', error);
+                    $('#DiasCompletarInfoCliente').val('');
+                });
+
 
             // Enviar formulario via AJAX
             $('#formCrearOcupacion').submit(function(e) {
