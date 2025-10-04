@@ -107,12 +107,12 @@
 
                         <div class="col-sm-4">
                             <label class="control-label ">Fecha de Ingreso</label>
-                            <input type="date" name="FechaIngreso"
+                            <input type="date" name="FechaIngreso" id="FechaIngreso"
                                 value="{{ date('Y-m-d', strtotime($suscripcion->FechaIngreso)) }}" class="form-control">
                         </div>
                         <div class="col-sm-4">
                             <label class="control-label ">Días para completar información (cliente)</label>
-                            <input type="number" name="DiasCompletarInfoCliente"
+                            <input type="number" name="DiasCompletarInfoCliente" id="DiasCompletarInfoCliente"
                                 value="{{ $suscripcion->DiasCompletarInfoCliente }}" class="form-control"
                                 oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                         </div>
@@ -236,7 +236,8 @@
                         <div class="col-sm-4">
                             <label class="control-label ">Asegurado</label>
                             <input type="text" name="Asegurado" value="{{ $suscripcion->Asegurado }}"
-                                class="form-control" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
+                                class="form-control"
+                                oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                         </div>
                         <div class="col-sm-2">
                             <label class="control-label ">Edad</label>
@@ -664,6 +665,31 @@
             } else {
                 // Si alguno está vacío, limpiar el campo de resultado
                 $('#DiasProcesamiento').val('');
+            }
+        });
+
+        $('#FechaIngreso, #FechaEntregaDocsCompletos').change(function() {
+
+            var inicio = $('#FechaIngreso').val();
+            var fin = $('#FechaEntregaDocsCompletos').val();
+
+            if (inicio && fin) {
+                $.ajax({
+                    url: "{{ route('calcular.dias.habiles.json') }}",
+                    type: 'GET',
+                    data: {
+                        '_token': '{{ csrf_token() }}',
+                        'fecha_inicio': inicio,
+                        'fecha_fin': fin
+                    },
+                    success: function(response) {
+                        $('#DiasCompletarInfoCliente').val(response.dias_habiles);
+                    },
+                    error: function(xhr) {
+                        console.error('Error:', xhr.responseJSON);
+                        $('#DiasCompletarInfoCliente').val("");
+                    }
+                });
             }
         });
 

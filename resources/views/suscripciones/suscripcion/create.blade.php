@@ -78,7 +78,8 @@
 
                         <div class="col-sm-4">
                             <label class="control-label ">Fecha de Ingreso</label>
-                            <input type="date" name="FechaIngreso" id="FechaIngreso"  value="{{ date('Y-m-d') }}" class="form-control">
+                            <input type="date" name="FechaIngreso" id="FechaIngreso" value="{{ date('Y-m-d') }}"
+                                class="form-control">
                         </div>
 
                         <div class="col-sm-4">
@@ -192,7 +193,8 @@
                         <div class="col-sm-4">
                             <label class="control-label ">Asegurado</label>
                             <input type="text" name="Asegurado" value="{{ old('Asegurado') }}" class="form-control"
-                                oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)" required>
+                                oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)"
+                                required>
                         </div>
 
                         <div class="col-sm-2">
@@ -578,6 +580,28 @@
                     });
                 }
             });
+
+
+
+            $('#FechaReportadoCia, #FechaEntregaDocsCompletos').on('change', function() {
+                const inicio = $('#FechaReportadoCia').val();
+                const fin = $('#FechaEntregaDocsCompletos').val();
+
+                if (inicio && fin) {
+                    calFechaHabil(inicio, fin)
+                        .then(function(dias) {
+                            $('#TrabajadoEfectuadoDiaHabil').val(dias);
+                        })
+                        .catch(function(error) {
+                            console.error('Error al calcular días hábiles:', error);
+                            $('#TrabajadoEfectuadoDiaHabil').val('');
+                        });
+                } else {
+                    // Si alguno está vacío, limpiar el campo de resultado
+                    $('#TrabajadoEfectuadoDiaHabil').val('');
+                }
+            });
+
 
             // Enviar formulario via AJAX
             $('#formCrearOcupacion').submit(function(e) {
