@@ -169,7 +169,10 @@ class VidaController extends Controller
             $vida->TasaDescuento = $request->TasaDescuento ?? null;
             $vida->EdadMaximaInscripcion = $request->EdadMaximaInscripcion;
             $vida->EdadTerminacion = $request->EdadTerminacion;
-            $vida->EstadoPoliza = $request->EstadoPoliza;
+            $vida->Beneficios = $request->Beneficios;
+
+            $vida->ClausulasEspeciales = $request->ClausulasEspeciales;
+            $vida->Beneficios = $request->Beneficios;
             $vida->Activo = 1;
 
 
@@ -531,6 +534,8 @@ class VidaController extends Controller
             $vida->EdadMaximaInscripcion = $request->EdadMaximaInscripcion;
             $vida->EdadTerminacion = $request->EdadTerminacion;
             $vida->EstadoPoliza = $request->EstadoPoliza;
+            $vida->ClausulasEspeciales = $request->ClausulasEspeciales;
+            $vida->Beneficios = $request->Beneficios;
             $vida->Activo = 1;
 
             if ($request->TipoCobro == 1) {
