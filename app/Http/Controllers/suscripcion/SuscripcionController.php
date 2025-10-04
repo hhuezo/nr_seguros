@@ -617,7 +617,7 @@ class SuscripcionController extends Controller
 
         // 🚩 Caso especial: misma fecha
         if ($inicio->equalTo($fin)) {
-            return $inicio->isWeekend() ? 0 : 1;
+            return 0;
         }
 
         // 🚩 Caso especial: rango solo de fin de semana (ej. sábado → domingo)
