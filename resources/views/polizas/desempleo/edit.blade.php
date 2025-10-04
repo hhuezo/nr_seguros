@@ -18,6 +18,8 @@
                             <a href="" data-target="#modal-finalizar" data-toggle="modal"
                                 class="btn btn-primary">Apertura <br> Configuración</a>
                         @endif
+
+
                     </ul>
                     <div class="clearfix"></div>
                     <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
@@ -111,7 +113,7 @@
                                 @foreach ($planes as $obj)
                                     <option value="{{ $obj->Id }}"
                                         {{ $desempleo->Plan && $desempleo->Plan == $obj->Id ? 'selected' : '' }}>
-                                         {{ $obj->Nombre }}</option>
+                                        {{ $obj->Nombre }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -189,7 +191,9 @@
                             <label class="control-label">Estado *</label>
                             <select name="EstadoPoliza" class="form-control" required>
                                 @foreach ($estadoPoliza as $estado)
-                                    <option value="{{ $estado->Id }}" {{$desempleo->EstadoPoliza == $estado->Id ? 'selected':''}}> {{ $estado->Nombre }}
+                                    <option value="{{ $estado->Id }}"
+                                        {{ $desempleo->EstadoPoliza == $estado->Id ? 'selected' : '' }}>
+                                        {{ $estado->Nombre }}
                                     </option>
                                 @endforeach
                             </select>
@@ -234,11 +238,11 @@
                 <!-- Botones -->
                 <br>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <div class="form-group" style="text-align: right">
+                    <div class="form-group" style="text-align: center">
                         <button type="submit" class="btn btn-success"
                             {{ $desempleo->Configuracion == 1 ? 'disabled' : '' }}>Guardar y Continuar</button>
-                        {{-- <a href="{{ url('polizas/deuda') }}"><button type="button"
-                                class="btn btn-primary">Cancelar</button></a> --}}
+                        <a href="{{ url('polizas/desempleo') }}"><button type="button"
+                                class="btn btn-primary">Cancelar</button></a>
                     </div>
                 </div>
             </form>
