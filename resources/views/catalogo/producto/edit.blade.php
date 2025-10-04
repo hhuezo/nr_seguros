@@ -112,11 +112,8 @@
                                 <tr>
                                     <td>{{$loop->iteration}}</td>
                                     <td>{{ $obj->Nombre }}</td>
-                                    @if ($obj->Tarificacion)
-                                    <td>Millar</td>
-                                    @else
-                                    <td>Porcentual</td>
-                                    @endif
+                                    <td>{{$tarificacion[$obj->Tarificacion] ?? ''}}</td>
+
                                     @if ($obj->Descuento)
                                     <td>Si</td>
                                     @else

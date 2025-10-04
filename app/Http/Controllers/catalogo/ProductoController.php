@@ -64,6 +64,8 @@ class ProductoController extends Controller
             session(['tab1' => '1']);
         }
 
+        $tarificacion = ['Porcentual','MIllar','Prima'];
+
         $producto = Producto::findOrFail($id);
         $aseguradoras = Aseguradora::where('Activo', '=', 1)->get();
         $ramos = NecesidadProteccion::where('Activo', '=', 1)->get();
@@ -74,7 +76,8 @@ class ProductoController extends Controller
             'aseguradoras',
             'ramos',
             'coberturas',
-            'datos_tecnicos'
+            'datos_tecnicos',
+            'tarificacion'
         ));
     }
 
