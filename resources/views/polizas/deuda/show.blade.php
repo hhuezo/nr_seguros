@@ -364,7 +364,7 @@
                                     <button type="submit" class="btn btn-success"
                                         {{ $deuda->Configuracion == 1 ? 'disabled' : '' }}>Guardar y
                                         Continuar</button>
-                                    <a href="{{ url('polizas/deuda') }}"><button type="button"
+                                    <a href="{{ url('polizas/deuda') }}?idRegistro={{$deuda->Id}}"><button type="button"
                                             class="btn btn-primary">Cancelar</button></a>
                                 </div>
 
