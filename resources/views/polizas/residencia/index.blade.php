@@ -61,40 +61,49 @@
                                                 <i class="fa fa-file fa-lg"></i>
                                         @endif
 
-                                    &nbsp;
-                                    <a href="{{ url('polizas/residencia') }}/{{ $obj->Id }}/renovar"
-                                        class="btn btn-primary on-default edit-row" title="Renovar o Cancelar "><i
-                                            class="fa fa-refresh fa-lg"></i></a>
-
-                                </div>
-                                <div style="display: flex; justify-content: center;">
-                                    @can('delete users')
-
-                                        <a href="" class="btn btn-danger"
-                                            data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"
-                                            title="Anular Poliza"><i class="fa fa-trash fa-lg"></i></a>
-                                    @endcan
-                                    @if ($obj->Modificar == 1)
-                                        <a href="" class="btn btn-danger"
-                                            data-target="#modal-desactivar-{{ $obj->Id }}" data-toggle="modal"
-                                            title="Desactivar modificación"><i class="fa fa-check-square fa-lg"></i></a>
-                                    @else
                                         &nbsp;
-                                        <a href="" class="btn btn-warning"
-                                            data-target="#modal-activar-{{ $obj->Id }}" data-toggle="modal"
-                                            title="Activar modificación"><i class="fa fa-unlock-alt fa-lg"></i></a>
-                                    @endif
-                                </div>
-                            </td>
+                                        <a href="{{ url('polizas/residencia') }}/{{ $obj->Id }}/renovar"
+                                            class="btn btn-primary on-default edit-row" title="Renovar o Cancelar "><i
+                                                class="fa fa-refresh fa-lg"></i></a>
+
+                                    </div>
+                                    <div style="display: flex; justify-content: center;">
+                                        @can('delete users')
+                                            <a href="" class="btn btn-danger"
+                                                data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"
+                                                title="Anular Poliza"><i class="fa fa-trash fa-lg"></i></a>
+                                        @endcan
+                                        @if ($obj->Modificar == 1)
+                                            <a href="" class="btn btn-danger"
+                                                data-target="#modal-desactivar-{{ $obj->Id }}" data-toggle="modal"
+                                                title="Desactivar modificación"><i class="fa fa-check-square fa-lg"></i></a>
+                                        @else
+                                            &nbsp;
+                                            <a href="" class="btn btn-warning"
+                                                data-target="#modal-activar-{{ $obj->Id }}" data-toggle="modal"
+                                                title="Activar modificación"><i class="fa fa-unlock-alt fa-lg"></i></a>
+                                        @endif
+                                    </div>
+                                </td>
 
 
-                        </tr>
-                        @include('polizas.residencia.modal')
-                    @endforeach
-                </tbody>
-            </table>
+                            </tr>
+                            @include('polizas.residencia.modal')
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</div>
-@include('sweetalert::alert')
+    <script>
+        var displayStart = {{ $posicion }};
+        $(document).ready(function() {
+            var table = $('#datatable').DataTable({
+                pageLength: 10,
+                displayStart: displayStart,
+                ordering: false
+            });
+        });
+    </script>
+    @include('sweetalert::alert')
 @endsection

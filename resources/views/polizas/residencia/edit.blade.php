@@ -14,7 +14,7 @@
                 <div class="x_title">
                     <h2>Pólizas / Residencia / Póliza de Residencia / {{ $residencia->NumeroPoliza }} <small></small></h2>
                     <ul class="nav navbar-right panel_toolbox">
-                        <a href="{{ url('polizas/residencia') }}" class="btn btn-info fa fa-undo " style="color: white">
+                        <a href="{{ url('polizas/residencia') }}?idRegistro={{$residencia->Id}}" class="btn btn-info fa fa-undo " style="color: white">
                             Atrás</a>
                     </ul>
                     <div class="clearfix"></div>

@@ -37,30 +37,40 @@ class ResidenciaController extends Controller
     {
         $this->middleware('auth');
     }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+
+    public function index(Request $request)
     {
+        $idRegistro = $request->idRegistro ?? 0;
+
         $today = Carbon::now()->toDateString();
 
-        session(['MontoCartera' => 0]);
-        session(['FechaInicio' => $today]);
-        session(['FechaFinal' => $today]);
-        session(['ExcelURL' => '']);
-        session(['tab' => 1]);
+        session([
+            'MontoCartera' => 0,
+            'FechaInicio' => $today,
+            'FechaFinal' => $today,
+            'ExcelURL' => '',
+            'tab' => 1
+        ]);
 
-        $residencias = Residencia::where('Activo', 1)->get();
-        return view('polizas.residencia.index', compact('residencias'));
+        $residencias = Residencia::where('Activo', 1)->orderBy('Id', 'asc')->get();
+
+        $posicion = 0;
+        if ($idRegistro > 0) {
+            $indice = $residencias->search(function ($r) use ($idRegistro) {
+                return $r->Id == $idRegistro;
+            });
+
+            if ($indice !== false) {
+                $pageLength = 10;
+                $posicion = floor($indice / $pageLength) * $pageLength;
+            }
+        }
+
+        return view('polizas.residencia.index', compact('residencias', 'posicion'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
+
     public function create()
     {
         $aseguradoras = Aseguradora::where('Activo', '=', 1)->where('Nombre', 'like', '%fede%')->orWhere('Nombre', 'like', '%seguros e inversiones%')->get();
