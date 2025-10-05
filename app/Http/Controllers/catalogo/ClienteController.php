@@ -13,7 +13,6 @@ use App\Models\catalogo\ClienteHabitoConsumo;
 use App\Models\catalogo\ClienteInformarse;
 use App\Models\catalogo\ClienteMetodoPago;
 use App\Models\catalogo\ClienteMotivoEleccion;
-use App\Models\catalogo\ClienteNecesidadProteccion;
 use App\Models\catalogo\ClientePrefereciaCompra;
 use App\Models\catalogo\ClienteRetroalimentacion;
 use App\Models\catalogo\ClienteTarjetaCredito;
@@ -22,15 +21,12 @@ use App\Models\catalogo\Distrito;
 use App\Models\catalogo\FormaPago;
 use App\Models\catalogo\Municipio;
 use App\Models\catalogo\NecesidadProteccion;
-use App\Models\catalogo\Ruta;
 use App\Models\catalogo\TipoContribuyente;
 use App\Models\catalogo\UbicacionCobro;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Validation\Rule;
 
 
@@ -42,11 +38,32 @@ class ClienteController extends Controller
         $this->middleware('auth');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        session(['tab2' => '1']);
+        //dd($request->idRegistro);
+        $posicion = 0;
+        $idRegistro = $request->idRegistro ?? 0;
         $clientes = Cliente::where('Activo', 1)->get();
-        return view('catalogo.cliente.index', compact('clientes'));
+        if ($idRegistro > 0) {
+            $indice = 0;
+            $posicion = -1;
+
+
+            foreach ($clientes as $cliente) {
+                if ($cliente->Id == $idRegistro) {
+                    $posicion = $indice;
+                    break;
+                }
+                $indice++;
+            }
+        }
+
+        //dd($posicion);
+
+
+
+
+        return view('catalogo.cliente.index', compact('clientes', 'posicion'));
     }
 
     public function create()

@@ -3,14 +3,13 @@
     <div class="x_panel"
         style="background-image:url('dentco-html/images/LOGO_app.png'); background-repeat: no-repeat; background-size: 30% ; background-position-x:right ; background-position-y:bottom ;">
 
-        @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
         <div class="x_title">
             <div class="col-md-6 col-sm-6 col-xs-12">
                 <h3>Listado de clientes </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
                 <a href="{{ url('catalogo/cliente/create/') }}"><button class="btn btn-info float-right"> <i
-                            class="fa fa-plus"></i> Nuevo</button></a>
+                            class="fa fa-plus"></i> Nuevo {{ $posicion }}</button></a>
             </div>
             <div class="clearfix"></div>
         </div>
@@ -81,14 +80,16 @@
             </div>
         </div>
     </div>
-    @include('sweetalert::alert')
+
     <script>
-        //Tabla Bomberos
+        var displayStart = {{ $posicion }};
         $(document).ready(function() {
-            $('#tablaIndexClientes').DataTable({
+            var table = $('#tablaIndexClientes').DataTable({
                 order: [
                     [0, 'asc']
-                ] // 1 corresponde al index de la columna estado
+                ],
+                pageLength: 10,
+                displayStart: displayStart
             });
         });
     </script>
