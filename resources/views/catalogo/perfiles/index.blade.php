@@ -129,7 +129,8 @@
                             <label for="Aseguradora" class="form-label">Aseguradora</label>
                             <select id="Aseguradora" name="Aseguradora" class="form-control select2" style="width: 100%">
                                 @foreach ($aseguradoras as $obj)
-                                    <option value="{{ $obj->Id }}" {{ old('Aseguradora') == $obj->Id ? 'selected' : '' }}>
+                                    <option value="{{ $obj->Id }}"
+                                        {{ old('Aseguradora') == $obj->Id ? 'selected' : '' }}>
                                         {{ $obj->Nombre }}
                                     </option>
                                 @endforeach
@@ -138,15 +139,17 @@
 
                         <div class="form-group">
                             <label class="control-label" align="right">Descripción</label>
-                            <textarea name="Descripcion"  class="form-control" oninput="this.value = this.value.toUpperCase();">{{ old('Descripcion') }}</textarea>
+                            <textarea name="Descripcion" class="form-control" oninput="this.value = this.value.toUpperCase();">{{ old('Descripcion') }}</textarea>
                         </div>
 
                         <div class="form-group">
-                            <input type="checkbox" name="PagoAutomatico" value="1" class="js-switch" {{ old('PagoAutomatico') ? 'checked' : '' }} />&nbsp;
+                            <input type="checkbox" name="PagoAutomatico" value="1" class="js-switch"
+                                {{ old('PagoAutomatico') ? 'checked' : '' }} />&nbsp;
                             <label class="control-label" align="right">Pago Automático</label>
 
                             <div class="form-group row col-md-6">
-                                <input type="checkbox" name="DeclaracionJurada" value="1" class="js-switch" {{ old('DeclaracionJurada') ? 'checked' : '' }} />&nbsp;
+                                <input type="checkbox" name="DeclaracionJurada" value="1" class="js-switch"
+                                    {{ old('DeclaracionJurada') ? 'checked' : '' }} />&nbsp;
                                 <label class="control-label" align="right">Declaración Jurada</label>
                             </div>
                         </div>
@@ -165,7 +168,16 @@
 
         </div>
     </div>
-
+    <script>
+        var displayStart = {{ $posicion }};
+        $(document).ready(function() {
+            var table = $('#datatable').DataTable({
+                pageLength: 10,
+                displayStart: displayStart,
+                //ordering: false
+            });
+        });
+    </script>
 
     @include('sweetalert::alert')
 @endsection
