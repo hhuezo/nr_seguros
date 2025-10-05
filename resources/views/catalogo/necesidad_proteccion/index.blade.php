@@ -49,7 +49,7 @@
                                     @can('delete users')
                                         {{-- &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}"
                                             data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a> --}}
-                                         <a href="#" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal">
+                                        <a href="#" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal">
                                             <button class="btn btn-danger"><i class="fa fa-trash fa-lg"></i></button></a>
                                     @endcan
                                 </td>
@@ -94,5 +94,16 @@
             </div>
         </div>
     </div>
+
+    <script>
+        var displayStart = {{ $posicion }};
+        $(document).ready(function() {
+            var table = $('#datatable').DataTable({
+                pageLength: 10,
+                displayStart: displayStart,
+                ordering: false
+            });
+        });
+    </script>
     @include('sweetalert::alert')
 @endsection

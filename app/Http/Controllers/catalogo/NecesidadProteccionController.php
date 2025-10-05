@@ -14,33 +14,32 @@ class NecesidadProteccionController extends Controller
     {
         $this->middleware('auth');
     }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+
+    public function index(Request $request)
     {
-        $necesidad_proteccion = NecesidadProteccion::where('Activo',1)->get();
-        return view('catalogo.necesidad_proteccion.index', compact('necesidad_proteccion'));
+        $idRegistro = $request->idRegistro ?? 0;
+        $necesidad_proteccion = NecesidadProteccion::where('Activo', 1)->orderBy('Id', 'asc')->get();
+
+        $posicion = 0;
+        if ($idRegistro > 0) {
+            $indice = $necesidad_proteccion->search(function ($n) use ($idRegistro) {
+                return $n->Id == $idRegistro;
+            });
+
+            if ($indice !== false) {
+                $pageLength = 10;
+                $posicion = floor($indice / $pageLength) * $pageLength;
+            }
+        }
+
+        return view('catalogo.necesidad_proteccion.index', compact('necesidad_proteccion', 'posicion'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         return view('catalogo.necesidad_proteccion.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(NecesidadProteccionFormRequest $request)
     {
         $necesidad_proteccion = new NecesidadProteccion();
@@ -50,40 +49,20 @@ class NecesidadProteccionController extends Controller
 
 
         alert()->success('El registro ha sido creado correctamente');
-        return Redirect::to('catalogo/necesidad_proteccion');
-
+        return Redirect::to('catalogo/necesidad_proteccion?idRegistro=' . $necesidad_proteccion->Id);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         $necesidad_proteccion = NecesidadProteccion::findOrFail($id);
         return view('catalogo.necesidad_proteccion.edit', compact('necesidad_proteccion'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(NecesidadProteccionFormRequest $request, $id)
     {
         $necesidad_proteccion = NecesidadProteccion::findOrFail($id);
@@ -92,15 +71,9 @@ class NecesidadProteccionController extends Controller
 
 
         alert()->success('El registro ha sido modificado correctamente');
-        return Redirect::to('catalogo/necesidad_proteccion');
+        return Redirect::to('catalogo/necesidad_proteccion?idRegistro=' . $necesidad_proteccion->Id);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         $necesidad_proteccion = NecesidadProteccion::findOrFail($id)->update(['Activo' => 0]);
