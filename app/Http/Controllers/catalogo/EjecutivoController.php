@@ -17,20 +17,25 @@ class EjecutivoController extends Controller
         session(['tab_menu' => 'ejecutivo']);
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $area_comercial = AreaComercial::where('Activo', 1)->get();
-        $ejecutivo = Ejecutivo::with('areaComercial')->where('Activo', 1)->get();
-        $identificador_carrito = session('idCarrito');
+        $idRegistro = $request->idRegistro ?? 0;
 
-        return view('catalogo.ejecutivo.index', compact('ejecutivo', 'area_comercial'));
+        $area_comercial = AreaComercial::where('Activo', 1)->get();
+        $ejecutivo = Ejecutivo::with('areaComercial')->where('Activo', 1)->orderBy('Id', 'asc')->get();
+
+        $posicion = 0;
+        if ($idRegistro > 0) {
+            $indice = $ejecutivo->search(fn($e) => $e->Id == $idRegistro);
+            if ($indice !== false) {
+                $pageLength = 10;
+                $posicion = floor($indice / $pageLength) * $pageLength;
+            }
+        }
+
+        return view('catalogo.ejecutivo.index', compact('ejecutivo', 'area_comercial', 'posicion'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         session(['tab_menu' => 'ejecutivo']);
@@ -57,7 +62,7 @@ class EjecutivoController extends Controller
         $ejecutivo->save();
 
         alert()->success('El registro ha sido creado correctamente');
-        return Redirect::to('catalogo/ejecutivos');
+        return Redirect::to('catalogo/ejecutivos?idRegistro=' . $ejecutivo->Id);
     }
 
     /**
@@ -102,7 +107,7 @@ class EjecutivoController extends Controller
         $ejecutivo->update();
 
         alert()->success('El registro ha sido modificado correctamente');
-        return Redirect::to('catalogo/ejecutivos');
+        return Redirect::to('catalogo/ejecutivos?idRegistro=' . $ejecutivo->Id);
     }
 
     /**
