@@ -5,7 +5,7 @@
         @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
         <div class="x_title">
             <div class="col-md-6 col-sm-6 col-xs-12">
-                <h3>Área Comercial </h3>
+                <h3>Cargo</h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
                 {{-- <a href="{{ url('catalogo/area_comercial/create/') }}"><button class="btn btn-info float-right"> <i
@@ -93,6 +93,15 @@
         </div>
     </div>
 
-
+    <script>
+        var displayStart = {{ $posicion }};
+        $(document).ready(function() {
+            var table = $('#datatable').DataTable({
+                pageLength: 10,
+                displayStart: displayStart,
+                //ordering: false
+            });
+        });
+    </script>
     @include('sweetalert::alert')
 @endsection
