@@ -425,7 +425,7 @@
                                     <button type="button" onclick="validar({{ $vida->Id }})"
                                         class="btn btn-success" {{ $vida->Configuracion == 1 ? 'disabled' : '' }}>Guardar
                                         y Continuar</button>
-                                    <a href="{{ url('polizas/vida') }}" class="btn btn-primary">Cancelar</a>
+                                    <a href="{{ url('polizas/vida') }}?idRegistro={{$vida->Id}}" class="btn btn-primary">Cancelar</a>
                                 </div>
                             </form>
 

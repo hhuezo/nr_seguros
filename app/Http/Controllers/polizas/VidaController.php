@@ -19,7 +19,6 @@ use App\Models\catalogo\ConfiguracionRecibo;
 use App\Models\catalogo\DatosGenerales;
 use App\Models\catalogo\Ejecutivo;
 use App\Models\catalogo\EstadoPoliza;
-use App\Models\catalogo\Perfil;
 use App\Models\catalogo\Plan;
 use App\Models\catalogo\Producto;
 use App\Models\catalogo\TipoCobro;
@@ -44,11 +43,27 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class VidaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $vida = Vida::all();
-        return view('polizas.vida.index', compact('vida'));
+        $idRegistro = $request->idRegistro ?? 0;
+
+        $vida = Vida::orderBy('Id', 'asc')->get();
+
+        $posicion = 0;
+        if ($idRegistro > 0) {
+            $indice = $vida->search(function ($v) use ($idRegistro) {
+                return $v->Id == $idRegistro;
+            });
+
+            if ($indice !== false) {
+                $pageLength = 10;
+                $posicion = floor($indice / $pageLength) * $pageLength;
+            }
+        }
+
+        return view('polizas.vida.index', compact('vida', 'posicion'));
     }
+
 
 
     public function create()
