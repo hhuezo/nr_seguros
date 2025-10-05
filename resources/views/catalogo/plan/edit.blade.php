@@ -8,7 +8,7 @@
             <div class="x_title">
                 <h2>Modificar Plan <small></small></h2>
                 <ul class="nav navbar-right panel_toolbox">
-                    <a href="{{url('catalogo/plan')}}" class="btn btn-info fa fa-undo " style="color: white"> Atrás</a>
+                    <a href="{{url('catalogo/plan')}}?idRegistro={{$plan->Id}}" class="btn btn-info fa fa-undo " style="color: white"> Atrás</a>
                 </ul>
                 <div class="clearfix"></div>
             </div>
@@ -86,9 +86,8 @@
                         @endforeach
                     </tbody>
                 </table>
-                <div class="form-group" align="center">
+                <div class="form-group" align="right">
                     <button class="btn btn-success" type="submit">Modificar</button>
-                    <a href="{{ url('catalogo/plan/') }}"><button class="btn btn-primary" type="button">Cancelar</button></a>
                 </div>
 
             </form>

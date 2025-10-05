@@ -11,11 +11,27 @@ use Illuminate\Http\Request;
 
 class PlanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $planes = Plan::where('Activo', '=', 1)->get();
-        return view('catalogo.plan.index', compact('planes'));
+        $idRegistro = $request->idRegistro ?? 0;
+
+        $planes = Plan::where('Activo', 1)->orderBy('Id', 'asc')->get();
+
+        $posicion = 0;
+        if ($idRegistro > 0) {
+            $indice = $planes->search(function ($p) use ($idRegistro) {
+                return $p->Id == $idRegistro;
+            });
+
+            if ($indice !== false) {
+                $pageLength = 10;
+                $posicion = floor($indice / $pageLength) * $pageLength;
+            }
+        }
+
+        return view('catalogo.plan.index', compact('planes', 'posicion'));
     }
+
 
     public function create()
     {
@@ -53,11 +69,13 @@ class PlanController extends Controller
     {
         //
     }
-    public function get_producto($id){
+    public function get_producto($id)
+    {
         return Producto::where('Aseguradora', '=', $id)->get();
     }
 
-    public function get_plan($id){
+    public function get_plan($id)
+    {
         return Plan::where('Producto', '=', $id)->where('Activo', 1)->get();
     }
 
@@ -97,16 +115,16 @@ class PlanController extends Controller
         //return Redirect::to('catalogo/aseguradoras');
     }
 
-    public function edit_cobertura_detalle(Request $request){
+    public function edit_cobertura_detalle(Request $request)
+    {
 
         PlanCoberturaDetalle::updateOrInsert(
             ['Plan' => $request->Plan, 'Cobertura' => $request->Cobertura], // Condiciones de búsqueda
-            ['SumaAsegurada' => $request->SumaAsegurada, 'Tasa' => $request->Tasa, 'Prima' =>$request->Prima, 'Activo' => '1'] // Datos a actualizar o crear
+            ['SumaAsegurada' => $request->SumaAsegurada, 'Tasa' => $request->Tasa, 'Prima' => $request->Prima, 'Activo' => '1'] // Datos a actualizar o crear
         );
 
         alert()->success('El registro ha sido modificado correctamente');
 
         return back();
     }
-
 }
