@@ -46,17 +46,28 @@ class DesempleoController extends Controller
     {
         $this->middleware('auth');
     }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        $desempleo = Desempleo::get();
 
-        return view('polizas.desempleo.index', compact('desempleo'));
+    public function index(Request $request)
+    {
+        $idRegistro = $request->idRegistro ?? 0;
+
+        $desempleo = Desempleo::orderBy('Id', 'asc')->get();
+
+        $posicion = 0;
+        if ($idRegistro > 0) {
+            $indice = $desempleo->search(function ($d) use ($idRegistro) {
+                return $d->Id == $idRegistro;
+            });
+
+            if ($indice !== false) {
+                $pageLength = 10;
+                $posicion = floor($indice / $pageLength) * $pageLength;
+            }
+        }
+
+        return view('polizas.desempleo.index', compact('desempleo', 'posicion'));
     }
+
 
     public function create()
     {

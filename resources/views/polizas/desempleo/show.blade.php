@@ -33,7 +33,7 @@
                 <h4>Polizas de Desempleo </h4>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
-                <a href="{{ url('polizas/desempleo/') }}"><button class="btn btn-info float-right"> <i
+                <a href="{{ url('polizas/desempleo/') }}?idRegistro={{$desempleo->Id}}"><button class="btn btn-info float-right"> <i
                             class="fa fa-arrow-left"></i></button></a>
             </div>
             <div class="clearfix"></div>

@@ -8,7 +8,7 @@
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal">
 
                 <div class="x_title">
-                    <h2>Nuevo Poliza de Desempleo &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; VIDE - Seguro por Desempleo<small></small>
+                    <h2>Poliza de Desempleo &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; VIDE - Seguro por Desempleo<small></small>
                     </h2>
                     <ul class="nav navbar-right panel_toolbox">
                         @if ($desempleo->Configuracion == 0)
@@ -251,7 +251,7 @@
                     <div class="form-group" style="text-align: center">
                         <button type="submit" class="btn btn-success"
                             {{ $desempleo->Configuracion == 1 ? 'disabled' : '' }}>Guardar y Continuar</button>
-                        <a href="{{ url('polizas/desempleo') }}"><button type="button"
+                        <a href="{{ url('polizas/desempleo') }}?idRegistro={{$desempleo->Id}}"><button type="button"
                                 class="btn btn-primary">Cancelar</button></a>
                     </div>
                 </div>
