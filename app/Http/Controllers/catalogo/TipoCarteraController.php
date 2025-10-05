@@ -14,33 +14,34 @@ class TipoCarteraController extends Controller
     {
         $this->middleware('auth');
     }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+
+    public function index(Request $request)
     {
-        $tipo_cartera = TipoCartera::orderBy('Poliza')->where('Activo',1)->get();
-        return view('catalogo.tipo_cartera.index', compact('tipo_cartera'));
+        $idRegistro = $request->idRegistro ?? 0;
+
+        $tipo_cartera = TipoCartera::where('Activo', 1)->get();
+
+        $posicion = 0;
+        if ($idRegistro > 0) {
+            $indice = $tipo_cartera->search(function ($t) use ($idRegistro) {
+                return $t->Id == $idRegistro;
+            });
+
+            if ($indice !== false) {
+                $pageLength = 10;
+                $posicion = floor($indice / $pageLength) * $pageLength;
+            }
+        }
+
+        return view('catalogo.tipo_cartera.index', compact('tipo_cartera', 'posicion'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         return view('catalogo.tipo_cartera.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
     public function store(TipoCarteraFormRequest $request)
     {
         $tipo_cartera = new TipoCartera();
@@ -50,39 +51,21 @@ class TipoCarteraController extends Controller
         $tipo_cartera->save();
 
         alert()->success('El registro ha sido agregado correctamente');
-        return Redirect::to('catalogo/tipo_cartera');
+        return Redirect::to('catalogo/tipo_cartera?idRegistro=' . $tipo_cartera->Id);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         $tipo_cartera = TipoCartera::findOrFail($id);
         return view('catalogo.tipo_cartera.edit', compact('tipo_cartera'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function update(TipoCarteraFormRequest $request, $id)
     {
         $tipo_cartera = TipoCartera::findOrFail($id);
@@ -92,15 +75,9 @@ class TipoCarteraController extends Controller
 
 
         alert()->success('El registro ha sido modificado correctamente');
-        return Redirect::to('catalogo/tipo_cartera');
+        return Redirect::to('catalogo/tipo_cartera?idRegistro=' . $tipo_cartera->Id);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         $tipo_cartera = TipoCartera::findOrFail($id)->update(['Activo' => 0]);
