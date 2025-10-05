@@ -8,7 +8,8 @@
                 <div class="x_title">
                     <h2>Modificar aseguradora <small></small></h2>
                     <ul class="nav navbar-right panel_toolbox">
-                        <a href="{{ url('catalogo/aseguradoras') }}" class="btn btn-info fa fa-undo " style="color: white">
+                        <a href="{{ url('catalogo/aseguradoras') }}?idRegistro={{ $aseguradora->Id }}"
+                            class="btn btn-info fa fa-undo " style="color: white">
                             Atrás</a>
                     </ul>
                     <div class="clearfix"></div>
@@ -35,7 +36,7 @@
                         </li>
 
                         <!-- <li role="presentation" class="{{ $tab == 3 ? 'active' : '' }}"><a href="#necesidad" role="tab" id="profile-necesidad" data-toggle="tab" aria-expanded="false">Necesidades</a>
-                        </li> -->
+                            </li> -->
                         <li role="presentation" class="{{ $tab == 4 ? 'active' : '' }}"><a href="#documentacion"
                                 role="tab" id="profile" data-toggle="tab" aria-expanded="false">Documentación</a>
                         </li>
