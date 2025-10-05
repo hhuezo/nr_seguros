@@ -503,11 +503,9 @@
 
                                 </div>
 
-                                <div class="form-group" align="center">
+                                <div class="form-group" align="right">
                                     <button class="btn btn-success" onclick="validar_cliente()"
                                         type="button">Aceptar</button>
-                                    <a href="{{ url('catalogo/cliente/') }}"><button class="btn btn-primary"
-                                            type="button">Cancelar</button></a>
                                 </div>
 
                             </form>

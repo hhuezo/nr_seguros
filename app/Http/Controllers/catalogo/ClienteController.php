@@ -40,31 +40,28 @@ class ClienteController extends Controller
 
     public function index(Request $request)
     {
-        //dd($request->idRegistro);
-        $posicion = 0;
         $idRegistro = $request->idRegistro ?? 0;
-        $clientes = Cliente::where('Activo', 1)->get();
+
+        // Obtener clientes activos ordenados por Id
+        $clientes = Cliente::where('Activo', 1)->orderBy('Id', 'asc')->get();
+
+        $posicion = 0;
+
         if ($idRegistro > 0) {
-            $indice = 0;
-            $posicion = -1;
+            $indice = $clientes->search(function ($cliente) use ($idRegistro) {
+                return $cliente->Id == $idRegistro;
+            });
 
-
-            foreach ($clientes as $cliente) {
-                if ($cliente->Id == $idRegistro) {
-                    $posicion = $indice;
-                    break;
-                }
-                $indice++;
+            if ($indice !== false) {
+                $pageLength = 10;
+                $posicion = floor($indice / $pageLength) * $pageLength;
             }
         }
 
-        //dd($posicion);
-
-
-
-
         return view('catalogo.cliente.index', compact('clientes', 'posicion'));
     }
+
+
 
     public function create()
     {

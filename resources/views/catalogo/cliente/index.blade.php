@@ -9,7 +9,7 @@
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
                 <a href="{{ url('catalogo/cliente/create/') }}"><button class="btn btn-info float-right"> <i
-                            class="fa fa-plus"></i> Nuevo {{ $posicion }}</button></a>
+                            class="fa fa-plus"></i> Nuevo</button></a>
             </div>
             <div class="clearfix"></div>
         </div>
