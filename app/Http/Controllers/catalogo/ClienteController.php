@@ -106,10 +106,10 @@ class ClienteController extends Controller
             'Dui.required' => 'El campo DUI es obligatorio',
             'Dui.min' => 'El formato de DUI es incorrecto',
             'Dui.unique' => 'El DUI ya existe en la base de datos',
-            'TelefonoCelular.required' => 'Debe ingresar al menos un teléfono',
+            //'TelefonoCelular.required' => 'Debe ingresar al menos un teléfono',
             'NumeroExtranjero.required' => 'Debe ingresar al menos un teléfono',
-            'TelefonoCelular.size' => 'El teléfono principal es incorrecto',
-            'NumeroExtranjero.max' => 'El teléfono extranjero es demasiado largo',
+            //'TelefonoCelular.size' => 'El teléfono principal es incorrecto',
+            //'NumeroExtranjero.max' => 'El teléfono extranjero es demasiado largo',
             'UbicacionCobro.required' => 'El Método de Pago es obligatorio',
             'UbicacionCobro.integer' => 'El Método de Pago debe ser un valor válido',
             'Nit.required_without' => 'Debe ingresar al menos un NIT o un Pasaporte',
@@ -193,11 +193,11 @@ class ClienteController extends Controller
         $validator = Validator::make($request->all(), $rules, $messages);
 
         // Validación custom: al menos uno de los dos teléfonos debe existir
-        $validator->after(function ($validator) use ($request) {
-            if (empty($request->TelefonoCelular) && empty($request->NumeroExtranjero)) {
-                $validator->errors()->add('TelefonoCelular', 'Debe ingresar al menos un teléfono');
-            }
-        });
+        // $validator->after(function ($validator) use ($request) {
+        //     if (empty($request->TelefonoCelular) && empty($request->NumeroExtranjero)) {
+        //         $validator->errors()->add('TelefonoCelular', 'Debe ingresar al menos un teléfono');
+        //     }
+        // });
 
         if ($validator->fails()) {
             return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
