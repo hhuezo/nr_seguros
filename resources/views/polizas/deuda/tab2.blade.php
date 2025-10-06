@@ -193,6 +193,7 @@
                 <table class="excel-like-table">
                     <thead>
                         <tr>
+                            <th>Tipo cartera</th>
                             <th>Lineas de crédito</th>
                             <th>Tasa interés</th>
                             <th>Edad</th>
@@ -230,6 +231,7 @@
                             @php($totalPrimaCalculada += $item['PrimaCalculada'])
 
                             <tr>
+                                <td>{{ $item['TipoCarteraNombre'] }}</td>
                                 <td>{{ $item['DescripcionLineaCredito'] }} ({{ $item['AbreviaturaLineaCredito'] }})
                                 </td>
                                 <td>{{ $item['Tasa'] }}%</td>
@@ -271,7 +273,7 @@
                         @endforeach
 
                         <tr>
-                            <th colspan="4">Totales</th>
+                            <th colspan="5">Totales</th>
                             <td class="numeric"><span id="total_monto_otorgado"></span>
                             </td>
                             <td class="numeric"><span id="total_saldo_capital"></span>
@@ -409,8 +411,10 @@
             <div>
                 <form action="{{ url('polizas/deuda/agregar_pago') }}" method="POST">
                     @csrf
-                    <input type="hidden" name="FechaInicio" value="{{ isset($ultimaCartera) ? $ultimaCartera->FechaInicio : '' }}">
-                    <input type="hidden" name="FechaFinal" value="{{ isset($ultimaCartera) ? $ultimaCartera->FechaFinal : '' }}">
+                    <input type="hidden" name="FechaInicio"
+                        value="{{ isset($ultimaCartera) ? $ultimaCartera->FechaInicio : '' }}">
+                    <input type="hidden" name="FechaFinal"
+                        value="{{ isset($ultimaCartera) ? $ultimaCartera->FechaFinal : '' }}">
                     <input type="hidden" name="MontoCartera" id="MontoCarteraDetalle">
                     <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
                     <input type="hidden" name="Tasa" value="{{ $deuda->Tasa }}">
@@ -474,7 +478,7 @@
                                 </button>
                                 <h4 class="modal-title">Cancelar Cobro</h4>
                                 <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
-                                         </div>
+                            </div>
                             <div class="modal-body">
                                 <p>¿Esta seguro/a que desea cancelar el cobro?</p>
                             </div>
@@ -519,31 +523,38 @@
 
 
                     let elemento_monto_nominal = document.getElementById("monto_nominal_" + idRegistro);
-                    let monto_nominal = elemento_monto_nominal ? (elemento_monto_nominal.innerText || elemento_monto_nominal.textContent) : 0;
+                    let monto_nominal = elemento_monto_nominal ? (elemento_monto_nominal.innerText ||
+                        elemento_monto_nominal.textContent) : 0;
 
 
                     let elemento_monto_otorgado = document.getElementById("monto_otorgado_" + idRegistro);
-                    let monto_otorgado = elemento_monto_otorgado ? (elemento_monto_otorgado.innerText || elemento_monto_otorgado.textContent) : 0;
+                    let monto_otorgado = elemento_monto_otorgado ? (elemento_monto_otorgado.innerText ||
+                        elemento_monto_otorgado.textContent) : 0;
 
 
                     let elemento_interes = document.getElementById("interes_" + idRegistro);
-                    let interes = elemento_interes ? (elemento_interes.innerText || elemento_interes.textContent) : 0;
+                    let interes = elemento_interes ? (elemento_interes.innerText || elemento_interes.textContent) :
+                        0;
 
 
                     let elemento_interes_covid = document.getElementById("interes_covid_" + idRegistro);
-                    let interes_covid = elemento_interes_covid ? (elemento_interes_covid.innerText || elemento_interes_covid.textContent) : 0;
+                    let interes_covid = elemento_interes_covid ? (elemento_interes_covid.innerText ||
+                        elemento_interes_covid.textContent) : 0;
 
 
                     let elemento_interes_moratorio = document.getElementById("interes_moratorio_" + idRegistro);
-                    let interes_moratorio = elemento_interes_moratorio ? (elemento_interes_moratorio.innerText || elemento_interes_moratorio.textContent) : 0;
+                    let interes_moratorio = elemento_interes_moratorio ? (elemento_interes_moratorio.innerText ||
+                        elemento_interes_moratorio.textContent) : 0;
 
 
                     let elemento_suma_asegurada = document.getElementById("suma_asegurada_" + idRegistro);
-                    let suma_asegurada = elemento_suma_asegurada ? (elemento_suma_asegurada.innerText || elemento_suma_asegurada.textContent) : 0;
+                    let suma_asegurada = elemento_suma_asegurada ? (elemento_suma_asegurada.innerText ||
+                        elemento_suma_asegurada.textContent) : 0;
 
 
                     let elemento_prima_calculada = document.getElementById("prima_calculada_" + idRegistro);
-                    let prima_calculada = elemento_prima_calculada ? (elemento_prima_calculada.innerText || elemento_prima_calculada.textContent) : 0;
+                    let prima_calculada = elemento_prima_calculada ? (elemento_prima_calculada.innerText ||
+                        elemento_prima_calculada.textContent) : 0;
 
 
 
@@ -605,7 +616,8 @@
                 document.getElementById("sub_total_extra_prima").textContent = formatearCantidad(extra_prima);
 
 
-                let descuento = (parseFloat(sub_total) + parseFloat(extra_prima)) * parseFloat(parseFloat(document.getElementById('DescuentoRentabilidad').value) / 100);
+                let descuento = (parseFloat(sub_total) + parseFloat(extra_prima)) * parseFloat(parseFloat(document
+                    .getElementById('DescuentoRentabilidad').value) / 100);
                 document.getElementById('descuento_rentabilidad').textContent = formatearCantidad(descuento);
                 document.getElementById('DescuentoDetalle').value = parseFloat(descuento);
                 prima_a_cobrar = (parseFloat(sub_total) + parseFloat(extra_prima)) - parseFloat(descuento);

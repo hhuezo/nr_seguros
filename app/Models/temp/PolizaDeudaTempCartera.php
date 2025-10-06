@@ -7,6 +7,7 @@ use App\Models\polizas\Deuda;
 use App\Models\polizas\DeudaCredito;
 use App\Models\polizas\DeudaExcluidos;
 use App\Models\polizas\PolizaDeudaCartera;
+use App\Models\polizas\PolizaDeudaTipoCartera;
 use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -80,6 +81,11 @@ class PolizaDeudaTempCartera extends Model
     public function poliza_deuda()
     {
         return $this->belongsTo(Deuda::class, 'PolizaDeuda', 'Id');
+    }
+
+    public function poliza_deuda_tipo_cartera()
+    {
+        return $this->belongsTo(PolizaDeudaTipoCartera::class, 'PolizaDeudaTipoCartera', 'Id');
     }
 
 

@@ -728,6 +728,7 @@ class DeudaController extends Controller
 
                         $linea_credito = SaldoMontos::findOrFail($tasa_diferenciada->LineaCredito);
 
+
                         $edad = '';
 
                         if ($deuda_tipos_cartera->TipoCalculo == 2) {
@@ -742,9 +743,9 @@ class DeudaController extends Controller
                                 Carbon::parse($tasa_diferenciada->FechaHasta)->format('d/m/Y');
                         }
 
-
-
                         $dataPagoTemp->push([
+
+                            "TipoCarteraNombre" => $deuda_tipos_cartera->tipo_cartera->Nombre ?? '',
                             "Id" => $tasa_diferenciada->Id,
                             "PolizaDeuda" => $deuda_tipos_cartera->PolizaDeuda,
                             "TipoCartera" => $deuda_tipos_cartera->TipoCartera,
@@ -768,7 +769,6 @@ class DeudaController extends Controller
                     }
                 }
 
-
                 $dataPago = collect([]);
 
 
@@ -781,14 +781,14 @@ class DeudaController extends Controller
 
                         $total = DB::table('poliza_deuda_cartera')
                             ->selectRaw('
-                        COALESCE(SUM(MontoOtorgado), 0) as MontoOtorgado,
-                        COALESCE(SUM(SaldoCapital), 0) as SaldoCapital,
-                        COALESCE(SUM(Intereses), 0) as Intereses,
-                        COALESCE(SUM(InteresesMoratorios), 0) as InteresesMoratorios,
-                        COALESCE(SUM(InteresesCovid), 0) as InteresesCovid,
-                        COALESCE(SUM(MontoNominal), 0) as MontoNominal,
-                        COALESCE(SUM(TotalCredito), 0) as TotalCredito
-                    ')
+                                        COALESCE(SUM(MontoOtorgado), 0) as MontoOtorgado,
+                                        COALESCE(SUM(SaldoCapital), 0) as SaldoCapital,
+                                        COALESCE(SUM(Intereses), 0) as Intereses,
+                                        COALESCE(SUM(InteresesMoratorios), 0) as InteresesMoratorios,
+                                        COALESCE(SUM(InteresesCovid), 0) as InteresesCovid,
+                                        COALESCE(SUM(MontoNominal), 0) as MontoNominal,
+                                        COALESCE(SUM(TotalCredito), 0) as TotalCredito
+                                    ')
                             ->where('PolizaDeudaDetalle', null)
                             ->where('PolizaDeuda', $id)
                             ->where('PolizaDeudaTipoCartera', $item['PolizaDuedaTipoCartera'])
@@ -806,6 +806,7 @@ class DeudaController extends Controller
                         $item['TotalCredito'] = $total->TotalCredito ?? 0;
                         $item['PrimaCalculada'] = ($item['TotalCredito'] > 0 && $item['Tasa'] > 0)
                             ? $item['TotalCredito'] * $item['Tasa'] : 0;
+                        $item['TipoCartera'] = $total->TipoCarteraNombre ?? '';
 
                         $dataPago->push($item);
                     }
@@ -838,19 +839,20 @@ class DeudaController extends Controller
                         $item['TotalCredito'] = $total->TotalCredito ?? 0;
                         $item['PrimaCalculada'] = ($item['TotalCredito'] > 0 && $item['Tasa'] > 0)
                             ? $item['TotalCredito'] * $item['Tasa'] : 0;
+                        $item['TipoCartera'] = $total->TipoCartera ?? '';
 
                         $dataPago->push($item);
                     } else {
                         $total = DB::table('poliza_deuda_cartera')
                             ->selectRaw('
-                    COALESCE(SUM(MontoOtorgado), 0) as MontoOtorgado,
-                    COALESCE(SUM(SaldoCapital), 0) as SaldoCapital,
-                    COALESCE(SUM(Intereses), 0) as Intereses,
-                    COALESCE(SUM(InteresesMoratorios), 0) as InteresesMoratorios,
-                    COALESCE(SUM(InteresesCovid), 0) as InteresesCovid,
-                    COALESCE(SUM(MontoNominal), 0) as MontoNominal,
-                    COALESCE(SUM(TotalCredito), 0) as TotalCredito
-                ')
+                                    COALESCE(SUM(MontoOtorgado), 0) as MontoOtorgado,
+                                    COALESCE(SUM(SaldoCapital), 0) as SaldoCapital,
+                                    COALESCE(SUM(Intereses), 0) as Intereses,
+                                    COALESCE(SUM(InteresesMoratorios), 0) as InteresesMoratorios,
+                                    COALESCE(SUM(InteresesCovid), 0) as InteresesCovid,
+                                    COALESCE(SUM(MontoNominal), 0) as MontoNominal,
+                                    COALESCE(SUM(TotalCredito), 0) as TotalCredito
+                                ')
                             ->where('PolizaDeudaDetalle', null)
                             ->where('PolizaDeuda', $id)
                             ->where('PolizaDeudaTipoCartera', $item['PolizaDuedaTipoCartera'])
@@ -869,10 +871,13 @@ class DeudaController extends Controller
                         $item['PrimaCalculada'] = ($item['TotalCredito'] > 0 && $item['Tasa'] > 0)
                             ? $item['TotalCredito'] * $item['Tasa'] : 0;
 
+                        $item['TipoCartera'] = $total->TipoCartera ?? '';
+
                         $dataPago->push($item);
                     }
                 }
             } else {
+
                 //para datos que tengan la tasa en archivo excel
                 $dataPago = collect([]);
                 $cartera_data = PolizaDeudaCartera::with('linea_credito')
@@ -911,6 +916,8 @@ class DeudaController extends Controller
                     $item['AbreviaturaLineaCredito'] =  $cartera->linea_credito->Abreviatura ?? '';
                     $item['Edad'] =   '';
                     $item['Fecha'] =   '';
+
+                    $item['TipoCartera'] = $total->TipoCartera ?? '';
 
                     $dataPago->push($item);
                 }
@@ -1776,7 +1783,8 @@ class DeudaController extends Controller
 
             $poliza_cumulos = DB::table('poliza_deuda_temp_cartera as pdtc')
                 ->leftJoin('saldos_montos as sm', 'pdtc.LineaCredito', '=', 'sm.id')
-                ->leftJoin('tipo_cartera as tc', 'pdtc.PolizaDeudaTipoCartera', '=', 'tc.id') // Unir con la tabla tipo_cartera
+                ->leftJoin('poliza_deuda_tipo_cartera as pdc', 'pdtc.PolizaDeudaTipoCartera', '=', 'pdc.Id')
+                ->leftJoin('tipo_cartera as tc', 'pdc.TipoCartera', '=', 'tc.Id') // Unir con la tabla tipo_cartera
                 ->select(
                     'pdtc.Id',
                     'pdtc.Dui',
