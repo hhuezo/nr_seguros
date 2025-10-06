@@ -15,33 +15,33 @@ class AreaComercialController extends Controller
     {
         $this->middleware('auth');
     }
-   /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+
+    public function index(Request $request)
     {
-        $area_comercial = AreaComercial::where('Activo',1)->get();
-        return view('catalogo.area_comercial.index', compact('area_comercial'));
+        $idRegistro = $request->idRegistro ?? 0;
+        $area_comercial = AreaComercial::where('Activo', 1)->orderBy('Id', 'asc')->get();
+
+        $posicion = 0;
+        if ($idRegistro > 0) {
+            $indice = $area_comercial->search(function ($a) use ($idRegistro) {
+                return $a->Id == $idRegistro;
+            });
+
+            if ($indice !== false) {
+                $pageLength = 10;
+                $posicion = floor($indice / $pageLength) * $pageLength;
+            }
+        }
+
+        return view('catalogo.area_comercial.index', compact('area_comercial', 'posicion'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function create()
     {
         return view('catalogo.area_comercial.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(AreaComercialFormRequest $request)
     {
         $area_comercial = new AreaComercial();
@@ -51,40 +51,23 @@ class AreaComercialController extends Controller
 
 
         alert()->success('El registro ha sido creado correctamente');
-        return Redirect::to('catalogo/area_comercial');
-
+        return Redirect::to('catalogo/area_comercial?idRegistro=' . $area_comercial->Id);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function edit($id)
     {
         $area_comercial = AreaComercial::findOrFail($id);
         return view('catalogo.area_comercial.edit', compact('area_comercial'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function update(AreaComercialFormRequest $request, $id)
     {
         $area_comercial = AreaComercial::findOrFail($id);
@@ -93,15 +76,9 @@ class AreaComercialController extends Controller
 
 
         alert()->success('El registro ha sido modificado correctamente');
-        return Redirect::to('catalogo/area_comercial');
+        return Redirect::to('catalogo/area_comercial?idRegistro=' . $area_comercial->Id);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         $area_comercial = AreaComercial::findOrFail($id)->update(['Activo' => 0]);

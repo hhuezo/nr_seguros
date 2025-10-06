@@ -59,7 +59,7 @@
 
                     <div class="form-group" align="center">
                         <button class="btn btn-success" type="submit">Guardar</button>
-                        <a href="{{ url('usuario/') }}"><button class="btn btn-primary" type="button">Cancelar</button></a>
+                        <a href="{{ url('usuario/') }}?idRegistro={{$usuario->id}}"><button class="btn btn-primary" type="button">Cancelar</button></a>
                     </div>
 
 

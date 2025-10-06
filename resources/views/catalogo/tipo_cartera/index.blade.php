@@ -21,7 +21,7 @@
                 <table id="datatable" class="table table-striped table-bordered">
                     <thead>
                         <tr>
-                            <th style="display: none;"></th>
+                            <th>#</th>
                             <th>Nombre</th>
                             <th>Ramo</th>
                             <th>Opciones</th>
@@ -30,13 +30,13 @@
                     <tbody>
                         @foreach ($tipo_cartera as $obj)
                             <tr>
-                                <td style="display: none;"></td>
+                                <td>{{ $loop->iteration }}</td>
                                 <td>{{ $obj->Nombre }}</td>
                                 <td>
-                                    @if($obj->Poliza == 1)
-                                    Vida
+                                    @if ($obj->Poliza == 1)
+                                        Vida
                                     @elseif($obj->Poliza == 2)
-                                    Deuda
+                                        Deuda
                                     @endif
                                 </td>
                                 <td align="center">
@@ -62,5 +62,15 @@
             </div>
         </div>
     </div>
+    <script>
+        var displayStart = {{ $posicion }};
+        $(document).ready(function() {
+            var table = $('#datatable').DataTable({
+                pageLength: 10,
+                displayStart: displayStart,
+                //ordering: false
+            });
+        });
+    </script>
     @include('sweetalert::alert')
 @endsection

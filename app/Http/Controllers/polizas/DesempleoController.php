@@ -46,17 +46,28 @@ class DesempleoController extends Controller
     {
         $this->middleware('auth');
     }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        $desempleo = Desempleo::get();
 
-        return view('polizas.desempleo.index', compact('desempleo'));
+    public function index(Request $request)
+    {
+        $idRegistro = $request->idRegistro ?? 0;
+
+        $desempleo = Desempleo::orderBy('Id', 'asc')->get();
+
+        $posicion = 0;
+        if ($idRegistro > 0) {
+            $indice = $desempleo->search(function ($d) use ($idRegistro) {
+                return $d->Id == $idRegistro;
+            });
+
+            if ($indice !== false) {
+                $pageLength = 10;
+                $posicion = floor($indice / $pageLength) * $pageLength;
+            }
+        }
+
+        return view('polizas.desempleo.index', compact('desempleo', 'posicion'));
     }
+
 
     public function create()
     {
@@ -74,7 +85,7 @@ class DesempleoController extends Controller
         $estadoPoliza = EstadoPoliza::where('Activo', 1)->get();
         $tipoCobro = TipoCobro::where('Activo', 1)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
-        //$saldos = SaldoMontos::where('Activo', 1)->get();
+        $saldos = SaldoMontos::where('Activo', 1)->get();
 
         //dd($tipoCartera);
         return view('polizas.desempleo.create', compact(
@@ -89,7 +100,7 @@ class DesempleoController extends Controller
             // 'tipos_contribuyente',
             // 'rutas',
             // 'ubicaciones_cobro',
-            //'saldos'
+            'saldos'
         ));
     }
 
@@ -156,8 +167,11 @@ class DesempleoController extends Controller
             $desempleo->Tasa = $request->Tasa;
             $desempleo->EdadMaximaInscripcion = $request->EdadMaximaInscripcion;
             $desempleo->EdadMaxima = $request->EdadTerminacion;
-            $desempleo->EstadoPoliza = 1;
+            $desempleo->EstadoPoliza = $request->EstadoPoliza;
             $desempleo->Descuento = $request->Descuento;
+            $desempleo->Concepto = $request->Concepto;
+            $desempleo->ClausulasEspeciales = $request->ClausulasEspeciales;
+            $desempleo->Beneficios = $request->Beneficios;
             $desempleo->Activo = 1;
             $desempleo->Plan = $request->Planes;
             $desempleo->Usuario = auth()->id();
@@ -165,7 +179,7 @@ class DesempleoController extends Controller
             $desempleo->save();
 
             alert()->success('Éxito', 'La póliza de desempleo se ha creado correctamente.');
-            return Redirect::to('polizas/desempleo' . $desempleo->Id . '/edit');
+            return Redirect::to('polizas/desempleo/' . $desempleo->Id . '/edit');
         } catch (\Exception $e) {
 
             alert()->error('Error', 'Ocurrió un error al crear la póliza de desempleo: ' . $e->getMessage());
@@ -712,249 +726,249 @@ class DesempleoController extends Controller
     public function create_pago(Request $request, $id)
     {
         try {
-        $request->validate([
-            'Axo' => 'required|integer',
-            'Mes' => 'required|integer|between:1,12',
-            'FechaInicio' => 'required|date',
-            'FechaFinal' => 'required|date|after_or_equal:FechaInicio',
-            'Archivo' => 'required|file|mimes:csv,xlsx,xls|max:2048',
-        ], [
-            'Axo.required' => 'El campo Año es obligatorio.',
-            'Axo.integer' => 'El campo Año debe ser un número entero.',
-            'Axo.min' => 'El campo Año debe ser mayor o igual a 2022.',
-            'Axo.max' => 'El campo Año no puede ser mayor al año actual.',
-            'Mes.required' => 'El campo Mes es obligatorio.',
-            'Mes.integer' => 'El campo Mes debe ser un número entero.',
-            'Mes.between' => 'El campo Mes debe estar entre 1 y 12.',
-            'FechaInicio.required' => 'El campo Fecha de inicio es obligatorio.',
-            'FechaInicio.date' => 'El campo Fecha de inicio debe ser una fecha válida.',
-            'FechaFinal.required' => 'El campo Fecha final es obligatorio.',
-            'FechaFinal.date' => 'El campo Fecha final debe ser una fecha válida.',
-            'FechaFinal.after_or_equal' => 'La fecha final debe ser igual o posterior a la fecha de inicio.',
-            'Archivo.required' => 'El campo Archivo es obligatorio.',
-            'Archivo.file' => 'El campo Archivo debe ser un archivo válido.',
-            'Archivo.mimes' => 'El archivo debe ser de tipo CSV, XLSX o XLS.',
-            'Archivo.max' => 'El archivo no debe superar los 2MB.',
-        ]);
-
-        $desempleo = Desempleo::findOrFail($id);
-
-
-        $archivo = $request->Archivo;
-
-        $excel = IOFactory::load($archivo);
-
-        // Verifica si hay al menos dos hojas
-        $sheetsCount = $excel->getSheetCount();
-
-        if ($sheetsCount > 1) {
-            alert()->error('La cartera solo puede contener un solo libro de Excel');
-            return back();
-        }
-
-        //borrar datos de tabla temporal
-        DesempleoCarteraTemp::where('User', auth()->user()->id)->where('PolizaDesempleo', $id)->delete();
-
-        $saldos = $desempleo->Saldos;
-        //guardando datos de excel en base de datos
-        Excel::import(new DesempleoCarteraTempImport($request->Axo, $request->Mes, $id, $request->FechaInicio, $request->FechaFinal, $saldos), $archivo);
-
-
-
-        //calculando errores de cartera
-        $cartera_temp = DesempleoCarteraTemp::where('User', '=', auth()->user()->id)->where('PolizaDesempleo', $id)->get();
-
-
-        foreach ($cartera_temp as $obj) {
-            $errores_array = [];
-
-            if ($obj->FechaNacimientoDate == null) {
-                $obj->TipoError = 1;
-                $obj->update();
-                array_push($errores_array, 1);
-            }
-
-
-            if ($obj->FechaOtorgamientoDate == null) {
-                $obj->TipoError = 2;
-                $obj->update();
-                array_push($errores_array, 1);
-            }
-
-            if ($request->validacion_dui == 'on') {
-                $validador_dui = true;
-            } else {
-                // Validar si la nacionalidad está vacía
-                if (empty($obj->Nacionalidad)) {
-                    $obj->TipoError = 3;
-                    $obj->update();
-                    $errores_array[] = 3; // Agregar error al array
-                }
-                // Validar si la nacionalidad es SAL (El Salvador)
-                else if (strtolower(trim($obj->Nacionalidad)) == 'sal') {
-                    $validador_dui = $this->validarDocumento($obj->Dui, "dui");
-                    if (!$validador_dui) {
-                        $obj->TipoError = 4;
-                        $obj->update();
-                        $errores_array[] = 4; // Agregar error al array
-                    }
-                }
-                // Validar si el pasaporte está vacío para nacionalidades no SAL
-                else if (empty($obj->Pasaporte)) {
-                    $validador_dui = false;
-                    $obj->TipoError = 5;
-                    $obj->update();
-                    $errores_array[] = 5; // Agregar error al array
-                } else {
-                    $validador_dui = true;
-                }
-            }
-
-            $obj->SaldoTotalTotal = $obj->calculoTodalSaldo();
-            $obj->update();
-
-
-
-            // 4 nombre o apellido
-            if (trim($obj->PrimerApellido) == "" || trim($obj->PrimerNombre) == "") {
-                $obj->TipoError = 6;
-                $obj->update();
-
-                array_push($errores_array, 6);
-            }
-
-
-            // 7 referencia si va vacia.
-            if (trim($obj->NumeroReferencia) == "") {
-                $obj->TipoError = 7;
-                $obj->update();
-
-                array_push($errores_array, 7);
-            }
-
-
-            // 10 error sexo
-            if (empty(trim($obj->Sexo)) || !in_array($obj->Sexo, ['M', 'F'])) {
-                $obj->TipoError = 8;
-                $obj->update();
-                $errores_array[] = 8; // Agregar error al array
-            }
-
-            $obj->Errores = $errores_array;
-        }
-
-        $data_error = $cartera_temp->where('TipoError', '<>', 0);
-
-
-        if ($data_error->count() > 0) {
-            return view('polizas.desempleo.respuesta_poliza_error', compact('data_error', 'desempleo'));
-        }
-
-
-        $temp_data_fisrt = DesempleoCarteraTemp::where('PolizaDesempleo', $id)->where('User', auth()->user()->id)->first();
-
-        if (!$temp_data_fisrt) {
-            alert()->error('No se han cargado las carteras');
-            return back();
-        }
-
-        $axoActual =  $temp_data_fisrt->Axo;
-        $mesActual =  $temp_data_fisrt->Mes;
-
-
-        // Calcular el mes pasado
-        if ($mesActual == 1) {
-            $mesAnterior = 12; // Diciembre
-            $axoAnterior = $axoActual - 1; // Año anterior
-        } else {
-            $mesAnterior = $mesActual - 1; // Mes anterior
-            $axoAnterior = $axoActual; // Mismo año
-        }
-
-
-        //estableciendo fecha de nacimiento date y calculando edad
-        DesempleoCarteraTemp::where('User', auth()->user()->id)
-            ->where('PolizaDesempleo', $id)
-            ->update([
-                'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaFinal)"),
-                'EdadDesembloso' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaOtorgamientoDate)"),
+            $request->validate([
+                'Axo' => 'required|integer',
+                'Mes' => 'required|integer|between:1,12',
+                'FechaInicio' => 'required|date',
+                'FechaFinal' => 'required|date|after_or_equal:FechaInicio',
+                'Archivo' => 'required|file|mimes:csv,xlsx,xls|max:2048',
+            ], [
+                'Axo.required' => 'El campo Año es obligatorio.',
+                'Axo.integer' => 'El campo Año debe ser un número entero.',
+                'Axo.min' => 'El campo Año debe ser mayor o igual a 2022.',
+                'Axo.max' => 'El campo Año no puede ser mayor al año actual.',
+                'Mes.required' => 'El campo Mes es obligatorio.',
+                'Mes.integer' => 'El campo Mes debe ser un número entero.',
+                'Mes.between' => 'El campo Mes debe estar entre 1 y 12.',
+                'FechaInicio.required' => 'El campo Fecha de inicio es obligatorio.',
+                'FechaInicio.date' => 'El campo Fecha de inicio debe ser una fecha válida.',
+                'FechaFinal.required' => 'El campo Fecha final es obligatorio.',
+                'FechaFinal.date' => 'El campo Fecha final debe ser una fecha válida.',
+                'FechaFinal.after_or_equal' => 'La fecha final debe ser igual o posterior a la fecha de inicio.',
+                'Archivo.required' => 'El campo Archivo es obligatorio.',
+                'Archivo.file' => 'El campo Archivo debe ser un archivo válido.',
+                'Archivo.mimes' => 'El archivo debe ser de tipo CSV, XLSX o XLS.',
+                'Archivo.max' => 'El archivo no debe superar los 2MB.',
             ]);
 
-        $data = DesempleoCarteraTemp::where('User', auth()->user()->id)->where('PolizaDesempleo', $id)->get();
-        $poliza_edad_maxima = $data->where('EdadDesembloso', '>', $desempleo->EdadMaximaInscripcion);
+            $desempleo = Desempleo::findOrFail($id);
 
 
-        //registros que no existen en el mes anterior
-        $count_data_cartera = DesempleoCartera::where('PolizaDesempleo', $id)->count();
-        if ($count_data_cartera > 0) {
-            //dd($mesAnterior,$axoAnterior,$request->Desempleo);
-            $registros_eliminados = DB::table('poliza_desempleo_cartera AS pdc')
-                ->leftJoin('poliza_desempleo_cartera_temp AS pdtc', function ($join) {
-                    $join->on('pdc.NumeroReferencia', '=', 'pdtc.NumeroReferencia')
-                        ->where('pdtc.User', auth()->user()->id);
-                })
-                ->where('pdc.Mes', (int)$mesAnterior)
-                ->where('pdc.Axo', (int)$axoAnterior)
-                ->where('pdc.PolizaDesempleo', $id)
-                ->whereNull('pdtc.NumeroReferencia') // Solo los que no están en poliza_desempleo_temp_cartera
-                ->select('pdc.*') // Selecciona columnas principales
-                ->get();
-        } else {
-            $registros_eliminados =  DesempleoCarteraTemp::where('Id', 0)->get();
-        }
+            $archivo = $request->Archivo;
+
+            $excel = IOFactory::load($archivo);
+
+            // Verifica si hay al menos dos hojas
+            $sheetsCount = $excel->getSheetCount();
+
+            if ($sheetsCount > 1) {
+                alert()->error('La cartera solo puede contener un solo libro de Excel');
+                return back();
+            }
+
+            //borrar datos de tabla temporal
+            DesempleoCarteraTemp::where('User', auth()->user()->id)->where('PolizaDesempleo', $id)->delete();
+
+            $saldos = $desempleo->Saldos;
+            //guardando datos de excel en base de datos
+            Excel::import(new DesempleoCarteraTempImport($request->Axo, $request->Mes, $id, $request->FechaInicio, $request->FechaFinal, $saldos), $archivo);
 
 
-        $nuevos_registros = DesempleoCarteraTemp::leftJoin(
-            DB::raw('(
+
+            //calculando errores de cartera
+            $cartera_temp = DesempleoCarteraTemp::where('User', '=', auth()->user()->id)->where('PolizaDesempleo', $id)->get();
+
+
+            foreach ($cartera_temp as $obj) {
+                $errores_array = [];
+
+                if ($obj->FechaNacimientoDate == null) {
+                    $obj->TipoError = 1;
+                    $obj->update();
+                    array_push($errores_array, 1);
+                }
+
+
+                if ($obj->FechaOtorgamientoDate == null) {
+                    $obj->TipoError = 2;
+                    $obj->update();
+                    array_push($errores_array, 1);
+                }
+
+                if ($request->validacion_dui == 'on') {
+                    $validador_dui = true;
+                } else {
+                    // Validar si la nacionalidad está vacía
+                    if (empty($obj->Nacionalidad)) {
+                        $obj->TipoError = 3;
+                        $obj->update();
+                        $errores_array[] = 3; // Agregar error al array
+                    }
+                    // Validar si la nacionalidad es SAL (El Salvador)
+                    else if (strtolower(trim($obj->Nacionalidad)) == 'sal') {
+                        $validador_dui = $this->validarDocumento($obj->Dui, "dui");
+                        if (!$validador_dui) {
+                            $obj->TipoError = 4;
+                            $obj->update();
+                            $errores_array[] = 4; // Agregar error al array
+                        }
+                    }
+                    // Validar si el pasaporte está vacío para nacionalidades no SAL
+                    else if (empty($obj->Pasaporte)) {
+                        $validador_dui = false;
+                        $obj->TipoError = 5;
+                        $obj->update();
+                        $errores_array[] = 5; // Agregar error al array
+                    } else {
+                        $validador_dui = true;
+                    }
+                }
+
+                $obj->SaldoTotalTotal = $obj->calculoTodalSaldo();
+                $obj->update();
+
+
+
+                // 4 nombre o apellido
+                if (trim($obj->PrimerApellido) == "" || trim($obj->PrimerNombre) == "") {
+                    $obj->TipoError = 6;
+                    $obj->update();
+
+                    array_push($errores_array, 6);
+                }
+
+
+                // 7 referencia si va vacia.
+                if (trim($obj->NumeroReferencia) == "") {
+                    $obj->TipoError = 7;
+                    $obj->update();
+
+                    array_push($errores_array, 7);
+                }
+
+
+                // 10 error sexo
+                if (empty(trim($obj->Sexo)) || !in_array($obj->Sexo, ['M', 'F'])) {
+                    $obj->TipoError = 8;
+                    $obj->update();
+                    $errores_array[] = 8; // Agregar error al array
+                }
+
+                $obj->Errores = $errores_array;
+            }
+
+            $data_error = $cartera_temp->where('TipoError', '<>', 0);
+
+
+            if ($data_error->count() > 0) {
+                return view('polizas.desempleo.respuesta_poliza_error', compact('data_error', 'desempleo'));
+            }
+
+
+            $temp_data_fisrt = DesempleoCarteraTemp::where('PolizaDesempleo', $id)->where('User', auth()->user()->id)->first();
+
+            if (!$temp_data_fisrt) {
+                alert()->error('No se han cargado las carteras');
+                return back();
+            }
+
+            $axoActual =  $temp_data_fisrt->Axo;
+            $mesActual =  $temp_data_fisrt->Mes;
+
+
+            // Calcular el mes pasado
+            if ($mesActual == 1) {
+                $mesAnterior = 12; // Diciembre
+                $axoAnterior = $axoActual - 1; // Año anterior
+            } else {
+                $mesAnterior = $mesActual - 1; // Mes anterior
+                $axoAnterior = $axoActual; // Mismo año
+            }
+
+
+            //estableciendo fecha de nacimiento date y calculando edad
+            DesempleoCarteraTemp::where('User', auth()->user()->id)
+                ->where('PolizaDesempleo', $id)
+                ->update([
+                    'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaFinal)"),
+                    'EdadDesembloso' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaOtorgamientoDate)"),
+                ]);
+
+            $data = DesempleoCarteraTemp::where('User', auth()->user()->id)->where('PolizaDesempleo', $id)->get();
+            $poliza_edad_maxima = $data->where('EdadDesembloso', '>', $desempleo->EdadMaximaInscripcion);
+
+
+            //registros que no existen en el mes anterior
+            $count_data_cartera = DesempleoCartera::where('PolizaDesempleo', $id)->count();
+            if ($count_data_cartera > 0) {
+                //dd($mesAnterior,$axoAnterior,$request->Desempleo);
+                $registros_eliminados = DB::table('poliza_desempleo_cartera AS pdc')
+                    ->leftJoin('poliza_desempleo_cartera_temp AS pdtc', function ($join) {
+                        $join->on('pdc.NumeroReferencia', '=', 'pdtc.NumeroReferencia')
+                            ->where('pdtc.User', auth()->user()->id);
+                    })
+                    ->where('pdc.Mes', (int)$mesAnterior)
+                    ->where('pdc.Axo', (int)$axoAnterior)
+                    ->where('pdc.PolizaDesempleo', $id)
+                    ->whereNull('pdtc.NumeroReferencia') // Solo los que no están en poliza_desempleo_temp_cartera
+                    ->select('pdc.*') // Selecciona columnas principales
+                    ->get();
+            } else {
+                $registros_eliminados =  DesempleoCarteraTemp::where('Id', 0)->get();
+            }
+
+
+            $nuevos_registros = DesempleoCarteraTemp::leftJoin(
+                DB::raw('(
                         SELECT DISTINCT NumeroReferencia
                         FROM poliza_desempleo_cartera
                         WHERE PolizaDesempleo = ' . $id . '
                     ) AS valid_references'),
-            'poliza_desempleo_cartera_temp.NumeroReferencia',
-            '=',
-            'valid_references.NumeroReferencia'
-        )
-            ->where('poliza_desempleo_cartera_temp.User', auth()->user()->id) // Filtra por el usuario autenticado
-            ->where('poliza_desempleo_cartera_temp.PolizaDesempleo', $id)
-            ->whereNull('valid_references.NumeroReferencia') // Los registros que no coinciden
-            ->select('poliza_desempleo_cartera_temp.*') // Selecciona columnas de la tabla principal
-            ->get();
+                'poliza_desempleo_cartera_temp.NumeroReferencia',
+                '=',
+                'valid_references.NumeroReferencia'
+            )
+                ->where('poliza_desempleo_cartera_temp.User', auth()->user()->id) // Filtra por el usuario autenticado
+                ->where('poliza_desempleo_cartera_temp.PolizaDesempleo', $id)
+                ->whereNull('valid_references.NumeroReferencia') // Los registros que no coinciden
+                ->select('poliza_desempleo_cartera_temp.*') // Selecciona columnas de la tabla principal
+                ->get();
 
-        $total = DesempleoCarteraTemp::where('PolizaDesempleo', $id)->sum('SaldoTotalTotal');
-        //recibos tabla de configuracion
-
-
-        $temp = DesempleoCarteraTemp::where('PolizaDesempleo', $id)->get();
-        $mesAnteriorString = $axoAnterior . '-' . $mesAnterior;
-        //calcular rehabilitados
-        $referenciasAnteriores = DB::table('poliza_desempleo_cartera')
-            ->where('PolizaDesempleo', $id)
-            ->where('User', auth()->user()->id)
-            ->whereRaw('CONCAT(Axo, "-", Mes) <> ?', [$mesAnteriorString])
-            ->pluck('NumeroReferencia')
-            ->toArray();
+            $total = DesempleoCarteraTemp::where('PolizaDesempleo', $id)->sum('SaldoTotalTotal');
+            //recibos tabla de configuracion
 
 
-        $referenciasMesAterior = DB::table('poliza_desempleo_cartera')
-            ->where('PolizaDesempleo', $id)
-            ->where('User', auth()->user()->id)
-            ->where('Axo', $axoAnterior)
-            ->where('Mes', $mesAnterior)
-            ->pluck('NumeroReferencia')
-            ->toArray();
+            $temp = DesempleoCarteraTemp::where('PolizaDesempleo', $id)->get();
+            $mesAnteriorString = $axoAnterior . '-' . $mesAnterior;
+            //calcular rehabilitados
+            $referenciasAnteriores = DB::table('poliza_desempleo_cartera')
+                ->where('PolizaDesempleo', $id)
+                ->where('User', auth()->user()->id)
+                ->whereRaw('CONCAT(Axo, "-", Mes) <> ?', [$mesAnteriorString])
+                ->pluck('NumeroReferencia')
+                ->toArray();
 
 
-        foreach ($temp as $item) {
-            // Verifica si el NumeroReferencia está en referenciasAnteriores pero no en referenciasMesAterior
-            if (in_array($item->NumeroReferencia, $referenciasAnteriores) && !in_array($item->NumeroReferencia, $referenciasMesAterior)) {
-                $item->Rehabilitado = 1;
-                $item->save();
+            $referenciasMesAterior = DB::table('poliza_desempleo_cartera')
+                ->where('PolizaDesempleo', $id)
+                ->where('User', auth()->user()->id)
+                ->where('Axo', $axoAnterior)
+                ->where('Mes', $mesAnterior)
+                ->pluck('NumeroReferencia')
+                ->toArray();
+
+
+            foreach ($temp as $item) {
+                // Verifica si el NumeroReferencia está en referenciasAnteriores pero no en referenciasMesAterior
+                if (in_array($item->NumeroReferencia, $referenciasAnteriores) && !in_array($item->NumeroReferencia, $referenciasMesAterior)) {
+                    $item->Rehabilitado = 1;
+                    $item->save();
+                }
             }
-        }
 
-        $registros_rehabilitados = DesempleoCarteraTemp::where('User', auth()->user()->id)->where('PolizaDesempleo', $id)->where('Rehabilitado', 1)->get();
+            $registros_rehabilitados = DesempleoCarteraTemp::where('User', auth()->user()->id)->where('PolizaDesempleo', $id)->where('Rehabilitado', 1)->get();
 
-        return view('polizas.desempleo.respuesta_poliza', compact('total', 'desempleo', 'poliza_edad_maxima', 'registros_rehabilitados', 'registros_eliminados', 'nuevos_registros', 'axoActual', 'mesActual'));
+            return view('polizas.desempleo.respuesta_poliza', compact('total', 'desempleo', 'poliza_edad_maxima', 'registros_rehabilitados', 'registros_eliminados', 'nuevos_registros', 'axoActual', 'mesActual'));
         } catch (\Exception $e) {
             // Capturar cualquier excepción y retornar un mensaje de error
             return back()->with('error', 'Ocurrió un error al crear la póliza de desempleo: ' . $e->getMessage());
@@ -1258,8 +1272,11 @@ class DesempleoController extends Controller
             $desempleo->EdadMaxima = $request->EdadTerminacion;
             $desempleo->EstadoPoliza = 1;
             $desempleo->Descuento = $request->Descuento;
-            $desempleo->Activo = 1;
+            $desempleo->Concepto = $request->Concepto;
+            $desempleo->ClausulasEspeciales = $request->ClausulasEspeciales;
+            $desempleo->Beneficios = $request->Beneficios;
             $desempleo->Plan = $request->Planes;
+            $desempleo->EstadoPoliza = $request->EstadoPoliza;
             //$desempleo->Usuario = auth()->id();
             $desempleo->update();
 

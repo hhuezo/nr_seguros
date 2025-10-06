@@ -16,12 +16,29 @@ class UserController extends Controller
     {
         $this->middleware('auth');
     }
-    public function index()
+    public function index(Request $request)
     {
+        $idRegistro = $request->idRegistro ?? 0;
+
         $roles = Role::get();
-        $usuarios = User::get();
-        return view('seguridad.user.index', compact('usuarios', 'roles'));
+        $usuarios = User::orderBy('id', 'asc')->get();
+
+
+        $posicion = 0;
+        if ($idRegistro > 0) {
+            $indice = $usuarios->search(function ($u) use ($idRegistro) {
+                return $u->id == $idRegistro;
+            });
+
+            if ($indice !== false) {
+                $pageLength = 10;
+                $posicion = floor($indice / $pageLength) * $pageLength;
+            }
+        }
+
+        return view('seguridad.user.index', compact('usuarios', 'roles', 'posicion'));
     }
+
 
 
     public function create()

@@ -22,7 +22,7 @@
                 <table id="datatable" class="table table-striped table-bordered">
                     <thead>
                         <tr>
-
+                            {{-- <th>#</th> --}}
                             <th>Código</th>
                             <th>Nombre</th>
                             <th>Teléfono</th>
@@ -34,6 +34,7 @@
                     <tbody>
                         @foreach ($ejecutivo as $obj)
                             <tr>
+                                {{-- <td>{{ $loop->iteration }}</td> --}}
                                 <td>{{ $obj->Codigo }}</td>
                                 <td>{{ $obj->Nombre }}</td>
                                 <td>{{ $obj->Telefono }}</td>
@@ -84,7 +85,8 @@
                         <div class="form-group">
                             <label class="control-label">Nombre</label>
                             <input type="text" required name="Nombre" value="{{ old('Nombre') }}" class="form-control"
-                                autofocus oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
+                                autofocus
+                                oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
                         </div>
 
                         <div class="form-group">
@@ -107,10 +109,9 @@
                             </select>
                         </div>
 
-                          <div class="form-group">
+                        <div class="form-group">
                             <label class="control-label">Correo</label>
-                            <input type="email" required name="Correo" value="{{ old('Correo') }}"
-                                class="form-control">
+                            <input type="email" required name="Correo" value="{{ old('Correo') }}" class="form-control">
                         </div>
 
 
@@ -125,6 +126,17 @@
 
         </div>
     </div>
+
+    <script>
+        var displayStart = {{ $posicion }};
+        $(document).ready(function() {
+            var table = $('#datatable').DataTable({
+                pageLength: 10,
+                displayStart: displayStart,
+                ordering: false
+            });
+        });
+    </script>
 
     @include('sweetalert::alert')
 @endsection

@@ -86,6 +86,25 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <label for="Nombre" class="form-label">Pasaporte </label>
+                                                <input class="form-control" name="Pasaporte" id="Pasaporte"
+                                                    value="{{ old('Pasaporte') }}" readonly>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group row">
+                                                    <label for="Extranjero" class="form-label">¿Extranjero?</label><br>
+                                                    <label class="switch">
+                                                        <input type="checkbox" name="Extranjero" id="Extranjero">
+                                                        <span class="slider round"></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="form-group">
                                         <label for="Nombre" class="form-label">Registro Fiscal </label>
                                         <input class="form-control" name="RegistroFiscal" id="RegistroFiscal" required
@@ -95,7 +114,8 @@
                                         <label for="Nombre" class="form-label">Nombre o Razón Social *</label>
                                         <input class="form-control" id="Nombre" name="Nombre"
                                             value="{{ old('Nombre') }}" type="text" required
-                                            oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)"> <!-- se agrego toUpperCase -->
+                                            oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
+                                        <!-- se agrego toUpperCase -->
                                     </div>
                                     <div class="form-group">
                                         <label for="FechaNacimiento" class="form-label">Fecha de Nacimiento ó Fundación de
@@ -137,7 +157,8 @@
                                         <label for="Genero" class="form-label">Ocupación</label>
                                         <input class="form-control" id="Ocupacion" name="Ocupacion"
                                             value="{{ old('Ocupacion') }}" required type="text"
-                                            oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)"> <!-- se agrego toUpperCase -->
+                                            oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
+                                        <!-- se agrego toUpperCase -->
                                     </div>
                                     <div class="form-group" style="padding-bottom: 38px;">
 
@@ -182,8 +203,7 @@
                                     <div class="form-group">
                                         <label for="NumeroExtrajero" class="form-label">Número Extrajero</label>
                                         <input class="form-control" name="NumeroExtrajero"
-                                            value="{{ old('NumeroExtrajero') }}"
-                                            data-mask type="text">
+                                            value="{{ old('NumeroExtrajero') }}" data-mask type="text">
                                     </div>
                                     <div class="form-group">
                                         <label for="CorreoPrincipal" class="form-label">Correo Principal</label>
@@ -344,7 +364,8 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="Comentarios" class="form-label">Comentarios</label>
-                                        <textarea class="form-control" name="Comentarios" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">{{ old('Comentarios') }}</textarea>
+                                        <textarea class="form-control" name="Comentarios"
+                                            oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">{{ old('Comentarios') }}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -389,6 +410,7 @@
 
             let homologadoCheck = $('#Homologado');
             let switchery = new Switchery(homologadoCheck[0]);
+
 
             $("#TipoPersona").change(function() {
                 tipo_persona(switchery);
@@ -452,6 +474,15 @@
                 });
 
 
+            });
+
+
+            $("#Extranjero").change(function() {
+                if ($(this).is(':checked')) {
+                    $("#Pasaporte").prop('readonly', false);
+                } else {
+                    $("#Pasaporte").prop('readonly', true).val('');
+                }
             });
 
         });
@@ -552,6 +583,9 @@
             var departamento = document.getElementById('Departamento').value;
             var municipio = document.getElementById('Municipio').value;
             var distrito = document.getElementById('Distrito').value;
+            var checkbox = document.getElementById('Extranjero');
+            var extranjero = checkbox.checked ? 1 : null;
+            var pasaporte = document.getElementById('Pasaporte').value;
 
 
             // Construir la URL con los parámetros
@@ -572,7 +606,9 @@
                 UbicacionCobro: ubicacionCobro,
                 Departamento: departamento,
                 Municipio: municipio,
-                Distrito: distrito
+                Distrito: distrito,
+                Extranjero: extranjero,
+                Pasaporte: pasaporte
             };
             Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
 

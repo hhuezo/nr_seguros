@@ -58,7 +58,7 @@
                     <h2>Cliente <small></small></h2>
                     <ul class="nav navbar-right panel_toolbox">
 
-                        <a href="{{ url('catalogo/cliente') }}" class="btn btn-info fa fa-undo " style="color: white">
+                        <a href="{{ url('catalogo/cliente') }}?idRegistro={{$cliente->Id}}" class="btn btn-info fa fa-undo " style="color: white">
                             Atrás</a>
                     </ul>
                     <div class="clearfix"></div>
@@ -165,6 +165,32 @@
                                                         </div>
                                                     </div>
                                                 </div>
+
+
+
+                                                <div class="form-group">
+                                                    <div class="row">
+                                                        <div class="col-md-8">
+                                                            <label for="Nombre" class="form-label">Pasaporte </label>
+                                                            <input class="form-control" name="Pasaporte" id="Pasaporte"
+                                                                value="{{ $cliente->Pasaporte }}" readonly>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group row">
+                                                                <label for="Extranjero"
+                                                                    class="form-label">¿Extranjero?</label><br>
+                                                                <label class="switch">
+                                                                    <input type="checkbox" name="Extranjero"
+                                                                        {{ $cliente->Extranjero == true ? 'checked' : '' }}
+                                                                        id="Extranjero">
+                                                                    <span class="slider round"></span>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
                                                 <div class="form-group">
                                                     <label for="Nombre" class="form-label">Registro Fiscal </label>
                                                     <input class="form-control" name="RegistroFiscal" id="RegistroFiscal"
@@ -477,11 +503,9 @@
 
                                 </div>
 
-                                <div class="form-group" align="center">
+                                <div class="form-group" align="right">
                                     <button class="btn btn-success" onclick="validar_cliente()"
                                         type="button">Aceptar</button>
-                                    <a href="{{ url('catalogo/cliente/') }}"><button class="btn btn-primary"
-                                            type="button">Cancelar</button></a>
                                 </div>
 
                             </form>
@@ -1194,7 +1218,7 @@
                     document.getElementById('tarjeta').setAttribute('disabled', true);
                     document.getElementById('vencimiento').setAttribute('disabled', true);
                 }
-            })
+            });
 
 
             $("#ModalMetodoPago").change(function() {
@@ -1206,7 +1230,22 @@
                     document.getElementById('ModalNumeroTarjeta').setAttribute('disabled', true);
                     document.getElementById('ModalFechaVencimiento').setAttribute('disabled', true);
                 }
-            })
+            });
+
+
+            function togglePasaporte() {
+                if ($("#Extranjero").is(':checked')) {
+                    $("#Pasaporte").prop('readonly', false);
+                } else {
+                    $("#Pasaporte").prop('readonly', true).val('');
+                }
+            }
+
+            // Ejecutar al cargar la página
+            togglePasaporte();
+
+            // Ejecutar cada vez que el checkbox cambie
+            $("#Extranjero").change(togglePasaporte);
 
         });
 

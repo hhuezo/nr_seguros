@@ -17,11 +17,27 @@ class ProductoController extends Controller
         $this->middleware('auth');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $productos = Producto::where('Activo', '=', 1)->get();
-        return view('catalogo.producto.index', compact('productos'));
+        $idRegistro = $request->idRegistro ?? 0;
+
+        $productos = Producto::where('Activo', 1)->orderBy('Id', 'asc')->get();
+
+        $posicion = 0;
+        if ($idRegistro > 0) {
+            $indice = $productos->search(function ($p) use ($idRegistro) {
+                return $p->Id == $idRegistro;
+            });
+
+            if ($indice !== false) {
+                $pageLength = 10;
+                $posicion = floor($indice / $pageLength) * $pageLength;
+            }
+        }
+
+        return view('catalogo.producto.index', compact('productos', 'posicion'));
     }
+
 
     public function create()
     {
@@ -47,7 +63,6 @@ class ProductoController extends Controller
 
         alert()->success('El registro ha sido creado correctamente');
         return redirect('catalogo/producto/' . $producto->Id . '/edit');
-        //return Redirect::to('catalogo/producto/create');
     }
 
     public function show($id)
@@ -64,6 +79,8 @@ class ProductoController extends Controller
             session(['tab1' => '1']);
         }
 
+        $tarificacion = ['Porcentual', 'MIllar', 'Prima'];
+
         $producto = Producto::findOrFail($id);
         $aseguradoras = Aseguradora::where('Activo', '=', 1)->get();
         $ramos = NecesidadProteccion::where('Activo', '=', 1)->get();
@@ -74,7 +91,8 @@ class ProductoController extends Controller
             'aseguradoras',
             'ramos',
             'coberturas',
-            'datos_tecnicos'
+            'datos_tecnicos',
+            'tarificacion'
         ));
     }
 
@@ -100,14 +118,15 @@ class ProductoController extends Controller
         //return Redirect::to('catalogo/aseguradoras');
     }
 
-    public function add_cobertura(Request $request){
+    public function add_cobertura(Request $request)
+    {
         $cobertura = new Cobertura();
         $cobertura->Nombre = $request->Nombre;
         $cobertura->Tarificacion = $request->Tarificacion;
         $cobertura->Descuento = $request->Descuento;
         $cobertura->Iva = $request->Iva;
-        $cobertura->Producto  = $request->Producto ;
-        $cobertura->Activo  = 1 ;
+        $cobertura->Producto  = $request->Producto;
+        $cobertura->Activo  = 1;
 
         $cobertura->save();
         alert()->success('El registro ha sido creado correctamente');
@@ -116,14 +135,15 @@ class ProductoController extends Controller
         return back();
     }
 
-    public function edit_cobertura(Request $request){
+    public function edit_cobertura(Request $request)
+    {
         $cobertura = Cobertura::findOrFail($request->Id);
 
         $cobertura->Nombre = $request->Nombre;
         $cobertura->Tarificacion = $request->Tarificacion;
         $cobertura->Descuento = $request->Descuento;
         $cobertura->Iva = $request->Iva;
-        $cobertura->Producto  = $request->Producto ;
+        $cobertura->Producto  = $request->Producto;
         $cobertura->update();
         alert()->success('El registro ha sido modificado correctamente');
 
@@ -131,7 +151,8 @@ class ProductoController extends Controller
         return back();
     }
 
-    public function delete_cobertura(Request $request){
+    public function delete_cobertura(Request $request)
+    {
         Cobertura::findOrFail($request->Id)->update(['Activo' => 0]);
         alert()->error('El registro ha sido eliminado correctamente');
 
@@ -139,12 +160,13 @@ class ProductoController extends Controller
         return back();
     }
 
-    public function add_dato_tecnico(Request $request){
+    public function add_dato_tecnico(Request $request)
+    {
         $dato_tecnico = new DatosTecnicos();
         $dato_tecnico->Nombre = $request->Nombre;
         $dato_tecnico->Descripcion = $request->Descripcion;
-        $dato_tecnico->Producto  = $request->Producto ;
-        $dato_tecnico->Activo  = 1 ;
+        $dato_tecnico->Producto  = $request->Producto;
+        $dato_tecnico->Activo  = 1;
 
         $dato_tecnico->save();
         alert()->success('El registro ha sido creado correctamente');
@@ -153,12 +175,13 @@ class ProductoController extends Controller
         return back();
     }
 
-    public function edit_dato_tecnico(Request $request){
+    public function edit_dato_tecnico(Request $request)
+    {
         $dato_tecnico = DatosTecnicos::findOrFail($request->Id);
 
         $dato_tecnico->Nombre = $request->Nombre;
         $dato_tecnico->Descripcion = $request->Descripcion;
-        $dato_tecnico->Producto  = $request->Producto ;
+        $dato_tecnico->Producto  = $request->Producto;
         $dato_tecnico->update();
         alert()->success('El registro ha sido modificado correctamente');
 
@@ -166,12 +189,12 @@ class ProductoController extends Controller
         return back();
     }
 
-    public function delete_dato_tecnico(Request $request){
+    public function delete_dato_tecnico(Request $request)
+    {
         DatosTecnicos::findOrFail($request->Id)->update(['Activo' => 0]);
         alert()->error('El registro ha sido eliminado correctamente');
 
         session(['tab2' => '3']);
         return back();
     }
-
 }

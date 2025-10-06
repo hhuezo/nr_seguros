@@ -31,7 +31,7 @@
                 <table id="datatable" class="table table-striped table-bordered">
                     <thead>
                         <tr>
-                            <th>Id</th>
+                            <th>#</th>
                             <th>Nombre</th>
                             <th>Correo</th>
                             <th>Roles</th>
@@ -42,7 +42,7 @@
                     <tbody>
                         @foreach ($usuarios as $obj)
                             <tr>
-                                <td align="center">{{ $obj->id }}</td>
+                                <td align="center">{{ $loop->iteration }}</td>
                                 <td>{{ $obj->name }}</td>
                                 <td>{{ $obj->email }}</td>
                                 <td>
@@ -136,6 +136,17 @@
 
         </div>
     </div>
+
+    <script>
+        var displayStart = {{ $posicion }};
+        $(document).ready(function() {
+            var table = $('#datatable').DataTable({
+                pageLength: 10,
+                displayStart: displayStart,
+                //ordering: false
+            });
+        });
+    </script>
 
     <script>
         function toggleUserActive(id) {

@@ -70,17 +70,36 @@ class DeudaController extends Controller
 
 
 
-    public function index()
+    public function index(Request $request)
     {
+        $idRegistro = $request->idRegistro ?? 0;
+
         $today = Carbon::now()->toDateString();
 
-        session(['MontoCarteraDeuda' => 0]);
-        session(['FechaInicioDeuda' => $today]);
-        session(['FechaFinalDeuda' => $today]);
-        session(['ExcelURLDeuda' => '']);
-        $deuda = Deuda::where('Activo', 1)->get();
-        return view('polizas.deuda.index', compact('deuda'));
+        session([
+            'MontoCarteraDeuda' => 0,
+            'FechaInicioDeuda' => $today,
+            'FechaFinalDeuda' => $today,
+            'ExcelURLDeuda' => ''
+        ]);
+
+        $deuda = Deuda::where('Activo', 1)->orderBy('Id', 'asc')->get();
+
+        $posicion = 0;
+        if ($idRegistro > 0) {
+            $indice = $deuda->search(function ($d) use ($idRegistro) {
+                return $d->Id == $idRegistro;
+            });
+
+            if ($indice !== false) {
+                $pageLength = 10;
+                $posicion = floor($indice / $pageLength) * $pageLength;
+            }
+        }
+
+        return view('polizas.deuda.index', compact('deuda', 'posicion'));
     }
+
 
 
     public function create()
@@ -1449,6 +1468,7 @@ class DeudaController extends Controller
 
 
         try {
+
             $deuda = Deuda::findOrFail($id);
             $deuda->NumeroPoliza = $request->NumeroPoliza;
             $deuda->Plan = $request->Planes;

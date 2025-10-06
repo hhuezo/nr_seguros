@@ -8,7 +8,7 @@
             <div class="x_title">
                 <h2>Modificar Producto <small></small></h2>
                 <ul class="nav navbar-right panel_toolbox">
-                    <a href="{{url('catalogo/producto')}}" class="btn btn-info fa fa-undo " style="color: white"> Atrás</a>
+                    <a href="{{url('catalogo/producto')}}?idRegistro={{$producto->Id}}" class="btn btn-info fa fa-undo " style="color: white"> Atrás</a>
                 </ul>
                 <div class="clearfix"></div>
             </div>
@@ -112,11 +112,8 @@
                                 <tr>
                                     <td>{{$loop->iteration}}</td>
                                     <td>{{ $obj->Nombre }}</td>
-                                    @if ($obj->Tarificacion)
-                                    <td>Millar</td>
-                                    @else
-                                    <td>Porcentual</td>
-                                    @endif
+                                    <td>{{$tarificacion[$obj->Tarificacion] ?? ''}}</td>
+
                                     @if ($obj->Descuento)
                                     <td>Si</td>
                                     @else
@@ -335,6 +332,7 @@
                                     <select name="Tarificacion" id="Tarificacion" class="form-control" required>
                                         <option value="0" {{ old('Tarificacion') == "0" ? 'selected' : '' }}>Porcentual</option>
                                         <option value="1" {{ old('Tarificacion') == "1" ? 'selected' : '' }}>Millar</option>
+                                        <option value="2" {{ old('Tarificacion') == "2" ? 'selected' : '' }}>Prima</option>
                                     </select>
                                 </div>
                             </div>
@@ -399,6 +397,7 @@
                                     <select name="Tarificacion" id="ModalCoberturaTarificacion" class="form-control" required>
                                         <option value="0" {{ old('Tarificacion') == "0" ? 'selected' : '' }}>Porcentual</option>
                                         <option value="1" {{ old('Tarificacion') == "1" ? 'selected' : '' }}>Millar</option>
+                                        <option value="2" {{ old('Tarificacion') == "2" ? 'selected' : '' }}>Prima</option>
                                     </select>
                                 </div>
                             </div>

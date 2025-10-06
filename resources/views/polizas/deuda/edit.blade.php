@@ -49,7 +49,7 @@
                 </h2>
                 <ul class="nav navbar-right panel_toolbox">
 
-                    <a href="{{ url('polizas/deuda') }}" class="btn btn-info">Atras</a>
+                    <a href="{{ url('polizas/deuda') }}?idRegistro={{$deuda->Id}}" class="btn btn-info">Atras</a>
                 </ul>
                 <div class="clearfix"></div>
                 <br>

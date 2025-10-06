@@ -39,15 +39,16 @@
                                 <td>{{ $obj->estadoPoliza->Nombre ?? '' }}</td>
 
                                 <td align="center">
-                                @if($obj->Configuracion == 1)
-                                <a href="{{ url('polizas/vida') }}/{{ $obj->Id }}"  title="Generar Pago">
-                                    <i class="fa fa-file fa-lg"></i></a>
-                                <a href="{{ url('polizas/vida') }}/{{ $obj->Id }}/edit"  title="Configuracion">
-                                    <i class="fa fa-lock fa-lg"></i></a>
-                                @else
-                                <a href="{{ url('polizas/vida') }}/{{ $obj->Id }}/edit"  title="Configuracion">
-                                    <i class="fa fa-unlock fa-lg"></i></a>
-                                @endif
+                                    @if ($obj->Configuracion == 1)
+                                        <a href="{{ url('polizas/vida') }}/{{ $obj->Id }}?tab=2" title="Generar Pago">
+                                            <i class="fa fa-file fa-lg"></i></a>
+                                        <a href="{{ url('polizas/vida') }}/{{ $obj->Id }}/edit" title="Configuracion">
+                                            <i class="fa fa-lock fa-lg"></i></a>
+                                    @else
+                                        <a href="{{ url('polizas/vida') }}/{{ $obj->Id }}/edit"
+                                            title="Configuracion">
+                                            <i class="fa fa-unlock fa-lg"></i></a>
+                                    @endif
                                     @can('delete users')
                                         &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}"
                                             data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
@@ -62,5 +63,15 @@
             </div>
         </div>
     </div>
+    <script>
+        var displayStart = {{ $posicion }};
+        $(document).ready(function() {
+            var table = $('#datatable').DataTable({
+                pageLength: 10,
+                displayStart: displayStart,
+                ordering: false
+            });
+        });
+    </script>
     @include('sweetalert::alert')
 @endsection

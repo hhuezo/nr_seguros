@@ -164,21 +164,21 @@ class SuscripcionController extends Controller
     {
         $ocupaciones = Ocupacion::where('Activo', 1)->get();
         $tipo_creditos = TipoCredito::where('Activo', 1)->get();
-        $companias = Compania::get();
-        $tipo_clientes = TipoCliente::get();
-        $tipo_orden = OrdenMedica::get();
-        $estados = EstadoCaso::get();
-        $reprocesos = Reproceso::get();
+        $companias = Compania::where('Activo', 1)->get();
+        $tipo_clientes = TipoCliente::where('Activo', 1)->get();
+        $tipo_orden = OrdenMedica::where('Activo', 1)->get();
+        $estados = EstadoCaso::where('Activo', 1)->get();
+        $reprocesos = Reproceso::where('Activo', 1)->get();
         $ejecutivos = Ejecutivo::where('Activo', 1)->get();
         $clientes = Cliente::where('activo', 1)->get();
-        $polizas_deuda = Deuda::where('activo', 1)->get();
-        $polizas_vida = Vida::where('activo', 1)->get();
+        $polizas_deuda = Deuda::where('Activo', 1)->get();
+        $polizas_vida = Vida::where('Activo', 1)->get();
 
-        $tipos_imc = TipoImc::get();
+        $tipos_imc = TipoImc::where('Activo', 1)->get();
         $resumen_gestion = ResumenGestion::get();
 
         //observaciones 22-5-25
-        $aseguradoras = Aseguradora::where('activo', 1)->get();
+        $aseguradoras = Aseguradora::where('Activo', 1)->get();
 
 
         return view('suscripciones.suscripcion.create', compact(
@@ -380,22 +380,22 @@ class SuscripcionController extends Controller
     {
         $tab = $request->tab ?? 1;
         $suscripcion = Suscripcion::findOrFail($id);
-        $companias = Compania::get();
+        $companias = Compania::where('Activo', 1)->get();
         $ocupaciones = Ocupacion::where('Activo', 1)->get();
-        $tipo_clientes = TipoCliente::get();
+        $tipo_clientes = TipoCliente::where('Activo', 1)->get();
         $tipo_creditos = TipoCredito::where('Activo', 1)->get();
-        $tipo_orden = OrdenMedica::get();
-        $estados = EstadoCaso::get();
+        $tipo_orden = OrdenMedica::where('Activo', 1)->get();
+        $estados = EstadoCaso::where('Activo', 1)->get();
         $ejecutivos = Ejecutivo::where('Activo', 1)->get();
         $clientes = Cliente::where('activo', 1)->get();
         $polizas_deuda = Deuda::where('activo', 1)->get();
         $polizas_vida = Vida::where('activo', 1)->get();
-        $tipos_imc = TipoImc::get();
-        $resumen_gestion = ResumenGestion::get();
-        $reprocesos = Reproceso::get();
+        $tipos_imc = TipoImc::where('Activo', 1)->get();
+        $resumen_gestion = ResumenGestion::where('Activo', 1)->get();
+        $reprocesos = Reproceso::where('Activo', 1)->get();
 
         //observaciones 22-5-25
-        $aseguradoras = Aseguradora::where('activo', 1)->get();
+        $aseguradoras = Aseguradora::where('Activo', 1)->get();
 
         return view('suscripciones.suscripcion.edit', compact('reprocesos', 'aseguradoras', 'tipos_imc', 'resumen_gestion', 'polizas_vida', 'polizas_deuda', 'clientes', 'ejecutivos', 'companias', 'ocupaciones', 'tipo_clientes', 'tipo_creditos', 'tipo_orden', 'suscripcion', 'estados', 'tab'));
     }
@@ -610,27 +610,34 @@ class SuscripcionController extends Controller
     */
     public function calcularDiasHabiles($fechaInicio, $fechaFin)
     {
-        // 1. Configurar zona horaria (El Salvador GMT-6)
         $zonaHoraria = 'America/El_Salvador';
 
-        // 2. Parsear fechas con zona horaria
         $inicio = Carbon::parse($fechaInicio)->setTimezone($zonaHoraria)->startOfDay();
         $fin = Carbon::parse($fechaFin)->setTimezone($zonaHoraria)->startOfDay();
 
-        // 3. Obtener todos los feriados que solapan con el rango
+        // 🚩 Caso especial: misma fecha
+        if ($inicio->equalTo($fin)) {
+            return 0;
+        }
+
+        // 🚩 Caso especial: rango solo de fin de semana (ej. sábado → domingo)
+        if ($inicio->isWeekend() && $fin->isWeekend() && $inicio->diffInDays($fin) <= 1) {
+            return 0;
+        }
+
+        // 3. Obtener feriados que solapan con el rango
         $feriados = FechasFeriadas::where('FechaFinal', '>=', $inicio->toDateString())
             ->where('FechaInicio', '<=', $fin->toDateString())
             ->where('Activo', 1)
             ->get(['FechaInicio', 'FechaFinal']);
 
-        // 4. Calcular días hábiles base (excluyendo fines de semana)
+        // 4. Calcular días hábiles base (sin fines de semana)
         $diasHabiles = $inicio->diffInDaysFiltered(function (Carbon $fecha) {
-            return !$fecha->isWeekend(); // Excluye sábados y domingos
-        }, $fin->copy()->addDay()); // +1 para incluir fecha final
+            return !$fecha->isWeekend();
+        }, $fin->copy()->addDay());
 
-        // 5. Filtrar y restar feriados que caen en días laborables
+        // 5. Restar feriados que caen en días laborales
         $diasFeriados = 0;
-
         foreach ($feriados as $feriado) {
             $periodoFeriado = CarbonPeriod::create(
                 Carbon::parse($feriado->FechaInicio)->setTimezone($zonaHoraria)->startOfDay(),
@@ -638,14 +645,13 @@ class SuscripcionController extends Controller
             );
 
             foreach ($periodoFeriado as $fechaFeriado) {
-                // Solo contar si está en el rango y es día laborable
                 if ($fechaFeriado->between($inicio, $fin) && !$fechaFeriado->isWeekend()) {
                     $diasFeriados++;
                 }
             }
         }
 
-        return $diasHabiles - $diasFeriados;
+        return $diasHabiles - $diasFeriados -1;
     }
 
 

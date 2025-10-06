@@ -78,12 +78,13 @@
 
                         <div class="col-sm-4">
                             <label class="control-label ">Fecha de Ingreso</label>
-                            <input type="date" name="FechaIngreso" value="{{ date('Y-m-d') }}" class="form-control">
+                            <input type="date" name="FechaIngreso" id="FechaIngreso" value="{{ date('Y-m-d') }}"
+                                class="form-control">
                         </div>
 
                         <div class="col-sm-4">
                             <label class="control-label ">Días para completar información (cliente)</label>
-                            <input type="number" name="DiasCompletarInfoCliente"
+                            <input type="number" name="DiasCompletarInfoCliente" id="DiasCompletarInfoCliente"
                                 value="{{ old('DiasCompletarInfoCliente') }}" class="form-control">
                         </div>
 
@@ -192,7 +193,8 @@
                         <div class="col-sm-4">
                             <label class="control-label ">Asegurado</label>
                             <input type="text" name="Asegurado" value="{{ old('Asegurado') }}" class="form-control"
-                                oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)" required>
+                                oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)"
+                                required>
                         </div>
 
                         <div class="col-sm-2">
@@ -291,7 +293,7 @@
                                         onchange="resumenGestionChanged(this.value)">
                                         <option value="">SELECCIONE</option>
                                         @foreach ($resumen_gestion as $resumen)
-                                            @if ($resumen->Id != 20)
+                                            @if ($resumen->Id != 18)
                                                 <option value="{{ $resumen->Id }}" class=" bg-{{ $resumen->Color }}">
                                                     {{ $resumen->Nombre }}</option>
                                             @else
@@ -552,6 +554,54 @@
                     });
                 }
             });
+
+
+            $('#FechaIngreso, #FechaEntregaDocsCompletos').change(function() {
+
+                var inicio = $('#FechaIngreso').val();
+                var fin = $('#FechaEntregaDocsCompletos').val();
+
+                if (inicio && fin) {
+                    $.ajax({
+                        url: "{{ route('calcular.dias.habiles.json') }}",
+                        type: 'GET',
+                        data: {
+                            '_token': '{{ csrf_token() }}',
+                            'fecha_inicio': inicio,
+                            'fecha_fin': fin
+                        },
+                        success: function(response) {
+                            $('#DiasCompletarInfoCliente').val(response.dias_habiles);
+                        },
+                        error: function(xhr) {
+                            console.error('Error:', xhr.responseJSON);
+                            $('#DiasCompletarInfoCliente').val("");
+                        }
+                    });
+                }
+            });
+
+
+
+            $('#FechaReportadoCia, #FechaEntregaDocsCompletos').on('change', function() {
+                const inicio = $('#FechaReportadoCia').val();
+                const fin = $('#FechaEntregaDocsCompletos').val();
+
+                if (inicio && fin) {
+                    calFechaHabil(inicio, fin)
+                        .then(function(dias) {
+                            $('#TrabajadoEfectuadoDiaHabil').val(dias);
+                        })
+                        .catch(function(error) {
+                            console.error('Error al calcular días hábiles:', error);
+                            $('#TrabajadoEfectuadoDiaHabil').val('');
+                        });
+                } else {
+                    // Si alguno está vacío, limpiar el campo de resultado
+                    $('#TrabajadoEfectuadoDiaHabil').val('');
+                }
+            });
+
 
             // Enviar formulario via AJAX
             $('#formCrearOcupacion').submit(function(e) {

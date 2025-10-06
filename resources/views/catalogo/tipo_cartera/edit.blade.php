@@ -54,7 +54,7 @@
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <div class="form-group" align="center">
                                 <button type="submit" class="btn btn-success">Aceptar</button>
-                                <a href="{{ url('catalogo/tipo_cartera') }}"><button type="button" class="btn btn-primary">Cancelar</button></a>
+                                <a href="{{ url('catalogo/tipo_cartera') }}?idRegistro={{$tipo_cartera->Id}}"><button type="button" class="btn btn-primary">Cancelar</button></a>
                             </div>
                         </div>
 

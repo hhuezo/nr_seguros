@@ -24,11 +24,29 @@ class AseguradoraController extends Controller
         $this->middleware('auth');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $aseguradora = Aseguradora::where('Activo', '=', 1)->get();
-        return view('catalogo.aseguradora.index', compact('aseguradora'));
+        $idRegistro = $request->idRegistro ?? 0;
+
+        // Obtener aseguradoras activas ordenadas por Id
+        $aseguradora = Aseguradora::where('Activo', 1)->orderBy('Id', 'asc')->get();
+
+        // Calcular la posición para DataTable
+        $posicion = 0; // por defecto
+        if ($idRegistro > 0) {
+            $indice = $aseguradora->search(function ($a) use ($idRegistro) {
+                return $a->Id == $idRegistro;
+            });
+
+            if ($indice !== false) {
+                $pageLength = 10; // Debe coincidir con JS
+                $posicion = floor($indice / $pageLength) * $pageLength;
+            }
+        }
+
+        return view('catalogo.aseguradora.index', compact('aseguradora', 'posicion'));
     }
+
 
     public function create()
     {

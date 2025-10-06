@@ -278,7 +278,7 @@
                                 <option value="" selected>SELECCIONE</option>
                                 @foreach ($polizas_vida as $obj)
                                     <option value="{{ $obj->Id }}"
-                                        {{ $deuda->PolizaVida == $obj->Id ? 'selected' : '' }}>{{ $obj->Codigo }}
+                                        {{ $deuda->PolizaVida == $obj->Id ? 'selected' : '' }}>{{ $obj->NumeroPoliza }}
                                     </option>
                                 @endforeach
                             </select>

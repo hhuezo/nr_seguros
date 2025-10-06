@@ -19,7 +19,6 @@ use App\Models\catalogo\ConfiguracionRecibo;
 use App\Models\catalogo\DatosGenerales;
 use App\Models\catalogo\Ejecutivo;
 use App\Models\catalogo\EstadoPoliza;
-use App\Models\catalogo\Perfil;
 use App\Models\catalogo\Plan;
 use App\Models\catalogo\Producto;
 use App\Models\catalogo\TipoCobro;
@@ -44,11 +43,27 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class VidaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $vida = Vida::all();
-        return view('polizas.vida.index', compact('vida'));
+        $idRegistro = $request->idRegistro ?? 0;
+
+        $vida = Vida::orderBy('Id', 'asc')->get();
+
+        $posicion = 0;
+        if ($idRegistro > 0) {
+            $indice = $vida->search(function ($v) use ($idRegistro) {
+                return $v->Id == $idRegistro;
+            });
+
+            if ($indice !== false) {
+                $pageLength = 10;
+                $posicion = floor($indice / $pageLength) * $pageLength;
+            }
+        }
+
+        return view('polizas.vida.index', compact('vida', 'posicion'));
     }
+
 
 
     public function create()
@@ -59,6 +74,7 @@ class VidaController extends Controller
         $cliente = Cliente::where('Activo', 1)->get();
         $tipoCobro = TipoCobro::where('Activo', 1)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
+        $estados = EstadoPoliza::where('Activo', 1)->get();
         return view('polizas.vida.create', compact(
             'aseguradora',
             'cliente',
@@ -66,6 +82,7 @@ class VidaController extends Controller
             'ejecutivo',
             'productos',
             'planes',
+            'estados'
         ));
     }
 
@@ -167,7 +184,11 @@ class VidaController extends Controller
             $vida->TasaDescuento = $request->TasaDescuento ?? null;
             $vida->EdadMaximaInscripcion = $request->EdadMaximaInscripcion;
             $vida->EdadTerminacion = $request->EdadTerminacion;
-            $vida->EstadoPoliza = 1;
+            $vida->Beneficios = $request->Beneficios;
+            $vida->EstadoPoliza = $request->EstadoPoliza;
+
+            $vida->ClausulasEspeciales = $request->ClausulasEspeciales;
+            $vida->Beneficios = $request->Beneficios;
             $vida->Activo = 1;
 
 
@@ -405,7 +426,7 @@ class VidaController extends Controller
         $tipoCobro = TipoCobro::where('Activo', 1)->orderBy('Id', 'desc')->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
         $tiposCartera = VidaTipoCartera::get();
-        // $historico_poliza = PolizaDeudaHistorica::where('Deuda', $id)->get();
+        $estados = EstadoPoliza::where('Activo', 1)->get();
         // $registroInicial = $historico_poliza->isNotEmpty() ? $historico_poliza->first() : null;
 
 
@@ -418,7 +439,8 @@ class VidaController extends Controller
             'productos',
             'planes',
             'tiposCartera',
-            'tab'
+            'tab',
+            'estados'
         ));
     }
 
@@ -523,11 +545,13 @@ class VidaController extends Controller
             $vida->TipoCobro = $request->TipoCobro;
             $vida->TipoTarifa = $request->TipoTarifa ?? null;
             $vida->Tasa = $request->Tasa;
-             $vida->TasaComision = $request->TasaComision;
+            $vida->TasaComision = $request->TasaComision;
             $vida->TasaDescuento = $request->TasaDescuento ?? null;
             $vida->EdadMaximaInscripcion = $request->EdadMaximaInscripcion;
             $vida->EdadTerminacion = $request->EdadTerminacion;
-            $vida->EstadoPoliza = 1;
+            $vida->EstadoPoliza = $request->EstadoPoliza;
+            $vida->ClausulasEspeciales = $request->ClausulasEspeciales;
+            $vida->Beneficios = $request->Beneficios;
             $vida->Activo = 1;
 
             if ($request->TipoCobro == 1) {

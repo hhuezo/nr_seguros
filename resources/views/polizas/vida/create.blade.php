@@ -246,39 +246,59 @@
 
                                 <div class="col-sm-12" style="padding: 0% !important">
                                     <!-- Vigencia Desde -->
-                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                    <div class="item form-group col-sm-12 col-md-3 col-lg-3">
                                         <label class="control-label" align="right">Vigencia Desde</label>
                                         <input class="form-control" name="VigenciaDesde" type="date"
                                             value="{{ old('VigenciaDesde') }}" required>
                                     </div>
 
                                     <!-- Vigencia Hasta -->
-                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                    <div class="item form-group col-sm-12 col-md-3 col-lg-3">
                                         <label class="control-label" align="right">Vigencia Hasta</label>
                                         <input class="form-control" name="VigenciaHasta" type="date"
                                             value="{{ old('VigenciaHasta') }}" required>
                                     </div>
+
+
+                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                        <label class="control-label" align="right">Status *</label>
+                                        <select name="EstadoPoliza" id="EstadoPoliza" class="form-control">
+                                            @foreach ($estados as $estado)
+                                                <option value="{{ $estado->Id }}">{{ $estado->Nombre }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                <div class="item form-group col-sm-12 col-md-4 col-lg-4">
+                                    <label class="control-label" align="right">Clausulas Especiales </label>
+                                    <textarea class="form-control" name="ClausulasEspeciales" rows="3" cols="4">{{ old('ClausulasEspeciales') }}</textarea>
+                                </div>
+                                <div class="item form-group col-sm-12 col-md-4 col-lg-4">
+                                    <label class="control-label" align="right">Beneficios Adicionales </label>
+                                    <textarea class="form-control" name="Beneficios" rows="3" cols="4">{{ old('Beneficios') }}</textarea>
                                 </div>
 
 
 
+                                <div class="item form-group col-sm-12 col-md-4 col-lg-4">
+                                    <label class="control-label" align="right">Concepto</label>
+                                    <textarea class="form-control" name="Concepto" rows="3" cols="4">{{ old('Concepto') }}</textarea>
+                                </div>
+
+
                                 <!-- Tasa Millar Mensual -->
-                                <div class="item form-group col-sm-12 col-md-3 col-lg-3">
+                                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
                                     <label class="control-label" align="right">Descuento</label>
                                     <input class="form-control" name="TasaDescuento" type="number" step="any"
                                         value="{{ old('TasaDescuento') }}">
                                 </div>
 
-                                <div class="item form-group col-sm-12 col-md-3 col-lg-3">
+                                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
                                     <label class="control-label" align="right">% de Comisión *</label>
                                     <input class="form-control" name="TasaComision" id="TasaComision" type="number"
                                         step="any" value="{{ old('TasaComision') }}" required>
-                                </div>
-
-                                <!-- Concepto -->
-                                <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                                    <label class="control-label" align="right">Concepto</label>
-                                    <textarea class="form-control" name="Concepto" rows="3" cols="4">{{ old('Concepto') }}</textarea>
                                 </div>
                             </div>
 

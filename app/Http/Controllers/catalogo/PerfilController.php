@@ -7,26 +7,34 @@ use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\Perfil;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redirect;
 
 class PerfilController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+
+    public function index(Request $request)
     {
-        $perfiles = Perfil::where('Activo', 1)->get();
+        $idRegistro = $request->idRegistro ?? 0;
+
+        $perfiles = Perfil::where('Activo', 1)->orderBy('Id', 'asc')->get();
         $aseguradoras = Aseguradora::where('Activo', 1)->get();
-        return view('catalogo.perfiles.index', compact('perfiles', 'aseguradoras'));
+
+        $posicion = 0;
+        if ($idRegistro > 0) {
+            $indice = $perfiles->search(function ($p) use ($idRegistro) {
+                return $p->Id == $idRegistro;
+            });
+
+            if ($indice !== false) {
+                $pageLength = 10;
+                $posicion = floor($indice / $pageLength) * $pageLength;
+            }
+        }
+
+        return view('catalogo.perfiles.index', compact('perfiles', 'aseguradoras', 'posicion'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function create()
     {
         $aseguradoras = Aseguradora::where('Activo', 1)->get();
@@ -58,7 +66,7 @@ class PerfilController extends Controller
             $perfiles->save();
 
             // Redirigir con mensaje de éxito
-            return back()->with('success', 'Perfil creado exitosamente.');
+            return Redirect::to('catalogo/perfiles?idRegistro=' . $perfiles->Id)->with('success', 'Perfil creado exitosamente.');
         } catch (\Exception $e) {
             // Capturar el error y registrar el detalle
             Log::error('Error al crear perfil: ' . $e->getMessage(), [
@@ -107,7 +115,7 @@ class PerfilController extends Controller
             $perfiles->update();
 
             // Redirigir con mensaje de éxito
-            return back()->with('success', 'Perfil modificado exitosamente.');
+            return Redirect::to('catalogo/perfiles?idRegistro=' . $perfiles->Id)->with('success', 'Perfil creado exitosamente.');
         } catch (\Exception $e) {
             // Capturar el error y registrar el detalle
             Log::error('Error al guardar perfil: ' . $e->getMessage(), [
