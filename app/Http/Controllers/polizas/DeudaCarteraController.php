@@ -404,22 +404,22 @@ class DeudaCarteraController extends Controller
 
 
             //6 error formato fecha vencimiento
-            $validador_fecha_vencimiento = $this->validarFormatoFecha($obj->FechaVencimiento);
-            if ($validador_fecha_vencimiento == false) {
-                //trata de convertir la fecha excel en fecha y luego comprobar nuevamente si la fecha convertida es una fecha.
-                $fecha_excel_convertida_vencimiento = $this->convertDate($obj->FechaVencimiento);
-                $validador_fecha_vencimiento = $this->validarFormatoFecha($fecha_excel_convertida_vencimiento);
+            // $validador_fecha_vencimiento = $this->validarFormatoFecha($obj->FechaVencimiento);
+            // if ($validador_fecha_vencimiento == false) {
+            //     //trata de convertir la fecha excel en fecha y luego comprobar nuevamente si la fecha convertida es una fecha.
+            //     $fecha_excel_convertida_vencimiento = $this->convertDate($obj->FechaVencimiento);
+            //     $validador_fecha_vencimiento = $this->validarFormatoFecha($fecha_excel_convertida_vencimiento);
 
-                if ($validador_fecha_vencimiento == false || trim($obj->FechaVencimiento) == "") {
-                    $obj->TipoError = 6;
-                    $obj->update();
+            //     if ($validador_fecha_vencimiento == false || trim($obj->FechaVencimiento) == "") {
+            //         $obj->TipoError = 6;
+            //         $obj->update();
 
-                    array_push($errores_array, 6);
-                } else {
-                    $obj->FechaVencimiento = $fecha_excel_convertida_vencimiento;
-                    $obj->update();
-                }
-            }
+            //         array_push($errores_array, 6);
+            //     } else {
+            //         $obj->FechaVencimiento = $fecha_excel_convertida_vencimiento;
+            //         $obj->update();
+            //     }
+            // }
 
             // 7 referencia si va vacia.
             if (trim($obj->NumeroReferencia) == "") {
