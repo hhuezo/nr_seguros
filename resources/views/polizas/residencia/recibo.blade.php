@@ -31,7 +31,7 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
         San Salvador, {{ \Carbon\Carbon::parse($detalle->ImpresionRecibo)->format('d') }} de {{ $meses[\Carbon\Carbon::parse($detalle->ImpresionRecibo)->format('m') - 0 ] }} del {{ \Carbon\Carbon::parse($detalle->ImpresionRecibo)->format('Y') }} <br>
         Señor (a) (es): <br> {{$residencia->clientes->Nombre}} <br>
         NIT: {{$residencia->clientes->Nit}} <br>
-        {{$residencia->clientes->DireccionResidencia}} <br>
+        {{ $residencia->clientes->DireccionResidencia ?: $residencia->clientes->DireccionCorrespondencia }}<br>
         {{$residencia->clientes->distrito->municipio->departamento->Nombre}}, {{$residencia->clientes->distrito->municipio->Nombre}}
         <br>
         <br><br>
@@ -77,15 +77,15 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
     </tr>
     <tr>
       <td style="background-color: lightgrey;">Anexo</td>
-      <td colspan="2" align="center">{{$detalle->Anexo}}</td>
+      <td colspan="2">{{$detalle->Anexo}}</td>
     </tr>
     <tr>
       <td style="background-color: lightgrey;">Referencia</td>
-      <td colspan="2" align="center">{{$detalle->Referencia}}</td>
+      <td colspan="2">{{$detalle->Referencia}}</td>
     </tr>
     <tr>
       <td style="background-color: lightgrey;">Factura (s) a Nombre de</td>
-      <td colspan="2" align="center">{{$residencia->clientes->Nombre}} </td>
+      <td colspan="2">{{$residencia->clientes->Nombre}} </td>
     </tr>
   </table>
   <br>
@@ -179,10 +179,10 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
       </td>
     </tr>
   </table>
-  <br><br>
+  <br>
   <table border="1" cellspacing="0" style="width: 100%;">
     <tr style="background-color: lightgrey;">
-      <th>Cuota</th>
+      <th height="27">Cuota</th>
       <th>Número de <br> documento</th>
       <th>Fecha de vencimiento</th>
       <th>Prima A Cobrar</th>
@@ -191,23 +191,22 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
       <th>Pago líquido de prima</th>
     </tr>
     <tr>
-      <td style="text-align: center;">01/01</td>
-      <td>{{$detalle->NumeroCorrelativo}}</td>
-      <td>{{ \Carbon\Carbon::parse($detalle->FechaInicio)->format('d/m/Y') }}</td>
+      <td height="27" style="text-align: center;">01/01</td>
+      <td><div align="center">{{$detalle->NumeroCorrelativo}}</div></td>
+      <td><div align="center">{{ \Carbon\Carbon::parse($detalle->FechaInicio)->format('d/m/Y') }}</div></td>
       <td style="text-align: right;">${{number_format(($detalle->SubTotal+$detalle->Iva),2,'.',',')}}</td>
       <td style="text-align: right;">${{number_format(($detalle->ValorCCF ),2,'.',',')}}</td>
       <td style="text-align: right;">${{number_format($detalle->Otros,2,'.',',')}}</td>
       <td style="text-align: right;">${{number_format($detalle->APagar,2,'.',',')}}</td>
     </tr>
     <tr>
-      <td colspan="3" align="center">TOTAL </td>
+      <td height="27" colspan="3" align="center">TOTAL </td>
       <td style="text-align: right;">${{number_format(($detalle->SubTotal+$detalle->Iva),2,'.',',')}}</td>
       <td style="text-align: right;">${{number_format($detalle->ValorCCF,2,'.',',')}}</td>
       <td></td>
       <td style="text-align: right;">${{number_format(($detalle->APagar),2,'.',',')}}</td>
     </tr>
   </table>
-  <br>
 
   <table border="0" cellspacing="0" style="width: 100%;">
 
@@ -218,7 +217,7 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
       </td>
     </tr>
   </table>
-  <br><br>
+  <br>
 
   <table border="0" cellspacing="0" style="width: 40%;" align="right">
     <tr style="text-align: right;">
@@ -245,7 +244,6 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
   </table>
   <br><br>
 
-  <br><br>
   <footer>
     <table style="width: 100%; text-align: center;">
       <tr>

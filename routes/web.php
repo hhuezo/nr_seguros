@@ -185,7 +185,6 @@ Route::middleware(['auth'])->group(function () {
 
 
     //pólizas
-    Route::get('polizas/residencia/get_recibo', [ResidenciaController::class, 'impresion']);
     Route::resource('polizas/residencia', ResidenciaController::class);
     Route::post('polizas/residencia/create_pago', [ResidenciaController::class, 'create_pago']);
     Route::post('polizas/residencia/agregar_pago', [ResidenciaController::class, 'agregar_pago']);
@@ -194,7 +193,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('poliza/residencia/get_recibo/{id}', [ResidenciaController::class, 'get_recibo']);
     Route::post('poliza/residencia/active/{id}', [ResidenciaController::class, 'active_edit']);
     Route::post('poliza/residencia/desactive/{id}', [ResidenciaController::class, 'desactive_edit']);
-    Route::get('polizas/residencia/get_recibo', [ResidenciaController::class, 'impresion']);
     Route::get('polizas/residencia/get_pago/{id}', [ResidenciaController::class, 'get_pago']);
     Route::get('polizas/residencia/{id}/renovar', [ResidenciaController::class, 'renovar']);
     Route::get('polizas/residencia/{id}/cancelacion', [ResidenciaController::class, 'cancelacion']);
