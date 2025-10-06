@@ -114,7 +114,7 @@ class PolizaDeudaTempCartera extends Model
                     break;
                 case '5':
                     # .monto moninal
-                    $saldo = $this->MontoNominal;
+                    $saldo = $this->MontoOtorgado;
                     break;
                 case '6':
                     # .monto otorgado
