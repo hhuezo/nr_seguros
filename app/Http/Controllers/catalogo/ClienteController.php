@@ -106,30 +106,40 @@ class ClienteController extends Controller
             'Dui.required' => 'El campo DUI es obligatorio',
             'Dui.min' => 'El formato de DUI es incorrecto',
             'Dui.unique' => 'El DUI ya existe en la base de datos',
-            'TelefonoCelular.required' => 'El teléfono principal es obligatorio',
-            'TelefonoCelular.size' => 'El teléfono Principal es incorrecto',
+            'TelefonoCelular.required' => 'Debe ingresar al menos un teléfono',
+            'NumeroExtranjero.required' => 'Debe ingresar al menos un teléfono',
+            'TelefonoCelular.size' => 'El teléfono principal es incorrecto',
+            'NumeroExtranjero.max' => 'El teléfono extranjero es demasiado largo',
             'UbicacionCobro.required' => 'El Método de Pago es obligatorio',
-            'UbicacionCobro.integer'  => 'El Método de Pago debe ser un valor válido',
+            'UbicacionCobro.integer' => 'El Método de Pago debe ser un valor válido',
             'Nit.required_without' => 'Debe ingresar al menos un NIT o un Pasaporte',
+            'Nit.min' => 'El campo NIT debe contener al menos 17 caracteres',
             'Pasaporte.required_without' => 'Debe ingresar al menos un NIT o un Pasaporte',
+            'Pasaporte.max' => 'El campo Pasaporte es demasiado largo',
+            'Nombre.required' => 'El campo nombre es obligatorio',
+            'DireccionCorrespondencia.required' => 'El campo direccion correspondencia es obligatorio',
+            'FechaVinculacion.required' => 'El campo fecha vinculacion es obligatorio',
+            'Genero.required' => 'El campo genero es obligatorio',
+            'TipoContribuyente.required' => 'El campo tipo contribuyente es obligatorio',
+            'FechaNacimiento.required' => 'El campo fecha de nacimiento es obligatorio',
         ];
 
-        // Limpiar campos
+        // Limpiar campos y convertir vacíos en null
         $request->merge([
-            'Dui' => $this->string_replace($request->get('Dui')),
-            'Nit' => $this->string_replace($request->get('Nit')),
-            'Pasaporte' => $this->string_replace($request->get('Pasaporte')),
-            'TelefonoCelular' => $this->string_replace($request->get('TelefonoCelular')),
+            'Dui' => $this->string_replace($request->get('Dui')) ?: null,
+            'Nit' => $this->string_replace($request->get('Nit')) ?: null,
+            'Pasaporte' => $this->string_replace($request->get('Pasaporte')) ?: null,
+            'TelefonoCelular' => $this->string_replace($request->get('TelefonoCelular')) ?: null,
+            'NumeroExtranjero' => $this->string_replace($request->get('NumeroExtranjero')) ?: null,
+            'UbicacionCobro' => $request->get('UbicacionCobro') ?: null,
         ]);
 
-        // Convertir checkbox a boolean
-        $extranjero = $request->boolean('Extranjero'); // true si está marcado, false si no
+        $extranjero = $request->boolean('Extranjero');
 
         // Reglas base
         $rules = [
             'Nombre' => 'required',
             'DireccionCorrespondencia' => 'required|max:255',
-            'TelefonoCelular' => 'required|size:9',
             'FechaVinculacion' => 'required|date',
             'Estado' => 'required|integer',
             'Genero' => 'required|integer',
@@ -137,9 +147,10 @@ class ClienteController extends Controller
             'UbicacionCobro' => 'required|integer',
         ];
 
-        // Validación para NO extranjeros
-        if (!$extranjero) {
-            if ($request->get('TipoPersona') == 1) {
+        // Validación para persona natural (TipoPersona == 1)
+        if ($request->get('TipoPersona') == 1) {
+            // DUI obligatorio para persona natural si no es extranjero
+            if (!$extranjero) {
                 $duiRules = ['required', 'min:10'];
                 if ($request->get('ClienteId')) {
                     $duiRules[] = Rule::unique('cliente')->ignore($request->get('ClienteId'));
@@ -147,26 +158,26 @@ class ClienteController extends Controller
                     $duiRules[] = 'unique:cliente';
                 }
                 $rules['Dui'] = $duiRules;
-
-                $rules['FechaNacimiento'] = [
-                    'required',
-                    'date',
-                    function ($attribute, $value, $fail) {
-                        $eighteenYearsAgo = now()->subYears(18)->format('Y-m-d');
-                        if ($value > $eighteenYearsAgo) {
-                            $fail('El cliente debe tener al menos 18 años.');
-                        }
-                    }
-                ];
             }
+
+            // Fecha de nacimiento requerida y >= 18 años
+            $rules['FechaNacimiento'] = [
+                'required',
+                'date',
+                function ($attribute, $value, $fail) {
+                    if ($value > now()->subYears(18)->format('Y-m-d')) {
+                        $fail('El cliente debe tener al menos 18 años.');
+                    }
+                }
+            ];
         }
 
-        // Validación para Extranjero: al menos Nit o Pasaporte debe tener dato
+        // Validación para Extranjero: Nit o Pasaporte
         if ($extranjero) {
-            $rules['Nit'] = 'required_without:Pasaporte|min:17';
-            $rules['Pasaporte'] = 'required_without:Nit|max:100';
+            $rules['Nit'] = 'nullable|min:17|required_without:Pasaporte';
+            $rules['Pasaporte'] = 'nullable|max:100|required_without:Nit';
         } else {
-            // Si no es extranjero y no es persona natural, Nit opcional pero válido si existe
+            // Si no es persona natural y existe Nit
             if ($request->get('TipoPersona') != 1 && $request->get('Nit')) {
                 $nitRules = ['min:17'];
                 if ($request->get('ClienteId')) {
@@ -181,12 +192,21 @@ class ClienteController extends Controller
         // Ejecutar validator
         $validator = Validator::make($request->all(), $rules, $messages);
 
+        // Validación custom: al menos uno de los dos teléfonos debe existir
+        $validator->after(function ($validator) use ($request) {
+            if (empty($request->TelefonoCelular) && empty($request->NumeroExtranjero)) {
+                $validator->errors()->add('TelefonoCelular', 'Debe ingresar al menos un teléfono');
+            }
+        });
+
         if ($validator->fails()) {
             return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
 
         return response()->json(['success' => true, 'message' => 'Validación exitosa']);
     }
+
+
 
 
 

@@ -202,7 +202,7 @@
 
                                     <div class="form-group">
                                         <label for="NumeroExtrajero" class="form-label">Número Extrajero</label>
-                                        <input class="form-control" name="NumeroExtrajero"
+                                        <input class="form-control" name="NumeroExtrajero" id="NumeroExtrajero"
                                             value="{{ old('NumeroExtrajero') }}" data-mask type="text">
                                     </div>
                                     <div class="form-group">
@@ -586,6 +586,7 @@
             var checkbox = document.getElementById('Extranjero');
             var extranjero = checkbox.checked ? 1 : null;
             var pasaporte = document.getElementById('Pasaporte').value;
+            var numeroExtranjero = document.getElementById('NumeroExtrajero').value;
 
 
             // Construir la URL con los parámetros
@@ -608,7 +609,8 @@
                 Municipio: municipio,
                 Distrito: distrito,
                 Extranjero: extranjero,
-                Pasaporte: pasaporte
+                Pasaporte: pasaporte,
+                NumeroExtrajero: numeroExtranjero
             };
             Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
 
