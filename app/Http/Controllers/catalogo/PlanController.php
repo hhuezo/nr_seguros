@@ -27,7 +27,12 @@ class PlanController extends Controller
 
     public function getCoberturas(Request $request)
     {
+        $tarificacion = ["Millar", "Porcentual", "Prima"];
         $datosRecibidos = Cobertura::where('Activo', '=', 1)->where('Producto', '=', $request->ProductoId)->get();
+        foreach ($datosRecibidos as $dato) {
+            $indice = (int)$dato->Tarificacion;
+            $dato->Tarificacion = $tarificacion[$indice] ?? 'Desconocido';
+        }
 
         if ($datosRecibidos->count() > 0) {
             return response()->json(['datosRecibidos' => $datosRecibidos], 200);
@@ -53,11 +58,13 @@ class PlanController extends Controller
     {
         //
     }
-    public function get_producto($id){
+    public function get_producto($id)
+    {
         return Producto::where('Aseguradora', '=', $id)->get();
     }
 
-    public function get_plan($id){
+    public function get_plan($id)
+    {
         return Plan::where('Producto', '=', $id)->get();
     }
 
@@ -97,16 +104,16 @@ class PlanController extends Controller
         //return Redirect::to('catalogo/aseguradoras');
     }
 
-    public function edit_cobertura_detalle(Request $request){
+    public function edit_cobertura_detalle(Request $request)
+    {
 
         PlanCoberturaDetalle::updateOrInsert(
             ['Plan' => $request->Plan, 'Cobertura' => $request->Cobertura], // Condiciones de búsqueda
-            ['SumaAsegurada' => $request->SumaAsegurada, 'Tasa' => $request->Tasa, 'Prima' =>$request->Prima, 'Activo' => '1'] // Datos a actualizar o crear
+            ['SumaAsegurada' => $request->SumaAsegurada, 'Tasa' => $request->Tasa, 'Prima' => $request->Prima, 'Activo' => '1'] // Datos a actualizar o crear
         );
 
         alert()->success('El registro ha sido modificado correctamente');
 
         return back();
     }
-
 }
