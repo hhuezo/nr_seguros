@@ -1694,7 +1694,7 @@ class VidaController extends Controller
             $count = VidaCarteraTemp::where('PolizaVida', $id)
                 //->where('EdadDesembloso', '>', $poliza_vida->EdadMaximaInscripcion) EdadTerminacion
                 ->where('EdadDesembloso', '>', $poliza_vida->EdadMaximaInscripcion)
-                ->where('NoValido', 1)
+                ->where('NoValido', 0)
                 ->count();
 
             return response()->json([
