@@ -21,7 +21,7 @@
                 <table id="datatable" class="table table-striped table-bordered">
                     <thead>
                         <tr>
-                            <td style="width: 150px;">Numero poliza</td>
+                            <th>Número de Póliza</th>
                             <th>Asegurado</th>
                             <th>Aseguradora</th>
                             <th>Ejecutivo</th>

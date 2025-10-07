@@ -21,7 +21,7 @@
                 <table id="datatable" class="table table-striped table-bordered">
                     <thead>
                         <tr>
-                            <td style="width: 150px;">Número poliza</td>
+                            <th>Número de Póliza</th>
                             <th>Asegurado</th>
                             <th>Aseguradora</th>
                             <th>Vendedor</th>
@@ -32,7 +32,7 @@
                     <tbody>
                         @foreach ($deuda as $obj)
                             <tr>
-                                <td>{{ $obj->NumeroPoliza }}</td>
+                                 <td  style="width: 150px;">{{ $obj->NumeroPoliza }}</td>
                                 @isset($obj->Asegurado)
                                     <td>{{ $obj->clientes->Nombre }}</td>
                                 @else
