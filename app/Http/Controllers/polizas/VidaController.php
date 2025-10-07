@@ -883,7 +883,7 @@ class VidaController extends Controller
         $poliza_vida = Vida::findOrFail($id);
 
 
-        $temp_data_fisrt = VidaCarteraTemp::where('PolizaVida', $id)->where('User', auth()->user()->id)->first();
+        $temp_data_fisrt = VidaCarteraTemp::where('PolizaVida', $id)->first();
 
         if (!$temp_data_fisrt) {
             alert()->error('No se han cargado las carteras');
@@ -906,13 +906,16 @@ class VidaController extends Controller
             $axoAnterior = $axoActual; // Mismo año
         }
 
-        $poliza_edad_maxima = VidaCarteraTemp::where('User', auth()->user()->id)->where('PolizaVida', $id)->where('EdadDesembloso', '>', $poliza_vida->EdadMaximaInscripcion)->get();
-        $poliza_edad_terminacion = VidaCarteraTemp::where('User', auth()->user()->id)->where('PolizaVida', $id)->where('EdadDesembloso', '>', $poliza_vida->EdadTerminacion)->get();
+        $poliza_edad_maxima = VidaCarteraTemp::where('PolizaVida', $id)->where('EdadDesembloso', '>', $poliza_vida->EdadMaximaInscripcion)->get();
+        $poliza_edad_terminacion = VidaCarteraTemp::where('PolizaVida', $id)->where('EdadDesembloso', '>', $poliza_vida->EdadTerminacion)->get();
 
 
         if ($poliza_vida->TipoCobro == 1) {
-            $poliza_responsabilidad_maxima = VidaCarteraTemp::where('User', auth()->user()->id)->where('PolizaVida', $id)
+
+            $poliza_responsabilidad_maxima = VidaCarteraTemp::where('PolizaVida', $id)
                 ->whereColumn('SumaAsegurada', '>', 'MontoMaximoIndividual')->get();
+
+                dd( $poliza_responsabilidad_maxima->SumaAsegurada,$poliza_responsabilidad_maxima->MontoMaximoIndividual,);
         } else {
             $poliza_responsabilidad_maxima = VidaCarteraTemp::where('Id', 0)->get();
         }
@@ -989,7 +992,7 @@ class VidaController extends Controller
             }
         }
 
-        $registros_rehabilitados = VidaCarteraTemp::where('User', auth()->user()->id)->where('PolizaVida', $id)->where('Rehabilitado', 1)->get();
+        $registros_rehabilitados = VidaCarteraTemp::where('PolizaVida', $id)->where('Rehabilitado', 1)->get();
 
         $extra_primados = $poliza_vida->extra_primados;
 
