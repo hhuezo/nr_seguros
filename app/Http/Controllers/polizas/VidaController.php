@@ -912,10 +912,11 @@ class VidaController extends Controller
 
         if ($poliza_vida->TipoCobro == 1) {
 
-            $poliza_responsabilidad_maxima = VidaCarteraTemp::where('PolizaVida', $id)
-                ->whereColumn('SumaAsegurada', '>', 'MontoMaximoIndividual')->get();
+            // $poliza_responsabilidad_maxima = VidaCarteraTemp::where('PolizaVida', $id)
+            //     ->whereColumn('SumaAsegurada', '>', 'MontoMaximoIndividual')->get();
 
-                dd( $poliza_responsabilidad_maxima->SumaAsegurada,$poliza_responsabilidad_maxima->MontoMaximoIndividual,);
+                $poliza_responsabilidad_maxima = VidaCarteraTemp::where('Id', 0)->get();
+
         } else {
             $poliza_responsabilidad_maxima = VidaCarteraTemp::where('Id', 0)->get();
         }
