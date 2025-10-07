@@ -34,7 +34,7 @@
                     <tbody>
                         @foreach ($residencias as $obj)
                             <tr>
-                                <td>{{ $obj->NumeroPoliza }}</td>
+                                <td  style="width: 150px;">{{ $obj->NumeroPoliza }}</td>
                                 @if ($obj->Asegurado)
                                     <td>{{ $obj->clientes->Nombre ?? '' }}</td>
                                 @else
