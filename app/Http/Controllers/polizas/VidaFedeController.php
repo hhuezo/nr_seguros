@@ -228,7 +228,7 @@ class VidaFedeController extends Controller
                 //     $obj->update();
                 //     $errores_array[] = 5; // Agregar error al array
                 // }
-                 else {
+                else {
                     $validador_dui = true;
                 }
             }
@@ -333,9 +333,15 @@ class VidaFedeController extends Controller
                 $min = $poliza_vida->SumaMinima;
                 $max = $poliza_vida->SumaMaxima;
 
+                if ($obj->SumaAsegurada < $min ||  $obj->SumaAsegurada > $max) {
+                    $obj->TipoError = 14;
+                    $obj->update();
+
+                    array_push($errores_array, 14);
+                }
 
 
-                $sumasPorCliente = [];
+                /*$sumasPorCliente = [];
                 foreach ($cartera_temp as $obj1) {
                     if (!isset($sumasPorCliente[$obj1->Dui])) {
                         $sumasPorCliente[$obj1->Dui] = 0;
@@ -352,9 +358,7 @@ class VidaFedeController extends Controller
 
                         array_push($errores_array, 14);
                     }
-                }
-
-
+                }*/
             }
 
 
@@ -370,7 +374,7 @@ class VidaFedeController extends Controller
 
 
         $temp_data_fisrt = VidaCarteraTemp::where('PolizaVida', $id)->where('User', auth()->user()->id)->where('PolizaVidaTipoCartera', '=', $request->PolizaVidaTipoCartera)->first();
-       // dd($temp_data_fisrt);
+        // dd($temp_data_fisrt);
         if (!$temp_data_fisrt) {
             alert()->error('No se han cargado las carteras');
             return back();
