@@ -35,7 +35,7 @@
                         </div>
                         <div class="col-sm-6">
                             <label for="Producto" class="form-label">Producto</label>
-                            <select disabled id="Producto" name="Producto" class="form-control select2" style="width: 100%">
+                            <select id="Producto" name="Producto" class="form-control select2" style="width: 100%">
                                 @foreach ($productos as $obj)
                                 <option value="{{ $obj->Id }}" {{ $plan->Producto == $obj->Id ? 'selected' : '' }}>{{ $obj->Nombre }}
                                 </option>

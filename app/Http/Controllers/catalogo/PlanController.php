@@ -106,6 +106,7 @@ class PlanController extends Controller
     {
         $plan = Plan::findOrFail($id);
         $plan->Nombre = $request->Nombre;
+        $plan->Producto = $request->Producto;
         $plan->update();
         alert()->success('El registro ha sido modificado correctamente');
         return back();
