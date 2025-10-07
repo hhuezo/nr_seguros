@@ -163,7 +163,7 @@
                                 <td>{{ [1 => 'FECHA', 2 => 'MONTO'][$obj->TipoCalculo] ?? 'NO APLICA' }}</td>
                                 <td align="right">${{ number_format($obj->Total, 2, '.', ',') }}</td>
                                 <td align="center">
-                                    @if ($poliza_vida->Aseguradora == 3)
+                                    @if ($poliza_vida->Aseguradora == 3 || $poliza_vida->Aseguradora == 4)
                                         <a data-target="#modal-add-fede-{{ $obj->Id }}" data-toggle="modal">
                                             <button class="btn btn-default"><i class="fa fa-upload fa-lg"></i></button> </a>
                                     @else
