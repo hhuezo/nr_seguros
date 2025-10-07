@@ -165,7 +165,7 @@
                                 <td>{{ $obj->Descripcion }}</td>
                                 <td align="right">${{ number_format($obj->Total, 2, '.', ',') }}</td>
                                 <td align="center">
-                                    @if ($deuda->Aseguradora == 3)
+                                    @if ($deuda->Aseguradora == 3 || $deuda->Aseguradora == 4)
                                         <a data-target="#modal-add-fede-{{ $obj->Id }}" data-toggle="modal">
                                             <button class="btn btn-default"><i class="fa fa-upload fa-lg"></i></button> </a>
                                     @else
