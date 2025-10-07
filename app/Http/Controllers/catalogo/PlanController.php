@@ -76,12 +76,12 @@ class PlanController extends Controller
     }
     public function get_producto($id)
     {
-        return Producto::where('Aseguradora', '=', $id)->get();
+        return Producto::where('Aseguradora', '=', $id)->orderBy('Nombre')->get();
     }
 
     public function get_plan($id)
     {
-        return Plan::where('Producto', '=', $id)->where('Activo', 1)->get();
+        return Plan::where('Producto', '=', $id)->where('Activo', 1)->orderBy('Nombre')->get();
     }
 
 

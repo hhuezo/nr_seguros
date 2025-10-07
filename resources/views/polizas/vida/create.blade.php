@@ -66,12 +66,7 @@
                                         <select name="Productos" id="Productos" class="form-control select2"
                                             style="width: 100%" required>
                                             <option value="" selected disabled>Seleccione...</option>
-                                            @foreach ($productos as $obj)
-                                                <option value="{{ $obj->Id }}"
-                                                    {{ old('Productos') == $obj->Id ? 'selected' : '' }}>
-                                                    {{ $obj->Nombre }}
-                                                </option>
-                                            @endforeach
+
                                         </select>
                                         @error('Productos')
                                             <div class="text-danger">{{ $message }}</div>
@@ -84,12 +79,7 @@
                                         <select name="Planes" id="Planes" class="form-control select2"
                                             style="width: 100%" required>
                                             <option value="" selected disabled>Seleccione...</option>
-                                            @foreach ($planes as $obj)
-                                                <option value="{{ $obj->Id }}"
-                                                    {{ old('Planes') == $obj->Id ? 'selected' : '' }}>
-                                                    {{ $obj->Nombre }}
-                                                </option>
-                                            @endforeach
+
                                         </select>
                                         @error('Planes')
                                             <div class="text-danger">{{ $message }}</div>
@@ -358,6 +348,36 @@
                     }
                 });
             });
+
+            $("#Aseguradora").change(function() {
+                $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
+                var Aseguradora = $(this).val();
+
+                $.get("{{ url('get_producto') }}" + '/' + Aseguradora, function(data) {
+                    //esta el la peticion get, la cual se divide en tres partes. ruta,variables y funcion
+                    console.log(data);
+                    var _select = '<option value=""> Seleccione </option>';
+                    for (var i = 0; i < data.length; i++)
+                        _select += '<option value="' + data[i].Id + '"  >' + data[i].Nombre +
+                        '</option>';
+                    $("#Productos").html(_select);
+                });
+            });
+
+            $("#Productos").change(function() {
+                $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
+                var Productos = $(this).val();
+
+                $.get("{{ url('get_plan') }}" + '/' + Productos, function(data) {
+                    //esta el la peticion get, la cual se divide en tres partes. ruta,variables y funcion
+                    console.log(data);
+                    var _select = '<option value=""> Seleccione </option>';
+                    for (var i = 0; i < data.length; i++)
+                        _select += '<option value="' + data[i].Id + '"  >' + data[i].Nombre +
+                        '</option>';
+                    $("#Planes").html(_select);
+                });
+            })
 
         });
 
