@@ -77,15 +77,15 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
         </tr>
         <tr>
             <td style="background-color: lightgrey;">Anexo</td>
-            <td colspan="2" align="center">{{$recibo_historial->Anexo}}</td>
+            <td colspan="2">{{$recibo_historial->Anexo}}</td>
         </tr>
         <tr>
             <td style="background-color: lightgrey;">Referencia</td>
-            <td colspan="2" align="center">{{$recibo_historial->Referencia}}</td>
+            <td colspan="2">{{$recibo_historial->Referencia}}</td>
         </tr>
         <tr>
             <td style="background-color: lightgrey;">Factura (s) a Nombre de</td>
-            <td colspan="2" align="center">{{$deuda->clientes->Nombre}} </td>
+            <td colspan="2">{{$deuda->clientes->Nombre}} </td>
         </tr>
     </table>
     <br>
@@ -184,8 +184,8 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
     </table>
     <br><br>
     <table border="1" cellspacing="0" style="width: 100%;">
-        <tr style="background-color: lightgrey;">
-            <th style="width: 14.28%;">Cuota</th>
+        <tr style="background-color: lightgrey;"  height="25px">
+            <th style="width: 14.28%;" height="22">Cuota</th>
             <th style="width: 14.28%;">Número de <br> documento</th>
             <th style="width: 14.28%;">Fecha de vencimiento</th>
             <th style="width: 14.28%;">Prima A Cobrar</th>
@@ -195,7 +195,7 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
         </tr>
 
         <tr>
-            <td style="text-align: center;">01/01</td>
+            <td style="text-align: center;" height="22">01/01</td>
             <td style="text-align: center;">{{$recibo_historial->NumeroCorrelativo}}</td>
             <td style="text-align: center;">{{ \Carbon\Carbon::parse($recibo_historial->FechaInicio)->format('d/m/Y') }}</td>
             <td style="text-align: right;">${{number_format($recibo_historial->PrimaDescontada,2,'.',',')}}</td>
@@ -204,7 +204,7 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
             <td style="text-align: right;">${{number_format($recibo_historial->TotalAPagar,2,'.',',')}}</td>
         </tr>
         <tr>
-            <td colspan="3" align="center">TOTAL </td>
+            <td height="22" colspan="3" align="center">TOTAL </td>
             <td style="text-align: right;">${{number_format($recibo_historial->PrimaDescontada,2,'.',',')}}</td>
             <td style="text-align: right;">${{number_format($recibo_historial->ValorCCF,2,'.',',')}}</td>
             <td></td>
