@@ -95,12 +95,7 @@
                                         <select name="Productos" id="Productos" class="form-control select2"
                                             style="width: 100%" required>
                                             <option value="" selected disabled>Seleccione...</option>
-                                            @foreach ($productos as $obj)
-                                                <option value="{{ $obj->Id }}"
-                                                    {{ old('Productos') == $obj->Id ? 'selected' : '' }}>
-                                                    {{ $obj->Nombre }}
-                                                </option>
-                                            @endforeach
+
                                         </select>
                                     </div>
                                     <div class="col-sm-2">
@@ -108,11 +103,7 @@
                                         <select name="Planes" id="Planes" class="form-control select2"
                                             style="width: 100%" required>
                                             <option value="" selected disabled>Seleccione...</option>
-                                            @foreach ($planes as $obj)
-                                                <option value="{{ $obj->Id }}"
-                                                    {{ old('Planes') == $obj->Id ? 'selected' : '' }}>{{ $obj->Nombre }}
-                                                </option>
-                                            @endforeach
+
                                         </select>
                                     </div>
                                     <div class="col-sm-8">
