@@ -37,7 +37,7 @@
                         <div class="form-group">
                             <div class="col-sm-12">
                                 <label class="control-label">Anexo</label>
-                                <textarea class="form-control" rows="4" name="Anexo"></textarea>
+                                <input type="text" class="form-control" name="Anexo">
                             </div>
                         </div>
                         <div class="form-group">
@@ -128,10 +128,10 @@
                     @endforeach
                 </div>
             </div>
-        
+
             <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                    
+
                 </div>
 
         </div>
