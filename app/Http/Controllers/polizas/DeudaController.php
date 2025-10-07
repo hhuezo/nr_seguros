@@ -1195,6 +1195,7 @@ class DeudaController extends Controller
         $detalle = DeudaDetalle::findOrFail($id);
 
         $deuda = Deuda::findOrFail($detalle->Deuda);
+        $cliente = Cliente::findOrFail($deuda->Asegurado);
         $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
         $recibo_historial = DeudaHistorialRecibo::where('PolizaDeudaDetalle', $id)->orderBy('id', 'desc')->first();
@@ -1211,7 +1212,9 @@ class DeudaController extends Controller
 
         $configuracion = ConfiguracionRecibo::first();
 
-        $pdf = \PDF::loadView('polizas.deuda.recibo', compact('configuracion', 'recibo_historial', 'detalle', 'deuda', 'meses', 'exportar'))->setWarnings(false)->setPaper('letter');
+        //return view('polizas.deuda.recibo', compact('configuracion', 'recibo_historial', 'detalle', 'deuda', 'meses', 'exportar'));
+
+        $pdf = \PDF::loadView('polizas.deuda.recibo', compact('configuracion','cliente', 'recibo_historial', 'detalle', 'deuda', 'meses', 'exportar'))->setWarnings(false)->setPaper('letter');
         //  dd($detalle);
         return $pdf->stream('Recibos.pdf');
     }
