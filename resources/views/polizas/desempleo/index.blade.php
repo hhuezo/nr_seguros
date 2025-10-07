@@ -21,7 +21,7 @@
                 <table id="datatable" class="table table-striped table-bordered">
                     <thead>
                         <tr>
-                            <td style="width: 150px;">{{ $obj->NumeroPoliza }}</td>
+                            <td style="width: 150px;">Numero poliza</td>
                             <th>Asegurado</th>
                             <th>Aseguradora</th>
                             <th>Ejecutivo</th>
@@ -33,7 +33,7 @@
                         @foreach ($desempleo as $obj)
                             <tr>
                                 <!-- Número de Póliza -->
-                                <td>{{ $obj->NumeroPoliza }}</td>
+                                 <td  style="width: 150px;">{{ $obj->NumeroPoliza }}</td>
 
                                 <!-- Asegurado -->
                                 <td>
