@@ -274,12 +274,13 @@ class VidaFedeController extends Controller
 
             //validar cantidad asegurada o multi categoria error 10
 
-            if (!in_array($obj->SumaAsegurada, $montos)) {
-                $obj->TipoError = 10;
-                $obj->update();
+            // if (!in_array($obj->SumaAsegurada, $montos)) {
+            //     dd("");
+            //     $obj->TipoError = 10;
+            //     $obj->update();
 
-                array_push($errores_array, 10);
-            }
+            //     array_push($errores_array, 10);
+            // }
 
 
             // 11 error nombres o apellidos con caracteres inválidos
@@ -325,10 +326,14 @@ class VidaFedeController extends Controller
                     }
                 }
             } else if ($poliza_vida->TipoCobro == 1) {
+
+
                 //suma abierta
 
                 $min = $poliza_vida->SumaMinima;
                 $max = $poliza_vida->SumaMaxima;
+
+
 
                 $sumasPorCliente = [];
                 foreach ($cartera_temp as $obj1) {
@@ -339,6 +344,8 @@ class VidaFedeController extends Controller
                 }
 
                 foreach ($sumasPorCliente as $cliente => $sumaTotal) {
+
+
                     if ($sumaTotal < $min ||  $sumaTotal > $max) {
                         $obj->TipoError = 14;
                         $obj->update();
@@ -346,6 +353,8 @@ class VidaFedeController extends Controller
                         array_push($errores_array, 14);
                     }
                 }
+
+
             }
 
 
