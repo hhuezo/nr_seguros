@@ -395,9 +395,9 @@
                                 <div class="col-sm-6">
                                     Tarificación
                                     <select name="Tarificacion" id="ModalCoberturaTarificacion" class="form-control" required>
-                                        <option value="0" {{ old('Tarificacion') == "0" ? 'selected' : '' }}>Porcentual</option>
-                                        <option value="1" {{ old('Tarificacion') == "1" ? 'selected' : '' }}>Millar</option>
-                                        <option value="2" {{ old('Tarificacion') == "2" ? 'selected' : '' }}>Prima</option>
+                                        @foreach ($tarificaciones  as $tarificacion)
+                                            <option value="{{$tarificacion->Id}}" {{$producto->Tarificacion = $tarificacion->Id ? 'selectred':''}}>{{$tarificacion->Nombre}}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
