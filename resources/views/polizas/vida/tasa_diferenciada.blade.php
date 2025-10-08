@@ -187,7 +187,7 @@
                                             @endif
 
                                             <div class="text-center">
-                                                @if ($tipo->VidaTipoCartera > 1 && $tipo->TipoCalculo > 0)
+                                                @if ($tipo->TipoCalculo > 0)
                                                     <button class="btn btn-primary" type="button"
                                                         data-target="#modal-tasa-diferenciada" data-toggle="modal"
                                                         onclick="show_modal_tasa_diferenciada({{ $tipo->Id }},{{ $tipo->TipoCalculo }},{{ $tipo->TipoCalculo }})"><i
