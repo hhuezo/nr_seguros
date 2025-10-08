@@ -880,6 +880,7 @@ class VidaController extends Controller
 
     public function validar_poliza($id)
     {
+
         $poliza_vida = Vida::findOrFail($id);
 
 
@@ -914,6 +915,8 @@ class VidaController extends Controller
 
             // $poliza_responsabilidad_maxima = VidaCarteraTemp::where('PolizaVida', $id)
             //     ->whereColumn('SumaAsegurada', '>', 'MontoMaximoIndividual')->get();
+
+                VidaCarteraTemp::where('PolizaVida', $id)->update(["Tasa"=>$poliza_vida->Tasa]);
 
                 $poliza_responsabilidad_maxima = VidaCarteraTemp::where('Id', 0)->get();
 
@@ -1030,7 +1033,6 @@ class VidaController extends Controller
 
     public function create_pago(Request $request)
     {
-
         $request->validate([
             'Axo' => 'required|integer',
             'Mes' => 'required|integer|between:1,12',
@@ -1401,7 +1403,7 @@ class VidaController extends Controller
 
         $tasas_diferenciadas = $vida_tipo_cartera->tasa_diferenciada;
 
-
+        dd($vida_tipo_cartera->TipoCalculo );
         if ($vida_tipo_cartera->TipoCalculo == 1) {
             foreach ($tasas_diferenciadas as $tasa) {
                 //dd($tasa);
