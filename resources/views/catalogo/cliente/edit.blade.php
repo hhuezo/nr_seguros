@@ -862,29 +862,31 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($contactos as $obj)
+                                        @foreach ($contactos as $contacto)
                                             <tr>
-                                                <td>{{ $obj->Nombre }}</td>
-                                                @if ($obj->cargo)
-                                                    <td>{{ $obj->cargo->Nombre }}</td>
+                                                <td>{{ $contacto->Nombre }}</td>
+                                                @if ($contacto->cargo)
+                                                    <td>{{ $contacto->cargo->Nombre }}</td>
                                                 @else
                                                     <td></td>
                                                 @endif
-                                                <td>{{ $obj->Telefono }}</td>
-                                                <td>{{ $obj->Email }}</td>
-                                                <td>{{ $obj->LugarTrabajo }}</td>
+                                                <td>{{ $contacto->Telefono }}</td>
+                                                <td>{{ $contacto->Email }}</td>
+                                                <td>{{ $contacto->LugarTrabajo }}</td>
                                                 <td>
                                                     <i class="fa fa-pencil fa-lg"
-                                                        onclick="modal_edit_contacto({{ $obj->Id }},'{{ $obj->Cargo }}','{{ $obj->Nombre }}','{{ $obj->Telefono }}','{{ $obj->Email }}','{{ $obj->LugarTrabajo }}')"
-                                                        data-target="#modal-edit-contacto" data-toggle="modal"></i>
+                                                        onclick="modal_edit_contacto({{ $contacto->Id }},'{{ $contacto->Cargo }}','{{ $contacto->Nombre }}','{{ $contacto->Telefono }}','{{ $contacto->Email }}','{{ $contacto->LugarTrabajo }}')"
+                                                        data-target="#modal-edit-contacto-{{ $contacto->Id }}" data-toggle="modal"></i>
                                                     &nbsp;&nbsp;
                                                     <i class="fa fa-trash fa-lg"
-                                                        onclick="modal_delete_contacto({{ $obj->Id }})"
+                                                        onclick="modal_delete_contacto({{ $contacto->Id }})"
                                                         data-target="#modal-delete-contacto" data-toggle="modal"></i>
 
 
                                                 </td>
                                             </tr>
+
+                                            @include('catalogo.cliente.contacto_edit')
                                         @endforeach
                                     </tbody>
                                 </table>
