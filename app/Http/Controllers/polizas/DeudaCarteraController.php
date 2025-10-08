@@ -1289,12 +1289,16 @@ class DeudaCarteraController extends Controller
             JOIN (
                 SELECT Dui, SUM(TotalCredito) AS total_saldo_cumulo
                 FROM poliza_deuda_temp_cartera
+                WHERE PolizaDeuda = ?
                 GROUP BY Dui
             ) p2 ON p1.Dui = p2.Dui
             SET p1.SaldoCumulo = p2.total_saldo_cumulo
-        ");
+            WHERE p1.PolizaDeuda = ?
+        ", [$request->Deuda, $request->Deuda]);
 
-        $poliza_cumulos = PolizaDeudaTempCartera::where('User', auth()->user()->id)->where('PolizaDeuda', $request->Deuda)->get();
+
+
+        $poliza_cumulos = PolizaDeudaTempCartera::where('PolizaDeuda', $request->Deuda)->get();
 
         foreach ($requisitos as $requisito) {
             if ($requisito->perfil->PagoAutomatico == 1 || $requisito->perfil->DeclaracionJurada == 1) {
@@ -1318,6 +1322,12 @@ class DeudaCarteraController extends Controller
                 ->where('SaldoCumulo', '>=', $requisito->MontoInicial)->where('SaldoCumulo', '<=', $requisito->MontoFinal)
                 ->pluck('Dui')->toArray();
 
+            // if (in_array('000744688', $data_dui_cartera)) {
+
+            //     $a = $poliza_cumulos->where('Dui', '000744688');
+            //     dd($requisito, $a);
+            // }
+
 
             PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
                 ->whereIn('Dui', $data_dui_cartera)
@@ -1340,7 +1350,7 @@ class DeudaCarteraController extends Controller
                 ]);
         }
 
-
+        // dd($requisitos);
         //inicializamos los no validos a cero
         PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('MontoMaximoIndividual', 0)
             ->update(['NoValido' => 0]);
