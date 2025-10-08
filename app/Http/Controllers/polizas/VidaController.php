@@ -910,16 +910,10 @@ class VidaController extends Controller
         $poliza_edad_maxima = VidaCarteraTemp::where('PolizaVida', $id)->where('EdadDesembloso', '>', $poliza_vida->EdadMaximaInscripcion)->get();
         $poliza_edad_terminacion = VidaCarteraTemp::where('PolizaVida', $id)->where('EdadDesembloso', '>', $poliza_vida->EdadTerminacion)->get();
 
+        VidaCarteraTemp::where('PolizaVida', $id)->update(["Tasa" => $poliza_vida->Tasa]);
 
         if ($poliza_vida->TipoCobro == 1) {
-
-            // $poliza_responsabilidad_maxima = VidaCarteraTemp::where('PolizaVida', $id)
-            //     ->whereColumn('SumaAsegurada', '>', 'MontoMaximoIndividual')->get();
-
-                VidaCarteraTemp::where('PolizaVida', $id)->update(["Tasa"=>$poliza_vida->Tasa]);
-
-                $poliza_responsabilidad_maxima = VidaCarteraTemp::where('Id', 0)->get();
-
+            $poliza_responsabilidad_maxima = VidaCarteraTemp::where('Id', 0)->get();
         } else {
             $poliza_responsabilidad_maxima = VidaCarteraTemp::where('Id', 0)->get();
         }
@@ -1403,7 +1397,7 @@ class VidaController extends Controller
 
         $tasas_diferenciadas = $vida_tipo_cartera->tasa_diferenciada;
 
-        dd($vida_tipo_cartera->TipoCalculo );
+        dd($vida_tipo_cartera->TipoCalculo);
         if ($vida_tipo_cartera->TipoCalculo == 1) {
             foreach ($tasas_diferenciadas as $tasa) {
                 //dd($tasa);
