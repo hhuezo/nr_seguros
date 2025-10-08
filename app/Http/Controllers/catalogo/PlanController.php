@@ -4,6 +4,7 @@ namespace App\Http\Controllers\catalogo;
 
 use App\Http\Controllers\Controller;
 use App\Models\catalogo\Cobertura;
+use App\Models\catalogo\CoberturaTarificacion;
 use App\Models\catalogo\Plan;
 use App\Models\catalogo\PlanCoberturaDetalle;
 use App\Models\catalogo\Producto;
@@ -43,11 +44,9 @@ class PlanController extends Controller
 
     public function getCoberturas(Request $request)
     {
-        $tarificacion = ["Millar", "Porcentual", "Prima"];
         $datosRecibidos = Cobertura::where('Activo', '=', 1)->where('Producto', '=', $request->ProductoId)->get();
         foreach ($datosRecibidos as $dato) {
-            $indice = (int)$dato->Tarificacion;
-            $dato->Tarificacion = $tarificacion[$indice] ?? 'Desconocido';
+            $dato->Tarificacion = $dato->tarificacion->Nombre ?? '';
         }
 
         if ($datosRecibidos->count() > 0) {

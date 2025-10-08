@@ -5,6 +5,7 @@ namespace App\Http\Controllers\catalogo;
 use App\Http\Controllers\Controller;
 use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\Cobertura;
+use App\Models\catalogo\CoberturaTarificacion;
 use App\Models\catalogo\DatosTecnicos;
 use App\Models\catalogo\NecesidadProteccion;
 use App\Models\catalogo\Producto;
@@ -79,20 +80,20 @@ class ProductoController extends Controller
             session(['tab1' => '1']);
         }
 
-        $tarificacion = ['Porcentual', 'MIllar', 'Prima'];
 
         $producto = Producto::findOrFail($id);
         $aseguradoras = Aseguradora::where('Activo', '=', 1)->get();
         $ramos = NecesidadProteccion::where('Activo', '=', 1)->get();
         $coberturas = Cobertura::where('Activo', '=', 1)->where('Producto', '=', $producto->Id)->get();
         $datos_tecnicos = DatosTecnicos::where('Activo', '=', 1)->where('Producto', '=', $producto->Id)->get();
+        $tarificaciones = CoberturaTarificacion::where('Activo',1)->get();
         return view('catalogo/producto/edit', compact(
             'producto',
             'aseguradoras',
             'ramos',
             'coberturas',
             'datos_tecnicos',
-            'tarificacion'
+            'tarificaciones'
         ));
     }
 

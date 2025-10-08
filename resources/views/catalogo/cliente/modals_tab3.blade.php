@@ -73,77 +73,7 @@
 </div>
 
 <div class="col-12">
-    <div class="modal fade modal-edit-contacto" tabindex="-1" role="dialog" aria-hidden="true"
-        id="modal-edit-contacto">
-        <div class="modal-dialog modal-lg">
-            <form method="POST" action="{{ url('catalogo/cliente/edit_contacto') }}">
-                @csrf
-                <div class="modal-content">
 
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="myModalLabel">Editar contacto</h4>
-                        <input type="hidden" name="Id" id="ModalContactoId" class="form-control" required>
-                    </div>
-                    <div class="modal-body">
-                        <input type="hidden" name="Cliente" value="{{ $cliente->Id }}" class="form-control">
-                        <div class="form-group">
-                            <div class="col-sm-6">
-                                Nombre *
-                                <input type="text" name="Nombre" id="ModalContactoNombre" class="form-control" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)"
-                                    required>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-sm-6">
-                                Cargo *
-                                <select name="Cargo" id="ModalContactoCargo" class="form-control"
-                                    required>
-                                    @foreach ($cliente_contacto_cargos as $cargo)
-                                        <option value="{{ $cargo->Id }}">{{ $cargo->Nombre }}</option>
-                                    @endforeach
-
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-sm-6">
-                                Teléfono *
-                                <input type="text" name="Telefono" id="ModalContactoTelefono"
-                                    data-inputmask="'mask': ['9999-9999']" data-mask class="form-control">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-sm-6">
-                                Email *
-                                <input type="email" name="Email" id="ModalContactoEmail" class="form-control">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-sm-6">
-                                Lugar Trabajo *
-                                <input type="text" name="LugarTrabajo" id="ModalContactoLugarTrabajo" oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)"
-                                    class="form-control">
-                            </div>
-                        </div>
-                        <div class="form-group"> * Campo requerido</div>
-
-
-
-                    </div>
-                    <div>&nbsp; </div>
-                    <div class="clearfix"></div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-primary">Guardar</button>
-                    </div>
-
-            </form>
-
-        </div>
-    </div>
 </div>
 
 <div class="col-12">
