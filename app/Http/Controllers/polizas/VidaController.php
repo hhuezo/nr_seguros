@@ -1563,7 +1563,7 @@ class VidaController extends Controller
         try {
             VidaCarteraTemp::where('PolizaVida', '=', $request->PolizaVida)->delete();
 
-            VidaCartera::where('PolizaVida', '=', $request->PolizaVida)->where('User', auth()->user()->id)->where('PolizaVidaDetalle', null)->delete();
+            VidaCartera::where('PolizaVida', '=', $request->PolizaVida)->where('PolizaVidaDetalle', null)->delete();
         } catch (\Throwable $th) {
             //throw $th;
         }
