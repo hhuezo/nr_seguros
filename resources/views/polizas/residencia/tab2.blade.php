@@ -342,7 +342,7 @@
                                         {{ $descuento != 0 ? number_format($descuento, 2, '.', ',') : 0 }}
                                     </td>
                                     <td class="numeric total" contenteditable="true" id="prima_descontada"
-                                        onblur="actualizarCalculos()">
+                                        onblur="actualizarCalculosPrimaDescontada()">
                                         {{ $total_prima_descontada != 0 ? number_format($total_prima_descontada, 2, '.', ',') : 0 }}
                                     </td>
                                 </tr>
@@ -452,7 +452,8 @@
                                 </tr>
                                 <tr>
                                     <td>Sub Total</td>
-                                    <td id="sub_total" class="numeric editable" contenteditable="true" onblur="actualizarCalculos()"></td>
+                                    <td id="sub_total" class="numeric editable" contenteditable="true"
+                                        onblur="actualizarCalculos()"></td>
                                 </tr>
                                 <tr>
                                     <td>13% Iva</td>
@@ -592,6 +593,8 @@
 
 <script>
     function actualizarCalculos() {
+
+
         //alert(document.getElementById('monto_cartera').innerText);
         let monto = convertirANumero(document.getElementById('monto_cartera').innerText);
         console.log(monto);
@@ -658,6 +661,154 @@
         document.getElementById('prima_calculada').innerText = formatearCantidad(decimales);
         document.getElementById('prima_mensual').innerText = formatearCantidad(prima_mensual);
         document.getElementById('prima_descontada').innerText = formatearCantidad(prima_descontada);
+        document.getElementById('descuento').innerText = formatearCantidad(descuento);
+        document.getElementById('total_prima_descontada').innerText = formatearCantidad(prima_descontada);
+
+        //funcion para los calculos totales
+
+
+        document.getElementById('impuestos_bomberos').innerText = formatearCantidad(bomberos);
+
+        if (gastos == 0) {
+            document.getElementById('gastos_emision').innerText = formatearCantidad(0);
+
+        } else {
+            document.getElementById('gastos_emision').innerText = formatearCantidad(gastos);
+
+        }
+        if (otros == 0) {
+            document.getElementById('otros').innerText = formatearCantidad(0);
+
+        } else {
+            document.getElementById('otros').innerText = formatearCantidad(otros);
+
+        }
+        gastos = document.getElementById('gastos_emision').innerText;
+        otros = document.getElementById('otros').innerText;
+
+        sub_total = (parseFloat(prima_descontada) + parseFloat(bomberos) + parseFloat(gastos) + parseFloat(otros));
+
+        document.getElementById('sub_total').innerText = formatearCantidad(sub_total);
+        let iva_form = 0;
+        if (tipo_contribuyente != 4) {
+            iva_form = 0.13;
+        } else {
+            iva_form = 0;
+        }
+        iva = parseFloat(sub_total) * parseFloat(iva_form);
+
+        document.getElementById('iva').innerText = formatearCantidad(iva);
+
+
+        //calculo ccf
+        let prima_cobrar = sub_total;
+        document.getElementById('prima_a_cobrar_ccf').textContent = formatearCantidad(sub_total);
+        let valor_comision = (parseFloat(tasa_comision) / 100) * parseFloat(prima_cobrar);
+        document.getElementById('valor_comision').textContent = formatearCantidad(valor_comision);
+        let iva_comision = 0;
+        //el cliente no contribuyente, no paga iva
+
+        if (tipo_contribuyente != 4) {
+            iva_comision = (parseFloat(valor_comision) * 0.13);
+        } else {
+            iva_comision = 0;
+        }
+        document.getElementById('iva_comision').textContent = formatearCantidad(iva_comision);
+        let sub_total_ccf = (parseFloat(iva_comision) + parseFloat(valor_comision));
+        document.getElementById('sub_total_ccf').textContent = formatearCantidad(sub_total_ccf);
+        let comision = 0;
+        let retencion = 0;
+        if (tipo_contribuyente == 1) {
+            retencion = (parseFloat(valor_comision) * 0.01);
+        }
+
+        document.getElementById('retencion_comision').textContent = formatearCantidad(retencion);
+        let comision_ccf = parseFloat(sub_total_ccf) - parseFloat(retencion);
+        document.getElementById('comision_ccf').textContent = formatearCantidad(comision_ccf);
+        document.getElementById('comision').textContent = formatearCantidad(comision_ccf);
+
+        console.log();
+        let liquido_pagar = (parseFloat(sub_total) + parseFloat(iva) - parseFloat(comision_ccf));
+        document.getElementById('liquido_pagar').textContent = formatearCantidad(liquido_pagar);
+        let total_factura = (parseFloat(sub_total) + parseFloat(iva));
+        document.getElementById('total_factura').textContent = formatearCantidad(total_factura);
+
+        //llenado de form
+        document.getElementById('MontoCarteraDetalle').value = parseFloat(monto);
+        document.getElementById('PrimaCalculadaDetalle').value = parseFloat(decimales);
+        document.getElementById('PrimaDescontadaDetalle').value = parseFloat(prima_descontada);
+        document.getElementById('IvaDetalle').value = parseFloat(iva);
+        document.getElementById('SubTotalDetalle').value = parseFloat(sub_total);
+        document.getElementById('ComisionDetalle').value = parseFloat(valor_comision);
+        document.getElementById('IvaComisionDetalle').value = parseFloat(iva_comision);
+        document.getElementById('RetencionDetalle').value = parseFloat(retencion);
+        document.getElementById('ValorCCFDetalle').value = parseFloat(comision_ccf);
+        document.getElementById('APagarDetalle').value = parseFloat(liquido_pagar);
+        document.getElementById('DescuentoDetalle').value = parseFloat(descuento);
+        document.getElementById('GastosEmisionDetalle').value = parseFloat(gastos);
+        document.getElementById('OtrosDetalle').value = parseFloat(otros);
+        document.getElementById('PrimaTotalDetalle').value = parseFloat(prima_descontada);
+
+    }
+
+
+
+
+    function actualizarCalculosPrimaDescontada() {
+
+
+        //alert(document.getElementById('monto_cartera').innerText);
+        let monto = convertirANumero(document.getElementById('monto_cartera').innerText);
+        console.log(monto);
+        let aseguradora = {{ $residencia->Aseguradora }};
+        let tasa = {{ $residencia->Tasa }};
+        let millar = 0;
+        let dias_mes = {{ $dias_mes }};
+        let decimales = 0;
+        let diario = {{ $residencia->aseguradoras->Diario ? 1 : 0 }};
+        let dias_axo =
+            {{ $residencia->aseguradoras->Diario == 1 && $residencia->aseguradoras->Dias365 == 1 ? 365 : $dias_axo }};
+        let descuento = 0;
+        let tasadescuento = {{ $residencia->TasaDescuento }};
+        let sub_total = 0;
+        let bomberos = {{ $bomberos }};
+        let gastos = document.getElementById('gastos_emision').innerText;
+        let otros = document.getElementById('otros').innerText;
+        let iva = 0;
+        let ccf = 0;
+        let comision_iva = {{ $residencia->ComisionIva ?? 0 }};
+        let total = 0;
+        let tasa_comision = 0;
+        let var_com = {{ $residencia->Comision }};
+        let prima_mensual = 0;
+        if (comision_iva == 1) {
+            tasa_comision = var_com / 1.13;
+        } else {
+            tasa_comision = var_com;
+
+        }
+        let tipo_contribuyente = {{ $residencia->clientes->TipoContribuyente ?? 0 }};
+        console.log("tipo_contribuyente ", tipo_contribuyente);
+        if (aseguradora == 3) {
+            //fede
+            millar = tasa / 1000;
+        } else {
+            //sisa
+            millar = (tasa / 1000) / 12;
+        }
+        //dias_mes = 31;
+        decimales = (monto * millar);
+
+        let prima_descontada = convertirANumero(document.getElementById('prima_descontada').innerText);
+
+
+        console.log("prima_descontada ", prima_descontada)
+
+
+        document.getElementById('prueba_decimales').innerText = parseFloat(decimales);
+        document.getElementById('prima_calculada').innerText = formatearCantidad(decimales);
+        document.getElementById('prima_mensual').innerText = formatearCantidad(prima_mensual);
+
         document.getElementById('descuento').innerText = formatearCantidad(descuento);
         document.getElementById('total_prima_descontada').innerText = formatearCantidad(prima_descontada);
 
