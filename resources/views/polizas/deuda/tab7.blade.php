@@ -95,7 +95,7 @@
                         <td>{{ $obj->Nombre }}</td>
                         <td>{{ $obj->FechaOtorgamiento }}</td>
                         <td>${{ number_format($obj->saldo_capital, 2, '.', ',') }}</td>
-                        <td>${{ number_format($obj->Intereses, 2, '.', ',') }}</td>
+                        <td>${{ number_format($obj->interes, 2, '.', ',') }}</td>
                         <td align="right">${{ number_format($obj->total, 2, '.', ',') }}</td>
                         <td align="right">${{ number_format($obj->prima_neta, 2, '.', ',') }}</td>
                         <td>{{ $obj->PorcentajeEP }}%</td>
