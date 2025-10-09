@@ -47,20 +47,20 @@
                             inicio</label>
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                             <input class="form-control" name="Id" value="{{ $poliza_vida->Id }}" type="hidden" required>
-                            <input class="form-control" type="date" name="FechaInicio" id="FechaInicioFede{{ $obj->Id }}"  required>
+                            <input class="form-control" type="date" value="{{$fechaInicio}}"  name="FechaInicio" id="FechaInicioFede{{ $obj->Id }}"  required>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
                             final</label>
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                            <input class="form-control" name="FechaFinal" id="FechaFinalFede{{ $obj->Id }}" type="date" required>
+                            <input class="form-control" name="FechaFinal" value="{{$fechaFinal}}" id="FechaFinalFede{{ $obj->Id }}" type="date" required>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Archivo</label>
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                            <input class="form-control" name="Archivo" id="Archivo" type="file" required>
+                            <input class="form-control" name="Archivo"  id="Archivo" type="file" required>
                         </div>
                     </div>
 

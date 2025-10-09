@@ -47,7 +47,6 @@ class DeudaCarteraFedeController extends Controller
             alert()->error('No se han definido requisitos minimos de asegurabilidad');
             $deuda->Configuracion = 0;
             $deuda->update();
-            session(['tab' => 3]);
             return redirect('polizas/deuda/' . $deuda->Id);
         }
 
@@ -152,12 +151,6 @@ class DeudaCarteraFedeController extends Controller
 
         //calculando errores de cartera
         $cartera_temp = PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)->get();
-        //  dd($cartera_temp);
-
-
-
-
-
 
 
         foreach ($cartera_temp as $obj) {
@@ -292,9 +285,6 @@ class DeudaCarteraFedeController extends Controller
             ]);
 
 
-
-
-
         //tasas diferenciadas
         $tasas_diferenciadas = $deuda_tipo_cartera->tasa_diferenciada;
 
@@ -302,8 +292,7 @@ class DeudaCarteraFedeController extends Controller
 
             foreach ($tasas_diferenciadas as $tasa) {
                 //dd($tasa);
-                PolizaDeudaTempCartera::where('User', auth()->user()->id)
-                    ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                PolizaDeudaTempCartera::where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
                     ->whereBetween('FechaOtorgamientoDate', [$tasa->FechaDesde, $tasa->FechaHasta])
                     ->update([
                         'LineaCredito' => $tasa->LineaCredito,
@@ -313,8 +302,7 @@ class DeudaCarteraFedeController extends Controller
         } else  if ($deuda_tipo_cartera->TipoCalculo == 2) {
 
             foreach ($tasas_diferenciadas as $tasa) {
-                PolizaDeudaTempCartera::where('User', auth()->user()->id)
-                    ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                PolizaDeudaTempCartera::where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
                     ->whereBetween('EdadDesembloso', [$tasa->EdadDesde, $tasa->EdadHasta])
                     ->update([
                         'LineaCredito' => $tasa->LineaCredito,
@@ -323,8 +311,7 @@ class DeudaCarteraFedeController extends Controller
             }
         } else {
             foreach ($tasas_diferenciadas as $tasa) {
-                PolizaDeudaTempCartera::where('User', auth()->user()->id)
-                    ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                PolizaDeudaTempCartera::where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
                     ->update([
                         'LineaCredito' => $tasa->LineaCredito,
                         'Tasa' => $deuda->Tasa
@@ -333,7 +320,7 @@ class DeudaCarteraFedeController extends Controller
         }
 
 
-        $cartera_temp = PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->get();
+        $cartera_temp = PolizaDeudaTempCartera::where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->get();
 
         foreach ($cartera_temp as $obj) {
             $obj->TotalCredito = $obj->calculoTodalSaldo();
@@ -345,7 +332,6 @@ class DeudaCarteraFedeController extends Controller
         $MontoMaximoIndividual = $deuda_tipo_cartera->MontoMaximoIndividual;
         if (isset($MontoMaximoIndividual) && $MontoMaximoIndividual > 0) {
             $duis = PolizaDeudaTempCartera::selectRaw('Dui')
-                ->where('User', auth()->user()->id)
                 ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
                 ->groupBy('Dui')
                 ->havingRaw('SUM(TotalCredito) > ?', [$MontoMaximoIndividual])
@@ -362,15 +348,8 @@ class DeudaCarteraFedeController extends Controller
         }
 
 
-
-
         alert()->success('Exito', 'La cartera fue subida con exito');
-
-
         return back();
-
-
-        //        return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date', 'tipo_cartera', 'nombre_cartera'));
     }
 
     public function create_pago_recibo(Request $request)

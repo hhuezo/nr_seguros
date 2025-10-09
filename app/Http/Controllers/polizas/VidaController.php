@@ -843,39 +843,100 @@ class VidaController extends Controller
         $poliza_vida_tipo_cartera = $poliza_vida->vida_tipos_cartera;
 
         foreach ($poliza_vida_tipo_cartera as $item) {
-            $item->Total = VidaCarteraTemp::where('PolizaVida', $id)->where('PolizaVidaTipoCartera', $item->Id)->sum('SumaAsegurada');
+            $item->Total = VidaCarteraTemp::where('PolizaVida', $id)
+                ->where('PolizaVidaTipoCartera', $item->Id)
+                ->sum('SumaAsegurada');
         }
 
-        $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
+        $meses = [
+            '',
+            'Enero',
+            'Febrero',
+            'Marzo',
+            'Abril',
+            'Mayo',
+            'Junio',
+            'Julio',
+            'Agosto',
+            'Septiembre',
+            'Octubre',
+            'Noviembre',
+            'Diciembre'
+        ];
 
+        // 👉 Por defecto: del primer día del mes anterior al primer día del mes actual
+        $fechaInicio = Carbon::now()->subMonth()->startOfMonth();
+        $fechaFinal = Carbon::now()->startOfMonth();
+        $axo = $fechaInicio->year;
+        $mes = (int) $fechaInicio->month;
+        $anioSeleccionado = $fechaInicio->year;
 
-        $fechaInicio = Carbon::now()->subMonth()->startOfMonth()->toDateString();
-        $fechaFinal = Carbon::now()->startOfMonth()->toDateString();
-
-        // Extraer el mes y el año de $fechaFinal
-        $mes = Carbon::parse($fechaFinal)->month;
-        $anioSeleccionado = Carbon::parse($fechaFinal)->year;
-
+        // 👉 Rango de años válidos según vigencia
         $vigenciaDesde = Carbon::parse($poliza_vida->VigenciaDesde);
         $vigenciaHasta = Carbon::parse($poliza_vida->VigenciaHasta);
-
         $anios = array_combine(
             $years = range($vigenciaDesde->year, $vigenciaHasta->year),
             $years
         );
 
-        $fechas = VidaCartera::select('Mes', 'Axo', 'FechaInicio', 'FechaFinal')
-            ->where('PolizaVida', '=', $id)
-            ->orderByDesc('Id')->first();
+
+
+        // ✅ Formato Y-m-d para el Blade
+        $fechaInicio = $fechaInicio->format('Y-m-d');
+        $fechaFinal = $fechaFinal->format('Y-m-d');
+
+        // Último pago activo
+        $ultimo_pago = VidaDetalle::where('PolizaVida', $id)
+            ->where('Activo', 1)
+            ->latest('Id')
+            ->first();
+
+
+        if ($ultimo_pago) {
+            // Si hay pago, tomar la fecha inicial y final con +1 mes exacto
+            $fecha_inicial = Carbon::parse($ultimo_pago->FechaInicio);
+            $fecha_final = $fecha_inicial->copy()->addMonth();
+
+            $axo = $fecha_inicial->year;
+            $mes = (int) $fecha_inicial->month;
+
+            // Formato final Y-m-d
+            $fechaInicio = $ultimo_pago->FechaInicio;
+            $fechaFinal = $ultimo_pago->FechaFinal;
+        }
+
+
+
+
+        // Último registro temporal de cartera
+        $registro_cartera = VidaCarteraTemp::where('PolizaVida', $id)->first();
+
+        if ($registro_cartera) {
+            $axo = $registro_cartera->Axo;
+            $mes = (int) $registro_cartera->Mes;
+
+            $fechaInicio = $registro_cartera->FechaInicio;
+            $fechaFinal = $registro_cartera->FechaFinal;
+        }
+
+
+
+        //dd($mes);
+
 
         return view('polizas.vida.subir_archivos', compact(
             'poliza_vida',
             'poliza_vida_tipo_cartera',
             'meses',
             'anios',
-            'mes'
+            'axo',
+            'mes',
+            'anioSeleccionado',
+            'fechaInicio',
+            'fechaFinal'
         ));
     }
+
 
 
     public function validar_poliza($id)
@@ -1759,37 +1820,37 @@ class VidaController extends Controller
 
         // Iterar sobre los resultados y realizar la inserción en la tabla principal
         foreach ($tempData as $tempRecord) {
-           try {
-            $poliza = new VidaCartera();
-            $poliza->PolizaVida = $tempRecord->PolizaVida ?? null;
-            $poliza->Nit = $tempRecord->Nit ?? null;
-            $poliza->Dui = $tempRecord->Dui ?? null;
-            $poliza->Pasaporte = $tempRecord->Pasaporte ?? null;
-            $poliza->Nacionalidad = $tempRecord->Nacionalidad ?? null;
-            $poliza->FechaNacimiento = $tempRecord->FechaNacimiento ?? null;
-            $poliza->TipoPersona = $tempRecord->TipoPersona ?? null;
-            $poliza->PrimerApellido = $tempRecord->PrimerApellido ?? null;
-            $poliza->SegundoApellido = $tempRecord->SegundoApellido ?? null;
-            $poliza->ApellidoCasada = $tempRecord->ApellidoCasada ?? null;
-            $poliza->PrimerNombre = $tempRecord->PrimerNombre ?? null;
-            $poliza->SegundoNombre = $tempRecord->SegundoNombre ?? null;
-            $poliza->Sexo = $tempRecord->Sexo ?? null;
-            $poliza->FechaOtorgamiento = $tempRecord->FechaOtorgamiento ?? null;
-            $poliza->FechaVencimiento = $tempRecord->FechaVencimiento ?? null;
-            $poliza->NumeroReferencia = $tempRecord->NumeroReferencia ?? null;
-            $poliza->SumaAsegurada = $tempRecord->SumaAsegurada ?? null;
-            $poliza->User = $tempRecord->User;
-            $poliza->Axo = $tempRecord->Axo ?? null;
-            $poliza->Mes = $tempRecord->Mes ?? null;
-            $poliza->FechaInicio = $tempRecord->FechaInicio ?? null;
-            $poliza->FechaFinal = $tempRecord->FechaFinal ?? null;
-            $poliza->FechaNacimientoDate = $tempRecord->FechaNacimientoDate ?? null;
-            $poliza->FechaOtorgamientoDate = $tempRecord->FechaOtorgamientoDate ?? null;
-            $poliza->Edad = $tempRecord->Edad ?? null;
-            $poliza->EdadDesembloso = $tempRecord->EdadDesembloso ?? null;
-            $poliza->PolizaVidaTipoCartera = $tempRecord->PolizaVidaTipoCartera ?? null;
-            $poliza->Tasa = $tempRecord->Tasa ?? null;
-            $poliza->save();
+            try {
+                $poliza = new VidaCartera();
+                $poliza->PolizaVida = $tempRecord->PolizaVida ?? null;
+                $poliza->Nit = $tempRecord->Nit ?? null;
+                $poliza->Dui = $tempRecord->Dui ?? null;
+                $poliza->Pasaporte = $tempRecord->Pasaporte ?? null;
+                $poliza->Nacionalidad = $tempRecord->Nacionalidad ?? null;
+                $poliza->FechaNacimiento = $tempRecord->FechaNacimiento ?? null;
+                $poliza->TipoPersona = $tempRecord->TipoPersona ?? null;
+                $poliza->PrimerApellido = $tempRecord->PrimerApellido ?? null;
+                $poliza->SegundoApellido = $tempRecord->SegundoApellido ?? null;
+                $poliza->ApellidoCasada = $tempRecord->ApellidoCasada ?? null;
+                $poliza->PrimerNombre = $tempRecord->PrimerNombre ?? null;
+                $poliza->SegundoNombre = $tempRecord->SegundoNombre ?? null;
+                $poliza->Sexo = $tempRecord->Sexo ?? null;
+                $poliza->FechaOtorgamiento = $tempRecord->FechaOtorgamiento ?? null;
+                $poliza->FechaVencimiento = $tempRecord->FechaVencimiento ?? null;
+                $poliza->NumeroReferencia = $tempRecord->NumeroReferencia ?? null;
+                $poliza->SumaAsegurada = $tempRecord->SumaAsegurada ?? null;
+                $poliza->User = $tempRecord->User;
+                $poliza->Axo = $tempRecord->Axo ?? null;
+                $poliza->Mes = $tempRecord->Mes ?? null;
+                $poliza->FechaInicio = $tempRecord->FechaInicio ?? null;
+                $poliza->FechaFinal = $tempRecord->FechaFinal ?? null;
+                $poliza->FechaNacimientoDate = $tempRecord->FechaNacimientoDate ?? null;
+                $poliza->FechaOtorgamientoDate = $tempRecord->FechaOtorgamientoDate ?? null;
+                $poliza->Edad = $tempRecord->Edad ?? null;
+                $poliza->EdadDesembloso = $tempRecord->EdadDesembloso ?? null;
+                $poliza->PolizaVidaTipoCartera = $tempRecord->PolizaVidaTipoCartera ?? null;
+                $poliza->Tasa = $tempRecord->Tasa ?? null;
+                $poliza->save();
             } catch (\Exception $e) {
                 // Captura errores y los guarda en el log
                 Log::error("Error al insertar en poliza_vida_cartera: " . $e->getMessage(), [

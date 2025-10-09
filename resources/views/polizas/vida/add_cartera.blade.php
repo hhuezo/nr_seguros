@@ -29,7 +29,7 @@
                             <select name="Axo" id="Axo{{ $obj->Id }}" class="form-control"
                                 onchange="calcularFechas('Axo{{ $obj->Id }}', 'Mes{{ $obj->Id }}', 'FechaInicio{{ $obj->Id }}', 'FechaFinal{{ $obj->Id }}')">
                                 @foreach ($anios as $year => $value)
-                                    <option value="{{ $value }}" {{ $value == date('Y') ? 'selected' : '' }}>
+                                    <option value="{{ $value }}"  {{ $axo == $value ? 'selected' : '' }}>
                                         {{ $value }}
                                     </option>
                                 @endforeach
@@ -42,7 +42,7 @@
                             <select name="Mes" id="Mes{{ $obj->Id }}" class="form-control"
                                 onchange="calcularFechas('Axo{{ $obj->Id }}', 'Mes{{ $obj->Id }}', 'FechaInicio{{ $obj->Id }}', 'FechaFinal{{ $obj->Id }}')">
                                 @for ($i = 1; $i <= 12; $i++)
-                                    <option value="{{ $i }}">
+                                    <option value="{{ $i }}" {{ $mes == $i ? 'selected' : '' }}>
                                         {{ $meses[$i] }}
                                     </option>
                                 @endfor
@@ -56,14 +56,14 @@
                             <input class="form-control" name="Id" value="{{ $poliza_vida->Id }}" type="hidden"
                                 required>
                             <input class="form-control" type="date" name="FechaInicio"
-                                id="FechaInicio{{ $obj->Id }}" required>
+                                id="FechaInicio{{ $obj->Id }}" value="{{$fechaInicio}}" required>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
                             final</label>
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                            <input class="form-control" name="FechaFinal" id="FechaFinal{{ $obj->Id }}"
+                            <input class="form-control" name="FechaFinal" id="FechaFinal{{ $obj->Id }}" value="{{$fechaFinal}}"
                                 max="{{ !empty($poliza_vida->VigenciaHasta) && strtotime($poliza_vida->VigenciaHasta) ? date('Y-m-d', strtotime($poliza_vida->VigenciaHasta)) : '' }}"
                                 type="date" required>
                         </div>

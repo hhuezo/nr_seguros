@@ -1024,75 +1024,6 @@ class DeudaCarteraController extends Controller
 
         return response()->json(['success' => true, 'conteo' => $conteo]);
 
-
-        dd($existe);
-        /*    //$sub_total = $deuda->total_saldo + $deuda->total_interes + $deuda->total_covid + $deuda->total_moratorios + $deuda->total_monto_nominal;
-        $val = $request->val;
-        $sub_total = $request->subtotal;
-
-        if ($ex_existe) {
-            if ($val == 1) {
-                $ex_existe->Edad = $registro->Edad;
-                $ex_existe->EdadMaxima = 1;
-            }
-            if ($val == 0) {
-                $excluidos = DeudaExcluidos::whereMonth('FechaExclusion', $registro->Mes)->where('Poliza', $deuda->Id)->get();
-                foreach ($excluidos as $obj) {
-                    if ($sub_total < $deuda->ResponsabilidadMaxima && $obj->ResponsabilidadMaxima == 1 && $obj->EdadMaxima == null) {
-
-                        if ($obj->Dui == $registro->Dui) {
-                            $obj->Activo = 1;
-                            $obj->update();
-
-                            $registro->NoValido = 0;
-                            $registro->update();
-                        }
-                    }
-                }
-                $ex_existe->Responsabilidad = $sub_total;
-                $ex_existe->ResponsabilidadMaxima = 1;
-            }
-            $ex_existe->update();
-            $id = $ex_existe->Id;
-        } else {
-            $excluidos = new DeudaExcluidos();
-            $excluidos->Dui = $registro->Dui;
-            $excluidos->Nombre = $registro->PrimerNombre . ' ' . $registro->SegundoNombre . ' ' . $registro->PrimerApellido . ' ' . $registro->SegundoApellido . ' ' . $registro->ApellidoCasada;
-            $excluidos->NumeroReferencia = $registro->NumeroReferencia;
-            $excluidos->Poliza = $registro->PolizaDeuda;
-            $excluidos->FechaExclusion = Carbon::now('America/El_Salvador');
-            $excluidos->Usuario = auth()->user()->id;
-            if ($val == 1) {
-                $excluidos->Edad = $registro->Edad;
-                $excluidos->EdadMaxima = 1;
-            }
-            if ($val == 0) {
-                $excluidos->Responsabilidad = $sub_total;
-                $excluidos->ResponsabilidadMaxima = 1;
-            }
-            $excluidos->save();
-            $id = $excluidos->Id;
-        }
-        $registro->Excluido = $id;
-        $registro->update();
-
-
-
-        $excuidos = DeudaExcluidos::where('Poliza', $registro->PolizaDeuda)->get();
-
-        $excuidos_array = [];
-        if ($excuidos) {
-            $excuidos_array = $excuidos->pluck('NumeroReferencia')->toArray();
-        }
-        //dd($excuidos);
-
-        $poliza_temporal = PolizaDeudaTempCartera::where('PolizaDeuda', $registro->PolizaDeuda)->where('User', auth()->user()->id)
-            ->where('Edad', '>=', $deuda->EdadMaximaTerminacion)
-            ->whereNotIn('NumeroReferencia', $excuidos_array)->get();
-
-        $conteo_excluidos = $poliza_temporal->count();
-
-        return response()->json(['excluido' => $id, 'conteo_excluidos' => $conteo_excluidos]);*/
     }
 
 
@@ -1163,7 +1094,7 @@ class DeudaCarteraController extends Controller
         $poliza_id = $request->Deuda;
         $deuda = Deuda::findOrFail($request->Deuda);
 
-        $temp_data_fisrt = PolizaDeudaTempCartera::where('PolizaDeuda', $poliza_id)->where('User', auth()->user()->id)->first();
+        $temp_data_fisrt = PolizaDeudaTempCartera::where('PolizaDeuda', $poliza_id)->first();
 
         if (!$temp_data_fisrt) {
             alert()->error('No se han cargado las carteras');
@@ -1177,7 +1108,6 @@ class DeudaCarteraController extends Controller
             alert()->error('No se han definido requisitos minimos de asegurabilidad');
             $deuda->Configuracion = 0;
             $deuda->update();
-            session(['tab' => 3]);
             return redirect('polizas/deuda/' . $deuda->Id);
         }
 
@@ -1199,7 +1129,6 @@ class DeudaCarteraController extends Controller
 
         //dejar valores a cero
         DB::table('poliza_deuda_temp_cartera')
-            ->where('User', auth()->user()->id)
             ->where('PolizaDeuda', $poliza_id)
             ->update(['Rehabilitado' => 0]);
 
@@ -1211,7 +1140,6 @@ class DeudaCarteraController extends Controller
             //calcular rehabilitados
             $referenciasAnteriores = DB::table('poliza_deuda_cartera')
                 ->where('PolizaDeuda', $poliza_id)
-                ->where('User', auth()->user()->id)
                 ->whereRaw('CONCAT(Axo, "-", Mes) <> ?', [$mesAnteriorString])
                 ->pluck('NumeroReferencia')
                 ->toArray();
@@ -1219,15 +1147,14 @@ class DeudaCarteraController extends Controller
 
             $referenciasMesAterior = DB::table('poliza_deuda_cartera')
                 ->where('PolizaDeuda', $poliza_id)
-                ->where('User', auth()->user()->id)
+
                 ->where('Axo', $axoAnterior)
                 ->where('Mes', $mesAnterior)
                 ->pluck('NumeroReferencia')
                 ->toArray();
 
 
-            $temp = PolizaDeudaTempCartera::where('User', auth()->user()->id)
-                ->where('PolizaDeuda', $poliza_id)->get();
+            $temp = PolizaDeudaTempCartera::here('PolizaDeuda', $poliza_id)->get();
 
 
             foreach ($temp as $item) {
@@ -1240,10 +1167,8 @@ class DeudaCarteraController extends Controller
         }
 
 
-
-
         //calcular los registros que pasan de la edad maxima
-        $poliza_edad_maxima = PolizaDeudaTempCartera::where('PolizaDeuda', $request->Deuda)->where('User', auth()->user()->id)
+        $poliza_edad_maxima = PolizaDeudaTempCartera::where('PolizaDeuda', $request->Deuda)
             ->where('Edad', '>', $deuda->EdadMaximaTerminacion)->get();
 
 
@@ -1252,7 +1177,6 @@ class DeudaCarteraController extends Controller
         $poliza_responsabilidad_maxima = PolizaDeudaTempCartera::selectRaw('Id,Dui,NumeroReferencia,Edad,CarnetResidencia,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento,Excluido,NoValido,TotalCredito,EdadDesembloso,Excluido,FechaOtorgamiento')
             ->having('TotalCredito', '>', $deuda->ResponsabilidadMaxima)
             ->where('PolizaDeuda', $request->Deuda)
-            ->where('User', auth()->user()->id)
             ->get();
 
 
@@ -1263,8 +1187,7 @@ class DeudaCarteraController extends Controller
             //dd($mesAnterior,$axoAnterior,$request->Deuda);
             $registros_eliminados = DB::table('poliza_deuda_cartera AS pdc')
                 ->leftJoin('poliza_deuda_temp_cartera AS pdtc', function ($join) {
-                    $join->on('pdc.NumeroReferencia', '=', 'pdtc.NumeroReferencia')
-                        ->where('pdtc.User', auth()->user()->id);
+                    $join->on('pdc.NumeroReferencia', '=', 'pdtc.NumeroReferencia');
                 })
                 ->where('pdc.Mes', (int)$mesAnterior)
                 ->where('pdc.Axo', (int)$axoAnterior)
@@ -1289,7 +1212,6 @@ class DeudaCarteraController extends Controller
             '=',
             'valid_references.NumeroReferencia'
         )
-            ->where('poliza_deuda_temp_cartera.User', auth()->user()->id) // Filtra por el usuario autenticado
             ->where('poliza_deuda_temp_cartera.PolizaDeuda', $request->Deuda)
             ->whereNull('valid_references.NumeroReferencia') // Los registros que no coinciden
             ->select('poliza_deuda_temp_cartera.*') // Selecciona columnas de la tabla principal
@@ -1437,18 +1359,6 @@ class DeudaCarteraController extends Controller
             'poliza_responsabilidad_maxima',
             'nuevos_registros',
             'extra_primados',
-            //'conteo_excluidos',
-            //'excluidos',
-            // 'poliza_temporal',
-            // 'maxEdadMaxima',
-            // 'nuevos_registros',
-
-            // 'poliza_cumulos',
-            //'date_anterior',
-            //'date',
-            // 'extra_primados',
-            // 'requisitos',
-
         ));
     }
 
