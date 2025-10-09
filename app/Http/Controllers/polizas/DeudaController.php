@@ -1214,7 +1214,7 @@ class DeudaController extends Controller
 
         //return view('polizas.deuda.recibo', compact('configuracion', 'recibo_historial', 'detalle', 'deuda', 'meses', 'exportar'));
 
-        $pdf = \PDF::loadView('polizas.deuda.recibo', compact('configuracion','cliente', 'recibo_historial', 'detalle', 'deuda', 'meses', 'exportar'))->setWarnings(false)->setPaper('letter');
+        $pdf = \PDF::loadView('polizas.deuda.recibo', compact('configuracion', 'cliente', 'recibo_historial', 'detalle', 'deuda', 'meses', 'exportar'))->setWarnings(false)->setPaper('letter');
         //  dd($detalle);
         return $pdf->stream('Recibos.pdf');
     }
@@ -1713,40 +1713,44 @@ class DeudaController extends Controller
                 ->first();
 
             if ($registro) {
+                // Si ya existe, se elimina
                 $registro->delete();
+                $accion = 'eliminado';
             } else {
+                // Si no existe, se agrega
                 $registro = new DeudaValidados();
                 $registro->Dui = $temp->Dui;
                 $registro->Nombre = $temp->Nombre;
                 $registro->NumeroReferencia = $temp->NumeroReferencia;
-                $registro->Poliza = $temp->PolizaDeuda; // Asegúrate de usar PolizaDeuda aquí
+                $registro->Poliza = $temp->PolizaDeuda;
                 $registro->Mes = $temp->Mes;
                 $registro->Axo = $temp->Axo;
                 $registro->Usuario = auth()->user()->id;
                 $registro->save();
+
+                $accion = 'agregado';
             }
 
+            // Contar los registros no validados del mismo DUI y póliza
             $data = PolizaDeudaTempCartera::leftJoin(
                 'poliza_deuda_validados',
                 'poliza_deuda_validados.NumeroReferencia',
                 '=',
                 'poliza_deuda_temp_cartera.NumeroReferencia'
             )
-                ->whereNull('poliza_deuda_validados.NumeroReferencia') // Filtra los que no tienen coincidencia
+                ->whereNull('poliza_deuda_validados.NumeroReferencia')
                 ->where('poliza_deuda_temp_cartera.Dui', $temp->Dui)
                 ->where('poliza_deuda_temp_cartera.NoValido', 0)
+                ->where('poliza_deuda_temp_cartera.PolizaDeuda', $temp->PolizaDeuda)
                 ->count();
-
-
-
 
             return response()->json([
                 'success' => true,
+                'accion' => $accion,
                 'count' => $data,
-                'message' => 'Operación realizada con éxito.'
+                'message' => "Registro {$accion} correctamente."
             ]);
         } catch (\Exception $e) {
-            // Registrar el error en los logs para su seguimiento
             Log::error('Error en agregar_validado: ' . $e->getMessage());
 
             return response()->json([
@@ -1895,6 +1899,7 @@ class DeudaController extends Controller
                         ->whereNull('poliza_deuda_validados.NumeroReferencia') // Filtra los que no tienen coincidencia
                         ->where('poliza_deuda_temp_cartera.Dui', $cumulo->Dui)
                         ->where('poliza_deuda_temp_cartera.NoValido', 0)
+                        ->where('poliza_deuda_temp_cartera.PolizaDeuda', $poliza)
                         ->count();
                     $cumulo->Validado = $count;
                 }
