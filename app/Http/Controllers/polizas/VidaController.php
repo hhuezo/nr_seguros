@@ -1755,12 +1755,11 @@ class VidaController extends Controller
             ->where('NoValido', 0)
             ->where('PolizaVida', $id)
             //->where('EdadDesembloso', '>', $desempleo->EdadMaximaInscripcion)
-            ->take(50)
             ->get();
 
         // Iterar sobre los resultados y realizar la inserción en la tabla principal
         foreach ($tempData as $tempRecord) {
-            try {
+           try {
             $poliza = new VidaCartera();
             $poliza->PolizaVida = $tempRecord->PolizaVida ?? null;
             $poliza->Nit = $tempRecord->Nit ?? null;

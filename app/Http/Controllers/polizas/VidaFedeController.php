@@ -128,15 +128,14 @@ class VidaFedeController extends Controller
         }
 
         //borrar datos de tabla temporal
-        VidaCarteraTemp::where('User', auth()->user()->id)->where('PolizaVida', $id)->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)->delete();
+        VidaCarteraTemp::where('PolizaVida', $id)->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)->delete();
 
         Excel::import(new VidaCarteraTempFedeImport($request->Axo, $request->Mes, $id, $request->FechaInicio, $request->FechaFinal, $request->PolizaVidaTipoCartera), $archivo);
 
 
 
         //verificando creditos repetidos
-        $repetidos = VidaCarteraTemp::where('User', auth()->user()->id)
-            ->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)
+        $repetidos = VidaCarteraTemp::where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)
             ->groupBy('NumeroReferencia')
             ->havingRaw('COUNT(*) > 1')
             ->get();
@@ -144,8 +143,7 @@ class VidaFedeController extends Controller
         $numerosRepetidos = $repetidos->isNotEmpty() ? $repetidos->pluck('NumeroReferencia') : null;
 
         if ($numerosRepetidos) {
-            VidaCarteraTemp::where('User', auth()->user()->id)
-                ->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)
+            VidaCarteraTemp::where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)
                 ->delete();
 
             $numerosStr = $numerosRepetidos->implode(', ');
@@ -156,8 +154,7 @@ class VidaFedeController extends Controller
 
 
         //calculando edades y fechas de nacimiento
-        VidaCarteraTemp::where('User', auth()->user()->id)
-            ->where('PolizaVida', $poliza_vida->Id)
+        VidaCarteraTemp::where('PolizaVida', $poliza_vida->Id)
             ->update([
                 'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaFinal)"),
                 'EdadDesembloso' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaOtorgamientoDate)"),
@@ -373,7 +370,7 @@ class VidaFedeController extends Controller
         }
 
 
-        $temp_data_fisrt = VidaCarteraTemp::where('PolizaVida', $id)->where('User', auth()->user()->id)->where('PolizaVidaTipoCartera', '=', $request->PolizaVidaTipoCartera)->first();
+        $temp_data_fisrt = VidaCarteraTemp::where('PolizaVida', $id)->where('PolizaVidaTipoCartera', '=', $request->PolizaVidaTipoCartera)->first();
         // dd($temp_data_fisrt);
         if (!$temp_data_fisrt) {
             alert()->error('No se han cargado las carteras');
@@ -388,14 +385,17 @@ class VidaFedeController extends Controller
         //tasa diferenciada
         $vida_tipo_cartera = VidaTipoCartera::findOrFail($request->PolizaVidaTipoCartera);
 
+
         $tasas_diferenciadas = $vida_tipo_cartera->tasa_diferenciada;
+
 
         if ($vida_tipo_cartera->TipoCalculo == 1) {
 
             foreach ($tasas_diferenciadas as $tasa) {
+
                 //dd($tasa);
-                VidaCarteraTemp::where('User', auth()->user()->id)
-                    ->where('PolizaVidaTipoCartera', $vida_tipo_cartera->Id)
+                VidaCarteraTemp::where('PolizaVidaTipoCartera', $vida_tipo_cartera->Id)
+                    ->where('PolizaVida', $id)
                     ->whereBetween('FechaOtorgamientoDate', [$tasa->FechaDesde, $tasa->FechaHasta])
                     ->update([
                         'MontoMaximoIndividual' => $vida_tipo_cartera->MontoMaximoIndividual,
@@ -405,8 +405,8 @@ class VidaFedeController extends Controller
         } else  if ($vida_tipo_cartera->TipoCalculo == 2) {
 
             foreach ($tasas_diferenciadas as $tasa) {
-                VidaCarteraTemp::where('User', auth()->user()->id)
-                    ->where('PolizaVidaTipoCartera', $vida_tipo_cartera->Id)
+                VidaCarteraTemp::where('PolizaVidaTipoCartera', $vida_tipo_cartera->Id)
+                    ->where('PolizaVida', $id)
                     ->whereBetween('SumaAsegurada', [$tasa->MontoDesde, $tasa->MontoHasta])
                     ->update([
                         'MontoMaximoIndividual' => $vida_tipo_cartera->MontoMaximoIndividual,
@@ -415,7 +415,7 @@ class VidaFedeController extends Controller
             }
         } else {
             foreach ($tasas_diferenciadas as $tasa) {
-                VidaCarteraTemp::where('User', auth()->user()->id)
+                VidaCarteraTemp::where('PolizaVida', $vida_tipo_cartera->PolizaVida)
                     ->where('PolizaVidaTipoCartera', $vida_tipo_cartera->Id)
                     ->update([
                         'MontoMaximoIndividual' => $vida_tipo_cartera->MontoMaximoIndividual,
