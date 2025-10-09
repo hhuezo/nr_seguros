@@ -252,7 +252,7 @@
                                 <select name="Axo" id="Axo" class="form-control">
                                     @foreach ($anios as $anio)
                                         <option value="{{ $anio }}"
-                                            {{ $anio == $anioSeleccionado ? 'selected' : '' }}>{{ $anio }}
+                                            {{ $anio == $axo ? 'selected' : '' }}>{{ $anio }}
                                         </option>
                                     @endforeach
                                 </select>

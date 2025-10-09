@@ -208,7 +208,7 @@ class DesempleoController extends Controller
 
     public function show(Request $request, $id)
     {
-        try {
+        //try {
 
             $tab = $request->tab ?: 1;
 
@@ -216,12 +216,55 @@ class DesempleoController extends Controller
             $desempleo = Desempleo::findOrFail($id);
             $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
-            $fechaInicio = Carbon::now()->subMonth()->startOfMonth()->toDateString();
-            $fechaFinal = Carbon::now()->startOfMonth()->toDateString();
 
-            // Extraer el mes y el año de $fechaFinal
-            $mes = Carbon::parse($fechaFinal)->month;
-            $anioSeleccionado = Carbon::parse($fechaFinal)->year;
+
+
+
+            // 👉 Por defecto: del primer día del mes anterior al primer día del mes actual
+            $fecha_inicial = now()->subMonth()->startOfMonth();
+            $fecha_final = now()->startOfMonth();
+            $axo = $fecha_inicial->year;
+            $mes = (int) $fecha_inicial->month;
+
+
+            // ✅ Fechas en formato Y-m-d
+            $fechaInicio = $fecha_inicial->format('Y-m-d');
+            $fechaFinal = $fecha_final->format('Y-m-d');
+
+
+            // Último pago activo
+            $ultimo_pago = DesempleoDetalle::where('Desempleo', $id)
+                ->where('Activo', 1)
+                ->latest('Id')
+                ->first();
+
+
+            if ($ultimo_pago) {
+                // Si hay pago, tomar la fecha inicial y final con +1 mes exacto
+                $fecha_inicial = Carbon::parse($ultimo_pago->FechaInicio);
+                $fecha_final = $fecha_inicial->copy()->addMonth();
+
+                $axo = $fecha_inicial->year;
+                $mes = (int) $fecha_inicial->month;
+
+                // Formato final Y-m-d
+                $fechaInicio = $fecha_inicial->format('Y-m-d');
+                $fechaFinal = $fecha_final->format('Y-m-d');
+            }
+
+
+
+            // Último registro temporal de cartera
+            $registro_cartera = DesempleoCarteraTemp::where('PolizaDesempleo', $id)->first();
+
+            if ($registro_cartera) {
+                $axo = $registro_cartera->Axo;
+                $mes = (int) $registro_cartera->Mes;
+
+                $fecha_inicial = $registro_cartera->FechaInicio;
+                $fecha_final = $registro_cartera->FechaFinal;
+            }
+
 
             // Fechas de ejemplo
             $vigenciaDesde = Carbon::parse($desempleo->VigenciaDesde);
@@ -351,17 +394,17 @@ class DesempleoController extends Controller
                 'fechaInicio',
                 'fechaFinal',
                 'mes',
+                'axo',
                 'anios',
-                'anioSeleccionado',
                 'fechas',
                 'detalle',
                 'comentarios',
                 'ultimo_pago'
             ));
-        } catch (\Exception $e) {
-            alert()->error('No se pudo encontrar la póliza de desempleo solicitada.');
-            return back();
-        }
+        // } catch (\Exception $e) {
+        //     alert()->error('No se pudo encontrar la póliza de desempleo solicitada.');
+        //     return back();
+        // }
     }
 
     public function recibo_pago($id, Request $request)
