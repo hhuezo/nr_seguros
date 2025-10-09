@@ -910,7 +910,9 @@ class VidaController extends Controller
         $poliza_edad_maxima = VidaCarteraTemp::where('PolizaVida', $id)->where('EdadDesembloso', '>', $poliza_vida->EdadMaximaInscripcion)->get();
         $poliza_edad_terminacion = VidaCarteraTemp::where('PolizaVida', $id)->where('EdadDesembloso', '>', $poliza_vida->EdadTerminacion)->get();
 
-        VidaCarteraTemp::where('PolizaVida', $id)->update(["Tasa" => $poliza_vida->Tasa]);
+
+
+        VidaCarteraTemp::where('PolizaVida', $id)->where('Tasa', null)->update(["Tasa" => $poliza_vida->Tasa]);
 
         if ($poliza_vida->TipoCobro == 1) {
             $poliza_responsabilidad_maxima = VidaCarteraTemp::where('Id', 0)->get();
@@ -1753,42 +1755,42 @@ class VidaController extends Controller
             ->where('NoValido', 0)
             ->where('PolizaVida', $id)
             //->where('EdadDesembloso', '>', $desempleo->EdadMaximaInscripcion)
+            ->take(50)
             ->get();
 
         // Iterar sobre los resultados y realizar la inserción en la tabla principal
         foreach ($tempData as $tempRecord) {
             try {
-                $poliza = new VidaCartera();
-                $poliza->PolizaVida = $tempRecord->PolizaVida ?? null;
-                $poliza->Nit = $tempRecord->Nit ?? null;
-                $poliza->Dui = $tempRecord->Dui ?? null;
-                $poliza->Pasaporte = $tempRecord->Pasaporte ?? null;
-                $poliza->Nacionalidad = $tempRecord->Nacionalidad ?? null;
-                $poliza->FechaNacimiento = $tempRecord->FechaNacimiento ?? null;
-                $poliza->TipoPersona = $tempRecord->TipoPersona ?? null;
-                $poliza->PrimerApellido = $tempRecord->PrimerApellido ?? null;
-                $poliza->SegundoApellido = $tempRecord->SegundoApellido ?? null;
-                $poliza->ApellidoCasada = $tempRecord->ApellidoCasada ?? null;
-                $poliza->PrimerNombre = $tempRecord->PrimerNombre ?? null;
-                $poliza->SegundoNombre = $tempRecord->SegundoNombre ?? null;
-                $poliza->Sexo = $tempRecord->Sexo ?? null;
-                $poliza->FechaOtorgamiento = $tempRecord->FechaOtorgamiento ?? null;
-                $poliza->FechaVencimiento = $tempRecord->FechaVencimiento ?? null;
-                $poliza->NumeroReferencia = $tempRecord->NumeroReferencia ?? null;
-                $poliza->SumaAsegurada = $tempRecord->SumaAsegurada ?? null;
-                $poliza->User = $tempRecord->User;
-                $poliza->Axo = $tempRecord->Axo ?? null;
-                $poliza->Mes = $tempRecord->Mes ?? null;
-                $poliza->FechaInicio = $tempRecord->FechaInicio ?? null;
-                $poliza->FechaFinal = $tempRecord->FechaFinal ?? null;
-                $poliza->FechaNacimientoDate = $tempRecord->FechaNacimientoDate ?? null;
-                $poliza->FechaOtorgamientoDate = $tempRecord->FechaOtorgamientoDate ?? null;
-                $poliza->Edad = $tempRecord->Edad ?? null;
-                $poliza->EdadDesembloso = $tempRecord->EdadDesembloso ?? null;
-                $poliza->PolizaVidaTipoCartera = $tempRecord->PolizaVidaTipoCartera ?? null;
-                $poliza->Tasa = $tempRecord->Tasa ?? null;
-
-                $poliza->save();
+            $poliza = new VidaCartera();
+            $poliza->PolizaVida = $tempRecord->PolizaVida ?? null;
+            $poliza->Nit = $tempRecord->Nit ?? null;
+            $poliza->Dui = $tempRecord->Dui ?? null;
+            $poliza->Pasaporte = $tempRecord->Pasaporte ?? null;
+            $poliza->Nacionalidad = $tempRecord->Nacionalidad ?? null;
+            $poliza->FechaNacimiento = $tempRecord->FechaNacimiento ?? null;
+            $poliza->TipoPersona = $tempRecord->TipoPersona ?? null;
+            $poliza->PrimerApellido = $tempRecord->PrimerApellido ?? null;
+            $poliza->SegundoApellido = $tempRecord->SegundoApellido ?? null;
+            $poliza->ApellidoCasada = $tempRecord->ApellidoCasada ?? null;
+            $poliza->PrimerNombre = $tempRecord->PrimerNombre ?? null;
+            $poliza->SegundoNombre = $tempRecord->SegundoNombre ?? null;
+            $poliza->Sexo = $tempRecord->Sexo ?? null;
+            $poliza->FechaOtorgamiento = $tempRecord->FechaOtorgamiento ?? null;
+            $poliza->FechaVencimiento = $tempRecord->FechaVencimiento ?? null;
+            $poliza->NumeroReferencia = $tempRecord->NumeroReferencia ?? null;
+            $poliza->SumaAsegurada = $tempRecord->SumaAsegurada ?? null;
+            $poliza->User = $tempRecord->User;
+            $poliza->Axo = $tempRecord->Axo ?? null;
+            $poliza->Mes = $tempRecord->Mes ?? null;
+            $poliza->FechaInicio = $tempRecord->FechaInicio ?? null;
+            $poliza->FechaFinal = $tempRecord->FechaFinal ?? null;
+            $poliza->FechaNacimientoDate = $tempRecord->FechaNacimientoDate ?? null;
+            $poliza->FechaOtorgamientoDate = $tempRecord->FechaOtorgamientoDate ?? null;
+            $poliza->Edad = $tempRecord->Edad ?? null;
+            $poliza->EdadDesembloso = $tempRecord->EdadDesembloso ?? null;
+            $poliza->PolizaVidaTipoCartera = $tempRecord->PolizaVidaTipoCartera ?? null;
+            $poliza->Tasa = $tempRecord->Tasa ?? null;
+            $poliza->save();
             } catch (\Exception $e) {
                 // Captura errores y los guarda en el log
                 Log::error("Error al insertar en poliza_vida_cartera: " . $e->getMessage(), [
