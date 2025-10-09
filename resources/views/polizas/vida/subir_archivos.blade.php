@@ -119,7 +119,7 @@
                 </h3>
             </div>
             <div class="col-md-2 col-sm-2 col-xs-12" align="right">
-                <a href="{{ url('polizas/deuda') }}/{{ $poliza_vida->Id }}/edit"><button class="btn btn-info float-right"> <i
+                <a href="{{ url('polizas/vida') }}/{{ $poliza_vida->Id }}?tab=2"><button class="btn btn-info float-right"> <i
                             class="fa fa-undo"></i> Atras</button></a>
             </div>
 
