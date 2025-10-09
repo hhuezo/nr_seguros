@@ -61,7 +61,7 @@ class PolizaDeudaTempCarteraFedeImport implements ToModel, /*WithStartRow,*/ Ski
                 'SaldoCapital' => $row[11],
                 'Intereses' => $row[12],
                 'MoraCapital' => $row[13],
-                'SaldoInteresMora' => !empty($row[14]) ? $row[14] : null,
+                'InteresesMoratorios' => !empty($row[14]) ? $row[14] : null,
                 'InteresesCovid' => $row[15],
                 'PorcentajeExtraprima' => $row[16],
 
