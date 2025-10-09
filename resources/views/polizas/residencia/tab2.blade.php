@@ -452,8 +452,7 @@
                                 </tr>
                                 <tr>
                                     <td>Sub Total</td>
-                                    <td class="numeric editable" contenteditable="true"><span id="sub_total"
-                                            onblur="actualizarCalculos()"></span></td>
+                                    <td id="sub_total" class="numeric editable" contenteditable="true" onblur="actualizarCalculos()"></td>
                                 </tr>
                                 <tr>
                                     <td>13% Iva</td>
