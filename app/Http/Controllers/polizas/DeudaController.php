@@ -655,22 +655,15 @@ class DeudaController extends Controller
 
     public function edit($id)
     {
-        //  dd("holi");
         $deuda = Deuda::findOrFail($id);
-        //   dd($deuda);
         if ($deuda->Configuracion == 0) {
-            //  dd("si");
-            //  alert()->success('La configuracion no ha sido terminada');
-            //session(['tab' => 1]);
             return redirect('polizas/deuda/' . $id);
         } else {
             if ($deuda->EdadMaximaTerminacion == null || $deuda->ResponsabilidadMaxima == null) {
-                //session(['tab' => 1]);
                 alert()->success('Debe agregar Edad Máxima y Responsabilidad Máxima');
                 return redirect('polizas/deuda/' . $id);
             }
 
-            // dd("no");
             $requisitos = DeudaRequisitos::where('Activo', 1)->where('Deuda', $id)->get();
 
             //formando encabezados

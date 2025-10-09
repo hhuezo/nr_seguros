@@ -29,56 +29,85 @@ class DeudaCarteraController extends Controller
 
     public function subir_cartera($id)
     {
-
         $deuda = Deuda::findOrFail($id);
-
         $deuda_tipo_cartera = $deuda->deuda_tipos_cartera;
 
         foreach ($deuda_tipo_cartera as $tipo_cartera) {
-            $tasas_diferenciadas  = $tipo_cartera->tasa_diferenciada;
+            $tasas_diferenciadas = $tipo_cartera->tasa_diferenciada;
 
-            // Obtener todas las descripciones de línea de crédito y unirlas con coma
-            $tipo_cartera->Descripcion = implode(',', $tasas_diferenciadas->pluck('linea_credito.Descripcion')->unique()->toArray());
-            $tipo_cartera->Abreviatura = implode(',', $tasas_diferenciadas->pluck('linea_credito.Abreviatura')->unique()->toArray());
-            $tipo_cartera->Total = PolizaDeudaTempCartera::where('PolizaDeudaTipoCartera', $tipo_cartera->Id)->where('User', auth()->user()->id)->sum('TotalCredito');
+            $tipo_cartera->Descripcion = $tasas_diferenciadas
+                ->pluck('linea_credito.Descripcion')
+                ->unique()
+                ->implode(',');
+
+            $tipo_cartera->Abreviatura = $tasas_diferenciadas
+                ->pluck('linea_credito.Abreviatura')
+                ->unique()
+                ->implode(',');
+
+            $tipo_cartera->Total = PolizaDeudaTempCartera::where([
+                ['PolizaDeudaTipoCartera', $tipo_cartera->Id],
+                ['User', auth()->id()]
+            ])->sum('TotalCredito');
         }
 
+        $meses = [
+            '',
+            'Enero',
+            'Febrero',
+            'Marzo',
+            'Abril',
+            'Mayo',
+            'Junio',
+            'Julio',
+            'Agosto',
+            'Septiembre',
+            'Octubre',
+            'Noviembre',
+            'Diciembre'
+        ];
 
-        $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
-        $ultimo_pago = DeudaDetalle::where('Deuda', $deuda->Id)->where('Activo', 1)->orderBy('Id', 'desc')->first();
+        // 👉 Por defecto: del primer día del mes anterior al primer día del mes actual
+        $fecha_inicial = now()->subMonth()->startOfMonth();
+        $fecha_final = now()->startOfMonth();
+        $axo = $fecha_inicial->year;
+        $mes = (int) $fecha_inicial->month;
 
 
-        //inicializando valores
-        // Primer día del mes anterior
-        $fecha_inicial = Carbon::now()->subMonth()->startOfMonth()->format('Y-m-d');
-        // Primer día del mes actual
-        $fecha_final = Carbon::now()->startOfMonth()->format('Y-m-d');
+        // ✅ Fechas en formato Y-m-d
+        $fecha_inicial = $fecha_inicial->format('Y-m-d');
+        $fecha_final = $fecha_final->format('Y-m-d');
 
-        $axo = Carbon::parse()->format('Y');
-        $mes = Carbon::parse()->format('m');
+        // Último pago activo
+        $ultimo_pago = DeudaDetalle::where('Deuda', $deuda->Id)
+            ->where('Activo', 1)
+            ->latest('Id')
+            ->first();
+
 
         if ($ultimo_pago) {
+            // Si hay pago, tomar la fecha inicial y final con +1 mes exacto
             $fecha_inicial = Carbon::parse($ultimo_pago->FechaInicio);
-            $fecha_inicial->addMonth();
+            $fecha_final = $fecha_inicial->copy()->addMonth();
 
-            $axo = $fecha_inicial->format('Y');
-            $mes = $fecha_inicial->format('m') + 0;
+            $axo = $fecha_inicial->year;
+            $mes = (int) $fecha_inicial->month;
 
+            // Formato final Y-m-d
             $fecha_inicial = $fecha_inicial->format('Y-m-d');
-
-            $fecha_final = Carbon::parse($ultimo_pago->FechaFinal);
-            $fecha_final->addMonth();
             $fecha_final = $fecha_final->format('Y-m-d');
         }
 
 
-
-        //ultimo registro de cartera
-        $registro_cartera = PolizaDeudaTempCartera::where('PolizaDeuda', $id)->where('User', auth()->user()->id)->first();
+        // Último registro temporal de cartera
+        $registro_cartera = PolizaDeudaTempCartera::where('PolizaDeuda', $id)->first();
 
         if ($registro_cartera) {
             $axo = $registro_cartera->Axo;
-            $mes = $registro_cartera->Mes + 0;
+            $mes = (int) $registro_cartera->Mes;
+
+            $fecha_inicial = $registro_cartera->FechaInicio;
+            $fecha_final = $registro_cartera->FechaFinal;
         }
 
 
@@ -93,6 +122,11 @@ class DeudaCarteraController extends Controller
             'mes'
         ));
     }
+
+
+
+
+
 
 
     public function recibo_complementario($id)
