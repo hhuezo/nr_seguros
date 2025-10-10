@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\catalogo;
 
 use App\Http\Controllers\Controller;
+use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\Cobertura;
 use App\Models\catalogo\CoberturaTarificacion;
+use App\Models\catalogo\NecesidadProteccion;
 use App\Models\catalogo\Plan;
 use App\Models\catalogo\PlanCoberturaDetalle;
 use App\Models\catalogo\Producto;
@@ -73,10 +75,22 @@ class PlanController extends Controller
     {
         //
     }
-    public function get_producto($id)
+
+
+    public function get_producto($id, $tipo)
     {
-        return Producto::where('Aseguradora', '=', $id)->orderBy('Nombre')->get();
+        $productos = Producto::where('Aseguradora',$id)->get();
+
+        $ramosId = NecesidadProteccion::where('TipoPoliza',$tipo)->pluck('Id');
+
+        $productos = Producto::whereIn('NecesidadProteccion',$ramosId )
+            ->where('Aseguradora',$id)
+            ->orderBy('Nombre')
+            ->get();
+
+        return $productos;
     }
+
 
     public function get_plan($id)
     {

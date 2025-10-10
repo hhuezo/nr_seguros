@@ -17,7 +17,6 @@ class NecesidadProteccion extends Model
 
     protected $fillable = [
         'Nombre',
-
         'Activo',
         'TipoPoliza'
     ];

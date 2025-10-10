@@ -139,7 +139,7 @@ Route::middleware(['auth'])->group(function () {
 
 
     Route::resource('catalogo/negocio', NegocioController::class);
-    Route::get('get_producto/{id}', [PlanController::class, 'get_producto']);
+    Route::get('get_producto/{id}/{tipo}', [PlanController::class, 'get_producto']);
     Route::get('get_plan/{id}', [PlanController::class, 'get_plan']);
 
 
@@ -234,6 +234,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('polizas/deuda/get_extraprimado/{poliza}/{dui}/{numeroReferencia}', [DeudaController::class, 'get_extraprimado']);
     Route::post('polizas/deuda/store_extraprimado', [DeudaController::class, 'store_extraprimado']);
     Route::post('polizas/deuda/update_extraprimado', [DeudaController::class, 'update_extraprimado']);
+    Route::post('polizas/deuda/store_poliza_primara_carga/{id}', [DeudaCarteraController::class, 'primera_carga'])->name('deuda.primera_carga');
     Route::post('polizas/deuda/store_poliza', [DeudaCarteraController::class, 'store_poliza']);
     Route::post('polizas/deuda/store_poliza_recibo', [DeudaCarteraController::class, 'store_poliza_recibo']);
     Route::post('polizas/deuda/store_requisitos', [DeudaController::class, 'store_requisitos']);

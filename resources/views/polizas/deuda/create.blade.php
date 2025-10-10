@@ -78,7 +78,7 @@
                                                 value="{{ $ultimo }}" readonly>
                                         </div>
                                     </div>
-                                    <div class="col-sm-8">
+                                    <div class="col-sm-6">
                                         <label class="control-label" align="right">Aseguradora *</label>
                                         <select name="Aseguradora" id="Aseguradora" class="form-control select2"
                                             style="width: 100%" required>
@@ -90,7 +90,7 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-sm-2">
+                                    <div class="col-sm-3">
                                         <label class="control-label">Productos *</label>
                                         <select name="Productos" id="Productos" class="form-control select2"
                                             style="width: 100%" required>
@@ -98,7 +98,7 @@
 
                                         </select>
                                     </div>
-                                    <div class="col-sm-2">
+                                    <div class="col-sm-3">
                                         <label class="control-label">Planes *</label>
                                         <select name="Planes" id="Planes" class="form-control select2"
                                             style="width: 100%" required>
@@ -106,7 +106,7 @@
 
                                         </select>
                                     </div>
-                                    <div class="col-sm-8">
+                                    <div class="col-sm-6">
                                         <label class="control-label" align="right">Asegurado *</label>
                                         <select name="Asegurado" id="Asegurado" class="form-control select2"
                                             style="width: 100%" required>
@@ -118,7 +118,7 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-6">
                                         <label class="control-label" align="right">Nit *</label>
                                         <input class="form-control" name="Nit" id="Nit" type="text"
                                             value="{{ old('Nit') }}" readonly>
@@ -327,7 +327,7 @@
                 $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
                 var Aseguradora = $(this).val();
 
-                $.get("{{ url('get_producto') }}" + '/' + Aseguradora, function(data) {
+                $.get("{{ url('get_producto') }}" + '/' + Aseguradora+ '/1', function(data) {
                     //esta el la peticion get, la cual se divide en tres partes. ruta,variables y funcion
                     console.log(data);
                     var _select = '<option value=""> Seleccione </option>';
