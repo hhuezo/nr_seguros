@@ -1638,6 +1638,8 @@ class VidaController extends Controller
         $detalle = VidaDetalle::findOrFail($id);
         $poliza_vida = Vida::findOrFail($detalle->PolizaVida);
 
+        $cliente = Cliente::find($poliza_vida->Asegurado);
+
         $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
         // Actualizar campos del detalle
@@ -1663,7 +1665,9 @@ class VidaController extends Controller
             throw new \Exception("No se encontró la configuración de recibos");
         }
 
-        $pdf = \PDF::loadView('polizas.vida.recibo', compact('configuracion', 'recibo_historial', 'detalle', 'meses', 'poliza_vida'))
+        //return view('polizas.vida.recibo', compact('configuracion', 'cliente','recibo_historial', 'detalle', 'meses', 'poliza_vida'));
+
+        $pdf = \PDF::loadView('polizas.vida.recibo', compact('configuracion', 'cliente','recibo_historial', 'detalle', 'meses', 'poliza_vida'))
             ->setWarnings(false)
             ->setPaper('letter');
 
