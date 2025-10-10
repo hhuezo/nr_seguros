@@ -405,11 +405,9 @@ class ClienteController extends Controller
 
         $departamento_id = optional(optional(optional($cliente->distrito)->municipio)->Departamento);
 
-        if ($departamento_id) {
-            $municipios = Municipio::where('Departamento', $departamento_id)->get();
-        } else {
+
             $municipios = Municipio::get();
-        }
+
 
         $municipio_actual = 0;
         $departamento_actual = 0;
