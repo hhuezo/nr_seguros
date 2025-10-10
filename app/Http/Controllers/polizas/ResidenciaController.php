@@ -767,16 +767,14 @@ class ResidenciaController extends Controller
 
 
         if (strpos($residencia->aseguradoras->Nombre, 'FEDE') === false) {
-            // dd("SISA");
-
+            //sisa
             if ($residencia->Mensual == 0) {
-                $tasaFinal = ($tasa / 1000) / !2;
+                $tasaFinal = ($tasa / 1000) / 12;
             } else {
                 $tasaFinal = $tasa / 1000;
             }
         } else {
-            //dd('FEDE');
-
+            //fede
             if ($residencia->Mensual == 0) {    //falta confirmacion de tasa anual
                 $tasaFinal = ($tasa / 1000); // / 12;
             } else {
