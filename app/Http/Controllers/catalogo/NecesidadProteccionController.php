@@ -5,6 +5,7 @@ namespace App\Http\Controllers\catalogo;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NecesidadProteccionFormRequest;
 use App\Models\catalogo\NecesidadProteccion;
+use App\Models\catalogo\TipoPoliza;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 
@@ -19,6 +20,7 @@ class NecesidadProteccionController extends Controller
     {
         $idRegistro = $request->idRegistro ?? 0;
         $necesidad_proteccion = NecesidadProteccion::where('Activo', 1)->orderBy('Id', 'asc')->get();
+        $tipos_poliza = TipoPoliza::where('Activo', 1)->get();
 
         $posicion = 0;
         if ($idRegistro > 0) {
@@ -32,7 +34,7 @@ class NecesidadProteccionController extends Controller
             }
         }
 
-        return view('catalogo.necesidad_proteccion.index', compact('necesidad_proteccion', 'posicion'));
+        return view('catalogo.necesidad_proteccion.index', compact('necesidad_proteccion', 'posicion', 'tipos_poliza'));
     }
 
     public function create()
@@ -40,10 +42,18 @@ class NecesidadProteccionController extends Controller
         return view('catalogo.necesidad_proteccion.create');
     }
 
-    public function store(NecesidadProteccionFormRequest $request)
+    public function store(Request $request)
     {
+        $request->validate([
+            'Nombre' => 'required',
+            'TipoPoliza' => 'required',
+        ], [
+            'Nombre.required' => 'El campo Nombre es obligatorio.',
+            'TipoPoliza.required' => 'Debe seleccionar un módulo.',
+        ]);
         $necesidad_proteccion = new NecesidadProteccion();
         $necesidad_proteccion->Nombre = $request->Nombre;
+        $necesidad_proteccion->TipoPoliza = $request->TipoPoliza;
         $necesidad_proteccion->Activo = 1;
         $necesidad_proteccion->save();
 
@@ -65,8 +75,17 @@ class NecesidadProteccionController extends Controller
 
     public function update(NecesidadProteccionFormRequest $request, $id)
     {
+        $request->validate([
+            'Nombre' => 'required',
+            'TipoPoliza' => 'required',
+        ], [
+            'Nombre.required' => 'El campo Nombre es obligatorio.',
+            'TipoPoliza.required' => 'Debe seleccionar un módulo.',
+        ]);
+
         $necesidad_proteccion = NecesidadProteccion::findOrFail($id);
         $necesidad_proteccion->Nombre = $request->Nombre;
+        $necesidad_proteccion->TipoPoliza = $request->TipoPoliza;
         $necesidad_proteccion->update();
 
 

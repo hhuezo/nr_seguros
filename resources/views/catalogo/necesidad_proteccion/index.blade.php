@@ -25,7 +25,8 @@
                     <thead>
                         <tr>
                             <th width="5%">No</th>
-                            <th width="75%">Nombre</th>
+                            <th width="55%">Nombre</th>
+                            <th width="20%">Modulo</th>
                             <th width="20%">Opciones</th>
                         </tr>
                     </thead>
@@ -34,6 +35,7 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $obj->Nombre }}</td>
+                                <td>{{ $obj->tipo_poliza->Nombre ?? '' }}</td>
                                 <td align="center">
 
                                     @can('edit users')
@@ -82,8 +84,19 @@
                     <div class="modal-body">
                         <div class="form-group row">
                             <label class="control-label">Nombre</label>
-                            <input class="form-control" name="Nombre" type="text" autofocus
+                            <input class="form-control" name="Nombre" type="text" autofocus required
                                 oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="control-label">Modulo</label>
+                            <select name="TipoPoliza" class="form-control" required>
+                                 <option value="">Seleccione</option>
+                                @foreach ($tipos_poliza as $tipo)
+                                    <option value="{{ $tipo->Id }}">{{ $tipo->Nombre }}</option>
+                                @endforeach
+
+                            </select>
                         </div>
                     </div>
                     <div class="modal-footer">

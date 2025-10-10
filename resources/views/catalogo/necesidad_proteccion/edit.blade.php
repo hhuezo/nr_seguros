@@ -16,15 +16,25 @@
                     </div>
                 </div>
                 <div class="modal-body">
-                   
+
 
                     <div class="form-group">
                         <label class="control-label">Nombre</label>
                         <input type="text" name="Nombre" class="form-control" value="{{ $obj->Nombre }}" required
-                            autofocus="true" >
+                            autofocus="true">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Módulo</label>
+                        <select name="TipoPoliza" class="form-control" required>
+                             <option value="">Seleccione</option>
+                            @foreach ($tipos_poliza as $tipo)
+                                <option value="{{ $tipo->Id }}" {{ $obj->Modulo == $tipo->Id ? 'selected' : '' }}>
+                                    {{ $tipo->Nombre }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
 
-                    
                     &nbsp;
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
