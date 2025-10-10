@@ -402,7 +402,8 @@ class ClienteController extends Controller
         $metodos_pago = ClienteMetodoPago::where('Activo', '=', 1)->get();
 
         $departamentos = Departamento::get();
-        $municipios = Municipio::get();
+
+        $municipios = Municipio::where('Departamento',$cliente->distrito->municipio->Departamento)->get();
         $municipio_actual = 0;
         $departamento_actual = 0;
         //  dd($cliente->Distrito);
