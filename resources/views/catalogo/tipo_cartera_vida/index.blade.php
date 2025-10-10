@@ -21,6 +21,7 @@
                 <table id="datatable" class="table table-striped table-bordered">
                     <thead>
                         <tr>
+                            <th>#</th>
                             <th>Nombre</th>
                             <!-- <th>Activo</th> -->
                             <th>Opciones</th>
@@ -29,8 +30,9 @@
                     <tbody>
                         @foreach ($tipo_cartera as $obj)
                             <tr>
+                                <td>{{ $loop->iteration }}</td>
                                 <td>{{ $obj->Nombre }}</td>
-                                <!-- <td>{{ $obj->Activo == 1 ? 'Activo':'Desactivo' }}</td> -->
+                                <!-- <td>{{ $obj->Activo == 1 ? 'Activo' : 'Desactivo' }}</td> -->
                                 <td align="center">
                                     @can('edit users')
                                         <a href="{{ url('catalogo/tipo_cartera_vida') }}/{{ $obj->Id }}/edit"
