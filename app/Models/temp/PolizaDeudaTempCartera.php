@@ -122,7 +122,9 @@ class PolizaDeudaTempCartera extends Model
                     break;
                 default:
                     # .sando capital
-                    $saldo = $this->SaldoCapital;
+                    //$saldo = $this->SaldoCapital;
+                    //se cambio por intereses
+                    $this->Intereses;
                     break;
             }
 
