@@ -30,10 +30,10 @@ $prima_calculada = $detalle->MontoCartera * $poliza_vida->Tasa;
         <tr>
             <td>
                San Salvador, {{ \Carbon\Carbon::parse($recibo_historial->ImpresionRecibo)->format('d') }} de {{ $meses[\Carbon\Carbon::parse($recibo_historial->ImpresionRecibo)->format('m') - 0 ] }} del {{ \Carbon\Carbon::parse($recibo_historial->ImpresionRecibo)->format('Y') }} <br>
-                Señor (a) (es): <br> {{$recibo_historial->NombreCliente}} <br>
-                NIT: {{$recibo_historial->Nit}} <br>
+                Señor (a) (es): <br>{{$recibo_historial->NombreCliente}}<br>
+                NIT: {{$cliente->Nit}} <br>
                 {{$recibo_historial->DireccionResidencia}} <br>
-                {{$recibo_historial->Departamento}}, {{$recibo_historial->Municipio}}
+                 {{ $cliente->DireccionResidencia ?? $cliente->DireccionCorrespondencia }}
                 <br>
                 <br><br>
                 Estimado (a)(o)(es):
