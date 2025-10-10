@@ -95,8 +95,6 @@ class PolizaDeudaTempCartera extends Model
         try {
             $tipo_cartera = $this->LineaCredito;
 
-            dd($tipo_cartera);
-
             switch ($tipo_cartera) {
                 case '1':
                     # saldo a capital
