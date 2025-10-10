@@ -150,7 +150,7 @@ class ClienteController extends Controller
         // Validación para persona natural (TipoPersona == 1)
         if ($request->get('TipoPersona') == 1) {
             // DUI obligatorio para persona natural si no es extranjero
-            if (!$extranjero) {
+           /* if (!$extranjero) {
                 $duiRules = ['required', 'min:10'];
                 if ($request->get('ClienteId')) {
                     $duiRules[] = Rule::unique('cliente')->ignore($request->get('ClienteId'));
@@ -158,7 +158,7 @@ class ClienteController extends Controller
                     $duiRules[] = 'unique:cliente';
                 }
                 $rules['Dui'] = $duiRules;
-            }
+            }*/
 
             // Fecha de nacimiento requerida y >= 18 años
             $rules['FechaNacimiento'] = [
@@ -231,7 +231,7 @@ class ClienteController extends Controller
 
         // Limpiar DUI y NIT
         $request->merge([
-            'Dui' => $this->string_replace($request->get('Dui')),
+            //'Dui' => $this->string_replace($request->get('Dui')),
             'Nit' => $this->string_replace($request->get('Nit')),
         ]);
 
@@ -245,13 +245,13 @@ class ClienteController extends Controller
         if (!$extranjero) {
             // No es extranjero → DUI obligatorio si TipoPersona es 1
             if ($request->get('TipoPersona') == 1) {
-                $duiRules = ['required', 'min:10'];
+                /*$duiRules = ['required', 'min:10'];
                 if ($request->get('ClienteId')) {
                     $duiRules[] = Rule::unique('cliente')->ignore($request->get('ClienteId'));
                 } else {
                     $duiRules[] = 'unique:cliente';
                 }
-                $rules['Dui'] = $duiRules;
+                $rules['Dui'] = $duiRules;*/
             } else {
                 if ($request->get('Nit')) {
                     $nitRules = ['min:17'];
