@@ -30,9 +30,8 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
       <td>
         San Salvador, {{ \Carbon\Carbon::parse($detalle->ImpresionRecibo)->format('d') }} de {{ $meses[\Carbon\Carbon::parse($detalle->ImpresionRecibo)->format('m') - 0 ] }} del {{ \Carbon\Carbon::parse($detalle->ImpresionRecibo)->format('Y') }} <br>
         Señor (a) (es): <br> {{$residencia->clientes->Nombre}} <br>
-        NIT: {{$residencia->clientes->Nit}} <br>
-        {{ $residencia->clientes->DireccionResidencia ?: $residencia->clientes->DireccionCorrespondencia }}<br>
-        {{$residencia->clientes->distrito->municipio->departamento->Nombre}}, {{$residencia->clientes->distrito->municipio->Nombre}}
+        NIT: {{$cliente->Nit}} <br>
+        {{ $cliente->DireccionResidencia ?: $cliente->DireccionCorrespondencia }}
         <br>
         <br><br>
         Estimado (a)(o)(es):

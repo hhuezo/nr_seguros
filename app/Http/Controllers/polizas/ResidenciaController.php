@@ -733,15 +733,17 @@ class ResidenciaController extends Controller
     public function get_recibo($id)
     {
         $detalle = DetalleResidencia::findOrFail($id);
-
         $residencia = Residencia::findOrFail($detalle->Residencia);
+
+
+        $cliente = Cliente::findOrFail($residencia->Asegurado);
         $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
         $calculo = $this->monto($residencia, $detalle);
         // dd($calculo);
         $configuracion = ConfiguracionRecibo::first();
 
-       // return view('polizas.residencia.recibo', compact('configuracion', 'detalle', 'residencia', 'meses', 'calculo'));
-        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion', 'detalle', 'residencia', 'meses', 'calculo'))->setWarnings(false)->setPaper('letter');
+        return view('polizas.residencia.recibo', compact('configuracion','cliente',  'detalle', 'residencia', 'meses', 'calculo'));
+        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion','cliente', 'detalle', 'residencia', 'meses', 'calculo'))->setWarnings(false)->setPaper('letter');
         //  dd($detalle);
         return $pdf->stream('Recibos.pdf');
     }
