@@ -742,7 +742,7 @@ class ResidenciaController extends Controller
         // dd($calculo);
         $configuracion = ConfiguracionRecibo::first();
 
-        return view('polizas.residencia.recibo', compact('configuracion','cliente',  'detalle', 'residencia', 'meses', 'calculo'));
+        //return view('polizas.residencia.recibo', compact('configuracion','cliente',  'detalle', 'residencia', 'meses', 'calculo'));
         $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion','cliente', 'detalle', 'residencia', 'meses', 'calculo'))->setWarnings(false)->setPaper('letter');
         //  dd($detalle);
         return $pdf->stream('Recibos.pdf');
