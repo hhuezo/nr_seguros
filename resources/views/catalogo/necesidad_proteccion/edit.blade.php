@@ -26,9 +26,9 @@
                     <div class="form-group">
                         <label class="control-label">Módulo</label>
                         <select name="TipoPoliza" class="form-control">
-                             <option value="">Seleccione</option>
+                            <option value="">Seleccione</option>
                             @foreach ($tipos_poliza as $tipo)
-                                <option value="{{ $tipo->Id }}" {{ $obj->Modulo == $tipo->Id ? 'selected' : '' }}>
+                                <option value="{{ $tipo->Id }}" {{ $obj->TipoPoliza == $tipo->Id ? 'selected' : '' }}>
                                     {{ $tipo->Nombre }}
                                 </option>
                             @endforeach
