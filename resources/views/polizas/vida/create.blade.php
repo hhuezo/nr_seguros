@@ -353,7 +353,7 @@
                 $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
                 var Aseguradora = $(this).val();
 
-                $.get("{{ url('get_producto') }}" + '/' + Aseguradora, function(data) {
+                $.get("{{ url('get_producto') }}" + '/' + Aseguradora+ '/2', function(data) {
                     //esta el la peticion get, la cual se divide en tres partes. ruta,variables y funcion
                     console.log(data);
                     var _select = '<option value=""> Seleccione </option>';
