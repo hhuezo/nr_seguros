@@ -95,6 +95,8 @@ class PolizaDeudaTempCartera extends Model
         try {
             $tipo_cartera = $this->LineaCredito;
 
+            dd($tipo_cartera);
+
             switch ($tipo_cartera) {
                 case '1':
                     # saldo a capital
@@ -117,14 +119,15 @@ class PolizaDeudaTempCartera extends Model
                     $saldo = $this->MontoOtorgado;
                     break;
                 case '6':
+                    //se cambio por intereses
                     # .monto otorgado
-                    $saldo = $this->MontoOtorgado;
+                    $saldo = $this->Intereses;
                     break;
                 default:
                     # .sando capital
                     //$saldo = $this->SaldoCapital;
-                    //se cambio por intereses
-                    $this->Intereses;
+
+                    $this->SaldoCapital;
                     break;
             }
 
