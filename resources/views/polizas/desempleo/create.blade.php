@@ -286,7 +286,22 @@
                         '</option>';
                     $("#Planes").html(_select);
                 });
-            })
+            });
+
+            $("#Aseguradora").change(function() {
+                $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
+                var Aseguradora = $(this).val();
+
+                $.get("{{ url('get_producto') }}" + '/' + Aseguradora+ '/3', function(data) {
+                    //esta el la peticion get, la cual se divide en tres partes. ruta,variables y funcion
+                    console.log(data);
+                    var _select = '<option value=""> Seleccione </option>';
+                    for (var i = 0; i < data.length; i++)
+                        _select += '<option value="' + data[i].Id + '"  >' + data[i].Nombre +
+                        '</option>';
+                    $("#Productos").html(_select);
+                });
+            });
 
         });
     </script>

@@ -265,7 +265,7 @@
                 var Aseguradora = $(this).val();
 
                 //funcionpara las distritos
-                $.get("{{ url('get_producto') }}" + '/' + Aseguradora, function(data) {
+                $.get("{{ url('get_producto') }}" + '/' + Aseguradora+ '/4', function(data) {
                     //esta el la peticion get, la cual se divide en tres partes. ruta,variables y funcion
                     console.log(data);
                     var _select = '<option value=""> Seleccione </option>';
