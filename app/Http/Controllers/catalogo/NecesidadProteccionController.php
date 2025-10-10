@@ -46,14 +46,14 @@ class NecesidadProteccionController extends Controller
     {
         $request->validate([
             'Nombre' => 'required',
-            'TipoPoliza' => 'required',
+            //'TipoPoliza' => 'required',
         ], [
             'Nombre.required' => 'El campo Nombre es obligatorio.',
             'TipoPoliza.required' => 'Debe seleccionar un módulo.',
         ]);
         $necesidad_proteccion = new NecesidadProteccion();
         $necesidad_proteccion->Nombre = $request->Nombre;
-        $necesidad_proteccion->TipoPoliza = $request->TipoPoliza;
+        $necesidad_proteccion->TipoPoliza = $request->TipoPoliza ?: null;
         $necesidad_proteccion->Activo = 1;
         $necesidad_proteccion->save();
 
@@ -77,7 +77,7 @@ class NecesidadProteccionController extends Controller
     {
         $request->validate([
             'Nombre' => 'required',
-            'TipoPoliza' => 'required',
+            //'TipoPoliza' => 'required',
         ], [
             'Nombre.required' => 'El campo Nombre es obligatorio.',
             'TipoPoliza.required' => 'Debe seleccionar un módulo.',
@@ -85,7 +85,7 @@ class NecesidadProteccionController extends Controller
 
         $necesidad_proteccion = NecesidadProteccion::findOrFail($id);
         $necesidad_proteccion->Nombre = $request->Nombre;
-        $necesidad_proteccion->TipoPoliza = $request->TipoPoliza;
+        $necesidad_proteccion->TipoPoliza = $request->TipoPoliza ?: null;
         $necesidad_proteccion->update();
 
 

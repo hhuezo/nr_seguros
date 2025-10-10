@@ -90,7 +90,7 @@
 
                         <div class="form-group row">
                             <label class="control-label">Modulo</label>
-                            <select name="TipoPoliza" class="form-control" required>
+                            <select name="TipoPoliza" class="form-control">
                                  <option value="">Seleccione</option>
                                 @foreach ($tipos_poliza as $tipo)
                                     <option value="{{ $tipo->Id }}">{{ $tipo->Nombre }}</option>
