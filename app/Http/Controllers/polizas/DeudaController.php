@@ -588,6 +588,9 @@ class DeudaController extends Controller
         $requisito = DeudaRequisitos::findOrFail($request->id);
         $requisito->delete();
         alert()->success('Se ha eliminado con exito');
+
+       return redirect("polizas/deuda/{$requisito->Deuda}?tab=3");
+
         return back();
         // return response()->json(['mensaje' => 'Se ha eliminado con exito', 'title' => 'Requisito!', 'icon' => 'success', 'showConfirmButton' => 'true']);
     }
