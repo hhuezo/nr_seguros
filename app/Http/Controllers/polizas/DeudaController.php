@@ -1788,14 +1788,13 @@ class DeudaController extends Controller
             $poliza_cumulos = DB::table('poliza_deuda_temp_cartera as pdtc')
                 ->leftJoin('saldos_montos as sm', 'pdtc.LineaCredito', '=', 'sm.id')
                 ->leftJoin('poliza_deuda_tipo_cartera as pdc', 'pdtc.PolizaDeudaTipoCartera', '=', 'pdc.Id')
-                ->leftJoin('tipo_cartera as tc', 'pdc.TipoCartera', '=', 'tc.Id') // Unir con la tabla tipo_cartera
+                ->leftJoin('tipo_cartera as tc', 'pdc.TipoCartera', '=', 'tc.Id')
                 ->select(
                     'pdtc.Id',
                     'pdtc.Dui',
                     'pdtc.Pasaporte',
                     'pdtc.CarnetResidencia',
                     'pdtc.Edad',
-                    //'pdtc.Nit',
                     'pdtc.PrimerNombre',
                     'pdtc.SegundoNombre',
                     'pdtc.PrimerApellido',
@@ -1807,21 +1806,21 @@ class DeudaController extends Controller
                     'pdtc.Perfiles',
                     'pdtc.EdadDesembloso',
                     'pdtc.FechaOtorgamiento',
-                    'pdtc.NoValido',
                     'pdtc.Excluido',
                     'pdtc.MontoMaximoIndividual',
-                    DB::raw("sum(pdtc.TotalCredito) as saldo_total"),
+                    DB::raw('SUM(pdtc.TotalCredito) AS saldo_total'),
                     DB::raw("GROUP_CONCAT(DISTINCT pdtc.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
                     DB::raw("GROUP_CONCAT(DISTINCT FORMAT(pdtc.TotalCredito, 2) SEPARATOR '- ') AS ConcatenatedMonto"),
-                    'sm.Abreviatura as Abreviatura',
-                    'tc.nombre AS TipoCarteraNombre' // Agregar el nombre de la TipoCartera
+                    'sm.Abreviatura AS Abreviatura',
+                    'tc.nombre AS TipoCarteraNombre'
                 )
                 ->where('pdtc.NoValido', 1)
                 ->where('pdtc.EdadDesembloso', '<=', $deuda->EdadMaximaTerminacion)
                 ->where('pdtc.TotalCredito', '<=', $deuda->ResponsabilidadMaxima)
                 ->where('pdtc.PolizaDeuda', $poliza)
-                ->groupBy('poliza_deuda_temp_cartera.Dui', 'poliza_deuda_temp_cartera.Pasaporte', 'poliza_deuda_temp_cartera.CarnetResidencia')
+                ->groupBy('pdtc.Dui', 'pdtc.Pasaporte', 'pdtc.CarnetResidencia')
                 ->get();
+
 
             // dd($poliza_cumulos);
 
@@ -2112,7 +2111,7 @@ class DeudaController extends Controller
             ->where('FechaInicio', $request->FechaInicio)
             ->where('FechaFinal', $request->FechaFinal)
             ->where('PolizaDeuda', $request->PolizaDeuda)
-            ->groupBy('pdtc.Dui', 'pdtc.NumeroReferencia')
+            ->groupBy('pdtc.Dui', 'pdtc.Pasaporte', 'pdtc.CarnetResidencia', 'pdtc.NumeroReferencia')
             ->get();
 
         return view('polizas.deuda.get_historico', compact('tabla_historico'));
