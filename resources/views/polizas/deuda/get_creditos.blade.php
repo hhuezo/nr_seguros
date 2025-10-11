@@ -4,7 +4,7 @@
             <tr>
                 <th>Número crédito</th>
                 <th>Tipo cartera</th>
-                <th>DUI</th>
+                <th>DUI/DOCUMENTO</th>
                 <th>Nombre</th>
                 <th>Fecha nacimiento</th>
                 <th>Fecha otorgamiento</th>
@@ -26,7 +26,7 @@
                     <td>{{ $registro->TipoCarteraNombre }}
                         ({{ $registro->Abreviatura }})
                     </td>
-                    <td>{{ $registro->Dui }}</td>
+                    <td>{{ $registro->Dui }} {{ $registro->Pasaporte }} {{ $registro->CarnetResidencia }}</td>
                     <td>{{ $registro->PrimerNombre }}
                         {{ $registro->SegundoNombre }}
                         {{ $registro->PrimerApellido }}
@@ -80,7 +80,7 @@
         <thead>
             <tr>
                 <th>Número crédito</th>
-                <th>DUI/NIT</th>
+                <th>DUI/DOCUMENTO</th>
                 {{-- <th>NIT</th> --}}
                 <th>Nombre</th>
                 <th>Fecha nacimiento</th>
@@ -127,7 +127,7 @@
                         @endif
 
                         <td>
-                            {{ $registro->Dui ?? '' }}
+                            {{ $registro->Dui ?? '' }} {{ $registro->Pasaporte }} {{ $registro->CarnetResidencia }}
                         </td>
 
 

@@ -589,7 +589,7 @@ class DeudaController extends Controller
         $requisito->delete();
         alert()->success('Se ha eliminado con exito');
 
-       return redirect("polizas/deuda/{$requisito->Deuda}?tab=3");
+        return redirect("polizas/deuda/{$requisito->Deuda}?tab=3");
 
         return back();
         // return response()->json(['mensaje' => 'Se ha eliminado con exito', 'title' => 'Requisito!', 'icon' => 'success', 'showConfirmButton' => 'true']);
@@ -1130,7 +1130,7 @@ class DeudaController extends Controller
 
         $recibo_historial = $this->save_recibo($detalle, $deuda);
         $configuracion = ConfiguracionRecibo::first();
-        $pdf = \PDF::loadView('polizas.deuda.recibo', compact('configuracion', 'recibo_historial', 'detalle', 'deuda', 'meses','cliente'))->setWarnings(false)->setPaper('letter');
+        $pdf = \PDF::loadView('polizas.deuda.recibo', compact('configuracion', 'recibo_historial', 'detalle', 'deuda', 'meses', 'cliente'))->setWarnings(false)->setPaper('letter');
         return $pdf->stream('Recibo.pdf');
 
         //  return back();
@@ -1792,6 +1792,8 @@ class DeudaController extends Controller
                 ->select(
                     'pdtc.Id',
                     'pdtc.Dui',
+                    'pdtc.Pasaporte',
+                    'pdtc.CarnetResidencia',
                     'pdtc.Edad',
                     //'pdtc.Nit',
                     'pdtc.PrimerNombre',
@@ -1818,7 +1820,7 @@ class DeudaController extends Controller
                 ->where('pdtc.EdadDesembloso', '<=', $deuda->EdadMaximaTerminacion)
                 ->where('pdtc.TotalCredito', '<=', $deuda->ResponsabilidadMaxima)
                 ->where('pdtc.PolizaDeuda', $poliza)
-                ->groupBy('pdtc.Dui')
+                ->groupBy('poliza_deuda_temp_cartera.Dui', 'poliza_deuda_temp_cartera.Pasaporte', 'poliza_deuda_temp_cartera.CarnetResidencia')
                 ->get();
 
             // dd($poliza_cumulos);
@@ -1858,6 +1860,8 @@ class DeudaController extends Controller
                         'poliza_deuda_temp_cartera.Id',
                         'poliza_deuda_temp_cartera.PolizaDeuda',
                         'poliza_deuda_temp_cartera.Dui',
+                        'poliza_deuda_temp_cartera.Pasaporte',
+                        'poliza_deuda_temp_cartera.CarnetResidencia',
                         'poliza_deuda_temp_cartera.Edad',
                         //'poliza_deuda_temp_cartera.Nit',
                         'poliza_deuda_temp_cartera.PrimerNombre',
@@ -1882,7 +1886,7 @@ class DeudaController extends Controller
                     ->where('poliza_deuda_temp_cartera.PolizaDeuda', $poliza)
                     ->where('poliza_deuda_temp_cartera.OmisionPerfil', 0)
                     ->whereNull('pdcart.NumeroReferencia')
-                    ->groupBy('poliza_deuda_temp_cartera.Dui')
+                    ->groupBy('poliza_deuda_temp_cartera.Dui', 'poliza_deuda_temp_cartera.Pasaporte', 'poliza_deuda_temp_cartera.CarnetResidencia')
                     ->get();
 
 
@@ -1893,8 +1897,10 @@ class DeudaController extends Controller
                         '=',
                         'poliza_deuda_temp_cartera.NumeroReferencia'
                     )
-                        ->whereNull('poliza_deuda_validados.NumeroReferencia') // Filtra los que no tienen coincidencia
+                        ->whereNull('poliza_deuda_validados.NumeroReferencia')
                         ->where('poliza_deuda_temp_cartera.Dui', $cumulo->Dui)
+                        ->where('poliza_deuda_temp_cartera.Pasaporte', $cumulo->Pasaporte)
+                        ->where('poliza_deuda_temp_cartera.CarnetResidencia', $cumulo->CarnetResidencia)
                         ->where('poliza_deuda_temp_cartera.NoValido', 0)
                         ->where('poliza_deuda_temp_cartera.PolizaDeuda', $poliza)
                         ->count();
@@ -1905,6 +1911,8 @@ class DeudaController extends Controller
                     ->select(
                         'poliza_deuda_temp_cartera.Id',
                         'poliza_deuda_temp_cartera.Dui',
+                        'poliza_deuda_temp_cartera.Pasaporte',
+                        'poliza_deuda_temp_cartera.CarnetResidencia',
                         'poliza_deuda_temp_cartera.Edad',
                         //'poliza_deuda_temp_cartera.Nit',
                         'poliza_deuda_temp_cartera.PrimerNombre',
@@ -1928,7 +1936,7 @@ class DeudaController extends Controller
                     ->where('poliza_deuda_temp_cartera.NoValido', 0)
                     ->where('poliza_deuda_temp_cartera.PolizaDeuda', $poliza)
                     ->where('poliza_deuda_temp_cartera.OmisionPerfil', 1)
-                    ->groupBy('poliza_deuda_temp_cartera.Dui')
+                    ->groupBy('poliza_deuda_temp_cartera.Dui', 'poliza_deuda_temp_cartera.Pasaporte', 'poliza_deuda_temp_cartera.CarnetResidencia')
                     ->get();
                 return view('polizas.deuda.get_creditos', compact('poliza_cumulos', 'opcion', 'requisitos', 'tipo', 'deuda'));
             } elseif ($tipo == 3) { // creditos rehabilitados

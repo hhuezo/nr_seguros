@@ -1277,12 +1277,6 @@ class DeudaCarteraController extends Controller
                 ->where('SaldoCumulo', '>=', $requisito->MontoInicial)->where('SaldoCumulo', '<=', $requisito->MontoFinal)
                 ->pluck('Dui')->toArray();
 
-            // if (in_array('000744688', $data_dui_cartera)) {
-
-            //     $a = $poliza_cumulos->where('Dui', '000744688');
-            //     dd($requisito, $a);
-            // }
-
 
             PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
                 ->whereIn('Dui', $data_dui_cartera)

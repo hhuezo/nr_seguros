@@ -306,7 +306,7 @@
                                             <thead>
                                                 <tr>
                                                     <th>Número crédito</th>
-                                                    <th>DUI</th>
+                                                    <th>DUI/DOCUMENTO</th>
                                                     {{-- <th>NIT</th> --}}
                                                     <th>Nombre</th>
                                                     <th>Fecha nacimiento</th>
@@ -318,7 +318,7 @@
                                                 @foreach ($nuevos_registros->where('Edad', '<=', $deuda->EdadMaximaTerminacion) as $registro)
                                                     <tr>
                                                         <td>{{ $registro->NumeroReferencia }}</td>
-                                                        <td>{{ $registro->Dui }}</td>
+                                                        <td>{{ $registro->Dui }} {{ $registro->Pasaporte }} {{ $registro->CarnetResidencia }}</td>
                                                         {{-- <td>{{ $registro->Nit }}</td> --}}
                                                         <td>{{ $registro->PrimerNombre }}
                                                             {{ $registro->SegundoNombre }}
