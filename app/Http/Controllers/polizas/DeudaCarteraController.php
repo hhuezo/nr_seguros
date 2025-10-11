@@ -387,7 +387,7 @@ class DeudaCarteraController extends Controller
                     }
                 } else {
 
-                    if ($obj->Pasaporte == null || $obj->Pasaporte == '') {
+                    if ($obj->Pasaporte == null && $obj->CarnetResidencia == null) {
                         $validador_dui = false;
                         if ($validador_dui == false) {
                             $obj->TipoError = 8;
@@ -775,7 +775,7 @@ class DeudaCarteraController extends Controller
                         array_push($errores_array, 2);
                     }
                 } else {
-                    if ($obj->Pasaporte == null || $obj->Pasaporte == '') {
+                    if ($obj->Pasaporte == null && $obj->CarnetResidencia == null) {
                         $validador_dui = false;
                         if ($validador_dui == false) {
                             $obj->TipoError = 8;
@@ -1023,7 +1023,6 @@ class DeudaCarteraController extends Controller
 
 
         return response()->json(['success' => true, 'conteo' => $conteo]);
-
     }
 
 
