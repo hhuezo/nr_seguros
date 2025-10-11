@@ -712,9 +712,10 @@ class ResidenciaController extends Controller
 
     public function recibo_pago($id, Request $request)
     {
-        session(['tab' => 4]);
+
         $detalle = DetalleResidencia::findOrFail($id);
         $residencia = Residencia::findOrFail($detalle->Residencia);
+        $cliente = Cliente::findOrFail($residencia->Asegurado);
         $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
         $detalle->SaldoA = $request->SaldoA;
         $detalle->ImpresionRecibo = $request->ImpresionRecibo;
@@ -724,7 +725,7 @@ class ResidenciaController extends Controller
         $detalle->update();
         //$calculo = $this->monto($residencia, $detalle);
         $configuracion = ConfiguracionRecibo::first();
-        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion', 'detalle', 'residencia', 'meses'))->setWarnings(false)->setPaper('letter');
+        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion', 'detalle', 'residencia', 'meses','cliente'))->setWarnings(false)->setPaper('letter');
         return $pdf->stream('Recibo.pdf');
 
         //  return back();
