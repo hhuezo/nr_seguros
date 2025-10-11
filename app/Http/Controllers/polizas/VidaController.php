@@ -1460,8 +1460,7 @@ class VidaController extends Controller
 
         $tasas_diferenciadas = $vida_tipo_cartera->tasa_diferenciada;
 
-        dd($vida_tipo_cartera->TipoCalculo);
-        if ($vida_tipo_cartera->TipoCalculo == 1) {
+         if ($vida_tipo_cartera->TipoCalculo == 1) {
             foreach ($tasas_diferenciadas as $tasa) {
                 //dd($tasa);
                 VidaCarteraTemp::where('User', auth()->user()->id)
