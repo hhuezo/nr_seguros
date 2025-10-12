@@ -27,11 +27,11 @@
                         <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Año</label>
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                             <select name="Axo" id="Axo{{ $obj->Id }}" class="form-control"
-                                onchange="calcularFechas('Axo{{ $obj->Id }}', 'Mes{{ $obj->Id }}', 'FechaInicio{{ $obj->Id }}', 'FechaFinal{{ $obj->Id }}')">
+                                onchange="calcularFechas('Axo{{ $obj->Id }}', 'Mes{{ $obj->Id }}', 'FechaInicio{{ $obj->Id }}', 'FechaFinal{{ $obj->Id }}','{{$obj->Id}}')">
                                 @foreach ($anios as $year => $value)
-                                    <option value="{{ $value }}"  {{ $axo == $value ? 'selected' : '' }}>
-                                        {{ $value }}
-                                    </option>
+                                <option value="{{ $value }}" {{ $axo == $value ? 'selected' : '' }}>
+                                    {{ $value }}
+                                </option>
                                 @endforeach
                             </select>
                         </div>
@@ -40,12 +40,12 @@
                         <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Mes</label>
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                             <select name="Mes" id="Mes{{ $obj->Id }}" class="form-control"
-                                onchange="calcularFechas('Axo{{ $obj->Id }}', 'Mes{{ $obj->Id }}', 'FechaInicio{{ $obj->Id }}', 'FechaFinal{{ $obj->Id }}')">
+                                onchange="calcularFechas('Axo{{ $obj->Id }}', 'Mes{{ $obj->Id }}', 'FechaInicio{{ $obj->Id }}', 'FechaFinal{{ $obj->Id }}','{{$obj->Id}}')">
                                 @for ($i = 1; $i <= 12; $i++)
                                     <option value="{{ $i }}" {{ $mes == $i ? 'selected' : '' }}>
-                                        {{ $meses[$i] }}
+                                    {{ $meses[$i] }}
                                     </option>
-                                @endfor
+                                    @endfor
                             </select>
                         </div>
                     </div>
@@ -53,7 +53,7 @@
                         <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
                             inicio</label>
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                            <input class="form-control" name="Id" value="{{ $poliza_vida->Id }}" type="hidden"
+                            <input class="form-control" name="Id" value="{{ $poliza_vida->Id }}" id="VidaId" type="hidden"
                                 required>
                             <input class="form-control" type="date" name="FechaInicio"
                                 id="FechaInicio{{ $obj->Id }}" value="{{$fechaInicio}}" required>
@@ -71,7 +71,7 @@
                     <div class="form-group row">
                         <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Archivo</label>
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                            <input class="form-control" name="Archivo" id="Archivo" type="file" required>
+                            <input class="form-control" name="Archivo" id="Archivo" type="file" required onchange="get_cartera('{{ $obj->Id }}')">
                         </div>
                     </div>
                     <div class="form-group row">
@@ -90,6 +90,27 @@
                         </div>
 
                     </div>
+
+                    <div class="form-group row">
+                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">
+
+                            <label class="switch">
+                                <input type="checkbox" name="validacion_credito">
+                                <span class="slider round"></span>
+                            </label>
+
+                        </label>
+                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                            <label class="control-label" align="left">Desea omitir la validacion de número de crédito?</label>
+                        </div>
+
+                    </div>
+                     <div class="alert alert-info" role="alert" id="div_error" style="display: none;">
+                        <ul>
+                            <li>Ya se tiene una cartera de este mes</li>
+                        </ul>
+                    </div>
+
 
                 </div>
 
@@ -112,7 +133,7 @@
         document.getElementById('loading-overlay').style.display = 'flex'; // Muestra el overlay de carga
     });
 
-    function calcularFechas(axoId, mesId, fechaInicioId, fechaFinalId) {
+    function calcularFechas(axoId, mesId, fechaInicioId, fechaFinalId,Id) {
         // Obtener los valores de año y mes
         const axo = document.getElementById(axoId).value;
         const mes = document.getElementById(mesId).value;
@@ -125,5 +146,24 @@
         const fechaFinal = new Date(axo, mes, 1); // Mes siguiente
         const fechaFinalFormateada = fechaFinal.toISOString().split('T')[0];
         document.getElementById(fechaFinalId).value = fechaFinalFormateada;
+        get_cartera(Id);
+    }
+
+    function get_cartera(id) {
+        const VidaId = document.getElementById('VidaId').value;
+        // Tomamos los valores del año y mes del modal actual
+        const mes = document.getElementById('Mes' + id).value;
+        const axo = document.getElementById('Axo' + id).value;
+        $.get("{{ url('polizas/vida/get_cartera') }}" + '/' + VidaId + '/' + mes + '/' + axo, function(data) {
+            //esta el la peticion get, la cual se divide en tres partes. ruta,variables y funcion
+            console.log('data:', data);
+
+            if (data == 1) {
+                document.getElementById('div_error').style.display = 'block';
+            } else {
+                document.getElementById('div_error').style.display = 'none';
+            }
+
+        });
     }
 </script>

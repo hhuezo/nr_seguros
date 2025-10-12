@@ -126,7 +126,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="FechaNacimiento" class="form-label">Edad *</label>
-                                        <input class="form-control" id="EdadCalculada" value="" type="text"
+                                        <input class="form-control" id="EdadCalculada" value="" name="EdadCalculada" type="text"
                                             disabled>
                                     </div>
                                     <div class="form-group">
@@ -301,46 +301,53 @@
                                             <div class="titulo">
                                                 Ruta
                                             </div>
+                                        
                                             <div class="form-group">
-                                                <label for="DireccionResidencia" class="form-label">Departamento
-                                                </label>
-                                                <select id="Departamento" class="form-control select2"
-                                                    style="width: 100%">
+                                                <label for="Departamento" class="form-label">Departamento</label>
+                                                <select id="Departamento" name="Departamento" class="form-control select2" style="width: 100%">
                                                     <option value="" disabled selected>Seleccione</option>
                                                     @foreach ($departamentos as $obj)
-                                                        <option value="{{ $obj->Id }}"
-                                                            {{ old('Estado') == $obj->Id ? 'selected' : '' }}>
+                                                        <option value="{{ $obj->Id }}" {{ old('Departamento') == $obj->Id ? 'selected' : '' }}>
                                                             {{ $obj->Nombre }}
                                                         </option>
                                                     @endforeach
                                                 </select>
+                                                @error('Departamento')
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                @enderror
                                             </div>
+
                                             <div class="form-group">
-                                                <label for="DireccionResidencia" class="form-label">Municipio</label>
-                                                <select name="Municipio" id="Municipio" class="form-control select2"
-                                                    style="width: 100%" disabled>
+                                                <label for="Municipio" class="form-label">Municipio</label>
+                                                <select name="Municipio" id="Municipio" class="form-control select2" style="width: 100%">
                                                     <option value="">Seleccione</option>
                                                     @foreach ($municipios as $obj)
-                                                        <option value="{{ $obj->Id }}"
-                                                            {{ old('Estado') == $obj->Id ? 'selected' : '' }}>
+                                                        <option value="{{ $obj->Id }}" {{ old('Municipio') == $obj->Id ? 'selected' : '' }}>
                                                             {{ $obj->Nombre }}
                                                         </option>
                                                     @endforeach
                                                 </select>
+                                                @error('Municipio')
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                @enderror
                                             </div>
+
                                             <div class="form-group">
-                                                <label for="DireccionResidencia" class="form-label">Distrito</label>
-                                                <select id="Distrito" name="Distrito" class="form-control select2"
-                                                    style="width: 100%" disabled>
+                                                <label for="Distrito" class="form-label">Distrito</label>
+                                                <select id="Distrito" name="Distrito" class="form-control select2" style="width: 100%">
                                                     <option value="">Seleccione</option>
                                                     @foreach ($distritos as $obj)
-                                                        <option value="{{ $obj->Id }}"
-                                                            {{ old('Estado') == $obj->Id ? 'selected' : '' }}>
+                                                        <option value="{{ $obj->Id }}" {{ old('Distrito') == $obj->Id ? 'selected' : '' }}>
                                                             {{ $obj->Nombre }}
                                                         </option>
                                                     @endforeach
                                                 </select>
+                                                @error('Distrito')
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                @enderror
                                             </div>
+                                        
+
                                             <div class="form-group">
                                                 <label for="BancoPrefencia" class="form-label">Banco de su Preferencia
                                                 </label>
@@ -590,7 +597,7 @@
 
 
             // Construir la URL con los parámetros
-            var url = new URL('{{ url('catalogo/cliente/validar_cliente') }}');
+            var url = new URL("{{ url('catalogo/cliente/validar_cliente') }}");
             var params = {
                 Dui: dui,
                 Nit: nit,

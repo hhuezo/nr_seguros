@@ -135,23 +135,23 @@ class VidaFedeController extends Controller
 
 
         //verificando creditos repetidos
-        $repetidos = VidaCarteraTemp::where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)
-            ->groupBy('NumeroReferencia')
-            ->havingRaw('COUNT(*) > 1')
-            ->get();
+        if ($request->validacion_credito != 'on') {
+            $repetidos = VidaCarteraTemp::where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)
+                ->groupBy('NumeroReferencia')
+                ->havingRaw('COUNT(*) > 1')
+                ->get();
 
-        $numerosRepetidos = $repetidos->isNotEmpty() ? $repetidos->pluck('NumeroReferencia') : null;
+            $numerosRepetidos = $repetidos->isNotEmpty() ? $repetidos->pluck('NumeroReferencia') : null;
 
-        if ($numerosRepetidos) {
-            VidaCarteraTemp::where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)
-                ->delete();
+            if ($numerosRepetidos) {
+                VidaCarteraTemp::where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)
+                    ->delete();
 
-            $numerosStr = $numerosRepetidos->implode(', ');
+                $numerosStr = $numerosRepetidos->implode(', ');
 
-            return back()
-                ->withErrors(['Archivo' => "Existen números de crédito repetidos: $numerosStr"]);
+                return back()->withErrors(['Archivo' => "Existen números de crédito repetidos: $numerosStr"]);
+            }
         }
-
 
         //calculando edades y fechas de nacimiento
         VidaCarteraTemp::where('PolizaVida', $poliza_vida->Id)

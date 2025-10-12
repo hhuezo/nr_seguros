@@ -129,21 +129,23 @@ class DeudaCarteraFedeController extends Controller
 
 
         //verificando creditos repetidos
-        $repetidos = PolizaDeudaTempCartera::where('User', auth()->user()->id)
-            ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
-            ->groupBy('NumeroReferencia')
-            ->havingRaw('COUNT(*) > 1')
-            ->get();
+        if ($request->validacion_credito != 'on') {
+            $repetidos = PolizaDeudaTempCartera::where('User', auth()->user()->id)
+                ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                ->groupBy('NumeroReferencia')
+                ->havingRaw('COUNT(*) > 1')
+                ->get();
 
-        $numerosRepetidos = $repetidos->isNotEmpty() ? $repetidos->pluck('NumeroReferencia') : null;
+            $numerosRepetidos = $repetidos->isNotEmpty() ? $repetidos->pluck('NumeroReferencia') : null;
 
-        if ($numerosRepetidos) {
-            PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->delete();
-            // Convertir la colección a string para mostrarla en el error
-            $numerosStr = $numerosRepetidos->implode(', ');
+            if ($numerosRepetidos) {
+                PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->delete();
+                // Convertir la colección a string para mostrarla en el error
+                $numerosStr = $numerosRepetidos->implode(', ');
 
-            $validator->errors()->add('Archivo', "Existen números de crédito repetidos: $numerosStr");
-            return back()->withErrors($validator);
+                $validator->errors()->add('Archivo', "Existen números de crédito repetidos: $numerosStr");
+                return back()->withErrors($validator);
+            }
         }
 
 
@@ -269,7 +271,7 @@ class DeudaCarteraFedeController extends Controller
 
         if ($data_error->count() > 0) {
             $deuda_tipo_cartera_id = $deuda_tipo_cartera->Id;
-            return view('polizas.deuda.respuesta_poliza_error', compact('data_error', 'deuda','deuda_tipo_cartera_id'));
+            return view('polizas.deuda.respuesta_poliza_error', compact('data_error', 'deuda', 'deuda_tipo_cartera_id'));
         }
 
 

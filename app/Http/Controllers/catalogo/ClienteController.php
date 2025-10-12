@@ -113,6 +113,7 @@ class ClienteController extends Controller
             'UbicacionCobro.required' => 'El Método de Pago es obligatorio',
             'UbicacionCobro.integer' => 'El Método de Pago debe ser un valor válido',
             'Nit.required_without' => 'Debe ingresar al menos un NIT o un Pasaporte',
+            'Nit.required' => 'Debe ingresar el numero de NIT',
             'Nit.min' => 'El campo NIT debe contener al menos 17 caracteres',
             'Pasaporte.required_without' => 'Debe ingresar al menos un NIT o un Pasaporte',
             'Pasaporte.max' => 'El campo Pasaporte es demasiado largo',
@@ -122,6 +123,7 @@ class ClienteController extends Controller
             'Genero.required' => 'El campo genero es obligatorio',
             'TipoContribuyente.required' => 'El campo tipo contribuyente es obligatorio',
             'FechaNacimiento.required' => 'El campo fecha de nacimiento es obligatorio',
+            'NumeroExtrajero.required' => 'El campo Numero de Extranjero es obligatorio',
         ];
 
         // Limpiar campos y convertir vacíos en null
@@ -150,7 +152,7 @@ class ClienteController extends Controller
         // Validación para persona natural (TipoPersona == 1)
         if ($request->get('TipoPersona') == 1) {
             // DUI obligatorio para persona natural si no es extranjero
-           /* if (!$extranjero) {
+            if (!$extranjero) {
                 $duiRules = ['required', 'min:10'];
                 if ($request->get('ClienteId')) {
                     $duiRules[] = Rule::unique('cliente')->ignore($request->get('ClienteId'));
@@ -158,7 +160,7 @@ class ClienteController extends Controller
                     $duiRules[] = 'unique:cliente';
                 }
                 $rules['Dui'] = $duiRules;
-            }*/
+            }
 
             // Fecha de nacimiento requerida y >= 18 años
             $rules['FechaNacimiento'] = [
@@ -176,8 +178,11 @@ class ClienteController extends Controller
         if ($extranjero) {
             $rules['Nit'] = 'nullable|min:17|required_without:Pasaporte';
             $rules['Pasaporte'] = 'nullable|max:100|required_without:Nit';
+            $rules['NumeroExtrajero'] = 'required';
         } else {
             // Si no es persona natural y existe Nit
+            $rules['Nit'] = 'nullable|min:17|required';
+
             if ($request->get('TipoPersona') != 1 && $request->get('Nit')) {
                 $nitRules = ['min:17'];
                 if ($request->get('ClienteId')) {
@@ -406,13 +411,14 @@ class ClienteController extends Controller
         $departamento_id = optional(optional(optional($cliente->distrito)->municipio)->Departamento);
 
 
-            $municipios = Municipio::get();
+        $municipios = Municipio::get();
 
 
         $municipio_actual = 0;
         $departamento_actual = 0;
         //  dd($cliente->Distrito);
         if ($cliente->Distrito) {
+            $municipios = Municipio::where('Departamento', '=', $cliente->distrito->municipio->Departamento)->get();
             $distritos = Distrito::where('Municipio', '=', $cliente->distrito->Municipio)->get();
             $municipio_actual = $cliente->distrito->Municipio;
             $departamento_actual = $cliente->distrito->municipio->Departamento;
