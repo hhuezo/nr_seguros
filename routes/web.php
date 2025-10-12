@@ -143,7 +143,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('get_producto/{id}/{tipo}', [PlanController::class, 'get_producto']);
     Route::get('get_plan/{id}', [PlanController::class, 'get_plan']);
 
-    Route::get('catalogo/cliente/validar_cliente', [ClienteController::class, 'valida  r']);
+    Route::get('catalogo/cliente/validar_cliente', [ClienteController::class, 'validar']);
     Route::post('catalogo/cliente/add_contacto', [ClienteController::class, 'add_contacto']);
     Route::post('catalogo/cliente/delete_contacto', [ClienteController::class, 'delete_contacto']);
     Route::post('catalogo/cliente/edit_contacto', [ClienteController::class, 'edit_contacto']);

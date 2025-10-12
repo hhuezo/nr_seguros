@@ -14,7 +14,8 @@
                 <div class="x_title">
                     <h2>Pólizas / Residencia / Póliza de Residencia / {{ $residencia->NumeroPoliza }} <small></small></h2>
                     <ul class="nav navbar-right panel_toolbox">
-                        <a href="{{ url('polizas/residencia') }}?idRegistro={{$residencia->Id}}" class="btn btn-info fa fa-undo " style="color: white">
+                        <a href="{{ url('polizas/residencia') }}?idRegistro={{ $residencia->Id }}"
+                            class="btn btn-info fa fa-undo " style="color: white">
                             Atrás</a>
                     </ul>
                     <div class="clearfix"></div>
@@ -374,7 +375,7 @@
                                                     {{ $obj->FechaFinal ? \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') : '' }}
                                                 </td>
                                                 <td style="text-align: center;">
-                                                    {{$obj->ImpresionRecibo}}
+                                                    {{ $obj->ImpresionRecibo }}
                                                     {{ $obj->ImpresionRecibo ? \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') : '' }}
                                                 </td>
                                                 <td style="text-align: center;">
@@ -549,10 +550,7 @@
                                                 </div>
                                             </td>
                                         </tr>
-                                        <!-- <tr>
-                                                                                                                            <td>Resultado 1</td>
-                                                                                                                            <td><input type="text" id="Resultado2" value="@if ($ultimo_pago) {{ $ultimo_pago->MontoCartera }} @else 0 @endif"   class="form-group"></td>
-                                                                                                                        </tr> -->
+
                                         <tr>
                                             <td>Prima Calculada </td>
                                             <td>
@@ -937,9 +935,9 @@
                                                         class="form-control" readonly>
                                                 </div>
                                                 <!-- <div class="col-sm-3">
-                                                                                                                                <label class="control-label">&nbsp;</label>
-                                                                                                                                <i class="btn btn-default fa fa-print form-control" id="btn_impresion"></i>
-                                                                                                                            </div> -->
+                                                                                                                                    <label class="control-label">&nbsp;</label>
+                                                                                                                                    <i class="btn btn-default fa fa-print form-control" id="btn_impresion"></i>
+                                                                                                                                </div> -->
                                             </div>
 
                                             <div class="form-group">

@@ -875,7 +875,7 @@
         document.getElementById('comision_ccf').textContent = formatearCantidad(comision_ccf);
         document.getElementById('comision').textContent = formatearCantidad(comision_ccf);
 
-        console.log();
+        console.log("hola");
         let liquido_pagar = (parseFloat(sub_total) + parseFloat(iva) - parseFloat(comision_ccf));
         document.getElementById('liquido_pagar').textContent = formatearCantidad(liquido_pagar);
         let total_factura = (parseFloat(sub_total) + parseFloat(iva));
