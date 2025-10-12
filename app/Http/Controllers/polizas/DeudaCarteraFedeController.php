@@ -128,6 +128,28 @@ class DeudaCarteraFedeController extends Controller
         Excel::import(new PolizaDeudaTempCarteraFedeImport($date->year, $date->month, $deuda->Id, $request->FechaInicio, $request->FechaFinal, $deuda_tipo_cartera->Id), $archivo);
 
 
+
+
+        // 🔍 Buscar DUI con caracteres inválidos (#, !, %, etc.)
+        $duiInvalidos = PolizaDeudaTempCartera::where('User', auth()->id())
+            ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+            ->whereRaw("Dui REGEXP '[^0-9-]'") // Detección de caracteres no válidos
+            ->pluck('NumeroReferencia')
+            ->toArray();
+
+        if (count($duiInvalidos) > 0) {
+            // 👇 Redirigir hacia atrás con los errores en la sesión
+            return back()
+                ->with('warning', 'Se detectaron DUI inválidos en el archivo en los creditos.')
+                ->with('errores', $duiInvalidos)
+                ->withInput();
+        }
+
+
+
+
+
+
         //verificando creditos repetidos
         if ($request->validacion_credito != 'on') {
             $repetidos = PolizaDeudaTempCartera::where('User', auth()->user()->id)

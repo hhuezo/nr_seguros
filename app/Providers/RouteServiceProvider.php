@@ -38,9 +38,13 @@ class RouteServiceProvider extends ServiceProvider
 
 
 
+            // 👇 Agregar tu nuevo grupo de rutas web personalizadas
             Route::middleware('web')
-                ->prefix('polizas/deuda')
-                ->group(base_path('routes/deuda.php'));
+                ->group(base_path('routes/residencia.php'));
+
+
+            Route::middleware('web')
+                ->group(base_path('routes/desempleo.php'));
 
 
             // 👇 Agregar tu nuevo grupo de rutas web personalizadas

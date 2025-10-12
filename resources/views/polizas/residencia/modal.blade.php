@@ -29,7 +29,7 @@
 <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
     id="modal-activar-{{ $obj->Id }}">
 
-    <form method="POST" action="{{ url('poliza/residencia/active', $obj->Id) }}">
+    <form method="POST" action="{{ url('polizas/residencia/active', $obj->Id) }}">
         @method('POST')
         @csrf
         <div class="modal-dialog">
@@ -57,7 +57,7 @@
 <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
     id="modal-desactivar-{{ $obj->Id }}">
 
-    <form method="POST" action="{{ url('poliza/residencia/desactive', $obj->Id) }}">
+    <form method="POST" action="{{ url('polizas/residencia/desactive', $obj->Id) }}">
         @method('POST')
         @csrf
         <div class="modal-dialog">

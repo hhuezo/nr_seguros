@@ -184,29 +184,6 @@ Route::middleware(['auth'])->group(function () {
 
 
 
-    //pólizas
-    Route::resource('polizas/residencia', ResidenciaController::class);
-    Route::post('polizas/residencia/create_pago', [ResidenciaController::class, 'create_pago']);
-    Route::post('polizas/residencia/agregar_pago', [ResidenciaController::class, 'agregar_pago']);
-    Route::post('polizas/residencia/edit_pago', [ResidenciaController::class, 'edit_pago']);
-    Route::post('poliza/residencia/recibo/{id}', [ResidenciaController::class, 'recibo_pago']);
-    Route::get('poliza/residencia/get_recibo/{id}', [ResidenciaController::class, 'get_recibo']);
-    Route::post('poliza/residencia/active/{id}', [ResidenciaController::class, 'active_edit']);
-    Route::post('poliza/residencia/desactive/{id}', [ResidenciaController::class, 'desactive_edit']);
-    Route::get('polizas/residencia/get_pago/{id}', [ResidenciaController::class, 'get_pago']);
-    Route::get('polizas/residencia/{id}/renovar', [ResidenciaController::class, 'renovar']);
-    Route::get('polizas/residencia/{id}/cancelacion', [ResidenciaController::class, 'cancelacion']);
-    Route::post('polizas/residencia/renovar/{id}', [ResidenciaController::class, 'renovarPoliza'])->name('residencia.renovarPoliza');
-    Route::post('polizas/residencia/delete_pago/{id}', [ResidenciaController::class, 'delete_pago']);
-    Route::post('polizas/residencia/agregar_comentario', [ResidenciaController::class, 'agregar_comentario']);
-    Route::post('polizas/residencia/eliminar_comentario', [ResidenciaController::class, 'eliminar_comentario']);
-    Route::post('polizas/residencia/cancelar_pago', [ResidenciaController::class, 'cancelar_pago']);
-
-
-
-
-
-
 
     Route::post('exportar/extraprimados_excluidos/{id}', [DeudaController::class, 'extraprimados_excluidos']);
     Route::post('exportar/nuevos_registros/{id}', [DeudaController::class, 'exportar_nuevos_registros']);
@@ -295,42 +272,20 @@ Route::middleware(['auth'])->group(function () {
 
 
 
+    Route::get('polizas/deuda/get_referencia_creditos/{id}/{tipo_cartera}', [DeudaController::class, 'get_referencia_creditos']);
+    Route::get('polizas/deuda/get_creditos/{id}', [DeudaController::class, 'get_creditos']);
+
+    Route::get('polizas/deuda/get_creditos_no_validos/{id}', [DeudaController::class, 'get_creditos_no_validos']);
+    Route::get('polizas/deuda/get_creditos_con_requisitos/{id}', [DeudaController::class, 'get_creditos_con_requisitos']);
+
+    Route::get('polizas/deuda/get_creditos_detalle_requisitos/{documento}/{poliza}/{tipo}/{tipo_cartera}', [DeudaController::class, 'get_creditos_detalle_requisitos']);
 
 
 
+    Route::post('polizas/deuda/fede/create_pago', [DeudaCarteraFedeController::class, 'create_pago']);
+    Route::post('polizas/deuda/fede/create_pago_recibo', [DeudaCarteraFedeController::class, 'create_pago_recibo']);
 
-    //desempleo store_poliza
-
-    Route::post('polizas/desempleo/agregar_no_valido/{id}', [DesempleoController::class, 'agregar_no_valido']);
-    Route::get('polizas/desempleo/get_no_valido/{id}', [DesempleoController::class, 'get_no_valido']);
-    Route::post('polizas/desempleo/store_poliza/{id}', [DesempleoController::class, 'store_poliza']);
-    Route::post('polizas/desempleo/create_pago/{id}', [DesempleoController::class, 'create_pago']);
-    Route::post('polizas/desempleo/borrar_proceso_actual/{id}', [DesempleoController::class, 'borrar_proceso_actual']);
-    Route::post('polizas/desempleo/agregar_pago', [DesempleoController::class, 'agregar_pago']);
-    Route::get('polizas/desempleo/get_pago/{id}', [DesempleoController::class, 'get_pago']);
-    Route::post('poliza/desempleo/recibo/{id}', [DesempleoController::class, 'recibo_pago']);
-    Route::post('polizas/desempleo/edit_pago', [DesempleoController::class, 'edit_pago']);
-    Route::post('polizas/desempleo/anular_pago/{id}', [DesempleoController::class, 'anular_pago']);
-    Route::post('polizas/desempleo/delete_pago/{id}', [DesempleoController::class, 'delete_pago']);
-    Route::post('finalizar_configuracion_desempleo', [DesempleoController::class, 'finalizar_configuracion']);
-
-    Route::post('exportar/desempleo/registros_edad_maxima/{id}', [DesempleoController::class, 'registros_edad_maxima']);
-    Route::post('exportar/desempleo/registros_responsabilidad_maxima/{id}', [DesempleoController::class, 'registros_responsabilidad_maxima']);
-    Route::post('exportar/desempleo/nuevos_registros/{id}', [DesempleoController::class, 'exportar_nuevos_registros']);
-    Route::post('exportar/desempleo/registros_eliminados/{id}', [DesempleoController::class, 'exportar_registros_eliminados']);
-    Route::post('exportar/desempleo/registros_rehabilitados/{id}', [DesempleoController::class, 'exportar_registros_rehabilitados']);
-
-
-    Route::get('poliza/desempleo/get_recibo/{id}/{exportar}', [DesempleoController::class, 'get_recibo']);
-    Route::get('poliza/desempleo/get_recibo_edit/{id}', [DesempleoController::class, 'get_recibo_edit']);
-    Route::post('poliza/desempleo/get_recibo_edit', [DesempleoController::class, 'get_recibo_update']);
-    Route::get('polizas/desempleo/get_cartera/{id}/{mes}/{axo}', [DesempleoController::class, 'get_cartera']);
-
-
-    Route::resource('polizas/desempleo', DesempleoController::class);
-
-
-
+    Route::post('polizas/deuda/agregar_valido_detalle', [DeudaController::class, 'agregar_valido_detalle']);
 
 
 

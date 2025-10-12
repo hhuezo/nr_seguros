@@ -48,7 +48,7 @@ class PolizaDeudaTempCarteraFedeImport implements ToModel, /*WithStartRow,*/ Ski
 
             return new PolizaDeudaTempCartera([
                 'TipoDocumento' => $row[0],
-                'Dui' => $row[1],
+                'Dui' => trim($row[1]),
                 'PrimerApellido' => $row[2],
                 'SegundoApellido' => $row[3],
                 'PrimerNombre' => $row[4],

@@ -320,6 +320,27 @@ class DeudaCarteraController extends Controller
         }
 
 
+
+
+
+        // 🔍 Buscar DUI con caracteres inválidos (#, !, %, etc.)
+        $duiInvalidos = PolizaDeudaTempCartera::where('User', auth()->id())
+            ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+            ->whereRaw("Dui REGEXP '[^0-9-]'") // Detección de caracteres no válidos
+            ->pluck('NumeroReferencia')
+            ->toArray();
+
+        if (count($duiInvalidos) > 0) {
+            // 👇 Redirigir hacia atrás con los errores en la vista
+            return back()
+                ->with('warning', 'Se detectaron DUI inválidos en el archivo en los creditos.')
+                ->with('errores', $duiInvalidos)
+                ->withInput();
+        }
+
+
+
+
         //verificando creditos repetidos
 
         //dd($request->validacion_credito);

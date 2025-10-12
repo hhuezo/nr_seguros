@@ -43,7 +43,7 @@ class PolizaDeudaTempCarteraImport implements ToModel, /*WithStartRow,*/ SkipsEm
             if ($this->encabezados == 1) {
 
                 return new PolizaDeudaTempCartera([
-                    'Dui'                 => $row[0],
+                    'Dui'                 => trim($row[0]),
                     'Pasaporte'           => $row[1],
                     'CarnetResidencia'    => $row[2],
                     'Nacionalidad'        => $row[3],

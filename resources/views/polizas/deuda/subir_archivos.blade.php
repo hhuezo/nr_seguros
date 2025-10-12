@@ -8,101 +8,6 @@
         });
     </script>
 
-    <style>
-        #loading-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.8);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #loading-overlay img {
-            width: 50px;
-            /* Ajusta el tamaño de la imagen según tus necesidades */
-            height: 50px;
-            /* Ajusta el tamaño de la imagen según tus necesidades */
-        }
-
-        /* The switch - the box around the slider */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 40px;
-            /* Ajustar el ancho según sea necesario */
-            height: 20px;
-            /* Ajustar la altura según sea necesario */
-        }
-
-        /* Hide default HTML checkbox */
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        /* The slider */
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            -webkit-transition: .4s;
-            transition: .4s;
-            border-radius: 10px;
-            /* Ajustar el radio de borde para que sea más pequeño */
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            /* Ajustar la altura según sea necesario */
-            width: 16px;
-            /* Ajustar el ancho según sea necesario */
-            left: 2px;
-            /* Ajustar la posición según sea necesario */
-            bottom: 2px;
-            /* Ajustar la posición según sea necesario */
-            background-color: white;
-            -webkit-transition: .4s;
-            transition: .4s;
-            border-radius: 50%;
-            /* Hacer el selector redondo */
-        }
-
-        input:checked+.slider {
-            background-color: #2196F3;
-        }
-
-        input:focus+.slider {
-            box-shadow: 0 0 1px #2196F3;
-        }
-
-        input:checked+.slider:before {
-            -webkit-transform: translateX(16px);
-            -ms-transform: translateX(16px);
-            transform: translateX(16px);
-        }
-
-        /* Rounded sliders */
-        .slider.round {
-            border-radius: 20px;
-            /* Ajustar el radio de borde para que sea más pequeño */
-        }
-
-        .slider.round:before {
-            border-radius: 50%;
-        }
-    </style>
 
 
     <!-- Agrega este div al final de tu archivo blade -->
@@ -130,6 +35,19 @@
 
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+                @if (session('warning'))
+                    <div class="alert alert-danger">
+                        <strong>{{ session('warning') }}</strong><br>
+
+                        @if (session('errores'))
+                            <span>
+                                {{ implode(', ', session('errores')) }}
+                            </span>
+                        @endif
+                    </div>
+                @endif
+
 
                 @if (session('error'))
                     <div class="alert alert-danger">
