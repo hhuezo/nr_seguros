@@ -105,7 +105,7 @@
                         </div>
 
                     </div>
-                     <div class="alert alert-info" role="alert" id="div_error" style="display: none;">
+                    <div class="alert alert-info" role="alert" id="div_error{{$obj->Id}}" style="display: none;">
                         <ul>
                             <li>Ya se tiene una cartera de este mes</li>
                         </ul>
@@ -133,7 +133,7 @@
         document.getElementById('loading-overlay').style.display = 'flex'; // Muestra el overlay de carga
     });
 
-    function calcularFechas(axoId, mesId, fechaInicioId, fechaFinalId,Id) {
+    function calcularFechas(axoId, mesId, fechaInicioId, fechaFinalId, Id) {
         // Obtener los valores de año y mes
         const axo = document.getElementById(axoId).value;
         const mes = document.getElementById(mesId).value;
@@ -159,9 +159,9 @@
             console.log('data:', data);
 
             if (data == 1) {
-                document.getElementById('div_error').style.display = 'block';
+                document.getElementById('div_error' + id).style.display = 'block';
             } else {
-                document.getElementById('div_error').style.display = 'none';
+                document.getElementById('div_error' + id).style.display = 'none';
             }
 
         });

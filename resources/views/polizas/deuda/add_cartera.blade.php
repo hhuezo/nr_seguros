@@ -100,7 +100,7 @@
                         </div>
 
                     </div>
-                    <div class="alert alert-info" role="alert" id="div_error" style="display: none;">
+                    <div class="alert alert-info" role="alert" id="div_error{{$obj->Id}}" style="display: none;">
                         <ul>
                             <li>Ya se tiene una cartera de este mes</li>
                         </ul>
@@ -157,11 +157,12 @@
         $.get("{{ url('polizas/deuda/get_cartera') }}" + '/' + DeudaId + '/' + mes + '/' + axo, function(data) {
             //esta el la peticion get, la cual se divide en tres partes. ruta,variables y funcion
             console.log('data:', data);
+            console.log('div_error' + id);
 
             if (data == 1) {
-                document.getElementById('div_error').style.display = 'block';
+                document.getElementById('div_error' + id).style.display = 'block';
             } else {
-                document.getElementById('div_error').style.display = 'none';
+                document.getElementById('div_error' + id).style.display = 'none';
             }
 
         });

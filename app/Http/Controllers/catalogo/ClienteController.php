@@ -423,7 +423,8 @@ class ClienteController extends Controller
             $municipio_actual = $cliente->distrito->Municipio;
             $departamento_actual = $cliente->distrito->municipio->Departamento;
         } else {
-            $distritos = Distrito::get();
+            $distritos = Distrito::where('Municipio', '=', 1)->get();
+            $municipios = Municipio::where('Departamento', '=', 1)->get();
         }
         $aseguradoras = Aseguradora::where('Activo', 1)->get();
 
