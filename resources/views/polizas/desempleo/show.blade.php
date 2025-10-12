@@ -298,10 +298,29 @@
                         <div class="form-group row">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Archivo</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="Archivo" type="file" required>
+                                <input class="form-control" name="Archivo" type="file" required onchange="get_cartera({{'$desempleo->Id'}})">
                             </div>
                         </div>
 
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">
+
+                            <label class="switch">
+                                <input type="checkbox" name="validacion_credito">
+                                <span class="slider round"></span>
+                            </label>
+
+                        </label>
+                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                            <label class="control-label" align="left">Desea omitir la validacion de número de crédito?</label>
+                        </div>
+
+                    </div>
+                    <div class="alert alert-info" role="alert" id="div_error" style="display: none;">
+                        <ul>
+                            <li>Ya se tiene una cartera de este mes</li>
+                        </ul>
                     </div>
                     <div class="clearfix"></div>
                     <div class="modal-footer">
@@ -361,5 +380,23 @@
             añoSelect.addEventListener('change', actualizarFechas);
             mesSelect.addEventListener('change', actualizarFechas);
         });
+
+        function get_cartera(id) {
+            
+            // Tomamos los valores del año y mes del modal actual
+            const mes = document.getElementById('Mes').value;
+            const axo = document.getElementById('Axo').value;
+            $.get("{{ url('polizas/desempleo/get_cartera') }}" + '/' + id + '/' + mes + '/' + axo, function(data) {
+                //esta el la peticion get, la cual se divide en tres partes. ruta,variables y funcion
+                console.log('data:', data);
+
+                if (data == 1) {
+                    document.getElementById('div_error').style.display = 'block';
+                } else {
+                    document.getElementById('div_error').style.display = 'none';
+                }
+
+            });
+        }
     </script>
 @endsection

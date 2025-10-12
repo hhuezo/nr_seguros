@@ -123,6 +123,16 @@ class DeudaCarteraController extends Controller
         ));
     }
 
+    public function get_cartera($id, $mes, $axo)
+    {
+        $deuda = Deuda::findOrFail($id);
+        $deuda_cartera = PolizaDeudaCartera::where('PolizaDeuda', $id)->where('Mes', $mes)->where('Axo', $axo)->first();
+
+        if ($deuda_cartera) {
+            return true;
+        }
+        return false;
+    }
 
 
 
@@ -312,22 +322,25 @@ class DeudaCarteraController extends Controller
 
         //verificando creditos repetidos
 
-        $repetidos = PolizaDeudaTempCartera::where('User', auth()->user()->id)
-            ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
-            //->where('PolizaDeuda', $request->Id)
-            ->groupBy('NumeroReferencia')
-            ->havingRaw('COUNT(*) > 1')
-            ->get();
+        //dd($request->validacion_credito);
+        if ($request->validacion_credito != 'on') {
+            $repetidos = PolizaDeudaTempCartera::where('User', auth()->user()->id)
+                ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                //->where('PolizaDeuda', $request->Id)
+                ->groupBy('NumeroReferencia')
+                ->havingRaw('COUNT(*) > 1')
+                ->get();
 
-        $numerosRepetidos = $repetidos->isNotEmpty() ? $repetidos->pluck('NumeroReferencia') : null;
+            $numerosRepetidos = $repetidos->isNotEmpty() ? $repetidos->pluck('NumeroReferencia') : null;
 
-        if ($numerosRepetidos) {
-            PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->delete();
-            // Convertir la colección a string para mostrarla en el error
-            $numerosStr = $numerosRepetidos->implode(', ');
+            if ($numerosRepetidos) {
+                PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->delete();
+                // Convertir la colección a string para mostrarla en el error
+                $numerosStr = $numerosRepetidos->implode(', ');
 
-            $validator->errors()->add('Archivo', "Existen números de crédito repetidos: $numerosStr");
-            return back()->withErrors($validator);
+                $validator->errors()->add('Archivo', "Existen números de crédito repetidos: $numerosStr");
+                return back()->withErrors($validator);
+            }
         }
 
 

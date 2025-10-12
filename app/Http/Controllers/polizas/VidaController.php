@@ -1219,23 +1219,24 @@ class VidaController extends Controller
 
 
         //verificando creditos repetidos
-        $repetidos = VidaCarteraTemp::where('User', auth()->user()->id)
-            ->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)
-            ->groupBy('NumeroReferencia')
-            ->havingRaw('COUNT(*) > 1')
-            ->get();
-
-        $numerosRepetidos = $repetidos->isNotEmpty() ? $repetidos->pluck('NumeroReferencia') : null;
-
-        if ($numerosRepetidos) {
-            VidaCarteraTemp::where('User', auth()->user()->id)
+        if ($request->validacion_credito != 'on') {
+            $repetidos = VidaCarteraTemp::where('User', auth()->user()->id)
                 ->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)
-                ->delete();
+                ->groupBy('NumeroReferencia')
+                ->havingRaw('COUNT(*) > 1')
+                ->get();
 
-            $numerosStr = $numerosRepetidos->implode(', ');
+            $numerosRepetidos = $repetidos->isNotEmpty() ? $repetidos->pluck('NumeroReferencia') : null;
 
-            return back()
-                ->withErrors(['Archivo' => "Existen números de crédito repetidos: $numerosStr"]);
+            if ($numerosRepetidos) {
+                VidaCarteraTemp::where('User', auth()->user()->id)
+                    ->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)
+                    ->delete();
+
+                $numerosStr = $numerosRepetidos->implode(', ');
+
+                return back()->withErrors(['Archivo' => "Existen números de crédito repetidos: $numerosStr"]);
+            }
         }
 
 
@@ -1460,7 +1461,7 @@ class VidaController extends Controller
 
         $tasas_diferenciadas = $vida_tipo_cartera->tasa_diferenciada;
 
-         if ($vida_tipo_cartera->TipoCalculo == 1) {
+        if ($vida_tipo_cartera->TipoCalculo == 1) {
             foreach ($tasas_diferenciadas as $tasa) {
                 //dd($tasa);
                 VidaCarteraTemp::where('User', auth()->user()->id)
@@ -1504,6 +1505,17 @@ class VidaController extends Controller
 
 
         return back();
+    }
+
+    public function get_cartera($id, $mes, $axo)
+    {
+        $vida = Vida::findOrFail($id);
+        $vida_cartera = VidaCartera::where('PolizaVida', $id)->where('Mes', $mes)->where('Axo', $axo)->first();
+
+        if ($vida_cartera) {
+            return true;
+        }
+        return false;
     }
 
     public function delete_temp($id)
@@ -1666,7 +1678,7 @@ class VidaController extends Controller
 
         //return view('polizas.vida.recibo', compact('configuracion', 'cliente','recibo_historial', 'detalle', 'meses', 'poliza_vida'));
 
-        $pdf = \PDF::loadView('polizas.vida.recibo', compact('configuracion', 'cliente','recibo_historial', 'detalle', 'meses', 'poliza_vida'))
+        $pdf = \PDF::loadView('polizas.vida.recibo', compact('configuracion', 'cliente', 'recibo_historial', 'detalle', 'meses', 'poliza_vida'))
             ->setWarnings(false)
             ->setPaper('letter');
 

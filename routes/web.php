@@ -226,6 +226,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('polizas/deuda/validar_poliza_recibos', [DeudaCarteraController::class, 'validar_poliza_recibos']);
     Route::get('polizas/deuda/subir_cartera/{id}', [DeudaCarteraController::class, 'subir_cartera']);
     Route::get('polizas/deuda/recibo_complementario/{id}', [DeudaCarteraController::class, 'recibo_complementario']);
+    Route::get('polizas/deuda/get_cartera/{id}/{mes}/{axo}', [DeudaCarteraController::class, 'get_cartera']);
     Route::post('polizas/deuda/delete_temp', [DeudaCarteraController::class, 'deleteLineaCredito']);
     Route::post('deuda/cancelar_pago', [DeudaController::class, 'cancelar_pago']);
     Route::post('polizas/deuda/eliminar_extraprima', [DeudaController::class, 'eliminar_extraprima']);
@@ -323,6 +324,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('poliza/desempleo/get_recibo/{id}/{exportar}', [DesempleoController::class, 'get_recibo']);
     Route::get('poliza/desempleo/get_recibo_edit/{id}', [DesempleoController::class, 'get_recibo_edit']);
     Route::post('poliza/desempleo/get_recibo_edit', [DesempleoController::class, 'get_recibo_update']);
+    Route::get('polizas/desempleo/get_cartera/{id}/{mes}/{axo}', [DesempleoController::class, 'get_cartera']);
+
 
     Route::resource('polizas/desempleo', DesempleoController::class);
 
@@ -359,6 +362,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('polizas/vida/store_extraprimado', [VidaController::class, 'store_extraprimado']);
     Route::get('polizas/vida/get_extraprimado/{poliza}/{dui}', [VidaController::class, 'get_extraprimado']);
     Route::post('exportar/vida/extraprimados_excluidos/{id}', [VidaController::class, 'extraprimados_excluidos']);
+    Route::get('polizas/vida/get_cartera/{id}/{mes}/{axo}', [VidaController::class, 'get_cartera']);
 
 
 
