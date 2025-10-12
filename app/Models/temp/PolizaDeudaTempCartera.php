@@ -137,10 +137,10 @@ class PolizaDeudaTempCartera extends Model
     }
 
 
-    public function getNumerosReferencia()
+    public function getNumerosReferencia($tipoCartera) //PolizaDeudaTipoCartera
     {
         $data = PolizaDeudaTempCartera::where('Dui', $this->Dui)
-            //->where('Pasaporte', $this->Pasaporte)
+            ->where('PolizaDeudaTipoCartera', $tipoCartera)
             ->where('PolizaDeuda', $this->PolizaDeuda)
             ->orderBy('FechaOtorgamientoDate')
             ->get();

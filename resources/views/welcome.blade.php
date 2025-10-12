@@ -109,6 +109,26 @@
             border-radius: 50%;
         }
     </style>
+
+    <style>
+        #loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #loading-overlay img {
+            width: 50px;
+            height: 50px;
+        }
+    </style>
 </head>
 
 <body class="nav-md">
@@ -254,8 +274,9 @@
                                 </li>
                                 <li><a><i class="fa fa-shield"></i> Aseguradoras <span
                                             class="fa fa-chevron-down"></span></a>
-                                    <ul  id="ul-aseguradoras" class="nav child_menu">
-                                        <li id="li-catalogo-aseguradora"><a href="{{ url('catalogo/aseguradoras') }}">Aseguradora </a></li>
+                                    <ul id="ul-aseguradoras" class="nav child_menu">
+                                        <li id="li-catalogo-aseguradora"><a
+                                                href="{{ url('catalogo/aseguradoras') }}">Aseguradora </a></li>
                                         <!-- <li><a href="{{ url('catalogo/necesidad_aseguradora') }}">Asignar Necesidad de Protección <br>
                                     Aseguradora</a></li> -->
                                     </ul>
@@ -272,7 +293,8 @@
                                                 href="{{ url('polizas/desempleo') }}">Desempleo</a></li>
                                         <li id="li-poliza-seguro"><a href="{{ url('poliza/seguro') }}">Polizas
                                                 seguro</a></li>
-                                        <li id="li-control-cartera"><a href="{{ url('control_cartera') }}">Control carteras</a></li>
+                                        <li id="li-control-cartera"><a href="{{ url('control_cartera') }}">Control
+                                                carteras</a></li>
                                     </ul>
                                 </li>
 

@@ -22,6 +22,7 @@ class DeudaValidados extends Model
         'Nombre',
         'NumeroReferencia',
         'Poliza',
+        'TipoCartera',
         'Mes',
         'Usuario',
     ];

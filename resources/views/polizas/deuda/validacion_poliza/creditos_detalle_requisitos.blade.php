@@ -39,7 +39,7 @@
                     <td>
                         <label class="switch">
                             <input type="checkbox"
-                                onchange="registroValidado('{{ $obj->NumeroReferencia }}','{{ $obj->Dui }}')"
+                                onchange="registroValidado('{{ $obj->Id }}')"
                                 {{ $obj->Validado > 0 ? 'checked' : '' }}>
                             <span class="slider round"></span>
                         </label>
@@ -60,36 +60,3 @@
     </tbody>
 </table>
 
-
-<script>
-    function registroValidado(NumeroReferencia, Dui) {
-
-        //   alert('adadad');
-        var parametros = {
-            "_token": "{{ csrf_token() }}",
-            "NumeroReferencia": NumeroReferencia
-        };
-        $.ajax({
-            type: "POST",
-            url: "{{ url('polizas/deuda/agregar_validado') }}",
-            data: parametros,
-            success: function(data) {
-                console.log(data);
-
-                // Asegurarse de que el ID esté correctamente formateado
-                var button = $("#cumulo-" + Dui);
-
-                if (button.length) { // Verificar si el botón existe
-                    if (data.count == 0) {
-                        button.removeClass("btn-primary").addClass("btn-success");
-                    } else {
-                        button.removeClass("btn-success").addClass("btn-primary");
-                    }
-                } else {
-                    console.error("Botón no encontrado con ID: cumulo-" + Dui);
-                }
-
-            }
-        })
-    }
-</script>
