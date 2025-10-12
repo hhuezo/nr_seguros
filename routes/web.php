@@ -86,7 +86,8 @@ Route::middleware(['auth'])->group(function () {
 
     //catalogos
     Route::get('/home', [HomeController::class, 'index'])->name('home');
-    Route::post('catalogo/aseguradora/add_contacto', [AseguradoraController::class, 'add_contacto']);
+
+  Route::post('catalogo/aseguradora/add_contacto', [AseguradoraController::class, 'add_contacto']);
     Route::post('catalogo/aseguradora/delete_contacto', [AseguradoraController::class, 'delete_contacto']);
     Route::post('catalogo/aseguradora/edit_contacto', [AseguradoraController::class, 'edit_contacto']);
     Route::get('catalogo/aseguradora/addCargo', [AseguradoraController::class, 'addCargo']);
@@ -142,8 +143,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('get_producto/{id}/{tipo}', [PlanController::class, 'get_producto']);
     Route::get('get_plan/{id}', [PlanController::class, 'get_plan']);
 
-
-    Route::get('catalogo/cliente/validar_cliente', [ClienteController::class, 'validar']);
+    Route::get('catalogo/cliente/validar_cliente', [ClienteController::class, 'valida  r']);
     Route::post('catalogo/cliente/add_contacto', [ClienteController::class, 'add_contacto']);
     Route::post('catalogo/cliente/delete_contacto', [ClienteController::class, 'delete_contacto']);
     Route::post('catalogo/cliente/edit_contacto', [ClienteController::class, 'edit_contacto']);
@@ -205,9 +205,7 @@ Route::middleware(['auth'])->group(function () {
 
 
 
-    Route::get('polizas/deuda/get_referencia_creditos/{id}', [DeudaController::class, 'get_referencia_creditos']);
-    Route::get('polizas/deuda/get_creditos/{id}', [DeudaController::class, 'get_creditos']);
-    Route::get('polizas/deuda/get_creditos_detalle/{documento}/{poliza}/{tipo}', [DeudaController::class, 'get_creditos_detalle']);
+
 
 
     Route::post('exportar/extraprimados_excluidos/{id}', [DeudaController::class, 'extraprimados_excluidos']);
@@ -220,8 +218,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('exportar/registros_erroneos/{id}', [DeudaController::class, 'registros_erroneos']);
     Route::post('exportar/registros_responsabilidad_maxima/{id}', [DeudaController::class, 'registros_responsabilidad_maxima']);
     Route::get('polizas/deuda/get_historico', [DeudaController::class, 'get_historico']);
-    Route::post('polizas/deuda/agregar_valido', [DeudaController::class, 'agregar_valido']);
-    Route::post('polizas/deuda/agregar_validado', [DeudaController::class, 'agregar_validado']);
+
+
     Route::post('polizas/deuda/create_pago', [DeudaCarteraController::class, 'create_pago']);
     Route::post('polizas/deuda/create_pago_recibo', [DeudaCarteraController::class, 'create_pago_recibo']);
     Route::post('polizas/deuda/validar_poliza', [DeudaCarteraController::class, 'validar_poliza']);
@@ -247,8 +245,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('polizas/deuda/get_requisitos', [DeudaController::class, 'get_requisitos']);
     Route::resource('polizas/deuda', DeudaController::class);
 
-    Route::post('polizas/deuda/fede/create_pago', [DeudaCarteraFedeController::class, 'create_pago']);
-    Route::post('polizas/deuda/fede/create_pago_recibo', [DeudaCarteraFedeController::class, 'create_pago_recibo']);
+
 
 
 

@@ -663,7 +663,7 @@ class DeudaCarteraController extends Controller
         return back();
 
 
-        return view('polizas.deuda.respuesta_poliza', compact('nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date', 'tipo_cartera', 'nombre_cartera'));
+        return view('polizas.deuda.validacion_poliza.respuesta_poliza', compact('nuevos_registros', 'registros_eliminados', 'deuda', 'poliza_cumulos', 'date_anterior', 'date', 'tipo_cartera', 'nombre_cartera'));
     }
 
     public function create_pago_recibo(Request $request)
@@ -1153,7 +1153,7 @@ class DeudaCarteraController extends Controller
                 ->toArray();
 
 
-            $temp = PolizaDeudaTempCartera::here('PolizaDeuda', $poliza_id)->get();
+            $temp = PolizaDeudaTempCartera::where('PolizaDeuda', $poliza_id)->get();
 
 
             foreach ($temp as $item) {
@@ -1234,22 +1234,34 @@ class DeudaCarteraController extends Controller
 
 
 
-        //cumulos por dui
-        // $poliza_cumulos = PolizaDeudaTempCartera::selectRaw('*, SUM(saldo_total) as saldo_total')
-        //     ->groupBy('Dui')
-        //     ->get();
+        //cumulos por dui y linea credito
 
         DB::statement("
             UPDATE poliza_deuda_temp_cartera p1
             JOIN (
-                SELECT Dui, SUM(TotalCredito) AS total_saldo_cumulo
+                SELECT Dui, LineaCredito, SUM(TotalCredito) AS total_saldo_cumulo
                 FROM poliza_deuda_temp_cartera
                 WHERE PolizaDeuda = ?
-                GROUP BY Dui
-            ) p2 ON p1.Dui = p2.Dui
+                GROUP BY Dui, LineaCredito
+            ) p2
+                ON p1.Dui = p2.Dui
+                AND p1.LineaCredito = p2.LineaCredito
             SET p1.SaldoCumulo = p2.total_saldo_cumulo
             WHERE p1.PolizaDeuda = ?
         ", [$request->Deuda, $request->Deuda]);
+
+
+        //   DB::statement("
+        //     UPDATE poliza_deuda_temp_cartera p1
+        //     JOIN (
+        //         SELECT Dui, SUM(TotalCredito) AS total_saldo_cumulo
+        //         FROM poliza_deuda_temp_cartera
+        //         WHERE PolizaDeuda = ?
+        //         GROUP BY Dui
+        //     ) p2 ON p1.Dui = p2.Dui
+        //     SET p1.SaldoCumulo = p2.total_saldo_cumulo
+        //     WHERE p1.PolizaDeuda = ?
+        // ", [$request->Deuda, $request->Deuda]);
 
 
 
@@ -1266,6 +1278,7 @@ class DeudaCarteraController extends Controller
         }
 
 
+
         // Ordenar la colección por OmicionPerfil de forma descendente
         $requisitos = $requisitos->sortByDesc('OmicionPerfil');
 
@@ -1273,13 +1286,20 @@ class DeudaCarteraController extends Controller
 
 
         foreach ($requisitos as $requisito) {
-            $data_dui_cartera = $poliza_cumulos->where('EdadDesembloso', '>=', $requisito->EdadInicial)->where('EdadDesembloso', '<=', $requisito->EdadFinal)
+
+            $ids_cartera = $poliza_cumulos->where('EdadDesembloso', '>=', $requisito->EdadInicial)->where('EdadDesembloso', '<=', $requisito->EdadFinal)
                 ->where('SaldoCumulo', '>=', $requisito->MontoInicial)->where('SaldoCumulo', '<=', $requisito->MontoFinal)
-                ->pluck('Dui')->toArray();
+                ->pluck('Id')->toArray();
+
+            //dd( $ids_cartera);
+
+            // $data_dui_cartera = $poliza_cumulos->where('EdadDesembloso', '>=', $requisito->EdadInicial)->where('EdadDesembloso', '<=', $requisito->EdadFinal)
+            //     ->where('SaldoCumulo', '>=', $requisito->MontoInicial)->where('SaldoCumulo', '<=', $requisito->MontoFinal)
+            //     ->pluck('Dui')->toArray();
 
 
             PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
-                ->whereIn('Dui', $data_dui_cartera)
+                ->whereIn('Id', $ids_cartera)
                 ->update([
                     'Perfiles' => DB::raw(
                         'IF(Perfiles IS NULL OR Perfiles = "","' . $requisito->perfil->Descripcion . '", CONCAT(Perfiles, ",","' . $requisito->perfil->Descripcion . '"))'
@@ -1290,7 +1310,7 @@ class DeudaCarteraController extends Controller
                 ]);
 
             PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
-                ->whereIn('Dui', $data_dui_cartera)
+                ->whereIn('Id', $ids_cartera)
                 ->where('SaldoCumulo', '>=', $requisito->MontoInicial)->where('SaldoCumulo', '<=', $requisito->MontoFinal)
                 ->where('EdadDesembloso', '>=', $requisito->EdadInicial)->where('EdadDesembloso', '<=', $requisito->EdadFinal)
                 ->update([
@@ -1341,7 +1361,7 @@ class DeudaCarteraController extends Controller
 
 
 
-        return view('polizas.deuda.respuesta_poliza', compact(
+        return view('polizas.deuda.validacion_poliza.respuesta_poliza', compact(
             'deuda',
             'axoActual',
             'mesActual',
