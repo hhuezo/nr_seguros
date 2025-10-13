@@ -61,7 +61,7 @@
 </div>
 
 
-<div class="modal fade bs-example-modal-lg" id="modal-primer-ingreso" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal" id="modal-primer-ingreso" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <form method="POST" action="{{ url('polizas/deuda/store_poliza_primara_carga') }}/{{ $deuda->Id }}">
