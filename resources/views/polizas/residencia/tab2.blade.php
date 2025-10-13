@@ -718,8 +718,9 @@
         document.getElementById('sub_total_ccf').textContent = formatearCantidad(sub_total_ccf);
         let comision = 0;
         let retencion = 0;
-        if (tipo_contribuyente == 1) {
-            retencion = (parseFloat(valor_comision) * 0.01);
+        if (tipo_contribuyente == 1 && valor_comision >=100) {
+             //console.log("valor_comision1: ",valor_comision);
+            retencion = (parseFloat(valor_comision) * 0.001);
         }
 
         document.getElementById('retencion_comision').textContent = formatearCantidad(retencion);
@@ -727,7 +728,6 @@
         document.getElementById('comision_ccf').textContent = formatearCantidad(comision_ccf);
         document.getElementById('comision').textContent = formatearCantidad(comision_ccf);
 
-        console.log();
         let liquido_pagar = (parseFloat(sub_total) + parseFloat(iva) - parseFloat(comision_ccf));
         document.getElementById('liquido_pagar').textContent = formatearCantidad(liquido_pagar);
         let total_factura = (parseFloat(sub_total) + parseFloat(iva));
@@ -866,8 +866,9 @@
         document.getElementById('sub_total_ccf').textContent = formatearCantidad(sub_total_ccf);
         let comision = 0;
         let retencion = 0;
-        if (tipo_contribuyente == 1) {
-            retencion = (parseFloat(valor_comision) * 0.01);
+        if (tipo_contribuyente == 1 && valor_comision >=100) {
+            //console.log("valor_comision: ",valor_comision);
+            retencion = (parseFloat(valor_comision) * 0.001);
         }
 
         document.getElementById('retencion_comision').textContent = formatearCantidad(retencion);
