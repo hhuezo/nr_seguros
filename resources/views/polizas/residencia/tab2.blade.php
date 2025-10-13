@@ -506,7 +506,7 @@
                             <input type="hidden" name="Retencion" id="RetencionDetalle">
                             <input type="hidden" name="ValorCCF" id="ValorCCFDetalle">
                             <input type="hidden" name="APagar" id="APagarDetalle">
-                            <input type="hidden" name="Descuento" id="DescuentoDetalle">
+                            <input type="text" name="Descuento" id="DescuentoDetalle">
                             <input type="hidden" name="ImpuestoBomberos" value="{{ $bomberos }}">
                             <input type="hidden" name="GastosEmision" id="GastosEmisionDetalle">
                             <input type="hidden" name="Otros" id="OtrosDetalle">
@@ -718,8 +718,8 @@
         document.getElementById('sub_total_ccf').textContent = formatearCantidad(sub_total_ccf);
         let comision = 0;
         let retencion = 0;
-        if (tipo_contribuyente == 1 && valor_comision >=100) {
-             //console.log("valor_comision1: ",valor_comision);
+        if (tipo_contribuyente == 1 && valor_comision >= 100) {
+            //console.log("valor_comision1: ",valor_comision);
             retencion = (parseFloat(valor_comision) * 0.001);
         }
 
@@ -768,7 +768,7 @@
         let diario = {{ $residencia->aseguradoras->Diario ? 1 : 0 }};
         let dias_axo =
             {{ $residencia->aseguradoras->Diario == 1 && $residencia->aseguradoras->Dias365 == 1 ? 365 : $dias_axo }};
-        let descuento = 0;
+        let descuento = document.getElementById('descuento').innerText;;
         let tasadescuento = {{ $residencia->TasaDescuento }};
         let sub_total = 0;
         let bomberos = {{ $bomberos }};
@@ -798,6 +798,12 @@
         }
         //dias_mes = 31;
         decimales = (monto * millar);
+
+
+
+
+        //let prima_descontada = convertirANumero(document.getElementById('prima_descontada').innerText);
+
 
         let prima_descontada = convertirANumero(document.getElementById('prima_descontada').innerText);
 
@@ -866,7 +872,7 @@
         document.getElementById('sub_total_ccf').textContent = formatearCantidad(sub_total_ccf);
         let comision = 0;
         let retencion = 0;
-        if (tipo_contribuyente == 1 && valor_comision >=100) {
+        if (tipo_contribuyente == 1 && valor_comision >= 100) {
             //console.log("valor_comision: ",valor_comision);
             retencion = (parseFloat(valor_comision) * 0.001);
         }
@@ -893,7 +899,9 @@
         document.getElementById('RetencionDetalle').value = parseFloat(retencion);
         document.getElementById('ValorCCFDetalle').value = parseFloat(comision_ccf);
         document.getElementById('APagarDetalle').value = parseFloat(liquido_pagar);
+
         document.getElementById('DescuentoDetalle').value = parseFloat(descuento);
+
         document.getElementById('GastosEmisionDetalle').value = parseFloat(gastos);
         document.getElementById('OtrosDetalle').value = parseFloat(otros);
         document.getElementById('PrimaTotalDetalle').value = parseFloat(prima_descontada);
