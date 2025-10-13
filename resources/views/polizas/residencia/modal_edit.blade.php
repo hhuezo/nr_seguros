@@ -1,6 +1,6 @@
 <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-recibo-{{ $obj->Id }}">
 
-    <form method="POST" action="{{ url('poliza/residencia/recibo', $obj->Id) }}">
+    <form method="POST" action="{{ url('polizas/residencia/recibo', $obj->Id) }}">
 
         @csrf
         <div class="modal-dialog">
