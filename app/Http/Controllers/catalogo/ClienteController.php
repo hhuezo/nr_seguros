@@ -176,12 +176,12 @@ class ClienteController extends Controller
 
         // Validación para Extranjero: Nit o Pasaporte
         if ($extranjero) {
-            $rules['Nit'] = 'nullable|required_without:Pasaporte';
+            //$rules['Nit'] = 'nullable|required_without:Pasaporte';
             $rules['Pasaporte'] = 'nullable|max:100|required_without:Nit';
             $rules['NumeroExtrajero'] = 'required';
         } else {
             // Si no es persona natural y existe Nit
-            $rules['Nit'] = 'nullable|required';
+            //$rules['Nit'] = 'nullable|required';
 
             if ($request->get('TipoPersona') != 1 && $request->get('Nit')) {
                 // $nitRules = ['min:17'];
@@ -517,14 +517,14 @@ class ClienteController extends Controller
             //     ],
             // ], $messages);
         } else {
-            if ($request->get('Nit')) {
-                // $request->validate([
-                //     'Nit' => [
-                //         'min:17',
-                //         Rule::unique('cliente', 'Nit')->ignore($id),
-                //     ],
-                // ], $messages);
-            }
+            // if ($request->get('Nit')) {
+            //     $request->validate([
+            //         'Nit' => [
+            //             'min:17',
+            //             Rule::unique('cliente', 'Nit')->ignore($id),
+            //         ],
+            //     ], $messages);
+            // }
         }
 
 
