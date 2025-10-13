@@ -1946,7 +1946,8 @@ class DeudaController extends Controller
                     DB::raw('MAX(poliza_deuda_temp_cartera.FechaOtorgamientoDate) as FechaOtorgamiento'),
                     'poliza_deuda_temp_cartera.Excluido',
                     'poliza_deuda_temp_cartera.OmisionPerfil',
-                    DB::raw('SUM(poliza_deuda_temp_cartera.SaldoCumulo) as saldo_total'),
+                    'poliza_deuda_temp_cartera.SaldoCumulo  as saldo_total',
+                    //DB::raw('SUM(poliza_deuda_temp_cartera.SaldoCumulo) as saldo_total'),
                     'ptc.MontoMaximoIndividual as MontoMaximoIndividual',
                     'tc.nombre as TipoCarteraNombre' // 👈 agregado
                 )
