@@ -152,15 +152,15 @@ class ClienteController extends Controller
         // Validación para persona natural (TipoPersona == 1)
         if ($request->get('TipoPersona') == 1) {
             // DUI obligatorio para persona natural si no es extranjero
-            if (!$extranjero) {
-                $duiRules = ['required', 'min:10'];
-                if ($request->get('ClienteId')) {
-                    $duiRules[] = Rule::unique('cliente')->ignore($request->get('ClienteId'));
-                } else {
-                    $duiRules[] = 'unique:cliente';
-                }
-                $rules['Dui'] = $duiRules;
-            }
+            // if (!$extranjero) {
+            //     $duiRules = ['required', 'min:10'];
+            //     if ($request->get('ClienteId')) {
+            //         $duiRules[] = Rule::unique('cliente')->ignore($request->get('ClienteId'));
+            //     } else {
+            //         $duiRules[] = 'unique:cliente';
+            //     }
+            //     $rules['Dui'] = $duiRules;
+            // }
 
             // Fecha de nacimiento requerida y >= 18 años
             $rules['FechaNacimiento'] = [
@@ -509,13 +509,13 @@ class ClienteController extends Controller
 
         // Validaciones condicionales
         if ($request->get('TipoPersona') == 1) {
-            $request->validate([
-                'Dui' => [
-                    'required',
-                    'min:10',
-                    Rule::unique('cliente', 'Dui')->ignore($id),
-                ],
-            ], $messages);
+            // $request->validate([
+            //     'Dui' => [
+            //         'required',
+            //         'min:10',
+            //         Rule::unique('cliente', 'Dui')->ignore($id),
+            //     ],
+            // ], $messages);
         } else {
             if ($request->get('Nit')) {
                 $request->validate([
