@@ -27,7 +27,7 @@
                                         <td style="vertical-align: top;">
                                             <div class="btn btn-warning" data-toggle="modal"
                                                 data-target="#modal-primer-ingreso">
-                                                Primer ingreso
+                                                Primera carga
                                             </div>
 
                                         </td>
