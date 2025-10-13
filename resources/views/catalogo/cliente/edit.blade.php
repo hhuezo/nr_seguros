@@ -421,8 +421,8 @@
                                                             <label for="DireccionResidencia"
                                                                 class="form-label">Departamento
                                                                 *</label>
-                                                            <select id="Departamento" class="form-control"
-                                                                style="width: 100%">
+                                                            <select id="Departamento" class="form-control">
+                                                                <option value="">Seleccione</option>
                                                                 @foreach ($departamentos as $obj)
                                                                     <option value="{{ $obj->Id }}"
                                                                         {{ $departamento_actual == $obj->Id ? 'selected' : '' }}>
@@ -436,6 +436,7 @@
                                                                 *</label>
                                                             <select name="Municipio" id="Municipio"
                                                                 class="form-control select2" style="width: 100%">
+                                                                   <option value="">Seleccione</option>
                                                                 @foreach ($municipios as $obj)
                                                                     <option value="{{ $obj->Id }}"
                                                                         {{ $municipio_actual == $obj->Id ? 'selected' : '' }}>
@@ -449,6 +450,7 @@
                                                                 *</label>
                                                             <select id="Distrito" name="Distrito" required
                                                                 class="form-control select2" style="width: 100%">
+                                                                   <option value="">Seleccione</option>
                                                                 @foreach ($distritos as $obj)
                                                                     <option value="{{ $obj->Id }}"
                                                                         {{ $cliente->Distrito == $obj->Id ? 'selected' : '' }}>
