@@ -176,21 +176,21 @@ class ClienteController extends Controller
 
         // Validación para Extranjero: Nit o Pasaporte
         if ($extranjero) {
-            $rules['Nit'] = 'nullable|min:17|required_without:Pasaporte';
+            $rules['Nit'] = 'nullable|required_without:Pasaporte';
             $rules['Pasaporte'] = 'nullable|max:100|required_without:Nit';
             $rules['NumeroExtrajero'] = 'required';
         } else {
             // Si no es persona natural y existe Nit
-            $rules['Nit'] = 'nullable|min:17|required';
+            $rules['Nit'] = 'nullable|required';
 
             if ($request->get('TipoPersona') != 1 && $request->get('Nit')) {
-                $nitRules = ['min:17'];
-                if ($request->get('ClienteId')) {
-                    $nitRules[] = Rule::unique('cliente')->ignore($request->get('ClienteId'));
-                } else {
-                    $nitRules[] = 'unique:cliente';
-                }
-                $rules['Nit'] = $nitRules;
+                // $nitRules = ['min:17'];
+                // if ($request->get('ClienteId')) {
+                //     $nitRules[] = Rule::unique('cliente')->ignore($request->get('ClienteId'));
+                // } else {
+                //     $nitRules[] = 'unique:cliente';
+                // }
+                // $rules['Nit'] = $nitRules;
             }
         }
 
@@ -259,18 +259,18 @@ class ClienteController extends Controller
                 $rules['Dui'] = $duiRules;*/
             } else {
                 if ($request->get('Nit')) {
-                    $nitRules = ['min:17'];
-                    if ($request->get('ClienteId')) {
-                        $nitRules[] = Rule::unique('cliente')->ignore($request->get('ClienteId'));
-                    } else {
-                        $nitRules[] = 'unique:cliente';
-                    }
-                    $rules['Nit'] = $nitRules;
+                    // $nitRules = ['min:17'];
+                    // if ($request->get('ClienteId')) {
+                    //     $nitRules[] = Rule::unique('cliente')->ignore($request->get('ClienteId'));
+                    // } else {
+                    //     $nitRules[] = 'unique:cliente';
+                    // }
+                    // $rules['Nit'] = $nitRules;
                 }
             }
         } else {
             // Es extranjero → al menos Nit o Pasaporte debe tener dato
-            $rules['Nit'] = 'required_without:Pasaporte|min:17';
+            $rules['Nit'] = 'required_without:Pasaporte';
             $rules['Pasaporte'] = 'required_without:Nit|max:100';
         }
 
@@ -518,12 +518,12 @@ class ClienteController extends Controller
             // ], $messages);
         } else {
             if ($request->get('Nit')) {
-                $request->validate([
-                    'Nit' => [
-                        'min:17',
-                        Rule::unique('cliente', 'Nit')->ignore($id),
-                    ],
-                ], $messages);
+                // $request->validate([
+                //     'Nit' => [
+                //         'min:17',
+                //         Rule::unique('cliente', 'Nit')->ignore($id),
+                //     ],
+                // ], $messages);
             }
         }
 
