@@ -506,7 +506,7 @@
                             <input type="hidden" name="Retencion" id="RetencionDetalle">
                             <input type="hidden" name="ValorCCF" id="ValorCCFDetalle">
                             <input type="hidden" name="APagar" id="APagarDetalle">
-                            <input type="text" name="Descuento" id="DescuentoDetalle">
+                            <input type="hidden" name="Descuento" id="DescuentoDetalle">
                             <input type="hidden" name="ImpuestoBomberos" value="{{ $bomberos }}">
                             <input type="hidden" name="GastosEmision" id="GastosEmisionDetalle">
                             <input type="hidden" name="Otros" id="OtrosDetalle">
