@@ -59,3 +59,40 @@
         </div>
     </div>
 </div>
+
+
+<div class="modal fade bs-example-modal-lg" id="modal-primer-ingreso" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" action="{{ url('polizas/deuda/store_poliza_primara_carga') }}/{{ $deuda->Id }}">
+                @csrf
+                <div class="modal-header">
+                    <div class="col-md-6">
+                        <h4 class="modal-title" id="myModalLabel">Primer carga</h4>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="modal-body">
+                    <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
+                    <input type="hidden" name="MesActual" value="{{ $mesActual }}">
+                    <input type="hidden" name="AxoActual" value="{{ $axoActual }}">
+                    <input type="hidden" name="MesAnterior" value="{{ $mesAnterior }}">
+                    <input type="hidden" name="AxoAnterior" value="{{ $axoAnterior }}">
+                    <p class="fs-5 mb-0">
+                        ¿Desea realizar el primer carga?
+                    </p>
+                </div>
+
+                <div class="modal-footer text-center">
+                    <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Aceptar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

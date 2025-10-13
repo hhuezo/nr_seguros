@@ -26,7 +26,6 @@ Route::middleware(['web'])->group(function () {
 
     Route::get('polizas/deuda/get_historico', [DeudaController::class, 'get_historico']);
 
-
     Route::post('polizas/deuda/create_pago', [DeudaCarteraController::class, 'create_pago']);
     Route::post('polizas/deuda/create_pago_recibo', [DeudaCarteraController::class, 'create_pago_recibo']);
     Route::post('polizas/deuda/validar_poliza', [DeudaCarteraController::class, 'validar_poliza']);
@@ -51,7 +50,6 @@ Route::middleware(['web'])->group(function () {
     Route::get('get_fechas_renovacion', [DeudaRenovacionController::class, 'get_fechas_renovacion']);
     Route::post('eliminar_renovacion/{id}', [DeudaRenovacionController::class, 'eliminar_renovacion']);
     Route::get('polizas/deuda/get_requisitos', [DeudaController::class, 'get_requisitos']);
-    Route::resource('polizas/deuda', DeudaController::class);
 
 
 
@@ -116,4 +114,14 @@ Route::middleware(['web'])->group(function () {
     Route::post('polizas/deuda/fede/create_pago_recibo', [DeudaCarteraFedeController::class, 'create_pago_recibo']);
 
     Route::post('polizas/deuda/agregar_valido_detalle', [DeudaController::class, 'agregar_valido_detalle']);
+
+
+
+
+
+
+
+
+
+    Route::resource('polizas/deuda', DeudaController::class);
 });

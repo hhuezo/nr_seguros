@@ -25,6 +25,13 @@
                                 <table>
                                     <tr>
                                         <td style="vertical-align: top;">
+                                            <div class="btn btn-warning" data-toggle="modal"
+                                                data-target="#modal-primer-ingreso">
+                                                Primer ingreso
+                                            </div>
+
+                                        </td>
+                                        <td style="vertical-align: top;">
                                             <a href="{{ url('polizas/deuda') }}/{{ $deuda->Id }}/edit"
                                                 class="btn btn-info">Pausar Validación</a>
                                         </td>
@@ -93,7 +100,8 @@
                                                 válidos</a>
                                         </li>
                                         <li role="presentation" class=""><a href="#tab_content3" role="tab"
-                                                id="profile-tab2" data-toggle="tab" aria-expanded="false">Registros <br> con
+                                                id="profile-tab2" data-toggle="tab" aria-expanded="false">Registros <br>
+                                                con
                                                 requisitos</a>
                                         </li>
                                         <li role="presentation" class=""><a href="#tab_content4" role="tab"
