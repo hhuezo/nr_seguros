@@ -7,13 +7,13 @@ use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 
-class PolizaResidenciaCarteraImport implements ToModel, WithStartRow,SkipsEmptyRows
+class PolizaResidenciaCarteraImport implements ToModel, WithStartRow, SkipsEmptyRows
 {
     /**
-    * @param array $row
-    *
-    * @return \Illuminate\Database\Eloquent\Model|null
-    */
+     * @param array $row
+     *
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
     public function startRow(): int
     {
         return 2;
@@ -24,7 +24,7 @@ class PolizaResidenciaCarteraImport implements ToModel, WithStartRow,SkipsEmptyR
     private $PolizaResidencia;
 
 
-    public function __construct($Axo,$Mes,$PolizaResidencia,$FechaInicio,$FechaFinal)
+    public function __construct($Axo, $Mes, $PolizaResidencia, $FechaInicio, $FechaFinal)
     {
         $this->Axo = $Axo;
         $this->Mes = $Mes;
@@ -37,6 +37,10 @@ class PolizaResidenciaCarteraImport implements ToModel, WithStartRow,SkipsEmptyR
     public function model(array $row)
     {
 
+        if (empty(trim($row[7]))) {
+            // Si el nombre completo está vacío o solo contiene espacios, no insertar
+            return null;
+        }
         return new PolizaResidenciaCartera([
             'Dui' => $row[0],
             'Pasaporte' => $row[1],
@@ -64,6 +68,5 @@ class PolizaResidenciaCarteraImport implements ToModel, WithStartRow,SkipsEmptyR
             'FechaInicio' =>  $this->FechaInicio,
             'FechaFinal' =>  $this->FechaFinal
         ]);
-
     }
 }

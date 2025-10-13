@@ -29,7 +29,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use PDF;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Str;
-
+use Throwable;
 
 class ResidenciaController extends Controller
 {

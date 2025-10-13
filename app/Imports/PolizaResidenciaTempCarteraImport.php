@@ -27,19 +27,21 @@ class PolizaResidenciaTempCarteraImport implements ToModel, WithStartRow, SkipsE
     private $PolizaResidencia;
 
 
-    public function __construct($Axo,$Mes,$PolizaResidencia,$FechaInicio,$FechaFinal)
+    public function __construct($Axo, $Mes, $PolizaResidencia, $FechaInicio, $FechaFinal)
     {
         $this->Axo = $Axo;
         $this->Mes = $Mes;
         $this->PolizaResidencia = $PolizaResidencia;
         $this->FechaInicio = $FechaInicio;
         $this->FechaFinal = $FechaFinal;
-
     }
 
     public function model(array $row)
     {
-
+        if (empty(trim($row[8]))) {
+            // Si el nombre completo está vacío o solo contiene espacios, no insertar
+            return null;
+        }
         return new PolizaResidenciaTempCartera([
             'Dui' => $row[0],
             'Nit' => $row[1],
@@ -68,6 +70,5 @@ class PolizaResidenciaTempCarteraImport implements ToModel, WithStartRow, SkipsE
             'FechaInicio' =>  $this->FechaInicio,
             'FechaFinal' =>  $this->FechaFinal
         ]);
-
     }
 }
