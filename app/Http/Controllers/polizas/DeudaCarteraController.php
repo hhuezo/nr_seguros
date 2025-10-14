@@ -1320,45 +1320,41 @@ class DeudaCarteraController extends Controller
         foreach ($requisitos as $requisito) {
 
             $ids_cartera = $poliza_cumulos->where('EdadDesembloso', '>=', $requisito->EdadInicial)->where('EdadDesembloso', '<=', $requisito->EdadFinal)
-                ->where('TotalCredito', '>=', $requisito->MontoInicial)->where('TotalCredito', '<=', $requisito->MontoFinal)
+                ->where('SaldoCumulo', '>=', $requisito->MontoInicial)->where('SaldoCumulo', '<=', $requisito->MontoFinal)
                 ->pluck('Id')->toArray();
 
-            if ($requisito->perfil->PagoAutomatico == 1 || $requisito->perfil->DeclaracionJurada == 1) {
-
-                PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
-                    ->whereIn('Id', $ids_cartera)
-                    ->update([
-                        'Perfiles' => DB::raw(
-                            'IF(Perfiles IS NULL OR Perfiles = "", "' . $requisito->perfil->Descripcion . '", CONCAT(Perfiles, ",", "' . $requisito->perfil->Descripcion . '"))'
-                        ),
-                        'OmisionPerfil'   => $requisito->OmicionPerfil,
-                        'MontoRequisito'  => null,
-                        'EdadRequisito'   => null,
-                        'PagoAutomatico'  => 1
-                    ]);
-            } else {
-
-                PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
-                    ->whereIn('Id', $ids_cartera)
-                    ->update([
-                        'Perfiles' => DB::raw(
-                            'IF(Perfiles IS NULL OR Perfiles = "", "' . $requisito->perfil->Descripcion . '", CONCAT(Perfiles, ",", "' . $requisito->perfil->Descripcion . '"))'
-                        ),
-                        'OmisionPerfil'   => $requisito->OmicionPerfil,
-                        'MontoRequisito'  => null,
-                        'EdadRequisito'   => null
-                    ]);
-            }
+            PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
+                ->whereIn('Id', $ids_cartera)
+                ->update([
+                    'Perfiles' => DB::raw(
+                        'IF(Perfiles IS NULL OR Perfiles = "", "' . $requisito->perfil->Descripcion . '", CONCAT(Perfiles, ",", "' . $requisito->perfil->Descripcion . '"))'
+                    ),
+                    'OmisionPerfil'   => $requisito->OmicionPerfil,
+                    'MontoRequisito'  => null,
+                    'EdadRequisito'   => null
+                ]);
 
 
             PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
                 ->whereIn('Id', $ids_cartera)
-                ->where('TotalCredito', '>=', $requisito->MontoInicial)->where('TotalCredito', '<=', $requisito->MontoFinal)
+                ->where('SaldoCumulo', '>=', $requisito->MontoInicial)->where('SaldoCumulo', '<=', $requisito->MontoFinal)
                 ->where('EdadDesembloso', '>=', $requisito->EdadInicial)->where('EdadDesembloso', '<=', $requisito->EdadFinal)
                 ->update([
                     'MontoRequisito' =>  $requisito->MontoInicial,
                     'EdadRequisito' =>  $requisito->EdadInicial
                 ]);
+
+            // if ($requisito->perfil->PagoAutomatico == 1 || $requisito->perfil->DeclaracionJurada == 1) {
+            //     $ids_cartera = $poliza_cumulos->where('EdadDesembloso', '>=', $requisito->EdadInicial)->where('EdadDesembloso', '<=', $requisito->EdadFinal)
+            //         ->where('TotalCredito', '>=', $requisito->MontoInicial)->where('TotalCredito', '<=', $requisito->MontoFinal)
+            //         ->pluck('Id')->toArray();
+
+            //     PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
+            //         ->whereIn('Id', $ids_cartera)
+            //         ->update([
+            //             'PagoAutomatico' =>  1
+            //         ]);
+            // }
         }
 
         // dd($requisitos);

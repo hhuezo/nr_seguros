@@ -14,6 +14,7 @@
             <th>Nombre</th>
             <th>Fecha nacimiento</th>
             <th>Edad Actual</th>
+            <th>Edad Desembolso</th>
             <th>Total</th>
         </tr>
     </thead>
@@ -31,6 +32,7 @@
                 <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
                 </td>
                 <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
+                <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }} Años</td>
                 <td>${{ number_format($registro->TotalCredito, 2) }}</td>
             </tr>
         @endforeach
