@@ -1860,8 +1860,8 @@ class DeudaController extends Controller
 
             )
             ->where('pdtc.NoValido', 1)
-            ->where('pdtc.EdadDesembloso', '<=', $deuda->EdadMaximaTerminacion)
-            ->where('pdtc.TotalCredito', '<=', $deuda->ResponsabilidadMaxima)
+            ->where('pdtc.EdadDesembloso', '>', $deuda->EdadMaximaTerminacion)
+            ->where('pdtc.TotalCredito', '>', $deuda->ResponsabilidadMaxima)
             ->where('pdtc.PolizaDeuda', $poliza)
             ->groupBy('pdtc.Dui', 'pdtc.Pasaporte', 'pdtc.CarnetResidencia', 'tc.Id')
             ->get();
