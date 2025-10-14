@@ -1254,6 +1254,7 @@ class VidaController extends Controller
         //dd($cartera_temp->take(10));
 
 
+
         //tipo cobro 2 suma abierta
         if ($poliza_vida->TipoCobro == 2) {
             //tipo tarifa 1 suma uniforme
@@ -1358,12 +1359,15 @@ class VidaController extends Controller
 
             //validar cantidad asegurada o multi categoria error 10
 
-            if (!in_array($obj->SumaAsegurada, $montos)) {
-                $obj->TipoError = 10;
-                $obj->update();
+            if ($poliza_vida->TipoCobro == 2) {
+                if (!in_array($obj->SumaAsegurada, $montos)) {
+                    $obj->TipoError = 10;
+                    $obj->update();
 
-                array_push($errores_array, 10);
+                    array_push($errores_array, 10);
+                }
             }
+
 
 
             // 11 error nombres o apellidos con caracteres inválidos
@@ -1422,11 +1426,12 @@ class VidaController extends Controller
                     $sumasPorCliente[$obj1->Dui] += $obj1->SumaAsegurada;
                 }
 
+
+
                 foreach ($sumasPorCliente as $cliente => $sumaTotal) {
-                    if ($sumaTotal < $min ||  $sumaTotal > $max) {
+                    if ($sumaTotal < $min &&  $sumaTotal > $max) {
                         $obj->TipoError = 14;
                         $obj->update();
-
                         array_push($errores_array, 14);
                     }
                 }
