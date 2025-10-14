@@ -1273,16 +1273,27 @@ class DeudaCarteraController extends Controller
         DB::statement("
             UPDATE poliza_deuda_temp_cartera p1
             JOIN (
-                SELECT Dui, LineaCredito, SUM(TotalCredito) AS total_saldo_cumulo
+                SELECT
+                    COALESCE(Dui, '') AS Dui,
+                    COALESCE(PolizaDeudaTipoCartera, '') AS PolizaDeudaTipoCartera,
+                    COALESCE(Pasaporte, '') AS Pasaporte,
+                    COALESCE(CarnetResidencia, '') AS CarnetResidencia,
+                    SUM(TotalCredito) AS total_saldo_cumulo
                 FROM poliza_deuda_temp_cartera
                 WHERE PolizaDeuda = ?
-                GROUP BY Dui, LineaCredito
+                GROUP BY
+                    COALESCE(Dui, ''),
+                    COALESCE(PolizaDeudaTipoCartera, ''),
+                    COALESCE(Pasaporte, ''),
+                    COALESCE(CarnetResidencia, '')
             ) p2
-                ON p1.Dui = p2.Dui
-                AND p1.LineaCredito = p2.LineaCredito
+                ON COALESCE(p1.Dui, '') = p2.Dui
+                AND COALESCE(p1.PolizaDeudaTipoCartera, '') = p2.PolizaDeudaTipoCartera
+                AND COALESCE(p1.Pasaporte, '') = p2.Pasaporte
+                AND COALESCE(p1.CarnetResidencia, '') = p2.CarnetResidencia
             SET p1.SaldoCumulo = p2.total_saldo_cumulo
-            WHERE p1.PolizaDeuda = ?
-        ", [$request->Deuda, $request->Deuda]);
+            WHERE p1.PolizaDeuda = ?", [$request->Deuda, $request->Deuda]);
+
 
 
 
