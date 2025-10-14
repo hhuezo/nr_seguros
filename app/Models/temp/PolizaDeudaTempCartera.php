@@ -137,33 +137,48 @@ class PolizaDeudaTempCartera extends Model
     }
 
 
-    public function getNumerosReferencia($tipoCartera) //PolizaDeudaTipoCartera
+    public function getNumerosReferencia($tipoCartera)
     {
         $data = PolizaDeudaTempCartera::where('Dui', $this->Dui)
             ->where('PolizaDeudaTipoCartera', $tipoCartera)
+            ->where('Pasaporte', $this->Pasaporte)
+            ->where('CarnetResidencia', $this->CarnetResidencia)
             ->where('PolizaDeuda', $this->PolizaDeuda)
             ->orderBy('FechaOtorgamientoDate')
             ->get();
 
 
-        $montoRequisito = $data->where('MontoRequisito', '<>', null)->first()->MontoRequisito ?? 0;
 
         $concatenatedReferences = '';
 
 
-        $sumaTotal = 0;
-        foreach ($data as $obj) {
-            $sumaTotal += $obj->TotalCredito;
 
-            $style = ($sumaTotal < $montoRequisito)
+
+        // Elimina la última coma y espacio
+        $concatenatedReferences = rtrim($concatenatedReferences, ', ');
+
+        foreach ($data as $obj) {
+
+            $style = ($obj->PagoAutomatico == 1)
                 ? '<span style="color: black;">' . $obj->NumeroReferencia . '</span>'
                 : '<span style="color: red;">' . $obj->NumeroReferencia . '</span>';
 
             $concatenatedReferences .= $style . ', ';
         }
 
-        // Elimina la última coma y espacio
-        $concatenatedReferences = rtrim($concatenatedReferences, ', ');
+        // $montoRequisito = $data->where('MontoRequisito', '<>', null)->first()->MontoRequisito ?? 0;
+        // $sumaTotal = 0;
+        // foreach ($data as $obj) {
+        //     $sumaTotal += $obj->TotalCredito;
+
+        //     $style = ($sumaTotal < $montoRequisito)
+        //         ? '<span style="color: black;">' . $obj->NumeroReferencia . '</span>'
+        //         : '<span style="color: red;">' . $obj->NumeroReferencia . '</span>';
+
+        //     $concatenatedReferences .= $style . ', ';
+        // }
+
+
 
 
 

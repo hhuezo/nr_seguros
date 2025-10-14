@@ -33,4 +33,7 @@ Route::middleware(['web'])->group(function () {
 
 
     Route::resource('polizas/desempleo', DesempleoController::class);
+
+    //tasa diferenciada
+    Route::get('polizas/desempleo/tasa_diferenciada/{id}', [DesempleoController::class, 'tasa_diferenciada']);
 });

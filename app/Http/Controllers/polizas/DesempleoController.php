@@ -78,16 +78,10 @@ class DesempleoController extends Controller
             return true;
         }
         return false;
-
     }
 
     public function create()
     {
-
-        // $tipos_contribuyente = TipoContribuyente::get();
-        // $rutas = Ruta::where('Activo', '=', 1)->get();
-        // $ubicaciones_cobro = UbicacionCobro::where('Activo', '=', 1)->get();
-
 
         $productos = Producto::where('Activo', 1)->get();
         $planes = Plan::where('Activo', 1)->get();
@@ -493,7 +487,6 @@ class DesempleoController extends Controller
     {
 
         $detalle = DesempleoDetalle::findOrFail($request->Id);
-        //dd($detalle);
 
         $desempleo = Desempleo::findOrFail($detalle->Desempleo);
         $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
@@ -689,9 +682,7 @@ class DesempleoController extends Controller
         $time = Carbon::now('America/El_Salvador');
 
         $recibo = DatosGenerales::orderByDesc('Id_recibo')->first();
-        // if (!$request->ExcelURL) {
-        //     alert()->error('No se puede generar el pago, falta subir cartera')->showConfirmButton('Aceptar', '#3085d6');
-        // } else {
+
 
         $detalle = new DesempleoDetalle();
         $detalle->FechaInicio = $request->FechaInicio;
@@ -1391,5 +1382,12 @@ class DesempleoController extends Controller
     public function exportar_registros_rehabilitados($id)
     {
         return Excel::download(new RegistrosRehabilitadosExport($id), 'registros_rehabilitados.xlsx');
+    }
+
+
+    public function tasa_diferenciada($id)
+    {
+        return view('polizas.desempleo.desempleo_tasa_diferenciada.');
+
     }
 }
