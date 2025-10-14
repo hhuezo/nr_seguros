@@ -1418,23 +1418,13 @@ class VidaController extends Controller
                 $min = $poliza_vida->SumaMinima;
                 $max = $poliza_vida->SumaMaxima;
 
-                $sumasPorCliente = [];
-                foreach ($cartera_temp as $obj1) {
-                    if (!isset($sumasPorCliente[$obj1->Dui])) {
-                        $sumasPorCliente[$obj1->Dui] = 0;
-                    }
-                    $sumasPorCliente[$obj1->Dui] += $obj1->SumaAsegurada;
+                if ($obj->SumaAsegurada < $min ||  $obj->SumaAsegurada > $max) {
+                    $obj->TipoError = 14;
+                    $obj->update();
+                    array_push($errores_array, 14);
                 }
 
 
-
-                foreach ($sumasPorCliente as $cliente => $sumaTotal) {
-                    if ($sumaTotal < $min &&  $sumaTotal > $max) {
-                        $obj->TipoError = 14;
-                        $obj->update();
-                        array_push($errores_array, 14);
-                    }
-                }
             }
 
 
