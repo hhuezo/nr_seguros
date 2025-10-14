@@ -1857,14 +1857,18 @@ class DeudaController extends Controller
                 'sm.Abreviatura AS Abreviatura',
                 'tc.nombre AS TipoCarteraNombre',
                 'pdtc.PolizaDeudaTipoCartera AS TipoCarteraId'
-
             )
-            ->where('pdtc.NoValido', 1)
-            ->where('pdtc.EdadDesembloso', '>', $deuda->EdadMaximaTerminacion)
-            ->where('pdtc.TotalCredito', '>', $deuda->ResponsabilidadMaxima)
             ->where('pdtc.PolizaDeuda', $poliza)
+            ->where(function ($query) use ($deuda) {
+                $query->where('pdtc.NoValido', 1)
+                    ->orWhere(function ($subquery) use ($deuda) {
+                        $subquery->where('pdtc.EdadDesembloso', '>', $deuda->EdadMaximaTerminacion)
+                            ->orWhere('pdtc.TotalCredito', '>', $deuda->ResponsabilidadMaxima);
+                    });
+            })
             ->groupBy('pdtc.Dui', 'pdtc.Pasaporte', 'pdtc.CarnetResidencia', 'tc.Id')
             ->get();
+
 
         // Obtener los rangos de asegurabilidad de la póliza
         $edades = DB::table('poliza_deuda_requisitos')
@@ -2154,8 +2158,6 @@ class DeudaController extends Controller
         $requisitos = $deuda->requisitos;
 
         if ($opcion == 1) {
-
-
 
             $poliza_cumulos = DB::table('poliza_deuda_temp_cartera as pdtc')
                 ->leftJoin('saldos_montos as sm', 'pdtc.LineaCredito', '=', 'sm.id')
