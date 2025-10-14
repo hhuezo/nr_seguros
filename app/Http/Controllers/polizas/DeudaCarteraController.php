@@ -1320,7 +1320,7 @@ class DeudaCarteraController extends Controller
         foreach ($requisitos as $requisito) {
 
             $ids_cartera = $poliza_cumulos->where('EdadDesembloso', '>=', $requisito->EdadInicial)->where('EdadDesembloso', '<=', $requisito->EdadFinal)
-                ->where('SaldoCumulo', '>=', $requisito->MontoInicial)->where('SaldoCumulo', '<=', $requisito->MontoFinal)
+                ->where('TotalCredito', '>=', $requisito->MontoInicial)->where('TotalCredito', '<=', $requisito->MontoFinal)
                 ->pluck('Id')->toArray();
 
             if ($requisito->perfil->PagoAutomatico == 1 || $requisito->perfil->DeclaracionJurada == 1) {
@@ -1353,7 +1353,7 @@ class DeudaCarteraController extends Controller
 
             PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
                 ->whereIn('Id', $ids_cartera)
-                ->where('SaldoCumulo', '>=', $requisito->MontoInicial)->where('SaldoCumulo', '<=', $requisito->MontoFinal)
+                ->where('TotalCredito', '>=', $requisito->MontoInicial)->where('TotalCredito', '<=', $requisito->MontoFinal)
                 ->where('EdadDesembloso', '>=', $requisito->EdadInicial)->where('EdadDesembloso', '<=', $requisito->EdadFinal)
                 ->update([
                     'MontoRequisito' =>  $requisito->MontoInicial,
