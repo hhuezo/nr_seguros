@@ -654,7 +654,7 @@
                 let sub_total_ccf = parseFloat(valor_comision) + parseFloat(iva_comision);
                 document.getElementById('sub_total_ccf').textContent = formatearCantidad(sub_total_ccf);
 
-                let retencion_comision =    tipo_contribuyente !== 1 && sub_total >= 100 ? parseFloat(valor_comision) * 0.01 : 0;
+                let retencion_comision =    tipo_contribuyente !== 1 && valor_comision >= 100 ? parseFloat(valor_comision) * 0.01 : 0;
 
                 console.log(tipo_contribuyente);
                 document.getElementById('retencion_comision').textContent = formatearCantidad(retencion_comision);
