@@ -46,6 +46,16 @@
 
     <tbody>
         @foreach ($poliza_cumulos as $registro)
+            @php
+                $documento = !empty($registro->Dui)
+                    ? $registro->Dui
+                    : (!empty($registro->Pasaporte)
+                        ? $registro->Pasaporte
+                        : (!empty($registro->CarnetResidencia)
+                            ? $registro->CarnetResidencia
+                            : ''));
+            @endphp
+
             <tr class="{{ $tipo == 3 ? 'row-warning' : '' }}">
                 {{-- Número de crédito --}}
                 <td>
@@ -62,9 +72,7 @@
                 </td>
 
                 {{-- DUI / Documento --}}
-                <td>
-                    {{ $registro->Dui ?? ($registro->Pasaporte ?? ($registro->CarnetResidencia ?? '')) }}
-                </td>
+                <td>{{ $documento }}</td>
 
                 {{-- Nombre completo --}}
                 <td>
@@ -72,9 +80,7 @@
                 </td>
 
                 {{-- Fecha de nacimiento --}}
-                <td class="text-center">
-                    {{ $registro->FechaNacimiento }}
-                </td>
+                <td class="text-center">{{ $registro->FechaNacimiento }}</td>
 
                 {{-- Edad actual --}}
                 <td class="text-center text-nowrap">
@@ -87,9 +93,7 @@
                 </td>
 
                 {{-- Fecha otorgamiento --}}
-                <td class="text-center">
-                    {{ $registro->FechaOtorgamiento }}
-                </td>
+                <td class="text-center">{{ $registro->FechaOtorgamiento }}</td>
 
                 {{-- Requisitos --}}
                 <td style="width: 25%; white-space: normal; word-wrap: break-word;">
@@ -111,22 +115,21 @@
 
                 {{-- Último registro (solo tipo 3) --}}
                 @if ($tipo == 3)
-                    <td class="text-center">
-                        {{ $registro->UltimoRegistro ?? '-' }}
-                    </td>
+                    <td class="text-center">{{ $registro->UltimoRegistro ?? '-' }}</td>
                 @endif
 
                 {{-- Botón detalle --}}
                 <td class="text-center">
-                    <button type="button" id="cumulo-{{ $registro->Dui }}"
+                    <button type="button" id="cumulo-{{ $documento }}"
                         class="btn btn-sm btn-{{ $tipo == 1 && ($registro->Validado ?? 0) == 0 ? 'success' : 'primary' }}"
                         data-toggle="modal" data-target=".bs-example-modal-lg"
-                        onclick="loadDetalleCreditoRequisito('{{ $registro->Dui }}', {{ $deuda->Id }}, {{ $tipo }},{{ $registro->PolizaDeudaTipoCartera }})">
+                        onclick="loadDetalleCreditoRequisito('{{ $documento }}', {{ $deuda->Id }}, {{ $tipo }}, {{ $registro->PolizaDeudaTipoCartera }})">
                         <i class="fa fa-eye"></i>
                     </button>
                 </td>
             </tr>
         @endforeach
+
     </tbody>
 </table>
 

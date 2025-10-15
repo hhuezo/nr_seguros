@@ -1782,13 +1782,22 @@ class DeudaController extends Controller
         // 🧩 Mostrar diferencias reales
         $diferencia = abs($totalTemp - $totalValidados);
 
+
+        $documento = !empty($temp->Dui)
+            ? $temp->Dui
+            : (!empty($temp->Pasaporte)
+                ? $temp->Pasaporte
+                : (!empty($temp->CarnetResidencia)
+                    ? $temp->CarnetResidencia
+                    : ''));
+
         return response()->json([
             'success' => true,
             'accion' => $accion,
             'count' => $diferencia,
             'totalTemp' => $totalTemp,
             'totalValidados' => $totalValidados,
-            'Dui' => $temp->Dui,
+            'Dui' => $documento,
             'TipoCartera' => $temp->PolizaDeudaTipoCartera
         ]);
     }
