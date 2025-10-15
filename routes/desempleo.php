@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\polizas\DesempleoCarteraController;
 use App\Http\Controllers\polizas\DesempleoController;
 use App\Http\Controllers\polizas\DesempleoTasaDiferenciadaController;
 use App\Models\polizas\Desempleo;
@@ -11,7 +12,7 @@ Route::middleware(['web'])->group(function () {
     Route::post('polizas/desempleo/agregar_no_valido/{id}', [DesempleoController::class, 'agregar_no_valido']);
     Route::get('polizas/desempleo/get_no_valido/{id}', [DesempleoController::class, 'get_no_valido']);
     Route::post('polizas/desempleo/store_poliza/{id}', [DesempleoController::class, 'store_poliza']);
-    Route::post('polizas/desempleo/create_pago/{id}', [DesempleoController::class, 'create_pago']);
+
     Route::post('polizas/desempleo/borrar_proceso_actual/{id}', [DesempleoController::class, 'borrar_proceso_actual']);
     Route::post('polizas/desempleo/agregar_pago', [DesempleoController::class, 'agregar_pago']);
     Route::get('polizas/desempleo/get_pago/{id}', [DesempleoController::class, 'get_pago']);
@@ -20,6 +21,9 @@ Route::middleware(['web'])->group(function () {
     Route::post('polizas/desempleo/anular_pago/{id}', [DesempleoController::class, 'anular_pago']);
     Route::post('polizas/desempleo/delete_pago/{id}', [DesempleoController::class, 'delete_pago']);
     Route::post('finalizar_configuracion_desempleo', [DesempleoController::class, 'finalizar_configuracion']);
+
+    Route::get('polizas/desempleo/subir_cartera/{id}', [DesempleoCarteraController::class, 'subir_cartera']);
+    Route::post('polizas/desempleo/create_pago/{id}', [DesempleoCarteraController::class, 'create_pago']);
 
     Route::post('exportar/desempleo/registros_edad_maxima/{id}', [DesempleoController::class, 'registros_edad_maxima']);
     Route::post('exportar/desempleo/registros_responsabilidad_maxima/{id}', [DesempleoController::class, 'registros_responsabilidad_maxima']);
@@ -34,7 +38,7 @@ Route::middleware(['web'])->group(function () {
     Route::get('polizas/desempleo/get_cartera/{id}/{mes}/{axo}', [DesempleoController::class, 'get_cartera']);
 
 
-    Route::resource('polizas/desempleo', DesempleoController::class);
+
 
     //tasa diferenciada
     Route::get('polizas/desempleo/tasa_diferenciada/{id}', [DesempleoTasaDiferenciadaController::class, 'tasa_diferenciada']);
@@ -47,6 +51,5 @@ Route::middleware(['web'])->group(function () {
 
 
 
-
-
+    Route::resource('polizas/desempleo', DesempleoController::class);
 });

@@ -103,8 +103,6 @@
                                 </td>
                             </tr>
 
-                            <!-- Modal de eliminación -->
-                            @include('polizas.desempleo.modal')
                         @endforeach
                     </tbody>
                 </table>

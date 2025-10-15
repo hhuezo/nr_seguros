@@ -57,10 +57,6 @@ class Desempleo extends Model
         return $this->belongsTo(EstadoPoliza::class, 'EstadoPoliza', 'Id');
     }
 
-    public function saldos()
-    {
-        return $this->belongsTo(SaldoMontos::class, 'Saldos', 'Id');
-    }
 
     public function planes()
     {

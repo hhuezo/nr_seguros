@@ -142,6 +142,11 @@
     </style>
 
 
+    <ul class="nav navbar-right panel_toolbox">
+        <a href="{{url('polizas/desempleo/subir_cartera')}}/{{$desempleo->Id}}" class="btn btn-info float-right">
+            Subir Archivo Excel</a>
+    </ul>
+
     <br>
 
     <div class="modal-body">
@@ -163,6 +168,7 @@
                 <table class="excel-like-table">
                     <thead>
                         <tr>
+                            <th>Linea credito</th>
                             <th>Tasa Millar</th>
                             <th>Saldo capital</th>
                             <th>Intereses corrientes</th>
@@ -173,6 +179,20 @@
                             <th>Prima por pagar</th>
                         </tr>
                     </thead>
+
+                    @foreach ($desempleo->desempleo_tipos_cartera as $tipo_cartera)
+                        <tr>
+                            <td contenteditable="true">
+                                {{ $tipo_cartera->saldos_montos->Abreviatura ?? '' }} -
+                                {{ $tipo_cartera->saldos_montos->Descripcion ?? '' }}
+                            </td>
+                            <td contenteditable="true" id="tasa_millar">
+                                {{ $desempleo->Tasa }}
+                            </td>
+
+
+                        </tr>
+                    @endforeach
 
                     <tr>
                         <td contenteditable="true" id="tasa_millar">
@@ -217,13 +237,25 @@
 
                     <tr>
                         <th>Totales</th>
-                        <td class="numeric"><span id="total_saldo_capital">{{ number_format($data['saldoCapital'], 2, '.', ',') }}</span></td>
-                        <td class="numeric"><span id="total_interes">{{ number_format($data['intereses'], 2, '.', ',') }}</span></td>
-                        <td class="numeric"><span id="total_interes_covid">{{ number_format($data['interesesCovid'], 2, '.', ',') }}</span></td>
-                        <td class="numeric"><span id="total_interes_moratorios">{{ number_format($data['interesesMoratorios'], 2, '.', ',') }}</span></td>
-                        <td class="numeric"><span id="total_monto_nominal">{{ number_format($data['montoNominal'], 2, '.', ',') }}</span></td>
-                        <td class="numeric"><span id="total_monto_cartera">{{ number_format($data['total'], 2, '.', ',') }}</span></td>
-                        <td class="numeric"><span id="total_prima_por_pagar">{{ number_format($data['primaPorPagar'], 2, '.', ',') }}</span></td>
+                        <td class="numeric"><span
+                                id="total_saldo_capital">{{ number_format($data['saldoCapital'], 2, '.', ',') }}</span>
+                        </td>
+                        <td class="numeric"><span
+                                id="total_interes">{{ number_format($data['intereses'], 2, '.', ',') }}</span></td>
+                        <td class="numeric"><span
+                                id="total_interes_covid">{{ number_format($data['interesesCovid'], 2, '.', ',') }}</span>
+                        </td>
+                        <td class="numeric"><span
+                                id="total_interes_moratorios">{{ number_format($data['interesesMoratorios'], 2, '.', ',') }}</span>
+                        </td>
+                        <td class="numeric"><span
+                                id="total_monto_nominal">{{ number_format($data['montoNominal'], 2, '.', ',') }}</span>
+                        </td>
+                        <td class="numeric"><span
+                                id="total_monto_cartera">{{ number_format($data['total'], 2, '.', ',') }}</span></td>
+                        <td class="numeric"><span
+                                id="total_prima_por_pagar">{{ number_format($data['primaPorPagar'], 2, '.', ',') }}</span>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
@@ -246,32 +278,44 @@
                         </tr>
                         <tr>
                             <td>Porcentaje de Comisión </td>
-                            <td class="numeric editable"><span>{{ $data['tasaComision'] ?? 0.0}} %</span>
+                            <td class="numeric editable"><span>{{ $data['tasaComision'] ?? 0.0 }} %</span>
                             </td>
                         </tr>
                         <tr>
                             <td>Prima a cobrar</td>
-                            <td class="numeric editable"><span id="prima_a_cobrar_ccf">{{ number_format($data['primaCobrar'], 2, '.', ',') }}</span></td>
+                            <td class="numeric editable"><span
+                                    id="prima_a_cobrar_ccf">{{ number_format($data['primaCobrar'], 2, '.', ',') }}</span>
+                            </td>
                         </tr>
                         <tr>
                             <td>Valor de comisión</td>
-                            <td class="numeric editable"><span id="valor_comision">{{number_format($data['valorComision'],2,".",",")}}</span></td>
+                            <td class="numeric editable"><span
+                                    id="valor_comision">{{ number_format($data['valorComision'], 2, '.', ',') }}</span>
+                            </td>
                         </tr>
                         <tr>
                             <td>(+) 13% IVA</td>
-                            <td class="numeric editable"><span id="iva_comision">{{number_format($data['ivaComision'],2,".",",")}}</span></td>
+                            <td class="numeric editable"><span
+                                    id="iva_comision">{{ number_format($data['ivaComision'], 2, '.', ',') }}</span>
+                            </td>
                         </tr>
                         <tr>
                             <td>Sub Total Comision</td>
-                            <td class="numeric editable"><span id="sub_total_ccf">{{number_format($data['subTotalCcf'],2,".",",")}}</span></td>
+                            <td class="numeric editable"><span
+                                    id="sub_total_ccf">{{ number_format($data['subTotalCcf'], 2, '.', ',') }}</span>
+                            </td>
                         </tr>
                         <tr>
                             <td>(-) 1% Retención</td>
-                            <td class="numeric editable"><span id="retencion_comision">{{number_format($data['retencionComision'],2,".",",")}}</span></td>
+                            <td class="numeric editable"><span
+                                    id="retencion_comision">{{ number_format($data['retencionComision'], 2, '.', ',') }}</span>
+                            </td>
                         </tr>
                         <tr>
                             <td>(=) Valor CCF Comisión</td>
-                            <td class="numeric editable"><span id="comision_ccf">{{number_format($data['comisionCcf'],2,".",",")}}</span></td>
+                            <td class="numeric editable"><span
+                                    id="comision_ccf">{{ number_format($data['comisionCcf'], 2, '.', ',') }}</span>
+                            </td>
                         </tr>
 
                     </tbody>
@@ -295,24 +339,33 @@
                         </tr>
                         <tr>
                             <td>Monto total cartera</td>
-                            <td class="numeric editable"><span id="monto_total_cartera">{{ number_format($data['total'], 2, '.', ',') }}</span></td>
+                            <td class="numeric editable"><span
+                                    id="monto_total_cartera">{{ number_format($data['total'], 2, '.', ',') }}</span>
+                            </td>
                         </tr>
                         <tr>
                             <td>Prima calculada</td>
-                            <td class="numeric editable"><span id="sub_total">{{ number_format($data['primaPorPagar'], 2, '.', ',') }}</span></td>
+                            <td class="numeric editable"><span
+                                    id="sub_total">{{ number_format($data['primaPorPagar'], 2, '.', ',') }}</span></td>
                         </tr>
                         <tr>
                             <td>Extra Prima</td>
-                            <td class="numeric editable"><span id="sub_total_extra_prima">{{ number_format($data['extra_prima'], 2, '.', ',') }}</span></td>
+                            <td class="numeric editable"><span
+                                    id="sub_total_extra_prima">{{ number_format($data['extra_prima'], 2, '.', ',') }}</span>
+                            </td>
                         </tr>
                         <tr>
                             <td>(-) Descuento rentabilidad (%)
                             </td>
-                            <td class="numeric editable"><span id="descuento_rentabilidad">{{ number_format($data['descuento'], 2, '.', ',') }}</span></td>
+                            <td class="numeric editable"><span
+                                    id="descuento_rentabilidad">{{ number_format($data['descuento'], 2, '.', ',') }}</span>
+                            </td>
                         </tr>
                         <tr>
                             <td>(=) Prima descontada</td>
-                            <td class="numeric editable"><span id="prima_a_cobrar">{{ number_format($data['primaCobrar'], 2, '.', ',') }}</span></td>
+                            <td class="numeric editable"><span
+                                    id="prima_a_cobrar">{{ number_format($data['primaCobrar'], 2, '.', ',') }}</span>
+                            </td>
                         </tr>
                         <!-- <tr>
                             <td>Iva</td>
@@ -324,11 +377,13 @@
                         </tr> -->
                         <tr>
                             <td>(-) Estructura CCF de Comisión (%) </td>
-                            <td class="numeric editable"><span id="comision">{{number_format($data['comisionCcf'],2,".",",")}}</span></td>
+                            <td class="numeric editable"><span
+                                    id="comision">{{ number_format($data['comisionCcf'], 2, '.', ',') }}</span></td>
                         </tr>
                         <tr>
                             <td>Total a pagar</td>
-                            <td class="numeric total" contenteditable="true" id="liquido_pagar" onblur="total()">{{number_format($data['liquidoApagar'],2,".",",")}} </td>
+                            <td class="numeric total" contenteditable="true" id="liquido_pagar" onblur="total()">
+                                {{ number_format($data['liquidoApagar'], 2, '.', ',') }} </td>
                         </tr>
                     </tbody>
                 </table>
@@ -338,23 +393,30 @@
             <div>
                 <form action="{{ url('polizas/desempleo/agregar_pago') }}" method="POST">
                     @csrf
-                    <input type="hidden" name="FechaInicio" value="{{ isset($fechas) ? $fechas->FechaInicio : '' }}">
+                    <input type="hidden" name="FechaInicio"
+                        value="{{ isset($fechas) ? $fechas->FechaInicio : '' }}">
                     <input type="hidden" name="FechaFinal" value="{{ isset($fechas) ? $fechas->FechaFinal : '' }}">
-                    <input type="hidden" name="MontoCartera" id="MontoCarteraDetalle" value="{{$data['total']}}">
+                    <input type="hidden" name="MontoCartera" id="MontoCarteraDetalle"
+                        value="{{ $data['total'] }}">
                     <input type="hidden" name="Desempleo" value="{{ $desempleo->Id }}">
                     <input type="hidden" name="Tasa" value="{{ $desempleo->Tasa }}">
-                    <input type="hidden" name="PrimaCalculada" id="PrimaCalculadaDetalle" value="{{$data['primaPorPagar']}}">
-                    <input type="hidden" name="PrimaDescontada" id="PrimaDescontadaDetalle" value="{{$data['primaDescontada']}}">
-                    <!-- <input type="hidden" name="SubTotal" id="SubTotalDetalle" value="{{$data['primaPorPagar']}}" > -->
+                    <input type="hidden" name="PrimaCalculada" id="PrimaCalculadaDetalle"
+                        value="{{ $data['primaPorPagar'] }}">
+                    <input type="hidden" name="PrimaDescontada" id="PrimaDescontadaDetalle"
+                        value="{{ $data['primaDescontada'] }}">
+                    <!-- <input type="hidden" name="SubTotal" id="SubTotalDetalle" value="{{ $data['primaPorPagar'] }}" > -->
                     <!-- <input type="hidden" name="Iva" id="IvaDetalle"> -->
                     <input type="hidden" name="TasaComision" value="{{ $desempleo->TasaComision }}">
-                    <input type="hidden" name="Comision" id="ComisionDetalle" value="{{$data['valorComision']}}">
-                    <input type="hidden" name="IvaSobreComision" id="IvaComisionDetalle" value="{{$data['ivaComision']}}">
-                    <input type="hidden" name="Descuento" id="DescuentoDetalle" value="{{$data['descuento']}}">
-                    <input type="hidden" name="Retencion" id="RetencionDetalle" value="{{$data['retencionComision']}}">
-                    <input type="hidden" name="ValorCCF" id="ValorCCFDetalle" value="{{$data['comisionCcf']}}">
-                    <input type="hidden" name="APagar" id="APagarDetalle" value="{{ $data['liquidoApagar']}}">
-                    <input type="hidden" name="ExtraPrima" value="{{$data['extra_prima']}}">
+                    <input type="hidden" name="Comision" id="ComisionDetalle"
+                        value="{{ $data['valorComision'] }}">
+                    <input type="hidden" name="IvaSobreComision" id="IvaComisionDetalle"
+                        value="{{ $data['ivaComision'] }}">
+                    <input type="hidden" name="Descuento" id="DescuentoDetalle" value="{{ $data['descuento'] }}">
+                    <input type="hidden" name="Retencion" id="RetencionDetalle"
+                        value="{{ $data['retencionComision'] }}">
+                    <input type="hidden" name="ValorCCF" id="ValorCCFDetalle" value="{{ $data['comisionCcf'] }}">
+                    <input type="hidden" name="APagar" id="APagarDetalle" value="{{ $data['liquidoApagar'] }}">
+                    <input type="hidden" name="ExtraPrima" value="{{ $data['extra_prima'] }}">
                     <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
                         id="modal-aplicar">
                         <div class="modal-dialog">
@@ -422,4 +484,3 @@
             </div>
         </div>
     </div>
-  

@@ -178,19 +178,16 @@
                                     </div>
 
                                     <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                                        <label class="control-label">Saldos y Montos</label>
-                                        <select name="Saldos" class="form-control" required>
-                                            <option value="">Seleccione...</option>
-                                            @foreach ($saldos as $obj)
-                                                <option value="{{ $obj->Id }}"
-                                                    {{ $desempleo->Saldos == $obj->Id ? 'selected' : '' }}>
-                                                    {{ $obj->Abreviatura }} -
-                                                    {{ $obj->Descripcion }}
+                                        <label class="control-label">Estado *</label>
+                                        <select name="EstadoPoliza" class="form-control" required>
+                                            @foreach ($estadoPoliza as $estado)
+                                                <option value="{{ $estado->Id }}"
+                                                    {{ $desempleo->EstadoPoliza == $estado->Id ? 'selected' : '' }}>
+                                                    {{ $estado->Nombre }}
                                                 </option>
                                             @endforeach
                                         </select>
                                     </div>
-
 
                                     <div class="col-sm-12" style="padding: 0% !important">
 
@@ -208,38 +205,46 @@
                                                 value="{{ $desempleo->VigenciaHasta }}" required>
                                         </div>
 
-                                        <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                                            <label class="control-label">Estado *</label>
-                                            <select name="EstadoPoliza" class="form-control" required>
-                                                @foreach ($estadoPoliza as $estado)
-                                                    <option value="{{ $estado->Id }}"
-                                                        {{ $desempleo->EstadoPoliza == $estado->Id ? 'selected' : '' }}>
-                                                        {{ $estado->Nombre }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
+
+                                        <!-- Edad máxima de inscripción -->
+                                        <div class="item form-group col-sm-12 col-md-3 col-lg-3">
+                                            <label class="control-label" align="right">Edad máxima de inscripción</label>
+                                            <input class="form-control" name="EdadMaximaInscripcion" type="number"
+                                                step="any" value="{{ $desempleo->EdadMaximaInscripcion }}" required>
                                         </div>
+
+                                        <!-- Edad Terminación -->
+                                        <div class="item form-group col-sm-12 col-md-3 col-lg-3">
+                                            <label class="control-label" align="right">Edad Terminación</label>
+                                            <input class="form-control" name="EdadTerminacion" type="number"
+                                                step="any" value="{{ $desempleo->EdadMaxima }}" required>
+                                        </div>
+
+
                                     </div>
 
-                                    <!-- Edad máxima de inscripción -->
-                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                                        <label class="control-label" align="right">Edad máxima de inscripción</label>
-                                        <input class="form-control" name="EdadMaximaInscripcion" type="number"
-                                            step="any" value="{{ $desempleo->EdadMaximaInscripcion }}" required>
+
+
+                                    <div class="item form-group col-sm-12 col-md-3 col-lg-3">
+                                        <label class="control-label" align="right">Tasa Diferenciada</label>
+                                        <select name="TasaDiferenciada" id="TasaDiferenciada" class="form-control">
+                                            <option value="0"
+                                                {{ old('TasaDiferenciada', $desempleo->TasaDiferenciada ?? 0) == 0 ? 'selected' : '' }}>
+                                                NO
+                                            </option>
+                                            <option value="1"
+                                                {{ old('TasaDiferenciada', $desempleo->TasaDiferenciada ?? 0) == 1 ? 'selected' : '' }}>
+                                                SI
+                                            </option>
+                                        </select>
                                     </div>
 
-                                    <!-- Edad Terminación -->
-                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                                        <label class="control-label" align="right">Edad Terminación</label>
-                                        <input class="form-control" name="EdadTerminacion" type="number" step="any"
-                                            value="{{ $desempleo->EdadMaxima }}" required>
-                                    </div>
 
                                     <!-- Tasa Millar Mensual -->
-                                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                                    <div class="item form-group col-sm-12 col-md-3 col-lg-3">
                                         <label class="control-label" align="right">Tasa Millar Mensual</label>
-                                        <input class="form-control" name="Tasa" type="number" step="any"
-                                            value="{{ $desempleo->Tasa }}" required>
+                                        <input class="form-control" name="Tasa" id="Tasa" type="number"
+                                            step="any" value="{{ $desempleo->Tasa }}" required>
                                     </div>
 
                                     <!-- Tasa Millar Mensual -->
@@ -349,10 +354,10 @@
                                                                                         @foreach ($tipo->tasa_diferenciada as $tasa_diferenciada)
                                                                                             <tr class="primary-row">
                                                                                                 <!-- <td>
-                                                                                                                                                                                                                                                                            {{ $tasa_diferenciada->linea_credito?->Abreviatura ?? '' }}
-                                                                                                                                                                                                                                                                            -
-                                                                                                                                                                                                                                                                            {{ $tasa_diferenciada->linea_credito?->Descripcion ?? '' }}
-                                                                                                                                                                                                                                                                        </td> -->
+                                                                                                                                                                                                                                                                                            {{ $tasa_diferenciada->linea_credito?->Abreviatura ?? '' }}
+                                                                                                                                                                                                                                                                                            -
+                                                                                                                                                                                                                                                                                            {{ $tasa_diferenciada->linea_credito?->Descripcion ?? '' }}
+                                                                                                                                                                                                                                                                                        </td> -->
                                                                                                 @if ($tipo->TipoCalculo == 1)
                                                                                                     <td>
                                                                                                         {{ $tasa_diferenciada->FechaDesde ? date('d/m/Y', strtotime($tasa_diferenciada->FechaDesde)) : 'Sin fecha' }}
@@ -472,7 +477,19 @@
                                 '</option>';
                             $("#Planes").html(_select);
                         });
-                    })
+                    });
+
+                    $("#TasaDiferenciada").change(function() {
+                        let valor = $(this).val();
+
+                        if (valor == "1") {
+                            // Si elige "SI": limpiar y bloquear el campo Tasa
+                            $("#Tasa").val("").prop("readonly", true);
+                        } else {
+                            // Si elige "NO": desbloquear el campo Tasa
+                            $("#Tasa").prop("readonly", false);
+                        }
+                    });
 
                 });
             </script>

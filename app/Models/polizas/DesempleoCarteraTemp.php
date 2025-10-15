@@ -11,35 +11,36 @@ class DesempleoCarteraTemp extends Model
     use HasFactory;
 
     protected $table = 'poliza_desempleo_cartera_temp';
-
     protected $primaryKey = 'Id';
-
     public $timestamps = false;
 
     protected $fillable = [
         'PolizaDesempleo',
-        'Nit',
         'Dui',
         'Pasaporte',
+        'CarnetResidencia',
         'Nacionalidad',
         'FechaNacimiento',
         'TipoPersona',
+        'Sexo',
         'PrimerApellido',
         'SegundoApellido',
         'ApellidoCasada',
         'PrimerNombre',
         'SegundoNombre',
         'NombreSociedad',
-        'Sexo',
         'FechaOtorgamiento',
         'FechaVencimiento',
-        'Ocupacion',
         'NumeroReferencia',
         'MontoOtorgado',
         'SaldoCapital',
         'Intereses',
         'MoraCapital',
         'InteresesMoratorios',
+        'InteresesCovid',
+        'Tarifa',
+        'TipoDeuda',
+        'PorcentajeExtraprima',
         'SaldoTotal',
         'User',
         'Axo',
@@ -48,16 +49,14 @@ class DesempleoCarteraTemp extends Model
         'FechaFinal',
         'TipoError',
         'FechaNacimientoDate',
-        'Edad',
-        'InteresesCovid',
-        'MontoNominal',
-        'NoValido',
-        'EdadDesembloso',
         'FechaOtorgamientoDate',
+        'Edad',
+        'EdadDesembloso',
+        'NoValido',
         'Excluido',
         'Rehabilitado',
         'EdadRequisito',
-        'Saldos'
+        'SaldosMontos'
     ];
 
     public function calculoTodalSaldo()
@@ -103,5 +102,4 @@ class DesempleoCarteraTemp extends Model
             return 0.00;
         }
     }
-
 }

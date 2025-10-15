@@ -119,18 +119,14 @@
                     </div>
 
                     <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                        <label class="control-label">Saldos y Montos</label>
-                        <select name="Saldos" class="form-control" required>
-                            <option value="">Seleccione...</option>
-                            @foreach ($saldos as $obj)
-                                <option value="{{ $obj->Id }}">
-                                    {{ $obj->Abreviatura }} -
-                                    {{ $obj->Descripcion }}
+                        <label class="control-label">Estado *</label>
+                        <select name="EstadoPoliza" class="form-control" required>
+                            @foreach ($estadoPoliza as $estado)
+                                <option value="{{ $estado->Id }}"> {{ $estado->Nombre }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
-
 
 
 
@@ -150,38 +146,37 @@
                                 value="{{ old('VigenciaHasta') }}" required>
                         </div>
 
-                        <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                            <label class="control-label">Estado *</label>
-                            <select name="EstadoPoliza" class="form-control" required>
-                                @foreach ($estadoPoliza as $estado)
-                                    <option value="{{ $estado->Id }}"> {{ $estado->Nombre }}
-                                    </option>
-                                @endforeach
-                            </select>
+
+                        <!-- Edad máxima de inscripción -->
+                        <div class="item form-group col-sm-12 col-md-3 col-lg-3">
+                            <label class="control-label" align="right">Edad máxima de inscripción</label>
+                            <input class="form-control" name="EdadMaximaInscripcion" type="number" step="any"
+                                value="{{ old('EdadMaximaInscripcion') }}" required>
                         </div>
+
+                        <!-- Edad Terminación -->
+                        <div class="item form-group col-sm-12 col-md-3 col-lg-3">
+                            <label class="control-label" align="right">Edad Terminación</label>
+                            <input class="form-control" name="EdadTerminacion" type="number" step="any"
+                                value="{{ old('EdadTerminacion') }}" required>
+                        </div>
+
                     </div>
 
 
 
+                    <div class="item form-group col-sm-12 col-md-3 col-lg-3">
+                        <label class="control-label" align="right">Tasa Diferenciada</label>
+                        <select name="TasaDiferenciada" id="TasaDiferenciada" class="form-control">
+                            <option value="0">NO</option>
+                            <option value="1">SI</option>
+                        </select>
 
-                    <!-- Edad máxima de inscripción -->
-                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                        <label class="control-label" align="right">Edad máxima de inscripción</label>
-                        <input class="form-control" name="EdadMaximaInscripcion" type="number" step="any"
-                            value="{{ old('EdadMaximaInscripcion') }}" required>
                     </div>
 
-                    <!-- Edad Terminación -->
-                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                        <label class="control-label" align="right">Edad Terminación</label>
-                        <input class="form-control" name="EdadTerminacion" type="number" step="any"
-                            value="{{ old('EdadTerminacion') }}" required>
-                    </div>
-
-                    <!-- Tasa Millar Mensual -->
-                    <div class="item form-group col-sm-12 col-md-6 col-lg-6">
+                    <div class="item form-group col-sm-12 col-md-3 col-lg-3">
                         <label class="control-label" align="right">Tasa Millar Mensual</label>
-                        <input class="form-control" name="Tasa" type="number" step="any"
+                        <input class="form-control" name="Tasa" id="Tasa" type="number" step="any"
                             value="{{ old('Tasa') }}" required>
                     </div>
 
@@ -192,7 +187,7 @@
                             value="{{ old('Descuento') }}">
                     </div>
 
-                     <div class="item form-group col-sm-12 col-md-4 col-lg-4">
+                    <div class="item form-group col-sm-12 col-md-4 col-lg-4">
                         <label class="control-label" align="right">Clausulas Especiales </label>
                         <textarea class="form-control" name="ClausulasEspeciales" rows="3" cols="4">{{ old('ClausulasEspeciales') }}</textarea>
                     </div>
@@ -201,7 +196,7 @@
                         <textarea class="form-control" name="Beneficios" rows="3" cols="4">{{ old('Beneficios') }}</textarea>
                     </div>
 
-                     <!-- Concepto -->
+                    <!-- Concepto -->
                     <div class="item form-group col-sm-12 col-md-4 col-lg-4">
                         <label class="control-label" align="right">Concepto</label>
                         <textarea class="form-control" name="Concepto" rows="3" cols="4">{{ old('Concepto') }}</textarea>
@@ -259,16 +254,6 @@
                 // var para la Departamento
                 var Aseguradora = $(this).val();
 
-                // //funcionpara las distritos
-                // $.get("{{ url('get_producto') }}" + '/' + Aseguradora, function(data) {
-                //     //esta el la peticion get, la cual se divide en tres partes. ruta,variables y funcion
-                //     console.log(data);
-                //     var _select = '<option value=""> Seleccione </option>';
-                //     for (var i = 0; i < data.length; i++)
-                //         _select += '<option value="' + data[i].Id + '"  >' + data[i].Nombre +
-                //         '</option>';
-                //     $("#Productos").html(_select);
-                // });
             });
 
             $("#Productos").change(function() {
@@ -292,7 +277,7 @@
                 $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
                 var Aseguradora = $(this).val();
 
-                $.get("{{ url('get_producto') }}" + '/' + Aseguradora+ '/3', function(data) {
+                $.get("{{ url('get_producto') }}" + '/' + Aseguradora + '/3', function(data) {
                     //esta el la peticion get, la cual se divide en tres partes. ruta,variables y funcion
                     console.log(data);
                     var _select = '<option value=""> Seleccione </option>';
@@ -301,6 +286,18 @@
                         '</option>';
                     $("#Productos").html(_select);
                 });
+            });
+
+            $("#TasaDiferenciada").change(function() {
+                let valor = $(this).val();
+
+                if (valor == "1") {
+                    // Si elige "SI": limpiar y bloquear el campo Tasa
+                    $("#Tasa").val("").prop("readonly", true);
+                } else {
+                    // Si elige "NO": desbloquear el campo Tasa
+                    $("#Tasa").prop("readonly", false);
+                }
             });
 
         });

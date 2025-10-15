@@ -33,8 +33,8 @@
                 <h4>Polizas de Desempleo </h4>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
-                <a href="{{ url('polizas/desempleo/') }}?idRegistro={{$desempleo->Id}}"><button class="btn btn-info float-right"> <i
-                            class="fa fa-arrow-left"></i></button></a>
+                <a href="{{ url('polizas/desempleo/') }}?idRegistro={{ $desempleo->Id }}"><button
+                        class="btn btn-info float-right"> <i class="fa fa-arrow-left"></i></button></a>
             </div>
             <div class="clearfix"></div>
         </div>
@@ -109,12 +109,13 @@
                         <input type="text" class="form-control" value="{{ $desempleo->cliente->Nit }}" readonly>
                     </div>
 
+
                     <div class="form-group">
-                        <label>Saldos y Montos</label>
-                        <input type="text" class="form-control"
-                            value="{{ $desempleo->saldos->Abreviatura }} - {{ $desempleo->saldos->Descripcion }}"
+                        <label>Estado</label>
+                        <input type="text" class="form-control" value="{{ $desempleo->estadoPoliza->Nombre ?? '' }}"
                             readonly>
                     </div>
+
 
                 </div>
 
@@ -132,15 +133,8 @@
                     </div>
                 </div>
 
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Estado</label>
-                        <input type="text" class="form-control" value="{{ $desempleo->estadoPoliza->Nombre ?? '' }}"
-                            readonly>
-                    </div>
-                </div>
 
-                <div class="col-md-6">
+                <div class="col-md-3">
                     <div class="form-group">
                         <label>Edad Máxima de Inscripción</label>
                         <input type="text" class="form-control" value="{{ $desempleo->EdadMaximaInscripcion }}"
@@ -148,14 +142,23 @@
                     </div>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-3">
                     <div class="form-group">
                         <label>Edad Terminación</label>
                         <input type="text" class="form-control" value="{{ $desempleo->EdadMaxima }}" readonly>
                     </div>
                 </div>
 
-                <div class="col-md-6">
+                <div class="item form-group col-sm-12 col-md-3 col-lg-3">
+                    <label class="control-label" align="right">Tasa Diferenciada</label>
+                    <select name="TasaDiferenciada" id="TasaDiferenciada" class="form-control" disabled>
+                        <option value="0" {{ $desempleo->TasaDiferenciada == 0 ? 'selected' : '' }}>NO</option>
+                        <option value="1" {{ $desempleo->TasaDiferenciada == 1 ? 'selected' : '' }}>SI</option>
+                    </select>
+                </div>
+
+
+                <div class="col-md-3">
                     <div class="form-group">
                         <label>Tasa</label>
                         <input type="text" class="form-control" value="{{ $desempleo->Tasa }}" readonly>
@@ -203,10 +206,6 @@
             <div class="tab-pane fade {{ isset($tab) && $tab == 2 ? 'active in' : '' }}" id="profile" role="tabpanel"
                 aria-labelledby="profile-tab">
 
-                <ul class="nav navbar-right panel_toolbox">
-                    <div class="btn btn-info float-right" data-toggle="modal" data-target="#modal_pago">
-                        Subir Archivo Excel</div>
-                </ul>
 
                 @include('polizas.desempleo.tab2')
 
@@ -229,7 +228,7 @@
     </div>
 
 
-    <div class="modal fade bs-example-modal-lg" id="modal_pago" tabindex="-1" role="dialog"
+    {{-- <div class="modal fade bs-example-modal-lg" id="modal_pago" tabindex="-1" role="dialog"
         aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -251,8 +250,8 @@
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                 <select name="Axo" id="Axo" class="form-control">
                                     @foreach ($anios as $anio)
-                                        <option value="{{ $anio }}"
-                                            {{ $anio == $axo ? 'selected' : '' }}>{{ $anio }}
+                                        <option value="{{ $anio }}" {{ $anio == $axo ? 'selected' : '' }}>
+                                            {{ $anio }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -298,7 +297,8 @@
                         <div class="form-group row">
                             <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Archivo</label>
                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <input class="form-control" name="Archivo" type="file" required onchange="get_cartera({{'$desempleo->Id'}})">
+                                <input class="form-control" name="Archivo" type="file" required
+                                    onchange="get_cartera({{ '$desempleo->Id' }})">
                             </div>
                         </div>
 
@@ -313,7 +313,8 @@
 
                         </label>
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                            <label class="control-label" align="left">Desea omitir la validacion de número de crédito?</label>
+                            <label class="control-label" align="left">Desea omitir la validacion de número de
+                                crédito?</label>
                         </div>
 
                     </div>
@@ -337,7 +338,7 @@
 
             </div>
         </div>
-    </div>
+    </div> --}}
 
     <script>
         $(document).ready(function() {
@@ -382,7 +383,7 @@
         });
 
         function get_cartera(id) {
-            
+
             // Tomamos los valores del año y mes del modal actual
             const mes = document.getElementById('Mes').value;
             const axo = document.getElementById('Axo').value;
