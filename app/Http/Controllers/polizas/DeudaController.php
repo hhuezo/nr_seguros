@@ -1804,6 +1804,31 @@ class DeudaController extends Controller
 
 
 
+    public function agregar_valido(Request $request)
+    {
+        $temp = PolizaDeudaTempCartera::findOrFail($request->id);
+        $temp->NoValido = 0;
+        $temp->OmisionPerfil = 1;
+        $temp->update();
+
+        $registro = new DeudaValidados();
+        $registro->Dui = $temp->Dui;
+        $registro->Pasaporte = $temp->Pasaporte;
+        $registro->CarnetResidencia = $temp->CarnetResidencia;
+        $registro->Nombre = $temp->Nombre;
+        $registro->NumeroReferencia = $temp->NumeroReferencia;
+        $registro->Poliza = $temp->PolizaDeuda;
+        $registro->TipoCartera = $temp->PolizaDeudaTipoCartera;
+        $registro->Mes = $temp->Mes;
+        $registro->Axo = $temp->Axo;
+        $registro->Usuario = auth()->id();
+        $registro->save();
+
+        return $registro;
+    }
+
+
+
 
     public function agregar_validado(Request $request)
     {

@@ -227,7 +227,7 @@
 
                 // Buscar el botón por su ID
                 let button = $("#cumulo-" + data.Dui);
-                console.log(button,data);
+                console.log(button, data);
                 if (button.length) { // Verificar si el botón existe
                     if (data.count == 0) {
                         button.removeClass("btn-primary").addClass("btn-success");
@@ -238,6 +238,25 @@
                     console.error("Botón no encontrado con ID: cumulo-" + Dui);
                 }
 
+            }
+        })
+    }
+
+
+    function agregarValidos() {
+        var id = document.getElementById('creditos').value;
+        var parametros = {
+            "_token": "{{ csrf_token() }}",
+            "id": id
+        };
+        $.ajax({
+            type: "POST",
+            url: "{{ url('polizas/deuda/agregar_valido') }}",
+            data: parametros,
+            success: function(data) {
+                $('#modal_cambio_credito_valido').modal('hide');
+                //buscar registros no validos
+                loadCreditosNoValidos();
             }
         })
     }

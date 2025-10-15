@@ -114,6 +114,7 @@ Route::middleware(['web'])->group(function () {
     Route::post('polizas/deuda/fede/create_pago_recibo', [DeudaCarteraFedeController::class, 'create_pago_recibo']);
 
     Route::post('polizas/deuda/agregar_valido_detalle', [DeudaController::class, 'agregar_valido_detalle']);
+    Route::post('polizas/deuda/agregar_valido', [DeudaController::class, 'agregar_valido']);
 
 
 
