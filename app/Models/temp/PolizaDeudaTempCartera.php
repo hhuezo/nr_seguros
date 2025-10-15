@@ -4,8 +4,8 @@ namespace App\Models\temp;
 
 use App\Models\catalogo\SaldoMontos;
 use App\Models\polizas\Deuda;
-use App\Models\polizas\DeudaCredito;
 use App\Models\polizas\DeudaExcluidos;
+use App\Models\polizas\DeudaRequisitos;
 use App\Models\polizas\PolizaDeudaCartera;
 use App\Models\polizas\PolizaDeudaTipoCartera;
 use Exception;
@@ -139,6 +139,7 @@ class PolizaDeudaTempCartera extends Model
 
     public function getNumerosReferencia($tipoCartera)
     {
+
         $data = PolizaDeudaTempCartera::where('Dui', $this->Dui)
             ->where('PolizaDeudaTipoCartera', $tipoCartera)
             ->where('Pasaporte', $this->Pasaporte)
@@ -152,35 +153,27 @@ class PolizaDeudaTempCartera extends Model
         $concatenatedReferences = '';
 
 
+        $deuda = Deuda::findOrFail($this->PolizaDeuda);
+
+        $acumulado = 0;
+        foreach ($data as $item) {
+            $acumulado += $item->TotalCredito ?? 0.00;
+            $requisito = $deuda->requisitos->where('EdadInicial', '<=', $item->EdadDesembloso)->where('EdadFinal', '>=', $item->EdadDesembloso)
+                ->where('MontoInicial', '<=', $acumulado)->where('MontoFinal', '>=', $acumulado)->first();
 
 
-        // Elimina la última coma y espacio
-        $concatenatedReferences = rtrim($concatenatedReferences, ', ');
 
-        foreach ($data as $obj) {
-
-            $style = ($obj->PagoAutomatico == 1)
-                ? '<span style="color: black;">' . $obj->NumeroReferencia . '</span>'
-                : '<span style="color: red;">' . $obj->NumeroReferencia . '</span>';
+            if ($requisito && ($requisito->perfil->PagoAutomatico == 1 || $requisito->perfil->DeclaracionJurada == 1)) {
+                $style = '<span style="color: black;">' . $item->NumeroReferencia . '</span>';
+            } else {
+                $style = '<span style="color: red;">' . $item->NumeroReferencia . '</span>';
+            }
 
             $concatenatedReferences .= $style . ', ';
         }
 
-        // $montoRequisito = $data->where('MontoRequisito', '<>', null)->first()->MontoRequisito ?? 0;
-        // $sumaTotal = 0;
-        // foreach ($data as $obj) {
-        //     $sumaTotal += $obj->TotalCredito;
-
-        //     $style = ($sumaTotal < $montoRequisito)
-        //         ? '<span style="color: black;">' . $obj->NumeroReferencia . '</span>'
-        //         : '<span style="color: red;">' . $obj->NumeroReferencia . '</span>';
-
-        //     $concatenatedReferences .= $style . ', ';
-        // }
-
-
-
-
+        // Elimina la última coma y espacio
+        $concatenatedReferences = rtrim($concatenatedReferences, ', ');
 
         // Retorna el resultado
         return $concatenatedReferences;

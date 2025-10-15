@@ -227,7 +227,7 @@
 
                 // Buscar el botón por su ID
                 let button = $("#cumulo-" + data.Dui);
-                //console.log(button,data);
+                console.log(button,data);
                 if (button.length) { // Verificar si el botón existe
                     if (data.count == 0) {
                         button.removeClass("btn-primary").addClass("btn-success");

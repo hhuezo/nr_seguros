@@ -1680,12 +1680,22 @@ class DeudaController extends Controller
         $temp = PolizaDeudaTempCartera::findOrFail($request->id);
 
         // Buscar si ya existe el registro en DeudaValidados
-        $existe = DeudaValidados::where('Dui', $temp->Dui)
+        $existe = DeudaValidados::where(function ($query) use ($temp) {
+            if (!empty($temp->Dui)) {
+                $query->where('Dui', $temp->Dui);
+            }
+            if (!empty($temp->Pasaporte)) {
+                $query->orWhere('Pasaporte', $temp->Pasaporte);
+            }
+            if (!empty($temp->CarnetResidencia)) {
+                $query->orWhere('CarnetResidencia', $temp->CarnetResidencia);
+            }
+        })
             ->where('NumeroReferencia', $temp->NumeroReferencia)
             ->where('Poliza', $temp->PolizaDeuda)
             ->where('TipoCartera', $temp->PolizaDeudaTipoCartera)
-            ->where('Mes', $temp->Mes)
-            ->where('Axo', $temp->Axo)
+            // ->where('Mes', $temp->Mes)
+            // ->where('Axo', $temp->Axo)
             ->first();
 
         if (!$existe) {
@@ -1696,6 +1706,8 @@ class DeudaController extends Controller
 
             $registro = new DeudaValidados();
             $registro->Dui = $temp->Dui;
+            $registro->Pasaporte = $temp->Pasaporte;
+            $registro->CarnetResidencia = $temp->CarnetResidencia;
             $registro->Nombre = $temp->Nombre;
             $registro->NumeroReferencia = $temp->NumeroReferencia;
             $registro->Poliza = $temp->PolizaDeuda;
@@ -1712,31 +1724,75 @@ class DeudaController extends Controller
             $temp->OmisionPerfil = 0;
             $temp->update();
 
-            $existe->delete();
+            // 🔻 Eliminar todos los registros que coincidan con los criterios
+            DeudaValidados::where(function ($query) use ($temp) {
+                if (!empty($temp->Dui)) {
+                    $query->where('Dui', $temp->Dui);
+                }
+                if (!empty($temp->Pasaporte)) {
+                    $query->orWhere('Pasaporte', $temp->Pasaporte);
+                }
+                if (!empty($temp->CarnetResidencia)) {
+                    $query->orWhere('CarnetResidencia', $temp->CarnetResidencia);
+                }
+            })
+                ->where('NumeroReferencia', $temp->NumeroReferencia)
+                ->where('Poliza', $temp->PolizaDeuda)
+                ->where('TipoCartera', $temp->PolizaDeudaTipoCartera)
+                // ->where('Mes', $temp->Mes)
+                // ->where('Axo', $temp->Axo)
+                ->delete();
             $accion = 'eliminado';
         }
 
-        // 🔢 Conteo total en la tabla temporal (todos los registros del DUI y TipoCartera)
-        $totalTemp = PolizaDeudaTempCartera::where('Dui', $temp->Dui)
+        // 🔢 Conteo total en la tabla temporal
+        $totalTemp = PolizaDeudaTempCartera::where(function ($query) use ($temp) {
+            if (!empty($temp->Dui)) {
+                $query->where('Dui', $temp->Dui);
+            } elseif (!empty($temp->Pasaporte)) {
+                $query->where('Pasaporte', $temp->Pasaporte);
+            } elseif (!empty($temp->CarnetResidencia)) {
+                $query->where('CarnetResidencia', $temp->CarnetResidencia);
+            }
+        })
+            ->where('PolizaDeuda', $temp->PolizaDeuda)
             ->where('PolizaDeudaTipoCartera', $temp->PolizaDeudaTipoCartera)
-            ->count();
+            ->where('Mes', $temp->Mes)
+            ->where('Axo', $temp->Axo)
+            ->distinct('NumeroReferencia')
+            ->count('NumeroReferencia');
 
-        // 🔢 Conteo en la tabla de validados (los que ya existen)
-        $totalValidados = DeudaValidados::where('Dui', $temp->Dui)
+        // 🔢 Conteo de registros validados
+        $totalValidados = DeudaValidados::where(function ($query) use ($temp) {
+            if (!empty($temp->Dui)) {
+                $query->where('Dui', $temp->Dui);
+            } elseif (!empty($temp->Pasaporte)) {
+                $query->where('Pasaporte', $temp->Pasaporte);
+            } elseif (!empty($temp->CarnetResidencia)) {
+                $query->where('CarnetResidencia', $temp->CarnetResidencia);
+            }
+        })
+            ->where('Poliza', $temp->PolizaDeuda)
             ->where('TipoCartera', $temp->PolizaDeudaTipoCartera)
-            ->count();
+            ->where('Mes', $temp->Mes)
+            ->where('Axo', $temp->Axo)
+            ->distinct('NumeroReferencia')
+            ->count('NumeroReferencia');
 
-        // Si todos los registros existen, devolver 0; si faltan, devolver la diferencia
-        $count = ($totalValidados >= $totalTemp) ? 0 : ($totalTemp - $totalValidados);
+        // 🧩 Mostrar diferencias reales
+        $diferencia = abs($totalTemp - $totalValidados);
 
         return response()->json([
             'success' => true,
             'accion' => $accion,
-            'count' => $count,
+            'count' => $diferencia,
+            'totalTemp' => $totalTemp,
+            'totalValidados' => $totalValidados,
             'Dui' => $temp->Dui,
             'TipoCartera' => $temp->PolizaDeudaTipoCartera
         ]);
     }
+
 
 
 
@@ -2420,10 +2476,14 @@ class DeudaController extends Controller
     {
 
 
-        $data = PolizaDeudaTempCartera::where('NoValido', 0)
-            ->where('PolizaDeuda', $poliza)
+        $data = PolizaDeudaTempCartera::where('PolizaDeuda', $poliza)
+            // ->where('NoValido', 0)
             ->where('PolizaDeudaTipoCartera', $tipo_cartera)
-            ->where('Dui', $documento)
+            ->where(function ($query) use ($documento) {
+                $query->where('Dui', $documento)
+                    ->orWhere('Pasaporte', $documento)
+                    ->orWhere('CarnetResidencia', $documento);
+            })
             ->orderBy('FechaOtorgamientoDate')
             ->get();
 
