@@ -87,7 +87,7 @@ class DeudaCarteraController extends Controller
 
         if ($ultimo_pago) {
             // Si hay pago, tomar la fecha inicial y final con +1 mes exacto
-            $fecha_inicial = Carbon::parse($ultimo_pago->FechaInicio);
+            $fecha_inicial = Carbon::parse($ultimo_pago->FechaFinal);
             $fecha_final = $fecha_inicial->copy()->addMonth();
 
             $axo = $fecha_inicial->year;
@@ -96,6 +96,7 @@ class DeudaCarteraController extends Controller
             // Formato final Y-m-d
             $fecha_inicial = $fecha_inicial->format('Y-m-d');
             $fecha_final = $fecha_final->format('Y-m-d');
+
         }
 
 
