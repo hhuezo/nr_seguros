@@ -71,4 +71,9 @@ class Desempleo extends Model
     {
         return $this->belongsTo(PolizaControlCartera::class, 'DesempleoId', 'Id');
     }
+
+     public function desempleo_tipos_cartera()
+    {
+        return $this->hasMany(DesempleoTipoCartera::class, 'PolizaDesempleo', 'Id');
+    }
 }

@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\polizas\DesempleoController;
+use App\Http\Controllers\polizas\DesempleoTasaDiferenciadaController;
+use App\Models\polizas\Desempleo;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['web'])->group(function () {
@@ -35,5 +37,16 @@ Route::middleware(['web'])->group(function () {
     Route::resource('polizas/desempleo', DesempleoController::class);
 
     //tasa diferenciada
-    Route::get('polizas/desempleo/tasa_diferenciada/{id}', [DesempleoController::class, 'tasa_diferenciada']);
+    Route::get('polizas/desempleo/tasa_diferenciada/{id}', [DesempleoTasaDiferenciadaController::class, 'tasa_diferenciada']);
+    Route::post('polizas/desempleo/agregar_tipo_cartera/{id}', [DesempleoTasaDiferenciadaController::class, 'agregar_tipo_cartera']);
+    Route::post('polizas/desempleo/tasa_diferenciada', [DesempleoTasaDiferenciadaController::class, 'store'])->name('tasa_diferenciada_desempleo.store');
+    Route::post('polizas/desempleo/delete_tipo_cartera', [DesempleoTasaDiferenciadaController::class, 'delete_tipo_cartera']);
+    Route::post('polizas/desempleo/delete_tasa_diferenciada', [DesempleoTasaDiferenciadaController::class, 'destroy']);
+    Route::put('polizas/desempleo/update_tipo_cartera/{id}', [DesempleoTasaDiferenciadaController::class, 'update_tipo_cartera']);
+    Route::put('polizas/desempleo/tasa_diferenciada/{id}', [DesempleoTasaDiferenciadaController::class, 'update']);
+
+
+
+
+
 });

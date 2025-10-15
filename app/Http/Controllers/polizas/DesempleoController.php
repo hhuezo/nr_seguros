@@ -1252,9 +1252,9 @@ class DesempleoController extends Controller
         $tipoCobro = TipoCobro::where('Activo', 1)->get();
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
         $saldos = SaldoMontos::where('Activo', 1)->get();
-
+        $tab = 1;
         //dd($tipoCartera);
-        return view('polizas.desempleo.edit', compact(
+        return view('polizas.desempleo.edit', compact('tab',
             'desempleo',
             'aseguradora',
             'cliente',
@@ -1387,7 +1387,9 @@ class DesempleoController extends Controller
 
     public function tasa_diferenciada($id)
     {
-        return view('polizas.desempleo.desempleo_tasa_diferenciada.');
+        $desempleo = Desempleo::findOrFail($id);
+
+        return view('polizas.desempleo.tasa_diferenciada',compact('desempleo'));
 
     }
 }

@@ -2,7 +2,7 @@
         aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
-                <form action="{{ url('polizas/vida/update_tipo_cartera') }}/{{ $vida->Id }}" method="POST">
+                <form action="{{ url('polizas/desempleo/update_tipo_cartera') }}/{{ $desempleo->Id }}" method="POST">
                     @method('PUT')
                     @csrf
                     <input type="hidden" name="VidaTipoCartera" value="{{ $tipo->Id }}">
@@ -20,24 +20,13 @@
                                 <div class="form-group row">
                                     <label class="control-label">Tipo de Cartera</label>
                                     <select class="form-control" name="TipoCartera">
-                                        @foreach ($tiposCartera as $obj)
+                                        @foreach ($saldos_montos as $obj)
                                             <option value="{{ $obj->Id }}"
-                                                {{ $obj->Id == $tipo->VidaTipoCartera ? 'selected' : '' }}>{{ $obj->Nombre }}
+                                                {{ $obj->Id == $tipo->SaldosMontos ? 'selected' : '' }}>{{$obj->Abreviatura}} - {{ $obj->Descripcion }}
                                             </option>
                                         @endforeach
                                     </select>
                                 </div>
-
-
-                                @if ($vida->TarifaExcel != 1)
-                                    <div class="form-group row">
-                                        <label class="control-label">Monto maximo individual</label>
-                                        <input type="number" step="any" min="0.00" class="form-control"
-                                            value="{{ $tipo->MontoMaximoIndividual }}" name="MontoMaximoIndividual"
-                                            required>
-
-                                    </div>
-                                @endif
                             </div>
                         </div>
                     </div>
