@@ -2,7 +2,7 @@
     aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form action="{{ url('polizas/vida/tasa_diferenciada') }}/{{ $tasa_diferenciada->Id }}" method="POST">
+            <form action="{{ url('polizas/desempleo/tasa_diferenciada') }}/{{ $tasa_diferenciada->Id }}" method="POST">
                 @method('PUT')
                 @csrf
                 <div class="modal-header">
@@ -17,7 +17,7 @@
                     <div class="box-body">
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <input type="hidden" name="TipoCalculoEdit" value="{{ $tipo->TipoCalculo }}" class="form-control">
-                         
+
                             <div class="form-group row" id="divFechaDesdeEdit" style="display: none">
                                 <label class="control-label">Fecha inicio</label>
                                 <input type="date" name="FechaDesdeEdit" class="form-control"
