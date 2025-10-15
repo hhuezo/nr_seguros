@@ -153,7 +153,7 @@ class DeudaCarteraController extends Controller
             // Obtener todas las descripciones de línea de crédito y unirlas con coma
             $tipo_cartera->Descripcion = implode(',', $tasas_diferenciadas->pluck('linea_credito.Descripcion')->unique()->toArray());
             $tipo_cartera->Abreviatura = implode(',', $tasas_diferenciadas->pluck('linea_credito.Abreviatura')->unique()->toArray());
-            $tipo_cartera->Total = PolizaDeudaTempCartera::where('PolizaDeudaTipoCartera', $tipo_cartera->Id)->where('User', auth()->user()->id)->sum('TotalCredito');
+            $tipo_cartera->Total = PolizaDeudaTempCartera::where('PolizaDeudaTipoCartera', $tipo_cartera->Id)->sum('TotalCredito');
         }
 
 
@@ -187,7 +187,7 @@ class DeudaCarteraController extends Controller
 
 
         //ultimo registro de cartera
-        $registro_cartera = PolizaDeudaTempCartera::where('PolizaDeuda', $id)->where('User', auth()->user()->id)->first();
+        $registro_cartera = PolizaDeudaTempCartera::where('PolizaDeuda', $id)->first();
 
         if ($registro_cartera) {
             $axo = $registro_cartera->Axo;
@@ -306,7 +306,7 @@ class DeudaCarteraController extends Controller
 
 
 
-        PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->delete();
+        PolizaDeudaTempCartera::where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->delete();
 
         try {
             Excel::import(new PolizaDeudaTempCarteraImport($date->year, $date->month, $deuda->Id, $request->FechaInicio, $request->FechaFinal, $deuda_tipo_cartera->Id, $deuda->TarifaExcel), $archivo);
@@ -346,8 +346,7 @@ class DeudaCarteraController extends Controller
 
         //dd($request->validacion_credito);
         if ($request->validacion_credito != 'on') {
-            $repetidos = PolizaDeudaTempCartera::where('User', auth()->user()->id)
-                ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+            $repetidos = PolizaDeudaTempCartera::where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
                 //->where('PolizaDeuda', $request->Id)
                 ->groupBy('NumeroReferencia')
                 ->havingRaw('COUNT(*) > 1')
@@ -356,7 +355,7 @@ class DeudaCarteraController extends Controller
             $numerosRepetidos = $repetidos->isNotEmpty() ? $repetidos->pluck('NumeroReferencia') : null;
 
             if ($numerosRepetidos) {
-                PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->delete();
+                PolizaDeudaTempCartera::where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->delete();
                 // Convertir la colección a string para mostrarla en el error
                 $numerosStr = $numerosRepetidos->implode(', ');
 
@@ -371,7 +370,7 @@ class DeudaCarteraController extends Controller
 
 
         //calculando errores de cartera
-        $cartera_temp = PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->get();
+        $cartera_temp = PolizaDeudaTempCartera::where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->get();
 
 
 
@@ -591,8 +590,7 @@ class DeudaCarteraController extends Controller
 
 
         //calculando edades y fechas de nacimiento
-        PolizaDeudaTempCartera::where('User', auth()->user()->id)
-            ->where('PolizaDeuda', $deuda->Id)
+        PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
             ->update([
                 'FechaNacimientoDate' => DB::raw("STR_TO_DATE(FechaNacimiento, '%d/%m/%Y')"),
                 //'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, CURDATE())"),
@@ -613,8 +611,7 @@ class DeudaCarteraController extends Controller
 
                 foreach ($tasas_diferenciadas as $tasa) {
                     //dd($tasa);
-                    PolizaDeudaTempCartera::where('User', auth()->user()->id)
-                        ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                    PolizaDeudaTempCartera::where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
                         ->whereBetween('FechaOtorgamientoDate', [$tasa->FechaDesde, $tasa->FechaHasta])
                         ->update([
                             'LineaCredito' => $tasa->LineaCredito,
@@ -624,8 +621,7 @@ class DeudaCarteraController extends Controller
             } else  if ($deuda_tipo_cartera->TipoCalculo == 2) {
 
                 foreach ($tasas_diferenciadas as $tasa) {
-                    PolizaDeudaTempCartera::where('User', auth()->user()->id)
-                        ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                    PolizaDeudaTempCartera::where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
                         ->whereBetween('EdadDesembloso', [$tasa->EdadDesde, $tasa->EdadHasta])
                         ->update([
                             'LineaCredito' => $tasa->LineaCredito,
@@ -634,8 +630,7 @@ class DeudaCarteraController extends Controller
                 }
             } else {
                 foreach ($tasas_diferenciadas as $tasa) {
-                    PolizaDeudaTempCartera::where('User', auth()->user()->id)
-                        ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                    PolizaDeudaTempCartera::where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
                         ->update([
                             'LineaCredito' => $tasa->LineaCredito,
                             'Tasa' => $deuda->Tasa
@@ -646,8 +641,7 @@ class DeudaCarteraController extends Controller
             //tasas diferenciadas solo los que si traen la tarifa en el excel
             $tasas_diferenciadas = $deuda_tipo_cartera->tasa_diferenciada;
             foreach ($tasas_diferenciadas as $tasa) {
-                PolizaDeudaTempCartera::where('User', auth()->user()->id)
-                    ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                PolizaDeudaTempCartera::where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
                     ->update([
                         'LineaCredito' => $tasa->LineaCredito,
                         //'Tasa' => $deuda->Tasa
@@ -655,7 +649,7 @@ class DeudaCarteraController extends Controller
             }
         }
 
-        $cartera_temp = PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->get();
+        $cartera_temp = PolizaDeudaTempCartera::where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->get();
 
         foreach ($cartera_temp as $obj) {
             $obj->TotalCredito = $obj->calculoTodalSaldo();
@@ -672,19 +666,38 @@ class DeudaCarteraController extends Controller
 
         $MontoMaximoIndividual = $deuda_tipo_cartera->MontoMaximoIndividual;
         if (isset($MontoMaximoIndividual) && $MontoMaximoIndividual > 0) {
-            $duis = PolizaDeudaTempCartera::selectRaw('Dui')
-                ->where('User', auth()->user()->id)
+          // Paso 1: obtener los identificadores (DUI/Pasaporte/Carnet) que superan el límite
+            $personas = PolizaDeudaTempCartera::selectRaw("
+                    COALESCE(NULLIF(Dui, ''), NULLIF(Pasaporte, ''), NULLIF(CarnetResidencia, '')) AS Identificador
+                ")
                 ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
-                ->groupBy('Dui')
+                ->whereNotNull(DB::raw("COALESCE(NULLIF(Dui, ''), NULLIF(Pasaporte, ''), NULLIF(CarnetResidencia, ''))"))
+                ->groupBy('Identificador')
                 ->havingRaw('SUM(TotalCredito) > ?', [$MontoMaximoIndividual])
-                ->pluck('Dui'); // Obtiene solo los valores de la columna Dui
+                ->pluck('Identificador');
 
-            // Realiza el update en los registros con los DUI filtrados
-            if ($duis->isNotEmpty()) {
-                PolizaDeudaTempCartera::whereIn('Dui', $duis)
+            if ($personas->isNotEmpty()) {
+                PolizaDeudaTempCartera::where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                    ->where(function ($query) use ($personas) {
+                        $query->where(function ($q) use ($personas) {
+                            $q->whereNotNull('Dui')
+                                ->where('Dui', '!=', '')
+                                ->whereIn('Dui', $personas);
+                        })
+                            ->orWhere(function ($q) use ($personas) {
+                                $q->whereNotNull('Pasaporte')
+                                    ->where('Pasaporte', '!=', '')
+                                    ->whereIn('Pasaporte', $personas);
+                            })
+                            ->orWhere(function ($q) use ($personas) {
+                                $q->whereNotNull('CarnetResidencia')
+                                    ->where('CarnetResidencia', '!=', '')
+                                    ->whereIn('CarnetResidencia', $personas);
+                            });
+                    })
                     ->update([
                         'MontoMaximoIndividual' => 1,
-                        'NoValido' => 1
+                        'NoValido' => 1,
                     ]);
             }
         }
@@ -754,7 +767,7 @@ class DeudaCarteraController extends Controller
         }
 
 
-        PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->delete();
+        PolizaDeudaTempCartera::where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->delete();
 
         try {
             Excel::import(new PolizaDeudaTempCarteraComImport($deuda->Id, $request->FechaInicio, $request->FechaFinal, $deuda_tipo_cartera->Id), $archivo);
@@ -769,7 +782,7 @@ class DeudaCarteraController extends Controller
         }
 
         //calculando errores de cartera
-        $cartera_temp = PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('LineaCredito', '=', $deuda_tipo_cartera->Id)->get();
+        $cartera_temp = PolizaDeudaTempCartera::where('LineaCredito', '=', $deuda_tipo_cartera->Id)->get();
 
         foreach ($cartera_temp as $obj) {
             $errores_array = [];
@@ -907,8 +920,7 @@ class DeudaCarteraController extends Controller
         }
 
         //calculando edades y fechas de nacimiento
-        PolizaDeudaTempCartera::where('User', auth()->user()->id)
-            ->where('PolizaDeuda', $deuda->Id)
+        PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
             ->update([
                 'FechaNacimientoDate' => DB::raw("STR_TO_DATE(FechaNacimiento, '%d/%m/%Y')"),
                 //'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, CURDATE())"),
@@ -928,8 +940,7 @@ class DeudaCarteraController extends Controller
 
             foreach ($tasas_diferenciadas as $tasa) {
                 //dd($tasa);
-                PolizaDeudaTempCartera::where('User', auth()->user()->id)
-                    ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                PolizaDeudaTempCartera::where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
                     ->whereBetween('FechaOtorgamientoDate', [$tasa->FechaDesde, $tasa->FechaHasta])
                     ->update([
                         'LineaCredito' => $tasa->LineaCredito,
@@ -940,8 +951,8 @@ class DeudaCarteraController extends Controller
 
             foreach ($tasas_diferenciadas as $tasa) {
 
-                PolizaDeudaTempCartera::where('User', auth()->user()->id)
-                    ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                PolizaDeudaTempCartera::
+                where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
                     ->whereBetween('EdadDesembloso', [$tasa->EdadDesde, $tasa->EdadHasta])
                     ->update([
                         'LineaCredito' => $tasa->LineaCredito,
@@ -950,8 +961,8 @@ class DeudaCarteraController extends Controller
             }
         } else {
             foreach ($tasas_diferenciadas as $tasa) {
-                PolizaDeudaTempCartera::where('User', auth()->user()->id)
-                    ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                PolizaDeudaTempCartera::
+                where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
                     ->update([
                         'LineaCredito' => $tasa->LineaCredito,
                         'Tasa' => $deuda->Tasa
@@ -960,7 +971,7 @@ class DeudaCarteraController extends Controller
         }
 
 
-        $cartera_temp = PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->get();
+        $cartera_temp = PolizaDeudaTempCartera::where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->get();
 
         foreach ($cartera_temp as $obj) {
             $obj->TotalCredito = $obj->calculoTodalSaldo();
@@ -979,7 +990,7 @@ class DeudaCarteraController extends Controller
 
     public function deleteLineaCredito(Request $request)
     {
-        PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $request->PolizaDeudaTipoCartera)->delete();
+        PolizaDeudaTempCartera::where('PolizaDeudaTipoCartera', '=', $request->PolizaDeudaTipoCartera)->delete();
 
         return redirect('polizas/deuda/subir_cartera/' . $request->DeudaId);
     }
@@ -1421,7 +1432,7 @@ class DeudaCarteraController extends Controller
         $poliza_id = $request->Deuda;
         $deuda = Deuda::findOrFail($request->Deuda);
 
-        $temp_data_fisrt = PolizaDeudaTempCartera::where('PolizaDeuda', $poliza_id)->where('User', auth()->user()->id)->first();
+        $temp_data_fisrt = PolizaDeudaTempCartera::where('PolizaDeuda', $poliza_id)->first();
 
         if (!$temp_data_fisrt) {
             alert()->error('No se han cargado las carteras');
@@ -1441,8 +1452,7 @@ class DeudaCarteraController extends Controller
 
 
         //estableciendo fecha de nacimiento date y calculando edad
-        PolizaDeudaTempCartera::where('User', auth()->user()->id)
-            ->where('PolizaDeuda', $poliza_id)
+        PolizaDeudaTempCartera::where('PolizaDeuda', $poliza_id)
             ->update([
                 'FechaNacimientoDate' => DB::raw("STR_TO_DATE(FechaNacimiento, '%d/%m/%Y')"),
                 'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaFinal)"),
@@ -1694,7 +1704,6 @@ class DeudaCarteraController extends Controller
 
         PolizaDeudaTempCartera::where('Axo', $anio)
             ->where('Mes', $mes + 0)
-            ->where('User', auth()->user()->id)
             ->where('PolizaDeuda', $request->Deuda)->delete();
 
         alert()->success('El registro de poliza ha sido ingresado correctamente');
@@ -1706,8 +1715,7 @@ class DeudaCarteraController extends Controller
 
 
         // Obtener los datos de la tabla temporal
-        $tempData = PolizaDeudaTempCartera::where('User', auth()->user()->id)
-            ->where('NoValido', 0)
+        $tempData = PolizaDeudaTempCartera::where('NoValido', 0)
             ->where('PolizaDeuda', $request->Deuda)
             ->get();
 
@@ -1867,13 +1875,13 @@ class DeudaCarteraController extends Controller
         if ($tipo == 1) {
             //edad maxima
             // $excluidos = DeudaExcluidos::where('Poliza', $deuda->Id)->where('EdadMaxima', 1)->whereMonth('FechaExclusion', $mes)->where('Activo', 0)->get();
-            $excluidos = PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Edad', '>=', $deuda->EdadMaximaTerminacion)->where('User', auth()->user()->id)->get();
+            $excluidos = PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('Edad', '>=', $deuda->EdadMaximaTerminacion)->get();
         } else {
             //$excluidos = DeudaExcluidos::where('Poliza', $deuda->Id)->where('ResponsabilidadMaxima', 1)->whereMonth('FechaExclusion', $mes)->where('Activo', 0)->get();
             $excluidos = PolizaDeudaTempCartera::selectRaw('Id,Dui,Edad,Nit,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,FechaNacimiento,Excluido,
         NumeroReferencia,NoValido,Perfiles,EdadDesembloso,FechaOtorgamiento,NoValido,
          GROUP_CONCAT(DISTINCT NumeroReferencia SEPARATOR ", ") AS ConcatenatedNumeroReferencia,SUM(saldo_total) as total_saldo')
-                ->where('User', auth()->user()->id)->where('PolizaDeuda', $deuda->Id)
+                ->where('PolizaDeuda', $deuda->Id)
                 ->groupBy('Dui', 'NoValido')->get();
         }
 

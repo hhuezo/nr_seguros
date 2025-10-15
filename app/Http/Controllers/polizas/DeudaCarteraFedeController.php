@@ -355,18 +355,38 @@ class DeudaCarteraFedeController extends Controller
 
         $MontoMaximoIndividual = $deuda_tipo_cartera->MontoMaximoIndividual;
         if (isset($MontoMaximoIndividual) && $MontoMaximoIndividual > 0) {
-            $duis = PolizaDeudaTempCartera::selectRaw('Dui')
+            // Paso 1: obtener los identificadores (DUI/Pasaporte/Carnet) que superan el límite
+            $personas = PolizaDeudaTempCartera::selectRaw("
+                    COALESCE(NULLIF(Dui, ''), NULLIF(Pasaporte, ''), NULLIF(CarnetResidencia, '')) AS Identificador
+                ")
                 ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
-                ->groupBy('Dui')
+                ->whereNotNull(DB::raw("COALESCE(NULLIF(Dui, ''), NULLIF(Pasaporte, ''), NULLIF(CarnetResidencia, ''))"))
+                ->groupBy('Identificador')
                 ->havingRaw('SUM(TotalCredito) > ?', [$MontoMaximoIndividual])
-                ->pluck('Dui'); // Obtiene solo los valores de la columna Dui
+                ->pluck('Identificador');
 
-            // Realiza el update en los registros con los DUI filtrados
-            if ($duis->isNotEmpty()) {
-                PolizaDeudaTempCartera::whereIn('Dui', $duis)
+            if ($personas->isNotEmpty()) {
+                PolizaDeudaTempCartera::where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                    ->where(function ($query) use ($personas) {
+                        $query->where(function ($q) use ($personas) {
+                            $q->whereNotNull('Dui')
+                                ->where('Dui', '!=', '')
+                                ->whereIn('Dui', $personas);
+                        })
+                            ->orWhere(function ($q) use ($personas) {
+                                $q->whereNotNull('Pasaporte')
+                                    ->where('Pasaporte', '!=', '')
+                                    ->whereIn('Pasaporte', $personas);
+                            })
+                            ->orWhere(function ($q) use ($personas) {
+                                $q->whereNotNull('CarnetResidencia')
+                                    ->where('CarnetResidencia', '!=', '')
+                                    ->whereIn('CarnetResidencia', $personas);
+                            });
+                    })
                     ->update([
                         'MontoMaximoIndividual' => 1,
-                        'NoValido' => 1
+                        'NoValido' => 1,
                     ]);
             }
         }
