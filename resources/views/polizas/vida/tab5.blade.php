@@ -99,8 +99,7 @@
                     </tr>
                     <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete_extraprima-{{ $obj->Id }}">
 
-                        <form method="POST" action="{{ url('polizas/vida/eliminar_extraprima')}}">
-                            @method('POST')
+                        <form method="POST" action="{{ url('polizas/vida/eliminar_extraprimado')}}/{{ $obj->Id}}">
                             @csrf
                             <div class="modal-dialog">
                                 <div class="modal-content">

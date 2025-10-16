@@ -39,7 +39,8 @@ Route::middleware(['web'])->group(function () {
     Route::post('polizas/vida/store_extraprimado', [VidaController::class, 'store_extraprimado']);
     Route::get('polizas/vida/get_extraprimado/{poliza}/{dui}', [VidaController::class, 'get_extraprimado']);
     Route::post('exportar/vida/extraprimados_excluidos/{id}', [VidaController::class, 'extraprimados_excluidos']);
-    Route::get('polizas/vida/get_cartera/{id}/{mes}/{axo}', [VidaController::class, 'get_cartera']);
+    Route::post('polizas/vida/eliminar_extraprimado/{id}', [VidaController::class, 'delete_extraprimado']);
+    Route::get('polizas/vida/get_cartera/{id}/{mes}/{axo}', [VidaController::class, 'get_cartera']); //
 
 
 

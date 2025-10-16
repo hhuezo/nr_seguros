@@ -1901,7 +1901,7 @@ class VidaController extends Controller
             $cliente->save();
 
             alert()->success('Extraprimado agregado correctamente.');
-            return redirect('polizas/vida/' . $request->PolizaVida . '?tab=5');
+            return redirect('polizas/vida/' . $request->PolizaVida . '?tab=3');
         } catch (\Exception $e) {
             // Log del error para depuración
             Log::error('Error al guardar extraprimado: ' . $e->getMessage());
@@ -1911,6 +1911,34 @@ class VidaController extends Controller
             return redirect()->back()->withInput();
         }
     }
+
+
+    public function delete_extraprimado($id)
+    {
+        try {
+            // Buscar el registro por Id
+            $cliente = PolizaVidaExtraPrimados::find($id);
+
+            if (!$cliente) {
+                alert()->error('No se encontró el registro a eliminar.')->persistent('Ok');
+                return redirect()->back();
+            }
+
+            // Eliminar el registro
+            $cliente->delete();
+
+            alert()->success('Extraprimado eliminado correctamente.');
+            return redirect('polizas/vida/' . $cliente->PolizaVida . '?tab=3');
+        } catch (\Exception $e) {
+            // Log del error para depuración
+            Log::error('Error al eliminar extraprimado: ' . $e->getMessage());
+
+            // Mensaje de error para el usuario
+            alert()->error('Error al eliminar el registro.')->persistent('Ok');
+            return redirect()->back();
+        }
+    }
+
 
     public function get_extraprimado($id, $dui)
     {
@@ -1930,6 +1958,25 @@ class VidaController extends Controller
 
         )
             ->where('PolizaVida', $id)->where('Dui', $dui)->first();
+
+        if (!$cliente) {
+            $cliente = VidaCarteraTemp::select(
+                'poliza_vida_cartera_temp.Id',
+                DB::raw("TRIM(CONCAT(
+                    IFNULL(poliza_vida_cartera_temp.PrimerNombre, ''),
+                    IF(IFNULL(poliza_vida_cartera_temp.SegundoNombre, '') != '', CONCAT(' ', poliza_vida_cartera_temp.SegundoNombre), ''),
+                    IF(IFNULL(poliza_vida_cartera_temp.PrimerApellido, '') != '', CONCAT(' ', poliza_vida_cartera_temp.PrimerApellido), ''),
+                    IF(IFNULL(poliza_vida_cartera_temp.SegundoApellido, '') != '', CONCAT(' ', poliza_vida_cartera_temp.SegundoApellido), ''),
+                    IF(IFNULL(poliza_vida_cartera_temp.ApellidoCasada, '') != '', CONCAT(' ', poliza_vida_cartera_temp.ApellidoCasada), '')
+                )) as Nombre"),
+                'poliza_vida_cartera_temp.Dui',
+                'poliza_vida_cartera_temp.NumeroReferencia',
+                'poliza_vida_cartera_temp.SumaAsegurada',
+                'poliza_vida_cartera_temp.FechaOtorgamiento',
+
+            )
+                ->where('PolizaVida', $id)->where('Dui', $dui)->first();
+        }
 
         return response()->json($cliente);
     }
