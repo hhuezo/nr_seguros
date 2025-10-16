@@ -1423,8 +1423,6 @@ class VidaController extends Controller
                     $obj->update();
                     array_push($errores_array, 14);
                 }
-
-
             }
 
 
@@ -1456,42 +1454,37 @@ class VidaController extends Controller
 
         $tasas_diferenciadas = $vida_tipo_cartera->tasa_diferenciada;
 
-        if ($vida_tipo_cartera->TipoCalculo == 1) {
-            foreach ($tasas_diferenciadas as $tasa) {
-                //dd($tasa);
+        //si la tarifa no viene en el excel se calculara la tasa
+        if ($poliza_vida->TarifaExcel != 1) {
+            if ($vida_tipo_cartera->TipoCalculo == 1) {
+                foreach ($tasas_diferenciadas as $tasa) {
+                    //dd($tasa);
+                    VidaCarteraTemp::where('User', auth()->user()->id)
+                        ->where('PolizaVidaTipoCartera', $vida_tipo_cartera->Id)
+                        ->whereBetween('FechaOtorgamientoDate', [$tasa->FechaDesde, $tasa->FechaHasta])
+                        ->update([
+                            //'MontoMaximoIndividual' => $vida_tipo_cartera->MontoMaximoIndividual,
+                            'Tasa' => $tasa->Tasa
+                        ]);
+                }
+            } else  if ($vida_tipo_cartera->TipoCalculo == 2) {
+                foreach ($tasas_diferenciadas as $tasa) {
+                    VidaCarteraTemp::where('User', auth()->user()->id)
+                        ->where('PolizaVidaTipoCartera', $vida_tipo_cartera->Id)
+                        ->whereBetween('SumaAsegurada', [$tasa->MontoDesde, $tasa->MontoHasta])
+                        ->update([
+                            //'MontoMaximoIndividual' => $vida_tipo_cartera->MontoMaximoIndividual,
+                            'Tasa' => $tasa->Tasa
+                        ]);
+                }
+            } else {
                 VidaCarteraTemp::where('User', auth()->user()->id)
-                    ->where('PolizaVidaTipoCartera', $vida_tipo_cartera->Id)
-                    ->whereBetween('FechaOtorgamientoDate', [$tasa->FechaDesde, $tasa->FechaHasta])
+                    // ->where('PolizaVidaTipoCartera', $vida_tipo_cartera->Id)
                     ->update([
                         //'MontoMaximoIndividual' => $vida_tipo_cartera->MontoMaximoIndividual,
-                        'Tasa' => $tasa->Tasa
+                        'Tasa' => $poliza_vida->Tasa
                     ]);
             }
-        } else  if ($vida_tipo_cartera->TipoCalculo == 2) {
-            foreach ($tasas_diferenciadas as $tasa) {
-                VidaCarteraTemp::where('User', auth()->user()->id)
-                    ->where('PolizaVidaTipoCartera', $vida_tipo_cartera->Id)
-                    ->whereBetween('SumaAsegurada', [$tasa->MontoDesde, $tasa->MontoHasta])
-                    ->update([
-                        //'MontoMaximoIndividual' => $vida_tipo_cartera->MontoMaximoIndividual,
-                        'Tasa' => $tasa->Tasa
-                    ]);
-            }
-        } else {
-            VidaCarteraTemp::where('User', auth()->user()->id)
-                // ->where('PolizaVidaTipoCartera', $vida_tipo_cartera->Id)
-                ->update([
-                    //'MontoMaximoIndividual' => $vida_tipo_cartera->MontoMaximoIndividual,
-                    'Tasa' => $poliza_vida->Tasa
-                ]);
-            // foreach ($tasas_diferenciadas as $tasa) {
-            //     VidaCarteraTemp::where('User', auth()->user()->id)
-            //         ->where('PolizaVidaTipoCartera', $vida_tipo_cartera->Id)
-            //         ->update([
-            //             'MontoMaximoIndividual' => $vida_tipo_cartera->MontoMaximoIndividual,
-            //             'Tasa' => $poliza_vida->Tasa
-            //         ]);
-            // }
         }
 
         //agregar la validacion para las edades maximas de inscripcion
@@ -2123,51 +2116,51 @@ class VidaController extends Controller
             ->where('Mes', $mes + 0)
             ->where('PolizaVida', $request->Vida)
             ->get();
-
+        //dd($tempData);
 
         // Iterar sobre los resultados y realizar la inserción en la tabla principal
         foreach ($tempData as $tempRecord) {
 
-            try {
-                $poliza = new VidaCartera();
-                $poliza->PolizaVida = $tempRecord->PolizaVida;
-                $poliza->Nit = $tempRecord->Nit;
-                $poliza->Dui = $tempRecord->Dui;
-                $poliza->Pasaporte = $tempRecord->Pasaporte;
-                $poliza->Nacionalidad = $tempRecord->Nacionalidad;
-                $poliza->FechaNacimiento = $tempRecord->FechaNacimiento;
-                $poliza->TipoPersona = $tempRecord->TipoPersona;
-                $poliza->Sexo = $tempRecord->Sexo;
-                $poliza->PrimerApellido = $tempRecord->PrimerApellido;
-                $poliza->SegundoApellido = $tempRecord->SegundoApellido;
-                $poliza->ApellidoCasada = $tempRecord->ApellidoCasada;
-                $poliza->PrimerNombre = $tempRecord->PrimerNombre;
-                $poliza->SegundoNombre = $tempRecord->SegundoNombre;
-                $poliza->FechaOtorgamiento = $tempRecord->FechaOtorgamiento;
-                $poliza->FechaVencimiento = $tempRecord->FechaVencimiento;
-                $poliza->NumeroReferencia = $tempRecord->NumeroReferencia;
-                $poliza->SumaAsegurada = $tempRecord->SumaAsegurada;
-                $poliza->User  = $tempRecord->User;
-                $poliza->Axo = $tempRecord->Axo;
-                $poliza->Mes = $tempRecord->Mes;
-                $poliza->FechaInicio  = $tempRecord->FechaInicio;
-                $poliza->FechaFinal  = $tempRecord->FechaFinal;
-                $poliza->FechaNacimientoDate  = $tempRecord->FechaNacimientoDate;
-                $poliza->FechaOtorgamientoDate  = $tempRecord->FechaOtorgamientoDate;
-                $poliza->Edad = $tempRecord->Edad;
-                $poliza->EdadDesembloso = $tempRecord->EdadDesembloso;
-                $poliza->PolizaVidaTipoCartera = $tempRecord->PolizaVidaTipoCartera;
-                $poliza->Tasa = $tempRecord->Tasa;
-                $poliza->CarnetResidencia = $tempRecord->CarnetResidencia;
-                $poliza->save();
-            } catch (\Exception $e) {
-                // Captura errores y los guarda en el log
-                Log::error("Error al insertar en poliza_vida_cartera: " . $e->getMessage(), [
-                    'NumeroReferencia' => $tempRecord->NumeroReferencia,
-                    'Usuario' => auth()->user()->id ?? 'N/A',
-                    'Datos' => $tempRecord
-                ]);
-            }
+            //try {
+            $poliza = new VidaCartera();
+            $poliza->PolizaVida = $tempRecord->PolizaVida;
+            $poliza->Nit = $tempRecord->Nit;
+            $poliza->Dui = $tempRecord->Dui;
+            $poliza->Pasaporte = $tempRecord->Pasaporte;
+            $poliza->Nacionalidad = $tempRecord->Nacionalidad;
+            $poliza->FechaNacimiento = $tempRecord->FechaNacimiento;
+            $poliza->TipoPersona = $tempRecord->TipoPersona;
+            $poliza->Sexo = $tempRecord->Sexo;
+            $poliza->PrimerApellido = $tempRecord->PrimerApellido;
+            $poliza->SegundoApellido = $tempRecord->SegundoApellido;
+            $poliza->ApellidoCasada = $tempRecord->ApellidoCasada;
+            $poliza->PrimerNombre = $tempRecord->PrimerNombre;
+            $poliza->SegundoNombre = $tempRecord->SegundoNombre;
+            $poliza->FechaOtorgamiento = $tempRecord->FechaOtorgamiento;
+            $poliza->FechaVencimiento = $tempRecord->FechaVencimiento;
+            $poliza->NumeroReferencia = $tempRecord->NumeroReferencia;
+            $poliza->SumaAsegurada = $tempRecord->SumaAsegurada;
+            $poliza->User  = $tempRecord->User;
+            $poliza->Axo = $tempRecord->Axo;
+            $poliza->Mes = $tempRecord->Mes;
+            $poliza->FechaInicio  = $tempRecord->FechaInicio;
+            $poliza->FechaFinal  = $tempRecord->FechaFinal;
+            $poliza->FechaNacimientoDate  = $tempRecord->FechaNacimientoDate;
+            $poliza->FechaOtorgamientoDate  = $tempRecord->FechaOtorgamientoDate;
+            $poliza->Edad = $tempRecord->Edad;
+            $poliza->EdadDesembloso = $tempRecord->EdadDesembloso;
+            $poliza->PolizaVidaTipoCartera = $tempRecord->PolizaVidaTipoCartera;
+            $poliza->Tasa = $tempRecord->Tasa;
+            $poliza->CarnetResidencia = $tempRecord->CarnetResidencia;
+            $poliza->save();
+            // } catch (\Exception $e) {
+            //     // Captura errores y los guarda en el log
+            //     Log::error("Error al insertar en poliza_vida_cartera: " . $e->getMessage(), [
+            //         'NumeroReferencia' => $tempRecord->NumeroReferencia,
+            //         'Usuario' => auth()->user()->id ?? 'N/A',
+            //         'Datos' => $tempRecord
+            //     ]);
+            // }
         }
 
 
