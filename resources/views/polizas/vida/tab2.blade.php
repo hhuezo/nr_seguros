@@ -44,10 +44,10 @@
         $tasaComision = $poliza_vida->ComisionIva == 1 ? $poliza_vida->TasaComision / 1.13 : $poliza_vida->TasaComision;
     @endphp
 
-    <input type="hidden" id="TasaComisionDetalle" value="{{ $tasaComision }}">
+    <input type="hidden" id="TasaComisionDetalle" value="{{ $poliza_vida->ComisionIva }}">
     <input type="hidden" id="ExtraPrima" value="{{ $total_extrapima }}">
    <input type="hidden" id="ComisionIva" value="{{ $poliza_vida->ComisionIva }}">
-    <input type="hidden" id="DescuentoRentabilidad" value="{{ $poliza_vida->Descuento ?? 0.00}}">
+    <input type="hidden" id="DescuentoRentabilidad" value="{{ $poliza_vida->TasaDescuento ?? 0.00}}">
     <input type="hidden" id="TipoContribuyente" value="{{ $poliza_vida->cliente->TipoContribuyente }}">
 
     <div class="modal-body">
@@ -369,6 +369,7 @@
 
             function calculoTotales() {
 
+
                 let total_suma_asegurada = 0;
                 let total_prima_calculada = 0;
 
@@ -412,7 +413,7 @@
 
                 let tasa_comision = parseFloat(document.getElementById('TasaComisionDetalle')?.value) || 0;
                 let tipo_contribuyente = {{ $poliza_vida->cliente->TipoContribuyente }};
-               //console.log("tasa_comision: " + tasa_comision);
+               console.log("tasa_comision: " + tasa_comision);
 
 
                 //modificando valores de cuadros
