@@ -66,6 +66,8 @@ Route::middleware(['web'])->group(function () {
     Route::get('poliza/vida/get_recibo/{id}/{exportar}', [VidaController::class, 'get_recibo']);
     Route::get('poliza/vida/get_recibo_edit/{id}', [VidaController::class, 'get_recibo_edit']);
     Route::post('poliza/vida/get_recibo_edit', [VidaController::class, 'get_recibo_update']);
+    Route::post('polizas/vida/store_poliza_primara_carga/{id}',[VidaController::class, 'primera_carga']);
+
 
     Route::post('vida/exportar_excel', [VidaController::class, 'exportar_excel']);
     Route::post('vida/exportar_excel_fede', [VidaController::class, 'exportar_excel_fede']);

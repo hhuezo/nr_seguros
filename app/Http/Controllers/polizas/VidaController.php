@@ -2107,6 +2107,78 @@ class VidaController extends Controller
         return back();
     }
 
+    public function primera_carga(Request $request)
+    {
+        $mes = $request->MesActual;
+        $anio = $request->AxoActual;
+
+
+        // eliminando datos de la cartera si existieran
+        $tempData = VidaCartera::where('Axo', $anio)
+            ->where('Mes', $mes + 0)->where('PolizaVida', $request->Vida)->delete();
+
+
+        // Obtener los datos de la tabla temporal
+        $tempData = VidaCarteraTemp::where('Axo', $anio)
+            ->where('Mes', $mes + 0)
+            ->where('PolizaVida', $request->Vida)
+            ->get();
+
+
+        // Iterar sobre los resultados y realizar la inserción en la tabla principal
+        foreach ($tempData as $tempRecord) {
+
+            try {
+                $poliza = new VidaCartera();
+                $poliza->PolizaVida = $tempRecord->PolizaVida;
+                $poliza->Nit = $tempRecord->Nit;
+                $poliza->Dui = $tempRecord->Dui;
+                $poliza->Pasaporte = $tempRecord->Pasaporte;
+                $poliza->Nacionalidad = $tempRecord->Nacionalidad;
+                $poliza->FechaNacimiento = $tempRecord->FechaNacimiento;
+                $poliza->TipoPersona = $tempRecord->TipoPersona;
+                $poliza->Sexo = $tempRecord->Sexo;
+                $poliza->PrimerApellido = $tempRecord->PrimerApellido;
+                $poliza->SegundoApellido = $tempRecord->SegundoApellido;
+                $poliza->ApellidoCasada = $tempRecord->ApellidoCasada;
+                $poliza->PrimerNombre = $tempRecord->PrimerNombre;
+                $poliza->SegundoNombre = $tempRecord->SegundoNombre;
+                $poliza->FechaOtorgamiento = $tempRecord->FechaOtorgamiento;
+                $poliza->FechaVencimiento = $tempRecord->FechaVencimiento;
+                $poliza->NumeroReferencia = $tempRecord->NumeroReferencia;
+                $poliza->SumaAsegurada = $tempRecord->SumaAsegurada;
+                $poliza->User  = $tempRecord->User;
+                $poliza->Axo = $tempRecord->Axo;
+                $poliza->Mes = $tempRecord->Mes;
+                $poliza->FechaInicio  = $tempRecord->FechaInicio;
+                $poliza->FechaFinal  = $tempRecord->FechaFinal;
+                $poliza->FechaNacimientoDate  = $tempRecord->FechaNacimientoDate;
+                $poliza->FechaOtorgamientoDate  = $tempRecord->FechaOtorgamientoDate;
+                $poliza->Edad = $tempRecord->Edad;
+                $poliza->EdadDesembloso = $tempRecord->EdadDesembloso;
+                $poliza->PolizaVidaTipoCartera = $tempRecord->PolizaVidaTipoCartera;
+                $poliza->Tasa = $tempRecord->Tasa;
+                $poliza->CarnetResidencia = $tempRecord->CarnetResidencia;
+                $poliza->save();
+            } catch (\Exception $e) {
+                // Captura errores y los guarda en el log
+                Log::error("Error al insertar en poliza_vida_cartera: " . $e->getMessage(), [
+                    'NumeroReferencia' => $tempRecord->NumeroReferencia,
+                    'Usuario' => auth()->user()->id ?? 'N/A',
+                    'Datos' => $tempRecord
+                ]);
+            }
+        }
+
+
+        VidaCarteraTemp::where('Axo', $anio)
+            ->where('Mes', $mes + 0)
+            ->where('PolizaVida', $request->Vida)->delete();
+
+        alert()->success('El registro de poliza ha sido ingresado correctamente');
+        return redirect('polizas/vida/' . $request->Vida . '?tab=2');
+    }
+
     public function anular_pago($id)
     {
         $detalle = VidaDetalle::findOrFail($id);

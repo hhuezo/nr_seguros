@@ -44,6 +44,13 @@
                             <table>
                                 <tr>
                                     <td style="vertical-align: top;">
+                                            <div class="btn btn-warning" data-toggle="modal"
+                                                data-target="#modal-primer-ingreso">
+                                                Primera carga
+                                            </div>
+
+                                    </td>
+                                    <td style="vertical-align: top;">
                                         <form method="post"
                                             action="{{ url('polizas/vida/delete_temp') }}/{{ $poliza_vida->Id }}">
                                             @csrf
@@ -555,6 +562,40 @@
                 </div>
             </div>
         </div>
+        <div class="modal" id="modal-primer-ingreso" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form method="POST" action="{{ url('polizas/vida/store_poliza_primara_carga') }}/{{ $poliza_vida->Id }}">
+                        @csrf
+                        <div class="modal-header">
+                            <div class="col-md-6">
+                                <h4 class="modal-title" id="myModalLabel">Primer carga</h4>
+                            </div>
+                            <div class="col-md-6 text-right">
+                                <button type="button" class="close" data-dismiss="modal">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="modal-body">
+                            <input type="hidden" name="Vida" value="{{ $poliza_vida->Id }}">
+                            <input type="hidden" name="MesActual" value="{{ $mesActual }}">
+                            <input type="hidden" name="AxoActual" value="{{ $axoActual }}">
+
+                            <p class="fs-5 mb-0">
+                                ¿Desea realizar el primer carga?
+                            </p>
+                        </div>
+
+                        <div class="modal-footer text-center">
+                            <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary" id="btnAceptar">Aceptar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 
 
     </div>
@@ -581,6 +622,9 @@
 
         getNoValido({{$poliza_vida->Id}});
         document.getElementById('btnGuardarCartera').addEventListener('click', function() {
+            document.getElementById('loading-overlay').style.display = 'flex';
+        });
+        document.getElementById('btnAceptar').addEventListener('click', function() {
             document.getElementById('loading-overlay').style.display = 'flex';
         });
     });
