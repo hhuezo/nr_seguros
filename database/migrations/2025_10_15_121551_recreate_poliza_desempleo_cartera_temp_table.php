@@ -68,7 +68,6 @@ return new class extends Migration
             $table->integer('Rehabilitado')->default(0);
             $table->integer('EdadRequisito')->nullable();
 
-            $table->unsignedBigInteger('DesempleoTipoCartera');
 
             // 🔹 Índices
             $table->index('PolizaDesempleo', 'fk_desempleo_cartera_temp_poliza_idx');
