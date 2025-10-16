@@ -1348,12 +1348,12 @@ class VidaController extends Controller
             }
 
             //11 error por edad de terminacion
-            if (trim($obj->Edad) > $poliza_vida->EdadTerminacion) {
-                $obj->TipoError = 9;
-                $obj->update();
+            // if (trim($obj->Edad) > $poliza_vida->EdadTerminacion) {
+            //     $obj->TipoError = 9;
+            //     $obj->update();
 
-                array_push($errores_array, 9);
-            }
+            //     array_push($errores_array, 9);
+            // }
 
 
 
