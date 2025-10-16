@@ -876,10 +876,11 @@ class DeudaController extends Controller
 
                 //para datos que tengan la tasa en archivo excel
                 $dataPago = collect([]);
-                $cartera_data = PolizaDeudaCartera::with('linea_credito')
+                $cartera_data = PolizaDeudaCartera::with(['poliza_duda_tipo_cartera', 'linea_credito'])
                     ->whereNull('PolizaDeudaDetalle')
                     ->where('PolizaDeuda', $id)
                     ->selectRaw('LineaCredito,
+                    PolizaDeudaTipoCartera,
                     Tasa,
                     COALESCE(SUM(MontoOtorgado), 0) as MontoOtorgado,
                     COALESCE(SUM(SaldoCapital), 0) as SaldoCapital,
@@ -895,6 +896,7 @@ class DeudaController extends Controller
 
 
                 foreach ($cartera_data as $cartera) {
+
                     $dataPagoId[] = $cartera->LineaCredito . $cartera->Tasa;
                     $item['Id'] =   $cartera->LineaCredito . $cartera->Tasa;
                     $item['MontoOtorgado'] = $cartera->MontoOtorgado ?? 0;
@@ -914,11 +916,13 @@ class DeudaController extends Controller
                     $item['Fecha'] =   '';
 
                     $item['TipoCartera'] = $total->TipoCartera ?? '';
+                    $item['TipoCarteraNombre'] = $cartera->poliza_duda_tipo_cartera->tipo_cartera->Nombre ?? '';
+
 
                     $dataPago->push($item);
                 }
             }
-
+            //dd($dataPago);
 
             $polizas_vida = Vida::get();
             $polizas_desempleo = Desempleo::get();

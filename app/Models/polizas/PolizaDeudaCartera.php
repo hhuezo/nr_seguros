@@ -64,4 +64,9 @@ class PolizaDeudaCartera extends Model
     {
         return $this->belongsTo(SaldoMontos::class, 'LineaCredito', 'Id');
     }
+
+    public function poliza_duda_tipo_cartera()
+    {
+        return $this->belongsTo(PolizaDeudaTipoCartera::class, 'PolizaDeudaTipoCartera', 'Id');
+    }
 }
