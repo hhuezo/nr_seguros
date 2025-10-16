@@ -3,7 +3,7 @@
 namespace App\Exports\desempleo;
 
 use App\Models\polizas\Desempleo;
-use App\Models\polizas\DesempleoCarteraTemp;
+use App\Models\temp\DesempleoCarteraTemp;
 use App\Models\polizas\Deuda;
 use App\Models\temp\PolizaDeudaTempCartera;
 use Illuminate\Support\Facades\DB;

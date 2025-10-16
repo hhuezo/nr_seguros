@@ -2,7 +2,7 @@
 
 namespace App\Imports;
 
-use App\Models\polizas\DesempleoCarteraTemp;
+use App\Models\temp\DesempleoCarteraTemp;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;

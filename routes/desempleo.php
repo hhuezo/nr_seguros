@@ -24,6 +24,7 @@ Route::middleware(['web'])->group(function () {
 
     Route::get('polizas/desempleo/subir_cartera/{id}', [DesempleoCarteraController::class, 'subir_cartera']);
     Route::post('polizas/desempleo/create_pago/{id}', [DesempleoCarteraController::class, 'create_pago']);
+    Route::post('polizas/desempleo/validar_poliza/{id}', [DesempleoCarteraController::class, 'validar_poliza']);
 
     Route::post('exportar/desempleo/registros_edad_maxima/{id}', [DesempleoController::class, 'registros_edad_maxima']);
     Route::post('exportar/desempleo/registros_responsabilidad_maxima/{id}', [DesempleoController::class, 'registros_responsabilidad_maxima']);

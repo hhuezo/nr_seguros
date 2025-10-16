@@ -54,9 +54,9 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>{{$desempleo->saldos->Abreviatura}}</td>
-                                        <td>{{$desempleo->saldos->Descripcion}}</td>
-                                        <td>${{ number_format($total, 2, '.', ',') }}</td>
+                                        {{-- <td>{{$desempleo->desempleo_tipos_cartera->saldos_montos->Abreviatura ?? ''}}</td>
+                                        <td>{{$desempleo->desempleo_tipos_cartera->saldos_montos->Descripcion ?? ''}}</td>
+                                        <td>${{ number_format($total, 2, '.', ',') }}</td> --}}
                                         <!-- <td></td> -->
                                     </tr>
                                 </tbody>

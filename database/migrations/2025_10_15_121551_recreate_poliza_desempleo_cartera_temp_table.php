@@ -67,8 +67,8 @@ return new class extends Migration
             $table->integer('Excluido')->default(0)->nullable();
             $table->integer('Rehabilitado')->default(0);
             $table->integer('EdadRequisito')->nullable();
-
-
+            $table->decimal('Tasa', 28, 14)->nullable();
+            $table->decimal('TotalCredito', 28, 14)->nullable();
             // 🔹 Índices
             $table->index('PolizaDesempleo', 'fk_desempleo_cartera_temp_poliza_idx');
             $table->index('User', 'fk_desempleo_cartera_temp_usuario_idx');

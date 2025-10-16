@@ -27,7 +27,7 @@ use App\Models\catalogo\UbicacionCobro;
 use App\Models\polizas\Comentario;
 use App\Models\polizas\Desempleo;
 use App\Models\polizas\DesempleoCartera;
-use App\Models\polizas\DesempleoCarteraTemp;
+use App\Models\temp\DesempleoCarteraTemp;
 use App\Models\polizas\DesempleoDetalle;
 use App\Models\polizas\DesempleoHistorialRecibo;
 use Carbon\Carbon;
@@ -214,8 +214,10 @@ class DesempleoController extends Controller
         $tab = $request->tab ?: 1;
 
         // Buscar la póliza de desempleo por su ID
-        $desempleo = Desempleo::findOrFail($id);
+        $desempleo = Desempleo::with('desempleo_tipos_cartera')->findOrFail($id);
+
         $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
 
 
 
@@ -979,6 +981,7 @@ class DesempleoController extends Controller
         $ejecutivo = Ejecutivo::where('Activo', 1)->get();
         $saldos = SaldoMontos::where('Activo', 1)->get();
         $tab = 1;
+
         //dd($tipoCartera);
         return view('polizas.desempleo.edit', compact(
             'tab',

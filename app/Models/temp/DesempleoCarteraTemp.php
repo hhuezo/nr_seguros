@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Models\polizas;
+namespace App\Models\temp;
 
+use App\Models\polizas\DesempleoTipoCartera;
 use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -56,14 +57,20 @@ class DesempleoCarteraTemp extends Model
         'Excluido',
         'Rehabilitado',
         'EdadRequisito',
-        'SaldosMontos'
+        'SaldosMontos',
+        'DesempleoTipoCartera'
     ];
+
+    public function tipo_cartera()
+    {
+        return $this->belongsTo(DesempleoTipoCartera::class, 'DesempleoTipoCartera', 'Id');
+    }
+
 
     public function calculoTodalSaldo()
     {
-
         try {
-            $tipo_cartera = $this->Saldos;
+            $tipo_cartera = $this->tipo_cartera->SaldosMontos ?? 0;
             switch ($tipo_cartera) {
                 case '1':
                     # saldo a capital

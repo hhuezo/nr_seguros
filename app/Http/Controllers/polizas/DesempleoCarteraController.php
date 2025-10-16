@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Imports\DesempleoCarteraTempImport;
 use App\Models\polizas\Desempleo;
 use App\Models\polizas\DesempleoCartera;
-use App\Models\polizas\DesempleoCarteraTemp;
+use App\Models\polizas\DesempleoTipoCartera;
+use App\Models\temp\DesempleoCarteraTemp;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -19,6 +20,21 @@ class DesempleoCarteraController extends Controller
     public function subir_cartera($id)
     {
         $desempleo = Desempleo::find($id);
+        $desempleo_tipos_cartera = $desempleo->desempleo_tipos_cartera;
+
+        // 1️⃣ Obtener tipos de cartera relacionados con la póliza
+        $desempleo_tipos_cartera = DesempleoTipoCartera::where('PolizaDesempleo', $id)->get();
+
+        // 2️⃣ Obtener los totales agrupados por tipo de cartera
+        $totales_por_cartera = DesempleoCarteraTemp::select(
+            'DesempleoTipoCartera',
+            DB::raw('SUM(TotalCredito) as total')
+        )
+            ->where('PolizaDesempleo', $id)
+            ->groupBy('DesempleoTipoCartera')
+            ->pluck('total', 'DesempleoTipoCartera');
+
+
 
 
         $meses = [
@@ -57,7 +73,17 @@ class DesempleoCarteraController extends Controller
         $fechaInicio = $fechaInicio->format('Y-m-d');
         $fechaFinal = $fechaFinal->format('Y-m-d');
 
-        return view('polizas.desempleo.subir_archivos', compact('desempleo', 'anios', 'axo', 'mes', 'meses', 'fechaInicio', 'fechaFinal'));
+        return view('polizas.desempleo.subir_archivos', compact(
+            'desempleo',
+            'anios',
+            'axo',
+            'mes',
+            'meses',
+            'fechaInicio',
+            'fechaFinal',
+            'desempleo_tipos_cartera',
+            'totales_por_cartera'
+        ));
     }
 
 
@@ -290,13 +316,52 @@ class DesempleoCarteraController extends Controller
 
 
         //calculando edades y fechas de nacimiento
-        DesempleoCarteraTemp::where('PolizaDeuda',  $id)
+        DesempleoCarteraTemp::where('PolizaDesempleo',  $id)
             ->update([
                 'FechaNacimientoDate' => DB::raw("STR_TO_DATE(FechaNacimiento, '%d/%m/%Y')"),
                 'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaFinal)"),
                 'FechaOtorgamientoDate' => DB::raw("STR_TO_DATE(FechaOtorgamiento, '%d/%m/%Y')"),
                 'EdadDesembloso' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaOtorgamientoDate)"),
             ]);
+
+        $desempleo_cartera_temporal =  DesempleoCarteraTemp::where('PolizaDesempleo',  $id)->get();
+
+        foreach ($desempleo_cartera_temporal as $temp) {
+            $temp->TotalCredito = $temp->calculoTodalSaldo();
+            $temp->update();
+        }
+
+        $poliza_desempleo_tipo_cartera = DesempleoTipoCartera::find($request->DesempleoTipoCartera);
+
+        $tasas_diferenciadas = $poliza_desempleo_tipo_cartera->tasa_diferenciada;
+
+        if ($poliza_desempleo_tipo_cartera->TipoCalculo == 1) {
+
+            foreach ($tasas_diferenciadas as $tasa) {
+                //dd($tasa);
+                DesempleoCarteraTemp::where('DesempleoTipoCartera',  $request->DesempleoTipoCartera)
+                    ->whereBetween('FechaOtorgamientoDate', [$tasa->FechaDesde, $tasa->FechaHasta])
+                    ->update([
+                        'Tasa' => $tasa->Tasa
+                    ]);
+            }
+        } else  if ($poliza_desempleo_tipo_cartera->TipoCalculo == 2) {
+
+            foreach ($tasas_diferenciadas as $tasa) {
+                DesempleoCarteraTemp::where('DesempleoTipoCartera',  $request->DesempleoTipoCartera)
+                    ->whereBetween('EdadDesembloso', [$tasa->EdadDesde, $tasa->EdadHasta])
+                    ->update([
+                        'Tasa' => $tasa->Tasa
+                    ]);
+            }
+        } else {
+            DesempleoCarteraTemp::where('DesempleoTipoCartera',  $request->DesempleoTipoCartera)
+                ->update([
+                    'Tasa' => $desempleo->Tasa
+                ]);
+        }
+
+
 
 
 
@@ -412,5 +477,112 @@ class DesempleoCarteraController extends Controller
 
             return preg_match($reglaFormato, $documento) === 1;
         }
+    }
+
+
+    public function validar_poliza($id)
+    {
+        $desempleo = Desempleo::findOrFail($id);
+
+        $temp_data_fisrt = DesempleoCarteraTemp::where('PolizaDesempleo', $id)->first();
+
+        if (!$temp_data_fisrt) {
+            alert()->error('No se han cargado las carteras');
+            return back();
+        }
+
+
+        $axoActual =  $temp_data_fisrt->Axo;
+        $mesActual =  $temp_data_fisrt->Mes;
+
+
+        // Calcular el mes pasado
+        if ($mesActual == 1) {
+            $mesAnterior = 12; // Diciembre
+            $axoAnterior = $axoActual - 1; // Año anterior
+        } else {
+            $mesAnterior = $mesActual - 1; // Mes anterior
+            $axoAnterior = $axoActual; // Mismo año
+        }
+
+
+
+        $data = DesempleoCarteraTemp::where('PolizaDesempleo', $id)->get();
+        $poliza_edad_maxima = $data->where('EdadDesembloso', '>', $desempleo->EdadMaximaInscripcion);
+
+
+        //registros que no existen en el mes anterior
+        $count_data_cartera = DesempleoCartera::where('PolizaDesempleo', $id)->count();
+        if ($count_data_cartera > 0) {
+            //dd($mesAnterior,$axoAnterior,$request->Desempleo);
+            $registros_eliminados = DB::table('poliza_desempleo_cartera AS pdc')
+                ->leftJoin('poliza_desempleo_cartera_temp AS pdtc', function ($join) {
+                    $join->on('pdc.NumeroReferencia', '=', 'pdtc.NumeroReferencia')
+                        ->where('pdtc.User', auth()->user()->id);
+                })
+                ->where('pdc.Mes', (int)$mesAnterior)
+                ->where('pdc.Axo', (int)$axoAnterior)
+                ->where('pdc.PolizaDesempleo', $id)
+                ->whereNull('pdtc.NumeroReferencia') // Solo los que no están en poliza_desempleo_temp_cartera
+                ->select('pdc.*') // Selecciona columnas principales
+                ->get();
+        } else {
+            $registros_eliminados =  DesempleoCarteraTemp::where('Id', 0)->get();
+        }
+
+
+        $nuevos_registros = DesempleoCarteraTemp::leftJoin(
+            DB::raw('(
+                        SELECT DISTINCT NumeroReferencia
+                        FROM poliza_desempleo_cartera
+                        WHERE PolizaDesempleo = ' . $id . '
+                    ) AS valid_references'),
+            'poliza_desempleo_cartera_temp.NumeroReferencia',
+            '=',
+            'valid_references.NumeroReferencia'
+        )
+            ->where('poliza_desempleo_cartera_temp.User', auth()->user()->id) // Filtra por el usuario autenticado
+            ->where('poliza_desempleo_cartera_temp.PolizaDesempleo', $id)
+            ->whereNull('valid_references.NumeroReferencia') // Los registros que no coinciden
+            ->select('poliza_desempleo_cartera_temp.*') // Selecciona columnas de la tabla principal
+            ->get();
+
+        $total = DesempleoCarteraTemp::where('PolizaDesempleo', $id)->sum('SaldoTotal');
+        //recibos tabla de configuracion
+
+
+        $temp = DesempleoCarteraTemp::where('PolizaDesempleo', $id)->get();
+        $mesAnteriorString = $axoAnterior . '-' . $mesAnterior;
+        //calcular rehabilitados
+        $referenciasAnteriores = DB::table('poliza_desempleo_cartera')
+            ->where('PolizaDesempleo', $id)
+
+            ->whereRaw('CONCAT(Axo, "-", Mes) <> ?', [$mesAnteriorString])
+            ->pluck('NumeroReferencia')
+            ->toArray();
+
+
+        $referenciasMesAterior = DB::table('poliza_desempleo_cartera')
+            ->where('PolizaDesempleo', $id)
+
+            ->where('Axo', $axoAnterior)
+            ->where('Mes', $mesAnterior)
+            ->pluck('NumeroReferencia')
+            ->toArray();
+
+
+        foreach ($temp as $item) {
+            // Verifica si el NumeroReferencia está en referenciasAnteriores pero no en referenciasMesAterior
+            if (in_array($item->NumeroReferencia, $referenciasAnteriores) && !in_array($item->NumeroReferencia, $referenciasMesAterior)) {
+                $item->Rehabilitado = 1;
+                $item->save();
+            }
+        }
+
+        $registros_rehabilitados = DesempleoCarteraTemp::where('PolizaDesempleo', $id)->where('Rehabilitado', 1)->get();
+
+
+        return view('polizas.desempleo.respuesta_poliza', compact('total', 'desempleo', 'poliza_edad_maxima', 'registros_rehabilitados', 'registros_eliminados', 'nuevos_registros', 'axoActual', 'mesActual'));
+
     }
 }

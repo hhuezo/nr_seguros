@@ -191,16 +191,6 @@
                             </td>
 
 
-                        </tr>
-                    @endforeach
-
-                    <tr>
-                        <td contenteditable="true" id="tasa_millar">
-                            {{ $desempleo->Tasa }}
-                        </td>
-
-
-
                         <td class="numeric editable" contenteditable="true" id="saldo_capital"
                             onblur="actualizarCalculos()">
                             {{ number_format($data['saldoCapital'], 2, '.', ',') }}
@@ -232,11 +222,13 @@
                             onblur="actualizarCalculos()">
                             {{ number_format($data['primaPorPagar'], 2, '.', ',') }}
                         </td>
-                    </tr>
 
+
+                        </tr>
+                    @endforeach
 
                     <tr>
-                        <th>Totales</th>
+                        <th colspan="2">Totales</th>
                         <td class="numeric"><span
                                 id="total_saldo_capital">{{ number_format($data['saldoCapital'], 2, '.', ',') }}</span>
                         </td>
