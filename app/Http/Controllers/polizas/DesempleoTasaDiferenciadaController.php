@@ -318,10 +318,9 @@ class DesempleoTasaDiferenciadaController extends Controller
 
     public function update_tipo_cartera(Request $request, $id)
     {
-
         $desempleo = Desempleo::findOrFail($id);
 
-        try {
+       try {
             // Reglas base
             $rules = [
                 'TipoCartera' => 'required|numeric',
@@ -338,6 +337,7 @@ class DesempleoTasaDiferenciadaController extends Controller
                 'MontoMaximoIndividual.min' => 'El monto máximo individual debe ser mayor o igual a 0.',
             ];
 
+
             // Validación
             $request->validate($rules, $messages);
 
@@ -347,7 +347,7 @@ class DesempleoTasaDiferenciadaController extends Controller
             $tipo_cartera = DesempleoTipoCartera::findOrFail($id);
 
             // Verificar duplicados (ignorando el actual)
-            $count = DesempleoTipoCartera::where('DesempleoTipoCartera', $request->TipoCartera)
+            $count = DesempleoTipoCartera::where('SaldosMontos', $request->TipoCartera)
                 ->where('PolizaDesempleo', $tipo_cartera->PolizaDesempleo)
                 ->where('id', '<>', $id)
                 ->count();
@@ -357,7 +357,7 @@ class DesempleoTasaDiferenciadaController extends Controller
             }
 
             // Guardar cambios
-            $tipo_cartera->DesempleoTipoCartera = $request->TipoCartera;
+            $tipo_cartera->SaldosMontos = $request->TipoCartera;
 
             $tipo_cartera->save();
 

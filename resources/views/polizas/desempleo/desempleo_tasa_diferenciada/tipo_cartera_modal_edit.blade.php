@@ -5,7 +5,7 @@
                 <form action="{{ url('polizas/desempleo/update_tipo_cartera') }}/{{ $desempleo->Id }}" method="POST">
                     @method('PUT')
                     @csrf
-                    <input type="hidden" name="VidaTipoCartera" value="{{ $tipo->Id }}">
+                    <input type="hidden" name="DesempleoTipoCartera" value="{{ $tipo->Id }}">
                     <div class="modal-header">
                         <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
                             <h5 class="modal-title" id="exampleModalLabel">Tipo de cartera</h5>
