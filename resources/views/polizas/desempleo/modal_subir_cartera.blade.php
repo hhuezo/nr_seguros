@@ -146,7 +146,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{ url('polizas/desempleo/create_pago_fedecredito') }}/{{$desempleo->Id }}" id="uploadForm{{ $tipo_cartera->Id }}" method="POST"
+            <form action="{{ url('polizas/desempleo/create_pago_fedecredito') }}/{{$desempleo->Id }}" id="uploadFormFede{{ $tipo_cartera->Id }}" method="POST"
                 enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body">
@@ -267,6 +267,10 @@
 
 <script>
     document.getElementById('uploadForm{{ $tipo_cartera->Id }}').addEventListener('submit', function() {
+        document.getElementById('loading-overlay').style.display = 'flex'; // Muestra el overlay de carga
+    });
+
+     document.getElementById('uploadFormFede{{ $tipo_cartera->Id }}').addEventListener('submit', function() {
         document.getElementById('loading-overlay').style.display = 'flex'; // Muestra el overlay de carga
     });
 
