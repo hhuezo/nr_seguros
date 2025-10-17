@@ -125,7 +125,7 @@ class PolizaDeudaTempCartera extends Model
                     # .sando capital
                     //$saldo = $this->SaldoCapital;
 
-                    $saldo =  $this->SaldoCapital;
+                    $saldo =  0.00;
                     break;
             }
 
