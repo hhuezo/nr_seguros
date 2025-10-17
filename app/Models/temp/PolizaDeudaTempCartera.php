@@ -92,7 +92,6 @@ class PolizaDeudaTempCartera extends Model
 
     public function calculoTodalSaldo()
     {
-
         try {
             $tipo_cartera = $this->LineaCredito;
 
@@ -126,7 +125,7 @@ class PolizaDeudaTempCartera extends Model
                     # .sando capital
                     //$saldo = $this->SaldoCapital;
 
-                    $this->SaldoCapital;
+                    $saldo =  0.00;
                     break;
             }
 
