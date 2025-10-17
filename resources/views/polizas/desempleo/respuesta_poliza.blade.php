@@ -29,48 +29,7 @@
 
     <div class="">
 
-        <div class="clearfix"></div>
-
-        <div class="row" id="subir_respuesta" style="display: block;">
-            <div class="col-md-12 col-sm-12 ">
-                <div class="x_panel">
-                    <div class="x_title">
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                            <h3>Subir Carteras de <br> {{ $desempleo->NumeroPoliza }} | {{ $desempleo->cliente->Nombre }} </h3>
-                        </div>
-                        <div class="clearfix"></div>
-                    </div>
-
-                    <div class="x_content">
-                        <div class="col-md-12 col-sm-12 ">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Abreviatura</th>
-                                        <th>Descripcion</th>
-                                        <th>Datos Ingresados</th>
-                                        <!-- <th align="center">Carga de <br> archivo de cartera </th> -->
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        {{-- <td>{{$desempleo->desempleo_tipos_cartera->saldos_montos->Abreviatura ?? ''}}</td>
-                                        <td>{{$desempleo->desempleo_tipos_cartera->saldos_montos->Descripcion ?? ''}}</td>
-                                        <td>${{ number_format($total, 2, '.', ',') }}</td> --}}
-                                        <!-- <td></td> -->
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align: right;">
-                            <button class="btn btn-primary float-right" type="button" onclick="resumen()">Validar póliza</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row" id="resumen" style="display: none;">
+          <div class="row" id="resumen">
             <div class="col-md-12 col-sm-12 ">
                 <div class="x_panel">
                     <div class="x_title">
@@ -80,6 +39,13 @@
                         <div class="col-md-6 col-sm-6 col-xs-12" align="right">
                             <table>
                                 <tr>
+                                     <td style="vertical-align: top;">
+                                            <div class="btn btn-warning" data-toggle="modal"
+                                                data-target="#modal-primer-carga">
+                                                Primera carga
+                                            </div>
+
+                                    </td>
                                     <td style="vertical-align: top;">
                                         <form method="post"
                                             action="{{ url('polizas/desempleo/borrar_proceso_actual') }}/{{ $desempleo->Id }}">
@@ -465,6 +431,42 @@
 
     </div>
 </div>
+
+
+   <div class="modal" id="modal-primer-carga" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form method="POST" action="{{ url('polizas/desempleo/store_poliza_primara_carga') }}">
+                        @csrf
+                        <div class="modal-header">
+                            <div class="col-md-6">
+                                <h4 class="modal-title" id="myModalLabel">Primer carga</h4>
+                            </div>
+                            <div class="col-md-6 text-right">
+                                <button type="button" class="close" data-dismiss="modal">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="modal-body">
+                            <input type="hidden" name="Desempleo" value="{{ $desempleo->Id }}">
+                            <input type="hidden" name="MesActual" value="{{ $mesActual }}">
+                            <input type="hidden" name="AxoActual" value="{{ $axoActual }}">
+
+                            <p class="fs-5 mb-0">
+                                ¿Desea realizar el primer carga?
+                            </p>
+                        </div>
+
+                        <div class="modal-footer text-center">
+                            <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary" id="btnAceptar">Aceptar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 
 
 <script type="text/javascript">

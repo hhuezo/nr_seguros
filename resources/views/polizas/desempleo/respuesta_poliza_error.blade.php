@@ -19,10 +19,10 @@
                                     @csrf
                                     <button class="btn btn-success">Descargar Excel</button>
                                 </form>
-                                <form method="POST" action="{{ url('polizas/deuda/delete_temp') }}"
+                                <form method="POST" action="{{ url('polizas/desempleo/delete_temp') }}"
                                     style="display: inline-block;">
                                     @csrf
-                                    <input type="hidden" name="DeudaId" value="{{ $desempleo->Id }}">
+                                    <input type="hidden" name="DesempleoId" value="{{ $desempleo->Id }}">
                                     <button type="submit" class="btn btn-primary">
                                         <i class="fa fa-arrow-left"></i>
                                     </button>

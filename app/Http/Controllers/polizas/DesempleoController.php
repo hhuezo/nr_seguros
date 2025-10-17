@@ -295,6 +295,197 @@ class DesempleoController extends Controller
                 DB::raw("IFNULL(sum(InteresesMoratorios), '0.00') as InteresesMoratorios")
             )->first();
 
+
+
+        $dataPagoTemp = collect([]);
+        $dataPagoId = [];
+
+        foreach ($desempleo->desempleo_tipos_cartera as $desempleo_tipos_cartera) {
+
+
+            if ($desempleo_tipos_cartera->tasa_diferenciada->count() > 0) {
+                /*foreach ($desempleo_tipos_cartera->tasa_diferenciada as $tasa_diferenciada) {
+
+                   $dataPagoId[] = $tasa_diferenciada->Id;
+
+                    $linea_credito = SaldoMontos::findOrFail($tasa_diferenciada->LineaCredito);
+
+
+                    $edad = '';
+
+                    if ($deuda_tipos_cartera->TipoCalculo == 2) {
+                        $edad = $tasa_diferenciada->EdadDesde . ' - ' . $tasa_diferenciada->EdadHasta . ' años';
+                    }
+
+                    $fecha = '';
+
+                    if ($deuda_tipos_cartera->TipoCalculo == 1) {
+                        $fecha = Carbon::parse($tasa_diferenciada->FechaDesde)->format('d/m/Y') .
+                            ' - ' .
+                            Carbon::parse($tasa_diferenciada->FechaHasta)->format('d/m/Y');
+                    }
+
+                    $dataPagoTemp->push([
+
+                        "TipoCarteraNombre" => $deuda_tipos_cartera->tipo_cartera->Nombre ?? '',
+                        "Id" => $tasa_diferenciada->Id,
+                        "PolizaDeuda" => $deuda_tipos_cartera->PolizaDeuda,
+                        "TipoCartera" => $deuda_tipos_cartera->TipoCartera,
+                        "DescripcionTipoCartera" => $deuda_tipos_cartera->TipoCartera,
+                        "TipoCalculo" => $deuda_tipos_cartera->TipoCalculo,
+                        "MontoMaximoIndividual" => $deuda_tipos_cartera->MontoMaximoIndividual,
+                        // Agregando los nuevos campos
+                        "PolizaDuedaTipoCartera" => $tasa_diferenciada->PolizaDuedaTipoCartera,
+                        "LineaCredito" => $tasa_diferenciada->LineaCredito,
+                        "DescripcionLineaCredito" => $linea_credito ? $linea_credito->Descripcion : '',
+                        "AbreviaturaLineaCredito" => $linea_credito ? $linea_credito->Abreviatura : '',
+                        "Fecha" => $fecha,
+                        "Edad" => $edad,
+                        "FechaDesde" => $tasa_diferenciada->FechaDesde ?? null,
+                        "FechaHasta" => $tasa_diferenciada->FechaHasta ?? null,
+                        "EdadDesde" => $tasa_diferenciada->EdadDesde ?? null,
+                        "EdadHasta" => $tasa_diferenciada->EdadHasta ?? null,
+
+                        "Tasa" => $tasa_diferenciada->Tasa,
+                    ]);
+                }*/
+            } else {
+
+
+                $dataPagoId[] = $desempleo_tipos_cartera->Id;
+
+                $linea_credito = SaldoMontos::findOrFail($desempleo_tipos_cartera->SaldosMontos);
+
+                $dataPagoTemp->push([
+
+                    "Id" => $desempleo_tipos_cartera->Id,
+                    "TipoCalculo" => "No Aplica",
+                    "DesempleoTipoCartera" => $desempleo_tipos_cartera->Id,
+                    // Agregando los nuevos campos
+                    "DescripcionLineaCredito" => $linea_credito ? $linea_credito->Descripcion : '',
+                    "AbreviaturaLineaCredito" => $linea_credito ? $linea_credito->Abreviatura : '',
+                    "Fecha" => "",
+                    "Edad" => "",
+                    "FechaDesde" => "",
+                    "FechaHasta" => "",
+                    "EdadDesde" => "",
+                    "EdadHasta" => "",
+
+                    "Tasa" => $desempleo->Tasa,
+                ]);
+            }
+        }
+
+
+
+
+        $dataPago = collect([]);
+
+
+
+        foreach ($dataPagoTemp as $item) {
+
+            //dd($item);
+            //por fechas
+            if ($item['TipoCalculo'] == 1) {
+
+                $total = DB::table('poliza_desempleo_cartera')
+                    ->selectRaw('
+                                        COALESCE(SUM(MontoOtorgado), 0) as MontoOtorgado,
+                                        COALESCE(SUM(SaldoCapital), 0) as SaldoCapital,
+                                        COALESCE(SUM(Intereses), 0) as Intereses,
+                                        COALESCE(SUM(InteresesMoratorios), 0) as InteresesMoratorios,
+                                        COALESCE(SUM(InteresesCovid), 0) as InteresesCovid,
+                                        COALESCE(SUM(MontoNominal), 0) as MontoNominal,
+                                        COALESCE(SUM(TotalCredito), 0) as TotalCredito
+                                    ')
+                    ->where('PolizaDesempleoDetalle', null)
+                    ->where('PolizaDesempleo', $id)
+                    ->where('PolizaDeudaTipoCartera', $item['PolizaDuedaTipoCartera'])
+                    ->where('LineaCredito', $item['LineaCredito'])
+                    ->whereBetween('FechaOtorgamientoDate', [$item['FechaDesde'], $item['FechaHasta']])
+                    ->first();
+
+                // Si $total es null, aseguramos que los valores sean 0
+                $item['MontoOtorgado'] = $total->MontoOtorgado ?? 0;
+                $item['SaldoCapital'] = $total->SaldoCapital ?? 0;
+                $item['Intereses'] = $total->Intereses ?? 0;
+                $item['InteresesMoratorios'] = $total->InteresesMoratorios ?? 0;
+                $item['InteresesCovid'] = $total->InteresesCovid ?? 0;
+                $item['MontoNominal'] = $total->MontoNominal ?? 0;
+                $item['TotalCredito'] = $total->TotalCredito ?? 0;
+                $item['PrimaCalculada'] = ($item['TotalCredito'] > 0 && $item['Tasa'] > 0)
+                    ? $item['TotalCredito'] * $item['Tasa'] : 0;
+                $item['TipoCartera'] = $total->TipoCarteraNombre ?? '';
+
+                $dataPago->push($item);
+            }
+            //por edad
+            else if ($item['TipoCalculo'] == 2) {
+                $total = DB::table('poliza_desempleo_cartera')
+                    ->selectRaw('
+                            COALESCE(SUM(MontoOtorgado), 0) as MontoOtorgado,
+                            COALESCE(SUM(SaldoCapital), 0) as SaldoCapital,
+                            COALESCE(SUM(Intereses), 0) as Intereses,
+                            COALESCE(SUM(InteresesMoratorios), 0) as InteresesMoratorios,
+                            COALESCE(SUM(InteresesCovid), 0) as InteresesCovid,
+                            COALESCE(SUM(MontoNominal), 0) as MontoNominal,
+                            COALESCE(SUM(TotalCredito), 0) as TotalCredito
+                        ')
+                    ->where('PolizaDesempleoDetalle', null)
+                    ->where('PolizaDesempleo', $id)
+                    ->where('PolizaDeudaTipoCartera', $item['PolizaDuedaTipoCartera'])
+                    ->where('LineaCredito', $item['LineaCredito'])
+                    ->whereBetween('EdadDesembloso', [$item['EdadDesde'], $item['EdadHasta']])
+                    ->first();
+
+                // Si $total es null, aseguramos que los valores sean 0
+                $item['MontoOtorgado'] = $total->MontoOtorgado ?? 0;
+                $item['SaldoCapital'] = $total->SaldoCapital ?? 0;
+                $item['Intereses'] = $total->Intereses ?? 0;
+                $item['InteresesMoratorios'] = $total->InteresesMoratorios ?? 0;
+                $item['InteresesCovid'] = $total->InteresesCovid ?? 0;
+                $item['MontoNominal'] = $total->MontoNominal ?? 0;
+                $item['TotalCredito'] = $total->TotalCredito ?? 0;
+                $item['PrimaCalculada'] = ($item['TotalCredito'] > 0 && $item['Tasa'] > 0)
+                    ? $item['TotalCredito'] * $item['Tasa'] : 0;
+                $item['TipoCartera'] = $total->TipoCartera ?? '';
+
+                $dataPago->push($item);
+            } else {
+                $total = DB::table('poliza_desempleo_cartera')
+                    ->selectRaw('
+                                    COALESCE(SUM(MontoOtorgado), 0) as MontoOtorgado,
+                                    COALESCE(SUM(SaldoCapital), 0) as SaldoCapital,
+                                    COALESCE(SUM(Intereses), 0) as Intereses,
+                                    COALESCE(SUM(InteresesMoratorios), 0) as InteresesMoratorios,
+                                    COALESCE(SUM(InteresesCovid), 0) as InteresesCovid,
+                                    COALESCE(SUM(MontoNominal), 0) as MontoNominal,
+                                    COALESCE(SUM(SaldoTotal), 0) as TotalCredito
+                                ')
+                    ->where('PolizaDesempleoDetalle', null)
+                    ->where('PolizaDesempleo', $id)
+                    ->where('DesempleoTipoCartera', $item['DesempleoTipoCartera'])
+                    ->first();
+
+                // Si $total es null, aseguramos que los valores sean 0
+                $item['MontoOtorgado'] = $total->MontoOtorgado ?? 0;
+                $item['SaldoCapital'] = $total->SaldoCapital ?? 0;
+                $item['Intereses'] = $total->Intereses ?? 0;
+                $item['InteresesMoratorios'] = $total->InteresesMoratorios ?? 0;
+                $item['InteresesCovid'] = $total->InteresesCovid ?? 0;
+                $item['MontoNominal'] = $total->MontoNominal ?? 0;
+                $item['TotalCredito'] = $total->TotalCredito ?? 0;
+                $item['PrimaCalculada'] = ($item['TotalCredito'] > 0 && $item['Tasa'] > 0)
+                    ? $item['TotalCredito'] * $item['Tasa'] : 0;
+
+                $item['TipoCartera'] =  '';
+
+                $dataPago->push($item);
+            }
+        }
+
+
         $saldoCapital = 0.00;
         $intereses = 0.00;
         $montoNominal = 0.00;
@@ -302,31 +493,31 @@ class DesempleoController extends Controller
         $interesesMoratorios = 0.00;
         $total = 0;
 
-        if ($desempleo->Saldos == 1) {
-            $total = $cartera->SaldoCapital;
-            $saldoCapital = $cartera->SaldoCapital;
-        } else if ($desempleo->Saldos == 2) {
-            $total = $cartera->SaldoCapital + $cartera->Intereses;
-            $saldoCapital = $cartera->SaldoCapital;
-            $intereses = $cartera->Intereses;
-        } else if ($desempleo->Saldos == 3) {
-            $total = $cartera->SaldoCapital + $cartera->Intereses + $cartera->InteresesCovid;
-            $saldoCapital = $cartera->SaldoCapital;
-            $intereses = $cartera->Intereses;
-            $interesesCovid = $cartera->InteresesCovid;
-        } else if ($desempleo->Saldos == 4) {
-            $total = $cartera->SaldoCapital + $cartera->Intereses + $cartera->InteresesCovid + $cartera->InteresesMoratorios;
-            $saldoCapital = $cartera->SaldoCapital;
-            $intereses = $cartera->Intereses;
-            $interesesCovid = $cartera->InteresesCovid;
-            $interesesMoratorios = $cartera->interesesMoratorios;
-        } else if ($desempleo->Saldos == 5) {
-            $total = $cartera->MontoNominal;
-            $MontoNominal = $cartera->MontoNominal;
-        } else if ($desempleo->Saldos == 6) {
-            $total = $cartera->MontoOtorgado;
-            $MontoOtorgado = $cartera->MontoOtorgado;
-        }
+        // if ($desempleo->Saldos == 1) {
+        //     $total = $cartera->SaldoCapital;
+        //     $saldoCapital = $cartera->SaldoCapital;
+        // } else if ($desempleo->Saldos == 2) {
+        //     $total = $cartera->SaldoCapital + $cartera->Intereses;
+        //     $saldoCapital = $cartera->SaldoCapital;
+        //     $intereses = $cartera->Intereses;
+        // } else if ($desempleo->Saldos == 3) {
+        //     $total = $cartera->SaldoCapital + $cartera->Intereses + $cartera->InteresesCovid;
+        //     $saldoCapital = $cartera->SaldoCapital;
+        //     $intereses = $cartera->Intereses;
+        //     $interesesCovid = $cartera->InteresesCovid;
+        // } else if ($desempleo->Saldos == 4) {
+        //     $total = $cartera->SaldoCapital + $cartera->Intereses + $cartera->InteresesCovid + $cartera->InteresesMoratorios;
+        //     $saldoCapital = $cartera->SaldoCapital;
+        //     $intereses = $cartera->Intereses;
+        //     $interesesCovid = $cartera->InteresesCovid;
+        //     $interesesMoratorios = $cartera->interesesMoratorios;
+        // } else if ($desempleo->Saldos == 5) {
+        //     $total = $cartera->MontoNominal;
+        //     $MontoNominal = $cartera->MontoNominal;
+        // } else if ($desempleo->Saldos == 6) {
+        //     $total = $cartera->MontoOtorgado;
+        //     $MontoOtorgado = $cartera->MontoOtorgado;
+        // }
 
 
         $total = $total ?? 0;
@@ -381,7 +572,6 @@ class DesempleoController extends Controller
             "comisionCcf" => $comision_ccf,
             "liquidoApagar" => $liquidoApagar,
             "primaDescontada" => $prima_descontada
-
         ];
 
 
@@ -401,7 +591,9 @@ class DesempleoController extends Controller
             'fechas',
             'detalle',
             'comentarios',
-            'ultimo_pago'
+            'ultimo_pago',
+            'dataPago',
+            'dataPagoId'
         ));
         // } catch (\Exception $e) {
         //     alert()->error('No se pudo encontrar la póliza de desempleo solicitada.');
@@ -780,65 +972,66 @@ class DesempleoController extends Controller
 
         $tempData = DesempleoCarteraTemp::where('Axo', $anio)
             ->where('Mes', $mes + 0)
-            ->where('User', auth()->user()->id)
             ->where('NoValido', 0)
             ->where('PolizaDesempleo', $id)
-            //->where('EdadDesembloso', '>', $desempleo->EdadMaximaInscripcion)
             ->get();
 
         // Iterar sobre los resultados y realizar la inserción en la tabla principal
         foreach ($tempData as $tempRecord) {
-            try {
-                $poliza = new DesempleoCartera();
-                $poliza->PolizaDesempleo = $tempRecord->PolizaDesempleo;
-                $poliza->Nit = $tempRecord->Nit;
-                $poliza->Dui = $tempRecord->Dui;
-                $poliza->Pasaporte = $tempRecord->Pasaporte;
-                $poliza->Nacionalidad = $tempRecord->Nacionalidad;
-                $poliza->FechaNacimiento = $tempRecord->FechaNacimiento;
-                $poliza->TipoPersona = $tempRecord->TipoPersona;
-                $poliza->PrimerApellido = $tempRecord->PrimerApellido;
-                $poliza->SegundoApellido = $tempRecord->SegundoApellido;
-                $poliza->ApellidoCasada = $tempRecord->ApellidoCasada;
-                $poliza->PrimerNombre = $tempRecord->PrimerNombre;
-                $poliza->SegundoNombre = $tempRecord->SegundoNombre;
-                $poliza->NombreSociedad = $tempRecord->NombreSociedad;
-                $poliza->Sexo = $tempRecord->Sexo;
-                $poliza->FechaOtorgamiento = $tempRecord->FechaOtorgamiento;
-                $poliza->FechaVencimiento = $tempRecord->FechaVencimiento;
-                $poliza->Ocupacion = $tempRecord->Ocupacion;
-                $poliza->NumeroReferencia = $tempRecord->NumeroReferencia;
-                $poliza->MontoOtorgado = $tempRecord->MontoOtorgado;
-                $poliza->SaldoCapital = $tempRecord->SaldoCapital;
-                $poliza->Intereses = $tempRecord->Intereses;
-                $poliza->MoraCapital = $tempRecord->MoraCapital;
-                $poliza->InteresesMoratorios = $tempRecord->InteresesMoratorios;
-                $poliza->SaldoTotal = $tempRecord->SaldoTotal;
-                $poliza->User = $tempRecord->User;
-                $poliza->Axo = $tempRecord->Axo;
-                $poliza->Mes = $tempRecord->Mes;
-                $poliza->FechaInicio = $tempRecord->FechaInicio;
-                $poliza->FechaFinal = $tempRecord->FechaFinal;
-                $poliza->TipoError = $tempRecord->TipoError;
-                $poliza->FechaNacimientoDate = $tempRecord->FechaNacimientoDate;
-                $poliza->Edad = $tempRecord->Edad;
-                $poliza->InteresesCovid = $tempRecord->InteresesCovid;
-                $poliza->MontoNominal = $tempRecord->MontoNominal;
-                $poliza->NoValido = $tempRecord->NoValido;
-                $poliza->EdadDesembloso = $tempRecord->EdadDesembloso;
-                $poliza->FechaOtorgamientoDate = $tempRecord->FechaOtorgamientoDate;
-                $poliza->Excluido = $tempRecord->Excluido;
-                $poliza->Rehabilitado = $tempRecord->Rehabilitado;
-                $poliza->EdadRequisito = $tempRecord->EdadRequisito;
-                $poliza->save();
-            } catch (\Exception $e) {
-                // Captura errores y los guarda en el log
-                Log::error("Error al insertar en poliza_desempleo_cartera: " . $e->getMessage(), [
-                    'NumeroReferencia' => $tempRecord->NumeroReferencia,
-                    'Usuario' => auth()->user()->id ?? 'N/A',
-                    'Datos' => $tempRecord
-                ]);
-            }
+            //try {
+            $poliza = new DesempleoCartera();
+            $poliza->PolizaDesempleo = $tempRecord->PolizaDesempleo;
+            $poliza->Dui = $tempRecord->Dui;
+            $poliza->CarnetResidencia = $tempRecord->CarnetResidencia;
+            $poliza->Pasaporte = $tempRecord->Pasaporte;
+            $poliza->Nacionalidad = $tempRecord->Nacionalidad;
+            $poliza->FechaNacimiento = $tempRecord->FechaNacimiento;
+            $poliza->TipoPersona = $tempRecord->TipoPersona;
+            $poliza->Sexo = $tempRecord->Sexo;
+            $poliza->PrimerApellido = $tempRecord->PrimerApellido;
+            $poliza->SegundoApellido = $tempRecord->SegundoApellido;
+            $poliza->ApellidoCasada = $tempRecord->ApellidoCasada;
+            $poliza->PrimerNombre = $tempRecord->PrimerNombre;
+            $poliza->SegundoNombre = $tempRecord->SegundoNombre;
+            $poliza->NombreSociedad = $tempRecord->NombreSociedad;
+
+            $poliza->FechaOtorgamiento = $tempRecord->FechaOtorgamiento;
+            $poliza->FechaVencimiento = $tempRecord->FechaVencimiento;
+            $poliza->NumeroReferencia = $tempRecord->NumeroReferencia;
+            $poliza->MontoOtorgado = $tempRecord->MontoOtorgado;
+            $poliza->SaldoCapital = $tempRecord->SaldoCapital;
+            $poliza->Intereses = $tempRecord->Intereses;
+            $poliza->MoraCapital = $tempRecord->MoraCapital;
+            $poliza->InteresesMoratorios = $tempRecord->InteresesMoratorios;
+            $poliza->InteresesCovid = $tempRecord->InteresesCovid;
+            $poliza->SaldoTotal = $tempRecord->SaldoTotal;
+
+            $poliza->EdadDesembloso = $tempRecord->EdadDesembloso;
+            $poliza->FechaOtorgamientoDate = $tempRecord->FechaOtorgamientoDate;
+            $poliza->User = $tempRecord->User;
+            $poliza->Axo = $tempRecord->Axo;
+            $poliza->Mes = $tempRecord->Mes;
+            $poliza->FechaInicio = $tempRecord->FechaInicio;
+            $poliza->FechaFinal = $tempRecord->FechaFinal;
+            $poliza->TipoError = $tempRecord->TipoError;
+            $poliza->FechaNacimientoDate = $tempRecord->FechaNacimientoDate;
+            $poliza->Edad = $tempRecord->Edad;
+
+            $poliza->DesempleoTipoCartera = $tempRecord->DesempleoTipoCartera;
+            $poliza->NoValido = $tempRecord->NoValido;
+
+            $poliza->Excluido = $tempRecord->Excluido;
+            $poliza->Rehabilitado = $tempRecord->Rehabilitado;
+            $poliza->EdadRequisito = $tempRecord->EdadRequisito;
+            $poliza->save();
+            // } catch (\Exception $e) {
+            //     // Captura errores y los guarda en el log
+            //     Log::error("Error al insertar en poliza_desempleo_cartera: " . $e->getMessage(), [
+            //         'NumeroReferencia' => $tempRecord->NumeroReferencia,
+            //         'Usuario' => auth()->user()->id ?? 'N/A',
+            //         'Datos' => $tempRecord
+            //     ]);
+            // }
         }
 
         // eliminando datos de la cartera temporal
@@ -847,6 +1040,94 @@ class DesempleoController extends Controller
         alert()->success('El registro de poliza ha sido ingresado correctamente');
         return redirect('polizas/desempleo/' . $id . '?tab=2');
     }
+
+
+       public function primera_carga(Request $request)
+    {
+        $mes = $request->MesActual;
+        $anio = $request->AxoActual;
+
+
+        // eliminando datos de la cartera si existieran
+        $tempData = DesempleoCartera::where('Axo', $anio)
+            ->where('Mes', $mes + 0)->where('PolizaDesempleo', $request->Desempleo)->delete();
+
+
+        // Obtener los datos de la tabla temporal
+        $tempData = DesempleoCarteraTemp::where('Axo', $anio)
+            ->where('Mes', $mes + 0)
+            ->where('PolizaDesempleo', $request->Desempleo)
+            ->get();
+        //dd($tempData);
+
+        // Iterar sobre los resultados y realizar la inserción en la tabla principal
+        foreach ($tempData as $tempRecord) {
+
+            //try {
+            $poliza = new DesempleoCartera();
+            $poliza->PolizaDesempleo = $tempRecord->PolizaDesempleo;
+            $poliza->Dui = $tempRecord->Dui;
+            $poliza->CarnetResidencia = $tempRecord->CarnetResidencia;
+            $poliza->Pasaporte = $tempRecord->Pasaporte;
+            $poliza->Nacionalidad = $tempRecord->Nacionalidad;
+            $poliza->FechaNacimiento = $tempRecord->FechaNacimiento;
+            $poliza->TipoPersona = $tempRecord->TipoPersona;
+            $poliza->Sexo = $tempRecord->Sexo;
+            $poliza->PrimerApellido = $tempRecord->PrimerApellido;
+            $poliza->SegundoApellido = $tempRecord->SegundoApellido;
+            $poliza->ApellidoCasada = $tempRecord->ApellidoCasada;
+            $poliza->PrimerNombre = $tempRecord->PrimerNombre;
+            $poliza->SegundoNombre = $tempRecord->SegundoNombre;
+            $poliza->NombreSociedad = $tempRecord->NombreSociedad;
+
+            $poliza->FechaOtorgamiento = $tempRecord->FechaOtorgamiento;
+            $poliza->FechaVencimiento = $tempRecord->FechaVencimiento;
+            $poliza->NumeroReferencia = $tempRecord->NumeroReferencia;
+            $poliza->MontoOtorgado = $tempRecord->MontoOtorgado;
+            $poliza->SaldoCapital = $tempRecord->SaldoCapital;
+            $poliza->Intereses = $tempRecord->Intereses;
+            $poliza->MoraCapital = $tempRecord->MoraCapital;
+            $poliza->InteresesMoratorios = $tempRecord->InteresesMoratorios;
+            $poliza->InteresesCovid = $tempRecord->InteresesCovid;
+            $poliza->SaldoTotal = $tempRecord->SaldoTotal;
+
+            $poliza->EdadDesembloso = $tempRecord->EdadDesembloso;
+            $poliza->FechaOtorgamientoDate = $tempRecord->FechaOtorgamientoDate;
+            $poliza->User = $tempRecord->User;
+            $poliza->Axo = $tempRecord->Axo;
+            $poliza->Mes = $tempRecord->Mes;
+            $poliza->FechaInicio = $tempRecord->FechaInicio;
+            $poliza->FechaFinal = $tempRecord->FechaFinal;
+            $poliza->TipoError = $tempRecord->TipoError;
+            $poliza->FechaNacimientoDate = $tempRecord->FechaNacimientoDate;
+            $poliza->Edad = $tempRecord->Edad;
+
+            $poliza->DesempleoTipoCartera = $tempRecord->DesempleoTipoCartera;
+            $poliza->NoValido = $tempRecord->NoValido;
+
+            $poliza->Excluido = $tempRecord->Excluido;
+            $poliza->Rehabilitado = $tempRecord->Rehabilitado;
+            $poliza->EdadRequisito = $tempRecord->EdadRequisito;
+            $poliza->save();
+            // } catch (\Exception $e) {
+            //     // Captura errores y los guarda en el log
+            //     Log::error("Error al insertar en poliza_vida_cartera: " . $e->getMessage(), [
+            //         'NumeroReferencia' => $tempRecord->NumeroReferencia,
+            //         'Usuario' => auth()->user()->id ?? 'N/A',
+            //         'Datos' => $tempRecord
+            //     ]);
+            // }
+        }
+
+
+        DesempleoCarteraTemp::where('Axo', $anio)
+            ->where('Mes', $mes + 0)
+            ->where('PolizaDesempleo', $request->Desempleo)->delete();
+
+        alert()->success('El registro de poliza ha sido ingresado correctamente');
+        return redirect('polizas/desempleo/' . $request->Desempleo . '?tab=2');
+    }
+
 
     public function borrar_proceso_actual(Request $request, $id)
     {

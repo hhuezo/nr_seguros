@@ -24,7 +24,11 @@ Route::middleware(['web'])->group(function () {
 
     Route::get('polizas/desempleo/subir_cartera/{id}', [DesempleoCarteraController::class, 'subir_cartera']);
     Route::post('polizas/desempleo/create_pago/{id}', [DesempleoCarteraController::class, 'create_pago']);
+
+    Route::post('polizas/desempleo/create_pago_fedecredito/{id}', [DesempleoCarteraController::class, 'create_pago_fedecredito']);
     Route::post('polizas/desempleo/validar_poliza/{id}', [DesempleoCarteraController::class, 'validar_poliza']);
+
+    Route::post('polizas/desempleo/cancelar_pago', [DesempleoCarteraController::class, 'cancelar_pago']);
 
     Route::post('exportar/desempleo/registros_edad_maxima/{id}', [DesempleoController::class, 'registros_edad_maxima']);
     Route::post('exportar/desempleo/registros_responsabilidad_maxima/{id}', [DesempleoController::class, 'registros_responsabilidad_maxima']);
@@ -38,7 +42,8 @@ Route::middleware(['web'])->group(function () {
     Route::post('poliza/desempleo/get_recibo_edit', [DesempleoController::class, 'get_recibo_update']);
     Route::get('polizas/desempleo/get_cartera/{id}/{mes}/{axo}', [DesempleoController::class, 'get_cartera']);
 
-
+    Route::post('polizas/desempleo/store_poliza_primara_carga', [DesempleoController::class, 'primera_carga']);
+    Route::post('polizas/desempleo/delete_temp', [DesempleoCarteraController::class, 'delete_temp']);
 
 
     //tasa diferenciada

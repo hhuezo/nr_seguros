@@ -90,18 +90,20 @@ class DesempleoCarteraTemp extends Model
                     break;
                 case '5':
                     # .monto moninal
-                    $saldo = $this->MontoNominal;
+                    $saldo = $this->MontoOtorgado;
                     break;
                 case '6':
+                    //se cambio por intereses
                     # .monto otorgado
-                    $saldo = $this->MontoOtorgado;
+                    $saldo = $this->Intereses;
                     break;
                 default:
                     # .sando capital
-                    $saldo = $this->SaldoCapital;
+                    //$saldo = $this->SaldoCapital;
+
+                    $this->SaldoCapital;
                     break;
             }
-
             ///dd($saldo);
 
             return $saldo;

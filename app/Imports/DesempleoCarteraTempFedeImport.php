@@ -2,14 +2,14 @@
 
 namespace App\Imports;
 
-use App\Models\temp\DesempleoCarteraTemp;
+use App\Models\DesempleoCarteraTemp;
+use App\Models\temp\DesempleoCarteraTemp as TempDesempleoCarteraTemp;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
-use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 
-class DesempleoCarteraTempImport implements ToModel, WithStartRow, SkipsEmptyRows
+class DesempleoCarteraTempFedeImport implements ToModel, WithStartRow
 {
     private $Axo;
     private $Mes;
@@ -55,45 +55,45 @@ class DesempleoCarteraTempImport implements ToModel, WithStartRow, SkipsEmptyRow
             }
 
             // Crear registro normalmente
-            return new DesempleoCarteraTemp([
-                'PolizaDesempleo' => $this->Poliza,
-                'Dui' => $row[0] ?? null,
-                'Pasaporte' => $row[1] ?? null,
-                'CarnetResidencia' => $row[2] ?? null,
-                'Nacionalidad' => $row[3] ?? null,
-                'FechaNacimiento' => $this->convertirFecha($row[4] ?? null),
-                'TipoPersona' => $row[5] ?? null,
-                'Sexo' => $row[6] ?? null,
-                'PrimerApellido' => $row[7] ?? null,
-                'SegundoApellido' => $row[8] ?? null,
-                'ApellidoCasada' => $row[9] ?? null,
-                'PrimerNombre' => $row[10] ?? null,
-                'SegundoNombre' => $row[11] ?? null,
-                'NombreSociedad' => $row[12] ?? null,
-                'FechaOtorgamiento' => $this->convertirFecha($row[13]),
-                'FechaVencimiento' => $this->convertirFecha($row[14]),
-                'NumeroReferencia' => $row[15] ?? null,
-                'MontoOtorgado' => $row[16] ?? null,
-                'SaldoCapital' => $row[17] ?? null,
-                'Intereses' => $row[18] ?? null,
-                'MoraCapital' => $row[19] ?? null,
-                'InteresesMoratorios' => $row[20] ?? null,
-                'InteresesCovid' => $row[21] ?? null,
-                'Tarifa' => $row[22] ?? null,
-                'TipoDeuda' => $row[23] ?? null,
-                'PorcentajeExtraprima' => $row[24] ?? null,
-                'User' => auth()->id(),
-                'Axo' => $this->Axo,
-                'Mes' => $this->Mes,
-                'FechaInicio' => $this->FechaInicio,
-                'FechaFinal' => $this->FechaFinal,
-                'FechaNacimientoDate' => $this->convertirFecha($row[4]),
-                'FechaOtorgamientoDate' => $this->convertirFecha($row[13]),
-                'NoValido' => 0,
-                'Excluido' => 0,
-                'Rehabilitado' => 0,
-                'DesempleoTipoCartera' => $this->tipo_cartera,
+            return new TempDesempleoCarteraTemp([
+                'PolizaDesempleo'       => $this->Poliza,
+                'TipoPersona'           => $row[0] ?? null, // TIPO DE DOCUMENTO
+                'Dui'                   => $row[1] ?? null, // DUI O DOCUMENTO DE IDENTIDAD
+                'PrimerApellido'        => $row[2] ?? null, // PRIMER APELLIDO
+                'SegundoApellido'       => $row[3] ?? null, // SEGUNDO APELLIDO
+                'PrimerNombre'          => $row[4] ?? null, // NOMBRES
+                'Nacionalidad'          => $row[5] ?? null, // NACIONALIDAD
+                'FechaNacimiento'       => $this->convertirFecha($row[6] ?? null), // FECHA DE NACIMIENTO
+                'Sexo'                  => $row[7] ?? null, // GÉNERO
+                'NumeroReferencia'      => $row[8] ?? null, // NRO. DE PRÉSTAMO
+                'FechaOtorgamiento'     => $this->convertirFecha($row[9] ?? null), // FECHA DE OTORGAMIENTO
+                'MontoOtorgado'         => $row[10] ?? null, // MONTO ORIGINAL DE DESEMBOLSO
+                'SaldoCapital'          => $row[11] ?? null, // SALDO DE DEUDA CAPITAL ACTUAL
+                'Intereses'             => $row[12] ?? null, // SALDO INTERESES CORRIENTES
+                'MoraCapital'           => $row[13] ?? null, // MORA CAPITAL
+                'InteresesMoratorios'   => $row[14] ?? null, // SALDO INTERESES POR MORA
+                'InteresesCovid'        => $row[15] ?? null, // INTERESES COVID
+                'PorcentajeExtraprima'  => $row[16] ?? null, // EXTRA PRIMA
+                'Tarifa'                => $row[17] ?? null, // TARIFA
 
+                // Valores adicionales automáticos
+                'User'                  => auth()->id(),
+                'Axo'                   => $this->Axo,
+                'Mes'                   => $this->Mes,
+                'FechaInicio'           => $this->FechaInicio,
+                'FechaFinal'            => $this->FechaFinal,
+
+                // Conversiones de fecha
+                'FechaNacimientoDate'   => $this->convertirFecha($row[6] ?? null),
+                'FechaOtorgamientoDate' => $this->convertirFecha($row[9] ?? null),
+
+                // Valores por defecto
+                'NoValido'              => 0,
+                'Excluido'              => 0,
+                'Rehabilitado'          => 0,
+
+                // Tipo de cartera
+                'DesempleoTipoCartera'  => $this->tipo_cartera,
             ]);
         } catch (\Throwable $e) {
             // Si ocurre un error al procesar una fila, se registra en el log
