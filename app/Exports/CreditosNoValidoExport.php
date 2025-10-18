@@ -69,6 +69,7 @@ class CreditosNoValidoExport implements FromCollection, WithHeadings
                 ->where('NoValido', 1)
                  ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
                 ->join('poliza_deuda_tipo_cartera as pdtc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'pdtc.Id')
+                ->join('tipo_cartera as tc', 'pdtc.TipoCartera', '=', 'tc.Id')
                 ->select([
                     'Dui',
                     'Pasaporte',
