@@ -428,7 +428,7 @@
                     @csrf
 
 
-           <input type="text" class="form-control" name="FechaInicio"  value="{{ isset($fechas) ? $fechas->FechaInicio : '' }}">
+           <input type="hidden" class="form-control" name="FechaInicio"  value="{{ isset($fechas) ? $fechas->FechaInicio : '' }}">
                     <input type="hidden" class="form-control" name="FechaFinal" value="{{ isset($fechas) ? $fechas->FechaFinal : '' }}">
                     <input type="hidden" class="form-control" name="MontoCartera" id="MontoCarteraDetalle"                        value="{{ $data['total'] }}">
                     <input type="hidden" class="form-control" name="Desempleo" value="{{ $desempleo->Id }}">
