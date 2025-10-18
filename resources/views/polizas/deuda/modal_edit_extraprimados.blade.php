@@ -17,7 +17,7 @@
                             <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">DUI</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    
+
                                     <input class="form-control" type="hidden" value="{{$obj->Id}}" name="IdExtraPrima" readonly>
                                     <input class="form-control" type="text" value="{{$obj->Dui}}" readonly>
                                 </div>
@@ -50,7 +50,7 @@
                                 </div>
                             </div>
 
-                            
+
                             <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tarifa</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
@@ -61,18 +61,18 @@
                             <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Porcentaje EP</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    <input class="form-control"  type="number" name="PorcentajeEP" value="{{$obj->PorcentajeEP}}" required min="0.01" max="100.00" step="0.01"   >
+                                    <input class="form-control"  type="number" name="PorcentajeEP" value="{{$obj->PorcentajeEP}}" required min="0.01" step="0.01"   >
                                 </div>
                             </div>
 
-                            
+
                             <!-- <div class="form-group row">
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Pago EP</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                     <input class="form-control"  type="number"  name="PagoEP" value="{{$obj->PagoEP}}" required  step="0.01">
                                 </div>
                             </div> -->
-                         
+
                         </div>
                     </div>
                 </div>
