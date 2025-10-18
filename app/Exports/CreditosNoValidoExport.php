@@ -28,12 +28,13 @@ class CreditosNoValidoExport implements FromCollection, WithHeadings
     {
 
         $deuda = Deuda::findOrFail($this->id);
-        if ($deuda->Aseguradora == 3) {
+        if ($deuda->Aseguradora == 3 || $deuda->Aseguradora == 4) {
 
-            $data = PolizaDeudaTempCartera::where('PolizaDeuda', $this->id)
+            $data = PolizaDeudaTempCartera::where('poliza_deuda_temp_cartera.PolizaDeuda', $this->id)
                 ->where('NoValido', 1)
                 ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
-                ->join('tipo_cartera as tc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'tc.Id')
+                ->join('poliza_deuda_tipo_cartera as pdtc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'pdtc.Id')
+                ->join('tipo_cartera as tc', 'pdtc.TipoCartera', '=', 'tc.Id')
                 ->select([
                     'TipoDocumento',
                     'Dui',
@@ -61,12 +62,13 @@ class CreditosNoValidoExport implements FromCollection, WithHeadings
                 ->groupBy('NumeroReferencia')
                 ->orderBy('NumeroReferencia')
                 ->get();
+
         } else {
 
-            $data = PolizaDeudaTempCartera::where('PolizaDeuda', $this->id)
+            $data = PolizaDeudaTempCartera::where('poliza_deuda_temp_cartera.PolizaDeuda', $this->id)
                 ->where('NoValido', 1)
-                ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
-                ->join('tipo_cartera as tc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'tc.Id')
+                 ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
+                ->join('poliza_deuda_tipo_cartera as pdtc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'pdtc.Id')
                 ->select([
                     'Dui',
                     'Pasaporte',
@@ -118,7 +120,7 @@ class CreditosNoValidoExport implements FromCollection, WithHeadings
     {
         $deuda = Deuda::findOrFail($this->id);
 
-        if ($deuda->Aseguradora == 3) {
+        if ($deuda->Aseguradora == 3 || $deuda->Aseguradora == 4) {
             // Fedecrédito
             return [
                 'Tipo de documento',
