@@ -990,8 +990,7 @@ class VidaController extends Controller
             //dd($mesAnterior,$axoAnterior,$request->Desempleo);
             $registros_eliminados = DB::table('poliza_vida_cartera AS pdc')
                 ->leftJoin('poliza_vida_cartera_temp AS pdtc', function ($join) {
-                    $join->on('pdc.NumeroReferencia', '=', 'pdtc.NumeroReferencia')
-                        ->where('pdtc.User', auth()->user()->id);
+                    $join->on('pdc.NumeroReferencia', '=', 'pdtc.NumeroReferencia');
                 })
                 ->where('pdc.Mes', (int)$mesAnterior)
                 ->where('pdc.Axo', (int)$axoAnterior)
@@ -1014,7 +1013,6 @@ class VidaController extends Controller
             '=',
             'valid_references.NumeroReferencia'
         )
-            ->where('poliza_vida_cartera_temp.User', auth()->user()->id) // Filtra por el usuario autenticado
             ->where('poliza_vida_cartera_temp.PolizaVida', $id)
             ->whereNull('valid_references.NumeroReferencia') // Los registros que no coinciden
             ->select('poliza_vida_cartera_temp.*') // Selecciona columnas de la tabla principal
@@ -1030,7 +1028,6 @@ class VidaController extends Controller
         //calcular rehabilitados
         $referenciasAnteriores = DB::table('poliza_vida_cartera')
             ->where('PolizaVida', $id)
-            ->where('User', auth()->user()->id)
             ->whereRaw('CONCAT(Axo, "-", Mes) <> ?', [$mesAnteriorString])
             ->pluck('NumeroReferencia')
             ->toArray();
@@ -1038,7 +1035,6 @@ class VidaController extends Controller
 
         $referenciasMesAterior = DB::table('poliza_vida_cartera')
             ->where('PolizaVida', $id)
-            ->where('User', auth()->user()->id)
             ->where('Axo', $axoAnterior)
             ->where('Mes', $mesAnterior)
             ->pluck('NumeroReferencia')
