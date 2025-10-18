@@ -30,7 +30,7 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
         <tr>
             <td>
                San Salvador, {{ \Carbon\Carbon::parse($recibo_historial->ImpresionRecibo)->format('d') }} de {{ $meses[\Carbon\Carbon::parse($recibo_historial->ImpresionRecibo)->format('m') - 0 ] }} del {{ \Carbon\Carbon::parse($recibo_historial->ImpresionRecibo)->format('Y') }} <br>
-                Señor (a) (es): <br> {{$recibo_historial->NombreCliente}} <br>
+                Señor (a) (es): <br> {{$cliente->Nombre}} <br>
                 NIT: {{$cliente->Nit}} <br>
                 {{ $cliente->DireccionResidencia ?? $cliente->DireccionCorrespondencia }} <br>
                 <br>
