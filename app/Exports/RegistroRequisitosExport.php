@@ -28,11 +28,12 @@ class RegistroRequisitosExport implements FromCollection, WithHeadings
 
 
         // Fedecrédito
-        if ($deuda->Aseguradora == 3) {
-            $data = PolizaDeudaTempCartera::where('PolizaDeuda', $this->id)->where('User', auth()->user()->id)
+        if ($deuda->Aseguradora == 3 || $deuda->Aseguradora == 4) {
+            $data = PolizaDeudaTempCartera::where('poliza_deuda_temp_cartera.PolizaDeuda', $this->id)
                 ->where('NoValido', 0)->where('OmisionPerfil', 0)
                 ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
-                ->join('tipo_cartera as tc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'tc.Id')
+                ->join('poliza_deuda_tipo_cartera as pdtc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'pdtc.Id')
+                ->join('tipo_cartera as tc', 'pdtc.TipoCartera', '=', 'tc.Id')
                 ->select([
                     'TipoDocumento',
                     'Dui',
@@ -60,10 +61,11 @@ class RegistroRequisitosExport implements FromCollection, WithHeadings
                 ->orderBy('NumeroReferencia')
                 ->get();
         } else {
-            $data = PolizaDeudaTempCartera::where('PolizaDeuda', $this->id)->where('User', auth()->user()->id)
+            $data = PolizaDeudaTempCartera::where('poliza_deuda_temp_cartera.PolizaDeuda', $this->id)
                 ->where('NoValido', 0)->where('OmisionPerfil', 0)
                 ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
-                ->join('tipo_cartera as tc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'tc.Id')
+                ->join('poliza_deuda_tipo_cartera as pdtc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'pdtc.Id')
+                ->join('tipo_cartera as tc', 'pdtc.TipoCartera', '=', 'tc.Id')
                 ->select([
                     'Dui',
                     'Pasaporte',
@@ -112,7 +114,7 @@ class RegistroRequisitosExport implements FromCollection, WithHeadings
     {
         $deuda = Deuda::findOrFail($this->id);
 
-        if ($deuda->Aseguradora == 3) {
+        if ($deuda->Aseguradora == 3  || $deuda->Aseguradora == 4) {
             // Fedecrédito
             return [
                 'Tipo de documento',
