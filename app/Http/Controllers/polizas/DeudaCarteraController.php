@@ -96,7 +96,6 @@ class DeudaCarteraController extends Controller
             // Formato final Y-m-d
             $fecha_inicial = $fecha_inicial->format('Y-m-d');
             $fecha_final = $fecha_final->format('Y-m-d');
-
         }
 
 
@@ -209,7 +208,6 @@ class DeudaCarteraController extends Controller
 
     public function create_pago(Request $request)
     {
-
         $deuda_tipo_cartera = PolizaDeudaTipoCartera::findOrFail($request->PolizaDeudaTipoCartera);
         $deuda = Deuda::findOrFail($request->Id);
 
@@ -231,7 +229,6 @@ class DeudaCarteraController extends Controller
             alert()->error('No se han definido requisitos minimos de asegurabilidad');
             $deuda->Configuracion = 0;
             $deuda->update();
-            session(['tab' => 3]);
             return redirect('polizas/deuda/' . $deuda->Id);
         }
 
@@ -666,7 +663,7 @@ class DeudaCarteraController extends Controller
 
         $MontoMaximoIndividual = $deuda_tipo_cartera->MontoMaximoIndividual;
         if (isset($MontoMaximoIndividual) && $MontoMaximoIndividual > 0) {
-          // Paso 1: obtener los identificadores (DUI/Pasaporte/Carnet) que superan el límite
+            // Paso 1: obtener los identificadores (DUI/Pasaporte/Carnet) que superan el límite
             $personas = PolizaDeudaTempCartera::selectRaw("
                     COALESCE(NULLIF(Dui, ''), NULLIF(Pasaporte, ''), NULLIF(CarnetResidencia, '')) AS Identificador
                 ")
@@ -702,7 +699,45 @@ class DeudaCarteraController extends Controller
             }
         }
 
+        //calculando cumulo por rango de edades tipo de cartera y documento
 
+        foreach ($requisitos as $requisito) {
+            DB::statement("
+                    UPDATE poliza_deuda_temp_cartera p1
+                    JOIN (
+                        SELECT
+                            COALESCE(Dui, '') AS Dui,
+                            COALESCE(Pasaporte, '') AS Pasaporte,
+                            COALESCE(CarnetResidencia, '') AS CarnetResidencia,
+                            SUM(TotalCredito) AS total_credito
+                        FROM poliza_deuda_temp_cartera
+                        WHERE PolizaDeudaTipoCartera = ?
+                        AND EdadDesembloso BETWEEN ? AND ?
+                        GROUP BY
+                            COALESCE(Dui, ''),
+                            COALESCE(Pasaporte, ''),
+                            COALESCE(CarnetResidencia, '')
+                    ) p2
+                        ON COALESCE(p1.Dui, '') = p2.Dui
+                        AND COALESCE(p1.Pasaporte, '') = p2.Pasaporte
+                        AND COALESCE(p1.CarnetResidencia, '') = p2.CarnetResidencia
+                    SET
+                        p1.SaldoCumulo = p2.total_credito,
+                        p1.EdadRequisito = ?,
+                        p1.MontoRequisito = ?
+                    WHERE p1.PolizaDeudaTipoCartera = ?
+                    AND p1.EdadDesembloso BETWEEN ? AND ?
+                ", [
+                $deuda_tipo_cartera->Id,                   // PolizaDeudaTipoCartera
+                $requisito->EdadInicial,                   // Rango inicial
+                $requisito->EdadFinal,                     // Rango final
+                $requisito->EdadFinal,                     // Guardamos el requisito superior (opcional)
+                $requisito->MontoFinal,                    // Monto del requisito (opcional)
+                $deuda_tipo_cartera->Id,                   // Filtro principal
+                $requisito->EdadInicial,                   // Mismo rango
+                $requisito->EdadFinal
+            ]);
+        }
 
 
         alert()->success('Exito', 'La cartera fue subida con exito');
@@ -951,8 +986,7 @@ class DeudaCarteraController extends Controller
 
             foreach ($tasas_diferenciadas as $tasa) {
 
-                PolizaDeudaTempCartera::
-                where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                PolizaDeudaTempCartera::where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
                     ->whereBetween('EdadDesembloso', [$tasa->EdadDesde, $tasa->EdadHasta])
                     ->update([
                         'LineaCredito' => $tasa->LineaCredito,
@@ -961,8 +995,7 @@ class DeudaCarteraController extends Controller
             }
         } else {
             foreach ($tasas_diferenciadas as $tasa) {
-                PolizaDeudaTempCartera::
-                where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                PolizaDeudaTempCartera::where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
                     ->update([
                         'LineaCredito' => $tasa->LineaCredito,
                         'Tasa' => $deuda->Tasa
@@ -1282,29 +1315,29 @@ class DeudaCarteraController extends Controller
 
         //cumulos por dui y linea credito
 
-        DB::statement("
-            UPDATE poliza_deuda_temp_cartera p1
-            JOIN (
-                SELECT
-                    COALESCE(Dui, '') AS Dui,
-                    COALESCE(PolizaDeudaTipoCartera, '') AS PolizaDeudaTipoCartera,
-                    COALESCE(Pasaporte, '') AS Pasaporte,
-                    COALESCE(CarnetResidencia, '') AS CarnetResidencia,
-                    SUM(TotalCredito) AS total_saldo_cumulo
-                FROM poliza_deuda_temp_cartera
-                WHERE PolizaDeuda = ?
-                GROUP BY
-                    COALESCE(Dui, ''),
-                    COALESCE(PolizaDeudaTipoCartera, ''),
-                    COALESCE(Pasaporte, ''),
-                    COALESCE(CarnetResidencia, '')
-            ) p2
-                ON COALESCE(p1.Dui, '') = p2.Dui
-                AND COALESCE(p1.PolizaDeudaTipoCartera, '') = p2.PolizaDeudaTipoCartera
-                AND COALESCE(p1.Pasaporte, '') = p2.Pasaporte
-                AND COALESCE(p1.CarnetResidencia, '') = p2.CarnetResidencia
-            SET p1.SaldoCumulo = p2.total_saldo_cumulo
-            WHERE p1.PolizaDeuda = ?", [$request->Deuda, $request->Deuda]);
+        // DB::statement("
+        //     UPDATE poliza_deuda_temp_cartera p1
+        //     JOIN (
+        //         SELECT
+        //             COALESCE(Dui, '') AS Dui,
+        //             COALESCE(PolizaDeudaTipoCartera, '') AS PolizaDeudaTipoCartera,
+        //             COALESCE(Pasaporte, '') AS Pasaporte,
+        //             COALESCE(CarnetResidencia, '') AS CarnetResidencia,
+        //             SUM(TotalCredito) AS total_saldo_cumulo
+        //         FROM poliza_deuda_temp_cartera
+        //         WHERE PolizaDeuda = ?
+        //         GROUP BY
+        //             COALESCE(Dui, ''),
+        //             COALESCE(PolizaDeudaTipoCartera, ''),
+        //             COALESCE(Pasaporte, ''),
+        //             COALESCE(CarnetResidencia, '')
+        //     ) p2
+        //         ON COALESCE(p1.Dui, '') = p2.Dui
+        //         AND COALESCE(p1.PolizaDeudaTipoCartera, '') = p2.PolizaDeudaTipoCartera
+        //         AND COALESCE(p1.Pasaporte, '') = p2.Pasaporte
+        //         AND COALESCE(p1.CarnetResidencia, '') = p2.CarnetResidencia
+        //     SET p1.SaldoCumulo = p2.total_saldo_cumulo
+        //     WHERE p1.PolizaDeuda = ?", [$request->Deuda, $request->Deuda]);
 
 
 
