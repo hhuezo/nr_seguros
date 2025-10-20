@@ -770,6 +770,8 @@ class DesempleoController extends Controller
         $detalle = DesempleoDetalle::findOrFail($id);
 
         $desempleo = Desempleo::findOrFail($detalle->Desempleo);
+        $cliente = Cliente::find($desempleo->Asegurado);
+
         $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
         $recibo_historial = DesempleoHistorialRecibo::where('PolizaDesempleoDetalle', $id)->orderBy('id', 'desc')->first();
@@ -785,7 +787,7 @@ class DesempleoController extends Controller
         }*/
 
         $configuracion = ConfiguracionRecibo::first();
-        $pdf = \PDF::loadView('polizas.desempleo.recibo', compact('configuracion', 'recibo_historial', 'detalle', 'desempleo', 'meses', 'exportar'))->setWarnings(false)->setPaper('letter');
+        $pdf = \PDF::loadView('polizas.desempleo.recibo', compact('configuracion','cliente', 'recibo_historial', 'detalle', 'desempleo', 'meses', 'exportar'))->setWarnings(false)->setPaper('letter');
         //  dd($detalle);
         return $pdf->stream('Recibos.pdf');
     }
