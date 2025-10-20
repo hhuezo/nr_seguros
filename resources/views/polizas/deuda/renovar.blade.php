@@ -341,7 +341,7 @@
                                             aria-label="Close">
                                             <span aria-hidden="true">×</span>
                                         </button>
-                                        <h4 class="modal-title">Eliminar Registros holi</h4>
+                                        <h4 class="modal-title">Eliminar Registros</h4>
                                     </div>
                                     <div class="modal-body">
                                         <p>Confirme si desea Eliminar el Registro</p>

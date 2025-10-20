@@ -53,6 +53,9 @@
                                         &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}"
                                             data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
                                     @endcan
+                                    <a data-target="#modal-renovar-{{ $obj->Id }}" data-toggle="modal"
+                                        class="on-default edit-row" title="Renovar"><i
+                                            class="fa fa-refresh fa-lg"></i></a>
                                 </td>
                             </tr>
                             @include('polizas.vida.modal')

@@ -1,7 +1,7 @@
 <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
     id="modal-delete-{{ $obj->Id }}">
 
-    <form method="POST" action="{{ route('vida.destroy', $obj->Id) }}">
+    <form method="POST" action="{{ route('desempleo.destroy', $obj->Id) }}">
         @method('delete')
         @csrf
         <div class="modal-dialog">
@@ -40,7 +40,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                <a href="{{ url('polizas/vida/renovar') }}/{{ $obj->Id }}" class="on-default edit-row btn btn-info" title="Renovar">Confirmar </a>
+                <a href="{{ url('polizas/desempleo/renovar') }}/{{ $obj->Id }}" class="on-default edit-row btn btn-info" title="Renovar">Confirmar </a>
 
 
             </div>

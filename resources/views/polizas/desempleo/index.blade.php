@@ -33,7 +33,7 @@
                         @foreach ($desempleo as $obj)
                             <tr>
                                 <!-- Número de Póliza -->
-                                 <td  style="width: 150px;">{{ $obj->NumeroPoliza }}</td>
+                                <td style="width: 150px;">{{ $obj->NumeroPoliza }}</td>
 
                                 <!-- Asegurado -->
                                 <td>
@@ -100,8 +100,11 @@
                                             <i class="fa fa-refresh fa-lg"></i>
                                         </a>
                                     @endcan
+                                    <a data-target="#modal-renovar-{{ $obj->Id }}" data-toggle="modal"
+                                        class="on-default edit-row" title="Renovar"><i class="fa fa-refresh fa-lg"></i></a>
                                 </td>
                             </tr>
+                            @include('polizas.desempleo.modal')
 
                         @endforeach
                     </tbody>

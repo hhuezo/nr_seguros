@@ -6,7 +6,7 @@
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
                 <div class="x_title">
-                    <h2>Pólizas / Vida / Póliza de vida / Renovar póliza<small></small>
+                    <h2>Pólizas / Desepleo / Póliza de desempleo / Renovar póliza<small></small>
                     </h2>
 
                     <div class="clearfix"></div>
@@ -24,16 +24,16 @@
             </div>
 
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
-                <form action="{{ url('polizas/vida/renovar') }}" method="POST">
+                <form action="{{ url('polizas/desempleo/renovar') }}" method="POST">
                     @csrf
-                    <input type="hidden" id="Id" name="Id" value="{{ $vida->Id }}">
+                    <input type="hidden" id="Id" name="Id" value="{{ $desempleo->Id }}">
                     <div class="x_content" style="font-size: 12px;">
                         <div class="col-sm-12 row">
                             <div class="col-sm-4">
 
                                 <label class="control-label" align="right">Número de Póliza *</label>
                                 <input class="form-control" name="NumeroPoliza" id="NumeroPoliza" type="text"
-                                    value="{{ $vida->NumeroPoliza }}" readonly>
+                                    value="{{ $desempleo->NumeroPoliza }}" readonly>
                             </div>
 
                             <div class="col-sm-4">&nbsp;</div>
@@ -46,7 +46,7 @@
                                 disabled>
                                 <option value="">Seleccione...</option>
                                 @foreach ($aseguradora as $obj)
-                                    @if ($obj->Id == $vida->Aseguradora)
+                                    @if ($obj->Id == $desempleo->Aseguradora)
                                         <option value="{{ $obj->Id }}" selected>{{ $obj->Nombre }}
                                         </option>
                                     @else
@@ -62,7 +62,7 @@
                                 <option value="" selected disabled>Seleccione...</option>
                                 @foreach ($productos as $obj)
                                     <option value="{{ $obj->Id }}"
-                                        {{ $vida->planes && $obj->Id == $vida->planes->Producto ? 'selected' : '' }}>
+                                        {{ $desempleo->planes && $obj->Id == $desempleo->planes->Producto ? 'selected' : '' }}>
                                         {{ $obj->Nombre }}
                                     </option>
                                 @endforeach
@@ -73,7 +73,7 @@
                             <select name="Planes" id="Planes" class="form-control select2" style="width: 100%" disabled>
                                 <option value="" selected disabled>Seleccione...</option>
                                 @foreach ($planes as $obj)
-                                    @if ($obj->Id == $vida->Plan)
+                                    @if ($obj->Id == $desempleo->Plan)
                                         <option value="{{ $obj->Id }}" selected>{{ $obj->Nombre }}
                                         </option>
                                     @else
@@ -88,7 +88,7 @@
                                 disabled>
                                 <option value="">Seleccione...</option>
                                 @foreach ($cliente as $obj)
-                                    @if ($obj->Id == $vida->Asegurado)
+                                    @if ($obj->Id == $desempleo->Asegurado)
                                         <option value="{{ $obj->Id }}" selected>{{ $obj->Nombre }}
                                         </option>
                                     @else
@@ -97,21 +97,17 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-sm-4">
-                            <label class="control-label" align="right">DUI / NIT *</label>
-                            <input class="form-control" name="Nit" id="Nit" type="text"
-                                value="{{ $vida->Nit }}" readonly>
-                        </div>
+
                         <div class="col-sm-12">
                             &nbsp;
                         </div>
                         <div class="col-sm-4">
                             <label class="control-label" align="right">Vigencia Desde</label>
-                            <input class="form-control" type="date" value="{{ $vida->VigenciaDesde }}" readonly>
+                            <input class="form-control" type="date" value="{{ $desempleo->VigenciaDesde }}" readonly>
                         </div>
                         <div class="col-sm-4">
                             <label class="control-label" align="right">Vigencia Hasta</label>
-                            <input class="form-control" type="date" value="{{ $vida->VigenciaHasta }}" readonly>
+                            <input class="form-control" type="date" value="{{ $desempleo->VigenciaHasta }}" readonly>
                         </div>
 
                         <div class="col-sm-4" style="display: none">
@@ -129,7 +125,7 @@
                             <select name="Ejecutivo" class="form-control select2" style="width: 100%" required>
                                 <option value="">Seleccione...</option>
                                 @foreach ($ejecutivo as $obj)
-                                    @if ($obj->Id == $vida->Ejecutivo)
+                                    @if ($obj->Id == $desempleo->Ejecutivo)
                                         <option value="{{ $obj->Id }}" selected>{{ $obj->Nombre }}
                                         </option>
                                     @else
@@ -139,148 +135,81 @@
                             </select>
                         </div>
 
+
+
+
+                        <!-- Edad máxima de inscripción -->
                         <div class="col-sm-4">
-                            <label class="control-label" align="right">Tipo cobro</label>
-                            <select name="TipoCobro" class="form-control" onchange="showTipoCobro(this.value)" required>
-                                @foreach ($tipoCobro as $tipo)
-                                    <option value="{{ $tipo->Id }}"
-                                        {{ $tipo->Id == $vida->TipoCobro ? 'selected' : '' }}>
-                                        {{ $tipo->Nombre }}
-                                    </option>
-                                @endforeach
+                            <label class="control-label" align="right">Edad máxima de
+                                inscripción</label>
+                            <input class="form-control" name="EdadMaximaInscripcion" type="number" min="18"
+                                max="100" step="any" value="{{ $desempleo->EdadMaximaInscripcion }}" required>
+                        </div>
+
+
+                        <!-- Edad Terminación -->
+                        <div class="col-sm-4">
+                            <label class="control-label" align="right">Edad Maxima</label>
+                            <input class="form-control" name="EdadTerminacion" type="number" step="any"
+                                value="{{ $desempleo->EdadMaxima }}" min="18" max="100" required>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <label class="control-label" align="right">Tasa Diferenciada</label>
+                            <select name="TasaDiferenciada" id="TasaDiferenciada" class="form-control">
+                                <option value="0" {{ $desempleo->TasaDiferenciada == 0 ? 'selected' : '' }}>NO
+                                </option>
+                                <option value="1" {{ $desempleo->TasaDiferenciada == 1 ? 'selected' : '' }}>SI
+                                </option>
                             </select>
-                        </div>
-
-
-
-                        <div class="col-sm-8" style="padding: 0% !important; display: none" id="div-cobro-usuarios">
-
-
-                            <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                                <label class="control-label" align="right">Suma minima</label>
-                                <input class="form-control" name="SumaMinima" type="number" min="0.00"
-                                    step="any" value="{{ $vida->SumaMinima }}">
-                            </div>
-
-
-                            <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                                <label class="control-label" align="right">Suma máxima</label>
-                                <input class="form-control" name="SumaMaxima" type="number" min="0.00"
-                                    step="any" value="{{ $vida->SumaMaxima }}">
-                            </div>
-
 
                         </div>
 
-
-                        <div class="col-sm-8" style="padding: 0% !important" id="div-cobro-creditos">
-
-                            <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                                <label class="control-label" align="right">Tipo de suma</label>
-                                <select name="TipoTarifa" class="form-control" onchange="showMultitarifa(this.value)">
-                                    <option value="1" {{ $vida->TipoTarifa == 1 ? 'selected' : '' }}>Suma uniforme
-                                    </option>
-                                    <option value="2" {{ $vida->TipoTarifa == 2 ? 'selected' : '' }}>Multicategoria
-                                    </option>
-                                </select>
-                            </div>
-
-
-                            <div class="item form-group col-sm-12 col-md-6 col-lg-6" id="div-sumaAsegurada">
-                                <label class="control-label" align="right">Suma asegurada</label>
-                                <input class="form-control" name="SumaAsegurada" type="number" step="any"
-                                    value="{{ $vida->SumaAsegurada }}" min="100">
-                            </div>
-
-                            <div class="item form-group col-sm-12 col-md-6 col-lg-6" id="div-multitarifa"
-                                style="display: none">
-                                <label class="control-label" align="right">Multicategoria</label>
-                                <input class="form-control" name="Multitarifa" type="text" id="Multitarifa"
-                                    min="1" step="any" value="{{ $vida->Multitarifa }}"
-                                    oninput="formatMultitarifa(this)">
-                                <label id="multitarifa-error" class="text-danger" style="display: none;">Formato
-                                    inválido: use cantidades separadas
-                                    por coma.</label>
-                            </div>
-
+                        <div class="col-sm-4">
+                            <label class="control-label" align="right">Comisión</label>
+                            <input class="form-control" name="Descuento" type="number" step="any"
+                                value="{{ $desempleo->Descuento }}">
                         </div>
 
-                        <div class="col-sm-12" style="padding: 0% !important">
+
+                        <div class="col-sm-4">
+                            <label class="control-label" align="right">Tasa Millar Mensual</label>
+                            <input class="form-control" name="Tasa" id="Tasa" type="number" step="any"
+                                value="{{ $desempleo->Tasa }}" required>
+                        </div>
+
+                        <!-- Tasa Millar Mensual -->
 
 
 
-                            <div class="item form-group col-sm-12 col-md-3 col-lg-3">
-                                <label class="control-label" align="right">Opcion tarifa</label>
-                                <select name="Opcion" id="Opcion" class="form-control">
-                                    <option value="0"
-                                        {{ $vida->TasaDiferenciada == 0 && $vida->TarifaExcel == 0 ? 'selected' : '' }}>NO
-                                        APLICA</option>
-                                    <option value="1"
-                                        {{ $vida->TasaDiferenciada == 1 && $vida->TarifaExcel == 0 ? 'selected' : '' }}>TASA
-                                        DIFERENCIADA</option>
-                                    <option value="2"
-                                        {{ $vida->TasaDiferenciada == 0 && $vida->TarifaExcel == 1 ? 'selected' : '' }}>
-                                        COBRO CON TARIFA EXCEL</option>
-                                </select>
-
-                            </div>
-
-                            <div class="item form-group col-sm-12 col-md-3 col-lg-3">
-                                <label class="control-label" align="right">Tasa Millar Mensual</label>
-                                <input class="form-control" name="Tasa" id="Tasa" type="number" step="any"
-                                    value="{{ $vida->Tasa}}">
-                            </div>
-
-                            <!-- Edad máxima de inscripción -->
-                            <div class="item form-group col-sm-12 col-md-3 col-lg-3">
-                                <label class="control-label" align="right">Edad máxima de
-                                    inscripción</label>
-                                <input class="form-control" name="EdadMaximaInscripcion" type="number" min="18"
-                                    max="100" step="any" value="{{ $vida->EdadMaximaInscripcion }}" required>
-                            </div>
 
 
-                            <!-- Edad Terminación -->
-                            <div class="item form-group col-sm-12 col-md-3 col-lg-3">
-                                <label class="control-label" align="right">Edad Terminación</label>
-                                <input class="form-control" name="EdadTerminacion" type="number" step="any"
-                                    value="{{ $vida->EdadTerminacion }}" min="18" max="100" required>
-                            </div>
 
 
+
+                        <div class="col-md-12">
 
                         </div>
 
 
                         <div class="item form-group col-sm-12 col-md-4 col-lg-4">
                             <label class="control-label" align="right">Clausulas Especiales </label>
-                            <textarea class="form-control" name="ClausulasEspeciales" rows="3" cols="4">{{ $vida->ClausulasEspeciales }}</textarea>
+                            <textarea class="form-control" name="ClausulasEspeciales" rows="3" cols="4">{{ $desempleo->ClausulasEspeciales }}</textarea>
                         </div>
                         <div class="item form-group col-sm-12 col-md-4 col-lg-4">
                             <label class="control-label" align="right">Beneficios Adicionales </label>
-                            <textarea class="form-control" name="Beneficios" rows="3" cols="4">{{ $vida->Beneficios }}</textarea>
+                            <textarea class="form-control" name="Beneficios" rows="3" cols="4">{{ $desempleo->Beneficios }}</textarea>
                         </div>
 
 
 
                         <div class="item form-group col-sm-12 col-md-4 col-lg-4">
                             <label class="control-label" align="right">Concepto</label>
-                            <textarea class="form-control" name="Concepto" rows="3" cols="4">{{ $vida->Concepto }}</textarea>
+                            <textarea class="form-control" name="Concepto" rows="3" cols="4">{{ $desempleo->Concepto }}</textarea>
                         </div>
 
 
-                        <!-- Tasa Millar Mensual -->
-                        <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                            <label class="control-label" align="right">Descuento</label>
-                            <input class="form-control" name="TasaDescuento" type="number" step="any"
-                                value="{{ $vida->TasaDescuento }}">
-                        </div>
 
-                        <div class="item form-group col-sm-12 col-md-6 col-lg-6">
-                            <label class="control-label" align="right">% de Comisión *</label>
-                            <input class="form-control" name="TasaComision" id="TasaComision" type="number"
-                                step="any" value="{{ $vida->TasaComision }}" required>
-                        </div>
                         <div class="col-sm-12">
                             &nbsp;
                         </div>
@@ -334,7 +263,7 @@
                         <br>
                         <div class="form-group" align="center">
                             <button type="submit" class="btn btn-success">Guardar</button>
-                            <a href="{{ url('polizas/vida') }}"><button type="button"
+                            <a href="{{ url('polizas/desempleo') }}"><button type="button"
                                     class="btn btn-primary">Cancelar</button></a>
                         </div>
                     </div>
@@ -374,7 +303,8 @@
                             <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog"
                                 tabindex="-1" id="modal-delete-inicial-{{ $registroInicial->Id }}">
 
-                                <form method="POST" action="{{ url('polizas/vida/eliminar_renovacion', $obj->Id) }}">
+                                <form method="POST"
+                                    action="{{ url('polizas/desempleo/eliminar_renovacion', $obj->Id) }}">
                                     @method('post')
                                     @csrf
                                     <div class="modal-dialog">
@@ -417,7 +347,8 @@
                                 <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog"
                                     tabindex="-1" id="modal-delete-documento-{{ $obj->Id }}">
 
-                                    <form method="POST" action="{{ url('polizas/vida/eliminar_renovacion', $obj->Id) }}">
+                                    <form method="POST"
+                                        action="{{ url('polizas/desempleo/eliminar_renovacion', $obj->Id) }}">
                                         @method('post')
                                         @csrf
                                         <div class="modal-dialog">
@@ -459,15 +390,7 @@
     <script>
         $(document).ready(function() {
             //mostrar opcion en menu
-            displayOption("ul-poliza", "li-poliza-vida");
-            showTipoCobro({{ $vida->TipoCobro }})
-            showMultitarifa({{ $vida->TipoTarifa }})
-
-            if ($("#Opcion").val() == "0") {
-                $("#Tasa").prop('readonly', false);
-            } else {
-                $("#Tasa").val('').prop('readonly', true);
-            }
+            displayOption("ul-poliza", "li-poliza-desempleo");
             toggleFechaHasta();
 
         })
@@ -484,28 +407,6 @@
         });
 
 
-
-        function formatMultitarifa(input) {
-            // Permitir solo dígitos, puntos y comas
-            input.value = input.value.replace(/[^0-9.,]/g, '');
-        }
-
-        function showTipoCobro(id) {
-            const divUsuarios = document.getElementById('div-cobro-usuarios');
-            const divCreditos = document.getElementById('div-cobro-creditos');
-
-            if (id == 1) {
-                divUsuarios.style.display = 'block';
-                divCreditos.style.display = 'none';
-            } else if (id == 2) {
-                divUsuarios.style.display = 'none';
-                divCreditos.style.display = 'block';
-            } else if (id == 3) {
-                divUsuarios.style.display = 'none';
-                divCreditos.style.display = 'none';
-            }
-        }
-
         function formatResponsabilidadMax(input) {
             let value = parseFloat(input.value.replace(/,/g, '')); // Elimina comas y convierte a número
             if (!isNaN(value)) {
@@ -519,18 +420,6 @@
         }
 
 
-        function showMultitarifa(id) {
-            const divSuma = document.getElementById('div-sumaAsegurada');
-            const divMulti = document.getElementById('div-multitarifa');
-
-            if (id == 1) {
-                divSuma.style.display = 'block';
-                divMulti.style.display = 'none';
-            } else if (id == 2) {
-                divSuma.style.display = 'none';
-                divMulti.style.display = 'block';
-            }
-        }
 
         function toggleFechaHasta() {
             var tipoRenovacion = document.getElementById("TipoRenovacion").value;

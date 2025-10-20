@@ -126,7 +126,7 @@ class NegocioController extends Controller
     public function show($id)
     {
 
-        dd("holi show");
+       // dd("holi show");
         // $ejecutivo = Ejecutivo::where('Activo', '1')->get();
         // return view('catalogo.negocio.show', compact('ejecutivo'));
 

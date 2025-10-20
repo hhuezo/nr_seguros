@@ -4,6 +4,7 @@ use App\Http\Controllers\catalogo\TipoCarteraVidaController;
 use App\Http\Controllers\polizas\ResidenciaController;
 use App\Http\Controllers\polizas\VidaController;
 use App\Http\Controllers\polizas\VidaFedeController;
+use App\Http\Controllers\polizas\VidaRenovacionController;
 use App\Http\Controllers\polizas\VidaTasaDiferenciadaController;
 use Illuminate\Support\Facades\Route;
 
@@ -67,7 +68,7 @@ Route::middleware(['web'])->group(function () {
     Route::get('poliza/vida/get_recibo/{id}/{exportar}', [VidaController::class, 'get_recibo']);
     Route::get('poliza/vida/get_recibo_edit/{id}', [VidaController::class, 'get_recibo_edit']);
     Route::post('poliza/vida/get_recibo_edit', [VidaController::class, 'get_recibo_update']);
-    Route::post('polizas/vida/store_poliza_primara_carga/{id}',[VidaController::class, 'primera_carga']);
+    Route::post('polizas/vida/store_poliza_primara_carga/{id}', [VidaController::class, 'primera_carga']);
 
 
     Route::post('vida/exportar_excel', [VidaController::class, 'exportar_excel']);
@@ -77,4 +78,10 @@ Route::middleware(['web'])->group(function () {
     Route::post('exportar/vida/registros_responsabilidad_maxima/{id}', [VidaController::class, 'registros_responsabilidad_maxima']);
     Route::post('exportar/vida/registros_responsabilidad_terminacion/{id}', [VidaController::class, 'registros_responsabilidad_terminacion']);
     Route::post('exportar/vida/nuevos_registros/{id}', [VidaController::class, 'exportar_nuevos_registros']);
+
+    //renovar
+    Route::get('polizas/vida/renovar/{id}', [VidaRenovacionController::class, 'renovar']);
+    Route::post('polizas/vida/renovar', [VidaRenovacionController::class, 'save_renovar']);
+    Route::post('polizas/vida/eliminar_renovacion/{id}', [VidaRenovacionController::class, 'eliminar_renovacion']);
+
 });
