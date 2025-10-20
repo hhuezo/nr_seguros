@@ -575,6 +575,9 @@
         const subTotalInput = document.getElementById('SubTotalDetalle');
         if (subTotalInput) subTotalInput.value = primaCalculada;
 
+        // ✅ Actualiza también el campo visible "sub_total"
+        document.getElementById('sub_total').textContent = fmt(primaCalculada);
+
         // --- Variables auxiliares del documento ---
         let extra_prima = toNumber(document.getElementById('ExtraPrima')?.value);
         let descuento_rentabilidad = toNumber(document.getElementById('DescuentoRentabilidad')?.value);
