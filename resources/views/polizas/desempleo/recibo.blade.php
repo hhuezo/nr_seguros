@@ -253,7 +253,7 @@ $prima_calculada = $detalle->MontoCartera * $desempleo->Tasa;
         <table style="width: 100%; text-align: center;">
             <tr>
                 <td>
-                    {{!!$configuracion->Pie!!}}
+                    {!!$configuracion->Pie!!}
 
                 </td>
             </tr>
