@@ -405,7 +405,7 @@ class DeudaCarteraController extends Controller
                     $obj->update();
 
                     array_push($errores_array, 9);
-                } else if ($obj->Nacionalidad == 'SAL' || $obj->Nacionalidad == 'Sal' || $obj->Nacionalidad == 'sal') {
+                }else if (trim(strtolower($obj->Nacionalidad)) == 'sal') {
                     $validador_dui = $this->validarDocumento($obj->Dui, "dui");
 
 
