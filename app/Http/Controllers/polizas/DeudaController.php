@@ -1019,7 +1019,7 @@ class DeudaController extends Controller
             }
             // dd("holi");
 
-            $clientes = DB::table('poliza_deuda_temp_cartera')
+            $clientes = DB::table('poliza_deuda_cartera')
                 ->select(
                     'Id',
                     'PrimerNombre',
@@ -1043,6 +1043,7 @@ class DeudaController extends Controller
                     'Axo',
                     'Mes'
                 )
+                ->where('PolizaDeudaDetalle', '=', null)
                 ->where('PolizaDeuda', '=', $id)
                 ->get();
 
