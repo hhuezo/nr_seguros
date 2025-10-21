@@ -131,16 +131,14 @@ class DeudaCarteraFedeController extends Controller
 
 
         // 🔍 Buscar DUI con caracteres inválidos (#, !, %, etc.)
-        $duiInvalidos = PolizaDeudaTempCartera::where('User', auth()->id())
-            ->where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
-            ->whereRaw("Dui REGEXP '[^0-9-]'") // Detección de caracteres no válidos
+        $duiInvalidos = PolizaDeudaTempCartera::where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+            ->whereRaw("Dui REGEXP '[#%&!$@*?<>/{}()_=+]'") // Busca solo estos símbolos
             ->pluck('NumeroReferencia')
             ->toArray();
 
         if (count($duiInvalidos) > 0) {
-            // 👇 Redirigir hacia atrás con los errores en la sesión
             return back()
-                ->with('warning', 'Se detectaron DUI inválidos en el archivo en los creditos.')
+                ->with('warning', 'Se detectaron DUI con símbolos no permitidos (#, %, !, $, etc.).')
                 ->with('errores', $duiInvalidos)
                 ->withInput();
         }
@@ -200,19 +198,19 @@ class DeudaCarteraFedeController extends Controller
 
 
             // 2 error formato de dui
-            if ($obj->Dui == null || $obj->Dui == '') {
-                $validador_dui = false;
-                if ($validador_dui == false) {
-                    $obj->TipoError = 8;
-                    $obj->update();
+            // if ($obj->Dui == null || $obj->Dui == '') {
+            //     $validador_dui = false;
+            //     if ($validador_dui == false) {
+            //         $obj->TipoError = 8;
+            //         $obj->update();
 
-                    array_push($errores_array, 8);
-                }
-            } else {
-                $validador_dui = true;
-            }
+            //         array_push($errores_array, 8);
+            //     }
+            // } else {
+            //     $validador_dui = true;
+            // }
 
-            $obj->update();
+            // $obj->update();
 
 
 
