@@ -390,6 +390,50 @@ class DeudaCarteraFedeController extends Controller
         }
 
 
+
+        //calculando cumulo por rango de edades tipo de cartera y documento
+
+        foreach ($requisitos as $requisito) {
+            DB::statement("
+                    UPDATE poliza_deuda_temp_cartera p1
+                    JOIN (
+                        SELECT
+                            COALESCE(Dui, '') AS Dui,
+                            COALESCE(Pasaporte, '') AS Pasaporte,
+                            COALESCE(CarnetResidencia, '') AS CarnetResidencia,
+                            SUM(TotalCredito) AS total_credito
+                        FROM poliza_deuda_temp_cartera
+                        WHERE PolizaDeudaTipoCartera = ?
+                        AND EdadDesembloso BETWEEN ? AND ?
+                        GROUP BY
+                            COALESCE(Dui, ''),
+                            COALESCE(Pasaporte, ''),
+                            COALESCE(CarnetResidencia, '')
+                    ) p2
+                        ON COALESCE(p1.Dui, '') = p2.Dui
+                        AND COALESCE(p1.Pasaporte, '') = p2.Pasaporte
+                        AND COALESCE(p1.CarnetResidencia, '') = p2.CarnetResidencia
+                    SET
+                        p1.SaldoCumulo = p2.total_credito,
+                        p1.EdadRequisito = ?,
+                        p1.MontoRequisito = ?
+                    WHERE p1.PolizaDeudaTipoCartera = ?
+                    AND p1.EdadDesembloso BETWEEN ? AND ?
+                ", [
+                $deuda_tipo_cartera->Id,                   // PolizaDeudaTipoCartera
+                $requisito->EdadInicial,                   // Rango inicial
+                $requisito->EdadFinal,                     // Rango final
+                $requisito->EdadFinal,                     // Guardamos el requisito superior (opcional)
+                $requisito->MontoFinal,                    // Monto del requisito (opcional)
+                $deuda_tipo_cartera->Id,                   // Filtro principal
+                $requisito->EdadInicial,                   // Mismo rango
+                $requisito->EdadFinal
+            ]);
+        }
+
+
+
+
         alert()->success('Exito', 'La cartera fue subida con exito');
         return back();
     }
