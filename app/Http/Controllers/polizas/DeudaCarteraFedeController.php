@@ -132,7 +132,7 @@ class DeudaCarteraFedeController extends Controller
 
         // 🔍 Buscar DUI con caracteres inválidos (#, !, %, etc.)
         $duiInvalidos = PolizaDeudaTempCartera::where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
-            ->whereRaw("Dui REGEXP '[#%&!$@*?<>/{}()_=+]'") // Busca solo estos símbolos
+            ->whereRaw("Dui REGEXP '[#%&!$@?<>/{}()_=+]'") // Busca solo estos símbolos
             ->pluck('NumeroReferencia')
             ->toArray();
 
