@@ -21,13 +21,12 @@ class DeudaErroneosExport implements FromCollection, WithHeadings
     public function collection()
     {
 
-        $data = PolizaDeudaTempCartera::where('PolizaDeuda', $this->id)->where('User', auth()->user()->id)
-            ->join('poliza_deuda_creditos as pdc', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'pdc.Id')
-            ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
+        $data = PolizaDeudaTempCartera::where('poliza_deuda_temp_cartera.PolizaDeuda', $this->id)
+            ->leftJoin('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
             ->join('poliza_deuda_tipo_cartera as pdtc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'pdtc.Id')
             ->join('tipo_cartera as tc', 'pdtc.TipoCartera', '=', 'tc.Id')
             ->select([
-                'Nit',
+                //'Nit',
                 'Dui',
                 'Pasaporte',
                 'Nacionalidad',
@@ -42,7 +41,7 @@ class DeudaErroneosExport implements FromCollection, WithHeadings
                 'Sexo',
                 'FechaOtorgamiento',
                 'FechaVencimiento',
-                'Ocupacion',
+                //'Ocupacion',
                 DB::raw("CONCAT(NumeroReferencia, ' ') AS NumeroReferencia"),
                 DB::raw("IF(MontoOtorgado IS NULL, '', ROUND(MontoOtorgado, 2)) AS MontoOtorgado"),
                 DB::raw("IF(SaldoCapital IS NULL, '', ROUND(SaldoCapital, 2)) AS SaldoCapital"),
@@ -59,6 +58,7 @@ class DeudaErroneosExport implements FromCollection, WithHeadings
             ])
             ->where('TipoError', '<>', 0)
             ->get();
+
 
         foreach ($data as $registro) {
             $errores = [];
@@ -93,6 +93,10 @@ class DeudaErroneosExport implements FromCollection, WithHeadings
                 $errores[] = 'El género no es válido';
             }
 
+             if ($registro->TipoError == 11) {
+                $errores[] = 'El nombre debe contener solo letras';
+            }
+
 
             // Guardar el mensaje consolidado de errores en la propiedad Error
             $registro->TipoError = implode('; ', $errores);  // Concatenar todos los mensajes con "; "
@@ -105,7 +109,7 @@ class DeudaErroneosExport implements FromCollection, WithHeadings
     public function headings(): array
     {
         return [
-            'NIT',
+            //'NIT',
             'DUI',
             'PASAPORTE O CARNET DE RESIDENTE ASEGURADO',
             'SALVADOREÑO',
@@ -120,7 +124,7 @@ class DeudaErroneosExport implements FromCollection, WithHeadings
             'SEXO',
             'FECHA DE OTORGAMIENTO',
             'FECHA DE VENCIMIENTO',
-            'OCUPACION',
+            //'OCUPACION',
             'No DE REFERENCIA DEL CRÉDITO',
             'MONTO OTORGADO DEL CREDITO',
             'SALDO VIGENTE DE CAPITAL',
