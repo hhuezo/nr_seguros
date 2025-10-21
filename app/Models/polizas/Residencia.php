@@ -71,7 +71,6 @@ class Residencia extends Model
         return $this->belongsTo('App\Models\catalogo\Plan', 'Plan', 'Id');
     }
 
-
     public function control_cartera()
     {
         return $this->belongsTo(PolizaControlCartera::class, 'ResidenciaId', 'Id');

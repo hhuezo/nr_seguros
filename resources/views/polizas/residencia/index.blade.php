@@ -62,9 +62,9 @@
                                         @endif
 
                                         &nbsp;
-                                        <a href="{{ url('polizas/residencia') }}/{{ $obj->Id }}/renovar"
-                                            class="btn btn-primary on-default edit-row" title="Renovar o Cancelar "><i
-                                                class="fa fa-refresh fa-lg"></i></a>
+                                       <a data-target="#modal-renovar-{{ $obj->Id }}" data-toggle="modal"
+                                        class="on-default btn btn-primary edit-row" title="Renovar"><i
+                                            class="fa fa-refresh fa-lg"></i></a>
 
                                     </div>
                                     <div style="display: flex; justify-content: center;">
