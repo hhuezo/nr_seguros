@@ -46,6 +46,7 @@ use App\Models\polizas\PolizaDeudaCartera;
 use App\Models\polizas\PolizaDeudaExtraPrimadosMensual;
 use App\Models\polizas\PolizaDeudaHistorica;
 use App\Models\polizas\PolizaDeudaTasaDiferenciada;
+use App\Models\polizas\PolizaSeguroCobertura;
 use App\Models\polizas\Vida;
 use App\Models\temp\PolizaDeudaTempCartera;
 use Carbon\Carbon;
@@ -1018,30 +1019,33 @@ class DeudaController extends Controller
             }
             // dd("holi");
 
-            $clientes = PolizaDeudaCartera::select(
-                'Id',
-                'PrimerNombre',
-                DB::raw("TRIM(CONCAT(
+            $clientes = DB::table('poliza_deuda_temp_cartera')
+                ->select(
+                    'Id',
+                    'PrimerNombre',
+                    DB::raw("TRIM(CONCAT(
                         IFNULL(PrimerNombre, ''),
                         IF(IFNULL(SegundoNombre, '') != '', CONCAT(' ', SegundoNombre), ''),
                         IF(IFNULL(PrimerApellido, '') != '', CONCAT(' ', PrimerApellido), ''),
                         IF(IFNULL(SegundoApellido, '') != '', CONCAT(' ', SegundoApellido), ''),
                         IF(IFNULL(ApellidoCasada, '') != '', CONCAT(' ', ApellidoCasada), '')
-                    )) as Nombre"),
-                'Dui',
-                'LineaCredito',
-                'NumeroReferencia',
-                'MontoOtorgado',
-                'SaldoCapital',
-                'Intereses',
-                'InteresesCovid',
-                'InteresesMoratorios',
-                'MontoNominal',
-                'TotalCredito',
-                'Axo',
-                'Mes'
-            )->where('PolizaDeuda', '=', $id)->where('PolizaDeudaDetalle', '=', 0)
-                ->orWhere('PolizaDeudaDetalle', '=', null)->groupBy('NumeroReferencia')->get();
+                    )) AS Nombre"),
+                    'Dui',
+                    'LineaCredito',
+                    'NumeroReferencia',
+                    'MontoOtorgado',
+                    'SaldoCapital',
+                    'Intereses',
+                    'InteresesCovid',
+                    'InteresesMoratorios',
+                    'MontoNominal',
+                    'TotalCredito',
+                    'Axo',
+                    'Mes'
+                )
+                ->where('PolizaDeuda', '=', $id)
+                ->get();
+
 
             //dd($clientes->take(20));
 
