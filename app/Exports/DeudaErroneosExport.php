@@ -23,8 +23,9 @@ class DeudaErroneosExport implements FromCollection, WithHeadings
 
         $data = PolizaDeudaTempCartera::where('PolizaDeuda', $this->id)->where('User', auth()->user()->id)
             ->join('poliza_deuda_creditos as pdc', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'pdc.Id')
-            ->join('saldos_montos as sm', 'pdc.saldos', '=', 'sm.id')
-            ->join('tipo_cartera as tc', 'pdc.TipoCartera', '=', 'tc.id')
+            ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
+            ->join('poliza_deuda_tipo_cartera as pdtc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'pdtc.Id')
+            ->join('tipo_cartera as tc', 'pdtc.TipoCartera', '=', 'tc.Id')
             ->select([
                 'Nit',
                 'Dui',
@@ -56,46 +57,46 @@ class DeudaErroneosExport implements FromCollection, WithHeadings
                 'TipoError'
                 // '' // Porcentaje Extraprima cambiar
             ])
-            ->where('TipoError','<>',0)
+            ->where('TipoError', '<>', 0)
             ->get();
 
-            foreach ($data as $registro) {
-                $errores = [];
+        foreach ($data as $registro) {
+            $errores = [];
 
-                if ($registro->TipoError == 1) {
-                    $errores[] = 'Formato de fecha de nacimiento no válido';
-                }
-                if ($registro->TipoError == 2) {
-                    $errores[] = 'Formato de DUI no válido';
-                }
-                if ($registro->TipoError == 4) {
-                    if (!$registro->PrimerNombre) {
-                        $errores[] = 'Falta el primer nombre';
-                    }
-                    if (!$registro->PrimerApellido) {
-                        $errores[] = 'Falta el primer apellido';
-                    }
-                }
-                if ($registro->TipoError == 5) {
-                    $errores[] = 'Formato de fecha de otorgamiento no válido';
-                }
-                if ($registro->TipoError == 7) {
-                    $errores[] = 'Número de referencia no válido';
-                }
-                if ($registro->TipoError == 8) {
-                    $errores[] = 'Pasaporte no válido';
-                }
-                if ($registro->TipoError == 9) {
-                    $errores[] = 'El dato de la nacionalidad está vacío';
-                }
-                if ($registro->TipoError == 10) {
-                    $errores[] = 'El género no es válido';
-                }
-
-
-                // Guardar el mensaje consolidado de errores en la propiedad Error
-                $registro->TipoError = implode('; ', $errores);  // Concatenar todos los mensajes con "; "
+            if ($registro->TipoError == 1) {
+                $errores[] = 'Formato de fecha de nacimiento no válido';
             }
+            if ($registro->TipoError == 2) {
+                $errores[] = 'Formato de DUI no válido';
+            }
+            if ($registro->TipoError == 4) {
+                if (!$registro->PrimerNombre) {
+                    $errores[] = 'Falta el primer nombre';
+                }
+                if (!$registro->PrimerApellido) {
+                    $errores[] = 'Falta el primer apellido';
+                }
+            }
+            if ($registro->TipoError == 5) {
+                $errores[] = 'Formato de fecha de otorgamiento no válido';
+            }
+            if ($registro->TipoError == 7) {
+                $errores[] = 'Número de referencia no válido';
+            }
+            if ($registro->TipoError == 8) {
+                $errores[] = 'Pasaporte no válido';
+            }
+            if ($registro->TipoError == 9) {
+                $errores[] = 'El dato de la nacionalidad está vacío';
+            }
+            if ($registro->TipoError == 10) {
+                $errores[] = 'El género no es válido';
+            }
+
+
+            // Guardar el mensaje consolidado de errores en la propiedad Error
+            $registro->TipoError = implode('; ', $errores);  // Concatenar todos los mensajes con "; "
+        }
 
 
         return $data;
