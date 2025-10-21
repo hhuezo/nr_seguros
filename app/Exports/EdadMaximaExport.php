@@ -27,12 +27,13 @@ class EdadMaximaExport implements FromCollection, WithHeadings
         $edadTerminacion = $deuda->EdadMaximaTerminacion ?? 100;
 
 
-         // Fedecrédito
-        if ($deuda->Aseguradora == 3) {
-            $data = PolizaDeudaTempCartera::where('PolizaDeuda', $this->id)->where('User', auth()->user()->id)
+        // Fedecrédito
+        if ($deuda->Aseguradora == 3 || $deuda->Aseguradora == 4) {
+            $data = PolizaDeudaTempCartera::where('poliza_deuda_temp_cartera.PolizaDeuda', $this->id)
                 ->where('Edad', '>', $edadTerminacion)
-                ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
-                ->join('tipo_cartera as tc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'tc.Id')
+                ->leftJoin('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
+                ->join('poliza_deuda_tipo_cartera as pdtc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'pdtc.Id')
+                ->join('tipo_cartera as tc', 'pdtc.TipoCartera', '=', 'tc.Id')
                 ->select([
                     'TipoDocumento',
                     'Dui',
@@ -60,10 +61,11 @@ class EdadMaximaExport implements FromCollection, WithHeadings
                 ->orderBy('NumeroReferencia')
                 ->get();
         } else {
-            $data = PolizaDeudaTempCartera::where('PolizaDeuda', $this->id)->where('User', auth()->user()->id)
+            $data = PolizaDeudaTempCartera::where('poliza_deuda_temp_cartera.PolizaDeuda', $this->id)
                 ->where('Edad', '>', $edadTerminacion)
-                ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
-                ->join('tipo_cartera as tc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'tc.Id')
+                ->leftJoin('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
+                ->join('poliza_deuda_tipo_cartera as pdtc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'pdtc.Id')
+                ->join('tipo_cartera as tc', 'pdtc.TipoCartera', '=', 'tc.Id')
                 ->select([
                     'Dui',
                     'Pasaporte',
