@@ -79,14 +79,6 @@ class CreditosNoValidoExport implements FromCollection, WithHeadings
                     'Dui',
                     'Pasaporte',
                     'CarnetResidencia',
-                    DB::raw("
-                            TRIM(
-                                CONCAT(
-                                    poliza_deuda_temp_cartera.PrimerNombre,
-                                    IF(poliza_deuda_temp_cartera.SegundoNombre IS NOT NULL AND poliza_deuda_temp_cartera.SegundoNombre != '', CONCAT(' ', poliza_deuda_temp_cartera.SegundoNombre), '')
-                                )
-                            ) AS Nombres
-                    "),
                     'Nacionalidad',
                     'FechaNacimiento',
                     'TipoPersona',
@@ -94,6 +86,8 @@ class CreditosNoValidoExport implements FromCollection, WithHeadings
                     'PrimerApellido',
                     'SegundoApellido',
                     'ApellidoCasada',
+                     'PrimerNombre',
+                    'SegundoNombre',
                     'NombreSociedad',
                     'FechaOtorgamiento',
                     'FechaVencimiento',

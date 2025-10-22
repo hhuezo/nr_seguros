@@ -39,7 +39,14 @@ class RegistroRequisitosExport implements FromCollection, WithHeadings
                     'Dui',
                     'PrimerApellido',
                     'SegundoApellido',
-                    DB::raw("CONCAT(PrimerNombre, ' ', SegundoNombre) AS Nombres"),
+                      DB::raw("
+                            TRIM(
+                                CONCAT(
+                                    poliza_deuda_temp_cartera.PrimerNombre,
+                                    IF(poliza_deuda_temp_cartera.SegundoNombre IS NOT NULL AND poliza_deuda_temp_cartera.SegundoNombre != '', CONCAT(' ', poliza_deuda_temp_cartera.SegundoNombre), '')
+                                )
+                            ) AS Nombres
+                    "),
                     'Nacionalidad',
 
                     'FechaNacimiento',
@@ -79,7 +86,6 @@ class RegistroRequisitosExport implements FromCollection, WithHeadings
                     'ApellidoCasada',
                     'PrimerNombre',
                     'SegundoNombre',
-                    'NombreSociedad',
                     'FechaOtorgamiento',
                     'FechaVencimiento',
 
@@ -153,7 +159,7 @@ class RegistroRequisitosExport implements FromCollection, WithHeadings
                 'APELLIDOCASADA',
                 'PRIMERNOMBRE',
                 'SEGUNDONOMBRE',
-                'NOMBRE SOCIEDAD',
+                //'NOMBRE SOCIEDAD',
                 'FECOTORGAMIENTO',
                 'FECHA DE VENCIMIENTO',
                 'NUMREFERENCIA',
