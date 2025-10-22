@@ -22,7 +22,7 @@
                     @foreach ($clientes as $obj)
                     @if ($clientes->count() > 0)
                     <tr>
-                        <td align="center"><button class="btn btn-primary" onclick="modalExtraprimados({{ $deuda->Id }},'{{ $obj->Dui }}','{{ $obj->NumeroReferencia }}')" data-target="#modal_extraprimados" data-toggle="modal">
+                        <td align="center"><button class="btn btn-primary" onclick="modalExtraprimados({{ $obj->Id }})" data-target="#modal_extraprimados" data-toggle="modal">
                                 <i class="fa fa-edit fa-lg"></i>
                             </button></td>
                         <td>{{ $obj->Dui }}</td>
@@ -146,18 +146,18 @@
 @include('polizas.deuda.modal_extraprimados')
 
 <script type="text/javascript">
-    function modalExtraprimados(poliza, dui, NumeroReferencia) {
-        console.log(poliza, dui, NumeroReferencia);
+    function modalExtraprimados(Id) {
+
         // Construir la URL con los parámetros
-        var url = "{{ url('polizas/deuda/get_extraprimado') }}" + '/' + poliza + '/' + dui+ '/' + NumeroReferencia;
+        var url = "{{ url('polizas/deuda/get_extraprimado') }}" + '/' + Id;
 
         // Realizar la solicitud GET
         $.get(url, function(data) {
                 //console.log(data);
-                document.getElementById('ExtraprimadosDui').value = data.Dui;
+                document.getElementById('ExtraprimadosDui').value = data.Documento;
                 document.getElementById('ExtraprimadosNombre').value = data.Nombre;
                 document.getElementById('ExtraprimadosFechaOtorgamiento').value = data.FechaOtorgamiento;
-                document.getElementById('ExtraprimadosNumeroReferencia').value = NumeroReferencia;
+                document.getElementById('ExtraprimadosNumeroReferencia').value = data.NumeroReferencia;
                 document.getElementById('ExtraprimadosMontoOtorgamiento').value = parseFloat(data.TotalCredito).toFixed(2);
                 document.getElementById('DeudaCarteraId').value = data.Id;
 

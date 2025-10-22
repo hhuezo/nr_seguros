@@ -1349,31 +1349,36 @@ class DeudaController extends Controller
     }
 
 
-    public function get_extraprimado($id, $dui, $numeroReferencia)
+    public function get_extraprimado($id)
     {
         $cliente = PolizaDeudaCartera::join('saldos_montos as sal', 'sal.Id', '=', 'poliza_deuda_cartera.LineaCredito')
             ->select(
                 'poliza_deuda_cartera.Id',
-                // DB::raw("CONCAT(poliza_deuda_cartera.PrimerNombre, ' ', poliza_deuda_cartera.SegundoNombre, ' ', poliza_deuda_cartera.PrimerApellido, ' ', poliza_deuda_cartera.SegundoApellido, ' ', ' ', poliza_deuda_cartera.ApellidoCasada) as Nombre"),
                 DB::raw("TRIM(CONCAT(
-                    IFNULL(poliza_deuda_cartera.PrimerNombre, ''),
-                    IF(IFNULL(poliza_deuda_cartera.SegundoNombre, '') != '', CONCAT(' ', poliza_deuda_cartera.SegundoNombre), ''),
-                    IF(IFNULL(poliza_deuda_cartera.PrimerApellido, '') != '', CONCAT(' ', poliza_deuda_cartera.PrimerApellido), ''),
-                    IF(IFNULL(poliza_deuda_cartera.SegundoApellido, '') != '', CONCAT(' ', poliza_deuda_cartera.SegundoApellido), ''),
-                    IF(IFNULL(poliza_deuda_cartera.ApellidoCasada, '') != '', CONCAT(' ', poliza_deuda_cartera.ApellidoCasada), '')
-                )) as Nombre"),
-                'poliza_deuda_cartera.Dui',
+                IFNULL(poliza_deuda_cartera.PrimerNombre, ''),
+                IF(IFNULL(poliza_deuda_cartera.SegundoNombre, '') != '', CONCAT(' ', poliza_deuda_cartera.SegundoNombre), ''),
+                IF(IFNULL(poliza_deuda_cartera.PrimerApellido, '') != '', CONCAT(' ', poliza_deuda_cartera.PrimerApellido), ''),
+                IF(IFNULL(poliza_deuda_cartera.SegundoApellido, '') != '', CONCAT(' ', poliza_deuda_cartera.SegundoApellido), ''),
+                IF(IFNULL(poliza_deuda_cartera.ApellidoCasada, '') != '', CONCAT(' ', poliza_deuda_cartera.ApellidoCasada), '')
+            )) as Nombre"),
+                // Devuelve el primer documento válido en este orden: Dui > Pasaporte > CarnetResidencia
+                DB::raw("COALESCE(
+                NULLIF(poliza_deuda_cartera.Dui, ''),
+                NULLIF(poliza_deuda_cartera.Pasaporte, ''),
+                NULLIF(poliza_deuda_cartera.CarnetResidencia, '')
+            ) as Documento"),
                 'sal.Id as Linea',
                 'poliza_deuda_cartera.NumeroReferencia',
                 'poliza_deuda_cartera.Intereses',
                 'poliza_deuda_cartera.TotalCredito',
-                'poliza_deuda_cartera.FechaOtorgamiento',
-
+                'poliza_deuda_cartera.FechaOtorgamiento'
             )
-            ->where('PolizaDeuda', $id)->where('Dui', $dui)->where('poliza_deuda_cartera.NumeroReferencia', $numeroReferencia)->first();
+            ->where('poliza_deuda_cartera.Id', $id)
+            ->first();
 
         return response()->json($cliente);
     }
+
 
     public function store_extraprimado(Request $request)
     {
