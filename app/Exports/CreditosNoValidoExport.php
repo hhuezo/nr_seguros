@@ -40,7 +40,14 @@ class CreditosNoValidoExport implements FromCollection, WithHeadings
                     'Dui',
                     'PrimerApellido',
                     'SegundoApellido',
-                    DB::raw("CONCAT(PrimerNombre, ' ', SegundoNombre) AS Nombres"),
+                    DB::raw("
+                            TRIM(
+                                CONCAT(
+                                    poliza_deuda_temp_cartera.PrimerNombre,
+                                    IF(poliza_deuda_temp_cartera.SegundoNombre IS NOT NULL AND poliza_deuda_temp_cartera.SegundoNombre != '', CONCAT(' ', poliza_deuda_temp_cartera.SegundoNombre), '')
+                                )
+                            ) AS Nombres
+                        "),
                     'Nacionalidad',
 
                     'FechaNacimiento',
@@ -62,18 +69,24 @@ class CreditosNoValidoExport implements FromCollection, WithHeadings
                 ->groupBy('NumeroReferencia')
                 ->orderBy('NumeroReferencia')
                 ->get();
-
         } else {
-
             $data = PolizaDeudaTempCartera::where('poliza_deuda_temp_cartera.PolizaDeuda', $this->id)
                 ->where('NoValido', 1)
-                 ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
+                ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
                 ->join('poliza_deuda_tipo_cartera as pdtc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'pdtc.Id')
                 ->join('tipo_cartera as tc', 'pdtc.TipoCartera', '=', 'tc.Id')
                 ->select([
                     'Dui',
                     'Pasaporte',
                     'CarnetResidencia',
+                    DB::raw("
+                            TRIM(
+                                CONCAT(
+                                    poliza_deuda_temp_cartera.PrimerNombre,
+                                    IF(poliza_deuda_temp_cartera.SegundoNombre IS NOT NULL AND poliza_deuda_temp_cartera.SegundoNombre != '', CONCAT(' ', poliza_deuda_temp_cartera.SegundoNombre), '')
+                                )
+                            ) AS Nombres
+                    "),
                     'Nacionalidad',
                     'FechaNacimiento',
                     'TipoPersona',
@@ -81,8 +94,6 @@ class CreditosNoValidoExport implements FromCollection, WithHeadings
                     'PrimerApellido',
                     'SegundoApellido',
                     'ApellidoCasada',
-                    'PrimerNombre',
-                    'SegundoNombre',
                     'NombreSociedad',
                     'FechaOtorgamiento',
                     'FechaVencimiento',
