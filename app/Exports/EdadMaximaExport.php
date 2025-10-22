@@ -39,7 +39,14 @@ class EdadMaximaExport implements FromCollection, WithHeadings
                     'Dui',
                     'PrimerApellido',
                     'SegundoApellido',
-                    DB::raw("CONCAT(PrimerNombre, ' ', SegundoNombre) AS Nombres"),
+                     DB::raw("
+                            TRIM(
+                                CONCAT(
+                                    poliza_deuda_temp_cartera.PrimerNombre,
+                                    IF(poliza_deuda_temp_cartera.SegundoNombre IS NOT NULL AND poliza_deuda_temp_cartera.SegundoNombre != '', CONCAT(' ', poliza_deuda_temp_cartera.SegundoNombre), '')
+                                )
+                            ) AS Nombres
+                    "),
                     'Nacionalidad',
 
                     'FechaNacimiento',
@@ -114,7 +121,7 @@ class EdadMaximaExport implements FromCollection, WithHeadings
     {
         $deuda = Deuda::findOrFail($this->id);
 
-        if ($deuda->Aseguradora == 3) {
+        if ($deuda->Aseguradora == 3 || $deuda->Aseguradora == 4) {
             // Fedecrédito
             return [
                 'Tipo de documento',
