@@ -405,7 +405,7 @@ class DeudaCarteraController extends Controller
                     $obj->update();
 
                     array_push($errores_array, 9);
-                }else if (trim(strtolower($obj->Nacionalidad)) == 'sal') {
+                } else if (trim(strtolower($obj->Nacionalidad)) == 'sal') {
                     $validador_dui = $this->validarDocumento($obj->Dui, "dui");
 
 
@@ -1166,9 +1166,11 @@ class DeudaCarteraController extends Controller
 
 
 
+
+
     public function validar_poliza(Request $request)
     {
-
+        $startTime = microtime(true); // 🔹 Inicia el cronómetro
         $poliza_id = $request->Deuda;
         $deuda = Deuda::findOrFail($request->Deuda);
 
@@ -1260,40 +1262,37 @@ class DeudaCarteraController extends Controller
 
 
         //registros que no existen en el mes anterior
-        $count_data_cartera = PolizaDeudaCartera::where('PolizaDeuda', $poliza_id)->count();
-        if ($count_data_cartera > 0) {
-            //dd($mesAnterior,$axoAnterior,$request->Deuda);
-            $registros_eliminados = DB::table('poliza_deuda_cartera AS pdc')
-                ->leftJoin('poliza_deuda_temp_cartera AS pdtc', function ($join) {
-                    $join->on('pdc.NumeroReferencia', '=', 'pdtc.NumeroReferencia');
-                })
-                ->where('pdc.Mes', (int)$mesAnterior)
-                ->where('pdc.Axo', (int)$axoAnterior)
-                ->where('pdc.PolizaDeuda', $request->Deuda)
-                ->whereNull('pdtc.NumeroReferencia') // Solo los que no están en poliza_deuda_temp_cartera
-                ->select('pdc.*') // Selecciona columnas principales
-                ->get();
-        } else {
-            $registros_eliminados =  PolizaDeudaTempCartera::where('Id', 0)->get();
-        }
+
+        $registros_eliminados = collect(DB::select("
+            SELECT pdc.*
+            FROM poliza_deuda_cartera pdc
+            WHERE pdc.PolizaDeuda = ?
+            AND pdc.Axo = ?
+            AND pdc.Mes = ?
+            AND NOT EXISTS (
+                SELECT 1
+                FROM poliza_deuda_temp_cartera pdtc
+                WHERE pdtc.NumeroReferencia = pdc.NumeroReferencia
+                    AND pdtc.PolizaDeuda = ?
+            )
+        ", [$poliza_id, $axoAnterior, $mesAnterior, $poliza_id]));
 
 
 
-
-        $nuevos_registros = PolizaDeudaTempCartera::leftJoin(
-            DB::raw('(
-                        SELECT DISTINCT NumeroReferencia
-                        FROM poliza_deuda_cartera
-                        WHERE PolizaDeuda = ' . $request->Deuda . '
-                    ) AS valid_references'),
-            'poliza_deuda_temp_cartera.NumeroReferencia',
-            '=',
-            'valid_references.NumeroReferencia'
-        )
-            ->where('poliza_deuda_temp_cartera.PolizaDeuda', $request->Deuda)
-            ->whereNull('valid_references.NumeroReferencia') // Los registros que no coinciden
-            ->select('poliza_deuda_temp_cartera.*') // Selecciona columnas de la tabla principal
-            ->get();
+        // ==========================
+        // 2️⃣ Registros nuevos
+        // ==========================
+        $nuevos_registros = collect(DB::select("
+            SELECT pdtc.*
+            FROM poliza_deuda_temp_cartera pdtc
+            WHERE pdtc.PolizaDeuda = ?
+            AND NOT EXISTS (
+                SELECT 1
+                FROM poliza_deuda_cartera pdc
+                WHERE pdc.NumeroReferencia = pdtc.NumeroReferencia
+                    AND pdc.PolizaDeuda = ?
+            )
+        ", [$poliza_id, $poliza_id]));
 
 
 
@@ -1310,34 +1309,6 @@ class DeudaCarteraController extends Controller
                 $extra_primado->Existe = 0;
             }
         }
-
-
-
-        //cumulos por dui y linea credito
-
-        // DB::statement("
-        //     UPDATE poliza_deuda_temp_cartera p1
-        //     JOIN (
-        //         SELECT
-        //             COALESCE(Dui, '') AS Dui,
-        //             COALESCE(PolizaDeudaTipoCartera, '') AS PolizaDeudaTipoCartera,
-        //             COALESCE(Pasaporte, '') AS Pasaporte,
-        //             COALESCE(CarnetResidencia, '') AS CarnetResidencia,
-        //             SUM(TotalCredito) AS total_saldo_cumulo
-        //         FROM poliza_deuda_temp_cartera
-        //         WHERE PolizaDeuda = ?
-        //         GROUP BY
-        //             COALESCE(Dui, ''),
-        //             COALESCE(PolizaDeudaTipoCartera, ''),
-        //             COALESCE(Pasaporte, ''),
-        //             COALESCE(CarnetResidencia, '')
-        //     ) p2
-        //         ON COALESCE(p1.Dui, '') = p2.Dui
-        //         AND COALESCE(p1.PolizaDeudaTipoCartera, '') = p2.PolizaDeudaTipoCartera
-        //         AND COALESCE(p1.Pasaporte, '') = p2.Pasaporte
-        //         AND COALESCE(p1.CarnetResidencia, '') = p2.CarnetResidencia
-        //     SET p1.SaldoCumulo = p2.total_saldo_cumulo
-        //     WHERE p1.PolizaDeuda = ?", [$request->Deuda, $request->Deuda]);
 
 
 
@@ -1388,18 +1359,6 @@ class DeudaCarteraController extends Controller
                     'MontoRequisito' =>  $requisito->MontoInicial,
                     'EdadRequisito' =>  $requisito->EdadInicial
                 ]);
-
-            // if ($requisito->perfil->PagoAutomatico == 1 || $requisito->perfil->DeclaracionJurada == 1) {
-            //     $ids_cartera = $poliza_cumulos->where('EdadDesembloso', '>=', $requisito->EdadInicial)->where('EdadDesembloso', '<=', $requisito->EdadFinal)
-            //         ->where('TotalCredito', '>=', $requisito->MontoInicial)->where('TotalCredito', '<=', $requisito->MontoFinal)
-            //         ->pluck('Id')->toArray();
-
-            //     PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
-            //         ->whereIn('Id', $ids_cartera)
-            //         ->update([
-            //             'PagoAutomatico' =>  1
-            //         ]);
-            // }
         }
 
         // dd($requisitos);
@@ -1441,7 +1400,16 @@ class DeudaCarteraController extends Controller
                 'Perfiles' => DB::raw('TRIM(Perfiles)')
             ]);
 
+        // 🔹 Fin del cronómetro
+        $endTime = microtime(true);
+        $executionTime = round($endTime - $startTime, 3);
 
+        // 🔹 Registrar en el log de Laravel
+        Log::info('⏱️ validar_poliza ejecutada en ' . $executionTime . ' segundos.', [
+            'poliza_id' => $poliza_id,
+            'user_id' => auth()->id(),
+            'fecha' => now()->toDateTimeString()
+        ]);
 
 
         return view('polizas.deuda.validacion_poliza.respuesta_poliza', compact(
