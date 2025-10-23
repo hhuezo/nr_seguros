@@ -327,33 +327,107 @@
 
 
 
-                <input type="hidden" class="form-control" name="FechaFinal"
-                    value="{{ isset($fechas) ? $fechas->FechaFinal : '' }}">
-                <input type="hidden" class="form-control" name="MontoCartera" id="MontoCarteraDetalle"
-                    value="{{ $data['total'] }}">
-                <input type="hidden" class="form-control" name="Desempleo" value="{{ $desempleo->Id }}">
-                <input type="hidden" class="form-control" name="Tasa" value="{{ $desempleo->Tasa }}">
-                <input type="hidden" class="form-control" name="PrimaCalculada" id="PrimaCalculadaDetalle"
-                    value="{{ $data['primaPorPagar'] }}">
-                <input type="hidden" class="form-control" name="PrimaDescontada" id="PrimaDescontadaDetalle"
-                    value="{{ $data['primaDescontada'] }}">
-                <input type="hidden" class="form-control" name="SubTotal" id="SubTotalDetalle">
-                <input type="hidden" class="form-control" name="Iva" id="IvaDetalle">
-                <input type="hidden" class="form-control" name="TasaComision"
-                    value="{{ $desempleo->TasaComision ?? 0 }}">
-                <input type="hidden" class="form-control" name="Comision" id="ComisionDetalle"
-                    value="{{ $data['valorComision'] ?? 0 }}">
-                <input type="hidden" class="form-control" name="IvaSobreComision" id="IvaComisionDetalle"
-                    value="{{ $data['ivaComision'] }}">
-                <input type="hidden" class="form-control" name="Descuento" id="DescuentoDetalle"
-                    value="{{ $data['descuento'] }}">
-                <input type="hidden" class="form-control" name="Retencion" id="RetencionDetalle"
-                    value="{{ $data['retencionComision'] }}">
-                <input type="hidden" class="form-control" name="ValorCCF" id="ValorCCFDetalle"
-                    value="{{ $data['comisionCcf'] }}">
-                <input type="hidden" class="form-control" name="APagar" id="APagarDetalle"
-                    value="{{ $data['liquidoApagar'] }}">
-                <input type="hidden" class="form-control" name="ExtraPrima" value="{{ $data['extra_prima'] }}">
+                <div class="card mt-4 p-3 bg-light">
+                    <h5>🔍 Depuración de valores (inputs visibles)</h5>
+                    <div class="row g-2">
+                        <div class="col-md-3">
+                            <label>Fecha Final</label>
+                            <input type="text" class="form-control" name="FechaFinal"
+                                value="{{ isset($fechas) ? $fechas->FechaFinal : '' }}">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label>Monto Cartera</label>
+                            <input type="text" class="form-control" name="MontoCartera" id="MontoCarteraDetalle"
+                                value="{{ $data['total'] }}">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label>Desempleo (ID)</label>
+                            <input type="text" class="form-control" name="Desempleo"
+                                value="{{ $desempleo->Id }}">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label>Tasa</label>
+                            <input type="text" class="form-control" name="Tasa"
+                                value="{{ $desempleo->Tasa }}">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label>Prima Calculada</label>
+                            <input type="text" class="form-control" name="PrimaCalculada"
+                                id="PrimaCalculadaDetalle" value="{{ $data['primaPorPagar'] }}">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label>Prima Descontada</label>
+                            <input type="text" class="form-control" name="PrimaDescontada"
+                                id="PrimaDescontadaDetalle" value="{{ $data['primaDescontada'] }}">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label>Sub Total</label>
+                            <input type="text" class="form-control" name="SubTotal" id="SubTotalDetalle"
+                                value="">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label>IVA</label>
+                            <input type="text" class="form-control" name="Iva" id="IvaDetalle"
+                                value="">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label>Tasa Comisión</label>
+                            <input type="text" class="form-control" name="TasaComision"
+                                value="{{ $desempleo->TasaComision ?? 0 }}">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label>Comisión</label>
+                            <input type="text" class="form-control" name="Comision" id="ComisionDetalle"
+                                value="{{ $data['valorComision'] ?? 0 }}">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label>IVA Comisión</label>
+                            <input type="text" class="form-control" name="IvaSobreComision"
+                                id="IvaComisionDetalle" value="{{ $data['ivaComision'] }}">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label>Descuento</label>
+                            <input type="text" class="form-control" name="Descuento" id="DescuentoDetalle"
+                                value="{{ $data['descuento'] }}">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label>Retención</label>
+                            <input type="text" class="form-control" name="Retencion" id="RetencionDetalle"
+                                value="{{ $data['retencionComision'] }}">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label>Valor CCF</label>
+                            <input type="text" class="form-control" name="ValorCCF" id="ValorCCFDetalle"
+                                value="{{ $data['comisionCcf'] }}">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label>A Pagar</label>
+                            <input type="text" class="form-control" name="APagar" id="APagarDetalle"
+                                value="{{ $data['liquidoApagar'] }}">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label>Extra Prima</label>
+                            <input type="text" class="form-control" name="ExtraPrima"
+                                value="{{ $data['extra_prima'] }}">
+                        </div>
+                    </div>
+                </div>
+
 
                 <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
                     id="modal-aplicar">
@@ -564,11 +638,17 @@
         document.getElementById('comision').textContent = fmt(comision_ccf);
         document.getElementById('ValorCCFDetalle').value = comision_ccf;
 
+        // ✅ Monto total cartera (CORREGIDO)
+        let total_suma_asegurada = toNumber(document.getElementById('total_suma_asegurada')?.textContent);
+        document.getElementById('monto_total_cartera').textContent = fmt(total_suma_asegurada);
+        document.getElementById('MontoCarteraDetalle').value = total_suma_asegurada;
+
         // Líquido
         let liquido = prima_a_cobrar - comision_ccf;
         document.getElementById('liquido_pagar').textContent = fmt(liquido);
         document.getElementById('APagarDetalle').value = liquido;
     }
+
 
     // ========================
     // ⚙️ Recalcular solo desde total_prima_calculada
