@@ -327,7 +327,7 @@
 
 
 
-                <div class="card mt-4 p-3 bg-light">
+                <div class="card mt-4 p-3 bg-light" style="display: none">
                     <h5>🔍 Depuración de valores (inputs visibles)</h5>
                     <div class="row g-2">
                         <div class="col-md-3">
