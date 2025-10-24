@@ -629,13 +629,20 @@ class DesempleoCarteraController extends Controller
 
                 if ($tipo->TipoCalculo == 1) {
 
+                    DesempleoCarteraTemp::where('PolizaDesempleo',  $id)->where('DesempleoTipoCartera',  $request->DesempleoTipoCartera)
+                        ->whereBetween('FechaOtorgamientoDate', [$tasas_diferenciadas->FechaDesde, $tasas_diferenciadas->FechaHasta])
+                        ->update(['SaldosMontos' => $tasas_diferenciadas->SaldosMontos]);
+
+
+
+
                     $temporal =  DesempleoCarteraTemp::where('PolizaDesempleo',  $id)->where('DesempleoTipoCartera',  $request->DesempleoTipoCartera)
                         ->whereBetween('FechaOtorgamientoDate', [$tasas_diferenciadas->FechaDesde, $tasas_diferenciadas->FechaHasta])->get();
 
                     foreach ($temporal as $temp) {
                         $saldo = $temp->calculoTodalSaldo();
                         $temp->TotalCredito = $saldo;
-                        $temp->SaldosMontos = $tasas_diferenciadas->SaldosMontos;
+                        $temp->Tasa = $tasas_diferenciadas->Tasa;
                         $temp->save();
                     }
                 } else  if ($tipo->TipoCalculo == 2) {
@@ -651,6 +658,7 @@ class DesempleoCarteraController extends Controller
                             $saldo = $temp->calculoTodalSaldo();
                             $temp->TotalCredito = $saldo;
                             $temp->SaldosMontos = $tasas_diferenciadas->SaldosMontos;
+                            $temp->Tasa = $tasas_diferenciadas->Tasa;
                             $temp->save();
                         }
                     }
@@ -661,36 +669,17 @@ class DesempleoCarteraController extends Controller
                             ->whereBetween('EdadDesembloso', [$tasa->EdadDesde, $tasa->EdadHasta])
                             ->get();
 
-
                         foreach ($temporal as $temp) {
                             $saldo = $temp->calculoTodalSaldo();
                             $temp->TotalCredito = $saldo;
                             $temp->SaldosMontos = $tasas_diferenciadas->SaldosMontos;
+                            $temp->Tasa = $tasas_diferenciadas->Tasa;
                             $temp->save();
                         }
                     }
                 }
             }
         }
-
-
-
-
-        /**/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -722,10 +711,6 @@ class DesempleoCarteraController extends Controller
 
                 $validador_dui = true;
             }
-
-            $obj->SaldoTotal = $obj->calculoTodalSaldo();
-            $obj->update();
-
 
 
             // 4 nombre o apellido

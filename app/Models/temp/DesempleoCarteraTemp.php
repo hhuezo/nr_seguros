@@ -71,6 +71,7 @@ class DesempleoCarteraTemp extends Model
     {
 
         try {
+            $tipo_cartera = $this->tipo_cartera->SaldosMontos ?? 0;
             switch ($tipo_cartera) {
                 case '1':
                     # saldo a capital
