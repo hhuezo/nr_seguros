@@ -69,8 +69,8 @@ class DesempleoCarteraTemp extends Model
 
     public function calculoTodalSaldo()
     {
+
         try {
-            $tipo_cartera = $this->tipo_cartera->SaldosMontos ?? 0;
             switch ($tipo_cartera) {
                 case '1':
                     # saldo a capital
@@ -101,7 +101,7 @@ class DesempleoCarteraTemp extends Model
                     # .sando capital
                     //$saldo = $this->SaldoCapital;
 
-                    $this->SaldoCapital;
+                    $saldo = 0;
                     break;
             }
             ///dd($saldo);
