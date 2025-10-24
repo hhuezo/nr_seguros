@@ -24,6 +24,7 @@ class DesempleoTasaDiferenciada extends Model
         'MontoHasta',
         'Tasa',
         'Usuario',
+        'SaldosMontos',
     ];
 
     public function usuario()
@@ -34,5 +35,11 @@ class DesempleoTasaDiferenciada extends Model
     public function poliza_desempleo_tipo_cartera()
     {
         return $this->belongsTo(DesempleoTipoCartera::class, 'PolizaDesempleoTipoCartera', 'Id');
+    }
+
+
+    public function saldos_montos()
+    {
+        return $this->belongsTo(SaldoMontos::class, 'SaldosMontos', 'Id');
     }
 }

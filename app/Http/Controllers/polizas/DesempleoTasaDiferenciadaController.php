@@ -97,6 +97,7 @@ class DesempleoTasaDiferenciadaController extends Controller
             $tasa_diferenciada->MontoHasta = $request->MontoHasta;
         }
 
+        $tasa_diferenciada->SaldosMontos = $request->SaldosMontos;
         $tasa_diferenciada->Tasa = $request->Tasa;
         $tasa_diferenciada->Usuario = auth()->user()->id;
         $tasa_diferenciada->save();
@@ -275,7 +276,7 @@ class DesempleoTasaDiferenciadaController extends Controller
         try {
 
             $rules = [
-                'SaldosMontos' => 'required|integer',
+                //'SaldosMontos' => 'required|integer',
                 'TipoCalculo' => 'required|integer',
             ];
 
@@ -291,20 +292,11 @@ class DesempleoTasaDiferenciadaController extends Controller
             $request->validate($rules, $messages);
 
 
-            // Verificar si los datos ya existen en la base de datos
-            $existe = DesempleoTipoCartera::where('PolizaDesempleo', $id)
-                ->where('SaldosMontos', $request->SaldosMontos)
-                ->exists();
-
-            if ($existe) {
-                return redirect()->back()->withErrors(['error' => 'Este registro ya existe los registros.'])->withInput();
-            }
-
 
             // Crear y guardar el nuevo tipo de cartera
             $tipo_cartera = new DesempleoTipoCartera();
             $tipo_cartera->PolizaDesempleo = $id;
-            $tipo_cartera->SaldosMontos = $request->SaldosMontos;
+            //$tipo_cartera->SaldosMontos = $request->SaldosMontos;
             $tipo_cartera->TipoCalculo = $request->TipoCalculo;
             $tipo_cartera->save();
 

@@ -76,7 +76,6 @@
                         <table class="table table-bordered">
                             <thead class="table-dark">
                                 <tr class="warning-row">
-                                    <th style="width: 40%;">Saldos y Montos</th>
                                     <th style="width: 20%;">Tipo cálculo</th>
                                     <th style="width: 20%;">Opciones</th>
                                 </tr>
@@ -87,12 +86,7 @@
 
                                 @foreach ($desempleo->desempleo_tipos_cartera as $tipo)
                                     <tr class="tarea warning-row">
-                                        <td>
-                                            <span class="expand-icon">▼</span>
-                                            {{ $tipo->saldos_montos?->Abreviatura ?? '' }}
-                                            -{{ $tipo->saldos_montos?->Descripcion ?? '' }}
-                                        </td>
-                                        <td>
+                                        <td> <span class="expand-icon">▼</span>
                                             @if ($tipo->TipoCalculo == 1)
                                                 {{ 'Fecha' }}
                                             @elseif ($tipo->TipoCalculo == 2)
@@ -118,74 +112,75 @@
                                     <tr class="subtareas-container">
                                         <td colspan="4" style="background-color: #f8fafc;">
 
-                                            @if ($tipo->tasa_diferenciada->count() > 0)
-                                                <br>
-                                                <div style="padding-left: 20px !important; padding-right: 20px !important;">
-                                                    <table class="table table-sm table-bordered">
-                                                        <thead class="table-light">
+
+                                            <br>
+                                            <div style="padding-left: 20px !important; padding-right: 20px !important;">
+                                                <table class="table table-sm table-bordered">
+                                                    <thead class="table-light">
+                                                        <tr class="primary-row">
+                                                            <!-- <th>Línea crédito</th> -->
+                                                            @if ($tipo->TipoCalculo == 1)
+                                                                <th>Fecha inicio</th>
+                                                                <th>Fecha final</th>
+                                                            @endif
+
+                                                            @if ($tipo->TipoCalculo == 2)
+                                                                <th>Monto inicio</th>
+                                                                <th>Monto final</th>
+                                                            @endif
+                                                            <th>Linea de crédito</th>
+                                                            <th>Tasa</th>
+                                                            <th>Opciones</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach ($tipo->tasa_diferenciada as $tasa_diferenciada)
                                                             <tr class="primary-row">
-                                                                <!-- <th>Línea crédito</th> -->
+                                                                 <td>{{ $tasa_diferenciada->saldos_montos->Descripcion  }} ({{ $tasa_diferenciada->saldos_montos->Abreviatura ?? '' }})</td>
                                                                 @if ($tipo->TipoCalculo == 1)
-                                                                    <th>Fecha inicio</th>
-                                                                    <th>Fecha final</th>
+                                                                    <td>
+                                                                        {{ $tasa_diferenciada->FechaDesde ? date('d/m/Y', strtotime($tasa_diferenciada->FechaDesde)) : 'Sin fecha' }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ $tasa_diferenciada->FechaHasta ? date('d/m/Y', strtotime($tasa_diferenciada->FechaHasta)) : 'Sin fecha' }}
+                                                                    </td>
                                                                 @endif
 
                                                                 @if ($tipo->TipoCalculo == 2)
-                                                                    <th>Monto inicio</th>
-                                                                    <th>Monto final</th>
-                                                                @endif
-                                                                <th>Tasa</th>
-                                                                <th>Opciones</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            @foreach ($tipo->tasa_diferenciada as $tasa_diferenciada)
-                                                                <tr class="primary-row">
-                                                                    @if ($tipo->TipoCalculo == 1)
-                                                                        <td>
-                                                                            {{ $tasa_diferenciada->FechaDesde ? date('d/m/Y', strtotime($tasa_diferenciada->FechaDesde)) : 'Sin fecha' }}
-                                                                        </td>
-                                                                        <td>
-                                                                            {{ $tasa_diferenciada->FechaHasta ? date('d/m/Y', strtotime($tasa_diferenciada->FechaHasta)) : 'Sin fecha' }}
-                                                                        </td>
-                                                                    @endif
-
-                                                                    @if ($tipo->TipoCalculo == 2)
-                                                                        <td>${{ number_format($tasa_diferenciada->MontoDesde ?? 0, 2) }}
-                                                                        </td>
-                                                                        <td>${{ number_format($tasa_diferenciada->MontoHasta ?? 0, 2) }}
-                                                                        </td>
-                                                                    @endif
-
-                                                                    <td>{{ $tasa_diferenciada->Tasa }}%</td>
-                                                                    <td><button class="btn btn-primary"
-                                                                            onclick="show_modal_tasa_diferenciada_edit({{ $tipo->TipoCalculo }})"
-                                                                            data-target="#modal-tasa-diferenciada_edit-{{ $tasa_diferenciada->Id }}"
-                                                                            data-toggle="modal">
-                                                                            <i class="fa fa-edit"></i>
-                                                                        </button>
-                                                                        <button class="btn btn-danger"
-                                                                            data-target="#modal-delete-tasa-diferenciada"
-                                                                            data-toggle="modal"
-                                                                            onclick="show_modal_delete_tasa_diferenciada({{ $tasa_diferenciada->Id }})"><i
-                                                                                class="fa fa-trash"></i></button>
+                                                                    <td>${{ number_format($tasa_diferenciada->MontoDesde ?? 0, 2) }}
                                                                     </td>
-                                                                </tr>
-                                                                @include('polizas.desempleo.desempleo_tasa_diferenciada.modal_tasa_diferenciada_edit')
-                                                            @endforeach
+                                                                    <td>${{ number_format($tasa_diferenciada->MontoHasta ?? 0, 2) }}
+                                                                    </td>
+                                                                @endif
 
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            @endif
+                                                                <td>{{ $tasa_diferenciada->Tasa }}%</td>
+                                                                <td><button class="btn btn-primary"
+                                                                        onclick="show_modal_tasa_diferenciada_edit({{ $tipo->TipoCalculo }})"
+                                                                        data-target="#modal-tasa-diferenciada_edit-{{ $tasa_diferenciada->Id }}"
+                                                                        data-toggle="modal">
+                                                                        <i class="fa fa-edit"></i>
+                                                                    </button>
+                                                                    <button class="btn btn-danger"
+                                                                        data-target="#modal-delete-tasa-diferenciada"
+                                                                        data-toggle="modal"
+                                                                        onclick="show_modal_delete_tasa_diferenciada({{ $tasa_diferenciada->Id }})"><i
+                                                                            class="fa fa-trash"></i></button>
+                                                                </td>
+                                                            </tr>
+                                                            @include('polizas.desempleo.desempleo_tasa_diferenciada.modal_tasa_diferenciada_edit')
+                                                        @endforeach
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
 
                                             <div class="text-center">
-                                                @if ($tipo->TipoCalculo > 0)
-                                                    <button class="btn btn-primary" type="button"
-                                                        data-target="#modal-tasa-diferenciada" data-toggle="modal"
-                                                        onclick="show_modal_tasa_diferenciada({{ $tipo->Id }},{{ $tipo->TipoCalculo }},{{ $tipo->TipoCalculo }})"><i
-                                                            class="fa fa-plus"></i></button>
-                                                @endif
+                                                <button class="btn btn-primary" type="button"
+                                                    data-target="#modal-tasa-diferenciada" data-toggle="modal"
+                                                    onclick="show_modal_tasa_diferenciada({{ $tipo->Id }},{{ $tipo->TipoCalculo }},{{ $tipo->TipoCalculo }})"><i
+                                                        class="fa fa-plus"></i></button>
+
 
 
                                             </div>
@@ -228,16 +223,6 @@
                     <div class="modal-body">
                         <div class="box-body">
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                <div class="form-group row">
-                                    <label class="control-label">Saldos y Montos</label>
-                                    <select class="form-control" name="SaldosMontos">
-                                        @foreach ($saldos_montos as $saldo)
-                                            <option value="{{ $saldo->Id }}">{{ $saldo->Abreviatura }} -
-                                                {{ $saldo->Descripcion }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
                                 <div class="form-group row">
                                     <label class="control-label">Tipo cálculo</label>
                                     <select name="TipoCalculo" class="form-control" required>
@@ -313,6 +298,18 @@
                     <div class="modal-body">
                         <div class="box-body">
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+                                <div class="form-group row">
+                                    <label class="control-label">Saldos y Montos</label>
+                                    <select class="form-control" name="SaldosMontos">
+                                        @foreach ($saldos_montos as $saldo)
+                                            <option value="{{ $saldo->Id }}">{{ $saldo->Abreviatura }} -
+                                                {{ $saldo->Descripcion }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+
                                 <input type="hidden" name="PolizaDesempleoTipoCartera" class="form-control">
                                 <input type="hidden" id="tipoCalculoIngreso" name="TipoCalculoIngreso"
                                     class="form-control">
