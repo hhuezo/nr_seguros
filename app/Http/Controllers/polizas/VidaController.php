@@ -1985,13 +1985,14 @@ class VidaController extends Controller
         //dd($exportar);
         $detalle = VidaDetalle::findOrFail($id);
 
-        $vida = Vida::findOrFail($detalle->PolizaVida);
+        $poliza_vida = Vida::findOrFail($detalle->PolizaVida);
+        $cliente = Cliente::findOrFail($poliza_vida->Asegurado);
         $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
-        $recibo_historial = VidaHistorialRecibo::where('PolizaDesempleoDetalle', $id)->orderBy('id', 'desc')->first();
+        $recibo_historial = VidaHistorialRecibo::where('PolizaVidaDetalle', $id)->orderBy('id', 'desc')->first();
         //  $calculo = $this->monto($desempleo, $detalle);
         if (!$recibo_historial) {
-            $recibo_historial = $this->save_recibo($detalle, $vida);
+            $recibo_historial = $this->save_recibo($detalle, $poliza_vida);
             //dd("insert");
         }
 
@@ -2001,7 +2002,7 @@ class VidaController extends Controller
         }*/
 
         $configuracion = ConfiguracionRecibo::first();
-        $pdf = \PDF::loadView('polizas.vida.recibo', compact('configuracion', 'recibo_historial', 'detalle', 'vida', 'meses', 'exportar'))->setWarnings(false)->setPaper('letter');
+        $pdf = \PDF::loadView('polizas.vida.recibo', compact('configuracion','cliente', 'recibo_historial', 'detalle', 'poliza_vida', 'meses', 'exportar'))->setWarnings(false)->setPaper('letter');
         //  dd($detalle);
         return $pdf->stream('Recibos.pdf');
     }

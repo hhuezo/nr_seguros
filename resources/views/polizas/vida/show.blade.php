@@ -13,8 +13,8 @@
                 <h4>Polizas de Vida </h4>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
-                <a href="{{ url('polizas/vida/') }}?idRegistro={{$poliza_vida->Id}}"><button class="btn btn-info float-right"> <i
-                            class="fa fa-arrow-left"></i></button></a>
+                <a href="{{ url('polizas/vida/') }}?idRegistro={{ $poliza_vida->Id }}"><button
+                        class="btn btn-info float-right"> <i class="fa fa-arrow-left"></i></button></a>
             </div>
             <div class="clearfix"></div>
         </div>
@@ -304,8 +304,8 @@
                 @include('polizas.vida.tab4')
             </div>
             <div class="tab-pane fade " id="contact" role="tabpanel" aria-labelledby="contact-tab">
-
-
+                <br>
+                @include('polizas.vida.tab6')
             </div>
         </div>
 
