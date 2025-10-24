@@ -52,36 +52,37 @@
                 <table class="table table-striped table-bordered">
                     <thead>
                         <tr>
+                            <th>Tipo cálculo</th>
                             <th>Linea credito</th>
-                            <th>Abreviatura</th>
                             <th>Datos Ingresados</th>
                             <th align="center">Carga de <br> archivo de cartera </th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($desempleo_tipos_cartera as $tipo_cartera)
-                            @php
-                                $total_temp = $totales_por_cartera[$tipo_cartera->Id] ?? 0;
-                            @endphp
-
+                        @foreach ($tipos_cartera as $tipo)
                             <tr>
-                                <td>{{ $tipo_cartera->saldos_montos->Descripcion ?? '' }}</td>
-                                <td>{{ $tipo_cartera->saldos_montos->Abreviatura ?? '' }}</td>
-                                <td align="right">${{ number_format($total_temp, 2) }}</td>
+                                <td>{{ $tipo->TipoCalculoTexto }}</td>
+                                <td>{{ $tipo->SaldosMontosTexto }}</td>
+                                <td style="text-align: right">
+                                    {{ $tipo->Total > 0 ? '$' . number_format($tipo->Total, 2) : '-' }}
+                                </td>
+
                                 <td align="center">
                                     @if ($desempleo->Aseguradora == 3 || $desempleo->Aseguradora == 4)
-                                        <a data-target="#modal-add-fede-{{ $tipo_cartera->Id }}" data-toggle="modal">
+                                        <a data-target="#modal-add-fede-{{ $tipo->PolizaDesempleoTipoCartera }}" data-toggle="modal">
                                             <button class="btn btn-default"><i class="fa fa-upload fa-lg"></i></button>
                                         </a>
                                     @else
-                                        <a data-target="#modal-add-{{ $tipo_cartera->Id }}" data-toggle="modal">
+                                        <a data-target="#modal-add-{{ $tipo->PolizaDesempleoTipoCartera }}" data-toggle="modal">
                                             <button class="btn btn-default"><i class="fa fa-upload fa-lg"></i></button>
                                         </a>
                                     @endif
                                 </td>
+
+                                 @include('polizas.desempleo.modal_subir_cartera')
+
                             </tr>
 
-                            @include('polizas.desempleo.modal_subir_cartera')
                         @endforeach
 
                     </tbody>
@@ -91,7 +92,7 @@
 
             </div>
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align: right;">
-                <form method="POST" action="{{ url('polizas/desempleo/validar_poliza') }}/{{$desempleo->Id}}">
+                <form method="POST" action="{{ url('polizas/desempleo/validar_poliza') }}/{{ $desempleo->Id }}">
                     @csrf
                     <button class="btn btn-primary float-right">Validar póliza</button>
                 </form>

@@ -7,6 +7,7 @@ use App\Imports\DesempleoCarteraTempFedeImport;
 use App\Imports\DesempleoCarteraTempImport;
 use App\Models\polizas\Desempleo;
 use App\Models\polizas\DesempleoCartera;
+use App\Models\polizas\DesempleoTasaDiferenciada;
 use App\Models\polizas\DesempleoTipoCartera;
 use App\Models\temp\DesempleoCarteraTemp;
 use Carbon\Carbon;
@@ -21,20 +22,30 @@ class DesempleoCarteraController extends Controller
     public function subir_cartera($id)
     {
         $desempleo = Desempleo::find($id);
-        $desempleo_tipos_cartera = $desempleo->desempleo_tipos_cartera;
 
-        // 1️⃣ Obtener tipos de cartera relacionados con la póliza
-        $desempleo_tipos_cartera = DesempleoTipoCartera::where('PolizaDesempleo', $id)->get();
 
-        // 2️⃣ Obtener los totales agrupados por tipo de cartera
-        $totales_por_cartera = DesempleoCarteraTemp::select(
-            'DesempleoTipoCartera',
-            DB::raw('SUM(TotalCredito) as total')
-        )
-            ->where('PolizaDesempleo', $id)
-            ->groupBy('DesempleoTipoCartera')
-            ->pluck('total', 'DesempleoTipoCartera');
 
+        $tipos_cartera = DB::table('poliza_desempleo_tasa_diferenciada as pdt')
+            ->join('poliza_desempleo_tipo_cartera as pdtc', 'pdt.PolizaDesempleoTipoCartera', '=', 'pdtc.Id')
+            ->leftJoin('poliza_desempleo_cartera_temp as pdct', 'pdct.DesempleoTipoCartera', '=', 'pdtc.Id')
+            ->join('saldos_montos as sm', 'sm.Id', '=', 'pdt.SaldosMontos')
+            ->select(
+                'pdt.PolizaDesempleoTipoCartera',
+                DB::raw("
+            CASE pdtc.TipoCalculo
+                WHEN 0 THEN 'No aplica'
+                WHEN 1 THEN 'Fecha'
+                WHEN 2 THEN 'Monto'
+                ELSE 'Desconocido'
+            END as TipoCalculoTexto
+        "),
+                DB::raw("GROUP_CONCAT(DISTINCT CONCAT(sm.Abreviatura, ' ', sm.Descripcion) ORDER BY sm.Id SEPARATOR ', ') as SaldosMontosTexto"),
+                DB::raw('COALESCE(SUM(pdct.TotalCredito), 0) as Total')
+            )
+            ->where('pdtc.PolizaDesempleo', $id)
+            ->groupBy('pdt.PolizaDesempleoTipoCartera', 'pdtc.TipoCalculo')
+            ->orderBy('pdt.PolizaDesempleoTipoCartera')
+            ->get();
 
 
 
@@ -82,8 +93,7 @@ class DesempleoCarteraController extends Controller
             'meses',
             'fechaInicio',
             'fechaFinal',
-            'desempleo_tipos_cartera',
-            'totales_por_cartera'
+            'tipos_cartera'
         ));
     }
 
@@ -468,6 +478,7 @@ class DesempleoCarteraController extends Controller
     public function create_pago_fedecredito(Request $request, $id)
     {
 
+
         // 🧩 Validar datos básicos del formulario
         $request->validate([
             'Axo' => 'required|integer',
@@ -592,6 +603,79 @@ class DesempleoCarteraController extends Controller
         $cartera_temp = DesempleoCarteraTemp::where('PolizaDesempleo', $id)->get();
 
 
+
+
+        //calcular la tasa diferenciada
+
+
+
+
+
+        //calculando edades y fechas de nacimiento
+        DesempleoCarteraTemp::where('PolizaDesempleo',  $id)->where('DesempleoTipoCartera',  $request->DesempleoTipoCartera)
+            ->update([
+                'FechaNacimientoDate' => DB::raw("STR_TO_DATE(FechaNacimiento, '%d/%m/%Y')"),
+                'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaFinal)"),
+                'FechaOtorgamientoDate' => DB::raw("STR_TO_DATE(FechaOtorgamiento, '%d/%m/%Y')"),
+                'EdadDesembloso' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaOtorgamientoDate)"),
+            ]);
+
+
+        $tipos_cartera = DesempleoTipoCartera::where('PolizaDesempleo', $id)->get();
+
+        foreach ($tipos_cartera as $tipo) {
+
+            foreach ($tipo->tasa_diferenciada as $tasas_diferenciadas) {
+
+                if ($tipo->TipoCalculo == 1) {
+
+                    foreach ($tasas_diferenciadas as $tasa) {
+                        //dd($tasa);
+                        DesempleoCarteraTemp::where('DesempleoTipoCartera',  $request->DesempleoTipoCartera)
+                            ->whereBetween('FechaOtorgamientoDate', [$tasa->FechaDesde, $tasa->FechaHasta])
+                            ->update([
+                                'Tasa' => $tasa->Tasa
+                            ]);
+                    }
+                } else  if ($tipo->TipoCalculo == 2) {
+
+                    foreach ($tasas_diferenciadas as $tasa) {
+                        DesempleoCarteraTemp::where('DesempleoTipoCartera',  $request->DesempleoTipoCartera)
+                            ->whereBetween('EdadDesembloso', [$tasa->EdadDesde, $tasa->EdadHasta])
+                            ->update([
+                                'Tasa' => $tasa->Tasa
+                            ]);
+                    }
+                } else {
+                    DesempleoCarteraTemp::where('DesempleoTipoCartera',  $request->DesempleoTipoCartera)
+                        ->update([
+                            'Tasa' => $desempleo->Tasa
+                        ]);
+                }
+            }
+        }
+
+
+
+
+        /**/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         foreach ($cartera_temp as $obj) {
             $errores_array = [];
 
@@ -670,22 +754,22 @@ class DesempleoCarteraController extends Controller
         }
 
 
-        //calculando edades y fechas de nacimiento
-        DesempleoCarteraTemp::where('PolizaDesempleo',  $id)->where('DesempleoTipoCartera',  $request->DesempleoTipoCartera)
-            ->update([
-                'FechaNacimientoDate' => DB::raw("STR_TO_DATE(FechaNacimiento, '%d/%m/%Y')"),
-                'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaFinal)"),
-                'FechaOtorgamientoDate' => DB::raw("STR_TO_DATE(FechaOtorgamiento, '%d/%m/%Y')"),
-                'EdadDesembloso' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaOtorgamientoDate)"),
-            ]);
 
 
-        $desempleo_cartera_temporal =  DesempleoCarteraTemp::where('PolizaDesempleo',  $id)->get();
+
+
+        /* $desempleo_cartera_temporal =  DesempleoCarteraTemp::where('PolizaDesempleo',  $id)->get();
+
+
+
 
         foreach ($desempleo_cartera_temporal as $temp) {
             $temp->TotalCredito = $temp->calculoTodalSaldo();
             $temp->update();
         }
+
+
+
 
         $poliza_desempleo_tipo_cartera = DesempleoTipoCartera::find($request->DesempleoTipoCartera);
 
@@ -715,7 +799,7 @@ class DesempleoCarteraController extends Controller
                 ->update([
                     'Tasa' => $desempleo->Tasa
                 ]);
-        }
+        }*/
 
 
 

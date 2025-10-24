@@ -1,4 +1,4 @@
-<div class="modal fade bs-example-modal-lg" id="modal-add-{{ $tipo_cartera->Id }}" tabindex="-1" role="dialog"
+<div class="modal fade bs-example-modal-lg" id="modal-add-{{ $tipo->PolizaDesempleoTipoCartera }}" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -11,27 +11,29 @@
                 </button>
             </div>
             <form action="{{ url('polizas/desempleo/create_pago') }}/{{ $desempleo->Id }}"
-                id="uploadForm{{ $tipo_cartera->Id }}" method="POST" enctype="multipart/form-data">
+                id="uploadForm{{ $tipo->PolizaDesempleoTipoCartera }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body">
-                    <div class="form-group row">
+                    {{-- <div class="form-group row">
                         <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo cartera</label>
-                        <input type="hidden" name="PolizaVidaTipoCartera" value="{{ $tipo_cartera->Id }}">
+                        <input type="hidden" name="PolizaVidaTipoCartera" value="{{ $tipo->PolizaDesempleoTipoCartera }}">
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                             <input type="text" class="form-control"
                                 value="{{ $tipo_cartera->saldos_montos->Descripcion ?? '' }}" readonly>
 
 
-                            <input type="hidden" name="DesempleoTipoCartera" class="form-control"
-                                value="{{ $tipo_cartera->Id }}" readonly>
+
                         </div>
 
-                    </div>
+                    </div> --}}
+
+                     <input type="hidden" name="DesempleoTipoCartera" class="form-control"
+                                value="{{ $tipo->PolizaDesempleoTipoCartera }}" readonly>
                     <div class="form-group row">
                         <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Año</label>
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                            <select name="Axo" id="Axo{{ $tipo_cartera->Id }}" class="form-control"
-                                onchange="calcularFechas('Axo{{ $tipo_cartera->Id }}', 'Mes{{ $tipo_cartera->Id }}', 'FechaInicio{{ $tipo_cartera->Id }}', 'FechaFinal{{ $tipo_cartera->Id }}','{{ $tipo_cartera->Id }}')">
+                            <select name="Axo" id="Axo{{ $tipo->PolizaDesempleoTipoCartera }}" class="form-control"
+                                onchange="calcularFechas('Axo{{ $tipo->PolizaDesempleoTipoCartera }}', 'Mes{{ $tipo->PolizaDesempleoTipoCartera }}', 'FechaInicio{{ $tipo->PolizaDesempleoTipoCartera }}', 'FechaFinal{{ $tipo->PolizaDesempleoTipoCartera }}','{{ $tipo->PolizaDesempleoTipoCartera }}')">
                                 @foreach ($anios as $year => $value)
                                     <option value="{{ $value }}" {{ $axo == $value ? 'selected' : '' }}>
                                         {{ $value }}
@@ -43,8 +45,8 @@
                     <div class="form-group row">
                         <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Mes</label>
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                            <select name="Mes" id="Mes{{ $tipo_cartera->Id }}" class="form-control"
-                                onchange="calcularFechas('Axo{{ $tipo_cartera->Id }}', 'Mes{{ $tipo_cartera->Id }}', 'FechaInicio{{ $tipo_cartera->Id }}', 'FechaFinal{{ $tipo_cartera->Id }}','{{ $tipo_cartera->Id }}')">
+                            <select name="Mes" id="Mes{{ $tipo->PolizaDesempleoTipoCartera }}" class="form-control"
+                                onchange="calcularFechas('Axo{{ $tipo->PolizaDesempleoTipoCartera }}', 'Mes{{ $tipo->PolizaDesempleoTipoCartera }}', 'FechaInicio{{ $tipo->PolizaDesempleoTipoCartera }}', 'FechaFinal{{ $tipo->PolizaDesempleoTipoCartera }}','{{ $tipo->PolizaDesempleoTipoCartera }}')">
                                 @for ($i = 1; $i <= 12; $i++)
                                     <option value="{{ $i }}" {{ $mes == $i ? 'selected' : '' }}>
                                         {{ $meses[$i] }}
@@ -59,14 +61,14 @@
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
 
                             <input class="form-control" type="date" name="FechaInicio"
-                                id="FechaInicio{{ $tipo_cartera->Id }}" value="{{ $fechaInicio }}" required>
+                                id="FechaInicio{{ $tipo->PolizaDesempleoTipoCartera }}" value="{{ $fechaInicio }}" required>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
                             final</label>
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                            <input class="form-control" name="FechaFinal" id="FechaFinal{{ $tipo_cartera->Id }}"
+                            <input class="form-control" name="FechaFinal" id="FechaFinal{{ $tipo->PolizaDesempleoTipoCartera }}"
                                 value="{{ $fechaFinal }}"
                                 max="{{ !empty($poliza_vida->VigenciaHasta) && strtotime($poliza_vida->VigenciaHasta) ? date('Y-m-d', strtotime($poliza_vida->VigenciaHasta)) : '' }}"
                                 type="date" required>
@@ -76,7 +78,7 @@
                         <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Archivo</label>
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                             <input class="form-control" name="Archivo" id="Archivo" type="file" required
-                                onchange="get_cartera('{{ $tipo_cartera->Id }}')">
+                                onchange="get_cartera('{{ $tipo->PolizaDesempleoTipoCartera }}')">
                         </div>
                     </div>
                     <div class="form-group row">
@@ -111,7 +113,7 @@
                         </div>
 
                     </div>
-                    <div class="alert alert-info" role="alert" id="div_error{{ $tipo_cartera->Id }}"
+                    <div class="alert alert-info" role="alert" id="div_error{{ $tipo->PolizaDesempleoTipoCartera }}"
                         style="display: none;">
                         <ul>
                             <li>Ya se tiene una cartera de este mes</li>
@@ -125,7 +127,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-primary">Subir Cartera</button>
-                    <!-- <button type="button" class="btn btn-primary" id="submitButton-{{ $tipo_cartera->Id }}">Subir Cartera</button> -->
+                    <!-- <button type="button" class="btn btn-primary" id="submitButton-{{ $tipo->PolizaDesempleoTipoCartera }}">Subir Cartera</button> -->
                 </div>
             </form>
 
@@ -138,7 +140,7 @@
 
 
 
-<div class="modal fade bs-example-modal-lg" id="modal-add-fede-{{ $tipo_cartera->Id }}" tabindex="-1"
+<div class="modal fade bs-example-modal-lg" id="modal-add-fede-{{ $tipo->PolizaDesempleoTipoCartera }}" tabindex="-1"
     role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -151,27 +153,26 @@
                 </button>
             </div>
             <form action="{{ url('polizas/desempleo/create_pago_fedecredito') }}/{{ $desempleo->Id }}"
-                id="uploadFormFede{{ $tipo_cartera->Id }}" method="POST" enctype="multipart/form-data">
+                id="uploadFormFede{{ $tipo->PolizaDesempleoTipoCartera }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body">
                     <div class="form-group row">
-                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo cartera</label>
-                        <input type="hidden" name="PolizaVidaTipoCartera" value="{{ $tipo_cartera->Id }}">
+                        <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Tipo calculo</label>
+                        <input type="hidden" name="PolizaVidaTipoCartera" value="{{ $tipo->PolizaDesempleoTipoCartera }}">
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                             <input type="text" class="form-control"
-                                value="{{ $tipo_cartera->saldos_montos->Descripcion ?? '' }}" readonly>
-
-
-                            <input type="hidden" name="DesempleoTipoCartera" class="form-control"
-                                value="{{ $tipo_cartera->Id }}" readonly>
+                                value="{{ $tipo->TipoCalculoTexto }}" readonly>
                         </div>
 
                     </div>
+
+                    <input type="hidden" name="DesempleoTipoCartera" class="form-control"
+                                value="{{ $tipo->PolizaDesempleoTipoCartera }}" readonly>
                     <div class="form-group row">
                         <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Año</label>
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                            <select name="Axo" id="AxoFede{{ $tipo_cartera->Id }}" class="form-control"
-                                onchange="calcularFechasFede('AxoFede{{ $tipo_cartera->Id }}', 'MesFede{{ $tipo_cartera->Id }}', 'FechaInicioFede{{ $tipo_cartera->Id }}', 'FechaFinalFede{{ $tipo_cartera->Id }}','{{ $tipo_cartera->Id }}')">
+                            <select name="Axo" id="AxoFede{{ $tipo->PolizaDesempleoTipoCartera }}" class="form-control"
+                                onchange="calcularFechasFede('AxoFede{{ $tipo->PolizaDesempleoTipoCartera }}', 'MesFede{{ $tipo->PolizaDesempleoTipoCartera }}', 'FechaInicioFede{{ $tipo->PolizaDesempleoTipoCartera }}', 'FechaFinalFede{{ $tipo->PolizaDesempleoTipoCartera }}','{{ $tipo->PolizaDesempleoTipoCartera }}')">
                                 @foreach ($anios as $year => $value)
                                     <option value="{{ $value }}" {{ $axo == $value ? 'selected' : '' }}>
                                         {{ $value }}
@@ -183,8 +184,8 @@
                     <div class="form-group row">
                         <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Mes</label>
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                            <select name="Mes" id="MesFede{{ $tipo_cartera->Id }}" class="form-control"
-                                onchange="calcularFechasFede('AxoFede{{ $tipo_cartera->Id }}', 'MesFede{{ $tipo_cartera->Id }}', 'FechaInicioFede{{ $tipo_cartera->Id }}', 'FechaFinalFede{{ $tipo_cartera->Id }}','{{ $tipo_cartera->Id }}')">
+                            <select name="Mes" id="MesFede{{ $tipo->PolizaDesempleoTipoCartera }}" class="form-control"
+                                onchange="calcularFechasFede('AxoFede{{ $tipo->PolizaDesempleoTipoCartera }}', 'MesFede{{ $tipo->PolizaDesempleoTipoCartera }}', 'FechaInicioFede{{ $tipo->PolizaDesempleoTipoCartera }}', 'FechaFinalFede{{ $tipo->PolizaDesempleoTipoCartera }}','{{ $tipo->PolizaDesempleoTipoCartera }}')">
                                 @for ($i = 1; $i <= 12; $i++)
                                     <option value="{{ $i }}" {{ $mes == $i ? 'selected' : '' }}>
                                         {{ $meses[$i] }}
@@ -199,14 +200,14 @@
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
 
                             <input class="form-control" type="date" name="FechaInicio"
-                                id="FechaInicioFede{{ $tipo_cartera->Id }}" value="{{ $fechaInicio }}" required>
+                                id="FechaInicioFede{{ $tipo->PolizaDesempleoTipoCartera }}" value="{{ $fechaInicio }}" required>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Fecha
                             final</label>
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                            <input class="form-control" name="FechaFinal" id="FechaFinalFede{{ $tipo_cartera->Id }}"
+                            <input class="form-control" name="FechaFinal" id="FechaFinalFede{{ $tipo->PolizaDesempleoTipoCartera }}"
                                 value="{{ $fechaFinal }}"
                                 max="{{ !empty($poliza_vida->VigenciaHasta) && strtotime($poliza_vida->VigenciaHasta) ? date('Y-m-d', strtotime($poliza_vida->VigenciaHasta)) : '' }}"
                                 type="date" required>
@@ -216,7 +217,7 @@
                         <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Archivo</label>
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                             <input class="form-control" name="Archivo" id="Archivo" type="file" required
-                                onchange="get_cartera('{{ $tipo_cartera->Id }}')">
+                                onchange="get_cartera('{{ $tipo->PolizaDesempleoTipoCartera }}')">
                         </div>
                     </div>
                     <div class="form-group row">
@@ -251,7 +252,7 @@
                         </div>
 
                     </div>
-                    <div class="alert alert-info" role="alert" id="div_error{{ $tipo_cartera->Id }}"
+                    <div class="alert alert-info" role="alert" id="div_error{{ $tipo->PolizaDesempleoTipoCartera }}"
                         style="display: none;">
                         <ul>
                             <li>Ya se tiene una cartera de este mes</li>
@@ -265,7 +266,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-primary">Subir Cartera</button>
-                    <!-- <button type="button" class="btn btn-primary" id="submitButton-{{ $tipo_cartera->Id }}">Subir Cartera</button> -->
+                    <!-- <button type="button" class="btn btn-primary" id="submitButton-{{ $tipo->PolizaDesempleoTipoCartera }}">Subir Cartera</button> -->
                 </div>
             </form>
         </div>
@@ -274,11 +275,11 @@
 
 
 <script>
-    document.getElementById('uploadForm{{ $tipo_cartera->Id }}').addEventListener('submit', function() {
+    document.getElementById('uploadForm{{ $tipo->PolizaDesempleoTipoCartera }}').addEventListener('submit', function() {
         document.getElementById('loading-overlay').style.display = 'flex'; // Muestra el overlay de carga
     });
 
-    document.getElementById('uploadFormFede{{ $tipo_cartera->Id }}').addEventListener('submit', function() {
+    document.getElementById('uploadFormFede{{ $tipo->PolizaDesempleoTipoCartera }}').addEventListener('submit', function() {
         document.getElementById('loading-overlay').style.display = 'flex'; // Muestra el overlay de carga
     });
 

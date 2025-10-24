@@ -304,22 +304,26 @@ class DesempleoController extends Controller
 
 
             if ($desempleo_tipos_cartera->tasa_diferenciada->count() > 0) {
-                /*foreach ($desempleo_tipos_cartera->tasa_diferenciada as $tasa_diferenciada) {
 
-                   $dataPagoId[] = $tasa_diferenciada->Id;
 
-                    $linea_credito = SaldoMontos::findOrFail($tasa_diferenciada->LineaCredito);
 
+                foreach ($desempleo_tipos_cartera->tasa_diferenciada as $tasa_diferenciada) {
+
+                    $dataPagoId[] = $tasa_diferenciada->Id;
+
+
+                    $linea_credito = SaldoMontos::findOrFail($tasa_diferenciada->SaldosMontos);
+                    //dd($linea_credito);
 
                     $edad = '';
 
-                    if ($deuda_tipos_cartera->TipoCalculo == 2) {
+                    if ($desempleo_tipos_cartera->TipoCalculo == 2) {
                         $edad = $tasa_diferenciada->EdadDesde . ' - ' . $tasa_diferenciada->EdadHasta . ' años';
                     }
 
                     $fecha = '';
 
-                    if ($deuda_tipos_cartera->TipoCalculo == 1) {
+                    if ($desempleo_tipos_cartera->TipoCalculo == 1) {
                         $fecha = Carbon::parse($tasa_diferenciada->FechaDesde)->format('d/m/Y') .
                             ' - ' .
                             Carbon::parse($tasa_diferenciada->FechaHasta)->format('d/m/Y');
@@ -327,16 +331,11 @@ class DesempleoController extends Controller
 
                     $dataPagoTemp->push([
 
-                        "TipoCarteraNombre" => $deuda_tipos_cartera->tipo_cartera->Nombre ?? '',
+                        "TipoCarteraNombre" => $desempleo_tipos_cartera->tipo_cartera->Nombre ?? '',
                         "Id" => $tasa_diferenciada->Id,
-                        "PolizaDeuda" => $deuda_tipos_cartera->PolizaDeuda,
-                        "TipoCartera" => $deuda_tipos_cartera->TipoCartera,
-                        "DescripcionTipoCartera" => $deuda_tipos_cartera->TipoCartera,
-                        "TipoCalculo" => $deuda_tipos_cartera->TipoCalculo,
-                        "MontoMaximoIndividual" => $deuda_tipos_cartera->MontoMaximoIndividual,
-                        // Agregando los nuevos campos
-                        "PolizaDuedaTipoCartera" => $tasa_diferenciada->PolizaDuedaTipoCartera,
-                        "LineaCredito" => $tasa_diferenciada->LineaCredito,
+                        "PolizaDeuda" => $desempleo_tipos_cartera->PolizaDesempleo,
+                        "TipoCalculo" => $desempleo_tipos_cartera->TipoCalculo,
+                        "LineaCredito" => $linea_credito->Id,
                         "DescripcionLineaCredito" => $linea_credito ? $linea_credito->Descripcion : '',
                         "AbreviaturaLineaCredito" => $linea_credito ? $linea_credito->Abreviatura : '',
                         "Fecha" => $fecha,
@@ -348,7 +347,7 @@ class DesempleoController extends Controller
 
                         "Tasa" => $tasa_diferenciada->Tasa,
                     ]);
-                }*/
+                }
             } else {
 
 
@@ -381,7 +380,7 @@ class DesempleoController extends Controller
 
         $dataPago = collect([]);
 
-
+        //dd($dataPagoTemp);
 
         foreach ($dataPagoTemp as $item) {
 
@@ -397,12 +396,12 @@ class DesempleoController extends Controller
                                         COALESCE(SUM(InteresesMoratorios), 0) as InteresesMoratorios,
                                         COALESCE(SUM(InteresesCovid), 0) as InteresesCovid,
                                         COALESCE(SUM(MontoNominal), 0) as MontoNominal,
-                                        COALESCE(SUM(TotalCredito), 0) as TotalCredito
+                                        COALESCE(SUM(SaldoTotal), 0) as TotalCredito
                                     ')
                     ->where('PolizaDesempleoDetalle', null)
                     ->where('PolizaDesempleo', $id)
-                    ->where('PolizaDeudaTipoCartera', $item['PolizaDuedaTipoCartera'])
-                    ->where('LineaCredito', $item['LineaCredito'])
+                    ->where('DesempleoTipoCartera', $item['LineaCredito'])
+                    //->where('LineaCredito', $item['LineaCredito'])
                     ->whereBetween('FechaOtorgamientoDate', [$item['FechaDesde'], $item['FechaHasta']])
                     ->first();
 
@@ -424,18 +423,17 @@ class DesempleoController extends Controller
             else if ($item['TipoCalculo'] == 2) {
                 $total = DB::table('poliza_desempleo_cartera')
                     ->selectRaw('
-                            COALESCE(SUM(MontoOtorgado), 0) as MontoOtorgado,
-                            COALESCE(SUM(SaldoCapital), 0) as SaldoCapital,
-                            COALESCE(SUM(Intereses), 0) as Intereses,
-                            COALESCE(SUM(InteresesMoratorios), 0) as InteresesMoratorios,
-                            COALESCE(SUM(InteresesCovid), 0) as InteresesCovid,
-                            COALESCE(SUM(MontoNominal), 0) as MontoNominal,
-                            COALESCE(SUM(TotalCredito), 0) as TotalCredito
-                        ')
+                                        COALESCE(SUM(MontoOtorgado), 0) as MontoOtorgado,
+                                        COALESCE(SUM(SaldoCapital), 0) as SaldoCapital,
+                                        COALESCE(SUM(Intereses), 0) as Intereses,
+                                        COALESCE(SUM(InteresesMoratorios), 0) as InteresesMoratorios,
+                                        COALESCE(SUM(InteresesCovid), 0) as InteresesCovid,
+                                        COALESCE(SUM(MontoNominal), 0) as MontoNominal,
+                                        COALESCE(SUM(SaldoTotal), 0) as TotalCredito
+                                    ')
                     ->where('PolizaDesempleoDetalle', null)
                     ->where('PolizaDesempleo', $id)
-                    ->where('PolizaDeudaTipoCartera', $item['PolizaDuedaTipoCartera'])
-                    ->where('LineaCredito', $item['LineaCredito'])
+                    ->where('DesempleoTipoCartera', $item['LineaCredito'])
                     ->whereBetween('EdadDesembloso', [$item['EdadDesde'], $item['EdadHasta']])
                     ->first();
 
@@ -492,32 +490,6 @@ class DesempleoController extends Controller
         $interesesCovid = 0.00;
         $interesesMoratorios = 0.00;
         $total = 0;
-
-        // if ($desempleo->Saldos == 1) {
-        //     $total = $cartera->SaldoCapital;
-        //     $saldoCapital = $cartera->SaldoCapital;
-        // } else if ($desempleo->Saldos == 2) {
-        //     $total = $cartera->SaldoCapital + $cartera->Intereses;
-        //     $saldoCapital = $cartera->SaldoCapital;
-        //     $intereses = $cartera->Intereses;
-        // } else if ($desempleo->Saldos == 3) {
-        //     $total = $cartera->SaldoCapital + $cartera->Intereses + $cartera->InteresesCovid;
-        //     $saldoCapital = $cartera->SaldoCapital;
-        //     $intereses = $cartera->Intereses;
-        //     $interesesCovid = $cartera->InteresesCovid;
-        // } else if ($desempleo->Saldos == 4) {
-        //     $total = $cartera->SaldoCapital + $cartera->Intereses + $cartera->InteresesCovid + $cartera->InteresesMoratorios;
-        //     $saldoCapital = $cartera->SaldoCapital;
-        //     $intereses = $cartera->Intereses;
-        //     $interesesCovid = $cartera->InteresesCovid;
-        //     $interesesMoratorios = $cartera->interesesMoratorios;
-        // } else if ($desempleo->Saldos == 5) {
-        //     $total = $cartera->MontoNominal;
-        //     $MontoNominal = $cartera->MontoNominal;
-        // } else if ($desempleo->Saldos == 6) {
-        //     $total = $cartera->MontoOtorgado;
-        //     $MontoOtorgado = $cartera->MontoOtorgado;
-        // }
 
 
         $total = $total ?? 0;
@@ -621,7 +593,7 @@ class DesempleoController extends Controller
 
         $recibo_historial = $this->save_recibo($detalle, $desempleo);
         $configuracion = ConfiguracionRecibo::first();
-        $pdf = \PDF::loadView('polizas.desempleo.recibo', compact('configuracion','cliente', 'recibo_historial', 'detalle', 'desempleo', 'meses'))->setWarnings(false)->setPaper('letter');
+        $pdf = \PDF::loadView('polizas.desempleo.recibo', compact('configuracion', 'cliente', 'recibo_historial', 'detalle', 'desempleo', 'meses'))->setWarnings(false)->setPaper('letter');
         return $pdf->stream('Recibo.pdf');
 
         //  return back();
@@ -787,7 +759,7 @@ class DesempleoController extends Controller
         }*/
 
         $configuracion = ConfiguracionRecibo::first();
-        $pdf = \PDF::loadView('polizas.desempleo.recibo', compact('configuracion','cliente', 'recibo_historial', 'detalle', 'desempleo', 'meses', 'exportar'))->setWarnings(false)->setPaper('letter');
+        $pdf = \PDF::loadView('polizas.desempleo.recibo', compact('configuracion', 'cliente', 'recibo_historial', 'detalle', 'desempleo', 'meses', 'exportar'))->setWarnings(false)->setPaper('letter');
         //  dd($detalle);
         return $pdf->stream('Recibos.pdf');
     }
@@ -1048,7 +1020,7 @@ class DesempleoController extends Controller
     }
 
 
-       public function primera_carga(Request $request)
+    public function primera_carga(Request $request)
     {
         $mes = $request->MesActual;
         $anio = $request->AxoActual;
