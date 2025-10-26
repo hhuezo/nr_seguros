@@ -30,6 +30,7 @@ use App\Models\polizas\DesempleoCartera;
 use App\Models\temp\DesempleoCarteraTemp;
 use App\Models\polizas\DesempleoDetalle;
 use App\Models\polizas\DesempleoHistorialRecibo;
+use App\Models\polizas\DesempleoTipoCartera;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -50,6 +51,24 @@ class DesempleoController extends Controller
 
     public function index(Request $request)
     {
+        $tasa_diferenciada = collect([]);
+        $tipo = DesempleoTipoCartera::get();
+        foreach($tipo as $tip){
+            $tasa_diferenciada->push([
+            'PolizaDesempleoTipoCartera' => $tip->Id,
+            'FechaDesde' => null,
+            'FechaHasta' => null,
+            'MontoDesde' => null,
+            'MontoHasta' => null,
+            'Tasa' => $tip->poliza_desempleo->Tasa,
+            'SaldosMontos' => $tip->SaldosMontos,
+            'Usuario' => 8,
+            ]);
+        }
+        dd($tipo,json_encode($tasa_diferenciada));
+
+
+
         $idRegistro = $request->idRegistro ?? 0;
 
         $desempleo = Desempleo::orderBy('Id', 'asc')->get();
