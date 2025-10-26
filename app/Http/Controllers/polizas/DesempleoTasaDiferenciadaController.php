@@ -184,6 +184,7 @@ class DesempleoTasaDiferenciadaController extends Controller
     public function update(Request $request, $id)
     {
         $messages = [
+            'SaldosMontosEdit.required' => 'El campo Saldos y Montos es obligatorio.',
             'TasaEdit.required' => 'El campo Tasa es obligatorio.',
             'TasaEdit.numeric' => 'El campo Tasa debe ser un número.',
 
@@ -237,6 +238,7 @@ class DesempleoTasaDiferenciadaController extends Controller
                 $poliza_actualizar->MontoHasta = $request->MontoHastaEdit;
             }
             $poliza_actualizar->Tasa = $request->TasaEdit;
+            $poliza_actualizar->SaldosMontos = $request->SaldosMontosEdit;
             //$poliza_actualizar->Usuario = auth()->user()->id;
             $poliza_actualizar->update();
 
@@ -282,8 +284,8 @@ class DesempleoTasaDiferenciadaController extends Controller
 
             // Mensajes personalizados
             $messages = [
-                'SaldosMontos.required' => 'El campo saldo y montos es obligatorio.',
-                'SaldosMontos.integer' => 'El campo saldo y montos debe ser un número entero.',
+                // 'SaldosMontos.required' => 'El campo saldo y montos es obligatorio.',
+                // 'SaldosMontos.integer' => 'El campo saldo y montos debe ser un número entero.',
                 'TipoCalculo.required' => 'El campo Tipo de Cálculo es obligatorio.',
                 'TipoCalculo.integer' => 'El campo Tipo de Cálculo debe ser un número entero.'
             ];

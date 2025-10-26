@@ -119,6 +119,7 @@
                                                     <thead class="table-light">
                                                         <tr class="primary-row">
                                                             <!-- <th>Línea crédito</th> -->
+                                                            <th>Linea de crédito</th>
                                                             @if ($tipo->TipoCalculo == 1)
                                                                 <th>Fecha inicio</th>
                                                                 <th>Fecha final</th>
@@ -128,7 +129,6 @@
                                                                 <th>Monto inicio</th>
                                                                 <th>Monto final</th>
                                                             @endif
-                                                            <th>Linea de crédito</th>
                                                             <th>Tasa</th>
                                                             <th>Opciones</th>
                                                         </tr>
@@ -335,8 +335,8 @@
                                 </div>
 
                                 <div class="form-group row">
-                                    <label class="control-label">Tasa</label>
-                                    <input type="number" name="Tasa" step="any" value="{{ $desempleo->Tasa }}"
+                                    <label class="control-label">Tasa </label>
+                                    <input type="number" name="Tasa" id="TasaAgregar" step="any" value="{{ $desempleo->Tasa }}"
                                         class="form-control" required>
                                 </div>
 
@@ -420,8 +420,15 @@
             // Mostrar los campos según el tipo
             if (tipo == 1) {
                 $('#divFechaDesde, #divFechaHasta').show();
+                $('#TasaAgregar').attr('required', true);
+                $('#TasaAgregar').removeAttr('readonly');
             } else if (tipo == 2) {
                 $('#divMontoDesde, #divMontoHasta').show();
+                $('#TasaAgregar').attr('required', true);
+                $('#TasaAgregar').removeAttr('readonly');
+            }else{
+                $('#TasaAgregar').attr('readonly', true);
+                $('#TasaAgregar').removeAttr('reaquired');
             }
 
             document.querySelector('input[name="PolizaDesempleoTipoCartera"]').value = id;
@@ -437,8 +444,15 @@
             // Mostrar los campos según el tipo
             if (tipo == 1) {
                 $('#divFechaDesdeEdit, #divFechaHastaEdit').show();
+                $("#TasaEditar").attr('required', true);
+                $("#TasaEditar").removeAttr('readonly');
             } else if (tipo == 2) {
                 $('#divMontoDesdeEdit, #divMontoHastaEdit').show();
+                $("#TasaEditar").attr('required', true);
+                $("#TasaEditar").removeAttr('readonly');
+            }else{
+                $("#TasaEditar").attr('readonly', true);
+                $("#TasaEditar").removeAttr('required');
             }
         }
 

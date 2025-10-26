@@ -306,7 +306,6 @@
                                                     <table class="table table-bordered">
                                                         <thead class="table-dark">
                                                             <tr class="warning-row">
-                                                                <th style="width: 40%;">Saldos y Montos</th>
                                                                 <th style="width: 20%;">Tipo cálculo</th>
                                                             </tr>
                                                         </thead>
@@ -316,14 +315,15 @@
 
                                                             @foreach ($desempleo->desempleo_tipos_cartera as $tipo)
                                                                 <tr class="tarea warning-row">
-                                                                    <td>
-                                                                        <span class="expand-icon">▼</span>
-                                                                        {{ $tipo->saldos_montos?->Abreviatura ?? '' }}
-                                                                        -{{ $tipo->saldos_montos?->Descripcion ?? '' }}
+                                                                    <td> <span class="expand-icon">▼</span>
+                                                                        @if ($tipo->TipoCalculo == 1)
+                                                                            {{ 'Fecha' }}
+                                                                        @elseif ($tipo->TipoCalculo == 2)
+                                                                            {{ 'Monto' }}
+                                                                        @else
+                                                                            {{ 'No aplica' }}
+                                                                        @endif
                                                                     </td>
-                                                                    <td>{{ $tipo->TipoCalculo == 1 ? 'Fecha' : ($tipo->TipoCalculo == 2 ? 'Monto' : 'No aplica') }}
-                                                                    </td>
-
                                                                 </tr>
 
                                                                 <tr class="subtareas-container">
@@ -337,27 +337,27 @@
                                                                                     class="table table-sm table-bordered">
                                                                                     <thead class="table-light">
                                                                                         <tr class="primary-row">
-                                                                                            <!-- <th>Linea credito</th> -->
+                                                                                            <!-- <th>Línea crédito</th> -->
+                                                                                            <th>Linea de crédito</th>
                                                                                             @if ($tipo->TipoCalculo == 1)
                                                                                                 <th>Fecha inicio</th>
                                                                                                 <th>Fecha final</th>
                                                                                             @endif
 
                                                                                             @if ($tipo->TipoCalculo == 2)
-                                                                                                <th>Edad inicio</th>
-                                                                                                <th>Edad final</th>
+                                                                                                <th>Monto inicio</th>
+                                                                                                <th>Monto final</th>
                                                                                             @endif
                                                                                             <th>Tasa</th>
+
                                                                                         </tr>
                                                                                     </thead>
                                                                                     <tbody>
                                                                                         @foreach ($tipo->tasa_diferenciada as $tasa_diferenciada)
                                                                                             <tr class="primary-row">
-                                                                                                <!-- <td>
-                                                                                                                                                                                                                                                                                            {{ $tasa_diferenciada->linea_credito?->Abreviatura ?? '' }}
-                                                                                                                                                                                                                                                                                            -
-                                                                                                                                                                                                                                                                                            {{ $tasa_diferenciada->linea_credito?->Descripcion ?? '' }}
-                                                                                                                                                                                                                                                                                        </td> -->
+                                                                                                <td>{{ $tasa_diferenciada->saldos_montos->Descripcion }}
+                                                                                                    ({{ $tasa_diferenciada->saldos_montos->Abreviatura ?? '' }})
+                                                                                                </td>
                                                                                                 @if ($tipo->TipoCalculo == 1)
                                                                                                     <td>
                                                                                                         {{ $tasa_diferenciada->FechaDesde ? date('d/m/Y', strtotime($tasa_diferenciada->FechaDesde)) : 'Sin fecha' }}
@@ -368,17 +368,16 @@
                                                                                                 @endif
 
                                                                                                 @if ($tipo->TipoCalculo == 2)
-                                                                                                    <td>{{ $tasa_diferenciada->EdadDesde }}
-                                                                                                        Años</td>
-                                                                                                    <td>{{ $tasa_diferenciada->EdadHasta }}
-                                                                                                        Años</td>
+                                                                                                    <td>${{ number_format($tasa_diferenciada->MontoDesde ?? 0, 2) }}
+                                                                                                    </td>
+                                                                                                    <td>${{ number_format($tasa_diferenciada->MontoHasta ?? 0, 2) }}
+                                                                                                    </td>
                                                                                                 @endif
 
                                                                                                 <td>{{ $tasa_diferenciada->Tasa }}%
                                                                                                 </td>
                                                                                             </tr>
                                                                                         @endforeach
-
                                                                                     </tbody>
                                                                                 </table>
                                                                             </div>
