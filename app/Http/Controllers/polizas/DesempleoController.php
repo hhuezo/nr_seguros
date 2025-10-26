@@ -1091,6 +1091,9 @@ class DesempleoController extends Controller
             $poliza->Excluido = $tempRecord->Excluido;
             $poliza->Rehabilitado = $tempRecord->Rehabilitado;
             $poliza->EdadRequisito = $tempRecord->EdadRequisito;
+            $poliza->SaldosMontos = $tempRecord->SaldosMontos;
+            $poliza->TotalCredito = $tempRecord->TotalCredito;
+            $poliza->Tasa = $tempRecord->Tasa;
             $poliza->save();
             // } catch (\Exception $e) {
             //     // Captura errores y los guarda en el log
