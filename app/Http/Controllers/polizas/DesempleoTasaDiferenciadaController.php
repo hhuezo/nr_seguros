@@ -91,7 +91,7 @@ class DesempleoTasaDiferenciadaController extends Controller
 
         if ($desempleo_tipo_cartera->TipoCalculo == 2) {
             if ($this->compColisionMontosDTasaDiferencial(null, $desempleo_tipo_cartera->Id, $request->MontoDesde,  $request->MontoHasta)) {
-                return back()->withErrors(['error' => 'Ya existe una línea de crédito que cubre total o parcialmente el rango de edad que desea registrar.']);
+                return back()->withErrors(['error' => 'Ya existe una línea de crédito que cubre total o parcialmente el rango de monto que desea registrar.']);
             }
             $tasa_diferenciada->MontoDesde = $request->MontoDesde;
             $tasa_diferenciada->MontoHasta = $request->MontoHasta;

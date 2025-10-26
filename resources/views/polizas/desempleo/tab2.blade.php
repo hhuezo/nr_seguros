@@ -87,7 +87,7 @@
                         <tr>
                             <th>Lineas de crédito</th>
                             <th>Tasa interés</th>
-                            <th>Edad</th>
+                            <th>Monto</th>
                             <th>Fecha</th>
                             <th>Monto Otorgado</th>
                             <th>Saldo capital</th>
@@ -124,7 +124,7 @@
                         <td>{{ $item['DescripcionLineaCredito'] }} ({{ $item['AbreviaturaLineaCredito'] }})
                         </td>
                         <td>{{ $item['Tasa'] }}%</td>
-                        <td>{{ $item['Edad'] }}</td>
+                        <td>{{ $item['Monto'] }}</td>
                         <td>{{ $item['Fecha'] }}</td>
                         <td style="text-align: right;" class="numeric editable"
                             id="monto_otorgado_{{ $item['Id'] }}">

@@ -625,11 +625,13 @@ class DesempleoCarteraController extends Controller
 
         foreach ($tipos_cartera as $tipo) {
 
+
             foreach ($tipo->tasa_diferenciada as $tasa) {
 
 
                 if ($tipo->TipoCalculo == 1) {
                     // 1️⃣ Un solo update para SaldosMontos, TotalCredito y Tasa
+                    //Fecha
                     DesempleoCarteraTemp::where('PolizaDesempleo', $id)
                         ->where('DesempleoTipoCartera', $request->DesempleoTipoCartera)
                         ->whereBetween('FechaOtorgamientoDate', [$tasa->FechaDesde, $tasa->FechaHasta])
@@ -641,57 +643,41 @@ class DesempleoCarteraController extends Controller
                                 $temp->save();
                             }
                         });
-                }
-
-                /* if ($tipo->TipoCalculo == 1) {
-
-                    DesempleoCarteraTemp::where('PolizaDesempleo',  $id)->where('DesempleoTipoCartera',  $request->DesempleoTipoCartera)
-                        ->whereBetween('FechaOtorgamientoDate', [$tasas_diferenciadas->FechaDesde, $tasas_diferenciadas->FechaHasta])
-                        ->update(['SaldosMontos' => $tasas_diferenciadas->SaldosMontos]);
-
-
-
+                } else  if ($tipo->TipoCalculo == 2) {
+                    //Monto
 
                     $temporal =  DesempleoCarteraTemp::where('PolizaDesempleo',  $id)->where('DesempleoTipoCartera',  $request->DesempleoTipoCartera)
-                        ->whereBetween('FechaOtorgamientoDate', [$tasas_diferenciadas->FechaDesde, $tasas_diferenciadas->FechaHasta])->get();
+                        // ->whereBetween('EdadDesembloso', [$tasa->EdadDesde, $tasa->EdadHasta])
+                        ->get();
+
+                    foreach ($temporal as $data) {
+                        $suma = $data->calculoTodalSaldo($tasa->SaldosMontos);
+                        $data->TotalCredito = $suma;
+                        $data->save();
+                    }
+
+                    DesempleoCarteraTemp::where('PolizaDesempleo', $id)
+                        ->where('DesempleoTipoCartera', $request->DesempleoTipoCartera)
+                        ->whereBetween('TotalCredito', [$tasa->MontoDesde, $tasa->MontoHasta])
+                        ->chunk(500, function ($temporales) use ($tasa) {
+                            foreach ($temporales as $temp) {
+                                $temp->SaldosMontos = $tasa->SaldosMontos;
+                                $temp->Tasa = $tasa->Tasa;
+                                $temp->save();
+                            }
+                        });
+                } else {
+                    //NO Aplica
+
+                    $temporal = DesempleoCarteraTemp::where('PolizaDesempleo',  $id)->where('DesempleoTipoCartera',  $request->DesempleoTipoCartera)
+                        ->get();
 
                     foreach ($temporal as $temp) {
-                        $saldo = $temp->calculoTodalSaldo();
+                        $saldo = $temp->calculoTodalSaldo($tasa->SaldosMontos);
                         $temp->TotalCredito = $saldo;
-                        $temp->Tasa = $tasas_diferenciadas->Tasa;
+                        $temp->SaldosMontos = $tasa->SaldosMontos;
+                        $temp->Tasa = $tasa->Tasa;
                         $temp->save();
-                    }
-                } */ else  if ($tipo->TipoCalculo == 2) {
-
-                    foreach ($tasa as $tasa) {
-
-                        $temporal =  DesempleoCarteraTemp::where('PolizaDesempleo',  $id)->where('DesempleoTipoCartera',  $request->DesempleoTipoCartera)
-                            ->whereBetween('EdadDesembloso', [$tasa->EdadDesde, $tasa->EdadHasta])
-                            ->get();
-
-
-                        foreach ($temporal as $temp) {
-                            $saldo = $temp->calculoTodalSaldo();
-                            $temp->TotalCredito = $saldo;
-                            $temp->SaldosMontos = $tasa->SaldosMontos;
-                            $temp->Tasa = $tasa->Tasa;
-                            $temp->save();
-                        }
-                    }
-                } else {
-                    foreach ($tasa as $tasa) {
-
-                        $temporal =  DesempleoCarteraTemp::where('PolizaDesempleo',  $id)->where('DesempleoTipoCartera',  $request->DesempleoTipoCartera)
-                            ->whereBetween('EdadDesembloso', [$tasa->EdadDesde, $tasa->EdadHasta])
-                            ->get();
-
-                        foreach ($temporal as $temp) {
-                            $saldo = $temp->calculoTodalSaldo();
-                            $temp->TotalCredito = $saldo;
-                            $temp->SaldosMontos = $tasa->SaldosMontos;
-                            $temp->Tasa = $tasa->Tasa;
-                            $temp->save();
-                        }
                     }
                 }
             }

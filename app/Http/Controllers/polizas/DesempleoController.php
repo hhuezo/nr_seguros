@@ -315,10 +315,10 @@ class DesempleoController extends Controller
                     $linea_credito = SaldoMontos::findOrFail($tasa_diferenciada->SaldosMontos);
                     //dd($linea_credito);
 
-                    $edad = '';
+                    $monto = '';
 
                     if ($desempleo_tipos_cartera->TipoCalculo == 2) {
-                        $edad = $tasa_diferenciada->EdadDesde . ' - ' . $tasa_diferenciada->EdadHasta . ' años';
+                        $monto = $tasa_diferenciada->MontoDesde . ' - ' . $tasa_diferenciada->MontoHasta ;
                     }
 
                     $fecha = '';
@@ -335,15 +335,16 @@ class DesempleoController extends Controller
                         "Id" => $tasa_diferenciada->Id,
                         "PolizaDeuda" => $desempleo_tipos_cartera->PolizaDesempleo,
                         "TipoCalculo" => $desempleo_tipos_cartera->TipoCalculo,
+                        "DesempleoTipoCartera" => $desempleo_tipos_cartera->Id,
                         "LineaCredito" => $linea_credito->Id,
                         "DescripcionLineaCredito" => $linea_credito ? $linea_credito->Descripcion : '',
                         "AbreviaturaLineaCredito" => $linea_credito ? $linea_credito->Abreviatura : '',
                         "Fecha" => $fecha,
-                        "Edad" => $edad,
+                        "Monto" => $monto,
                         "FechaDesde" => $tasa_diferenciada->FechaDesde ?? null,
                         "FechaHasta" => $tasa_diferenciada->FechaHasta ?? null,
-                        "EdadDesde" => $tasa_diferenciada->EdadDesde ?? null,
-                        "EdadHasta" => $tasa_diferenciada->EdadHasta ?? null,
+                        "MontoDesde" => $tasa_diferenciada->MontoDesde ?? null,
+                        "MontoHasta" => $tasa_diferenciada->MontoHasta ?? null,
 
                         "Tasa" => $tasa_diferenciada->Tasa,
                     ]);
@@ -380,11 +381,10 @@ class DesempleoController extends Controller
 
         $dataPago = collect([]);
 
-        //dd($dataPagoTemp);
+         //dd($dataPagoTemp);
 
         foreach ($dataPagoTemp as $item) {
 
-            //dd($item);
             //por fechas
             if ($item['TipoCalculo'] == 1) {
 
@@ -396,14 +396,16 @@ class DesempleoController extends Controller
                                         COALESCE(SUM(InteresesMoratorios), 0) as InteresesMoratorios,
                                         COALESCE(SUM(InteresesCovid), 0) as InteresesCovid,
                                         COALESCE(SUM(MontoNominal), 0) as MontoNominal,
-                                        COALESCE(SUM(SaldoTotal), 0) as TotalCredito
+                                        COALESCE(SUM(TotalCredito), 0) as TotalCredito
                                     ')
                     ->where('PolizaDesempleoDetalle', null)
                     ->where('PolizaDesempleo', $id)
-                    ->where('DesempleoTipoCartera', $item['LineaCredito'])
+                    ->where('DesempleoTipoCartera', $item['DesempleoTipoCartera'])
                     //->where('LineaCredito', $item['LineaCredito'])
                     ->whereBetween('FechaOtorgamientoDate', [$item['FechaDesde'], $item['FechaHasta']])
                     ->first();
+
+                // dd($total);
 
                 // Si $total es null, aseguramos que los valores sean 0
                 $item['MontoOtorgado'] = $total->MontoOtorgado ?? 0;
@@ -413,9 +415,9 @@ class DesempleoController extends Controller
                 $item['InteresesCovid'] = $total->InteresesCovid ?? 0;
                 $item['MontoNominal'] = $total->MontoNominal ?? 0;
                 $item['TotalCredito'] = $total->TotalCredito ?? 0;
-                $item['PrimaCalculada'] = ($item['TotalCredito'] > 0 && $item['Tasa'] > 0)
-                    ? $item['TotalCredito'] * $item['Tasa'] : 0;
+                $item['PrimaCalculada'] = ($item['TotalCredito'] > 0 && $item['Tasa'] > 0) ? $item['TotalCredito'] * $item['Tasa'] : 0;
                 $item['TipoCartera'] = $total->TipoCarteraNombre ?? '';
+                //  dd($item);
 
                 $dataPago->push($item);
             }
@@ -429,12 +431,12 @@ class DesempleoController extends Controller
                                         COALESCE(SUM(InteresesMoratorios), 0) as InteresesMoratorios,
                                         COALESCE(SUM(InteresesCovid), 0) as InteresesCovid,
                                         COALESCE(SUM(MontoNominal), 0) as MontoNominal,
-                                        COALESCE(SUM(SaldoTotal), 0) as TotalCredito
+                                        COALESCE(SUM(TotalCredito), 0) as TotalCredito
                                     ')
                     ->where('PolizaDesempleoDetalle', null)
                     ->where('PolizaDesempleo', $id)
-                    ->where('DesempleoTipoCartera', $item['LineaCredito'])
-                    ->whereBetween('EdadDesembloso', [$item['EdadDesde'], $item['EdadHasta']])
+                    ->where('DesempleoTipoCartera', $item['DesempleoTipoCartera'])
+                    ->whereBetween('TotalCredito', [$item['MontoDesde'], $item['MontoHasta']])
                     ->first();
 
                 // Si $total es null, aseguramos que los valores sean 0
@@ -459,7 +461,7 @@ class DesempleoController extends Controller
                                     COALESCE(SUM(InteresesMoratorios), 0) as InteresesMoratorios,
                                     COALESCE(SUM(InteresesCovid), 0) as InteresesCovid,
                                     COALESCE(SUM(MontoNominal), 0) as MontoNominal,
-                                    COALESCE(SUM(SaldoTotal), 0) as TotalCredito
+                                    COALESCE(SUM(TotalCredito), 0) as TotalCredito
                                 ')
                     ->where('PolizaDesempleoDetalle', null)
                     ->where('PolizaDesempleo', $id)
@@ -1001,6 +1003,9 @@ class DesempleoController extends Controller
             $poliza->Excluido = $tempRecord->Excluido;
             $poliza->Rehabilitado = $tempRecord->Rehabilitado;
             $poliza->EdadRequisito = $tempRecord->EdadRequisito;
+            $poliza->SaldosMontos = $tempRecord->SaldosMontos;
+            $poliza->TotalCredito = $tempRecord->TotalCredito;
+            $poliza->Tasa = $tempRecord->Tasa;
             $poliza->save();
             // } catch (\Exception $e) {
             //     // Captura errores y los guarda en el log
