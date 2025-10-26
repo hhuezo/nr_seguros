@@ -136,7 +136,7 @@
                                                     <tbody>
                                                         @foreach ($tipo->tasa_diferenciada as $tasa_diferenciada)
                                                             <tr class="primary-row">
-                                                                 <td>{{ $tasa_diferenciada->saldos_montos->Descripcion  }} ({{ $tasa_diferenciada->saldos_montos->Abreviatura ?? '' }})</td>
+                                                                 <td>{{ $tasa_diferenciada->saldos_montos->Descripcion  ?? '' }} ({{ $tasa_diferenciada->saldos_montos->Abreviatura ?? '' }})</td>
                                                                 @if ($tipo->TipoCalculo == 1)
                                                                     <td>
                                                                         {{ $tasa_diferenciada->FechaDesde ? date('d/m/Y', strtotime($tasa_diferenciada->FechaDesde)) : 'Sin fecha' }}

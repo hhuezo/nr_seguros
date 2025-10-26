@@ -7,33 +7,28 @@ use App\Models\polizas\Deuda;
 use App\Models\polizas\PolizaControlCartera;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PolizaControlCarteraController extends Controller
 {
     public function index(Request $request)
     {
         // Obtener mes y año desde el request, o usar los actuales si no se envían
-        $mes = $request->input('mes') ?? Carbon::now()->format('m');
-        $anio = $request->input('anio') ?? Carbon::now()->year;
+        $mes = $request->Mes ?? Carbon::now()->format('m');
+        $anio = $request->Anio ?? Carbon::now()->year;
+        $tipo_poliza_id = $request->TipoPoliza ?? 1;
 
-        // Crear una fecha con el mes y año proporcionados
-        $inicioMes = Carbon::createFromDate($anio, $mes, 1)->startOfMonth()->toDateString();
-        $finMes = Carbon::createFromDate($anio, $mes, 1)->endOfMonth()->toDateString();
-
-
-        /*$polizas_deuda = Deuda::where('VigenciaDesde', '<=', $finMes)
-            ->where('VigenciaHasta', '>=', $inicioMes)
-            ->get();*/
-
-        $polizas_deuda = Deuda::where('VigenciaDesde', '<=', $finMes)
-            ->where('VigenciaHasta', '>=', $inicioMes)
+        // Consulta principal
+        $polizas_deuda = Deuda::leftJoin('poliza_deuda_detalle', 'poliza_deuda_detalle.Deuda', '=', 'poliza_deuda.Id')
+            ->select('poliza_deuda.*', 'poliza_deuda_detalle.*')
+            ->addSelect(DB::raw('(SELECT COUNT(*) FROM poliza_deuda_cartera WHERE poliza_deuda_cartera.PolizaDeuda = poliza_deuda.Id) as UsuariosReportados'))
             ->with(['control_cartera_por_mes_anio' => function ($query) use ($mes, $anio) {
                 $query->where('Mes', $mes)
                     ->where('Axo', $anio);
             }])
             ->get();
 
-
+        // Meses para selector
         $meses = [
             '01' => 'Enero',
             '02' => 'Febrero',
@@ -51,6 +46,7 @@ class PolizaControlCarteraController extends Controller
 
         return view('polizas.control_cartera.index', compact('polizas_deuda', 'anio', 'mes', 'meses'));
     }
+
 
     public function edit($id, $tipo, $anio, $mes)
     {

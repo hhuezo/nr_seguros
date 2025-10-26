@@ -65,7 +65,6 @@ class DesempleoController extends Controller
             'Usuario' => 8,
             ]);
         }
-        dd($tipo,json_encode($tasa_diferenciada));
 
 
 
