@@ -56,6 +56,7 @@
                             <th>Linea credito</th>
                             <th>Datos Ingresados</th>
                             <th align="center">Carga de <br> archivo de cartera </th>
+                            {{-- <th align="center">Eliminar de <br> archivo de cartera </th> --}}
                         </tr>
                     </thead>
                     <tbody>
@@ -69,20 +70,28 @@
 
                                 <td align="center">
                                     @if ($desempleo->Aseguradora == 3 || $desempleo->Aseguradora == 4)
-                                        <a data-target="#modal-add-fede-{{ $tipo->PolizaDesempleoTipoCartera }}" data-toggle="modal">
+                                        <a data-target="#modal-add-fede-{{ $tipo->PolizaDesempleoTipoCartera }}"
+                                            data-toggle="modal">
                                             <button class="btn btn-default"><i class="fa fa-upload fa-lg"></i></button>
                                         </a>
                                     @else
-                                        <a data-target="#modal-add-{{ $tipo->PolizaDesempleoTipoCartera }}" data-toggle="modal">
+                                        <a data-target="#modal-add-{{ $tipo->PolizaDesempleoTipoCartera }}"
+                                            data-toggle="modal">
                                             <button class="btn btn-default"><i class="fa fa-upload fa-lg"></i></button>
                                         </a>
                                     @endif
+                                    @if($tipo->Total > 0)
+                                    <a data-target="#modal-delete-{{ $tipo->PolizaDesempleoTipoCartera }}"
+                                        data-toggle="modal">
+                                        <button class="btn btn-default"><i class="fa fa-trash fa-lg"></i></button>
+                                    </a>
+                                    @endif
                                 </td>
 
-                                 @include('polizas.desempleo.modal_subir_cartera')
+                                @include('polizas.desempleo.modal_subir_cartera')
+                                @include('polizas.desempleo.modal_eliminar_cartera')
 
                             </tr>
-
                         @endforeach
 
                     </tbody>
