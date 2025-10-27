@@ -27,12 +27,15 @@ class ResponsabilidadMaximaExport implements FromCollection, WithHeadings
 
         $responsabilidadMaxima = $deuda->ResponsabilidadMaxima ?? 1000000;
 
+
+
         //fedecredito
         if ($deuda->Aseguradora == 3 || $deuda->Aseguradora == 4) {
-            $data = PolizaDeudaTempCartera::where('PolizaDeuda', $this->id)
+            $data = PolizaDeudaTempCartera::where('poliza_deuda_temp_cartera.PolizaDeuda', $this->id)
                 ->where('TotalCredito', '>', $responsabilidadMaxima)
                ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
-                ->join('tipo_cartera as tc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'tc.Id')
+                ->join('poliza_deuda_tipo_cartera as pdtc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'pdtc.Id')
+                ->join('tipo_cartera as tc', 'pdtc.TipoCartera', '=', 'tc.Id')
                 ->select([
                     'TipoDocumento',
                     'Dui',
@@ -60,11 +63,11 @@ class ResponsabilidadMaximaExport implements FromCollection, WithHeadings
                 ->orderBy('NumeroReferencia')
                 ->get();
         } else {
-            $data = PolizaDeudaTempCartera::where('PolizaDeuda', $this->id)
-                ->where('User', auth()->user()->id)
+            $data = PolizaDeudaTempCartera::where('poliza_deuda_temp_cartera.PolizaDeuda', $this->id)
                 ->where('TotalCredito', '>', $responsabilidadMaxima)
-                 ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
-                ->join('tipo_cartera as tc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'tc.Id')
+                ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
+                ->join('poliza_deuda_tipo_cartera as pdtc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'pdtc.Id')
+                ->join('tipo_cartera as tc', 'pdtc.TipoCartera', '=', 'tc.Id')
                 ->select([
                     'Dui',
                     'Pasaporte',
