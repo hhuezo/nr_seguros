@@ -28,11 +28,10 @@ class ResponsabilidadMaximaExport implements FromCollection, WithHeadings
         $responsabilidadMaxima = $deuda->ResponsabilidadMaxima ?? 1000000;
 
         //fedecredito
-        if ($deuda->Aseguradora == 3) {
+        if ($deuda->Aseguradora == 3 || $deuda->Aseguradora == 4) {
             $data = PolizaDeudaTempCartera::where('PolizaDeuda', $this->id)
-                ->where('User', auth()->user()->id)
                 ->where('TotalCredito', '>', $responsabilidadMaxima)
-                ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
+               ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
                 ->join('tipo_cartera as tc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'tc.Id')
                 ->select([
                     'TipoDocumento',
@@ -64,7 +63,7 @@ class ResponsabilidadMaximaExport implements FromCollection, WithHeadings
             $data = PolizaDeudaTempCartera::where('PolizaDeuda', $this->id)
                 ->where('User', auth()->user()->id)
                 ->where('TotalCredito', '>', $responsabilidadMaxima)
-                ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
+                 ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
                 ->join('tipo_cartera as tc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'tc.Id')
                 ->select([
                     'Dui',
