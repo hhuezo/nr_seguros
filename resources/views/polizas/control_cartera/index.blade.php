@@ -6,41 +6,50 @@
         }
     </style>
     <div class="x_panel">
-        <div class="x_title">
-            <div class="col-md-4 col-sm-4 col-xs-12">
-                <h4>Control de flujo de carteras</h4>
+        <form method="GET" action="{{ url('control_cartera') }}">
+            <div class="x_title">
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <h4>Control de flujo de carteras</h4>
+                </div>
+
+                <div class="col-md-2 col-sm-12 col-xs-12" align="right">
+                    <select class="form-control" name="TipoPoliza" id="TipoPoliza">
+                        <option value="1" {{ request('TipoPoliza') == 1 ? 'selected' : '' }}>Poliza deuda</option>
+                        <option value="2" {{ request('TipoPoliza') == 2 ? 'selected' : '' }}>Poliza vida</option>
+                        <option value="3" {{ request('TipoPoliza') == 3 ? 'selected' : '' }}>Poliza desempleo</option>
+                        <option value="4" {{ request('TipoPoliza') == 4 ? 'selected' : '' }}>Poliza residencia</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2 col-sm-12 col-xs-12" align="right">
+                    <select class="form-control" name="Mes" id="Mes">
+                        @foreach ($meses as $key => $nombre)
+                            <option value="{{ $key }}" @if ($key == $mes) selected @endif>
+                                {{ $nombre }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-2 col-sm-12 col-xs-12" align="right">
+                    <div class="input-group">
+                        <select class="form-control" name="Anio" id="Anio">
+                            @for ($i = date('Y'); $i >= 2024; $i--)
+                                <option value="{{ $i }}" @if ($i == $anio) selected @endif>
+                                    {{ $i }}
+                                </option>
+                            @endfor
+                        </select>
+                        <span class="input-group-btn">
+                            <button type="submit" class="btn btn-primary">Aceptar</button>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="clearfix"></div>
             </div>
+        </form>
 
-            <div class="col-md-2 col-sm-12 col-xs-12" align="right">
-
-                <select class="form-control" name="TipoPoliza" id="TipoPoliza">
-                    <option value="1">Poliza deuda</option>
-                    <option value="2">Poliza vida</option>
-                    <option value="3">Poliza desempleo</option>
-                    <option value="4">Poliza residencia</option>
-                </select>
-            </div>
-            <div class="col-md-2 col-sm-12 col-xs-12" align="right">
-
-                <select class="form-control" name="Mes" id="Mes">
-                    @foreach ($meses as $key => $nombre)
-                        <option value="{{ $key }}" @if ($key == $mes) selected @endif>
-                            {{ $nombre }}</option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div class="col-md-2 col-sm-12 col-xs-12" align="right">
-
-                <select class="form-control" name="Anio" id="Anio">
-                    @for ($i = date('Y'); $i >= 2024; $i--)
-                        <option value="{{ $i }}" @if ($i == $anio) selected @endif>
-                            {{ $i }}</option>
-                    @endfor
-                </select>
-            </div>
-            <div class="clearfix"></div>
-        </div>
 
 
         <div class="row">
@@ -65,7 +74,7 @@
                             <th>Usuarios reportados</th>
 
                             <th>Suma asegurada</th>
-                             <th>Tarifa</th>
+                            <th>Tarifa</th>
                             <th>Prima bruta</th>
                             <th>Extra prima</th>
                             <th>Prima emitida</th>
@@ -86,59 +95,65 @@
                     </thead>
                     <tbody>
                         @php($i = 1)
-                        @foreach ($polizas_deuda as $deuda)
+
+                        @foreach ($registro_control as $registro)
                             <tr>
                                 <td>
-                                    <a
-                                        href="{{ url('control_cartera') }}/{{ $deuda->Id }}/1/{{ $anio }}/{{ $mes }}">
-                                        <button class="btn btn-primary"><i class="fa fa-edit"></i></button>
-                                    </a>
+                                    <button type="button" class="btn btn-primary" data-toggle="modal"
+                                        data-target="#modal-edit-{{ $registro->Id }}">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
                                 </td>
 
                                 {{-- Datos base --}}
-                                <td>{{ $deuda->clientes->Nombre ?? '' }}</td>
-                                <td>{{ $deuda->VigenciaDesde ? date('d/m/Y', strtotime($deuda->VigenciaDesde)) : '' }}</td>
-                                <td>{{ $deuda->VigenciaHasta ? date('d/m/Y', strtotime($deuda->VigenciaHasta)) : '' }}</td>
+                                <td>{{ $registro->ClienteNombre ?? '' }}</td>
+                                <td>{{ $registro->VigenciaDesde ? date('d/m/Y', strtotime($registro->VigenciaDesde)) : '' }}
+                                </td>
+                                <td>{{ $registro->VigenciaHasta ? date('d/m/Y', strtotime($registro->VigenciaHasta)) : '' }}
+                                </td>
                                 <td>Deuda</td>
-                                <td>{{ $deuda->aseguradoras->Abreviatura ?? '' }}</td>
-                                <td>{{ $deuda->NumeroPoliza }}</td>
+                                <td>{{ $registro->ProductoNombre ?? '' }}</td>
+                                <td>{{ $registro->NumeroPoliza }}</td>
 
                                 {{-- Campos de control_cartera (solo si existen) --}}
-                                <td>{{ optional($deuda->control_cartera_por_mes_anio)->FechaRecepcionArchivo ? date('d/m/Y', strtotime($deuda->control_cartera_por_mes_anio->FechaRecepcionArchivo)) : '' }}
-                                </td>
-                                <td>{{ optional($deuda->control_cartera_por_mes_anio)->FechaEnvioCia ? date('d/m/Y', strtotime($deuda->control_cartera_por_mes_anio->FechaEnvioCia)) : '' }}
-                                </td>
+                                <td></td>
+                                <td></td>
                                 <td></td> {{-- Trabajo efectuado (no existe) --}}
                                 <td></td> {{-- Hora tarea (no existe) --}}
                                 <td></td> {{-- Flujo asignado (no existe) --}}
-                                <td>{{ $deuda->Usuario ?? '' }}</td>
-                                <td>{{ number_format($deuda->UsuariosReportados, 0, '.', ',') }}</td>
+                                <td>{{ $registro->Usuario ?? '' }}</td>
+                                <td style="text-align: right">
+                                    {{ number_format($registro->UsuariosReportados ?? 0, 0, '.', ',') }}</td>
 
                                 {{-- ✅ Campos reales de $deuda --}}
-                                <td>{{ number_format($deuda->MontoCartera, 2) }}</td>
-                                <td>{{ number_format($deuda->Tasa, 2) }}</td>
-                                <td>{{ number_format($deuda->PrimaCalculada, 2) }}</td>
-                                <td>{{ number_format($deuda->ExtraPrima, 2) }}</td>
-                                <td>{{ number_format($deuda->PrimaDescontada, 2) }}</td>
-                                <td>{{ number_format($deuda->TasaComision, 2) }}</td>
-                                <td>{{ number_format($deuda->Comision, 2) }}</td>
-                                <td>{{ number_format($deuda->IvaSobreComision ?? $deuda->Iva, 2) }}</td>
-                                <td>{{ number_format($deuda->APagar, 2) }}</td>
+                                <td>{{ number_format($registro->MontoCartera ?? 0, 2) }}</td>
+                                <td>{{ number_format($registro->Tasa ?? 0, 2) }}</td>
+                                <td>{{ number_format($registro->PrimaCalculada ?? 0, 2) }}</td>
+                                <td>{{ number_format($registro->ExtraPrima ?? 0, 2) }}</td>
+                                <td>{{ number_format($registro->PrimaDescontada ?? 0, 2) }}</td>
+                                <td>{{ number_format($registro->TasaComision ?? 0, 2) }}</td>
+                                <td>{{ number_format($registro->Comision ?? 0, 2) }}</td>
+                                <td>{{ number_format($registro->IvaSobreComision ?? ($registro->Iva ?? 0), 2) }}</td>
+                                <td>{{ number_format($registro->APagar ?? 0, 2) }}</td>
 
-                                <td>{{ $deuda->Anexo }}</td>
-                                <td>{{ $deuda->VigenciaHasta ? date('d/m/Y', strtotime($deuda->VigenciaHasta)) : '' }}</td>
+                                <td>{{ $registro->Anexo ?? '' }}</td>
+                                <td>{{ $registro->VigenciaHasta ? date('d/m/Y', strtotime($registro->VigenciaHasta)) : '' }}
+                                </td>
 
                                 {{-- Columnas sin campo real --}}
                                 <td></td> {{-- Fecha envío corrección --}}
                                 <td></td> {{-- Fecha seguimiento cobro --}}
                                 <td></td> {{-- Fecha reporte CIA --}}
                                 <td></td> {{-- Reproceso NR --}}
-                                <td>{{ $deuda->FechaIngreso ? date('d/m/Y', strtotime($deuda->FechaIngreso)) : '' }}</td>
-                                <td>{{ $deuda->Comentario ?? '' }}</td>
+                                <td>{{ $registro->FechaIngreso ? date('d/m/Y', strtotime($registro->FechaIngreso)) : '' }}
+                                </td>
+                                <td>{{ $registro->Comentario ?? '' }}</td>
                                 <td></td> {{-- Número Cisco --}}
                             </tr>
-                            @php($i++)
+                            @include('polizas.control_cartera.modal_edit')
                         @endforeach
+
+
                     </tbody>
 
                 </table>

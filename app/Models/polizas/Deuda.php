@@ -130,12 +130,9 @@ class Deuda extends Model
 
     public function control_cartera()
     {
-        return $this->belongsTo(PolizaControlCartera::class, 'DeudaId', 'Id');
+        return $this->belongsTo(PolizaDeclarativaControl::class, 'DeudaId', 'Id');
     }
 
 
-    public function control_cartera_por_mes_anio()
-    {
-        return $this->hasOne(PolizaControlCartera::class, 'DeudaId', 'Id');
-    }
+
 }
