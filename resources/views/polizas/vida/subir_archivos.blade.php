@@ -172,7 +172,7 @@
                                     @endif
                                     @if ($obj->Total > 0)
                                         <a data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal">
-                                            <button class="btn btn-default"><i class="fa fa-upload fa-lg"></i></button> </a>
+                                            <button class="btn btn-default"><i class="fa fa-trash fa-lg"></i></button> </a>
                                     @endif
                                 </td>
                             </tr>
