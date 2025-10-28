@@ -2002,7 +2002,7 @@ class VidaController extends Controller
         }*/
 
         $configuracion = ConfiguracionRecibo::first();
-        $pdf = \PDF::loadView('polizas.vida.recibo', compact('configuracion','cliente', 'recibo_historial', 'detalle', 'poliza_vida', 'meses', 'exportar'))->setWarnings(false)->setPaper('letter');
+        $pdf = \PDF::loadView('polizas.vida.recibo', compact('configuracion', 'cliente', 'recibo_historial', 'detalle', 'poliza_vida', 'meses', 'exportar'))->setWarnings(false)->setPaper('letter');
         //  dd($detalle);
         return $pdf->stream('Recibos.pdf');
     }
@@ -2141,6 +2141,14 @@ class VidaController extends Controller
         $comen->save();
 
         alert()->success('El registro ha sido ingresado correctamente');
+        return back();
+    }
+
+    public function eliminar_pago(Request $request, $id)
+    {
+        // dd($id);
+        VidaCarteraTemp::where('PolizaVida', $id)->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)->delete();
+        alert()->success('Cartera eliminada correctamente');
         return back();
     }
 

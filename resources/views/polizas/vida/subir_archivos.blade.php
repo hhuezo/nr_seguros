@@ -170,10 +170,15 @@
                                         <a data-target="#modal-add-{{ $obj->Id }}" data-toggle="modal">
                                             <button class="btn btn-default"><i class="fa fa-upload fa-lg"></i></button> </a>
                                     @endif
+                                    @if ($obj->Total > 0)
+                                        <a data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal">
+                                            <button class="btn btn-default"><i class="fa fa-upload fa-lg"></i></button> </a>
+                                    @endif
                                 </td>
                             </tr>
                             @include('polizas.vida.add_cartera')
                             @include('polizas.vida.add_cartera_fede')
+                            @include('polizas.vida.modal_eliminar_cartera')
                         @endforeach
 
 

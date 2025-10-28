@@ -15,6 +15,7 @@ Route::middleware(['web'])->group(function () {
 
 
     Route::post('polizas/vida/create_pago/{id}', [VidaController::class, 'create_pago']);
+    Route::post('polizas/vida/eliminar_pago/{id}', [VidaController::class, 'eliminar_pago']);
     Route::get('polizas/vida/subir_cartera/{id}', [VidaController::class, 'subir_cartera']);
     Route::post('polizas/vida/validar_poliza/{id}', [VidaController::class, 'validar_poliza']);
     Route::post('polizas/vida/delete_temp/{id}', [VidaController::class, 'delete_temp']);

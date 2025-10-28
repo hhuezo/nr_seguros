@@ -27,6 +27,7 @@ Route::middleware(['web'])->group(function () {
     Route::get('polizas/deuda/get_historico', [DeudaController::class, 'get_historico']);
 
     Route::post('polizas/deuda/create_pago', [DeudaCarteraController::class, 'create_pago']);
+    Route::post('polizas/deuda/eliminar_pago/{id}', [DeudaCarteraController::class, 'eliminar_pago']);
     Route::post('polizas/deuda/create_pago_recibo', [DeudaCarteraController::class, 'create_pago_recibo']);
     Route::post('polizas/deuda/validar_poliza', [DeudaCarteraController::class, 'validar_poliza']);
     Route::post('polizas/deuda/validar_poliza_recibos', [DeudaCarteraController::class, 'validar_poliza_recibos']);

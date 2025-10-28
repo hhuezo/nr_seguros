@@ -159,6 +159,10 @@
                             <a data-target="#modal-add-{{ $obj->Id }}" data-toggle="modal">
                                 <button class="btn btn-default"><i class="fa fa-upload fa-lg"></i></button> </a>
                             @endif
+                            @if($obj->Total > 0)
+                                <a data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal">
+                                <button class="btn btn-default"><i class="fa fa-trash fa-lg"></i></button> </a>
+                            @endif
 
                         </td>
 
@@ -285,6 +289,42 @@
                             </div>
                         </div>
                     </div>
+                    <div class="modal fade bs-example-modal-lg" id="modal-delete-{{ $obj->Id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                                        <h5 class="modal-title" id="exampleModalLabel">Subir archivo Excel..</h5>
+                                    </div>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <form action="{{ url('polizas/deuda/eliminar_pago') }},{{$deuda->Id}}" method="POST" >
+                                    @csrf
+                                    <div class="modal-body">
+                                        <div class="form-group row">
+
+                                            <input type="hidden" name="PolizaDeudaTipoCartera" value="{{ $obj->Id }}">
+
+
+                                    </div>
+
+                                    <div class="clearfix"></div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+                                        <button type="submit" class="btn btn-primary">Eliminar Cartera</button>
+                                        <!-- <button type="button" class="btn btn-primary" id="submitButton-{{$obj->Id}}">Subir Cartera</button> -->
+                                    </div>
+                                </form>
+
+
+
+
+                            </div>
+                        </div>
+                    </div>
+
                     <script>
                         document.getElementById('uploadForm{{$obj->Id}}').addEventListener('submit', function() {
                             document.getElementById('loading-overlay').style.display = 'flex'; // Muestra el overlay de carga

@@ -206,6 +206,13 @@ class DeudaCarteraController extends Controller
         ));
     }
 
+    public function eliminar_pago(Request $request,$id){
+       // dd($id);
+        PolizaDeudaTempCartera::where('PolizaDeuda',$id)->where('PolizaDeudaTipoCartera' ,$request->PolizaDeudaTipoCartera)->delete();
+        alert()->success('Cartera eliminada correctamente');
+        return back();
+    }
+
     public function create_pago(Request $request)
     {
         $deuda_tipo_cartera = PolizaDeudaTipoCartera::findOrFail($request->PolizaDeudaTipoCartera);
