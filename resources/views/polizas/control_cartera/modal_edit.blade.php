@@ -66,25 +66,15 @@
                                     value="{{ $registro->FechaEnvioCliente }}">
                             </div>
 
-                            <div class="form-group">
-                                <label>% Rentabilidad</label>
-                                <input type="number" step="0.01" name="PorcentajeRentabilidad" class="form-control"
-                                    value="{{ $registro->PorcentajeRentabilidad }}">
-                            </div>
-
-                            <div class="form-group">
-                                <label>Valor descuento</label>
-                                <input type="number" step="0.01" name="ValorDescuentoRentabilidad"
-                                    class="form-control" value="{{ $registro->ValorDescuentoRentabilidad }}">
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="form-group">
+                             <div class="form-group">
                                 <label>Anexo declaración</label>
                                 <input type="text" name="AnexoDeclaracion" class="form-control"
                                     value="{{ $registro->AnexoDeclaracion }}">
                             </div>
+                        </div>
+
+                        <div class="col-md-6">
+
 
                             <div class="form-group">
                                 <label>Número Cisco</label>

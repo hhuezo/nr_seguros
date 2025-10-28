@@ -16,7 +16,8 @@ class PolizaControlCarteraController extends Controller
     {
 
         // Obtener mes y año desde el request, o usar los actuales si no se envían
-        $mes = $request->Mes ?? Carbon::now()->subMonth()->format('m');
+        $mes = $request->Mes ?? Carbon::now()->subMonth()->format('n');
+
         $anio = $request->Anio ?? Carbon::now()->year;
         $tipo_poliza_id = $request->TipoPoliza ?? 1;
 
@@ -47,9 +48,14 @@ class PolizaControlCarteraController extends Controller
             ->where('poliza_declarativa_control.Axo', $anio)
             ->where('poliza_declarativa_control.Mes', $mes)
 
+
             // === Joins base ===
             ->join('poliza_deuda', 'poliza_deuda.Id', '=', 'poliza_declarativa_control.PolizaDeudaId')
-            ->leftJoin('poliza_deuda_detalle', 'poliza_deuda_detalle.Deuda', '=', 'poliza_deuda.Id')
+            ->leftJoin('poliza_deuda_detalle', function ($join) use ($anio, $mes) {
+                $join->on('poliza_deuda_detalle.Deuda', '=', 'poliza_deuda.Id')
+                    ->where('poliza_deuda_detalle.Axo', '=', $anio)
+                    ->where('poliza_deuda_detalle.Mes', '=', $mes);
+            })
             ->join('cliente', 'cliente.Id', '=', 'poliza_deuda.Asegurado')
             ->join('users', 'users.id', '=', 'poliza_deuda.Usuario')
 
@@ -68,8 +74,8 @@ class PolizaControlCarteraController extends Controller
                 'poliza_declarativa_control.TrabajoEfectuadoDiaHabil',
                 'poliza_declarativa_control.HoraTarea',
                 'poliza_declarativa_control.FlujoAsignado',
-                'poliza_declarativa_control.PorcentajeRentabilidad',
-                'poliza_declarativa_control.ValorDescuentoRentabilidad',
+                //'poliza_declarativa_control.PorcentajeRentabilidad',
+                //'poliza_declarativa_control.ValorDescuentoRentabilidad',
                 'poliza_declarativa_control.AnexoDeclaracion',
                 'poliza_declarativa_control.NumeroSisco',
                 'poliza_declarativa_control.FechaVencimiento',
@@ -97,12 +103,14 @@ class PolizaControlCarteraController extends Controller
                 'poliza_deuda_detalle.PrimaDescontada',
                 'poliza_deuda_detalle.TasaComision',
                 'poliza_deuda_detalle.Comision',
+                'poliza_deuda_detalle.Retencion',
                 'poliza_deuda_detalle.IvaSobreComision',
                 'poliza_deuda_detalle.Iva',
                 'poliza_deuda_detalle.APagar',
                 'poliza_deuda_detalle.Anexo',
                 'poliza_deuda_detalle.Comentario',
                 'poliza_deuda_detalle.FechaIngreso',
+                'poliza_deuda_detalle.Descuento as ValorDescuentoRentabilidad',
 
                 // === Cliente ===
                 'cliente.Nombre as ClienteNombre',
@@ -117,13 +125,17 @@ class PolizaControlCarteraController extends Controller
                 'poliza_declarativa_reproceso.Nombre as ReprocesoNombre',
 
                 // === Conteo de usuarios reportados ===
-                DB::raw('(SELECT COUNT(*)
-                  FROM poliza_deuda_cartera
-                  WHERE poliza_deuda_cartera.PolizaDeuda = poliza_deuda.Id) AS UsuariosReportados')
+                DB::raw("(SELECT COUNT(*)
+                    FROM poliza_deuda_cartera AS c
+                    WHERE c.PolizaDeuda = poliza_deuda.Id
+                    AND c.Axo = {$anio}
+                    AND c.Mes = {$mes}
+                ) AS UsuariosReportados")
             )
 
             ->orderBy('poliza_deuda.Id')
             ->get();
+
 
 
         $reprocesos = PolizaDeclarativaReproceso::where('Activo', 1)->get();
@@ -131,15 +143,15 @@ class PolizaControlCarteraController extends Controller
 
         // Meses para selector
         $meses = [
-            '01' => 'Enero',
-            '02' => 'Febrero',
-            '03' => 'Marzo',
-            '04' => 'Abril',
-            '05' => 'Mayo',
-            '06' => 'Junio',
-            '07' => 'Julio',
-            '08' => 'Agosto',
-            '09' => 'Septiembre',
+            '1' => 'Enero',
+            '2' => 'Febrero',
+            '3' => 'Marzo',
+            '4' => 'Abril',
+            '5' => 'Mayo',
+            '6' => 'Junio',
+            '7' => 'Julio',
+            '8' => 'Agosto',
+            '9' => 'Septiembre',
             '10' => 'Octubre',
             '11' => 'Noviembre',
             '12' => 'Diciembre',
@@ -171,8 +183,6 @@ class PolizaControlCarteraController extends Controller
         $control_cartera->TrabajoEfectuadoDiaHabil   = $request->TrabajoEfectuadoDiaHabil !== '' ? $request->TrabajoEfectuadoDiaHabil : null;
         $control_cartera->HoraTarea                  = $request->HoraTarea ?: null;
         $control_cartera->FlujoAsignado              = $request->FlujoAsignado ?: null;
-        $control_cartera->PorcentajeRentabilidad     = $request->PorcentajeRentabilidad ?: null;
-        $control_cartera->ValorDescuentoRentabilidad = $request->ValorDescuentoRentabilidad ?: null;
         $control_cartera->AnexoDeclaracion           = $request->AnexoDeclaracion ?: null;
         $control_cartera->NumeroSisco                = $request->NumeroSisco ?: null;
         $control_cartera->FechaVencimiento           = $request->FechaVencimiento ?: null;

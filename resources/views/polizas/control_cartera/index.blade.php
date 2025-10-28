@@ -122,32 +122,71 @@
                                 <td>{{ $registro->HoraTarea ?? '' }}</td>
                                 <td>{{ $registro->FlujoAsignado ?? '' }}</td>
                                 <td>{{ $registro->Usuario ?? '' }}</td>
-                                <td class="text-end">{{ number_format($registro->UsuariosReportados ?? 0, 0, '.', ',') }}
+
+                                <td class="text-end">
+                                    {{ $registro->UsuariosReportados && $registro->UsuariosReportados != 0 ? number_format($registro->UsuariosReportados, 0, '.', ',') : '' }}
                                 </td>
-                                <td>{{ number_format($registro->MontoCartera ?? 0, 2) }}</td>
-                                <td>{{ number_format($registro->Tasa ?? 0, 2) }}</td>
-                                <td>{{ number_format($registro->PrimaCalculada ?? 0, 2) }}</td>
-                                <td>{{ number_format($registro->ExtraPrima ?? 0, 2) }}</td>
-                                <td>{{ number_format($registro->PrimaDescontada ?? 0, 2) }}</td>
-                                <td>{{ number_format($registro->Descuento ?? 0, 2) }}  </td>
-                                <td>-</td>
-                                <td>{{ number_format($registro->PrimaDescontada ?? 0, 2) }}</td>
-                                <td>{{ number_format($registro->TasaComision ?? 0, 2) }}</td>
-                                <td>{{ number_format($registro->Comision ?? 0, 2) }}</td>
-                                <td>{{ number_format($registro->IvaSobreComision ?? ($registro->Iva ?? 0), 2) }}</td>
-                                <td>-</td>
-                                <td>{{ number_format($registro->APagar ?? 0, 2) }}</td>
+                                <td>
+                                    {{ $registro->MontoCartera && $registro->MontoCartera != 0 ? number_format($registro->MontoCartera, 2) : '' }}
+                                </td>
+                                <td>
+                                    {{ $registro->Tasa && $registro->Tasa != 0 ? number_format($registro->Tasa, 2) : '' }}
+                                </td>
+                                <td>
+                                    {{ $registro->PrimaCalculada && $registro->PrimaCalculada != 0 ? number_format($registro->PrimaCalculada, 2) : '' }}
+                                </td>
+                                <td>
+                                    {{ $registro->ExtraPrima && $registro->ExtraPrima != 0 ? number_format($registro->ExtraPrima, 2) : '' }}
+                                </td>
+                                <td>
+                                    {{ $registro->PrimaDescontada && $registro->PrimaDescontada != 0 ? number_format($registro->PrimaDescontada, 2) : '' }}
+                                </td>
+                                <td>
+                                    {{ $registro->Descuento && $registro->Descuento != 0 ? number_format($registro->Descuento, 2) : '' }}
+                                </td>
+                                <td>
+                                    {{ $registro->ValorDescuentoRentabilidad && $registro->ValorDescuentoRentabilidad != 0 ? number_format($registro->ValorDescuentoRentabilidad, 2) : '' }}
+                                </td>
+                                <td>
+                                    {{ $registro->PrimaDescontada && $registro->PrimaDescontada != 0 ? number_format($registro->PrimaDescontada, 2) : '' }}
+                                </td>
+                                <td>
+                                    {{ $registro->TasaComision && $registro->TasaComision != 0 ? number_format($registro->TasaComision, 2) : '' }}
+                                </td>
+                                <td>
+                                    {{ $registro->Comision && $registro->Comision != 0 ? number_format($registro->Comision, 2) : '' }}
+                                </td>
+                                <td>
+                                    {{ ($registro->IvaSobreComision ?? $registro->Iva) && ($registro->IvaSobreComision ?? $registro->Iva) != 0 ? number_format($registro->IvaSobreComision ?? $registro->Iva, 2) : '' }}
+                                </td>
+                                <td>
+                                    {{ $registro->Retencion && $registro->Retencion != 0 ? number_format($registro->Retencion, 2) : '' }}
+                                </td>
+                                <td>
+                                    {{ $registro->APagar && $registro->APagar != 0 ? number_format($registro->APagar, 2) : '' }}
+                                </td>
+
+
+
                                 <td>{{ $registro->AnexoDeclaracion ?? '' }}</td>
                                 <td>{{ $registro->NumeroACSisco ?? '' }}</td>
                                 <td>{{ $registro->FechaVencimiento ? date('d/m/Y', strtotime($registro->FechaVencimiento)) : '' }}
                                 </td>
-                                <td>-</td>
+
+                                <td>{{ $registro->FechaEnvioCliente ? date('d/m/Y', strtotime($registro->FechaEnvioCliente)) : '' }}
+                                </td>
+
+
                                 <td>{{ $registro->ReprocesoNombre ?? '' }}</td>
                                 <td>{{ $registro->FechaEnvioCorreccion ? date('d/m/Y', strtotime($registro->FechaEnvioCorreccion)) : '' }}
                                 </td>
                                 <td>{{ $registro->FechaSeguimientoCobros ? date('d/m/Y', strtotime($registro->FechaSeguimientoCobros)) : '' }}
                                 </td>
-                                <td>-</td>
+
+                                <td>{{ $registro->FechaRecepcionPago ? date('d/m/Y', strtotime($registro->FechaRecepcionPago)) : '' }}
+                                </td>
+
+
                                 <td>{{ $registro->FechaReporteACia ? date('d/m/Y', strtotime($registro->FechaReporteACia)) : '' }}
                                 </td>
                                 <td>{{ $registro->FechaAplicacion ? date('d/m/Y', strtotime($registro->FechaAplicacion)) : '' }}
