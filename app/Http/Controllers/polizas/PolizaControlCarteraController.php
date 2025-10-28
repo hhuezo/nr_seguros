@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\polizas;
 
 use App\Http\Controllers\Controller;
+use App\Models\catalogo\PolizaDeclarativaReproceso;
 use App\Models\polizas\Deuda;
-use App\Models\polizas\PolizaControlCartera;
 use App\Models\polizas\PolizaDeclarativaControl;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -14,8 +14,9 @@ class PolizaControlCarteraController extends Controller
 {
     public function index(Request $request)
     {
+
         // Obtener mes y año desde el request, o usar los actuales si no se envían
-        $mes = $request->Mes ?? Carbon::now()->format('m');
+        $mes = $request->Mes ?? Carbon::now()->subMonth()->format('m');
         $anio = $request->Anio ?? Carbon::now()->year;
         $tipo_poliza_id = $request->TipoPoliza ?? 1;
 
@@ -42,55 +43,91 @@ class PolizaControlCarteraController extends Controller
             }
         }
 
-
-
         $registro_control = PolizaDeclarativaControl::query()
             ->where('poliza_declarativa_control.Axo', $anio)
             ->where('poliza_declarativa_control.Mes', $mes)
-            // joins base
-            ->leftJoin('poliza_deuda', 'poliza_deuda.Id', '=', 'poliza_declarativa_control.PolizaDeudaId')
+
+            // === Joins base ===
+            ->join('poliza_deuda', 'poliza_deuda.Id', '=', 'poliza_declarativa_control.PolizaDeudaId')
             ->leftJoin('poliza_deuda_detalle', 'poliza_deuda_detalle.Deuda', '=', 'poliza_deuda.Id')
             ->join('cliente', 'cliente.Id', '=', 'poliza_deuda.Asegurado')
-            // joins nuevos
+            ->join('users', 'users.id', '=', 'poliza_deuda.Usuario')
+
+            // === Joins adicionales ===
             ->join('plan', 'plan.Id', '=', 'poliza_deuda.Plan')
             ->join('producto', 'producto.Id', '=', 'plan.Producto')
-            // campos seleccionados
+            ->leftJoin('poliza_declarativa_reproceso', 'poliza_declarativa_reproceso.Id', '=', 'poliza_declarativa_control.ReprocesoNRId')
+
+            // === Campos seleccionados ===
             ->select(
-                'poliza_declarativa_control.*',
-                'poliza_deuda.*',
-                'poliza_deuda_detalle.*',
+                // Campos principales del control
+                'poliza_declarativa_control.Id',
+                'poliza_declarativa_control.PolizaDeudaId',
+                'poliza_declarativa_control.FechaRecepcionArchivo',
+                'poliza_declarativa_control.FechaEnvioCia',
+                'poliza_declarativa_control.TrabajoEfectuadoDiaHabil',
+                'poliza_declarativa_control.HoraTarea',
+                'poliza_declarativa_control.FlujoAsignado',
+                'poliza_declarativa_control.PorcentajeRentabilidad',
+                'poliza_declarativa_control.ValorDescuentoRentabilidad',
+                'poliza_declarativa_control.AnexoDeclaracion',
+                'poliza_declarativa_control.NumeroSisco',
+                'poliza_declarativa_control.FechaVencimiento',
+                'poliza_declarativa_control.FechaEnvioCliente',
+                'poliza_declarativa_control.ReprocesoNRId',
+                'poliza_declarativa_control.FechaEnvioCorreccion',
+                'poliza_declarativa_control.FechaSeguimientoCobros',
+                'poliza_declarativa_control.FechaRecepcionPago',
+                'poliza_declarativa_control.FechaReporteACia',
+                'poliza_declarativa_control.FechaAplicacion',
+                'poliza_declarativa_control.Comentarios',
+
+                // === Campos de poliza_deuda ===
+                'poliza_deuda.NumeroPoliza',
+                'poliza_deuda.VigenciaDesde',
+                'poliza_deuda.VigenciaHasta',
+                'poliza_deuda.Descuento',
+                'users.name as Usuario',
+
+                // === Campos de poliza_deuda_detalle ===
+                'poliza_deuda_detalle.MontoCartera',
+                'poliza_deuda_detalle.Tasa',
+                'poliza_deuda_detalle.PrimaCalculada',
+                'poliza_deuda_detalle.ExtraPrima',
+                'poliza_deuda_detalle.PrimaDescontada',
+                'poliza_deuda_detalle.TasaComision',
+                'poliza_deuda_detalle.Comision',
+                'poliza_deuda_detalle.IvaSobreComision',
+                'poliza_deuda_detalle.Iva',
+                'poliza_deuda_detalle.APagar',
+                'poliza_deuda_detalle.Anexo',
+                'poliza_deuda_detalle.Comentario',
+                'poliza_deuda_detalle.FechaIngreso',
+
+                // === Cliente ===
                 'cliente.Nombre as ClienteNombre',
                 'cliente.Dui as ClienteDui',
                 'cliente.Nit as ClienteNit',
                 'cliente.CorreoPrincipal as ClienteCorreo',
                 'cliente.TelefonoCelular as ClienteTelefono',
+
+                // === Producto / plan / reproceso ===
                 'plan.Nombre as PlanNombre',
                 'producto.Nombre as ProductoNombre',
+                'poliza_declarativa_reproceso.Nombre as ReprocesoNombre',
+
+                // === Conteo de usuarios reportados ===
                 DB::raw('(SELECT COUNT(*)
                   FROM poliza_deuda_cartera
                   WHERE poliza_deuda_cartera.PolizaDeuda = poliza_deuda.Id) AS UsuariosReportados')
             )
+
             ->orderBy('poliza_deuda.Id')
             ->get();
 
 
+        $reprocesos = PolizaDeclarativaReproceso::where('Activo', 1)->get();
 
-
-        // Consulta principal
-        // $polizas_deuda = Deuda::leftJoin('poliza_deuda_detalle', 'poliza_deuda_detalle.Deuda', '=', 'poliza_deuda.Id')
-        //     ->select('poliza_deuda.*', 'poliza_deuda_detalle.*')
-        //     ->addSelect(DB::raw('(SELECT COUNT(*) FROM poliza_deuda_cartera WHERE poliza_deuda_cartera.PolizaDeuda = poliza_deuda.Id) as UsuariosReportados'))
-        //     ->with(['control_cartera_por_mes_anio' => function ($query) use ($mes, $anio) {
-        //         $query->where('Mes', $mes)
-        //             ->where('Axo', $anio);
-        //     }])
-        //     ->get();
-
-
-
-
-
-        //dd("");
 
         // Meses para selector
         $meses = [
@@ -108,7 +145,7 @@ class PolizaControlCarteraController extends Controller
             '12' => 'Diciembre',
         ];
 
-        return view('polizas.control_cartera.index', compact('registro_control', 'anio', 'mes', 'meses'));
+        return view('polizas.control_cartera.index', compact('registro_control', 'anio', 'mes', 'meses', 'reprocesos'));
     }
 
 
@@ -127,49 +164,29 @@ class PolizaControlCarteraController extends Controller
 
     public function update(Request $request, $id)
     {
-        if ($request->Tipo == 1) {
-            $control_cartera = PolizaControlCartera::where('DeudaId', $id)
-                ->where('Axo', $request->Anio)
-                ->where('Mes', $request->Mes)
-                ->first();
+        $control_cartera = PolizaDeclarativaControl::findOrFail($id);
 
-            if (!$control_cartera) {
-                $control_cartera = new PolizaControlCartera();
-                $control_cartera->DeudaId = $id;
-                $control_cartera->Axo = $request->Anio;
-                $control_cartera->Mes = $request->Mes;
-                $control_cartera->save();
-            }
-        }
-
-        // Asignación en el mismo orden de la migración
-        $control_cartera->FechaRecepcionArchivo   = $request->FechaRecepcionArchivo;
-        $control_cartera->FechaEnvioCia           = $request->FechaEnvioCia;
-        $control_cartera->TrabajoEfectuado        = $request->TrabajoEfectuado;
-        $control_cartera->HoraTarea               = $request->HoraTarea;
-        $control_cartera->FlujoAsignado           = $request->FlujoAsignado;
-        $control_cartera->Usuario                 = $request->Usuario;
-        $control_cartera->UsuariosReportados      = $request->UsuariosReportados;
-        $control_cartera->Tarifa                  = $request->Tarifa;
-        $control_cartera->PrimaBruta              = $request->PrimaBruta;
-        $control_cartera->ExtraPrima              = $request->ExtraPrima;
-        $control_cartera->PrimaEmitida            = $request->PrimaEmitida;
-        $control_cartera->PorcentajeComision      = $request->PorcentajeComision;
-        $control_cartera->ComisionNeta            = $request->ComisionNeta;
-        $control_cartera->Iva                     = $request->Iva;
-        $control_cartera->PrimaLiquida            = $request->PrimaLiquida;
-        $control_cartera->AnexoDeclaracion        = $request->AnexoDeclaracion;
-        $control_cartera->FechaVencimiento        = $request->FechaVencimiento;
-        $control_cartera->FechaEnvioCorreccion    = $request->FechaEnvioCorreccion;
-        $control_cartera->FechaSeguimientoCobro   = $request->FechaSeguimientoCobro;
-        $control_cartera->FechaReporteCia         = $request->FechaReporteCia;
-        $control_cartera->RepocesoNr              = $request->RepocesoNr;
-        $control_cartera->FechaAplicacion         = $request->FechaAplicacion;
-        $control_cartera->Comentarios             = $request->Comentarios;
-        $control_cartera->NumeroCisco             = $request->NumeroCisco;
+        $control_cartera->FechaRecepcionArchivo      = $request->FechaRecepcionArchivo ?: null;
+        $control_cartera->FechaEnvioCia              = $request->FechaEnvioCia ?: null;
+        $control_cartera->TrabajoEfectuadoDiaHabil   = $request->TrabajoEfectuadoDiaHabil !== '' ? $request->TrabajoEfectuadoDiaHabil : null;
+        $control_cartera->HoraTarea                  = $request->HoraTarea ?: null;
+        $control_cartera->FlujoAsignado              = $request->FlujoAsignado ?: null;
+        $control_cartera->PorcentajeRentabilidad     = $request->PorcentajeRentabilidad ?: null;
+        $control_cartera->ValorDescuentoRentabilidad = $request->ValorDescuentoRentabilidad ?: null;
+        $control_cartera->AnexoDeclaracion           = $request->AnexoDeclaracion ?: null;
+        $control_cartera->NumeroSisco                = $request->NumeroSisco ?: null;
+        $control_cartera->FechaVencimiento           = $request->FechaVencimiento ?: null;
+        $control_cartera->FechaEnvioCliente          = $request->FechaEnvioCliente ?: null;
+        $control_cartera->ReprocesoNRId              = $request->ReprocesoNRId ?: null;
+        $control_cartera->FechaEnvioCorreccion       = $request->FechaEnvioCorreccion ?: null;
+        $control_cartera->FechaSeguimientoCobros     = $request->FechaSeguimientoCobros ?: null;
+        $control_cartera->FechaRecepcionPago         = $request->FechaRecepcionPago ?: null;
+        $control_cartera->FechaReporteACia           = $request->FechaReporteACia ?: null;
+        $control_cartera->FechaAplicacion            = $request->FechaAplicacion ?: null;
+        $control_cartera->Comentarios                = $request->Comentarios ?: null;
 
         $control_cartera->save();
 
-        return back()->with('success', 'El registro ha sido actualizado correctamente');
+        return redirect()->back()->with('success', 'Control de cartera actualizado correctamente.');
     }
 }

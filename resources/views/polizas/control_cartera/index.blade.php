@@ -54,7 +54,7 @@
 
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                {{-- id="datatable" --}}
+
                 <table id="datatable" class="table table-striped table-bordered">
                     <thead>
                         <tr>
@@ -62,40 +62,42 @@
                             <th>Asegurado</th>
                             <th>Vigencia desde</th>
                             <th>Vigencia hasta</th>
-                            <th>Tipo póliza</th>
+                            <th>Tipo de póliza</th>
                             <th>CIA. de seguros</th>
-                            <th>Póliza No</th>
+                            <th>Póliza No.</th>
                             <th>Fecha recepción archivo</th>
-                            <th>Fecha envío a CIA</th>
-                            <th>Trabajo efectuado</th>
+                            <th>Fecha de envío a CIA.</th>
+                            <th>Trabajo efectuado día hábil</th>
                             <th>Hora tarea</th>
                             <th>Flujo asignado</th>
                             <th>Usuario</th>
                             <th>Usuarios reportados</th>
-
                             <th>Suma asegurada</th>
                             <th>Tarifa</th>
                             <th>Prima bruta</th>
                             <th>Extra prima</th>
                             <th>Prima emitida</th>
-                            <th>% Comisión</th>
+                            <th>% de rentabilidad</th>
+                            <th>Valor descuento rentabilidad</th>
+                            <th>Prima descontada</th>
+                            <th>% de comisión</th>
                             <th>Comisión neta</th>
-                            <th>IVA</th>
+                            <th>IVA 13%</th>
+                            <th>Retención 1%</th>
                             <th>Prima líquida</th>
-                            <th>Anexo declaración</th>
+                            <th>Anexo de declaración</th>
+                            <th>Número AC SISCO</th>
                             <th>Fecha vencimiento</th>
-                            <th>Fecha envío corrección</th>
-                            <th>Fecha seguimiento cobro</th>
-                            <th>Fecha reporte CIA</th>
-                            <th>Reproceso NR</th>
-                            <th>Fecha aplicación</th>
-                            <th>Comentarios</th>
-                            <th>Número Cisco</th>
+                            <th>Fecha de envío a cliente</th>
+                            <th>Reproceso de NR</th>
+                            <th>Fecha de envío de corrección</th>
+                            <th>Fecha seguimiento cobros</th>
+                            <th>Fecha recepción de pago</th>
+                            <th>Fecha de reporte a CIA.</th>
+                            <th>Fecha de aplicación</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @php($i = 1)
-
                         @foreach ($registro_control as $registro)
                             <tr>
                                 <td>
@@ -104,8 +106,6 @@
                                         <i class="fa fa-edit"></i>
                                     </button>
                                 </td>
-
-                                {{-- Datos base --}}
                                 <td>{{ $registro->ClienteNombre ?? '' }}</td>
                                 <td>{{ $registro->VigenciaDesde ? date('d/m/Y', strtotime($registro->VigenciaDesde)) : '' }}
                                 </td>
@@ -113,53 +113,86 @@
                                 </td>
                                 <td>Deuda</td>
                                 <td>{{ $registro->ProductoNombre ?? '' }}</td>
-                                <td>{{ $registro->NumeroPoliza }}</td>
-
-                                {{-- Campos de control_cartera (solo si existen) --}}
-                                <td></td>
-                                <td></td>
-                                <td></td> {{-- Trabajo efectuado (no existe) --}}
-                                <td></td> {{-- Hora tarea (no existe) --}}
-                                <td></td> {{-- Flujo asignado (no existe) --}}
+                                <td>{{ $registro->NumeroPoliza ?? '' }}</td>
+                                <td>{{ $registro->FechaRecepcionArchivo ? date('d/m/Y', strtotime($registro->FechaRecepcionArchivo)) : '' }}
+                                </td>
+                                <td>{{ $registro->FechaEnvioCia ? date('d/m/Y', strtotime($registro->FechaEnvioCia)) : '' }}
+                                </td>
+                                <td>{{ $registro->TrabajoEfectuadoDiaHabil ?? '' }}</td>
+                                <td>{{ $registro->HoraTarea ?? '' }}</td>
+                                <td>{{ $registro->FlujoAsignado ?? '' }}</td>
                                 <td>{{ $registro->Usuario ?? '' }}</td>
-                                <td style="text-align: right">
-                                    {{ number_format($registro->UsuariosReportados ?? 0, 0, '.', ',') }}</td>
-
-                                {{-- ✅ Campos reales de $deuda --}}
+                                <td class="text-end">{{ number_format($registro->UsuariosReportados ?? 0, 0, '.', ',') }}
+                                </td>
                                 <td>{{ number_format($registro->MontoCartera ?? 0, 2) }}</td>
                                 <td>{{ number_format($registro->Tasa ?? 0, 2) }}</td>
                                 <td>{{ number_format($registro->PrimaCalculada ?? 0, 2) }}</td>
                                 <td>{{ number_format($registro->ExtraPrima ?? 0, 2) }}</td>
                                 <td>{{ number_format($registro->PrimaDescontada ?? 0, 2) }}</td>
+                                <td>{{ number_format($registro->Descuento ?? 0, 2) }}  </td>
+                                <td>-</td>
+                                <td>{{ number_format($registro->PrimaDescontada ?? 0, 2) }}</td>
                                 <td>{{ number_format($registro->TasaComision ?? 0, 2) }}</td>
                                 <td>{{ number_format($registro->Comision ?? 0, 2) }}</td>
                                 <td>{{ number_format($registro->IvaSobreComision ?? ($registro->Iva ?? 0), 2) }}</td>
+                                <td>-</td>
                                 <td>{{ number_format($registro->APagar ?? 0, 2) }}</td>
-
-                                <td>{{ $registro->Anexo ?? '' }}</td>
-                                <td>{{ $registro->VigenciaHasta ? date('d/m/Y', strtotime($registro->VigenciaHasta)) : '' }}
+                                <td>{{ $registro->AnexoDeclaracion ?? '' }}</td>
+                                <td>{{ $registro->NumeroACSisco ?? '' }}</td>
+                                <td>{{ $registro->FechaVencimiento ? date('d/m/Y', strtotime($registro->FechaVencimiento)) : '' }}
                                 </td>
-
-                                {{-- Columnas sin campo real --}}
-                                <td></td> {{-- Fecha envío corrección --}}
-                                <td></td> {{-- Fecha seguimiento cobro --}}
-                                <td></td> {{-- Fecha reporte CIA --}}
-                                <td></td> {{-- Reproceso NR --}}
-                                <td>{{ $registro->FechaIngreso ? date('d/m/Y', strtotime($registro->FechaIngreso)) : '' }}
+                                <td>-</td>
+                                <td>{{ $registro->ReprocesoNombre ?? '' }}</td>
+                                <td>{{ $registro->FechaEnvioCorreccion ? date('d/m/Y', strtotime($registro->FechaEnvioCorreccion)) : '' }}
                                 </td>
-                                <td>{{ $registro->Comentario ?? '' }}</td>
-                                <td></td> {{-- Número Cisco --}}
+                                <td>{{ $registro->FechaSeguimientoCobros ? date('d/m/Y', strtotime($registro->FechaSeguimientoCobros)) : '' }}
+                                </td>
+                                <td>-</td>
+                                <td>{{ $registro->FechaReporteACia ? date('d/m/Y', strtotime($registro->FechaReporteACia)) : '' }}
+                                </td>
+                                <td>{{ $registro->FechaAplicacion ? date('d/m/Y', strtotime($registro->FechaAplicacion)) : '' }}
+                                </td>
                             </tr>
                             @include('polizas.control_cartera.modal_edit')
                         @endforeach
-
-
                     </tbody>
-
                 </table>
+
 
 
             </div>
         </div>
     </div>
+
+    <script>
+        function calcularDiasHabiles(id) {
+
+            const fechaInicio = document.getElementById('FechaRecepcionArchivo' + id).value;
+            const fechaFin = document.getElementById('FechaEnvioCia' + id).value;
+
+            console.log("fechaInicio: ", fechaInicio);
+            console.log("fechaFin: ", fechaFin);
+
+            if (!fechaInicio || !fechaFin) return; // si falta una fecha, no hace nada
+
+            let inicio = new Date(fechaInicio);
+            let fin = new Date(fechaFin);
+
+            // si las fechas están invertidas, intercambiarlas
+            if (fin < inicio)[inicio, fin] = [fin, inicio];
+
+            let diasHabiles = 0;
+            let fechaTemp = new Date(inicio);
+
+            while (fechaTemp <= fin) {
+                const diaSemana = fechaTemp.getDay(); // 0 = domingo, 6 = sábado
+                if (diaSemana !== 0 && diaSemana !== 6) {
+                    diasHabiles++;
+                }
+                fechaTemp.setDate(fechaTemp.getDate() + 1);
+            }
+
+            document.getElementById('TrabajoEfectuadoDiaHabil' + id).value = diasHabiles;
+        }
+    </script>
 @endsection
