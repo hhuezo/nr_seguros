@@ -185,6 +185,9 @@ class DeudaController extends Controller
         $detalle->Comentario = $request->Comentario;
         $detalle->APagar = $request->APagar;
 
+        $detalle->Mes = $request->Mes;
+        $detalle->Axo = $request->Axo;
+
         $detalle->PrimaTotal = $request->PrimaTotal;
         $detalle->DescuentoIva = $request->DescuentoIva; //checked
         $detalle->ExtraPrima = $request->ExtraPrima;
@@ -1075,6 +1078,7 @@ class DeudaController extends Controller
                     $query->where('PolizaDeudaDetalle', '=', 0)
                         ->orWhere('PolizaDeudaDetalle', '=', null);
                 })->orderByDesc('Id')->first();
+
 
             //conteo por si existe tasa diferenciada
             $count_tasas_diferencidas = PolizaDeudaTasaDiferenciada::join('poliza_deuda_tipo_cartera', 'poliza_deuda_tipo_cartera.Id', '=', 'poliza_deuda_tasa_diferenciada.PolizaDuedaTipoCartera')

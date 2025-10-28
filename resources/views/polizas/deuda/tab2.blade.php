@@ -340,6 +340,21 @@
                                     value="{{ isset($ultimaCartera) ? $ultimaCartera->FechaFinal : '' }}">
                             </div>
                             <div class="col-md-3">
+                                <label>Mes</label>
+                                <input type="text" class="form-control"
+                                    value="{{ isset($ultimaCartera->Mes) ? $ultimaCartera->Mes : ''}}"
+                                    name="Mes">
+
+                            </div>
+
+                            <div class="col-md-3">
+                                <label>Año</label>
+                                <input type="text" class="form-control"
+                                    value="{{ isset($ultimaCartera->Axo)  ? $ultimaCartera->Axo : ''}}"
+                                    name="Axo">
+
+                            </div>
+                            <div class="col-md-3">
                                 <label>Monto Cartera</label>
                                 <input type="text" class="form-control" id="MontoCarteraDetalle"
                                     name="MontoCartera">
