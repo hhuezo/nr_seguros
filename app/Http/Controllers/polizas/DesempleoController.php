@@ -882,8 +882,8 @@ class DesempleoController extends Controller
         $detalle->ImpuestoBomberos = $request->ImpuestoBomberos;
         $detalle->GastosEmision = $request->GastosEmision;
         $detalle->Otros = $request->Otros;
-        // $detalle->SubTotal = $request->SubTotal;
-        // $detalle->Iva = $request->Iva;
+        $detalle->Axo = $request->Axo;
+        $detalle->Mes = $request->Mes;
         $detalle->TasaComision = $request->TasaComision;
         $detalle->Comision = $request->Comision;
         $detalle->IvaSobreComision = $request->IvaSobreComision;

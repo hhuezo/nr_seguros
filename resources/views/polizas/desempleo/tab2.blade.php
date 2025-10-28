@@ -327,7 +327,7 @@
 
 
 
-                <div class="card mt-4 p-3 bg-light" style="display: none">
+                <div class="card mt-4 p-3 bg-light"  style="display: none">
                     <h5>🔍 Depuración de valores (inputs visibles)</h5>
                     <div class="row g-2">
                         <div class="col-md-3">
@@ -342,10 +342,24 @@
                                 value="{{ $data['total'] }}">
                         </div>
 
+
                         <div class="col-md-3">
                             <label>Desempleo (ID)</label>
                             <input type="text" class="form-control" name="Desempleo"
                                 value="{{ $desempleo->Id }}">
+                        </div>
+
+
+                        <div class="col-md-3">
+                            <label>Año</label>
+                            <input type="text" class="form-control" name="Axo"
+                                value="{{ isset($fechas) ? $fechas->Axo : '' }}">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label>Mes</label>
+                            <input type="text" class="form-control" name="Mes"
+                                value="{{ isset($fechas) ? $fechas->Mes : '' }}">
                         </div>
 
                         <div class="col-md-3">
