@@ -1551,6 +1551,9 @@ class VidaController extends Controller
         $detalle->Comentario = $request->Comentario;
         $detalle->APagar = $request->APagar;
 
+        $detalle->Axo = $request->Axo;
+        $detalle->Mes = $request->Mes;
+
         $detalle->PrimaTotal = $request->PrimaTotal;
         $detalle->DescuentoIva = $request->DescuentoIva; //checked
         $detalle->ExtraPrima = $request->ExtraPrima;
