@@ -486,7 +486,149 @@
                     <div>
                         <form action="{{ url('polizas/residencia/agregar_pago') }}" method="POST">
                             @csrf
-                            <input type="hidden" name="ExcelURL" id="ExcelURL" value="{{ session('ExcelURL') }}"
+
+
+                            <div style="display: none">
+                                <div class="form-group">
+                                    <label>Excel URL</label>
+                                    <input type="text" class="form-control" name="ExcelURL" id="ExcelURL"
+                                        value="{{ session('ExcelURL') }}">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Residencia</label>
+                                    <input type="text" class="form-control" name="Residencia" id="Residencia"
+                                        value="{{ $residencia->Id }}">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Tasa</label>
+                                    <input type="text" class="form-control" name="Tasa"
+                                        value="{{ $residencia->Tasa }}">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Fecha inicio</label>
+                                    <input type="text" class="form-control" name="FechaInicio"
+                                        value="{{ isset($fecha) ? $fecha->FechaInicio : '' }}">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Fecha final</label>
+                                    <input type="text" class="form-control" name="FechaFinal"
+                                        value="{{ isset($fecha) ? $fecha->FechaFinal : '' }}">
+                                </div>
+
+                                  <div class="form-group">
+                                    <label>Año</label>
+                                    <input type="text" class="form-control" name="Axo" value="{{ isset($fecha) ? $fecha->Axo : '' }}">
+                                </div>
+
+
+                                  <div class="form-group">
+                                    <label>Mes</label>
+                                    <input type="text" class="form-control" name="Mes" value="{{ isset($fecha) ? $fecha->Mes : '' }}">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Monto cartera</label>
+                                    <input type="text" class="form-control" name="MontoCartera"
+                                        id="MontoCarteraDetalle">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Prima calculada</label>
+                                    <input type="text" class="form-control" name="PrimaCalculada"
+                                        id="PrimaCalculadaDetalle">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Prima descontada</label>
+                                    <input type="text" class="form-control" name="PrimaDescontada"
+                                        id="PrimaDescontadaDetalle">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>IVA</label>
+                                    <input type="text" class="form-control" name="Iva" id="IvaDetalle">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Subtotal</label>
+                                    <input type="text" class="form-control" name="SubTotal" id="SubTotalDetalle">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Tasa comisión</label>
+                                    <input type="text" class="form-control" name="TasaComision"
+                                        value="{{ $residencia->TasaComision }}">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Comisión</label>
+                                    <input type="text" class="form-control" name="Comision" id="ComisionDetalle">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>IVA sobre comisión</label>
+                                    <input type="text" class="form-control" name="IvaSobreComision"
+                                        id="IvaComisionDetalle">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Retención</label>
+                                    <input type="text" class="form-control" name="Retencion"
+                                        id="RetencionDetalle">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Valor CCF</label>
+                                    <input type="text" class="form-control" name="ValorCCF" id="ValorCCFDetalle">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>A pagar</label>
+                                    <input type="text" class="form-control" name="APagar" id="APagarDetalle">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Descuento</label>
+                                    <input type="text" class="form-control" name="Descuento"
+                                        id="DescuentoDetalle">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Impuesto bomberos</label>
+                                    <input type="text" class="form-control" name="ImpuestoBomberos"
+                                        value="{{ $bomberos }}">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Gastos de emisión</label>
+                                    <input type="text" class="form-control" name="GastosEmision"
+                                        id="GastosEmisionDetalle">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Otros</label>
+                                    <input type="text" class="form-control" name="Otros" id="OtrosDetalle">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Prima total</label>
+                                    <input type="text" class="form-control" name="PrimaTotal"
+                                        id="PrimaTotalDetalle">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Extra prima</label>
+                                    <input type="text" class="form-control" name="ExtraPrima" value="0">
+                                </div>
+
+                            </div>
+
+
+                            {{-- <input type="hidden" name="ExcelURL" id="ExcelURL" value="{{ session('ExcelURL') }}"
                                 class="form-control">
                             <input type="hidden" name="Residencia" id="Residencia" value="{{ $residencia->Id }}"
                                 class="form-control">
@@ -511,7 +653,7 @@
                             <input type="hidden" name="GastosEmision" id="GastosEmisionDetalle">
                             <input type="hidden" name="Otros" id="OtrosDetalle">
                             <input type="hidden" name="PrimaTotal" id="PrimaTotalDetalle">
-                            <input type="hidden" name="ExtraPrima" value="0">
+                            <input type="hidden" name="ExtraPrima" value="0"> --}}
 
 
                             <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog"

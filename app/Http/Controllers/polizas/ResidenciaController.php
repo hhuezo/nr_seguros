@@ -628,6 +628,8 @@ class ResidenciaController extends Controller
             $detalle->ValorCCF = $request->ValorCCF;
             $detalle->Comentario = $request->Comentario;
             $detalle->APagar = $request->APagar;
+            $detalle->Axo = $request->Axo;
+            $detalle->Mes = $request->Mes;
 
             $detalle->PrimaTotal = $request->PrimaTotal;
             $detalle->DescuentoIva = $request->DescuentoIva; //checked
