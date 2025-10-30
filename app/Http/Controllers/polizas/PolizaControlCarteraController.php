@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\catalogo\PolizaDeclarativaReproceso;
 use App\Models\polizas\Deuda;
 use App\Models\polizas\PolizaDeclarativaControl;
+use App\Models\polizas\PolizaDeudaCartera;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -132,9 +133,74 @@ class PolizaControlCarteraController extends Controller
                     AND c.Mes = {$mes}
                 ) AS UsuariosReportados")
             )
-
             ->orderBy('poliza_deuda.Id')
             ->get();
+
+        $filtrados = $registro_control->where('MontoCartera', null)->where('UsuariosReportados', '>', 0);
+
+        foreach ($filtrados as  $item) {
+            $poliza = Deuda::find($item->PolizaDeudaId);
+
+            $montoCartera = PolizaDeudaCartera::where('PolizaDeuda', $poliza->Id)->where('PolizaDeudaDetalle', null)
+                ->where('Axo', $anio)->where('Mes', $mes)->sum('TotalCredito');
+
+            if ($montoCartera > 0) {
+                $item->MontoCartera = $montoCartera;
+
+                $primasCalculadas = PolizaDeudaCartera::where('PolizaDeuda', $poliza->Id)
+                    ->whereNull('PolizaDeudaDetalle')
+                    ->where('Axo', $anio)
+                    ->where('Mes', $mes)
+                    ->select('Tasa', DB::raw('SUM(TotalCredito) * Tasa AS total'))
+                    ->groupBy('Tasa')
+                    ->get();
+
+                $totalPrimas = $primasCalculadas->sum('total');
+                $tasas = $primasCalculadas->pluck('Tasa')->unique()->implode(', ');
+
+                // === Cálculos adicionales ===
+                $extraPrima = $poliza->ExtraPrima ?? 0;
+                $descuento = $poliza->Descuento ?? 0;
+                $tasaComision = $poliza->TasaComision ?? 0;
+                $comisionIva = $poliza->ComisionIva ?? 0;
+                $tipoContribuyente = $poliza->clientes->TipoContribuyente ?? 0;
+
+                // Prima descontada (después del descuento de rentabilidad)
+                $primaDescontada = ($totalPrimas + $extraPrima) - (($totalPrimas + $extraPrima) * ($descuento / 100));
+
+                // Comisión base
+                $valorComision = $primaDescontada * ($tasaComision / 100);
+
+                // IVA sobre comisión
+                $ivaSobreComision = $tipoContribuyente != 4 ? $valorComision * 0.13 : 0;
+
+                // Retención
+                $retencion = ($tipoContribuyente != 1 && $valorComision >= 100) ? $valorComision * 0.01 : 0;
+
+                // Comisión total (CCF)
+                $comisionTotal = $valorComision + $ivaSobreComision - $retencion;
+
+                // Total a pagar (líquido)
+                $aPagar = $primaDescontada - $comisionTotal;
+
+                // === Asignación final de campos ===
+                $item->Tasa = $tasas;
+                $item->PrimaCalculada = $totalPrimas;
+                $item->ExtraPrima = $extraPrima;
+                $item->PrimaDescontada = $primaDescontada;
+                $item->TasaComision = $tasaComision;
+                $item->Comision = $valorComision;
+                $item->Retencion = $retencion;
+                $item->IvaSobreComision = $ivaSobreComision;
+                $item->Iva = $ivaSobreComision; // si manejas IVA general, cámbialo
+                $item->APagar = $aPagar;
+            }
+        }
+
+
+
+
+
 
 
 

@@ -138,15 +138,7 @@
                             <strong>Aviso de Cobro:</strong><br>
 
                             <div class="d-flex justify-content-center align-items-center">
-                                <span class="mr-1 font-weight-bold">AC</span>
-
-                                <input type="text" name="NumeroRecibo"
-                                    class="form-control text-center d-inline-block mx-1"
-                                    style="width: 100px; display: inline-block; font-weight: bold;"
-                                    value="{{ $recibo_historial->NumeroRecibo }}"
-                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-
-                                <span class="ml-1 font-weight-bold">{{ date('Y') }}</span>
+                                <span class="mr-1 font-weight-bold"> AC {{ str_pad($recibo_historial->NumeroRecibo,6,"0",STR_PAD_LEFT)}} {{date('Y')}}</span>
                             </div>
                         </div>
                     </td>
