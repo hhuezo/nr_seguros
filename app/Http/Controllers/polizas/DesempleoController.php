@@ -53,16 +53,16 @@ class DesempleoController extends Controller
     {
         $tasa_diferenciada = collect([]);
         $tipo = DesempleoTipoCartera::get();
-        foreach($tipo as $tip){
+        foreach ($tipo as $tip) {
             $tasa_diferenciada->push([
-            'PolizaDesempleoTipoCartera' => $tip->Id,
-            'FechaDesde' => null,
-            'FechaHasta' => null,
-            'MontoDesde' => null,
-            'MontoHasta' => null,
-            'Tasa' => $tip->poliza_desempleo->Tasa,
-            'SaldosMontos' => $tip->SaldosMontos,
-            'Usuario' => 8,
+                'PolizaDesempleoTipoCartera' => $tip->Id,
+                'FechaDesde' => null,
+                'FechaHasta' => null,
+                'MontoDesde' => null,
+                'MontoHasta' => null,
+                'Tasa' => $tip->poliza_desempleo->Tasa,
+                'SaldosMontos' => $tip->SaldosMontos,
+                'Usuario' => 8,
             ]);
         }
 
@@ -336,7 +336,7 @@ class DesempleoController extends Controller
                     $monto = '';
 
                     if ($desempleo_tipos_cartera->TipoCalculo == 2) {
-                        $monto = $tasa_diferenciada->MontoDesde . ' - ' . $tasa_diferenciada->MontoHasta ;
+                        $monto = $tasa_diferenciada->MontoDesde . ' - ' . $tasa_diferenciada->MontoHasta;
                     }
 
                     $fecha = '';
@@ -399,7 +399,7 @@ class DesempleoController extends Controller
 
         $dataPago = collect([]);
 
-         //dd($dataPagoTemp);
+        //dd($dataPagoTemp);
 
         foreach ($dataPagoTemp as $item) {
 
@@ -796,8 +796,21 @@ class DesempleoController extends Controller
         $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
         $recibo_historial = DesempleoHistorialRecibo::where('PolizaDesempleoDetalle', $id)->orderBy('id', 'desc')->first();
+
+        if ($recibo_historial->DireccionResidencia == '' || $recibo_historial->DireccionResidencia == '(vacio)') {
+            $recibo_historial->DireccionResidencia =
+                $detalle->poliza_desempleo?->cliente?->DireccionResidencia
+                ?? $detalle->poliza_desempleo?->cliente?->DireccionCorrespondencia
+                ?? '';
+        }
+
+        if ($recibo_historial->ProductoSeguros == '') {
+            $recibo_historial->ProductoSeguros =  $detalle->poliza_desempleo?->planes->productos->Nombre ?? '';
+        }
+
         //dd($recibo_historial);
         $configuracion = ConfiguracionRecibo::first();
+
 
         return view('polizas.desempleo.recibo_edit', compact('configuracion', 'recibo_historial', 'meses'));
     }
@@ -813,6 +826,8 @@ class DesempleoController extends Controller
 
         $impresion_recibo = $request->AxoImpresionRecibo . '-' . $request->MesImpresionRecibo . '-' . $request->DiaImpresionRecibo;
 
+        $recibo_historial_anterior = DesempleoHistorialRecibo::where('PolizaDesempleoDetalle', $id)->orderBy('id', 'desc')->first();
+
         $recibo_historial = new DesempleoHistorialRecibo();
         $recibo_historial->PolizaDesempleoDetalle = $id;
         //este valor cambia por eso no se manda al metodo de save_recibo
@@ -820,8 +835,6 @@ class DesempleoController extends Controller
         $recibo_historial->NombreCliente = $request->NombreCliente;
         $recibo_historial->NitCliente = $request->NitCliente;
         $recibo_historial->DireccionResidencia = $request->DireccionResidencia;
-        $recibo_historial->Departamento = $request->Departamento;
-        $recibo_historial->Municipio = $request->Municipio;
         $recibo_historial->NumeroRecibo = $request->NumeroRecibo;
         $recibo_historial->CompaniaAseguradora = $request->CompaniaAseguradora;
         $recibo_historial->ProductoSeguros = $request->ProductoSeguros;
@@ -833,30 +846,36 @@ class DesempleoController extends Controller
         $recibo_historial->Anexo = $request->Anexo;
         $recibo_historial->Referencia = $request->Referencia;
         $recibo_historial->FacturaNombre = $request->FacturaNombre;
-        $recibo_historial->MontoCartera = $request->MontoCartera;
-        $recibo_historial->PrimaCalculada = $request->PrimaCalculada;
-        $recibo_historial->ExtraPrima = $request->ExtraPrima;
-        $recibo_historial->Descuento = $request->Descuento;
-        $recibo_historial->PordentajeDescuento = $request->PordentajeDescuento;
-        $recibo_historial->PrimaDescontada = $request->PrimaDescontada;
-        $recibo_historial->ValorCCF = $request->ValorCCF;
-        $recibo_historial->TotalAPagar = $request->TotalAPagar;
-        $recibo_historial->TasaComision = $request->TasaComision;
-        $recibo_historial->Comision = $request->Comision;
-        $recibo_historial->IvaSobreComision = $request->IvaSobreComision;
-        $recibo_historial->SubTotalComision = $request->SubTotalComision;
-        $recibo_historial->Retencion = $request->Retencion;
-        $recibo_historial->ValorCCF = $request->ValorCCF;
-        $recibo_historial->FechaVencimiento = $request->FechaVencimiento ?? $detalle->FechaInicio;
-        $recibo_historial->NumeroCorrelativo = $request->NumeroCorrelativo ??  '01';
-        $recibo_historial->Cuota = $request->Cuota ?? '01/01';
-        $recibo_historial->Otros = $detalle->Otros ?? 0;
 
+        // 🔹 Copiar campos del recibo anterior (si existe)
+        if ($recibo_historial_anterior) {
+            $recibo_historial->Departamento        = $recibo_historial_anterior->Departamento;
+            $recibo_historial->Municipio           = $recibo_historial_anterior->Municipio;
+            $recibo_historial->MontoCartera        = $recibo_historial_anterior->MontoCartera;
+            $recibo_historial->PrimaCalculada      = $recibo_historial_anterior->PrimaCalculada;
+            $recibo_historial->ExtraPrima          = $recibo_historial_anterior->ExtraPrima;
+            $recibo_historial->Descuento           = $recibo_historial_anterior->Descuento;
+            $recibo_historial->PordentajeDescuento = $recibo_historial_anterior->PordentajeDescuento;
+            $recibo_historial->PrimaDescontada     = $recibo_historial_anterior->PrimaDescontada;
+            $recibo_historial->ValorCCF            = $recibo_historial_anterior->ValorCCF;
+            $recibo_historial->TotalAPagar         = $recibo_historial_anterior->TotalAPagar;
+            $recibo_historial->TasaComision        = $recibo_historial_anterior->TasaComision;
+            $recibo_historial->Comision            = $recibo_historial_anterior->Comision;
+            $recibo_historial->IvaSobreComision    = $recibo_historial_anterior->IvaSobreComision;
+            $recibo_historial->SubTotalComision    = $recibo_historial_anterior->SubTotalComision;
+            $recibo_historial->Retencion           = $recibo_historial_anterior->Retencion;
+            $recibo_historial->ValorCCF            = $recibo_historial_anterior->ValorCCF;
+            $recibo_historial->FechaVencimiento    = $recibo_historial_anterior->FechaVencimiento;
+            $recibo_historial->NumeroCorrelativo   = $recibo_historial_anterior->NumeroCorrelativo ?? '01';
+            $recibo_historial->Cuota               = $recibo_historial_anterior->Cuota ?? '01/01';
+            $recibo_historial->Otros               = $recibo_historial_anterior->Otros ?? 0;
+        }
         $recibo_historial->Usuario = auth()->user()->id;
 
         $recibo_historial->save();
         //dd("insert");
         alert()->success('Actualizacion de Recibo Exitoso');
+        return back();
         return redirect('polizas/desempleo/' . $desempleo->Id . '/edit');
     }
 

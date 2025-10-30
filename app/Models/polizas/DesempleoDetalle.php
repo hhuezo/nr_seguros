@@ -58,10 +58,14 @@ class DesempleoDetalle extends Model
         'NumeroRecibo',
         'Usuario',
         'FechaIngreso',
-        
+
     ];
 
     public function usuarios(){
         return $this->belongsTo(User::class, 'Usuario', 'id');
+    }
+
+    public function poliza_desempleo(){
+        return $this->belongsTo(Desempleo::class, 'Desempleo', 'id');
     }
 }
