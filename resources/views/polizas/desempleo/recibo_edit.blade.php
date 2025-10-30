@@ -64,6 +64,28 @@
         }
     </style>
 
+    <!-- Toastr CSS -->
+    <link href="{{ asset('vendors/toast/toastr.min.css') }}" rel="stylesheet">
+
+    <!-- jQuery -->
+    <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
+
+    <!-- Toastr JS -->
+    <script src="{{ asset('vendors/toast/toastr.min.js') }}"></script>
+
+
+    @if (session('success'))
+        <script>
+            toastr.success("{{ session('success') }}");
+        </script>
+    @endif
+
+    @if (session('error'))
+        <script>
+            toastr.error("{{ session('error') }}");
+        </script>
+    @endif
+
     <div class="recibo-container">
         <form action="{{ url('poliza/desempleo/get_recibo_edit') }}" method="POST">
             @csrf
@@ -293,11 +315,13 @@
                     <th>Pago líquido de prima</th>
                 </tr>
                 <tr>
-                    <td><input type="text" class="form-control text-center" value="{{ $recibo_historial->Cuota }}">
+                    <td><input type="text" class="form-control text-center" name="Cuota"
+                            value="{{ $recibo_historial->Cuota }}">
                     </td>
-                    <td><input type="text" class="form-control text-center"
+                    <td><input type="text" class="form-control text-center" name="NumeroCorrelativo"
                             value="{{ $recibo_historial->NumeroCorrelativo }}"></td>
-                    <td><input type="date" class="form-control" value="{{ $recibo_historial->FechaVencimiento }}">
+                    <td><input type="date" class="form-control" name="FechaVencimiento"
+                            value="{{ $recibo_historial->FechaVencimiento }}">
                     </td>
                     <td class="text-right"><input type="text" class="form-control text-right"
                             value="{{ $recibo_historial->PrimaDescontada }}" readonly></td>

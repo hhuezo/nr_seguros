@@ -847,6 +847,10 @@ class DesempleoController extends Controller
         $recibo_historial->Referencia = $request->Referencia;
         $recibo_historial->FacturaNombre = $request->FacturaNombre;
 
+        $recibo_historial->FechaVencimiento    = $request->FechaVencimiento;
+        $recibo_historial->NumeroCorrelativo   = $request->NumeroCorrelativo ?? '01';
+        $recibo_historial->Cuota               = $request->Cuota ?? '01/01';
+
         // 🔹 Copiar campos del recibo anterior (si existe)
         if ($recibo_historial_anterior) {
             $recibo_historial->Departamento        = $recibo_historial_anterior->Departamento;
@@ -865,18 +869,13 @@ class DesempleoController extends Controller
             $recibo_historial->SubTotalComision    = $recibo_historial_anterior->SubTotalComision;
             $recibo_historial->Retencion           = $recibo_historial_anterior->Retencion;
             $recibo_historial->ValorCCF            = $recibo_historial_anterior->ValorCCF;
-            $recibo_historial->FechaVencimiento    = $recibo_historial_anterior->FechaVencimiento;
-            $recibo_historial->NumeroCorrelativo   = $recibo_historial_anterior->NumeroCorrelativo ?? '01';
-            $recibo_historial->Cuota               = $recibo_historial_anterior->Cuota ?? '01/01';
             $recibo_historial->Otros               = $recibo_historial_anterior->Otros ?? 0;
         }
         $recibo_historial->Usuario = auth()->user()->id;
 
         $recibo_historial->save();
         //dd("insert");
-        alert()->success('Actualizacion de Recibo Exitoso');
-        return back();
-        return redirect('polizas/desempleo/' . $desempleo->Id . '/edit');
+        return back()->with('success', 'Actualización de Recibo Exitosa');
     }
 
 
