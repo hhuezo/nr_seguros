@@ -171,7 +171,7 @@
                                 <td>{{ $registro->AnexoDeclaracion ?? '' }}</td>
                                 <td>
                                     {{ $registro->NumeroRecibo && $registro->Axo
-                                        ? 'AC' . str_pad($registro->NumeroRecibo, 6, '0', STR_PAD_LEFT) . $registro->Axo
+                                        ? 'AC ' . str_pad($registro->NumeroRecibo, 6, '0', STR_PAD_LEFT) . ' '.$registro->Axo
                                         : '' }}
                                 </td>
 
