@@ -45,6 +45,8 @@ class PolizaControlCarteraController extends Controller
             }
         }
 
+
+
         $registro_control = PolizaDeclarativaControl::query()
             ->where('poliza_declarativa_control.Axo', $anio)
             ->where('poliza_declarativa_control.Mes', $mes)
@@ -112,6 +114,8 @@ class PolizaControlCarteraController extends Controller
                 'poliza_deuda_detalle.Comentario',
                 'poliza_deuda_detalle.FechaIngreso',
                 'poliza_deuda_detalle.Descuento as ValorDescuentoRentabilidad',
+                'poliza_deuda_detalle.NumeroRecibo',
+                'poliza_deuda_detalle.Axo',
 
                 // === Cliente ===
                 'cliente.Nombre as ClienteNombre',
@@ -159,6 +163,7 @@ class PolizaControlCarteraController extends Controller
 
 
                 $conteoUsuarios = $primasCalculadas->sum('conteoUsuarios');
+                dd($conteoUsuarios);
                 $item->UsuariosReportados = $conteoUsuarios;
 
 

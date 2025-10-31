@@ -169,7 +169,12 @@
 
 
                                 <td>{{ $registro->AnexoDeclaracion ?? '' }}</td>
-                                <td>{{ $registro->NumeroACSisco ?? '' }}</td>
+                                <td>
+                                    {{ $registro->NumeroRecibo && $registro->Axo
+                                        ? 'AC' . str_pad($registro->NumeroRecibo, 6, '0', STR_PAD_LEFT) . $registro->Axo
+                                        : '' }}
+                                </td>
+
                                 <td>{{ $registro->FechaVencimiento ? date('d/m/Y', strtotime($registro->FechaVencimiento)) : '' }}
                                 </td>
 
