@@ -17,7 +17,7 @@ class PolizaControlCarteraController extends Controller
     {
 
         // Obtener mes y año desde el request, o usar los actuales si no se envían
-        $mes = $request->Mes ?? Carbon::now()->subMonth()->format('n');
+        $mes = $request->Mes ?? Carbon::now()->subMonthNoOverflow()->format('n');
 
         $anio = $request->Anio ?? Carbon::now()->year;
         $tipo_poliza_id = $request->TipoPoliza ?? 1;
@@ -131,18 +131,20 @@ class PolizaControlCarteraController extends Controller
                     WHERE c.PolizaDeuda = poliza_deuda.Id
                     AND c.Axo = {$anio}
                     AND c.Mes = {$mes}
+                    AND c.PolizaDeudaDetalle is not null
                 ) AS UsuariosReportados")
             )
             ->orderBy('poliza_deuda.Id')
             ->get();
 
-        $filtrados = $registro_control->where('MontoCartera', null)->where('UsuariosReportados', '>', 0);
+        $filtrados = $registro_control->where('MontoCartera', null);
 
         foreach ($filtrados as  $item) {
             $poliza = Deuda::find($item->PolizaDeudaId);
 
             $montoCartera = PolizaDeudaCartera::where('PolizaDeuda', $poliza->Id)->where('PolizaDeudaDetalle', null)
                 ->where('Axo', $anio)->where('Mes', $mes)->sum('TotalCredito');
+
 
             if ($montoCartera > 0) {
                 $item->MontoCartera = $montoCartera;
@@ -151,12 +153,19 @@ class PolizaControlCarteraController extends Controller
                     ->whereNull('PolizaDeudaDetalle')
                     ->where('Axo', $anio)
                     ->where('Mes', $mes)
-                    ->select('Tasa', DB::raw('SUM(TotalCredito) * Tasa AS total'))
+                    ->select('Tasa', DB::raw('SUM(TotalCredito) * Tasa AS total'), DB::raw('count(*) AS conteoUsuarios'))
                     ->groupBy('Tasa')
                     ->get();
 
+
+                $conteoUsuarios = $primasCalculadas->sum('conteoUsuarios');
+                $item->UsuariosReportados = $conteoUsuarios;
+
+
                 $totalPrimas = $primasCalculadas->sum('total');
                 $tasas = $primasCalculadas->pluck('Tasa')->unique()->implode(', ');
+
+
 
                 // === Cálculos adicionales ===
                 $extraPrima = $poliza->ExtraPrima ?? 0;
@@ -196,10 +205,6 @@ class PolizaControlCarteraController extends Controller
                 $item->APagar = $aPagar;
             }
         }
-
-
-
-
 
 
 
