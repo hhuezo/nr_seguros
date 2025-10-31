@@ -131,7 +131,6 @@ class PolizaControlCarteraController extends Controller
                     WHERE c.PolizaDeuda = poliza_deuda.Id
                     AND c.Axo = {$anio}
                     AND c.Mes = {$mes}
-                    AND c.PolizaDeudaDetalle is null
                 ) AS UsuariosReportados")
             )
             ->orderBy('poliza_deuda.Id')
