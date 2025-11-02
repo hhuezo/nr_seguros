@@ -627,12 +627,12 @@ class DesempleoController extends Controller
         $recibo_historial->ImpresionRecibo = $detalle->ImpresionRecibo; //Carbon::now();
         $recibo_historial->NombreCliente = $desempleo->cliente->Nombre;
         $recibo_historial->NitCliente = $desempleo->cliente->Nit;
-        $recibo_historial->DireccionResidencia = $desempleo->cliente->DireccionResidencia ?? '(vacio)';
+        $recibo_historial->DireccionResidencia = $desempleo->cliente->DireccionResidencia ?? $desempleo->cliente->DireccionCorrespondencia;
         $recibo_historial->Departamento = $desempleo->cliente->distrito->municipio->departamento->Nombre;
         $recibo_historial->Municipio = $desempleo->cliente->distrito->municipio->Nombre;
         $recibo_historial->NumeroRecibo = $detalle->NumeroRecibo;
         $recibo_historial->CompaniaAseguradora = $desempleo->aseguradora->Nombre;
-        // $recibo_historial->ProductoSeguros = $desempleo->planes->productos->Nombre;
+        $recibo_historial->ProductoSeguros = $desempleo->planes->productos->Nombre;
         $recibo_historial->NumeroPoliza = $desempleo->NumeroPoliza;
         $recibo_historial->VigenciaDesde = $desempleo->VigenciaDesde;
         $recibo_historial->VigenciaHasta = $desempleo->VigenciaHasta;
@@ -859,7 +859,7 @@ class DesempleoController extends Controller
             $recibo_historial->PrimaCalculada      = $recibo_historial_anterior->PrimaCalculada;
             $recibo_historial->ExtraPrima          = $recibo_historial_anterior->ExtraPrima;
             $recibo_historial->Descuento           = $recibo_historial_anterior->Descuento;
-            $recibo_historial->PordentajeDescuento = $recibo_historial_anterior->PordentajeDescuento;
+            $recibo_historial->PordentajeDescuento = $recibo_historial_anterior->PordentajeDescuento ?? 0;
             $recibo_historial->PrimaDescontada     = $recibo_historial_anterior->PrimaDescontada;
             $recibo_historial->ValorCCF            = $recibo_historial_anterior->ValorCCF;
             $recibo_historial->TotalAPagar         = $recibo_historial_anterior->TotalAPagar;
@@ -875,6 +875,16 @@ class DesempleoController extends Controller
 
         $recibo_historial->save();
         //dd("insert");
+
+        //enviar a descargar el archivo
+        $cliente = Cliente::find($desempleo->Asegurado);
+        $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        $configuracion = ConfiguracionRecibo::first();
+        $exportar = 1;
+        $pdf = \PDF::loadView('polizas.desempleo.recibo', compact('configuracion', 'cliente', 'recibo_historial', 'detalle', 'desempleo', 'meses', 'exportar'))->setWarnings(false)->setPaper('letter');
+        //  dd($detalle);
+        return $pdf->stream('Recibos.pdf');
+
         return back()->with('success', 'Actualización de Recibo Exitosa');
     }
 

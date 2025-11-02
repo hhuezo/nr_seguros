@@ -43,7 +43,7 @@
                         @endif
                         <td>
                             @if($obj->Activo <> 0)
-                                <a href="{{ url('poliza/desempleo/get_recibo') }}/{{ $obj->Id }}/1" target="_blank" class="btn btn-info"><span class="fa fa-print"></span></a>
+                                <a href="{{ url('poliza/desempleo/get_recibo') }}/{{ $obj->Id }}/1"  class="btn btn-info"><span class="fa fa-print"></span></a>
                                 &nbsp;
                                 <!-- <a href="{{ url('poliza/desempleo/get_recibo') }}/{{ $obj->Id }}/2" target="_blank" class="btn btn-success"><span class="fa fa-file-excel-o fa-lg"></span></a> -->
                                 &nbsp;
