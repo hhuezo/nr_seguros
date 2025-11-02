@@ -14,6 +14,7 @@ use App\Models\polizas\DeudaExcluidos;
 use App\Models\polizas\PolizaDeudaCartera;
 use App\Models\polizas\PolizaDeudaTipoCartera;
 use App\Models\temp\PolizaDeudaTempCartera;
+use App\Models\temp\PolizaDeudaTempCarteraHistorial;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -206,9 +207,10 @@ class DeudaCarteraController extends Controller
         ));
     }
 
-    public function eliminar_pago(Request $request,$id){
-       // dd($id);
-        PolizaDeudaTempCartera::where('PolizaDeuda',$id)->where('PolizaDeudaTipoCartera' ,$request->PolizaDeudaTipoCartera)->delete();
+    public function eliminar_pago(Request $request, $id)
+    {
+        // dd($id);
+        PolizaDeudaTempCartera::where('PolizaDeuda', $id)->where('PolizaDeudaTipoCartera', $request->PolizaDeudaTipoCartera)->delete();
         alert()->success('Cartera eliminada correctamente');
         return back();
     }
@@ -1710,6 +1712,55 @@ class DeudaCarteraController extends Controller
             }
         }
 
+
+
+        try {
+            // 1️⃣ Eliminar registros previos del mismo periodo en el historial
+            DB::table('poliza_deuda_temp_cartera_historial')
+                ->where('Axo', $anio)
+                ->where('Mes', $mes)
+                ->where('PolizaDeuda', $request->Deuda)
+                ->delete();
+
+            // 2️⃣ Insertar los registros actuales desde poliza_deuda_temp_cartera
+            DB::statement("
+                INSERT INTO poliza_deuda_temp_cartera_historial (
+                    PolizaDeudaTipoCartera, LineaCredito, Tasa, TotalCredito, EdadDesembloso,
+                    CarnetResidencia, Dui, Pasaporte, Nacionalidad, FechaNacimiento, TipoPersona,
+                    PrimerApellido, SegundoApellido, ApellidoCasada, PrimerNombre, SegundoNombre,
+                    NombreSociedad, Sexo, FechaOtorgamiento, FechaVencimiento, NumeroReferencia,
+                    MontoOtorgado, SaldoCapital, Intereses, MoraCapital, InteresesMoratorios, SaldoTotal,
+                    User, Axo, Mes, PolizaDeuda, FechaInicio, FechaFinal, TipoError, FechaNacimientoDate,
+                    Edad, InteresesCovid, MontoNominal, NoValido, Perfiles, FechaOtorgamientoDate,
+                    SaldoCumulo, Excluido, OmisionPerfil, Rehabilitado, EdadRequisito, MontoRequisito,
+                    MontoMaximoIndividual, TipoDeuda, PorcentajeExtraprima, TipoDocumento,
+                    SaldoInteresMora, PagoAutomatico, Errores
+                )
+                SELECT
+                    PolizaDeudaTipoCartera, LineaCredito, Tasa, TotalCredito, EdadDesembloso,
+                    CarnetResidencia, Dui, Pasaporte, Nacionalidad, FechaNacimiento, TipoPersona,
+                    PrimerApellido, SegundoApellido, ApellidoCasada, PrimerNombre, SegundoNombre,
+                    NombreSociedad, Sexo, FechaOtorgamiento, FechaVencimiento, NumeroReferencia,
+                    MontoOtorgado, SaldoCapital, Intereses, MoraCapital, InteresesMoratorios, SaldoTotal,
+                    User, Axo, Mes, PolizaDeuda, FechaInicio, FechaFinal, TipoError, FechaNacimientoDate,
+                    Edad, InteresesCovid, MontoNominal, NoValido, Perfiles, FechaOtorgamientoDate,
+                    SaldoCumulo, Excluido, OmisionPerfil, Rehabilitado, EdadRequisito, MontoRequisito,
+                    MontoMaximoIndividual, TipoDeuda, PorcentajeExtraprima, TipoDocumento,
+                    SaldoInteresMora, PagoAutomatico, Errores
+                FROM poliza_deuda_temp_cartera
+                WHERE Axo = ? AND Mes = ? AND PolizaDeuda = ?
+            ", [$anio, $mes, $request->Deuda]);
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+
+
+
+
+
         PolizaDeudaTempCartera::where('Axo', $anio)
             ->where('Mes', $mes + 0)
             ->where('PolizaDeuda', $request->Deuda)->delete();
@@ -1861,6 +1912,54 @@ class DeudaCarteraController extends Controller
                 ]);
             }
         }
+
+
+
+
+        try {
+            // 1️⃣ Eliminar registros previos del mismo periodo en el historial
+            DB::table('poliza_deuda_temp_cartera_historial')
+                ->where('Axo', $anio)
+                ->where('Mes', $mes)
+                ->where('PolizaDeuda', $request->Deuda)
+                ->delete();
+
+            // 2️⃣ Insertar los registros actuales desde poliza_deuda_temp_cartera
+            DB::statement("
+                INSERT INTO poliza_deuda_temp_cartera_historial (
+                    PolizaDeudaTipoCartera, LineaCredito, Tasa, TotalCredito, EdadDesembloso,
+                    CarnetResidencia, Dui, Pasaporte, Nacionalidad, FechaNacimiento, TipoPersona,
+                    PrimerApellido, SegundoApellido, ApellidoCasada, PrimerNombre, SegundoNombre,
+                    NombreSociedad, Sexo, FechaOtorgamiento, FechaVencimiento, NumeroReferencia,
+                    MontoOtorgado, SaldoCapital, Intereses, MoraCapital, InteresesMoratorios, SaldoTotal,
+                    User, Axo, Mes, PolizaDeuda, FechaInicio, FechaFinal, TipoError, FechaNacimientoDate,
+                    Edad, InteresesCovid, MontoNominal, NoValido, Perfiles, FechaOtorgamientoDate,
+                    SaldoCumulo, Excluido, OmisionPerfil, Rehabilitado, EdadRequisito, MontoRequisito,
+                    MontoMaximoIndividual, TipoDeuda, PorcentajeExtraprima, TipoDocumento,
+                    SaldoInteresMora, PagoAutomatico, Errores
+                )
+                SELECT
+                    PolizaDeudaTipoCartera, LineaCredito, Tasa, TotalCredito, EdadDesembloso,
+                    CarnetResidencia, Dui, Pasaporte, Nacionalidad, FechaNacimiento, TipoPersona,
+                    PrimerApellido, SegundoApellido, ApellidoCasada, PrimerNombre, SegundoNombre,
+                    NombreSociedad, Sexo, FechaOtorgamiento, FechaVencimiento, NumeroReferencia,
+                    MontoOtorgado, SaldoCapital, Intereses, MoraCapital, InteresesMoratorios, SaldoTotal,
+                    User, Axo, Mes, PolizaDeuda, FechaInicio, FechaFinal, TipoError, FechaNacimientoDate,
+                    Edad, InteresesCovid, MontoNominal, NoValido, Perfiles, FechaOtorgamientoDate,
+                    SaldoCumulo, Excluido, OmisionPerfil, Rehabilitado, EdadRequisito, MontoRequisito,
+                    MontoMaximoIndividual, TipoDeuda, PorcentajeExtraprima, TipoDocumento,
+                    SaldoInteresMora, PagoAutomatico, Errores
+                FROM poliza_deuda_temp_cartera
+                WHERE Axo = ? AND Mes = ? AND PolizaDeuda = ?
+            ", [$anio, $mes, $request->Deuda]);
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+
+
 
 
         PolizaDeudaTempCartera::where('Axo', $anio)

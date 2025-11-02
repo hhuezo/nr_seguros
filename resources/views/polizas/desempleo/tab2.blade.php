@@ -314,12 +314,6 @@
         </div>
 
         <div>
-            <form action="{{ url('polizas/desempleo/agregar_pago') }}" method="POST">
-                @csrf
-
-
-                <input type="hidden" class="form-control" name="FechaInicio"
-                    value="{{ isset($fechas) ? $fechas->FechaInicio : '' }}">
 
 
 
@@ -327,153 +321,34 @@
 
 
 
-                <div class="card mt-4 p-3 bg-light"  style="display: none">
-                    <h5>🔍 Depuración de valores (inputs visibles)</h5>
-                    <div class="row g-2">
-                        <div class="col-md-3">
-                            <label>Fecha Final</label>
-                            <input type="text" class="form-control" name="FechaFinal"
-                                value="{{ isset($fechas) ? $fechas->FechaFinal : '' }}">
-                        </div>
-
-                        <div class="col-md-3">
-                            <label>Monto Cartera</label>
-                            <input type="text" class="form-control" name="MontoCartera" id="MontoCarteraDetalle"
-                                value="{{ $data['total'] }}">
-                        </div>
 
 
-                        <div class="col-md-3">
-                            <label>Desempleo (ID)</label>
-                            <input type="text" class="form-control" name="Desempleo"
-                                value="{{ $desempleo->Id }}">
-                        </div>
 
 
-                        <div class="col-md-3">
-                            <label>Año</label>
-                            <input type="text" class="form-control" name="Axo"
-                                value="{{ isset($fechas) ? $fechas->Axo : '' }}">
-                        </div>
 
-                        <div class="col-md-3">
-                            <label>Mes</label>
-                            <input type="text" class="form-control" name="Mes"
-                                value="{{ isset($fechas) ? $fechas->Mes : '' }}">
-                        </div>
+            <br><br>
 
-                        <div class="col-md-3">
-                            <label>Tasa</label>
-                            <input type="text" class="form-control" name="Tasa"
-                                value="{{ $desempleo->Tasa }}">
-                        </div>
-
-                        <div class="col-md-3">
-                            <label>Prima Calculada</label>
-                            <input type="text" class="form-control" name="PrimaCalculada"
-                                id="PrimaCalculadaDetalle" value="{{ $data['primaPorPagar'] }}">
-                        </div>
-
-                        <div class="col-md-3">
-                            <label>Prima Descontada</label>
-                            <input type="text" class="form-control" name="PrimaDescontada"
-                                id="PrimaDescontadaDetalle" value="{{ $data['primaDescontada'] }}">
-                        </div>
-
-                        <div class="col-md-3">
-                            <label>Sub Total</label>
-                            <input type="text" class="form-control" name="SubTotal" id="SubTotalDetalle"
-                                value="">
-                        </div>
-
-                        <div class="col-md-3">
-                            <label>IVA</label>
-                            <input type="text" class="form-control" name="Iva" id="IvaDetalle"
-                                value="">
-                        </div>
-
-                        <div class="col-md-3">
-                            <label>Tasa Comisión</label>
-                            <input type="text" class="form-control" name="TasaComision"
-                                value="{{ $desempleo->TasaComision ?? 0 }}">
-                        </div>
-
-                        <div class="col-md-3">
-                            <label>Comisión</label>
-                            <input type="text" class="form-control" name="Comision" id="ComisionDetalle"
-                                value="{{ $data['valorComision'] ?? 0 }}">
-                        </div>
-
-                        <div class="col-md-3">
-                            <label>IVA Comisión</label>
-                            <input type="text" class="form-control" name="IvaSobreComision"
-                                id="IvaComisionDetalle" value="{{ $data['ivaComision'] }}">
-                        </div>
-
-                        <div class="col-md-3">
-                            <label>Descuento</label>
-                            <input type="text" class="form-control" name="Descuento" id="DescuentoDetalle"
-                                value="{{ $data['descuento'] }}">
-                        </div>
-
-                        <div class="col-md-3">
-                            <label>Retención</label>
-                            <input type="text" class="form-control" name="Retencion" id="RetencionDetalle"
-                                value="{{ $data['retencionComision'] }}">
-                        </div>
-
-                        <div class="col-md-3">
-                            <label>Valor CCF</label>
-                            <input type="text" class="form-control" name="ValorCCF" id="ValorCCFDetalle"
-                                value="{{ $data['comisionCcf'] }}">
-                        </div>
-
-                        <div class="col-md-3">
-                            <label>A Pagar</label>
-                            <input type="text" class="form-control" name="APagar" id="APagarDetalle"
-                                value="{{ $data['liquidoApagar'] }}">
-                        </div>
-
-                        <div class="col-md-3">
-                            <label>Extra Prima</label>
-                            <input type="text" class="form-control" name="ExtraPrima"
-                                value="{{ $data['extra_prima'] }}">
-                        </div>
-                    </div>
+            <div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    @if ($totalPrimaCalculada > 0)
+                        <a class="btn btn-warning" data-target="#modal-reiniciar" data-toggle="modal">Reiniciar
+                            carga</a>
+                    @else
+                        <a class="btn btn-warning" disabled>Reiniciar
+                            carga</a>
+                    @endif
                 </div>
 
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" style="text-align: right">
 
-                <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
-                    id="modal-aplicar">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">×</span>
-                                </button>
-                                <h4 class="modal-title">Aviso de cobro</h4>
-                            </div>
-                            <div class="modal-body">
-                                <p>¿Desea generar el aviso de cobro?</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                                <button id="boton_pago" class="btn btn-primary">Generar Aviso de cobro</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <br><br>
 
-                <div align="center">
-                    <br><br><br>
-                    <a class="btn btn-default" data-target="#modal-cancelar" data-toggle="modal"
-                        onclick="cancelarpago()">Cancelar Cobro</a>
-                    <a class="btn btn-primary" data-target="#modal-aplicar" data-toggle="modal"
-                        onclick="aplicarpago()">Generar Cobro</a>
+
+                    <a class="btn btn-default" data-target="#modal-cancelar" data-toggle="modal">Cancelar
+                        Cobro</a>
+                    <a class="btn btn-primary" data-target="#modal-aplicar" data-toggle="modal">Generar Cobro</a>
                 </div>
 
-            </form>
+            </div>
         </div>
 
         <div class="modal fade" id="modal-cancelar" tabindex="-1" role="dialog"
@@ -503,6 +378,182 @@
                         </div>
                     </div>
                 </form>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-reiniciar" tabindex="-1" role="dialog"
+            aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
+            <div class="modal-dialog">
+                <form action="{{ url('poliza/desempleo/reiniciar_carga') }}" method="POST">
+                    @csrf
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                            <h4 class="modal-title">Reiniciar carga</h4>
+                            <input type="hidden" name="PolizaDesempleo" value="{{ $desempleo->Id }}">
+                            <input type="hidden" name="Mes" value="{{ isset($fechas) ? $fechas->Mes : '' }}">
+                            <input type="hidden" name="Axo" value="{{ isset($fechas) ? $fechas->Axo : '' }}">
+                        </div>
+                        <div class="modal-body">
+                            <p>¿Está seguro/a que desea reinicar el proceso?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                            <button class="btn btn-danger">Reiniciar carga</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+        <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
+            id="modal-aplicar">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                        <h4 class="modal-title">Aviso de cobro</h4>
+                    </div>
+                    <form action="{{ url('polizas/desempleo/agregar_pago') }}" method="POST">
+                        @csrf
+
+
+
+                        <div class="modal-body">
+                            <div class="card mt-4 p-3 bg-light" style="display: none">
+                                <h5>🔍 Depuración de valores (inputs visibles)</h5>
+                                <div class="row g-2">
+
+
+                                    <div class="col-md-3">
+                                        <label>Fecha inicio</label>
+                                        <input type="text" class="form-control" name="FechaInicio"
+                                            value="{{ isset($fechas) ? $fechas->FechaInicio : '' }}">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>Fecha Final</label>
+                                        <input type="text" class="form-control" name="FechaFinal"
+                                            value="{{ isset($fechas) ? $fechas->FechaFinal : '' }}">
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label>Monto Cartera</label>
+                                        <input type="text" class="form-control" name="MontoCartera"
+                                            id="MontoCarteraDetalle" value="{{ $data['total'] }}">
+                                    </div>
+
+
+                                    <div class="col-md-3">
+                                        <label>Desempleo (ID)</label>
+                                        <input type="text" class="form-control" name="Desempleo"
+                                            value="{{ $desempleo->Id }}">
+                                    </div>
+
+
+                                    <div class="col-md-3">
+                                        <label>Año</label>
+                                        <input type="text" class="form-control" name="Axo"
+                                            value="{{ isset($fechas) ? $fechas->Axo : '' }}">
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label>Mes</label>
+                                        <input type="text" class="form-control" name="Mes"
+                                            value="{{ isset($fechas) ? $fechas->Mes : '' }}">
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label>Tasa</label>
+                                        <input type="text" class="form-control" name="Tasa"
+                                            value="{{ $desempleo->Tasa }}">
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label>Prima Calculada</label>
+                                        <input type="text" class="form-control" name="PrimaCalculada"
+                                            id="PrimaCalculadaDetalle" value="{{ $data['primaPorPagar'] }}">
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label>Prima Descontada</label>
+                                        <input type="text" class="form-control" name="PrimaDescontada"
+                                            id="PrimaDescontadaDetalle" value="{{ $data['primaDescontada'] }}">
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label>Sub Total</label>
+                                        <input type="text" class="form-control" name="SubTotal"
+                                            id="SubTotalDetalle" value="">
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label>IVA</label>
+                                        <input type="text" class="form-control" name="Iva" id="IvaDetalle"
+                                            value="">
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label>Tasa Comisión</label>
+                                        <input type="text" class="form-control" name="TasaComision"
+                                            value="{{ $desempleo->TasaComision ?? 0 }}">
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label>Comisión</label>
+                                        <input type="text" class="form-control" name="Comision"
+                                            id="ComisionDetalle" value="{{ $data['valorComision'] ?? 0 }}">
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label>IVA Comisión</label>
+                                        <input type="text" class="form-control" name="IvaSobreComision"
+                                            id="IvaComisionDetalle" value="{{ $data['ivaComision'] }}">
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label>Descuento</label>
+                                        <input type="text" class="form-control" name="Descuento"
+                                            id="DescuentoDetalle" value="{{ $data['descuento'] }}">
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label>Retención</label>
+                                        <input type="text" class="form-control" name="Retencion"
+                                            id="RetencionDetalle" value="{{ $data['retencionComision'] }}">
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label>Valor CCF</label>
+                                        <input type="text" class="form-control" name="ValorCCF"
+                                            id="ValorCCFDetalle" value="{{ $data['comisionCcf'] }}">
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label>A Pagar</label>
+                                        <input type="text" class="form-control" name="APagar" id="APagarDetalle"
+                                            value="{{ $data['liquidoApagar'] }}">
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label>Extra Prima</label>
+                                        <input type="text" class="form-control" name="ExtraPrima"
+                                            value="{{ $data['extra_prima'] }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <p>¿Desea generar el aviso de cobro?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                            <button id="boton_pago" class="btn btn-primary">Generar Aviso de cobro</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

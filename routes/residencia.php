@@ -24,6 +24,8 @@ Route::middleware(['web'])->group(function () {
     Route::post('polizas/residencia/eliminar_comentario', [ResidenciaController::class, 'eliminar_comentario']);
     Route::post('polizas/residencia/cancelar_pago', [ResidenciaController::class, 'cancelar_pago']);
 
+    Route::post('polizas/residencia/reiniciar_carga', [ResidenciaController::class, 'reiniciar_carga']);
+
     //renovacion
     Route::get('polizas/residencia/renovar/{id}', [ResidenciaRenovacionController::class, 'renovar']);
     Route::post('polizas/residencia/renovar', [ResidenciaRenovacionController::class, 'save_renovar']);

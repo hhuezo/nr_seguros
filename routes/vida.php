@@ -51,6 +51,7 @@ Route::middleware(['web'])->group(function () {
 
     Route::post('polizas/vida/agregar_pago', [VidaController::class, 'agregar_pago']);
     Route::post('polizas/vida/cancelar_pago', [VidaController::class, 'cancelar_pago']);
+    Route::post('poliza/vida/reiniciar_carga', [VidaController::class, 'reiniciar_carga']);
     Route::post('poliza/vida/recibo/{id}', [VidaController::class, 'recibo_pago']);
 
 
@@ -84,5 +85,4 @@ Route::middleware(['web'])->group(function () {
     Route::get('polizas/vida/renovar/{id}', [VidaRenovacionController::class, 'renovar']);
     Route::post('polizas/vida/renovar', [VidaRenovacionController::class, 'save_renovar']);
     Route::post('polizas/vida/eliminar_renovacion/{id}', [VidaRenovacionController::class, 'eliminar_renovacion']);
-
 });

@@ -62,7 +62,6 @@
                 _token: '{{ csrf_token() }}' // Necesario para la protección CSRF de Laravel
             },
             success: function(response) {
-                console.log(response.conteo);
 
                 if (response.conteo == 0) {
                     $('#btnGuardarCartera').prop('disabled', false);
@@ -261,67 +260,4 @@
         })
     }
 
-
-    // function agregarValidos() {
-    //     var id = document.getElementById('creditos').value;
-
-    //     var loadingOverlay = document.getElementById('loading-overlay'); // Cambiado para coincidir con el HTML
-
-    //     if (loadingOverlay) {
-    //         loadingOverlay.style.display = 'flex'; // Mostrar overlay
-    //     }
-
-    //     if (id != '') {
-    //         $.ajax({
-    //             url: "{{ url('polizas/deuda/agregar_valido') }}",
-    //             type: 'POST',
-    //             data: {
-    //                 id: id,
-    //                 _token: '{{ csrf_token() }}'
-    //             },
-    //             success: function(response) {
-    //                 console.log(response);
-    //                 $('#modal_cambio_credito_valido').modal('hide');
-    //                 loadCreditos(1, "");
-    //                 loadCreditos(2, "");
-    //             },
-    //             error: function(xhr, status, error) {
-    //                 console.error(error);
-    //             },
-    //             complete: function() {
-    //                 if (loadingOverlay) {
-    //                     console.log("Ocultando overlay en complete");
-    //                     loadingOverlay.style.display = 'none'; // Ocultar overlay después de la solicitud
-    //                 }
-    //             }
-    //         });
-
-    //     } else {
-    //         Swal.fire({
-    //             title: 'Error!',
-    //             text: 'Debe de seleccionar el credito',
-    //             icon: 'error',
-    //             confirmButtonText: 'Aceptar'
-    //         });
-
-    //         if (loadingOverlay) {
-    //             loadingOverlay.style.display = 'none'; // Ocultar overlay si no se seleccionó un crédito
-    //         }
-    //     }
-    // }
-
-    // $('#btn_valido').on('click', function() {
-    //     var buscar = document.getElementById('buscar_valido').value;
-
-    //     loadCreditos(2, buscar);
-    //     console.log("hola", buscar);
-    // });
-
-    // $('#btn_limpiarn_valido').on('click', function() {
-    //     document.getElementById('buscar_valido').value = "";
-    //     var buscar = "";
-
-    //     loadCreditos(2, buscar);
-    //     console.log("hola", buscar);
-    // });
 </script>

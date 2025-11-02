@@ -1721,6 +1721,81 @@ class DeudaController extends Controller
         return back();
     }
 
+    public function reiniciar_carga(Request $request)
+    {
+        $anio = $request->Axo;
+        $mes = $request->Mes;
+        $deuda = $request->Deuda;
+
+        DB::beginTransaction();
+
+        try {
+            //Eliminar los registros actuales en poliza_deuda_temp_cartera
+            DB::table('poliza_deuda_temp_cartera')
+                ->where('Axo', $anio)
+                ->where('Mes', $mes)
+                ->where('PolizaDeuda', $deuda)
+                ->delete();
+
+            //Insertar los registros del historial nuevamente en la tabla temporal
+            DB::statement("
+            INSERT INTO poliza_deuda_temp_cartera (
+                PolizaDeudaTipoCartera, LineaCredito, Tasa, TotalCredito, EdadDesembloso,
+                CarnetResidencia, Dui, Pasaporte, Nacionalidad, FechaNacimiento, TipoPersona,
+                PrimerApellido, SegundoApellido, ApellidoCasada, PrimerNombre, SegundoNombre,
+                NombreSociedad, Sexo, FechaOtorgamiento, FechaVencimiento, NumeroReferencia,
+                MontoOtorgado, SaldoCapital, Intereses, MoraCapital, InteresesMoratorios, SaldoTotal,
+                User, Axo, Mes, PolizaDeuda, FechaInicio, FechaFinal, TipoError, FechaNacimientoDate,
+                Edad, InteresesCovid, MontoNominal, NoValido, Perfiles, FechaOtorgamientoDate,
+                SaldoCumulo, Excluido, OmisionPerfil, Rehabilitado, EdadRequisito, MontoRequisito,
+                MontoMaximoIndividual, TipoDeuda, PorcentajeExtraprima, TipoDocumento,
+                SaldoInteresMora, PagoAutomatico, Errores
+            )
+            SELECT
+                PolizaDeudaTipoCartera, LineaCredito, Tasa, TotalCredito, EdadDesembloso,
+                CarnetResidencia, Dui, Pasaporte, Nacionalidad, FechaNacimiento, TipoPersona,
+                PrimerApellido, SegundoApellido, ApellidoCasada, PrimerNombre, SegundoNombre,
+                NombreSociedad, Sexo, FechaOtorgamiento, FechaVencimiento, NumeroReferencia,
+                MontoOtorgado, SaldoCapital, Intereses, MoraCapital, InteresesMoratorios, SaldoTotal,
+                User, Axo, Mes, PolizaDeuda, FechaInicio, FechaFinal, TipoError, FechaNacimientoDate,
+                Edad, InteresesCovid, MontoNominal, NoValido, Perfiles, FechaOtorgamientoDate,
+                SaldoCumulo, Excluido, OmisionPerfil, Rehabilitado, EdadRequisito, MontoRequisito,
+                MontoMaximoIndividual, TipoDeuda, PorcentajeExtraprima, TipoDocumento,
+                SaldoInteresMora, PagoAutomatico, Errores
+            FROM poliza_deuda_temp_cartera_historial
+            WHERE Axo = ? AND Mes = ? AND PolizaDeuda = ?", [$anio, $mes, $deuda]);
+
+
+            //Eliminar los registros del historial una vez restaurados
+            DB::table('poliza_deuda_temp_cartera_historial')
+                ->where('Axo', $anio)
+                ->where('Mes', $mes)
+                ->where('PolizaDeuda', $deuda)
+                ->delete();
+
+            //Eliminar los registros de la xcartera real
+            DB::table('poliza_deuda_cartera')
+                ->where('Axo', $anio)
+                ->where('Mes', $mes)
+                ->where('PolizaDeuda', $deuda)
+                ->where('PolizaDeudaDetalle', null)
+                ->delete();
+
+            DB::commit();
+
+            alert()->success('La carga ha sido reiniciada correctamente');
+            return back();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error al reiniciar carga: ' . $e->getMessage());
+            alert()->error('Hubo un error al reiniciar la carga');
+            return back();
+        }
+    }
+
+
+
+
 
     public function agregar_valido_detalle(Request $request)
     {

@@ -363,8 +363,7 @@
                                             <thead>
                                                 <tr>
                                                     <th>Número crédito</th>
-                                                    <th>DUI</th>
-                                                    <th>NIT</th>
+                                                    <th>Documento</th>
                                                     <th>Nombre</th>
                                                     <th>Fecha nacimiento</th>
                                                     <th>Edad Otorgamiento</th>
@@ -375,8 +374,7 @@
                                                 @foreach ($nuevos_registros->where('Edad', '<=', $poliza_vida->EdadMaximaInscripcion) as $registro)
                                                     <tr>
                                                         <td>{{ $registro->NumeroReferencia }}</td>
-                                                        <td>{{ $registro->Dui }}</td>
-                                                        <td>{{ $registro->Nit }}</td>
+                                                        <td>{{ $registro->Dui }} {{ $registro->Pasaporte }} {{ $registro->CarnetResidencia }} </td>
                                                         <td>{{ $registro->PrimerNombre }}
                                                             {{ $registro->SegundoNombre }}
                                                             {{ $registro->PrimerApellido }}
@@ -416,8 +414,7 @@
                                             <thead>
                                                 <tr>
                                                     <th>Número crédito</th>
-                                                    <th>DUI</th>
-                                                    <th>NIT</th>
+                                                    <th>Documento</th>
                                                     <th>Nombre</th>
                                                     <th>Fecha Nacimiento</th>
                                                     <th>Fecha Otorgamiento</th>
@@ -429,8 +426,7 @@
                                                 @foreach ($registros_eliminados as $registro)
                                                 <tr>
                                                     <td>{{ $registro->NumeroReferencia }}</td>
-                                                    <td>{{ $registro->Dui }}</td>
-                                                    <td>{{ $registro->Nit }}</td>
+                                                      <td>{{ $registro->Dui }} {{ $registro->Pasaporte }} {{ $registro->CarnetResidencia }} </td>
                                                     <td>{{ $registro->PrimerNombre }}
                                                         {{ $registro->SegundoNombre }}
                                                         {{ $registro->PrimerApellido }}

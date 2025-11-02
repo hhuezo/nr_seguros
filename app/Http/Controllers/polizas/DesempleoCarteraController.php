@@ -7,12 +7,14 @@ use App\Imports\DesempleoCarteraTempFedeImport;
 use App\Imports\DesempleoCarteraTempImport;
 use App\Models\polizas\Desempleo;
 use App\Models\polizas\DesempleoCartera;
+use App\Models\polizas\DesempleoDetalle;
 use App\Models\polizas\DesempleoTasaDiferenciada;
 use App\Models\polizas\DesempleoTipoCartera;
 use App\Models\temp\DesempleoCarteraTemp;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -73,6 +75,26 @@ class DesempleoCarteraController extends Controller
         $anioSeleccionado = $fechaInicio->year;
 
 
+        // ✅ Formato Y-m-d para el Blade
+        $fechaInicio = $fechaInicio->format('Y-m-d');
+        $fechaFinal = $fechaFinal->format('Y-m-d');
+
+        $ultimo_pago = DesempleoDetalle::where('Desempleo', $id)->orderBy('Id', 'desc')->first();
+
+        if ($ultimo_pago) {
+            // Si hay pago, tomar la fecha inicial y final con +1 mes exacto
+            $fecha_inicial = Carbon::parse($ultimo_pago->FechaFinal);
+            $fecha_final = $fecha_inicial->copy()->addMonth();
+
+            $axo = $fecha_inicial->year;
+            $mes = (int) $ultimo_pago->Mes + 1;
+
+            // Formato final Y-m-d
+            $fechaInicio =  $fecha_inicial->format('Y-m-d');
+            $fechaFinal = $fecha_final->format('Y-m-d');
+        }
+
+
         // 👉 Rango de años válidos según vigencia
         $vigenciaDesde = Carbon::parse($desempleo->VigenciaDesde);
         $vigenciaHasta = Carbon::parse($desempleo->VigenciaHasta);
@@ -81,9 +103,7 @@ class DesempleoCarteraController extends Controller
             $years
         );
 
-        // ✅ Formato Y-m-d para el Blade
-        $fechaInicio = $fechaInicio->format('Y-m-d');
-        $fechaFinal = $fechaFinal->format('Y-m-d');
+
 
         return view('polizas.desempleo.subir_archivos', compact(
             'desempleo',
@@ -848,6 +868,150 @@ class DesempleoCarteraController extends Controller
         alert()->success('El cobro se ha eliminado correctamente');
         return redirect('polizas/desempleo/' . $request->Desempleo . '?tab=2');
     }
+
+
+    public function reiniciar_carga(Request $request)
+    {
+        $anio = $request->Axo;
+        $mes = $request->Mes;
+        $desempleo = $request->PolizaDesempleo;
+
+        DB::beginTransaction();
+
+        try {
+            // 1️⃣ Eliminar los registros actuales en poliza_desempleo_cartera_temp
+            DB::table('poliza_desempleo_cartera_temp')
+                ->where('Axo', $anio)
+                ->where('Mes', $mes)
+                ->where('PolizaDesempleo', $desempleo)
+                ->delete();
+
+            // 2️⃣ Insertar los registros del historial nuevamente en la tabla temporal
+            DB::statement("
+            INSERT INTO poliza_desempleo_cartera_temp (
+                SaldosMontos,
+                PolizaDesempleo,
+                Dui,
+                Pasaporte,
+                CarnetResidencia,
+                Nacionalidad,
+                FechaNacimiento,
+                TipoPersona,
+                Sexo,
+                PrimerApellido,
+                SegundoApellido,
+                ApellidoCasada,
+                PrimerNombre,
+                SegundoNombre,
+                NombreSociedad,
+                FechaOtorgamiento,
+                FechaVencimiento,
+                NumeroReferencia,
+                MontoOtorgado,
+                SaldoCapital,
+                Intereses,
+                MoraCapital,
+                InteresesMoratorios,
+                InteresesCovid,
+                Tarifa,
+                TipoDeuda,
+                PorcentajeExtraprima,
+                SaldoTotal,
+                User,
+                Axo,
+                Mes,
+                FechaInicio,
+                FechaFinal,
+                TipoError,
+                FechaNacimientoDate,
+                FechaOtorgamientoDate,
+                Edad,
+                EdadDesembloso,
+                NoValido,
+                Excluido,
+                Rehabilitado,
+                EdadRequisito,
+                DesempleoTipoCartera,
+                TotalCredito,
+                Tasa
+            )
+            SELECT
+                SaldosMontos,
+                PolizaDesempleo,
+                Dui,
+                Pasaporte,
+                CarnetResidencia,
+                Nacionalidad,
+                FechaNacimiento,
+                TipoPersona,
+                Sexo,
+                PrimerApellido,
+                SegundoApellido,
+                ApellidoCasada,
+                PrimerNombre,
+                SegundoNombre,
+                NombreSociedad,
+                FechaOtorgamiento,
+                FechaVencimiento,
+                NumeroReferencia,
+                MontoOtorgado,
+                SaldoCapital,
+                Intereses,
+                MoraCapital,
+                InteresesMoratorios,
+                InteresesCovid,
+                Tarifa,
+                TipoDeuda,
+                PorcentajeExtraprima,
+                SaldoTotal,
+                User,
+                Axo,
+                Mes,
+                FechaInicio,
+                FechaFinal,
+                TipoError,
+                FechaNacimientoDate,
+                FechaOtorgamientoDate,
+                Edad,
+                EdadDesembloso,
+                NoValido,
+                Excluido,
+                Rehabilitado,
+                EdadRequisito,
+                DesempleoTipoCartera,
+                TotalCredito,
+                Tasa
+            FROM poliza_desempleo_cartera_temp_historial
+            WHERE Axo = ? AND Mes = ? AND PolizaDesempleo = ?
+        ", [$anio, $mes, $desempleo]);
+
+            // 3️⃣ Eliminar los registros del historial una vez restaurados
+            DB::table('poliza_desempleo_cartera_temp_historial')
+                ->where('Axo', $anio)
+                ->where('Mes', $mes)
+                ->where('PolizaDesempleo', $desempleo)
+                ->delete();
+
+            // 4️⃣ Eliminar los registros de la cartera real (que no tengan detalle)
+            DB::table('poliza_desempleo_cartera')
+                ->where('Axo', $anio)
+                ->where('Mes', $mes)
+                ->where('PolizaDesempleo', $desempleo)
+                ->whereNull('PolizaDesempleoDetalle')
+                ->delete();
+
+            DB::commit();
+
+            alert()->success('La carga de póliza de desempleo ha sido reiniciada correctamente');
+            return back();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error al reiniciar carga de desempleo: ' . $e->getMessage());
+            alert()->error('Hubo un error al reiniciar la carga de desempleo');
+            return back();
+        }
+    }
+
 
 
     public function delete_temp(Request $request)
