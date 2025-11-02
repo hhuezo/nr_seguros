@@ -10,7 +10,7 @@
 
         .recibo-container {
             width: 1200px;
-
+            height: 600px;
             margin: 30px auto;
             margin-top: 81px;
             background: #fff;
@@ -62,6 +62,10 @@
             font-weight: bold;
             text-align: center;
         }
+
+        .border-row tr{
+            border: 1px #ccc solid;
+        }
     </style>
 
     <!-- Toastr CSS -->
@@ -86,8 +90,8 @@
         </script>
     @endif
 
-    <div class="recibo-container">
-        <form action="{{ url('poliza/desempleo/get_recibo_edit') }}" method="POST">
+    <div class="recibo-container" style="overflow-y: scroll">
+        <form action="{{ url('poliza/desempleo/get_recibo_edit') }}" method="POST" target="_blank">
             @csrf
             <input type="hidden" name="id_desempleo_detalle" value="{{ $recibo_historial->PolizaDesempleoDetalle }}">
 
@@ -138,7 +142,9 @@
                             <strong>Aviso de Cobro:</strong><br>
 
                             <div class="d-flex justify-content-center align-items-center">
-                                <span class="mr-1 font-weight-bold"> AC {{ str_pad($recibo_historial->NumeroRecibo,6,"0",STR_PAD_LEFT)}} {{date('Y')}}</span>
+                                <span class="mr-1 font-weight-bold"> AC
+                                    {{ str_pad($recibo_historial->NumeroRecibo, 6, '0', STR_PAD_LEFT) }}
+                                    {{ date('Y') }}</span>
                             </div>
                         </div>
                     </td>
@@ -212,88 +218,101 @@
             </table>
 
             <div class="row">
-                <div class="col-6">
-                    <table>
-                        <tr>
-                            <td>Monto de Cartera</td>
-                            <td class="text-right"><input type="text" class="form-control text-right"
-                                    value="{{ $recibo_historial->MontoCartera }}" readonly></td>
-                        </tr>
-                        <tr>
-                            <td>Prima calculada</td>
-                            <td class="text-right"><input type="text" class="form-control text-right"
-                                    value="{{ $recibo_historial->PrimaCalculada }}" readonly></td>
-                        </tr>
-                        <tr>
-                            <td>Extra Prima</td>
-                            <td class="text-right"><input type="text" class="form-control text-right"
-                                    value="{{ $recibo_historial->ExtraPrima }}" readonly></td>
-                        </tr>
-                        <tr>
-                            <td>(-) Descuento rentabilidad ({{ $recibo_historial->PordentajeDescuento }}%)</td>
-                            <td class="text-right"><input type="text" class="form-control text-right"
-                                    value="{{ $recibo_historial->Descuento }}" readonly></td>
-                        </tr>
-                        <tr>
-                            <td>(=) Prima descontada</td>
-                            <td class="text-right"><input type="text" class="form-control text-right"
-                                    value="{{ $recibo_historial->PrimaDescontada }}" readonly></td>
-                        </tr>
-                        <tr>
-                            <td>(-) Estructura CCF de Comisión</td>
-                            <td class="text-right"><input type="text" class="form-control text-right"
-                                    value="{{ $recibo_historial->ValorCCF }}" readonly></td>
-                        </tr>
-                        <tr class="font-weight-bold">
-                            <td>Total a pagar</td>
-                            <td class="text-right"><input type="text" class="form-control text-right font-weight-bold"
-                                    value="{{ $recibo_historial->TotalAPagar }}" readonly></td>
-                        </tr>
-                    </table>
-                </div>
+                <table class="no-border">
+                    <tr>
+                        <td>
+                            <div class="col-6">
+                                <table class="border-row">
+                                    <tr>
+                                        <td>Monto de Cartera</td>
+                                        <td class="text-right"><input type="text" class="form-control text-right"
+                                                value="{{ $recibo_historial->MontoCartera }}" readonly></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Prima calculada</td>
+                                        <td class="text-right"><input type="text" class="form-control text-right"
+                                                value="{{ $recibo_historial->PrimaCalculada }}" readonly></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Extra Prima</td>
+                                        <td class="text-right"><input type="text" class="form-control text-right"
+                                                value="{{ $recibo_historial->ExtraPrima }}" readonly></td>
+                                    </tr>
+                                    @if($recibo_historial->PordentajeDescuento > 0)
+                                    <tr>
+                                        <td>(-) Descuento rentabilidad ({{ $recibo_historial->PordentajeDescuento }}%)</td>
+                                        <td class="text-right"><input type="text" class="form-control text-right"
+                                                value="{{ $recibo_historial->Descuento }}" readonly></td>
+                                    </tr>
+                                    @endif
+                                    <tr>
+                                        <td>(=) Prima descontada</td>
+                                        <td class="text-right"><input type="text" class="form-control text-right"
+                                                value="{{ $recibo_historial->PrimaDescontada }}" readonly></td>
+                                    </tr>
+                                    <tr>
+                                        <td>(-) Estructura CCF de Comisión</td>
+                                        <td class="text-right"><input type="text" class="form-control text-right"
+                                                value="{{ $recibo_historial->ValorCCF }}" readonly></td>
+                                    </tr>
+                                    <tr class="font-weight-bold">
+                                        <td>Total a pagar</td>
+                                        <td class="text-right"><input type="text"
+                                                class="form-control text-right font-weight-bold"
+                                                value="{{ $recibo_historial->TotalAPagar }}" readonly></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-6">
+                                <table class="border-row">
+                                    <tr>
+                                        <td colspan="2"><strong>Estructura del CCF de comisión</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Porcentaje de comisión</td>
+                                        <td class="text-right"><input type="text" class="form-control text-right"
+                                                value="{{ $recibo_historial->TasaComision }}" readonly></td>
+                                    </tr>
+                                    <tr>
+                                        <td>(=) Prima descontada</td>
+                                        <td class="text-right"><input type="text" class="form-control text-right"
+                                                value="{{ $recibo_historial->PrimaDescontada }}" readonly></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Valor de la comisión</td>
+                                        <td class="text-right"><input type="text" class="form-control text-right"
+                                                value="{{ $recibo_historial->Comision }}" readonly></td>
+                                    </tr>
+                                    <tr>
+                                        <td>(+) 13% IVA</td>
+                                        <td class="text-right"><input type="text" class="form-control text-right"
+                                                value="{{ $recibo_historial->IvaSobreComision }}" readonly></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Sub Total de comisión</td>
+                                        <td class="text-right"><input type="text" class="form-control text-right"
+                                                value="{{ $recibo_historial->SubTotalComision }}" readonly></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Retención 1%</td>
+                                        <td class="text-right"><input type="text" class="form-control text-right"
+                                                value="{{ $recibo_historial->Retencion }}" readonly></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Valor del CCF por Comisión</td>
+                                        <td class="text-right"><input type="text" class="form-control text-right"
+                                                value="{{ $recibo_historial->ValorCCF }}" readonly></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
 
-                <div class="col-6">
-                    <table>
-                        <tr>
-                            <td colspan="2"><strong>Estructura del CCF de comisión</strong></td>
-                        </tr>
-                        <tr>
-                            <td>Porcentaje de comisión</td>
-                            <td class="text-right"><input type="text" class="form-control text-right"
-                                    value="{{ $recibo_historial->TasaComision }}" readonly></td>
-                        </tr>
-                        <tr>
-                            <td>(=) Prima descontada</td>
-                            <td class="text-right"><input type="text" class="form-control text-right"
-                                    value="{{ $recibo_historial->PrimaDescontada }}" readonly></td>
-                        </tr>
-                        <tr>
-                            <td>Valor de la comisión</td>
-                            <td class="text-right"><input type="text" class="form-control text-right"
-                                    value="{{ $recibo_historial->Comision }}" readonly></td>
-                        </tr>
-                        <tr>
-                            <td>(+) 13% IVA</td>
-                            <td class="text-right"><input type="text" class="form-control text-right"
-                                    value="{{ $recibo_historial->IvaSobreComision }}" readonly></td>
-                        </tr>
-                        <tr>
-                            <td>Sub Total de comisión</td>
-                            <td class="text-right"><input type="text" class="form-control text-right"
-                                    value="{{ $recibo_historial->SubTotalComision }}" readonly></td>
-                        </tr>
-                        <tr>
-                            <td>Retención 1%</td>
-                            <td class="text-right"><input type="text" class="form-control text-right"
-                                    value="{{ $recibo_historial->Retencion }}" readonly></td>
-                        </tr>
-                        <tr>
-                            <td>Valor del CCF por Comisión</td>
-                            <td class="text-right"><input type="text" class="form-control text-right"
-                                    value="{{ $recibo_historial->ValorCCF }}" readonly></td>
-                        </tr>
-                    </table>
-                </div>
+
+                </table>
+
             </div>
 
             <table class="mt-3">
