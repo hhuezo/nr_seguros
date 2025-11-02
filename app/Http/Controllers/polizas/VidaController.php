@@ -2461,7 +2461,6 @@ class VidaController extends Controller
         // Iterar sobre los resultados y realizar la inserción en la tabla principal
         foreach ($tempData as $tempRecord) {
 
-            //try {
             $poliza = new VidaCartera();
             $poliza->PolizaVida = $tempRecord->PolizaVida;
             $poliza->Nit = $tempRecord->Nit;
@@ -2493,20 +2492,123 @@ class VidaController extends Controller
             $poliza->Tasa = $tempRecord->Tasa;
             $poliza->CarnetResidencia = $tempRecord->CarnetResidencia;
             $poliza->save();
-            // } catch (\Exception $e) {
-            //     // Captura errores y los guarda en el log
-            //     Log::error("Error al insertar en poliza_vida_cartera: " . $e->getMessage(), [
-            //         'NumeroReferencia' => $tempRecord->NumeroReferencia,
-            //         'Usuario' => auth()->user()->id ?? 'N/A',
-            //         'Datos' => $tempRecord
-            //     ]);
-            // }
+
         }
 
 
-        VidaCarteraTemp::where('Axo', $anio)
-            ->where('Mes', $mes + 0)
-            ->where('PolizaVida', $request->Vida)->delete();
+
+             try {
+            DB::beginTransaction();
+
+            // 1️⃣ Eliminar registros previos del mismo periodo en el historial
+            DB::table('poliza_vida_cartera_temp_historial')
+                ->where('Axo', $anio)
+                ->where('Mes', $mes)
+                ->where('PolizaVida', $request->Vida)
+                ->delete();
+
+            // 2️⃣ Insertar los registros actuales desde poliza_vida_cartera_temp
+            DB::statement("
+                INSERT INTO poliza_vida_cartera_temp_historial (
+                    PolizaVida,
+                    CarnetResidencia,
+                    Dui,
+                    Pasaporte,
+                    Nacionalidad,
+                    FechaNacimiento,
+                    TipoPersona,
+                    Sexo,
+                    PrimerApellido,
+                    SegundoApellido,
+                    ApellidoCasada,
+                    PrimerNombre,
+                    SegundoNombre,
+                    FechaOtorgamiento,
+                    FechaVencimiento,
+                    NumeroReferencia,
+                    SumaAsegurada,
+                    User,
+                    Axo,
+                    Mes,
+                    FechaInicio,
+                    FechaFinal,
+                    FechaNacimientoDate,
+                    FechaOtorgamientoDate,
+                    Edad,
+                    EdadDesembloso,
+                    TipoError,
+                    Rehabilitado,
+                    NoValido,
+                    PolizaVidaTipoCartera,
+                    Tasa,
+                    MontoMaximoIndividual,
+                    TipoDeuda,
+                    PorcentajeExtraprima,
+                    TipoDocumento,
+                    SaldoInteresMora,
+                    NombreSociedad,
+                    SaldoCapital,
+                    Intereses,
+                    InteresesMoratorios,
+                    InteresesCovid
+                )
+                SELECT
+                    PolizaVida,
+                    CarnetResidencia,
+                    Dui,
+                    Pasaporte,
+                    Nacionalidad,
+                    FechaNacimiento,
+                    TipoPersona,
+                    Sexo,
+                    PrimerApellido,
+                    SegundoApellido,
+                    ApellidoCasada,
+                    PrimerNombre,
+                    SegundoNombre,
+                    FechaOtorgamiento,
+                    FechaVencimiento,
+                    NumeroReferencia,
+                    SumaAsegurada,
+                    User,
+                    Axo,
+                    Mes,
+                    FechaInicio,
+                    FechaFinal,
+                    FechaNacimientoDate,
+                    FechaOtorgamientoDate,
+                    Edad,
+                    EdadDesembloso,
+                    TipoError,
+                    Rehabilitado,
+                    NoValido,
+                    PolizaVidaTipoCartera,
+                    Tasa,
+                    MontoMaximoIndividual,
+                    TipoDeuda,
+                    PorcentajeExtraprima,
+                    TipoDocumento,
+                    SaldoInteresMora,
+                    NombreSociedad,
+                    SaldoCapital,
+                    Intereses,
+                    InteresesMoratorios,
+                    InteresesCovid
+                FROM poliza_vida_cartera_temp
+                WHERE Axo = ? AND Mes = ? AND PolizaVida = ?
+            ", [$anio, $mes, $request->Vida]);
+
+            // 3️⃣ Eliminar los registros originales de la tabla temporal
+            VidaCarteraTemp::where('Axo', $anio)
+                ->where('Mes', $mes + 0)
+                ->where('PolizaVida', $request->Vida)
+                ->delete();
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
 
         alert()->success('El registro de poliza ha sido ingresado correctamente');
         return redirect('polizas/vida/' . $request->Vida . '?tab=2');
