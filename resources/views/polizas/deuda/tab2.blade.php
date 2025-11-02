@@ -319,147 +319,24 @@
                         </tr>
                     </tbody>
                 </table>
-                <br><br><br>
+                <br><br>
             </div>
 
             <div>
-                <form action="{{ url('polizas/deuda/agregar_pago') }}" method="POST">
-                    @csrf
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <a class="btn btn-warning" data-target="#modal-reiniciar" data-toggle="modal"
+                        onclick="cancelarpago()">Reiniciar carga</a>
+                </div>
 
-                    <div class="card mt-4 p-3 bg-light" style="display: none">
-                        <h5>🔍 Depuración de valores (inputs ocultos visibles)</h5>
-                        <div class="row g-2">
-                            <div class="col-md-3">
-                                <label>Fecha Inicio</label>
-                                <input type="text" class="form-control" id="FechaInicio" name="FechaInicio"
-                                    value="{{ isset($ultimaCartera) ? $ultimaCartera->FechaInicio : '' }}">
-                            </div>
-                            <div class="col-md-3">
-                                <label>Fecha Final</label>
-                                <input type="text" class="form-control" id="FechaFinal" name="FechaFinal"
-                                    value="{{ isset($ultimaCartera) ? $ultimaCartera->FechaFinal : '' }}">
-                            </div>
-                            <div class="col-md-3">
-                                <label>Mes</label>
-                                <input type="text" class="form-control"
-                                    value="{{ isset($ultimaCartera->Mes) ? $ultimaCartera->Mes : ''}}"
-                                    name="Mes">
-
-                            </div>
-
-                            <div class="col-md-3">
-                                <label>Año</label>
-                                <input type="text" class="form-control"
-                                    value="{{ isset($ultimaCartera->Axo)  ? $ultimaCartera->Axo : ''}}"
-                                    name="Axo">
-
-                            </div>
-                            <div class="col-md-3">
-                                <label>Monto Cartera</label>
-                                <input type="text" class="form-control" id="MontoCarteraDetalle"
-                                    name="MontoCartera">
-                            </div>
-                            <div class="col-md-3">
-                                <label>Deuda (ID)</label>
-                                <input type="text" class="form-control" id="Deuda" name="Deuda"
-                                    value="{{ $deuda->Id }}">
-                            </div>
-                            <div class="col-md-3">
-                                <label>Tasa</label>
-                                <input type="text" class="form-control" id="Tasa" name="Tasa"
-                                    value="{{ $deuda->Tasa }}">
-                            </div>
-                            <div class="col-md-3">
-                                <label>Prima Calculada</label>
-                                <input type="text" class="form-control" id="PrimaCalculadaDetalle"
-                                    name="PrimaCalculada">
-                            </div>
-                            <div class="col-md-3">
-                                <label>Prima Descontada</label>
-                                <input type="text" class="form-control" id="PrimaDescontadaDetalle"
-                                    name="PrimaDescontada">
-                            </div>
-                            <div class="col-md-3">
-                                <label>Sub Total</label>
-                                <input type="text" class="form-control" id="SubTotalDetalle" name="SubTotal">
-                            </div>
-                            <div class="col-md-3">
-                                <label>IVA</label>
-                                <input type="text" class="form-control" id="IvaDetalle" name="Iva">
-                            </div>
-                            <div class="col-md-3">
-                                <label>Tasa Comisión</label>
-                                <input type="text" class="form-control" id="TasaComision" name="TasaComision"
-                                    value="{{ $deuda->TasaComision }}">
-                            </div>
-                            <div class="col-md-3">
-                                <label>Comisión</label>
-                                <input type="text" class="form-control" id="ComisionDetalle" name="Comision">
-                            </div>
-                            <div class="col-md-3">
-                                <label>IVA Comisión</label>
-                                <input type="text" class="form-control" id="IvaComisionDetalle"
-                                    name="IvaSobreComision">
-                            </div>
-                            <div class="col-md-3">
-                                <label>Descuento</label>
-                                <input type="text" class="form-control" id="DescuentoDetalle" name="Descuento">
-                            </div>
-                            <div class="col-md-3">
-                                <label>Retención</label>
-                                <input type="text" class="form-control" id="RetencionDetalle" name="Retencion">
-                            </div>
-                            <div class="col-md-3">
-                                <label>Valor CCF</label>
-                                <input type="text" class="form-control" id="ValorCCFDetalle" name="ValorCCF">
-                            </div>
-                            <div class="col-md-3">
-                                <label>A Pagar</label>
-                                <input type="text" class="form-control" id="APagarDetalle" name="APagar">
-                            </div>
-                            <div class="col-md-3">
-                                <label>Extra Prima</label>
-                                <input type="text" class="form-control" id="ExtraPrima" name="ExtraPrima"
-                                    value="{{ $total_extrapima }}">
-                            </div>
-                        </div>
-                    </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" style="text-align: right">
 
 
 
-
-                    <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
-                        id="modal-aplicar">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">×</span>
-                                    </button>
-                                    <h4 class="modal-title">Aviso de cobro</h4>
-                                </div>
-                                <div class="modal-body">
-                                    <p>¿Desea generar el aviso de cobro?</p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-default"
-                                        data-dismiss="modal">Cerrar</button>
-                                    <button id="boton_pago" class="btn btn-primary">Generar Aviso de cobro</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <br><br>
-
-                    <div align="center">
-                        <br><br><br>
-                        <a class="btn btn-default" data-target="#modal-cancelar" data-toggle="modal"
-                            onclick="cancelarpago()">Cancelar Cobro</a>
-                        <a class="btn btn-primary" data-target="#modal-aplicar" data-toggle="modal"
-                            onclick="aplicarpago()">Generar Cobro</a>
-                    </div>
-
-                </form>
+                    <a class="btn btn-default" data-target="#modal-cancelar" data-toggle="modal"
+                        onclick="cancelarpago()">Cancelar Cobro</a>
+                    <a class="btn btn-primary" data-target="#modal-aplicar" data-toggle="modal"
+                        onclick="aplicarpago()">Generar Cobro</a>
+                </div>
 
             </div>
 
@@ -489,8 +366,179 @@
                     </form>
                 </div>
             </div>
+
+
+
+            <div class="modal fade" id="modal-reiniciar" tabindex="-1" role="dialog"
+                aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
+                <div class="modal-dialog">
+                    <form action="{{ url('deuda/reiniciar_carga') }}" method="POST">
+                        @method('POST')
+                        @csrf
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                                <h4 class="modal-title">Reiniciar carga</h4>
+                                <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
+                                <input type="hidden" name="Axo" value="{{ $ultimaCartera->Axo ?? '' }}">
+                                <input type="hidden" name="Mes" value="{{ $ultimaCartera->Mes ?? '' }}">
+                            </div>
+                            <div class="modal-body">
+                                <p>¿Esta seguro/a que desea reiniciar el proceso?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                <button class="btn btn-danger">Reiniciar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+
         </div>
+        <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
+            id="modal-aplicar">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                        <h4 class="modal-title">Aviso de cobro</h4>
+                    </div>
+
+
+
+                    <form action="{{ url('polizas/deuda/agregar_pago') }}" method="POST">
+                        @csrf
+
+                        <div class="card mt-4 p-3 bg-light" style="display: none">
+                            <h5>🔍 Depuración de valores (inputs ocultos visibles)</h5>
+                            <div class="row g-2">
+                                <div class="col-md-3">
+                                    <label>Fecha Inicio</label>
+                                    <input type="text" class="form-control" id="FechaInicio" name="FechaInicio"
+                                        value="{{ isset($ultimaCartera) ? $ultimaCartera->FechaInicio : '' }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label>Fecha Final</label>
+                                    <input type="text" class="form-control" id="FechaFinal" name="FechaFinal"
+                                        value="{{ isset($ultimaCartera) ? $ultimaCartera->FechaFinal : '' }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label>Mes</label>
+                                    <input type="text" class="form-control"
+                                        value="{{ isset($ultimaCartera->Mes) ? $ultimaCartera->Mes : '' }}"
+                                        name="Mes">
+
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label>Año</label>
+                                    <input type="text" class="form-control"
+                                        value="{{ isset($ultimaCartera->Axo) ? $ultimaCartera->Axo : '' }}"
+                                        name="Axo">
+
+                                </div>
+                                <div class="col-md-3">
+                                    <label>Monto Cartera</label>
+                                    <input type="text" class="form-control" id="MontoCarteraDetalle"
+                                        name="MontoCartera">
+                                </div>
+                                <div class="col-md-3">
+                                    <label>Deuda (ID)</label>
+                                    <input type="text" class="form-control" id="Deuda" name="Deuda"
+                                        value="{{ $deuda->Id }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label>Tasa</label>
+                                    <input type="text" class="form-control" id="Tasa" name="Tasa"
+                                        value="{{ $deuda->Tasa }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label>Prima Calculada</label>
+                                    <input type="text" class="form-control" id="PrimaCalculadaDetalle"
+                                        name="PrimaCalculada">
+                                </div>
+                                <div class="col-md-3">
+                                    <label>Prima Descontada</label>
+                                    <input type="text" class="form-control" id="PrimaDescontadaDetalle"
+                                        name="PrimaDescontada">
+                                </div>
+                                <div class="col-md-3">
+                                    <label>Sub Total</label>
+                                    <input type="text" class="form-control" id="SubTotalDetalle" name="SubTotal">
+                                </div>
+                                <div class="col-md-3">
+                                    <label>IVA</label>
+                                    <input type="text" class="form-control" id="IvaDetalle" name="Iva">
+                                </div>
+                                <div class="col-md-3">
+                                    <label>Tasa Comisión</label>
+                                    <input type="text" class="form-control" id="TasaComision" name="TasaComision"
+                                        value="{{ $deuda->TasaComision }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label>Comisión</label>
+                                    <input type="text" class="form-control" id="ComisionDetalle" name="Comision">
+                                </div>
+                                <div class="col-md-3">
+                                    <label>IVA Comisión</label>
+                                    <input type="text" class="form-control" id="IvaComisionDetalle"
+                                        name="IvaSobreComision">
+                                </div>
+                                <div class="col-md-3">
+                                    <label>Descuento</label>
+                                    <input type="text" class="form-control" id="DescuentoDetalle"
+                                        name="Descuento">
+                                </div>
+                                <div class="col-md-3">
+                                    <label>Retención</label>
+                                    <input type="text" class="form-control" id="RetencionDetalle"
+                                        name="Retencion">
+                                </div>
+                                <div class="col-md-3">
+                                    <label>Valor CCF</label>
+                                    <input type="text" class="form-control" id="ValorCCFDetalle" name="ValorCCF">
+                                </div>
+                                <div class="col-md-3">
+                                    <label>A Pagar</label>
+                                    <input type="text" class="form-control" id="APagarDetalle" name="APagar">
+                                </div>
+                                <div class="col-md-3">
+                                    <label>Extra Prima</label>
+                                    <input type="text" class="form-control" id="ExtraPrima" name="ExtraPrima"
+                                        value="{{ $total_extrapima }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-body">
+                            <p>¿Desea generar el aviso de cobro?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                            <button id="boton_pago" class="btn btn-primary">Generar Aviso de cobro</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+
+
     </div>
+
+
+
+
+
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {

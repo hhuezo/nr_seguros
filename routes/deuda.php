@@ -36,6 +36,7 @@ Route::middleware(['web'])->group(function () {
     Route::get('polizas/deuda/get_cartera/{id}/{mes}/{axo}', [DeudaCarteraController::class, 'get_cartera']);
     Route::post('polizas/deuda/delete_temp', [DeudaCarteraController::class, 'deleteLineaCredito']);
     Route::post('deuda/cancelar_pago', [DeudaController::class, 'cancelar_pago']);
+    Route::post('deuda/reiniciar_carga', [DeudaController::class, 'reiniciar_carga']);
     Route::post('polizas/deuda/eliminar_extraprima', [DeudaController::class, 'eliminar_extraprima']);
     Route::get('polizas/deuda/get_extraprimado/{id}', [DeudaController::class, 'get_extraprimado']);
     Route::post('polizas/deuda/store_extraprimado', [DeudaController::class, 'store_extraprimado']);

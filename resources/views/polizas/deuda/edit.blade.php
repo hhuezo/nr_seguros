@@ -272,32 +272,7 @@
 
 
 
-    // function show_MontoCartera() {
-    //     var montoCartera = parseFloat(document.getElementById("MontoCartera").value);
-
-    //     var numeroFormateado = formatearNumero(montoCartera);
-    //     document.getElementById('MontoCarteraView').value = numeroFormateado;
-
-    //     $("#MontoCarteraView").show();
-    //     $("#MontoCartera").hide();
-
-    // }
-
-    function aplicarpago() {
-
-        document.getElementById('MontoCartera').type = "submit";
-
-
-
-        document.getElementById('boton_pago').type = "submit";
-    }
-
-
-
     function modal_edit(id) {
-
-        // document.getElementById('ModalSaldoA').value = "";
-        // document.getElementById('ModalImpresionRecibo').value = "";
         document.getElementById('ModalComentario').value = "";
         document.getElementById('ModalEnvioCartera').value = "";
         document.getElementById('ModalEnvioPago').value = "";
@@ -346,10 +321,7 @@
                 $("#ModalEnvioPago").prop("readonly", true);
                 $("#ModalPagoAplicado").prop("readonly", true);
             }
-            // // else {
-            //     $("#ModalEnvioCartera").prop("readonly", true);
-            //     $("#ModalEnvioPago").prop("readonly", true);
-            // }
+
 
 
 
