@@ -324,18 +324,21 @@
 
             <div>
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <a class="btn btn-warning" data-target="#modal-reiniciar" data-toggle="modal"
-                        onclick="cancelarpago()">Reiniciar carga</a>
+                    @if ($totalPrimaCalculada > 0)
+                        <a class="btn btn-warning" data-target="#modal-reiniciar" data-toggle="modal">Reiniciar
+                            carga</a>
+                    @else
+                        <a class="btn btn-warning" disabled>Reiniciar
+                            carga</a>
+                    @endif
                 </div>
 
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" style="text-align: right">
 
 
 
-                    <a class="btn btn-default" data-target="#modal-cancelar" data-toggle="modal"
-                        onclick="cancelarpago()">Cancelar Cobro</a>
-                    <a class="btn btn-primary" data-target="#modal-aplicar" data-toggle="modal"
-                        onclick="aplicarpago()">Generar Cobro</a>
+                    <a class="btn btn-default" data-target="#modal-cancelar" data-toggle="modal">Cancelar Cobro</a>
+                    <a class="btn btn-primary" data-target="#modal-aplicar" data-toggle="modal">Generar Cobro</a>
                 </div>
 
             </div>

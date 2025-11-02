@@ -233,6 +233,7 @@
                     </tr>
                 </tbody>
             </table>
+            <br><br>
         </div>
 
 
@@ -243,172 +244,170 @@
 
         <!-- ==================== FORMULARIO DE ACCIONES ==================== -->
         <div>
-            <form action="{{ url('polizas/vida/agregar_pago') }}" method="POST">
-                @csrf
 
-                <div style="display: none">
-                    <div class="form-group">
-                        <label>Fecha inicio</label>
-                        <input type="text" class="form-control" name="FechaInicio"
-                            value="{{ isset($fechas) ? $fechas->FechaInicio : '' }}">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Fecha final</label>
-                        <input type="text" class="form-control" name="FechaFinal"
-                            value="{{ isset($fechas) ? $fechas->FechaFinal : '' }}">
-                    </div>
-
-                     <div class="form-group">
-                        <label>Año</label>
-                        <input type="text" class="form-control" name="Axo" value="{{ isset($fechas) ? $fechas->Axo : '' }}">
-                    </div>
-
-
-                     <div class="form-group">
-                        <label>Mes</label>
-                        <input type="text" class="form-control" name="Mes" value="{{ isset($fechas) ? $fechas->Mes : '' }}">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Monto cartera</label>
-                        <input type="text" class="form-control" name="MontoCartera" id="MontoCarteraDetalle">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Poliza vida</label>
-                        <input type="text" class="form-control" name="PolizaVida" value="{{ $poliza_vida->Id }}">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Tasa</label>
-                        <input type="text" class="form-control" name="Tasa" value="{{ $poliza_vida->Tasa }}">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Prima calculada</label>
-                        <input type="text" class="form-control" name="PrimaCalculada" id="PrimaCalculadaDetalle">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Prima descontada</label>
-                        <input type="text" class="form-control" name="PrimaDescontada"
-                            id="PrimaDescontadaDetalle">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Subtotal</label>
-                        <input type="text" class="form-control" name="SubTotal" id="SubTotalDetalle">
-                    </div>
-
-                    <div class="form-group">
-                        <label>IVA</label>
-                        <input type="text" class="form-control" name="Iva" id="IvaDetalle">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Tasa comisión</label>
-                        <input type="text" class="form-control" name="TasaComision"
-                            value="{{ $poliza_vida->TasaComision }}">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Comisión</label>
-                        <input type="text" class="form-control" name="Comision" id="ComisionDetalle">
-                    </div>
-
-                    <div class="form-group">
-                        <label>IVA sobre comisión</label>
-                        <input type="text" class="form-control" name="IvaSobreComision" id="IvaComisionDetalle">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Descuento</label>
-                        <input type="text" class="form-control" name="Descuento" id="DescuentoDetalle">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Retención</label>
-                        <input type="text" class="form-control" name="Retencion" id="RetencionDetalle">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Valor CCF</label>
-                        <input type="text" class="form-control" name="ValorCCF" id="ValorCCFDetalle">
-                    </div>
-
-                    <div class="form-group">
-                        <label>A pagar</label>
-                        <input type="text" class="form-control" name="APagar" id="APagarDetalle">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Extra prima</label>
-                        <input type="text" class="form-control" name="ExtraPrima"
-                            value="{{ $total_extrapima }}">
-                    </div>
-
+            <div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    @if ($totalPrimaCalculada > 0)
+                        <a class="btn btn-warning" data-target="#modal-reiniciar" data-toggle="modal">Reiniciar
+                            carga</a>
+                    @else
+                        <a class="btn btn-warning" disabled>Reiniciar
+                            carga</a>
+                    @endif
                 </div>
 
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" style="text-align: right">
 
 
 
-                {{-- <input type="hidden" name="FechaInicio" value="{{ isset($fechas) ? $fechas->FechaInicio : '' }}">
-                <input type="hidden" name="FechaFinal" value="{{ isset($fechas) ? $fechas->FechaFinal : '' }}">
-                <input type="hidden" name="MontoCartera" id="MontoCarteraDetalle">
-                <input type="hidden" name="PolizaVida" value="{{ $poliza_vida->Id }}">
-                <input type="hidden" name="Tasa" value="{{ $poliza_vida->Tasa }}">
-                <input type="hidden" name="PrimaCalculada" id="PrimaCalculadaDetalle">
-                <input type="hidden" name="PrimaDescontada" id="PrimaDescontadaDetalle">
-                <input type="hidden" name="SubTotal" id="SubTotalDetalle">
-                <input type="hidden" name="Iva" id="IvaDetalle">
-                <input type="hidden" name="TasaComision" value="{{ $poliza_vida->TasaComision }}">
-                <input type="hidden" name="Comision" id="ComisionDetalle">
-                <input type="hidden" name="IvaSobreComision" id="IvaComisionDetalle">
-                <input type="hidden" name="Descuento" id="DescuentoDetalle">
-                <input type="hidden" name="Retencion" id="RetencionDetalle">
-                <input type="hidden" name="ValorCCF" id="ValorCCFDetalle">
-                <input type="hidden" name="APagar" id="APagarDetalle">
-                <input type="hidden" name="ExtraPrima" value="{{ $total_extrapima }}"> --}}
+                    <a class="btn btn-default" data-target="#modal-cancelar" data-toggle="modal">Cancelar Cobro</a>
+                    <a class="btn btn-primary" data-target="#modal-aplicar" data-toggle="modal">Generar Cobro</a>
+                </div>
+
+            </div>
+
+        </div>
 
 
 
+        <!-- 🔹 MODAL: Generar Cobro -->
+        <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
+            id="modal-aplicar">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                        <h4 class="modal-title">Aviso de cobro</h4>
+                    </div>
+                    <form action="{{ url('polizas/vida/agregar_pago') }}" method="POST">
+                        @csrf
+                        <div class="modal-body">
+
+                            <div style="display: none">
+                                <div class="form-group">
+                                    <label>Fecha inicio</label>
+                                    <input type="text" class="form-control" name="FechaInicio"
+                                        value="{{ isset($fechas) ? $fechas->FechaInicio : '' }}">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Fecha final</label>
+                                    <input type="text" class="form-control" name="FechaFinal"
+                                        value="{{ isset($fechas) ? $fechas->FechaFinal : '' }}">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Año</label>
+                                    <input type="text" class="form-control" name="Axo"
+                                        value="{{ isset($fechas) ? $fechas->Axo : '' }}">
+                                </div>
 
 
+                                <div class="form-group">
+                                    <label>Mes</label>
+                                    <input type="text" class="form-control" name="Mes"
+                                        value="{{ isset($fechas) ? $fechas->Mes : '' }}">
+                                </div>
 
+                                <div class="form-group">
+                                    <label>Monto cartera</label>
+                                    <input type="text" class="form-control" name="MontoCartera"
+                                        id="MontoCarteraDetalle">
+                                </div>
 
+                                <div class="form-group">
+                                    <label>Poliza vida</label>
+                                    <input type="text" class="form-control" name="PolizaVida"
+                                        value="{{ $poliza_vida->Id }}">
+                                </div>
 
-                <!-- 🔹 MODAL: Generar Cobro -->
-                <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
-                    id="modal-aplicar">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">×</span>
-                                </button>
-                                <h4 class="modal-title">Aviso de cobro</h4>
+                                <div class="form-group">
+                                    <label>Tasa</label>
+                                    <input type="text" class="form-control" name="Tasa"
+                                        value="{{ $poliza_vida->Tasa }}">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Prima calculada</label>
+                                    <input type="text" class="form-control" name="PrimaCalculada"
+                                        id="PrimaCalculadaDetalle">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Prima descontada</label>
+                                    <input type="text" class="form-control" name="PrimaDescontada"
+                                        id="PrimaDescontadaDetalle">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Subtotal</label>
+                                    <input type="text" class="form-control" name="SubTotal" id="SubTotalDetalle">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>IVA</label>
+                                    <input type="text" class="form-control" name="Iva" id="IvaDetalle">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Tasa comisión</label>
+                                    <input type="text" class="form-control" name="TasaComision"
+                                        value="{{ $poliza_vida->TasaComision }}">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Comisión</label>
+                                    <input type="text" class="form-control" name="Comision" id="ComisionDetalle">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>IVA sobre comisión</label>
+                                    <input type="text" class="form-control" name="IvaSobreComision"
+                                        id="IvaComisionDetalle">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Descuento</label>
+                                    <input type="text" class="form-control" name="Descuento"
+                                        id="DescuentoDetalle">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Retención</label>
+                                    <input type="text" class="form-control" name="Retencion"
+                                        id="RetencionDetalle">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Valor CCF</label>
+                                    <input type="text" class="form-control" name="ValorCCF" id="ValorCCFDetalle">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>A pagar</label>
+                                    <input type="text" class="form-control" name="APagar" id="APagarDetalle">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Extra prima</label>
+                                    <input type="text" class="form-control" name="ExtraPrima"
+                                        value="{{ $total_extrapima }}">
+                                </div>
+
                             </div>
-                            <div class="modal-body">
-                                <p>¿Desea generar el aviso de cobro?</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                                <button id="boton_pago" class="btn btn-primary">Generar Aviso de cobro</button>
-                            </div>
+
+                            <p>¿Desea generar el aviso de cobro?</p>
                         </div>
-                    </div>
-                </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                            <button id="boton_pago" class="btn btn-primary">Generar Aviso de cobro</button>
+                        </div>
 
-                <!-- 🔹 BOTONES DE ACCIÓN -->
-                <div align="center">
-                    <br><br><br>
-                    <a class="btn btn-default" data-target="#modal-cancelar" data-toggle="modal"
-                        onclick="cancelarpago()">Cancelar Cobro</a>
-                    <a class="btn btn-primary" data-target="#modal-aplicar" data-toggle="modal"
-                        onclick="aplicarpago()">Generar Cobro</a>
+                    </form>
                 </div>
-            </form>
+            </div>
         </div>
 
         <!-- 🔹 MODAL: Cancelar Cobro -->
@@ -436,6 +435,34 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
                             <button class="btn btn-danger">Cancelar Cobro</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+        <div class="modal fade" id="modal-reiniciar" tabindex="-1" role="dialog"
+            aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
+            <div class="modal-dialog">
+                <form action="{{ url('poliza/vida/reiniciar_carga') }}" method="POST">
+                    @csrf
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                            <h4 class="modal-title">Reiniciar carga</h4>
+                            <input type="hidden" name="PolizaVida" value="{{ $poliza_vida->Id }}">
+                            <input type="hidden" name="Mes" value="{{ isset($fechas) ? $fechas->Mes : '' }}">
+                            <input type="hidden" name="Axo" value="{{ isset($fechas) ? $fechas->Axo : '' }}">
+                        </div>
+                        <div class="modal-body">
+                            <p>¿Está seguro/a que desea reinicar el proceso?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                            <button class="btn btn-danger">Reiniciar carga</button>
                         </div>
                     </div>
                 </form>
