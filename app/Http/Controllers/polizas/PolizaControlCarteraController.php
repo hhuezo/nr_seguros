@@ -141,6 +141,40 @@ class PolizaControlCarteraController extends Controller
             ->orderBy('poliza_deuda.Id')
             ->get();
 
+
+
+        foreach ($registro_control as $item) {
+            if (!empty($item->FechaAplicacion)) {
+                // ✅ Ya aplicada
+                $item->Color = 'success';
+            } elseif (!empty($item->FechaRecepcionPago) || !empty($item->FechaReporteACia)) {
+                // ⚠️ En proceso de pago o reporte
+                $item->Color = 'warning';
+            } elseif (
+                !empty($item->AnexoDeclaracion) ||
+                !empty($item->NumeroSisco) ||
+                !empty($item->FechaVencimiento) ||
+                !empty($item->FechaEnvioCliente) ||
+                !empty($item->ReprocesoNRId) ||
+                !empty($item->FechaEnvioCorreccion) ||
+                !empty($item->FechaSeguimientoCobros)
+            ) {
+                // ℹ️ En trámite administrativo
+                $item->Color = 'info';
+            } elseif (
+                !empty($item->FechaRecepcionArchivo) ||
+                !empty($item->FechaEnvioCia) ||
+                !empty($item->TrabajoEfectuadoDiaHabil)
+            ) {
+                // 🟠 Registro inicial / en recepción
+                $item->Color = 'orange';
+            } else {
+                // ⚪ Sin avance
+                $item->Color = 'secondary';
+            }
+        }
+
+
         $filtrados = $registro_control->where('MontoCartera', null);
 
         foreach ($filtrados as  $item) {
@@ -163,7 +197,6 @@ class PolizaControlCarteraController extends Controller
 
 
                 $conteoUsuarios = $primasCalculadas->sum('conteoUsuarios');
-                dd($conteoUsuarios);
                 $item->UsuariosReportados = $conteoUsuarios;
 
 

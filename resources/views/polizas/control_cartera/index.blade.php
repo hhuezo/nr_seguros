@@ -5,6 +5,59 @@
             font-size: 12px;
         }
     </style>
+    <style>
+        .table-success,
+        .table-success>th,
+        .table-success>td {
+            background-color: #d4edda !important;
+            /* verde */
+            color: #155724 !important;
+        }
+
+        .table-warning,
+        .table-warning>th,
+        .table-warning>td {
+            background-color: #fff3cd !important;
+            /* amarillo */
+            color: #856404 !important;
+        }
+
+        .table-info,
+        .table-info>th,
+        .table-info>td {
+            background-color: #d1ecf1 !important;
+            /* azul */
+            color: #0c5460 !important;
+        }
+
+        .table-danger,
+        .table-danger>th,
+        .table-danger>td {
+            background-color: #f8d7da !important;
+            /* rojo */
+            color: #721c24 !important;
+        }
+
+        .table-orange,
+        .table-orange>th,
+        .table-orange>td {
+            background-color: #ffecb3 !important;
+            /* naranja */
+            color: #7a4e00 !important;
+        }
+
+        /* 🎨 Secondary → fondo blanco */
+        .table-secondary,
+        .table-secondary>th,
+        .table-secondary>td {
+            background-color: #ffffff !important;
+            /* blanco */
+            color: #000000 !important;
+            /* texto negro */
+        }
+    </style>
+
+
     <div class="x_panel">
         <form method="GET" action="{{ url('control_cartera') }}">
             <div class="x_title">
@@ -99,7 +152,19 @@
                     </thead>
                     <tbody>
                         @foreach ($registro_control as $registro)
-                            <tr>
+                            @php
+                                $map = [
+                                    'success' => 'table-success',
+                                    'warning' => 'table-warning',
+                                    'info' => 'table-info',
+                                    'orange' => 'table-orange', // personalizada
+                                    'secondary' => 'table-secondary',
+                                ];
+                                $key = $registro->Color ?? 'secondary';
+                                $colorClass = $map[$key] ?? 'table-secondary';
+                            @endphp
+
+                            <tr class="{{ $colorClass }}">
                                 <td>
                                     <button type="button" class="btn btn-primary" data-toggle="modal"
                                         data-target="#modal-edit-{{ $registro->Id }}">
@@ -171,7 +236,7 @@
                                 <td>{{ $registro->AnexoDeclaracion ?? '' }}</td>
                                 <td>
                                     {{ $registro->NumeroRecibo && $registro->Axo
-                                        ? 'AC ' . str_pad($registro->NumeroRecibo, 6, '0', STR_PAD_LEFT) . ' '.$registro->Axo
+                                        ? 'AC ' . str_pad($registro->NumeroRecibo, 6, '0', STR_PAD_LEFT) . ' ' . $registro->Axo
                                         : '' }}
                                 </td>
 
