@@ -1043,18 +1043,121 @@ class DesempleoController extends Controller
             $poliza->TotalCredito = $tempRecord->TotalCredito;
             $poliza->Tasa = $tempRecord->Tasa;
             $poliza->save();
-            // } catch (\Exception $e) {
-            //     // Captura errores y los guarda en el log
-            //     Log::error("Error al insertar en poliza_desempleo_cartera: " . $e->getMessage(), [
-            //         'NumeroReferencia' => $tempRecord->NumeroReferencia,
-            //         'Usuario' => auth()->user()->id ?? 'N/A',
-            //         'Datos' => $tempRecord
-            //     ]);
-            // }
         }
 
-        // eliminando datos de la cartera temporal
-        DesempleoCarteraTemp::where('Axo', $anio)->where('Mes', $mes + 0)->where('PolizaDesempleo', $id)->delete();
+
+        // NUEVO BLOQUE — Guardar los datos de la tabla temporal en el historial
+        DB::table('poliza_desempleo_cartera_temp_historial')
+            ->where('Axo', $anio)
+            ->where('Mes', $mes)
+            ->where('PolizaDesempleo', $id)
+            ->delete();
+
+
+        DB::statement("
+            INSERT INTO poliza_desempleo_cartera_temp_historial (
+                SaldosMontos,
+                PolizaDesempleo,
+                Dui,
+                Pasaporte,
+                CarnetResidencia,
+                Nacionalidad,
+                FechaNacimiento,
+                TipoPersona,
+                Sexo,
+                PrimerApellido,
+                SegundoApellido,
+                ApellidoCasada,
+                PrimerNombre,
+                SegundoNombre,
+                NombreSociedad,
+                FechaOtorgamiento,
+                FechaVencimiento,
+                NumeroReferencia,
+                MontoOtorgado,
+                SaldoCapital,
+                Intereses,
+                MoraCapital,
+                InteresesMoratorios,
+                InteresesCovid,
+                Tarifa,
+                TipoDeuda,
+                PorcentajeExtraprima,
+                SaldoTotal,
+                User,
+                Axo,
+                Mes,
+                FechaInicio,
+                FechaFinal,
+                TipoError,
+                FechaNacimientoDate,
+                FechaOtorgamientoDate,
+                Edad,
+                EdadDesembloso,
+                NoValido,
+                Excluido,
+                Rehabilitado,
+                EdadRequisito,
+                DesempleoTipoCartera,
+                TotalCredito,
+                Tasa
+            )
+            SELECT
+                SaldosMontos,
+                PolizaDesempleo,
+                Dui,
+                Pasaporte,
+                CarnetResidencia,
+                Nacionalidad,
+                FechaNacimiento,
+                TipoPersona,
+                Sexo,
+                PrimerApellido,
+                SegundoApellido,
+                ApellidoCasada,
+                PrimerNombre,
+                SegundoNombre,
+                NombreSociedad,
+                FechaOtorgamiento,
+                FechaVencimiento,
+                NumeroReferencia,
+                MontoOtorgado,
+                SaldoCapital,
+                Intereses,
+                MoraCapital,
+                InteresesMoratorios,
+                InteresesCovid,
+                Tarifa,
+                TipoDeuda,
+                PorcentajeExtraprima,
+                SaldoTotal,
+                User,
+                Axo,
+                Mes,
+                FechaInicio,
+                FechaFinal,
+                TipoError,
+                FechaNacimientoDate,
+                FechaOtorgamientoDate,
+                Edad,
+                EdadDesembloso,
+                NoValido,
+                Excluido,
+                Rehabilitado,
+                EdadRequisito,
+                DesempleoTipoCartera,
+                TotalCredito,
+                Tasa
+            FROM poliza_desempleo_cartera_temp
+            WHERE Axo = ? AND Mes = ? AND PolizaDesempleo = ?
+        ", [$anio, $mes, $id]);
+
+        // 🔹 Eliminar datos de la cartera temporal (como ya hacías)
+        DesempleoCarteraTemp::where('Axo', $anio)
+            ->where('Mes', $mes + 0)
+            ->where('PolizaDesempleo', $id)
+            ->delete();
+
 
         alert()->success('El registro de poliza ha sido ingresado correctamente');
         return redirect('polizas/desempleo/' . $id . '?tab=2');
@@ -1142,9 +1245,118 @@ class DesempleoController extends Controller
         }
 
 
+        // NUEVO BLOQUE — Guardar los datos de la tabla temporal en el historial
+        DB::table('poliza_desempleo_cartera_temp_historial')
+            ->where('Axo', $anio)
+            ->where('Mes', $mes)
+            ->where('PolizaDesempleo', $request->Desempleo)
+            ->delete();
+
+
+        DB::statement("
+            INSERT INTO poliza_desempleo_cartera_temp_historial (
+                SaldosMontos,
+                PolizaDesempleo,
+                Dui,
+                Pasaporte,
+                CarnetResidencia,
+                Nacionalidad,
+                FechaNacimiento,
+                TipoPersona,
+                Sexo,
+                PrimerApellido,
+                SegundoApellido,
+                ApellidoCasada,
+                PrimerNombre,
+                SegundoNombre,
+                NombreSociedad,
+                FechaOtorgamiento,
+                FechaVencimiento,
+                NumeroReferencia,
+                MontoOtorgado,
+                SaldoCapital,
+                Intereses,
+                MoraCapital,
+                InteresesMoratorios,
+                InteresesCovid,
+                Tarifa,
+                TipoDeuda,
+                PorcentajeExtraprima,
+                SaldoTotal,
+                User,
+                Axo,
+                Mes,
+                FechaInicio,
+                FechaFinal,
+                TipoError,
+                FechaNacimientoDate,
+                FechaOtorgamientoDate,
+                Edad,
+                EdadDesembloso,
+                NoValido,
+                Excluido,
+                Rehabilitado,
+                EdadRequisito,
+                DesempleoTipoCartera,
+                TotalCredito,
+                Tasa
+            )
+            SELECT
+                SaldosMontos,
+                PolizaDesempleo,
+                Dui,
+                Pasaporte,
+                CarnetResidencia,
+                Nacionalidad,
+                FechaNacimiento,
+                TipoPersona,
+                Sexo,
+                PrimerApellido,
+                SegundoApellido,
+                ApellidoCasada,
+                PrimerNombre,
+                SegundoNombre,
+                NombreSociedad,
+                FechaOtorgamiento,
+                FechaVencimiento,
+                NumeroReferencia,
+                MontoOtorgado,
+                SaldoCapital,
+                Intereses,
+                MoraCapital,
+                InteresesMoratorios,
+                InteresesCovid,
+                Tarifa,
+                TipoDeuda,
+                PorcentajeExtraprima,
+                SaldoTotal,
+                User,
+                Axo,
+                Mes,
+                FechaInicio,
+                FechaFinal,
+                TipoError,
+                FechaNacimientoDate,
+                FechaOtorgamientoDate,
+                Edad,
+                EdadDesembloso,
+                NoValido,
+                Excluido,
+                Rehabilitado,
+                EdadRequisito,
+                DesempleoTipoCartera,
+                TotalCredito,
+                Tasa
+            FROM poliza_desempleo_cartera_temp
+            WHERE Axo = ? AND Mes = ? AND PolizaDesempleo = ?
+        ", [$anio, $mes, $request->Desempleo]);
+
+        // 🔹 Eliminar datos de la cartera temporal (como ya hacías)
         DesempleoCarteraTemp::where('Axo', $anio)
             ->where('Mes', $mes + 0)
-            ->where('PolizaDesempleo', $request->Desempleo)->delete();
+            ->where('PolizaDesempleo', $request->Desempleo)
+            ->delete();
+
 
         alert()->success('El registro de poliza ha sido ingresado correctamente');
         return redirect('polizas/desempleo/' . $request->Desempleo . '?tab=2');
