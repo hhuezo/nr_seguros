@@ -42,7 +42,7 @@ class VidaDetalle extends Model
     protected $guarded = [];
 
     public function vidas(){
-        return $this->belongsTo('App\Models\polizas\Vida', 'Vida', 'Id');
+        return $this->belongsTo(Vida::class, 'PolizaVida', 'Id');
     }
 
     public function usuario(){

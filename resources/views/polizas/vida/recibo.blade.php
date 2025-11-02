@@ -86,7 +86,7 @@ $prima_calculada = $detalle->MontoCartera * $poliza_vida->Tasa;
         </tr>
         <tr>
             <td style="background-color: lightgrey;">Factura (s) a Nombre de</td>
-            <td colspan="2" align="center">{{$poliza_vida->cliente->Nombre}} </td>
+            <td colspan="2" align="center">{{$recibo_historial->FacturaNombre ?? $poliza_vida->cliente->Nombre}} </td>
         </tr>
     </table>
     <br>
@@ -113,10 +113,12 @@ $prima_calculada = $detalle->MontoCartera * $poliza_vida->Tasa;
                         <td style="width: 65%;">Extra Prima</td>
                         <td style="width: 35%; text-align: right;">${{number_format($recibo_historial->ExtraPrima,2,'.',',')}}</td>
                     </tr>
+                    @if($recibo_historial->PordentajeDescuento > 0)
                     <tr>
                         <td>(-) Descuento rentabilidad ({{$recibo_historial->PordentajeDescuento == '' ? 0 : $recibo_historial->PordentajeDescuento}}%)</td>
                         <td style="width: 35%; text-align: right;">${{number_format($recibo_historial->Descuento,2,'.',',')}}</td>
                     </tr>
+                    @endif
                     <tr>
                         <td>(=) Prima descontada</td>
                         <td style="width: 35%; text-align: right;">${{number_format($recibo_historial->PrimaDescontada,2,'.',',')}}</td>
