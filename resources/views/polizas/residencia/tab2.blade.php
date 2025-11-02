@@ -1,105 +1,5 @@
 <div role="tabpanel" class="tab-pane fade {{ ($tab ?? session('tab')) == 2 ? 'active in' : '' }}" id="tab_content2"
     aria-labelledby="profile-tab">
-    @php
-        ini_set('max_execution_time', 30000);
-        set_time_limit(30000);
-    @endphp
-    <style>
-        #loading-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.8);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #loading-overlay img {
-            width: 50px;
-            /* Ajusta el tamaño de la imagen según tus necesidades */
-            height: 50px;
-            /* Ajusta el tamaño de la imagen según tus necesidades */
-        }
-
-        /* The switch - the box around the slider */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 40px;
-            /* Ajustar el ancho según sea necesario */
-            height: 20px;
-            /* Ajustar la altura según sea necesario */
-        }
-
-        /* Hide default HTML checkbox */
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        /* The slider */
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            -webkit-transition: .4s;
-            transition: .4s;
-            border-radius: 10px;
-            /* Ajustar el radio de borde para que sea más pequeño */
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            /* Ajustar la altura según sea necesario */
-            width: 16px;
-            /* Ajustar el ancho según sea necesario */
-            left: 2px;
-            /* Ajustar la posición según sea necesario */
-            bottom: 2px;
-            /* Ajustar la posición según sea necesario */
-            background-color: white;
-            -webkit-transition: .4s;
-            transition: .4s;
-            border-radius: 50%;
-            /* Hacer el selector redondo */
-        }
-
-        input:checked+.slider {
-            background-color: #2196F3;
-        }
-
-        input:focus+.slider {
-            box-shadow: 0 0 1px #2196F3;
-        }
-
-        input:checked+.slider:before {
-            -webkit-transform: translateX(16px);
-            -ms-transform: translateX(16px);
-            transform: translateX(16px);
-        }
-
-        /* Rounded sliders */
-        .slider.round {
-            border-radius: 20px;
-            /* Ajustar el radio de borde para que sea más pequeño */
-        }
-
-        .slider.round:before {
-            border-radius: 50%;
-        }
-    </style>
-
 
     <!-- Agrega este div al final de tu archivo blade -->
     <div id="loading-overlay">
@@ -186,7 +86,7 @@
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                     <select name="Mes" id="Mes" class="form-control">
                                         @for ($i = 1; $i <= 12; $i++)
-                                            @if (date('m') == $i)
+                                            @if ($mes == $i)
                                                 <option value="{{ $i }}" selected>
                                                     {{ $meses[$i] }}
                                                 </option>
@@ -206,8 +106,7 @@
                                     <input class="form-control" name="Id" value="{{ $residencia->Id }}"
                                         type="hidden" required>
                                     <input class="form-control" type="date" name="FechaInicio" id="FechaInicio"
-                                        value="{{ $ultimo_pago && $ultimo_pago != null ? date('Y-m-d', strtotime($ultimo_pago->FechaFinal)) : '' }}"
-                                        required>
+                                        value="{{ $FechaInicio }}" required>
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -215,8 +114,7 @@
                                     final</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                     <input class="form-control" name="FechaFinal" id="FechaFinal"
-                                        value="{{ $ultimo_pago_fecha_final && $ultimo_pago_fecha_final != null ? $ultimo_pago_fecha_final : '' }}"
-                                        type="date" required>
+                                        value="{{ $FechaFinal }}" type="date" required>
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -254,10 +152,10 @@
                         <table class="excel-like-table">
                             <tr>
                                 <td>Fecha Inicio:
-                                    {{ $fechas != null ? date('d/m/Y', strtotime($fechas->FechaInicio)) : '' }}</td>
+                                    {{ date('d/m/Y', strtotime($FechaInicio)) }}</td>
                                 <td>Fecha Final:
-                                    {{ $fechas != null ? date('d/m/Y', strtotime($fechas->FechaFinal)) : '' }}</td>
-                                <td>Mes: {{ $fechas != null ? $meses[$fechas->Mes] : '' }}</td>
+                                    {{ date('d/m/Y', strtotime($FechaFinal)) }}</td>
+                                <td>Mes: {{ $meses[$mes] }}</td>
                             </tr>
                         </table>
                         <br>
@@ -484,213 +382,227 @@
                     </div>
 
                     <div>
-                        <form action="{{ url('polizas/residencia/agregar_pago') }}" method="POST">
-                            @csrf
 
 
-                            <div style="display: none">
-                                <div class="form-group">
-                                    <label>Excel URL</label>
-                                    <input type="text" class="form-control" name="ExcelURL" id="ExcelURL"
-                                        value="{{ session('ExcelURL') }}">
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Residencia</label>
-                                    <input type="text" class="form-control" name="Residencia" id="Residencia"
-                                        value="{{ $residencia->Id }}">
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Tasa</label>
-                                    <input type="text" class="form-control" name="Tasa"
-                                        value="{{ $residencia->Tasa }}">
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Fecha inicio</label>
-                                    <input type="text" class="form-control" name="FechaInicio"
-                                        value="{{ isset($fecha) ? $fecha->FechaInicio : '' }}">
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Fecha final</label>
-                                    <input type="text" class="form-control" name="FechaFinal"
-                                        value="{{ isset($fecha) ? $fecha->FechaFinal : '' }}">
-                                </div>
-
-                                  <div class="form-group">
-                                    <label>Año</label>
-                                    <input type="text" class="form-control" name="Axo" value="{{ isset($fecha) ? $fecha->Axo : '' }}">
-                                </div>
 
 
-                                  <div class="form-group">
-                                    <label>Mes</label>
-                                    <input type="text" class="form-control" name="Mes" value="{{ isset($fecha) ? $fecha->Mes : '' }}">
-                                </div>
 
-                                <div class="form-group">
-                                    <label>Monto cartera</label>
-                                    <input type="text" class="form-control" name="MontoCartera"
-                                        id="MontoCarteraDetalle">
-                                </div>
 
-                                <div class="form-group">
-                                    <label>Prima calculada</label>
-                                    <input type="text" class="form-control" name="PrimaCalculada"
-                                        id="PrimaCalculadaDetalle">
-                                </div>
 
-                                <div class="form-group">
-                                    <label>Prima descontada</label>
-                                    <input type="text" class="form-control" name="PrimaDescontada"
-                                        id="PrimaDescontadaDetalle">
-                                </div>
+                        <br><br>
 
-                                <div class="form-group">
-                                    <label>IVA</label>
-                                    <input type="text" class="form-control" name="Iva" id="IvaDetalle">
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Subtotal</label>
-                                    <input type="text" class="form-control" name="SubTotal" id="SubTotalDetalle">
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Tasa comisión</label>
-                                    <input type="text" class="form-control" name="TasaComision"
-                                        value="{{ $residencia->TasaComision }}">
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Comisión</label>
-                                    <input type="text" class="form-control" name="Comision" id="ComisionDetalle">
-                                </div>
-
-                                <div class="form-group">
-                                    <label>IVA sobre comisión</label>
-                                    <input type="text" class="form-control" name="IvaSobreComision"
-                                        id="IvaComisionDetalle">
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Retención</label>
-                                    <input type="text" class="form-control" name="Retencion"
-                                        id="RetencionDetalle">
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Valor CCF</label>
-                                    <input type="text" class="form-control" name="ValorCCF" id="ValorCCFDetalle">
-                                </div>
-
-                                <div class="form-group">
-                                    <label>A pagar</label>
-                                    <input type="text" class="form-control" name="APagar" id="APagarDetalle">
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Descuento</label>
-                                    <input type="text" class="form-control" name="Descuento"
-                                        id="DescuentoDetalle">
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Impuesto bomberos</label>
-                                    <input type="text" class="form-control" name="ImpuestoBomberos"
-                                        value="{{ $bomberos }}">
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Gastos de emisión</label>
-                                    <input type="text" class="form-control" name="GastosEmision"
-                                        id="GastosEmisionDetalle">
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Otros</label>
-                                    <input type="text" class="form-control" name="Otros" id="OtrosDetalle">
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Prima total</label>
-                                    <input type="text" class="form-control" name="PrimaTotal"
-                                        id="PrimaTotalDetalle">
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Extra prima</label>
-                                    <input type="text" class="form-control" name="ExtraPrima" value="0">
-                                </div>
-
+                        <div>
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                @if ($monto_cartera > 0)
+                                    <a class="btn btn-warning" data-target="#modal-reiniciar"
+                                        data-toggle="modal">Reiniciar
+                                        carga</a>
+                                @else
+                                    <a class="btn btn-warning" disabled>Reiniciar
+                                        carga</a>
+                                @endif
                             </div>
 
-
-                            {{-- <input type="hidden" name="ExcelURL" id="ExcelURL" value="{{ session('ExcelURL') }}"
-                                class="form-control">
-                            <input type="hidden" name="Residencia" id="Residencia" value="{{ $residencia->Id }}"
-                                class="form-control">
-                            <input type="hidden" name="Tasa" value="{{ $residencia->Tasa }}">
-                            <input type="hidden" name="FechaInicio"
-                                value="{{ isset($fecha) ? $fecha->FechaInicio : '' }}">
-                            <input type="hidden" name="FechaFinal"
-                                value="{{ isset($fecha) ? $fecha->FechaFinal : '' }}">
-                            <input type="hidden" name="MontoCartera" id="MontoCarteraDetalle">
-                            <input type="hidden" name="PrimaCalculada" id="PrimaCalculadaDetalle">
-                            <input type="hidden" name="PrimaDescontada" id="PrimaDescontadaDetalle">
-                            <input type="hidden" name="Iva" id="IvaDetalle">
-                            <input type="hidden" name="SubTotal" id="SubTotalDetalle">
-                            <input type="hidden" name="TasaComision" value="{{ $residencia->TasaComision }}">
-                            <input type="hidden" name="Comision" id="ComisionDetalle">
-                            <input type="hidden" name="IvaSobreComision" id="IvaComisionDetalle">
-                            <input type="hidden" name="Retencion" id="RetencionDetalle">
-                            <input type="hidden" name="ValorCCF" id="ValorCCFDetalle">
-                            <input type="hidden" name="APagar" id="APagarDetalle">
-                            <input type="hidden" name="Descuento" id="DescuentoDetalle">
-                            <input type="hidden" name="ImpuestoBomberos" value="{{ $bomberos }}">
-                            <input type="hidden" name="GastosEmision" id="GastosEmisionDetalle">
-                            <input type="hidden" name="Otros" id="OtrosDetalle">
-                            <input type="hidden" name="PrimaTotal" id="PrimaTotalDetalle">
-                            <input type="hidden" name="ExtraPrima" value="0"> --}}
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" style="text-align: right">
 
 
-                            <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog"
-                                tabindex="-1" id="modal-aplicar">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <button type="button" class="close" data-dismiss="modal"
-                                                aria-label="Close">
-                                                <span aria-hidden="true">×</span>
-                                            </button>
-                                            <h4 class="modal-title">Aviso de cobro</h4>
-                                        </div>
-                                        <div class="modal-body">
-                                            <p>¿Desea generar el aviso de cobro</p>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-default"
-                                                data-dismiss="modal">Cerrar</button>
-                                            <button id="boton_pago" class="btn btn-primary">Generar aviso de
-                                                cobro</button>
+
+                                <a class="btn btn-default" data-target="#modal-cancelar" data-toggle="modal">Cancelar
+                                    Cobro</a>
+                                <a class="btn btn-primary" data-target="#modal-aplicar" data-toggle="modal">Generar
+                                    Cobro</a>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+
+                    <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
+                        id="modal-aplicar">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                    <h4 class="modal-title">Aviso de cobro</h4>
+                                </div>
+                                <form action="{{ url('polizas/residencia/agregar_pago') }}" method="POST">
+                                    @csrf
+                                    <div class="modal-body">
+
+                                        <p>¿Desea generar el aviso de cobro</p>
+
+
+                                        <div style="display: none">
+                                            <div class="form-group">
+                                                <label>Excel URL</label>
+                                                <input type="text" class="form-control" name="ExcelURL"
+                                                    id="ExcelURL" value="{{ session('ExcelURL') }}">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Residencia</label>
+                                                <input type="text" class="form-control" name="Residencia"
+                                                    id="Residencia" value="{{ $residencia->Id }}">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Tasa</label>
+                                                <input type="text" class="form-control" name="Tasa"
+                                                    value="{{ $residencia->Tasa }}">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Fecha inicio</label>
+                                                <input type="text" class="form-control" name="FechaInicio"
+                                                    value="{{ isset($fecha) ? $fecha->FechaInicio : '' }}">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Fecha final</label>
+                                                <input type="text" class="form-control" name="FechaFinal"
+                                                    value="{{ isset($fecha) ? $fecha->FechaFinal : '' }}">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Año</label>
+                                                <input type="text" class="form-control" name="Axo"
+                                                    value="{{ isset($fecha) ? $fecha->Axo : '' }}">
+                                            </div>
+
+
+                                            <div class="form-group">
+                                                <label>Mes</label>
+                                                <input type="text" class="form-control" name="Mes"
+                                                    value="{{ isset($fecha) ? $fecha->Mes : '' }}">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Monto cartera</label>
+                                                <input type="text" class="form-control" name="MontoCartera"
+                                                    id="MontoCarteraDetalle">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Prima calculada</label>
+                                                <input type="text" class="form-control" name="PrimaCalculada"
+                                                    id="PrimaCalculadaDetalle">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Prima descontada</label>
+                                                <input type="text" class="form-control" name="PrimaDescontada"
+                                                    id="PrimaDescontadaDetalle">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>IVA</label>
+                                                <input type="text" class="form-control" name="Iva"
+                                                    id="IvaDetalle">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Subtotal</label>
+                                                <input type="text" class="form-control" name="SubTotal"
+                                                    id="SubTotalDetalle">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Tasa comisión</label>
+                                                <input type="text" class="form-control" name="TasaComision"
+                                                    value="{{ $residencia->TasaComision }}">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Comisión</label>
+                                                <input type="text" class="form-control" name="Comision"
+                                                    id="ComisionDetalle">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>IVA sobre comisión</label>
+                                                <input type="text" class="form-control" name="IvaSobreComision"
+                                                    id="IvaComisionDetalle">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Retención</label>
+                                                <input type="text" class="form-control" name="Retencion"
+                                                    id="RetencionDetalle">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Valor CCF</label>
+                                                <input type="text" class="form-control" name="ValorCCF"
+                                                    id="ValorCCFDetalle">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>A pagar</label>
+                                                <input type="text" class="form-control" name="APagar"
+                                                    id="APagarDetalle">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Descuento</label>
+                                                <input type="text" class="form-control" name="Descuento"
+                                                    id="DescuentoDetalle">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Impuesto bomberos</label>
+                                                <input type="text" class="form-control" name="ImpuestoBomberos"
+                                                    value="{{ $bomberos }}">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Gastos de emisión</label>
+                                                <input type="text" class="form-control" name="GastosEmision"
+                                                    id="GastosEmisionDetalle">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Otros</label>
+                                                <input type="text" class="form-control" name="Otros"
+                                                    id="OtrosDetalle">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Prima total</label>
+                                                <input type="text" class="form-control" name="PrimaTotal"
+                                                    id="PrimaTotalDetalle">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Extra prima</label>
+                                                <input type="text" class="form-control" name="ExtraPrima"
+                                                    value="0">
+                                            </div>
+
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <br><br>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default"
+                                            data-dismiss="modal">Cerrar</button>
+                                        <button id="boton_pago" class="btn btn-primary">Generar aviso de
+                                            cobro</button>
+                                    </div>
 
-                            <div align="center">
-                                <br><br><br>
-                                <a class="btn btn-default" data-target="#modal-cancelar" data-toggle="modal"
-                                    onclick="cancelarpago()">Cancelar Cobro</a>
-                                <a class="btn btn-primary" data-target="#modal-aplicar" data-toggle="modal"
-                                    onclick="aplicarpago()">Generar Cobro</a>
-                            </div>
 
-                        </form>
+                                </form>
+                            </div>
+                        </div>
                     </div>
+
+
+
+
+
+
 
                     <div class="modal fade" id="modal-cancelar" tabindex="-1" role="dialog"
                         aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
@@ -720,6 +632,40 @@
                                             data-dismiss="modal">Cerrar</button>
                                         <button class="btn btn-danger">Cancelar
                                             Cobro</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+
+
+                    <div class="modal fade" id="modal-reiniciar" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
+                        <div class="modal-dialog">
+                            <form action="{{ url('polizas/residencia/reiniciar_carga') }}" method="POST">
+                                 @csrf
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal"
+                                            aria-label="Close">
+                                            <span aria-hidden="true">×</span>
+                                        </button>
+                                        <h4 class="modal-title">Reiniciar carga</h4>
+
+                                        <input type="hidden" name="Residencia" value="{{ $residencia->Id }}">
+                                        <input type="hidden" name="Mes"
+                                            value="{{ isset($fecha) ? $fecha->Mes : '' }}">
+                                        <input type="hidden" name="Axo"
+                                            value="{{ isset($fecha) ? $fecha->Axo : '' }}">
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>¿Esta seguro/a que desea reiniciar el proceso?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default"
+                                            data-dismiss="modal">Cerrar</button>
+                                        <button class="btn btn-danger">Reiniciar carga</button>
                                     </div>
                                 </div>
                             </form>

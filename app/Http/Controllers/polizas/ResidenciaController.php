@@ -24,6 +24,7 @@ use App\Models\temp\PolizaResidenciaTempCartera;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Maatwebsite\Excel\Facades\Excel;
 use PDF;
@@ -295,6 +296,113 @@ class ResidenciaController extends Controller
     }
 
 
+    public function reiniciar_carga(Request $request)
+    {
+        $anio = $request->Axo;
+        $mes = $request->Mes;
+        $residencia = $request->PolizaResidencia;
+
+        DB::beginTransaction();
+
+        try {
+            // 1️⃣ Eliminar los registros actuales en poliza_residencia_temp_cartera
+            DB::table('poliza_residencia_temp_cartera')
+                ->where('Axo', $anio)
+                ->where('Mes', $mes)
+                ->where('PolizaResidencia', $residencia)
+                ->delete();
+
+            // 2️⃣ Insertar los registros del historial nuevamente en la tabla temporal
+            DB::statement("
+            INSERT INTO poliza_residencia_temp_cartera (
+                Dui,
+                Nit,
+                Pasaporte,
+                CarnetResidencia,
+                Nacionalidad,
+                FechaNacimiento,
+                TipoPersona,
+                NombreCompleto,
+                NombreSociedad,
+                Genero,
+                Direccion,
+                FechaOtorgamiento,
+                FechaVencimiento,
+                NumeroReferencia,
+                SumaAsegurada,
+                Tarifa,
+                PrimaMensual,
+                NumeroCuotas,
+                TipoDeuda,
+                ClaseCartera,
+                User,
+                Axo,
+                Mes,
+                PolizaResidencia,
+                FechaInicio,
+                FechaFinal,
+                Errores
+            )
+            SELECT
+                Dui,
+                Nit,
+                Pasaporte,
+                CarnetResidencia,
+                Nacionalidad,
+                FechaNacimiento,
+                TipoPersona,
+                NombreCompleto,
+                NombreSociedad,
+                Genero,
+                Direccion,
+                FechaOtorgamiento,
+                FechaVencimiento,
+                NumeroReferencia,
+                SumaAsegurada,
+                Tarifa,
+                PrimaMensual,
+                NumeroCuotas,
+                TipoDeuda,
+                ClaseCartera,
+                User,
+                Axo,
+                Mes,
+                PolizaResidencia,
+                FechaInicio,
+                FechaFinal,
+                Errores
+            FROM poliza_residencia_temp_cartera_historial
+            WHERE Axo = ? AND Mes = ? AND PolizaResidencia = ?
+        ", [$anio, $mes, $residencia]);
+
+            // 3️⃣ Eliminar los registros del historial una vez restaurados
+            DB::table('poliza_residencia_temp_cartera_historial')
+                ->where('Axo', $anio)
+                ->where('Mes', $mes)
+                ->where('PolizaResidencia', $residencia)
+                ->delete();
+
+            // 4️⃣ Eliminar los registros de la cartera real (que no tengan detalle)
+            DB::table('poliza_residencia_cartera')
+                ->where('Axo', $anio)
+                ->where('Mes', $mes)
+                ->where('PolizaResidencia', $residencia)
+                //->whereNull('PolizaResidenciaDetalle')
+                ->delete();
+
+            DB::commit();
+
+            alert()->success('La carga de póliza de residencia ha sido reiniciada correctamente');
+            return back();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error al reiniciar carga de residencia: ' . $e->getMessage());
+            alert()->error('Hubo un error al reiniciar la carga de residencia');
+            return back();
+        }
+    }
+
+
     public function agregar_comentario(Request $request)
     {
         $time = Carbon::now('America/El_Salvador');
@@ -339,25 +447,47 @@ class ResidenciaController extends Controller
         $rutas = Ruta::where('Activo', '=', 1)->get();
         $ubicaciones_cobro = UbicacionCobro::where('Activo', '=', 1)->get();
         $detalle = DetalleResidencia::where('Residencia', $residencia->Id)->orderBy('Id', 'desc')->get();
-        $ultimo_pago = DetalleResidencia::where('Residencia', $residencia->Id)->where('Activo', 1)->orderBy('Id', 'desc')->first();
+        $ultimo_pago = DetalleResidencia::where('Residencia', $id)->orderBy('Id', 'desc')->first();
         $productos = Producto::where('Activo', 1)->get();
         $planes = Plan::where('Activo', 1)->get();
 
         $comentarios = Comentario::where('Residencia', '=', $id)->where('Activo', 1)->get();
         $fechas = PolizaResidenciaTempCartera::where('PolizaResidencia', $id)->first();
 
-        $ultimo_pago_fecha_final = null;
+        $now = Carbon::now();
+        $mes = $now->month;
+        $anio = $now->year;
+        // Primer día del mes
+        // Primer día del mes
+        $FechaInicio = $now->copy()->startOfMonth()->format('Y-m-d');
+
+        // Último día del mes
+        $FechaFinal = $now->copy()->endOfMonth()->format('Y-m-d');
+
         if ($ultimo_pago) {
+            // Si hay pago, tomar la fecha inicial y final con +1 mes exacto
             $fecha_inicial = Carbon::parse($ultimo_pago->FechaFinal);
-            $fecha_final_temp = $fecha_inicial->addMonth();
-            $ultimo_pago_fecha_final = $fecha_final_temp->format('Y-m-d');
+            $fecha_final = $fecha_inicial->copy()->addMonth();
+
+            $ulrtimoAxo = $ultimo_pago->Axo;
+            $UltimoMes = (int) $ultimo_pago->Mes;
+
+            // Crear una fecha base con día 1
+            $fecha = Carbon::create($ulrtimoAxo, $UltimoMes, 1);
+
+            // Aumentar un mes
+            $fecha->addMonth();
+
+            // Obtener los nuevos valores
+            $axo = $fecha->year;
+            $mes = $fecha->month;
+
+            // Formato final Y-m-d
+            $FechaInicio = $fecha_inicial->format('Y-m-d');
+            $FechaFinal = $fecha_final->format('Y-m-d');
         }
 
-        if (!$fechas) {
-            $fechas = null;
-        }
 
-        //dd($ultimo_pago);
 
         if (strpos($residencia->aseguradoras->Nombre, 'FEDE') === false) {
             if ($residencia->Mensual == 1) {
@@ -396,6 +526,10 @@ class ResidenciaController extends Controller
         return view('polizas.residencia.edit', compact(
             'fecha',
             'fechas',
+            'FechaInicio',
+            'FechaFinal',
+            'mes',
+            'axo',
             'residencia',
             'ejecutivo',
             'detalle',
@@ -410,7 +544,6 @@ class ResidenciaController extends Controller
             'bomberos',
             'meses',
             'ultimo_pago',
-            'ultimo_pago_fecha_final',
             'comentarios',
             'productos',
             'tab'
@@ -727,7 +860,7 @@ class ResidenciaController extends Controller
         $detalle->update();
         //$calculo = $this->monto($residencia, $detalle);
         $configuracion = ConfiguracionRecibo::first();
-        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion', 'detalle', 'residencia', 'meses','cliente'))->setWarnings(false)->setPaper('letter');
+        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion', 'detalle', 'residencia', 'meses', 'cliente'))->setWarnings(false)->setPaper('letter');
         return $pdf->stream('Recibo.pdf');
 
         //  return back();
@@ -746,7 +879,7 @@ class ResidenciaController extends Controller
         $configuracion = ConfiguracionRecibo::first();
 
         //return view('polizas.residencia.recibo', compact('configuracion','cliente',  'detalle', 'residencia', 'meses', 'calculo'));
-        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion','cliente', 'detalle', 'residencia', 'meses', 'calculo'))->setWarnings(false)->setPaper('letter');
+        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion', 'cliente', 'detalle', 'residencia', 'meses', 'calculo'))->setWarnings(false)->setPaper('letter');
         //  dd($detalle);
         return $pdf->stream('Recibos.pdf');
     }
