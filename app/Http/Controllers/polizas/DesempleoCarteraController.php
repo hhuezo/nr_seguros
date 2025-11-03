@@ -42,7 +42,9 @@ class DesempleoCarteraController extends Controller
             END as TipoCalculoTexto
         "),
                 DB::raw("GROUP_CONCAT(DISTINCT CONCAT(sm.Abreviatura, ' ', sm.Descripcion) ORDER BY sm.Id SEPARATOR ', ') as SaldosMontosTexto"),
-                DB::raw('COALESCE(SUM(pdct.TotalCredito), 0) as Total')
+                DB::raw('COALESCE(SUM(pdct.TotalCredito), 0) as Total'),
+                'pdct.Mes',
+                'pdct.Axo'
             )
             ->where('pdtc.PolizaDesempleo', $id)
             ->groupBy('pdt.PolizaDesempleoTipoCartera', 'pdtc.TipoCalculo')
@@ -148,6 +150,36 @@ class DesempleoCarteraController extends Controller
             'Archivo.max' => 'El archivo no debe superar los 2MB.',
         ]);
 
+        //validacion de mes y año
+        $tipos_cartera = DB::table('poliza_desempleo_tasa_diferenciada as pdt')
+            ->join('poliza_desempleo_tipo_cartera as pdtc', 'pdt.PolizaDesempleoTipoCartera', '=', 'pdtc.Id')
+            ->leftJoin('poliza_desempleo_cartera_temp as pdct', 'pdct.DesempleoTipoCartera', '=', 'pdtc.Id')
+            ->join('saldos_montos as sm', 'sm.Id', '=', 'pdt.SaldosMontos')
+            ->select(
+                'pdct.Mes',
+                'pdct.Axo'
+            )
+            ->where('pdtc.PolizaDesempleo', $id)
+            ->groupBy('pdt.PolizaDesempleoTipoCartera', 'pdtc.TipoCalculo')
+            ->orderBy('pdt.PolizaDesempleoTipoCartera')
+            ->get();
+
+        // 🧠 Crear validador manual
+        $validator = Validator::make([], []);
+
+        if ($tipos_cartera->count() > 1) {
+            foreach ($tipos_cartera as $tipo) {
+                // dd($tipo);
+                if ($tipo->Mes && $tipo->Axo) {
+                    // dd($tipo,$request->Mes, $request->Axo,$request->Axo != $tipo->Axo && $request->Mes != $tipo->Mes || $request->Axo != $tipo->Axo || $request->Mes != $tipo->Mes);
+                    if (($request->Axo != $tipo->Axo && $request->Mes != $tipo->Mes) || $request->Axo != $tipo->Axo || $request->Mes != $tipo->Mes) {
+                        // dd('holi');
+                        $validator->errors()->add('Archivo', 'El mes y año seleccionado no son iguales.');
+                        return back()->withErrors($validator);
+                    }
+                }
+            }
+        }
         // 🔍 Buscar la póliza
         $desempleo = Desempleo::findOrFail($id);
 
@@ -155,8 +187,7 @@ class DesempleoCarteraController extends Controller
         $archivo = $request->file('Archivo');
         $excel = IOFactory::load($archivo->getPathname());
 
-        // 🧠 Crear validador manual
-        $validator = Validator::make([], []);
+
 
         // 1️⃣ Validar número de hojas
         if ($excel->getSheetCount() > 1) {
@@ -458,6 +489,35 @@ class DesempleoCarteraController extends Controller
             'Archivo.mimes' => 'El archivo debe ser de tipo CSV, XLSX o XLS.',
             'Archivo.max' => 'El archivo no debe superar los 2MB.',
         ]);
+        // 🧠 Crear validador manual
+        $validator = Validator::make([], []);
+
+        $tipos_cartera = DB::table('poliza_desempleo_tasa_diferenciada as pdt')
+            ->join('poliza_desempleo_tipo_cartera as pdtc', 'pdt.PolizaDesempleoTipoCartera', '=', 'pdtc.Id')
+            ->leftJoin('poliza_desempleo_cartera_temp as pdct', 'pdct.DesempleoTipoCartera', '=', 'pdtc.Id')
+            ->join('saldos_montos as sm', 'sm.Id', '=', 'pdt.SaldosMontos')
+            ->select(
+                'pdct.Mes',
+                'pdct.Axo'
+            )
+            ->where('pdtc.PolizaDesempleo', $id)
+            ->groupBy('pdt.PolizaDesempleoTipoCartera', 'pdtc.TipoCalculo')
+            ->orderBy('pdt.PolizaDesempleoTipoCartera')
+            ->get();
+        if ($tipos_cartera->count() > 1) {
+            foreach ($tipos_cartera as $tipo) {
+                // dd($tipo);
+                if ($tipo->Mes && $tipo->Axo) {
+                    // dd($tipo,$request->Mes, $request->Axo,$request->Axo != $tipo->Axo && $request->Mes != $tipo->Mes || $request->Axo != $tipo->Axo || $request->Mes != $tipo->Mes);
+                    if (($request->Axo != $tipo->Axo && $request->Mes != $tipo->Mes) || $request->Axo != $tipo->Axo || $request->Mes != $tipo->Mes) {
+                        // dd('holi');
+                        $validator->errors()->add('Archivo', 'El mes y año seleccionado no son iguales.');
+                        return back()->withErrors($validator);
+                    }
+                }
+            }
+        }
+
 
         // 🔍 Buscar la póliza
         $desempleo = Desempleo::findOrFail($id);
@@ -466,8 +526,7 @@ class DesempleoCarteraController extends Controller
         $archivo = $request->file('Archivo');
         $excel = IOFactory::load($archivo->getPathname());
 
-        // 🧠 Crear validador manual
-        $validator = Validator::make([], []);
+
 
         // 1️⃣ Validar número de hojas
         if ($excel->getSheetCount() > 1) {

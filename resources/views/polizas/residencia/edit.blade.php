@@ -807,6 +807,9 @@
                                                                     <a href="{{ url('polizas/residencia/get_recibo') }}/{{ $obj->Id }}"
                                                                         target="_blank"
                                                                         class="btn btn-info">Reimprimir</a>
+                                                                    {{-- <a href="{{ url('polizas/residencia/get_recibo_edit') }}/{{ $obj->Id }}"
+                                                                        target="_blank"
+                                                                        class="btn btn-warning">Editar</a> --}}
                                                                 @endif
                                                             </td>
                                                         </tr>

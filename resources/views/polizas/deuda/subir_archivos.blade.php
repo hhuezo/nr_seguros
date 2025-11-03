@@ -71,6 +71,7 @@
                             <th>Tipo de Cartera</th>
                             <th>Abreviatura</th>
                             <th>Descripcion</th>
+                            <th>Mes / Año</th>
                             <th>Datos Ingresados</th>
                             <th align="center">Carga de <br> archivo de cartera </th>
                         </tr>
@@ -81,6 +82,7 @@
                                 <td>{{ $obj->tipo_cartera->Nombre }}</td>
                                 <td>{{ $obj->Abreviatura }}</td>
                                 <td>{{ $obj->Descripcion }}</td>
+                                <td>{{ $obj->Mes ?? ''}} {{$obj->Mes ? '/' :''}}{{ $obj->Axo ?? ''}}</td>
                                 <td align="right">${{ number_format($obj->Total, 2, '.', ',') }}</td>
                                 <td align="center">
                                     @if ($deuda->Aseguradora == 3 || $deuda->Aseguradora == 4)

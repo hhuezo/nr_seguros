@@ -54,6 +54,37 @@ class VidaFedeController extends Controller
 
         $poliza_vida = Vida::findOrFail($id);
 
+
+        $poliza_vida_tipo_cartera = $poliza_vida->vida_tipos_cartera;
+
+        foreach ($poliza_vida_tipo_cartera as $item) {
+
+            $item->Mes = VidaCarteraTemp::where('PolizaVida', $id)
+                ->where('PolizaVidaTipoCartera', $item->Id)
+                ->groupBy('Mes')->value('Mes');
+            $item->Axo = VidaCarteraTemp::where('PolizaVida', $id)
+                ->where('PolizaVidaTipoCartera', $item->Id)
+                ->groupBy('Axo')->value('Axo');
+        }
+
+        // Crear validador vacío
+        $validator = Validator::make([], []);
+
+        if ($poliza_vida_tipo_cartera->count() > 1) {
+            foreach ($poliza_vida_tipo_cartera as $tipo) {
+                // dd($tipo);
+                if ($tipo->Mes && $tipo->Axo) {
+                    // dd($tipo,$request->Mes, $request->Axo,$request->Axo != $tipo->Axo && $request->Mes != $tipo->Mes || $request->Axo != $tipo->Axo || $request->Mes != $tipo->Mes);
+                    if (($request->Axo != $tipo->Axo && $request->Mes != $tipo->Mes) || $request->Axo != $tipo->Axo || $request->Mes != $tipo->Mes) {
+                        // dd('holi');
+                        $validator->errors()->add('Archivo', 'El mes y año seleccionado no son iguales.');
+                        return back()->withErrors($validator);
+                    }
+                }
+            }
+        }
+
+
         $archivo = $request->Archivo;
 
         $excel = IOFactory::load($archivo);

@@ -25,8 +25,38 @@ class DeudaCarteraFedeController extends Controller
     public function create_pago(Request $request)
     {
 
-        $deuda_tipo_cartera = PolizaDeudaTipoCartera::findOrFail($request->PolizaDeudaTipoCartera);
         $deuda = Deuda::findOrFail($request->Id);
+        $deuda_tipo_cartera = $deuda->deuda_tipos_cartera;
+
+        foreach ($deuda_tipo_cartera as $tipo_cartera) {
+            $tipo_cartera->Mes = PolizaDeudaTempCartera::where([
+                ['PolizaDeudaTipoCartera', $tipo_cartera->Id],
+                ['User', auth()->id()]
+            ])->groupBy('Mes')->value('Mes');
+
+            $tipo_cartera->Axo = PolizaDeudaTempCartera::where([
+                ['PolizaDeudaTipoCartera', $tipo_cartera->Id],
+                ['User', auth()->id()]
+            ])->groupBy('Axo')->value('Axo');
+        }
+        // Validar estructura
+        $validator = Validator::make([], []); // Creamos un validador vacío
+
+        if ($deuda_tipo_cartera->count() > 1) {
+            foreach ($deuda_tipo_cartera as $tipo) {
+                // dd($tipo);
+                if ($tipo->Mes && $tipo->Axo) {
+                    // dd($tipo,$request->Mes, $request->Axo,$request->Axo != $tipo->Axo && $request->Mes != $tipo->Mes || $request->Axo != $tipo->Axo || $request->Mes != $tipo->Mes);
+                    if (($request->Axo != $tipo->Axo && $request->Mes != $tipo->Mes) || $request->Axo != $tipo->Axo || $request->Mes != $tipo->Mes) {
+                        // dd('holi');
+                        $validator->errors()->add('Archivo', 'El mes y año seleccionado no son iguales.');
+                        return back()->withErrors($validator);
+                    }
+                }
+            }
+        }
+
+        $deuda_tipo_cartera = PolizaDeudaTipoCartera::findOrFail($request->PolizaDeudaTipoCartera);
 
         if ($request->FechaFinal > $deuda->VigenciaHasta) {
             alert()->error('La fecha final no debe ser mayor que la vigencia de la poliza');

@@ -54,6 +54,7 @@
                         <tr>
                             <th>Tipo cálculo</th>
                             <th>Linea credito</th>
+                            <th>Mes/Año</th>
                             <th>Datos Ingresados</th>
                             <th align="center">Carga de <br> archivo de cartera </th>
                             {{-- <th align="center">Eliminar de <br> archivo de cartera </th> --}}
@@ -64,6 +65,7 @@
                             <tr>
                                 <td>{{ $tipo->TipoCalculoTexto }}</td>
                                 <td>{{ $tipo->SaldosMontosTexto }}</td>
+                                <td>{{$tipo->Mes ?? ''}}{{$tipo->Mes ? '/':''}}{{ $tipo->Axo ?? ''}}</td>
                                 <td style="text-align: right">
                                     {{ $tipo->Total > 0 ? '$' . number_format($tipo->Total, 2) : '-' }}
                                 </td>

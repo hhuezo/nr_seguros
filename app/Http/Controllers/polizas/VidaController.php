@@ -846,6 +846,12 @@ class VidaController extends Controller
             $item->Total = VidaCarteraTemp::where('PolizaVida', $id)
                 ->where('PolizaVidaTipoCartera', $item->Id)
                 ->sum('SumaAsegurada');
+            $item->Mes = VidaCarteraTemp::where('PolizaVida', $id)
+                ->where('PolizaVidaTipoCartera', $item->Id)
+                ->groupBy('Mes')->value('Mes');
+            $item->Axo = VidaCarteraTemp::where('PolizaVida', $id)
+                ->where('PolizaVidaTipoCartera', $item->Id)
+                ->groupBy('Axo')->value('Axo');
         }
 
         $meses = [
@@ -1151,6 +1157,35 @@ class VidaController extends Controller
 
         $poliza_vida = Vida::findOrFail($id);
 
+        $poliza_vida_tipo_cartera = $poliza_vida->vida_tipos_cartera;
+
+        foreach ($poliza_vida_tipo_cartera as $item) {
+
+            $item->Mes = VidaCarteraTemp::where('PolizaVida', $id)
+                ->where('PolizaVidaTipoCartera', $item->Id)
+                ->groupBy('Mes')->value('Mes');
+            $item->Axo = VidaCarteraTemp::where('PolizaVida', $id)
+                ->where('PolizaVidaTipoCartera', $item->Id)
+                ->groupBy('Axo')->value('Axo');
+        }
+
+          // Crear validador vacío
+        $validator = Validator::make([], []);
+
+        if ($poliza_vida_tipo_cartera->count() > 1) {
+            foreach ($poliza_vida_tipo_cartera as $tipo) {
+                // dd($tipo);
+                if ($tipo->Mes && $tipo->Axo) {
+                    // dd($tipo,$request->Mes, $request->Axo,$request->Axo != $tipo->Axo && $request->Mes != $tipo->Mes || $request->Axo != $tipo->Axo || $request->Mes != $tipo->Mes);
+                    if (($request->Axo != $tipo->Axo && $request->Mes != $tipo->Mes) || $request->Axo != $tipo->Axo || $request->Mes != $tipo->Mes) {
+                        // dd('holi');
+                        $validator->errors()->add('Archivo', 'El mes y año seleccionado no son iguales.');
+                        return back()->withErrors($validator);
+                    }
+                }
+            }
+        }
+
         $archivo = $request->Archivo;
 
         $excel = IOFactory::load($archivo);
@@ -1164,8 +1199,7 @@ class VidaController extends Controller
         }
 
 
-        // Crear validador vacío
-        $validator = Validator::make([], []);
+
 
         // 2. Validar primera fila
         $expectedColumns = [
@@ -2329,7 +2363,7 @@ class VidaController extends Controller
         $id = $request->id_vida_detalle;
         $detalle = VidaDetalle::findOrFail($id);
 
-        $vida = Vida::findOrFail($detalle->PolizaVida);
+        $poliza_vida = Vida::findOrFail($detalle->PolizaVida);
         $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
         $impresion_recibo = $request->AxoImpresionRecibo . '-' . $request->MesImpresionRecibo . '-' . $request->DiaImpresionRecibo;
@@ -2385,15 +2419,15 @@ class VidaController extends Controller
         $recibo_historial->save();
         //dd("insert");
         //alert()->success('Actualizacion de Recibo Exitoso');
-         //enviar a descargar el archivo
-        $cliente = Cliente::findOrFail($vida->Asegurado);
+        //enviar a descargar el archivo
+        $cliente = Cliente::findOrFail($poliza_vida->Asegurado);
         $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
         $configuracion = ConfiguracionRecibo::first();
         $exportar = 1;
-        $pdf = \PDF::loadView('polizas.vida.recibo', compact('configuracion', 'cliente', 'recibo_historial', 'detalle', 'vida', 'meses', 'exportar'))->setWarnings(false)->setPaper('letter');
+        $pdf = \PDF::loadView('polizas.vida.recibo', compact('configuracion', 'cliente', 'recibo_historial', 'detalle', 'poliza_vida', 'meses', 'exportar'))->setWarnings(false)->setPaper('letter');
         //  dd($detalle);
         return $pdf->stream('Recibos.pdf');
-        return redirect('polizas/vida/' . $vida->Id . '/edit');
+        return redirect('polizas/vida/' . $poliza_vida->Id . '/edit');
     }
 
 
@@ -2517,12 +2551,11 @@ class VidaController extends Controller
             $poliza->Tasa = $tempRecord->Tasa;
             $poliza->CarnetResidencia = $tempRecord->CarnetResidencia;
             $poliza->save();
-
         }
 
 
 
-             try {
+        try {
             DB::beginTransaction();
 
             // 1️⃣ Eliminar registros previos del mismo periodo en el historial

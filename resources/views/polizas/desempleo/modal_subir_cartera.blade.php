@@ -327,11 +327,11 @@
 
 
     function get_cartera(id) {
-        const VidaId = document.getElementById('VidaId').value;
+        const DesempleoId = document.getElementById('DesempleoId').value;
         // Tomamos los valores del año y mes del modal actual
         const mes = document.getElementById('Mes' + id).value;
         const axo = document.getElementById('Axo' + id).value;
-        $.get("{{ url('polizas/vida/get_cartera') }}" + '/' + VidaId + '/' + mes + '/' + axo, function(data) {
+        $.get("{{ url('polizas/desempleo/get_cartera') }}" + '/' + DesempleoId + '/' + mes + '/' + axo, function(data) {
             //esta el la peticion get, la cual se divide en tres partes. ruta,variables y funcion
             console.log('data:', data);
 

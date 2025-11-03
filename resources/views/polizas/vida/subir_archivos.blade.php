@@ -152,6 +152,7 @@
                         <tr>
                             <th>Tipo de Cartera</th>
                             <th>Tipo cálculo</th>
+                            <th>Mes/Año</th>
                             <th>Datos Ingresados</th>
                             <th align="center">Carga de <br> archivo de cartera </th>
                         </tr>
@@ -161,6 +162,7 @@
                             <tr>
                                 <td>{{ $obj->catalogo_tipo_cartera->Nombre ?? '' }}</td>
                                 <td>{{ [1 => 'FECHA', 2 => 'MONTO'][$obj->TipoCalculo] ?? 'NO APLICA' }}</td>
+                                <td>{{ $obj->Mes ?? '' }} {{ $obj->Mes ? '/' : '' }}{{ $obj->Axo ?? '' }}</td>
                                 <td align="right">${{ number_format($obj->Total, 2, '.', ',') }}</td>
                                 <td align="center">
                                     @if ($poliza_vida->Aseguradora == 3 || $poliza_vida->Aseguradora == 4)
