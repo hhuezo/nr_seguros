@@ -113,6 +113,7 @@ class PolizaControlCarteraController extends Controller
                 'poliza_deuda_detalle.Anexo',
                 'poliza_deuda_detalle.Comentario',
                 'poliza_deuda_detalle.FechaIngreso',
+                'poliza_deuda_detalle.FechaInicio',
                 'poliza_deuda_detalle.Descuento as ValorDescuentoRentabilidad',
                 'poliza_deuda_detalle.NumeroRecibo',
                 'poliza_deuda_detalle.Axo',

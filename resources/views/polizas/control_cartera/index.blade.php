@@ -238,7 +238,7 @@
                                         : '' }}
                                 </td>
 
-                                <td>{{ $registro->FechaVencimiento ? date('d/m/Y', strtotime($registro->FechaVencimiento)) : '' }}
+                                <td>{{ $registro->FechaInicio ? date('d/m/Y', strtotime($registro->FechaInicio)) : '' }}
                                 </td>
 
                                 <td>{{ $registro->FechaEnvioCliente ? date('d/m/Y', strtotime($registro->FechaEnvioCliente)) : '' }}
