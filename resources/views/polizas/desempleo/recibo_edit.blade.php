@@ -10,7 +10,7 @@
 
         .recibo-container {
             width: 1200px;
-            height: 600px;
+            height: 800px;
             margin: 30px auto;
             margin-top: 81px;
             background: #fff;
