@@ -9,53 +9,51 @@
         .table-success,
         .table-success>th,
         .table-success>td {
-            background-color: #d4edda !important;
-            /* verde */
-            color: #155724 !important;
+            background-color: #b8e0b2 !important;
+            /* verde más fuerte */
+            color: #0f5132 !important;
         }
 
         .table-warning,
         .table-warning>th,
         .table-warning>td {
-            background-color: #fff3cd !important;
-            /* amarillo */
-            color: #856404 !important;
+            background-color: #ffe28a !important;
+            /* amarillo más intenso */
+            color: #664d03 !important;
         }
 
         .table-info,
         .table-info>th,
         .table-info>td {
-            background-color: #d1ecf1 !important;
-            /* azul */
+            background-color: #c5e6ed !important;
+            /* azul igual */
             color: #0c5460 !important;
         }
 
         .table-danger,
         .table-danger>th,
         .table-danger>td {
-            background-color: #f8d7da !important;
-            /* rojo */
+            background-color: #f5b7b1 !important;
+            /* rojo igual o más vivo */
             color: #721c24 !important;
         }
 
         .table-orange,
         .table-orange>th,
         .table-orange>td {
-            background-color: #ffecb3 !important;
-            /* naranja */
-            color: #7a4e00 !important;
+            background-color: #ffd280 !important;
+            /* naranja más fuerte */
+            color: #5a3500 !important;
         }
 
-        /* 🎨 Secondary → fondo blanco */
         .table-secondary,
         .table-secondary>th,
         .table-secondary>td {
             background-color: #ffffff !important;
-            /* blanco */
             color: #000000 !important;
-            /* texto negro */
         }
     </style>
+
 
 
     <div class="x_panel">
