@@ -272,6 +272,16 @@
     </div>
 
     <script>
+        $(document).ready(function() {
+            $('#datatable').DataTable({
+                paging: false,
+                searching: true,
+                info: true,
+                ordering: false,
+            });
+        });
+
+
         function calcularDiasHabiles(id) {
 
             const fechaInicio = document.getElementById('FechaRecepcionArchivo' + id).value;

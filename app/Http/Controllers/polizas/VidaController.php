@@ -1169,7 +1169,7 @@ class VidaController extends Controller
                 ->groupBy('Axo')->value('Axo');
         }
 
-          // Crear validador vacío
+        // Crear validador vacío
         $validator = Validator::make([], []);
 
         if ($poliza_vida_tipo_cartera->count() > 1) {
@@ -2674,14 +2674,136 @@ class VidaController extends Controller
 
     public function anular_pago($id)
     {
-        $detalle = VidaDetalle::findOrFail($id);
-        $detalle->Activo = 0;
-        $detalle->update();
-        //recibo anulado
-        VidaHistorialRecibo::where('PolizaVidaDetalle', $id)->update(['Activo' => 0]);
+        try {
+            DB::beginTransaction();
+            $detalle = VidaDetalle::findOrFail($id);
+            $detalle->Activo = 0;
+            $detalle->update();
+            //recibo anulado
+            VidaHistorialRecibo::where('PolizaVidaDetalle', $id)->update(['Activo' => 0]);
 
-        VidaCartera::where('PolizaVidaDetalle', $id)->delete();
-        alert()->success('El registro ha sido ingresado correctamente');
+
+            $anio = $detalle->Axo;
+            $mes = $detalle->Mes;
+            $vidaId = $detalle->PolizaVida;
+
+
+
+            // 3️⃣ Eliminar los registros originales de la tabla temporal
+            VidaCarteraTemp::where('Axo', $anio)
+                ->where('Mes', $mes + 0)
+                ->where('PolizaVida', $vidaId)
+                ->delete();
+
+            // 2️⃣ Insertar los registros actuales desde poliza_vida_cartera_temp
+            DB::statement("
+            INSERT INTO poliza_vida_cartera_temp (
+                PolizaVida,
+                CarnetResidencia,
+                Dui,
+                Pasaporte,
+                Nacionalidad,
+                FechaNacimiento,
+                TipoPersona,
+                Sexo,
+                PrimerApellido,
+                SegundoApellido,
+                ApellidoCasada,
+                PrimerNombre,
+                SegundoNombre,
+                FechaOtorgamiento,
+                FechaVencimiento,
+                NumeroReferencia,
+                SumaAsegurada,
+                User,
+                Axo,
+                Mes,
+                FechaInicio,
+                FechaFinal,
+                FechaNacimientoDate,
+                FechaOtorgamientoDate,
+                Edad,
+                EdadDesembloso,
+                TipoError,
+                Rehabilitado,
+                NoValido,
+                PolizaVidaTipoCartera,
+                Tasa,
+                MontoMaximoIndividual,
+                TipoDeuda,
+                PorcentajeExtraprima,
+                TipoDocumento,
+                SaldoInteresMora,
+                NombreSociedad,
+                SaldoCapital,
+                Intereses,
+                InteresesMoratorios,
+                InteresesCovid
+            )
+            SELECT
+                PolizaVida,
+                CarnetResidencia,
+                Dui,
+                Pasaporte,
+                Nacionalidad,
+                FechaNacimiento,
+                TipoPersona,
+                Sexo,
+                PrimerApellido,
+                SegundoApellido,
+                ApellidoCasada,
+                PrimerNombre,
+                SegundoNombre,
+                FechaOtorgamiento,
+                FechaVencimiento,
+                NumeroReferencia,
+                SumaAsegurada,
+                User,
+                Axo,
+                Mes,
+                FechaInicio,
+                FechaFinal,
+                FechaNacimientoDate,
+                FechaOtorgamientoDate,
+                Edad,
+                EdadDesembloso,
+                TipoError,
+                Rehabilitado,
+                NoValido,
+                PolizaVidaTipoCartera,
+                Tasa,
+                MontoMaximoIndividual,
+                TipoDeuda,
+                PorcentajeExtraprima,
+                TipoDocumento,
+                SaldoInteresMora,
+                NombreSociedad,
+                SaldoCapital,
+                Intereses,
+                InteresesMoratorios,
+                InteresesCovid
+            FROM poliza_vida_cartera_temp_historial
+            WHERE Axo = ? AND Mes = ? AND PolizaVida = ?
+        ", [$anio, $mes, $vidaId]);
+
+
+
+            // 1️⃣ Eliminar registros previos del mismo periodo en el historial
+            DB::table('poliza_vida_cartera_temp_historial')
+                ->where('Axo', $anio)
+                ->where('Mes', $mes)
+                ->where('PolizaVida', $vidaId)
+                ->delete();
+
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+
+
+        alert()->success('El registro ha sido anulado correctamente');
         return back();
     }
 

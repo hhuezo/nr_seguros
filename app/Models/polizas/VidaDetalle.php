@@ -17,7 +17,7 @@ class VidaDetalle extends Model
 
 
     protected $fillable = [
-        'Vida',
+        'PolizaVida',
         'Comentario',
         'Tasa',
         'PrimaTotal',
