@@ -60,7 +60,6 @@ class PolizaControlCarteraController extends Controller
                     ->where('poliza_deuda_detalle.Mes', '=', $mes);
             })
             ->join('cliente', 'cliente.Id', '=', 'poliza_deuda.Asegurado')
-            ->join('users', 'users.id', '=', 'poliza_deuda.Usuario')
 
             // === Joins adicionales ===
             ->join('plan', 'plan.Id', '=', 'poliza_deuda.Plan')
@@ -96,7 +95,6 @@ class PolizaControlCarteraController extends Controller
                 'poliza_deuda.VigenciaDesde',
                 'poliza_deuda.VigenciaHasta',
                 'poliza_deuda.Descuento',
-                'users.name as Usuario',
 
                 // === Campos de poliza_deuda_detalle ===
                 'poliza_deuda_detalle.MontoCartera',
@@ -137,7 +135,16 @@ class PolizaControlCarteraController extends Controller
                     AND c.Axo = {$anio}
                     AND c.Mes = {$mes}
                     AND c.PolizaDeudaDetalle is not null
-                ) AS UsuariosReportados")
+                ) AS UsuariosReportados"),
+                DB::raw("(SELECT u.name
+                    FROM poliza_deuda_cartera AS c
+                    INNER JOIN users AS u ON u.id = c.User
+                    WHERE c.PolizaDeuda = poliza_deuda.Id
+                    AND c.Axo = {$anio}
+                    AND c.Mes = {$mes}
+                    ORDER BY c.Id ASC
+                    LIMIT 1
+                ) AS UsuarioCartera")
             )
             ->orderBy('poliza_deuda.Id')
             ->get();
