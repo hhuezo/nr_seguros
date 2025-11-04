@@ -140,7 +140,9 @@ class PolizaControlCarteraController extends Controller
                 ) AS UsuariosReportados")
             )
             ->orderBy('poliza_deuda.Id')
+            ->groupBy('poliza_declarativa_control.Id')
             ->get();
+
 
 
 
