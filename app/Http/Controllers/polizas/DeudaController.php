@@ -1319,7 +1319,7 @@ class DeudaController extends Controller
 
         $recibo_historial->save();
         //dd("insert");
-       // alert()->success('Actualizacion de Recibo Exitoso');
+        // alert()->success('Actualizacion de Recibo Exitoso');
         //enviar a descargar el archivo
         $cliente = Cliente::findOrFail($deuda->Asegurado);
         $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
@@ -1674,14 +1674,78 @@ class DeudaController extends Controller
 
     public function anular_pago($id)
     {
-        $detalle = DeudaDetalle::findOrFail($id);
-        $detalle->Activo = 0;
-        $detalle->update();
-        //recibo anulado
-        DeudaHistorialRecibo::where('PolizaDeudaDetalle', $id)->update(['Activo' => 0]);
+        try {
 
-        PolizaDeudaCartera::where('PolizaDeudaDetalle', $id)->delete();
-        alert()->success('El registro ha sido ingresado correctamente');
+            $detalle = DeudaDetalle::findOrFail($id);
+            $detalle->Activo = 0;
+            $detalle->update();
+
+            //recibo anulado
+            DeudaHistorialRecibo::where('PolizaDeudaDetalle', $id)->update(['Activo' => 0]);
+
+
+            $anio = $detalle->Axo;
+            $mes = $detalle->Mes;
+            $deudaId = $detalle->Deuda;
+
+
+
+
+            // 2️⃣ Insertar los registros actuales desde poliza_deuda_temp_cartera
+            DB::statement("
+                INSERT INTO poliza_deuda_temp_cartera (
+                    PolizaDeudaTipoCartera, LineaCredito, Tasa, TotalCredito, EdadDesembloso,
+                    CarnetResidencia, Dui, Pasaporte, Nacionalidad, FechaNacimiento, TipoPersona,
+                    PrimerApellido, SegundoApellido, ApellidoCasada, PrimerNombre, SegundoNombre,
+                    NombreSociedad, Sexo, FechaOtorgamiento, FechaVencimiento, NumeroReferencia,
+                    MontoOtorgado, SaldoCapital, Intereses, MoraCapital, InteresesMoratorios, SaldoTotal,
+                    User, Axo, Mes, PolizaDeuda, FechaInicio, FechaFinal, TipoError, FechaNacimientoDate,
+                    Edad, InteresesCovid, MontoNominal, NoValido, Perfiles, FechaOtorgamientoDate,
+                    SaldoCumulo, Excluido, OmisionPerfil, Rehabilitado, EdadRequisito, MontoRequisito,
+                    MontoMaximoIndividual, TipoDeuda, PorcentajeExtraprima, TipoDocumento,
+                    SaldoInteresMora, PagoAutomatico, Errores
+                )
+                SELECT
+                    PolizaDeudaTipoCartera, LineaCredito, Tasa, TotalCredito, EdadDesembloso,
+                    CarnetResidencia, Dui, Pasaporte, Nacionalidad, FechaNacimiento, TipoPersona,
+                    PrimerApellido, SegundoApellido, ApellidoCasada, PrimerNombre, SegundoNombre,
+                    NombreSociedad, Sexo, FechaOtorgamiento, FechaVencimiento, NumeroReferencia,
+                    MontoOtorgado, SaldoCapital, Intereses, MoraCapital, InteresesMoratorios, SaldoTotal,
+                    User, Axo, Mes, PolizaDeuda, FechaInicio, FechaFinal, TipoError, FechaNacimientoDate,
+                    Edad, InteresesCovid, MontoNominal, NoValido, Perfiles, FechaOtorgamientoDate,
+                    SaldoCumulo, Excluido, OmisionPerfil, Rehabilitado, EdadRequisito, MontoRequisito,
+                    MontoMaximoIndividual, TipoDeuda, PorcentajeExtraprima, TipoDocumento,
+                    SaldoInteresMora, PagoAutomatico, Errores
+                FROM poliza_deuda_temp_cartera_historial
+                WHERE Axo = ? AND Mes = ? AND PolizaDeuda = ?
+            ", [$anio, $mes, $deudaId]);
+
+
+
+            // 1️⃣ Eliminar registros previos del mismo periodo en el historial
+            DB::table('poliza_deuda_temp_cartera_historial')
+                ->where('Axo', $anio)
+                ->where('Mes', $mes)
+                ->where('PolizaDeuda', $deudaId)
+                ->delete();
+
+
+
+            // Eliminar registros de cartera
+            DB::table('poliza_deuda_cartera')
+                ->where('Axo', $anio)
+                ->where('Mes', $mes)
+                ->where('PolizaDeuda', $deudaId)
+                ->delete();
+
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+
+        alert()->success('Los registros han sido resturados correctamente');
         return back();
     }
 
