@@ -729,13 +729,162 @@ class DesempleoController extends Controller
 
     public function anular_pago($id)
     {
-        $detalle = DesempleoDetalle::findOrFail($id);
-        $detalle->Activo = 0;
-        $detalle->update();
-        //recibo anulado
-        DesempleoHistorialRecibo::where('PolizaDesempleoDetalle', $id)->update(['Activo' => 0]);
 
-        DesempleoCartera::where('PolizaDesempleoDetalle', $id)->delete();
+
+
+        DB::beginTransaction();
+
+        try {
+
+            $detalle = DesempleoDetalle::findOrFail($id);
+            $detalle->Activo = 0;
+            $detalle->update();
+            //recibo anulado
+            DesempleoHistorialRecibo::where('PolizaDesempleoDetalle', $id)->update(['Activo' => 0]);
+
+            $anio = $detalle->Axo;
+            $mes = $detalle->Mes;
+            $desempleoId = $detalle->Desempleo;
+
+
+            // 1️⃣ Eliminar los registros actuales en poliza_desempleo_cartera_temp
+            DB::table('poliza_desempleo_cartera_temp')
+                ->where('Axo', $anio)
+                ->where('Mes', $mes)
+                ->where('PolizaDesempleo', $desempleoId)
+                ->delete();
+
+
+            // 2️⃣ Insertar los registros del historial nuevamente en la tabla temporal
+            DB::statement("
+            INSERT INTO poliza_desempleo_cartera_temp (
+                SaldosMontos,
+                PolizaDesempleo,
+                Dui,
+                Pasaporte,
+                CarnetResidencia,
+                Nacionalidad,
+                FechaNacimiento,
+                TipoPersona,
+                Sexo,
+                PrimerApellido,
+                SegundoApellido,
+                ApellidoCasada,
+                PrimerNombre,
+                SegundoNombre,
+                NombreSociedad,
+                FechaOtorgamiento,
+                FechaVencimiento,
+                NumeroReferencia,
+                MontoOtorgado,
+                SaldoCapital,
+                Intereses,
+                MoraCapital,
+                InteresesMoratorios,
+                InteresesCovid,
+                Tarifa,
+                TipoDeuda,
+                PorcentajeExtraprima,
+                SaldoTotal,
+                User,
+                Axo,
+                Mes,
+                FechaInicio,
+                FechaFinal,
+                TipoError,
+                FechaNacimientoDate,
+                FechaOtorgamientoDate,
+                Edad,
+                EdadDesembloso,
+                NoValido,
+                Excluido,
+                Rehabilitado,
+                EdadRequisito,
+                DesempleoTipoCartera,
+                TotalCredito,
+                Tasa
+            )
+            SELECT
+                SaldosMontos,
+                PolizaDesempleo,
+                Dui,
+                Pasaporte,
+                CarnetResidencia,
+                Nacionalidad,
+                FechaNacimiento,
+                TipoPersona,
+                Sexo,
+                PrimerApellido,
+                SegundoApellido,
+                ApellidoCasada,
+                PrimerNombre,
+                SegundoNombre,
+                NombreSociedad,
+                FechaOtorgamiento,
+                FechaVencimiento,
+                NumeroReferencia,
+                MontoOtorgado,
+                SaldoCapital,
+                Intereses,
+                MoraCapital,
+                InteresesMoratorios,
+                InteresesCovid,
+                Tarifa,
+                TipoDeuda,
+                PorcentajeExtraprima,
+                SaldoTotal,
+                User,
+                Axo,
+                Mes,
+                FechaInicio,
+                FechaFinal,
+                TipoError,
+                FechaNacimientoDate,
+                FechaOtorgamientoDate,
+                Edad,
+                EdadDesembloso,
+                NoValido,
+                Excluido,
+                Rehabilitado,
+                EdadRequisito,
+                DesempleoTipoCartera,
+                TotalCredito,
+                Tasa
+            FROM poliza_desempleo_cartera_temp_historial
+            WHERE Axo = ? AND Mes = ? AND PolizaDesempleo = ?
+        ", [$anio, $mes, $desempleoId]);
+
+
+
+            // 3️⃣ Eliminar los registros del historial una vez restaurados
+            DB::table('poliza_desempleo_cartera_temp_historial')
+                ->where('Axo', $anio)
+                ->where('Mes', $mes)
+                ->where('PolizaDesempleo', $desempleoId)
+                ->delete();
+
+            // 4️⃣ Eliminar los registros de la cartera real (que no tengan detalle)
+            DB::table('poliza_desempleo_cartera')
+                ->where('Axo', $anio)
+                ->where('Mes', $mes)
+                ->where('PolizaDesempleo', $desempleoId)
+                ->whereNull('PolizaDesempleoDetalle')
+                ->delete();
+
+            DB::commit();
+
+            alert()->success('La carga de póliza de desempleo ha sido reiniciada correctamente');
+            return back();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error al reiniciar carga de desempleo: ' . $e->getMessage());
+            alert()->error('Hubo un error al reiniciar la carga de desempleo');
+            return back();
+        }
+
+
+
+
         alert()->success('El registro ha sido ingresado correctamente');
         return back();
     }

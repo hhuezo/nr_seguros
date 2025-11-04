@@ -6,53 +6,66 @@
         }
     </style>
     <style>
+        /* 🟢 Verde intenso (éxito) */
         .table-success,
         .table-success>th,
         .table-success>td {
-            background-color: #b8e0b2 !important;
-            /* verde más fuerte */
-            color: #0f5132 !important;
+            background-color: #9adf8f !important;
+            /* más vivo */
+            color: #0f3e23 !important;
         }
 
+        /* 🟡 Amarillo brillante (advertencia) */
         .table-warning,
         .table-warning>th,
         .table-warning>td {
-            background-color: #ffe28a !important;
-            /* amarillo más intenso */
-            color: #664d03 !important;
+            background-color: #f8e394 !important;
+            /* más fuerte */
+            color: #5a4300 !important;
         }
 
+        /* 🔵 Azul intenso (info) */
         .table-info,
         .table-info>th,
         .table-info>td {
-            background-color: #c5e6ed !important;
-            /* azul igual */
-            color: #0c5460 !important;
+            background-color: #91d6e3 !important;
+            /* azul más saturado */
+            color: #063c45 !important;
         }
 
+        /* 🔴 Rojo vivo (error/peligro) */
         .table-danger,
         .table-danger>th,
         .table-danger>td {
-            background-color: #f5b7b1 !important;
-            /* rojo igual o más vivo */
-            color: #721c24 !important;
+            background-color: #f28b82 !important;
+            /* rojo más brillante */
+            color: #5d0a0a !important;
         }
 
+        /* 🟠 Naranja fuerte (personalizado) */
         .table-orange,
         .table-orange>th,
         .table-orange>td {
-            background-color: #ffd280 !important;
-            /* naranja más fuerte */
-            color: #5a3500 !important;
+            background-color: #ffb84d !important;
+            /* naranja más intenso */
+            color: #4a2500 !important;
         }
 
+        /* ⚪ Blanco neutro (secundario o sin color) */
         .table-secondary,
         .table-secondary>th,
         .table-secondary>td {
-            background-color: #ffffff !important;
+            background-color: #f5f5f5 !important;
             color: #000000 !important;
         }
+
+        /* Opcional: bordes más suaves */
+        .table td,
+        .table th {
+            border-color: #dddddd !important;
+        }
     </style>
+
 
 
 
@@ -272,6 +285,16 @@
     </div>
 
     <script>
+        $(document).ready(function() {
+            $('#datatable').DataTable({
+                paging: false,
+                searching: true,
+                info: true,
+                ordering: false,
+            });
+        });
+
+
         function calcularDiasHabiles(id) {
 
             const fechaInicio = document.getElementById('FechaRecepcionArchivo' + id).value;
