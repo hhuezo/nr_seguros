@@ -144,7 +144,7 @@ class PolizaControlCarteraController extends Controller
                     AND c.Mes = {$mes}
                     ORDER BY c.Id ASC
                     LIMIT 1
-                ) AS UsuarioCartera")
+                ) AS Usuario")
             )
             ->orderBy('poliza_deuda.Id')
             ->groupBy('poliza_declarativa_control.Id')
