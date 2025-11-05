@@ -753,6 +753,7 @@
             const retencion = toNumber(document.getElementById('retencion_comision')?.textContent);
             const comision_ccf = sub_total_ccf - retencion;
             document.getElementById('comision_ccf').textContent = fmt(comision_ccf);
+             document.getElementById('comision').textContent = fmt(comision_ccf);
             document.getElementById('ValorCCFDetalle').value = comision_ccf;
 
             const prima_a_cobrar = toNumber(document.getElementById('prima_a_cobrar')?.textContent);
