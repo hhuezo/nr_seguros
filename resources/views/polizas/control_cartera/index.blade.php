@@ -19,7 +19,7 @@
         .table-warning,
         .table-warning>th,
         .table-warning>td {
-            background-color: #f8e394 !important;
+            background-color: #fffc4c !important;
             /* más fuerte */
             color: #5a4300 !important;
         }
