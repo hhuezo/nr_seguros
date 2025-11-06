@@ -48,4 +48,9 @@ class DetalleResidencia extends Model
     public function usuarios(){
         return $this->belongsTo('App\Models\User', 'Usuario', 'id');
     }
+
+    public function residencia(){
+        return $this->belongsTo(Residencia::class, 'Residencia', 'Id');
+
+    }
 }

@@ -20,6 +20,7 @@ use App\Models\polizas\Comentario;
 use App\Models\polizas\DetalleResidencia;
 use App\Models\polizas\PolizaResidenciaCartera;
 use App\Models\polizas\Residencia;
+use App\Models\polizas\ResidenciaHistorialRecibo;
 use App\Models\temp\PolizaResidenciaTempCartera;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -791,6 +792,55 @@ class ResidenciaController extends Controller
         return back();
     }
 
+    public function save_recibo($residencia, $detalle)
+    {
+// dd($detalle);
+        $recibo_historial = new ResidenciaHistorialRecibo();
+        $recibo_historial->PolizaResidenciaDetalle = $detalle->Id;
+        $recibo_historial->ImpresionRecibo = $detalle->ImpresionRecibo;
+        $recibo_historial->NombreCliente = $residencia->clientes->Nombre;
+        $recibo_historial->NitCliente = $residencia->clientes->Nit;
+        $recibo_historial->DireccionResidencia = $residencia->clientes->DireccionResidencia ?? $residencia->clientes->DireccionCorrespondencia;
+        $recibo_historial->Departamento = $residencia->clientes->distrito->municipio->departamento->Nombre;
+        $recibo_historial->Municipio = $residencia->clientes->distrito->municipio->Nombre;
+        $recibo_historial->NumeroRecibo = $detalle->NumeroRecibo;
+        $recibo_historial->CompaniaAseguradora = $residencia->aseguradoras->Nombre;
+        $recibo_historial->ProductoSeguros = $residencia->planes->productos->Nombre;
+        $recibo_historial->NumeroPoliza = $residencia->NumeroPoliza;
+        $recibo_historial->VigenciaDesde = $residencia->VigenciaDesde;
+        $recibo_historial->VigenciaHasta = $residencia->VigenciaHasta;
+        $recibo_historial->FechaInicio = $detalle->FechaInicio;
+        $recibo_historial->FechaFin = $detalle->FechaFinal;
+        $recibo_historial->Anexo = $detalle->Anexo;
+        $recibo_historial->Referencia = $detalle->Referencia;
+        $recibo_historial->FacturaNombre = $residencia->clientes->Nombre;
+        $recibo_historial->MontoCartera = $detalle->MontoCartera;
+        $recibo_historial->PrimaCalculada = $detalle->PrimaCalculada;
+        $recibo_historial->SubTotal = $detalle->SubTotal;
+        $recibo_historial->Iva = $detalle->Iva;
+        $recibo_historial->TotalFactura = $detalle->APagar;
+        $recibo_historial->Descuento = $detalle->Descuento;
+        $recibo_historial->PordentajeDescuento = $detalle->TasaDescuento;
+        $recibo_historial->PrimaDescontada = $detalle->PrimaDescontada;
+        $recibo_historial->TotalAPagar = $detalle->APagar;
+        $recibo_historial->TasaComision = $detalle->TasaComision ?? '';
+        $recibo_historial->Comision = $detalle->Comision;
+        $recibo_historial->IvaSobreComision = $detalle->IvaSobreComision;
+        $recibo_historial->SubTotalComision = $detalle->SubTotalComision ?? 0;
+        $recibo_historial->Retencion =  $detalle->Retencion;
+        $recibo_historial->ValorCCF = $detalle->ValorCCF;
+        $recibo_historial->NumeroCorrelativo = $detalle->NumeroCorrelativo;
+        $recibo_historial->Otros = $detalle->Otros;
+        $recibo_historial->Cuota = '01/01';
+        $recibo_historial->FechaVencimiento = $detalle->FechaInicio ?? '';
+        $recibo_historial->PagoLiquidoPrima = $detalle->PagoLiquidoPrima ?? 0;
+        $recibo_historial->CreatedAt = $detalle->CreatedAt;
+        $recibo_historial->UpdatedAt = $detalle->UpdatedAt;
+        $recibo_historial->Usuario = $detalle->Usuario;
+        $recibo_historial->Activo = $detalle->Activo;
+        $recibo_historial->save();
+    }
+
     public function edit_pago(Request $request)
     {
         session(['tab' => 4]);
@@ -804,6 +854,12 @@ class ResidenciaController extends Controller
             $detalle->Comentario = $request->Comentario;
             $detalle->update();
             $configuracion = ConfiguracionRecibo::first();
+
+            $recibo_historial = ResidenciaHistorialRecibo::where('PolizaResidenciaDetalle', $request->Id)->orderBy('Id', 'desc')->first();
+            if (!$recibo_historial) {
+                $recibo_historial = $this->save_recibo($residencia, $detalle);
+            }
+
             $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion', 'detalle', 'residencia'))->setWarnings(false)->setPaper('letter');
             return $pdf->stream('Recibo.pdf');
 
@@ -859,6 +915,8 @@ class ResidenciaController extends Controller
         $detalle->NumeroCorrelativo = $request->NumeroCorrelativo;
         $detalle->update();
         //$calculo = $this->monto($residencia, $detalle);
+        //llenar recibo
+        $recibo_historial = $this->save_recibo($residencia, $detalle);
         $configuracion = ConfiguracionRecibo::first();
         $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion', 'detalle', 'residencia', 'meses', 'cliente'))->setWarnings(false)->setPaper('letter');
         return $pdf->stream('Recibo.pdf');
@@ -877,6 +935,12 @@ class ResidenciaController extends Controller
         $calculo = $this->monto($residencia, $detalle);
         // dd($calculo);
         $configuracion = ConfiguracionRecibo::first();
+
+        $recibo_historial = ResidenciaHistorialRecibo::where('PolizaResidenciaDetalle', $id)->orderBy('Id', 'desc')->first();
+        if (!$recibo_historial) {
+            $recibo_historial = $this->save_recibo($residencia, $detalle);
+        }
+
 
         //return view('polizas.residencia.recibo', compact('configuracion','cliente',  'detalle', 'residencia', 'meses', 'calculo'));
         $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion', 'cliente', 'detalle', 'residencia', 'meses', 'calculo'))->setWarnings(false)->setPaper('letter');
@@ -1010,5 +1074,107 @@ class ResidenciaController extends Controller
         $detalle->update();
         alert()->success('El registro ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
         return back();
+    }
+
+    public function get_recibo_edit($id)
+    {
+        $detalle = DetalleResidencia::findOrFail($id);
+        $residencia = Residencia::findOrFail($detalle->Residencia);
+        $recibo_historial = ResidenciaHistorialRecibo::where('PolizaResidenciaDetalle', $id)->orderBy('id', 'desc')->first();
+        if (!$recibo_historial) {
+            $recibo_historial = $this->save_recibo($residencia, $detalle);
+            //dd("insert");
+        }
+        $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+        $recibo_historial = ResidenciaHistorialRecibo::where('PolizaResidenciaDetalle', $id)->orderBy('id', 'desc')->first();
+        if ($recibo_historial->DireccionResidencia == '' || $recibo_historial->DireccionResidencia == '(vacio)') {
+            $recibo_historial->DireccionResidencia =
+                $detalle->residencia?->clientes?->DireccionResidencia
+                ?? $detalle->residencia?->clientes?->DireccionCorrespondencia
+                ?? '';
+        }
+
+        if ($recibo_historial->ProductoSeguros == '') {
+            $recibo_historial->ProductoSeguros =  $detalle->deuda?->planes->productos->Nombre ?? '';
+        }
+
+        //dd($recibo_historial);
+        $configuracion = ConfiguracionRecibo::first();
+
+        return view('polizas.residencia.recibo_edit', compact('recibo_historial', 'meses', 'configuracion'));
+    }
+
+    public function get_recibo_update(Request $request) {
+         //modificación de ultimo recibo
+        $id = $request->id_residencia_detalle;
+        $detalle = DetalleResidencia::findOrFail($id);
+
+        $residencia = Residencia::findOrFail($detalle->Residencia);
+        $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+        $impresion_recibo = $request->AxoImpresionRecibo . '-' . $request->MesImpresionRecibo . '-' . $request->DiaImpresionRecibo;
+        $recibo_historial_anterior = ResidenciaHistorialRecibo::where('PolizaResidenciaDetalle', $id)->orderBy('id', 'desc')->first();
+
+
+        $recibo_historial = new ResidenciaHistorialRecibo();
+        $recibo_historial->PolizaDeudaDetalle = $id;
+        //este valor cambia por eso no se manda al metodo de save_recibo
+        $recibo_historial->ImpresionRecibo = Carbon::parse($impresion_recibo);
+        $recibo_historial->NombreCliente = $request->NombreCliente;
+        $recibo_historial->NitCliente = $request->NitCliente;
+        $recibo_historial->DireccionResidencia = $request->DireccionResidencia;
+        // $recibo_historial->NumeroRecibo = $detalle->NumeroRecibo;
+        $recibo_historial->CompaniaAseguradora = $request->CompaniaAseguradora;
+        $recibo_historial->ProductoSeguros = $request->ProductoSeguros;
+        $recibo_historial->NumeroPoliza = $request->NumeroPoliza;
+        $recibo_historial->VigenciaDesde = $request->VigenciaDesde;
+        $recibo_historial->VigenciaHasta = $request->VigenciaHasta;
+        $recibo_historial->FechaInicio = $request->FechaInicio;
+        $recibo_historial->FechaFin = $request->FechaFin;
+        $recibo_historial->Anexo = $request->Anexo;
+        $recibo_historial->Referencia = $request->Referencia;
+        $recibo_historial->FacturaNombre = $request->FacturaNombre;
+
+        $recibo_historial->FechaVencimiento = $request->FechaVencimiento ?? $detalle->FechaInicio;
+        $recibo_historial->NumeroCorrelativo = $request->NumeroCorrelativo ??  '01';
+        $recibo_historial->Cuota = $request->Cuota ?? '01/01';
+
+
+        // 🔹 Copiar campos del recibo anterior (si existe)
+        if ($recibo_historial_anterior) {
+            $recibo_historial->Departamento        = $recibo_historial_anterior->Departamento;
+            $recibo_historial->Municipio           = $recibo_historial_anterior->Municipio;
+            $recibo_historial->MontoCartera        = $recibo_historial_anterior->MontoCartera;
+            $recibo_historial->PrimaCalculada      = $recibo_historial_anterior->PrimaCalculada;
+            $recibo_historial->Descuento           = $recibo_historial_anterior->Descuento;
+            $recibo_historial->SubTotal            = $recibo_historial_anterior->SubTotal;
+            $recibo_historial->PordentajeDescuento = $recibo_historial_anterior->PordentajeDescuento ?? 0;
+            $recibo_historial->PrimaDescontada     = $recibo_historial_anterior->PrimaDescontada;
+            $recibo_historial->ValorCCF            = $recibo_historial_anterior->ValorCCF;
+            $recibo_historial->TotalAPagar         = $recibo_historial_anterior->TotalAPagar;
+            $recibo_historial->TasaComision        = $recibo_historial_anterior->TasaComision;
+            $recibo_historial->Comision            = $recibo_historial_anterior->Comision;
+            $recibo_historial->IvaSobreComision    = $recibo_historial_anterior->IvaSobreComision;
+            $recibo_historial->SubTotalComision    = $recibo_historial_anterior->SubTotalComision;
+            $recibo_historial->Retencion           = $recibo_historial_anterior->Retencion;
+            $recibo_historial->ValorCCF            = $recibo_historial_anterior->ValorCCF;
+            $recibo_historial->Otros               = $recibo_historial_anterior->Otros ?? 0;
+        }
+        $recibo_historial->Usuario = auth()->user()->id;
+
+        $recibo_historial->save();
+        //dd("insert");
+       // alert()->success('Actualizacion de Recibo Exitoso');
+        //enviar a descargar el archivo
+        $cliente = Cliente::findOrFail($residencia->Asegurado);
+        $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        $configuracion = ConfiguracionRecibo::first();
+        $exportar = 1;
+        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion', 'cliente', 'recibo_historial', 'detalle', 'residencia', 'meses', 'exportar'))->setWarnings(false)->setPaper('letter');
+        //  dd($detalle);
+        return $pdf->stream('Recibos.pdf');
+
+        return redirect('polizas/residencia/' . $residencia->Id . '/edit');
     }
 }
