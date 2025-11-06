@@ -185,7 +185,7 @@
                                 </td>
                                 <td>{{ $registro->VigenciaHasta ? date('d/m/Y', strtotime($registro->VigenciaHasta)) : '' }}
                                 </td>
-                                <td>{{$registro->TipoPoliza}}</td>
+                                <td>{{ $registro->TipoPoliza }}</td>
                                 <td>{{ $registro->ProductoNombre ?? '' }}</td>
                                 <td>{{ $registro->NumeroPoliza ?? '' }}</td>
                                 <td>{{ $registro->FechaRecepcionArchivo ? date('d/m/Y', strtotime($registro->FechaRecepcionArchivo)) : '' }}
@@ -293,34 +293,56 @@
         });
 
 
-        function calcularDiasHabiles(id) {
 
+        function calcularDiasHabiles(id) {
             const fechaInicio = document.getElementById('FechaRecepcionArchivo' + id).value;
             const fechaFin = document.getElementById('FechaEnvioCia' + id).value;
 
-            console.log("fechaInicio: ", fechaInicio);
-            console.log("fechaFin: ", fechaFin);
+            console.log("fechaInicio:", fechaInicio);
+            console.log("fechaFin:", fechaFin);
 
-            if (!fechaInicio || !fechaFin) return; // si falta una fecha, no hace nada
-
-            let inicio = new Date(fechaInicio);
-            let fin = new Date(fechaFin);
-
-            // si las fechas están invertidas, intercambiarlas
-            if (fin < inicio)[inicio, fin] = [fin, inicio];
-
-            let diasHabiles = 0;
-            let fechaTemp = new Date(inicio);
-
-            while (fechaTemp <= fin) {
-                const diaSemana = fechaTemp.getDay(); // 0 = domingo, 6 = sábado
-                if (diaSemana !== 0 && diaSemana !== 6) {
-                    diasHabiles++;
-                }
-                fechaTemp.setDate(fechaTemp.getDate() + 1);
+            if (!fechaInicio || !fechaFin) {
+                document.getElementById('TrabajoEfectuadoDiaHabil' + id).value = '';
+                return;
             }
 
-            document.getElementById('TrabajoEfectuadoDiaHabil' + id).value = diasHabiles;
+            calFechaHabil(fechaInicio, fechaFin)
+                .then(function(dias) {
+                    document.getElementById('TrabajoEfectuadoDiaHabil' + id).value = dias;
+                })
+                .catch(function(error) {
+                    console.error('Error al calcular días hábiles:', error);
+                    document.getElementById('TrabajoEfectuadoDiaHabil' + id).value = '';
+                });
+        }
+
+        function calFechaHabil(inicio, fin) {
+            return new Promise((resolve, reject) => {
+                if (inicio && fin) {
+                    $.ajax({
+                        url: "{{ route('calcular.dias.habiles.json') }}",
+                        type: 'GET',
+                        data: {
+                            '_token': '{{ csrf_token() }}',
+                            'fecha_inicio': inicio,
+                            'fecha_fin': fin
+                        },
+                        success: function(response) {
+                            // Asegura que la respuesta tenga el formato esperado
+                            if (response && response.dias_habiles !== undefined) {
+                                resolve(response.dias_habiles);
+                            } else {
+                                reject('Respuesta inválida del servidor');
+                            }
+                        },
+                        error: function(xhr) {
+                            reject(xhr.responseJSON ?? 'Error desconocido');
+                        }
+                    });
+                } else {
+                    resolve('');
+                }
+            });
         }
     </script>
 @endsection
