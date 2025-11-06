@@ -10,10 +10,11 @@
     <thead>
         <tr>
             <th>Número crédito</th>
-            <th>DUI/DOCUMENTO</th>
+            <th>DUI/Documento</th>
             <th>Nombre</th>
             <th>Fecha nacimiento</th>
             <th>Edad Actual</th>
+            <th>Fecha Otorgamiento</th>
             <th>Edad Desembolso</th>
             <th>Total</th>
         </tr>
@@ -32,6 +33,8 @@
                 <td>{{ $registro->FechaNacimiento ? $registro->FechaNacimiento : '' }}
                 </td>
                 <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
+                <td>{{ $registro->FechaOtorgamiento ? $registro->FechaOtorgamiento : '' }}
+                </td>
                 <td>{{ $registro->EdadDesembloso ? $registro->EdadDesembloso : '' }} Años</td>
                 <td>${{ number_format($registro->TotalCredito, 2) }}</td>
             </tr>
