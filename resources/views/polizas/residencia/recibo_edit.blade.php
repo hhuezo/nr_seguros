@@ -91,7 +91,7 @@
     @endif
 
     <div class="recibo-container" style="overflow-y: scroll">
-        <form action="{{ url('poliza/residencia/get_recibo_edit') }}" method="POST" target="_blank">
+        <form action="{{ url('polizas/residencia/edit') }}" method="POST" target="_blank">
             @csrf
             <input type="hidden" name="id_residencia_detalle" value="{{ $recibo_historial->PolizaResidenciaDetalle }}">
 

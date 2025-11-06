@@ -1118,7 +1118,7 @@ class ResidenciaController extends Controller
 
 
         $recibo_historial = new ResidenciaHistorialRecibo();
-        $recibo_historial->PolizaDeudaDetalle = $id;
+        $recibo_historial->PolizaResidenciaDetalle = $id;
         //este valor cambia por eso no se manda al metodo de save_recibo
         $recibo_historial->ImpresionRecibo = Carbon::parse($impresion_recibo);
         $recibo_historial->NombreCliente = $request->NombreCliente;
