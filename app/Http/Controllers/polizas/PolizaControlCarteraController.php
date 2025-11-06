@@ -167,21 +167,21 @@ class PolizaControlCarteraController extends Controller
 
                 // === Subqueries originales ===
                 DB::raw("(SELECT COUNT(*) FROM poliza_deuda_cartera AS c
-            WHERE c.PolizaDeuda = poliza_deuda.Id
-            AND c.Axo = {$anio}
-            AND c.Mes = {$mes}
-            AND c.PolizaDeudaDetalle is not null
-        ) AS UsuariosReportados"),
+                        WHERE c.PolizaDeuda = poliza_deuda.Id
+                        AND c.Axo = {$anio}
+                        AND c.Mes = {$mes}
+                        AND c.PolizaDeudaDetalle is not null
+                    ) AS UsuariosReportados"),
 
-                DB::raw("(SELECT u.name
-            FROM poliza_deuda_cartera AS c
-            INNER JOIN users AS u ON u.id = c.User
-            WHERE c.PolizaDeuda = poliza_deuda.Id
-            AND c.Axo = {$anio}
-            AND c.Mes = {$mes}
-            ORDER BY c.Id ASC
-            LIMIT 1
-        ) AS Usuario")
+                            DB::raw("(SELECT u.name
+                        FROM poliza_deuda_cartera AS c
+                        INNER JOIN users AS u ON u.id = c.User
+                        WHERE c.PolizaDeuda = poliza_deuda.Id
+                        AND c.Axo = {$anio}
+                        AND c.Mes = {$mes}
+                        ORDER BY c.Id ASC
+                        LIMIT 1
+                    ) AS Usuario")
             )
             ->orderBy('poliza_deuda.Id')
             ->groupBy('poliza_declarativa_control.Id')
@@ -225,22 +225,22 @@ class PolizaControlCarteraController extends Controller
 
                 // === Subqueries adaptadas a VIDA ===
                 DB::raw("(SELECT COUNT(*)
-            FROM poliza_vida_cartera AS c
-            WHERE c.PolizaVida = poliza_vida.Id
-            AND c.Axo = {$anio}
-            AND c.Mes = {$mes}
-            AND c.PolizaVidaDetalle is not null
-        ) AS UsuariosReportados"),
+                    FROM poliza_vida_cartera AS c
+                    WHERE c.PolizaVida = poliza_vida.Id
+                    AND c.Axo = {$anio}
+                    AND c.Mes = {$mes}
+                    AND c.PolizaVidaDetalle is not null
+                ) AS UsuariosReportados"),
 
-                DB::raw("(SELECT u.name
-            FROM poliza_vida_cartera AS c
-            INNER JOIN users AS u ON u.id = c.User
-            WHERE c.PolizaVida = poliza_vida.Id
-            AND c.Axo = {$anio}
-            AND c.Mes = {$mes}
-            ORDER BY c.Id ASC
-            LIMIT 1
-        ) AS Usuario")
+                        DB::raw("(SELECT u.name
+                    FROM poliza_vida_cartera AS c
+                    INNER JOIN users AS u ON u.id = c.User
+                    WHERE c.PolizaVida = poliza_vida.Id
+                    AND c.Axo = {$anio}
+                    AND c.Mes = {$mes}
+                    ORDER BY c.Id ASC
+                    LIMIT 1
+                ) AS Usuario")
             )
             ->groupBy('poliza_declarativa_control.Id')
             ->get();
@@ -283,22 +283,22 @@ class PolizaControlCarteraController extends Controller
 
                 // === Subqueries adaptadas a DESEMPLEO ===
                 DB::raw("(SELECT COUNT(*)
-            FROM poliza_desempleo_cartera AS c
-            WHERE c.PolizaDesempleo = poliza_desempleo.Id
-            AND c.Axo = {$anio}
-            AND c.Mes = {$mes}
-            AND c.PolizaDesempleoDetalle is not null
-        ) AS UsuariosReportados"),
+                    FROM poliza_desempleo_cartera AS c
+                    WHERE c.PolizaDesempleo = poliza_desempleo.Id
+                    AND c.Axo = {$anio}
+                    AND c.Mes = {$mes}
+                    AND c.PolizaDesempleoDetalle is not null
+                ) AS UsuariosReportados"),
 
-                DB::raw("(SELECT u.name
-            FROM poliza_desempleo_cartera AS c
-            INNER JOIN users AS u ON u.id = c.User
-            WHERE c.PolizaDesempleo = poliza_desempleo.Id
-            AND c.Axo = {$anio}
-            AND c.Mes = {$mes}
-            ORDER BY c.Id ASC
-            LIMIT 1
-        ) AS Usuario")
+                        DB::raw("(SELECT u.name
+                    FROM poliza_desempleo_cartera AS c
+                    INNER JOIN users AS u ON u.id = c.User
+                    WHERE c.PolizaDesempleo = poliza_desempleo.Id
+                    AND c.Axo = {$anio}
+                    AND c.Mes = {$mes}
+                    ORDER BY c.Id ASC
+                    LIMIT 1
+                ) AS Usuario")
             )
             ->groupBy('poliza_declarativa_control.Id')
             ->get();
@@ -533,13 +533,6 @@ class PolizaControlCarteraController extends Controller
 
 
 
-
-
-
-
-
-
-
         $reprocesos = PolizaDeclarativaReproceso::where('Activo', 1)->get();
 
 
@@ -601,6 +594,7 @@ class PolizaControlCarteraController extends Controller
         $control_cartera->save();
 
 
-        return redirect()->back()->with('success', 'Control de cartera actualizado correctamente.');
+        return redirect()->back()->with('success', 'Registro actualizado correctamente')->withFragment('fila-'.$control_cartera->Id);
+
     }
 }

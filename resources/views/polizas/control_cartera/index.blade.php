@@ -173,7 +173,7 @@
                                 $colorClass = $map[$key] ?? 'table-secondary';
                             @endphp
 
-                            <tr class="{{ $colorClass }}">
+                            <tr id="fila-{{ $registro->Id }}" class="{{ $colorClass }}">
                                 <td>
                                     <button type="button" class="btn btn-primary" data-toggle="modal"
                                         data-target="#modal-edit-{{ $registro->Id }}">
