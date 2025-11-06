@@ -4,9 +4,12 @@ namespace App\Http\Controllers\polizas;
 
 use App\Http\Controllers\Controller;
 use App\Models\catalogo\PolizaDeclarativaReproceso;
+use App\Models\polizas\Desempleo;
 use App\Models\polizas\Deuda;
 use App\Models\polizas\PolizaDeclarativaControl;
 use App\Models\polizas\PolizaDeudaCartera;
+use App\Models\polizas\Vida;
+use App\Models\polizas\VidaCartera;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -45,14 +48,53 @@ class PolizaControlCarteraController extends Controller
             }
         }
 
+        // =====================================================
+        // 2️⃣ Insertar controles de VIDA si no existen
+        // =====================================================
+        $vidaIdArray = Vida::pluck('Id')->toArray();
+
+        foreach ($vidaIdArray as $idVida) {
+            $existe = PolizaDeclarativaControl::where('PolizaVidaId', $idVida)
+                ->where('Mes', $mes)
+                ->where('Axo', $anio)
+                ->exists();
+
+            if (!$existe) {
+                PolizaDeclarativaControl::create([
+                    'PolizaVidaId' => $idVida,
+                    'Axo' => $anio,
+                    'Mes' => $mes,
+                ]);
+            }
+        }
+
+        // =====================================================
+        // 3 Insertar controles de DESEMPLEO si no existen
+        // =====================================================
+
+        $desempleoIdArray = Desempleo::pluck('Id')->toArray();
+
+        foreach ($desempleoIdArray as $idDesempleo) {
+            $existe = PolizaDeclarativaControl::where('PolizaDesempleoId', $idDesempleo)
+                ->where('Mes', $mes)
+                ->where('Axo', $anio)
+                ->exists();
+
+            if (!$existe) {
+                PolizaDeclarativaControl::create([
+                    'PolizaDesempleoId' => $idDesempleo,
+                    'Axo' => $anio,
+                    'Mes' => $mes,
+                ]);
+            }
+        }
 
 
-        $registro_control = PolizaDeclarativaControl::query()
+
+        // === Consulta 1: DEUDA ===
+        $deuda = PolizaDeclarativaControl::query()
             ->where('poliza_declarativa_control.Axo', $anio)
             ->where('poliza_declarativa_control.Mes', $mes)
-
-
-            // === Joins base ===
             ->join('poliza_deuda', 'poliza_deuda.Id', '=', 'poliza_declarativa_control.PolizaDeudaId')
             ->leftJoin('poliza_deuda_detalle', function ($join) use ($anio, $mes) {
                 $join->on('poliza_deuda_detalle.Deuda', '=', 'poliza_deuda.Id')
@@ -60,15 +102,11 @@ class PolizaControlCarteraController extends Controller
                     ->where('poliza_deuda_detalle.Mes', '=', $mes);
             })
             ->join('cliente', 'cliente.Id', '=', 'poliza_deuda.Asegurado')
-
-            // === Joins adicionales ===
             ->join('plan', 'plan.Id', '=', 'poliza_deuda.Plan')
             ->join('producto', 'producto.Id', '=', 'plan.Producto')
             ->leftJoin('poliza_declarativa_reproceso', 'poliza_declarativa_reproceso.Id', '=', 'poliza_declarativa_control.ReprocesoNRId')
-
-            // === Campos seleccionados ===
             ->select(
-                // Campos principales del control
+                // === Control ===
                 'poliza_declarativa_control.Id',
                 'poliza_declarativa_control.PolizaDeudaId',
                 'poliza_declarativa_control.FechaRecepcionArchivo',
@@ -76,8 +114,6 @@ class PolizaControlCarteraController extends Controller
                 'poliza_declarativa_control.TrabajoEfectuadoDiaHabil',
                 'poliza_declarativa_control.HoraTarea',
                 'poliza_declarativa_control.FlujoAsignado',
-                //'poliza_declarativa_control.PorcentajeRentabilidad',
-                //'poliza_declarativa_control.ValorDescuentoRentabilidad',
                 'poliza_declarativa_control.AnexoDeclaracion',
                 'poliza_declarativa_control.NumeroSisco',
                 'poliza_declarativa_control.FechaVencimiento',
@@ -89,14 +125,15 @@ class PolizaControlCarteraController extends Controller
                 'poliza_declarativa_control.FechaReporteACia',
                 'poliza_declarativa_control.FechaAplicacion',
                 'poliza_declarativa_control.Comentarios',
+                DB::raw("'DEUDA' AS TipoPoliza"),
 
-                // === Campos de poliza_deuda ===
+                // === poliza_deuda ===
                 'poliza_deuda.NumeroPoliza',
                 'poliza_deuda.VigenciaDesde',
                 'poliza_deuda.VigenciaHasta',
                 'poliza_deuda.Descuento',
 
-                // === Campos de poliza_deuda_detalle ===
+                // === detalle ===
                 'poliza_deuda_detalle.MontoCartera',
                 'poliza_deuda_detalle.Tasa',
                 'poliza_deuda_detalle.PrimaCalculada',
@@ -128,38 +165,161 @@ class PolizaControlCarteraController extends Controller
                 'producto.Nombre as ProductoNombre',
                 'poliza_declarativa_reproceso.Nombre as ReprocesoNombre',
 
-                // === Conteo de usuarios reportados ===
-                DB::raw("(SELECT COUNT(*)
-                    FROM poliza_deuda_cartera AS c
-                    WHERE c.PolizaDeuda = poliza_deuda.Id
-                    AND c.Axo = {$anio}
-                    AND c.Mes = {$mes}
-                    AND c.PolizaDeudaDetalle is not null
-                ) AS UsuariosReportados"),
+                // === Subqueries originales ===
+                DB::raw("(SELECT COUNT(*) FROM poliza_deuda_cartera AS c
+            WHERE c.PolizaDeuda = poliza_deuda.Id
+            AND c.Axo = {$anio}
+            AND c.Mes = {$mes}
+            AND c.PolizaDeudaDetalle is not null
+        ) AS UsuariosReportados"),
+
                 DB::raw("(SELECT u.name
-                    FROM poliza_deuda_cartera AS c
-                    INNER JOIN users AS u ON u.id = c.User
-                    WHERE c.PolizaDeuda = poliza_deuda.Id
-                    AND c.Axo = {$anio}
-                    AND c.Mes = {$mes}
-                    ORDER BY c.Id ASC
-                    LIMIT 1
-                ) AS Usuario")
+            FROM poliza_deuda_cartera AS c
+            INNER JOIN users AS u ON u.id = c.User
+            WHERE c.PolizaDeuda = poliza_deuda.Id
+            AND c.Axo = {$anio}
+            AND c.Mes = {$mes}
+            ORDER BY c.Id ASC
+            LIMIT 1
+        ) AS Usuario")
             )
             ->orderBy('poliza_deuda.Id')
             ->groupBy('poliza_declarativa_control.Id')
             ->get();
 
 
+        // === Consulta 2: VIDA (subqueries adaptadas) ===
+        $vida = PolizaDeclarativaControl::query()
+            ->where('poliza_declarativa_control.Axo', $anio)
+            ->where('poliza_declarativa_control.Mes', $mes)
+            ->join('poliza_vida', 'poliza_vida.Id', '=', 'poliza_declarativa_control.PolizaVidaId')
+            ->leftJoin('poliza_vida_detalle', function ($join) use ($anio, $mes) {
+                $join->on('poliza_vida_detalle.PolizaVida', '=', 'poliza_vida.Id')
+                    ->where('poliza_vida_detalle.Axo', '=', $anio)
+                    ->where('poliza_vida_detalle.Mes', '=', $mes);
+            })
+            ->join('cliente', 'cliente.Id', '=', 'poliza_vida.Asegurado')
+            ->join('plan', 'plan.Id', '=', 'poliza_vida.Plan')
+            ->join('producto', 'producto.Id', '=', 'plan.Producto')
+            ->leftJoin('poliza_declarativa_reproceso', 'poliza_declarativa_reproceso.Id', '=', 'poliza_declarativa_control.ReprocesoNRId')
+            ->select(
+                'poliza_declarativa_control.*',
+                DB::raw("'VIDA' AS TipoPoliza"),
+                'poliza_vida.NumeroPoliza',
+                'poliza_vida.VigenciaDesde',
+                'poliza_vida.VigenciaHasta',
+                'poliza_vida_detalle.MontoCartera',
+                'poliza_vida_detalle.PrimaCalculada',
+                'poliza_vida_detalle.ExtraPrima',
+                'poliza_vida_detalle.PrimaDescontada',
+                'poliza_vida_detalle.TasaComision',
+                'poliza_vida_detalle.Comision',
+                'poliza_vida_detalle.Retencion',
+                'poliza_vida_detalle.IvaSobreComision',
+                'poliza_vida_detalle.APagar',
+                'cliente.Nombre as ClienteNombre',
+                'cliente.Nit as ClienteNit',
+                'plan.Nombre as PlanNombre',
+                'producto.Nombre as ProductoNombre',
+                'poliza_declarativa_reproceso.Nombre as ReprocesoNombre',
+
+                // === Subqueries adaptadas a VIDA ===
+                DB::raw("(SELECT COUNT(*)
+            FROM poliza_vida_cartera AS c
+            WHERE c.PolizaVida = poliza_vida.Id
+            AND c.Axo = {$anio}
+            AND c.Mes = {$mes}
+            AND c.PolizaVidaDetalle is not null
+        ) AS UsuariosReportados"),
+
+                DB::raw("(SELECT u.name
+            FROM poliza_vida_cartera AS c
+            INNER JOIN users AS u ON u.id = c.User
+            WHERE c.PolizaVida = poliza_vida.Id
+            AND c.Axo = {$anio}
+            AND c.Mes = {$mes}
+            ORDER BY c.Id ASC
+            LIMIT 1
+        ) AS Usuario")
+            )
+            ->groupBy('poliza_declarativa_control.Id')
+            ->get();
 
 
+        // === Consulta 3: DESEMPLEO (subqueries adaptadas) ===
+        $desempleo = PolizaDeclarativaControl::query()
+            ->where('poliza_declarativa_control.Axo', $anio)
+            ->where('poliza_declarativa_control.Mes', $mes)
+            ->join('poliza_desempleo', 'poliza_desempleo.Id', '=', 'poliza_declarativa_control.PolizaDesempleoId')
+            ->leftJoin('poliza_desempleo_detalle', function ($join) use ($anio, $mes) {
+                $join->on('poliza_desempleo_detalle.Desempleo', '=', 'poliza_desempleo.Id')
+                    ->where('poliza_desempleo_detalle.Axo', '=', $anio)
+                    ->where('poliza_desempleo_detalle.Mes', '=', $mes);
+            })
+            ->join('cliente', 'cliente.Id', '=', 'poliza_desempleo.Asegurado')
+            ->join('plan', 'plan.Id', '=', 'poliza_desempleo.Plan')
+            ->join('producto', 'producto.Id', '=', 'plan.Producto')
+            ->leftJoin('poliza_declarativa_reproceso', 'poliza_declarativa_reproceso.Id', '=', 'poliza_declarativa_control.ReprocesoNRId')
+            ->select(
+                'poliza_declarativa_control.*',
+                DB::raw("'DESEMPLEO' AS TipoPoliza"),
+                'poliza_desempleo.NumeroPoliza',
+                'poliza_desempleo.VigenciaDesde',
+                'poliza_desempleo.VigenciaHasta',
+                'poliza_desempleo_detalle.MontoCartera',
+                'poliza_desempleo_detalle.PrimaCalculada',
+                'poliza_desempleo_detalle.ExtraPrima',
+                'poliza_desempleo_detalle.PrimaDescontada',
+                'poliza_desempleo_detalle.TasaComision',
+                'poliza_desempleo_detalle.Comision',
+                'poliza_desempleo_detalle.Retencion',
+                'poliza_desempleo_detalle.IvaSobreComision',
+                'poliza_desempleo_detalle.APagar',
+                'cliente.Nombre as ClienteNombre',
+                'cliente.Nit as ClienteNit',
+                'plan.Nombre as PlanNombre',
+                'producto.Nombre as ProductoNombre',
+                'poliza_declarativa_reproceso.Nombre as ReprocesoNombre',
+
+                // === Subqueries adaptadas a DESEMPLEO ===
+                DB::raw("(SELECT COUNT(*)
+            FROM poliza_desempleo_cartera AS c
+            WHERE c.PolizaDesempleo = poliza_desempleo.Id
+            AND c.Axo = {$anio}
+            AND c.Mes = {$mes}
+            AND c.PolizaDesempleoDetalle is not null
+        ) AS UsuariosReportados"),
+
+                DB::raw("(SELECT u.name
+            FROM poliza_desempleo_cartera AS c
+            INNER JOIN users AS u ON u.id = c.User
+            WHERE c.PolizaDesempleo = poliza_desempleo.Id
+            AND c.Axo = {$anio}
+            AND c.Mes = {$mes}
+            ORDER BY c.Id ASC
+            LIMIT 1
+        ) AS Usuario")
+            )
+            ->groupBy('poliza_declarativa_control.Id')
+            ->get();
+
+
+        // === COMBINAR LAS TRES ===
+        $registro_control = $deuda
+            ->concat($vida)
+            ->concat($desempleo);
+
+
+
+
+        // =============================================================
+        // 1️⃣ Asignar color de estado (aplica igual para ambas pólizas)
+        // =============================================================
         foreach ($registro_control as $item) {
             if (!empty($item->FechaAplicacion)) {
-                // ✅ Ya aplicada
-                $item->Color = 'success';
+                $item->Color = 'success'; // ✅ Ya aplicada
             } elseif (!empty($item->FechaRecepcionPago) || !empty($item->FechaReporteACia)) {
-                // ⚠️ En proceso de pago o reporte
-                $item->Color = 'warning';
+                $item->Color = 'warning'; // ⚠️ En proceso de pago o reporte
             } elseif (
                 !empty($item->AnexoDeclaracion) ||
                 !empty($item->NumeroSisco) ||
@@ -169,90 +329,213 @@ class PolizaControlCarteraController extends Controller
                 !empty($item->FechaEnvioCorreccion) ||
                 !empty($item->FechaSeguimientoCobros)
             ) {
-                // ℹ️ En trámite administrativo
-                $item->Color = 'info';
+                $item->Color = 'info'; // ℹ️ En trámite administrativo
             } elseif (
                 !empty($item->FechaRecepcionArchivo) ||
                 !empty($item->FechaEnvioCia) ||
                 !empty($item->TrabajoEfectuadoDiaHabil)
             ) {
-                // 🟠 Registro inicial / en recepción
-                $item->Color = 'orange';
+                $item->Color = 'orange'; // 🟠 Registro inicial / en recepción
             } else {
-                // ⚪ Sin avance
-                $item->Color = 'secondary';
+                $item->Color = 'secondary'; // ⚪ Sin avance
             }
         }
 
 
-        $filtrados = $registro_control->where('MontoCartera', null);
+        // =============================================================
+        // 2️⃣ Procesar pólizas según tipo
+        // =============================================================
+        foreach ($registro_control as $item) {
 
-        foreach ($filtrados as  $item) {
-            $poliza = Deuda::find($item->PolizaDeudaId);
+            // === Si es póliza de DEUDA ===
+            if ($item->TipoPoliza === 'DEUDA') {
 
-            $montoCartera = PolizaDeudaCartera::where('PolizaDeuda', $poliza->Id)->where('PolizaDeudaDetalle', null)
-                ->where('Axo', $anio)->where('Mes', $mes)->sum('TotalCredito');
+                if (empty($item->MontoCartera)) {
+                    $poliza = Deuda::find($item->PolizaDeudaId);
+                    if (!$poliza) continue;
+
+                    $montoCartera = PolizaDeudaCartera::where('PolizaDeuda', $poliza->Id)
+                        ->whereNull('PolizaDeudaDetalle')
+                        ->where('Axo', $anio)
+                        ->where('Mes', $mes)
+                        ->sum('TotalCredito');
+
+                    if ($montoCartera > 0) {
+                        $item->MontoCartera = $montoCartera;
+
+                        $primas = PolizaDeudaCartera::where('PolizaDeuda', $poliza->Id)
+                            ->whereNull('PolizaDeudaDetalle')
+                            ->where('Axo', $anio)
+                            ->where('Mes', $mes)
+                            ->select('Tasa', DB::raw('SUM(TotalCredito) * Tasa AS total'), DB::raw('count(*) AS conteoUsuarios'))
+                            ->groupBy('Tasa')
+                            ->get();
+
+                        $item->UsuariosReportados = $primas->sum('conteoUsuarios');
+                        $totalPrimas = $primas->sum('total');
+                        $tasas = $primas->pluck('Tasa')->unique()->implode(', ');
+
+                        // Cálculos estándar
+                        $extraPrima = $poliza->ExtraPrima ?? 0;
+                        $descuento = $poliza->Descuento ?? 0;
+                        $tasaComision = $poliza->TasaComision ?? 0;
+                        $tipoContribuyente = $poliza->clientes->TipoContribuyente ?? 0;
+
+                        $primaDescontada = ($totalPrimas + $extraPrima) - (($totalPrimas + $extraPrima) * ($descuento / 100));
+                        $valorComision = $primaDescontada * ($tasaComision / 100);
+                        $ivaSobreComision = $tipoContribuyente != 4 ? $valorComision * 0.13 : 0;
+                        $retencion = ($tipoContribuyente != 1 && $valorComision >= 100) ? $valorComision * 0.01 : 0;
+                        $comisionTotal = $valorComision + $ivaSobreComision - $retencion;
+                        $aPagar = $primaDescontada - $comisionTotal;
+
+                        // Asignar
+                        $item->Tasa = $tasas;
+                        $item->PrimaCalculada = $totalPrimas;
+                        $item->ExtraPrima = $extraPrima;
+                        $item->PrimaDescontada = $primaDescontada;
+                        $item->TasaComision = $tasaComision;
+                        $item->Comision = $valorComision;
+                        $item->Retencion = $retencion;
+                        $item->IvaSobreComision = $ivaSobreComision;
+                        $item->Iva = $ivaSobreComision;
+                        $item->APagar = $aPagar;
+                    }
+                }
+            }
+
+            // === Si es póliza de VIDA ===
+            elseif ($item->TipoPoliza === 'VIDA') {
+
+                if (empty($item->MontoCartera)) {
+                    $poliza = Vida::find($item->PolizaVidaId);
+                    if (!$poliza) continue;
+
+                    $montoCartera = VidaCartera::where('PolizaVida', $poliza->Id)
+                        ->whereNull('PolizaVidaDetalle')
+                        ->where('Axo', $anio)
+                        ->where('Mes', $mes)
+                        ->sum('SumaAsegurada');
+
+                    if ($montoCartera > 0) {
+                        $item->MontoCartera = $montoCartera;
+
+                        $primas = VidaCartera::where('PolizaVida', $poliza->Id)
+                            ->whereNull('PolizaVidaDetalle')
+                            ->where('Axo', $anio)
+                            ->where('Mes', $mes)
+                            ->select('Tasa', DB::raw('SUM(SumaAsegurada) * Tasa AS total'), DB::raw('count(*) AS conteoUsuarios'))
+                            ->groupBy('Tasa')
+                            ->get();
+
+                        $item->UsuariosReportados = $primas->sum('conteoUsuarios');
+                        $totalPrimas = $primas->sum('total');
+                        $tasas = $primas->pluck('Tasa')->unique()->implode(', ');
+
+                        // Cálculos adaptados a VIDA
+                        $extraPrima = $poliza->ExtraPrima ?? 0;
+                        $descuento = $poliza->TasaDescuento ?? 0;
+                        $tasaComision = $poliza->TasaComision ?? 0;
+                        $tipoContribuyente = $poliza->clientes->TipoContribuyente ?? 0;
+
+                        $primaDescontada = ($totalPrimas + $extraPrima) - (($totalPrimas + $extraPrima) * ($descuento / 100));
+                        $valorComision = $primaDescontada * ($tasaComision / 100);
+                        $ivaSobreComision = $tipoContribuyente != 4 ? $valorComision * 0.13 : 0;
+                        $retencion = ($tipoContribuyente != 1 && $valorComision >= 100) ? $valorComision * 0.01 : 0;
+                        $comisionTotal = $valorComision + $ivaSobreComision - $retencion;
+                        $aPagar = $primaDescontada - $comisionTotal;
+
+                        // Asignar
+                        $item->Tasa = $tasas;
+                        $item->PrimaCalculada = $totalPrimas;
+                        $item->ExtraPrima = $extraPrima;
+                        $item->PrimaDescontada = $primaDescontada;
+                        $item->TasaComision = $tasaComision;
+                        $item->Comision = $valorComision;
+                        $item->Retencion = $retencion;
+                        $item->IvaSobreComision = $ivaSobreComision;
+                        $item->Iva = $ivaSobreComision;
+                        $item->APagar = $aPagar;
+                    }
+                }
+            }
 
 
-            if ($montoCartera > 0) {
-                $item->MontoCartera = $montoCartera;
+            // === Si es póliza de DESEMPLEO ===
+            elseif ($item->TipoPoliza === 'DESEMPLEO') {
 
-                $primasCalculadas = PolizaDeudaCartera::where('PolizaDeuda', $poliza->Id)
-                    ->whereNull('PolizaDeudaDetalle')
-                    ->where('Axo', $anio)
-                    ->where('Mes', $mes)
-                    ->select('Tasa', DB::raw('SUM(TotalCredito) * Tasa AS total'), DB::raw('count(*) AS conteoUsuarios'))
-                    ->groupBy('Tasa')
-                    ->get();
+                if (empty($item->MontoCartera)) {
+                    $poliza = Desempleo::find($item->PolizaDesempleoId);
+                    if (!$poliza) continue;
 
+                    // === Monto de cartera ===
+                    $montoCartera = Desempleo::where('PolizaDesempleo', $poliza->Id)
+                        ->whereNull('PolizaDesempleoDetalle')
+                        ->where('Axo', $anio)
+                        ->where('Mes', $mes)
+                        ->sum('TotalCredito');
 
-                $conteoUsuarios = $primasCalculadas->sum('conteoUsuarios');
-                $item->UsuariosReportados = $conteoUsuarios;
+                    if ($montoCartera > 0) {
+                        $item->MontoCartera = $montoCartera;
 
+                        // === Agrupar primas según tasa ===
+                        $primas = Desempleo::where('PolizaDesempleo', $poliza->Id)
+                            ->whereNull('PolizaDesempleoDetalle')
+                            ->where('Axo', $anio)
+                            ->where('Mes', $mes)
+                            ->select('Tasa', DB::raw('SUM(TotalCredito) * Tasa AS total'), DB::raw('count(*) AS conteoUsuarios'))
+                            ->groupBy('Tasa')
+                            ->get();
 
-                $totalPrimas = $primasCalculadas->sum('total');
-                $tasas = $primasCalculadas->pluck('Tasa')->unique()->implode(', ');
+                        $item->UsuariosReportados = $primas->sum('conteoUsuarios');
+                        $totalPrimas = $primas->sum('total');
+                        $tasas = $primas->pluck('Tasa')->unique()->implode(', ');
 
+                        // === Cálculos adaptados a DESEMPLEO ===
+                        $extraPrima = $poliza->ExtraPrima ?? 0;
+                        $descuento = $poliza->Descuento ?? 0;
+                        $tasaComision = $poliza->TasaComision ?? 0;
+                        $tipoContribuyente = $poliza->clientes->TipoContribuyente ?? 0;
+                        $comisionIva = $poliza->ComisionIva ?? 0;
 
+                        // Prima descontada (después del descuento de rentabilidad)
+                        $primaDescontada = ($totalPrimas + $extraPrima) - (($totalPrimas + $extraPrima) * ($descuento / 100));
 
-                // === Cálculos adicionales ===
-                $extraPrima = $poliza->ExtraPrima ?? 0;
-                $descuento = $poliza->Descuento ?? 0;
-                $tasaComision = $poliza->TasaComision ?? 0;
-                $comisionIva = $poliza->ComisionIva ?? 0;
-                $tipoContribuyente = $poliza->clientes->TipoContribuyente ?? 0;
+                        // Comisión base
+                        $valorComision = $primaDescontada * ($tasaComision / 100);
 
-                // Prima descontada (después del descuento de rentabilidad)
-                $primaDescontada = ($totalPrimas + $extraPrima) - (($totalPrimas + $extraPrima) * ($descuento / 100));
+                        // IVA sobre comisión
+                        $ivaSobreComision = $tipoContribuyente != 4 ? $valorComision * 0.13 : 0;
 
-                // Comisión base
-                $valorComision = $primaDescontada * ($tasaComision / 100);
+                        // Retención
+                        $retencion = ($tipoContribuyente != 1 && $valorComision >= 100) ? $valorComision * 0.01 : 0;
 
-                // IVA sobre comisión
-                $ivaSobreComision = $tipoContribuyente != 4 ? $valorComision * 0.13 : 0;
+                        // Comisión total (CCF)
+                        $comisionTotal = $valorComision + $ivaSobreComision - $retencion;
 
-                // Retención
-                $retencion = ($tipoContribuyente != 1 && $valorComision >= 100) ? $valorComision * 0.01 : 0;
+                        // Total a pagar (líquido)
+                        $aPagar = $primaDescontada - $comisionTotal;
 
-                // Comisión total (CCF)
-                $comisionTotal = $valorComision + $ivaSobreComision - $retencion;
-
-                // Total a pagar (líquido)
-                $aPagar = $primaDescontada - $comisionTotal;
-
-                // === Asignación final de campos ===
-                $item->Tasa = $tasas;
-                $item->PrimaCalculada = $totalPrimas;
-                $item->ExtraPrima = $extraPrima;
-                $item->PrimaDescontada = $primaDescontada;
-                $item->TasaComision = $tasaComision;
-                $item->Comision = $valorComision;
-                $item->Retencion = $retencion;
-                $item->IvaSobreComision = $ivaSobreComision;
-                $item->Iva = $ivaSobreComision; // si manejas IVA general, cámbialo
-                $item->APagar = $aPagar;
+                        // === Asignación final de campos ===
+                        $item->Tasa = $tasas;
+                        $item->PrimaCalculada = $totalPrimas;
+                        $item->ExtraPrima = $extraPrima;
+                        $item->PrimaDescontada = $primaDescontada;
+                        $item->TasaComision = $tasaComision;
+                        $item->Comision = $valorComision;
+                        $item->Retencion = $retencion;
+                        $item->IvaSobreComision = $ivaSobreComision;
+                        $item->Iva = $ivaSobreComision;
+                        $item->APagar = $aPagar;
+                    }
+                }
             }
         }
+
+
+
+
+
+
 
 
 
@@ -295,6 +578,7 @@ class PolizaControlCarteraController extends Controller
 
     public function update(Request $request, $id)
     {
+
         $control_cartera = PolizaDeclarativaControl::findOrFail($id);
 
         $control_cartera->FechaRecepcionArchivo      = $request->FechaRecepcionArchivo ?: null;
@@ -315,6 +599,7 @@ class PolizaControlCarteraController extends Controller
         $control_cartera->Comentarios                = $request->Comentarios ?: null;
 
         $control_cartera->save();
+
 
         return redirect()->back()->with('success', 'Control de cartera actualizado correctamente.');
     }

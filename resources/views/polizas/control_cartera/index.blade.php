@@ -78,10 +78,8 @@
 
                 <div class="col-md-2 col-sm-12 col-xs-12" align="right">
                     <select class="form-control" name="TipoPoliza" id="TipoPoliza">
-                        <option value="1" {{ request('TipoPoliza') == 1 ? 'selected' : '' }}>Poliza deuda</option>
-                        <option value="2" {{ request('TipoPoliza') == 2 ? 'selected' : '' }}>Poliza vida</option>
-                        <option value="3" {{ request('TipoPoliza') == 3 ? 'selected' : '' }}>Poliza desempleo</option>
-                        <option value="4" {{ request('TipoPoliza') == 4 ? 'selected' : '' }}>Poliza residencia</option>
+                        <option value="1" {{ request('TipoPoliza') == 1 ? 'selected' : '' }}>Personas</option>
+                        <option value="2" {{ request('TipoPoliza') == 2 ? 'selected' : '' }}>Poliza residencia</option>
                     </select>
                 </div>
 
@@ -187,7 +185,7 @@
                                 </td>
                                 <td>{{ $registro->VigenciaHasta ? date('d/m/Y', strtotime($registro->VigenciaHasta)) : '' }}
                                 </td>
-                                <td>Deuda</td>
+                                <td>{{$registro->TipoPoliza}}</td>
                                 <td>{{ $registro->ProductoNombre ?? '' }}</td>
                                 <td>{{ $registro->NumeroPoliza ?? '' }}</td>
                                 <td>{{ $registro->FechaRecepcionArchivo ? date('d/m/Y', strtotime($registro->FechaRecepcionArchivo)) : '' }}
