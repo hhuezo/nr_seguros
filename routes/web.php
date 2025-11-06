@@ -77,7 +77,7 @@ Route::middleware(['auth'])->group(function () {
     //catalogos
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-  Route::post('catalogo/aseguradora/add_contacto', [AseguradoraController::class, 'add_contacto']);
+    Route::post('catalogo/aseguradora/add_contacto', [AseguradoraController::class, 'add_contacto']);
     Route::post('catalogo/aseguradora/delete_contacto', [AseguradoraController::class, 'delete_contacto']);
     Route::post('catalogo/aseguradora/edit_contacto', [AseguradoraController::class, 'edit_contacto']);
     Route::get('catalogo/aseguradora/addCargo', [AseguradoraController::class, 'addCargo']);
@@ -182,6 +182,7 @@ Route::middleware(['auth'])->group(function () {
 
 
     //reportes declarativas
+    Route::get('control_cartera/actualizacion', [PolizaControlCarteraController::class, 'actualizacion']);
     Route::get('control_cartera', [PolizaControlCarteraController::class, 'index']);
     Route::get('control_cartera/{id}/{tipo}/{anio}/{mes}', [PolizaControlCarteraController::class, 'edit']);
     Route::put('control_cartera/{id}', [PolizaControlCarteraController::class, 'update']);
