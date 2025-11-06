@@ -48,13 +48,14 @@ class RegistrosNuevosExport implements FromCollection, WithHeadings
 
         $deuda = Deuda::findOrFail($this->id);
         // Fedecrédito
-        if ($deuda->Aseguradora == 3) {
+        if ($deuda->Aseguradora == 3 || $deuda->Aseguradora == 4) {
 
-            $data = PolizaDeudaTempCartera::where('PolizaDeuda', $this->id)
+            $data = PolizaDeudaTempCartera::where('poliza_deuda_temp_cartera.PolizaDeuda', $this->id)
                 ->where('User', auth()->user()->id)
                 ->whereNotIn('NumeroReferencia', $registro_mes_anterior_array)
                 ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
-                ->join('tipo_cartera as tc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'tc.Id')
+                ->join('poliza_deuda_tipo_cartera as pdtc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'pdtc.Id')
+                ->join('tipo_cartera as tc', 'pdtc.TipoCartera', '=', 'tc.Id')
                 ->select([
                     'TipoDocumento',
                     'Dui',
@@ -83,11 +84,12 @@ class RegistrosNuevosExport implements FromCollection, WithHeadings
                 ->get();
         } else {
 
-            $data = PolizaDeudaTempCartera::where('PolizaDeuda', $this->id)
+            $data = PolizaDeudaTempCartera::where('poliza_deuda_temp_cartera.PolizaDeuda', $this->id)
                 ->where('User', auth()->user()->id)
                 ->whereNotIn('NumeroReferencia', $registro_mes_anterior_array)
                 ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
-                ->join('tipo_cartera as tc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'tc.Id')
+                ->join('poliza_deuda_tipo_cartera as pdtc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'pdtc.Id')
+                ->join('tipo_cartera as tc', 'pdtc.TipoCartera', '=', 'tc.Id')
                 ->select([
                     'Dui',
                     'Pasaporte',
