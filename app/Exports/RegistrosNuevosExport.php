@@ -118,10 +118,6 @@ class RegistrosNuevosExport implements FromCollection, WithHeadings
                     'TipoDeuda',
                     'PorcentajeExtraprima',
 
-                    /*DB::raw("IF(MontoNominal IS NULL, '', ROUND(MontoNominal, 2)) AS MontoNominal"),
-                DB::raw("IF(SaldoTotal IS NULL, '', ROUND(SaldoTotal, 2)) AS SaldoTotal"),
-
-                DB::raw("IF(TotalCredito IS NULL, '', ROUND(TotalCredito, 2)) AS total_saldo"), // Prima Mensual*/
                     'tc.Nombre as TipoCartera',
                     DB::raw("CONCAT(sm.Abreviatura, ' - ', sm.Descripcion) AS LineaCredito"),
                 ])

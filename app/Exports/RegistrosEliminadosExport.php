@@ -31,52 +31,72 @@ class RegistrosEliminadosExport implements FromCollection, WithHeadings
         $registro_cartera = PolizaDeudaCartera::where('PolizaDeuda', $this->id)->orderBy('Axo', 'desc')->orderBy('Mes', 'desc')->first();
 
 
-        $poliza_temporal = PolizaDeudaTempCartera::where('PolizaDeuda', $this->id)->where('User', auth()->user()->id)->get();
+        $poliza_temporal = PolizaDeudaTempCartera::where('PolizaDeuda', $this->id)->get();
         $poliza_temporal_array = $poliza_temporal->pluck('NumeroReferencia')->toArray();
 
-        $data = PolizaDeudaCartera::where('PolizaDeuda', $this->id)
-            ->where('Mes', $registro_cartera->Mes)->where('Axo', $registro_cartera->Axo)
-            ->whereNotIn('NumeroReferencia', $poliza_temporal_array)
-            ->join('saldos_montos as sm', 'poliza_deuda_cartera.LineaCredito', '=', 'sm.Id')
-            ->join('tipo_cartera as tc', 'poliza_deuda_cartera.PolizaDeudaTipoCartera', '=', 'tc.Id')
+        $poliza_id = $this->id;
+        $axoAnterior = $registro_cartera->Axo;
+        $mesAnterior = $registro_cartera->Mes;
+
+
+
+        $registros_eliminados = collect(DB::select("
+            SELECT pdc.*
+            FROM poliza_deuda_cartera pdc
+            WHERE pdc.PolizaDeuda = ?
+            AND pdc.Axo = ?
+            AND pdc.Mes = ?
+            AND NOT EXISTS (
+                SELECT 1
+                FROM poliza_deuda_temp_cartera pdtc
+                WHERE pdtc.NumeroReferencia = pdc.NumeroReferencia
+                    AND pdtc.PolizaDeuda = ?
+            )
+        ", [$poliza_id, $axoAnterior, $mesAnterior, $poliza_id]));
+
+
+
+        $data = PolizaDeudaCartera::from('poliza_deuda_cartera as pdc')
+            ->where('pdc.PolizaDeuda', $poliza_id)
+            ->where('pdc.Axo', $axoAnterior)
+            ->where('pdc.Mes', $mesAnterior)
+            ->whereNotExists(function ($query) use ($poliza_id) {
+                $query->select(DB::raw(1))
+                    ->from('poliza_deuda_temp_cartera as pdtc')
+                    ->whereColumn('pdtc.NumeroReferencia', 'pdc.NumeroReferencia')
+                    ->where('pdtc.PolizaDeuda', $poliza_id);
+            })
+            // ->join('saldos_montos as sm', 'pdc.LineaCredito', '=', 'sm.Id')
+            // ->join('tipo_cartera as tc', 'pdc.PolizaDeudaTipoCartera', '=', 'tc.Id')
             ->select([
-                'Dui',
-                'Pasaporte',
-                'CarnetResidencia',
-                'Nacionalidad',
-                'FechaNacimiento',
-                'TipoPersona',
-                'Sexo',
-                'PrimerApellido',
-                'SegundoApellido',
-                'ApellidoCasada',
-                'PrimerNombre',
-                'SegundoNombre',
-                'NombreSociedad',
-                'FechaOtorgamiento',
-                'FechaVencimiento',
-
-                DB::raw("CONCAT(NumeroReferencia, ' ') AS NumeroReferencia"),
-                DB::raw("IF(MontoOtorgado IS NULL, '', ROUND(MontoOtorgado, 2)) AS MontoOtorgado"),
-                DB::raw("IF(SaldoCapital IS NULL, '', ROUND(SaldoCapital, 2)) AS SaldoCapital"),
-                DB::raw("IF(Intereses IS NULL, '', ROUND(Intereses, 2)) AS Intereses"),
-                DB::raw("IF(InteresesMoratorios IS NULL, '', ROUND(InteresesMoratorios, 2)) AS InteresesMoratorios"),
-                DB::raw("IF(InteresesCovid IS NULL, '', ROUND(InteresesCovid, 2)) AS InteresesCovid"),
-
-                'Tasa',
-                'TipoDeuda',
-                'PorcentajeExtraprima',
-
-                /*DB::raw("IF(MontoNominal IS NULL, '', ROUND(MontoNominal, 2)) AS MontoNominal"),
-                DB::raw("IF(SaldoTotal IS NULL, '', ROUND(SaldoTotal, 2)) AS SaldoTotal"),
-
-                DB::raw("IF(TotalCredito IS NULL, '', ROUND(TotalCredito, 2)) AS total_saldo"), // Prima Mensual*/
-                'tc.Nombre as TipoCartera',
-                DB::raw("CONCAT(sm.Abreviatura, ' - ', sm.Descripcion) AS LineaCredito"),
-
+                'pdc.Dui',
+                'pdc.Pasaporte',
+                'pdc.CarnetResidencia',
+                'pdc.Nacionalidad',
+                'pdc.FechaNacimiento',
+                'pdc.TipoPersona',
+                'pdc.Sexo',
+                'pdc.PrimerApellido',
+                'pdc.SegundoApellido',
+                'pdc.ApellidoCasada',
+                'pdc.PrimerNombre',
+                'pdc.SegundoNombre',
+                'pdc.NombreSociedad',
+                'pdc.FechaOtorgamiento',
+                'pdc.FechaVencimiento',
+                DB::raw("CONCAT(pdc.NumeroReferencia, ' ') AS NumeroReferencia"),
+                DB::raw("IF(pdc.MontoOtorgado IS NULL, '', ROUND(pdc.MontoOtorgado, 2)) AS MontoOtorgado"),
+                DB::raw("IF(pdc.SaldoCapital IS NULL, '', ROUND(pdc.SaldoCapital, 2)) AS SaldoCapital"),
+                DB::raw("IF(pdc.Intereses IS NULL, '', ROUND(pdc.Intereses, 2)) AS Intereses"),
+                DB::raw("IF(pdc.InteresesMoratorios IS NULL, '', ROUND(pdc.InteresesMoratorios, 2)) AS InteresesMoratorios"),
+                DB::raw("IF(pdc.InteresesCovid IS NULL, '', ROUND(pdc.InteresesCovid, 2)) AS InteresesCovid"),
+                'pdc.Tasa',
+                'pdc.TipoDeuda',
+                'pdc.PorcentajeExtraprima',
+                //'tc.Nombre as TipoCartera',
+                // DB::raw("CONCAT(sm.Abreviatura, ' - ', sm.Descripcion) AS LineaCredito"),
             ])
-            ->groupBy('NumeroReferencia')
-            ->orderBy('NumeroReferencia')
+            ->orderBy('pdc.NumeroReferencia')
             ->get();
 
 
@@ -86,7 +106,7 @@ class RegistrosEliminadosExport implements FromCollection, WithHeadings
 
     public function headings(): array
     {
-       return [
+        return [
             'DUI',
             'PASAPORTE',
             'CARNET RESI',
@@ -114,8 +134,8 @@ class RegistrosEliminadosExport implements FromCollection, WithHeadings
             'TIPO DE DEUDA',
             'PORCENTAJE EXTRAPRIMA',
 
-            'TIPO CARTERA',
-            'LINEA CREDITO',
+            //'TIPO CARTERA',
+            //'LINEA CREDITO',
         ];
     }
 }
