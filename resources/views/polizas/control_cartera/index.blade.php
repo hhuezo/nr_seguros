@@ -185,8 +185,11 @@
                                 </td>
                                 <td>{{ $registro->VigenciaHasta ? date('d/m/Y', strtotime($registro->VigenciaHasta)) : '' }}
                                 </td>
-                                <td>{{ $registro->TipoPoliza }}</td>
-                                <td>{{ $registro->ProductoNombre ?? '' }}</td>
+                                <td>{{ $registro->PlanNombre }}</td>
+
+                                <td>{{ $registro->Abreviatura }}</td>
+
+
                                 <td>{{ $registro->NumeroPoliza ?? '' }}</td>
                                 <td>{{ $registro->FechaRecepcionArchivo ? date('d/m/Y', strtotime($registro->FechaRecepcionArchivo)) : '' }}
                                 </td>

@@ -104,6 +104,7 @@ class PolizaControlCarteraController extends Controller
                     ->where('poliza_deuda_detalle.Axo', '=', $anio)
                     ->where('poliza_deuda_detalle.Mes', '=', $mes);
             })
+            ->join('aseguradora', 'aseguradora.Id', '=', 'poliza_deuda.Aseguradora')
             ->join('cliente', 'cliente.Id', '=', 'poliza_deuda.Asegurado')
             ->join('plan', 'plan.Id', '=', 'poliza_deuda.Plan')
             ->join('producto', 'producto.Id', '=', 'plan.Producto')
@@ -167,6 +168,7 @@ class PolizaControlCarteraController extends Controller
                 'plan.Nombre as PlanNombre',
                 'producto.Nombre as ProductoNombre',
                 'poliza_declarativa_reproceso.Nombre as ReprocesoNombre',
+                'aseguradora.Abreviatura',
 
                 // === Subqueries originales ===
                 DB::raw("(SELECT COUNT(*) FROM poliza_deuda_cartera AS c
@@ -202,6 +204,7 @@ class PolizaControlCarteraController extends Controller
                     ->where('poliza_vida_detalle.Mes', '=', $mes);
             })
             ->join('cliente', 'cliente.Id', '=', 'poliza_vida.Asegurado')
+            ->join('aseguradora', 'aseguradora.Id', '=', 'poliza_vida.Aseguradora')
             ->join('plan', 'plan.Id', '=', 'poliza_vida.Plan')
             ->join('producto', 'producto.Id', '=', 'plan.Producto')
             ->leftJoin('poliza_declarativa_reproceso', 'poliza_declarativa_reproceso.Id', '=', 'poliza_declarativa_control.ReprocesoNRId')
@@ -225,6 +228,7 @@ class PolizaControlCarteraController extends Controller
                 'plan.Nombre as PlanNombre',
                 'producto.Nombre as ProductoNombre',
                 'poliza_declarativa_reproceso.Nombre as ReprocesoNombre',
+                'aseguradora.Abreviatura',
 
                 // === Subqueries adaptadas a VIDA ===
                 DB::raw("(SELECT COUNT(*)
@@ -260,6 +264,7 @@ class PolizaControlCarteraController extends Controller
                     ->where('poliza_desempleo_detalle.Mes', '=', $mes);
             })
             ->join('cliente', 'cliente.Id', '=', 'poliza_desempleo.Asegurado')
+            ->join('aseguradora', 'aseguradora.Id', '=', 'poliza_desempleo.Aseguradora')
             ->join('plan', 'plan.Id', '=', 'poliza_desempleo.Plan')
             ->join('producto', 'producto.Id', '=', 'plan.Producto')
             ->leftJoin('poliza_declarativa_reproceso', 'poliza_declarativa_reproceso.Id', '=', 'poliza_declarativa_control.ReprocesoNRId')
@@ -283,6 +288,7 @@ class PolizaControlCarteraController extends Controller
                 'plan.Nombre as PlanNombre',
                 'producto.Nombre as ProductoNombre',
                 'poliza_declarativa_reproceso.Nombre as ReprocesoNombre',
+                'aseguradora.Abreviatura',
 
                 // === Subqueries adaptadas a DESEMPLEO ===
                 DB::raw("(SELECT COUNT(*)
