@@ -13,6 +13,8 @@ Route::middleware(['web'])->group(function () {
     Route::post('polizas/residencia/edit_pago', [ResidenciaController::class, 'edit_pago']);
     Route::post('polizas/residencia/recibo/{id}', [ResidenciaController::class, 'recibo_pago']);
     Route::get('polizas/residencia/get_recibo/{id}', [ResidenciaController::class, 'get_recibo']);
+    Route::get('polizas/residencia/get_recibo_edit/{id}', [ResidenciaController::class, 'get_recibo_edit']);
+    Route::post('polizas/residencia/edit', [ResidenciaController::class, 'get_recibo_update']);
     Route::post('polizas/residencia/active/{id}', [ResidenciaController::class, 'active_edit']);
     Route::post('polizas/residencia/desactive/{id}', [ResidenciaController::class, 'desactive_edit']);
     Route::get('polizas/residencia/get_pago/{id}', [ResidenciaController::class, 'get_pago']);
