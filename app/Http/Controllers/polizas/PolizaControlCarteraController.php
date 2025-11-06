@@ -5,6 +5,7 @@ namespace App\Http\Controllers\polizas;
 use App\Http\Controllers\Controller;
 use App\Models\catalogo\PolizaDeclarativaReproceso;
 use App\Models\polizas\Desempleo;
+use App\Models\polizas\DesempleoCartera;
 use App\Models\polizas\Deuda;
 use App\Models\polizas\PolizaDeclarativaControl;
 use App\Models\polizas\PolizaDeudaCartera;
@@ -468,7 +469,7 @@ class PolizaControlCarteraController extends Controller
                     if (!$poliza) continue;
 
                     // === Monto de cartera ===
-                    $montoCartera = Desempleo::where('PolizaDesempleo', $poliza->Id)
+                    $montoCartera = DesempleoCartera::where('PolizaDesempleo', $poliza->Id)
                         ->whereNull('PolizaDesempleoDetalle')
                         ->where('Axo', $anio)
                         ->where('Mes', $mes)
@@ -478,7 +479,7 @@ class PolizaControlCarteraController extends Controller
                         $item->MontoCartera = $montoCartera;
 
                         // === Agrupar primas según tasa ===
-                        $primas = Desempleo::where('PolizaDesempleo', $poliza->Id)
+                        $primas = DesempleoCartera::where('PolizaDesempleo', $poliza->Id)
                             ->whereNull('PolizaDesempleoDetalle')
                             ->where('Axo', $anio)
                             ->where('Mes', $mes)
