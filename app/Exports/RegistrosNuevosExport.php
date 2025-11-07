@@ -5,13 +5,9 @@ namespace App\Exports;
 use App\Models\polizas\Deuda;
 use App\Models\polizas\PolizaDeudaCartera;
 use App\Models\temp\PolizaDeudaTempCartera;
-use Carbon\Carbon;
-use Illuminate\Contracts\View\View;
+
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\FromView;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class RegistrosNuevosExport implements FromCollection, WithHeadings
