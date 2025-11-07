@@ -29,7 +29,7 @@ class RegistroRequisitosExport implements FromCollection, WithHeadings
 
         // Fedecrédito
         if ($deuda->Aseguradora == 3 || $deuda->Aseguradora == 4) {
-            $data = PolizaDeudaTempCartera::where('poliza_deuda_temp_cartera.PolizaDeuda', $this->id)
+            /*$data = PolizaDeudaTempCartera::where('poliza_deuda_temp_cartera.PolizaDeuda', $this->id)
                 ->where('NoValido', 0)->where('OmisionPerfil', 0)
                 ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
                 ->join('poliza_deuda_tipo_cartera as pdtc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'pdtc.Id')
@@ -39,7 +39,7 @@ class RegistroRequisitosExport implements FromCollection, WithHeadings
                     'Dui',
                     'PrimerApellido',
                     'SegundoApellido',
-                      DB::raw("
+                    DB::raw("
                             TRIM(
                                 CONCAT(
                                     poliza_deuda_temp_cartera.PrimerNombre,
@@ -66,49 +66,120 @@ class RegistroRequisitosExport implements FromCollection, WithHeadings
                     DB::raw("CONCAT(sm.Abreviatura, ' - ', sm.Descripcion) AS LineaCredito"),
                 ])
                 ->orderBy('NumeroReferencia')
-                ->get();
+                ->get();*/
+
+
+                $data = PolizaDeudaTempCartera::query()
+                    ->where('poliza_deuda_temp_cartera.PolizaDeuda', $this->id)
+                    ->where('poliza_deuda_temp_cartera.NoValido', 0)
+                    ->where('poliza_deuda_temp_cartera.OmisionPerfil', 0)
+                    ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
+                    ->join('poliza_deuda_tipo_cartera as pdtc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'pdtc.Id')
+                    ->join('tipo_cartera as tc', 'pdtc.TipoCartera', '=', 'tc.Id')
+                    ->leftJoin('poliza_deuda_cartera as pdc', function ($join) {
+                        $join->on('poliza_deuda_temp_cartera.NumeroReferencia', '=', 'pdc.NumeroReferencia');
+                    })
+                    ->whereNull('pdc.NumeroReferencia') // 🔹 Excluir registros ya existentes
+                    ->select([
+                        'poliza_deuda_temp_cartera.TipoDocumento',
+                        'poliza_deuda_temp_cartera.Dui',
+                        'poliza_deuda_temp_cartera.PrimerApellido',
+                        'poliza_deuda_temp_cartera.SegundoApellido',
+                        DB::raw("
+                            TRIM(
+                                CONCAT(
+                                    poliza_deuda_temp_cartera.PrimerNombre,
+                                    IF(poliza_deuda_temp_cartera.SegundoNombre IS NOT NULL
+                                        AND poliza_deuda_temp_cartera.SegundoNombre != '',
+                                        CONCAT(' ', poliza_deuda_temp_cartera.SegundoNombre),
+                                        '')
+                                )
+                            ) AS Nombres
+                        "),
+                        'poliza_deuda_temp_cartera.Nacionalidad',
+                        'poliza_deuda_temp_cartera.FechaNacimiento',
+                        'poliza_deuda_temp_cartera.Sexo',
+
+                        DB::raw("CONCAT(poliza_deuda_temp_cartera.NumeroReferencia, ' ') AS NumeroReferencia"),
+                        'poliza_deuda_temp_cartera.FechaOtorgamiento',
+
+                        DB::raw("IF(poliza_deuda_temp_cartera.MontoOtorgado IS NULL, '', ROUND(poliza_deuda_temp_cartera.MontoOtorgado, 2)) AS MontoOtorgado"),
+                        DB::raw("IF(poliza_deuda_temp_cartera.SaldoCapital IS NULL, '', ROUND(poliza_deuda_temp_cartera.SaldoCapital, 2)) AS SaldoCapital"),
+                        DB::raw("IF(poliza_deuda_temp_cartera.Intereses IS NULL, '', ROUND(poliza_deuda_temp_cartera.Intereses, 2)) AS Intereses"),
+                        DB::raw("IF(poliza_deuda_temp_cartera.SaldoInteresMora IS NULL, '', ROUND(poliza_deuda_temp_cartera.SaldoInteresMora, 2)) AS MoraCapital"),
+                        DB::raw("IF(poliza_deuda_temp_cartera.InteresesMoratorios IS NULL, '', ROUND(poliza_deuda_temp_cartera.InteresesMoratorios, 2)) AS InteresesMoratorios"),
+                        DB::raw("IF(poliza_deuda_temp_cartera.InteresesCovid IS NULL, '', ROUND(poliza_deuda_temp_cartera.InteresesCovid, 2)) AS InteresesCovid"),
+
+                        'poliza_deuda_temp_cartera.PorcentajeExtraprima',
+                        'poliza_deuda_temp_cartera.Tasa',
+                        DB::raw('tc.Nombre AS TipoCartera'),
+                        DB::raw('pdtc.MontoMaximoIndividual AS MontoMaximoIndividual'),
+                        DB::raw("CONCAT(sm.Abreviatura, ' - ', sm.Descripcion) AS LineaCredito"),
+                    ])
+                    ->groupBy(
+                        'poliza_deuda_temp_cartera.Dui',
+                        'poliza_deuda_temp_cartera.Pasaporte',
+                        'poliza_deuda_temp_cartera.CarnetResidencia',
+                        'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera',
+                        'pdtc.MontoMaximoIndividual'
+                    )
+                    ->orderBy('poliza_deuda_temp_cartera.NumeroReferencia')
+                    ->get();
+
+
         } else {
+
             $data = PolizaDeudaTempCartera::where('poliza_deuda_temp_cartera.PolizaDeuda', $this->id)
-                ->where('NoValido', 0)->where('OmisionPerfil', 0)
+                ->where('poliza_deuda_temp_cartera.NoValido', 0)
+                ->where('poliza_deuda_temp_cartera.OmisionPerfil', 0)
                 ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
                 ->join('poliza_deuda_tipo_cartera as pdtc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'pdtc.Id')
                 ->join('tipo_cartera as tc', 'pdtc.TipoCartera', '=', 'tc.Id')
+                ->leftJoin('poliza_deuda_cartera as pdc', function ($join) {
+                    $join->on('poliza_deuda_temp_cartera.NumeroReferencia', '=', 'pdc.NumeroReferencia');
+                })
+                ->whereNull('pdc.NumeroReferencia') // 🔹 excluir registros ya existentes
                 ->select([
-                    'Dui',
-                    'Pasaporte',
-                    'CarnetResidencia',
-                    'Nacionalidad',
-                    'FechaNacimiento',
-                    'TipoPersona',
-                    'Sexo',
-                    'PrimerApellido',
-                    'SegundoApellido',
-                    'ApellidoCasada',
-                    'PrimerNombre',
-                    'SegundoNombre',
-                    'FechaOtorgamiento',
-                    'FechaVencimiento',
+                    'poliza_deuda_temp_cartera.Dui',
+                    'poliza_deuda_temp_cartera.Pasaporte',
+                    'poliza_deuda_temp_cartera.CarnetResidencia',
+                    'poliza_deuda_temp_cartera.Nacionalidad',
+                    'poliza_deuda_temp_cartera.FechaNacimiento',
+                    'poliza_deuda_temp_cartera.TipoPersona',
+                    'poliza_deuda_temp_cartera.Sexo',
+                    'poliza_deuda_temp_cartera.PrimerApellido',
+                    'poliza_deuda_temp_cartera.SegundoApellido',
+                    'poliza_deuda_temp_cartera.ApellidoCasada',
+                    'poliza_deuda_temp_cartera.PrimerNombre',
+                    'poliza_deuda_temp_cartera.SegundoNombre',
+                    'poliza_deuda_temp_cartera.FechaOtorgamiento',
+                    'poliza_deuda_temp_cartera.FechaVencimiento',
 
-                    DB::raw("CONCAT(NumeroReferencia, ' ') AS NumeroReferencia"),
-                    DB::raw("IF(MontoOtorgado IS NULL, '', ROUND(MontoOtorgado, 2)) AS MontoOtorgado"),
-                    DB::raw("IF(SaldoCapital IS NULL, '', ROUND(SaldoCapital, 2)) AS SaldoCapital"),
-                    DB::raw("IF(Intereses IS NULL, '', ROUND(Intereses, 2)) AS Intereses"),
-                    DB::raw("IF(InteresesMoratorios IS NULL, '', ROUND(InteresesMoratorios, 2)) AS InteresesMoratorios"),
-                    DB::raw("IF(InteresesCovid IS NULL, '', ROUND(InteresesCovid, 2)) AS InteresesCovid"),
+                    DB::raw("CONCAT(poliza_deuda_temp_cartera.NumeroReferencia, ' ') AS NumeroReferencia"),
+                    DB::raw("IF(poliza_deuda_temp_cartera.MontoOtorgado IS NULL, '', ROUND(poliza_deuda_temp_cartera.MontoOtorgado, 2)) AS MontoOtorgado"),
+                    DB::raw("IF(poliza_deuda_temp_cartera.SaldoCapital IS NULL, '', ROUND(poliza_deuda_temp_cartera.SaldoCapital, 2)) AS SaldoCapital"),
+                    DB::raw("IF(poliza_deuda_temp_cartera.Intereses IS NULL, '', ROUND(poliza_deuda_temp_cartera.Intereses, 2)) AS Intereses"),
+                    DB::raw("IF(poliza_deuda_temp_cartera.InteresesMoratorios IS NULL, '', ROUND(poliza_deuda_temp_cartera.InteresesMoratorios, 2)) AS InteresesMoratorios"),
+                    DB::raw("IF(poliza_deuda_temp_cartera.InteresesCovid IS NULL, '', ROUND(poliza_deuda_temp_cartera.InteresesCovid, 2)) AS InteresesCovid"),
 
-                    'Tasa',
-                    'TipoDeuda',
-                    'PorcentajeExtraprima',
+                    'poliza_deuda_temp_cartera.Tasa',
+                    'poliza_deuda_temp_cartera.TipoDeuda',
+                    'poliza_deuda_temp_cartera.PorcentajeExtraprima',
 
-                    /*DB::raw("IF(MontoNominal IS NULL, '', ROUND(MontoNominal, 2)) AS MontoNominal"),
-                DB::raw("IF(SaldoTotal IS NULL, '', ROUND(SaldoTotal, 2)) AS SaldoTotal"),
-
-                DB::raw("IF(TotalCredito IS NULL, '', ROUND(TotalCredito, 2)) AS total_saldo"), // Prima Mensual*/
-                    'tc.Nombre as TipoCartera',
+                    DB::raw('tc.Nombre as TipoCartera'),
+                    DB::raw('pdtc.MontoMaximoIndividual as MontoMaximoIndividual'),
                     DB::raw("CONCAT(sm.Abreviatura, ' - ', sm.Descripcion) AS LineaCredito"),
                 ])
-                ->orderBy('NumeroReferencia')
+                ->groupBy(
+                    'poliza_deuda_temp_cartera.Dui',
+                    'poliza_deuda_temp_cartera.Pasaporte',
+                    'poliza_deuda_temp_cartera.CarnetResidencia',
+                    'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera',
+                    'pdtc.MontoMaximoIndividual'
+                )
+                ->orderBy('poliza_deuda_temp_cartera.NumeroReferencia')
                 ->get();
+
         }
 
 
