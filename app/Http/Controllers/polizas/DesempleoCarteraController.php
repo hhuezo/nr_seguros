@@ -829,47 +829,56 @@ class DesempleoCarteraController extends Controller
             $axoAnterior = $axoActual; // Mismo año
         }
 
+        // Actualizar Identificador en tabla temporal
+        DB::table('poliza_desempleo_cartera_temp')
+            ->update([
+                'Identificador' => DB::raw("COALESCE(NULLIF(Dui,''), NULLIF(Pasaporte,''), NULLIF(CarnetResidencia,''))")
+            ]);
+
 
 
         $data = DesempleoCarteraTemp::where('PolizaDesempleo', $id)->get();
         $poliza_edad_maxima = $data->where('EdadDesembloso', '>', $desempleo->EdadMaximaInscripcion);
 
-
-        //registros que no existen en el mes anterior
+        // Verificamos si hay datos en la cartera anterior
         $count_data_cartera = DesempleoCartera::where('PolizaDesempleo', $id)->count();
+
         if ($count_data_cartera > 0) {
-            //dd($mesAnterior,$axoAnterior,$request->Desempleo);
+            // 🔹 Registros eliminados (ya no existen en la tabla temporal)
             $registros_eliminados = DB::table('poliza_desempleo_cartera AS pdc')
-                ->leftJoin('poliza_desempleo_cartera_temp AS pdtc', function ($join) {
-                    $join->on('pdc.NumeroReferencia', '=', 'pdtc.NumeroReferencia')
-                        ->where('pdtc.User', auth()->user()->id);
-                })
-                ->where('pdc.Mes', (int)$mesAnterior)
-                ->where('pdc.Axo', (int)$axoAnterior)
+                ->where('pdc.Mes', (int) $mesAnterior)
+                ->where('pdc.Axo', (int) $axoAnterior)
                 ->where('pdc.PolizaDesempleo', $id)
-                ->whereNull('pdtc.NumeroReferencia') // Solo los que no están en poliza_desempleo_temp_cartera
-                ->select('pdc.*') // Selecciona columnas principales
+                ->whereNotExists(function ($query) {
+                    $query->select(DB::raw(1))
+                        ->from('poliza_desempleo_cartera_temp AS pdtc')
+                        ->whereRaw('pdtc.NumeroReferencia = pdc.NumeroReferencia')
+                        ->whereRaw('pdtc.Identificador = pdc.Identificador');
+                })
+                ->select('pdc.*')
+                ->groupBy('NumeroReferencia', 'Identificador')
                 ->get();
         } else {
-            $registros_eliminados =  DesempleoCarteraTemp::where('Id', 0)->get();
+            $registros_eliminados = DesempleoCarteraTemp::where('Id', 0)->get();
         }
 
-
-        $nuevos_registros = DesempleoCarteraTemp::leftJoin(
-            DB::raw('(
-                        SELECT DISTINCT NumeroReferencia
-                        FROM poliza_desempleo_cartera
-                        WHERE PolizaDesempleo = ' . $id . '
-                    ) AS valid_references'),
-            'poliza_desempleo_cartera_temp.NumeroReferencia',
-            '=',
-            'valid_references.NumeroReferencia'
-        )
-            ->where('poliza_desempleo_cartera_temp.User', auth()->user()->id) // Filtra por el usuario autenticado
-            ->where('poliza_desempleo_cartera_temp.PolizaDesempleo', $id)
-            ->whereNull('valid_references.NumeroReferencia') // Los registros que no coinciden
-            ->select('poliza_desempleo_cartera_temp.*') // Selecciona columnas de la tabla principal
+        // 🔹 NUEVOS REGISTROS (presentes en la tabla temporal, pero no en la cartera histórica)
+        $nuevos_registros = DB::table('poliza_desempleo_cartera_temp AS t')
+            ->where('t.PolizaDesempleo', $id)
+            ->whereNotExists(function ($query) use ($id, $axoAnterior, $mesAnterior) {
+                $query->select(DB::raw(1))
+                    ->from('poliza_desempleo_cartera AS c')
+                    ->where('c.PolizaDesempleo', $id)
+                    ->where('c.Axo', $axoAnterior)
+                    ->where('c.Mes', $mesAnterior)
+                    ->whereRaw("COALESCE(c.NumeroReferencia, '') = COALESCE(t.NumeroReferencia, '')")
+                    ->whereRaw("COALESCE(c.Identificador, '') = COALESCE(t.Identificador, '')");
+            })
+            ->select('t.*')
             ->get();
+
+
+
 
         $total = DesempleoCarteraTemp::where('PolizaDesempleo', $id)->sum('SaldoTotal');
         //recibos tabla de configuracion
@@ -902,7 +911,6 @@ class DesempleoCarteraController extends Controller
                 $item->save();
             }
         }
-
         $registros_rehabilitados = DesempleoCarteraTemp::where('PolizaDesempleo', $id)->where('Rehabilitado', 1)->get();
 
         return view('polizas.desempleo.respuesta_poliza', compact('total', 'desempleo', 'poliza_edad_maxima', 'registros_rehabilitados', 'registros_eliminados', 'nuevos_registros', 'axoActual', 'mesActual'));
