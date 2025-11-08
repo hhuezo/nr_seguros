@@ -21,11 +21,10 @@ class EdadMaximaExport implements FromCollection, WithHeadings
 
     public function collection()
     {
-
         $vida = Vida::findOrFail($this->id);
-        $edadTerminacion = $desempleo->EdadTerminacion ?? 100;
+        //$edadTerminacion = $desempleo->EdadTerminacion ?? 100;
 
-        $data = VidaCarteraTemp::where('User', auth()->user()->id)->where('PolizaVida', $this->id)->get();
+        $data = VidaCarteraTemp::where('PolizaVida', $this->id)->get();
         $poliza_edad_maxima = $data->where('EdadDesembloso', '>', $vida->EdadMaximaInscripcion)->where('EdadDesembloso', '>', $vida->EdadTerminacion);
 
         //dd($poliza_edad_maxima,$data);

@@ -3,7 +3,9 @@
 namespace App\Exports\vida;
 
 use App\Models\polizas\Vida;
+use App\Models\polizas\VidaCartera;
 use App\Models\temp\VidaCarteraTemp;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -22,62 +24,85 @@ class NuevosRegistrosExport implements FromCollection, WithHeadings
 
     public function collection()
     {
-
         $vida = Vida::findOrFail($this->id);
-        $nuevos_registros = VidaCarteraTemp::leftJoin(
-            DB::raw('(
-                        SELECT DISTINCT NumeroReferencia
-                        FROM poliza_vida_cartera
-                        WHERE PolizaVida = ' . $this->id . '
-                    ) AS valid_references'),
-            'poliza_vida_cartera_temp.NumeroReferencia',
-            '=',
-            'valid_references.NumeroReferencia'
-        )
-            ->where('poliza_vida_cartera_temp.User', auth()->user()->id) // Filtra por el usuario autenticado
-            ->where('poliza_vida_cartera_temp.PolizaVida', $this->id)
-            ->whereNull('valid_references.NumeroReferencia') // Los registros que no coinciden
-            ->select('poliza_vida_cartera_temp.*') // Selecciona columnas de la tabla principal
-            ->get();
 
-        $data = $nuevos_registros->where('Edad', '<=', $vida->EdadMaximaInscripcion);
+        $tempRegistro = VidaCarteraTemp::where('PolizaVida', $vida->Id)->first();
 
+        if (!$tempRegistro) {
+            return collect();
+        }
 
-        return $data;
+        $fechaActual = Carbon::createFromDate($tempRegistro->Axo, $tempRegistro->Mes, 1);
+        $fechaAnterior = $fechaActual->copy()->subMonth();
+        $anioAnterior = $fechaAnterior->year;
+        $mesAnterior = $fechaAnterior->month;
+
+        $id = $vida->Id;
+        $axoActual = $tempRegistro->Axo;
+        $mesActual = $tempRegistro->Mes;
+
+        // 🔹 Consulta optimizada con uso de Identificador
+        $nuevosRegistros = collect(DB::select("
+                SELECT
+                    pdtc.Dui AS DUI,
+                    pdtc.Pasaporte AS PASAPORTE,
+                    pdtc.CarnetResidencia AS CARNET_RESI,
+                    pdtc.Nacionalidad AS NACIONALIDAD,
+                    pdtc.FechaNacimiento AS FECNACIMIENTO,
+                    pdtc.TipoPersona AS TIPO_PERSONA,
+                    pdtc.Sexo AS GENERO,
+                    pdtc.PrimerApellido AS PRIMERAPELLIDO,
+                    pdtc.SegundoApellido AS SEGUNDOAPELLIDO,
+                    pdtc.ApellidoCasada AS APELLIDOCASADA,
+                    pdtc.PrimerNombre AS PRIMERNOMBRE,
+                    pdtc.SegundoNombre AS SEGUNDONOMBRE,
+                    pdtc.FechaOtorgamiento AS FECOTORGAMIENTO,
+                    pdtc.FechaVencimiento AS FECHA_DE_VENCIMIENTO,
+                    pdtc.NumeroReferencia AS NUMREFERENCIA,
+                    pdtc.SumaAsegurada AS SUMA_ASEGURADA,
+                    pdtc.Tasa AS TARIFA
+                FROM poliza_vida_cartera_temp AS pdtc
+                WHERE pdtc.PolizaVida = ?
+                AND pdtc.Axo = ?
+                AND pdtc.Mes = ?
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM poliza_vida_cartera AS pdc
+                    WHERE pdc.PolizaVida = ?
+                        AND pdc.Axo = ?
+                        AND pdc.Mes = ?
+                        AND pdc.NumeroReferencia = pdtc.NumeroReferencia
+                        AND pdc.Identificador = pdtc.Identificador
+                )
+            ", [$id, $axoActual, $mesActual, $id, $anioAnterior, $mesAnterior]));
+
+        return $nuevosRegistros;
     }
+
+
+
 
 
     public function headings(): array
     {
         return [
-            'NIT',
             'DUI',
-            'PASAPORTE O CARNET DE RESIDENTE ASEGURADO',
-            'SALVADOREÑO',
+            'PASAPORTE',
+            'CARNET RESI',
+            'NACIONALIDAD',
             'FECHA NACIMIENTO',
-            'TIPO DE PERSONA',
+            'TIPO PERSONA',
+            'GENERO',
             'PRIMER APELLIDO',
             'SEGUNDO APELLIDO',
             'APELLIDO CASADA',
             'PRIMER NOMBRE',
             'SEGUNDO NOMBRE',
-            'NOMBRE SOCIEDAD',
-            'SEXO',
             'FECHA DE OTORGAMIENTO',
             'FECHA DE VENCIMIENTO',
-            'OCUPACION',
-            'No DE REFERENCIA DEL CRÉDITO',
-            'MONTO OTORGADO DEL CREDITO',
-            'SALDO VIGENTE DE CAPITAL',
-            'INTERESES',
-            'INTERESES MORATORIOS',
-            'INTERESES COVID',
-            'MONTO NOMINAL',
-            'SALDO TOTAL',
-            'PRIMA MENSUAL',
-            'TIPO CARTERA',
-            'LINEA CREDITO',
-            //'PORCENTAJE EXTRAPRIMA'
+            'NUMREFERENCIA',
+            'SUMA ASEGURADA',
+            'TARIFA',
         ];
     }
 }

@@ -4,10 +4,11 @@ namespace App\Exports\vida;
 
 use App\Models\polizas\Vida;
 use App\Models\temp\VidaCarteraTemp;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class EdadTerminacionExport implements  FromCollection, WithHeadings
+class EdadTerminacionExport implements FromCollection, WithHeadings
 {
     protected $id;
 
@@ -21,52 +22,55 @@ class EdadTerminacionExport implements  FromCollection, WithHeadings
 
     public function collection()
     {
-
         $vida = Vida::findOrFail($this->id);
-        $edadTerminacion = $vida->EdadMaximaTerminacion ?? 100;
 
-        $data = VidaCarteraTemp::where('User', auth()->user()->id)->where('PolizaVida', $this->id)->get();
-        $poliza_edad_maxima = $data->where('EdadDesembloso', '>', $vida->EdadTerminacion);
+        $poliza_edad_terminacion = DB::table('poliza_vida_cartera_temp AS t')
+            ->where('t.PolizaVida', $vida->Id)
+            ->where('t.EdadDesembloso', '>', $vida->EdadTerminacion)
+            ->select([
+                't.Dui AS DUI',
+                't.Pasaporte AS PASAPORTE',
+                't.CarnetResidencia AS CARNET_RESI',
+                't.Nacionalidad AS NACIONALIDAD',
+                't.FechaNacimiento AS FECNACIMIENTO',
+                't.TipoPersona AS TIPO_PERSONA',
+                't.Sexo AS GENERO',
+                't.PrimerApellido AS PRIMERAPELLIDO',
+                't.SegundoApellido AS SEGUNDOAPELLIDO',
+                't.ApellidoCasada AS APELLIDOCASADA',
+                't.PrimerNombre AS PRIMERNOMBRE',
+                't.SegundoNombre AS SEGUNDONOMBRE',
+                't.FechaOtorgamiento AS FECOTORGAMIENTO',
+                't.FechaVencimiento AS FECHA_DE_VENCIMIENTO',
+                't.NumeroReferencia AS NUMREFERENCIA',
+                't.SumaAsegurada AS SUMA_ASEGURADA',
+                't.Tasa AS TARIFA'
+            ])
+            ->get();
 
-        //dd($poliza_edad_maxima,$data);
-
-
-        return $poliza_edad_maxima;
+        return $poliza_edad_terminacion;
     }
-
 
     public function headings(): array
     {
         return [
-            'NIT',
             'DUI',
-            'PASAPORTE O CARNET DE RESIDENTE ASEGURADO',
-            'SALVADOREÑO',
+            'PASAPORTE',
+            'CARNET RESI',
+            'NACIONALIDAD',
             'FECHA NACIMIENTO',
-            'TIPO DE PERSONA',
+            'TIPO PERSONA',
+            'GENERO',
             'PRIMER APELLIDO',
             'SEGUNDO APELLIDO',
             'APELLIDO CASADA',
             'PRIMER NOMBRE',
             'SEGUNDO NOMBRE',
-            'NOMBRE SOCIEDAD',
-            'SEXO',
             'FECHA DE OTORGAMIENTO',
             'FECHA DE VENCIMIENTO',
-            'OCUPACION',
-            'No DE REFERENCIA DEL CRÉDITO',
-            'MONTO OTORGADO DEL CREDITO',
-            'SALDO VIGENTE DE CAPITAL',
-            'INTERESES',
-            'INTERESES MORATORIOS',
-            'INTERESES COVID',
-            'MONTO NOMINAL',
-            'SALDO TOTAL',
-            'PRIMA MENSUAL',
-            'TIPO CARTERA',
-            'LINEA CREDITO',
-            //'PORCENTAJE EXTRAPRIMA'
+            'NUMREFERENCIA',
+            'SUMA ASEGURADA',
+            'TARIFA',
         ];
     }
-
 }

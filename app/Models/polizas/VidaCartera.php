@@ -42,7 +42,8 @@ class VidaCartera extends Model
         'FechaNacimientoDate',
         'Edad',
         'EdadDesembloso',
-        'FechaOtorgamientoDate'
+        'FechaOtorgamientoDate',
+        'Identificador'
     ];
 
     protected $guarded = [];

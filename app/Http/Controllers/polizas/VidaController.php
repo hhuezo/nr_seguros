@@ -942,11 +942,10 @@ class VidaController extends Controller
 
 
 
+
     public function validar_poliza($id)
     {
-
         $poliza_vida = Vida::findOrFail($id);
-
 
         $temp_data_fisrt = VidaCarteraTemp::where('PolizaVida', $id)->first();
 
@@ -955,73 +954,59 @@ class VidaController extends Controller
             return back();
         }
 
-        $axoActual =  $temp_data_fisrt->Axo;
-        $mesActual =  $temp_data_fisrt->Mes;
-
+        $axoActual = $temp_data_fisrt->Axo;
+        $mesActual = $temp_data_fisrt->Mes;
 
         $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
         $mesString = (isset($mesActual) && isset($meses[$mesActual])) ? $meses[$mesActual] : '';
 
-        // Calcular el mes pasado
         if ($mesActual == 1) {
-            $mesAnterior = 12; // Diciembre
-            $axoAnterior = $axoActual - 1; // Año anterior
+            $mesAnterior = 12;
+            $axoAnterior = $axoActual - 1;
         } else {
-            $mesAnterior = $mesActual - 1; // Mes anterior
-            $axoAnterior = $axoActual; // Mismo año
+            $mesAnterior = $mesActual - 1;
+            $axoAnterior = $axoActual;
         }
 
-        $poliza_edad_maxima = VidaCarteraTemp::where('PolizaVida', $id)->where('EdadDesembloso', '>', $poliza_vida->EdadMaximaInscripcion)->get();
-        $poliza_edad_terminacion = VidaCarteraTemp::where('PolizaVida', $id)->where('EdadDesembloso', '>', $poliza_vida->EdadTerminacion)->get();
+        // 🔹 Actualizar el identificador (Dui -> Pasaporte -> Carnet)
+        DB::table('poliza_vida_cartera_temp')
+            ->where('PolizaVida', $id)
+            ->update([
+                'Identificador' => DB::raw("COALESCE(NULLIF(Dui,''), NULLIF(Pasaporte,''), NULLIF(CarnetResidencia,''))")
+            ]);
 
+        // 🔹 Edad máxima y edad de terminación
+        $poliza_edad_maxima = VidaCarteraTemp::where('PolizaVida', $id)
+            ->where('EdadDesembloso', '>', $poliza_vida->EdadMaximaInscripcion)
+            ->get();
 
+        $poliza_edad_terminacion = VidaCarteraTemp::where('PolizaVida', $id)
+            ->where('EdadDesembloso', '>', $poliza_vida->EdadTerminacion)
+            ->get();
 
-        VidaCarteraTemp::where('PolizaVida', $id)->where('Tasa', null)->update(["Tasa" => $poliza_vida->Tasa]);
+        // 🔹 Actualizar tasa faltante
+        VidaCarteraTemp::where('PolizaVida', $id)
+            ->whereNull('Tasa')
+            ->update(['Tasa' => $poliza_vida->Tasa]);
 
-        if ($poliza_vida->TipoCobro == 1) {
-            $poliza_responsabilidad_maxima = VidaCarteraTemp::where('Id', 0)->get();
-        } else {
-            $poliza_responsabilidad_maxima = VidaCarteraTemp::where('Id', 0)->get();
-        }
-
-
-
-
-        //registros que no existen en el mes anterior
+        // 🔹 Registros eliminados (ya no están en la tabla temporal)
         $registros_eliminados = collect(DB::select("
             SELECT
                 pdc.*
-            FROM poliza_vida_cartera pdc
+            FROM poliza_vida_cartera AS pdc
             WHERE pdc.PolizaVida = ?
             AND pdc.Axo = ?
             AND pdc.Mes = ?
             AND NOT EXISTS (
                 SELECT 1
-                FROM poliza_vida_cartera_temp pdtc
-                WHERE TRIM(CAST(pdtc.NumeroReferencia AS CHAR)) = TRIM(CAST(pdc.NumeroReferencia AS CHAR))
-                    AND pdtc.PolizaVida = ?
-                    AND (
-                        (
-                            pdc.Dui IS NOT NULL AND pdc.Dui <> ''
-                            AND TRIM(CAST(pdtc.Dui AS CHAR)) = TRIM(CAST(pdc.Dui AS CHAR))
-                        )
-                        OR (
-                            (pdc.Dui IS NULL OR pdc.Dui = '')
-                            AND pdc.Pasaporte IS NOT NULL AND pdc.Pasaporte <> ''
-                            AND TRIM(CAST(pdtc.Pasaporte AS CHAR)) = TRIM(CAST(pdc.Pasaporte AS CHAR))
-                        )
-                        OR (
-                            (pdc.Dui IS NULL OR pdc.Dui = '')
-                            AND (pdc.Pasaporte IS NULL OR pdc.Pasaporte = '')
-                            AND pdc.CarnetResidencia IS NOT NULL AND pdc.CarnetResidencia <> ''
-                            AND TRIM(CAST(pdtc.CarnetResidencia AS CHAR)) = TRIM(CAST(pdc.CarnetResidencia AS CHAR))
-                        )
-                    )
+                FROM poliza_vida_cartera_temp AS pdtc
+                WHERE pdtc.PolizaVida = ?
+                    AND pdtc.NumeroReferencia = pdc.NumeroReferencia
+                    AND pdtc.Identificador = pdc.Identificador
             )
         ", [$id, $axoAnterior, $mesAnterior, $id]));
 
-
-
+        // 🔹 Nuevos registros (presentes en la tabla temporal pero no en la anterior)
         $nuevos_registros = collect(DB::select("
             SELECT
                 pdtc.*
@@ -1033,43 +1018,26 @@ class VidaController extends Controller
                 SELECT 1
                 FROM poliza_vida_cartera AS pdc
                 WHERE pdc.PolizaVida = ?
-                    AND TRIM(CAST(pdc.NumeroReferencia AS CHAR)) = TRIM(CAST(pdtc.NumeroReferencia AS CHAR))
-                    AND (
-                        (
-                            pdtc.Dui IS NOT NULL AND pdtc.Dui <> ''
-                            AND TRIM(CAST(pdc.Dui AS CHAR)) = TRIM(CAST(pdtc.Dui AS CHAR))
-                        )
-                        OR (
-                            (pdtc.Dui IS NULL OR pdtc.Dui = '')
-                            AND pdtc.Pasaporte IS NOT NULL AND pdtc.Pasaporte <> ''
-                            AND TRIM(CAST(pdc.Pasaporte AS CHAR)) = TRIM(CAST(pdtc.Pasaporte AS CHAR))
-                        )
-                        OR (
-                            (pdtc.Dui IS NULL OR pdtc.Dui = '')
-                            AND (pdtc.Pasaporte IS NULL OR pdtc.Pasaporte = '')
-                            AND pdtc.CarnetResidencia IS NOT NULL AND pdtc.CarnetResidencia <> ''
-                            AND TRIM(CAST(pdc.CarnetResidencia AS CHAR)) = TRIM(CAST(pdtc.CarnetResidencia AS CHAR))
-                        )
-                    )
+                    AND pdc.NumeroReferencia = pdtc.NumeroReferencia
+                    AND pdc.Identificador = pdtc.Identificador
             )
         ", [$id, $axoActual, $mesActual, $id]));
 
-
-
-
+        // 🔹 Totales
         $total = VidaCarteraTemp::where('PolizaVida', $id)->sum('SumaAsegurada');
-
-
-
         $temp = VidaCarteraTemp::where('PolizaVida', $id)->get();
+
+
+
+        // 🔹 Rehabilitados
+
         $mesAnteriorString = $axoAnterior . '-' . $mesAnterior;
-        //calcular rehabilitados
+
         $referenciasAnteriores = DB::table('poliza_vida_cartera')
             ->where('PolizaVida', $id)
             ->whereRaw('CONCAT(Axo, "-", Mes) <> ?', [$mesAnteriorString])
             ->pluck('NumeroReferencia')
             ->toArray();
-
 
         $referenciasMesAterior = DB::table('poliza_vida_cartera')
             ->where('PolizaVida', $id)
@@ -1078,32 +1046,36 @@ class VidaController extends Controller
             ->pluck('NumeroReferencia')
             ->toArray();
 
-
         foreach ($temp as $item) {
-            // Verifica si el NumeroReferencia está en referenciasAnteriores pero no en referenciasMesAterior
             if (in_array($item->NumeroReferencia, $referenciasAnteriores) && !in_array($item->NumeroReferencia, $referenciasMesAterior)) {
                 $item->Rehabilitado = 1;
                 $item->save();
             }
         }
 
-        $registros_rehabilitados = VidaCarteraTemp::where('PolizaVida', $id)->where('Rehabilitado', 1)->get();
+        $registros_rehabilitados = VidaCarteraTemp::where('PolizaVida', $id)
+            ->where('Rehabilitado', 1)
+            ->get();
 
+        // 🔹 Extra primados
         $extra_primados = $poliza_vida->extra_primados;
 
-        foreach ($extra_primados as $extra_primado) {
-            //$extra_primado->Existe =
-            $registro  = VidaCarteraTemp::where('NumeroReferencia', $extra_primado->NumeroReferencia)
-                ->sum('SumaAsegurada') ?? 0;
+        // Obtener todas las sumas agrupadas por NumeroReferencia en una sola consulta
+        $sumas = VidaCarteraTemp::whereIn('NumeroReferencia', $extra_primados->pluck('NumeroReferencia'))
+            ->select('NumeroReferencia', DB::raw('SUM(SumaAsegurada) as total'))
+            ->groupBy('NumeroReferencia')
+            ->pluck('total', 'NumeroReferencia');
 
-            if ($registro > 0) {
-                $extra_primado->Existe = 1;
-                $extra_primado->MontoOtorgamiento = $registro;
-            } else {
-                $extra_primado->Existe = 0;
-            }
+        foreach ($extra_primados as $extra_primado) {
+            $monto = $sumas[$extra_primado->NumeroReferencia] ?? 0;
+
+            $extra_primado->Existe = $monto > 0 ? 1 : 0;
+            $extra_primado->MontoOtorgamiento = $monto;
         }
 
+        $poliza_responsabilidad_maxima = collect();
+
+        // 🔹 Retornar vista
         return view('polizas.vida.respuesta_poliza', compact(
             'total',
             'poliza_vida',
@@ -1119,6 +1091,9 @@ class VidaController extends Controller
             'extra_primados'
         ));
     }
+
+
+
 
 
 
