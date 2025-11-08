@@ -66,6 +66,11 @@
         .border-row tr {
             border: 1px #ccc solid;
         }
+
+        input.form-control:not([readonly]),
+        select.form-control:not([readonly]) {
+            border: 1px solid #28a745 !important;
+        }
     </style>
 
     <!-- Toastr CSS -->
@@ -259,7 +264,8 @@
                                     <tr>
                                         <td>Total Factura</td>
                                         <td class="text-right"><input type="text" class="form-control text-right"
-                                                value="{{number_format( ($recibo_historial->SubTotal+$recibo_historial->Iva), 2, '.', ',')}}" readonly></td>
+                                                value="{{ number_format($recibo_historial->SubTotal + $recibo_historial->Iva, 2, '.', ',') }}"
+                                                readonly></td>
                                     </tr>
                                     <tr>
                                         <td>(-) Estructura CCF de Comisión</td>

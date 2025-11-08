@@ -805,8 +805,7 @@
                                                             <td>
                                                                 @if ($obj->Activo != 0)
                                                                     <a href="{{ url('polizas/residencia/get_recibo') }}/{{ $obj->Id }}"
-                                                                        target="_blank"
-                                                                        class="btn btn-info">Reimprimir</a>
+                                                                         class="btn btn-info">Reimprimir</a>
                                                                     <a href="{{ url('polizas/residencia/get_recibo_edit') }}/{{ $obj->Id }}"
                                                                         class="btn btn-warning">Editar</a>
                                                                 @endif

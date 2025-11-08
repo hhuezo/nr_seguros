@@ -18,30 +18,33 @@
             right: 0px;
             height: 50px;
         }
-
     </style>
 </head>
 @php
-$prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
+    $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
 @endphp
 
 <body style="margin-top: -10%;">
     <table style="width: 100%;">
         <tr>
             <td>
-               San Salvador, {{ \Carbon\Carbon::parse($recibo_historial->ImpresionRecibo)->format('d') }} de {{ $meses[\Carbon\Carbon::parse($recibo_historial->ImpresionRecibo)->format('m') - 0 ] }} del {{ \Carbon\Carbon::parse($recibo_historial->ImpresionRecibo)->format('Y') }} <br>
-                Señor (a) (es): <br> {{$cliente->Nombre}} <br>
-                NIT: {{$cliente->Nit}} <br>
-                {{ $cliente->DireccionResidencia ?? $cliente->DireccionCorrespondencia }} <br>
+                San Salvador, {{ \Carbon\Carbon::parse($recibo_historial->ImpresionRecibo)->format('d') }} de
+                {{ $meses[\Carbon\Carbon::parse($recibo_historial->ImpresionRecibo)->format('m') - 0] }} del
+                {{ \Carbon\Carbon::parse($recibo_historial->ImpresionRecibo)->format('Y') }} <br>
+                Señor (a) (es): <br> {{ $recibo_historial->NombreCliente }} <br>
+                NIT: {{ $recibo_historial->NitCliente ?? $cliente->Nit }} <br>
+                {{ $recibo_historial->DireccionResidencia ?? ($cliente->DireccionCorrespondencia ?? $cliente->DireccionResidencia) }}
                 <br>
                 <br>
-                Estimado (a)(o)(es): {{$cliente->Nombre}}
+                <br>
+                Estimado (a)(o)(es): {{ $recibo_historial->NombreCliente }}
             </td>
             <td style="width: 25%;">
                 <img src="{{ public_path('img/logo.jpg') }}" alt="logo" width="165">
                 <br>
                 <p style="border: 1 solid #000; text-align: center;">Aviso de Cobro: <br>
-                    AC {{ str_pad($recibo_historial->NumeroRecibo,6,"0",STR_PAD_LEFT)}} {{date('Y')}}</p> <!--  falta agregar el numero del aviso de cobro -->
+                    AC {{ str_pad($recibo_historial->NumeroRecibo, 6, '0', STR_PAD_LEFT) }} {{ date('Y') }}</p>
+                <!--  falta agregar el numero del aviso de cobro -->
             </td>
         </tr>
     </table>
@@ -51,8 +54,12 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
             <td colspan="2">Producto de seguros</td>
         </tr>
         <tr>
-            <td>{{$recibo_historial->CompaniaAseguradora}}</td>
-            <td colspan="2">@if($deuda->Plan) {{$recibo_historial->ProductoSeguros}}@endif</td>
+            <td>{{ $recibo_historial->CompaniaAseguradora }}</td>
+            <td colspan="2">
+                @if ($deuda->Plan)
+                    {{ $recibo_historial->ProductoSeguros }}
+                @endif
+            </td>
         </tr>
         <tr style="background-color: lightgrey;">
             <td>Número de Póliza</td>
@@ -60,7 +67,7 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
             <td>Vigencia Final (anual)</td>
         </tr>
         <tr>
-            <td>{{$recibo_historial->NumeroPoliza}}</td>
+            <td>{{ $recibo_historial->NumeroPoliza }}</td>
             <td>{{ \Carbon\Carbon::parse($recibo_historial->VigenciaDesde)->format('d/m/Y') }}</td>
             <td>{{ \Carbon\Carbon::parse($recibo_historial->VigenciaHasta)->format('d/m/Y') }}</td>
         </tr>
@@ -77,15 +84,15 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
         </tr>
         <tr>
             <td style="background-color: lightgrey;">Anexo</td>
-            <td colspan="2">{{$recibo_historial->Anexo}}</td>
+            <td colspan="2">{{ $recibo_historial->Anexo }}</td>
         </tr>
         <tr>
             <td style="background-color: lightgrey;">Referencia</td>
-            <td colspan="2">{{$recibo_historial->Referencia}}</td>
+            <td colspan="2">{{ $recibo_historial->Referencia }}</td>
         </tr>
         <tr>
             <td style="background-color: lightgrey;">Factura (s) a Nombre de</td>
-            <td colspan="2">{{$recibo_historial->FacturaNombre ?? $deuda->clientes->Nombre}} </td>
+            <td colspan="2">{{ $recibo_historial->FacturaNombre ?? $deuda->clientes->Nombre }} </td>
         </tr>
     </table>
     <br>
@@ -102,45 +109,54 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
                 <table border="1" cellspacing="0">
                     <tr>
                         <td style="width: 65%;">Monto de Cartera</td>
-                        <td style="width: 35%; text-align: right;">${{number_format($recibo_historial->MontoCartera,2,'.',',')}}</td>
+                        <td style="width: 35%; text-align: right;">
+                            ${{ number_format($recibo_historial->MontoCartera, 2, '.', ',') }}</td>
                     </tr>
                     <tr>
                         <td style="width: 65%;">Prima calculada</td>
-                        <td style="width: 35%; text-align: right;">${{number_format($recibo_historial->PrimaCalculada,2,'.',',')}}</td>
+                        <td style="width: 35%; text-align: right;">
+                            ${{ number_format($recibo_historial->PrimaCalculada, 2, '.', ',') }}</td>
                     </tr>
                     <tr>
                         <td style="width: 65%;">Extra Prima</td>
-                        <td style="width: 35%; text-align: right;">${{number_format($recibo_historial->ExtraPrima,2,'.',',')}}</td>
+                        <td style="width: 35%; text-align: right;">
+                            ${{ number_format($recibo_historial->ExtraPrima, 2, '.', ',') }}</td>
                     </tr>
-                    @if($recibo_historial->PordentajeDescuento > 0)
-                    <tr>
-                        <td>(-) Descuento rentabilidad ({{$recibo_historial->PordentajeDescuento == '' ? 0 : $recibo_historial->PordentajeDescuento}}%)</td>
-                        <td style="width: 35%; text-align: right;">${{number_format($recibo_historial->Descuento,2,'.',',')}}</td>
-                    </tr>
+                    @if ($recibo_historial->PordentajeDescuento > 0)
+                        <tr>
+                            <td>(-) Descuento rentabilidad
+                                ({{ $recibo_historial->PordentajeDescuento == '' ? 0 : $recibo_historial->PordentajeDescuento }}%)
+                            </td>
+                            <td style="width: 35%; text-align: right;">
+                                ${{ number_format($recibo_historial->Descuento, 2, '.', ',') }}</td>
+                        </tr>
                     @endif
                     <tr>
                         <td>(=) Prima descontada</td>
-                        <td style="width: 35%; text-align: right;">${{number_format($recibo_historial->PrimaDescontada,2,'.',',')}}</td>
+                        <td style="width: 35%; text-align: right;">
+                            ${{ number_format($recibo_historial->PrimaDescontada, 2, '.', ',') }}</td>
                     </tr>
                     <!-- <tr>
             <td>Sub Total</td>
-            <td style="width: 35%; text-align: right;"> ${{number_format($recibo_historial->SubTotal,2,'.',',')}}</td>
+            <td style="width: 35%; text-align: right;"> ${{ number_format($recibo_historial->SubTotal, 2, '.', ',') }}</td>
           </tr>
           <tr>
             <td>13% IVA</td>
-            <td style="width: 35%; text-align: right;">${{number_format($recibo_historial->Iva,2,'.',',')}}</td>
+            <td style="width: 35%; text-align: right;">${{ number_format($recibo_historial->Iva, 2, '.', ',') }}</td>
           </tr>
           <tr>
             <td>Total Factura</td>
-            <td style="width: 35%; text-align: right;">${{number_format(($recibo_historial->SubTotal+$recibo_historial->Iva),2,'.',',')}}</td>
+            <td style="width: 35%; text-align: right;">${{ number_format($recibo_historial->SubTotal + $recibo_historial->Iva, 2, '.', ',') }}</td>
           </tr>  -->
                     <tr>
                         <td>(-) Estructura CCF de Comisión</td>
-                        <td style="width: 35%; text-align: right;">(${{number_format($recibo_historial->ValorCCF,2,'.',',')}})</td>
+                        <td style="width: 35%; text-align: right;">
+                            (${{ number_format($recibo_historial->ValorCCF, 2, '.', ',') }})</td>
                     </tr>
                     <tr>
                         <td><b>Total a pagar</b></td>
-                        <td style="width: 35%; text-align: right;"><b>${{number_format($recibo_historial->TotalAPagar,2,'.',',')}}</b></td>
+                        <td style="width: 35%; text-align: right;">
+                            <b>${{ number_format($recibo_historial->TotalAPagar, 2, '.', ',') }}</b></td>
                     </tr>
                 </table>
             </td>
@@ -153,31 +169,39 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
                     </tr>
                     <tr>
                         <td>Porcentaje de comisión </td>
-                        <td style="width: 35%; text-align: right;">{{$deuda->TasaComision == '' ? 0: $deuda->TasaComision}}%</td>
+                        <td style="width: 35%; text-align: right;">
+                            {{ $deuda->TasaComision == '' ? 0 : $deuda->TasaComision }}%</td>
                     </tr>
                     <tr>
                         <td>(=) Prima descontada</td>
-                        <td style="width: 35%; text-align: right;">${{number_format($recibo_historial->PrimaDescontada,2,'.',',')}}</td>
+                        <td style="width: 35%; text-align: right;">
+                            ${{ number_format($recibo_historial->PrimaDescontada, 2, '.', ',') }}</td>
                     </tr>
                     <tr>
                         <td>Valor de la comisión</td>
-                        <td style="width: 35%; text-align: right;">${{number_format($recibo_historial->Comision,2,'.',',')}}</td>
+                        <td style="width: 35%; text-align: right;">
+                            ${{ number_format($recibo_historial->Comision, 2, '.', ',') }}</td>
                     </tr>
                     <tr>
                         <td>(+) 13% IVA</td>
-                        <td style="width: 35%; text-align: right;">${{number_format($recibo_historial->IvaSobreComision,2,'.',',')}}</td>
+                        <td style="width: 35%; text-align: right;">
+                            ${{ number_format($recibo_historial->IvaSobreComision, 2, '.', ',') }}</td>
                     </tr>
                     <tr>
                         <td>Sub Total de comision</td>
-                        <td style="width: 35%; text-align: right;">${{number_format($recibo_historial->IvaSobreComision + $recibo_historial->Comision,2,'.',',')}}</td>
+                        <td style="width: 35%; text-align: right;">
+                            ${{ number_format($recibo_historial->IvaSobreComision + $recibo_historial->Comision, 2, '.', ',') }}
+                        </td>
                     </tr>
                     <tr>
                         <td>Retencion 1%</td>
-                        <td style="width: 35%; text-align: right;">${{number_format($recibo_historial->Retencion,2,'.',',')}}</td>
+                        <td style="width: 35%; text-align: right;">
+                            ${{ number_format($recibo_historial->Retencion, 2, '.', ',') }}</td>
                     </tr>
                     <tr>
                         <td>Valor del CCF por Comisión</td>
-                        <td style="width: 35%; text-align: right;">${{number_format($recibo_historial->ValorCCF,2,'.',',')}}</td>
+                        <td style="width: 35%; text-align: right;">
+                            ${{ number_format($recibo_historial->ValorCCF, 2, '.', ',') }}</td>
                     </tr>
 
                 </table>
@@ -186,7 +210,7 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
     </table>
     <br><br>
     <table border="1" cellspacing="0" style="width: 100%;">
-        <tr style="background-color: lightgrey;"  height="25px">
+        <tr style="background-color: lightgrey;" height="25px">
             <th style="width: 14.28%;" height="22">Cuota</th>
             <th style="width: 14.28%;">Número de <br> documento</th>
             <th style="width: 14.28%;">Fecha de vencimiento</th>
@@ -197,20 +221,21 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
         </tr>
 
         <tr>
-            <td style="text-align: center;" height="22">01/01</td>
-            <td style="text-align: center;">{{$recibo_historial->NumeroCorrelativo}}</td>
-            <td style="text-align: center;">{{ \Carbon\Carbon::parse($recibo_historial->FechaInicio)->format('d/m/Y') }}</td>
-            <td style="text-align: right;">${{number_format($recibo_historial->PrimaDescontada,2,'.',',')}}</td>
-            <td style="text-align: right;">${{number_format(($recibo_historial->ValorCCF ),2,'.',',')}}</td>
-            <td style="text-align: right;">${{number_format($recibo_historial->Otros,2,'.',',')}}</td>
-            <td style="text-align: right;">${{number_format($recibo_historial->TotalAPagar,2,'.',',')}}</td>
+            <td style="text-align: center;" height="22">{{  $recibo_historial->Cuota ?? '01/01'}}</td>
+            <td style="text-align: center;">{{ $recibo_historial->NumeroCorrelativo }}</td>
+            <td style="text-align: center;">
+                {{ \Carbon\Carbon::parse($recibo_historial->FechaVencimiento)->format('d/m/Y') }}</td>
+            <td style="text-align: right;">${{ number_format($recibo_historial->PrimaDescontada, 2, '.', ',') }}</td>
+            <td style="text-align: right;">${{ number_format($recibo_historial->ValorCCF, 2, '.', ',') }}</td>
+            <td style="text-align: right;">${{ number_format($recibo_historial->Otros, 2, '.', ',') }}</td>
+            <td style="text-align: right;">${{ number_format($recibo_historial->TotalAPagar, 2, '.', ',') }}</td>
         </tr>
         <tr>
             <td height="22" colspan="3" align="center">TOTAL </td>
-            <td style="text-align: right;">${{number_format($recibo_historial->PrimaDescontada,2,'.',',')}}</td>
-            <td style="text-align: right;">${{number_format($recibo_historial->ValorCCF,2,'.',',')}}</td>
+            <td style="text-align: right;">${{ number_format($recibo_historial->PrimaDescontada, 2, '.', ',') }}</td>
+            <td style="text-align: right;">${{ number_format($recibo_historial->ValorCCF, 2, '.', ',') }}</td>
             <td></td>
-            <td style="text-align: right;">${{number_format(($recibo_historial->TotalAPagar),2,'.',',')}}</td>
+            <td style="text-align: right;">${{ number_format($recibo_historial->TotalAPagar, 2, '.', ',') }}</td>
         </tr>
     </table>
     <br>
@@ -241,11 +266,11 @@ $prima_calculada = $detalle->MontoCartera * $deuda->Tasa;
         </tr>
         <tr style="text-align: right;">
             <td>Elaborado por:</td>
-            <td>{{$detalle->usuarios->name}}</td>
+            <td>{{ $detalle->usuarios->name }}</td>
         </tr>
         <tr style="text-align: right;">
             <td>Fecha</td>
-            <td>{{date('d/m/Y h:m:s A')}}</td>
+            <td>{{ date('d/m/Y h:m:s A') }}</td>
         </tr>
 
     </table>

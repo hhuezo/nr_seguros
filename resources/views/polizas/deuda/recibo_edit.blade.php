@@ -66,6 +66,11 @@
         .border-row tr {
             border: 1px #ccc solid;
         }
+
+        input.form-control:not([readonly]),
+        select.form-control:not([readonly]) {
+            border: 1px solid #28a745 !important;
+        }
     </style>
 
     <!-- Toastr CSS -->
