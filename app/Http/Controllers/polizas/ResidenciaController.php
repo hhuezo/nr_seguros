@@ -783,6 +783,9 @@ class ResidenciaController extends Controller
             $comen->DetalleResidencia = $detalle->Id;
             $comen->save();
 
+            PolizaResidenciaCartera::where('FechaInicio', $request->FechaInicio)->where('FechaFinal', $request->FechaFinal)->where('PolizaResidencia', $request->Residencia)
+            ->update(['DetalleResidencia' => $detalle->Id]);
+
 
             $recibo->Id_recibo = ($recibo->Id_recibo) + 1;
             $recibo->update();
@@ -794,7 +797,7 @@ class ResidenciaController extends Controller
 
     public function save_recibo($residencia, $detalle)
     {
-// dd($detalle);
+ //dd($detalle);
         $recibo_historial = new ResidenciaHistorialRecibo();
         $recibo_historial->PolizaResidenciaDetalle = $detalle->Id;
         $recibo_historial->ImpresionRecibo = $detalle->ImpresionRecibo;
@@ -839,6 +842,7 @@ class ResidenciaController extends Controller
         $recibo_historial->Usuario = $detalle->Usuario;
         $recibo_historial->Activo = $detalle->Activo;
         $recibo_historial->save();
+        return $recibo_historial;
     }
 
     public function edit_pago(Request $request)
@@ -914,11 +918,13 @@ class ResidenciaController extends Controller
         $detalle->Anexo = $request->Anexo;
         $detalle->NumeroCorrelativo = $request->NumeroCorrelativo;
         $detalle->update();
+        // dd($detalle);
         //$calculo = $this->monto($residencia, $detalle);
         //llenar recibo
         $recibo_historial = $this->save_recibo($residencia, $detalle);
+        ///dd($recibo_historial);
         $configuracion = ConfiguracionRecibo::first();
-        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion', 'detalle', 'residencia', 'meses', 'cliente'))->setWarnings(false)->setPaper('letter');
+        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion', 'detalle', 'residencia', 'meses', 'cliente','recibo_historial'))->setWarnings(false)->setPaper('letter');
         return $pdf->stream('Recibo.pdf');
 
         //  return back();
@@ -941,9 +947,11 @@ class ResidenciaController extends Controller
             $recibo_historial = $this->save_recibo($residencia, $detalle);
         }
 
+      //  dd($recibo_historial);
+
 
         //return view('polizas.residencia.recibo', compact('configuracion','cliente',  'detalle', 'residencia', 'meses', 'calculo'));
-        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion', 'cliente', 'detalle', 'residencia', 'meses', 'calculo'))->setWarnings(false)->setPaper('letter');
+        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion', 'cliente', 'detalle', 'residencia', 'meses', 'calculo','recibo_historial'))->setWarnings(false)->setPaper('letter');
         //  dd($detalle);
         return $pdf->stream('Recibos.pdf');
     }
@@ -1114,13 +1122,14 @@ class ResidenciaController extends Controller
         $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
         $impresion_recibo = $request->AxoImpresionRecibo . '-' . $request->MesImpresionRecibo . '-' . $request->DiaImpresionRecibo;
+
         $recibo_historial_anterior = ResidenciaHistorialRecibo::where('PolizaResidenciaDetalle', $id)->orderBy('id', 'desc')->first();
 
 
         $recibo_historial = new ResidenciaHistorialRecibo();
         $recibo_historial->PolizaResidenciaDetalle = $id;
         //este valor cambia por eso no se manda al metodo de save_recibo
-        $recibo_historial->ImpresionRecibo = Carbon::parse($impresion_recibo);
+        $recibo_historial->ImpresionRecibo = Carbon::parse($impresion_recibo)->format('Y-m-d');
         $recibo_historial->NombreCliente = $request->NombreCliente;
         $recibo_historial->NitCliente = $request->NitCliente;
         $recibo_historial->DireccionResidencia = $request->DireccionResidencia;
@@ -1139,6 +1148,7 @@ class ResidenciaController extends Controller
         $recibo_historial->FechaVencimiento = $request->FechaVencimiento ?? $detalle->FechaInicio;
         $recibo_historial->NumeroCorrelativo = $request->NumeroCorrelativo ??  '01';
         $recibo_historial->Cuota = $request->Cuota ?? '01/01';
+        // dd($request->FechaVencimiento);
 
 
         // 🔹 Copiar campos del recibo anterior (si existe)
@@ -1164,6 +1174,8 @@ class ResidenciaController extends Controller
         $recibo_historial->Usuario = auth()->user()->id;
 
         $recibo_historial->save();
+       // dd($recibo_historial);
+
         //dd("insert");
        // alert()->success('Actualizacion de Recibo Exitoso');
         //enviar a descargar el archivo

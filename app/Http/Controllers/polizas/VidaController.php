@@ -2373,7 +2373,7 @@ class VidaController extends Controller
         $recibo_historial = new VidaHistorialRecibo();
         $recibo_historial->PolizaVidaDetalle = $id;
         //este valor cambia por eso no se manda al metodo de save_recibo
-        $recibo_historial->ImpresionRecibo = Carbon::parse($impresion_recibo);
+        $recibo_historial->ImpresionRecibo = Carbon::parse($impresion_recibo)->format('Y-m-d');
         $recibo_historial->NombreCliente = $request->NombreCliente;
         $recibo_historial->NitCliente = $request->NitCliente;
         $recibo_historial->DireccionResidencia = $request->DireccionResidencia;

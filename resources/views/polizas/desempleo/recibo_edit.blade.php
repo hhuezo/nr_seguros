@@ -63,8 +63,13 @@
             text-align: center;
         }
 
-        .border-row tr{
+        .border-row tr {
             border: 1px #ccc solid;
+        }
+
+        input.form-control:not([readonly]),
+        select.form-control:not([readonly]) {
+            border: 1px solid #28a745 !important;
         }
     </style>
 
@@ -238,12 +243,13 @@
                                         <td class="text-right"><input type="text" class="form-control text-right"
                                                 value="{{ $recibo_historial->ExtraPrima }}" readonly></td>
                                     </tr>
-                                    @if($recibo_historial->PordentajeDescuento > 0)
-                                    <tr>
-                                        <td>(-) Descuento rentabilidad ({{ $recibo_historial->PordentajeDescuento }}%)</td>
-                                        <td class="text-right"><input type="text" class="form-control text-right"
-                                                value="{{ $recibo_historial->Descuento }}" readonly></td>
-                                    </tr>
+                                    @if ($recibo_historial->PordentajeDescuento > 0)
+                                        <tr>
+                                            <td>(-) Descuento rentabilidad ({{ $recibo_historial->PordentajeDescuento }}%)
+                                            </td>
+                                            <td class="text-right"><input type="text" class="form-control text-right"
+                                                    value="{{ $recibo_historial->Descuento }}" readonly></td>
+                                        </tr>
                                     @endif
                                     <tr>
                                         <td>(=) Prima descontada</td>

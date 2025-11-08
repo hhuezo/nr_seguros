@@ -31,7 +31,7 @@
                         <div class="form-group">
                             <div class="col-sm-12">
                                 <label class="control-label">Numero de Documento</label>
-                                <input type="text" class="form-control" name="NumeroCorrelativo">
+                                <input type="text" class="form-control" name="NumeroCorrelativo" required>
                             </div>
                         </div>
                         <div class="form-group">

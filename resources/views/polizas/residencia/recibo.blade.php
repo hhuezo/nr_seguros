@@ -28,13 +28,13 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
   <table style="width: 100%;">
     <tr>
       <td>
-        San Salvador, {{ \Carbon\Carbon::parse($recibo_historial->ImpresionRecibo)->format('d') }} de {{ $meses[\Carbon\Carbon::parse($detalle->ImpresionRecibo)->format('m') - 0 ] }} del {{ \Carbon\Carbon::parse($detalle->ImpresionRecibo)->format('Y') }} <br>
+        San Salvador, {{ \Carbon\Carbon::parse($recibo_historial->ImpresionRecibo)->format('d') }} de {{ $meses[\Carbon\Carbon::parse($recibo_historial->ImpresionRecibo)->format('m') - 0 ] }} del {{ \Carbon\Carbon::parse($recibo_historial->ImpresionRecibo)->format('Y') }} <br>
         Señor (a) (es): <br> {{$recibo_historial->NombreCliente}} <br>
-        NIT: {{$cliente->Nit}} <br>
-        {{ $cliente->DireccionResidencia ?: $cliente->DireccionCorrespondencia }}
+        NIT: {{$recibo_historial->NitCliente ?? $cliente->Nit}} <br>
+        {{ $recibo_historial->DireccionResidencia ??($cliente->DireccionCorrespondencia ?? $cliente->DireccionResidencia) }}
         <br>
         <br><br>
-        Estimado (a)(o)(es):
+        Estimado (a)(o)(es): {{$recibo_historial->NombreCliente}}
       </td>
       <td style="width: 25%;">
         <img src="{{ public_path('img/logo.jpg') }}" alt="logo" width="165">
@@ -72,7 +72,7 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
     </tr>
     <tr>
       <td align="center">{{ \Carbon\Carbon::parse($recibo_historial->FechaInicio)->format('d/m/Y') }}</td>
-      <td align="center">{{ \Carbon\Carbon::parse($recibo_historial->FechaFinal)->format('d/m/Y') }}</td>
+      <td align="center">{{ \Carbon\Carbon::parse($recibo_historial->FechaFin)->format('d/m/Y') }}</td>
     </tr>
     <tr>
       <td style="background-color: lightgrey;">Anexo</td>
@@ -135,7 +135,7 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
           </tr>
           <tr>
             <td><b>Total a pagar</b></td>
-            <td style="width: 35%; text-align: right;"><b>${{number_format($recibo_historial->APagar,2,'.',',')}}</b></td>
+            <td style="width: 35%; text-align: right;"><b>${{number_format($recibo_historial->TotalAPagar,2,'.',',')}}</b></td>
           </tr>
         </table>
       </td>
@@ -191,20 +191,20 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
       <th>Pago líquido de prima</th>
     </tr>
     <tr>
-      <td height="23" style="text-align: center;">01/01</td>
+      <td height="23" style="text-align: center;">{{$recibo_historial->Cuota ?? '01/01'}}</td>
       <td><div align="center">{{$recibo_historial->NumeroCorrelativo}}</div></td>
-      <td><div align="center">{{ \Carbon\Carbon::parse($recibo_historial->FechaInicio)->format('d/m/Y') }}</div></td>
+      <td><div align="center">{{ \Carbon\Carbon::parse($recibo_historial->FechaVencimiento)->format('d/m/Y') }}</div></td>
       <td style="text-align: right;">${{number_format(($recibo_historial->SubTotal+$recibo_historial->Iva),2,'.',',')}}</td>
       <td style="text-align: right;">${{number_format(($recibo_historial->ValorCCF ),2,'.',',')}}</td>
       <td style="text-align: right;">${{number_format($recibo_historial->Otros,2,'.',',')}}</td>
-      <td style="text-align: right;">${{number_format($recibo_historial->APagar,2,'.',',')}}</td>
+      <td style="text-align: right;">${{number_format($recibo_historial->TotalAPagar,2,'.',',')}}</td>
     </tr>
     <tr>
       <td height="23" colspan="3" align="center">TOTAL </td>
       <td style="text-align: right;">${{number_format(($recibo_historial->SubTotal+$recibo_historial->Iva),2,'.',',')}}</td>
       <td style="text-align: right;">${{number_format($recibo_historial->ValorCCF,2,'.',',')}}</td>
       <td></td>
-      <td style="text-align: right;">${{number_format(($recibo_historial->APagar),2,'.',',')}}</td>
+      <td style="text-align: right;">${{number_format(($recibo_historial->TotalAPagar),2,'.',',')}}</td>
     </tr>
   </table>
 
