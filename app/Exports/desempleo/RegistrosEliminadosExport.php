@@ -5,6 +5,7 @@ namespace App\Exports\desempleo;
 use App\Models\polizas\Desempleo;
 use App\Models\polizas\DesempleoCartera;
 use App\Models\temp\DesempleoCarteraTemp;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -20,77 +21,80 @@ class RegistrosEliminadosExport implements FromCollection, WithHeadings
 
     public function collection()
     {
-
         $desempleo = Desempleo::findOrFail($this->id);
-        $temp_data_fisrt = DesempleoCarteraTemp::where('PolizaDesempleo', $desempleo->id)->where('User', auth()->user()->id)->first();
+        $tempRegistro = DesempleoCarteraTemp::where('PolizaDesempleo', $desempleo->Id)->first();
 
-        $axoActual =  $temp_data_fisrt->Axo;
-        $mesActual =  $temp_data_fisrt->Mes;
+        $anioAnterior = null;
+        $mesAnterior = null;
 
-
-        // Calcular el mes pasado
-        if ($mesActual == 1) {
-            $mesAnterior = 12; // Diciembre
-            $axoAnterior = $axoActual - 1; // Año anterior
-        } else {
-            $mesAnterior = $mesActual - 1; // Mes anterior
-            $axoAnterior = $axoActual; // Mismo año
+        if ($tempRegistro) {
+            $fechaActual = Carbon::createFromDate($tempRegistro->Axo, $tempRegistro->Mes, 1);
+            $fechaAnterior = $fechaActual->copy()->subMonth();
+            $anioAnterior = $fechaAnterior->year;
+            $mesAnterior = $fechaAnterior->month;
         }
 
-        $count_data_cartera = DesempleoCartera::where('PolizaDesempleo', $desempleo->id)->count();
-        if ($count_data_cartera > 0) {
-            //dd($mesAnterior,$axoAnterior,$request->Desempleo);
-            $registros_eliminados = DB::table('poliza_desempleo_cartera AS pdc')
-                ->leftJoin('poliza_desempleo_cartera_temp AS pdtc', function ($join) {
-                    $join->on('pdc.NumeroReferencia', '=', 'pdtc.NumeroReferencia')
-                        ->where('pdtc.User', auth()->user()->id);
+        $hayCartera = DesempleoCartera::where('PolizaDesempleo', $desempleo->Id)->exists();
+
+        if ($hayCartera) {
+            $registrosEliminados = DB::table('poliza_desempleo_cartera AS c')
+                ->where('c.Mes', (int) $mesAnterior)
+                ->where('c.Axo', (int) $anioAnterior)
+                ->where('c.PolizaDesempleo', $desempleo->Id)
+                ->whereNotExists(function ($query) {
+                    $query->select(DB::raw(1))
+                        ->from('poliza_desempleo_cartera_temp AS t')
+                        ->whereRaw('t.NumeroReferencia = c.NumeroReferencia')
+                        ->whereRaw('t.Identificador = c.Identificador');
                 })
-                ->where('pdc.Mes', (int)$mesAnterior)
-                ->where('pdc.Axo', (int)$axoAnterior)
-                ->where('pdc.PolizaDesempleo', $desempleo->id)
-                ->whereNull('pdtc.NumeroReferencia') // Solo los que no están en poliza_desempleo_temp_cartera
-                ->select('pdc.*') // Selecciona columnas principales
+                ->select([
+                    'c.Dui AS DUI',
+                    'c.Pasaporte AS PASAPORTE',
+                    'c.CarnetResidencia AS CARNET_RESI',
+                    'c.Nacionalidad AS NACIONALIDAD',
+                    'c.FechaNacimiento AS FECNACIMIENTO',
+                    'c.TipoPersona AS TIPO_PERSONA',
+                    'c.Sexo AS GENERO',
+                    'c.PrimerApellido AS PRIMERAPELLIDO',
+                    'c.SegundoApellido AS SEGUNDOAPELLIDO',
+                    'c.ApellidoCasada AS APELLIDOCASADA',
+                    'c.PrimerNombre AS PRIMERNOMBRE',
+                    'c.SegundoNombre AS SEGUNDONOMBRE',
+                    'c.FechaOtorgamiento AS FECOTORGAMIENTO',
+                    'c.FechaVencimiento AS FECHA_DE_VENCIMIENTO',
+                    'c.NumeroReferencia AS NUMREFERENCIA',
+                    'c.MontoOtorgado AS MONTO OTORGADO',
+                    'c.Tasa AS TARIFA'
+                ])
                 ->get();
         } else {
-            $registros_eliminados =  DesempleoCarteraTemp::where('Id', 0)->get();
+            $registrosEliminados = collect();
         }
 
-        return $registros_eliminados;
+        return $registrosEliminados;
     }
 
 
     public function headings(): array
     {
         return [
-            'NIT',
             'DUI',
-            'PASAPORTE O CARNET DE RESIDENTE ASEGURADO',
-            'SALVADOREÑO',
-            'FECHA NACIMIENTO',
-            'TIPO DE PERSONA',
-            'PRIMER APELLIDO',
-            'SEGUNDO APELLIDO',
-            'APELLIDO CASADA',
-            'PRIMER NOMBRE',
-            'SEGUNDO NOMBRE',
-            'NOMBRE SOCIEDAD',
-            'SEXO',
-            'FECHA DE OTORGAMIENTO',
+            'PASAPORTE',
+            'CARNET RESI',
+            'NACIONALIDAD',
+            'FECNACIMIENTO',
+            'TIPO PERSONA',
+            'GENERO',
+            'PRIMERAPELLIDO',
+            'SEGUNDOAPELLIDO',
+            'APELLIDOCASADA',
+            'PRIMERNOMBRE',
+            'SEGUNDONOMBRE',
+            'FECOTORGAMIENTO',
             'FECHA DE VENCIMIENTO',
-            'OCUPACION',
-            'No DE REFERENCIA DEL CRÉDITO',
-            'MONTO OTORGADO DEL CREDITO',
-            'SALDO VIGENTE DE CAPITAL',
-            'INTERESES',
-            'INTERESES MORATORIOS',
-            'INTERESES COVID',
-            'MONTO NOMINAL',
-            'SALDO TOTAL',
-            'PRIMA MENSUAL',
-            'TIPO CARTERA',
-            'LINEA CREDITO',
-            //'PORCENTAJE EXTRAPRIMA'
+            'NUMREFERENCIA',
+            'MONTO OTORGADO',
+            'TARIFA',
         ];
     }
 }
-

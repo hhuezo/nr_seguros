@@ -4,6 +4,7 @@ namespace App\Exports\desempleo;
 
 use App\Models\polizas\Desempleo;
 use App\Models\temp\DesempleoCarteraTemp;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -24,60 +25,82 @@ class NuevosRegistrosExport implements FromCollection, WithHeadings
     {
 
         $desempleo = Desempleo::findOrFail($this->id);
-        $nuevos_registros = DesempleoCarteraTemp::leftJoin(
-            DB::raw('(
-                        SELECT DISTINCT NumeroReferencia
-                        FROM poliza_desempleo_cartera
-                        WHERE PolizaDesempleo = ' . $this->id . '
-                    ) AS valid_references'),
-            'poliza_desempleo_cartera_temp.NumeroReferencia',
-            '=',
-            'valid_references.NumeroReferencia'
-        )
-            ->where('poliza_desempleo_cartera_temp.User', auth()->user()->id) // Filtra por el usuario autenticado
-            ->where('poliza_desempleo_cartera_temp.PolizaDesempleo', $this->id)
-            ->whereNull('valid_references.NumeroReferencia') // Los registros que no coinciden
-            ->select('poliza_desempleo_cartera_temp.*') // Selecciona columnas de la tabla principal
-            ->get();
 
-        $data = $nuevos_registros->where('Edad', '<=', $desempleo->EdadMaximaInscripcion);
+        $tempRegistro = DesempleoCarteraTemp::where('PolizaDesempleo', $desempleo->Id)->first();
+
+        if (!$tempRegistro) {
+            return collect();
+        }
+
+        $fechaActual = Carbon::createFromDate($tempRegistro->Axo, $tempRegistro->Mes, 1);
+        $fechaAnterior = $fechaActual->copy()->subMonth();
+        $anioAnterior = $fechaAnterior->year;
+        $mesAnterior = $fechaAnterior->month;
+
+        $id = $desempleo->Id;
+        $axoActual = $tempRegistro->Axo;
+        $mesActual = $tempRegistro->Mes;
+
+        // 🔹 Consulta optimizada con uso de Identificador
+        $nuevosRegistros = collect(DB::select("
+                SELECT
+                    pdtc.Dui AS DUI,
+                    pdtc.Pasaporte AS PASAPORTE,
+                    pdtc.CarnetResidencia AS CARNET_RESI,
+                    pdtc.Nacionalidad AS NACIONALIDAD,
+                    pdtc.FechaNacimiento AS FECNACIMIENTO,
+                    pdtc.TipoPersona AS TIPO_PERSONA,
+                    pdtc.Sexo AS GENERO,
+                    pdtc.PrimerApellido AS PRIMERAPELLIDO,
+                    pdtc.SegundoApellido AS SEGUNDOAPELLIDO,
+                    pdtc.ApellidoCasada AS APELLIDOCASADA,
+                    pdtc.PrimerNombre AS PRIMERNOMBRE,
+                    pdtc.SegundoNombre AS SEGUNDONOMBRE,
+                    pdtc.FechaOtorgamiento AS FECOTORGAMIENTO,
+                    pdtc.FechaVencimiento AS FECHA_DE_VENCIMIENTO,
+                    pdtc.NumeroReferencia AS NUMREFERENCIA,
+                    pdtc.MontoOtorgado AS MONTO_OTORGADO,
+                    pdtc.Tasa AS TARIFA
+                FROM poliza_desempleo_cartera_temp AS pdtc
+                WHERE pdtc.PolizaDesempleo = ?
+                AND pdtc.Axo = ?
+                AND pdtc.Mes = ?
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM poliza_desempleo_cartera AS pdc
+                    WHERE pdc.PolizaDesempleo = ?
+                        AND pdc.Axo = ?
+                        AND pdc.Mes = ?
+                        AND pdc.NumeroReferencia = pdtc.NumeroReferencia
+                        AND pdc.Identificador = pdtc.Identificador
+                )
+            ", [$id, $axoActual, $mesActual, $id, $anioAnterior, $mesAnterior]));
 
 
-        return $data;
+        return $nuevosRegistros;
     }
 
 
     public function headings(): array
     {
         return [
-            'NIT',
             'DUI',
-            'PASAPORTE O CARNET DE RESIDENTE ASEGURADO',
-            'SALVADOREÑO',
+            'PASAPORTE',
+            'CARNET RESI',
+            'NACIONALIDAD',
             'FECHA NACIMIENTO',
-            'TIPO DE PERSONA',
+            'TIPO PERSONA',
+            'GENERO',
             'PRIMER APELLIDO',
             'SEGUNDO APELLIDO',
             'APELLIDO CASADA',
             'PRIMER NOMBRE',
             'SEGUNDO NOMBRE',
-            'NOMBRE SOCIEDAD',
-            'SEXO',
             'FECHA DE OTORGAMIENTO',
             'FECHA DE VENCIMIENTO',
-            'OCUPACION',
-            'No DE REFERENCIA DEL CRÉDITO',
-            'MONTO OTORGADO DEL CREDITO',
-            'SALDO VIGENTE DE CAPITAL',
-            'INTERESES',
-            'INTERESES MORATORIOS',
-            'INTERESES COVID',
-            'MONTO NOMINAL',
-            'SALDO TOTAL',
-            'PRIMA MENSUAL',
-            'TIPO CARTERA',
-            'LINEA CREDITO',
-            //'PORCENTAJE EXTRAPRIMA'
+            'NUMREFERENCIA',
+            'MONTO OTORGADO',
+            'TARIFA',
         ];
     }
 }

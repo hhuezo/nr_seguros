@@ -4,10 +4,11 @@ namespace App\Exports\vida;
 
 use App\Models\polizas\Vida;
 use App\Models\temp\VidaCarteraTemp;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class EdadInscripcionExport implements  FromCollection, WithHeadings
+class EdadInscripcionExport implements FromCollection, WithHeadings
 {
     protected $id;
 
@@ -26,9 +27,31 @@ class EdadInscripcionExport implements  FromCollection, WithHeadings
         //$edadTerminacion = $vida->EdadTerminacion ?? 100;
 
         $data = VidaCarteraTemp::where('PolizaVida', $this->id)->get();
-        $poliza_edad_maxima = $data->where('EdadDesembloso', '>', $vida->EdadMaximaInscripcion);
+        $poliza_edad_maxima = collect(DB::select("
+                SELECT
+                    pdtc.Dui AS DUI,
+                    pdtc.Pasaporte AS PASAPORTE,
+                    pdtc.CarnetResidencia AS CARNET_RESI,
+                    pdtc.Nacionalidad AS NACIONALIDAD,
+                    pdtc.FechaNacimiento AS FECNACIMIENTO,
+                    pdtc.TipoPersona AS TIPO_PERSONA,
+                    pdtc.Sexo AS GENERO,
+                    pdtc.PrimerApellido AS PRIMERAPELLIDO,
+                    pdtc.SegundoApellido AS SEGUNDOAPELLIDO,
+                    pdtc.ApellidoCasada AS APELLIDOCASADA,
+                    pdtc.PrimerNombre AS PRIMERNOMBRE,
+                    pdtc.SegundoNombre AS SEGUNDONOMBRE,
+                    pdtc.FechaOtorgamiento AS FECOTORGAMIENTO,
+                    pdtc.FechaVencimiento AS FECHA_DE_VENCIMIENTO,
+                    pdtc.NumeroReferencia AS NUMREFERENCIA,
+                    pdtc.SumaAsegurada AS SUMA_ASEGURADA,
+                    pdtc.Tasa AS TARIFA
+                FROM poliza_vida_cartera_temp AS pdtc
+                WHERE pdtc.PolizaVida = ? AND EdadDesembloso > ?
+            ", [$this->id, $vida->EdadMaximaInscripcion]));
+        // $poliza_edad_maxima = $data->where('EdadDesembloso', '>', $vida->EdadMaximaInscripcion);
 
-        //dd($poliza_edad_maxima,$data);
+        //dd($poliza_edad_maxima);
 
 
         return $poliza_edad_maxima;
@@ -38,35 +61,23 @@ class EdadInscripcionExport implements  FromCollection, WithHeadings
     public function headings(): array
     {
         return [
-            'NIT',
             'DUI',
-            'PASAPORTE O CARNET DE RESIDENTE ASEGURADO',
-            'SALVADOREÑO',
+            'PASAPORTE',
+            'CARNET RESI',
+            'NACIONALIDAD',
             'FECHA NACIMIENTO',
-            'TIPO DE PERSONA',
+            'TIPO PERSONA',
+            'GENERO',
             'PRIMER APELLIDO',
             'SEGUNDO APELLIDO',
             'APELLIDO CASADA',
             'PRIMER NOMBRE',
             'SEGUNDO NOMBRE',
-            'NOMBRE SOCIEDAD',
-            'SEXO',
             'FECHA DE OTORGAMIENTO',
             'FECHA DE VENCIMIENTO',
-            'OCUPACION',
-            'No DE REFERENCIA DEL CRÉDITO',
-            'MONTO OTORGADO DEL CREDITO',
-            'SALDO VIGENTE DE CAPITAL',
-            'INTERESES',
-            'INTERESES MORATORIOS',
-            'INTERESES COVID',
-            'MONTO NOMINAL',
-            'SALDO TOTAL',
-            'PRIMA MENSUAL',
-            'TIPO CARTERA',
-            'LINEA CREDITO',
-            //'PORCENTAJE EXTRAPRIMA'
+            'NUMREFERENCIA',
+            'SUMA ASEGURADA',
+            'TARIFA',
         ];
     }
-
 }

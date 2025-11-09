@@ -4,6 +4,7 @@ namespace App\Exports\desempleo;
 
 use App\Models\polizas\Desempleo;
 use App\Models\temp\DesempleoCarteraTemp;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
@@ -20,7 +21,29 @@ class RegistrosRehabilitadosExport implements FromCollection, WithHeadings
     {
 
         $desempleo = Desempleo::findOrFail($this->id);
-        $registros_rehabilitados = DesempleoCarteraTemp::where('User', auth()->user()->id)->where('PolizaDesempleo', $desempleo->id)->where('Rehabilitado',1)->get();
+        $registros_rehabilitados = DB::table('poliza_desempleo_cartera_temp AS t')
+            ->where('t.PolizaVida', $desempleo->Id)
+            ->where('t.Rehabilitado', 1)
+            ->select([
+                't.Dui AS DUI',
+                't.Pasaporte AS PASAPORTE',
+                't.CarnetResidencia AS CARNET_RESI',
+                't.Nacionalidad AS NACIONALIDAD',
+                't.FechaNacimiento AS FECNACIMIENTO',
+                't.TipoPersona AS TIPO_PERSONA',
+                't.Sexo AS GENERO',
+                't.PrimerApellido AS PRIMERAPELLIDO',
+                't.SegundoApellido AS SEGUNDOAPELLIDO',
+                't.ApellidoCasada AS APELLIDOCASADA',
+                't.PrimerNombre AS PRIMERNOMBRE',
+                't.SegundoNombre AS SEGUNDONOMBRE',
+                't.FechaOtorgamiento AS FECOTORGAMIENTO',
+                't.FechaVencimiento AS FECHA_DE_VENCIMIENTO',
+                't.NumeroReferencia AS NUMREFERENCIA',
+                't.MontoOtorgado AS MONTO_OTORGADO',
+                't.Tasa AS TARIFA'
+            ])
+            ->get();
 
         return $registros_rehabilitados;
     }
@@ -29,34 +52,23 @@ class RegistrosRehabilitadosExport implements FromCollection, WithHeadings
     public function headings(): array
     {
         return [
-            'NIT',
             'DUI',
-            'PASAPORTE O CARNET DE RESIDENTE ASEGURADO',
-            'SALVADOREÑO',
-            'FECHA NACIMIENTO',
-            'TIPO DE PERSONA',
+            'PASAPORTE',
+            'CARNET RESI',
+            'NACIONALIDAD',
+            'FECNACIMIENTO',
+            'TIPO PERSONA',
+            'GENERO',
             'PRIMER APELLIDO',
             'SEGUNDO APELLIDO',
             'APELLIDO CASADA',
             'PRIMER NOMBRE',
             'SEGUNDO NOMBRE',
-            'NOMBRE SOCIEDAD',
-            'SEXO',
             'FECHA DE OTORGAMIENTO',
             'FECHA DE VENCIMIENTO',
-            'OCUPACION',
-            'No DE REFERENCIA DEL CRÉDITO',
-            'MONTO OTORGADO DEL CREDITO',
-            'SALDO VIGENTE DE CAPITAL',
-            'INTERESES',
-            'INTERESES MORATORIOS',
-            'INTERESES COVID',
-            'MONTO NOMINAL',
-            'SALDO TOTAL',
-            'PRIMA MENSUAL',
-            'TIPO CARTERA',
-            'LINEA CREDITO',
-            //'PORCENTAJE EXTRAPRIMA'
+            'NUMREFERENCIA',
+            'MONTO OTORGADO',
+            'TARIFA',
         ];
     }
 }
