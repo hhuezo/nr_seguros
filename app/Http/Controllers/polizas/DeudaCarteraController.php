@@ -1471,8 +1471,9 @@ class DeudaCarteraController extends Controller
 
         //los nuevos registros se omitiran de los requisitos y omision perfil
         $idNuevos = $nuevos_registros->pluck('Id')->toArray();
-
-        PolizaDeudaTempCartera::whereNotIn('Id', $idNuevos)->update(['OmisionPerfil'=> 1]);
+        if (!empty($idNuevos)) {
+            PolizaDeudaTempCartera::whereNotIn('Id', $idNuevos)->update(['OmisionPerfil' => 1]);
+        }
 
 
         return view('polizas.deuda.validacion_poliza.respuesta_poliza', compact(
