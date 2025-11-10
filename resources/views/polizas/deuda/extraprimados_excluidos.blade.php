@@ -6,7 +6,7 @@
             <th>Número Referencia</th>
             <th>Nombre</th>
             <th>Fecha Otorgamiento</th>
-            <th>Monto Otorgamiento</th>
+            <th>Saldo</th>
             <th>Porcentaje EP</th>
         </tr>
     </thead>
