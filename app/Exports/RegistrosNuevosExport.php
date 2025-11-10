@@ -57,7 +57,7 @@ class RegistrosNuevosExport implements FromCollection, WithHeadings
                     'Dui',
                     'PrimerApellido',
                     'SegundoApellido',
-                    DB::raw("CONCAT(PrimerNombre, ' ', SegundoNombre) AS Nombres"),
+                    DB::raw("CONCAT(PrimerNombre, ' ') AS Nombre"),
                     'Nacionalidad',
 
                     'FechaNacimiento',
