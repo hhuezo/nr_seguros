@@ -26,7 +26,10 @@
                 <td>{{ $extra_primado->Nombre }}</td>
                 <td>{{ $extra_primado->Dui }}</td>
                 <td>{{ $extra_primado->FechaOtorgamiento }}</td>
-                <td>{{ $extra_primado->MontoOtorgamiento }}</td>
+                <td>
+                    {{ $extra_primado->MontoOtorgamiento ? number_format($extra_primado->MontoOtorgamiento, 4, '.', ',') : '' }}
+                </td>
+
                 <td> {{ $extra_primado->PorcentajeEP }}%</td>
             </tr>
         @endforeach
