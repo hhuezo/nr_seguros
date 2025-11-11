@@ -1133,7 +1133,7 @@ class ResidenciaController extends Controller
         $recibo_historial->NombreCliente = $request->NombreCliente;
         $recibo_historial->NitCliente = $request->NitCliente;
         $recibo_historial->DireccionResidencia = $request->DireccionResidencia;
-        // $recibo_historial->NumeroRecibo = $detalle->NumeroRecibo;
+        $recibo_historial->NumeroRecibo = $detalle->NumeroRecibo;
         $recibo_historial->CompaniaAseguradora = $request->CompaniaAseguradora;
         $recibo_historial->ProductoSeguros = $request->ProductoSeguros;
         $recibo_historial->NumeroPoliza = $request->NumeroPoliza;
