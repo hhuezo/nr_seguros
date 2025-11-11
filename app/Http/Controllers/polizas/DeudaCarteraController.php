@@ -1469,11 +1469,17 @@ class DeudaCarteraController extends Controller
         //los nuevos registros se omitiran de los requisitos y omision perfil
         if (!empty($idNuevos)) {
             PolizaDeudaTempCartera::whereNotIn('Id', $idNuevos)->update(['OmisionPerfil' => 1]);
+
+            //dejamos los registros que no son nuevos como validos
+            PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('NoValido', 1)->whereNotIn('Id', $idNuevos)->update(['NoValido' => 0]);
+        }
+        else{
+            PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->update(['OmisionPerfil' => 1]);
+             PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('NoValido', 1)->update(['NoValido' => 0]);
         }
 
 
-         //dejamos los registros que no son nuevos como validos
-        PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('NoValido', 1)->whereNotIn('Id',$idNuevos)->update(['NoValido'=> 0]);
+
 
         $novalidos = PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('NoValido', 1)->get();
 
