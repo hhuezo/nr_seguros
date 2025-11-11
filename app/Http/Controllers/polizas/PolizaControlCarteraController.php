@@ -329,7 +329,9 @@ class PolizaControlCarteraController extends Controller
             // === COMBINAR LAS TRES ===
             $registro_control = $deuda
                 ->concat($vida)
-                ->concat($desempleo);
+                ->concat($desempleo)
+                ->sortBy('ClienteNombre')   // orden ascendente por nombre del cliente
+                ->values();
 
 
 
@@ -673,7 +675,9 @@ class PolizaControlCarteraController extends Controller
                 )
                 ->orderBy('poliza_residencia.Id')
                 ->groupBy('poliza_declarativa_control.Id')
-                ->get();
+                ->get()
+                ->sortBy(fn($item) => strtolower($item->ClienteNombre)) // 🔹 Ordena alfabéticamente ignorando mayúsculas
+                ->values(); // 🔹 Reindexa la colección
 
 
             // =============================================================
