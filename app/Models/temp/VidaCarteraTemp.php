@@ -46,6 +46,7 @@ class VidaCarteraTemp extends Model
         'PolizaVidaTipoCartera',
         'Tasa',
         'Identificador',
+        'TipoDocumento'
     ];
 
     protected $guarded = [];

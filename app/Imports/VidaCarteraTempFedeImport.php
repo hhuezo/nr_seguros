@@ -35,16 +35,17 @@ class VidaCarteraTempFedeImport implements ToModel
             $this->encabezados = 1;
             return null;
         }
-        
+
         // dd($row);
         // Procesar solo las filas de datos
         if ($this->encabezados == 1 && (trim($row[1]) != "DUI o documento de identidad")) {
-
+            // dd($row);
             // Verificar que al menos uno de los dos campos (NIT o DUI) tenga datos
             if (!empty(trim($row[0])) || !empty(trim($row[1]))) {
                 return new VidaCarteraTemp([
                     'PolizaVida' => $this->Poliza,
                     //'Nit' => $row[0] ?? null,
+                    'TipoDocumento' => $row[0],
                     'Dui' => $row[1] ?? null,
                     'PrimerApellido' => $row[2] ?? null,
                     'SegundoApellido' => $row[3] ?? null,
