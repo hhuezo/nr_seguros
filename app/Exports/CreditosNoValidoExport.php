@@ -30,58 +30,49 @@ class CreditosNoValidoExport implements FromCollection, WithHeadings
         $deuda = Deuda::findOrFail($this->id);
         if ($deuda->Aseguradora == 3 || $deuda->Aseguradora == 4) {
 
-          $data = PolizaDeudaTempCartera::from('poliza_deuda_temp_cartera as pdtc')
-    ->where('pdtc.PolizaDeuda', $this->id)
-    ->where(function ($query) use ($deuda) {
-        $query->where('pdtc.NoValido', 1)
-            ->orWhere(function ($subquery) use ($deuda) {
-                $subquery->where('pdtc.EdadDesembloso', '>', $deuda->EdadMaximaTerminacion)
-                    ->orWhere('pdtc.TotalCredito', '>', $deuda->ResponsabilidadMaxima);
-            });
-    })
-    ->leftJoin('saldos_montos as sm', 'pdtc.LineaCredito', '=', 'sm.Id')
-    ->leftJoin('poliza_deuda_tipo_cartera as pd_tipo', 'pdtc.PolizaDeudaTipoCartera', '=', 'pd_tipo.Id')
-    ->leftJoin('tipo_cartera as tc', 'pd_tipo.TipoCartera', '=', 'tc.Id')
-    ->select([
-        'pdtc.TipoDocumento',
-        'pdtc.Dui',
-        'pdtc.PrimerApellido',
-        'pdtc.SegundoApellido',
-        DB::raw("
-            TRIM(
-                CONCAT(
-                    pdtc.PrimerNombre,
-                    IF(pdtc.SegundoNombre IS NOT NULL AND pdtc.SegundoNombre != '', CONCAT(' ', pdtc.SegundoNombre), '')
+            $data = PolizaDeudaTempCartera::from('poliza_deuda_temp_cartera as pdtc')
+                ->where('pdtc.PolizaDeuda', $this->id)
+                ->where(function ($query) use ($deuda) {
+                    $query->where('pdtc.NoValido', 1)
+                        ->orWhere(function ($subquery) use ($deuda) {
+                            $subquery->where('pdtc.EdadDesembloso', '>', $deuda->EdadMaximaTerminacion)
+                                ->orWhere('pdtc.TotalCredito', '>', $deuda->ResponsabilidadMaxima);
+                        });
+                })
+                ->leftJoin('saldos_montos as sm', 'pdtc.LineaCredito', '=', 'sm.Id')
+                ->leftJoin('poliza_deuda_tipo_cartera as pd_tipo', 'pdtc.PolizaDeudaTipoCartera', '=', 'pd_tipo.Id')
+                ->leftJoin('tipo_cartera as tc', 'pd_tipo.TipoCartera', '=', 'tc.Id')
+                ->select([
+                    'pdtc.TipoDocumento',
+                    'pdtc.Dui',
+                    'pdtc.PrimerApellido',
+                    'pdtc.SegundoApellido',
+                    'pdtc.PrimerNombre',
+                    'pdtc.Nacionalidad',
+                    'pdtc.FechaNacimiento',
+                    'pdtc.Sexo',
+                    DB::raw("CONCAT(pdtc.NumeroReferencia, ' ') AS NumeroReferencia"),
+                    'pdtc.FechaOtorgamiento',
+                    DB::raw("IF(pdtc.MontoOtorgado IS NULL, '', ROUND(pdtc.MontoOtorgado, 2)) AS MontoOtorgado"),
+                    DB::raw("IF(pdtc.SaldoCapital IS NULL, '', ROUND(pdtc.SaldoCapital, 2)) AS SaldoCapital"),
+                    DB::raw("IF(pdtc.Intereses IS NULL, '', ROUND(pdtc.Intereses, 2)) AS Intereses"),
+                    DB::raw("IF(pdtc.SaldoInteresMora IS NULL, '', ROUND(pdtc.SaldoInteresMora, 2)) AS MoraCapital"),
+                    DB::raw("IF(pdtc.InteresesMoratorios IS NULL, '', ROUND(pdtc.InteresesMoratorios, 2)) AS InteresesMoratorios"),
+                    DB::raw("IF(pdtc.InteresesCovid IS NULL, '', ROUND(pdtc.InteresesCovid, 2)) AS InteresesCovid"),
+                    'pdtc.PorcentajeExtraprima',
+                    'pdtc.Tasa',
+                    'tc.Nombre as TipoCartera',
+                    DB::raw("CONCAT(sm.Abreviatura, ' - ', sm.Descripcion) AS LineaCredito"),
+                ])
+                ->groupBy(
+                    'pdtc.Dui',
+                    'pdtc.Pasaporte',
+                    'pdtc.CarnetResidencia',
+                    'pdtc.NumeroReferencia',
+                    'tc.Id'
                 )
-            ) AS Nombres
-        "),
-        'pdtc.Nacionalidad',
-        'pdtc.FechaNacimiento',
-        'pdtc.Sexo',
-        DB::raw("CONCAT(pdtc.NumeroReferencia, ' ') AS NumeroReferencia"),
-        'pdtc.FechaOtorgamiento',
-        DB::raw("IF(pdtc.MontoOtorgado IS NULL, '', ROUND(pdtc.MontoOtorgado, 2)) AS MontoOtorgado"),
-        DB::raw("IF(pdtc.SaldoCapital IS NULL, '', ROUND(pdtc.SaldoCapital, 2)) AS SaldoCapital"),
-        DB::raw("IF(pdtc.Intereses IS NULL, '', ROUND(pdtc.Intereses, 2)) AS Intereses"),
-        DB::raw("IF(pdtc.SaldoInteresMora IS NULL, '', ROUND(pdtc.SaldoInteresMora, 2)) AS MoraCapital"),
-        DB::raw("IF(pdtc.InteresesMoratorios IS NULL, '', ROUND(pdtc.InteresesMoratorios, 2)) AS InteresesMoratorios"),
-        DB::raw("IF(pdtc.InteresesCovid IS NULL, '', ROUND(pdtc.InteresesCovid, 2)) AS InteresesCovid"),
-        'pdtc.PorcentajeExtraprima',
-        'pdtc.Tasa',
-        'tc.Nombre as TipoCartera',
-        DB::raw("CONCAT(sm.Abreviatura, ' - ', sm.Descripcion) AS LineaCredito"),
-    ])
-    ->groupBy(
-        'pdtc.Dui',
-        'pdtc.Pasaporte',
-        'pdtc.CarnetResidencia',
-        'pdtc.NumeroReferencia',
-        'tc.Id'
-    )
-    ->orderBy('pdtc.NumeroReferencia')
-    ->get();
-
-
+                ->orderBy('pdtc.NumeroReferencia')
+                ->get();
         } else {
             $data = PolizaDeudaTempCartera::where('poliza_deuda_temp_cartera.PolizaDeuda', $this->id)
                 ->where('NoValido', 1)
@@ -99,7 +90,7 @@ class CreditosNoValidoExport implements FromCollection, WithHeadings
                     'PrimerApellido',
                     'SegundoApellido',
                     'ApellidoCasada',
-                     'PrimerNombre',
+                    'PrimerNombre',
                     'SegundoNombre',
                     'NombreSociedad',
                     'FechaOtorgamiento',

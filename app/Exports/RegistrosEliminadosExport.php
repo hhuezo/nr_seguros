@@ -55,7 +55,7 @@ class RegistrosEliminadosExport implements FromCollection, WithHeadings
                     'pdc.Dui',
                     'pdc.PrimerApellido',
                     'pdc.SegundoApellido',
-                    DB::raw("CONCAT(pdc.PrimerNombre, ' ', pdc.SegundoNombre) AS Nombres"),
+                    DB::raw("CONCAT(PrimerNombre, ' ') AS Nombre"),
                     'pdc.Nacionalidad',
                     'pdc.FechaNacimiento',
                     'pdc.Sexo',

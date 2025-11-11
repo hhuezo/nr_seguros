@@ -1159,6 +1159,8 @@ class DesempleoController extends Controller
             $poliza->Dui = $tempRecord->Dui;
             $poliza->CarnetResidencia = $tempRecord->CarnetResidencia;
             $poliza->Pasaporte = $tempRecord->Pasaporte;
+            $poliza->Identificador = $tempRecord->Dui ?: ($tempRecord->Pasaporte ?: ($tempRecord->CarnetResidencia ?: null));
+
             $poliza->Nacionalidad = $tempRecord->Nacionalidad;
             $poliza->FechaNacimiento = $tempRecord->FechaNacimiento;
             $poliza->TipoPersona = $tempRecord->TipoPersona;
@@ -1350,6 +1352,8 @@ class DesempleoController extends Controller
             $poliza->Dui = $tempRecord->Dui;
             $poliza->CarnetResidencia = $tempRecord->CarnetResidencia;
             $poliza->Pasaporte = $tempRecord->Pasaporte;
+            $poliza->Identificador = $tempRecord->Dui ?: ($tempRecord->Pasaporte ?: ($tempRecord->CarnetResidencia ?: null));
+
             $poliza->Nacionalidad = $tempRecord->Nacionalidad;
             $poliza->FechaNacimiento = $tempRecord->FechaNacimiento;
             $poliza->TipoPersona = $tempRecord->TipoPersona;

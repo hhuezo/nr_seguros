@@ -2008,6 +2008,8 @@ class VidaController extends Controller
                 $poliza->Nit = $tempRecord->Nit ?? null;
                 $poliza->Dui = $tempRecord->Dui ?? null;
                 $poliza->Pasaporte = $tempRecord->Pasaporte ?? null;
+                $poliza->Identificador = $tempRecord->Dui ?: ($tempRecord->Pasaporte ?: ($tempRecord->CarnetResidencia ?: null));
+
                 $poliza->Nacionalidad = $tempRecord->Nacionalidad ?? null;
                 $poliza->FechaNacimiento = $tempRecord->FechaNacimiento ?? null;
                 $poliza->TipoPersona = $tempRecord->TipoPersona ?? null;
@@ -2500,6 +2502,8 @@ class VidaController extends Controller
             $poliza->Nit = $tempRecord->Nit;
             $poliza->Dui = $tempRecord->Dui;
             $poliza->Pasaporte = $tempRecord->Pasaporte;
+            $poliza->Identificador = $tempRecord->Dui ?: ($tempRecord->Pasaporte ?: ($tempRecord->CarnetResidencia ?: null));
+
             $poliza->Nacionalidad = $tempRecord->Nacionalidad;
             $poliza->FechaNacimiento = $tempRecord->FechaNacimiento;
             $poliza->TipoPersona = $tempRecord->TipoPersona;

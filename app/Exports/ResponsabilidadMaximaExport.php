@@ -41,7 +41,7 @@ class ResponsabilidadMaximaExport implements FromCollection, WithHeadings
                     'Dui',
                     'PrimerApellido',
                     'SegundoApellido',
-                    DB::raw("CONCAT(PrimerNombre, ' ', SegundoNombre) AS Nombres"),
+                    'PrimerNombre',
                     'Nacionalidad',
 
                     'FechaNacimiento',

@@ -39,14 +39,7 @@ class EdadMaximaExport implements FromCollection, WithHeadings
                     'Dui',
                     'PrimerApellido',
                     'SegundoApellido',
-                     DB::raw("
-                            TRIM(
-                                CONCAT(
-                                    poliza_deuda_temp_cartera.PrimerNombre,
-                                    IF(poliza_deuda_temp_cartera.SegundoNombre IS NOT NULL AND poliza_deuda_temp_cartera.SegundoNombre != '', CONCAT(' ', poliza_deuda_temp_cartera.SegundoNombre), '')
-                                )
-                            ) AS Nombres
-                    "),
+                    'PrimerNombre',
                     'Nacionalidad',
 
                     'FechaNacimiento',
