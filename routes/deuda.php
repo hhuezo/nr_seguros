@@ -80,6 +80,7 @@ Route::middleware(['web'])->group(function () {
     Route::get('polizas/deuda/tasa_diferenciada/{id}', [DeudaTasaDiferenciadaController::class, 'show']);
     Route::post('polizas/deuda/tasa_diferenciada', [DeudaTasaDiferenciadaController::class, 'store'])->name('tasa_diferenciada.store');
     Route::put('polizas/deuda/tasa_diferenciada/{id}', [DeudaTasaDiferenciadaController::class, 'update']);
+    Route::put('polizas/deuda/tasa_diferenciada_activo/{id}', [DeudaTasaDiferenciadaController::class, 'tasa_diferenciada_activo']);
 
 
     Route::post('polizas/deuda/agregar_tipo_cartera/{id}', [DeudaTasaDiferenciadaController::class, 'agregar_tipo_cartera']);

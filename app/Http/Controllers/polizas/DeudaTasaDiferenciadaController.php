@@ -237,6 +237,30 @@ class DeudaTasaDiferenciadaController extends Controller
     }
 
 
+    public function tasa_diferenciada_activo($id)
+    {
+        $tipo = PolizaDeudaTipoCartera::find($id);
+
+        if (!$tipo) {
+            return response()->json(['error' => 'Registro no encontrado'], 404);
+        }
+
+        // Alternar el valor actual
+        $tipo->Activo = !$tipo->Activo;
+
+        $tipo->save();
+
+        return response()->json([
+            'success' => true,
+            'nuevo_estado' => $tipo->Activo,
+            'mensaje' => $tipo->Activo ? 'Activado correctamente' : 'Desactivado correctamente'
+        ]);
+    }
+
+
+
+
+
     public function update(Request $request, $id)
     {
         try {

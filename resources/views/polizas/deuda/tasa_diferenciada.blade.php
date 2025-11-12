@@ -2,8 +2,8 @@
 @section('contenido')
     <style>
         /* .subtareas-container {
-                                                            display: none;
-                                                        } */
+                                                                                    display: none;
+                                                                                } */
 
         .expand-icon {
             cursor: pointer;
@@ -20,6 +20,15 @@
             /* Azul (primary) */
         }
     </style>
+
+       <!-- Toastr CSS -->
+    <link href="{{ asset('vendors/toast/toastr.min.css') }}" rel="stylesheet">
+
+    <!-- jQuery -->
+    <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
+
+    <!-- Toastr JS -->
+    <script src="{{ asset('vendors/toast/toastr.min.js') }}"></script>
 
     <div class="page-title">
         <div class="title_left">
@@ -69,7 +78,8 @@
                                     <th style="width: 40%;">Tipo cartera</th>
                                     <th style="width: 20%;">Tipo cálculo</th>
                                     <th style="width: 20%;">Monto máximo individual</th>
-                                    <th style="width: 20%;">Opciones</th>
+                                    <th style="width: 10%;">Opciones</th>
+                                    <th style="width: 10%;">Activo</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -100,6 +110,13 @@
                                                 data-toggle="modal"
                                                 onclick="show_modal_delete_tipo_cartera({{ $tipo->Id }})"><i
                                                     class="fa fa-trash"></i></button>
+                                        </td>
+                                        <td class="text-center">
+                                            <label class="switch">
+                                                <input type="checkbox" {{ $tipo->Activo ? 'checked' : '' }}
+                                                    onchange="toggleActivo({{ $tipo->Id }}, this.checked)">
+                                                <span class="slider round"></span>
+                                            </label>
                                         </td>
                                     </tr>
 
@@ -463,6 +480,45 @@
 
         function show_modal_delete_tipo_cartera(id) {
             document.getElementById('TipoCarteraId').value = id;
+        }
+    </script>
+
+
+    <script>
+        function toggleActivo(id, checked) {
+            fetch(`{{ url('polizas/deuda/tasa_diferenciada_activo') }}/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log("data ",data);
+                        if (typeof toastr !== 'undefined') {
+                            toastr.success(data.mensaje);
+                        } else {
+                            alert(data.mensaje);
+                        }
+                    } else {
+                        if (typeof toastr !== 'undefined') {
+                            toastr.error('No se pudo actualizar el estado');
+                        } else {
+                            alert('No se pudo actualizar el estado');
+                        }
+                        console.error(data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error('Error en la solicitud');
+                    } else {
+                        alert('Error en la solicitud');
+                    }
+                });
         }
     </script>
 @endsection

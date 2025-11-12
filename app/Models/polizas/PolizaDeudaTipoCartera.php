@@ -20,7 +20,8 @@ class PolizaDeudaTipoCartera extends Model
         'PolizaDeuda',
         'TipoCartera',
         'TipoCalculo',
-        'MontoMaximoIndividual'
+        'MontoMaximoIndividual',
+        'Activo'
     ];
 
     public function poliza_deuda(){
