@@ -31,7 +31,7 @@ class DeudaCarteraController extends Controller
     public function subir_cartera($id)
     {
         $deuda = Deuda::findOrFail($id);
-        $deuda_tipo_cartera = $deuda->deuda_tipos_cartera;
+        $deuda_tipo_cartera = $deuda->deuda_tipos_cartera->where('Activo',1);
 
         foreach ($deuda_tipo_cartera as $tipo_cartera) {
             $tasas_diferenciadas = $tipo_cartera->tasa_diferenciada;
@@ -47,18 +47,15 @@ class DeudaCarteraController extends Controller
                 ->implode(',');
 
             $tipo_cartera->Total = PolizaDeudaTempCartera::where([
-                ['PolizaDeudaTipoCartera', $tipo_cartera->Id],
-                ['User', auth()->id()]
+                ['PolizaDeudaTipoCartera', $tipo_cartera->Id]
             ])->sum('TotalCredito');
 
             $tipo_cartera->Mes = PolizaDeudaTempCartera::where([
-                ['PolizaDeudaTipoCartera', $tipo_cartera->Id],
-                ['User', auth()->id()]
+                ['PolizaDeudaTipoCartera', $tipo_cartera->Id]
             ])->groupBy('Mes')->value('Mes');
 
             $tipo_cartera->Axo = PolizaDeudaTempCartera::where([
-                ['PolizaDeudaTipoCartera', $tipo_cartera->Id],
-                ['User', auth()->id()]
+                ['PolizaDeudaTipoCartera', $tipo_cartera->Id]
             ])->groupBy('Axo')->value('Axo');
         }
 
