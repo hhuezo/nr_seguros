@@ -45,6 +45,7 @@ class DeudaTasaDiferenciadaController extends Controller
             // Verificar si los datos ya existen en la base de datos
             $existe = PolizaDeudaTipoCartera::where('PolizaDeuda', $id)
                 ->where('TipoCartera', $request->TipoCartera)
+                ->where('Activo', 1)
                 ->exists();
 
             if ($existe) {
