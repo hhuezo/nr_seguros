@@ -793,6 +793,46 @@ class PolizaControlCarteraController extends Controller
     }
 
 
+    public function update(Request $request, $id)
+    {
+        try {
+            $control_cartera = PolizaDeclarativaControl::findOrFail($id);
+
+            $control_cartera->fill($request->only([
+                'FechaRecepcionArchivo',
+                'FechaEnvioCia',
+                'TrabajoEfectuadoDiaHabil',
+                'HoraTarea',
+                'FlujoAsignado',
+                'AnexoDeclaracion',
+                'NumeroSisco',
+                'FechaVencimiento',
+                'FechaEnvioCliente',
+                'ReprocesoNRId',
+                'FechaEnvioCorreccion',
+                'FechaSeguimientoCobros',
+                'FechaRecepcionPago',
+                'FechaReporteACia',
+                'FechaAplicacion',
+                'Comentarios',
+            ]));
+
+            $control_cartera->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Registro actualizado correctamente',
+                'data' => $control_cartera
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el registro',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 
 
 
@@ -809,33 +849,7 @@ class PolizaControlCarteraController extends Controller
     }
 
 
-    public function update(Request $request, $id)
-    {
 
-        $control_cartera = PolizaDeclarativaControl::findOrFail($id);
-
-        $control_cartera->FechaRecepcionArchivo      = $request->FechaRecepcionArchivo ?: null;
-        $control_cartera->FechaEnvioCia              = $request->FechaEnvioCia ?: null;
-        $control_cartera->TrabajoEfectuadoDiaHabil   = $request->TrabajoEfectuadoDiaHabil !== '' ? $request->TrabajoEfectuadoDiaHabil : null;
-        $control_cartera->HoraTarea                  = $request->HoraTarea ?: null;
-        $control_cartera->FlujoAsignado              = $request->FlujoAsignado ?: null;
-        $control_cartera->AnexoDeclaracion           = $request->AnexoDeclaracion ?: null;
-        $control_cartera->NumeroSisco                = $request->NumeroSisco ?: null;
-        $control_cartera->FechaVencimiento           = $request->FechaVencimiento ?: null;
-        $control_cartera->FechaEnvioCliente          = $request->FechaEnvioCliente ?: null;
-        $control_cartera->ReprocesoNRId              = $request->ReprocesoNRId ?: null;
-        $control_cartera->FechaEnvioCorreccion       = $request->FechaEnvioCorreccion ?: null;
-        $control_cartera->FechaSeguimientoCobros     = $request->FechaSeguimientoCobros ?: null;
-        $control_cartera->FechaRecepcionPago         = $request->FechaRecepcionPago ?: null;
-        $control_cartera->FechaReporteACia           = $request->FechaReporteACia ?: null;
-        $control_cartera->FechaAplicacion            = $request->FechaAplicacion ?: null;
-        $control_cartera->Comentarios                = $request->Comentarios ?: null;
-
-        $control_cartera->save();
-
-
-        return redirect()->back()->with('success', 'Registro actualizado correctamente')->withFragment('fila-' . $control_cartera->Id);
-    }
 
 
 
