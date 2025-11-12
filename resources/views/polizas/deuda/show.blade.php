@@ -415,7 +415,7 @@
 
 
 
-                                                    @foreach ($deuda->deuda_tipos_cartera as $tipo)
+                                                    @foreach ($deuda->deuda_tipos_cartera->where('Activo',1) as $tipo)
                                                         <tr class="tarea warning-row">
                                                             <td>
                                                                 <span class="expand-icon">▼</span>
