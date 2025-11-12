@@ -1332,8 +1332,22 @@ class DeudaCarteraController extends Controller
 
 
 
+        // ==========================
+        // 2️⃣ Registros nuevos
+        // ==========================
+        $nuevos_registros = collect(DB::select("
+            SELECT pdtc.*
+            FROM poliza_deuda_temp_cartera pdtc
+            WHERE pdtc.PolizaDeuda = ?
+            AND NOT EXISTS (
+                SELECT 1
+                FROM poliza_deuda_cartera pdc
+                WHERE pdc.NumeroReferencia = pdtc.NumeroReferencia
+                    AND pdc.PolizaDeuda = ?
+            )
+        ", [$poliza_id, $poliza_id]));
 
-
+        $idNuevos = $nuevos_registros->pluck('Id')->toArray();
 
 
         $extra_primados = $deuda->extra_primados;
@@ -1422,7 +1436,7 @@ class DeudaCarteraController extends Controller
                 ->update(['NoValido' => 1]);
         }
 
-        $novalidos = PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('NoValido', 1)->get();
+
         //dd($novalidos);
 
         //update para los que son mayores a la edad inicial
@@ -1452,28 +1466,22 @@ class DeudaCarteraController extends Controller
         ]);
 
 
-
-
-        // ==========================
-        // 2️⃣ Registros nuevos
-        // ==========================
-        $nuevos_registros = collect(DB::select("
-            SELECT pdtc.*
-            FROM poliza_deuda_temp_cartera pdtc
-            WHERE pdtc.PolizaDeuda = ?
-            AND NOT EXISTS (
-                SELECT 1
-                FROM poliza_deuda_cartera pdc
-                WHERE pdc.NumeroReferencia = pdtc.NumeroReferencia
-                    AND pdc.PolizaDeuda = ?
-            )
-        ", [$poliza_id, $poliza_id]));
-
         //los nuevos registros se omitiran de los requisitos y omision perfil
-        $idNuevos = $nuevos_registros->pluck('Id')->toArray();
         if (!empty($idNuevos)) {
             PolizaDeudaTempCartera::whereNotIn('Id', $idNuevos)->update(['OmisionPerfil' => 1]);
+
+            //dejamos los registros que no son nuevos como validos
+            PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('NoValido', 1)->whereNotIn('Id', $idNuevos)->update(['NoValido' => 0]);
         }
+        else{
+            PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->update(['OmisionPerfil' => 1]);
+             PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('NoValido', 1)->update(['NoValido' => 0]);
+        }
+
+
+
+
+        $novalidos = PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('NoValido', 1)->get();
 
 
         return view('polizas.deuda.validacion_poliza.respuesta_poliza', compact(

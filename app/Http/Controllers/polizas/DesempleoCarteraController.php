@@ -27,7 +27,7 @@ class DesempleoCarteraController extends Controller
 
 
 
-        $tipos_cartera = DB::table('poliza_desempleo_tasa_diferenciada as pdt')
+        /* $tipos_cartera = DB::table('poliza_desempleo_tasa_diferenciada as pdt')
             ->join('poliza_desempleo_tipo_cartera as pdtc', 'pdt.PolizaDesempleoTipoCartera', '=', 'pdtc.Id')
             ->leftJoin('poliza_desempleo_cartera_temp as pdct', 'pdct.DesempleoTipoCartera', '=', 'pdtc.Id')
             ->join('saldos_montos as sm', 'sm.Id', '=', 'pdt.SaldosMontos')
@@ -48,6 +48,35 @@ class DesempleoCarteraController extends Controller
             )
             ->where('pdtc.PolizaDesempleo', $id)
             ->groupBy('pdt.PolizaDesempleoTipoCartera', 'pdtc.TipoCalculo')
+            ->orderBy('pdt.PolizaDesempleoTipoCartera')
+            ->get();*/
+
+
+        $tipos_cartera = DB::table('poliza_desempleo_tasa_diferenciada as pdt')
+            ->join('poliza_desempleo_tipo_cartera as pdtc', 'pdt.PolizaDesempleoTipoCartera', '=', 'pdtc.Id')
+            ->join('saldos_montos as sm', 'sm.Id', '=', 'pdt.SaldosMontos')
+            ->leftJoin(DB::raw('(
+        SELECT DesempleoTipoCartera, SUM(TotalCredito) AS Total, Mes, Axo
+        FROM poliza_desempleo_cartera_temp
+        GROUP BY DesempleoTipoCartera, Mes, Axo
+    ) as pdct'), 'pdct.DesempleoTipoCartera', '=', 'pdtc.Id')
+            ->select(
+                'pdt.PolizaDesempleoTipoCartera',
+                DB::raw("
+            CASE pdtc.TipoCalculo
+                WHEN 0 THEN 'No aplica'
+                WHEN 1 THEN 'Fecha'
+                WHEN 2 THEN 'Monto'
+                ELSE 'Desconocido'
+            END as TipoCalculoTexto
+        "),
+                DB::raw("GROUP_CONCAT(DISTINCT CONCAT(sm.Abreviatura, ' ', sm.Descripcion) ORDER BY sm.Id SEPARATOR ', ') as SaldosMontosTexto"),
+                DB::raw('COALESCE(pdct.Total, 0) as Total'),
+                'pdct.Mes',
+                'pdct.Axo'
+            )
+            ->where('pdtc.PolizaDesempleo', $id)
+            ->groupBy('pdt.PolizaDesempleoTipoCartera', 'pdtc.TipoCalculo', 'pdct.Total', 'pdct.Mes', 'pdct.Axo')
             ->orderBy('pdt.PolizaDesempleoTipoCartera')
             ->get();
 
@@ -716,6 +745,7 @@ class DesempleoCarteraController extends Controller
 
 
                 if ($tipo->TipoCalculo == 1) {
+
                     // 1️⃣ Un solo update para SaldosMontos, TotalCredito y Tasa
                     //Fecha
                     DesempleoCarteraTemp::where('PolizaDesempleo', $id)
