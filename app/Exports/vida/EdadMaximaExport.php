@@ -25,7 +25,7 @@ class EdadMaximaExport implements FromCollection, WithHeadings
         $vida = Vida::findOrFail($this->id);
         //$edadTerminacion = $desempleo->EdadTerminacion ?? 100;
 
-        $data = VidaCarteraTemp::where('PolizaVida', $this->id)->get();
+        //$data = VidaCarteraTemp::where('PolizaVida', $this->id)->get();
 
         if ($vida->Aseguradora == 3 || $vida->Aseguradora == 4) {
             //fedecredito
@@ -72,6 +72,8 @@ class EdadMaximaExport implements FromCollection, WithHeadings
                 WHERE pdtc.PolizaVida = ? AND EdadDesembloso > ? AND EdadDesembloso > ?
             ", [$this->id, $vida->EdadMaximaInscripcion, $vida->EdadTerminacion]));
         }
+
+           //dd($poliza_edad_maxima);
 
         //$poliza_edad_maxima = $data->where('EdadDesembloso', '>', $vida->EdadMaximaInscripcion)->where('EdadDesembloso', '>', $vida->EdadTerminacion);
 

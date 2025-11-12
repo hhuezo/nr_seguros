@@ -81,6 +81,7 @@ Route::middleware(['web'])->group(function () {
     Route::post('exportar/vida/registros_responsabilidad_terminacion/{id}', [VidaController::class, 'registros_responsabilidad_terminacion']);
     Route::post('exportar/vida/nuevos_registros/{id}', [VidaController::class, 'exportar_nuevos_registros']);
     Route::post('exportar/vida/registros_eliminados/{id}', [VidaController::class, 'exportar_registros_eliminados']);
+    Route::post('exportar/vida/registros_rehabilitados/{id}', [VidaController::class, 'exportar_registros_rehabilitados']);
 
     //renovar
     Route::get('polizas/vida/renovar/{id}', [VidaRenovacionController::class, 'renovar']);

@@ -38,6 +38,7 @@ class RegistrosEliminadosExport implements FromCollection, WithHeadings
 
         if ($hayCartera) {
             if ($vida->Aseguradora == 3 || $vida->Aseguradora == 4) {
+
                 //fedecredito
                 $registrosEliminados = DB::table('poliza_vida_cartera AS c')
                     ->where('c.Mes', (int) $mesAnterior)
@@ -50,7 +51,7 @@ class RegistrosEliminadosExport implements FromCollection, WithHeadings
                             ->whereRaw('t.Identificador = c.Identificador');
                     })
                     ->select([
-                        'c.TipoDocumento AS TIPO_DOCUMENTO',
+                        //'c.TipoDocumento AS TIPO_DOCUMENTO',
                         'c.Dui AS DUI',
                         'c.PrimerApellido AS PRIMERAPELLIDO',
                         'c.SegundoApellido AS SEGUNDOAPELLIDO',
@@ -61,7 +62,7 @@ class RegistrosEliminadosExport implements FromCollection, WithHeadings
                         'c.NumeroReferencia AS NUMREFERENCIA',
                         'c.FechaOtorgamiento AS FECOTORGAMIENTO',
                         'c.SumaAsegurada AS SUMA_ASEGURADA',
-                        'c.PorcentajeExtraprima AS EXTRA_PRIMA',
+                        //'c.PorcentajeExtraprima AS EXTRA_PRIMA',
                         'c.Tasa AS TARIFA',
                     ])
                     ->get();
@@ -112,7 +113,7 @@ class RegistrosEliminadosExport implements FromCollection, WithHeadings
         if ($vida->Aseguradora == 3 || $vida->Aseguradora == 4) {
             //fedecredito
             return [
-                'Tipo de Documento',
+                //'Tipo de Documento',
                 'DUI o documento de identidad',
                 'Primer Apellido',
                 'Segundo Apellido',
@@ -123,7 +124,7 @@ class RegistrosEliminadosExport implements FromCollection, WithHeadings
                 'Nro. de Préstamo',
                 'Fecha de otorgamiento',
                 'Suma asegurada ',
-                'Extra Prima',
+                //'Extra Prima',
                 'TARIFA',
 
             ];
