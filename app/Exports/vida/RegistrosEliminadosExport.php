@@ -113,7 +113,7 @@ class RegistrosEliminadosExport implements FromCollection, WithHeadings
         if ($vida->Aseguradora == 3 || $vida->Aseguradora == 4) {
             //fedecredito
             return [
-                //'Tipo de Documento',
+                'Tipo de Documento',
                 'DUI o documento de identidad',
                 'Primer Apellido',
                 'Segundo Apellido',
@@ -124,7 +124,7 @@ class RegistrosEliminadosExport implements FromCollection, WithHeadings
                 'Nro. de Préstamo',
                 'Fecha de otorgamiento',
                 'Suma asegurada ',
-                //'Extra Prima',
+                'Extra Prima',
                 'TARIFA',
 
             ];
