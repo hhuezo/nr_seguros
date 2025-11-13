@@ -612,19 +612,9 @@
             $('#table3').DataTable({
                 paging: false
             });
-            $(document).ready(function() {
-                $('#table4').DataTable({
-                    dom: 'Bfrtip',
-                    buttons: [{
-                        extend: 'excelHtml5',
-                        text: '<i class="fas fa-file-excel"></i> Exportar a Excel',
-                        title: 'PolizaEdadTerminacion',
-                        exportOptions: {
-                            columns: ':visible, :hidden' // 🔹 exporta todas, visibles y ocultas
-                        }
-                    }],
-                    responsive: true
-                });
+
+             $('#table4').DataTable({
+                paging: false
             });
 
             $('#table5').DataTable({
