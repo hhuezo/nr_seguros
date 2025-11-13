@@ -95,42 +95,45 @@ class PolizaDeudaTempCartera extends Model
         try {
             $tipo_cartera = $this->LineaCredito;
 
+            // Normaliza todos los valores numéricos
+            $saldoCapital         = $this->SaldoCapital         ?? 0.00;
+            $intereses            = $this->Intereses            ?? 0.00;
+            $interesesCovid       = $this->InteresesCovid       ?? 0.00;
+            $interesesMoratorios  = $this->InteresesMoratorios  ?? 0.00;
+            $montoOtorgado        = $this->MontoOtorgado        ?? 0.00;
+
             switch ($tipo_cartera) {
                 case '1':
-                    # saldo a capital
-                    $saldo = $this->SaldoCapital;
+                    // saldo a capital
+                    $saldo = $saldoCapital;
                     break;
                 case '2':
-                    # saldo a capital mas intereses
-                    $saldo =  $this->SaldoCapital + $this->Intereses;
+                    // saldo a capital + intereses
+                    $saldo = $saldoCapital + $intereses;
                     break;
                 case '3':
-                    # saldo a capital mas intereses mas covid
-                    $saldo = $this->SaldoCapital + $this->Intereses +  $this->InteresesCovid;
+                    // saldo a capital + intereses + covid
+                    $saldo = $saldoCapital + $intereses + $interesesCovid;
                     break;
                 case '4':
-                    # saldo a capital as intereses mas covid mas moratorios
-                    $saldo = $this->SaldoCapital + $this->Intereses +  $this->InteresesCovid +  $this->InteresesMoratorios;
+                    // saldo a capital + intereses + covid + moratorios
+                    $saldo = $saldoCapital + $intereses + $interesesCovid + $interesesMoratorios;
                     break;
                 case '5':
-                    # .monto moninal
-                    $saldo = $this->MontoOtorgado;
+                    // monto nominal
+                    $saldo = $montoOtorgado;
                     break;
                 case '6':
-                    //se cambio por intereses
-                    # .monto otorgado
-                    $saldo = $this->Intereses;
+                    // solo intereses
+                    $saldo = $intereses;
                     break;
                 default:
-                    # .sando capital
-                    //$saldo = $this->SaldoCapital;
-
-                    $saldo =  0.00;
+                    $saldo = 0.00;
                     break;
             }
 
-            return $saldo;
-        } catch (Exception $e) {
+            return round($saldo, 2);
+        } catch (\Exception $e) {
             return 0.00;
         }
     }

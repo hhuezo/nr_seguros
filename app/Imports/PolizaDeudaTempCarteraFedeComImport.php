@@ -30,7 +30,7 @@ class PolizaDeudaTempCarteraFedeComImport implements ToModel, /*WithStartRow,*/ 
 
     public function __construct($PolizaDeuda, $FechaInicio, $FechaFinal, $credito)
     {
-  
+
         $this->PolizaDeuda = $PolizaDeuda;
         $this->FechaInicio = $FechaInicio;
         $this->FechaFinal = $FechaFinal;
@@ -56,8 +56,10 @@ class PolizaDeudaTempCarteraFedeComImport implements ToModel, /*WithStartRow,*/ 
             // $row[6] = str_replace(" ", ",", $row[6]);
             // $row[7] = str_replace(" ", ",", $row[7]);
             // $row[8] = str_replace(" ", ",", $row[8]);
-            // $row[9] = str_replace(" ", ",", $row[9]);            
+            // $row[9] = str_replace(" ", ",", $row[9]);
             // $row[10] = str_replace(" ", ",", $row[10]);
+
+
 
 
             return new PolizaDeudaTempCartera([
