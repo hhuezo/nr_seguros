@@ -176,45 +176,60 @@
                 <div class="modal-content" v-if="registroActivo">
                     <div class="modal-header">
                         <h5 class="modal-title">@{{ registroActivo.ClienteNombre }}</h5>
-
                     </div>
+
                     <div class="modal-body">
                         <div class="row">
+
+                            <!-- COLUMNA IZQUIERDA -->
                             <div class="col-md-6">
-                                <div class="form-group"><label>Recepción archivo</label>
+
+                                <div class="form-group">
+                                    <label>Recepción archivo</label>
                                     <input type="date" class="form-control"
                                         v-model="registroActivo.FechaRecepcionArchivo"
                                         @change="calcularDiasHabiles(registroActivo)">
                                 </div>
-                                <div class="form-group"><label>Fecha envío a CIA</label>
+
+                                <div class="form-group">
+                                    <label>Fecha envío a CIA</label>
                                     <input type="date" class="form-control" v-model="registroActivo.FechaEnvioCia"
                                         @change="calcularDiasHabiles(registroActivo)">
                                 </div>
-                                <div class="form-group"><label>Trabajo día hábil</label>
+
+                                <div class="form-group">
+                                    <label>Trabajo día hábil</label>
                                     <input type="number" class="form-control"
                                         v-model="registroActivo.TrabajoEfectuadoDiaHabil" readonly>
                                 </div>
-                                <div class="form-group"><label>Hora tarea</label>
+
+                                <div class="form-group">
+                                    <label>Hora tarea</label>
                                     <input type="time" class="form-control" v-model="registroActivo.HoraTarea">
                                 </div>
-                                <div class="form-group"><label>Flujo asignado</label>
+
+                                <div class="form-group">
+                                    <label>Flujo asignado</label>
                                     <input type="text" class="form-control" v-model="registroActivo.FlujoAsignado">
                                 </div>
-                                <div class="form-group"><label>Fecha vencimiento</label>
-                                    <input type="date" class="form-control" v-model="registroActivo.FechaVencimiento">
-                                </div>
-                                <div class="form-group"><label>Fecha envío cliente</label>
+
+                                <div class="form-group">
+                                    <label>Fecha envío cliente</label>
                                     <input type="date" class="form-control" v-model="registroActivo.FechaEnvioCliente">
                                 </div>
-                                <div class="form-group"><label>Anexo declaración</label>
+
+                                <div class="form-group">
+                                    <label>Anexo declaración</label>
                                     <input type="text" class="form-control" v-model="registroActivo.AnexoDeclaracion">
                                 </div>
+
                             </div>
+
+                            <!-- COLUMNA DERECHA -->
                             <div class="col-md-6">
-                                <div class="form-group"><label>Número Sisco</label>
-                                    <input type="text" class="form-control" v-model="registroActivo.NumeroSisco">
-                                </div>
-                                <div class="form-group"><label>Reproceso NR</label>
+
+                                <div class="form-group">
+                                    <label>Reproceso NR</label>
                                     <select class="form-control" v-model="registroActivo.ReprocesoNRId">
                                         <option value="">SELECCIONE</option>
                                         @foreach ($reprocesos as $reproceso)
@@ -222,48 +237,65 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="form-group"><label>Fecha envío corrección</label>
+
+                                <div class="form-group">
+                                    <label>Fecha envío corrección</label>
                                     <input type="date" class="form-control"
                                         v-model="registroActivo.FechaEnvioCorreccion">
                                 </div>
-                                <div class="form-group"><label>Fecha seguimiento cobros</label>
+
+                                <div class="form-group">
+                                    <label>Fecha seguimiento cobros</label>
                                     <input type="date" class="form-control"
                                         v-model="registroActivo.FechaSeguimientoCobros">
                                 </div>
-                                <div class="form-group"><label>Fecha recepción pago</label>
-                                    <input type="date" class="form-control"
-                                        v-model="registroActivo.FechaRecepcionPago">
+
+                                <div class="form-group">
+                                    <label>Fecha recepción pago</label>
+                                    <input type="date" class="form-control" v-model="registroActivo.FechaRecepcionPago">
                                 </div>
-                                <div class="form-group"><label>Fecha reporte CIA</label>
+
+                                <div class="form-group">
+                                    <label>Fecha reporte CIA</label>
                                     <input type="date" class="form-control" v-model="registroActivo.FechaReporteACia">
                                 </div>
-                                <div class="form-group"><label>Fecha aplicación</label>
+
+                                <div class="form-group">
+                                    <label>Fecha aplicación</label>
                                     <input type="date" class="form-control" v-model="registroActivo.FechaAplicacion">
                                 </div>
-                                <div class="form-group"><label>Comentarios</label>
-                                    <textarea class="form-control" rows="3" v-model="registroActivo.Comentarios"></textarea>
-                                </div>
+
                             </div>
+
                         </div>
                     </div>
+
                     <div class="modal-footer">
                         <button class="btn btn-warning" data-dismiss="modal">Cancelar</button>
-                        <button class="btn btn-primary" @click="guardarCambios">Guardar cambios</button>
+                        <button class="btn btn-primary" @click="guardarCambios">
+                            Guardar cambios
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
 
     {{-- Scripts --}}
-    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
-    <link href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css" rel="stylesheet" />
-    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- Toastr CSS -->
+    <link href="{{ asset('vendors/toast/toastr.min.css') }}" rel="stylesheet">
+
+   <!-- Toastr JS -->
+    <script src="{{ asset('vendors/toast/toastr.min.js') }}"></script>
+
+
+
+    <script src="{{ asset('vendors/jquery.dataTables.min.js') }}"></script>
+   <link href="{{ asset('vendors/jquery.dataTables.min.css') }}" rel="stylesheet" />
+
+    <script src="{{ asset('vendors/vue.global.prod.js') }}"></script>
 
 
     <script>
@@ -275,19 +307,48 @@
             data() {
                 return {
                     registros: @json($registro_control ?? []),
-                    registroActivo: null
+                    registroActivo: null,
+                    reprocesos: @json($reprocesos ?? [])
                 }
             },
             mounted() {
-                $('#datatable').DataTable({
+                $('#datatable1').DataTable({
                     paging: false,
                     searching: true,
-                    info: true,
+                    info: false,
                     ordering: false,
-                    scrollX: true
+                    scrollX: true,
+                    language: {
+                        decimal: ",",
+                        thousands: ".",
+                        processing: "Procesando...",
+                        search: "Buscar:",
+                        lengthMenu: "Mostrar _MENU_ registros",
+                        info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                        infoEmpty: "Mostrando 0 a 0 de 0 registros",
+                        infoFiltered: "(filtrado de _MAX_ registros totales)",
+                        infoPostFix: "",
+                        loadingRecords: "Cargando...",
+                        zeroRecords: "No se encontraron resultados",
+                        emptyTable: "Ningún dato disponible en esta tabla",
+                        paginate: {
+                            first: "Primero",
+                            previous: "Anterior",
+                            next: "Siguiente",
+                            last: "Último"
+                        },
+                        aria: {
+                            sortAscending: ": activar para ordenar la columna ascendente",
+                            sortDescending: ": activar para ordenar la columna descendente"
+                        }
+                    }
                 });
             },
             methods: {
+
+                // =====================================================
+                // 🔹 CLASES DE COLOR
+                // =====================================================
                 getRowClass(color) {
                     const map = {
                         success: 'table-success',
@@ -298,21 +359,53 @@
                     };
                     return map[color] ?? 'table-secondary';
                 },
+
+                // =====================================================
+                // 🔹 FORMATEO DE FECHA
+                // =====================================================
                 formatDate(date) {
                     if (!date) return '';
-                    const parsed = new Date(date);
-                    return isNaN(parsed.getTime()) ? '' : parsed.toLocaleDateString('es-SV');
+
+                    // Normalizar a solo la parte "YYYY-MM-DD"
+                    // Si incluye hora, ejemplo: "2025-08-01 00:00:00"
+                    if (date.includes(' ')) {
+                        date = date.split(' ')[0];
+                    }
+
+                    // Seguridad adicional: eliminar milisegundos si vienen
+                    if (date.includes('.')) {
+                        date = date.split('.')[0];
+                    }
+
+                    const [year, month, day] = date.split('-');
+
+                    // Evitar errores si por alguna razón la fecha no viene como se espera
+                    if (!year || !month || !day) return '';
+
+                    return `${day}/${month}/${year}`;
                 },
+
+                // =====================================================
+                // 🔹 FORMATEO DE NUMEROS
+                // =====================================================
                 formatNumber(num) {
                     if (!num || isNaN(num)) return '';
                     return parseFloat(num).toLocaleString('es-SV', {
                         minimumFractionDigits: 2
                     });
                 },
+
+                // =====================================================
+                // 🔹 ABRIR MODAL
+                // =====================================================
                 abrirModal(registro) {
                     this.registroActivo = JSON.parse(JSON.stringify(registro));
                     $('#modal-edit').modal('show');
                 },
+
+                // =====================================================
+                // 🔹 CALCULAR DÍAS HÁBILES
+                // =====================================================
                 calcularDiasHabiles(registro) {
                     if (!registro.FechaRecepcionArchivo || !registro.FechaEnvioCia) {
                         registro.TrabajoEfectuadoDiaHabil = '';
@@ -327,18 +420,47 @@
                             'fecha_inicio': registro.FechaRecepcionArchivo,
                             'fecha_fin': registro.FechaEnvioCia
                         },
-                        success: function(response) {
-                            if (response && response.dias_habiles !== undefined) {
-                                registro.TrabajoEfectuadoDiaHabil = response.dias_habiles;
-                            } else {
-                                registro.TrabajoEfectuadoDiaHabil = '';
-                            }
+                        success: (response) => {
+                            registro.TrabajoEfectuadoDiaHabil =
+                                response?.dias_habiles ?? '';
                         },
-                        error: function() {
+                        error: () => {
                             registro.TrabajoEfectuadoDiaHabil = '';
                         }
                     });
                 },
+
+                // =====================================================
+                // 🔹 CÁLCULO DEL COLOR (igual que backend)
+                // =====================================================
+                calcularColor(item) {
+                    if (item.FechaAplicacion) return 'success';
+
+                    if (item.FechaRecepcionPago || item.FechaReporteACia)
+                        return 'warning';
+
+                    if (
+                        item.AnexoDeclaracion ||
+                        item.NumeroSisco ||
+                        item.FechaVencimiento ||
+                        item.FechaEnvioCliente ||
+                        item.ReprocesoNRId ||
+                        item.FechaEnvioCorreccion ||
+                        item.FechaSeguimientoCobros
+                    ) return 'info';
+
+                    if (
+                        item.FechaRecepcionArchivo ||
+                        item.FechaEnvioCia ||
+                        item.TrabajoEfectuadoDiaHabil
+                    ) return 'orange';
+
+                    return 'secondary';
+                },
+
+                // =====================================================
+                // 🔹 GUARDAR CAMBIOS
+                // =====================================================
                 guardarCambios() {
                     if (!this.registroActivo) return;
 
@@ -350,10 +472,29 @@
                             ...this.registroActivo
                         },
                         success: (response) => {
-                            const index = this.registros.findIndex(r => r.Id === this.registroActivo
-                            .Id);
+
+                            const index = this.registros.findIndex(
+                                r => r.Id === this.registroActivo.Id
+                            );
+
                             if (index !== -1) {
-                                this.registros[index] = JSON.parse(JSON.stringify(this.registroActivo));
+
+                                // Buscar nombre del reproceso
+                                const reproceso = this.reprocesos.find(
+                                    r => r.Id == this.registroActivo.ReprocesoNRId
+                                );
+
+                                this.registroActivo.ReprocesoNombre =
+                                    reproceso ? reproceso.Nombre : '';
+
+                                // Actualizar registro completo
+                                this.registros[index] = JSON.parse(
+                                    JSON.stringify(this.registroActivo)
+                                );
+
+                                // Recalcular color
+                                this.registros[index].Color =
+                                    this.calcularColor(this.registros[index]);
                             }
 
                             $('#modal-edit').modal('hide');
@@ -365,6 +506,7 @@
                         }
                     });
                 }
+
             }
         }).mount('#app');
     </script>

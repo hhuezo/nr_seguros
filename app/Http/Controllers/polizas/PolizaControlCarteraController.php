@@ -18,6 +18,7 @@ use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PolizaControlCarteraController extends Controller
 {
@@ -798,24 +799,20 @@ class PolizaControlCarteraController extends Controller
         try {
             $control_cartera = PolizaDeclarativaControl::findOrFail($id);
 
-            $control_cartera->fill($request->only([
-                'FechaRecepcionArchivo',
-                'FechaEnvioCia',
-                'TrabajoEfectuadoDiaHabil',
-                'HoraTarea',
-                'FlujoAsignado',
-                'AnexoDeclaracion',
-                'NumeroSisco',
-                'FechaVencimiento',
-                'FechaEnvioCliente',
-                'ReprocesoNRId',
-                'FechaEnvioCorreccion',
-                'FechaSeguimientoCobros',
-                'FechaRecepcionPago',
-                'FechaReporteACia',
-                'FechaAplicacion',
-                'Comentarios',
-            ]));
+            // 👉 Asignación manual correcta
+            $control_cartera->FechaRecepcionArchivo   = $request->FechaRecepcionArchivo;
+            $control_cartera->FechaEnvioCia           = $request->FechaEnvioCia;
+            $control_cartera->TrabajoEfectuadoDiaHabil = $request->TrabajoEfectuadoDiaHabil;
+            $control_cartera->HoraTarea               = $request->HoraTarea;
+            $control_cartera->FlujoAsignado           = $request->FlujoAsignado;
+            $control_cartera->FechaEnvioCliente       = $request->FechaEnvioCliente;
+            $control_cartera->AnexoDeclaracion        = $request->AnexoDeclaracion;
+            $control_cartera->ReprocesoNRId           = $request->ReprocesoNRId;
+            $control_cartera->FechaEnvioCorreccion    = $request->FechaEnvioCorreccion;
+            $control_cartera->FechaSeguimientoCobros  = $request->FechaSeguimientoCobros;
+            $control_cartera->FechaRecepcionPago      = $request->FechaRecepcionPago;
+            $control_cartera->FechaReporteACia        = $request->FechaReporteACia;
+            $control_cartera->FechaAplicacion         = $request->FechaAplicacion;
 
             $control_cartera->save();
 
@@ -825,6 +822,7 @@ class PolizaControlCarteraController extends Controller
                 'data' => $control_cartera
             ]);
         } catch (\Exception $e) {
+
             return response()->json([
                 'success' => false,
                 'message' => 'Error al actualizar el registro',
@@ -832,6 +830,9 @@ class PolizaControlCarteraController extends Controller
             ], 500);
         }
     }
+
+
+
 
 
 
