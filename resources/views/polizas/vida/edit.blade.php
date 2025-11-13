@@ -516,10 +516,8 @@
                                                                                             @endif
 
                                                                                             @if ($tipo->TipoCalculo == 2)
-                                                                                                <td>{{ $tasa_diferenciada->EdadDesde }}
-                                                                                                    Años</td>
-                                                                                                <td>{{ $tasa_diferenciada->EdadHasta }}
-                                                                                                    Años</td>
+                                                                                                <td>${{ $tasa_diferenciada->MontoDesde }}</td>
+                                                                                                <td>${{ $tasa_diferenciada->MontoHasta }}</td>
                                                                                             @endif
 
                                                                                             <td>{{ $tasa_diferenciada->Tasa }}%
