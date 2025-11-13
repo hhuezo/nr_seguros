@@ -9,7 +9,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{ url('polizas/vida/fede/create_pago') }}" id="uploadForm{{$obj->Id}}" method="POST" enctype="multipart/form-data">
+            <form action="{{ url('polizas/vida/fede/create_pago') }}" id="uploadFedeForm{{$obj->Id}}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body">
                     <div class="form-group row">
@@ -90,7 +90,6 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-primary">Subir Cartera</button>
-                    <!-- <button type="button" class="btn btn-primary" id="submitButton-{{$obj->Id}}">Subir Cartera</button> -->
                 </div>
             </form>
 
@@ -101,7 +100,7 @@
     </div>
 </div>
 <script>
-    document.getElementById('uploadForm{{$obj->Id}}').addEventListener('submit', function() {
+    document.getElementById('uploadFedeForm{{$obj->Id}}').addEventListener('submit', function() {
         document.getElementById('loading-overlay').style.display = 'flex'; // Muestra el overlay de carga
     });
 
