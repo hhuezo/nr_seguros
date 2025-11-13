@@ -142,7 +142,7 @@
                                                     action="{{ url('exportar/vida/registros_edad_maxima') }}/{{ $poliza_vida->Id }}"
                                                     method="POST">
                                                     @csrf
-                                                    <button style="text-align: right;" class="btn btn-success">Descargar
+                                                    <button style="text-align: right;" class="btn btn-success" {{ $poliza_responsabilidad_maxima->count() > 0 ? '' : 'disabled' }}>Descargar
                                                         Excel</button>
                                                 </form>
 
@@ -218,7 +218,7 @@
                                                     action="{{ url('exportar/vida/registros_responsabilidad_maxima') }}/{{ $poliza_vida->Id }}"
                                                     method="POST">
                                                     @csrf
-                                                    <button style="text-align: right;" class="btn btn-success">Descargar
+                                                    <button style="text-align: right;" class="btn btn-success" {{$poliza_edad_maxima->count() > 0 ? '' : 'disabled'}}>Descargar
                                                         Excel</button>
                                                 </form>
 
@@ -290,7 +290,7 @@
                                                     action="{{ url('exportar/vida/registros_responsabilidad_terminacion') }}/{{ $poliza_vida->Id }}"
                                                     method="POST">
                                                     @csrf
-                                                    <button style="text-align: right;" class="btn btn-success">Descargar
+                                                    <button style="text-align: right;" class="btn btn-success" {{ $poliza_edad_terminacion->count() > 0 ? '' : 'disabled'}}>Descargar
                                                         Excel</button>
                                                 </form>
 
@@ -515,7 +515,7 @@
                                         <div class="col-md-12 col-sm-12" align="right">
                                             <form method="POST" action="{{ url('exportar/vida/extraprimados_excluidos') }}/{{ $poliza_vida->Id }}">
                                                 @csrf
-                                                <button class="btn btn-success">Descargar Excel</button>
+                                                <button class="btn btn-success" {{ $extra_primados->count() > 0 ? '' : 'disabled' }}>Descargar Excel</button>
                                             </form>
                                             <br>
                                         </div>

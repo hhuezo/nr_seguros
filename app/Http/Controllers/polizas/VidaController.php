@@ -2026,6 +2026,8 @@ class VidaController extends Controller
                 $poliza->User = $tempRecord->User;
                 $poliza->Axo = $tempRecord->Axo ?? null;
                 $poliza->Mes = $tempRecord->Mes ?? null;
+                $poliza->TipoDocumento = $tempRecord->TipoDocumento ?? null;
+                $poliza->PorcentajeExtraprima = $tempRecord->PorcentajeExtraprima ?? null;
                 $poliza->FechaInicio = $tempRecord->FechaInicio ?? null;
                 $poliza->FechaFinal = $tempRecord->FechaFinal ?? null;
                 $poliza->FechaNacimientoDate = $tempRecord->FechaNacimientoDate ?? null;
@@ -2492,7 +2494,7 @@ class VidaController extends Controller
             ->where('Mes', $mes + 0)
             ->where('PolizaVida', $request->Vida)
             ->get();
-        //dd($tempData);
+       // dd($tempData);
 
         // Iterar sobre los resultados y realizar la inserción en la tabla principal
         foreach ($tempData as $tempRecord) {
@@ -2520,6 +2522,8 @@ class VidaController extends Controller
             $poliza->User  = $tempRecord->User;
             $poliza->Axo = $tempRecord->Axo;
             $poliza->Mes = $tempRecord->Mes;
+            $poliza->TipoDocumento = $tempRecord->TipoDocumento ?? null;
+            $poliza->PorcentajeExtraprima = $tempRecord->PorcentajeExtraprima ?? null;
             $poliza->FechaInicio  = $tempRecord->FechaInicio;
             $poliza->FechaFinal  = $tempRecord->FechaFinal;
             $poliza->FechaNacimientoDate  = $tempRecord->FechaNacimientoDate;

@@ -51,7 +51,7 @@ class RegistrosEliminadosExport implements FromCollection, WithHeadings
                             ->whereRaw('t.Identificador = c.Identificador');
                     })
                     ->select([
-                        //'c.TipoDocumento AS TIPO_DOCUMENTO',
+                        'c.TipoDocumento AS TIPO_DOCUMENTO',
                         'c.Dui AS DUI',
                         'c.PrimerApellido AS PRIMERAPELLIDO',
                         'c.SegundoApellido AS SEGUNDOAPELLIDO',
@@ -62,7 +62,7 @@ class RegistrosEliminadosExport implements FromCollection, WithHeadings
                         'c.NumeroReferencia AS NUMREFERENCIA',
                         'c.FechaOtorgamiento AS FECOTORGAMIENTO',
                         'c.SumaAsegurada AS SUMA_ASEGURADA',
-                        //'c.PorcentajeExtraprima AS EXTRA_PRIMA',
+                        'c.PorcentajeExtraprima AS EXTRA_PRIMA',
                         'c.Tasa AS TARIFA',
                     ])
                     ->get();
