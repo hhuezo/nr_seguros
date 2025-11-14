@@ -361,7 +361,6 @@ class DesempleoCarteraController extends Controller
                 }
             }
 
-            $obj->SaldoTotal = $obj->calculoTodalSaldo();
             $obj->update();
 
 
