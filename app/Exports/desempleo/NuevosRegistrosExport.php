@@ -41,8 +41,40 @@ class NuevosRegistrosExport implements FromCollection, WithHeadings
         $axoActual = $tempRegistro->Axo;
         $mesActual = $tempRegistro->Mes;
 
-        // 🔹 Consulta optimizada con uso de Identificador
-        $nuevosRegistros = collect(DB::select("
+        // 🔹 Consulta optimizada con uso de
+        if ($desempleo->Aseguradora == 3 || $desempleo->Aseguradora == 4) {
+            $nuevosRegistros = collect(DB::select("
+                SELECT
+                    pdtc.TipoPersona AS TIPO_DOCUMENTO,
+                    pdtc.Dui AS DUI,
+                    pdtc.PrimerApellido AS PRIMERAPELLIDO,
+                    pdtc.SegundoApellido AS SEGUNDOAPELLIDO,
+                    pdtc.PrimerNombre AS PRIMERNOMBRE,
+                    pdtc.Nacionalidad AS NACIONALIDAD,
+                    pdtc.FechaNacimiento AS FECNACIMIENTO,
+                    pdtc.Sexo AS GENERO,
+                    pdtc.NumeroReferencia AS NUMREFERENCIA,
+                    pdtc.FechaOtorgamiento AS FECOTORGAMIENTO,
+                    pdtc.MontoOtorgado AS MONTO_OTORGADO,
+                    pdtc.Tasa AS TARIFA
+                FROM poliza_desempleo_cartera_temp AS pdtc
+                WHERE pdtc.PolizaDesempleo = ?
+                AND pdtc.Axo = ?
+                AND pdtc.Mes = ?
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM poliza_desempleo_cartera AS pdc
+                    WHERE pdc.PolizaDesempleo = ?
+                        AND pdc.Axo = ?
+                        AND pdc.Mes = ?
+                        AND pdc.NumeroReferencia = pdtc.NumeroReferencia
+                        AND pdc.Identificador = pdtc.Identificador
+                )
+            ", [$id, $axoActual, $mesActual, $id, $anioAnterior, $mesAnterior]));
+        } else {
+
+
+            $nuevosRegistros = collect(DB::select("
                 SELECT
                     pdtc.Dui AS DUI,
                     pdtc.Pasaporte AS PASAPORTE,
@@ -75,7 +107,7 @@ class NuevosRegistrosExport implements FromCollection, WithHeadings
                         AND pdc.Identificador = pdtc.Identificador
                 )
             ", [$id, $axoActual, $mesActual, $id, $anioAnterior, $mesAnterior]));
-
+        }
 
         return $nuevosRegistros;
     }
@@ -83,24 +115,42 @@ class NuevosRegistrosExport implements FromCollection, WithHeadings
 
     public function headings(): array
     {
-        return [
-            'DUI',
-            'PASAPORTE',
-            'CARNET RESI',
-            'NACIONALIDAD',
-            'FECHA NACIMIENTO',
-            'TIPO PERSONA',
-            'GENERO',
-            'PRIMER APELLIDO',
-            'SEGUNDO APELLIDO',
-            'APELLIDO CASADA',
-            'PRIMER NOMBRE',
-            'SEGUNDO NOMBRE',
-            'FECHA DE OTORGAMIENTO',
-            'FECHA DE VENCIMIENTO',
-            'NUMREFERENCIA',
-            'MONTO OTORGADO',
-            'TARIFA',
-        ];
+        $desempleo = Desempleo::findOrFail($this->id);
+        if ($desempleo->Aseguradora == 3 || $desempleo->Aseguradora == 4) {
+            return [
+                'Tipo de Documento',
+                'DUI o documento de identidad',
+                'Primer Apellido',
+                'Segundo Apellido',
+                'Nombres',
+                'Nacionalidad',
+                'Fecha de Nacimiento',
+                'Género',
+                'Nro. de Préstamo',
+                'Fecha de otorgamiento',
+                'Monto Otorgado',
+                'TARIFA',
+            ];
+        } else {
+            return [
+                'DUI',
+                'PASAPORTE',
+                'CARNET RESI',
+                'NACIONALIDAD',
+                'FECHA NACIMIENTO',
+                'TIPO PERSONA',
+                'GENERO',
+                'PRIMER APELLIDO',
+                'SEGUNDO APELLIDO',
+                'APELLIDO CASADA',
+                'PRIMER NOMBRE',
+                'SEGUNDO NOMBRE',
+                'FECHA DE OTORGAMIENTO',
+                'FECHA DE VENCIMIENTO',
+                'NUMREFERENCIA',
+                'MONTO OTORGADO',
+                'TARIFA',
+            ];
+        }
     }
 }
