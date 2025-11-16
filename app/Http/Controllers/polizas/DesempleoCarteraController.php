@@ -900,13 +900,11 @@ class DesempleoCarteraController extends Controller
                     ->where('c.PolizaDesempleo', $id)
                     ->where('c.Axo', $axoAnterior)
                     ->where('c.Mes', $mesAnterior)
-                    ->whereRaw("COALESCE(c.NumeroReferencia, '') = COALESCE(t.NumeroReferencia, '')")
-                    ->whereRaw("COALESCE(c.Identificador, '') = COALESCE(t.Identificador, '')");
+                    ->whereRaw("TRIM(COALESCE(c.NumeroReferencia, '')) = TRIM(COALESCE(t.NumeroReferencia, ''))")
+                    ->whereRaw("TRIM(COALESCE(c.Identificador, '')) = TRIM(COALESCE(t.Identificador, ''))");
             })
             ->select('t.*')
             ->get();
-
-
 
 
         $total = DesempleoCarteraTemp::where('PolizaDesempleo', $id)->sum('SaldoTotal');
