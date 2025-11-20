@@ -38,7 +38,9 @@
                     <div class="x_panel">
                         <div class="x_title">
                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                <h2>Resumen de cartera</h2>
+                                <h2>Resumen de cartera {{ $poliza_vida->NumeroPoliza }} <br>
+                                    {{ $poliza_vida->cliente->Nombre ?? '' }}
+                                </h2>
                             </div>
                             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
                                 <table>

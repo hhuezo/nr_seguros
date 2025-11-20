@@ -771,7 +771,7 @@ class DeudaController extends Controller
 
                 $dataPago = collect([]);
 
-
+                //dd($dataPagoTemp);
 
                 foreach ($dataPagoTemp as $item) {
 
@@ -1085,6 +1085,10 @@ class DeudaController extends Controller
                 ->where('poliza_deuda_tipo_cartera.PolizaDeuda', $id)
                 ->whereIn('poliza_deuda_tipo_cartera.TipoCalculo', [1, 2])->count();
 
+            $fechas = PolizaDeudaCartera::select('Mes', 'Axo', 'FechaInicio', 'FechaFinal')
+                ->where('PolizaDeuda', '=', $id)
+                ->orderByDesc('Id')->first();
+
 
             return view('polizas.deuda.edit', compact(
                 'historico',
@@ -1121,7 +1125,8 @@ class DeudaController extends Controller
                 //tab2
                 'dataPago',
                 'dataPagoId',
-                'count_tasas_diferencidas'
+                'count_tasas_diferencidas',
+                'fechas'
             ));
         }
     }
@@ -2244,27 +2249,6 @@ class DeudaController extends Controller
                     'ptc.MontoMaximoIndividual'
                 )
                 ->get();
-
-
-            // Calcular cantidad de validaciones por cada crédito
-            /* foreach ($poliza_cumulos as $cumulo) {
-                $count = PolizaDeudaTempCartera::leftJoin(
-                    'poliza_deuda_validados',
-                    'poliza_deuda_validados.NumeroReferencia',
-                    '=',
-                    'poliza_deuda_temp_cartera.NumeroReferencia'
-                )
-                    ->whereNull('poliza_deuda_validados.NumeroReferencia')
-                    ->where('poliza_deuda_temp_cartera.Dui', $cumulo->Dui)
-                    ->where('poliza_deuda_temp_cartera.Pasaporte', $cumulo->Pasaporte)
-                    ->where('poliza_deuda_temp_cartera.CarnetResidencia', $cumulo->CarnetResidencia)
-                    ->where('poliza_deuda_temp_cartera.NoValido', 0)
-                    ->where('poliza_deuda_temp_cartera.PolizaDeuda', $poliza)
-                    ->count();
-
-                $cumulo->Validado = $count;
-            }*/
-
 
 
             // Calcular cantidad de validaciones por cada crédito

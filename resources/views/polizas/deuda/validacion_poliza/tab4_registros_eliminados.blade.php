@@ -10,21 +10,22 @@
     <thead>
         <tr>
             <th>Número crédito</th>
+            <th>Linea credito</th>
             <th>DUI</th>
-            {{-- <th>NIT</th> --}}
             <th>Nombre</th>
             <th>Fecha Nacimiento</th>
             <th>Fecha Otorgamiento</th>
             <th>Edad Actual</th>
             <th>Edad Desembolso</th>
+            <th>Saldo reportado</th>
         </tr>
     </thead>
     <tbody>
         @foreach ($registros_eliminados as $registro)
             <tr>
                 <td>{{ $registro->NumeroReferencia }}</td>
+                <td>{{ $registro->LineaCredito }} </td>
                 <td>{{ $registro->Dui }}</td>
-                {{-- <td>{{ $registro->Nit }}</td> --}}
                 <td>{{ $registro->PrimerNombre }}
                     {{ $registro->SegundoNombre }}
                     {{ $registro->PrimerApellido }}
@@ -38,6 +39,10 @@
                 <td>{{ $registro->Edad ? $registro->Edad : '' }} Años</td>
                 <td>{{ $registro->Edad ? $registro->Edad : '' }}
                     Años</td>
+                <td>
+                    {{ $registro->TotalCredito ? '$'.number_format($registro->TotalCredito, 2, '.', ',') : '' }}
+                </td>
+
             </tr>
         @endforeach
 

@@ -10,7 +10,8 @@
 
         <div class="x_title">
             <div class="col-md-6 col-sm-6 col-xs-12">
-                <h4>Polizas de Vida </h4>
+                 <h4>Pólizas/ Póliza de vida / {{ $poliza_vida->NumeroPoliza }}<small></small>
+                </h4>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
                 <a href="{{ url('polizas/vida/') }}?idRegistro={{ $poliza_vida->Id }}"><button

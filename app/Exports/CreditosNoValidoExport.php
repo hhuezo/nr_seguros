@@ -119,7 +119,26 @@ class CreditosNoValidoExport implements FromCollection, WithHeadings
                 ->get();
         }
 
+        // Obtener los rangos de asegurabilidad de la póliza
+        $edades = DB::table('poliza_deuda_requisitos')
+            ->where('Deuda', $this->id)
+            ->selectRaw('
+            MIN(EdadInicial) AS EdadInicial,
+            MAX(EdadFinal) AS EdadFinal,
+            MIN(MontoInicial) AS MontoInicial,
+            MAX(MontoFinal) AS MontoFinal
+        ')
+            ->first();
 
+        foreach ($data as $cumulo) {
+            if ($cumulo->EdadDesembloso < $edades->EdadInicial || $cumulo->EdadDesembloso > $edades->EdadFinal) {
+                $cumulo->Motivo = 'Revisar edad: fuera de los rangos de asegurabilidad.';
+            } elseif ($cumulo->saldo_total > $edades->MontoFinal) {
+                $cumulo->Motivo = 'Excede el límite de suma asegurada del rango permitido.';
+            } else {
+                $cumulo->Motivo = 'No cumple los criterios de asegurabilidad.';
+            }
+        }
 
 
         return $data;
@@ -153,6 +172,7 @@ class CreditosNoValidoExport implements FromCollection, WithHeadings
                 'TARIFA',
                 'TIPO CARTERA',
                 'LINEA CREDITO',
+                 'MOTIVO',
             ];
         } else {
             // Otras aseguradoras
@@ -183,6 +203,7 @@ class CreditosNoValidoExport implements FromCollection, WithHeadings
                 'PORCENTAJE EXTRAPRIMA',
                 'TIPO CARTERA',
                 'LINEA CREDITO',
+                'MOTIVO',
             ];
         }
     }

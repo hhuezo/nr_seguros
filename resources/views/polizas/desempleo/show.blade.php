@@ -30,7 +30,8 @@
         @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
         <div class="x_title">
             <div class="col-md-6 col-sm-6 col-xs-12">
-                <h4>Polizas de Desempleo </h4>
+                 <h4>Pólizas/ Póliza de desempleo / {{ $desempleo->NumeroPoliza }}<small></small>
+                </h4>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
                 <a href="{{ url('polizas/desempleo/') }}?idRegistro={{ $desempleo->Id }}"><button

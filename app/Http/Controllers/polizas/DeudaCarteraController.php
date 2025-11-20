@@ -31,7 +31,7 @@ class DeudaCarteraController extends Controller
     public function subir_cartera($id)
     {
         $deuda = Deuda::findOrFail($id);
-        $deuda_tipo_cartera = $deuda->deuda_tipos_cartera->where('Activo',1);
+        $deuda_tipo_cartera = $deuda->deuda_tipos_cartera->where('Activo', 1);
 
         foreach ($deuda_tipo_cartera as $tipo_cartera) {
             $tasas_diferenciadas = $tipo_cartera->tasa_diferenciada;
@@ -1313,8 +1313,12 @@ class DeudaCarteraController extends Controller
         //registros que no existen en el mes anterior
 
         $registros_eliminados = collect(DB::select("
-            SELECT pdc.*
+            SELECT pdc.NumeroReferencia,pdc.Dui,pdc.Pasaporte,pdc.CarnetResidencia
+            ,pdc.PrimerNombre,pdc.SegundoNombre,pdc.PrimerApellido,pdc.SegundoApellido,pdc.ApellidoCasada
+            ,pdc.FechaNacimiento,pdc.Edad,pdc.FechaOtorgamiento,pdc.EdadDesembloso,pdc.TotalCredito,saldos_montos.Abreviatura as LineaCredito,
+            pdc.TotalCredito
             FROM poliza_deuda_cartera pdc
+            inner join saldos_montos on saldos_montos.Id = pdc.LineaCredito
             WHERE pdc.PolizaDeuda = ?
             AND pdc.Axo = ?
             AND pdc.Mes = ?
@@ -1333,8 +1337,11 @@ class DeudaCarteraController extends Controller
         // 2️⃣ Registros nuevos
         // ==========================
         $nuevos_registros = collect(DB::select("
-            SELECT pdtc.*
+            SELECT pdtc.NumeroReferencia,pdtc.Dui,pdtc.Pasaporte,pdtc.CarnetResidencia
+            ,pdtc.PrimerNombre,pdtc.SegundoNombre,pdtc.PrimerApellido,pdtc.SegundoApellido,pdtc.ApellidoCasada
+            ,pdtc.FechaNacimiento,pdtc.Edad,pdtc.FechaOtorgamiento,pdtc.EdadDesembloso,pdtc.TotalCredito,saldos_montos.Abreviatura as LineaCredito
             FROM poliza_deuda_temp_cartera pdtc
+            inner join saldos_montos on saldos_montos.Id = pdtc.LineaCredito
             WHERE pdtc.PolizaDeuda = ?
             AND NOT EXISTS (
                 SELECT 1
@@ -1469,10 +1476,9 @@ class DeudaCarteraController extends Controller
 
             //dejamos los registros que no son nuevos como validos
             PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('NoValido', 1)->whereNotIn('Id', $idNuevos)->update(['NoValido' => 0]);
-        }
-        else{
+        } else {
             PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->update(['OmisionPerfil' => 1]);
-             PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('NoValido', 1)->update(['NoValido' => 0]);
+            PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('NoValido', 1)->update(['NoValido' => 0]);
         }
 
 

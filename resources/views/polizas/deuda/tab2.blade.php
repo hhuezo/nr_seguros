@@ -73,6 +73,19 @@
                 Excel</a>
         </div>
 
+        <table class="excel-like-table">
+            <tr>
+                <td>Fecha Inicio:
+                    {{ $fechas != null ? date('d/m/Y', strtotime($fechas->FechaInicio)) : '' }}
+                </td>
+                <td>Fecha Final:
+                    {{ $fechas != null ? date('d/m/Y', strtotime($fechas->FechaFinal)) : '' }}
+                </td>
+                <td>Mes: {{ $fechas != null ? $meses[$fechas->Mes] : '' }}</td>
+            </tr>
+        </table>
+        <br>
+
     </div>
 
     <input type="hidden" id="Tasa" value="{{ $deuda->Tasa }}">
