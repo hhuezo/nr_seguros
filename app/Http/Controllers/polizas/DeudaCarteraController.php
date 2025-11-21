@@ -1586,7 +1586,7 @@ class DeudaCarteraController extends Controller
 
 
         // eliminando datos de la cartera si existieran
-        $tempData = PolizaDeudaCartera::where('Axo', $anio)
+        PolizaDeudaCartera::where('Axo', $anio)
             ->where('Mes', $mes + 0)->where('PolizaDeuda', $request->Deuda)->delete();
 
 
@@ -1594,20 +1594,20 @@ class DeudaCarteraController extends Controller
         $tempData = PolizaDeudaTempCartera::where('Axo', $anio)
             ->where('Mes', $mes + 0)
             ->where('NoValido', 0)
-            ->where('OmisionPerfil', 1)
+            //->where('OmisionPerfil', 1)
             ->where('PolizaDeuda', $request->Deuda)
             ->get();
 
 
-        $tempDataValidados = PolizaDeudaTempCartera::join('poliza_deuda_validados', 'poliza_deuda_validados.NumeroReferencia', '=', 'poliza_deuda_temp_cartera.NumeroReferencia')
+
+        /*$tempDataValidados = PolizaDeudaTempCartera::join('poliza_deuda_validados', 'poliza_deuda_validados.NumeroReferencia', '=', 'poliza_deuda_temp_cartera.NumeroReferencia')
             ->where('poliza_deuda_temp_cartera.Axo', $anio)
             ->where('poliza_deuda_temp_cartera.Mes', $mes + 0)
             ->where('poliza_deuda_temp_cartera.OmisionPerfil', 0)
             ->where('NoValido', 0)
             ->where('poliza_deuda_temp_cartera.PolizaDeuda', $request->Deuda)
             ->select('poliza_deuda_temp_cartera.*')
-            ->get();
-
+            ->get();*/
 
 
         if (!empty($request->Eliminados)) {
@@ -1718,62 +1718,62 @@ class DeudaCarteraController extends Controller
         }
 
 
-        foreach ($tempDataValidados as $tempRecordV) {
-            //try {
-            $poliza = new PolizaDeudaCartera();
-            $poliza->CarnetResidencia = $tempRecordV->CarnetResidencia;
-            $poliza->Dui = $tempRecordV->Dui;
-            $poliza->Pasaporte = $tempRecordV->Pasaporte;
-            $poliza->Nacionalidad = $tempRecordV->Nacionalidad;
-            $poliza->FechaNacimiento = $tempRecordV->FechaNacimiento;
-            $poliza->TipoPersona = $tempRecordV->TipoPersona;
-            $poliza->PrimerApellido = $tempRecordV->PrimerApellido;
-            $poliza->SegundoApellido = $tempRecordV->SegundoApellido;
-            $poliza->ApellidoCasada = $tempRecordV->ApellidoCasada;
-            $poliza->PrimerNombre = $tempRecordV->PrimerNombre;
-            $poliza->SegundoNombre = $tempRecordV->SegundoNombre;
-            $poliza->NombreSociedad = $tempRecordV->NombreSociedad;
-            $poliza->Sexo = $tempRecordV->Sexo;
-            $poliza->FechaOtorgamiento = $tempRecordV->FechaOtorgamiento;
-            $poliza->FechaVencimiento = $tempRecordV->FechaVencimiento;
-            $poliza->NumeroReferencia = $tempRecordV->NumeroReferencia;
-            $poliza->MontoOtorgado = $tempRecordV->MontoOtorgado;
-            $poliza->SaldoCapital = $tempRecordV->SaldoCapital;
-            $poliza->Intereses = $tempRecordV->Intereses;
-            $poliza->InteresesCovid = $tempRecordV->InteresesCovid;
-            $poliza->InteresesMoratorios = $tempRecordV->InteresesMoratorios;
-            $poliza->MontoNominal = $tempRecordV->MontoNominal;
-            $poliza->User = $tempRecordV->User;
-            $poliza->Axo = $tempRecordV->Axo;
-            $poliza->Mes = $tempRecordV->Mes;
-            $poliza->PolizaDeuda = $tempRecordV->PolizaDeuda;
-            $poliza->FechaInicio = $tempRecordV->FechaInicio;
-            $poliza->FechaFinal = $tempRecordV->FechaFinal;
-            $poliza->TipoError = $tempRecordV->TipoError;
-            $poliza->FechaNacimientoDate = $tempRecordV->FechaNacimientoDate;
-            $poliza->Edad = $tempRecordV->Edad;
-            $poliza->EdadDesembloso = $tempRecordV->EdadDesembloso;
-            $poliza->LineaCredito = $tempRecordV->LineaCredito;
-            $poliza->NoValido = $tempRecordV->NoValido;
-            $poliza->PolizaDeudaTipoCartera = $tempRecordV->PolizaDeudaTipoCartera;
-            $poliza->Tasa = $tempRecordV->Tasa;
-            $poliza->TotalCredito = $tempRecordV->TotalCredito;
-            $poliza->FechaOtorgamientoDate = $tempRecordV->FechaOtorgamientoDate;
+        // foreach ($tempDataValidados as $tempRecordV) {
+        //     //try {
+        //     $poliza = new PolizaDeudaCartera();
+        //     $poliza->CarnetResidencia = $tempRecordV->CarnetResidencia;
+        //     $poliza->Dui = $tempRecordV->Dui;
+        //     $poliza->Pasaporte = $tempRecordV->Pasaporte;
+        //     $poliza->Nacionalidad = $tempRecordV->Nacionalidad;
+        //     $poliza->FechaNacimiento = $tempRecordV->FechaNacimiento;
+        //     $poliza->TipoPersona = $tempRecordV->TipoPersona;
+        //     $poliza->PrimerApellido = $tempRecordV->PrimerApellido;
+        //     $poliza->SegundoApellido = $tempRecordV->SegundoApellido;
+        //     $poliza->ApellidoCasada = $tempRecordV->ApellidoCasada;
+        //     $poliza->PrimerNombre = $tempRecordV->PrimerNombre;
+        //     $poliza->SegundoNombre = $tempRecordV->SegundoNombre;
+        //     $poliza->NombreSociedad = $tempRecordV->NombreSociedad;
+        //     $poliza->Sexo = $tempRecordV->Sexo;
+        //     $poliza->FechaOtorgamiento = $tempRecordV->FechaOtorgamiento;
+        //     $poliza->FechaVencimiento = $tempRecordV->FechaVencimiento;
+        //     $poliza->NumeroReferencia = $tempRecordV->NumeroReferencia;
+        //     $poliza->MontoOtorgado = $tempRecordV->MontoOtorgado;
+        //     $poliza->SaldoCapital = $tempRecordV->SaldoCapital;
+        //     $poliza->Intereses = $tempRecordV->Intereses;
+        //     $poliza->InteresesCovid = $tempRecordV->InteresesCovid;
+        //     $poliza->InteresesMoratorios = $tempRecordV->InteresesMoratorios;
+        //     $poliza->MontoNominal = $tempRecordV->MontoNominal;
+        //     $poliza->User = $tempRecordV->User;
+        //     $poliza->Axo = $tempRecordV->Axo;
+        //     $poliza->Mes = $tempRecordV->Mes;
+        //     $poliza->PolizaDeuda = $tempRecordV->PolizaDeuda;
+        //     $poliza->FechaInicio = $tempRecordV->FechaInicio;
+        //     $poliza->FechaFinal = $tempRecordV->FechaFinal;
+        //     $poliza->TipoError = $tempRecordV->TipoError;
+        //     $poliza->FechaNacimientoDate = $tempRecordV->FechaNacimientoDate;
+        //     $poliza->Edad = $tempRecordV->Edad;
+        //     $poliza->EdadDesembloso = $tempRecordV->EdadDesembloso;
+        //     $poliza->LineaCredito = $tempRecordV->LineaCredito;
+        //     $poliza->NoValido = $tempRecordV->NoValido;
+        //     $poliza->PolizaDeudaTipoCartera = $tempRecordV->PolizaDeudaTipoCartera;
+        //     $poliza->Tasa = $tempRecordV->Tasa;
+        //     $poliza->TotalCredito = $tempRecordV->TotalCredito;
+        //     $poliza->FechaOtorgamientoDate = $tempRecordV->FechaOtorgamientoDate;
 
-            $poliza->TipoDeuda = $tempRecordV->TipoDeuda;
-            $poliza->PorcentajeExtraprima = $tempRecordV->PorcentajeExtraprima;
-            $poliza->TipoDocumento = $tempRecordV->TipoDocumento;
-            $poliza->SaldoInteresMora = $tempRecordV->SaldoInteresMora;
-            $poliza->save();
-            // } catch (\Exception $e) {
-            //     // Captura errores y los guarda en el log
-            //     Log::error("Error al insertar en poliza_deuda_cartera2: " . $e->getMessage(), [
-            //         'NumeroReferencia' => $tempRecordV->NumeroReferencia,
-            //         'Usuario' => auth()->user()->id ?? 'N/A',
-            //         'Datos' => $tempRecordV
-            //     ]);
-            // }
-        }
+        //     $poliza->TipoDeuda = $tempRecordV->TipoDeuda;
+        //     $poliza->PorcentajeExtraprima = $tempRecordV->PorcentajeExtraprima;
+        //     $poliza->TipoDocumento = $tempRecordV->TipoDocumento;
+        //     $poliza->SaldoInteresMora = $tempRecordV->SaldoInteresMora;
+        //     $poliza->save();
+        //     // } catch (\Exception $e) {
+        //     //     // Captura errores y los guarda en el log
+        //     //     Log::error("Error al insertar en poliza_deuda_cartera2: " . $e->getMessage(), [
+        //     //         'NumeroReferencia' => $tempRecordV->NumeroReferencia,
+        //     //         'Usuario' => auth()->user()->id ?? 'N/A',
+        //     //         'Datos' => $tempRecordV
+        //     //     ]);
+        //     // }
+        // }
 
 
 
