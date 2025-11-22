@@ -56,6 +56,11 @@
 
 <div class="modal-body">
     <div class="box-body row">
+         <div class="col-md-6">
+
+            <h4 class="title" id="exampleModalLabel">
+                {{$val > 0 ? 'Nuevo pago':'Ultimo periodo facturado'}}</h4>
+        </div>
         <br>
 
         <!-- ==================== TABLA PRINCIPAL ==================== -->

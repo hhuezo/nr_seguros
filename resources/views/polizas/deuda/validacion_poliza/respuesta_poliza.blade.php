@@ -109,6 +109,9 @@
                                                 <br>
                                                 excluidos</a>
                                         </li>
+                                        <li role="presentation" class=""><a href="#tab_content8" role="tab"
+                                                id="profile-tab2" data-toggle="tab" aria-expanded="false">Registros <br> Rehabilitados</a>
+                                        </li>
 
                                     </ul>
                                     <div id="myTabContent" class="tab-content">
@@ -170,6 +173,15 @@
                                             aria-labelledby="profile-tab">
 
                                             @include('polizas.deuda.validacion_poliza.tab7_registros_excluidos')
+
+                                        </div>
+
+
+                                        <!--con rehabilitados-->
+                                        <div role="tabpanel" class="tab-pane fade" id="tab_content8"
+                                            aria-labelledby="profile-tab">
+
+                                            @include('polizas.deuda.validacion_poliza.tab8_registros_excluidos')
 
                                         </div>
 

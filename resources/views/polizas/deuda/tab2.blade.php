@@ -60,7 +60,7 @@
 
     <div class="modal-header">
         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-            <h4 class="title" id="exampleModalLabel">Nuevo pago</h4>
+            <h4 class="title" id="exampleModalLabel">{{$dataPago->first()['PrimaCalculada'] > 0 ? 'Nuevo pago':'Ultimo periodo facturado'}}</h4>
 
         </div>
         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 d-flex justify-content-start" style="text-align: right;">

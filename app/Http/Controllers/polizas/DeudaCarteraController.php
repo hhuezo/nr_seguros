@@ -1222,6 +1222,7 @@ class DeudaCarteraController extends Controller
         $startTime = microtime(true); // 🔹 Inicia el cronómetro
         $poliza_id = $request->Deuda;
         $deuda = Deuda::findOrFail($request->Deuda);
+        set_time_limit(600);
 
         $temp_data_fisrt = PolizaDeudaTempCartera::where('PolizaDeuda', $poliza_id)->first();
 
@@ -1485,6 +1486,10 @@ class DeudaCarteraController extends Controller
 
 
         $novalidos = PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)->where('NoValido', 1)->get();
+        $registros_rehabilitados = PolizaDeudaTempCartera::where('PolizaDeuda', $deuda->Id)
+            ->where('Rehabilitado', 1)
+            ->get();
+
 
 
         return view('polizas.deuda.validacion_poliza.respuesta_poliza', compact(
@@ -1498,6 +1503,7 @@ class DeudaCarteraController extends Controller
             'poliza_responsabilidad_maxima',
             'nuevos_registros',
             'extra_primados',
+            'registros_rehabilitados'
         ));
     }
 

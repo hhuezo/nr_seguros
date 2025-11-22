@@ -21,6 +21,7 @@ Route::middleware(['web'])->group(function () {
     Route::post('exportar/registros_edad_maxima/{id}', [DeudaController::class, 'registros_edad_maxima']);
     Route::post('exportar/registros_erroneos/{id}', [DeudaController::class, 'registros_erroneos']);
     Route::post('exportar/registros_responsabilidad_maxima/{id}', [DeudaController::class, 'registros_responsabilidad_maxima']);
+    Route::post('exportar/rehabilitados/{id}', [DeudaController::class, 'registros_rehabilitados']);
 
 
 

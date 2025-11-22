@@ -812,8 +812,21 @@ class VidaController extends Controller
             ->where('poliza_vida_tipo_cartera.PolizaVida', $id)
             ->whereIn('poliza_vida_tipo_cartera.TipoCalculo', [1, 2])->count();
 
+        //validacion de titulo
+        $val = false;
+        if ($dataPago->count() > 0) {
+            if ($dataPago->first()['PrimaCalculada']) {
+                $val = true;
+            }
+        } else {
+            if($dataPago){
+                $val = true;
+            }
+        }
 
+        // dd($dataPago);
         return view('polizas.vida.show', compact(
+            'val',
             'extraprimados',
             'clientes',
             'total_extrapima',
@@ -2494,7 +2507,7 @@ class VidaController extends Controller
             ->where('Mes', $mes + 0)
             ->where('PolizaVida', $request->Vida)
             ->get();
-       // dd($tempData);
+        // dd($tempData);
 
         // Iterar sobre los resultados y realizar la inserción en la tabla principal
         foreach ($tempData as $tempRecord) {

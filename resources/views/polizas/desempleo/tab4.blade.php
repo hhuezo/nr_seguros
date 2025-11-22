@@ -68,7 +68,7 @@
                     @else
                         <td style="text-align: center;"></td>
                     @endif
-                   
+
 
                     <td style="text-align: center;">
                         @if ($obj->Activo == 0)
@@ -81,13 +81,13 @@
                                 <i class="fa fa-pencil fa-lg" title="Actualizar Fechas de Cobro"></i>
                             </button>
                         @endif
-                    
-                       
-                    
+
+
+
                         @if ($obj->Activo == 1)
                             <button class="btn btn-warning" data-target="#modal-view-{{ $obj->Id }}" data-toggle="modal">
                                 <i class="fa fa-eye" align="center" title="Ver Actividad de Aviso de cobro"></i>
-                            </button> 
+                            </button>
                             <a href="" data-target="#modal-anular-{{ $obj->Id }}" data-toggle="modal" title="Anular Aviso de Cobro">
                                 <button class="btn btn-danger" style="background-color: #ff5733;">
                                     <i class="fa fa-close fa-lg"></i>
@@ -112,16 +112,16 @@
                                 </button>
                             </form>
                         @endif
-                    
-                       
+
+
                     </td>
-                    
+
 
                 </tr>
                 @include('polizas.desempleo.modal_edit')
             @endforeach
         </tbody>
-        
+
         <tfoot>
             <td colspan="5" style="text-align: right;"><b>Total de Poliza:</b> </td>
             <td colspan="5" style="text-align: right;"><b>${{ number_format($total, 2, '.', ',') }}</b> </td>
@@ -162,7 +162,7 @@
                                 <input type="date" name="ImpresionRecibo" id="ModalImpresionRecibo"
                                     value="{{ date('Y-m-d') }}" class="form-control" readonly>
                             </div>
-                
+
                         </div>
 
                         <div class="form-group">
@@ -207,3 +207,68 @@
         </div>
     </div>
 </div>
+<script>
+    function modal_edit(id) {
+
+        // document.getElementById('ModalSaldoA').value = "";
+        // document.getElementById('ModalImpresionRecibo').value = "";
+        document.getElementById('ModalComentario').value = "";
+        document.getElementById('ModalEnvioCartera').value = "";
+        document.getElementById('ModalEnvioPago').value = "";
+        document.getElementById('ModalPagoAplicado').value = "";
+        document.getElementById('ModalId').value = id;
+
+
+
+        $.get("{{ url('polizas/desempleo/get_pago') }}" + '/' + id, function(data) {
+
+
+            console.log(data);
+            if (data.SaldoA != null) {
+                document.getElementById('ModalSaldoA').value = data.SaldoA.substring(0, 10);
+            }
+
+            if (data.ImpresionRecibo != null) {
+                document.getElementById('ModalImpresionRecibo').value = data.ImpresionRecibo.substring(0, 10);
+                $("#ModalEnvioCartera").removeAttr("readonly");
+            }
+
+
+
+            document.getElementById('ModalComentario').value = data.Comentario;
+            if (data.EnvioCartera) {
+                document.getElementById('ModalEnvioCartera').value = data.EnvioCartera.substring(0, 10);
+                $("#ModalEnvioCartera").prop("readonly", true);
+            } else {
+                $("#ModalEnvioPago").prop("readonly", true);
+                $("#ModalPagoAplicado").prop("readonly", true);
+            }
+
+
+            if (data.EnvioPago) {
+                document.getElementById('ModalEnvioPago').value = data.EnvioPago.substring(0, 10);
+                $("#ModalEnvioPago").prop("readonly", true);
+            } else {
+                //  $("#ModalEnvioCartera").prop("readonly", true);
+                $("#ModalPagoAplicado").prop("readonly", true);
+            }
+
+            if (data.PagoAplicado) {
+                document.getElementById('ModalPagoAplicado').value = data.PagoAplicado.substring(0, 10);
+
+                $("#ModalEnvioCartera").prop("readonly", true);
+                $("#ModalEnvioPago").prop("readonly", true);
+                $("#ModalPagoAplicado").prop("readonly", true);
+            }
+            // // else {
+            //     $("#ModalEnvioCartera").prop("readonly", true);
+            //     $("#ModalEnvioPago").prop("readonly", true);
+            // }
+
+
+
+        });
+        $('#modal_editar_pago').modal('show');
+
+    }
+</script>

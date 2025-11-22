@@ -51,6 +51,11 @@
 
 <div class="modal-body">
     <div class="box-body row">
+        <div class="col-md-6">
+
+            <h4 class="title" id="exampleModalLabel">
+                {{$dataPago->first()['PrimaCalculada'] > 0 ? 'Nuevo pago':'Ultimo periodo facturado'}}</h4>
+        </div>
         <br>
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <table class="excel-like-table">
