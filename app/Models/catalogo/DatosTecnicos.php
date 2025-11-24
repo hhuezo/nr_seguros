@@ -8,13 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class DatosTecnicos extends Model
 {
     use HasFactory;
-    protected $table = 'datos_tecnicos';
+    protected $table = 'producto_datos_tecnicos';
     protected $primaryKey = 'Id'; // Especificamos la clave primaria
-    protected $fillable = ['Nombre', 'NombreJSON', 'Descripcion', 'Producto', 'Activo'];
+    protected $fillable = ['Nombre', 'NombreJSON', 'Descripcion', 'ProductoId', 'Activo'];
     public $timestamps = false;
 
     public function productos()
     {
-        return $this->belongsTo(Producto::class, 'Producto', 'Id');
+        return $this->belongsTo(Producto::class, 'ProductoId', 'Id');
     }
 }
