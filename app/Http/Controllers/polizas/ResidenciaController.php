@@ -700,7 +700,9 @@ class ResidenciaController extends Controller
                 return view('polizas.validacion_cartera.resultado', compact('nuevos', 'eliminados'));
             }*/
 
-            DB::statement("CALL insertar_temp_cartera_residencia(?, ?, ?, ?, ?)", [auth()->user()->id, $request->Axo, $request->Mes, $residencia->Id, $idUnicoCartera]);
+         //   DB::statement("CALL insertar_temp_cartera_residencia(?, ?, ?, ?, ?)", [auth()->user()->id, $request->Axo, $request->Mes, $residencia->Id, $idUnicoCartera]);
+
+            $this->insertar_temp(auth()->user()->id, $request->Axo, $request->Mes, $residencia->Id, $idUnicoCartera);
 
             $monto_cartera_total = PolizaResidenciaCartera::where('Axo', $request->Axo)
                 ->where('Mes', $request->Mes)
@@ -784,7 +786,7 @@ class ResidenciaController extends Controller
             $comen->save();
 
             PolizaResidenciaCartera::where('FechaInicio', $request->FechaInicio)->where('FechaFinal', $request->FechaFinal)->where('PolizaResidencia', $request->Residencia)
-            ->update(['DetalleResidencia' => $detalle->Id]);
+                ->update(['DetalleResidencia' => $detalle->Id]);
 
 
             $recibo->Id_recibo = ($recibo->Id_recibo) + 1;
@@ -795,9 +797,78 @@ class ResidenciaController extends Controller
         return back();
     }
 
+    public function insertar_temp($usuarioTemp, $axoTemp, $mesTemp, $polizaResidenciaId, $idUnicoCartera)
+    {
+        return DB::table('poliza_residencia_cartera')->insertUsing(
+            [
+                'Dui',
+                'Nit',
+                'Pasaporte',
+                'CarnetResidencia',
+                'Nacionalidad',
+                'FechaNacimiento',
+                'TipoPersona',
+                'NombreCompleto',
+                'NombreSociedad',
+                'Genero',
+                'Direccion',
+                'FechaOtorgamiento',
+                'FechaVencimiento',
+                'NumeroReferencia',
+                'SumaAsegurada',
+                'Tarifa',
+                'PrimaMensual',
+                'NumeroCuotas',
+                'TipoDeuda',
+                'ClaseCartera',
+                'User',
+                'Axo',
+                'Mes',
+                'PolizaResidencia',
+                'FechaInicio',
+                'FechaFinal',
+                'IdUnicoCartera'
+            ],
+            DB::table('poliza_residencia_temp_cartera')
+                ->select(
+                    'Dui',
+                    'Nit',
+                    'Pasaporte',
+                    'CarnetResidencia',
+                    'Nacionalidad',
+                    'FechaNacimiento',
+                    'TipoPersona',
+                    'NombreCompleto',
+                    'NombreSociedad',
+                    'Genero',
+                    'Direccion',
+                    'FechaOtorgamiento',
+                    'FechaVencimiento',
+                    'NumeroReferencia',
+                    'SumaAsegurada',
+                    'Tarifa',
+                    'PrimaMensual',
+                    'NumeroCuotas',
+                    'TipoDeuda',
+                    'ClaseCartera',
+                    'User',
+                    'Axo',
+                    'Mes',
+                    'PolizaResidencia',
+                    'FechaInicio',
+                    'FechaFinal',
+                    DB::raw("'" . $idUnicoCartera . "' AS IdUnicoCartera")
+                )
+                ->where('User', $usuarioTemp)
+                ->where('Axo', $axoTemp)
+                ->where('Mes', $mesTemp)
+                ->where('PolizaResidencia', $polizaResidenciaId)
+        );
+    }
+
     public function save_recibo($residencia, $detalle)
     {
- //dd($detalle);
+        //dd($detalle);
         $recibo_historial = new ResidenciaHistorialRecibo();
         $recibo_historial->PolizaResidenciaDetalle = $detalle->Id;
         $recibo_historial->ImpresionRecibo = $detalle->ImpresionRecibo;
@@ -924,7 +995,7 @@ class ResidenciaController extends Controller
         $recibo_historial = $this->save_recibo($residencia, $detalle);
         ///dd($recibo_historial);
         $configuracion = ConfiguracionRecibo::first();
-        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion', 'detalle', 'residencia', 'meses', 'cliente','recibo_historial'))->setWarnings(false)->setPaper('letter');
+        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion', 'detalle', 'residencia', 'meses', 'cliente', 'recibo_historial'))->setWarnings(false)->setPaper('letter');
         return $pdf->stream('Recibo.pdf');
 
         //  return back();
@@ -947,11 +1018,11 @@ class ResidenciaController extends Controller
             $recibo_historial = $this->save_recibo($residencia, $detalle);
         }
 
-      //  dd($recibo_historial);
+        //  dd($recibo_historial);
 
 
         //return view('polizas.residencia.recibo', compact('configuracion','cliente',  'detalle', 'residencia', 'meses', 'calculo'));
-        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion', 'cliente', 'detalle', 'residencia', 'meses', 'calculo','recibo_historial'))->setWarnings(false)->setPaper('letter');
+        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion', 'cliente', 'detalle', 'residencia', 'meses', 'calculo', 'recibo_historial'))->setWarnings(false)->setPaper('letter');
         //  dd($detalle);
         return $pdf->stream('Recibos.pdf');
     }
@@ -1113,8 +1184,9 @@ class ResidenciaController extends Controller
         return view('polizas.residencia.recibo_edit', compact('recibo_historial', 'meses', 'configuracion'));
     }
 
-    public function get_recibo_update(Request $request) {
-         //modificación de ultimo recibo
+    public function get_recibo_update(Request $request)
+    {
+        //modificación de ultimo recibo
         $id = $request->id_residencia_detalle;
         $detalle = DetalleResidencia::findOrFail($id);
 
@@ -1174,10 +1246,10 @@ class ResidenciaController extends Controller
         $recibo_historial->Usuario = auth()->user()->id;
 
         $recibo_historial->save();
-       // dd($recibo_historial);
+        // dd($recibo_historial);
 
         //dd("insert");
-       // alert()->success('Actualizacion de Recibo Exitoso');
+        // alert()->success('Actualizacion de Recibo Exitoso');
         //enviar a descargar el archivo
         $cliente = Cliente::findOrFail($residencia->Asegurado);
         $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
