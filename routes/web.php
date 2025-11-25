@@ -98,11 +98,11 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('catalogo/departamento_nr', DepartamentoNRController::class);
 
     Route::post('catalogo/producto/add_cobertura', [ProductoController::class, 'add_cobertura']);
-    Route::post('catalogo/producto/edit_cobertura', [ProductoController::class, 'edit_cobertura']);
-    Route::post('catalogo/producto/delete_cobertura', [ProductoController::class, 'delete_cobertura']);
-    Route::post('catalogo/producto/add_dato_tecnico', [ProductoController::class, 'add_dato_tecnico']);
-    Route::post('catalogo/producto/edit_dato_tecnico', [ProductoController::class, 'edit_dato_tecnico']);
-    Route::post('catalogo/producto/delete_dato_tecnico', [ProductoController::class, 'delete_dato_tecnico']);
+    Route::put('catalogo/producto/edit_cobertura/{id}', [ProductoController::class, 'edit_cobertura'])->name('edit_cobertura');
+    Route::delete('catalogo/producto/delete_cobertura/{id}', [ProductoController::class, 'delete_cobertura'])->name('delete_cobertura');
+    Route::post('catalogo/producto/add_dato_tecnico', [ProductoController::class, 'add_dato_tecnico'])->name('add_dato_tecnico');
+    Route::put('catalogo/producto/edit_dato_tecnico/{id}', [ProductoController::class, 'edit_dato_tecnico'])->name('edit_dato_tecnico');
+    Route::delete('catalogo/producto/delete_dato_tecnico/{id}', [ProductoController::class, 'delete_dato_tecnico'])->name('delete_dato_tecnico');
     Route::resource('catalogo/producto', ProductoController::class);
 
 

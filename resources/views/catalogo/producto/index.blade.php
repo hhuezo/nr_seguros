@@ -2,13 +2,12 @@
 @section('contenido')
     <div class="x_panel">
 
-        @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
         <div class="x_title">
             <div class="col-md-6 col-sm-6 col-xs-12">
                 <h3>Listado de Productos </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
-                <a href="{{ url('catalogo/producto/create/') }}"><button class="btn btn-info float-right"> <i
+                <a href="#" data-target="#modal-create" data-toggle="modal"><button class="btn btn-info float-right"> <i
                             class="fa fa-plus"></i> Nuevo</button></a>
             </div>
             <div class="clearfix"></div>
@@ -17,6 +16,15 @@
 
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                @if (count($errors) > 0)
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
                 <table id="datatable" class="table table-striped table-bordered">
                     <thead>
@@ -57,6 +65,8 @@
             </div>
         </div>
     </div>
+
+    @include('catalogo.producto.create')
     <script>
         var displayStart = {{ $posicion }};
         $(document).ready(function() {
@@ -67,5 +77,4 @@
             });
         });
     </script>
-    @include('sweetalert::alert')
 @endsection
