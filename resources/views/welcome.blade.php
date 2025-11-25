@@ -206,7 +206,7 @@
                                         <li><a href="{{ url('catalogo/perfiles') }}">Requisitos de asegurabilidad</a>
                                         </li>
                                         <li><a href="{{ url('catalogo/departamento_nr') }}">Departamentos NR</a></li>
-                                        <li><a href="{{ url('catalogo/producto') }}">Productos</a></li>
+                                        <li id="li-producto"><a href="{{ url('catalogo/producto') }}">Productos</a></li>
                                         <li><a href="{{ url('catalogo/plan') }}">Planes</a></li>
 
 

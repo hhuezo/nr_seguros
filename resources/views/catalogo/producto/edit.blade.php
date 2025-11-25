@@ -232,7 +232,7 @@
                                                 </tr>
 
                                                 @include('catalogo.producto.modal_edit_dato_tecnico')
-                                                 @include('catalogo.producto.modal_delete_dato_tecnico')
+                                                @include('catalogo.producto.modal_delete_dato_tecnico')
                                             @endforeach
                                         </tbody>
                                     </table>
@@ -445,7 +445,9 @@
 
 
     <script>
-        $(document).ready(function() {});
+        $(document).ready(function() {
+            displayOption("ul-catalogo", "li-producto");
+        });
 
         function uppercaseCaretSafe(input) {
             let start = input.selectionStart;

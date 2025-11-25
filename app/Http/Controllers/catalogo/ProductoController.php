@@ -154,9 +154,7 @@ class ProductoController extends Controller
     public function destroy($id)
     {
         Producto::findOrFail($id)->update(['Activo' => 0]);
-        alert()->error('El registro ha sido desactivado correctamente');
-        return back();
-        //return Redirect::to('catalogo/aseguradoras');
+        return redirect('catalogo/producto/')->with('success', 'El registro ha sido eliminado correctamente');
     }
 
     public function add_cobertura(Request $request)
