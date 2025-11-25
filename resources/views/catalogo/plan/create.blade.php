@@ -1,6 +1,26 @@
 @extends ('welcome')
 @section('contenido')
-    @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
+    <!-- Toastr CSS -->
+    <link href="{{ asset('vendors/toast/toastr.min.css') }}" rel="stylesheet">
+
+    <!-- jQuery -->
+    <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
+
+    <!-- Toastr JS -->
+    <script src="{{ asset('vendors/toast/toastr.min.js') }}"></script>
+
+
+    @if (session('success'))
+        <script>
+            toastr.success("{{ session('success') }}");
+        </script>
+    @endif
+
+    @if (session('error'))
+        <script>
+            toastr.error("{{ session('error') }}");
+        </script>
+    @endif
     <div class="x_panel">
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
@@ -66,10 +86,8 @@
                             </table>
                         </div>
                     </div>
-                    <div class="form-group" align="center">
+                    <div class="form-group" align="right">
                         <button class="btn btn-success" type="submit">Guardar</button>
-                        <a href="{{ url('catalogo/plan/') }}"><button class="btn btn-primary"
-                                type="button">Cancelar</button></a>
                     </div>
                 </form>
 
@@ -78,9 +96,6 @@
         </div>
 
     </div>
-    @include('sweetalert::alert')
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 
     <script>
         $(document).ready(function() {

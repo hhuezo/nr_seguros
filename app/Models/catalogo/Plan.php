@@ -10,22 +10,22 @@ class Plan extends Model
     use HasFactory;
     protected $table = 'plan';
     protected $primaryKey = 'Id'; // Especificamos la clave primaria
-    protected $fillable = ['Nombre', 'Producto', 'Activo'];
+    protected $fillable = ['Nombre', 'ProductoId', 'Activo'];
     public $timestamps = false;
 
     public function productos()
     {
-        return $this->belongsTo(Producto::class, 'Producto', 'Id');
+        return $this->belongsTo(Producto::class, 'ProductoId', 'Id');
     }
 
     public function planesCoberturaDetalles()
     {
-        return $this->hasMany(PlanCoberturaDetalle::class, 'Plan', 'Id');
+        return $this->hasMany(PlanCoberturaDetalle::class, 'PlanId', 'Id');
     }
 
     public function coberturas()
     {
-        return $this->belongsToMany(Cobertura::class, 'plan_cobertura_detalle', 'Plan', 'Cobertura')
+        return $this->belongsToMany(Cobertura::class, 'plan_cobertura_detalle', 'PlanId', 'CoberturaId')
             ->withPivot(['SumaAsegurada', 'Tasa', 'Prima', 'Activo']);
     }
 }

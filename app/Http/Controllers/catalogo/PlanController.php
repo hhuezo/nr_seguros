@@ -46,7 +46,7 @@ class PlanController extends Controller
 
     public function getCoberturas(Request $request)
     {
-        $datosRecibidos = Cobertura::where('Activo', '=', 1)->where('Producto', '=', $request->ProductoId)->get();
+        $datosRecibidos = Cobertura::where('Activo', '=', 1)->where('ProductoId', '=', $request->ProductoId)->get();
         foreach ($datosRecibidos as $dato) {
             $dato->Tarificacion = $dato->tarificacion->Nombre ?? '';
         }
@@ -60,16 +60,30 @@ class PlanController extends Controller
 
     public function store(Request $request)
     {
+        // VALIDACIONES
+        $request->validate([
+            'Nombre'   => 'required|string|max:150',
+            'Producto' => 'required|integer',
+        ], [
+            'Nombre.required'  => 'El nombre del plan es obligatorio.',
+            'Nombre.max'       => 'El nombre no debe exceder los 150 caracteres.',
+
+            'Producto.required' => 'Debe seleccionar un producto.',
+            'Producto.integer' => 'El identificador del producto no es válido.',
+        ]);
+
+        // CREAR REGISTRO
         $Plan = new Plan();
         $Plan->Nombre = $request->Nombre;
-        $Plan->Producto = $request->Producto;
+        $Plan->ProductoId = $request->Producto;
         $Plan->Activo = 1;
         $Plan->save();
 
         alert()->success('El registro ha sido creado correctamente');
+
         return redirect('catalogo/plan/' . $Plan->Id . '/edit');
-        //return Redirect::to('catalogo/producto/create');
     }
+
 
     public function show($id)
     {
@@ -79,12 +93,12 @@ class PlanController extends Controller
 
     public function get_producto($id, $tipo)
     {
-        $productos = Producto::where('Aseguradora',$id)->get();
+        $productos = Producto::where('Aseguradora', $id)->get();
 
-        $ramosId = NecesidadProteccion::where('TipoPoliza',$tipo)->pluck('Id');
+        $ramosId = NecesidadProteccion::where('TipoPoliza', $tipo)->pluck('Id');
 
-        $productos = Producto::whereIn('NecesidadProteccion',$ramosId )
-            ->where('Aseguradora',$id)
+        $productos = Producto::whereIn('NecesidadProteccion', $ramosId)
+            ->where('Aseguradora', $id)
             ->orderBy('Nombre')
             ->get();
 
@@ -106,7 +120,7 @@ class PlanController extends Controller
         $coberturasEnDetalle = $plan->coberturas->pluck('Id');
 
         // Obtén todas las coberturas disponibles que NO están en detalle
-        $coberturasDisponibles = Cobertura::where('Activo', '=', 1)->whereNotIn('id', $coberturasEnDetalle)->where('Producto', '=', $plan->productos->Id)->get();
+        $coberturasDisponibles = Cobertura::where('Activo', '=', 1)->whereNotIn('id', $coberturasEnDetalle)->where('ProductoId', '=', $plan->productos->Id)->get();
         $productos = Producto::where('Activo', '=', 1)->get();
         return view('catalogo/plan/edit', compact(
             'plan',
@@ -123,7 +137,6 @@ class PlanController extends Controller
         $plan->update();
         alert()->success('El registro ha sido modificado correctamente');
         return back();
-        //return Redirect::to('catalogo/aseguradoras/' . $id . 'edit');
     }
 
     public function destroy($id)
