@@ -9,7 +9,7 @@ class CoberturaTarificacion extends Model
 {
     use HasFactory;
 
-    protected $table = 'producto_cobertura_tarificacion';
+    protected $table = 'cobertura_tarificacion';
 
     public $timestamps = false;
 

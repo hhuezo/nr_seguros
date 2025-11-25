@@ -8,14 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Cobertura extends Model
 {
     use HasFactory;
-    protected $table = 'producto_cobertura';
+    protected $table = 'cobertura';
     protected $primaryKey = 'Id'; // Especificamos la clave primaria
-    protected $fillable = ['Nombre', 'TarificacionId', 'Descuento', 'Iva', 'ProductoId', 'Activo'];
+    protected $fillable = ['Nombre', 'Tarificacion', 'Descuento', 'Iva', 'Producto', 'Activo'];
     public $timestamps = false;
 
     public function productos()
     {
-        return $this->belongsTo(Producto::class, 'ProductoId', 'Id');
+        return $this->belongsTo(Producto::class, 'Producto', 'Id');
     }
 
     public function planesCoberturaDetalles()
@@ -31,6 +31,6 @@ class Cobertura extends Model
 
     public function tarificacion()
     {
-        return $this->belongsTo(CoberturaTarificacion::class, 'TarificacionId', 'Id');
+        return $this->belongsTo(CoberturaTarificacion::class, 'Tarificacion', 'Id');
     }
 }
