@@ -805,7 +805,8 @@ class VidaController extends Controller
 
         $total_extrapima = $extraprimados->sum('ExtraPrima') ?? 0.00;
 
-        $fechas = VidaCartera::where('PolizaVida', '=', $id)->where('PolizaVidaDetalle', null)->first();
+        $fechas = VidaCartera::where('PolizaVida', '=', $id)->orderByDesc('Id')->first();
+        $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
         //conteo por si existe tasa diferenciada
         $count_tasas_diferencidas = VidaTasaDiferenciada::join('poliza_vida_tipo_cartera', 'poliza_vida_tipo_cartera.Id', '=', 'poliza_vida_tasa_diferenciada.PolizaVidaTipoCartera')
@@ -819,7 +820,7 @@ class VidaController extends Controller
                 $val = true;
             }
         } else {
-            if($dataPago){
+            if ($dataPago) {
                 $val = true;
             }
         }
@@ -843,6 +844,7 @@ class VidaController extends Controller
             'dataPago',
             'dataPagoId',
             'fechas',
+            'meses',
             //tab3
             'ultimo_pago',
             'count_tasas_diferencidas'
