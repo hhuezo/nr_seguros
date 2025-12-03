@@ -181,7 +181,7 @@
                                         <div role="tabpanel" class="tab-pane fade" id="tab_content8"
                                             aria-labelledby="profile-tab">
 
-                                            @include('polizas.deuda.validacion_poliza.tab8_registros_excluidos')
+                                            @include('polizas.deuda.validacion_poliza.tab8_registros_rehabilitados')
 
                                         </div>
 

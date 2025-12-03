@@ -107,7 +107,7 @@ class RehabilitadosExport implements FromCollection, WithHeadings
     {
         $deuda = Deuda::findOrFail($this->id);
 
-        if ($deuda->Aseguradora == 3) {
+        if ($deuda->Aseguradora == 3 || $deuda->Aseguradora == 4) {
             // Fedecrédito
             return [
                 'Tipo de documento',
