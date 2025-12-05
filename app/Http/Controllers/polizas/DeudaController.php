@@ -772,7 +772,7 @@ class DeudaController extends Controller
 
                 $dataPago = collect([]);
 
-                //dd($dataPagoTemp);
+                //dd($dataPago);
 
                 foreach ($dataPagoTemp as $item) {
 

@@ -61,8 +61,8 @@
     <div class="modal-header">
         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <h4 class="title" id="exampleModalLabel">
-                {{ optional($dataPago->first())->PrimaCalculada > 0 ? 'Nuevo pago' : 'Ultimo periodo facturado' }}
-            </h4>
+                {{ data_get($dataPago->first(), 'PrimaCalculada', 0) > 0 ? 'Nuevo pago' : 'Ultimo periodo facturado' }}
+
 
 
         </div>

@@ -1340,9 +1340,10 @@ class DeudaCarteraController extends Controller
         $nuevos_registros = collect(DB::select("
             SELECT pdtc.NumeroReferencia,pdtc.Dui,pdtc.Pasaporte,pdtc.CarnetResidencia
             ,pdtc.PrimerNombre,pdtc.SegundoNombre,pdtc.PrimerApellido,pdtc.SegundoApellido,pdtc.ApellidoCasada
-            ,pdtc.FechaNacimiento,pdtc.Edad,pdtc.FechaOtorgamiento,pdtc.EdadDesembloso,pdtc.TotalCredito,saldos_montos.Abreviatura as LineaCredito
+            ,pdtc.FechaNacimiento,pdtc.Edad,pdtc.FechaOtorgamiento,pdtc.EdadDesembloso,pdtc.TotalCredito,tipo_cartera.Nombre as TipoCartera
             FROM poliza_deuda_temp_cartera pdtc
-            inner join saldos_montos on saldos_montos.Id = pdtc.LineaCredito
+            inner join poliza_deuda_tipo_cartera on poliza_deuda_tipo_cartera.Id = pdtc.PolizaDeudaTipoCartera
+            inner join tipo_cartera on tipo_cartera.Id = poliza_deuda_tipo_cartera.TipoCartera
             WHERE pdtc.PolizaDeuda = ?
             AND NOT EXISTS (
                 SELECT 1

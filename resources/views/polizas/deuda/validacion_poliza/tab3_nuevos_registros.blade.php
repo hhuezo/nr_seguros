@@ -24,7 +24,7 @@
         @foreach ($nuevos_registros->where('Edad', '<=', $deuda->EdadMaximaTerminacion) as $registro)
             <tr>
                 <td>{{ $registro->NumeroReferencia }}</td>
-                <td>{{ $registro->LineaCredito}}  </td>
+                <td>{{ $registro->TipoCartera}}  </td>
                 <td>{{ $registro->Dui }} {{ $registro->Pasaporte }} {{ $registro->CarnetResidencia }}</td>
                 <td>{{ $registro->PrimerNombre }}
                     {{ $registro->SegundoNombre }}
