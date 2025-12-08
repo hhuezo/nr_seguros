@@ -767,6 +767,19 @@ class VidaController extends Controller
 
         $ultimo_pago = VidaDetalle::where('PolizaVida', $id)->orderBy('Id', 'desc')->first();
         $detalle = VidaDetalle::where('PolizaVida', $id)->orderBy('Id', 'desc')->get();
+        foreach ($detalle as $det) {
+            $historial = VidaHistorialRecibo::where('PolizaVidaDetalle', $det->Id)->orderByDesc('Id')->first();
+            if ($det->FechaInicio != $historial->FechaInicio) {
+                $det->FechaInicio = $historial->FechaInicio;
+            }
+            if ($det->FechaFinal != $historial->FechaFin) {
+                $det->FechaFinal = $historial->FechaFin;
+            }
+            if ($det->ImpresionRecibo != $historial->ImpresionRecibo) {
+                $det->ImpresionRecibo = $historial->ImpresionRecibo;
+            }
+        }
+
         $comentarios = Comentario::where('Vida', $poliza_vida->Id)->where('Activo', '=', 1)->get();
         //dd($comentarios);
 
@@ -824,6 +837,8 @@ class VidaController extends Controller
                 $val = true;
             }
         }
+
+
 
         // dd($dataPago);
         return view('polizas.vida.show', compact(
