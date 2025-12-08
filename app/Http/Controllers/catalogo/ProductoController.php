@@ -84,8 +84,8 @@ class ProductoController extends Controller
         $producto = Producto::findOrFail($id);
         $aseguradoras = Aseguradora::where('Activo', '=', 1)->get();
         $ramos = NecesidadProteccion::where('Activo', '=', 1)->get();
-        $coberturas = Cobertura::where('Activo', '=', 1)->where('ProductoId', '=', $producto->Id)->get();
-        $datos_tecnicos = DatosTecnicos::where('Activo', '=', 1)->where('ProductoId', '=', $producto->Id)->get();
+        $coberturas = Cobertura::where('Activo', '=', 1)->where('Producto', '=', $producto->Id)->get();
+        $datos_tecnicos = DatosTecnicos::where('Activo', '=', 1)->where('Producto', '=', $producto->Id)->get();
         $tarificaciones = CoberturaTarificacion::where('Activo',1)->get();
         return view('catalogo/producto/edit', compact(
             'producto',
@@ -123,10 +123,10 @@ class ProductoController extends Controller
     {
         $cobertura = new Cobertura();
         $cobertura->Nombre = $request->Nombre;
-        $cobertura->TarificacionId = $request->Tarificacion;
+        $cobertura->Tarificacion = $request->Tarificacion;
         $cobertura->Descuento = $request->Descuento;
         $cobertura->Iva = $request->Iva;
-        $cobertura->ProductoId  = $request->Producto;
+        $cobertura->Producto  = $request->Producto;
         $cobertura->Activo  = 1;
 
         $cobertura->save();
@@ -144,7 +144,7 @@ class ProductoController extends Controller
         $cobertura->Tarificacion = $request->Tarificacion;
         $cobertura->Descuento = $request->Descuento;
         $cobertura->Iva = $request->Iva;
-        $cobertura->ProductoId  = $request->Producto;
+        $cobertura->Producto  = $request->Producto;
         $cobertura->update();
         alert()->success('El registro ha sido modificado correctamente');
 
@@ -166,7 +166,7 @@ class ProductoController extends Controller
         $dato_tecnico = new DatosTecnicos();
         $dato_tecnico->Nombre = $request->Nombre;
         $dato_tecnico->Descripcion = $request->Descripcion;
-        $dato_tecnico->ProductoId  = $request->Producto;
+        $dato_tecnico->Producto  = $request->Producto;
         $dato_tecnico->Activo  = 1;
 
         $dato_tecnico->save();
@@ -182,7 +182,7 @@ class ProductoController extends Controller
 
         $dato_tecnico->Nombre = $request->Nombre;
         $dato_tecnico->Descripcion = $request->Descripcion;
-        $dato_tecnico->ProductoId  = $request->Producto;
+        $dato_tecnico->Producto  = $request->Producto;
         $dato_tecnico->update();
         alert()->success('El registro ha sido modificado correctamente');
 

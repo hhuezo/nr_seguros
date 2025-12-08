@@ -65,3 +65,9 @@
 
       </tbody>
   </table>
+
+  <script type="text/javascript">
+      $(document).ready(function() {
+          $('#MyTable7').DataTable();
+      });
+  </script>

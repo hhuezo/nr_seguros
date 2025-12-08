@@ -6,7 +6,7 @@
     <br>
 </div>
 <br>
-<table class="table table-striped" id="datatable">
+<table class="table table-striped" id="MyTable8">
     <thead>
         <tr>
             <th>Número crédito</th>
@@ -44,3 +44,10 @@
 
     </tbody>
 </table>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#MyTable8').DataTable();
+    });
+</script>
+
