@@ -100,6 +100,9 @@
     <script>
         $(document).ready(function() {
 
+            //mostrar opcion en menu
+            displayOption("ul-catalogo", "li-plan");
+
             $("#divCoberturas").hide();
             $("#Producto").on("change", function() {
                 generarRegistrosCobertura();

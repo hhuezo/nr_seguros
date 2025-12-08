@@ -8,10 +8,16 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Cambiar Plan → PlanId (MariaDB compatible)
+        // Cambiar Plan → PlanId
         DB::statement("
             ALTER TABLE plan_cobertura_detalle
             CHANGE `Plan` `PlanId` BIGINT(20) UNSIGNED NOT NULL
+        ");
+
+        // Cambiar Cobertura → CoberturaId
+        DB::statement("
+            ALTER TABLE plan_cobertura_detalle
+            CHANGE `Cobertura` `CoberturaId` BIGINT(20) UNSIGNED NOT NULL
         ");
     }
 
@@ -22,5 +28,12 @@ return new class extends Migration
             ALTER TABLE plan_cobertura_detalle
             CHANGE `PlanId` `Plan` BIGINT(20) UNSIGNED NOT NULL
         ");
+
+        // Revertir CoberturaId → Cobertura
+        DB::statement("
+            ALTER TABLE plan_cobertura_detalle
+            CHANGE `CoberturaId` `Cobertura` BIGINT(20) UNSIGNED NOT NULL
+        ");
     }
 };
+

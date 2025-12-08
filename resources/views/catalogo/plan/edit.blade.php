@@ -183,7 +183,9 @@
         <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 
         <script type="text/javascript">
-            $(document).ready(function() {});
+            $(document).ready(function() {
+                  displayOption("ul-catalogo", "li-plan");
+            });
 
             function modal_edit_cobertura(Id, Nombre, SumaAsegurada, Tasa, Prima) {
                 $('#ModalCoberturaId').val(Id);

@@ -133,7 +133,7 @@ class PlanController extends Controller
     {
         $plan = Plan::findOrFail($id);
         $plan->Nombre = $request->Nombre;
-        $plan->Producto = $request->Producto;
+        $plan->ProductoId = $request->Producto;
         $plan->update();
         alert()->success('El registro ha sido modificado correctamente');
         return back();
@@ -151,7 +151,7 @@ class PlanController extends Controller
     {
 
         PlanCoberturaDetalle::updateOrInsert(
-            ['Plan' => $request->Plan, 'Cobertura' => $request->Cobertura], // Condiciones de búsqueda
+            ['PlanId' => $request->Plan, 'CoberturaId' => $request->Cobertura], // Condiciones de búsqueda
             ['SumaAsegurada' => $request->SumaAsegurada, 'Tasa' => $request->Tasa, 'Prima' => $request->Prima, 'Activo' => '1'] // Datos a actualizar o crear
         );
 

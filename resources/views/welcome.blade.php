@@ -207,7 +207,7 @@
                                         </li>
                                         <li><a href="{{ url('catalogo/departamento_nr') }}">Departamentos NR</a></li>
                                         <li id="li-producto"><a href="{{ url('catalogo/producto') }}">Productos</a></li>
-                                        <li><a href="{{ url('catalogo/plan') }}">Planes</a></li>
+                                        <li id="li-plan"><a href="{{ url('catalogo/plan') }}">Planes</a></li>
 
 
                                     </ul>
