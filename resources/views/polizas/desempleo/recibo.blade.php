@@ -51,7 +51,7 @@ $prima_calculada = $detalle->MontoCartera * $desempleo->Tasa;
         </tr>
         <tr>
             <td>{{$recibo_historial->CompaniaAseguradora}}</td>
-            <td colspan="2">@if($desempleo->Plan) {{$desempleo->planes->productos->Nombre}}@endif</td>
+            <td colspan="2">@if($desempleo->Plan) {{$desempleo->planes->productos->Nombre ?? ''}}@endif</td>
         </tr>
         <tr style="background-color: lightgrey;">
             <td>Número de Póliza</td>
