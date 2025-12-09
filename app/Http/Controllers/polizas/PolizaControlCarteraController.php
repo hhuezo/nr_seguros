@@ -337,9 +337,7 @@ class PolizaControlCarteraController extends Controller
 
 
 
-            // =============================================================
-            // 1️⃣ Asignar color de estado (aplica igual para ambas pólizas)
-            // =============================================================
+            //Asignar color de estado
             foreach ($registro_control as $item) {
                 if (!empty($item->FechaAplicacion)) {
                     $item->Color = 'success'; // ✅ Ya aplicada
@@ -365,6 +363,101 @@ class PolizaControlCarteraController extends Controller
                     $item->Color = 'secondary'; // ⚪ Sin avance
                 }
             }
+
+
+
+
+
+
+            // Prima del mes anterior si está en estado
+
+            $mesAnterior = $mes - 1;
+            $anioAnterior = $anio;
+
+            if ($mesAnterior == 0) {
+                $mesAnterior = 12;
+                $anioAnterior = $anio - 1;
+            }
+
+            foreach ($registro_control as $item) {
+
+                if ($item->Color !== 'secondary') {
+                    continue;
+                }
+
+                // ───────────────────────────────────────────────
+                // DEUDA
+                // ───────────────────────────────────────────────
+                if ($item->TipoPoliza === 'DEUDA') {
+
+                    $detalleAnterior = DB::table('poliza_deuda_detalle')
+                        ->where('Deuda', $item->PolizaDeudaId)
+                        ->where('Mes', $mesAnterior)
+                        ->where('Axo', $anioAnterior)
+                        ->value('PrimaCalculada');
+
+                    if ($detalleAnterior !== null) {
+                        $item->PrimaCalculada = (float)$detalleAnterior;
+                    }
+                }
+
+                // ───────────────────────────────────────────────
+                // VIDA
+                // ───────────────────────────────────────────────
+                elseif ($item->TipoPoliza === 'VIDA') {
+
+                    $detalleAnterior = DB::table('poliza_vida_detalle')
+                        ->where('PolizaVida', $item->PolizaVidaId)
+                        ->where('Mes', $mesAnterior)
+                        ->where('Axo', $anioAnterior)
+                        ->value('PrimaCalculada');
+
+                    if ($detalleAnterior !== null) {
+                        $item->PrimaCalculada = (float)$detalleAnterior;
+                    }
+                }
+
+                // ───────────────────────────────────────────────
+                // DESEMPLEO
+                // ───────────────────────────────────────────────
+                elseif ($item->TipoPoliza === 'DESEMPLEO') {
+
+                    $detalleAnterior = DB::table('poliza_desempleo_detalle')
+                        ->where('Desempleo', $item->PolizaDesempleoId)
+                        ->where('Mes', $mesAnterior)
+                        ->where('Axo', $anioAnterior)
+                        ->value('PrimaCalculada');
+
+                    if ($detalleAnterior !== null) {
+                        $item->PrimaCalculada = (float)$detalleAnterior;
+                    }
+                }
+
+                // ───────────────────────────────────────────────
+                // RESIDENCIA
+                // ───────────────────────────────────────────────
+                elseif ($item->TipoPoliza === 'RESIDENCIA') {
+
+                    $detalleAnterior = DB::table('poliza_residencia_detalle')
+                        ->where('Residencia', $item->PolizaResidenciaId)
+                        ->where('Mes', $mesAnterior)
+                        ->where('Axo', $anioAnterior)
+                        ->value('PrimaCalculada');
+
+                    if ($detalleAnterior !== null) {
+                        $item->PrimaCalculada = (float)$detalleAnterior;
+                    }
+                }
+            }
+
+
+
+
+
+
+
+
+
 
 
             // =============================================================
@@ -790,7 +883,43 @@ class PolizaControlCarteraController extends Controller
             '12' => 'Diciembre',
         ];
 
-        return view('polizas.control_cartera.index', compact('registro_control', 'anio', 'mes', 'meses', 'reprocesos'));
+
+        // =============================================================
+        //  Totales por color (suma de PrimaCalculada)
+        // =============================================================
+
+        // Lista completa de colores que usas
+        $coloresPosibles = [
+            'secondary',
+            'orange',
+            'info',
+            'warning',
+            'success',
+        ];
+
+        // Calcular totales reales
+        $totalesPorColor = $registro_control
+            ->groupBy('Color')
+            ->map(function ($items) {
+                return $items->sum(function ($item) {
+                    return (float) ($item->PrimaCalculada ?? 0);
+                });
+            });
+
+        // Asegurar que todos los colores existan en el resultado
+        foreach ($coloresPosibles as $color) {
+            if (!isset($totalesPorColor[$color])) {
+                $totalesPorColor[$color] = 0;
+            }
+        }
+
+        // Ordenar según el orden definido
+        $totalesPorColor = $totalesPorColor->sortBy(
+            fn($value, $key) =>
+            array_search($key, $coloresPosibles)
+        );
+
+        return view('polizas.control_cartera.index', compact('registro_control', 'anio', 'mes', 'meses', 'reprocesos', 'totalesPorColor'));
     }
 
 
@@ -848,18 +977,6 @@ class PolizaControlCarteraController extends Controller
 
         return view('polizas.control_cartera.edit', compact('poliza', 'tipo', 'anio', 'mes'));
     }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

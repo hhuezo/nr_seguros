@@ -282,18 +282,38 @@
 
     </div>
 
+    @if (auth()->user()->id == 1 || auth()->user()->id == 2)
+        <table class="table table-bordered" style="width: 800px;">
+            <thead>
+                <tr>
+                    <th colspan="5">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    @foreach ($totalesPorColor as $color => $total)
+                        <td class="table-{{ $color }}">
+                            ${{ number_format($total, 2) }}
+                        </td>
+                    @endforeach
+                </tr>
+            </tbody>
+        </table>
+    @endif
+    <br>
+
     {{-- Scripts --}}
 
     <!-- Toastr CSS -->
     <link href="{{ asset('vendors/toast/toastr.min.css') }}" rel="stylesheet">
 
-   <!-- Toastr JS -->
+    <!-- Toastr JS -->
     <script src="{{ asset('vendors/toast/toastr.min.js') }}"></script>
 
 
 
     <script src="{{ asset('vendors/jquery.dataTables.min.js') }}"></script>
-   <link href="{{ asset('vendors/jquery.dataTables.min.css') }}" rel="stylesheet" />
+    <link href="{{ asset('vendors/jquery.dataTables.min.css') }}" rel="stylesheet" />
 
     <script src="{{ asset('vendors/vue.global.prod.js') }}"></script>
 
