@@ -951,16 +951,20 @@ class DeudaController extends Controller
             $productos = Producto::where('Activo', 1)->get();
             $planes = Plan::where('Activo', 1)->get();
             $detalle = DeudaDetalle::where('Deuda', $deuda->Id)->orderBy('Id', 'desc')->get();
+
             foreach ($detalle as $det) {
                 $historial = DeudaHistorialRecibo::where('PolizaDeudaDetalle', $det->Id)->orderByDesc('Id')->first();
-                if ($det->FechaInicio != $historial->FechaInicio) {
-                    $det->FechaInicio = $historial->FechaInicio;
-                }
-                if ($det->FechaFinal != $historial->FechaFin) {
-                    $det->FechaFinal = $historial->FechaFin;
-                }
-                if($det->ImpresionRecibo != $historial->ImpresionRecibo){
-                    $det->ImpresionRecibo = $historial->ImpresionRecibo;
+                if ($historial) {
+
+                    if ($det->FechaInicio != $historial->FechaInicio) {
+                        $det->FechaInicio = $historial->FechaInicio;
+                    }
+                    if ($det->FechaFinal != $historial->FechaFin) {
+                        $det->FechaFinal = $historial->FechaFin;
+                    }
+                    if ($det->ImpresionRecibo != $historial->ImpresionRecibo) {
+                        $det->ImpresionRecibo = $historial->ImpresionRecibo;
+                    }
                 }
             }
 
