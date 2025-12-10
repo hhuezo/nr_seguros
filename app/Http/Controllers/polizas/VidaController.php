@@ -769,14 +769,17 @@ class VidaController extends Controller
         $detalle = VidaDetalle::where('PolizaVida', $id)->orderBy('Id', 'desc')->get();
         foreach ($detalle as $det) {
             $historial = VidaHistorialRecibo::where('PolizaVidaDetalle', $det->Id)->orderByDesc('Id')->first();
-            if ($det->FechaInicio != $historial->FechaInicio) {
-                $det->FechaInicio = $historial->FechaInicio;
-            }
-            if ($det->FechaFinal != $historial->FechaFin) {
-                $det->FechaFinal = $historial->FechaFin;
-            }
-            if ($det->ImpresionRecibo != $historial->ImpresionRecibo) {
-                $det->ImpresionRecibo = $historial->ImpresionRecibo;
+            if($historial){
+
+                if ($det->FechaInicio != $historial->FechaInicio) {
+                    $det->FechaInicio = $historial->FechaInicio;
+                }
+                if ($det->FechaFinal != $historial->FechaFin) {
+                    $det->FechaFinal = $historial->FechaFin;
+                }
+                if ($det->ImpresionRecibo != $historial->ImpresionRecibo) {
+                    $det->ImpresionRecibo = $historial->ImpresionRecibo;
+                }
             }
         }
 

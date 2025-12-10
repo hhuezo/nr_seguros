@@ -531,15 +531,18 @@ class DesempleoController extends Controller
         $detalle = DesempleoDetalle::where('Desempleo', $desempleo->Id)->orderBy('Id', 'desc')->get();
         foreach ($detalle as $det) {
             $historial = DesempleoHistorialRecibo::where('PolizaDesempleoDetalle', $det->Id)->orderByDesc('Id')->first();
-            if ($det->FechaInicio != $historial->FechaInicio) {
-                $det->FechaInicio = $historial->FechaInicio;
-            }
-            if ($det->FechaFinal != $historial->FechaFin) {
-                $det->FechaFinal = $historial->FechaFin;
-            }
+            if($historial){
 
-            if ($det->ImpresionRecibo != $historial->ImpresionRecibo) {
-                $det->ImpresionRecibo = $historial->ImpresionRecibo;
+                if ($det->FechaInicio != $historial->FechaInicio) {
+                    $det->FechaInicio = $historial->FechaInicio;
+                }
+                if ($det->FechaFinal != $historial->FechaFin) {
+                    $det->FechaFinal = $historial->FechaFin;
+                }
+
+                if ($det->ImpresionRecibo != $historial->ImpresionRecibo) {
+                    $det->ImpresionRecibo = $historial->ImpresionRecibo;
+                }
             }
         }
 
