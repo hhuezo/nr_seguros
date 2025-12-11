@@ -429,7 +429,6 @@ class VidaController extends Controller
         $estados = EstadoPoliza::where('Activo', 1)->get();
         // $registroInicial = $historico_poliza->isNotEmpty() ? $historico_poliza->first() : null;
 
-
         return view('polizas.vida.edit', compact(
             'vida',
             'aseguradora',
@@ -783,6 +782,7 @@ class VidaController extends Controller
             }
         }
 
+
         $comentarios = Comentario::where('Vida', $poliza_vida->Id)->where('Activo', '=', 1)->get();
         //dd($comentarios);
 
@@ -802,8 +802,7 @@ class VidaController extends Controller
             'SumaAsegurada',
             'Axo',
             'Mes'
-        )->where('PolizaVida', '=', $id)->where('PolizaVidaDetalle', null)
-            ->orWhere('PolizaVidaDetalle', '=', null)->groupBy('NumeroReferencia')->get();
+        )->where('PolizaVida', '=', $id)->where('PolizaVidaDetalle', null)->groupBy('NumeroReferencia')->get();
 
         $extraprimados = PolizaVidaExtraPrimados::where('PolizaVida', $id)->get();
 
@@ -818,6 +817,8 @@ class VidaController extends Controller
 
             // dd($data_array);
         }
+
+
 
         $total_extrapima = $extraprimados->sum('ExtraPrima') ?? 0.00;
 
@@ -840,7 +841,6 @@ class VidaController extends Controller
                 $val = true;
             }
         }
-
 
 
         // dd($dataPago);
@@ -1282,7 +1282,7 @@ class VidaController extends Controller
 
 
         //borrar datos de tabla temporal
-        VidaCarteraTemp::where('User', auth()->user()->id)->where('PolizaVida', $id)->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)->delete();
+        VidaCarteraTemp::where('PolizaVida', $id)->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)->delete();
 
         Excel::import(new VidaCarteraTempImport($request->Axo, $request->Mes, $id, $request->FechaInicio, $request->FechaFinal, $request->PolizaVidaTipoCartera, $poliza_vida->TarifaExcel), $archivo);
 
@@ -1290,8 +1290,7 @@ class VidaController extends Controller
 
         //verificando creditos repetidos
         if ($request->validacion_credito != 'on') {
-            $repetidos = VidaCarteraTemp::where('User', auth()->user()->id)
-                ->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)
+            $repetidos = VidaCarteraTemp::where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)
                 ->groupBy('NumeroReferencia')
                 ->havingRaw('COUNT(*) > 1')
                 ->get();
@@ -1299,8 +1298,7 @@ class VidaController extends Controller
             $numerosRepetidos = $repetidos->isNotEmpty() ? $repetidos->pluck('NumeroReferencia') : null;
 
             if ($numerosRepetidos) {
-                VidaCarteraTemp::where('User', auth()->user()->id)
-                    ->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)
+                VidaCarteraTemp::where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)
                     ->delete();
 
                 $numerosStr = $numerosRepetidos->implode(', ');
@@ -1311,15 +1309,14 @@ class VidaController extends Controller
 
 
         //calculando edades y fechas de nacimiento
-        VidaCarteraTemp::where('User', auth()->user()->id)
-            ->where('PolizaVida', $poliza_vida->Id)
+        VidaCarteraTemp::where('PolizaVida', $poliza_vida->Id)
             ->update([
                 'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaFinal)"),
                 'EdadDesembloso' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaOtorgamientoDate)"),
             ]);
 
         //calculando errores de cartera
-        $cartera_temp = VidaCarteraTemp::where('User', '=', auth()->user()->id)->where('PolizaVida', $id)->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)->get();
+        $cartera_temp = VidaCarteraTemp::where('PolizaVida', $id)->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)->get();
 
         //dd($cartera_temp->take(10));
 
@@ -1356,7 +1353,7 @@ class VidaController extends Controller
             if ($obj->FechaOtorgamientoDate == null) {
                 $obj->TipoError = 2;
                 $obj->update();
-                array_push($errores_array, 1);
+                array_push($errores_array, 2);
             }
 
             if ($request->validacion_dui == 'on') {
@@ -1416,15 +1413,6 @@ class VidaController extends Controller
                 $obj->update();
                 $errores_array[] = 8; // Agregar error al array
             }
-
-            //11 error por edad de terminacion
-            // if (trim($obj->Edad) > $poliza_vida->EdadTerminacion) {
-            //     $obj->TipoError = 9;
-            //     $obj->update();
-
-            //     array_push($errores_array, 9);
-            // }
-
 
 
             //validar cantidad asegurada o multi categoria error 10
@@ -1500,14 +1488,16 @@ class VidaController extends Controller
         }
 
 
+
         $data_error = $cartera_temp->where('TipoError', '<>', 0);
+
 
         if ($data_error->count() > 0) {
             return view('polizas.vida.respuesta_poliza_error', compact('data_error', 'poliza_vida'));
         }
 
 
-        $temp_data_fisrt = VidaCarteraTemp::where('PolizaVida', $id)->where('User', auth()->user()->id)->where('PolizaVidaTipoCartera', '=', $request->PolizaVidaTipoCartera)->first();
+        $temp_data_fisrt = VidaCarteraTemp::where('PolizaVida', $id)->where('PolizaVidaTipoCartera', '=', $request->PolizaVidaTipoCartera)->first();
 
         if (!$temp_data_fisrt) {
             alert()->error('No se han cargado las carteras');

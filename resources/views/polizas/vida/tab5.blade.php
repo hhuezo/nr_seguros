@@ -29,18 +29,7 @@
                         <td>{{ $obj->Nombre }}</td>
                         <td>{{ $obj->NumeroReferencia }}</td>
                         <td>${{ number_format($obj->SumaAsegurada, 2, '.', ',') }}</td>
-                        {{-- @if($obj->linia_credito->Saldos == 1)
-                        <td>${{ number_format($obj->SaldoCapital, 2, '.', ',') }} </td>
-                        @elseif($obj->linia_credito->Saldos == 2)
-                        @php($linea2 = $obj->SaldoCapital + $obj->Intereses)
-                        <td>${{ number_format(($linea2), 2, '.', ',') }} </td>
-                        @elseif($obj->linia_credito->Saldos == 3)
-                        <td>${{ number_format(($obj->SaldoCapital + $obj->Intereses + $obj->InteresesCovid), 2, '.', ',') }} </td>
-                        @elseif($obj->linia_credito->Saldos == 4)
-                        <td>${{ number_format(($obj->SaldoCapital + $obj->Intereses + $obj->InteresesCovid + $obj->InteresesMoratorios), 2, '.', ',') }} </td>
-                        @else
-                        <td>${{ number_format($obj->MontoNominal, 2, '.', ',') }} </td>
-                        @endif --}}
+
                     </tr>
                     @endif
                     @endforeach
@@ -70,8 +59,6 @@
                         <th>Nombre</th>
                         <th>Fecha de Otorgamiento</th>
                         <th>SA</th>
-                        {{-- <th>Interes</th>
-                        <th>Total</th> --}}
                         <th>Prima neta</th>
                         <th>%EP</th>
                         <th>Extra prima</th>
@@ -91,8 +78,6 @@
                         <td>{{ $obj->Nombre }}</td>
                         <td>{{ $obj->FechaOtorgamiento }}</td>
                         <td>${{ number_format($obj->SumaAsegurada, 2, '.', ',') }}</td>
-                        {{-- <td>${{ number_format($obj->Intereses, 2, '.', ',') }}</td> --}}
-                        {{-- <td align="right">${{ number_format($obj->total, 2, '.', ',') }}</td> --}}
                         <td align="right">${{ number_format($obj->PrimaNeta, 2, '.', ',') }}</td>
                         <td>{{ $obj->PorcentajeEP }}%</td>
                         <td align="right">${{ number_format($obj->ExtraPrima, 2, '.', ',') }}</td>
