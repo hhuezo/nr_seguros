@@ -282,24 +282,7 @@
 
     </div>
 
-    @if (auth()->user()->id == 1 || auth()->user()->id == 2)
-        <table class="table table-bordered" style="width: 800px;">
-            <thead>
-                <tr>
-                    <th colspan="5">Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    @foreach ($totalesPorColor as $color => $total)
-                        <td class="table-{{ $color }}">
-                            ${{ number_format($total, 2) }}
-                        </td>
-                    @endforeach
-                </tr>
-            </tbody>
-        </table>
-    @endif
+
     <br>
 
     {{-- Scripts --}}

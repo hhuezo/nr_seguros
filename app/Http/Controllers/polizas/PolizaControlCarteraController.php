@@ -884,42 +884,9 @@ class PolizaControlCarteraController extends Controller
         ];
 
 
-        // =============================================================
-        //  Totales por color (suma de PrimaCalculada)
-        // =============================================================
 
-        // Lista completa de colores que usas
-        $coloresPosibles = [
-            'secondary',
-            'orange',
-            'info',
-            'warning',
-            'success',
-        ];
 
-        // Calcular totales reales
-        $totalesPorColor = $registro_control
-            ->groupBy('Color')
-            ->map(function ($items) {
-                return $items->sum(function ($item) {
-                    return (float) ($item->PrimaCalculada ?? 0);
-                });
-            });
-
-        // Asegurar que todos los colores existan en el resultado
-        foreach ($coloresPosibles as $color) {
-            if (!isset($totalesPorColor[$color])) {
-                $totalesPorColor[$color] = 0;
-            }
-        }
-
-        // Ordenar según el orden definido
-        $totalesPorColor = $totalesPorColor->sortBy(
-            fn($value, $key) =>
-            array_search($key, $coloresPosibles)
-        );
-
-        return view('polizas.control_cartera.index', compact('registro_control', 'anio', 'mes', 'meses', 'reprocesos', 'totalesPorColor'));
+        return view('polizas.control_cartera.index', compact('registro_control', 'anio', 'mes', 'meses', 'reprocesos'));
     }
 
 
