@@ -11,6 +11,7 @@
             <tr>
                 <th style="display: none;">Id</th>
                 <th style="text-align: center;">Póliza</th>
+                <th style="text-align: center;">Mes/Año</th>
                 <th style="text-align: center;">Fecha Inicio <br> Vigencia</th>
                 <th style="text-align: center;">Fecha Final <br> Vigencia</th>
                 <th style="text-align: center;">Fecha de Creación</th>
@@ -32,6 +33,7 @@
             <tr>
                 <td style="display: none;">{{$obj->Id}}</td>
                 <td style="text-align: center;">{{ $poliza_vida->NumeroPoliza }}</td>
+                <td style="text-align: center;">{{ $obj->Mes }}/{{ $obj->Axo }}</td>
                 <td style="text-align: center;">{{ $obj->FechaInicio ? \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') : ''}}</td>
                 <td style="text-align: center;">{{ $obj->FechaFinal ? \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') : ''}}</td>
                 <td style="text-align: center;">{{ $obj->ImpresionRecibo ? \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') : ''}}</td>
@@ -123,7 +125,7 @@
         </tbody>
 
         <tfoot>
-            <td colspan="5" style="text-align: right;"><b>Total de Poliza:</b> </td>
+            <td colspan="6" style="text-align: right;"><b>Total de Poliza:</b> </td>
             <td colspan="5" style="text-align: right;"><b>${{ number_format($total, 2, '.', ',') }}</b> </td>
             <td colspan="2"></td>
         </tfoot>

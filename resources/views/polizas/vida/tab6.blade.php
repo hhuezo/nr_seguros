@@ -13,6 +13,7 @@
                     <tr>
                         <th>N° Aviso</th>
                         <th>N° Correlativo</th>
+                        <th>Mes/Año</th>
                         <th>Fecha Impresión Aviso</th>
                         <th>Fecha Inicio</th>
                         <th>Fecha Final</th>
@@ -22,37 +23,41 @@
                 </thead>
                 <tbody>
                     @foreach ($detalle as $obj)
-                    @if ($obj->ImpresionRecibo != null)
-                    <tr>
-                        <td>AC {{str_pad($obj->NumeroRecibo, 6, "0", STR_PAD_LEFT);}} {{date('y')}}</td>
-                        <td>{{$obj->NumeroCorrelativo ? $obj->NumeroCorrelativo : ''}} </td>
-                        <td>{{ \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}
-                        </td>
-                        <td>{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}
-                        </td>
-                        <td> {{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}
-                        </td>
-                        @if($obj->Activo == 0)
-                        <td>Anulado</td>
-                        @elseif($obj->ImpresionRecibo)
-                        <td>Emitido</td>
-                        @elseif($obj->PagoAplicado)
-                        <td>Pagado</td>
-                        @else
-                        <td></td>
-                        @endif
-                        <td>
-                            @if($obj->Activo <> 0)
-                                <a href="{{ url('poliza/vida/get_recibo') }}/{{ $obj->Id }}/1" target="_blank" class="btn btn-info"><span class="fa fa-print"></span></a>
-                                &nbsp;
-                                {{-- <a href="{{ url('poliza/vida/get_recibo') }}/{{ $obj->Id }}/2" target="_blank" class="btn btn-success"><span class="fa fa-file-excel-o fa-lg"></span></a> --}}
-                                 &nbsp;
-                                <a href="{{ url('poliza/vida/get_recibo_edit') }}/{{ $obj->Id }}" target="_blank" class="btn btn-warning"><span class="fa fa-pencil"></span></a>
+                        @if ($obj->ImpresionRecibo != null)
+                            <tr>
+                                <td>AC {{ str_pad($obj->NumeroRecibo, 6, '0', STR_PAD_LEFT) }} {{ date('y') }}</td>
+                                <td>{{ $obj->NumeroCorrelativo ? $obj->NumeroCorrelativo : '' }} </td>
+                                <td>{{ $obj->Mes }}/{{ $obj->Axo }}</td>
+                                <td>{{ \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}
+                                </td>
+                                <td>{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}
+                                </td>
+                                <td> {{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}
+                                </td>
+                                @if ($obj->Activo == 0)
+                                    <td>Anulado</td>
+                                @elseif($obj->ImpresionRecibo)
+                                    <td>Emitido</td>
+                                @elseif($obj->PagoAplicado)
+                                    <td>Pagado</td>
+                                @else
+                                    <td></td>
                                 @endif
+                                <td>
+                                    @if ($obj->Activo != 0)
+                                        <a href="{{ url('poliza/vida/get_recibo') }}/{{ $obj->Id }}/1"
+                                            target="_blank" class="btn btn-info"><span class="fa fa-print"></span></a>
+                                        &nbsp;
+                                        {{-- <a href="{{ url('poliza/vida/get_recibo') }}/{{ $obj->Id }}/2" target="_blank" class="btn btn-success"><span class="fa fa-file-excel-o fa-lg"></span></a> --}}
+                                        &nbsp;
+                                        <a href="{{ url('poliza/vida/get_recibo_edit') }}/{{ $obj->Id }}"
+                                            target="_blank" class="btn btn-warning"><span
+                                                class="fa fa-pencil"></span></a>
+                                    @endif
 
-                        </td>
-                    </tr>
-                    @endif
+                                </td>
+                            </tr>
+                        @endif
                     @endforeach
                 </tbody>
             </table>
