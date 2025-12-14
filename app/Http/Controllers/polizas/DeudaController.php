@@ -54,12 +54,15 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Maatwebsite\Excel\Facades\Excel;
 use PDF;
 use Throwable;
+
+use Illuminate\Support\Facades\File;
 
 class DeudaController extends Controller
 {
@@ -1778,21 +1781,36 @@ class DeudaController extends Controller
     {
         try {
 
-            //eliminando datos de cartera
-            PolizaDeudaCartera::where('PolizaDeuda',  $request->Deuda)
-                ->where('PolizaDeudaDetalle', 0)->orWhere('PolizaDeudaDetalle', null)
+            PolizaDeudaCartera::where('PolizaDeuda', $request->Deuda)
+                ->where(function ($q) {
+                    $q->where('PolizaDeudaDetalle', 0)
+                        ->orWhereNull('PolizaDeudaDetalle');
+                })
                 ->delete();
 
-            //eliminando temp
-            PolizaDeudaTempCartera::where('PolizaDeuda',  $request->Deuda)
-                ->delete();
+            PolizaDeudaTempCartera::where('PolizaDeuda', $request->Deuda)->delete();
+
+            $usuario = Auth::user();
+            $fecha   = now()->format('Y-m-d H:i:s');
+
+            $mensaje = "[{$fecha}] "
+                . "USUARIO: {$usuario->id} - {$usuario->name} | "
+                . "ACCION: CANCELAR PAGO | "
+                . "POLIZA_DEUDA_ID: {$request->Deuda} | "
+                . "IP: {$request->ip()}"
+                . PHP_EOL;
+
+            File::append(
+                storage_path('logs/pagos_cancelados.log'),
+                $mensaje
+            );
         } catch (\Throwable $th) {
+
             alert()->error('Error al eliminar el registro');
             return back();
         }
 
-
-        alert()->success('El registro ha sido ingresado correctamente');
+        alert()->success('El registro ha sido cancelado correctamente');
         return back();
     }
 

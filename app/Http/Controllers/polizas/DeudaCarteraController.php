@@ -226,19 +226,28 @@ class DeudaCarteraController extends Controller
 
     public function create_pago(Request $request)
     {
+        $cartera_count = PolizaDeudaCartera::where('PolizaDeuda', $request->Id)->where('Mes', $request->Mes)->where('Axo', $request->Axo)->count();
+
+        if ($cartera_count > 0) {
+            return back()
+                ->withErrors([
+                    'Mes' => 'Ya existe una cartera registrada para este mes y año.'
+                ])
+                ->withInput();
+        }
+
+
         $deuda = Deuda::findOrFail($request->Id);
 
         $deuda_tipo_cartera = $deuda->deuda_tipos_cartera;
 
         foreach ($deuda_tipo_cartera as $tipo_cartera) {
             $tipo_cartera->Mes = PolizaDeudaTempCartera::where([
-                ['PolizaDeudaTipoCartera', $tipo_cartera->Id],
-                ['User', auth()->id()]
+                ['PolizaDeudaTipoCartera', $tipo_cartera->Id]
             ])->groupBy('Mes')->value('Mes');
 
             $tipo_cartera->Axo = PolizaDeudaTempCartera::where([
-                ['PolizaDeudaTipoCartera', $tipo_cartera->Id],
-                ['User', auth()->id()]
+                ['PolizaDeudaTipoCartera', $tipo_cartera->Id]
             ])->groupBy('Axo')->value('Axo');
         }
         // Validar estructura
