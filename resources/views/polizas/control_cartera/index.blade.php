@@ -39,7 +39,43 @@
             background-color: #f5f5f5 !important;
             color: #000000 !important;
         }
+
+        tfoot th {
+            background: #e9ecef !important;
+            font-weight: 700;
+        }
     </style>
+
+
+
+    <style>
+        /* IMPORTANTE: DataTables crea wrappers */
+        div.dataTables_scrollHead {
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 9999 !important;
+        }
+
+        /* el thead real dentro del scrollHead */
+        div.dataTables_scrollHead thead th,
+        div.dataTables_scrollHead thead td {
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 10000 !important;
+            background: #ffffff !important;
+        }
+
+        /* evita transparencias raras */
+        div.dataTables_scrollHead table {
+            background: #ffffff !important;
+        }
+
+        /* por si tu layout tiene paneles con overflow */
+        .x_content {
+            overflow: visible !important;
+        }
+    </style>
+
 
     <div id="app">
         <div class="x_panel">
@@ -121,6 +157,7 @@
                             <th>Fecha de aplicación</th>
                         </tr>
                     </thead>
+
                     <tbody>
                         <tr v-for="registro in registros" :key="registro.Id" :class="getRowClass(registro.Color)">
                             <td>
@@ -166,6 +203,26 @@
                             <td>@{{ formatDate(registro.FechaAplicacion) }}</td>
                         </tr>
                     </tbody>
+
+                    <tfoot>
+                        <tr  style="display: :none !important">
+                            <th colspan="14" style="text-align:right">TOTALES:</th>
+                            <th></th> <!-- 14 Suma asegurada (MontoCartera) -->
+                            <th></th> <!-- 15 Tarifa -->
+                            <th></th> <!-- 16 Prima bruta (PrimaCalculada) -->
+                            <th></th> <!-- 17 Extra prima -->
+                            <th></th> <!-- 18 Prima emitida -->
+                            <th></th> <!-- 19 % rentabilidad -->
+                            <th></th> <!-- 20 Valor descuento rentabilidad -->
+                            <th></th> <!-- 21 Prima descontada -->
+                            <th></th> <!-- 22 % comisión -->
+                            <th></th> <!-- 23 Comisión -->
+                            <th></th> <!-- 24 IVA -->
+                            <th></th> <!-- 25 Retención -->
+                            <th></th> <!-- 26 Prima líquida -->
+                            <th colspan="10"></th>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>
@@ -282,7 +339,6 @@
 
     </div>
 
-
     <br>
 
     {{-- Scripts --}}
@@ -293,13 +349,10 @@
     <!-- Toastr JS -->
     <script src="{{ asset('vendors/toast/toastr.min.js') }}"></script>
 
-
-
     <script src="{{ asset('vendors/jquery.dataTables.min.js') }}"></script>
     <link href="{{ asset('vendors/jquery.dataTables.min.css') }}" rel="stylesheet" />
 
     <script src="{{ asset('vendors/vue.global.prod.js') }}"></script>
-
 
     <script>
         const {
@@ -315,36 +368,88 @@
                 }
             },
             mounted() {
-                $('#datatable1').DataTable({
-                    paging: false,
-                    searching: true,
-                    info: false,
-                    ordering: false,
-                    scrollX: true,
-                    language: {
-                        decimal: ",",
-                        thousands: ".",
-                        processing: "Procesando...",
-                        search: "Buscar:",
-                        lengthMenu: "Mostrar _MENU_ registros",
-                        info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                        infoEmpty: "Mostrando 0 a 0 de 0 registros",
-                        infoFiltered: "(filtrado de _MAX_ registros totales)",
-                        infoPostFix: "",
-                        loadingRecords: "Cargando...",
-                        zeroRecords: "No se encontraron resultados",
-                        emptyTable: "Ningún dato disponible en esta tabla",
-                        paginate: {
-                            first: "Primero",
-                            previous: "Anterior",
-                            next: "Siguiente",
-                            last: "Último"
+                this.$nextTick(() => {
+
+                    $('#datatable1').DataTable({
+                        destroy: true,
+                        paging: false,
+                        searching: true,
+                        info: false,
+                        ordering: false,
+                        scrollX: true,
+
+                        scrollY: '70vh',
+                        scrollCollapse: true,
+
+                        footerCallback: function(row, data) {
+                            const api = this.api();
+
+                            const toNumber = (val) => {
+                                if (val === null || val === undefined) return 0;
+                                const s = String(val)
+                                    .replace(/\s/g, '')
+                                    .replace(/[^0-9\.\-]/g,
+                                        ''
+                                    ); // quita comas/puntos de miles/cualquier símbolo
+                                const n = parseFloat(s);
+                                return isNaN(n) ? 0 : n;
+                            };
+
+                            const sum = (col) => {
+                                const total = api
+                                    .column(col, {
+                                        search: 'applied'
+                                    })
+                                    .data()
+                                    .reduce((a, b) => toNumber(a) + toNumber(b), 0);
+
+                                return total.toLocaleString('es-SV', {
+                                    minimumFractionDigits: 2
+                                });
+                            };
+
+                            // Índices exactos según TU tabla
+                            $(api.column(14).footer()).html(sum(
+                                14)); // Suma asegurada (MontoCartera)
+                            $(api.column(16).footer()).html(sum(
+                                16)); // Prima bruta (PrimaCalculada)
+                            $(api.column(17).footer()).html(sum(17)); // Extra prima
+                            $(api.column(18).footer()).html(sum(18)); // Prima emitida
+                            $(api.column(20).footer()).html(sum(
+                                20)); // Valor descuento rentabilidad
+                            $(api.column(21).footer()).html(sum(21)); // Prima descontada
+                            $(api.column(23).footer()).html(sum(23)); // Comisión neta
+                            $(api.column(24).footer()).html(sum(24)); // IVA 13%
+                            $(api.column(25).footer()).html(sum(25)); // Retención 1%
+                            $(api.column(26).footer()).html(sum(26)); // Prima líquida
                         },
-                        aria: {
-                            sortAscending: ": activar para ordenar la columna ascendente",
-                            sortDescending: ": activar para ordenar la columna descendente"
+
+                        language: {
+                            decimal: ",",
+                            thousands: ".",
+                            processing: "Procesando...",
+                            search: "Buscar:",
+                            lengthMenu: "Mostrar _MENU_ registros",
+                            info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                            infoEmpty: "Mostrando 0 a 0 de 0 registros",
+                            infoFiltered: "(filtrado de _MAX_ registros totales)",
+                            infoPostFix: "",
+                            loadingRecords: "Cargando...",
+                            zeroRecords: "No se encontraron resultados",
+                            emptyTable: "Ningún dato disponible en esta tabla",
+                            paginate: {
+                                first: "Primero",
+                                previous: "Anterior",
+                                next: "Siguiente",
+                                last: "Último"
+                            },
+                            aria: {
+                                sortAscending: ": activar para ordenar la columna ascendente",
+                                sortDescending: ": activar para ordenar la columna descendente"
+                            }
                         }
-                    }
+                    });
+
                 });
             },
             methods: {
@@ -369,20 +474,15 @@
                 formatDate(date) {
                     if (!date) return '';
 
-                    // Normalizar a solo la parte "YYYY-MM-DD"
-                    // Si incluye hora, ejemplo: "2025-08-01 00:00:00"
                     if (date.includes(' ')) {
                         date = date.split(' ')[0];
                     }
 
-                    // Seguridad adicional: eliminar milisegundos si vienen
                     if (date.includes('.')) {
                         date = date.split('.')[0];
                     }
 
                     const [year, month, day] = date.split('-');
-
-                    // Evitar errores si por alguna razón la fecha no viene como se espera
                     if (!year || !month || !day) return '';
 
                     return `${day}/${month}/${year}`;
@@ -482,7 +582,6 @@
 
                             if (index !== -1) {
 
-                                // Buscar nombre del reproceso
                                 const reproceso = this.reprocesos.find(
                                     r => r.Id == this.registroActivo.ReprocesoNRId
                                 );
@@ -490,12 +589,10 @@
                                 this.registroActivo.ReprocesoNombre =
                                     reproceso ? reproceso.Nombre : '';
 
-                                // Actualizar registro completo
                                 this.registros[index] = JSON.parse(
                                     JSON.stringify(this.registroActivo)
                                 );
 
-                                // Recalcular color
                                 this.registros[index].Color =
                                     this.calcularColor(this.registros[index]);
                             }
