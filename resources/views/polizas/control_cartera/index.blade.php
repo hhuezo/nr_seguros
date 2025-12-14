@@ -282,18 +282,21 @@
 
     </div>
 
+
+    <br>
+
     {{-- Scripts --}}
 
     <!-- Toastr CSS -->
     <link href="{{ asset('vendors/toast/toastr.min.css') }}" rel="stylesheet">
 
-   <!-- Toastr JS -->
+    <!-- Toastr JS -->
     <script src="{{ asset('vendors/toast/toastr.min.js') }}"></script>
 
 
 
     <script src="{{ asset('vendors/jquery.dataTables.min.js') }}"></script>
-   <link href="{{ asset('vendors/jquery.dataTables.min.css') }}" rel="stylesheet" />
+    <link href="{{ asset('vendors/jquery.dataTables.min.css') }}" rel="stylesheet" />
 
     <script src="{{ asset('vendors/vue.global.prod.js') }}"></script>
 

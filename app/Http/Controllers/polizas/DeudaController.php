@@ -58,6 +58,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use PDF;
 use Throwable;
@@ -955,6 +956,22 @@ class DeudaController extends Controller
             $planes = Plan::where('Activo', 1)->get();
             $detalle = DeudaDetalle::where('Deuda', $deuda->Id)->orderBy('Id', 'desc')->get();
 
+            foreach ($detalle as $det) {
+                $historial = DeudaHistorialRecibo::where('PolizaDeudaDetalle', $det->Id)->orderByDesc('Id')->first();
+                if ($historial) {
+
+                    if ($det->FechaInicio != $historial->FechaInicio) {
+                        $det->FechaInicio = $historial->FechaInicio;
+                    }
+                    if ($det->FechaFinal != $historial->FechaFin) {
+                        $det->FechaFinal = $historial->FechaFin;
+                    }
+                    if ($det->ImpresionRecibo != $historial->ImpresionRecibo) {
+                        $det->ImpresionRecibo = $historial->ImpresionRecibo;
+                    }
+                }
+            }
+
             //para fechas de modal
             $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
             $comentarios = Comentario::where('Deuda', $deuda->Id)->where('Activo', '=', 1)->get();
@@ -1770,13 +1787,45 @@ class DeudaController extends Controller
 
 
 
-            // Eliminar registros de cartera
-            DB::table('poliza_deuda_cartera')
+            // 🔹 Obtener registros a eliminar
+            $registros = DB::table('poliza_deuda_cartera')
                 ->where('Axo', $anio)
                 ->where('Mes', $mes)
                 ->where('PolizaDeuda', $deudaId)
-                ->delete();
+                ->get();
 
+            if ($registros->isNotEmpty()) {
+
+                // 🔹 Auditoría en archivo JSON
+                $contenido = [
+                    'fecha'       => now()->toDateTimeString(),
+                    'accion'      => 'DELETE',
+                    'mensaje'     => 'anular_pago', // ⬅ MENSAJE ADICIONAL
+                    'PolizaDeuda' => $deudaId,
+                    'usuario'     => [
+                        'id'    => Auth::id(),
+                        'email' => Auth::user()?->email,
+                    ],
+                    'filtro' => [
+                        'Axo'         => $anio,
+                        'Mes'         => $mes,
+                        'PolizaDeuda' => $deudaId,
+                    ],
+                    'datos' => $registros,
+                ];
+
+                Storage::put(
+                    'auditoria/poliza_deuda_' . $deudaId . '_anular_pago_' . now()->format('Ymd_His') . '.json',
+                    json_encode($contenido, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+                );
+
+                // 🔹 Eliminación final
+                DB::table('poliza_deuda_cartera')
+                    ->where('Axo', $anio)
+                    ->where('Mes', $mes)
+                    ->where('PolizaDeuda', $deudaId)
+                    ->delete();
+            }
 
             $usuario = Auth::user();
             $fecha   = now()->format('Y-m-d H:i:s');
@@ -1934,13 +1983,50 @@ class DeudaController extends Controller
                 ->where('PolizaDeuda', $deuda)
                 ->delete();
 
-            //Eliminar los registros de la xcartera real
-            DB::table('poliza_deuda_cartera')
+            // 🔹 Obtener registros a eliminar
+            $registros = DB::table('poliza_deuda_cartera')
                 ->where('Axo', $anio)
                 ->where('Mes', $mes)
                 ->where('PolizaDeuda', $deuda)
-                ->where('PolizaDeudaDetalle', null)
-                ->delete();
+                ->whereNull('PolizaDeudaDetalle')
+                ->get();
+
+            if ($registros->isNotEmpty()) {
+
+                // 🔹 Auditoría en archivo JSON
+                $contenido = [
+                    'fecha'       => now()->toDateTimeString(),
+                    'accion'      => 'DELETE',
+                    'mensaje'     => 'reiniciar_carga', // ⬅ MENSAJE
+                    'tabla'       => 'poliza_deuda_cartera',
+                    'PolizaDeuda' => $deuda,
+                    'usuario'     => [
+                        'id'    => Auth::id(),
+                        'email' => Auth::user()?->email,
+                    ],
+                    'filtro' => [
+                        'Axo'                 => $anio,
+                        'Mes'                 => $mes,
+                        'PolizaDeuda'         => $deuda,
+                        'PolizaDeudaDetalle'  => null,
+                    ],
+                    'datos' => $registros,
+                ];
+
+                Storage::put(
+                    'auditoria/poliza_deuda_' . $deuda . '_reiniciar_carga_' . now()->format('Ymd_His') . '.json',
+                    json_encode($contenido, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+                );
+
+                // 🔹 Eliminación final
+                DB::table('poliza_deuda_cartera')
+                    ->where('Axo', $anio)
+                    ->where('Mes', $mes)
+                    ->where('PolizaDeuda', $deuda)
+                    ->whereNull('PolizaDeudaDetalle')
+                    ->delete();
+            }
+
 
 
 

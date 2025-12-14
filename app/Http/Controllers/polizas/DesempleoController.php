@@ -529,6 +529,22 @@ class DesempleoController extends Controller
         $comisionIva = ($desempleo->ComisionIva == 1)  ? round(($desempleo->TasaComision ?? 0) / 1.13, 2)  : ($desempleo->TasaComision ?? 0);
 
         $detalle = DesempleoDetalle::where('Desempleo', $desempleo->Id)->orderBy('Id', 'desc')->get();
+        foreach ($detalle as $det) {
+            $historial = DesempleoHistorialRecibo::where('PolizaDesempleoDetalle', $det->Id)->orderByDesc('Id')->first();
+            if($historial){
+
+                if ($det->FechaInicio != $historial->FechaInicio) {
+                    $det->FechaInicio = $historial->FechaInicio;
+                }
+                if ($det->FechaFinal != $historial->FechaFin) {
+                    $det->FechaFinal = $historial->FechaFin;
+                }
+
+                if ($det->ImpresionRecibo != $historial->ImpresionRecibo) {
+                    $det->ImpresionRecibo = $historial->ImpresionRecibo;
+                }
+            }
+        }
 
         $tipo_contribuyente = $desempleo->cliente->TipoContribuyente;
         $retencion_comision = 0;

@@ -150,7 +150,7 @@
                                             <td>
                                                 @if (in_array(1, $registro->Errores))
                                                     <strong><span
-                                                            style="color: red;">{{ $registro->FechaNacimiento }}</span></strong>
+                                                            style="color: red;">{{ $registro->FechaNacimiento}}</span></strong>
                                                 @else
                                                     {{ $registro->FechaNacimiento }}
                                                 @endif
@@ -158,7 +158,7 @@
                                             <td>
                                                 @if (in_array(2, $registro->Errores))
                                                     <strong><span
-                                                            style="color: red;">{{ $registro->FechaOtorgamiento }}</span></strong>
+                                                            style="color: red;">{{ $registro->FechaOtorgamientoDate }}</span></strong>
                                                 @else
                                                     {{ $registro->FechaOtorgamiento }}
                                                 @endif
