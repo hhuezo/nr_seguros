@@ -7,6 +7,7 @@ use App\Imports\PolizaDeudaTempCarteraFedeComImport;
 use App\Imports\PolizaDeudaTempCarteraFedeImport;
 use App\Models\polizas\Deuda;
 use App\Models\polizas\DeudaCredito;
+use App\Models\polizas\PolizaDeudaCartera;
 use App\Models\polizas\PolizaDeudaTipoCartera;
 use App\Models\temp\PolizaDeudaTempCartera;
 use Carbon\Carbon;
@@ -18,13 +19,23 @@ use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Throwable;
-use Illuminate\Support\Facades\File;
 
 class DeudaCarteraFedeController extends Controller
 {
     //
     public function create_pago(Request $request)
     {
+
+        $cartera_count = PolizaDeudaCartera::where('PolizaDeuda', $request->Id)->where('Mes', $request->Mes)->where('Axo', $request->Axo)->count();
+
+        if ($cartera_count > 0) {
+            return back()
+                ->withErrors([
+                    'Mes' => 'Ya existe una cartera registrada para este mes y año.'
+                ])
+                ->withInput();
+        }
+
 
         $deuda = Deuda::findOrFail($request->Id);
         $deuda_tipo_cartera = $deuda->deuda_tipos_cartera;
