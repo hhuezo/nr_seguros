@@ -1796,30 +1796,7 @@ class DeudaController extends Controller
 
             if ($registros->isNotEmpty()) {
 
-                // 🔹 Auditoría en archivo JSON
-                $contenido = [
-                    'fecha'       => now()->toDateTimeString(),
-                    'accion'      => 'DELETE',
-                    'mensaje'     => 'anular_pago', // ⬅ MENSAJE ADICIONAL
-                    'PolizaDeuda' => $deudaId,
-                    'usuario'     => [
-                        'id'    => Auth::id(),
-                        'email' => Auth::user()?->email,
-                    ],
-                    'filtro' => [
-                        'Axo'         => $anio,
-                        'Mes'         => $mes,
-                        'PolizaDeuda' => $deudaId,
-                    ],
-                    'datos' => $registros,
-                ];
-
-                Storage::put(
-                    'auditoria/poliza_deuda_' . $deudaId . '_anular_pago_' . now()->format('Ymd_His') . '.json',
-                    json_encode($contenido, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
-                );
-
-                // 🔹 Eliminación final
+                         // 🔹 Eliminación final
                 DB::table('poliza_deuda_cartera')
                     ->where('Axo', $anio)
                     ->where('Mes', $mes)
@@ -1990,33 +1967,7 @@ class DeudaController extends Controller
                 ->where('PolizaDeuda', $deuda)
                 ->whereNull('PolizaDeudaDetalle')
                 ->get();
-
             if ($registros->isNotEmpty()) {
-
-                // 🔹 Auditoría en archivo JSON
-                $contenido = [
-                    'fecha'       => now()->toDateTimeString(),
-                    'accion'      => 'DELETE',
-                    'mensaje'     => 'reiniciar_carga', // ⬅ MENSAJE
-                    'tabla'       => 'poliza_deuda_cartera',
-                    'PolizaDeuda' => $deuda,
-                    'usuario'     => [
-                        'id'    => Auth::id(),
-                        'email' => Auth::user()?->email,
-                    ],
-                    'filtro' => [
-                        'Axo'                 => $anio,
-                        'Mes'                 => $mes,
-                        'PolizaDeuda'         => $deuda,
-                        'PolizaDeudaDetalle'  => null,
-                    ],
-                    'datos' => $registros,
-                ];
-
-                Storage::put(
-                    'auditoria/poliza_deuda_' . $deuda . '_reiniciar_carga_' . now()->format('Ymd_His') . '.json',
-                    json_encode($contenido, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
-                );
 
                 // 🔹 Eliminación final
                 DB::table('poliza_deuda_cartera')

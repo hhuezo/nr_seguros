@@ -1610,29 +1610,6 @@ class DeudaCarteraController extends Controller
             ->where('PolizaDeuda', $request->Deuda)
             ->get();
 
-        $contenido = [
-            'fecha'        => now()->toDateTimeString(),
-            'accion'       => 'DELETE',
-            'mensaje'     => 'store_poliza',
-            'PolizaDeuda'  => $request->Deuda, // ⬅ CAMPO DIRECTO
-            'usuario'      => [
-                'id'    => Auth::id(),
-                'email' => Auth::user()?->email,
-            ],
-            'filtro' => [
-                'Axo'          => $anio,
-                'Mes'          => $mes,
-                'PolizaDeuda'  => $request->Deuda,
-            ],
-            'datos' => $registros,
-        ];
-
-        Storage::put(
-            'auditoria/poliza_deuda_' . $request->Deuda . '_' . now()->format('Ymd_His') . '.json',
-            json_encode($contenido, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
-        );
-
-
         // eliminando datos de la cartera si existieran
         PolizaDeudaCartera::where('Axo', $anio)
             ->where('Mes', $mes + 0)->where('PolizaDeuda', $request->Deuda)->delete();
@@ -2042,30 +2019,7 @@ class DeudaCarteraController extends Controller
 
         if ($registros->isNotEmpty()) {
 
-            // 🔹 Auditoría en archivo JSON
-            $contenido = [
-                'fecha'       => now()->toDateTimeString(),
-                'accion'      => 'DELETE',
-                'PolizaDeuda' => $request->Deuda,
-                'mensaje'       => 'primera_carga',
-                'usuario'     => [
-                    'id'    => Auth::id(),
-                    'email' => Auth::user()?->email,
-                ],
-                'filtro' => [
-                    'Axo'         => $anio,
-                    'Mes'         => $mes + 0,
-                    'PolizaDeuda' => $request->Deuda,
-                ],
-                'datos' => $registros,
-            ];
-
-            Storage::put(
-                'auditoria/poliza_deuda_' . $request->Deuda . '_' . now()->format('Ymd_His') . '.json',
-                json_encode($contenido, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
-            );
-
-            // 🔹 Eliminación final
+           // 🔹 Eliminación final
             PolizaDeudaCartera::where('Axo', $anio)
                 ->where('Mes', $mes + 0)
                 ->where('PolizaDeuda', $request->Deuda)
@@ -2081,7 +2035,6 @@ class DeudaCarteraController extends Controller
             . "POLIZA_DEUDA_ID: {$request->Deuda} | "
             . "MES: " . ($mes + 0) . " | "
             . "AÑO: {$anio} | "
-            . "REGISTROS_ELIMINADOS: {$tempData} | "
             . "IP: " . request()->ip()
             . PHP_EOL;
 
