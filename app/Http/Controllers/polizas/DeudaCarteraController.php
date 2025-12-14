@@ -18,12 +18,14 @@ use App\Models\temp\PolizaDeudaTempCarteraHistorial;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Throwable;
+use Illuminate\Support\Facades\File;
 
 class DeudaCarteraController extends Controller
 {
@@ -1605,6 +1607,23 @@ class DeudaCarteraController extends Controller
         PolizaDeudaCartera::where('Axo', $anio)
             ->where('Mes', $mes + 0)->where('PolizaDeuda', $request->Deuda)->delete();
 
+        $usuario = Auth::user();
+        $fecha   = now()->format('Y-m-d H:i:s');
+
+        $mensaje = "[{$fecha}] "
+            . "USUARIO: {$usuario->id} - {$usuario->name} | "
+            . "ACCION: STORE POLIZA | "
+            . "POLIZA_DEUDA_ID: {$request->Deuda} | "
+            . "MES: " . ($mes + 0) . " | "
+            . "AÑO: {$anio} | "
+            . "IP: " . request()->ip()
+            . PHP_EOL;
+
+        File::append(
+            storage_path('logs/pagos_cancelados.log'),
+            $mensaje
+        );
+
 
         // Obtener los datos de la tabla temporal
         $tempData = PolizaDeudaTempCartera::where('Axo', $anio)
@@ -1613,17 +1632,6 @@ class DeudaCarteraController extends Controller
             //->where('OmisionPerfil', 1)
             ->where('PolizaDeuda', $request->Deuda)
             ->get();
-
-
-
-        /*$tempDataValidados = PolizaDeudaTempCartera::join('poliza_deuda_validados', 'poliza_deuda_validados.NumeroReferencia', '=', 'poliza_deuda_temp_cartera.NumeroReferencia')
-            ->where('poliza_deuda_temp_cartera.Axo', $anio)
-            ->where('poliza_deuda_temp_cartera.Mes', $mes + 0)
-            ->where('poliza_deuda_temp_cartera.OmisionPerfil', 0)
-            ->where('NoValido', 0)
-            ->where('poliza_deuda_temp_cartera.PolizaDeuda', $request->Deuda)
-            ->select('poliza_deuda_temp_cartera.*')
-            ->get();*/
 
 
         if (!empty($request->Eliminados)) {
@@ -1923,6 +1931,24 @@ class DeudaCarteraController extends Controller
         // eliminando datos de la cartera si existieran
         $tempData = PolizaDeudaCartera::where('Axo', $anio)
             ->where('Mes', $mes + 0)->where('PolizaDeuda', $request->Deuda)->delete();
+
+        $usuario = Auth::user();
+        $fecha   = now()->format('Y-m-d H:i:s');
+
+        $mensaje = "[{$fecha}] "
+            . "USUARIO: {$usuario->id} - {$usuario->name} | "
+            . "ACCION: PRIMER CARGA | "
+            . "POLIZA_DEUDA_ID: {$request->Deuda} | "
+            . "MES: " . ($mes + 0) . " | "
+            . "AÑO: {$anio} | "
+            . "REGISTROS_ELIMINADOS: {$tempData} | "
+            . "IP: " . request()->ip()
+            . PHP_EOL;
+
+        File::append(
+            storage_path('logs/pagos_cancelados.log'),
+            $mensaje
+        );
 
 
         // Obtener los datos de la tabla temporal

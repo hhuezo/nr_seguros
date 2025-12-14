@@ -1677,11 +1677,36 @@ class DeudaController extends Controller
 
     public function borrar_proceso_actual(Request $request)
     {
-        // dd($request->deuda_id);
+        try {
 
-        PolizaDeudaCartera::where('PolizaDeuda', $request->deuda_id)->where('PolizaDeudaDetalle', null)->delete();
+            PolizaDeudaCartera::where('PolizaDeuda', $request->deuda_id)
+                ->whereNull('PolizaDeudaDetalle')
+                ->delete();
 
-        PolizaDeudaTempCartera::where('PolizaDeuda', $request->deuda_id)->delete();
+            PolizaDeudaTempCartera::where('PolizaDeuda', $request->deuda_id)
+                ->delete();
+
+            $usuario = Auth::user();
+            $fecha   = now()->format('Y-m-d H:i:s');
+
+            $mensaje = "[{$fecha}] "
+                . "USUARIO: {$usuario->id} - {$usuario->name} | "
+                . "ACCION: BORRAR PROCESO ACTUAL | "
+                . "POLIZA_DEUDA_ID: {$request->deuda_id} | "
+                . "IP: {$request->ip()}"
+                . PHP_EOL;
+
+            File::append(
+                storage_path('logs/pagos_cancelados.log'),
+                $mensaje
+            );
+        } catch (\Throwable $th) {
+
+            alert()->error('Error al borrar el proceso actual');
+            return back();
+        }
+
+        alert()->success('Proceso actual eliminado correctamente');
         return redirect('polizas/deuda/' . $request->deuda_id . '/edit');
     }
 
@@ -1753,6 +1778,24 @@ class DeudaController extends Controller
                 ->delete();
 
 
+            $usuario = Auth::user();
+            $fecha   = now()->format('Y-m-d H:i:s');
+
+            $mensaje = "[{$fecha}] "
+                . "USUARIO: {$usuario->id} - {$usuario->name} | "
+                . "ACCION: ANULAR PAGO | "
+                . "POLIZA_DEUDA_ID: {$deudaId} | "
+                . "MES: {$mes} | "
+                . "AÑO: {$anio} | "
+                . "IP: " . request()->ip()
+                . PHP_EOL;
+
+            File::append(
+                storage_path('logs/pagos_cancelados.log'),
+                $mensaje
+            );
+
+
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
@@ -1765,14 +1808,39 @@ class DeudaController extends Controller
 
     public function delete_pago($id)
     {
-        $detalle = DeudaDetalle::findOrFail($id);
+        try {
 
-        // recibo eliminado
-        DeudaHistorialRecibo::where('PolizaDeudaDetalle', $id)->delete();
+            $detalle = DeudaDetalle::findOrFail($id);
 
-        PolizaDeudaCartera::where('PolizaDeudaDetalle', $id)->delete();
-        $detalle->delete();
-        alert()->success('El registro ha sido ingresado correctamente');
+            DeudaHistorialRecibo::where('PolizaDeudaDetalle', $id)->delete();
+            PolizaDeudaCartera::where('PolizaDeudaDetalle', $id)->delete();
+
+            $polizaId = $detalle->PolizaDeuda ?? null;
+
+            $detalle->delete();
+
+            $usuario = Auth::user();
+            $fecha   = now()->format('Y-m-d H:i:s');
+
+            $mensaje = "[{$fecha}] "
+                . "USUARIO: {$usuario->id} - {$usuario->name} | "
+                . "ACCION: DELETE PAGO | "
+                . "DEUDA_DETALLE_ID: {$id} | "
+                . "POLIZA_DEUDA_ID: {$polizaId} | "
+                . "IP: " . request()->ip()
+                . PHP_EOL;
+
+            File::append(
+                storage_path('logs/pagos_cancelados.log'),
+                $mensaje
+            );
+        } catch (\Throwable $th) {
+
+            alert()->error('Error al eliminar el registro');
+            return back();
+        }
+
+        alert()->success('El registro ha sido eliminado correctamente');
         return back();
     }
 
@@ -1873,6 +1941,27 @@ class DeudaController extends Controller
                 ->where('PolizaDeuda', $deuda)
                 ->where('PolizaDeudaDetalle', null)
                 ->delete();
+
+
+
+            $usuario = Auth::user();
+            $fecha   = now()->format('Y-m-d H:i:s');
+
+            $mensaje = "[{$fecha}] "
+                . "USUARIO: {$usuario->id} - {$usuario->name} | "
+                . "ACCION: REINICIAR CARGA | "
+                . "POLIZA_DEUDA_ID: {$deuda} | "
+                . "MES: {$mes} | "
+                . "AÑO: {$anio} | "
+                . "IP: " . request()->ip()
+                . PHP_EOL;
+
+            File::append(
+                storage_path('logs/pagos_cancelados.log'),
+                $mensaje
+            );
+
+
 
             DB::commit();
 
