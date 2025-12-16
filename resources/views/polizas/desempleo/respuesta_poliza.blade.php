@@ -153,7 +153,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @foreach ($poliza_edad_maxima->where('EdadDesembloso', '>', $desempleo->EdadMaxima) as $registro)
+                                                        @foreach ($poliza_edad_maxima as $registro)
                                                             <tr>
                                                                 <td>{{ $registro->NumeroReferencia }}</td>
                                                                 <td>{{ $registro->Dui }}</td>

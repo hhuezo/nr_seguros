@@ -531,7 +531,7 @@ class DesempleoController extends Controller
         $detalle = DesempleoDetalle::where('Desempleo', $desempleo->Id)->orderBy('Id', 'desc')->get();
         foreach ($detalle as $det) {
             $historial = DesempleoHistorialRecibo::where('PolizaDesempleoDetalle', $det->Id)->orderByDesc('Id')->first();
-            if($historial){
+            if ($historial) {
 
                 if ($det->FechaInicio != $historial->FechaInicio) {
                     $det->FechaInicio = $historial->FechaInicio;
@@ -1555,10 +1555,21 @@ class DesempleoController extends Controller
         try {
             $desempleo = Desempleo::findOrFail($id);
 
-            $count = DesempleoCarteraTemp::where('User', auth()->user()->id)
-                ->where('PolizaDesempleo', $id)
+            $count = DesempleoCarteraTemp::where('PolizaDesempleo', $id)
                 ->where('EdadDesembloso', '>', $desempleo->EdadMaximaInscripcion)
                 ->where('NoValido', 0)
+                ->whereNotExists(function ($query) {
+                    $query->select(DB::raw(1))
+                        ->from('poliza_desempleo_cartera')
+                        ->whereColumn(
+                            'poliza_desempleo_cartera.Identificador',
+                            'poliza_desempleo_cartera_temp.Identificador'
+                        )
+                        ->whereColumn(
+                            'poliza_desempleo_cartera.NumeroReferencia',
+                            'poliza_desempleo_cartera_temp.NumeroReferencia'
+                        );
+                })
                 ->count();
 
             return response()->json([
@@ -1566,11 +1577,10 @@ class DesempleoController extends Controller
                 'count' => $count,
             ]);
         } catch (\Exception $e) {
-            // Retornar error en caso de excepción
             return response()->json([
                 'success' => false,
                 'message' => 'Error: ' . $e->getMessage(),
-            ], 500); // Código de estado HTTP 500 para errores del servidor
+            ], 500);
         }
     }
 

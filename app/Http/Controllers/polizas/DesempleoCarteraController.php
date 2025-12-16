@@ -867,7 +867,22 @@ class DesempleoCarteraController extends Controller
 
 
         $data = DesempleoCarteraTemp::where('PolizaDesempleo', $id)->get();
-        $poliza_edad_maxima = $data->where('EdadDesembloso', '>', $desempleo->EdadMaximaInscripcion);
+        $poliza_edad_maxima = DesempleoCarteraTemp::where('PolizaDesempleo', $id)
+            ->where('EdadDesembloso', '>', $desempleo->EdadMaximaInscripcion)
+            ->whereNotExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('poliza_desempleo_cartera')
+                    ->whereColumn(
+                        'poliza_desempleo_cartera.Identificador',
+                        'poliza_desempleo_cartera_temp.Identificador'
+                    )
+                    ->whereColumn(
+                        'poliza_desempleo_cartera.NumeroReferencia',
+                        'poliza_desempleo_cartera_temp.NumeroReferencia'
+                    );
+            })
+            ->get();
+
 
         // Verificamos si hay datos en la cartera anterior
         $count_data_cartera = DesempleoCartera::where('PolizaDesempleo', $id)->count();
@@ -939,7 +954,7 @@ class DesempleoCarteraController extends Controller
             }
         }
         $registros_rehabilitados = DesempleoCarteraTemp::where('PolizaDesempleo', $id)->where('Rehabilitado', 1)->get();
-        //($poliza_edad_maxima);
+
 
         return view('polizas.desempleo.respuesta_poliza', compact('total', 'desempleo', 'poliza_edad_maxima', 'registros_rehabilitados', 'registros_eliminados', 'nuevos_registros', 'axoActual', 'mesActual'));
     }
