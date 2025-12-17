@@ -493,8 +493,7 @@ class DesempleoCarteraController extends Controller
     public function create_pago_fedecredito(Request $request, $id)
     {
 
-
-        // 🧩 Validar datos básicos del formulario
+        //Validar datos básicos del formulario
         $request->validate([
             'Axo' => 'required|integer',
             'Mes' => 'required|integer|between:1,12',
@@ -624,17 +623,16 @@ class DesempleoCarteraController extends Controller
         $validator = Validator::make([], []); // Creamos un validador vacío
 
         if ($request->validacion_credito != 'on') {
-            $repetidos = DesempleoCarteraTemp::where('User', auth()->user()->id)
-                //->where('PolizaDeuda', $request->Id)
-                ->where('DesempleoTipoCartera', $request->DesempleoTipoCartera)
+            $repetidos = DesempleoCarteraTemp::where('DesempleoTipoCartera', $request->DesempleoTipoCartera)
                 ->groupBy('NumeroReferencia')
                 ->havingRaw('COUNT(*) > 1')
                 ->get();
 
             $numerosRepetidos = $repetidos->isNotEmpty() ? $repetidos->pluck('NumeroReferencia') : null;
 
+
+
             if ($numerosRepetidos) {
-                DesempleoCarteraTemp::delete();
                 // Convertir la colección a string para mostrarla en el error
                 $numerosStr = $numerosRepetidos->implode(', ');
 
