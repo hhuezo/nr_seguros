@@ -633,6 +633,7 @@ class DesempleoCarteraController extends Controller
 
 
             if ($numerosRepetidos) {
+                 DesempleoCarteraTemp::where('PolizaDesempleo', $id)->where('DesempleoTipoCartera', $request->DesempleoTipoCartera)->delete();
                 // Convertir la colección a string para mostrarla en el error
                 $numerosStr = $numerosRepetidos->implode(', ');
 
