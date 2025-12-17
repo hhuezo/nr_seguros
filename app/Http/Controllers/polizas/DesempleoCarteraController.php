@@ -155,6 +155,17 @@ class DesempleoCarteraController extends Controller
     public function create_pago(Request $request, $id)
     {
 
+        $cartera_count = DesempleoCartera::where('PolizaDesempleo', $id)->where('Mes', $request->Mes)->where('Axo', $request->Axo)->count();
+
+        if ($cartera_count > 0) {
+            return back()
+                ->withErrors([
+                    'Mes' => 'Ya existe una cartera registrada para este mes y año.'
+                ])
+                ->withInput();
+        }
+
+
         // 🧩 Validar datos básicos del formulario
         $request->validate([
             'Axo' => 'required|integer',
@@ -493,6 +504,16 @@ class DesempleoCarteraController extends Controller
     public function create_pago_fedecredito(Request $request, $id)
     {
 
+        $cartera_count = DesempleoCartera::where('PolizaDesempleo', $id)->where('Mes', $request->Mes)->where('Axo', $request->Axo)->count();
+
+        if ($cartera_count > 0) {
+            return back()
+                ->withErrors([
+                    'Mes' => 'Ya existe una cartera registrada para este mes y año.'
+                ])
+                ->withInput();
+        }
+
         //Validar datos básicos del formulario
         $request->validate([
             'Axo' => 'required|integer',
@@ -633,7 +654,7 @@ class DesempleoCarteraController extends Controller
 
 
             if ($numerosRepetidos) {
-                 DesempleoCarteraTemp::where('PolizaDesempleo', $id)->where('DesempleoTipoCartera', $request->DesempleoTipoCartera)->delete();
+                DesempleoCarteraTemp::where('PolizaDesempleo', $id)->where('DesempleoTipoCartera', $request->DesempleoTipoCartera)->delete();
                 // Convertir la colección a string para mostrarla en el error
                 $numerosStr = $numerosRepetidos->implode(', ');
 
