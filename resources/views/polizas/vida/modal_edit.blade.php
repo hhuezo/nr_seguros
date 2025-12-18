@@ -1,6 +1,6 @@
 <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-recibo-{{ $obj->Id }}">
 
-    <form method="POST" action="{{ url('poliza/vida/recibo', $obj->Id) }}" >
+    <form method="POST" action="{{ url('poliza/vida/recibo', $obj->Id) }}" target="_blank">
 
         @csrf
         <div class="modal-dialog">
@@ -48,9 +48,9 @@
                         </div>
                         <br>
                     </div>
-                    
+
                     <div class="modal-footer">
-                        
+
                         <button type="button" style="margin-top: 10px !important;" class="btn btn-default" data-dismiss="modal">Cerrar</button>
                         <button type="submit" style="margin-top: 10px !important;"  class="btn btn-primary" id="btn_confirmar_recibo" onclick="confirmar_recibo({{$obj->Id}})">Confirmar</button>
                     </div>
@@ -188,11 +188,11 @@
             confirmButtonText: 'Aceptar'
         }).then((result) => {
             if (result.isConfirmed) {
-                document.getElementById('loading-overlay-modal').style.display = 'flex';
+                document.getElementById('loading-overlay').style.display = 'flex';
 
                 // Retrasar la redirección para permitir que se muestre el overlay
                 setTimeout(() => {
-                    window.location.href = "{{url('polizas/vida/')}}/" + vida + '/edit?tab=4'; // Redirigir a otra URL
+                    window.location.href = "{{url('polizas/vida/')}}/" + vida + '?tab=5'; // Redirigir a otra URL
                 }, 500); // 500ms de retraso (puedes ajustar este valor si es necesario)
             }
         });

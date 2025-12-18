@@ -54,7 +54,7 @@
                 <a class="nav-link" id="hoja-tab" data-toggle="tab" href="#hoja" role="tab" aria-controls="hoja"
                     aria-selected="false">Hoja de Cartera {{ $desempleo->NumeroPoliza }}</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item {{ isset($tab) && $tab == 4 ? 'active in' : '' }}">
                 <a class="nav-link" id="pagos-tab" data-toggle="tab" href="#pagos" role="tab" aria-controls="pagos"
                     aria-selected="false">Estado de Pago</a>
             </li>
@@ -216,7 +216,7 @@
                 @include('polizas.desempleo.tab3')
 
             </div>
-            <div class="tab-pane fade " id="pagos" role="tabpanel" aria-labelledby="pagos-tab">
+            <div class="tab-pane fade {{ isset($tab) && $tab == 4 ? 'active in' : '' }}" id="pagos" role="tabpanel" aria-labelledby="pagos-tab">
                 @include('polizas.desempleo.tab4')
 
             </div>

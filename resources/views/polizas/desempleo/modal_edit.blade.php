@@ -186,11 +186,11 @@
             confirmButtonText: 'Aceptar'
         }).then((result) => {
             if (result.isConfirmed) {
-                document.getElementById('loading-overlay-modal').style.display = 'flex';
+                document.getElementById('loading-overlay').style.display = 'flex';
 
                 // Retrasar la redirección para permitir que se muestre el overlay
                 setTimeout(() => {
-                    window.location.href = "{{url('polizas/desempleo/')}}/" + desempleo + '/edit?tab=4'; // Redirigir a otra URL
+                    window.location.href = "{{url('polizas/desempleo/')}}/" + desempleo + '?tab=4'; // Redirigir a otra URL
                 }, 500); // 500ms de retraso (puedes ajustar este valor si es necesario)
             }
         });
