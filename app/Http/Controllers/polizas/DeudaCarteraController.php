@@ -98,18 +98,31 @@ class DeudaCarteraController extends Controller
             ->first();
 
 
+
         if ($ultimo_pago) {
-            // Si hay pago, tomar la fecha inicial y final con +1 mes exacto
-            $fecha_inicial = Carbon::parse($ultimo_pago->FechaFinal);
+
+            $mes = (int) $ultimo_pago->Mes;   // 1..12
+            $axo = (int) $ultimo_pago->Axo;   // asegúrate que exista el año
+
+            // Aumentar un mes
+            $mes++;
+
+            if ($mes > 12) {
+                $mes = 1;
+                $axo++;
+            }
+
+            // Fecha inicial = primer día del mes calculado
+            $fecha_inicial = Carbon::create($axo, $mes, 1);
+
+            // Fecha final = +1 mes exacto
             $fecha_final = $fecha_inicial->copy()->addMonth();
 
-            $axo = $fecha_inicial->year;
-            $mes = (int) $fecha_inicial->month;
-
-            // Formato final Y-m-d
+            // Formato final
             $fecha_inicial = $fecha_inicial->format('Y-m-d');
-            $fecha_final = $fecha_final->format('Y-m-d');
+            $fecha_final   = $fecha_final->format('Y-m-d');
         }
+
 
 
         // Último registro temporal de cartera
@@ -122,8 +135,6 @@ class DeudaCarteraController extends Controller
             $fecha_inicial = $registro_cartera->FechaInicio;
             $fecha_final = $registro_cartera->FechaFinal;
         }
-
-
 
         return view('polizas.deuda.subir_archivos', compact(
             'deuda',
@@ -2019,7 +2030,7 @@ class DeudaCarteraController extends Controller
 
         if ($registros->isNotEmpty()) {
 
-           // 🔹 Eliminación final
+            // 🔹 Eliminación final
             PolizaDeudaCartera::where('Axo', $anio)
                 ->where('Mes', $mes + 0)
                 ->where('PolizaDeuda', $request->Deuda)
