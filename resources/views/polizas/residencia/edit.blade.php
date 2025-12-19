@@ -344,6 +344,7 @@
                                     <thead>
                                         <tr>
                                             <th style="text-align: center;">Póliza</th>
+                                            <th style="text-align: center;">Mes/Año</th>
                                             <th style="text-align: center;">Fecha Inicio <br> Vigencia</th>
                                             <th style="text-align: center;">Fecha Final <br> Vigencia</th>
                                             <th style="text-align: center;">Fecha de Creación</th>
@@ -368,6 +369,8 @@
                                                     $fileUrl = asset($obj->ExcelURL);
                                                 @endphp
                                                 <td style="text-align: center;">{{ $residencia->NumeroPoliza }}</td>
+                                                <td style="text-align: center;">{{ $obj->Mes }}/{{ $obj->Axo }}
+                                                </td>
                                                 <td style="text-align: center;">
                                                     {{ $obj->FechaInicio ? \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') : '' }}
                                                 </td>
@@ -375,7 +378,6 @@
                                                     {{ $obj->FechaFinal ? \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') : '' }}
                                                 </td>
                                                 <td style="text-align: center;">
-                                                    {{ $obj->ImpresionRecibo }}
                                                     {{ $obj->ImpresionRecibo ? \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') : '' }}
                                                 </td>
                                                 <td style="text-align: center;">
@@ -459,6 +461,10 @@
 
                         </div>
                         @include('polizas.residencia.tab2')
+
+
+
+
                         <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="creditos-tab">
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div class="x_title">
@@ -756,6 +762,10 @@
                             </div>
                         </div>
 
+
+
+
+
                         <div role="tabpanel" class="tab-pane fade" id="tab_content5" aria-labelledby="recibos-tab">
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -771,6 +781,7 @@
                                             <thead>
                                                 <tr>
                                                     <th>N° Aviso</th>
+                                                    <th style="text-align: center;">Mes/Año</th>
                                                     <th>N° Documento</th>
                                                     <th>Fecha Impresión Aviso</th>
                                                     <th>Fecha Inicio</th>
@@ -785,6 +796,8 @@
                                                         <tr>
                                                             <td>{{ $obj->NumeroRecibo ? 'AC' . str_pad($obj->NumeroRecibo, 6, '0', STR_PAD_LEFT) . ' ' . date('y') : '' }}
                                                             </td>
+                                                            <td style="text-align: center;">
+                                                                {{ $obj->Mes }}/{{ $obj->Axo }}</td>
                                                             <td>{{ $obj->NumeroCorrelativo ? $obj->NumeroCorrelativo : '' }}
                                                             </td>
                                                             <td>{{ \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}
@@ -805,7 +818,7 @@
                                                             <td>
                                                                 @if ($obj->Activo != 0)
                                                                     <a href="{{ url('polizas/residencia/get_recibo') }}/{{ $obj->Id }}"
-                                                                         class="btn btn-info">Reimprimir</a>
+                                                                        class="btn btn-info">Reimprimir</a>
                                                                     <a href="{{ url('polizas/residencia/get_recibo_edit') }}/{{ $obj->Id }}"
                                                                         class="btn btn-warning">Editar</a>
                                                                 @endif
@@ -819,6 +832,10 @@
                                 </div>
                             </div>
                         </div>
+
+
+
+
                         <div role="tabpanel" class="tab-pane fade" id="tab_content6" aria-labelledby="comen-tab">
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -936,9 +953,9 @@
                                                         class="form-control" readonly>
                                                 </div>
                                                 <!-- <div class="col-sm-3">
-                                                                                                                                    <label class="control-label">&nbsp;</label>
-                                                                                                                                    <i class="btn btn-default fa fa-print form-control" id="btn_impresion"></i>
-                                                                                                                                </div> -->
+                                                                                                                                            <label class="control-label">&nbsp;</label>
+                                                                                                                                            <i class="btn btn-default fa fa-print form-control" id="btn_impresion"></i>
+                                                                                                                                        </div> -->
                                             </div>
 
                                             <div class="form-group">
