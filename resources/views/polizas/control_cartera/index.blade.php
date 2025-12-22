@@ -48,7 +48,7 @@
 
 
 
-    <style>
+    {{-- <style>
         /* IMPORTANTE: DataTables crea wrappers */
         div.dataTables_scrollHead {
             position: sticky !important;
@@ -71,10 +71,10 @@
         }
 
         /* por si tu layout tiene paneles con overflow */
-        .x_content {
+         .x_content {
             overflow: visible !important;
         }
-    </style>
+    </style> --}}
 
 
     <div id="app">
