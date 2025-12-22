@@ -1,6 +1,26 @@
 @extends ('welcome')
 @section('contenido')
+<style>
+    #loading-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.8);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+    }
 
+    #loading-overlay img {
+        width: 50px;
+        /* Ajusta el tamaño de la imagen según tus necesidades */
+        height: 50px;
+        /* Ajusta el tamaño de la imagen según tus necesidades */
+    }
+</style>
     @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
     <div class="x_panel">
         <div id="loading-overlay" style="display: none">
@@ -48,7 +68,7 @@
                 <a class="nav-link" id="hoja-tab" data-toggle="tab" href="#hoja" role="tab" aria-controls="hoja"
                     aria-selected="false">Hoja de Cartera <br> {{ $poliza_vida->NumeroPoliza }}</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item {{ isset($tab) && $tab == 5 ? 'active in' : '' }}">
                 <a class="nav-link" id="pagos-tab" data-toggle="tab" href="#pagos" role="tab" aria-controls="pagos"
                     aria-selected="false">Estado <br> de Pago</a>
             </li>

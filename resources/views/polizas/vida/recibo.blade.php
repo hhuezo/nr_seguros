@@ -35,7 +35,7 @@ $prima_calculada = $detalle->MontoCartera * $poliza_vida->Tasa;
                 {{$recibo_historial->DireccionResidencia ?? $cliente->DireccionCorrespondencia }}
                 <br>
                 <br><br>
-                Estimado (a)(o)(es):
+                Estimado (a)(o)(es): {{$cliente->Nombre}}
             </td>
             <td style="width: 25%;">
                 <img src="{{ public_path('img/logo.jpg') }}" alt="logo" width="165">

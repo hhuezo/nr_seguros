@@ -806,7 +806,7 @@
         document.getElementById('sub_total_ccf').textContent = formatearCantidad(sub_total_ccf);
         let comision = 0;
         let retencion = 0;
-        if (tipo_contribuyente == 1 && valor_comision >= 100) {
+        if (tipo_contribuyente !== 1 && valor_comision >= 100) {
             //console.log("valor_comision1: ",valor_comision);
             retencion = (parseFloat(valor_comision) * 0.001);
         }

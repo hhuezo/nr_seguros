@@ -114,7 +114,7 @@ class VidaController extends Controller
 
             // Reglas condicionales
             if ($request->TipoCobro == 1) {
-                $rules['SumaMinima'] = 'required|numeric|min:0.01';
+                $rules['SumaMinima'] = 'required|numeric|min:0.00';
                 $rules['SumaMaxima'] = 'required|numeric|gt:SumaMinima';
             }
 
@@ -153,7 +153,7 @@ class VidaController extends Controller
                 // Mensajes para SumaMinima y SumaMaxima
                 'SumaMinima.required' => 'La suma mínima es obligatoria',
                 'SumaMinima.numeric' => 'La suma mínima debe ser un valor numérico',
-                'SumaMinima.min' => 'La suma mínima debe ser al menos 0.01',
+                'SumaMinima.min' => 'La suma mínima debe ser al menos 0.00',
                 'SumaMaxima.required' => 'La suma máxima es obligatoria',
                 'SumaMaxima.numeric' => 'La suma máxima debe ser un valor numérico',
                 'SumaMaxima.gt' => 'La suma máxima debe ser mayor que la suma mínima',
@@ -259,7 +259,7 @@ class VidaController extends Controller
 
             // Reglas condicionales
             if ($request->TipoCobro == 1) {
-                $rules['SumaMinima'] = 'required|numeric|min:0.01';
+                $rules['SumaMinima'] = 'required|numeric|min:0.00';
                 $rules['SumaMaxima'] = 'required|numeric|gt:SumaMinima';
             }
 
@@ -297,7 +297,7 @@ class VidaController extends Controller
                 // Mensajes para SumaMinima y SumaMaxima
                 'SumaMinima.required' => 'La suma mínima es obligatoria',
                 'SumaMinima.numeric' => 'La suma mínima debe ser un valor numérico',
-                'SumaMinima.min' => 'La suma mínima debe ser al menos 0.01',
+                'SumaMinima.min' => 'La suma mínima debe ser al menos 0.00',
                 'SumaMaxima.required' => 'La suma máxima es obligatoria',
                 'SumaMaxima.numeric' => 'La suma máxima debe ser un valor numérico',
                 'SumaMaxima.gt' => 'La suma máxima debe ser mayor que la suma mínima',
@@ -345,7 +345,7 @@ class VidaController extends Controller
 
             // Reglas condicionales
             if ($request->TipoCobro == 1) {
-                $rules['SumaMinima'] = 'required|numeric|min:0.01';
+                $rules['SumaMinima'] = 'required|numeric|min:0.00';
                 $rules['SumaMaxima'] = 'required|numeric|gt:SumaMinima';
             }
 
@@ -383,7 +383,7 @@ class VidaController extends Controller
                 // Mensajes para SumaMinima y SumaMaxima
                 'SumaMinima.required' => 'La suma mínima es obligatoria',
                 'SumaMinima.numeric' => 'La suma mínima debe ser un valor numérico',
-                'SumaMinima.min' => 'La suma mínima debe ser al menos 0.01',
+                'SumaMinima.min' => 'La suma mínima debe ser al menos 0.00',
                 'SumaMaxima.required' => 'La suma máxima es obligatoria',
                 'SumaMaxima.numeric' => 'La suma máxima debe ser un valor numérico',
                 'SumaMaxima.gt' => 'La suma máxima debe ser mayor que la suma mínima',
@@ -485,7 +485,7 @@ class VidaController extends Controller
 
             // Reglas condicionales
             if ($request->TipoCobro == 1) {
-                $rules['SumaMinima'] = 'required|numeric|min:0.01';
+                $rules['SumaMinima'] = 'required|numeric|min:0.00';
                 $rules['SumaMaxima'] = 'required|numeric|gt:SumaMinima';
             }
 
@@ -520,7 +520,7 @@ class VidaController extends Controller
                 'Multitarifa.regex' => 'El formato de multitarifa es inválido. Use números separados por coma, con hasta 2 decimales.',
                 'SumaMinima.required' => 'La suma mínima es obligatoria',
                 'SumaMinima.numeric' => 'La suma mínima debe ser un valor numérico',
-                'SumaMinima.min' => 'La suma mínima debe ser al menos 0.01',
+                'SumaMinima.min' => 'La suma mínima debe ser al menos 0.00',
                 'SumaMaxima.required' => 'La suma máxima es obligatoria',
                 'SumaMaxima.numeric' => 'La suma máxima debe ser un valor numérico',
                 'SumaMaxima.gt' => 'La suma máxima debe ser mayor que la suma mínima',

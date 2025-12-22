@@ -155,6 +155,17 @@ class DesempleoCarteraController extends Controller
     public function create_pago(Request $request, $id)
     {
 
+        $cartera_count = DesempleoCartera::where('PolizaDesempleo', $id)->where('Mes', $request->Mes)->where('Axo', $request->Axo)->count();
+
+        if ($cartera_count > 0) {
+            return back()
+                ->withErrors([
+                    'Mes' => 'Ya existe una cartera registrada para este mes y año.'
+                ])
+                ->withInput();
+        }
+
+
         // 🧩 Validar datos básicos del formulario
         $request->validate([
             'Axo' => 'required|integer',
@@ -493,8 +504,17 @@ class DesempleoCarteraController extends Controller
     public function create_pago_fedecredito(Request $request, $id)
     {
 
+        $cartera_count = DesempleoCartera::where('PolizaDesempleo', $id)->where('Mes', $request->Mes)->where('Axo', $request->Axo)->count();
 
-        // 🧩 Validar datos básicos del formulario
+        if ($cartera_count > 0) {
+            return back()
+                ->withErrors([
+                    'Mes' => 'Ya existe una cartera registrada para este mes y año.'
+                ])
+                ->withInput();
+        }
+
+        //Validar datos básicos del formulario
         $request->validate([
             'Axo' => 'required|integer',
             'Mes' => 'required|integer|between:1,12',
@@ -624,17 +644,17 @@ class DesempleoCarteraController extends Controller
         $validator = Validator::make([], []); // Creamos un validador vacío
 
         if ($request->validacion_credito != 'on') {
-            $repetidos = DesempleoCarteraTemp::where('User', auth()->user()->id)
-                //->where('PolizaDeuda', $request->Id)
-                ->where('DesempleoTipoCartera', $request->DesempleoTipoCartera)
+            $repetidos = DesempleoCarteraTemp::where('DesempleoTipoCartera', $request->DesempleoTipoCartera)
                 ->groupBy('NumeroReferencia')
                 ->havingRaw('COUNT(*) > 1')
                 ->get();
 
             $numerosRepetidos = $repetidos->isNotEmpty() ? $repetidos->pluck('NumeroReferencia') : null;
 
+
+
             if ($numerosRepetidos) {
-                DesempleoCarteraTemp::delete();
+                DesempleoCarteraTemp::where('PolizaDesempleo', $id)->where('DesempleoTipoCartera', $request->DesempleoTipoCartera)->delete();
                 // Convertir la colección a string para mostrarla en el error
                 $numerosStr = $numerosRepetidos->implode(', ');
 
@@ -867,7 +887,22 @@ class DesempleoCarteraController extends Controller
 
 
         $data = DesempleoCarteraTemp::where('PolizaDesempleo', $id)->get();
-        $poliza_edad_maxima = $data->where('EdadDesembloso', '>', $desempleo->EdadMaximaInscripcion);
+        $poliza_edad_maxima = DesempleoCarteraTemp::where('PolizaDesempleo', $id)
+            ->where('EdadDesembloso', '>', $desempleo->EdadMaximaInscripcion)
+            ->whereNotExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('poliza_desempleo_cartera')
+                    ->whereColumn(
+                        'poliza_desempleo_cartera.Identificador',
+                        'poliza_desempleo_cartera_temp.Identificador'
+                    )
+                    ->whereColumn(
+                        'poliza_desempleo_cartera.NumeroReferencia',
+                        'poliza_desempleo_cartera_temp.NumeroReferencia'
+                    );
+            })
+            ->get();
+
 
         // Verificamos si hay datos en la cartera anterior
         $count_data_cartera = DesempleoCartera::where('PolizaDesempleo', $id)->count();
@@ -939,7 +974,7 @@ class DesempleoCarteraController extends Controller
             }
         }
         $registros_rehabilitados = DesempleoCarteraTemp::where('PolizaDesempleo', $id)->where('Rehabilitado', 1)->get();
-        //($poliza_edad_maxima);
+
 
         return view('polizas.desempleo.respuesta_poliza', compact('total', 'desempleo', 'poliza_edad_maxima', 'registros_rehabilitados', 'registros_eliminados', 'nuevos_registros', 'axoActual', 'mesActual'));
     }
