@@ -34,6 +34,12 @@ class PolizaDeudaTempCarteraImport implements ToModel, /*WithStartRow,*/ SkipsEm
     public function model(array $row)
     {
         try {
+
+            // 🔹 LIMPIAR TODA LA FILA
+            $row = array_map(function ($value) {
+                return is_string($value) ? trim($value) : $value;
+            }, $row);
+
             // Detectar encabezados (ya no viene "NIT", sino "DUI")
             if (trim($row[0]) === "DUI") {
                 $this->encabezados = 1;
@@ -41,7 +47,6 @@ class PolizaDeudaTempCarteraImport implements ToModel, /*WithStartRow,*/ SkipsEm
             }
 
             if ($this->encabezados == 1) {
-
                 return new PolizaDeudaTempCartera([
                     'Dui'                 => trim($row[0]),
                     'Pasaporte'           => $row[1],
