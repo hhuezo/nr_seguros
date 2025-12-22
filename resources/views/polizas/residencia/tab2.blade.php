@@ -644,7 +644,7 @@
                         aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
                         <div class="modal-dialog">
                             <form action="{{ url('polizas/residencia/reiniciar_carga') }}" method="POST">
-                                 @csrf
+                                @csrf
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <button type="button" class="close" data-dismiss="modal"
@@ -960,8 +960,7 @@
         document.getElementById('sub_total_ccf').textContent = formatearCantidad(sub_total_ccf);
         let comision = 0;
         let retencion = 0;
-        if (tipo_contribuyente == 1 && valor_comision >= 100) {
-            //console.log("valor_comision: ",valor_comision);
+        if (tipo_contribuyente !== 1 && valor_comision >= 100) {
             retencion = (parseFloat(valor_comision) * 0.001);
         }
 
