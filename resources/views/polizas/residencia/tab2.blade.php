@@ -807,8 +807,7 @@
         let comision = 0;
         let retencion = 0;
         if (tipo_contribuyente !== 1 && valor_comision >= 100) {
-            //console.log("valor_comision1: ",valor_comision);
-            retencion = (parseFloat(valor_comision) * 0.001);
+            retencion = (parseFloat(valor_comision) * 0.01);
         }
 
         document.getElementById('retencion_comision').textContent = formatearCantidad(retencion);
@@ -961,7 +960,9 @@
         let comision = 0;
         let retencion = 0;
         if (tipo_contribuyente !== 1 && valor_comision >= 100) {
-            retencion = (parseFloat(valor_comision) * 0.001);
+            console.log("comision ", valor_comision);
+            retencion = (parseFloat(valor_comision) * 0.01);
+            console.log("retencion ", retencion);
         }
 
         document.getElementById('retencion_comision').textContent = formatearCantidad(retencion);
