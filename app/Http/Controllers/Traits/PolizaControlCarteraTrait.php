@@ -125,6 +125,7 @@ trait PolizaControlCarteraTrait
                     'poliza_deuda_detalle.APagar',
                     'poliza_deuda_detalle.NumeroRecibo',
                     'poliza_deuda_detalle.Axo',
+                    'poliza_deuda_detalle.FechaInicio',
                     'poliza_deuda_detalle.Usuario',
                     'poliza_deuda_detalle.UsuariosReportados',
 
@@ -188,6 +189,7 @@ trait PolizaControlCarteraTrait
                     'poliza_vida_detalle.APagar',
                     'poliza_vida_detalle.NumeroRecibo',
                     'poliza_vida_detalle.Axo',
+                    'poliza_vida_detalle.FechaInicio',
                     'poliza_vida_detalle.Usuario',
                     'poliza_vida_detalle.UsuariosReportados',
 
@@ -242,6 +244,7 @@ trait PolizaControlCarteraTrait
                     'poliza_desempleo_detalle.APagar',
                     'poliza_desempleo_detalle.NumeroRecibo',
                     'poliza_desempleo_detalle.Axo',
+                    'poliza_desempleo_detalle.FechaInicio',
                     'poliza_desempleo_detalle.Usuario',
                     'poliza_desempleo_detalle.UsuariosReportados',
 
@@ -305,6 +308,7 @@ trait PolizaControlCarteraTrait
                 'poliza_residencia_detalle.APagar',
                 'poliza_residencia_detalle.NumeroRecibo',
                 'poliza_residencia_detalle.Axo',
+                'poliza_residencia_detalle.FechaInicio',
                 'poliza_residencia_detalle.Usuario',
                 'poliza_residencia_detalle.UsuariosReportados',
 
