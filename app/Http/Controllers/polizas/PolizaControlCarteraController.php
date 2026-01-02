@@ -25,7 +25,7 @@ class PolizaControlCarteraController extends Controller
         // 1️⃣ Parámetros de entrada
         // ===============================
         $mes = $request->Mes ?? Carbon::now()->subMonthNoOverflow()->month;
-        $anio = $request->Anio ?? Carbon::now()->year;
+        $anio = $request->Anio ?? Carbon::now()->subMonthNoOverflow()->year;
         $tipoPoliza = $request->TipoPoliza ?? 1;
 
         // ===============================

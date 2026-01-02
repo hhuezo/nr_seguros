@@ -6,6 +6,7 @@ use App\Models\polizas\Desempleo;
 use App\Models\polizas\Deuda;
 use App\Models\polizas\Residencia;
 use App\Models\polizas\Vida;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -68,6 +69,9 @@ trait PolizaControlCarteraTrait
      ============================================================ */
     protected function obtenerRegistros($anio, $mes, $tipoPoliza)
     {
+
+        $usuariosMap = User::pluck('name', 'id');
+
         /*
      |--------------------------------------------------------------------------
      | PERSONAS: DEUDA + VIDA + DESEMPLEO
@@ -78,6 +82,8 @@ trait PolizaControlCarteraTrait
             /* =========================
          | DEUDA
          ========================= */
+
+
             $deuda = DB::table('poliza_declarativa_control')
                 ->where('poliza_declarativa_control.Axo', $anio)
                 ->where('poliza_declarativa_control.Mes', $mes)
@@ -119,6 +125,8 @@ trait PolizaControlCarteraTrait
                     'poliza_deuda_detalle.APagar',
                     'poliza_deuda_detalle.NumeroRecibo',
                     'poliza_deuda_detalle.Axo',
+                    'poliza_deuda_detalle.Usuario',
+                    'poliza_deuda_detalle.UsuariosReportados',
 
                     'cliente.Nombre as ClienteNombre',
                     'cliente.Nit as ClienteNit',
@@ -129,6 +137,15 @@ trait PolizaControlCarteraTrait
                     'aseguradora.Abreviatura'
                 )
                 ->get();
+
+
+
+            $deuda = $deuda->map(function ($item) use ($usuariosMap) {
+                $item->Usuario = $usuariosMap[$item->Usuario] ?? null;
+                return $item;
+            });
+
+            // dd($deuda);
 
             /* =========================
          | VIDA
@@ -171,6 +188,8 @@ trait PolizaControlCarteraTrait
                     'poliza_vida_detalle.APagar',
                     'poliza_vida_detalle.NumeroRecibo',
                     'poliza_vida_detalle.Axo',
+                    'poliza_vida_detalle.Usuario',
+                    'poliza_vida_detalle.UsuariosReportados',
 
                     'cliente.Nombre as ClienteNombre',
                     'cliente.Nit as ClienteNit',
@@ -223,6 +242,8 @@ trait PolizaControlCarteraTrait
                     'poliza_desempleo_detalle.APagar',
                     'poliza_desempleo_detalle.NumeroRecibo',
                     'poliza_desempleo_detalle.Axo',
+                    'poliza_desempleo_detalle.Usuario',
+                    'poliza_desempleo_detalle.UsuariosReportados',
 
                     'cliente.Nombre as ClienteNombre',
                     'cliente.Nit as ClienteNit',
@@ -284,6 +305,8 @@ trait PolizaControlCarteraTrait
                 'poliza_residencia_detalle.APagar',
                 'poliza_residencia_detalle.NumeroRecibo',
                 'poliza_residencia_detalle.Axo',
+                'poliza_residencia_detalle.Usuario',
+                'poliza_residencia_detalle.UsuariosReportados',
 
                 'cliente.Nombre as ClienteNombre',
                 'cliente.Nit as ClienteNit',

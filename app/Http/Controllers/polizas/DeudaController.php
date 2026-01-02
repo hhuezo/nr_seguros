@@ -168,6 +168,14 @@ class DeudaController extends Controller
         //     alert()->error('No se puede generar el pago, falta subir cartera')->showConfirmButton('Aceptar', '#3085d6');
         // } else {
 
+
+
+        $usuariosReportados = DB::table('poliza_deuda_cartera')
+            ->where('PolizaDeuda', $request->Deuda)
+            ->where('Axo', $request->Axo)
+            ->where('Mes', $request->Mes)
+            ->count();
+
         $detalle = new DeudaDetalle();
         $detalle->FechaInicio = $request->FechaInicio;
         $detalle->FechaFinal = $request->FechaFinal;
@@ -199,6 +207,9 @@ class DeudaController extends Controller
         $detalle->ExcelURL = $request->ExcelURL;
         $detalle->NumeroRecibo = ($recibo->Id_recibo) + 1;
         $detalle->Usuario = auth()->user()->id;
+        $detalle->UsuariosReportados = $usuariosReportados;
+
+
         $detalle->FechaIngreso = $time->format('Y-m-d');
         $detalle->save();
 
@@ -1796,7 +1807,7 @@ class DeudaController extends Controller
 
             if ($registros->isNotEmpty()) {
 
-                         // 🔹 Eliminación final
+                // 🔹 Eliminación final
                 DB::table('poliza_deuda_cartera')
                     ->where('Axo', $anio)
                     ->where('Mes', $mes)

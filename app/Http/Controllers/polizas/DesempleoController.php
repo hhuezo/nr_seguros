@@ -1063,6 +1063,13 @@ class DesempleoController extends Controller
         $recibo = DatosGenerales::orderByDesc('Id_recibo')->first();
 
 
+        $usuariosReportados = DB::table('poliza_desempleo_cartera')
+            ->where('PolizaDesempleo', $request->Desempleo)
+            ->where('Axo', $request->Axo)
+            ->where('Mes', $request->Mes)
+            ->count();
+
+
         $detalle = new DesempleoDetalle();
         $detalle->FechaInicio = $request->FechaInicio;
         $detalle->FechaFinal = $request->FechaFinal;
@@ -1086,11 +1093,13 @@ class DesempleoController extends Controller
         $detalle->APagar = $request->APagar;
 
         $detalle->PrimaTotal = $request->PrimaTotal;
-        $detalle->DescuentoIva = $request->DescuentoIva; //checked
+        $detalle->DescuentoIva = $request->DescuentoIva;
         $detalle->ExtraPrima = $request->ExtraPrima;
         $detalle->ExcelURL = $request->ExcelURL;
         $detalle->NumeroRecibo = ($recibo->Id_recibo) + 1;
         $detalle->Usuario = auth()->user()->id;
+        $detalle->UsuariosReportados = $usuariosReportados;
+
         $detalle->FechaIngreso = $time->format('Y-m-d');
         $detalle->save();
 

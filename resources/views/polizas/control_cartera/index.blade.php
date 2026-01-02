@@ -48,34 +48,6 @@
 
 
 
-    {{-- <style>
-        /* IMPORTANTE: DataTables crea wrappers */
-        div.dataTables_scrollHead {
-            position: sticky !important;
-            top: 0 !important;
-            z-index: 9999 !important;
-        }
-
-        /* el thead real dentro del scrollHead */
-        div.dataTables_scrollHead thead th,
-        div.dataTables_scrollHead thead td {
-            position: sticky !important;
-            top: 0 !important;
-            z-index: 10000 !important;
-            background: #ffffff !important;
-        }
-
-        /* evita transparencias raras */
-        div.dataTables_scrollHead table {
-            background: #ffffff !important;
-        }
-
-        /* por si tu layout tiene paneles con overflow */
-         .x_content {
-            overflow: visible !important;
-        }
-    </style> --}}
-
 
     <div id="app">
         <div class="x_panel">
@@ -182,7 +154,9 @@
                             <td>@{{ registro.Tasa }}</td>
                             <td>@{{ formatNumber(registro.PrimaCalculada) }}</td>
                             <td>@{{ formatNumber(registro.ExtraPrima) }}</td>
+
                             <td>@{{ formatNumber(registro.PrimaDescontada) }}</td>
+
                             <td>@{{ formatNumber(registro.Descuento) }}</td>
                             <td>@{{ formatNumber(registro.ValorDescuentoRentabilidad) }}</td>
                             <td>@{{ formatNumber(registro.PrimaDescontada) }}</td>
@@ -378,7 +352,7 @@
                         ordering: false,
                         scrollX: true,
 
-                        scrollY: '70vh',
+                        scrollY: '60vh',
                         scrollCollapse: true,
 
                         footerCallback: function(row, data) {

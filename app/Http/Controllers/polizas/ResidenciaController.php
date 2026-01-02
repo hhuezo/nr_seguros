@@ -700,7 +700,7 @@ class ResidenciaController extends Controller
                 return view('polizas.validacion_cartera.resultado', compact('nuevos', 'eliminados'));
             }*/
 
-         //   DB::statement("CALL insertar_temp_cartera_residencia(?, ?, ?, ?, ?)", [auth()->user()->id, $request->Axo, $request->Mes, $residencia->Id, $idUnicoCartera]);
+            //   DB::statement("CALL insertar_temp_cartera_residencia(?, ?, ?, ?, ?)", [auth()->user()->id, $request->Axo, $request->Mes, $residencia->Id, $idUnicoCartera]);
 
             $this->insertar_temp(auth()->user()->id, $request->Axo, $request->Mes, $residencia->Id, $idUnicoCartera);
 
@@ -743,6 +743,13 @@ class ResidenciaController extends Controller
             alert()->error('No se puede generar el pago, falta subir cartera')->showConfirmButton('Aceptar', '#3085d6');
         } else {
 
+            $usuariosReportados = DB::table('poliza_residencia_cartera')
+                ->where('PolizaResidencia', $request->Residencia)
+                ->where('Axo', $request->Axo)
+                ->where('Mes', $request->Mes)
+                ->count();
+
+
             $detalle = new DetalleResidencia();
             $detalle->FechaInicio = $request->FechaInicio;
             $detalle->FechaFinal = $request->FechaFinal;
@@ -768,7 +775,7 @@ class ResidenciaController extends Controller
             $detalle->Mes = $request->Mes;
 
             $detalle->PrimaTotal = $request->PrimaTotal;
-            $detalle->DescuentoIva = $request->DescuentoIva; //checked
+            $detalle->DescuentoIva = $request->DescuentoIva;
             $detalle->ExtraPrima = $request->ExtraPrima;
             $detalle->ExcelURL = $request->ExcelURL;
             $detalle->NumeroRecibo = ($recibo->Id_recibo) + 1;
@@ -780,6 +787,9 @@ class ResidenciaController extends Controller
             $comen->Comentario = 'Se agrego el pago de la cartera';
             $comen->Activo = 1;
             $comen->Usuario = auth()->user()->id;
+            $detalle->UsuariosReportados = $usuariosReportados;
+
+
             $comen->FechaIngreso = $time;
             $comen->Residencia = $request->Residencia;
             $comen->DetalleResidencia = $detalle->Id;

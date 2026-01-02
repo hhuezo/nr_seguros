@@ -1615,6 +1615,14 @@ class VidaController extends Controller
 
         $recibo = DatosGenerales::orderByDesc('Id_recibo')->first();
 
+
+        $usuariosReportados = DB::table('poliza_vida_cartera')
+            ->where('PolizaVida', $request->PolizaVida)
+            ->where('Axo', $request->Axo)
+            ->where('Mes', $request->Mes)
+            ->count();
+
+
         $detalle = new VidaDetalle();
         $detalle->FechaInicio = $request->FechaInicio;
         $detalle->FechaFinal = $request->FechaFinal;
@@ -1624,11 +1632,6 @@ class VidaController extends Controller
         $detalle->PrimaCalculada = $request->PrimaCalculada;
         $detalle->Descuento = $request->Descuento;
         $detalle->PrimaDescontada = $request->PrimaDescontada;
-        //$detalle->ImpuestoBomberos = $request->ImpuestoBomberos;
-        //$detalle->GastosEmision = $request->GastosEmision;
-        //$detalle->Otros = $request->Otros;
-        // $detalle->SubTotal = $request->SubTotal;
-        // $detalle->Iva = $request->Iva;
         $detalle->TasaComision = $request->TasaComision;
         $detalle->Comision = $request->Comision;
         $detalle->IvaSobreComision = $request->IvaSobreComision;
@@ -1641,15 +1644,16 @@ class VidaController extends Controller
         $detalle->Mes = $request->Mes;
 
         $detalle->PrimaTotal = $request->PrimaTotal;
-        $detalle->DescuentoIva = $request->DescuentoIva; //checked
+        $detalle->DescuentoIva = $request->DescuentoIva;
         $detalle->ExtraPrima = $request->ExtraPrima;
-        //$detalle->ExcelURL = $request->ExcelURL;
         $detalle->NumeroRecibo = ($recibo->Id_recibo) + 1;
         $detalle->Usuario = auth()->user()->id;
+        $detalle->UsuariosReportados = $usuariosReportados;
+
         $detalle->FechaIngreso = $time->format('Y-m-d');
         $detalle->save();
 
-        //DesempleoCarteraTemp::where('User', '=', auth()->user()->id)->where('PolizaDesempleo', $request->Desempleo)->delete();
+
         VidaCartera::where('PolizaVida', $request->PolizaVida)->where('PolizaVidaDetalle', null)->update(['PolizaVidaDetalle' => $detalle->Id]);
 
         $comen = new Comentario();
