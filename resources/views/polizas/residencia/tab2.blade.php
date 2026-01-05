@@ -878,7 +878,8 @@
         }
         let tipo_contribuyente_cliente = {{ $residencia->clientes->TipoContribuyente ?? 0 }};
         let tipo_contribuyente_aseguradora = {{ $residencia->aseguradoras->TipoContribuyente ?? 0 }};
-        console.log("tipo_contribuyente ", tipo_contribuyente_cliente);
+        console.log("tipo_contribuyente_cliente ", tipo_contribuyente_cliente);
+        console.log("tipo_contribuyente_aseguradora ", tipo_contribuyente_aseguradora);
         if (aseguradora == 3) {
             //fede
             millar = tasa / 1000;
@@ -962,10 +963,9 @@
         document.getElementById('sub_total_ccf').textContent = formatearCantidad(sub_total_ccf);
         let comision = 0;
         let retencion = 0;
-        if (tipo_contribuyente_aseguradora = 1 && tipo_contribuyente_cliente != 1 &&  valor_comision >= 100) {
-            console.log("comision ", valor_comision);
+        if (tipo_contribuyente_aseguradora == 1 && tipo_contribuyente_cliente != 1 &&  valor_comision >= 100) {
             retencion = (parseFloat(valor_comision) * 0.01);
-            console.log("retencion ", retencion);
+            console.log("retencion1 ", retencion);
         }
 
         document.getElementById('retencion_comision').textContent = formatearCantidad(retencion);
