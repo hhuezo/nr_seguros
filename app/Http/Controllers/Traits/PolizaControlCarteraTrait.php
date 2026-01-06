@@ -203,6 +203,12 @@ trait PolizaControlCarteraTrait
                 )
                 ->get();
 
+
+            $vida = $vida->map(function ($item) use ($usuariosMap) {
+                $item->Usuario = $usuariosMap[$item->Usuario] ?? null;
+                return $item;
+            });
+
             /* =========================
          | DESEMPLEO
          ========================= */
@@ -257,6 +263,11 @@ trait PolizaControlCarteraTrait
                     'aseguradora.Abreviatura'
                 )
                 ->get();
+
+            $desempleo = $desempleo->map(function ($item) use ($usuariosMap) {
+                $item->Usuario = $usuariosMap[$item->Usuario] ?? null;
+                return $item;
+            });
 
             return $deuda
                 ->concat($vida)
@@ -320,6 +331,7 @@ trait PolizaControlCarteraTrait
                 'poliza_declarativa_reproceso.Nombre as ReprocesoNombre',
                 'aseguradora.Abreviatura'
             )
+            ->groupBy('poliza_declarativa_control.Id')
             ->orderBy('cliente.Nombre')
             ->get();
     }

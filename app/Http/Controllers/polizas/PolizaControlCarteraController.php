@@ -42,6 +42,7 @@ class PolizaControlCarteraController extends Controller
         // ===============================
         $reprocesos = PolizaDeclarativaReproceso::where('Activo', 1)->get();
 
+
         $meses = [
             1  => 'Enero',
             2  => 'Febrero',
