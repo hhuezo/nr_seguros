@@ -4,6 +4,7 @@ namespace App\Http\Controllers\catalogo;
 
 use App\Http\Controllers\Controller;
 use App\Models\catalogo\ConfiguracionRecibo;
+use App\Models\catalogo\DatosGenerales;
 use Illuminate\Http\Request;
 
 class ConfiguracionReciboController extends Controller
@@ -25,9 +26,10 @@ class ConfiguracionReciboController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function form_numeracion_recibo()
     {
-        //
+        $datos_generares = DatosGenerales::first();
+        return view('catalogo.configuracion_recibo.numeracion_recibo', compact('datos_generares'));
     }
 
     /**
@@ -36,9 +38,12 @@ class ConfiguracionReciboController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function numeracion_recibo(Request $request, $id)
     {
-        //
+        $datos_generales = DatosGenerales::findOrFail($id);
+        $datos_generales->Id_recibo = $request->Id_recibo;
+        $datos_generales->save();
+        return back()->with('success', 'Numeracion de recibo actualizada correctamente');
     }
 
     /**
