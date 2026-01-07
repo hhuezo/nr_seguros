@@ -54,15 +54,15 @@
         <tr>
             <td>{{$obj->NumeroTarea}}</td>
             <td>{{ $obj->FechaIngreso ? date('d/m/Y', strtotime($obj->FechaIngreso)) : '' }}</td>
-            <td></td>
-            <td></td>
+           <td>{{ $obj->FechaEntregaDocsCompletos ? date('d/m/Y', strtotime($obj->FechaEntregaDocsCompletos)) : '' }}</td>
+            <td>{{$obj->DiasCompletarInfoCliente}}</td>
             <td>{{ $obj->gestor->Nombre ?? ' ' }}</td>
             <td>{{$obj->compania->Nombre ?? '' }}</td>
             <td>{{$obj->contratante->Nombre ?? '' }}</td>
             <td>{{ $obj->polizaDeuda->NumeroPoliza ?? '' }}</td>
             <td>{{ $obj->polizaVida->NumeroPoliza ?? '' }}</td>
             <td>{{$obj->Asegurado}}</td>
-            <td>{{$obj->ocupacion->Nombre}}</td>
+            <td>{{$obj->ocupacion->Nombre  ?? ''}}</td>
             <td>{{$obj->Dui}}</td>
             <td>{{$obj->Edad}}</td>
             <td>{{ $obj->Genero == 1 ? 'F' : ($obj->Genero == 2 ? 'M' : '') }}</td>

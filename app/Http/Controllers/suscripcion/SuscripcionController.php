@@ -46,7 +46,23 @@ class SuscripcionController extends Controller
             $documento =  $request->Documento;
             $suscripciones = Suscripcion::where('Dui', $documento)->get();
         } else {
-            $suscripciones = Suscripcion::whereBetween(DB::raw('DATE(FechaIngreso)'), [$fecha_inicio, $fecha_final])->get();
+            $suscripciones = Suscripcion::with([
+                'gestor',
+                'compania',
+                'contratante',
+                'polizaDeuda',
+                'polizaVida',
+                'ocupacion',
+                'tipoCliente',
+                'tipoCredito',
+                'tipoImc',
+                'tipoOrdenMedica',
+                'estadoCaso',
+                'resumenGestion',
+                'comentarios'
+            ])
+                ->whereBetween(DB::raw('DATE(FechaIngreso)'), [$fecha_inicio, $fecha_final])
+                ->get();
         }
 
         if ($exportar) {
@@ -651,7 +667,7 @@ class SuscripcionController extends Controller
             }
         }
 
-        return $diasHabiles - $diasFeriados -1;
+        return $diasHabiles - $diasFeriados - 1;
     }
 
 
