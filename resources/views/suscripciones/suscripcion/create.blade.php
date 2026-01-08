@@ -43,7 +43,7 @@
 
                         <div class="col-sm-4">
                             <label class="control-label "># Tarea</label>
-                            <input type="text" name="NumeroTarea" class="form-control">
+                            <input type="text" name="NumeroTarea" value="{{$nuevaTarea}}" class="form-control">
                         </div>
 
                         <div class="col-sm-4">

@@ -193,6 +193,16 @@ class SuscripcionController extends Controller
         $tipos_imc = TipoImc::where('Activo', 1)->get();
         $resumen_gestion = ResumenGestion::get();
 
+
+        $ultimo = Suscripcion::selectRaw('MAX(CAST(SUBSTRING(NumeroTarea, LOCATE("TS-", NumeroTarea) + 3) AS UNSIGNED)) as ultimo')
+            ->whereRaw('LEFT(NumeroTarea, 2) = ?', [substr(date('Y'), -2)])
+            ->value('ultimo');
+
+        $nuevoCorrelativo = $ultimo ? $ultimo + 1 : 1;
+        $nuevaTarea = substr(date('Y'), -2) . 'TS-' . $nuevoCorrelativo;
+
+
+
         //observaciones 22-5-25
         $aseguradoras = Aseguradora::where('Activo', 1)->get();
 
@@ -210,7 +220,8 @@ class SuscripcionController extends Controller
             'tipos_imc',
             'resumen_gestion',
             'tipo_creditos',
-            'ocupaciones'
+            'ocupaciones',
+            'nuevaTarea'
         ));
     }
 
