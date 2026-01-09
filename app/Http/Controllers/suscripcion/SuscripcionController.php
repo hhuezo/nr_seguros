@@ -36,9 +36,12 @@ class SuscripcionController extends Controller
 
     public function index(Request $request)
     {
-        $fecha_final = $request->FechaFinal ?? date('Y-m-d');
-        $fecha_inicio = $request->FechaInicio ?? date('Y-m-d', strtotime('-1 year'));
+        $fecha_final = $request->FechaFinal ?? date('Y-12-31');
+        $fecha_inicio = $request->FechaInicio ?? date('Y-01-01');
+
         $documento = $request->documento ?? null;
+
+        $registroId = $request->Id ?? 1;
 
         $exportar = $request->Exportar ?? null;
 
@@ -62,6 +65,7 @@ class SuscripcionController extends Controller
                 'comentarios'
             ])
                 ->whereBetween(DB::raw('DATE(FechaIngreso)'), [$fecha_inicio, $fecha_final])
+                ->orderBy('suscripcion.Id', 'desc')
                 ->get();
         }
 
@@ -69,7 +73,18 @@ class SuscripcionController extends Controller
             return Excel::download(new SuscripcionesExport($suscripciones), 'suscripciones.xlsx');
         }
 
-        return view('suscripciones.suscripcion.index', compact('suscripciones', 'fecha_inicio', 'fecha_final', 'documento'));
+
+        $recordIndex = 1;
+        if ($request->Id) {
+            foreach ($suscripciones as $index => $suscripcion) {
+                if ($suscripcion->Id == $registroId) {
+                    $recordIndex = $index + 1; // +1 porque los índices de los arrays comienzan en 0
+                    break;
+                }
+            }
+        }
+
+        return view('suscripciones.suscripcion.index', compact('suscripciones', 'fecha_inicio', 'fecha_final', 'documento', 'recordIndex'));
     }
 
 
@@ -85,6 +100,7 @@ class SuscripcionController extends Controller
             ->leftJoin('sus_estado_caso', 'sus_estado_caso.Id', '=', 'suscripcion.EstadoId')
             ->leftJoin('sus_resumen_gestion', 'sus_resumen_gestion.Id', '=', 'suscripcion.ResumenGestion')
             ->whereBetween(DB::raw('DATE(suscripcion.FechaIngreso)'), [$fechaInicio, $fechaFinal])
+            ->orderBy('suscripcion.Id', 'desc')
             ->select(
                 'suscripcion.Id',
                 'suscripcion.NumeroTarea',
@@ -154,24 +170,28 @@ class SuscripcionController extends Controller
                     ? Carbon::parse($row->FechaEnvioResoCliente)->format('d/m/Y')
                     : '';
             })
-            ->addColumn('acciones', function ($row) {
+            ->addColumn('acciones', function ($row) use ($fechaInicio, $fechaFinal) {
+
                 $id = $row->Id;
+
                 return '
-                    <a href="' . url("suscripciones/{$id}/edit") . '" class="btn btn-primary">
-                        <i class="fa fa-pencil fa-lg"></i>
-                    </a>
+                <a href="' . url("suscripciones/{$id}/edit") .
+                    '?FechaInicio=' . $fechaInicio .
+                    '&FechaFinal=' . $fechaFinal . '"
+                class="btn btn-primary">
+                    <i class="fa fa-pencil fa-lg"></i>
+                </a>
 
-                    <a href="#" class="btn btn-danger" onclick="shoModalDelete(' . $id . ')">
-                        <i class="fa fa-trash fa-lg"></i>
-                    </a>
+                <a href="#" class="btn btn-danger" onclick="shoModalDelete(' . $id . ')">
+                    <i class="fa fa-trash fa-lg"></i>
+                </a>
 
-                    <a href="#" class="btn btn-info" data-toggle="modal" data-target="#modal-comentario" onclick="getComentarios(' . $id . ')">
-                        <i class="fa fa-book fa-lg"></i>
-                    </a>
-                ';
-            })->rawColumns(['acciones'])
-
-
+                <a href="#" class="btn btn-info" data-toggle="modal" data-target="#modal-comentario" onclick="getComentarios(' . $id . ')">
+                    <i class="fa fa-book fa-lg"></i>
+                </a>
+            ';
+            })
+            ->rawColumns(['acciones'])
             ->make(true);
     }
 
@@ -406,6 +426,10 @@ class SuscripcionController extends Controller
     public function edit(Request $request, $id)
     {
         $tab = $request->tab ?? 1;
+
+        $fechaInicio = $request->FechaInicio ?? date('Y-12-31');
+        $fechaFinal = $request->FechaFinal ?? date('Y-01-01');
+
         $suscripcion = Suscripcion::findOrFail($id);
         $companias = Compania::where('Activo', 1)->get();
         $ocupaciones = Ocupacion::where('Activo', 1)->get();
@@ -424,7 +448,7 @@ class SuscripcionController extends Controller
         //observaciones 22-5-25
         $aseguradoras = Aseguradora::where('Activo', 1)->get();
 
-        return view('suscripciones.suscripcion.edit', compact('reprocesos', 'aseguradoras', 'tipos_imc', 'resumen_gestion', 'polizas_vida', 'polizas_deuda', 'clientes', 'ejecutivos', 'companias', 'ocupaciones', 'tipo_clientes', 'tipo_creditos', 'tipo_orden', 'suscripcion', 'estados', 'tab'));
+        return view('suscripciones.suscripcion.edit', compact('reprocesos', 'aseguradoras', 'tipos_imc', 'resumen_gestion', 'polizas_vida', 'polizas_deuda', 'clientes', 'ejecutivos', 'companias', 'ocupaciones', 'tipo_clientes', 'tipo_creditos', 'tipo_orden', 'suscripcion', 'estados', 'tab', 'fechaInicio', 'fechaFinal'));
     }
 
 

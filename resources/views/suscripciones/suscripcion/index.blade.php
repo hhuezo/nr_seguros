@@ -34,7 +34,7 @@
         </style>
         <div class="x_title">
             <div class="col-md-6 col-sm-6 col-xs-12">
-                <h3>Suscripciones </h3>
+                <h3>Control de flujo de suscripciones </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
                 <button class="btn btn-success" data-target="#modal-importar" data-toggle="modal"><i
@@ -65,6 +65,7 @@
                 <table id="datatable" class="table table-striped table-bordered">
                     <thead>
                         <tr>
+                            <th>Opciones</th>
                             <th>No.</th>
                             <th># Tarea</th>
                             <th>Fecha ingreso</th>
@@ -94,70 +95,11 @@
                             <th>Fecha de envió de resolución al cliente</th>
                             <th>Días de procesamiento de resolución</th>
                             {{-- <th>Comentarios</th> --}}
-                            <th>Opciones</th>
+
 
                         </tr>
                     </thead>
-                    {{--  <tbody>
-                        @php($i = 1)
-                        @foreach ($suscripciones as $obj)
-                            <tr>
-                                <td>{{ $i }}</td>
-                                <td>{{ $obj->NumeroTarea }}</td>
-                                <td>{{ $obj->FechaIngreso ? date('d/m/Y', strtotime($obj->FechaIngreso)) : '' }}</td>
-                                <td>{{ $obj->gestor->Nombre ?? ' ' }}</td>
-                                <td>{{ $obj->compania->Nombre ?? '' }}</td>
-                                <td>{{ $obj->contratante->Nombre ?? '' }}</td>
-                                <td>{{ $obj->polizaDeuda->NumeroPoliza ?? '' }}</td>
-                                <td>{{ $obj->polizaVida->NumeroPoliza ?? '' }}</td>
-                                <td>{{ $obj->Asegurado }}</td>
-                                <td>{{ $obj->Dui }}</td>
-                                <td>{{ $obj->Edad }}</td>
-                                <td>{{ $obj->Genero == 1 ? 'F' : ($obj->Genero == 2 ? 'M' : '') }} </td>
-                                <td>{{ $obj->SumaAseguradaDeuda !== null && $obj->SumaAseguradaDeuda > 0
-                                    ? number_format($obj->SumaAseguradaDeuda, 2)
-                                    : '' }}
-                                </td>
-                                <td>{{ $obj->SumaAseguradaVida !== null && $obj->SumaAseguradaVida > 0
-                                    ? number_format($obj->SumaAseguradaVida, 2)
-                                    : '' }}
-                                </td>
-                                <td>{{ $obj->tipoCliente->Nombre ?? '' }}</td>
-                                <td>{{ $obj->Peso }} Lb</td>
-                                <td>{{ $obj->Estatura }} Mts</td>
-                                <td>{{ number_format($obj->Imc, 2) }}</td>
-                                <td>{{ $obj->Padecimiento }}</td>
-                                <td>{{ $obj->tipoOrdenMedica->Nombre ?? '' }}</td>
-                                <td>{{ $obj->estadoCaso->Nombre }}</td>
-                                <td class="bg-{{ $obj->resumenGestion->Color ?? '' }}">
-                                    {{ $obj->resumenGestion->Nombre ?? '' }}
-                                </td>
-                                <td>{{ $obj->FechaReportadoCia ? date('d/m/Y', strtotime($obj->FechaReportadoCia)) : '' }}
-                                </td>
-                                <td>{{ $obj->TareasEvaSisa }}</td>
-                                <td>{{ $obj->ValorExtraPrima }}</td>
-                                <td>{{ $obj->FechaResolucion ? date('d/m/Y', strtotime($obj->FechaResolucion)) : '' }}</td>
-                                <td>{{ $obj->FechaEnvioResoCliente ? date('d/m/Y', strtotime($obj->FechaEnvioResoCliente)) : '' }}
-                                </td>
-                                <td>{{ $obj->DiasProcesamientoResolucion ?? 0 }}</td>
-                                <td align="center">
-                                    <a href="{{ url('suscripciones') }}/{{ $obj->Id }}/edit" class="btn btn-primary"
-                                        class="on-default edit-row">
-                                        <i class="fa fa-pencil fa-lg"></i></a>
 
-                                    <a href="#" class="btn btn-danger"
-                                        data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"><i
-                                            class="fa fa-trash fa-lg"></i></a>
-
-                                    <a href="#" class="btn btn-info" data-target="#modal-comentario"
-                                        data-toggle="modal" onclick="getComentarios({{ $obj->Id }})"><i
-                                            class="fa fa-book fa-lg"></i></a>
-                                </td>
-                            </tr>
-                            @include('suscripciones.suscripcion.modal')
-                            @php($i++)
-                        @endforeach
-                    </tbody> --}}
                 </table>
 
             </div>
@@ -329,11 +271,25 @@
 
     <script>
         $(document).ready(function() {
+
+            const pageSize = 10; // debe coincidir con pageLength
+            const recordIndex = {{$recordIndex}}; // registro que quieres mostrar
+            const page = Math.floor((recordIndex - 1) / pageSize);
+
+
             $('#datatable').DataTable({
                 processing: true,
                 serverSide: true,
+                pageLength: pageSize,
+                displayStart: page * pageSize, // 👈 aquí saltas a la página
                 ajax: '{{ url('suscripciones/data') }}/{{ $fecha_inicio }}/{{ $fecha_final }}',
                 columns: [{
+                        data: 'acciones',
+                        name: 'acciones',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
                         data: 'Id',
                         name: 'suscripcion.Id'
                     },
@@ -449,12 +405,7 @@
                         data: 'DiasProcesamientoResolucion',
                         name: 'suscripcion.DiasProcesamientoResolucion'
                     },
-                    {
-                        data: 'acciones',
-                        name: 'acciones',
-                        orderable: false,
-                        searchable: false
-                    },
+
                 ]
             });
 

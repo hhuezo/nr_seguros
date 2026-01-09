@@ -35,10 +35,10 @@
 
         <div class="x_title">
             <div class="col-md-6 col-sm-6 col-xs-12">
-                <h4>Editar Suscripción </h4>
+                <h4>Editar Suscripción</h4>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
-                <a href="{{ url('suscripciones') }}"><button class="btn btn-info float-right"> <i
+                <a href="{{ url('suscripciones') }}?Id={{ $suscripcion->Id }}&FechaInicio={{ $fechaInicio }}&FechaFinal={{ $fechaFinal }}"><button class="btn btn-info float-right"> <i
                             class="fa fa-arrow-left"></i></button></a>
             </div>
             <div class="clearfix"></div>
