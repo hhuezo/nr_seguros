@@ -111,7 +111,7 @@
     <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-filtro">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form method="GET" action="{{ url('suscripciones') }}">
+                <form method="GET" action="{{ url('suscripciones') }}" id="form-filtro">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">×</span>
@@ -273,7 +273,7 @@
         $(document).ready(function() {
 
             const pageSize = 10; // debe coincidir con pageLength
-            const recordIndex = {{$recordIndex}}; // registro que quieres mostrar
+            const recordIndex = {{ $recordIndex }}; // registro que quieres mostrar
             const page = Math.floor((recordIndex - 1) / pageSize);
 
 
@@ -463,4 +463,16 @@
             $('#modal-delete').modal('show');
         }
     </script>
+
+
+    <script>
+        $('#form-filtro').on('submit', function() {
+            const exportar = $(this).find('input[name="Exportar"]').is(':checked');
+
+            if (exportar) {
+                $('#modal-filtro').modal('hide');
+            }
+        });
+    </script>
+
 @endsection
