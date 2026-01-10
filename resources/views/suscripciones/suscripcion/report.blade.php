@@ -17,14 +17,14 @@
             <th> GESTOR </th>
             <th> CIA </th>
             <th> CONTRATANTE </th>
-            <th> "NUMERO POLIZA DEUDA" </th>
-            <th> "NUMERO POLIZA VIDA" </th>
+            <th> NUMERO POLIZA DEUDA </th>
+            <th> NUMERO POLIZA VIDA </th>
             <th> ASEGURADO </th>
             <th> OCUPACION </th>
             <th> DUI / OTRO DOCUMENTO DE IDENTIDAD </th>
             <th> EDAD </th>
             <th> GENERO </th>
-            <th> "SUMA ASEGURADA <br> EVALUADA DEUDA" </th>
+            <th> SUMA ASEGURADA <br> EVALUADA DEUDA </th>
             <th> SUMA ASEGURADA EVALUADA <br> VIDA COLECTIVO USUARIOS </th>
             <th> TIPO DE CLIENTE </th>
             <th> TIPO DE CREDITO </th>
@@ -36,7 +36,7 @@
             <th> RESUMEN DE GESTION </th>
             <th> FECHA REPORTADO CIA <br>/ RESOLUCION ANTICIPADA </th>
             <th> TRABAJO EFECTUADO DIA HABIL </th>
-            <th> "TAREAS EVA (SISA)" </th>
+            <th> TAREAS EVA (SISA) </th>
             <th> COMENTARIOS NR SUSCRIPCION </th>
             <th> FECHA CIERRE DE GESTION </th>
             <th> FECHA DE RECEPCION <br>DE RESOLUCION DE CIA </th>
