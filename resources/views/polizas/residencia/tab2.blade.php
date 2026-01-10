@@ -437,7 +437,7 @@
                                         <p>¿Desea generar el aviso de cobro</p>
 
 
-                                        <div>
+                                        <div style="display: none">
                                             <div class="form-group">
                                                 <label>Excel URL</label>
                                                 <input type="text" class="form-control" name="ExcelURL"
