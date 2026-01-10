@@ -437,7 +437,7 @@
                                         <p>¿Desea generar el aviso de cobro</p>
 
 
-                                        <div style="display: none">
+                                        <div>
                                             <div class="form-group">
                                                 <label>Excel URL</label>
                                                 <input type="text" class="form-control" name="ExcelURL"
@@ -727,6 +727,7 @@
         //dias_mes = 31;
         decimales = (monto * millar);
         let prima_descontada = 0;
+
         if (diario == 1) {
             prima_mensual = (parseFloat(decimales) / parseFloat(dias_axo)) * parseFloat(dias_mes);
             if (tasadescuento < 0) {
@@ -808,9 +809,14 @@
         document.getElementById('sub_total_ccf').textContent = formatearCantidad(sub_total_ccf);
         let comision = 0;
         let retencion = 0;
-        if (tipo_contribuyente_aseguradora == 1 &&  tipo_contribuyente_cliente != 1 && valor_comision >= 100) {
+
+        console.log("tipo_contribuyente_aseguradora ", tipo_contribuyente_aseguradora);
+        console.log("tipo_contribuyente_cliente ", tipo_contribuyente_cliente);
+
+        if (tipo_contribuyente_aseguradora == 1 && tipo_contribuyente_cliente != 1 && valor_comision >= 100) {
             retencion = (parseFloat(valor_comision) * 0.01);
         }
+
 
         document.getElementById('retencion_comision').textContent = formatearCantidad(retencion);
         let comision_ccf = parseFloat(sub_total_ccf) - parseFloat(retencion);
@@ -821,6 +827,57 @@
         document.getElementById('liquido_pagar').textContent = formatearCantidad(liquido_pagar);
         let total_factura = (parseFloat(sub_total) + parseFloat(iva));
         document.getElementById('total_factura').textContent = formatearCantidad(total_factura);
+
+
+
+
+
+        if (tipo_contribuyente_aseguradora == 2 && tipo_contribuyente_cliente == 1 && prima_descontada >= 100) {
+            retencion = (parseFloat(prima_descontada) * 0.01);
+
+
+            iva_comision = (parseFloat(prima_descontada) * 0.13);
+            document.getElementById('iva_comision').textContent = formatearCantidad(iva_comision);
+
+            console.log("iva_comision", iva_comision);
+            console.log("prima_descontada", prima_descontada);
+
+            let sub_total_ccf = (parseFloat(iva_comision) + parseFloat(prima_descontada)) - parseFloat(retencion);
+            document.getElementById('sub_total_ccf').textContent = formatearCantidad(sub_total_ccf);
+
+            let iva_valor_comision = valor_comision * 0.13;
+
+            sub_total_ccf_comision = (parseFloat(iva_valor_comision) + parseFloat(valor_comision));
+
+
+
+            iva = iva_comision;
+
+            document.getElementById('iva').textContent = formatearCantidad(iva_valor_comision);
+
+
+
+
+
+
+
+            document.getElementById('retencion_comision').textContent = formatearCantidad(retencion);
+
+            sub_total = sub_total_ccf;
+
+            liquido_pagar = (parseFloat(sub_total) - parseFloat(comision_ccf));
+            document.getElementById('liquido_pagar').textContent = formatearCantidad(liquido_pagar);
+
+
+            iva_comision = iva_valor_comision;
+
+
+            valor_comision = (parseFloat(tasa_comision) / 100) * parseFloat(prima_descontada);
+
+
+        }
+
+
 
         //llenado de form
         document.getElementById('MontoCarteraDetalle').value = parseFloat(monto);
@@ -963,7 +1020,7 @@
         document.getElementById('sub_total_ccf').textContent = formatearCantidad(sub_total_ccf);
         let comision = 0;
         let retencion = 0;
-        if (tipo_contribuyente_aseguradora == 1 && tipo_contribuyente_cliente != 1 &&  valor_comision >= 100) {
+        if (tipo_contribuyente_aseguradora == 1 && tipo_contribuyente_cliente != 1 && valor_comision >= 100) {
             retencion = (parseFloat(valor_comision) * 0.01);
             console.log("retencion1 ", retencion);
         }
@@ -973,11 +1030,66 @@
         document.getElementById('comision_ccf').textContent = formatearCantidad(comision_ccf);
         document.getElementById('comision').textContent = formatearCantidad(comision_ccf);
 
-        console.log("hola");
+
         let liquido_pagar = (parseFloat(sub_total) + parseFloat(iva) - parseFloat(comision_ccf));
         document.getElementById('liquido_pagar').textContent = formatearCantidad(liquido_pagar);
         let total_factura = (parseFloat(sub_total) + parseFloat(iva));
         document.getElementById('total_factura').textContent = formatearCantidad(total_factura);
+
+
+
+
+
+
+        if (tipo_contribuyente_aseguradora == 2 && tipo_contribuyente_cliente == 1 && prima_descontada >= 100) {
+            retencion = (parseFloat(prima_descontada) * 0.01);
+
+
+            iva_comision = (parseFloat(prima_descontada) * 0.13);
+            document.getElementById('iva_comision').textContent = formatearCantidad(iva_comision);
+
+            console.log("iva_comision", iva_comision);
+            console.log("prima_descontada", prima_descontada);
+
+            let sub_total_ccf = (parseFloat(iva_comision) + parseFloat(prima_descontada)) - parseFloat(retencion);
+            document.getElementById('sub_total_ccf').textContent = formatearCantidad(sub_total_ccf);
+
+            let iva_valor_comision = valor_comision * 0.13;
+
+            sub_total_ccf_comision = (parseFloat(iva_valor_comision) + parseFloat(valor_comision));
+
+
+
+            iva = iva_comision;
+
+            document.getElementById('iva').textContent = formatearCantidad(iva_valor_comision);
+
+
+
+
+
+
+
+            document.getElementById('retencion_comision').textContent = formatearCantidad(retencion);
+
+            sub_total = sub_total_ccf;
+
+            liquido_pagar = (parseFloat(sub_total) - parseFloat(comision_ccf));
+            document.getElementById('liquido_pagar').textContent = formatearCantidad(liquido_pagar);
+
+
+            iva_comision = iva_valor_comision;
+
+
+            valor_comision = (parseFloat(tasa_comision) / 100) * parseFloat(prima_descontada);
+
+
+        }
+
+
+
+
+
 
         //llenado de form
         document.getElementById('MontoCarteraDetalle').value = parseFloat(monto);
