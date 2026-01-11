@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\polizas;
 
 use App\Exports\CreditosNoValidoExport;
+use App\Exports\DeudaCarteraExport;
 use App\Exports\DeudaErroneosExport;
 use App\Exports\DeudaExport;
 use App\Exports\DeudaFedeExport;
@@ -2918,5 +2919,12 @@ class DeudaController extends Controller
             ->get();
 
         return view('polizas.deuda.get_historico', compact('tabla_historico'));
+    }
+
+    public function exportar_excel_cartera($id)
+    {
+        $deuda = Deuda::findOrFail($id);
+        $cartera = PolizaDeudaCartera::where('PolizaDeuda', $deuda->Id)->where('NoValido', 0)->where('PolizaDeudaDetalle', null)->get();
+        return Excel::download(new DeudaCarteraExport($cartera), 'Cartera.xlsx');
     }
 }

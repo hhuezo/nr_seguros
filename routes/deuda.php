@@ -120,6 +120,8 @@ Route::middleware(['web'])->group(function () {
     Route::post('polizas/deuda/agregar_valido_detalle', [DeudaController::class, 'agregar_valido_detalle']);
     Route::post('polizas/deuda/agregar_valido', [DeudaController::class, 'agregar_valido']);
 
+    Route::get('deuda/exportar_excel/{id}', [DeudaController::class, 'exportar_excel_cartera']);
+
 
 
 

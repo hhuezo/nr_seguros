@@ -9,6 +9,7 @@ use App\Exports\vida\ExtraPrimadosExcluidosExport;
 use App\Exports\vida\NuevosRegistrosExport;
 use App\Exports\vida\RegistrosEliminadosExport;
 use App\Exports\vida\RegistrosRehabilitadosExport;
+use App\Exports\vida\VidaCarteraExport;
 use App\Exports\vida\VidaExport;
 use App\Exports\vida\VidaFedeExport;
 use App\Http\Controllers\Controller;
@@ -2900,5 +2901,12 @@ class VidaController extends Controller
     public function exportar_registros_rehabilitados($id)
     {
         return Excel::download(new RegistrosRehabilitadosExport($id), 'registros_rehabilitados.xlsx');
+    }
+
+    public function exportar_excel_cartera($id)
+    {
+        $vida = Vida::findOrFail($id);
+        $cartera = VidaCartera::where('PolizaVida', $vida->Id)->where('PolizaVidaDetalle', null)->get();
+        return Excel::download(new VidaCarteraExport($cartera), 'Cartera.xlsx');
     }
 }

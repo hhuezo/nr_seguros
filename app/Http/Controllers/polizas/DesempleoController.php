@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\polizas;
 
+use App\Exports\desempleo\DesempleoCarteraExport;
 use App\Exports\desempleo\EdadInscripcionExport;
 use App\Exports\desempleo\EdadMaximaExport;
 use App\Exports\desempleo\NuevosRegistrosExport;
@@ -1834,5 +1835,12 @@ class DesempleoController extends Controller
         $desempleo = Desempleo::findOrFail($id);
 
         return view('polizas.desempleo.tasa_diferenciada', compact('desempleo'));
+    }
+
+    public function exportar_excel_cartera($id)
+    {
+        $desempleo = Desempleo::findOrFail($id);
+        $cartera = DesempleoCartera::where('PolizaDesempleo', $desempleo->Id)->where('NoValido', 0)->where('PolizaDesempleoDetalle', null)->get();
+        return Excel::download(new DesempleoCarteraExport($cartera), 'Cartera.xlsx');
     }
 }
