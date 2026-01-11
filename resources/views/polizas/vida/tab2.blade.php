@@ -264,7 +264,9 @@
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" style="text-align: right">
 
 
-
+                    @if($totalSumaAsegurada > 0)
+                    <a class="btn btn-success" href="{{ url('vida/exportar_excel') }}/{{ $poliza_vida->Id }}">Exportar Cartera</a>
+                    @endif
                     <a class="btn btn-default" data-target="#modal-cancelar" data-toggle="modal">Cancelar Cobro</a>
                     <a class="btn btn-primary" data-target="#modal-aplicar" data-toggle="modal">Generar Cobro</a>
                 </div>
