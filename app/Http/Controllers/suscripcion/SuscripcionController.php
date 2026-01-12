@@ -235,6 +235,15 @@ class SuscripcionController extends Controller
         return redirect('suscripciones/' . $request->SuscripcionId . '/edit?tab=2');
     }
 
+      public function editar_comentario(Request $request, $id)
+    {
+        $comentario = Comentarios::findorfail($id);
+        $comentario->Comentario = $request->Comentario;
+        $comentario->update();
+        alert()->success('El registro ha sido modificado correctamente');
+        return redirect('suscripciones/' . $request->SuscripcionId . '/edit?tab=2');
+    }
+
 
     public function edit(Request $request,$id)
     {

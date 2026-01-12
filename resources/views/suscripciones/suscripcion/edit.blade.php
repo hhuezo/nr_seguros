@@ -315,6 +315,7 @@
                     <thead>
                         <tr>
                             <th>#</th>
+                            <th>Id</th>
                             <th>Fecha</th>
                             <th>Usuario</th>
                             <th>Comentario</th>
@@ -326,33 +327,32 @@
                         @foreach ($suscripcion->comentarios as $comen)
                             <tr>
                                 <td>{{ $i }}</td>
+                                <td>{{ $comen->Id }}</td>
                                 <td>{{ date('d/m/Y', strtotime($comen->FechaCreacion)) }}</td>
                                 <td>{{ $comen->usuario->name ?? '' }}</td>
                                 <td>{{ $comen->Comentario }}</td>
 
                                 <td align="center">
-                                    <a class="btn btn-primary" class="on-default edit-row">
-                                        <i class="fa fa-pencil fa-lg"></i></a>
+                                    {{-- <a class="btn btn-primary" class="on-default edit-row">
+                                        <i class="fa fa-pencil fa-lg"></i></a> --}}
+
+                                    <a href="#" data-target="#modal-edit-{{ $comen->Id }}" data-toggle="modal"
+                                        class="on-default edit-row"><button class="btn btn-primary"><i
+                                                class="fa fa-pencil fa-lg"></i></button></a>
+
                                     <a href="#" class="btn btn-danger"><i class="fa fa-trash fa-lg"></i></a>
                                 </td>
                             </tr>
-                             @php($i++)
+                            @php($i++)
                         @endforeach
                     </tbody>
-
-
                 </table>
-
-
             </div>
-
         </div>
-
     </div>
 
 
     <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-create">
-
         <form action="{{ url('suscripciones/agregar_comentario') }}" method="POST" class="forms-sample">
             @csrf
             <div class="modal-dialog">
@@ -375,9 +375,42 @@
                 </div>
             </div>
         </form>
-
     </div>
 
+    <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
+        id="modal-edit-{{ $comen->Id }}">
+        <form method="POST" action="{{ url('suscripciones/editar_comentario'), $comen->Id  }}">
+            @method('PUT')
+            @csrf
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="col-md-6">
+                            <h4 class="modal-title">Editar Comentario</h4>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="control-label">Comentario</label>
+                            <input type="text" name="Nombre" class="form-control" value="{{ $comen->Id }}">
+                             <input type="text"  class="form-control" value="{{ $comen->comentario }}" 
+                            autofocus="true" oninput="this.value = this.value.toUpperCase()">
+                            
+                        </div>
+                        &nbsp;
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </div>
+                </div>
+        </form>
+    </div>
 
     <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
     <script type="text/javascript">

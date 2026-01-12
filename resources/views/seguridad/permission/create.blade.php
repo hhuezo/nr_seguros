@@ -33,7 +33,7 @@
                             <div class="form-group row">
                                 <label class="control-label col-md-3" align="right">Nombre</label>
                                 <div class="col-md-6">
-                                    <input class="form-control" name="name" required type="text" autofocus="true"
+                                    <input class="form-control" name="name" required type="text" autofocus
                                         onblur="this.value = this.value.toLowerCase();">
                                 </div>
                             </div>

@@ -101,8 +101,7 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label class="control-label">Permiso</label>
-                            <input type="text" name="name" value="{{ old('name') }}" required class="form-control"
-                                autofocus>
+                            <input type="text" name="name" value="{{ old('name') }}" required class="form-control">
                         </div>
 
 
@@ -117,4 +116,12 @@
 
         </div>
     </div>
+
+    <!-- jaguilar, este jquery es solo para que funcione el focus -->
+    <script>
+        $('#modal-create').on('shown.bs.modal', function() {
+            $(this).find('input[name="name"]').focus();
+        });
+    </script>
+    <!--  -->
 @endsection

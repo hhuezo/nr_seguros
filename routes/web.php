@@ -402,6 +402,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('get_imc', [SuscripcionController::class, 'get_imc']);
     Route::post('suscripciones/agregar_comentario', [SuscripcionController::class, 'agregar_comentario']);
+    Route::post('suscripciones/editar_comentario/{id}', [SuscripcionController::class, 'editar_comentario']);
     Route::post('suscripciones_update', [SuscripcionController::class, 'update']);
     Route::resource('suscripciones', SuscripcionController::class);
     Route::resource('companias', CompaniaController::class);
