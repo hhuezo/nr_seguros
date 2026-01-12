@@ -49,61 +49,77 @@
             <th> % EXTRAPRIMA </th>
 
         </tr>
-        @php($i=1)
-        @foreach($suscripciones as $obj)
-        <tr>
-            <td>{{$obj->NumeroTarea}}</td>
-            <td>{{ $obj->FechaIngreso ? date('d/m/Y', strtotime($obj->FechaIngreso)) : '' }}</td>
-           <td>{{ $obj->FechaEntregaDocsCompletos ? date('d/m/Y', strtotime($obj->FechaEntregaDocsCompletos)) : '' }}</td>
-            <td>{{$obj->DiasCompletarInfoCliente}}</td>
-            <td>{{ $obj->gestor->Nombre ?? ' ' }}</td>
-            <td>{{$obj->compania->Nombre ?? '' }}</td>
-            <td>{{$obj->contratante->Nombre ?? '' }}</td>
-            <td>{{ $obj->polizaDeuda->NumeroPoliza ?? '' }}</td>
-            <td>{{ $obj->polizaVida->NumeroPoliza ?? '' }}</td>
-            <td>{{$obj->Asegurado}}</td>
-            <td>{{$obj->ocupacion->Nombre  ?? ''}}</td>
-            <td>{{$obj->Dui}}</td>
-            <td>{{$obj->Edad}}</td>
-            <td>{{ $obj->Genero == 1 ? 'F' : ($obj->Genero == 2 ? 'M' : '') }}</td>
-            <td> {{ $obj->SumaAseguradaDeuda !== null && $obj->SumaAseguradaDeuda > 0
-                                        ? number_format($obj->SumaAseguradaDeuda, 2)
-                                        : '' }}
-            </td>
-            <td> {{ $obj->SumaAseguradaVida !== null && $obj->SumaAseguradaVida > 0
-                                        ? number_format($obj->SumaAseguradaVida, 2)
-                                        : '' }}
-            </td>
-            <td>{{$obj->tipoCliente->Nombre ?? ''}}</td>
-            <td>{{$obj->tipoCredito->Nombre ?? ''}}</td>
-            <td>{{number_format($obj->Imc, 2) }}</td>
-            <td>{{$obj->tipoImc->Nombre ?? ''}}</td>
-            <td>{{$obj->Padecimiento}}</td>
-            <td>{{$obj->tipoOrdenMedica->Nombre}}</td>
-            <td>{{$obj->estadoCaso->Nombre ?? ''}}</td>
-            <td>{{$obj->resumenGestion->Nombre ?? ''}}</td>
-            <td>{{ $obj->FechaReportadoCia ? date('d/m/Y', strtotime($obj->FechaReportadoCia)) : '' }}</td>
-            <td>{{$obj->TrabajadoEfectuadoDiaHabil}}</td>
-            <td>{{$obj->TareasEvaSisa}}</td>
-            <td>
-                <ul>
-                    @foreach($obj->comentarios as $comen)
-                    <li>{{$comen->Comentario}}</li>
-                    @endforeach
-                </ul>
-            </td>
-            <td>{{ $obj->FechaCierreGestion ? date('d/m/Y', strtotime($obj->FechaCierreGestion)) : '' }}</td>
-            <td>{{ $obj->FechaResolucion ? date('d/m/Y', strtotime($obj->FechaResolucion)) : '' }}</td>
-            <td>{{ $obj->FechaEnvioResoCliente ? date('d/m/Y', strtotime($obj->FechaEnvioResoCliente)) : '' }}</td>
-            <td>{{ $obj->DiasProcesamientoResolucion}}</td>
-            <td>{{ $obj->ReprocesoId ?? ''}}</td>
-            <td>{{ $obj->FechaEnvioCorreccion ? date('d/m/Y', strtotime($obj->FechaEnvioCorreccion)) : '' }}</td>
-            <td>{{ $obj->TotalDiasProceso}}</td>
-            <td>{{ $obj->ResolucionFinal}}</td>
-            <td>{{ $obj->ValorExtraPrima}}</td>
+        @php($i = 1)
+        @foreach ($suscripciones as $obj)
+            <tr>
+                <td>{{ $obj->NumeroTarea }}</td>
+                <td>{{ $obj->FechaIngreso ? date('d/m/Y', strtotime($obj->FechaIngreso)) : '' }}</td>
+                <td>{{ $obj->FechaEntregaDocsCompletos ? date('d/m/Y', strtotime($obj->FechaEntregaDocsCompletos)) : '' }}
+                </td>
+                <td>{{ $obj->DiasCompletarInfoCliente }}</td>
+                <td>{{ $obj->gestor->Nombre ?? ' ' }}</td>
+                <td>{{ $obj->compania->Nombre ?? '' }}</td>
+                <td>{{ $obj->contratante->Nombre ?? '' }}</td>
+                <td>{{ $obj->polizaDeuda->NumeroPoliza ?? '' }}</td>
+                <td>{{ $obj->polizaVida->NumeroPoliza ?? '' }}</td>
+                <td>{{ $obj->Asegurado }}</td>
+                <td>{{ $obj->ocupacion->Nombre ?? '' }}</td>
+                <td>{{ $obj->Dui }}</td>
+                <td>{{ $obj->Edad }}</td>
+                <td>{{ $obj->Genero == 1 ? 'F' : ($obj->Genero == 2 ? 'M' : '') }}</td>
+                <td> {{ $obj->SumaAseguradaDeuda !== null && $obj->SumaAseguradaDeuda > 0
+                    ? number_format($obj->SumaAseguradaDeuda, 2)
+                    : '' }}
+                </td>
+                <td> {{ $obj->SumaAseguradaVida !== null && $obj->SumaAseguradaVida > 0
+                    ? number_format($obj->SumaAseguradaVida, 2)
+                    : '' }}
+                </td>
+                <td>{{ $obj->tipoCliente->Nombre ?? '' }}</td>
+                <td>{{ $obj->tipoCredito->Nombre ?? '' }}</td>
+                <td>{{ number_format($obj->Imc, 2) }}</td>
+                <td>{{ $obj->tipoImc->Nombre ?? '' }}</td>
+                <td>{{ $obj->Padecimiento }}</td>
+                <td>{{ $obj->tipoOrdenMedica->Nombre }}</td>
+                <td>{{ $obj->estadoCaso->Nombre ?? '' }}</td>
+                <td>{{ $obj->resumenGestion->Nombre ?? '' }}</td>
+                <td>{{ $obj->FechaReportadoCia ? date('d/m/Y', strtotime($obj->FechaReportadoCia)) : '' }}</td>
+                <td>{{ $obj->TrabajadoEfectuadoDiaHabil }}</td>
+                <td>{{ $obj->TareasEvaSisa }}</td>
+                <td>
+                    <ul>
+                        @foreach ($obj->comentarios as $comen)
+                            <li>
+                                {{-- Nombre con un espacio a la derecha --}}
+                                <strong>{{ $comen->usuario->name ?? 'Usuario anónimo' }}</strong>
+                                &nbsp; | &nbsp;
 
-        </tr>
-        @php($i++)
+                                {{-- Fecha con formato y espacio --}}
+                                @if (!empty($comen->FechaIngreso))
+                                    <span style="color: #666;">
+                                        {{ \Carbon\Carbon::parse($comen->FechaIngreso)->format('d/m/Y') }}
+                                    </span>
+                                    &nbsp; | &nbsp;
+                                @endif
+
+                                {{-- Comentario --}}
+                                <span>{{ $comen->Comentario ?? '' }}</span>
+                            </li>
+                        @endforeach
+                    </ul>
+                </td>
+                <td>{{ $obj->FechaCierreGestion ? date('d/m/Y', strtotime($obj->FechaCierreGestion)) : '' }}</td>
+                <td>{{ $obj->FechaResolucion ? date('d/m/Y', strtotime($obj->FechaResolucion)) : '' }}</td>
+                <td>{{ $obj->FechaEnvioResoCliente ? date('d/m/Y', strtotime($obj->FechaEnvioResoCliente)) : '' }}</td>
+                <td>{{ $obj->DiasProcesamientoResolucion }}</td>
+                <td>{{ $obj->ReprocesoId ?? '' }}</td>
+                <td>{{ $obj->FechaEnvioCorreccion ? date('d/m/Y', strtotime($obj->FechaEnvioCorreccion)) : '' }}</td>
+                <td>{{ $obj->TotalDiasProceso }}</td>
+                <td>{{ $obj->ResolucionFinal }}</td>
+                <td>{{ $obj->ValorExtraPrima }}</td>
+
+            </tr>
+            @php($i++)
         @endforeach
     </table>
 </body>

@@ -122,6 +122,11 @@ class Suscripcion extends Model
         return $this->belongsTo(Vida::class, 'PolizaVida');
     }
 
+     public function usuario()
+    {
+        return $this->belongsTo(User::class, 'UsuarioId');
+    }
+
     public function comentarios()
     {
         return $this->hasMany(Comentarios::class, 'SuscripcionId');

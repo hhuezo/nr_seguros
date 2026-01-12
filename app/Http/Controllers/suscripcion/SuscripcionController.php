@@ -507,6 +507,8 @@ class SuscripcionController extends Controller
             'FechaEnvioResoCliente.after_or_equal' => 'La fecha de envió de resolución al cliente no puede ser menor a la fecha de recepción de resolución de CIA'
         ]);
 
+
+
         $suscripcion = Suscripcion::findOrFail($request->Id);
         $suscripcion->FechaIngreso = $request->FechaIngreso;
         $suscripcion->GestorId = $request->Gestor;
@@ -528,7 +530,9 @@ class SuscripcionController extends Controller
         $suscripcion->TipoIMCId = $request->TipoIMCId;
         $suscripcion->Padecimiento = $request->Padecimiento;
         $suscripcion->TipoOrdenMedicaId = $request->TipoOrdenMedicaId;
-        $suscripcion->EstadoId = $request->EstadoId;
+        if ($request->EstadoId != null) {
+            $suscripcion->EstadoId = $request->EstadoId;
+        }
         $suscripcion->ReprocesoId = $request->ReprocesoId;
         $suscripcion->ResumenGestion = $request->ResumenGestion;
         $suscripcion->FechaReportadoCia = $request->FechaReportadoCia;
