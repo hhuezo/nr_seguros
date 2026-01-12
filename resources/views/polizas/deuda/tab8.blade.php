@@ -20,13 +20,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($historico as $obj)
+                    @foreach ($detalle as $obj)
                     <tr>
                         <td>{{$obj->Axo}}</td>
                         <td>{{ ucfirst(\Carbon\Carbon::create(null, $obj->Mes, 1)->translatedFormat('F')) }}</td>
                         <td>{{ \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') }}</td>
                         <td>{{ \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') }}</td>
-                        <td> {{ $obj->total_registros}}</td>
+                        <td> {{ $obj->UsuariosReportados}}</td>
                         <td>
                             <div style=" display: flex;gap: 10px; align-items: center;">
                                 <a class="btn btn-primary on-default edit-row" title="Consultar Pago"

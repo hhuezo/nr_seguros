@@ -968,6 +968,7 @@ class DeudaController extends Controller
             $planes = Plan::where('Activo', 1)->get();
             $detalle = DeudaDetalle::where('Deuda', $deuda->Id)->orderBy('Id', 'desc')->get();
 
+
             foreach ($detalle as $det) {
                 $historial = DeudaHistorialRecibo::where('PolizaDeudaDetalle', $det->Id)->orderByDesc('Id')->first();
                 if ($historial) {
@@ -1013,7 +1014,10 @@ class DeudaController extends Controller
             }
 
             //tab 8
-            $historico = DB::table('poliza_deuda_cartera')
+
+
+
+            /*$historico = DB::table('poliza_deuda_cartera')
                 ->select(
                     'Axo',
                     'Mes',
@@ -1027,7 +1031,7 @@ class DeudaController extends Controller
                 ->orderBy('Axo', 'asc')  // Ordenar primero por Axo
                 ->orderBy('Mes', 'asc')  // Luego ordenar por Mes
                 ->orderBy('FechaInicio', 'asc')  // Finalmente ordenar por FechaInicio
-                ->get();
+                ->get();*/
 
 
 
@@ -1124,7 +1128,6 @@ class DeudaController extends Controller
 
 
             return view('polizas.deuda.edit', compact(
-                'historico',
                 'totalUltimoPago',
                 'ultimaCartera',
                 'total_extrapima',
