@@ -17,6 +17,8 @@
         <th> FECHA DE OTORGAMIENTO </th>
         <th> FECHA DE VENCIMIENTO </th>
         <th> OCUPACION </th>
+        <th>EDAD</th>
+        <th>EDAD DESEMBLOSO</th>
         <th> No DE REFERENCIA DEL CRÉDITO </th>
         <th> MONTO OTORGADO DEL CREDITO </th>
         <th> SALDO VIGENTE DE CAPITAL </th>
@@ -47,6 +49,8 @@
         <td>{{$obj->FechaOtorgamiento}}</td>
         <td>{{$obj->FechaVencimiento}}</td>
         <td>{{$obj->Ocupacion}}</td>
+        <td>{{$obj->Edad}}</td>
+        <td>{{$obj->EdadDesembloso}}</td>
         <td>{{$obj->NumeroReferencia}}</td>
         <td>{{$obj->MontoOtorgado}}</td>
         <td>{{$obj->SaldoCapital}}</td>
@@ -55,6 +59,7 @@
         <td>{{$obj->InteresesCovid}}</td>
         <td>{{$obj->MontoNominal}}</td>
         <td>{{$obj->SaldoTotal}}</td>
+
 
     </tr>
     @endforeach
