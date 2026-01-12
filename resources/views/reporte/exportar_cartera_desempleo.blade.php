@@ -17,9 +17,16 @@
         <th> FECHA DE OTORGAMIENTO </th>
         <th> FECHA DE VENCIMIENTO </th>
         <th> OCUPACION </th>
+        <th> EDAD </th>
+        <th> EDAD DESEMBLOSO </th>
         <th> No DE REFERENCIA DEL CRÉDITO </th>
         <th> MONTO OTORGADO DEL CREDITO </th>
-
+        <th> SALDO VIGENTE DE CAPITAL </th>
+        <th> INTERESES </th>
+        <th> INTERESES MORATORIOS </th>
+        <th> INTERESES COVID</th>
+        <th> MONTO NOMINAL</th>
+        <th> SALDO TOTAL </th>
 
     </tr>
     @foreach($cartera as $obj)
@@ -42,8 +49,16 @@
         <td>{{$obj->FechaOtorgamiento}}</td>
         <td>{{$obj->FechaVencimiento}}</td>
         <td>{{$obj->Ocupacion}}</td>
+        <td>{{$obj->Edad}}</td>
+        <td>{{$obj->EdadDesembloso}}</td>
         <td>{{$obj->NumeroReferencia}}</td>
         <td>{{$obj->MontoOtorgado}}</td>
+        <td>{{$obj->SaldoCapital}}</td>
+        <td>{{$obj->Intereses}}</td>
+        <td>{{$obj->InteresesMoratorios}}</td>
+        <td>{{$obj->InteresesCovid}}</td>
+        <td>{{$obj->MontoNominal}}</td>
+        <td>{{$obj->SaldoTotal}}</td>
 
 
 
