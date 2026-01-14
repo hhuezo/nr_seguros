@@ -1334,15 +1334,16 @@ class DeudaCarteraController extends Controller
 
 
 
-        //registros que no existen en el mes anterior
+        //registros que no existen en el mes anterior PolizaDeudaTipoCartera
 
         $registros_eliminados = collect(DB::select("
             SELECT pdc.NumeroReferencia,pdc.Dui,pdc.Pasaporte,pdc.CarnetResidencia
             ,pdc.PrimerNombre,pdc.SegundoNombre,pdc.PrimerApellido,pdc.SegundoApellido,pdc.ApellidoCasada
-            ,pdc.FechaNacimiento,pdc.Edad,pdc.FechaOtorgamiento,pdc.EdadDesembloso,pdc.TotalCredito,saldos_montos.Abreviatura as LineaCredito,
-            pdc.TotalCredito
+            ,pdc.FechaNacimiento,pdc.Edad,pdc.FechaOtorgamiento,pdc.EdadDesembloso,pdc.TotalCredito,
+            pdc.TotalCredito,tipo_cartera.Nombre as TipoCartera
             FROM poliza_deuda_cartera pdc
-            inner join saldos_montos on saldos_montos.Id = pdc.LineaCredito
+            inner join poliza_deuda_tipo_cartera on poliza_deuda_tipo_cartera.Id = pdc.PolizaDeudaTipoCartera
+            inner join tipo_cartera on tipo_cartera.Id = poliza_deuda_tipo_cartera.TipoCartera
             WHERE pdc.PolizaDeuda = ?
             AND pdc.Axo = ?
             AND pdc.Mes = ?

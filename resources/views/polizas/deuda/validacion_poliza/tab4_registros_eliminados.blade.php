@@ -24,7 +24,7 @@
         @foreach ($registros_eliminados as $registro)
             <tr>
                 <td>{{ $registro->NumeroReferencia }}</td>
-                <td>{{ $registro->LineaCredito }} </td>
+                <td>{{ $registro->TipoCartera }} </td>
                 <td>{{ $registro->Dui }}</td>
                 <td>{{ $registro->PrimerNombre }}
                     {{ $registro->SegundoNombre }}
