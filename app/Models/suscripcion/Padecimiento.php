@@ -11,6 +11,8 @@ class Padecimiento extends Model
     use HasFactory;
     protected $table = 'sus_padecimientos';
 
+    protected $primaryKey = 'Id';
+
     public $timestamps = false;
 
     protected $fillable = [

@@ -739,26 +739,30 @@
                         type: 'POST',
                         data: $(this).serialize(),
                         success: function(response) {
-                            // 1. Cerrar el modal específico de padecimientos y limpiar el form
+
+                            // 1. Cerrar el modal y limpiar el formulario
                             $('#modal-create-padecimiento').modal('hide');
                             $('#formCrearPadecimiento').trigger('reset');
 
-                            // 2. Crear la nueva opción para el Select2
-                            // Usamos response.nombre y response.id (según el JSON que retorna el controlador)
-                            var newOption = new Option(
-                                response.nombre,
-                                response.id,
-                                true, // Default Selected
-                                true // Selected
-                            );
+                            // 2. Validar que el ID sea un número válido
+                            var idLimpio = parseInt(response.id);
 
-                            // 3. Importante: Append y trigger change
-                            // Al ser un select MULTIPLE, esto añade el nuevo sin borrar los anteriores
-                            $('#Padecimiento').append(newOption).trigger('change');
+                            if (!isNaN(idLimpio)) {
+                                // 3. Crear opción: new Option(texto, valor, defaultSelected, selected)
+                                // Cambiamos a true, true para que se agregue Y se seleccione de una vez
+                                var newOption = new Option(response.nombre, idLimpio, true, true);
 
-                            // 3. Mostrar notificación con Toastr (Sustituye a Swal)
-                            toastr.success(response.message ||
-                                "Padecimiento agregado correctamente");
+                                // 4. Inyectar en el Select2 y disparar el cambio
+                                $('#Padecimiento').append(newOption).trigger('change');
+
+                                toastr.success(response.message ||
+                                    "Padecimiento agregado y seleccionado.");
+                            } else {
+                                console.error("Error: El ID recibido no es un número", response);
+                                toastr.error(
+                                    "Error crítico: El servidor devolvió un ID no numérico.");
+                            }
+
                         },
                         error: function(xhr) {
                             if (xhr.status === 422) {

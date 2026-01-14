@@ -492,7 +492,6 @@ class SuscripcionController extends Controller
 
     public function update(Request $request)
     {
-
         $request->validate([
             'FechaIngreso'         => 'required|date',
             'Gestor'               => 'nullable|integer|exists:users,id',
@@ -655,7 +654,6 @@ class SuscripcionController extends Controller
 
     public function agregar_padecimiento(Request $request)
     {
-        // Validación
         $validator = Validator::make($request->all(), [
             'Nombre' => 'required|string|max:50|unique:sus_padecimientos,Nombre',
         ], [
@@ -672,22 +670,25 @@ class SuscripcionController extends Controller
         }
 
         try {
-            // Guardado
             $padecimiento = new Padecimiento();
             $padecimiento->Nombre = mb_strtoupper($request->Nombre);
             $padecimiento->Activo = 1;
             $padecimiento->save();
 
+            // IMPORTANTE: Accedemos a Id (Mayúscula) y forzamos a entero
+            // Si tu primary key en el modelo no es 'id', asegúrate de usar la correcta
+            $nuevoId = $padecimiento->Id;
+
             return response()->json([
                 'success' => true,
-                'id'      => $padecimiento->Id,
+                'id'      => intval($nuevoId),
                 'nombre'  => $padecimiento->Nombre,
                 'message' => 'Padecimiento agregado correctamente.'
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al guardar el padecimiento.'
+                'message' => 'Error al guardar: ' . $e->getMessage()
             ], 500);
         }
     }

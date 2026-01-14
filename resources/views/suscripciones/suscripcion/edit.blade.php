@@ -325,15 +325,22 @@
                         </div>
                         <div class="col-sm-6">
                             <label for="Padecimiento" class="form-label">Padecimientos</label>
-                            <select name="Padecimiento[]" id="Padecimiento" class="form-control select2"
-                                multiple="multiple">
-                                @foreach ($padecimientos as $padecimiento)
-                                    <option value="{{ $padecimiento->Id }}"
-                                        {{ is_array(old('Padecimiento', $padecimientos_seleccionados)) && in_array($padecimiento->Id, old('Padecimiento', $padecimientos_seleccionados)) ? 'selected' : '' }}>
-                                        {{ $padecimiento->Nombre }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            <div class="input-group">
+                                <select name="Padecimiento[]" id="Padecimiento" class="form-control select2"
+                                    multiple="multiple">
+                                    @foreach ($padecimientos as $padecimiento)
+                                        <option value="{{ $padecimiento->Id }}"
+                                            {{ is_array(old('Padecimiento', $padecimientos_seleccionados)) && in_array($padecimiento->Id, old('Padecimiento', $padecimientos_seleccionados)) ? 'selected' : '' }}>
+                                            {{ $padecimiento->Nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-primary"
+                                        data-target="#modal-create-padecimiento" data-toggle="modal"
+                                        title="Agregar nuevo padecimiento" style="margin-left: 2px;">+</button>
+                                </span>
+                            </div>
                         </div>
 
                         <div class="clearfix"></div>
@@ -574,6 +581,50 @@
             </div>
         </div>
     </div>
+
+
+
+    <div class="modal fade" id="modal-create-padecimiento" tabindex="-1" user="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="col-md-6">
+                        <h4 class="modal-title">Nuevo Padecimiento</h4>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                </div>
+                <form id="formCrearPadecimiento">
+                    @csrf
+
+                    <div class="modal-body">
+                        <div class="form-group row">
+                            <label class="control-label">Nombre</label>
+                            <input class="form-control" name="Nombre" type="text" autofocus
+                                oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
     <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
     <script type="text/javascript">
         document.getElementById('Dui').addEventListener('input', function(e) {
@@ -852,5 +903,64 @@
 
 
         }
+
+
+
+        $('#formCrearPadecimiento').submit(function(e) {
+            e.preventDefault();
+
+            $.ajax({
+                // Cambia esta URL por la ruta real que apunte a tu función agregar_padecimiento
+                url: "{{ url('suscripcion/padecimiento_store') }}",
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function(response) {
+
+                    // 1. Cerrar el modal y limpiar el formulario
+                    $('#modal-create-padecimiento').modal('hide');
+                    $('#formCrearPadecimiento').trigger('reset');
+
+                    // 2. Validar que el ID sea un número válido
+                    var idLimpio = parseInt(response.id);
+
+                    if (!isNaN(idLimpio)) {
+                        // 3. Crear opción: new Option(texto, valor, defaultSelected, selected)
+                        // Cambiamos a true, true para que se agregue Y se seleccione de una vez
+                        var newOption = new Option(response.nombre, idLimpio, true, true);
+
+                        // 4. Inyectar en el Select2 y disparar el cambio
+                        $('#Padecimiento').append(newOption).trigger('change');
+
+                        toastr.success(response.message || "Padecimiento agregado y seleccionado.");
+                    } else {
+                        console.error("Error: El ID recibido no es un número", response);
+                        toastr.error("Error crítico: El servidor devolvió un ID no numérico.");
+                    }
+
+                },
+                error: function(xhr) {
+                    if (xhr.status === 422) {
+                        var errors = xhr.responseJSON.errors;
+                        // Si pasaste los errores como array en el controlador
+                        var mensajeError = Array.isArray(errors) ? errors[0] : Object
+                            .values(errors)[0][0];
+
+                        Swal.fire({
+                            title: '¡Error!',
+                            text: mensajeError,
+                            icon: 'error',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    } else {
+                        Swal.fire({
+                            title: '¡Error!',
+                            text: 'Hubo un problema al procesar la solicitud.',
+                            icon: 'error',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
+                }
+            });
+        });
     </script>
 @endsection
