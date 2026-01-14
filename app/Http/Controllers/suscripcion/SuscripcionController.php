@@ -464,9 +464,28 @@ class SuscripcionController extends Controller
         $padecimientos = Padecimiento::where('Activo', 1)->get();
         $padecimientos_seleccionados = $suscripcion->padecimientos->pluck('Id')->toArray();
 
-        return view('suscripciones.suscripcion.edit', compact('reprocesos', 'aseguradoras', 'tipos_imc', 'resumen_gestion', 'polizas_vida',
-        'polizas_deuda', 'clientes', 'ejecutivos', 'companias', 'ocupaciones', 'tipo_clientes', 'tipo_creditos', 'tipo_orden', 'suscripcion',
-         'estados', 'tab', 'fechaInicio', 'fechaFinal','padecimientos','padecimientos_seleccionados'));
+        return view('suscripciones.suscripcion.edit', compact(
+            'reprocesos',
+            'aseguradoras',
+            'tipos_imc',
+            'resumen_gestion',
+            'polizas_vida',
+            'polizas_deuda',
+            'clientes',
+            'ejecutivos',
+            'companias',
+            'ocupaciones',
+            'tipo_clientes',
+            'tipo_creditos',
+            'tipo_orden',
+            'suscripcion',
+            'estados',
+            'tab',
+            'fechaInicio',
+            'fechaFinal',
+            'padecimientos',
+            'padecimientos_seleccionados'
+        ));
     }
 
 
@@ -491,7 +510,8 @@ class SuscripcionController extends Controller
             'Estatura'             => 'nullable|numeric|min:0',
             'Imc'                  => 'nullable|numeric|min:0',
             'TipoIMCId'            => 'nullable|integer|exists:sus_tipo_imc,Id',
-            'Padecimiento'         => 'nullable|string|max:500',
+            'Padecimiento'               => 'nullable|array',
+            'Padecimiento.*'             => 'integer|exists:sus_padecimientos,Id',
             'TipoOrdenMedicaId'    => 'nullable|integer|exists:sus_orden_medica,Id',
             'EstadoId'             => 'nullable|integer|exists:sus_estado_caso,Id',
             'ReprocesoId'             => 'nullable|integer|exists:sus_reproceso,Id',
@@ -521,6 +541,7 @@ class SuscripcionController extends Controller
             'in'                   => 'El valor seleccionado en :attribute no es válido.',
             'exists'               => 'El valor seleccionado en :attribute no existe.',
             'regex'                => 'El formato de :attribute no es válido.',
+            'Padecimiento.*.exists' => 'Uno de los padecimientos seleccionados no es válido.',
             'FechaResolucion.before_or_equal' => 'La fecha de recepción de resolución de CIA no puede ser mayor a la fecha de envió de resolución al cliente',
             'FechaEnvioResoCliente.after_or_equal' => 'La fecha de envió de resolución al cliente no puede ser menor a la fecha de recepción de resolución de CIA'
         ]);
@@ -580,6 +601,15 @@ class SuscripcionController extends Controller
             $suscripcion->TrabajadoEfectuadoDiaHabil = $this->calcularDiasHabiles($suscripcion->FechaReportadoCia,  $suscripcion->FechaEntregaDocsCompletos);
         }
         $suscripcion->update();
+
+
+        // Sincronizar padecimientos
+        if ($request->has('Padecimiento')) {
+            $suscripcion->padecimientos()->sync($request->Padecimiento);
+        } else {
+            // Si el usuario desmarcó todo, vaciamos la relación
+            $suscripcion->padecimientos()->detach();
+        }
 
 
         return redirect('suscripciones/' . $request->Id . '/edit?tab=1')->with('success', 'El registro ha sido modificado correctamente');
