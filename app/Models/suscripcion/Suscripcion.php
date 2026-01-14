@@ -122,7 +122,7 @@ class Suscripcion extends Model
         return $this->belongsTo(Vida::class, 'PolizaVida');
     }
 
-     public function usuario()
+    public function usuario()
     {
         return $this->belongsTo(User::class, 'UsuarioId');
     }
@@ -134,5 +134,14 @@ class Suscripcion extends Model
     public function reproceso()
     {
         return $this->hasMany(Reproceso::class, 'ReprocesoId');
+    }
+    public function padecimientos()
+    {
+        return $this->belongsToMany(
+            Padecimiento::class,
+            'suscripcion_padecimientos',
+            'SuscripcionId',
+            'PadecimientoId'
+        );
     }
 }

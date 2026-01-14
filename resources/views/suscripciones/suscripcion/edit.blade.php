@@ -324,9 +324,16 @@
                             </select>
                         </div>
                         <div class="col-sm-6">
-                            <label for="DireccionResidencia" class="form-label">Padecimientos</label>
-                            <textarea type="text" id="Padecimiento" name="Padecimiento" class="form-control">{{ $suscripcion->Padecimiento }}</textarea>
-                            <!-- <input type="checkbox"  class="js-switch" > -->
+                            <label for="Padecimiento" class="form-label">Padecimientos</label>
+                            <select name="Padecimiento[]" id="Padecimiento" class="form-control select2"
+                                multiple="multiple">
+                                @foreach ($padecimientos as $padecimiento)
+                                    <option value="{{ $padecimiento->Id }}"
+                                        {{ is_array(old('Padecimiento', $padecimientos_seleccionados)) && in_array($padecimiento->Id, old('Padecimiento', $padecimientos_seleccionados)) ? 'selected' : '' }}>
+                                        {{ $padecimiento->Nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
 
                         <div class="clearfix"></div>

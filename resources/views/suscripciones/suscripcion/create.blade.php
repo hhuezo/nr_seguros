@@ -43,7 +43,7 @@
 
                         <div class="col-sm-4">
                             <label class="control-label "># Tarea</label>
-                            <input type="text" name="NumeroTarea" value="{{$nuevaTarea}}" class="form-control">
+                            <input type="text" name="NumeroTarea" value="{{ $nuevaTarea }}" class="form-control">
                         </div>
 
                         <div class="col-sm-4">
@@ -273,8 +273,13 @@
                         </div>
 
                         <div class="col-sm-6">
-                            <label for="DireccionResidencia" class="form-label">Padecimientos</label>
-                            <textarea id="Padecimiento" name="Padecimiento" class="form-control"></textarea>
+                            <label for="Padecimiento" class="form-label">Padecimientos</label>
+                            <select name="Padecimiento[]" id="Padecimiento" class="form-control select2"
+                                multiple="multiple">
+                                @foreach ($padecimientos as $padecimiento)
+                                    <option value="{{ $padecimiento->Id }}">{{ $padecimiento->Nombre }}</option>
+                                @endforeach
+                            </select>
                         </div>
 
                         <div class="clearfix"></div>

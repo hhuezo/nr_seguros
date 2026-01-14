@@ -16,6 +16,7 @@ use App\Models\suscripcion\EstadoCaso;
 use App\Models\suscripcion\FechasFeriadas;
 use App\Models\suscripcion\Ocupacion;
 use App\Models\suscripcion\OrdenMedica;
+use App\Models\suscripcion\Padecimiento;
 use App\Models\suscripcion\Reproceso;
 use App\Models\suscripcion\ResumenGestion;
 use App\Models\suscripcion\Suscripcion;
@@ -221,7 +222,7 @@ class SuscripcionController extends Controller
         $nuevoCorrelativo = $ultimo ? $ultimo + 1 : 1;
         $nuevaTarea = substr(date('Y'), -2) . 'TS-' . $nuevoCorrelativo;
 
-
+        $padecimientos = Padecimiento::where('Activo', 1)->get();
 
         //observaciones 22-5-25
         $aseguradoras = Aseguradora::where('Activo', 1)->get();
@@ -241,7 +242,8 @@ class SuscripcionController extends Controller
             'resumen_gestion',
             'tipo_creditos',
             'ocupaciones',
-            'nuevaTarea'
+            'nuevaTarea',
+            'padecimientos'
         ));
     }
 
@@ -249,134 +251,145 @@ class SuscripcionController extends Controller
     {
 
         $request->validate([
-            'FechaIngreso'         => 'required|date',
-            'Gestor'               => 'nullable|integer|exists:users,id',
-            'CompaniaId'           => 'nullable|integer|exists:aseguradora,Id',
-            'ContratanteId'        => 'nullable|integer|exists:cliente,Id',
-            'PolizaDeuda'          => 'nullable|integer|exists:poliza_deuda,Id',
-            'PolizaVida'           => 'nullable|integer|exists:poliza_vida,Id',
-            'Asegurado'            => 'required|string|max:100',
-            'Dui'                  => 'nullable|string',
-            'Edad'                 => 'nullable|integer|min:0|max:120',
-            'Genero'               => 'nullable|in:1,2',
-            'SumaAseguradaDeuda'   => 'nullable|numeric|min:0',
-            'SumaAseguradaVida'    => 'nullable|numeric|min:0',
-            'TipoClienteId'        => 'nullable|integer|exists:sus_tipo_cliente,Id',
-            'Peso'                 => 'nullable|numeric|min:0',
-            'Estatura'             => 'nullable|numeric|min:0',
-            'Imc'                  => 'nullable|numeric|min:0',
-            'TipoIMCId'            => 'nullable|integer|exists:sus_tipo_imc,Id',
-            'Padecimiento'         => 'nullable|string|max:500',
-            'TipoOrdenMedicaId'    => 'nullable|integer|exists:sus_orden_medica,Id',
-            'EstadoId'             => 'nullable|integer|exists:sus_estado_caso,Id',
-            'ResumenGestion'       => 'nullable|integer|exists:sus_resumen_gestion,Id',
-            'FechaReportadoCia'    => 'nullable|date',
-            'TareasEvaSisa'        => 'nullable|string|max:255',
-            'ResolucionFinal'      => 'nullable|string|max:1000',
-            'ValorExtraPrima'      => 'nullable|numeric|min:0',
-            'Comentarios'          => 'nullable|string|max:3000',
-            'OcupacionId'          => 'nullable|integer|exists:sus_ocupacion,Id',
-            'ReprocesoId'          => 'nullable|integer|exists:sus_reproceso,Id',
-            'TipoCreditoId'        => 'nullable|integer|exists:sus_tipo_credito,Id',
-            'FechaEntregaDocsCompletos' => 'nullable|date',
-            'DiasCompletarInfoCliente' => 'nullable|integer',
+            'FechaIngreso'               => 'required|date',
+            'Gestor'                     => 'nullable|integer|exists:users,id',
+            'CompaniaId'                 => 'nullable|integer|exists:aseguradora,Id',
+            'ContratanteId'              => 'nullable|integer|exists:cliente,Id',
+            'PolizaDeuda'                => 'nullable|integer|exists:poliza_deuda,Id',
+            'PolizaVida'                 => 'nullable|integer|exists:poliza_vida,Id',
+            'Asegurado'                  => 'required|string|max:100',
+            'Dui'                        => 'nullable|string',
+            'Edad'                       => 'nullable|integer|min:0|max:120',
+            'Genero'                     => 'nullable|in:1,2',
+            'SumaAseguradaDeuda'         => 'nullable|numeric|min:0',
+            'SumaAseguradaVida'          => 'nullable|numeric|min:0',
+            'TipoClienteId'              => 'nullable|integer|exists:sus_tipo_cliente,Id',
+            'Peso'                       => 'nullable|numeric|min:0',
+            'Estatura'                   => 'nullable|numeric|min:0',
+            'Imc'                        => 'nullable|numeric|min:0',
+            'TipoIMCId'                  => 'nullable|integer|exists:sus_tipo_imc,Id',
+
+            // VALIDACIÓN ACTUALIZADA
+            'Padecimiento'               => 'nullable|array',
+            'Padecimiento.*'             => 'integer|exists:sus_padecimientos,Id',
+
+            'TipoOrdenMedicaId'          => 'nullable|integer|exists:sus_orden_medica,Id',
+            'EstadoId'                   => 'nullable|integer|exists:sus_estado_caso,Id',
+            'ResumenGestion'             => 'nullable|integer|exists:sus_resumen_gestion,Id',
+            'FechaReportadoCia'          => 'nullable|date',
+            'TareasEvaSisa'              => 'nullable|string|max:255',
+            'ResolucionFinal'            => 'nullable|string|max:1000',
+            'ValorExtraPrima'            => 'nullable|numeric|min:0',
+            'Comentarios'                => 'nullable|string|max:3000',
+            'OcupacionId'                => 'nullable|integer|exists:sus_ocupacion,Id',
+            'ReprocesoId'                => 'nullable|integer|exists:sus_reproceso,Id',
+            'TipoCreditoId'              => 'nullable|integer|exists:sus_tipo_credito,Id',
+            'FechaEntregaDocsCompletos'  => 'nullable|date',
+            'DiasCompletarInfoCliente'   => 'nullable|integer',
             'TrabajadoEfectuadoDiaHabil' => 'nullable|integer',
-            'FechaCierreGestion'    => 'nullable|date',
-            'FechaEnvioCorreccion'    => 'nullable|date',
-            'FechaResolucion'    => 'nullable|date|before_or_equal:FechaEnvioResoCliente',
-            'FechaEnvioResoCliente'    => 'nullable|date|after_or_equal:FechaResolucion',
+            'FechaCierreGestion'         => 'nullable|date',
+            'FechaEnvioCorreccion'       => 'nullable|date',
+            'FechaResolucion'            => 'nullable|date|before_or_equal:FechaEnvioResoCliente',
+            'FechaEnvioResoCliente'      => 'nullable|date|after_or_equal:FechaResolucion',
 
         ], [
-            'required'             => 'El campo :attribute es obligatorio.',
-            'date'                 => 'El campo :attribute debe ser una fecha válida.',
-            'integer'              => 'El campo :attribute debe ser un número entero.',
-            'numeric'              => 'El campo :attribute debe ser numérico.',
-            'max'                  => 'El campo :attribute no debe ser mayor a :max caracteres.',
-            'min'                  => 'El campo :attribute debe ser al menos :min.',
-            'in'                   => 'El valor seleccionado en :attribute no es válido.',
-            'exists'               => 'El valor seleccionado en :attribute no existe.',
-            'regex'                => 'El formato de :attribute no es válido.',
+            'required'           => 'El campo :attribute es obligatorio.',
+            'date'               => 'El campo :attribute debe ser una fecha válida.',
+            'integer'            => 'El campo :attribute debe ser un número entero.',
+            'numeric'            => 'El campo :attribute debe ser numérico.',
+            'max'                => 'El campo :attribute no debe ser mayor a :max caracteres.',
+            'min'                => 'El campo :attribute debe ser al menos :min.',
+            'in'                 => 'El valor seleccionado en :attribute no es válido.',
+            'exists'             => 'El valor seleccionado en :attribute no existe.',
+            'array'              => 'El campo :attribute debe ser una lista de opciones.',
+            'Padecimiento.*.exists' => 'Uno de los padecimientos seleccionados no es válido.',
             'FechaResolucion.before_or_equal' => 'La fecha de recepción de resolución de CIA no puede ser mayor a la fecha de envió de resolución al cliente',
             'FechaEnvioResoCliente.after_or_equal' => 'La fecha de envió de resolución al cliente no puede ser menor a la fecha de recepción de resolución de CIA'
         ]);
 
-        // try {
-        //     DB::beginTransaction();
+        try {
+            DB::beginTransaction();
 
-        $ultimo = Suscripcion::selectRaw('MAX(CAST(SUBSTRING(NumeroTarea, LOCATE("TS-", NumeroTarea) + 3) AS UNSIGNED)) as ultimo')
-            ->whereRaw('LEFT(NumeroTarea, 2) = ?', [substr(date('Y'), -2)])
-            ->value('ultimo');
+            $ultimo = Suscripcion::selectRaw('MAX(CAST(SUBSTRING(NumeroTarea, LOCATE("TS-", NumeroTarea) + 3) AS UNSIGNED)) as ultimo')
+                ->whereRaw('LEFT(NumeroTarea, 2) = ?', [substr(date('Y'), -2)])
+                ->value('ultimo');
 
-        $nuevoCorrelativo = $ultimo ? $ultimo + 1 : 1;
-        $nuevaTarea = substr(date('Y'), -2) . 'TS-' . $nuevoCorrelativo;
+            $nuevoCorrelativo = $ultimo ? $ultimo + 1 : 1;
+            $nuevaTarea = substr(date('Y'), -2) . 'TS-' . $nuevoCorrelativo;
 
-        $suscripcion = new Suscripcion();
-        $suscripcion->NumeroTarea = $request->NumeroTarea;
-        $suscripcion->FechaIngreso = $request->FechaIngreso;
-        $suscripcion->GestorId = $request->Gestor;
-        $suscripcion->CompaniaId = $request->CompaniaId;
-        $suscripcion->CategoriaSisa = $request->CategoriaSisa;
-        $suscripcion->ContratanteId = $request->ContratanteId;
-        $suscripcion->PolizaDeuda = $request->PolizaDeuda;
-        $suscripcion->PolizaVida = $request->PolizaVida;
-        $suscripcion->Asegurado = $request->Asegurado;
-        $suscripcion->Dui = $request->Dui;
-        $suscripcion->Edad = $request->Edad;
-        $suscripcion->Genero = $request->Genero;
-        $suscripcion->SumaAseguradaDeuda = $request->SumaAseguradaDeuda;
-        $suscripcion->SumaAseguradaVida = $request->SumaAseguradaVida;
-        $suscripcion->TipoClienteId = $request->TipoClienteId;
-        $suscripcion->Peso = $request->Peso;
-        $suscripcion->Estatura = $request->Estatura;
-        $suscripcion->Imc = $request->Imc;
-        $suscripcion->TipoIMCId = $request->TipoIMCId;
-        $suscripcion->Padecimiento = $request->Padecimiento;
-        $suscripcion->TipoOrdenMedicaId = $request->TipoOrdenMedicaId;
-        $suscripcion->EstadoId = $request->EstadoId;
-        $suscripcion->ReprocesoId = $request->ReprocesoId;
-        $suscripcion->ResumenGestion = $request->ResumenGestion;
-        $suscripcion->FechaReportadoCia = $request->FechaReportadoCia;
-        $suscripcion->TareasEvaSisa = $request->TareasEvaSisa;
-        $suscripcion->FechaResolucion = $request->FechaResolucion;
-        $suscripcion->ResolucionFinal = $request->ResolucionFinal;
-        $suscripcion->ValorExtraPrima = $request->ValorExtraPrima;
-        $suscripcion->Activo = 1;
-        $suscripcion->OcupacionId = $request->OcupacionId;
-        $suscripcion->TipoCreditoId = $request->TipoCreditoId;
-        $suscripcion->FechaEntregaDocsCompletos = $request->FechaEntregaDocsCompletos;
-        $suscripcion->DiasCompletarInfoCliente = $request->DiasCompletarInfoCliente;
-        $suscripcion->TrabajadoEfectuadoDiaHabil = $request->TrabajadoEfectuadoDiaHabil;
-        $suscripcion->FechaCierreGestion = $request->FechaCierreGestion;
-        $suscripcion->FechaEnvioResoCliente = $request->FechaEnvioResoCliente;
-        $suscripcion->FechaEnvioCorreccion = $request->FechaEnvioCorreccion;
-        $suscripcion->TotalDiasProceso = $request->TotalDiasProceso;
+            $suscripcion = new Suscripcion();
+            $suscripcion->NumeroTarea = $request->NumeroTarea;
+            $suscripcion->FechaIngreso = $request->FechaIngreso;
+            $suscripcion->GestorId = $request->Gestor;
+            $suscripcion->CompaniaId = $request->CompaniaId;
+            $suscripcion->CategoriaSisa = $request->CategoriaSisa;
+            $suscripcion->ContratanteId = $request->ContratanteId;
+            $suscripcion->PolizaDeuda = $request->PolizaDeuda;
+            $suscripcion->PolizaVida = $request->PolizaVida;
+            $suscripcion->Asegurado = $request->Asegurado;
+            $suscripcion->Dui = $request->Dui;
+            $suscripcion->Edad = $request->Edad;
+            $suscripcion->Genero = $request->Genero;
+            $suscripcion->SumaAseguradaDeuda = $request->SumaAseguradaDeuda;
+            $suscripcion->SumaAseguradaVida = $request->SumaAseguradaVida;
+            $suscripcion->TipoClienteId = $request->TipoClienteId;
+            $suscripcion->Peso = $request->Peso;
+            $suscripcion->Estatura = $request->Estatura;
+            $suscripcion->Imc = $request->Imc;
+            $suscripcion->TipoIMCId = $request->TipoIMCId;
+            $suscripcion->TipoOrdenMedicaId = $request->TipoOrdenMedicaId;
+            $suscripcion->EstadoId = $request->EstadoId;
+            $suscripcion->ReprocesoId = $request->ReprocesoId;
+            $suscripcion->ResumenGestion = $request->ResumenGestion;
+            $suscripcion->FechaReportadoCia = $request->FechaReportadoCia;
+            $suscripcion->TareasEvaSisa = $request->TareasEvaSisa;
+            $suscripcion->FechaResolucion = $request->FechaResolucion;
+            $suscripcion->ResolucionFinal = $request->ResolucionFinal;
+            $suscripcion->ValorExtraPrima = $request->ValorExtraPrima;
+            $suscripcion->Activo = 1;
+            $suscripcion->OcupacionId = $request->OcupacionId;
+            $suscripcion->TipoCreditoId = $request->TipoCreditoId;
+            $suscripcion->FechaEntregaDocsCompletos = $request->FechaEntregaDocsCompletos;
+            $suscripcion->DiasCompletarInfoCliente = $request->DiasCompletarInfoCliente;
+            $suscripcion->TrabajadoEfectuadoDiaHabil = $request->TrabajadoEfectuadoDiaHabil;
+            $suscripcion->FechaCierreGestion = $request->FechaCierreGestion;
+            $suscripcion->FechaEnvioResoCliente = $request->FechaEnvioResoCliente;
+            $suscripcion->FechaEnvioCorreccion = $request->FechaEnvioCorreccion;
+            $suscripcion->TotalDiasProceso = $request->TotalDiasProceso;
 
-        if ($suscripcion->FechaResolucion != null && $suscripcion->FechaEnvioResoCliente != null) {
-            $suscripcion->DiasProcesamientoResolucion = $this->calcularDiasHabiles($suscripcion->FechaResolucion,  $suscripcion->FechaEnvioResoCliente);
+            if ($suscripcion->FechaResolucion != null && $suscripcion->FechaEnvioResoCliente != null) {
+                $suscripcion->DiasProcesamientoResolucion = $this->calcularDiasHabiles($suscripcion->FechaResolucion,  $suscripcion->FechaEnvioResoCliente);
+            }
+
+            $suscripcion->save();
+
+
+            // --- AGREGAR PADECIMIENTOS (Tabla Intermedia) ---
+            if ($request->has('Padecimiento')) {
+                // attach() toma el array de IDs del select múltiple
+                $suscripcion->padecimientos()->attach($request->Padecimiento);
+            }
+
+
+            if ($request->Comentarios != "") {
+                $comentario = new Comentarios();
+                $comentario->SuscripcionId = $suscripcion->Id;
+                $comentario->Usuario = $request->Gestor;
+                $comentario->FechaCreacion = Carbon::now();
+                $comentario->Activo = $request->Activo;
+                $comentario->Comentario = $request->Comentarios;
+                $comentario->save();
+            }
+
+            DB::commit();
+
+            return redirect('suscripciones/' . $suscripcion->Id . '/edit?tab=1')->with('success', 'El registro ha sido creado correctamente');
+        } catch (Exception $e) {
+            DB::rollBack();
+            report($e); // Puedes también usar Log::error($e->getMessage());
+            alert()->error('Ha ocurrido un error al guardar la suscripción.');
+            return redirect()->back()->withInput();
         }
-
-        $suscripcion->save();
-
-        if ($request->Comentarios != "") {
-            $comentario = new Comentarios();
-            $comentario->SuscripcionId = $suscripcion->Id;
-            $comentario->Usuario = $request->Gestor;
-            $comentario->FechaCreacion = Carbon::now();
-            $comentario->Activo = $request->Activo;
-            $comentario->Comentario = $request->Comentarios;
-            $comentario->save();
-        }
-
-        return redirect('suscripciones/' . $suscripcion->Id . '/edit?tab=1')->with('success', 'El registro ha sido creado correctamente');
-
-
-        //  DB::commit();
-        // } catch (Exception $e) {
-        //     DB::rollBack();
-        //     report($e); // Puedes también usar Log::error($e->getMessage());
-        //     alert()->error('Ha ocurrido un error al guardar la suscripción.');
-        //     return redirect()->back()->withInput();
-        // }
     }
 
     public function get_imc(Request $request)
@@ -448,7 +461,12 @@ class SuscripcionController extends Controller
         //observaciones 22-5-25
         $aseguradoras = Aseguradora::where('Activo', 1)->get();
 
-        return view('suscripciones.suscripcion.edit', compact('reprocesos', 'aseguradoras', 'tipos_imc', 'resumen_gestion', 'polizas_vida', 'polizas_deuda', 'clientes', 'ejecutivos', 'companias', 'ocupaciones', 'tipo_clientes', 'tipo_creditos', 'tipo_orden', 'suscripcion', 'estados', 'tab', 'fechaInicio', 'fechaFinal'));
+        $padecimientos = Padecimiento::where('Activo', 1)->get();
+        $padecimientos_seleccionados = $suscripcion->padecimientos->pluck('Id')->toArray();
+
+        return view('suscripciones.suscripcion.edit', compact('reprocesos', 'aseguradoras', 'tipos_imc', 'resumen_gestion', 'polizas_vida',
+        'polizas_deuda', 'clientes', 'ejecutivos', 'companias', 'ocupaciones', 'tipo_clientes', 'tipo_creditos', 'tipo_orden', 'suscripcion',
+         'estados', 'tab', 'fechaInicio', 'fechaFinal','padecimientos','padecimientos_seleccionados'));
     }
 
 
