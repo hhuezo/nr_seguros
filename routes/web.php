@@ -203,6 +203,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('suscripciones/importar', [SuscripcionController::class, 'importar']);
     Route::get('suscripciones/calcular_dias_habiles_json', [SuscripcionController::class, 'calcularDiasHabilesJson'])->name('calcular.dias.habiles.json');
     Route::get('suscripciones/data/{fechaInicio}/{fechaFinal}', [SuscripcionController::class, 'data']);
+    Route::post('suscripcion/padecimiento_store', [SuscripcionController::class, 'agregar_padecimiento']);
+
+
 
     Route::resource('suscripciones', SuscripcionController::class);
     Route::resource('companias', CompaniaController::class);

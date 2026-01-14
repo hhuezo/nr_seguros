@@ -29,6 +29,7 @@ use Carbon\CarbonPeriod;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -650,6 +651,45 @@ class SuscripcionController extends Controller
         $comentario->Comentario = $request->Comentario;
         $comentario->save();
         return redirect('suscripciones/' . $request->SuscripcionId . '/edit?tab=2')->with('success', 'El registro ha sido creado correctamente');
+    }
+
+    public function agregar_padecimiento(Request $request)
+    {
+        // Validación
+        $validator = Validator::make($request->all(), [
+            'Nombre' => 'required|string|max:50|unique:sus_padecimientos,Nombre',
+        ], [
+            'Nombre.required' => 'El nombre del padecimiento es obligatorio.',
+            'Nombre.unique'   => 'Este padecimiento ya existe en el catálogo.',
+            'Nombre.max'      => 'El nombre no debe exceder los 50 caracteres.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors'  => $validator->errors()->all()
+            ], 422);
+        }
+
+        try {
+            // Guardado
+            $padecimiento = new Padecimiento();
+            $padecimiento->Nombre = mb_strtoupper($request->Nombre);
+            $padecimiento->Activo = 1;
+            $padecimiento->save();
+
+            return response()->json([
+                'success' => true,
+                'id'      => $padecimiento->Id,
+                'nombre'  => $padecimiento->Nombre,
+                'message' => 'Padecimiento agregado correctamente.'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al guardar el padecimiento.'
+            ], 500);
+        }
     }
 
     public function comentarios_update(Request $request, $id)
