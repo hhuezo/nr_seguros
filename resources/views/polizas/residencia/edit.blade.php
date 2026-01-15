@@ -794,7 +794,7 @@
                                                 @foreach ($detalle as $obj)
                                                     @if ($obj->ImpresionRecibo != null)
                                                         <tr>
-                                                            <td>{{ $obj->NumeroRecibo ? 'AC' . str_pad($obj->NumeroRecibo, 6, '0', STR_PAD_LEFT) . ' ' . date('y') : '' }}
+                                                            <td>{{ $obj->NumeroRecibo ? 'AC' . str_pad($obj->NumeroRecibo, 6, '0', STR_PAD_LEFT) . ' ' .  \Carbon\Carbon::parse($obj->FechaIngreso)->format('Y') : '' }}
                                                             </td>
                                                             <td style="text-align: center;">
                                                                 {{ $obj->Mes }}/{{ $obj->Axo }}</td>
