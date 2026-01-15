@@ -24,7 +24,7 @@
                     @foreach ($detalle as $obj)
                     @if ($obj->ImpresionRecibo != null)
                     <tr>
-                        <td>AC {{str_pad($obj->NumeroRecibo, 6, "0", STR_PAD_LEFT);}} {{date('y')}}</td>
+                        <td>AC {{str_pad($obj->NumeroRecibo, 6, "0", STR_PAD_LEFT);}} {{ \Carbon\Carbon::parse($detalle->FechaIngreso)->format('Y') }}</td>
                         <td>{{$obj->NumeroCorrelativo ? $obj->NumeroCorrelativo : ''}} </td>
                         <td>{{ \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') }}
                         </td>
@@ -43,7 +43,7 @@
                         @endif
                         <td>
                             @if($obj->Activo <> 0)
-                                <a href="{{ url('poliza/deuda/get_recibo') }}/{{ $obj->Id }}/1"  class="btn btn-info"><span class="fa fa-print"></span></a>
+                                <a href="{{ url('poliza/deuda/get_recibo') }}/{{ $obj->Id }}/1"  target="_blank" class="btn btn-info"><span class="fa fa-print"></span></a>
                                  &nbsp;
                                 <a href="{{ url('poliza/deuda/get_recibo') }}/{{ $obj->Id }}/2" target="_blank" class="btn btn-success"><span class="fa fa-file-excel-o fa-lg"></span></a>
                                 &nbsp;
