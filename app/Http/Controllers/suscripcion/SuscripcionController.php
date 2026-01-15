@@ -172,6 +172,22 @@ class SuscripcionController extends Controller
                     ? Carbon::parse($row->FechaEnvioResoCliente)->format('d/m/Y')
                     : '';
             })
+            ->editColumn('Padecimiento', function ($row) {
+
+                // Cargar modelo real (porque DataTables usa stdClass)
+                $suscripcion = Suscripcion::with('padecimientos')
+                    ->find($row->Id);
+
+                // Si tiene padecimientos en la tabla intermedia
+                if ($suscripcion && $suscripcion->padecimientos->count() > 0) {
+                    return $suscripcion->padecimientos
+                        ->pluck('Nombre')
+                        ->implode(', ');
+                }
+
+                // Fallback al campo original
+                return $row->Padecimiento ?? '';
+            })
             ->addColumn('acciones', function ($row) use ($fechaInicio, $fechaFinal) {
 
                 $id = $row->Id;
