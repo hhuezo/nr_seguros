@@ -416,7 +416,6 @@ class VidaController extends Controller
     {
         $vida = Vida::findOrFail($id);
 
-
         $tab = $request->tab ?? 1;
 
 
