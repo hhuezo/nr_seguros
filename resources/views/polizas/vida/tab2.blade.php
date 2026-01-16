@@ -56,10 +56,10 @@
 
 <div class="modal-body">
     <div class="box-body row">
-         <div class="col-md-6">
+        <div class="col-md-6">
 
             <h4 class="title" id="exampleModalLabel">
-                {{$val > 0 ? 'Nuevo pago':'Ultimo periodo facturado'}}</h4>
+                {{ $val > 0 ? 'Nuevo pago' : 'Ultimo periodo facturado' }}</h4>
         </div>
         <br>
 
@@ -264,8 +264,9 @@
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" style="text-align: right">
 
 
-                    @if($totalPrimaCalculada > 0)
-                    <a class="btn btn-success" href="{{ url('vida/exportar_excel') }}/{{ $poliza_vida->Id }}">Exportar Cartera</a>
+                    @if ($totalPrimaCalculada > 0)
+                        <a class="btn btn-success"
+                            href="{{ url('vida/exportar_excel') }}/{{ $poliza_vida->Id }}">Exportar Cartera</a>
                     @endif
                     <a class="btn btn-default" data-target="#modal-cancelar" data-toggle="modal">Cancelar Cobro</a>
                     <a class="btn btn-primary" data-target="#modal-aplicar" data-toggle="modal">Generar Cobro</a>
@@ -511,10 +512,8 @@
         if (id === "total_prima_calculada") return recalcularDesdeTotalPrima(valorNuevo);
         if (id === "sub_total_ccf") return recalcularDesdeSubTotalCCF(valorNuevo);
         if (id === "comision_ccf") return recalcularDesdeComisionCCF(valorNuevo);
-        if (id === "liquido_pagar") {
-            document.getElementById('APagarDetalle').value = valorNuevo;
-            return;
-        }
+        if (id === "liquido_pagar") return recalcularDesdeLiquidoPagar(valorNuevo);
+        if (id.startsWith("suma_asegurada_")) return recalcularPrimaDesdeSumaAsegurada(id, valorNuevo);
     }
 
     function recalcularTotales() {
@@ -556,7 +555,21 @@
         let prima_a_cobrar = (sub_total + extra_prima) - descuento;
         document.getElementById("prima_a_cobrar").textContent = fmt(prima_a_cobrar);
         document.getElementById("prima_a_cobrar_ccf").textContent = fmt(prima_a_cobrar);
+
+
+
+
+
+
+
         document.getElementById('PrimaDescontadaDetalle').value = prima_a_cobrar;
+
+
+
+        let porcentaje_impuesto_bombero = {{ $poliza_vida->ImpuestoBombero }};
+        if (porcentaje_impuesto_bombero > 0) {
+            prima_a_cobrar = prima_a_cobrar - (prima_a_cobrar * (porcentaje_impuesto_bombero / 100));
+        }
 
         let valor_comision = prima_a_cobrar * (tasa_comision / 100);
         document.getElementById('valor_comision').textContent = fmt(valor_comision);
@@ -582,9 +595,17 @@
         document.getElementById('monto_total_cartera').textContent = fmt(total_suma_asegurada);
         document.getElementById('MontoCarteraDetalle').value = total_suma_asegurada;
 
+        //reescribir la variablew si tenia impuesto bombero
+        prima_a_cobrar = (sub_total + extra_prima) - descuento;
+
         let liquido = prima_a_cobrar - comision_ccf;
+
+
+
         document.getElementById('liquido_pagar').textContent = fmt(liquido);
         document.getElementById('APagarDetalle').value = liquido;
+
+
     }
 
     function recalcularDesdeTotalPrima(total) {
@@ -604,6 +625,7 @@
         const comision_ccf = sub_total_ccf - retencion;
         document.getElementById('comision_ccf').textContent = fmt(comision_ccf);
         document.getElementById('ValorCCFDetalle').value = comision_ccf;
+        document.getElementById('comision').textContent = fmt(comision_ccf);
 
         const prima_a_cobrar = toNumber(document.getElementById('prima_a_cobrar')?.textContent);
         const liquido = prima_a_cobrar - comision_ccf;
@@ -621,6 +643,47 @@
         const liquido = prima_a_cobrar - comision_ccf;
         document.getElementById('liquido_pagar').textContent = fmt(liquido);
         document.getElementById('APagarDetalle').value = liquido;
+        document.getElementById('comision').textContent = fmt(comision_ccf);
+        document.getElementById('ValorCCFDetalle').value = comision_ccf;
+    }
+
+    function recalcularDesdeLiquidoPagar(liquido) {
+        const toNumber = v => parseFloat(String(v ?? '').replace(/,/g, '')) || 0;
+        const fmt = v => v.toLocaleString('es-SV', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+        const prima_a_cobrar = toNumber(document.getElementById('prima_a_cobrar')?.textContent);
+        const comision_ccf = prima_a_cobrar - liquido;
+        document.getElementById('comision_ccf').textContent = fmt(comision_ccf);
+        document.getElementById('ValorCCFDetalle').value = comision_ccf;
+        document.getElementById('comision').textContent = fmt(comision_ccf);
+        document.getElementById('APagarDetalle').value = liquido;
+
+        // Recalcular sub_total_ccf hacia atrás si es necesario
+        const retencion = toNumber(document.getElementById('retencion_comision')?.textContent);
+        const sub_total_ccf = comision_ccf + retencion;
+        document.getElementById('sub_total_ccf').textContent = fmt(sub_total_ccf);
+    }
+
+    function recalcularPrimaDesdeSumaAsegurada(id, sumaAsegurada) {
+        // Extraer el ID del item desde el id del campo (ej: "suma_asegurada_123" -> "123")
+        const itemId = id.replace('suma_asegurada_', '');
+        const primaCalculadaId = `prima_calculada_${itemId}`;
+
+        // Obtener la tasa del millar para este item
+        const tasa = parseFloat(document.getElementById('Tasa')?.value) || 0;
+
+        // Calcular prima: (suma asegurada * tasa) / 1000
+        const primaCalculada = (sumaAsegurada * tasa) / 1000;
+
+        // Actualizar la prima calculada para este item
+        const primaCalculadaElement = document.getElementById(primaCalculadaId);
+        if (primaCalculadaElement) {
+            primaCalculadaElement.textContent = formatearNumero(primaCalculada);
+            // Recalcular todos los totales
+            recalcularTotales();
+        }
     }
 
     function convertirANumero(cadena) {
