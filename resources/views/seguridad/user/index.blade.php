@@ -59,10 +59,10 @@
 
                                 <td align="center">
 
-                                    @can('edit users')
-                                        <a href="{{ url('usuario') }}/{{ $obj->id }}/edit" class="on-default edit-row">
-                                            <button class="btn btn-primary"><i class="fa fa-pencil fa-lg"></i></button> </a>
-                                    @endcan
+
+                                    <a href="{{ url('usuario') }}/{{ $obj->id }}/edit" class="on-default edit-row">
+                                        <button class="btn btn-primary"><i class="fa fa-pencil fa-lg"></i></button> </a>
+
 
                                 </td>
                             </tr>
