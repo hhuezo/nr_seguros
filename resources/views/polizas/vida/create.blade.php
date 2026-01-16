@@ -1,6 +1,7 @@
 @extends ('welcome')
 @section('contenido')
 
+
     <div class="x_panel">
         <div class="clearfix"></div>
         <div class="row">
@@ -290,6 +291,22 @@
                                     <input class="form-control" name="TasaComision" id="TasaComision" type="number"
                                         step="any" value="{{ old('TasaComision') }}" required>
                                 </div>
+
+                                <!-- Tiene Impuesto Bombero -->
+                                <div class="item form-group col-sm-12 col-md-6 col-lg-6"><br>
+                                    <label class="control-label" align="right">Tiene Impuesto Bombero</label>
+                                    <input name="TieneImpuestoBombero" id="TieneImpuestoBombero" type="checkbox" class="js-switch"
+                                        value="1" {{ old('TieneImpuestoBombero') ? 'checked' : '' }} onchange="toggleImpuestoBombero(this)">
+                                    <input type="hidden" name="TieneImpuestoBombero" value="0" id="TieneImpuestoBomberoHidden">
+                                </div>
+
+                                <!-- Impuesto Bombero -->
+                                <div class="item form-group col-sm-12 col-md-6 col-lg-6" id="div-impuesto-bombero"
+                                    style="display: {{ old('TieneImpuestoBombero') == '1' ? 'block' : 'none' }};">
+                                    <label class="control-label" align="right">Impuesto Bombero</label>
+                                    <input class="form-control" name="ImpuestoBombero" id="ImpuestoBombero"
+                                        type="number" step="0.01" min="0" value="{{ old('ImpuestoBombero') }}">
+                                </div>
                             </div>
 
                             <br><br>
@@ -424,6 +441,38 @@
             // Permitir solo dígitos, puntos y comas
             input.value = input.value.replace(/[^0-9.,]/g, '');
         }
+
+        function toggleImpuestoBombero(checkbox) {
+            const divImpuesto = document.getElementById('div-impuesto-bombero');
+            const hiddenInput = document.getElementById('TieneImpuestoBomberoHidden');
+            const impuestoInput = document.getElementById('ImpuestoBombero');
+
+            if (checkbox.checked) {
+                divImpuesto.style.display = 'block';
+                if (hiddenInput) {
+                    hiddenInput.disabled = true;
+                }
+            } else {
+                divImpuesto.style.display = 'none';
+                if (hiddenInput) {
+                    hiddenInput.disabled = false;
+                }
+                if (impuestoInput) {
+                    impuestoInput.value = '';
+                }
+            }
+        }
+
+        // Inicializar el estado del switch al cargar la página
+        $(document).ready(function() {
+            const checkbox = document.getElementById('TieneImpuestoBombero');
+            if (checkbox) {
+                // Esperar a que js-switch se inicialice
+                setTimeout(function() {
+                    toggleImpuestoBombero(checkbox);
+                }, 100);
+            }
+        });
 
 
         async function validar() {

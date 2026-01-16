@@ -53,7 +53,7 @@
     <style>
         .subtareas-container {
             /* display: none;
-                 /* Ocultar subtareas por defecto */
+                     /* Ocultar subtareas por defecto */
         }
 
         .expand-icon {
@@ -413,6 +413,28 @@
                                         step="any" value="{{ $vida->TasaComision }}" required>
                                 </div>
 
+                                <!-- Tiene Impuesto Bombero -->
+                                <div class="item form-group col-sm-12 col-md-3 col-lg-3"><br>
+                                    <label class="control-label" align="right">Tiene Impuesto Bombero</label>
+                                    <input name="TieneImpuestoBombero" id="TieneImpuestoBombero" type="checkbox"
+                                        class="js-switch" value="1"
+                                        {{ $vida->TieneImpuestoBombero == 1 ? 'checked' : '' }}
+                                        onchange="toggleImpuestoBombero(this)">
+                                    <input type="hidden" name="TieneImpuestoBombero" value="0"
+                                        id="TieneImpuestoBomberoHidden">
+                                </div>
+
+                                <!-- Impuesto Bombero -->
+                                <div class="item form-group col-sm-12 col-md-3 col-lg-3" id="div-impuesto-bombero"
+                                    style="display: {{ $vida->TieneImpuestoBombero == 1 ? 'block' : 'none' }};">
+                                    <label class="control-label" align="right">% Impuesto Bombero</label>
+                                    <input class="form-control" name="ImpuestoBombero" id="ImpuestoBombero"
+                                        type="number" step="0.01" min="0"
+                                        value="{{ $vida->ImpuestoBombero }}">
+                                </div>
+
+                                <div class="item form-group col-sm-12 col-md-6 col-lg-6"><br>
+                                </div>
 
 
 
@@ -425,7 +447,8 @@
                                     <button type="button" onclick="validar({{ $vida->Id }})"
                                         class="btn btn-success" {{ $vida->Configuracion == 1 ? 'disabled' : '' }}>Guardar
                                         y Continuar</button>
-                                    <a href="{{ url('polizas/vida') }}?idRegistro={{$vida->Id}}" class="btn btn-primary">Cancelar</a>
+                                    <a href="{{ url('polizas/vida') }}?idRegistro={{ $vida->Id }}"
+                                        class="btn btn-primary">Cancelar</a>
                                 </div>
                             </form>
 
@@ -502,10 +525,10 @@
                                                                                     @foreach ($tipo->tasa_diferenciada as $tasa_diferenciada)
                                                                                         <tr class="primary-row">
                                                                                             <!-- <td>
-                                                                                                                                                                                                                                                                    {{ $tasa_diferenciada->linea_credito?->Abreviatura ?? '' }}
-                                                                                                                                                                                                                                                                    -
-                                                                                                                                                                                                                                                                    {{ $tasa_diferenciada->linea_credito?->Descripcion ?? '' }}
-                                                                                                                                                                                                                                                                </td> -->
+                                                                                                                                                                                                                                                                        {{ $tasa_diferenciada->linea_credito?->Abreviatura ?? '' }}
+                                                                                                                                                                                                                                                                        -
+                                                                                                                                                                                                                                                                        {{ $tasa_diferenciada->linea_credito?->Descripcion ?? '' }}
+                                                                                                                                                                                                                                                                    </td> -->
                                                                                             @if ($tipo->TipoCalculo == 1)
                                                                                                 <td>
                                                                                                     {{ $tasa_diferenciada->FechaDesde ? date('d/m/Y', strtotime($tasa_diferenciada->FechaDesde)) : 'Sin fecha' }}
@@ -516,8 +539,10 @@
                                                                                             @endif
 
                                                                                             @if ($tipo->TipoCalculo == 2)
-                                                                                                <td>${{ $tasa_diferenciada->MontoDesde }}</td>
-                                                                                                <td>${{ $tasa_diferenciada->MontoHasta }}</td>
+                                                                                                <td>${{ $tasa_diferenciada->MontoDesde }}
+                                                                                                </td>
+                                                                                                <td>${{ $tasa_diferenciada->MontoHasta }}
+                                                                                                </td>
                                                                                             @endif
 
                                                                                             <td>{{ $tasa_diferenciada->Tasa }}%
@@ -728,6 +753,14 @@
                 $("#Tasa").val('').prop('readonly', true);
             }
 
+            // Inicializar el estado del switch TieneImpuestoBombero
+            const checkbox = document.getElementById('TieneImpuestoBombero');
+            if (checkbox) {
+                // Esperar a que js-switch se inicialice
+                setTimeout(function() {
+                    toggleImpuestoBombero(checkbox);
+                }, 100);
+            }
 
         });
 
@@ -772,6 +805,27 @@
                 errorLabel.style.display = "block";
             } else {
                 errorLabel.style.display = "none";
+            }
+        }
+
+        function toggleImpuestoBombero(checkbox) {
+            const divImpuesto = document.getElementById('div-impuesto-bombero');
+            const hiddenInput = document.getElementById('TieneImpuestoBomberoHidden');
+            const impuestoInput = document.getElementById('ImpuestoBombero');
+
+            if (checkbox.checked) {
+                divImpuesto.style.display = 'block';
+                if (hiddenInput) {
+                    hiddenInput.disabled = true;
+                }
+            } else {
+                divImpuesto.style.display = 'none';
+                if (hiddenInput) {
+                    hiddenInput.disabled = false;
+                }
+                if (impuestoInput) {
+                    impuestoInput.value = '';
+                }
             }
         }
     </script>

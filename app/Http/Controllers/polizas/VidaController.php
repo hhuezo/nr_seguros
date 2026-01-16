@@ -191,6 +191,8 @@ class VidaController extends Controller
             $vida->ClausulasEspeciales = $request->ClausulasEspeciales;
             $vida->Beneficios = $request->Beneficios;
             $vida->Activo = 1;
+            $vida->TieneImpuestoBombero = $request->TieneImpuestoBombero ?? 0;
+            $vida->ImpuestoBombero = $request->ImpuestoBombero ?? 0;
 
 
             if ($request->TipoCobro == 1) {
@@ -552,6 +554,8 @@ class VidaController extends Controller
             $vida->ClausulasEspeciales = $request->ClausulasEspeciales;
             $vida->Beneficios = $request->Beneficios;
             $vida->Activo = 1;
+            $vida->TieneImpuestoBombero = $request->TieneImpuestoBombero ?? 0;
+            $vida->ImpuestoBombero = $request->ImpuestoBombero ?? 0 ;
 
             if ($request->TipoCobro == 1) {
                 // Si es 1, solo aplica SumaMinima y SumaMaxima
@@ -1030,13 +1034,39 @@ class VidaController extends Controller
                 'Identificador' => DB::raw("COALESCE(NULLIF(Dui,''), NULLIF(Pasaporte,''), NULLIF(CarnetResidencia,''))")
             ]);
 
-        // 🔹 Edad máxima y edad de terminación
+        // 🔹 Edad máxima y edad de terminación (excluyendo los que ya existen en VidaCartera)
         $poliza_edad_maxima = VidaCarteraTemp::where('PolizaVida', $id)
             ->where('EdadDesembloso', '>', $poliza_vida->EdadMaximaInscripcion)
+            ->whereNotExists(function ($query) use ($id) {
+                $query->select(DB::raw(1))
+                    ->from('poliza_vida_cartera')
+                    ->whereColumn(
+                        'poliza_vida_cartera.NumeroReferencia',
+                        'poliza_vida_cartera_temp.NumeroReferencia'
+                    )
+                    ->whereColumn(
+                        'poliza_vida_cartera.Identificador',
+                        'poliza_vida_cartera_temp.Identificador'
+                    )
+                    ->where('poliza_vida_cartera.PolizaVida', $id);
+            })
             ->get();
 
         $poliza_edad_terminacion = VidaCarteraTemp::where('PolizaVida', $id)
             ->where('EdadDesembloso', '>', $poliza_vida->EdadTerminacion)
+            ->whereNotExists(function ($query) use ($id) {
+                $query->select(DB::raw(1))
+                    ->from('poliza_vida_cartera')
+                    ->whereColumn(
+                        'poliza_vida_cartera.NumeroReferencia',
+                        'poliza_vida_cartera_temp.NumeroReferencia'
+                    )
+                    ->whereColumn(
+                        'poliza_vida_cartera.Identificador',
+                        'poliza_vida_cartera_temp.Identificador'
+                    )
+                    ->where('poliza_vida_cartera.PolizaVida', $id);
+            })
             ->get();
 
         // 🔹 Actualizar tasa faltante
@@ -1129,6 +1159,7 @@ class VidaController extends Controller
         }
 
         $poliza_responsabilidad_maxima = collect();
+
 
         // 🔹 Retornar vista
         return view('polizas.vida.respuesta_poliza', compact(
@@ -1989,6 +2020,19 @@ class VidaController extends Controller
                 //->where('EdadDesembloso', '>', $poliza_vida->EdadMaximaInscripcion) EdadTerminacion
                 ->where('EdadDesembloso', '>', $poliza_vida->EdadMaximaInscripcion)
                 ->where('NoValido', 0)
+                ->whereNotExists(function ($query) use ($id) {
+                    $query->select(DB::raw(1))
+                        ->from('poliza_vida_cartera')
+                        ->whereColumn(
+                            'poliza_vida_cartera.NumeroReferencia',
+                            'poliza_vida_cartera_temp.NumeroReferencia'
+                        )
+                        ->whereColumn(
+                            'poliza_vida_cartera.Identificador',
+                            'poliza_vida_cartera_temp.Identificador'
+                        )
+                        ->where('poliza_vida_cartera.PolizaVida', $id);
+                })
                 ->count();
 
             return response()->json([
