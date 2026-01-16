@@ -5,6 +5,7 @@ namespace App\Http\Controllers\polizas;
 use App\Exports\desempleo\DesempleoCarteraExport;
 use App\Exports\desempleo\EdadInscripcionExport;
 use App\Exports\desempleo\EdadMaximaExport;
+use App\Exports\desempleo\HistoricoDesempleoPagosExport;
 use App\Exports\desempleo\NuevosRegistrosExport;
 use App\Exports\desempleo\RegistrosEliminadosExport;
 use App\Exports\desempleo\RegistrosRehabilitadosExport;
@@ -588,6 +589,7 @@ class DesempleoController extends Controller
 
         // Retornar la vista con los datos de la póliza
         return view('polizas.desempleo.show', compact(
+            'id',
             'desempleo',
             'data',
             'tab',
@@ -1842,5 +1844,87 @@ class DesempleoController extends Controller
         $desempleo = Desempleo::findOrFail($id);
         $cartera = DesempleoCartera::where('PolizaDesempleo', $desempleo->Id)->where('NoValido', 0)->where('PolizaDesempleoDetalle', null)->get();
         return Excel::download(new DesempleoCarteraExport($cartera), 'Cartera.xlsx');
+    }
+
+    public function get_historico(Request $request)
+    {
+        // Obtener las fechas en formato YYYYMMDD
+        $fechaInicio = $request->input('FechaInicio');
+        $fechaFinal = $request->input('FechaFinal');
+
+        // Convertir las fechas a un formato legible usando Carbon
+        $fechaInicio = Carbon::createFromFormat('Ymd', $fechaInicio)->format('Y-m-d');
+        $fechaFinal = Carbon::createFromFormat('Ymd', $fechaFinal)->format('Y-m-d');
+
+        $tabla_historico = DB::table('poliza_desempleo_cartera as pdtc')
+            ->select(
+                'pdtc.Id',
+                'pdtc.Dui',
+                'pdtc.Edad',
+                //'pdtc.Nit',
+                'pdtc.PrimerNombre',
+                'pdtc.SegundoNombre',
+                'pdtc.PrimerApellido',
+                'pdtc.SegundoApellido',
+                'pdtc.ApellidoCasada',
+                'pdtc.FechaNacimiento',
+                'pdtc.NumeroReferencia',
+                // 'pdtc.NoValido',
+                'pdtc.EdadDesembloso',
+                'pdtc.FechaOtorgamiento',
+                // 'pdtc.NoValido',
+                'pdtc.NumeroReferencia AS ConcatenatedNumeroReferencia',
+                // DB::raw('SUM(pdtc.saldo_total) as total_saldo'),
+                //DB::raw("GROUP_CONCAT(DISTINCT pdtc.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
+                //  DB::raw('SUM(SaldoCapital) as saldo_cpital'),
+                DB::raw('SUM(pdtc.SumaAsegurada) as saldo_capital'),
+
+            )
+            ->where('Axo', $request->Axo)
+            ->where('Mes', $request->Mes)
+            ->where('FechaInicio', $request->FechaInicio)
+            ->where('FechaFinal', $request->FechaFinal)
+            ->where('PolizaVida', $request->PolizaVida)
+            ->groupBy('pdtc.Dui', 'pdtc.Pasaporte', 'pdtc.CarnetResidencia', 'pdtc.NumeroReferencia')
+            ->get();
+
+        return view('polizas.desempleo.get_historico', compact('tabla_historico'));
+    }
+
+
+
+    public function exportar_historial(Request $request)
+    {
+
+        return Excel::download(new HistoricoDesempleoPagosExport($request), 'historico_desempleo_pagos.xlsx');
+    }
+
+    public function agregar_comentario(Request $request)
+    {
+        $time = Carbon::now('America/El_Salvador');
+        $comen = new Comentario();
+        $comen->Comentario = $request->Comentario;
+        $comen->Activo = 1;
+        if ($request->TipoComentario == '') {
+            $comen->DetalleDesempleo = '';
+        } else {
+            $comen->DetalleDesempleo == $request->TipoComentario;
+        }
+        $comen->Usuario = auth()->user()->id;
+        $comen->FechaIngreso = $time;
+        $comen->Desempleo = $request->DesempleoComment;
+        $comen->save();
+        alert()->success('El registro del comentario ha sido creado correctamente')->showConfirmButton('Aceptar', '#3085d6');
+        return Redirect::to('polizas/desempleo/' . $request->DesempleoComment );
+    }
+
+    public function eliminar_comentario(Request $request)
+    {
+
+        $comen = Comentario::findOrFail($request->IdComment);
+        $comen->Activo = 0;
+        $comen->update();
+        alert()->success('El registro del comentario ha sido elimando correctamente')->showConfirmButton('Aceptar', '#3085d6');
+        return Redirect::to('polizas/desempleo/' . $comen->Desempleo);
     }
 }

@@ -6,6 +6,7 @@ use App\Exports\vida\EdadMaximaExport;
 use App\Exports\vida\EdadInscripcionExport;
 use App\Exports\vida\EdadTerminacionExport;
 use App\Exports\vida\ExtraPrimadosExcluidosExport;
+use App\Exports\vida\HistoricoVidaPagosExport;
 use App\Exports\vida\NuevosRegistrosExport;
 use App\Exports\vida\RegistrosEliminadosExport;
 use App\Exports\vida\RegistrosRehabilitadosExport;
@@ -38,6 +39,7 @@ use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -783,7 +785,7 @@ class VidaController extends Controller
 
 
         $comentarios = Comentario::where('Vida', $poliza_vida->Id)->where('Activo', '=', 1)->get();
-        //dd($comentarios);
+
 
         //extraprima
         $clientes = VidaCartera::select(
@@ -885,12 +887,57 @@ class VidaController extends Controller
             'dataPagoId',
             'fechas',
             'meses',
+            'id',
             //tab3
             'ultimo_pago',
             'count_tasas_diferencidas'
         ));
     }
 
+    public function get_historico(Request $request)
+    {
+        // Obtener las fechas en formato YYYYMMDD
+        $fechaInicio = $request->input('FechaInicio');
+        $fechaFinal = $request->input('FechaFinal');
+
+        // Convertir las fechas a un formato legible usando Carbon
+        $fechaInicio = Carbon::createFromFormat('Ymd', $fechaInicio)->format('Y-m-d');
+        $fechaFinal = Carbon::createFromFormat('Ymd', $fechaFinal)->format('Y-m-d');
+
+        $tabla_historico = DB::table('poliza_vida_cartera as pdtc')
+            ->select(
+                'pdtc.Id',
+                'pdtc.Dui',
+                'pdtc.Edad',
+                //'pdtc.Nit',
+                'pdtc.PrimerNombre',
+                'pdtc.SegundoNombre',
+                'pdtc.PrimerApellido',
+                'pdtc.SegundoApellido',
+                'pdtc.ApellidoCasada',
+                'pdtc.FechaNacimiento',
+                'pdtc.NumeroReferencia',
+                // 'pdtc.NoValido',
+                'pdtc.EdadDesembloso',
+                'pdtc.FechaOtorgamiento',
+                // 'pdtc.NoValido',
+                'pdtc.NumeroReferencia AS ConcatenatedNumeroReferencia',
+                // DB::raw('SUM(pdtc.saldo_total) as total_saldo'),
+                //DB::raw("GROUP_CONCAT(DISTINCT pdtc.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
+                //  DB::raw('SUM(SaldoCapital) as saldo_cpital'),
+                DB::raw('SUM(pdtc.SumaAsegurada) as saldo_capital'),
+
+            )
+            ->where('Axo', $request->Axo)
+            ->where('Mes', $request->Mes)
+            ->where('FechaInicio', $request->FechaInicio)
+            ->where('FechaFinal', $request->FechaFinal)
+            ->where('PolizaVida', $request->PolizaVida)
+            ->groupBy('pdtc.Dui', 'pdtc.Pasaporte', 'pdtc.CarnetResidencia', 'pdtc.NumeroReferencia')
+            ->get();
+
+        return view('polizas.vida.get_historico', compact('tabla_historico'));
+    }
 
     public function subir_cartera($id)
     {
@@ -2908,4 +2955,40 @@ class VidaController extends Controller
         $cartera = VidaCartera::where('PolizaVida', $vida->Id)->where('PolizaVidaDetalle', null)->get();
         return Excel::download(new VidaCarteraExport($cartera), 'Cartera.xlsx');
     }
+
+    public function exportar_historial(Request $request)
+    {
+
+        return Excel::download(new HistoricoVidaPagosExport($request), 'historico_vida_pagos.xlsx');
+    }
+
+    public function agregar_comentario(Request $request)
+    {
+        $time = Carbon::now('America/El_Salvador');
+        $comen = new Comentario();
+        $comen->Comentario = $request->Comentario;
+        $comen->Activo = 1;
+        if ($request->TipoComentario == '') {
+            $comen->DetalleVida = '';
+        } else {
+            $comen->DetalleVida == $request->TipoComentario;
+        }
+        $comen->Usuario = auth()->user()->id;
+        $comen->FechaIngreso = $time;
+        $comen->Vida = $request->VidaComment;
+        $comen->save();
+        alert()->success('El registro del comentario ha sido creado correctamente')->showConfirmButton('Aceptar', '#3085d6');
+        return Redirect::to('polizas/vida/' . $request->VidaComment);
+    }
+
+    public function eliminar_comentario(Request $request)
+    {
+
+        $comen = Comentario::findOrFail($request->IdComment);
+        $comen->Activo = 0;
+        $comen->update();
+        alert()->success('El registro del comentario ha sido elimando correctamente')->showConfirmButton('Aceptar', '#3085d6');
+        return Redirect::to('polizas/vida/' . $comen->Vida);
+    }
+
 }

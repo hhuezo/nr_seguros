@@ -1,26 +1,26 @@
 @extends ('welcome')
 @section('contenido')
-<style>
-    #loading-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(255, 255, 255, 0.8);
-        z-index: 9999;
-        justify-content: center;
-        align-items: center;
-    }
+    <style>
+        #loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
 
-    #loading-overlay img {
-        width: 50px;
-        /* Ajusta el tamaño de la imagen según tus necesidades */
-        height: 50px;
-        /* Ajusta el tamaño de la imagen según tus necesidades */
-    }
-</style>
+        #loading-overlay img {
+            width: 50px;
+            /* Ajusta el tamaño de la imagen según tus necesidades */
+            height: 50px;
+            /* Ajusta el tamaño de la imagen según tus necesidades */
+        }
+    </style>
     @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
     <div class="x_panel">
         <div id="loading-overlay" style="display: none">
@@ -30,7 +30,7 @@
 
         <div class="x_title">
             <div class="col-md-6 col-sm-6 col-xs-12">
-                 <h4>Pólizas/ Póliza de vida / {{ $poliza_vida->NumeroPoliza }}<small></small>
+                <h4>Pólizas/ Póliza de vida / {{ $poliza_vida->NumeroPoliza }}<small></small>
                 </h4>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
@@ -75,6 +75,14 @@
             <li class="nav-item">
                 <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab"
                     aria-controls="contact" aria-selected="false">Ver <br> Aviso</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="comentarios-tab" data-toggle="tab" href="#comentarios" role="tab"
+                    aria-controls="comentarios" aria-selected="false"><br>Comentarios</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="historico-tab" data-toggle="tab" href="#historico" role="tab"
+                    aria-controls="historico" aria-selected="false">Histórico <br> de pagos</a>
             </li>
             <br><br>
         </ul>
@@ -328,6 +336,14 @@
                 <br>
                 @include('polizas.vida.tab6')
             </div>
+            <div class="tab-pane fade " id="comentarios" role="tabpanel" aria-labelledby="comentarios-tab">
+                <br>
+                @include('polizas.vida.tab7')
+            </div>
+            <div class="tab-pane fade " id="historico" role="tabpanel" aria-labelledby="historico-tab">
+                <br>
+                @include('polizas.vida.tab8')
+            </div>
         </div>
 
     </div>
@@ -368,6 +384,31 @@
             showMultitarifa(tipoTarifa);
 
         });
+
+        function mostrar_historial(axo, mes, fechaInicio, fechaFinal, polizaDeuda) {
+            $.ajax({
+                url: "{{ url('polizas/vida/get_historico') }}",
+                type: 'GET',
+                data: {
+                    Axo: axo,
+                    Mes: mes,
+                    FechaInicio: encodeURIComponent(fechaInicio), // Codifica las fechas
+                    FechaFinal: encodeURIComponent(fechaFinal), // Codifica las fechas
+                    PolizaDeuda: polizaDeuda
+                },
+                success: function(response) {
+                    $('#historial_table').html(response);
+                    $("#modal_historial").modal('show');
+                },
+                error: function(error) {
+                    console.error(error);
+                }
+            });
+        }
+
+        function add_comment() {
+            $("#modal_agregar_comentario").modal('show');
+        }
 
 
 

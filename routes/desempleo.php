@@ -58,6 +58,12 @@ Route::middleware(['web'])->group(function () {
     Route::put('polizas/desempleo/update_tipo_cartera/{id}', [DesempleoTasaDiferenciadaController::class, 'update_tipo_cartera']);
     Route::put('polizas/desempleo/tasa_diferenciada/{id}', [DesempleoTasaDiferenciadaController::class, 'update']);
 
+    Route::get('polizas/desempleo/get_historico', [DesempleoController::class, 'get_historico']);
+    Route::post('polizas/desempleo/exportar_historial', [DesempleoController::class, 'exportar_historial']);
+    Route::post('polizas/desempleo/eliminar_comentario', [DesempleoController::class, 'eliminar_comentario']);
+    Route::post('polizas/desempleo/agregar_comentario', [DesempleoController::class, 'agregar_comentario']);
+
+
     Route::get('desempleo/exportar_excel/{id}', [DesempleoController::class, 'exportar_excel_cartera']);
 
 

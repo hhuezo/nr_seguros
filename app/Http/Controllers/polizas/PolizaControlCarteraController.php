@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\polizas;
 
+use App\Exports\ControlCarteraExport;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\PolizaControlCarteraTrait;
 use App\Models\catalogo\PolizaDeclarativaReproceso;
@@ -12,6 +13,7 @@ use App\Models\suscripcion\FechasFeriadas;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 
 class PolizaControlCarteraController extends Controller
@@ -230,5 +232,47 @@ class PolizaControlCarteraController extends Controller
         }
 
         return $diasHabiles - $diasFeriados - 1;
+    }
+
+    public function exportar_excel(Request $request)
+    {
+
+        try {
+            $mes = $request->Mes ?? Carbon::now()->subMonthNoOverflow()->month;
+            $anio = $request->Anio ?? Carbon::now()->subMonthNoOverflow()->year;
+            $tipoPoliza = $request->TipoPoliza ?? 1;
+
+            // Obtener los registros usando el trait
+            $registro_control = $this->buildControlCartera(
+                (int) $anio,
+                (int) $mes,
+                (int) $tipoPoliza
+            );
+
+            $meses = [
+                1  => 'Enero',
+                2  => 'Febrero',
+                3  => 'Marzo',
+                4  => 'Abril',
+                5  => 'Mayo',
+                6  => 'Junio',
+                7  => 'Julio',
+                8  => 'Agosto',
+                9  => 'Septiembre',
+                10 => 'Octubre',
+                11 => 'Noviembre',
+                12 => 'Diciembre',
+            ];
+
+            $tipoPolizaNombre = $tipoPoliza == 1 ? 'Personas' : 'Residencia';
+            $mesNombre = $meses[$mes] ?? '';
+
+            $nombreArchivo = "Control_Cartera_{$tipoPolizaNombre}_{$mesNombre}_{$anio}.xlsx";
+
+            return Excel::download(new ControlCarteraExport($registro_control), $nombreArchivo);
+        } catch (\Exception $e) {
+            \Log::error('Error al exportar control cartera: ' . $e->getMessage());
+            return back()->with('error', 'Error al exportar el archivo: ' . $e->getMessage());
+        }
     }
 }
