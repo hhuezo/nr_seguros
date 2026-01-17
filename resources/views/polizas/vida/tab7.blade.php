@@ -64,7 +64,7 @@
             </table>
         </div>
     </div>
-    <div class="modal fade " id="modal_agregar_comentario" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
+    {{-- <div class="modal fade " id="modal_agregar_comentario" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-tipo="1">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <form method="POST" action="{{ url('polizas/desempleo/agregar_comentario') }}">
@@ -109,5 +109,5 @@
 
             </div>
         </div>
-    </div>
+    </div> --}}
 </div>
