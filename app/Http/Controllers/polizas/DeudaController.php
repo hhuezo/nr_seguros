@@ -1670,9 +1670,10 @@ class DeudaController extends Controller
     }
 
 
-    public function registros_requisitos($id)
+    public function registros_requisitos($id, Request $request)
     {
-        return Excel::download(new RegistroRequisitosExport($id), 'creditos_con requisitos.xlsx');
+        $tipo = $request->input('tipo', 1); // Por defecto tipo 1 si no se especifica
+        return Excel::download(new RegistroRequisitosExport($id, $tipo), 'creditos_con requisitos.xlsx');
     }
     public function registros_requisitos_recibos($id)
     {

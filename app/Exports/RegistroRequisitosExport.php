@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\polizas\Deuda;
+use App\Models\polizas\DeudaValidados;
 use App\Models\temp\PolizaDeudaTempCartera;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -12,10 +13,12 @@ class RegistroRequisitosExport implements FromCollection, WithHeadings
 {
 
     protected $id;
+    protected $tipo;
 
-    public function __construct($id)
+    public function __construct($id, $tipo = 1)
     {
         $this->id = $id;
+        $this->tipo = $tipo;
     }
 
 
@@ -23,25 +26,57 @@ class RegistroRequisitosExport implements FromCollection, WithHeadings
 
     public function collection()
     {
+        ini_set('memory_limit', '512M');
+        set_time_limit(300);
 
         $deuda = Deuda::findOrFail($this->id);
 
+        // Determinar el valor de OmisionPerfil según el tipo
+        $omisionPerfil = ($this->tipo == 2) ? 1 : 0; // tipo 2 = válidos (OmisionPerfil = 1)
+
+        // Construir la query base según el tipo
+        $query = PolizaDeudaTempCartera::query()
+            ->where('poliza_deuda_temp_cartera.PolizaDeuda', $this->id)
+            ->where('poliza_deuda_temp_cartera.NoValido', 0);
+
+        // Aplicar filtros según el tipo
+        if ($this->tipo == 1 || $this->tipo == 2) {
+            // Tipo 1: Créditos con requisitos
+            // Tipo 2: Créditos válidos
+            $query->where('poliza_deuda_temp_cartera.OmisionPerfil', $omisionPerfil);
+        } elseif ($this->tipo == 3) {
+            // Tipo 3: Créditos rehabilitados
+            $query->where('poliza_deuda_temp_cartera.Rehabilitado', 1);
+        } elseif ($this->tipo == 4) {
+            // Tipo 4: Histórico de validados - obtener registros validados
+            $registrosValidados = DeudaValidados::where('Poliza', $this->id)
+                ->pluck('NumeroReferencia')
+                ->toArray();
+
+            if (empty($registrosValidados)) {
+                return collect(); // Retornar colección vacía si no hay validados
+            }
+
+            $query->whereIn('poliza_deuda_temp_cartera.NumeroReferencia', $registrosValidados);
+        }
 
         // Fedecrédito
         if ($deuda->Aseguradora == 3 || $deuda->Aseguradora == 4) {
 
-            $data = PolizaDeudaTempCartera::query()
-                ->where('poliza_deuda_temp_cartera.PolizaDeuda', $this->id)
-                ->where('poliza_deuda_temp_cartera.NoValido', 0)
-                ->where('poliza_deuda_temp_cartera.OmisionPerfil', 0)
+            $data = $query
                 ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
                 ->join('poliza_deuda_tipo_cartera as pdtc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'pdtc.Id')
                 ->join('tipo_cartera as tc', 'pdtc.TipoCartera', '=', 'tc.Id')
                 ->leftJoin('poliza_deuda_cartera as pdc', function ($join) {
                     $join->on('poliza_deuda_temp_cartera.NumeroReferencia', '=', 'pdc.NumeroReferencia');
-                })
-                ->whereNull('pdc.NumeroReferencia') // 🔹 Excluir registros ya existentes
-                ->select([
+                });
+
+            // Solo aplicar whereNull si es tipo 1 (créditos con requisitos)
+            if ($this->tipo == 1) {
+                $data->whereNull('pdc.NumeroReferencia'); // 🔹 Excluir registros ya existentes
+            }
+
+            $data = $data->select([
                     'poliza_deuda_temp_cartera.TipoDocumento',
                     'poliza_deuda_temp_cartera.Dui',
                     'poliza_deuda_temp_cartera.PrimerApellido',
@@ -77,19 +112,23 @@ class RegistroRequisitosExport implements FromCollection, WithHeadings
                 )
                 ->orderBy('poliza_deuda_temp_cartera.NumeroReferencia')
                 ->get();
+
         } else {
 
-            $data = PolizaDeudaTempCartera::where('poliza_deuda_temp_cartera.PolizaDeuda', $this->id)
-                ->where('poliza_deuda_temp_cartera.NoValido', 0)
-                ->where('poliza_deuda_temp_cartera.OmisionPerfil', 0)
+            $data = $query
                 ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
                 ->join('poliza_deuda_tipo_cartera as pdtc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'pdtc.Id')
                 ->join('tipo_cartera as tc', 'pdtc.TipoCartera', '=', 'tc.Id')
                 ->leftJoin('poliza_deuda_cartera as pdc', function ($join) {
                     $join->on('poliza_deuda_temp_cartera.NumeroReferencia', '=', 'pdc.NumeroReferencia');
-                })
-                ->whereNull('pdc.NumeroReferencia') // 🔹 excluir registros ya existentes
-                ->select([
+                });
+
+            // Solo aplicar whereNull si es tipo 1 (créditos con requisitos)
+            if ($this->tipo == 1) {
+                $data->whereNull('pdc.NumeroReferencia'); // 🔹 excluir registros ya existentes
+            }
+
+            $data = $data->select([
                     'poliza_deuda_temp_cartera.Dui',
                     'poliza_deuda_temp_cartera.Pasaporte',
                     'poliza_deuda_temp_cartera.CarnetResidencia',
@@ -131,6 +170,7 @@ class RegistroRequisitosExport implements FromCollection, WithHeadings
                 ->orderBy('poliza_deuda_temp_cartera.NumeroReferencia')
                 ->get();
         }
+
 
         return $data;
     }
