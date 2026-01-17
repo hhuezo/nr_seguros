@@ -2273,11 +2273,17 @@ class DeudaController extends Controller
         $deuda = Deuda::findOrFail($poliza);
         $requisitos = $deuda->requisitos;
 
-        // Obtener los registros de la cartera temporal con sus relaciones
         $poliza_cumulos = DB::table('poliza_deuda_temp_cartera as pdtc')
-            ->leftJoin('saldos_montos as sm', 'pdtc.LineaCredito', '=', 'sm.id')
             ->leftJoin('poliza_deuda_tipo_cartera as pdc', 'pdtc.PolizaDeudaTipoCartera', '=', 'pdc.Id')
             ->leftJoin('tipo_cartera as tc', 'pdc.TipoCartera', '=', 'tc.Id')
+
+            // ANTI-JOIN optimizado
+            ->leftJoin('poliza_deuda_cartera as pdcf', function ($join) {
+                $join->on('pdcf.NumeroReferencia', '=', 'pdtc.NumeroReferencia')
+                    ->on('pdcf.PolizaDeuda', '=', 'pdtc.PolizaDeuda');
+            })
+            ->whereNull('pdcf.NumeroReferencia')
+
             ->select(
                 'pdtc.Id',
                 'pdtc.Dui',
@@ -2299,40 +2305,40 @@ class DeudaController extends Controller
                 'pdtc.MontoMaximoIndividual',
                 DB::raw('SUM(pdtc.TotalCredito) AS saldo_total'),
                 DB::raw("GROUP_CONCAT(DISTINCT pdtc.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
-                DB::raw("GROUP_CONCAT(DISTINCT FORMAT(pdtc.TotalCredito, 2) SEPARATOR '- ') AS ConcatenatedMonto"),
-                'sm.Abreviatura AS Abreviatura',
                 'tc.nombre AS TipoCarteraNombre',
                 'pdtc.PolizaDeudaTipoCartera AS TipoCarteraId'
             )
             ->where('pdtc.PolizaDeuda', $poliza)
             ->where(function ($query) use ($deuda) {
                 $query->where('pdtc.NoValido', 1)
-                    ->orWhere(function ($subquery) use ($deuda) {
-                        $subquery->where('pdtc.EdadDesembloso', '>', $deuda->EdadMaximaTerminacion)
-                            ->orWhere('pdtc.TotalCredito', '>', $deuda->ResponsabilidadMaxima);
-                    });
+                    ->orWhere('pdtc.EdadDesembloso', '>', $deuda->EdadMaximaTerminacion)
+                    ->orWhere('pdtc.TotalCredito', '>', $deuda->ResponsabilidadMaxima);
             })
-            ->groupBy('pdtc.Dui', 'pdtc.Pasaporte', 'pdtc.CarnetResidencia', 'tc.Id')
+            ->groupBy(
+                'pdtc.Dui',
+                'pdtc.Pasaporte',
+                'pdtc.CarnetResidencia',
+                'tc.Id'
+            )
             ->get();
 
 
-        // Obtener los rangos de asegurabilidad de la póliza
+        // Rangos de asegurabilidad
         $edades = DB::table('poliza_deuda_requisitos')
             ->where('Deuda', $poliza)
             ->selectRaw('
-            MIN(EdadInicial) AS EdadInicial,
-            MAX(EdadFinal) AS EdadFinal,
-            MIN(MontoInicial) AS MontoInicial,
-            MAX(MontoFinal) AS MontoFinal
-        ')
+                MIN(EdadInicial) AS EdadInicial,
+                MAX(EdadFinal) AS EdadFinal,
+                MIN(MontoInicial) AS MontoInicial,
+                MAX(MontoFinal) AS MontoFinal
+            ')
             ->first();
 
-        // Evitar errores si no hay datos en la tabla de requisitos
         if (!$edades) {
             return back()->with('error', 'No se encontraron rangos de asegurabilidad para esta póliza.');
         }
 
-        // Evaluar cada crédito y asignar motivo
+        // Asignar motivo
         foreach ($poliza_cumulos as $cumulo) {
             if ($cumulo->EdadDesembloso < $edades->EdadInicial || $cumulo->EdadDesembloso > $edades->EdadFinal) {
                 $cumulo->Motivo = 'Revisar edad: fuera de los rangos de asegurabilidad.';
@@ -2343,13 +2349,13 @@ class DeudaController extends Controller
             }
         }
 
-        // Retornar la vista
         return view('polizas.deuda.validacion_poliza.creditos_no_validos', [
             'poliza_cumulos' => $poliza_cumulos,
             'requisitos' => $requisitos,
             'opcion' => 'no_validos',
         ]);
     }
+
 
 
     public function get_creditos_con_requisitos($poliza, Request $request)
