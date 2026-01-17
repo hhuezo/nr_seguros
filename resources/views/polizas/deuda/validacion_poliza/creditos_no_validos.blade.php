@@ -23,7 +23,6 @@
             <tr>
                 <td>{{ $registro->ConcatenatedNumeroReferencia }}</td>
                 <td>{{ $registro->TipoCarteraNombre }}
-                    ({{ $registro->Abreviatura }})
                 </td>
                 <td>{{ $registro->Dui }} {{ $registro->Pasaporte }} {{ $registro->CarnetResidencia }}</td>
                 <td>{{ $registro->PrimerNombre }}

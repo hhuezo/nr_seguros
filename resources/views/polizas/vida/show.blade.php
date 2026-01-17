@@ -298,6 +298,25 @@
 
 
 
+                <!-- Tiene Impuesto Bombero -->
+                <div class="item form-group col-sm-12 col-md-3 col-lg-3"><br>
+                    <label class="control-label" align="right">Tiene Impuesto Bombero</label>
+                    <input name="TieneImpuestoBombero" id="TieneImpuestoBombero" type="checkbox" class="js-switch"
+                        value="1" {{ $poliza_vida->TieneImpuestoBombero == 1 ? 'checked' : '' }} disabled>
+                    <input type="hidden" name="TieneImpuestoBombero" value="0" id="TieneImpuestoBomberoHidden" disabled>
+                </div>
+
+                <!-- Impuesto Bombero -->
+                <div class="item form-group col-sm-12 col-md-3 col-lg-3" id="div-impuesto-bombero"
+                    style="display: {{ $poliza_vida->TieneImpuestoBombero == 1 ? 'block' : 'none' }};">
+                    <label class="control-label" align="right">% Impuesto Bombero</label>
+                    <input class="form-control" name="ImpuestoBombero" id="ImpuestoBombero" type="number"
+                        step="0.01" min="0" value="{{ $poliza_vida->ImpuestoBombero }}" disabled>
+                </div>
+
+                <div class="item form-group col-sm-12 col-md-6 col-lg-6"><br>
+                </div>
+
 
 
 
