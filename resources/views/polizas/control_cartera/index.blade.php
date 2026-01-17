@@ -82,8 +82,20 @@
                                     class="btn btn-primary">Aceptar</button></span>
                         </div>
                     </div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-success" onclick="exportarExcel()">
+                            <i class="fa fa-file-excel-o"></i> Exportar Excel
+                        </button>
+                    </div>
                     <div class="clearfix"></div>
                 </div>
+            </form>
+
+            <form id="form-exportar-excel" method="POST" action="{{ url('control_cartera/exportar_excel') }}" style="display: none;">
+                @csrf
+                <input type="hidden" name="TipoPoliza" value="{{ request('TipoPoliza', 1) }}">
+                <input type="hidden" name="Mes" value="{{ $mes }}">
+                <input type="hidden" name="Anio" value="{{ $anio }}">
             </form>
 
             <div class="x_content">
@@ -583,5 +595,9 @@
 
             }
         }).mount('#app');
+
+        function exportarExcel() {
+            document.getElementById('form-exportar-excel').submit();
+        }
     </script>
 @endsection

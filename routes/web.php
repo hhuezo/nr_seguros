@@ -188,6 +188,7 @@ Route::middleware(['auth'])->group(function () {
     //reportes declarativas
     Route::get('control_cartera/actualizacion', [PolizaControlCarteraController::class, 'actualizacion']);
     Route::get('control_cartera', [PolizaControlCarteraController::class, 'index']);
+    Route::post('control_cartera/exportar_excel', [PolizaControlCarteraController::class, 'exportar_excel']);
     Route::get('control_cartera/{id}/{tipo}/{anio}/{mes}', [PolizaControlCarteraController::class, 'edit']);
     Route::put('control_cartera/{id}', [PolizaControlCarteraController::class, 'update']);
 

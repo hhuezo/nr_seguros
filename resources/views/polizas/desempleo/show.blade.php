@@ -62,6 +62,14 @@
                 <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab"
                     aria-controls="contact" aria-selected="false">Ver Aviso</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" id="comentarios-tab" data-toggle="tab" href="#comentarios" role="tab"
+                    aria-controls="comentarios" aria-selected="false">Comentarios</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="historico-tab" data-toggle="tab" href="#historico" role="tab"
+                    aria-controls="historico" aria-selected="false">Histórico de pagos</a>
+            </li>
         </ul>
         <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade {{ isset($tab) && $tab == 1 ? 'active in' : '' }}" id="home" role="tabpanel"
@@ -224,6 +232,14 @@
                 @include('polizas.desempleo.tab5')
 
             </div>
+            <div class="tab-pane fade " id="comentarios" role="tabpanel" aria-labelledby="comentarios-tab">
+                @include('polizas.desempleo.tab6')
+
+            </div>
+            <div class="tab-pane fade " id="historico" role="tabpanel" aria-labelledby="historico-tab">
+                @include('polizas.desempleo.tab7')
+
+            </div>
         </div>
 
     </div>
@@ -234,6 +250,32 @@
             //mostrar opcion en menu
             displayOption("ul-poliza", "li-poliza-desempleo");
         });
+
+        function mostrar_historial(axo, mes, fechaInicio, fechaFinal, polizaDeuda) {
+            $.ajax({
+                url: "{{ url('polizas/vida/get_historico') }}",
+                type: 'GET',
+                data: {
+                    Axo: axo,
+                    Mes: mes,
+                    FechaInicio: encodeURIComponent(fechaInicio), // Codifica las fechas
+                    FechaFinal: encodeURIComponent(fechaFinal), // Codifica las fechas
+                    PolizaDeuda: polizaDeuda
+                },
+                success: function(response) {
+                    $('#historial_table').html(response);
+                    $("#modal_historial").modal('show');
+                },
+                error: function(error) {
+                    console.error(error);
+                }
+            });
+        }
+
+        function add_comment() {
+            $("#modal_agregar_comentario").modal('show');
+        }
+
 
     </script>
 @endsection

@@ -44,6 +44,11 @@ Route::middleware(['web'])->group(function () {
     Route::post('polizas/vida/eliminar_extraprimado/{id}', [VidaController::class, 'delete_extraprimado']);
     Route::get('polizas/vida/get_cartera/{id}/{mes}/{axo}', [VidaController::class, 'get_cartera']); //
 
+    Route::get('polizas/vida/get_historico', [VidaController::class, 'get_historico']);
+    Route::post('polizas/vida/exportar_historial', [VidaController::class, 'exportar_historial']);
+    Route::post('polizas/vida/eliminar_comentario', [VidaController::class, 'eliminar_comentario']);
+    Route::post('polizas/vida/agregar_comentario', [VidaController::class, 'agregar_comentario']);
+
 
 
 
