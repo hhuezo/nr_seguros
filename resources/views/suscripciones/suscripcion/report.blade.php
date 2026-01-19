@@ -79,7 +79,14 @@
                 <td>{{ $obj->tipoCredito->Nombre ?? '' }}</td>
                 <td>{{ number_format($obj->Imc, 2) }}</td>
                 <td>{{ $obj->tipoImc->Nombre ?? '' }}</td>
-                <td>{{ $obj->Padecimiento }}</td>
+                <td>
+                    @if ($obj->padecimientos && $obj->padecimientos->count() > 0)
+                        {{ $obj->padecimientos->pluck('Nombre')->implode(', ') }}
+                    @else
+                        {{ $obj->Padecimiento }}
+                    @endif
+                </td>
+
                 <td>{{ $obj->tipoOrdenMedica->Nombre }}</td>
                 <td>{{ $obj->estadoCaso->Nombre ?? '' }}</td>
                 <td>{{ $obj->resumenGestion->Nombre ?? '' }}</td>
