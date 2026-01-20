@@ -281,7 +281,7 @@ trait PolizaControlCarteraTrait
      | RESIDENCIA
      |--------------------------------------------------------------------------
      */
-        return DB::table('poliza_declarativa_control')
+        /*return DB::table('poliza_declarativa_control')
             ->where('poliza_declarativa_control.Axo', $anio)
             ->where('poliza_declarativa_control.Mes', $mes)
             ->join('poliza_residencia', 'poliza_residencia.Id', '=', 'poliza_declarativa_control.PolizaResidenciaId')
@@ -333,7 +333,69 @@ trait PolizaControlCarteraTrait
             )
             ->groupBy('poliza_declarativa_control.Id')
             ->orderBy('cliente.Nombre')
+            ->get();*/
+
+
+        $residencia = DB::table('poliza_declarativa_control')
+            ->where('poliza_declarativa_control.Axo', $anio)
+            ->where('poliza_declarativa_control.Mes', $mes)
+            ->join('poliza_residencia', 'poliza_residencia.Id', '=', 'poliza_declarativa_control.PolizaResidenciaId')
+            ->leftJoin('poliza_residencia_detalle', function ($join) use ($anio, $mes) {
+                $join->on('poliza_residencia_detalle.Residencia', '=', 'poliza_residencia.Id')
+                    ->where('poliza_residencia_detalle.Axo', $anio)
+                    ->where('poliza_residencia_detalle.Mes', $mes);
+            })
+            ->join('cliente', 'cliente.Id', '=', 'poliza_residencia.Asegurado')
+            ->join('aseguradora', 'aseguradora.Id', '=', 'poliza_residencia.Aseguradora')
+            ->join('plan', 'plan.Id', '=', 'poliza_residencia.Plan')
+            ->join('producto', 'producto.Id', '=', 'plan.Producto')
+            ->leftJoin(
+                'poliza_declarativa_reproceso',
+                'poliza_declarativa_reproceso.Id',
+                '=',
+                'poliza_declarativa_control.ReprocesoNRId'
+            )
+            ->select(
+                'poliza_declarativa_control.*',
+                DB::raw("'RESIDENCIA' AS TipoPoliza"),
+
+                'poliza_residencia.NumeroPoliza',
+                'poliza_residencia.VigenciaDesde',
+                'poliza_residencia.VigenciaHasta',
+
+                'poliza_residencia_detalle.MontoCartera',
+                'poliza_residencia_detalle.PrimaCalculada',
+                'poliza_residencia_detalle.ExtraPrima',
+                'poliza_residencia_detalle.PrimaDescontada',
+                'poliza_residencia_detalle.TasaComision',
+                'poliza_residencia_detalle.Comision',
+                'poliza_residencia_detalle.Retencion',
+                'poliza_residencia_detalle.IvaSobreComision',
+                'poliza_residencia_detalle.APagar',
+                'poliza_residencia_detalle.NumeroRecibo',
+                'poliza_residencia_detalle.Axo',
+                'poliza_residencia_detalle.FechaInicio',
+                'poliza_residencia_detalle.Usuario',
+                'poliza_residencia_detalle.UsuariosReportados',
+
+                'cliente.Nombre as ClienteNombre',
+                'cliente.Nit as ClienteNit',
+
+                'plan.Nombre as PlanNombre',
+                'producto.Nombre as ProductoNombre',
+                'poliza_declarativa_reproceso.Nombre as ReprocesoNombre',
+                'aseguradora.Abreviatura',
+                'poliza_residencia_detalle.Residencia',
+            )
             ->get();
+
+
+        $residencia = $residencia->map(function ($item) use ($usuariosMap) {
+            $item->Usuario = $usuariosMap[$item->Usuario] ?? null;
+            return $item;
+        });
+
+        return $residencia;
     }
 
 

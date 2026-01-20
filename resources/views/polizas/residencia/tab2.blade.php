@@ -73,8 +73,8 @@
                                 <label class="control-label col-md-3 col-sm-12 col-xs-12" align="right">Año</label>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                     <select name="Axo" id="Axo" class="form-control">
-                                        @for ($i = date('Y'); $i >= 2022; $i--)
-                                            <option value="{{ $i }}">
+                                        @for ($i = date('Y'); $i >= 2025; $i--)
+                                            <option value="{{ $i }}" {{$i == $axo ? 'selected':''}}>
                                                 {{ $i }}
                                             </option>
                                         @endfor
