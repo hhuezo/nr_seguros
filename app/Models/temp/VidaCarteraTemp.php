@@ -18,6 +18,7 @@ class VidaCarteraTemp extends Model
 
     protected $fillable = [
         'PolizaVida',
+        'CarnetResidencia',
         'Nit',
         'Dui',
         'Pasaporte',
@@ -51,7 +52,8 @@ class VidaCarteraTemp extends Model
 
     protected $guarded = [];
 
-    public function poliza_vida(){
+    public function poliza_vida()
+    {
         return $this->belongsTo(Vida::class, 'PolizaVida', 'Id');
     }
 }

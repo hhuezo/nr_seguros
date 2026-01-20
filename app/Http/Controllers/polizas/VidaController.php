@@ -1475,7 +1475,7 @@ class VidaController extends Controller
                     }
                 }
                 // Validar si el pasaporte está vacío para nacionalidades no SAL
-                else if (empty($obj->Pasaporte)) {
+                else if (empty($obj->Pasaporte) && empty($obj->CarnetResidencia)) {
                     $validador_dui = false;
                     $obj->TipoError = 5;
                     $obj->update();

@@ -73,7 +73,7 @@
                                                 @endif
 
                                                 @if (in_array(5, $registro->Errores))
-                                                    <span style="color: red;">Pasaporte no válido</span>
+                                                    <span style="color: red;">Pasaporte o Carnet de residencia no válido</span>
                                                 @endif
 
 

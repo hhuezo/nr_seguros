@@ -40,7 +40,7 @@ class VidaCarteraTempImport implements ToModel, WithStartRow
     public function model(array $row)
     {
         try {
-            if (!empty(trim($row[0])) || !empty(trim($row[1]))) { // Al menos DUI o Pasaporte
+            if (!empty(trim($row[0])) || !empty(trim($row[1]))  || !empty(trim($row[2]))   ) { // Al menos DUI o Pasaporte o carnet de residencia
 
                 $modelData = [
                     'Dui' => $row[0] ?? null,
