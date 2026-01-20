@@ -4,7 +4,7 @@
         <div class="form-group row">
             <label class="control-label">Opciones</label>
 
-            <select class="form-control" onchange="loadCreditosConRquisitos(this.value)">
+            <select id="opcion_creditos" class="form-control" onchange="document.getElementById('tipo_exportar').value = this.value; loadCreditosConRquisitos(this.value);">
                 <option value="1">Creditos con requisitos</option>
                 <option value="2">Creditos válidos</option>
                 <option value="3">Creditos rehabilitados</option>
@@ -31,8 +31,9 @@
 
     </div>
     <div class="col-md-6 col-sm-12" align="right">
-        <form method="POST" action="{{ url('exportar/registros_requisitos') }}/{{ $deuda->Id }}">
+        <form id="form_exportar_excel" method="POST" action="{{ url('exportar/registros_requisitos') }}/{{ $deuda->Id }}">
             @csrf
+            <input type="hidden" name="tipo" id="tipo_exportar" value="1">
             <button class="btn btn-success">Descargar Excel</button>
         </form>
         <br>
