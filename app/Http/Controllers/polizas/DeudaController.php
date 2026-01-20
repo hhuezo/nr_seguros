@@ -2323,6 +2323,10 @@ class DeudaController extends Controller
             )
             ->get();
 
+        //dejando validos los que ya fueron validados en meses anteriores
+        $ids = $poliza_cumulos->pluck('Id')->toArray();
+        PolizaDeudaTempCartera::where('PolizaDeuda', $poliza)->where('NoValido', 1)->whereNotIn('Id',$ids)->update(['NoValido'=>0]);
+
 
         // Rangos de asegurabilidad
         $edades = DB::table('poliza_deuda_requisitos')
