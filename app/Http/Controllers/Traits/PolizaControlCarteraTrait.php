@@ -91,7 +91,8 @@ trait PolizaControlCarteraTrait
                 ->leftJoin('poliza_deuda_detalle', function ($join) use ($anio, $mes) {
                     $join->on('poliza_deuda_detalle.Deuda', '=', 'poliza_deuda.Id')
                         ->where('poliza_deuda_detalle.Axo', $anio)
-                        ->where('poliza_deuda_detalle.Mes', $mes);
+                        ->where('poliza_deuda_detalle.Mes', $mes)
+                        ->where('poliza_deuda_detalle.Activo', 1);
                 })
                 ->join('cliente', 'cliente.Id', '=', 'poliza_deuda.Asegurado')
                 ->join('aseguradora', 'aseguradora.Id', '=', 'poliza_deuda.Aseguradora')
@@ -149,8 +150,8 @@ trait PolizaControlCarteraTrait
             // dd($deuda);
 
             /* =========================
-         | VIDA
-         ========================= */
+            | VIDA
+            ========================= */
             $vida = DB::table('poliza_declarativa_control')
                 ->where('poliza_declarativa_control.Axo', $anio)
                 ->where('poliza_declarativa_control.Mes', $mes)
@@ -158,7 +159,8 @@ trait PolizaControlCarteraTrait
                 ->leftJoin('poliza_vida_detalle', function ($join) use ($anio, $mes) {
                     $join->on('poliza_vida_detalle.PolizaVida', '=', 'poliza_vida.Id')
                         ->where('poliza_vida_detalle.Axo', $anio)
-                        ->where('poliza_vida_detalle.Mes', $mes);
+                        ->where('poliza_vida_detalle.Mes', $mes)
+                        ->where('poliza_vida_detalle.Activo', 1);
                 })
                 ->join('cliente', 'cliente.Id', '=', 'poliza_vida.Asegurado')
                 ->join('aseguradora', 'aseguradora.Id', '=', 'poliza_vida.Aseguradora')
@@ -219,7 +221,8 @@ trait PolizaControlCarteraTrait
                 ->leftJoin('poliza_desempleo_detalle', function ($join) use ($anio, $mes) {
                     $join->on('poliza_desempleo_detalle.Desempleo', '=', 'poliza_desempleo.Id')
                         ->where('poliza_desempleo_detalle.Axo', $anio)
-                        ->where('poliza_desempleo_detalle.Mes', $mes);
+                        ->where('poliza_desempleo_detalle.Mes', $mes)
+                        ->where('poliza_desempleo_detalle.Activo', 1);
                 })
                 ->join('cliente', 'cliente.Id', '=', 'poliza_desempleo.Asegurado')
                 ->join('aseguradora', 'aseguradora.Id', '=', 'poliza_desempleo.Aseguradora')
@@ -343,7 +346,8 @@ trait PolizaControlCarteraTrait
             ->leftJoin('poliza_residencia_detalle', function ($join) use ($anio, $mes) {
                 $join->on('poliza_residencia_detalle.Residencia', '=', 'poliza_residencia.Id')
                     ->where('poliza_residencia_detalle.Axo', $anio)
-                    ->where('poliza_residencia_detalle.Mes', $mes);
+                    ->where('poliza_residencia_detalle.Mes', $mes)
+                     ->where('poliza_residencia_detalle.Activo', 1);
             })
             ->join('cliente', 'cliente.Id', '=', 'poliza_residencia.Asegurado')
             ->join('aseguradora', 'aseguradora.Id', '=', 'poliza_residencia.Aseguradora')
