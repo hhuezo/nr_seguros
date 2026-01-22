@@ -314,7 +314,9 @@ class DesempleoCarteraController extends Controller
             $numerosRepetidos = $repetidos->isNotEmpty() ? $repetidos->pluck('NumeroReferencia') : null;
 
             if ($numerosRepetidos) {
-                DesempleoCarteraTemp::delete();
+
+                DesempleoCarteraTemp::where('PolizaDesempleo', $id)->where('DesempleoTipoCartera', $request->DesempleoTipoCartera)->delete();
+
                 // Convertir la colección a string para mostrarla en el error
                 $numerosStr = $numerosRepetidos->implode(', ');
 
