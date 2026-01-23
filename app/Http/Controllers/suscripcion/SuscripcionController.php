@@ -269,7 +269,7 @@ class SuscripcionController extends Controller
 
         $request->validate([
             'FechaIngreso'               => 'required|date',
-            'Gestor'                     => 'nullable|integer|exists:users,id',
+            'Gestor'                     => 'nullable|integer|exists:ejecutivo,Id',
             'CompaniaId'                 => 'nullable|integer|exists:aseguradora,Id',
             'ContratanteId'              => 'nullable|integer|exists:cliente,Id',
             'PolizaDeuda'                => 'nullable|integer|exists:poliza_deuda,Id',
@@ -337,7 +337,7 @@ class SuscripcionController extends Controller
             $suscripcion = new Suscripcion();
             $suscripcion->NumeroTarea = $request->NumeroTarea;
             $suscripcion->FechaIngreso = $request->FechaIngreso;
-            $suscripcion->GestorId = $request->Gestor;
+            $suscripcion->GestorId = $request->Gestor ? $request->Gestor : null;
             $suscripcion->CompaniaId = $request->CompaniaId;
             $suscripcion->CategoriaSisa = $request->CategoriaSisa;
             $suscripcion->ContratanteId = $request->ContratanteId;
@@ -510,7 +510,7 @@ class SuscripcionController extends Controller
     {
         $request->validate([
             'FechaIngreso'         => 'required|date',
-            'Gestor'               => 'nullable|integer|exists:users,id',
+            'Gestor'               => 'nullable|integer|exists:ejecutivo,Id',
             'CompaniaId'           => 'nullable|integer|exists:aseguradora,Id',
             'ContratanteId'        => 'nullable|integer|exists:cliente,Id',
             'PolizaDeuda'          => 'nullable|integer|exists:poliza_deuda,Id',
@@ -566,7 +566,7 @@ class SuscripcionController extends Controller
 
         $suscripcion = Suscripcion::findOrFail($request->Id);
         $suscripcion->FechaIngreso = $request->FechaIngreso;
-        $suscripcion->GestorId = $request->Gestor;
+        $suscripcion->GestorId = $request->Gestor ? $request->Gestor : null;
         $suscripcion->CompaniaId = $request->CompaniaId;
         $suscripcion->CategoriaSisa = $request->CategoriaSisa;
         $suscripcion->ContratanteId = $request->ContratanteId;
