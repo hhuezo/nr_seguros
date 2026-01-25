@@ -3,6 +3,7 @@
 use App\Http\Controllers\catalogo\AreaComercialController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ControlPrimasController;
 use App\Http\Controllers\seguridad\UserController;
 use App\Http\Controllers\catalogo\ClienteController;
 use App\Http\Controllers\catalogo\AseguradoraController;
@@ -76,6 +77,8 @@ Route::middleware(['auth'])->group(function () {
 
     //catalogos
     Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+    Route::get('/control-primas', [ControlPrimasController::class, 'index'])->name('control-primas');
 
     Route::post('catalogo/aseguradora/add_contacto', [AseguradoraController::class, 'add_contacto']);
     Route::post('catalogo/aseguradora/delete_contacto', [AseguradoraController::class, 'delete_contacto']);
