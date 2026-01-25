@@ -39,7 +39,30 @@ class UserController extends Controller
         return view('seguridad.user.index', compact('usuarios', 'roles', 'posicion'));
     }
 
+    public function getRoles($id)
+    {
+        try {
+            $user = User::findOrFail($id);
+            $roles = Role::get()->map(function($role) {
+                return [
+                    'id' => $role->id,
+                    'name' => $role->name
+                ];
+            });
+            $userRoles = $user->roles->pluck('id')->toArray();
 
+            return response()->json([
+                'success' => true,
+                'roles' => $roles,
+                'userRoles' => $userRoles
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener los roles: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 
     public function create()
     {
@@ -167,34 +190,46 @@ class UserController extends Controller
 
 
 
-    public function edit($id)
-    {
-        $user = User::findOrFail($id);
-        $user_has_rol = $user->user_has_role;
-        $roles = Role::get();
-        return view('seguridad.user.edit', ['usuario' => $user, 'roles' => $roles, 'user_has_rol' => $user_has_rol]);
-    }
-
-
     public function update(Request $request, $id)
     {
-        $count = User::where('email', '=', $request->get('email'))->where('id', '<>', $id)->count();
-
-        if ($count > 0) {
-            alert()->error('El correo ingresado ya existe');
-        } else if ($request->get('password') != "" && Str::length($request->get('password')) < 8) {
-            alert()->error('La contraseña debe tener al menos 8 caracteres');
-        } else {
+        try {
             $user = User::findOrFail($id);
+            
+            // Validar email único
+            $count = User::where('email', '=', $request->get('email'))->where('id', '<>', $id)->count();
+            if ($count > 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'El correo ingresado ya existe'
+                ], 400);
+            }
+
+            // Validar contraseña si se proporciona
+            if ($request->get('password') != "" && Str::length($request->get('password')) < 8) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'La contraseña debe tener al menos 8 caracteres'
+                ], 400);
+            }
+
+            // Actualizar usuario
             $user->name = $request->get('name');
             $user->email = $request->get('email');
             if ($request->get('password') != "") {
                 $user->password = Hash::make($request->password);
             }
             $user->update();
-            alert()->success('El registro ha sido agregado correctamente');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Usuario actualizado correctamente'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el usuario: ' . $e->getMessage()
+            ], 500);
         }
-        return back();
     }
 
 
