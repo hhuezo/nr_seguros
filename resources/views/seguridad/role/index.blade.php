@@ -9,6 +9,9 @@
     <!-- Toastr JS -->
     <script src="{{ asset('vendors/toast/toastr.min.js') }}"></script>
 
+    <!-- Drawer Styles CSS -->
+    <link href="{{ asset('css/drawer_styles.css') }}" rel="stylesheet">
+
     <div class="x_panel">
 
         @if (session('success'))
@@ -65,17 +68,22 @@
                     </thead>
                     <tbody>
                         @foreach ($roles as $obj)
+                            @include('seguridad.role.edit_drawer', ['rol' => $obj])
+                            @include('seguridad.role.permissions_drawer', ['rol' => $obj])
                             <tr>
                                 <td align="center">{{ $obj->id }}</td>
                                 <td>{{ $obj->name }}</td>
                                 <td align="center">
-                                    <a href="{{ url('rol') }}/{{ $obj->id }}/edit" class="on-default edit-row">
-                                        <button class="btn btn-primary"><i
-                                            class="fa fa-pencil fa-lg"></i></button></a>
-                                    &nbsp;&nbsp;
+                                    <button class="btn btn-primary btn-sm" onclick="openEditDrawer({{ $obj->id }})" title="Modificar Rol">
+                                        <i class="fa fa-pencil fa-lg"></i>
+                                    </button>
+                                    <button class="btn btn-info btn-sm" onclick="openPermissionsDrawer_{{ $obj->id }}({{ $obj->id }})" title="Asignar Permisos" style="margin-left: 5px;">
+                                        <i class="fa fa-key fa-lg"></i>
+                                    </button>
                                     <a href="" data-target="#modal-delete-{{ $obj->id }}"
-                                        data-toggle="modal"><button class="btn btn-danger"><i class="fa fa-trash fa-lg"></i></button></a>
-
+                                        data-toggle="modal" style="margin-left: 5px;">
+                                        <button class="btn btn-danger btn-sm"><i class="fa fa-trash fa-lg"></i></button>
+                                    </a>
                                 </td>
                             </tr>
                             @include('seguridad.role.modal')
@@ -124,4 +132,40 @@
 
         </div>
     </div>
+
+    <script>
+        var displayStart = 0;
+        $(document).ready(function() {
+            var table = $('#datatable').DataTable({
+                pageLength: 10,
+                displayStart: displayStart,
+            });
+        });
+
+        function openEditDrawer(roleId) {
+            document.getElementById(`editDrawer_${roleId}`).classList.add('active');
+            document.getElementById(`editDrawerOverlay_${roleId}`).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeEditDrawer(roleId) {
+            document.getElementById(`editDrawer_${roleId}`).classList.remove('active');
+            document.getElementById(`editDrawerOverlay_${roleId}`).classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Cerrar drawer con tecla ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                @foreach ($roles as $obj)
+                    if (document.getElementById('editDrawer_{{ $obj->id }}').classList.contains('active')) {
+                        closeEditDrawer({{ $obj->id }});
+                    }
+                    if (document.getElementById('permissionsDrawer_{{ $obj->id }}').classList.contains('active')) {
+                        closePermissionsDrawer_{{ $obj->id }}({{ $obj->id }});
+                    }
+                @endforeach
+            }
+        });
+    </script>
 @endsection

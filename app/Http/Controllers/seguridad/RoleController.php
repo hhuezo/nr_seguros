@@ -69,28 +69,76 @@ class RoleController extends Controller
     }
     public function update(Request $request, $id)
     {
-        // Validar antes de crear
-        $request->validate([
-            'name' => 'required|unique:roles,name,' . $id,
-        ], [
-            'name.required' => 'El campo rol es obligatorio.',
-            'name.unique' => 'El rol ya existe en el sistema.',
-        ]);
-
         try {
+            // Validar antes de crear
+            $request->validate([
+                'name' => 'required|unique:roles,name,' . $id,
+            ], [
+                'name.required' => 'El campo rol es obligatorio.',
+                'name.unique' => 'El rol ya existe en el sistema.',
+            ]);
+
             $role = Role::findOrFail($id);
             $role->name = $request->get('name');
             $role->update();
+
+            // Si la petición espera JSON, devolver JSON
+            if ($request->expectsJson() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'El registro ha sido modificado correctamente'
+                ]);
+            }
+
             return back()->with('success', 'El registro ha sido modificado correctamente');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            if ($request->expectsJson() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $e->validator->errors()->first()
+                ], 422);
+            }
+            throw $e;
         } catch (\Exception $e) {
             Log::error('Error al guardar rol: ' . $e->getMessage(), [
                 'exception' => $e,
                 'request_data' => $request->all()
             ]);
 
-            // Redireccionar con mensaje genérico al usuario
+            if ($request->expectsJson() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Ocurrió un error al guardar el registro. Por favor intente nuevamente.'
+                ], 500);
+            }
+
             return back()
                 ->with('error', 'Ocurrió un error al guardar el registro. Por favor intente nuevamente.');
+        }
+    }
+
+    public function getPermissions($id)
+    {
+        try {
+            $role = ModelsRole::findOrFail($id);
+            $permissions = Permission::get()->map(function($permission) {
+                return [
+                    'id' => $permission->id,
+                    'name' => $permission->name
+                ];
+            });
+            $rolePermissions = $role->permissions->pluck('id')->toArray();
+
+            return response()->json([
+                'success' => true,
+                'permissions' => $permissions,
+                'rolePermissions' => $rolePermissions
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener los permisos: ' . $e->getMessage()
+            ], 500);
         }
     }
     public function destroy($id)
@@ -130,7 +178,7 @@ class RoleController extends Controller
                 $role->revokePermissionTo($permission->name);
                 return response()->json([
                     'success' => true,
-                    'message' => 'Rol removido correctamente',
+                    'message' => 'Permiso removido correctamente',
                     'action' => 'removed'
                 ]);
             }
@@ -138,7 +186,7 @@ class RoleController extends Controller
             $role->givePermissionTo($permission->name);
             return response()->json([
                 'success' => true,
-                'message' => 'Rol asignado correctamente',
+                'message' => 'Permiso asignado correctamente',
                 'action' => 'assigned'
             ]);
         } catch (\Exception $e) {

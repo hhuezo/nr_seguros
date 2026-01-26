@@ -162,9 +162,10 @@
                             <h3>NR Seguros</h3>
                             <ul class="nav side-menu">
 
-
-                                <li><a href="{{ url('/') }}"><i class="fa fa-bar-chart"></i>Control de Primas
+                                @can('dashoboard-primas')
+                                <li><a href="{{ url('/control-primas') }}"><i class="fa fa-bar-chart"></i>Control de Primas
                                         General</a></li>
+                                @endcan
                                 <li><a><i class="fa fa-users"></i> Seguridad <span
                                             class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu" id="ul-seguridad">

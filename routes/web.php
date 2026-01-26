@@ -3,6 +3,7 @@
 use App\Http\Controllers\catalogo\AreaComercialController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ControlPrimasController;
 use App\Http\Controllers\seguridad\UserController;
 use App\Http\Controllers\catalogo\ClienteController;
 use App\Http\Controllers\catalogo\AseguradoraController;
@@ -68,14 +69,18 @@ Auth::routes();
 Route::middleware(['auth'])->group(function () {
     Route::post('usuario/rol_link', [UserController::class, 'rol_link']);
     Route::post('usuario/active/{id}', [UserController::class, 'active']);
+    Route::get('usuario/get-roles/{id}', [UserController::class, 'getRoles']);
     Route::resource('permission', PermissionController::class);
     Route::post('role/permission_link', [RoleController::class, 'permission_link']);
+    Route::get('rol/get-permissions/{id}', [RoleController::class, 'getPermissions']);
     Route::resource('rol', RoleController::class);
     Route::resource('usuario', UserController::class);
 
 
     //catalogos
     Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+    Route::get('/control-primas', [ControlPrimasController::class, 'index'])->name('control-primas');
 
     Route::post('catalogo/aseguradora/add_contacto', [AseguradoraController::class, 'add_contacto']);
     Route::post('catalogo/aseguradora/delete_contacto', [AseguradoraController::class, 'delete_contacto']);

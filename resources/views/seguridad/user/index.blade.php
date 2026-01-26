@@ -1,8 +1,32 @@
 @extends ('welcome')
 @section('contenido')
+
+    <!-- Toastr CSS -->
+    <link href="{{ asset('vendors/toast/toastr.min.css') }}" rel="stylesheet">
+    
+    <!-- Drawer Styles CSS -->
+    <link href="{{ asset('css/drawer_styles.css') }}" rel="stylesheet">
+
+    <!-- jQuery -->
+    <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
+
+    <!-- Toastr JS -->
+    <script src="{{ asset('vendors/toast/toastr.min.js') }}"></script>
+
+    @if (session('success'))
+        <script>
+            toastr.success("{{ session('success') }}");
+        </script>
+    @endif
+
+    @if (session('error'))
+        <script>
+            toastr.error("{{ session('error') }}");
+        </script>
+    @endif
+
     <div class="x_panel">
 
-        @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
         <div class="x_title">
             <div class="col-md-6 col-sm-6 col-xs-12">
                 <h3>Listado de usuarios </h3>
@@ -41,6 +65,8 @@
                     </thead>
                     <tbody>
                         @foreach ($usuarios as $obj)
+                            @include('seguridad.user.edit_drawer', ['usuario' => $obj])
+                            @include('seguridad.user.roles_drawer', ['usuario' => $obj])
                             <tr>
                                 <td align="center">{{ $loop->iteration }}</td>
                                 <td>{{ $obj->name }}</td>
@@ -58,12 +84,12 @@
                                 </td>
 
                                 <td align="center">
-
-
-                                    <a href="{{ url('usuario') }}/{{ $obj->id }}/edit" class="on-default edit-row">
-                                        <button class="btn btn-primary"><i class="fa fa-pencil fa-lg"></i></button> </a>
-
-
+                                    <button class="btn btn-primary btn-sm" onclick="openEditDrawer({{ $obj->id }})" title="Modificar Usuario">
+                                        <i class="fa fa-pencil fa-lg"></i>
+                                    </button>
+                                    <button class="btn btn-info btn-sm" onclick="openRolesDrawer_{{ $obj->id }}({{ $obj->id }})" title="Asignar Roles" style="margin-left: 5px;">
+                                        <i class="fa fa-user-plus fa-lg"></i>
+                                    </button>
                                 </td>
                             </tr>
                         @endforeach
@@ -166,15 +192,52 @@
                 })
                 .then(data => {
                     if (data.success) {
-
+                        if (data.nuevo_estado == 1) {
+                            toastr.success(data.message || 'Usuario activado correctamente');
+                        } else {
+                            toastr.success(data.message || 'Usuario desactivado correctamente');
+                        }
                     } else {
                         throw new Error(data.message || 'Acción fallida');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert(error.message);
+                    toastr.error(error.message);
                 });
         }
+
+        function openEditDrawer(userId) {
+            document.getElementById(`editDrawer_${userId}`).classList.add('active');
+            document.getElementById(`editDrawerOverlay_${userId}`).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeEditDrawer(userId) {
+            document.getElementById(`editDrawer_${userId}`).classList.remove('active');
+            document.getElementById(`editDrawerOverlay_${userId}`).classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function closeAllEditDrawers() {
+            @foreach ($usuarios as $obj)
+                closeEditDrawer({{ $obj->id }});
+            @endforeach
+        }
+
+        // Cerrar drawer con tecla ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                @foreach ($usuarios as $obj)
+                    if (document.getElementById('editDrawer_{{ $obj->id }}').classList.contains('active')) {
+                        closeEditDrawer({{ $obj->id }});
+                    }
+                    if (document.getElementById('rolesDrawer_{{ $obj->id }}').classList.contains('active')) {
+                        closeRolesDrawer_{{ $obj->id }}({{ $obj->id }});
+                    }
+                @endforeach
+            }
+        });
+
     </script>
 @endsection
