@@ -43,16 +43,16 @@
                                 <td>{{ $obj->TelefonoWhatsapp }}</td>
 
                                 <td align="center">
-                                    @can('edit users')
-                                        <a href="{{ url('catalogo/aseguradoras') }}/{{ $obj->Id }}/edit"
-                                            class="on-default edit-row">
-                                            <i class="fa fa-pencil fa-lg"></i></a>
-                                    @endcan
 
-                                    @can('delete users')
-                                        &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}"
-                                            data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
-                                    @endcan
+                                    <a href="{{ url('catalogo/aseguradoras') }}/{{ $obj->Id }}/edit"
+                                        class="on-default edit-row">
+                                        <i class="fa fa-pencil fa-lg"></i></a>
+
+
+
+                                    &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}"
+                                        data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
+
                                 </td>
                             </tr>
                             @include('catalogo.aseguradora.modal')
