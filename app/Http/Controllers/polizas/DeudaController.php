@@ -1889,7 +1889,66 @@ class DeudaController extends Controller
 
     public function cancelar_pago(Request $request)
     {
+
         try {
+
+            $polizaDeudaCartera = PolizaDeudaCartera::where('PolizaDeuda', $request->Deuda)->where('PolizaDeudaDetalle', null)->first();
+            $anio = $polizaDeudaCartera->Axo;
+            $mes = $polizaDeudaCartera->Mes;
+            $deuda = $request->Deuda;
+
+
+
+            //Eliminar los registros actuales en poliza_deuda_temp_cartera
+            DB::table('poliza_deuda_temp_cartera')
+                ->where('Axo', $anio)
+                ->where('Mes', $mes)
+                ->where('PolizaDeuda', $deuda)
+                ->delete();
+
+            // Comprobar cuántos registros hay en historial (lo que se intentará insertar)
+            $filasEnHistorial = DB::table('poliza_deuda_temp_cartera_historial')
+                ->where('Axo', $anio)
+                ->where('Mes', $mes)
+                ->where('PolizaDeuda', $deuda)
+                ->count();
+
+            //Insertar los registros del historial nuevamente en la tabla temporal
+            DB::statement("
+              INSERT INTO poliza_deuda_temp_cartera (
+                  PolizaDeudaTipoCartera, LineaCredito, Tasa, TotalCredito, EdadDesembloso,
+                  CarnetResidencia, Dui, Pasaporte, Nacionalidad, FechaNacimiento, TipoPersona,
+                  PrimerApellido, SegundoApellido, ApellidoCasada, PrimerNombre, SegundoNombre,
+                  NombreSociedad, Sexo, FechaOtorgamiento, FechaVencimiento, NumeroReferencia,
+                  MontoOtorgado, SaldoCapital, Intereses, MoraCapital, InteresesMoratorios, SaldoTotal,
+                  User, Axo, Mes, PolizaDeuda, FechaInicio, FechaFinal, TipoError, FechaNacimientoDate,
+                  Edad, InteresesCovid, MontoNominal, NoValido, Perfiles, FechaOtorgamientoDate,
+                  SaldoCumulo, Excluido, OmisionPerfil, Rehabilitado, EdadRequisito, MontoRequisito,
+                  MontoMaximoIndividual, TipoDeuda, PorcentajeExtraprima, TipoDocumento,
+                  SaldoInteresMora, PagoAutomatico, Errores
+              )
+              SELECT
+                  PolizaDeudaTipoCartera, LineaCredito, Tasa, TotalCredito, EdadDesembloso,
+                  CarnetResidencia, Dui, Pasaporte, Nacionalidad, FechaNacimiento, TipoPersona,
+                  PrimerApellido, SegundoApellido, ApellidoCasada, PrimerNombre, SegundoNombre,
+                  NombreSociedad, Sexo, FechaOtorgamiento, FechaVencimiento, NumeroReferencia,
+                  MontoOtorgado, SaldoCapital, Intereses, MoraCapital, InteresesMoratorios, SaldoTotal,
+                  User, Axo, Mes, PolizaDeuda, FechaInicio, FechaFinal, TipoError, FechaNacimientoDate,
+                  Edad, InteresesCovid, MontoNominal, NoValido, Perfiles, FechaOtorgamientoDate,
+                  SaldoCumulo, Excluido, OmisionPerfil, Rehabilitado, EdadRequisito, MontoRequisito,
+                  MontoMaximoIndividual, TipoDeuda, PorcentajeExtraprima, TipoDocumento,
+                  SaldoInteresMora, PagoAutomatico, Errores
+              FROM poliza_deuda_temp_cartera_historial
+              WHERE Axo = ? AND Mes = ? AND PolizaDeuda = ?", [$anio, $mes, $deuda]);
+
+
+            //Eliminar los registros del historial una vez restaurados
+            DB::table('poliza_deuda_temp_cartera_historial')
+                ->where('Axo', $anio)
+                ->where('Mes', $mes)
+                ->where('PolizaDeuda', $deuda)
+                ->delete();
+
 
             PolizaDeudaCartera::where('PolizaDeuda', $request->Deuda)
                 ->where(function ($q) {
@@ -1898,7 +1957,7 @@ class DeudaController extends Controller
                 })
                 ->delete();
 
-            PolizaDeudaTempCartera::where('PolizaDeuda', $request->Deuda)->delete();
+            // No borrar poliza_deuda_temp_cartera: los datos restaurados del historial deben quedar ahí.
 
             $usuario = Auth::user();
             $fecha   = now()->format('Y-m-d H:i:s');
@@ -2325,7 +2384,7 @@ class DeudaController extends Controller
 
         //dejando validos los que ya fueron validados en meses anteriores
         $ids = $poliza_cumulos->pluck('Id')->toArray();
-        PolizaDeudaTempCartera::where('PolizaDeuda', $poliza)->where('NoValido', 1)->whereNotIn('Id',$ids)->update(['NoValido'=>0]);
+        PolizaDeudaTempCartera::where('PolizaDeuda', $poliza)->where('NoValido', 1)->whereNotIn('Id', $ids)->update(['NoValido' => 0]);
 
 
         // Rangos de asegurabilidad
