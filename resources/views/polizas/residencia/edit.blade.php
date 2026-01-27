@@ -791,7 +791,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($detalle as $obj)
+                                                @foreach ($detalle->sortBy('Axo')->sortBy('Mes')  as $obj)
                                                     @if ($obj->ImpresionRecibo != null)
                                                         <tr>
                                                             <td>{{ $obj->NumeroRecibo ? 'AC' . str_pad($obj->NumeroRecibo, 6, '0', STR_PAD_LEFT) . ' ' .  \Carbon\Carbon::parse($obj->FechaIngreso)->format('Y') : '' }}
@@ -1070,7 +1070,7 @@
             displayOption("ul-poliza", "li-poliza-residencia");
 
             $('#comentarios').DataTable();
-            $('#avisos').DataTable();
+            $('#avisos').DataTable({ ordering: false });
             //    $('#cobros').DataTable();
 
             $('#cobros').DataTable({
