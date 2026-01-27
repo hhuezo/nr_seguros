@@ -69,7 +69,7 @@
 
                             <div class="col-sm-4">
                                 <label class="control-label">Ejecutivo</label>
-                                <select name="Gestor" class="form-control">
+                                <select name="Gestor" class="form-control" required>
                                     <option value="">Seleccione</option>
                                     @foreach ($ejecutivos as $ejecutivo)
                                         <option value="{{ $ejecutivo->Id }}">{{ $ejecutivo->Nombre }}</option>

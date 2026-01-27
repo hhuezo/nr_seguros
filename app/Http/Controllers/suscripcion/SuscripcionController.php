@@ -269,7 +269,7 @@ class SuscripcionController extends Controller
 
         $request->validate([
             'FechaIngreso'               => 'required|date',
-            'Gestor'                     => 'nullable|integer|exists:ejecutivo,Id',
+            'Gestor'                     => 'integer|exists:ejecutivo,Id',
             'CompaniaId'                 => 'nullable|integer|exists:aseguradora,Id',
             'ContratanteId'              => 'nullable|integer|exists:cliente,Id',
             'PolizaDeuda'                => 'nullable|integer|exists:poliza_deuda,Id',
@@ -286,7 +286,7 @@ class SuscripcionController extends Controller
             'Imc'                        => 'nullable|numeric|min:0',
             'TipoIMCId'                  => 'nullable|integer|exists:sus_tipo_imc,Id',
 
-            // VALIDACIÓN ACTUALIZADA
+            // VALIDACIÓN ACTUALIZADA Gestor
             'Padecimiento'               => 'nullable|array',
             'Padecimiento.*'             => 'integer|exists:sus_padecimientos,Id',
 
@@ -337,7 +337,7 @@ class SuscripcionController extends Controller
             $suscripcion = new Suscripcion();
             $suscripcion->NumeroTarea = $request->NumeroTarea;
             $suscripcion->FechaIngreso = $request->FechaIngreso;
-            $suscripcion->GestorId = $request->Gestor ? $request->Gestor : null;
+            $suscripcion->GestorId = $request->Gestor;
             $suscripcion->CompaniaId = $request->CompaniaId;
             $suscripcion->CategoriaSisa = $request->CategoriaSisa;
             $suscripcion->ContratanteId = $request->ContratanteId;
