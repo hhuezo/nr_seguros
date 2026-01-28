@@ -1005,7 +1005,6 @@ class ResidenciaController extends Controller
         $tipo_contribuyente_aseguradora = $residencia->aseguradoras->TipoContribuyente ?? 0;
 
         $tipo_calculo = 0;
-
         //para las polizas que el cliente es gran empresa y aseguradora es mediana empresa
         if ($tipo_contribuyente_aseguradora == 2 && $tipo_contribuyente_cliente == 1 && $detalle->PrimaDescontada >= 100) {
 
