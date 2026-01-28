@@ -1000,13 +1000,24 @@ class ResidenciaController extends Controller
         $detalle->Anexo = $request->Anexo;
         $detalle->NumeroCorrelativo = $request->NumeroCorrelativo;
         $detalle->update();
-        // dd($detalle);
+
+        $tipo_contribuyente_cliente = $residencia->clientes->TipoContribuyente ?? 0;
+        $tipo_contribuyente_aseguradora = $residencia->aseguradoras->TipoContribuyente ?? 0;
+
+        $tipo_calculo = 0;
+
+        //para las polizas que el cliente es gran empresa y aseguradora es mediana empresa
+        if ($tipo_contribuyente_aseguradora == 2 && $tipo_contribuyente_cliente == 1 && $detalle->PrimaDescontada >= 100) {
+
+            $tipo_calculo = 1;
+        }
+
         //$calculo = $this->monto($residencia, $detalle);
         //llenar recibo
         $recibo_historial = $this->save_recibo($residencia, $detalle);
         ///dd($recibo_historial);
         $configuracion = ConfiguracionRecibo::first();
-        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion', 'detalle', 'residencia', 'meses', 'cliente', 'recibo_historial'))->setWarnings(false)->setPaper('letter');
+        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion', 'detalle', 'residencia', 'meses', 'cliente', 'recibo_historial','tipo_calculo'))->setWarnings(false)->setPaper('letter');
         return $pdf->stream('Recibo.pdf');
 
         //  return back();

@@ -125,10 +125,22 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
             <td>13% IVA</td>
             <td style="width: 35%; text-align: right;">${{number_format($recibo_historial->Iva,2,'.',',')}}</td>
           </tr>
+          @if($tipo_calculo == 0)
           <tr>
             <td>Total Factura</td>
             <td style="width: 35%; text-align: right;">${{number_format(($recibo_historial->SubTotal+$recibo_historial->Iva),2,'.',',')}}</td>
           </tr>
+
+          @else
+          <tr>
+            <td>Total Factura</td>
+            <td style="width: 35%; text-align: right;">
+                ${{number_format(($recibo_historial->Iva+$recibo_historial->PrimaDescontada),2,'.',',')}}</td>
+          </tr>
+          @endif
+
+
+
           <tr>
             <td>(-) Estructura CCF de Comisión</td>
             <td style="width: 35%; text-align: right;">(${{number_format($recibo_historial->ValorCCF,2,'.',',')}})</td>
@@ -194,7 +206,11 @@ $prima_calculada = $detalle->MontoCartera * $residencia->Tasa;
       <td height="23" style="text-align: center;">{{$recibo_historial->Cuota ?? '01/01'}}</td>
       <td><div align="center">{{$recibo_historial->NumeroCorrelativo}}</div></td>
       <td><div align="center">{{ \Carbon\Carbon::parse($recibo_historial->FechaVencimiento)->format('d/m/Y') }}</div></td>
-      <td style="text-align: right;">${{number_format(($recibo_historial->SubTotal+$recibo_historial->Iva),2,'.',',')}}</td>
+      @if($tipo_calculo == 0)
+        <td style="text-align: right;">${{number_format(($recibo_historial->SubTotal+$recibo_historial->Iva),2,'.',',')}}</td>
+      @else
+        <td style="text-align: right;">${{number_format(($recibo_historial->Iva+$recibo_historial->PrimaDescontada),2,'.',',')}}</td>
+      @endif
       <td style="text-align: right;">${{number_format(($recibo_historial->ValorCCF ),2,'.',',')}}</td>
       <td style="text-align: right;">${{number_format($recibo_historial->Otros,2,'.',',')}}</td>
       <td style="text-align: right;">${{number_format($recibo_historial->TotalAPagar,2,'.',',')}}</td>
