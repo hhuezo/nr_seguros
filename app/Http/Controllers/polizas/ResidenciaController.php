@@ -1028,6 +1028,17 @@ class ResidenciaController extends Controller
         $residencia = Residencia::findOrFail($detalle->Residencia);
 
 
+        $tipo_contribuyente_cliente = $residencia->clientes->TipoContribuyente ?? 0;
+        $tipo_contribuyente_aseguradora = $residencia->aseguradoras->TipoContribuyente ?? 0;
+
+        $tipo_calculo = 0;
+        //para las polizas que el cliente es gran empresa y aseguradora es mediana empresa
+        if ($tipo_contribuyente_aseguradora == 2 && $tipo_contribuyente_cliente == 1 && $detalle->PrimaDescontada >= 100) {
+
+            $tipo_calculo = 1;
+        }
+
+
         $cliente = Cliente::findOrFail($residencia->Asegurado);
         $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
         $calculo = $this->monto($residencia, $detalle);
@@ -1043,7 +1054,7 @@ class ResidenciaController extends Controller
 
 
         //return view('polizas.residencia.recibo', compact('configuracion','cliente',  'detalle', 'residencia', 'meses', 'calculo'));
-        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion', 'cliente', 'detalle', 'residencia', 'meses', 'calculo', 'recibo_historial'))->setWarnings(false)->setPaper('letter');
+        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion', 'cliente', 'detalle', 'residencia', 'meses', 'calculo', 'recibo_historial','tipo_calculo'))->setWarnings(false)->setPaper('letter');
         //  dd($detalle);
         return $pdf->stream('Recibos.pdf');
     }
