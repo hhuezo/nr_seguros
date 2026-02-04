@@ -198,7 +198,7 @@
         @foreach ($metricas as $m)
             <div class="col-lg-4">
                 <div class="chart-wrapper">
-                    <div id="{{ $m['id'] }}" style="height: 280px;"></div>
+                    <div id="{{ $m['id'] }}" style="height: 220px;"></div>
                 </div>
             </div>
         @endforeach
