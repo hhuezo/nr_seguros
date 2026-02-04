@@ -261,6 +261,130 @@
         </div>
     </div>
 
+
+    <br>
+
+    {{-- Encabezado Principal --}}
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-6">
+            <h4 class="m-0 font-weight-bold">
+                Primas Alternas
+            </h4>
+        </div>
+    </div>
+    {{-- Bloque de Cards de Resumen --}}
+    <div class="row mt-4">
+
+        {{-- Card Azul --}}
+        <div class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
+            <div class="tile-stats" style="border-left: 5px solid #1e3a8a;">
+                <div class="icon">
+                    <span class="material-symbols-outlined"
+                        style="font-size: 32px; opacity: 0.4; color: #1e3a8a;">analytics</span>
+                </div>
+                <div class="count" style="font-size: 24px;">$ {{ number_format($primas_alternas['emitida'], 2) }}</div>
+                <h3 style="font-size: 14px; color: #64748b;">PRIMAS DE EMITIDA</h3>
+                <p style="font-weight: bold;">PRESENTE MES</p>
+            </div>
+        </div>
+
+        {{-- Card Naranja --}}
+        <div class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
+            <div class="tile-stats" style="border-left: 5px solid #f97316;">
+                <div class="icon">
+                    <span class="material-symbols-outlined"
+                        style="font-size: 32px; opacity: 0.4; color: #f97316;">history</span>
+                </div>
+                <div class="count" style="font-size: 24px;">$
+                    {{ number_format($primas_alternas['emitida_mes_anterior'], 2) }}</div>
+                <h3 style="font-size: 14px; color: #64748b;">PRIMAS DE EMITIDA</h3>
+                <p style="font-weight: bold;">MES ANTERIOR</p>
+            </div>
+        </div>
+
+        {{-- Card Verde --}}
+        <div class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
+            <div class="tile-stats" style="border-left: 5px solid #22c55e;">
+                <div class="icon">
+                    <span class="material-symbols-outlined"
+                        style="font-size: 32px; opacity: 0.4; color: #22c55e;">payments</span>
+                </div>
+                <div class="count" style="font-size: 24px;">$ {{ number_format($primas_alternas['descontada'], 2) }}</div>
+                <h3 style="font-size: 14px; color: #64748b;">PRIMAS DESCONTADAS</h3>
+                <p style="font-weight: bold;">PRESENTE MES</p>
+            </div>
+        </div>
+
+        {{-- Card Roja --}}
+        <div class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
+            <div class="tile-stats" style="border-left: 5px solid #1ac2ec;">
+                <div class="icon">
+                    <span class="material-symbols-outlined"
+                        style="font-size: 32px; opacity: 0.4; color: #1ac2ec;">running_with_errors</span>
+                </div>
+                <div class="count" style="font-size: 24px;">$
+                    {{ number_format($primas_alternas['descontada_mes_anterior'], 2) }}</div>
+                <h3 style="font-size: 14px; color: #64748b;">PRIMAS DESCONTADAS</h3>
+                <p style="font-weight: bold;">MES ANTERIOR</p>
+            </div>
+        </div>
+
+
+        <div class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
+            <div class="tile-stats" style="border-left: 5px solid #eb1f1f;">
+                <div class="icon">
+                    <span class="material-symbols-outlined"
+                        style="font-size: 32px; opacity: 0.4; color: #eb1f1f;">running_with_errors</span>
+                </div>
+                <div class="count" style="font-size: 24px;">$
+                    {{ number_format($primas_alternas['descontada'] - $primas_alternas['descontada_mes_anterior'], 2) }}</div>
+                <h3 style="font-size: 14px; color: #64748b;">PRODUCCIÓN NUEVA</h3>
+                <p style="font-weight: bold;">&nbsp;</p>
+            </div>
+        </div>
+
+
+        <div class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
+            <div class="tile-stats" style="border-left: 5px solid #e4ee5c;">
+                <div class="icon">
+                    <span class="material-symbols-outlined"
+                        style="font-size: 32px; opacity: 0.4; color: #e4ee5c;">running_with_errors</span>
+                </div>
+                <div class="count" style="font-size: 24px;">$
+                    {{ number_format(($primas_alternas['descontada'] - $primas_alternas['descontada_mes_anterior']) * 12, 2) }}</div>
+                <h3 style="font-size: 14px; color: #64748b;">PRIMA ANUALIZADA ADICIONAL</h3>
+                <p style="font-weight: bold;">&nbsp;</p>
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     {{-- DRAWER --}}
     <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
     <div class="drawer" id="drawer">

@@ -88,6 +88,7 @@ trait PolizaControlCarteraTrait
                 ->where('poliza_declarativa_control.Axo', $anio)
                 ->where('poliza_declarativa_control.Mes', $mes)
                 ->join('poliza_deuda', 'poliza_deuda.Id', '=', 'poliza_declarativa_control.PolizaDeudaId')
+                ->join('poliza_deuda_tipo_cartera', 'poliza_deuda_tipo_cartera.PolizaDeuda', '=', 'poliza_deuda.Id')
                 ->leftJoin('poliza_deuda_detalle', function ($join) use ($anio, $mes) {
                     $join->on('poliza_deuda_detalle.Deuda', '=', 'poliza_deuda.Id')
                         ->where('poliza_deuda_detalle.Axo', $anio)
@@ -112,6 +113,7 @@ trait PolizaControlCarteraTrait
                     'poliza_deuda.VigenciaDesde',
                     'poliza_deuda.VigenciaHasta',
                     'poliza_deuda.Descuento',
+                    'poliza_deuda_tipo_cartera.TipoCartera',
 
                     'poliza_deuda_detalle.MontoCartera',
                     'poliza_deuda_detalle.Tasa',
@@ -140,14 +142,11 @@ trait PolizaControlCarteraTrait
                 )
                 ->get();
 
-
-
             $deuda = $deuda->map(function ($item) use ($usuariosMap) {
                 $item->Usuario = $usuariosMap[$item->Usuario] ?? null;
                 return $item;
             });
 
-            // dd($deuda);
 
             /* =========================
             | VIDA
