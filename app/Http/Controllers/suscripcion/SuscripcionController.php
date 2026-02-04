@@ -627,6 +627,13 @@ class SuscripcionController extends Controller
             $suscripcion->padecimientos()->detach();
         }
 
+        //estado de resumen de gestion
+        $resumen_gestion = ResumenGestion::findOrFail($request->ResumenGestion);
+        if($resumen_gestion->Color == 'success' || $resumen_gestion->Color == 'danger' || $resumen_gestion->Color == 'info'){
+            $suscripcion->EstadoId = 2;  //finalizado
+            $suscripcion->update();
+        }
+
 
         return redirect('suscripciones/' . $request->Id . '/edit?tab=1')->with('success', 'El registro ha sido modificado correctamente');
     }
