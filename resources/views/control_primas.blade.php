@@ -174,9 +174,9 @@
                     @endforeach
                 </select>
 
-                <label class="form-label-custom">Año Fiscal</label>
+                <label class="form-label-custom">Año</label>
                 <select class="form-select-custom" name="anio">
-                    @for ($i = date('Y'); $i >= 2020; $i--)
+                    @for ($i = date('Y'); $i >= 2025; $i--)
                         <option value="{{ $i }}" {{ ($anio ?? $anioActual) == $i ? 'selected' : '' }}>{{ $i }}</option>
                     @endfor
                 </select>
