@@ -1,8 +1,9 @@
 @extends('welcome')
 
 @section('contenido')
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@300;400;500&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@300;400;500&display=swap"
+        rel="stylesheet" />
 
     <style>
         :root {
@@ -13,7 +14,11 @@
             --text-muted: #64748b;
         }
 
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-main); color: var(--text-dark); }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+        }
 
         /* --- DRAWER --- */
         .drawer-overlay {
@@ -25,7 +30,11 @@
             backdrop-filter: blur(4px);
             transition: all 0.3s ease;
         }
-        .drawer-overlay.active { display: block; }
+
+        .drawer-overlay.active {
+            display: block;
+        }
+
         .drawer {
             position: fixed;
             top: 0;
@@ -39,34 +48,127 @@
             display: flex;
             flex-direction: column;
         }
-        .drawer.active { right: 0; }
-        .drawer-header { padding: 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
-        .drawer-title { font-weight: 700; font-size: 16px; color: var(--text-dark); text-transform: uppercase; display: flex; align-items: center; gap: 10px; margin: 0; }
-        .drawer-body { padding: 24px; flex-grow: 1; overflow-y: auto; }
-        .drawer-footer { padding: 24px; border-top: 1px solid var(--border-color); background: #f8fafc; }
+
+        .drawer.active {
+            right: 0;
+        }
+
+        .drawer-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .drawer-title {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--text-dark);
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0;
+        }
+
+        .drawer-body {
+            padding: 24px;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .drawer-footer {
+            padding: 24px;
+            border-top: 1px solid var(--border-color);
+            background: #f8fafc;
+        }
 
         /* --- ESTILOS DE TABLA --- */
-        .chart-wrapper { background: #fff; padding: 24px; border-radius: 16px; border: 1px solid var(--border-color); margin-bottom: 24px; }
-        .table-premium { width: 100%; border-collapse: separate; border-spacing: 0; background: white; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); }
-        .table-premium th { background: #e9e9e9; color: var(--text-muted); text-transform: uppercase; font-size: 11px; padding: 14px; border-bottom: 2px solid var(--border-color); }
-        .table-premium td { padding: 14px; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 13px; vertical-align: middle; }
-        .cell-money { font-family: 'Monaco', monospace; font-weight: 600; text-align: right; }
+        .chart-wrapper {
+            background: #fff;
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 24px;
+        }
+
+        .table-premium {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .table-premium th {
+            background: #e9e9e9;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 11px;
+            padding: 14px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .table-premium td {
+            padding: 14px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            font-size: 13px;
+            vertical-align: middle;
+        }
+
+        .cell-money {
+            font-family: 'Monaco', monospace;
+            font-weight: 600;
+            text-align: right;
+        }
 
         /* Utility */
-        .btn-close-drawer { background: #f1f5f9; border: none; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); }
-        .form-select-custom { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 14px; margin-bottom: 15px; }
-        .form-label-custom { display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; }
+        .btn-close-drawer {
+            background: #f1f5f9;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        .form-select-custom {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .form-label-custom {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
     </style>
 
     {{-- Encabezado Principal --}}
     <div class="row mb-4 align-items-center">
         <div class="col-md-6">
             <h4 class="m-0 font-weight-bold">
-                Dashboard de Primas <span class="text-muted font-weight-light">|</span> {{ $meses[$mes ?? $mesActual] ?? '' }} {{ $anio ?? $anioActual }}
+                Dashboard de Primas <span class="text-muted font-weight-light">|</span>
+                {{ $meses[$mes ?? $mesActual] ?? '' }} {{ $anio ?? $anioActual }}
             </h4>
         </div>
         <div class="col-md-6 text-right">
-            <button onclick="openDrawer()" class="btn btn-primary px-4 shadow-sm d-inline-flex align-items-center gap-2" style="background: var(--primary-blue); border: none; border-radius: 8px; padding: 10px 20px;">
+            <button onclick="openDrawer()" class="btn btn-primary px-4 shadow-sm d-inline-flex align-items-center gap-2"
+                style="background: var(--primary-blue); border: none; border-radius: 8px; padding: 10px 20px;">
                 <span class="material-symbols-outlined" style="font-size: 20px;">filter_list</span>
             </button>
         </div>
@@ -74,11 +176,15 @@
 
     @php
         $coloresConfig = [
-            'success'   => ['label' => 'Primas Aplicadas',     'bg' => '#22c55e', 'pastel' => 'rgba(34, 197, 94, 0.1)'],
-            'warning'   => ['label' => 'Primas por Aplicar',   'bg' => '#facc15', 'pastel' => 'rgba(250, 204, 21, 0.15)'],
-            'info'      => ['label' => 'Gestión de Cobro',     'bg' => '#38bdf8', 'pastel' => 'rgba(56, 189, 248, 0.1)'],
-            'orange'    => ['label' => 'Primas por Causar',    'bg' => '#f97316', 'pastel' => 'rgba(249, 115, 22, 0.1)'],
-            'secondary' => ['label' => 'Carteras por Procesar','bg' => '#94a3b8', 'pastel' => 'rgba(148, 163, 184, 0.1)'],
+            'success' => ['label' => 'Primas Aplicadas', 'bg' => '#22c55e', 'pastel' => 'rgba(34, 197, 94, 0.1)'],
+            'warning' => ['label' => 'Primas por Aplicar', 'bg' => '#facc15', 'pastel' => 'rgba(250, 204, 21, 0.15)'],
+            'info' => ['label' => 'Gestión de Cobro', 'bg' => '#38bdf8', 'pastel' => 'rgba(56, 189, 248, 0.1)'],
+            'orange' => ['label' => 'Primas por Causar', 'bg' => '#f97316', 'pastel' => 'rgba(249, 115, 22, 0.1)'],
+            'secondary' => [
+                'label' => 'Carteras por Procesar',
+                'bg' => '#94a3b8',
+                'pastel' => 'rgba(148, 163, 184, 0.1)',
+            ],
         ];
         $metricas = [
             'prima_emitida' => ['titulo' => 'Prima Emitida', 'id' => 'chartEmitida'],
@@ -114,7 +220,9 @@
                     </thead>
                     <tbody>
                         @php
-                            $totalEmitida = 0; $totalDescontada = 0; $totalLiquida = 0;
+                            $totalEmitida = 0;
+                            $totalDescontada = 0;
+                            $totalLiquida = 0;
                             foreach ($coloresConfig as $key => $conf) {
                                 $t = $totalesPorColor[$key] ?? [];
                                 $totalEmitida += (float) ($t['prima_emitida'] ?? 0);
@@ -132,12 +240,13 @@
                         @foreach ($coloresConfig as $key => $config)
                             @php
                                 $t = $totalesPorColor[$key] ?? [];
-                                $desc = (float)($t['prima_descontada'] ?? 0);
+                                $desc = (float) ($t['prima_descontada'] ?? 0);
                                 $porc = $totalDescontada > 0 ? ($desc / $totalDescontada) * 100 : 0;
                             @endphp
                             <tr style="background-color: {{ $config['pastel'] }};">
                                 <td style="font-weight: 600;">
-                                    <span style="display:inline-block; width:12px; height:12px; border-radius:3px; background:{{ $config['bg'] }}; margin-right:8px;"></span>
+                                    <span
+                                        style="display:inline-block; width:12px; height:12px; border-radius:3px; background:{{ $config['bg'] }}; margin-right:8px;"></span>
                                     {{ $config['label'] }}
                                 </td>
                                 <td class="cell-money text-muted">$ {{ number_format($t['prima_emitida'] ?? 0, 2) }}</td>
@@ -170,14 +279,16 @@
                 <label class="form-label-custom">Mes de Consulta</label>
                 <select class="form-select-custom" name="mes">
                     @foreach ($meses as $num => $nombre)
-                        <option value="{{ $num }}" {{ ($mes ?? $mesActual) == $num ? 'selected' : '' }}>{{ strtoupper($nombre) }}</option>
+                        <option value="{{ $num }}" {{ ($mes ?? $mesActual) == $num ? 'selected' : '' }}>
+                            {{ strtoupper($nombre) }}</option>
                     @endforeach
                 </select>
 
                 <label class="form-label-custom">Año</label>
                 <select class="form-select-custom" name="anio">
                     @for ($i = date('Y'); $i >= 2025; $i--)
-                        <option value="{{ $i }}" {{ ($anio ?? $anioActual) == $i ? 'selected' : '' }}>{{ $i }}</option>
+                        <option value="{{ $i }}" {{ ($anio ?? $anioActual) == $i ? 'selected' : '' }}>
+                            {{ $i }}</option>
                     @endfor
                 </select>
 
@@ -190,7 +301,8 @@
         </div>
 
         <div class="drawer-footer">
-            <button type="submit" form="filterForm" class="btn btn-primary btn-block py-3 font-weight-bold shadow-sm" style="background: var(--primary-blue); border: none; border-radius: 10px;">
+            <button type="submit" form="filterForm" class="btn btn-primary btn-block py-3 font-weight-bold shadow-sm"
+                style="background: var(--primary-blue); border: none; border-radius: 10px;">
                 Aplicar Filtros
             </button>
         </div>
@@ -211,29 +323,76 @@
         }
 
         function renderChart(id, title, data) {
+            // Configuración global para que Highcharts use coma como separador de miles
+            Highcharts.setOptions({
+                lang: {
+                    thousandsSep: ','
+                }
+            });
             Highcharts.chart(id, {
-                chart: { type: 'column', backgroundColor: 'transparent' },
-                title: { text: title, align: 'left', style: { fontSize: '12px', fontWeight: '700', color: '#64748b' } },
-                xAxis: { type: 'category', labels: { enabled: false }, lineWidth: 0, tickWidth: 0 },
-                yAxis: { title: { text: null }, gridLineColor: '#f1f5f9', labels: { enabled: false } },
-                legend: { enabled: false },
-                credits: { enabled: false },
+                chart: {
+                    type: 'column',
+                    backgroundColor: 'transparent'
+                },
+                title: {
+                    text: title,
+                    align: 'left',
+                    style: {
+                        fontSize: '12px',
+                        fontWeight: '700',
+                        color: '#64748b'
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    labels: {
+                        enabled: false
+                    },
+                    lineWidth: 0,
+                    tickWidth: 0
+                },
+                yAxis: {
+                    title: {
+                        text: null
+                    },
+                    gridLineColor: '#f1f5f9',
+                    labels: {
+                        enabled: false
+                    }
+                },
+                legend: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
+                },
                 plotOptions: {
                     column: {
                         borderRadius: 6,
                         colorByPoint: true,
-                        dataLabels: { enabled: true, format: '${point.y:,.0f}', style: { fontSize: '10px' } }
+                        dataLabels: {
+                            enabled: true,
+                            format: '${point.y:,.0f}', // La coma aquí indica separador de miles
+                            style: {
+                                fontSize: '10px'
+                            }
+                        }
                     }
                 },
-                series: [{ name: 'Monto', data: data }]
+                series: [{
+                    name: 'Monto',
+                    data: data
+                }]
             });
         }
 
         @php
             $getChartData = function ($key) use ($coloresConfig, $totalesPorColor) {
-                return collect($coloresConfig)->map(function ($c, $k) use ($key, $totalesPorColor) {
-                    return ['name' => $c['label'], 'y' => (float)($totalesPorColor[$k][$key] ?? 0), 'color' => $c['bg']];
-                })->values();
+                return collect($coloresConfig)
+                    ->map(function ($c, $k) use ($key, $totalesPorColor) {
+                        return ['name' => $c['label'], 'y' => (float) ($totalesPorColor[$k][$key] ?? 0), 'color' => $c['bg']];
+                    })
+                    ->values();
             };
         @endphp
 
