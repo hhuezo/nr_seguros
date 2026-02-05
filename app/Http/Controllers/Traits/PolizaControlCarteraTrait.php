@@ -89,12 +89,22 @@ trait PolizaControlCarteraTrait
                 ->where('poliza_declarativa_control.Mes', $mes)
                 ->join('poliza_deuda', 'poliza_deuda.Id', '=', 'poliza_declarativa_control.PolizaDeudaId')
                 ->join('poliza_deuda_tipo_cartera', 'poliza_deuda_tipo_cartera.PolizaDeuda', '=', 'poliza_deuda.Id')
+
+                // LEFT JOIN con poliza_deuda_detalle
                 ->leftJoin('poliza_deuda_detalle', function ($join) use ($anio, $mes) {
                     $join->on('poliza_deuda_detalle.Deuda', '=', 'poliza_deuda.Id')
                         ->where('poliza_deuda_detalle.Axo', $anio)
                         ->where('poliza_deuda_detalle.Mes', $mes)
                         ->where('poliza_deuda_detalle.Activo', 1);
                 })
+
+                // LEFT JOIN con poliza_deuda_detalle_preliminar (fallback)
+                ->leftJoin('poliza_deuda_detalle_preliminar', function ($join) use ($anio, $mes) {
+                    $join->on('poliza_deuda_detalle_preliminar.PolizaDeudaId', '=', 'poliza_deuda.Id')
+                        ->where('poliza_deuda_detalle_preliminar.Axo', $anio)
+                        ->where('poliza_deuda_detalle_preliminar.Mes', $mes);
+                })
+
                 ->join('cliente', 'cliente.Id', '=', 'poliza_deuda.Asegurado')
                 ->join('aseguradora', 'aseguradora.Id', '=', 'poliza_deuda.Aseguradora')
                 ->join('plan', 'plan.Id', '=', 'poliza_deuda.Plan')
@@ -115,22 +125,23 @@ trait PolizaControlCarteraTrait
                     'poliza_deuda.Descuento',
                     'poliza_deuda_tipo_cartera.TipoCartera',
 
-                    'poliza_deuda_detalle.MontoCartera',
-                    'poliza_deuda_detalle.Tasa',
-                    'poliza_deuda_detalle.PrimaCalculada',
-                    'poliza_deuda_detalle.ExtraPrima',
-                    'poliza_deuda_detalle.PrimaDescontada',
-                    'poliza_deuda_detalle.TasaComision',
-                    'poliza_deuda_detalle.Comision',
-                    'poliza_deuda_detalle.Retencion',
-                    'poliza_deuda_detalle.IvaSobreComision',
-                    'poliza_deuda_detalle.Iva',
-                    'poliza_deuda_detalle.APagar',
-                    'poliza_deuda_detalle.NumeroRecibo',
-                    'poliza_deuda_detalle.Axo',
-                    'poliza_deuda_detalle.FechaInicio',
-                    'poliza_deuda_detalle.Usuario',
-                    'poliza_deuda_detalle.UsuariosReportados',
+                    // COALESCE para usar poliza_deuda_detalle o poliza_deuda_detalle_preliminar
+                    DB::raw('COALESCE(poliza_deuda_detalle.MontoCartera, poliza_deuda_detalle_preliminar.MontoCartera) as MontoCartera'),
+                    DB::raw('COALESCE(poliza_deuda_detalle.Tasa, poliza_deuda_detalle_preliminar.Tasa) as Tasa'),
+                    DB::raw('COALESCE(poliza_deuda_detalle.PrimaCalculada, poliza_deuda_detalle_preliminar.PrimaCalculada) as PrimaCalculada'),
+                    DB::raw('COALESCE(poliza_deuda_detalle.ExtraPrima, poliza_deuda_detalle_preliminar.ExtraPrima) as ExtraPrima'),
+                    DB::raw('COALESCE(poliza_deuda_detalle.PrimaDescontada, poliza_deuda_detalle_preliminar.PrimaDescontada) as PrimaDescontada'),
+                    DB::raw('COALESCE(poliza_deuda_detalle.TasaComision, poliza_deuda_detalle_preliminar.TasaComision) as TasaComision'),
+                    DB::raw('COALESCE(poliza_deuda_detalle.Comision, poliza_deuda_detalle_preliminar.Comision) as Comision'),
+                    DB::raw('COALESCE(poliza_deuda_detalle.Retencion, poliza_deuda_detalle_preliminar.Retencion) as Retencion'),
+                    DB::raw('COALESCE(poliza_deuda_detalle.IvaSobreComision, poliza_deuda_detalle_preliminar.IvaSobreComision) as IvaSobreComision'),
+                    DB::raw('COALESCE(poliza_deuda_detalle.Iva, poliza_deuda_detalle_preliminar.Iva) as Iva'),
+                    DB::raw('COALESCE(poliza_deuda_detalle.APagar, poliza_deuda_detalle_preliminar.APagar) as APagar'),
+                    DB::raw('COALESCE(poliza_deuda_detalle.NumeroRecibo, poliza_deuda_detalle_preliminar.NumeroRecibo) as NumeroRecibo'),
+                    DB::raw('COALESCE(poliza_deuda_detalle.Axo, poliza_deuda_detalle_preliminar.Axo) as Axo'),
+                    DB::raw('COALESCE(poliza_deuda_detalle.FechaInicio, poliza_deuda_detalle_preliminar.FechaInicio) as FechaInicio'),
+                    DB::raw('COALESCE(poliza_deuda_detalle.Usuario, poliza_deuda_detalle_preliminar.Usuario) as Usuario'),
+                    DB::raw('COALESCE(poliza_deuda_detalle.UsuariosReportados, poliza_deuda_detalle_preliminar.UsuariosReportados) as UsuariosReportados'),
 
                     'cliente.Nombre as ClienteNombre',
                     'cliente.Nit as ClienteNit',
@@ -346,7 +357,7 @@ trait PolizaControlCarteraTrait
                 $join->on('poliza_residencia_detalle.Residencia', '=', 'poliza_residencia.Id')
                     ->where('poliza_residencia_detalle.Axo', $anio)
                     ->where('poliza_residencia_detalle.Mes', $mes)
-                     ->where('poliza_residencia_detalle.Activo', 1);
+                    ->where('poliza_residencia_detalle.Activo', 1);
             })
             ->join('cliente', 'cliente.Id', '=', 'poliza_residencia.Asegurado')
             ->join('aseguradora', 'aseguradora.Id', '=', 'poliza_residencia.Aseguradora')
