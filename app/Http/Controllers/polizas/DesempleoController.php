@@ -31,6 +31,7 @@ use App\Models\polizas\Desempleo;
 use App\Models\polizas\DesempleoCartera;
 use App\Models\temp\DesempleoCarteraTemp;
 use App\Models\polizas\DesempleoDetalle;
+use App\Models\polizas\DesempleoDetallePreliminar;
 use App\Models\polizas\DesempleoHistorialRecibo;
 use App\Models\polizas\DesempleoTipoCartera;
 use Carbon\Carbon;
@@ -1801,6 +1802,83 @@ class DesempleoController extends Controller
         }
     }
 
+
+
+    public function detalle_preliminar(Request $request, $id)
+    {
+        try {
+            // 1. Validar los datos
+            $validated = $request->validate([
+                'PolizaDesempleoId'    => 'required|integer',
+                'Axo'             => 'required|integer',
+                'Mes'             => 'required|integer|min:1|max:12',
+                'MontoCartera'    => 'nullable|numeric',
+                'Tasa'            => 'nullable|numeric',
+                'PrimaCalculada'  => 'nullable|numeric',
+                'ExtraPrima'      => 'nullable|numeric',
+                'PrimaDescontada' => 'nullable|numeric',
+                'TasaComision'    => 'nullable|numeric',
+                'Comision'        => 'nullable|numeric',
+                'Retencion'       => 'nullable|numeric',
+                'IvaSobreComision' => 'nullable|numeric',
+                'Iva'             => 'nullable|numeric',
+                'APagar'          => 'nullable|numeric',
+                'FechaInicio'     => 'nullable|date',
+            ]);
+
+            // 2. Buscar o crear instancia del modelo DesempleoDetallePreliminar
+            $detalle = DesempleoDetallePreliminar::firstOrNew([
+                'PolizaDesempleoId' => $validated['PolizaDesempleoId'],
+                'Axo'          => $validated['Axo'],
+                'Mes'          => $validated['Mes'],
+            ]);
+
+            $usuariosReportados = DesempleoCartera::where('PolizaDesempleo', $validated['PolizaDesempleoId'])
+                ->where('Axo', $validated['Axo'])
+                ->where('Mes', $validated['Mes'])
+                ->where('PolizaDesempleoDetalle', null)
+                ->count();
+
+            $isNew = !$detalle->exists;
+
+            $detalle->MontoCartera    = $validated['MontoCartera'] ?? null;
+            $detalle->Tasa            = $validated['Tasa'] ?? null;
+            $detalle->PrimaCalculada  = $validated['PrimaCalculada'] ?? null;
+            $detalle->ExtraPrima      = $validated['ExtraPrima'] ?? null;
+            $detalle->PrimaDescontada = $validated['PrimaDescontada'] ?? null;
+            $detalle->TasaComision    = $validated['TasaComision'] ?? null;
+            $detalle->Comision        = $validated['Comision'] ?? null;
+            $detalle->Retencion       = $validated['Retencion'] ?? null;
+            $detalle->IvaSobreComision = $validated['IvaSobreComision'] ?? null;
+            $detalle->Iva             = $validated['Iva'] ?? null;
+            $detalle->APagar          = $validated['APagar'] ?? null;
+            $detalle->FechaInicio     = $validated['FechaInicio'] ?? null;
+            $detalle->UsuariosReportados     = $usuariosReportados;
+
+            $detalle->Usuario         = auth()->user()->id ?? null;
+
+            $detalle->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => $isNew ? 'Datos guardados exitosamente' : 'Datos actualizados exitosamente',
+                'data'    => $detalle,
+                'action'  => $isNew ? 'created' : 'updated'
+            ], $isNew ? 201 : 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error de validación',
+                'errors'  => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al guardar: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function destroy($id)
     {
         //
@@ -1915,7 +1993,7 @@ class DesempleoController extends Controller
         $comen->Desempleo = $request->DesempleoComment;
         $comen->save();
         alert()->success('El registro del comentario ha sido creado correctamente')->showConfirmButton('Aceptar', '#3085d6');
-        return Redirect::to('polizas/desempleo/' . $request->DesempleoComment );
+        return Redirect::to('polizas/desempleo/' . $request->DesempleoComment);
     }
 
     public function eliminar_comentario(Request $request)

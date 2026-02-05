@@ -233,12 +233,22 @@ trait PolizaControlCarteraTrait
                 ->where('poliza_declarativa_control.Axo', $anio)
                 ->where('poliza_declarativa_control.Mes', $mes)
                 ->join('poliza_desempleo', 'poliza_desempleo.Id', '=', 'poliza_declarativa_control.PolizaDesempleoId')
+
+                // LEFT JOIN con poliza_desempleo_detalle (Tabla oficial)
                 ->leftJoin('poliza_desempleo_detalle', function ($join) use ($anio, $mes) {
                     $join->on('poliza_desempleo_detalle.Desempleo', '=', 'poliza_desempleo.Id')
                         ->where('poliza_desempleo_detalle.Axo', $anio)
                         ->where('poliza_desempleo_detalle.Mes', $mes)
                         ->where('poliza_desempleo_detalle.Activo', 1);
                 })
+
+                // LEFT JOIN con poliza_desempleo_detalle_preliminar (Nueva tabla de fallback)
+                ->leftJoin('poliza_desempleo_detalle_preliminar', function ($join) use ($anio, $mes) {
+                    $join->on('poliza_desempleo_detalle_preliminar.PolizaDesempleoId', '=', 'poliza_desempleo.Id')
+                        ->where('poliza_desempleo_detalle_preliminar.Axo', $anio)
+                        ->where('poliza_desempleo_detalle_preliminar.Mes', $mes);
+                })
+
                 ->join('cliente', 'cliente.Id', '=', 'poliza_desempleo.Asegurado')
                 ->join('aseguradora', 'aseguradora.Id', '=', 'poliza_desempleo.Aseguradora')
                 ->join('plan', 'plan.Id', '=', 'poliza_desempleo.Plan')
@@ -257,24 +267,29 @@ trait PolizaControlCarteraTrait
                     'poliza_desempleo.VigenciaDesde',
                     'poliza_desempleo.VigenciaHasta',
 
-                    'poliza_desempleo_detalle.MontoCartera',
-                    'poliza_desempleo_detalle.PrimaCalculada',
-                    'poliza_desempleo_detalle.ExtraPrima',
-                    'poliza_desempleo_detalle.PrimaDescontada',
-                    'poliza_desempleo_detalle.TasaComision',
-                    'poliza_desempleo_detalle.Comision',
-                    'poliza_desempleo_detalle.Retencion',
-                    'poliza_desempleo_detalle.IvaSobreComision',
-                    'poliza_desempleo_detalle.APagar',
-                    'poliza_desempleo_detalle.NumeroRecibo',
-                    'poliza_desempleo_detalle.Axo',
-                    'poliza_desempleo_detalle.FechaInicio',
-                    'poliza_desempleo_detalle.Usuario',
-                    'poliza_desempleo_detalle.UsuariosReportados',
+                    // COALESCE para usar detalle oficial o preliminar
+                    DB::raw('COALESCE(poliza_desempleo_detalle.MontoCartera, poliza_desempleo_detalle_preliminar.MontoCartera) as MontoCartera'),
+
+                    // Campos que tomamos directo de la preliminar (asegurando que existan según tu CREATE TABLE)
+                    DB::raw('poliza_desempleo_detalle_preliminar.Tasa as Tasa'),
+                    DB::raw('poliza_desempleo_detalle_preliminar.Iva as Iva'),
+
+                    DB::raw('COALESCE(poliza_desempleo_detalle.PrimaCalculada, poliza_desempleo_detalle_preliminar.PrimaCalculada) as PrimaCalculada'),
+                    DB::raw('COALESCE(poliza_desempleo_detalle.ExtraPrima, poliza_desempleo_detalle_preliminar.ExtraPrima) as ExtraPrima'),
+                    DB::raw('COALESCE(poliza_desempleo_detalle.PrimaDescontada, poliza_desempleo_detalle_preliminar.PrimaDescontada) as PrimaDescontada'),
+                    DB::raw('COALESCE(poliza_desempleo_detalle.TasaComision, poliza_desempleo_detalle_preliminar.TasaComision) as TasaComision'),
+                    DB::raw('COALESCE(poliza_desempleo_detalle.Comision, poliza_desempleo_detalle_preliminar.Comision) as Comision'),
+                    DB::raw('COALESCE(poliza_desempleo_detalle.Retencion, poliza_desempleo_detalle_preliminar.Retencion) as Retencion'),
+                    DB::raw('COALESCE(poliza_desempleo_detalle.IvaSobreComision, poliza_desempleo_detalle_preliminar.IvaSobreComision) as IvaSobreComision'),
+                    DB::raw('COALESCE(poliza_desempleo_detalle.APagar, poliza_desempleo_detalle_preliminar.APagar) as APagar'),
+                    DB::raw('COALESCE(poliza_desempleo_detalle.NumeroRecibo, poliza_desempleo_detalle_preliminar.NumeroRecibo) as NumeroRecibo'),
+                    DB::raw('COALESCE(poliza_desempleo_detalle.Axo, poliza_desempleo_detalle_preliminar.Axo) as Axo'),
+                    DB::raw('COALESCE(poliza_desempleo_detalle.FechaInicio, poliza_desempleo_detalle_preliminar.FechaInicio) as FechaInicio'),
+                    DB::raw('COALESCE(poliza_desempleo_detalle.Usuario, poliza_desempleo_detalle_preliminar.Usuario) as Usuario'),
+                    DB::raw('COALESCE(poliza_desempleo_detalle.UsuariosReportados, poliza_desempleo_detalle_preliminar.UsuariosReportados) as UsuariosReportados'),
 
                     'cliente.Nombre as ClienteNombre',
                     'cliente.Nit as ClienteNit',
-
                     'plan.Nombre as PlanNombre',
                     'producto.Nombre as ProductoNombre',
                     'poliza_declarativa_reproceso.Nombre as ReprocesoNombre',

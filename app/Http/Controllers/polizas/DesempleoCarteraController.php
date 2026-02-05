@@ -56,20 +56,20 @@ class DesempleoCarteraController extends Controller
             ->join('poliza_desempleo_tipo_cartera as pdtc', 'pdt.PolizaDesempleoTipoCartera', '=', 'pdtc.Id')
             ->join('saldos_montos as sm', 'sm.Id', '=', 'pdt.SaldosMontos')
             ->leftJoin(DB::raw('(
-        SELECT DesempleoTipoCartera, SUM(TotalCredito) AS Total, Mes, Axo
-        FROM poliza_desempleo_cartera_temp
-        GROUP BY DesempleoTipoCartera, Mes, Axo
-    ) as pdct'), 'pdct.DesempleoTipoCartera', '=', 'pdtc.Id')
+                    SELECT DesempleoTipoCartera, SUM(TotalCredito) AS Total, Mes, Axo
+                    FROM poliza_desempleo_cartera_temp
+                    GROUP BY DesempleoTipoCartera, Mes, Axo
+                ) as pdct'), 'pdct.DesempleoTipoCartera', '=', 'pdtc.Id')
             ->select(
                 'pdt.PolizaDesempleoTipoCartera',
                 DB::raw("
-            CASE pdtc.TipoCalculo
-                WHEN 0 THEN 'No aplica'
-                WHEN 1 THEN 'Fecha'
-                WHEN 2 THEN 'Monto'
-                ELSE 'Desconocido'
-            END as TipoCalculoTexto
-        "),
+                    CASE pdtc.TipoCalculo
+                        WHEN 0 THEN 'No aplica'
+                        WHEN 1 THEN 'Fecha'
+                        WHEN 2 THEN 'Monto'
+                        ELSE 'Desconocido'
+                    END as TipoCalculoTexto
+                "),
                 DB::raw("GROUP_CONCAT(DISTINCT CONCAT(sm.Abreviatura, ' ', sm.Descripcion) ORDER BY sm.Id SEPARATOR ', ') as SaldosMontosTexto"),
                 DB::raw('COALESCE(pdct.Total, 0) as Total'),
                 'pdct.Mes',
@@ -113,15 +113,18 @@ class DesempleoCarteraController extends Controller
         $ultimo_pago = DesempleoDetalle::where('Desempleo', $id)->orderBy('Id', 'desc')->first();
 
         if ($ultimo_pago) {
-            // Si hay pago, tomar la fecha inicial y final con +1 mes exacto
+            // 1. Manejo de Fechas (Calendario)
             $fecha_inicial = Carbon::parse($ultimo_pago->FechaFinal);
             $fecha_final = $fecha_inicial->copy()->addMonth();
+            // Creamos una fecha temporal usando el Axo y Mes del array para incrementar el periodo
+            $periodo = Carbon::createFromDate($ultimo_pago->Axo, $ultimo_pago->Mes, 1)->addMonth();
 
-            $axo = $fecha_inicial->year;
-            $mes = (int) $ultimo_pago->Mes + 1;
+            // Ahora Axo y Mes siempre serán correctos, incluso pasando de Diciembre a Enero
+            $axo = $periodo->year;
+            $mes = $periodo->month;
 
-            // Formato final Y-m-d
-            $fechaInicio =  $fecha_inicial->format('Y-m-d');
+            //Formato final para los inputs de la vista
+            $fechaInicio = $fecha_inicial->format('Y-m-d');
             $fechaFinal = $fecha_final->format('Y-m-d');
         }
 

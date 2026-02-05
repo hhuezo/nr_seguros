@@ -73,4 +73,7 @@ Route::middleware(['web'])->group(function () {
     Route::post('polizas/desempleo/eliminar_renovacion/{id}', [DesempleoRenovacionController::class, 'eliminar_renovacion']);
 
     Route::resource('polizas/desempleo', DesempleoController::class);
+
+
+    Route::post('polizas/desempleo/detalle_preliminar/{id}', [DesempleoController::class, 'detalle_preliminar']);
 });

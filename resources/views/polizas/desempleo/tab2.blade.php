@@ -54,7 +54,7 @@
         <div class="col-md-6">
 
             <h4 class="title" id="exampleModalLabel">
-                {{$dataPago->first()['PrimaCalculada'] > 0 ? 'Nuevo pago':'Ultimo periodo facturado'}}</h4>
+                {{ $dataPago->first()['PrimaCalculada'] > 0 ? 'Nuevo pago' : 'Ultimo periodo facturado' }}</h4>
         </div>
         <br>
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -347,8 +347,9 @@
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" style="text-align: right">
 
 
-                    @if($totalPrimaCalculada > 0)
-                    <a class="btn btn-success" href="{{ url('desempleo/exportar_excel') }}/{{ $desempleo->Id }}">Exportar Cartera</a>
+                    @if ($totalPrimaCalculada > 0)
+                        <a class="btn btn-success"
+                            href="{{ url('desempleo/exportar_excel') }}/{{ $desempleo->Id }}">Exportar Cartera</a>
                     @endif
                     <a class="btn btn-default" data-target="#modal-cancelar" data-toggle="modal">Cancelar
                         Cobro</a>
@@ -433,18 +434,16 @@
 
                         <div class="modal-body">
                             <div class="card mt-4 p-3 bg-light" style="display: none">
-                                <h5>🔍 Depuración de valores (inputs visibles)</h5>
                                 <div class="row g-2">
-
-
                                     <div class="col-md-3">
                                         <label>Fecha inicio</label>
                                         <input type="text" class="form-control" name="FechaInicio"
+                                            id="FechaInicio"
                                             value="{{ isset($fechas) ? $fechas->FechaInicio : '' }}">
                                     </div>
                                     <div class="col-md-3">
                                         <label>Fecha Final</label>
-                                        <input type="text" class="form-control" name="FechaFinal"
+                                        <input type="text" class="form-control" name="FechaFinal" id="FechaFinal"
                                             value="{{ isset($fechas) ? $fechas->FechaFinal : '' }}">
                                     </div>
 
@@ -454,29 +453,27 @@
                                             id="MontoCarteraDetalle" value="{{ $data['total'] }}">
                                     </div>
 
-
                                     <div class="col-md-3">
                                         <label>Desempleo (ID)</label>
                                         <input type="text" class="form-control" name="Desempleo"
-                                            value="{{ $desempleo->Id }}">
+                                            id="PolizaDesempleoId" value="{{ $desempleo->Id }}">
                                     </div>
-
 
                                     <div class="col-md-3">
                                         <label>Año</label>
-                                        <input type="text" class="form-control" name="Axo"
+                                        <input type="text" class="form-control" name="Axo" id="AxoDetalle"
                                             value="{{ isset($fechas) ? $fechas->Axo : '' }}">
                                     </div>
 
                                     <div class="col-md-3">
                                         <label>Mes</label>
-                                        <input type="text" class="form-control" name="Mes"
+                                        <input type="text" class="form-control" name="Mes" id="MesDetalle"
                                             value="{{ isset($fechas) ? $fechas->Mes : '' }}">
                                     </div>
 
                                     <div class="col-md-3">
                                         <label>Tasa</label>
-                                        <input type="text" class="form-control" name="Tasa"
+                                        <input type="text" class="form-control" name="Tasa" id="Tasa"
                                             value="{{ $desempleo->Tasa }}">
                                     </div>
 
@@ -507,7 +504,7 @@
                                     <div class="col-md-3">
                                         <label>Tasa Comisión</label>
                                         <input type="text" class="form-control" name="TasaComision"
-                                            value="{{ $desempleo->TasaComision ?? 0 }}">
+                                            id="TasaComisionVida" value="{{ $desempleo->TasaComision ?? 0 }}">
                                     </div>
 
                                     <div class="col-md-3">
@@ -549,7 +546,7 @@
                                     <div class="col-md-3">
                                         <label>Extra Prima</label>
                                         <input type="text" class="form-control" name="ExtraPrima"
-                                            value="{{ $data['extra_prima'] }}">
+                                            id="ExtraPrimaVida" value="{{ $data['extra_prima'] }}">
                                     </div>
                                 </div>
                             </div>
@@ -571,7 +568,64 @@
     document.addEventListener("DOMContentLoaded", function() {
         inicializarEventosEditables();
         recalcularTotales(); // cálculo inicial
+        verificarTablaPreliminar();
     });
+
+
+
+    function verificarTablaPreliminar() {
+        // 1. Obtener valores para validar
+        const primaCalculada = parseFloat(document.getElementById('PrimaCalculadaDetalle').value) || 0;
+        const montoCartera = parseFloat(document.getElementById('MontoCarteraDetalle').value) || 0;
+
+        if (primaCalculada <= 0 || montoCartera <= 0) {
+            console.log('No se envía: PrimaCalculada o MontoCartera son <= 0');
+            return;
+        }
+
+        // 2. Obtener el ID de la Póliza de Desempleo
+        const desempleoId = document.getElementById('PolizaDesempleoId').value;
+
+        // 3. Preparar los datos (Asegúrate de que los IDs coincidan con el HTML arriba)
+        const datos = {
+            FechaInicio: document.getElementById('FechaInicio').value,
+            FechaFinal: document.getElementById('FechaFinal').value,
+            Mes: document.getElementById('MesDetalle').value,
+            Axo: document.getElementById('AxoDetalle').value,
+            MontoCartera: montoCartera,
+            Tasa: document.getElementById('Tasa').value,
+            PrimaCalculada: primaCalculada,
+            PrimaDescontada: document.getElementById('PrimaDescontadaDetalle').value,
+            Iva: document.getElementById('IvaDetalle').value ?? 0.00,
+            TasaComision: document.getElementById('TasaComisionVida').value, // Actualizado
+            Comision: document.getElementById('ComisionDetalle').value,
+            IvaSobreComision: document.getElementById('IvaComisionDetalle').value,
+            Retencion: document.getElementById('RetencionDetalle').value,
+            APagar: document.getElementById('APagarDetalle').value,
+            ExtraPrima: document.getElementById('ExtraPrimaVida').value, // Actualizado
+            PolizaDesempleoId: desempleoId,
+            _token: '{{ csrf_token() }}'
+        };
+
+        // 4. Enviar por fetch a la ruta de Desempleo
+        fetch(`{{ url('polizas/desempleo/detalle_preliminar') }}/${desempleoId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(datos)
+            })
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Respuesta desempleo:', data);
+            })
+            .catch(error => console.error('Error en fetch desempleo:', error));
+    }
 
     // ========================
     // 🎯 Inicializar eventos
