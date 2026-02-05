@@ -351,8 +351,9 @@
 
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" style="text-align: right">
 
-                    @if($totalPrimaCalculada > 0)
-                    <a class="btn btn-success" href="{{ url('deuda/exportar_excel') }}/{{ $deuda->Id }}">Exportar Cartera</a>
+                    @if ($totalPrimaCalculada > 0)
+                        <a class="btn btn-success"
+                            href="{{ url('deuda/exportar_excel') }}/{{ $deuda->Id }}">Exportar Cartera</a>
                     @endif
                     <a class="btn btn-default" data-target="#modal-cancelar" data-toggle="modal">Cancelar Cobro</a>
                     <a class="btn btn-primary" data-target="#modal-aplicar" data-toggle="modal">Generar Cobro</a>
@@ -453,7 +454,7 @@
                                     <label>Mes</label>
                                     <input type="text" class="form-control"
                                         value="{{ isset($ultimaCartera->Mes) ? $ultimaCartera->Mes : '' }}"
-                                        name="Mes">
+                                        name="Mes" id="MesDetalle">
 
                                 </div>
 
@@ -461,7 +462,7 @@
                                     <label>Año</label>
                                     <input type="text" class="form-control"
                                         value="{{ isset($ultimaCartera->Axo) ? $ultimaCartera->Axo : '' }}"
-                                        name="Axo">
+                                        name="Axo" id="AxoDetalle">
 
                                 </div>
                                 <div class="col-md-3">
@@ -565,10 +566,78 @@
             // Calcula solo una vez al inicio
             sincronizarIniciales();
             inicializarEventosEditables();
+            verificarTablaPreliminar();
         });
 
+
+
+        function verificarTablaPreliminar() {
+            // Obtener valores para validar
+            const primaCalculada = parseFloat(document.getElementById('PrimaCalculadaDetalle').value) || 0;
+            const montoCartera = parseFloat(document.getElementById('MontoCarteraDetalle').value) || 0;
+
+            // Validar que ambos sean mayores a 0
+            if (primaCalculada <= 0 || montoCartera <= 0) {
+                console.log('No se envía: PrimaCalculada o MontoCartera son <= 0');
+                return;
+            }
+
+            // Obtener el ID de la deuda
+            const deudaId = document.getElementById('Deuda').value;
+
+            // Preparar los datos del formulario
+            const datos = {
+                FechaInicio: document.getElementById('FechaInicio').value,
+                FechaFinal: document.getElementById('FechaFinal').value,
+                Mes: document.getElementById('MesDetalle').value,
+                Axo: document.getElementById('AxoDetalle').value,
+                MontoCartera: montoCartera,
+                Tasa: document.getElementById('Tasa').value,
+                PrimaCalculada: primaCalculada,
+                PrimaDescontada: document.getElementById('PrimaDescontadaDetalle').value,
+                Iva: document.getElementById('IvaDetalle').value,
+                TasaComision: document.getElementById('TasaComision').value,
+                Comision: document.getElementById('ComisionDetalle').value,
+                IvaSobreComision: document.getElementById('IvaComisionDetalle').value,
+                Retencion: document.getElementById('RetencionDetalle').value,
+                APagar: document.getElementById('APagarDetalle').value,
+                ExtraPrima: document.getElementById('ExtraPrima').value,
+                PolizaDeudaId: deudaId,
+                _token: '{{ csrf_token() }}'
+            };
+
+
+            // Enviar por fetch
+            fetch(`{{ url('polizas/deuda/detalle_preliminar') }}/${deudaId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(datos)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Respuesta del servidor:', data);
+
+                    if (data.success) {
+                    } else {
+                        console.log('Error en la respuesta del servidor:', data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
         // ========================
-        // 🎯 Inicializar eventos
+        // Inicializar eventos
         // ========================
         function inicializarEventosEditables() {
             $(document).on('blur', '.editable', function(event) {
@@ -749,7 +818,7 @@
         }
 
         // ========================
-        // ⚙️ Recalcular desde total_prima_calculada
+        // Recalcular desde total_prima_calculada
         // ========================
         function recalcularDesdeTotalPrima(total) {
             document.getElementById("PrimaCalculadaDetalle").value = total;
@@ -759,7 +828,7 @@
         }
 
         // ========================
-        // ⚙️ Recalcular desde sub_total_ccf
+        // Recalcular desde sub_total_ccf
         // ========================
         function recalcularDesdeSubTotalCCF(sub_total_ccf) {
             const toNumber = v => parseFloat(String(v ?? '').replace(/,/g, '')) || 0;
@@ -780,7 +849,7 @@
         }
 
         // ========================
-        // ⚙️ Recalcular desde comision_ccf
+        // Recalcular desde comision_ccf
         // ========================
         function recalcularDesdeComisionCCF(comision_ccf) {
             const toNumber = v => parseFloat(String(v ?? '').replace(/,/g, '')) || 0;

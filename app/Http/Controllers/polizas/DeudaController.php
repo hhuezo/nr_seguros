@@ -40,6 +40,7 @@ use App\Models\polizas\Desempleo;
 use App\Models\polizas\Deuda;
 use App\Models\polizas\DeudaCredito;
 use App\Models\polizas\DeudaDetalle;
+use App\Models\polizas\DeudaDetallePreliminar;
 use App\Models\polizas\DeudaHistorialRecibo;
 use App\Models\polizas\DeudaRequisitos;
 use App\Models\polizas\DeudaValidados;
@@ -2935,6 +2936,74 @@ class DeudaController extends Controller
         }
 
         return view('polizas.deuda.validacion_poliza.creditos_detalle_requisitos', compact('data', 'tipo'));
+    }
+
+
+    public function detalle_preliminar(Request $request, $id)
+    {
+        try {
+            // Validar los datos
+            $validated = $request->validate([
+                'PolizaDeudaId' => 'required|integer',
+                'Axo' => 'required|integer',
+                'Mes' => 'required|integer|min:1|max:12',
+                'MontoCartera' => 'nullable|numeric',
+                'Tasa' => 'nullable|numeric',
+                'PrimaCalculada' => 'nullable|numeric',
+                'ExtraPrima' => 'nullable|numeric',
+                'PrimaDescontada' => 'nullable|numeric',
+                'TasaComision' => 'nullable|numeric',
+                'Comision' => 'nullable|numeric',
+                'Retencion' => 'nullable|numeric',
+                'IvaSobreComision' => 'nullable|numeric',
+                'Iva' => 'nullable|numeric',
+                'APagar' => 'nullable|numeric',
+                'FechaInicio' => 'nullable|date',
+            ]);
+
+            // Buscar o crear nueva instancia (sin guardar aún)
+            $detalle = DeudaDetallePreliminar::firstOrNew([
+                'PolizaDeudaId' => $validated['PolizaDeudaId'],
+                'Axo' => $validated['Axo'],
+                'Mes' => $validated['Mes'],
+            ]);
+
+            $isNew = !$detalle->exists;
+
+            // Asignar valores
+            $detalle->MontoCartera = $validated['MontoCartera'] ?? null;
+            $detalle->Tasa = $validated['Tasa'] ?? null;
+            $detalle->PrimaCalculada = $validated['PrimaCalculada'] ?? null;
+            $detalle->ExtraPrima = $validated['ExtraPrima'] ?? null;
+            $detalle->PrimaDescontada = $validated['PrimaDescontada'] ?? null;
+            $detalle->TasaComision = $validated['TasaComision'] ?? null;
+            $detalle->Comision = $validated['Comision'] ?? null;
+            $detalle->Retencion = $validated['Retencion'] ?? null;
+            $detalle->IvaSobreComision = $validated['IvaSobreComision'] ?? null;
+            $detalle->Iva = $validated['Iva'] ?? null;
+            $detalle->APagar = $validated['APagar'] ?? null;
+            $detalle->FechaInicio = $validated['FechaInicio'] ?? null;
+            $detalle->Usuario = auth()->user()->name ?? 'Sistema';
+            $detalle->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => $isNew ? 'Datos guardados exitosamente' : 'Datos actualizados exitosamente',
+                'data' => $detalle,
+                'action' => $isNew ? 'created' : 'updated'
+            ], $isNew ? 201 : 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error de validación',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al guardar: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
 
