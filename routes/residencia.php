@@ -32,4 +32,6 @@ Route::middleware(['web'])->group(function () {
     Route::get('polizas/residencia/renovar/{id}', [ResidenciaRenovacionController::class, 'renovar']);
     Route::post('polizas/residencia/renovar', [ResidenciaRenovacionController::class, 'save_renovar']);
     Route::post('polizas/residencia/eliminar_renovacion/{id}', [ResidenciaRenovacionController::class, 'eliminar_renovacion']);
+
+      Route::post('polizas/residencia/detalle_preliminar/{id}', [ResidenciaController::class, 'detalle_preliminar']);
 });

@@ -20,6 +20,7 @@ use App\Models\polizas\Comentario;
 use App\Models\polizas\DetalleResidencia;
 use App\Models\polizas\PolizaResidenciaCartera;
 use App\Models\polizas\Residencia;
+use App\Models\polizas\ResidenciaDetallePreliminar;
 use App\Models\polizas\ResidenciaHistorialRecibo;
 use App\Models\temp\PolizaResidenciaTempCartera;
 use Carbon\Carbon;
@@ -1016,7 +1017,7 @@ class ResidenciaController extends Controller
         $recibo_historial = $this->save_recibo($residencia, $detalle);
         ///dd($recibo_historial);
         $configuracion = ConfiguracionRecibo::first();
-        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion', 'detalle', 'residencia', 'meses', 'cliente', 'recibo_historial','tipo_calculo'))->setWarnings(false)->setPaper('letter');
+        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion', 'detalle', 'residencia', 'meses', 'cliente', 'recibo_historial', 'tipo_calculo'))->setWarnings(false)->setPaper('letter');
         return $pdf->stream('Recibo.pdf');
 
         //  return back();
@@ -1054,7 +1055,7 @@ class ResidenciaController extends Controller
 
 
         //return view('polizas.residencia.recibo', compact('configuracion','cliente',  'detalle', 'residencia', 'meses', 'calculo'));
-        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion', 'cliente', 'detalle', 'residencia', 'meses', 'calculo', 'recibo_historial','tipo_calculo'))->setWarnings(false)->setPaper('letter');
+        $pdf = \PDF::loadView('polizas.residencia.recibo', compact('configuracion', 'cliente', 'detalle', 'residencia', 'meses', 'calculo', 'recibo_historial', 'tipo_calculo'))->setWarnings(false)->setPaper('letter');
         //  dd($detalle);
         return $pdf->stream('Recibos.pdf');
     }
@@ -1292,5 +1293,83 @@ class ResidenciaController extends Controller
         return $pdf->stream('Recibos.pdf');
 
         return redirect('polizas/residencia/' . $residencia->Id . '/edit');
+    }
+
+
+
+
+    public function detalle_preliminar(Request $request, $id)
+    {
+        try {
+            // 1. Validar los datos
+            $validated = $request->validate([
+                'PolizaResidenciaId'    => 'required|integer',
+                'Axo'             => 'required|integer',
+                'Mes'             => 'required|integer|min:1|max:12',
+                'MontoCartera'    => 'nullable|numeric',
+                'Tasa'            => 'nullable|numeric',
+                'PrimaCalculada'  => 'nullable|numeric',
+                'ExtraPrima'      => 'nullable|numeric',
+                'PrimaDescontada' => 'nullable|numeric',
+                'TasaComision'    => 'nullable|numeric',
+                'Comision'        => 'nullable|numeric',
+                'Retencion'       => 'nullable|numeric',
+                'IvaSobreComision' => 'nullable|numeric',
+                'Iva'             => 'nullable|numeric',
+                'APagar'          => 'nullable|numeric',
+                'FechaInicio'     => 'nullable|date',
+            ]);
+
+            // 2. Buscar o crear instancia del modelo ResidenciaDetallePreliminar
+            $detalle = ResidenciaDetallePreliminar::firstOrNew([
+                'PolizaResidenciaId' => $validated['PolizaResidenciaId'],
+                'Axo'          => $validated['Axo'],
+                'Mes'          => $validated['Mes'],
+            ]);
+
+            $usuariosReportados = PolizaResidenciaCartera::where('PolizaResidencia', $validated['PolizaResidenciaId'])
+                ->where('Axo', $validated['Axo'])
+                ->where('Mes', $validated['Mes'])
+                ->where('DetalleResidencia', null)
+                ->count();
+
+            $isNew = !$detalle->exists;
+
+            $detalle->MontoCartera    = $validated['MontoCartera'] ?? null;
+            $detalle->Tasa            = $validated['Tasa'] ?? null;
+            $detalle->PrimaCalculada  = $validated['PrimaCalculada'] ?? null;
+            $detalle->ExtraPrima      = $validated['ExtraPrima'] ?? null;
+            $detalle->PrimaDescontada = $validated['PrimaDescontada'] ?? null;
+            $detalle->TasaComision    = $validated['TasaComision'] ?? null;
+            $detalle->Comision        = $validated['Comision'] ?? null;
+            $detalle->Retencion       = $validated['Retencion'] ?? null;
+            $detalle->IvaSobreComision = $validated['IvaSobreComision'] ?? null;
+            $detalle->Iva             = $validated['Iva'] ?? null;
+            $detalle->APagar          = $validated['APagar'] ?? null;
+            $detalle->FechaInicio     = $validated['FechaInicio'] ?? null;
+            $detalle->UsuariosReportados     = $usuariosReportados;
+
+            $detalle->Usuario         = auth()->user()->id ?? null;
+
+            $detalle->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => $isNew ? 'Datos guardados exitosamente' : 'Datos actualizados exitosamente',
+                'data'    => $detalle,
+                'action'  => $isNew ? 'created' : 'updated'
+            ], $isNew ? 201 : 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error de validación',
+                'errors'  => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al guardar: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

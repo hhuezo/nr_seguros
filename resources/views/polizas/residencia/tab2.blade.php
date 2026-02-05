@@ -74,7 +74,7 @@
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                                     <select name="Axo" id="Axo" class="form-control">
                                         @for ($i = date('Y'); $i >= 2025; $i--)
-                                            <option value="{{ $i }}" {{$i == $axo ? 'selected':''}}>
+                                            <option value="{{ $i }}" {{ $i == $axo ? 'selected' : '' }}>
                                                 {{ $i }}
                                             </option>
                                         @endfor
@@ -447,38 +447,39 @@
                                             <div class="form-group">
                                                 <label>Residencia</label>
                                                 <input type="text" class="form-control" name="Residencia"
-                                                    id="Residencia" value="{{ $residencia->Id }}">
+                                                    id="PolizaResidenciaId" value="{{ $residencia->Id }}">
                                             </div>
 
                                             <div class="form-group">
                                                 <label>Tasa</label>
                                                 <input type="text" class="form-control" name="Tasa"
-                                                    value="{{ $residencia->Tasa }}">
+                                                    id="Tasa" value="{{ $residencia->Tasa }}">
                                             </div>
 
                                             <div class="form-group">
                                                 <label>Fecha inicio</label>
                                                 <input type="text" class="form-control" name="FechaInicio"
+                                                    id="FechaInicio"
                                                     value="{{ isset($fecha) ? $fecha->FechaInicio : '' }}">
                                             </div>
 
                                             <div class="form-group">
                                                 <label>Fecha final</label>
                                                 <input type="text" class="form-control" name="FechaFinal"
+                                                    id="FechaFinal"
                                                     value="{{ isset($fecha) ? $fecha->FechaFinal : '' }}">
                                             </div>
 
                                             <div class="form-group">
                                                 <label>Año</label>
                                                 <input type="text" class="form-control" name="Axo"
-                                                    value="{{ isset($fecha) ? $fecha->Axo : '' }}">
+                                                    id="AxoDetalle" value="{{ isset($fecha) ? $fecha->Axo : '' }}">
                                             </div>
-
 
                                             <div class="form-group">
                                                 <label>Mes</label>
                                                 <input type="text" class="form-control" name="Mes"
-                                                    value="{{ isset($fecha) ? $fecha->Mes : '' }}">
+                                                    id="MesDetalle" value="{{ isset($fecha) ? $fecha->Mes : '' }}">
                                             </div>
 
                                             <div class="form-group">
@@ -514,7 +515,7 @@
                                             <div class="form-group">
                                                 <label>Tasa comisión</label>
                                                 <input type="text" class="form-control" name="TasaComision"
-                                                    value="{{ $residencia->TasaComision }}">
+                                                    id="TasaComisionVida" value="{{ $residencia->TasaComision }}">
                                             </div>
 
                                             <div class="form-group">
@@ -556,7 +557,7 @@
                                             <div class="form-group">
                                                 <label>Impuesto bomberos</label>
                                                 <input type="text" class="form-control" name="ImpuestoBomberos"
-                                                    value="{{ $bomberos }}">
+                                                    id="ImpuestoBomberos" value="{{ $bomberos }}">
                                             </div>
 
                                             <div class="form-group">
@@ -580,7 +581,7 @@
                                             <div class="form-group">
                                                 <label>Extra prima</label>
                                                 <input type="text" class="form-control" name="ExtraPrima"
-                                                    value="0">
+                                                    id="ExtraPrimaResidencia" value="0">
                                             </div>
 
                                         </div>
@@ -1210,5 +1211,67 @@
         añoSelect.addEventListener('change', actualizarFechas);
         mesSelect.addEventListener('change', actualizarFechas);
 
+
+        verificarTablaPreliminar();
+
     });
+
+
+
+
+
+
+    function verificarTablaPreliminar() {
+        // 1. Obtener valores para validar
+        const primaCalculada = parseFloat(document.getElementById('PrimaCalculadaDetalle').value) || 0;
+        const montoCartera = parseFloat(document.getElementById('MontoCarteraDetalle').value) || 0;
+
+        if (primaCalculada <= 0 || montoCartera <= 0) {
+            console.log('No se envía: PrimaCalculada o MontoCartera son <= 0');
+            return;
+        }
+
+        // 2. Obtener el ID de la Póliza de Residencia
+        const residenciaId = document.getElementById('PolizaResidenciaId').value;
+
+        // 3. Preparar los datos (Asegúrate de que los IDs coincidan con el HTML arriba)
+        const datos = {
+            FechaInicio: document.getElementById('FechaInicio').value,
+            FechaFinal: document.getElementById('FechaFinal').value,
+            Mes: document.getElementById('MesDetalle').value,
+            Axo: document.getElementById('AxoDetalle').value,
+            MontoCartera: montoCartera,
+            Tasa: document.getElementById('Tasa').value,
+            PrimaCalculada: primaCalculada,
+            PrimaDescontada: document.getElementById('PrimaDescontadaDetalle').value,
+            Iva: document.getElementById('IvaDetalle').value,
+            TasaComision: document.getElementById('TasaComisionVida').value, // Actualizado
+            Comision: document.getElementById('ComisionDetalle').value,
+            IvaSobreComision: document.getElementById('IvaComisionDetalle').value,
+            Retencion: document.getElementById('RetencionDetalle').value,
+            APagar: document.getElementById('APagarDetalle').value,
+            ExtraPrima: document.getElementById('ExtraPrimaResidencia').value, // Actualizado
+            PolizaResidenciaId: residenciaId, // Nombre de campo actualizado
+            _token: '{{ csrf_token() }}'
+        };
+
+        // 4. Enviar por fetch a la ruta de Residencia
+        fetch(`{{ url('polizas/residencia/detalle_preliminar') }}/${residenciaId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(datos)
+            })
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Respuesta residencia:', data);
+            })
+            .catch(error => console.error('Error en fetch residencia:', error));
+    }
 </script>

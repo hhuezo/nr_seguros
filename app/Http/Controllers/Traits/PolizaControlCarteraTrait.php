@@ -373,57 +373,66 @@ trait PolizaControlCarteraTrait
             ->where('poliza_declarativa_control.Axo', $anio)
             ->where('poliza_declarativa_control.Mes', $mes)
             ->join('poliza_residencia', 'poliza_residencia.Id', '=', 'poliza_declarativa_control.PolizaResidenciaId')
+
+            // 1. Join con la tabla oficial
             ->leftJoin('poliza_residencia_detalle', function ($join) use ($anio, $mes) {
                 $join->on('poliza_residencia_detalle.Residencia', '=', 'poliza_residencia.Id')
                     ->where('poliza_residencia_detalle.Axo', $anio)
                     ->where('poliza_residencia_detalle.Mes', $mes)
                     ->where('poliza_residencia_detalle.Activo', 1);
             })
+
+            // 2. Join con la nueva tabla preliminar
+            ->leftJoin('poliza_residencia_detalle_preliminar', function ($join) use ($anio, $mes) {
+                $join->on('poliza_residencia_detalle_preliminar.PolizaResidenciaId', '=', 'poliza_residencia.Id')
+                    ->where('poliza_residencia_detalle_preliminar.Axo', $anio)
+                    ->where('poliza_residencia_detalle_preliminar.Mes', $mes);
+            })
+
             ->join('cliente', 'cliente.Id', '=', 'poliza_residencia.Asegurado')
             ->join('aseguradora', 'aseguradora.Id', '=', 'poliza_residencia.Aseguradora')
             ->join('plan', 'plan.Id', '=', 'poliza_residencia.Plan')
             ->join('producto', 'producto.Id', '=', 'plan.Producto')
-            ->leftJoin(
-                'poliza_declarativa_reproceso',
-                'poliza_declarativa_reproceso.Id',
-                '=',
-                'poliza_declarativa_control.ReprocesoNRId'
-            )
+            ->leftJoin('poliza_declarativa_reproceso', 'poliza_declarativa_reproceso.Id', '=', 'poliza_declarativa_control.ReprocesoNRId')
             ->select(
                 'poliza_declarativa_control.*',
                 DB::raw("'RESIDENCIA' AS TipoPoliza"),
-
                 'poliza_residencia.NumeroPoliza',
                 'poliza_residencia.VigenciaDesde',
                 'poliza_residencia.VigenciaHasta',
 
-                'poliza_residencia_detalle.MontoCartera',
-                'poliza_residencia_detalle.PrimaCalculada',
-                'poliza_residencia_detalle.ExtraPrima',
-                'poliza_residencia_detalle.PrimaDescontada',
-                'poliza_residencia_detalle.TasaComision',
-                'poliza_residencia_detalle.Comision',
-                'poliza_residencia_detalle.Retencion',
-                'poliza_residencia_detalle.IvaSobreComision',
-                'poliza_residencia_detalle.APagar',
-                'poliza_residencia_detalle.NumeroRecibo',
-                'poliza_residencia_detalle.Axo',
-                'poliza_residencia_detalle.FechaInicio',
-                'poliza_residencia_detalle.Usuario',
-                'poliza_residencia_detalle.UsuariosReportados',
+                // COALESCE: Prioridad Tabla Oficial > Tabla Preliminar
+                DB::raw('COALESCE(poliza_residencia_detalle.MontoCartera, poliza_residencia_detalle_preliminar.MontoCartera) as MontoCartera'),
+
+                // Campos exclusivos o requeridos de la preliminar (según tu CREATE TABLE)
+                DB::raw('poliza_residencia_detalle_preliminar.Tasa as Tasa'),
+                DB::raw('poliza_residencia_detalle_preliminar.Iva as Iva'),
+
+                DB::raw('COALESCE(poliza_residencia_detalle.PrimaCalculada, poliza_residencia_detalle_preliminar.PrimaCalculada) as PrimaCalculada'),
+                DB::raw('COALESCE(poliza_residencia_detalle.ExtraPrima, poliza_residencia_detalle_preliminar.ExtraPrima) as ExtraPrima'),
+                DB::raw('COALESCE(poliza_residencia_detalle.PrimaDescontada, poliza_residencia_detalle_preliminar.PrimaDescontada) as PrimaDescontada'),
+                DB::raw('COALESCE(poliza_residencia_detalle.TasaComision, poliza_residencia_detalle_preliminar.TasaComision) as TasaComision'),
+                DB::raw('COALESCE(poliza_residencia_detalle.Comision, poliza_residencia_detalle_preliminar.Comision) as Comision'),
+                DB::raw('COALESCE(poliza_residencia_detalle.Retencion, poliza_residencia_detalle_preliminar.Retencion) as Retencion'),
+                DB::raw('COALESCE(poliza_residencia_detalle.IvaSobreComision, poliza_residencia_detalle_preliminar.IvaSobreComision) as IvaSobreComision'),
+                DB::raw('COALESCE(poliza_residencia_detalle.APagar, poliza_residencia_detalle_preliminar.APagar) as APagar'),
+                DB::raw('COALESCE(poliza_residencia_detalle.NumeroRecibo, poliza_residencia_detalle_preliminar.NumeroRecibo) as NumeroRecibo'),
+                DB::raw('COALESCE(poliza_residencia_detalle.Axo, poliza_residencia_detalle_preliminar.Axo) as Axo'),
+                DB::raw('COALESCE(poliza_residencia_detalle.FechaInicio, poliza_residencia_detalle_preliminar.FechaInicio) as FechaInicio'),
+                DB::raw('COALESCE(poliza_residencia_detalle.Usuario, poliza_residencia_detalle_preliminar.Usuario) as Usuario'),
+                DB::raw('COALESCE(poliza_residencia_detalle.UsuariosReportados, poliza_residencia_detalle_preliminar.UsuariosReportados) as UsuariosReportados'),
 
                 'cliente.Nombre as ClienteNombre',
                 'cliente.Nit as ClienteNit',
-
                 'plan.Nombre as PlanNombre',
                 'producto.Nombre as ProductoNombre',
                 'poliza_declarativa_reproceso.Nombre as ReprocesoNombre',
                 'aseguradora.Abreviatura',
-                'poliza_residencia_detalle.Residencia',
+                'poliza_residencia_detalle.Residencia'
             )
             ->get();
 
-
+        // Mapeo de nombres de usuario
         $residencia = $residencia->map(function ($item) use ($usuariosMap) {
             $item->Usuario = $usuariosMap[$item->Usuario] ?? null;
             return $item;
