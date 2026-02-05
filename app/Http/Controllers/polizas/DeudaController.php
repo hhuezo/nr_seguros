@@ -2968,6 +2968,13 @@ class DeudaController extends Controller
                 'Mes' => $validated['Mes'],
             ]);
 
+
+              $usuariosReportados = PolizaDeudaCartera::where('PolizaDeuda', $validated['PolizaDeudaId'])
+                ->where('Axo', $validated['Axo'])
+                ->where('Mes', $validated['Mes'])
+                ->where('PolizaDeudaDetalle', null)
+                ->count();
+
             $isNew = !$detalle->exists;
 
             // Asignar valores
@@ -2983,7 +2990,9 @@ class DeudaController extends Controller
             $detalle->Iva = $validated['Iva'] ?? null;
             $detalle->APagar = $validated['APagar'] ?? null;
             $detalle->FechaInicio = $validated['FechaInicio'] ?? null;
-            $detalle->Usuario = auth()->user()->name ?? 'Sistema';
+            $detalle->UsuariosReportados     = $usuariosReportados;
+
+            $detalle->Usuario         = auth()->user()->id ?? null;
             $detalle->save();
 
             return response()->json([

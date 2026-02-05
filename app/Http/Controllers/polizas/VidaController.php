@@ -2984,6 +2984,12 @@ class VidaController extends Controller
                 'Mes'          => $validated['Mes'],
             ]);
 
+            $usuariosReportados = VidaCartera::where('PolizaVida', $validated['PolizaVidaId'])
+                ->where('Axo', $validated['Axo'])
+                ->where('Mes', $validated['Mes'])
+                ->where('PolizaVidaDetalle', null)
+                ->count();
+
             $isNew = !$detalle->exists;
 
             $detalle->MontoCartera    = $validated['MontoCartera'] ?? null;
@@ -2998,8 +3004,9 @@ class VidaController extends Controller
             $detalle->Iva             = $validated['Iva'] ?? null;
             $detalle->APagar          = $validated['APagar'] ?? null;
             $detalle->FechaInicio     = $validated['FechaInicio'] ?? null;
+            $detalle->UsuariosReportados     = $usuariosReportados;
 
-            $detalle->Usuario         = auth()->user()->name ?? 'Sistema';
+            $detalle->Usuario         = auth()->user()->id ?? null;
 
             $detalle->save();
 
