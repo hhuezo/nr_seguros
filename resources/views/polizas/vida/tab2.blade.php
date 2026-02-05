@@ -296,26 +296,26 @@
                             <div style="display: none">
                                 <div class="form-group">
                                     <label>Fecha inicio</label>
-                                    <input type="text" class="form-control" name="FechaInicio"
+                                    <input type="text" class="form-control" name="FechaInicio" id="FechaInicio"
                                         value="{{ isset($fechas) ? $fechas->FechaInicio : '' }}">
                                 </div>
 
                                 <div class="form-group">
                                     <label>Fecha final</label>
-                                    <input type="text" class="form-control" name="FechaFinal"
+                                    <input type="text" class="form-control" name="FechaFinal" id="FechaFinal"
                                         value="{{ isset($fechas) ? $fechas->FechaFinal : '' }}">
                                 </div>
 
                                 <div class="form-group">
                                     <label>Año</label>
-                                    <input type="text" class="form-control" name="Axo"
+                                    <input type="text" class="form-control" name="Axo" id="AxoDetalle"
                                         value="{{ isset($fechas) ? $fechas->Axo : '' }}">
                                 </div>
 
 
                                 <div class="form-group">
                                     <label>Mes</label>
-                                    <input type="text" class="form-control" name="Mes"
+                                    <input type="text" class="form-control" name="Mes" id="MesDetalle"
                                         value="{{ isset($fechas) ? $fechas->Mes : '' }}">
                                 </div>
 
@@ -327,13 +327,13 @@
 
                                 <div class="form-group">
                                     <label>Poliza vida</label>
-                                    <input type="text" class="form-control" name="PolizaVida"
+                                    <input type="text" class="form-control" name="PolizaVida" id="PolizaVidaId"
                                         value="{{ $poliza_vida->Id }}">
                                 </div>
 
                                 <div class="form-group">
                                     <label>Tasa</label>
-                                    <input type="text" class="form-control" name="Tasa"
+                                    <input type="text" class="form-control" name="Tasa" id="Tasa"
                                         value="{{ $poliza_vida->Tasa }}">
                                 </div>
 
@@ -362,7 +362,7 @@
                                 <div class="form-group">
                                     <label>Tasa comisión</label>
                                     <input type="text" class="form-control" name="TasaComision"
-                                        value="{{ $poliza_vida->TasaComision }}">
+                                        id="TasaComisionVida" value="{{ $poliza_vida->TasaComision }}">
                                 </div>
 
                                 <div class="form-group">
@@ -400,7 +400,7 @@
 
                                 <div class="form-group">
                                     <label>Extra prima</label>
-                                    <input type="text" class="form-control" name="ExtraPrima"
+                                    <input type="text" class="form-control" name="ExtraPrima" id="ExtraPrimaVida"
                                         value="{{ $total_extrapima }}">
                                 </div>
 
@@ -487,7 +487,63 @@
     document.addEventListener("DOMContentLoaded", function() {
         inicializarEventosEditables();
         recalcularTotales();
+        verificarTablaPreliminar();
     });
+
+
+    function verificarTablaPreliminar() {
+        // 1. Obtener valores para validar
+        const primaCalculada = parseFloat(document.getElementById('PrimaCalculadaDetalle').value) || 0;
+        const montoCartera = parseFloat(document.getElementById('MontoCarteraDetalle').value) || 0;
+
+        if (primaCalculada <= 0 || montoCartera <= 0) {
+            console.log('No se envía: PrimaCalculada o MontoCartera son <= 0');
+            return;
+        }
+
+        // 2. Obtener el ID de la Póliza de Vida
+        const vidaId = document.getElementById('PolizaVidaId').value;
+
+        // 3. Preparar los datos (Asegúrate de que los IDs coincidan con el HTML arriba)
+        const datos = {
+            FechaInicio: document.getElementById('FechaInicio').value,
+            FechaFinal: document.getElementById('FechaFinal').value,
+            Mes: document.getElementById('MesDetalle').value,
+            Axo: document.getElementById('AxoDetalle').value,
+            MontoCartera: montoCartera,
+            Tasa: document.getElementById('Tasa').value,
+            PrimaCalculada: primaCalculada,
+            PrimaDescontada: document.getElementById('PrimaDescontadaDetalle').value,
+            Iva: document.getElementById('IvaDetalle').value,
+            TasaComision: document.getElementById('TasaComisionVida').value, // Actualizado
+            Comision: document.getElementById('ComisionDetalle').value,
+            IvaSobreComision: document.getElementById('IvaComisionDetalle').value,
+            Retencion: document.getElementById('RetencionDetalle').value,
+            APagar: document.getElementById('APagarDetalle').value,
+            ExtraPrima: document.getElementById('ExtraPrimaVida').value, // Actualizado
+            PolizaVidaId: vidaId, // Nombre de campo actualizado
+            _token: '{{ csrf_token() }}'
+        };
+
+        // 4. Enviar por fetch a la ruta de Vida
+        fetch(`{{ url('polizas/vida/detalle_preliminar') }}/${vidaId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(datos)
+            })
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Respuesta vida:', data);
+            })
+            .catch(error => console.error('Error en fetch vida:', error));
+    }
 
     function inicializarEventosEditables() {
         document.querySelectorAll(".editable").forEach(cell => {

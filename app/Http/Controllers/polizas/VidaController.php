@@ -29,6 +29,7 @@ use App\Models\polizas\PolizaVidaExtraPrimados;
 use App\Models\polizas\Vida;
 use App\Models\polizas\VidaCartera;
 use App\Models\polizas\VidaDetalle;
+use App\Models\polizas\VidaDetallePreliminar;
 use App\Models\polizas\VidaHistorialRecibo;
 use App\Models\polizas\VidaTasaDiferenciada;
 use App\Models\polizas\VidaTipoCartera;
@@ -557,7 +558,7 @@ class VidaController extends Controller
             $vida->Beneficios = $request->Beneficios;
             $vida->Activo = 1;
             $vida->TieneImpuestoBombero = $request->TieneImpuestoBombero ?? 0;
-            $vida->ImpuestoBombero = $request->ImpuestoBombero ?? 0 ;
+            $vida->ImpuestoBombero = $request->ImpuestoBombero ?? 0;
 
             if ($request->TipoCobro == 1) {
                 // Si es 1, solo aplica SumaMinima y SumaMaxima
@@ -872,6 +873,8 @@ class VidaController extends Controller
             }
         }
 
+        // dd($fechas);
+
         return view('polizas.vida.show', compact(
             'val',
             'extraprimados',
@@ -1005,15 +1008,22 @@ class VidaController extends Controller
 
 
         if ($ultimo_pago) {
-            // Si hay pago, tomar la fecha inicial y final con +1 mes exacto
-            $fecha_inicial = Carbon::parse($ultimo_pago->FechaFinal);
+            // 1. Creamos una fecha basada en el Axo y Mes del array
+            // Usamos el día 1 para evitar problemas con meses de 28/31 días al saltar
+            $fecha_actual = Carbon::createFromDate($ultimo_pago['Axo'], $ultimo_pago['Mes'], 1);
+
+            // 2. Aumentamos un mes (Carbon se encarga de pasar de diciembre 2025 a enero 2026)
+            $nueva_fecha = $fecha_actual->addMonth();
+
+            // 3. Asignamos los nuevos valores
+            $axo = $nueva_fecha->year;
+            $mes = $nueva_fecha->month;
+
+            // 4. Para las fechas de inicio y final (usando tus campos FechaFinal como base)
+            $fecha_inicial = Carbon::parse($ultimo_pago['FechaFinal']);
             $fecha_final = $fecha_inicial->copy()->addMonth();
 
-            $axo = $fecha_inicial->year;
-            $mes = (int) $ultimo_pago->Mes + 1;
-
-            // Formato final Y-m-d
-            $fechaInicio =  $fecha_inicial->format('Y-m-d');
+            $fechaInicio = $fecha_inicial->format('Y-m-d');
             $fechaFinal = $fecha_final->format('Y-m-d');
         }
 
@@ -2943,6 +2953,76 @@ class VidaController extends Controller
         return back();
     }
 
+
+
+    public function detalle_preliminar(Request $request, $id)
+    {
+        try {
+            // 1. Validar los datos
+            $validated = $request->validate([
+                'PolizaVidaId'    => 'required|integer',
+                'Axo'             => 'required|integer',
+                'Mes'             => 'required|integer|min:1|max:12',
+                'MontoCartera'    => 'nullable|numeric',
+                'Tasa'            => 'nullable|numeric',
+                'PrimaCalculada'  => 'nullable|numeric',
+                'ExtraPrima'      => 'nullable|numeric',
+                'PrimaDescontada' => 'nullable|numeric',
+                'TasaComision'    => 'nullable|numeric',
+                'Comision'        => 'nullable|numeric',
+                'Retencion'       => 'nullable|numeric',
+                'IvaSobreComision' => 'nullable|numeric',
+                'Iva'             => 'nullable|numeric',
+                'APagar'          => 'nullable|numeric',
+                'FechaInicio'     => 'nullable|date',
+            ]);
+
+            // 2. Buscar o crear instancia del modelo VidaDetallePreliminar
+            $detalle = VidaDetallePreliminar::firstOrNew([
+                'PolizaVidaId' => $validated['PolizaVidaId'],
+                'Axo'          => $validated['Axo'],
+                'Mes'          => $validated['Mes'],
+            ]);
+
+            $isNew = !$detalle->exists;
+
+            $detalle->MontoCartera    = $validated['MontoCartera'] ?? null;
+            $detalle->Tasa            = $validated['Tasa'] ?? null;
+            $detalle->PrimaCalculada  = $validated['PrimaCalculada'] ?? null;
+            $detalle->ExtraPrima      = $validated['ExtraPrima'] ?? null;
+            $detalle->PrimaDescontada = $validated['PrimaDescontada'] ?? null;
+            $detalle->TasaComision    = $validated['TasaComision'] ?? null;
+            $detalle->Comision        = $validated['Comision'] ?? null;
+            $detalle->Retencion       = $validated['Retencion'] ?? null;
+            $detalle->IvaSobreComision = $validated['IvaSobreComision'] ?? null;
+            $detalle->Iva             = $validated['Iva'] ?? null;
+            $detalle->APagar          = $validated['APagar'] ?? null;
+            $detalle->FechaInicio     = $validated['FechaInicio'] ?? null;
+
+            $detalle->Usuario         = auth()->user()->name ?? 'Sistema';
+
+            $detalle->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => $isNew ? 'Datos guardados exitosamente' : 'Datos actualizados exitosamente',
+                'data'    => $detalle,
+                'action'  => $isNew ? 'created' : 'updated'
+            ], $isNew ? 201 : 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error de validación',
+                'errors'  => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al guardar: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function exportar_excel(Request $request)
     {
         $vida = $request->Vida;
@@ -3034,5 +3114,4 @@ class VidaController extends Controller
         alert()->success('El registro del comentario ha sido elimando correctamente')->showConfirmButton('Aceptar', '#3085d6');
         return Redirect::to('polizas/vida/' . $comen->Vida);
     }
-
 }

@@ -94,4 +94,7 @@ Route::middleware(['web'])->group(function () {
     Route::get('polizas/vida/renovar/{id}', [VidaRenovacionController::class, 'renovar']);
     Route::post('polizas/vida/renovar', [VidaRenovacionController::class, 'save_renovar']);
     Route::post('polizas/vida/eliminar_renovacion/{id}', [VidaRenovacionController::class, 'eliminar_renovacion']);
+
+
+     Route::post('polizas/vida/detalle_preliminar/{id}', [VidaController::class, 'detalle_preliminar']);
 });
