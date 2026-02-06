@@ -121,17 +121,23 @@ class RoleController extends Controller
     {
         try {
             $role = ModelsRole::findOrFail($id);
-            $permissions = Permission::get()->map(function($permission) {
+            // Obtener todos los permisos y cargar su relación con PermissionType
+            $permissions = Permission::with('type')->get()->map(function($permission) {
                 return [
                     'id' => $permission->id,
-                    'name' => $permission->name
+                    'name' => $permission->name,
+                    'type_name' => $permission->type ? $permission->type->name : 'Otros' // Asignar 'Otros' si no tiene tipo
                 ];
             });
+
+            // Agrupar por nombre del tipo
+            $groupedPermissions = $permissions->groupBy('type_name');
+
             $rolePermissions = $role->permissions->pluck('id')->toArray();
 
             return response()->json([
                 'success' => true,
-                'permissions' => $permissions,
+                'permissions' => $groupedPermissions,
                 'rolePermissions' => $rolePermissions
             ]);
         } catch (\Exception $e) {

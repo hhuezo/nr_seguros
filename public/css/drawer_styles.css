@@ -34,7 +34,7 @@
 }
 
 .drawer-header {
-    padding: 20px;
+    padding: 12px;
     border-bottom: 1px solid #e8e8e8;
     display: flex;
     justify-content: space-between;
@@ -67,7 +67,7 @@
 }
 
 .drawer-body {
-    padding: 20px;
+    padding: 12px;
 }
 
 .drawer-footer {
@@ -88,7 +88,7 @@
 }
 
 .drawer-permissions .drawer-body {
-    max-height: calc(100vh - 140px);
+    max-height: calc(100vh - 95px);
     overflow-y: auto;
 }
 
@@ -129,7 +129,7 @@
     .drawer-permissions {
         width: 60%;
     }
-    
+
     .permissions-container {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -139,7 +139,7 @@
     .drawer-permissions {
         width: 90%;
     }
-    
+
     .permissions-container {
         grid-template-columns: 1fr;
     }
