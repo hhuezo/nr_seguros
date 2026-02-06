@@ -37,7 +37,7 @@
 
         <div class="x_title">
             <div class="col-md-6 col-sm-6 col-xs-12">
-                <h3>Listado de permisos </h3>
+                <h3>Listado de tipos de permisos </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
                 <button class="btn btn-info float-right" data-target="#modal-create" data-toggle="modal"> <i
@@ -55,16 +55,14 @@
                         <tr>
                             <th>Id</th>
                             <th>Descripción</th>
-                            <th>Tipo</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($permissions as $obj)
+                        @foreach ($permissionTypes as $obj)
                             <tr>
                                 <td align="center">{{ $obj->id }}</td>
                                 <td>{{ $obj->name }}</td>
-                                <td>{{ $obj->type ? $obj->type->name : '' }}</td>
                                 <td align="center">
                                     <a href="" data-target="#modal-edit-{{ $obj->id }}" data-toggle="modal"
                                         class="on-default edit-row"><button class="btn btn-primary"><i
@@ -74,8 +72,8 @@
                                         <button class="btn btn-danger"><i class="fa fa-trash fa-lg"></i></button></a>
                                 </td>
                             </tr>
-                            @include('seguridad.permission.modal')
-                            @include('seguridad.permission.edit')
+                            @include('seguridad.permission_type.modal')
+                            @include('seguridad.permission_type.edit')
                         @endforeach
 
                     </tbody>
@@ -89,7 +87,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <div class="col-md-6">
-                        <h4 class="modal-title">Nuevo permiso</h4>
+                        <h4 class="modal-title">Nuevo tipo de permiso</h4>
                     </div>
                     <div class="col-md-6">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
@@ -97,25 +95,14 @@
                         </button>
                     </div>
                 </div>
-                <form action="{{ url('permission') }}" method="POST">
+                <form action="{{ url('permission_type') }}" method="POST">
                     @csrf
 
                     <div class="modal-body">
                         <div class="form-group">
-                            <label class="control-label">Permiso</label>
+                            <label class="control-label">Tipo de Permiso</label>
                             <input type="text" name="name" value="{{ old('name') }}" required class="form-control"
                                 autofocus>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="control-label" align="right">Tipo Permiso</label>
-                            <select class="form-control" name="permission_type_id" required>
-                                @foreach ($permissionTypes as $type)
-                                    <option value="{{ $type->id }}"
-                                        {{ old('permission_type_id') == $type->id ? 'selected' : '' }}>{{ $type->name }}
-                                    </option>
-                                @endforeach
-                            </select>
                         </div>
 
 

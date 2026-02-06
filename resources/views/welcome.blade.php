@@ -171,6 +171,7 @@
                                     <ul class="nav child_menu" id="ul-seguridad">
                                         <li id="li-catalogo-usuario"><a href="{{ url('usuario/') }}">Usuario</a></li>
                                         <li><a href="{{ url('permission/') }}">Permisos</a></li>
+                                         <li><a href="{{ url('permission_type/') }}">Tipo permisos</a></li>
                                         <li id="li-catalogo-role"><a href="{{ url('rol/') }}">Roles</a></li>
                                     </ul>
                                 </li>

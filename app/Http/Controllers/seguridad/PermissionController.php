@@ -4,6 +4,7 @@ namespace App\Http\Controllers\seguridad;
 
 use App\Http\Controllers\Controller;
 use App\Models\Permission;
+use App\Models\PermissionType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Models\Permission as ModelPermission;
@@ -16,16 +17,14 @@ class PermissionController extends Controller
     }
     public function index(Request $request)
     {
-
-        if ($request) {
-            $permissions = Permission::get();
-            return view('seguridad.permission.index', compact('permissions'));
-        }
+        $permissions = Permission::get();
+        $permissionTypes = PermissionType::where('active', 1)->get();
+        return view('seguridad.permission.index', compact('permissions', 'permissionTypes'));
     }
     public function create()
     {
-
-        return view("seguridad.permission.create");
+        $permissionTypes = PermissionType::where('active', 1)->get();
+        return view("seguridad.permission.create", compact('permissionTypes'));
     }
 
     public function store(Request $request)
@@ -40,7 +39,11 @@ class PermissionController extends Controller
         try {
 
             // Si pasa la validación, se crea el permiso
-            $permission = ModelPermission::create(['name' => $request->name]);
+            $permission = new Permission();
+            $permission->name = $request->name;
+            $permission->guard_name = 'web';
+            $permission->permission_type_id = $request->permission_type_id;
+            $permission->save();
 
             return back()->with('success', 'El registro ha sido creado correctamente');
         } catch (\Exception $e) {
@@ -61,7 +64,8 @@ class PermissionController extends Controller
     }
     public function edit($id)
     {
-        return view("seguridad.permission.edit", ["permission" => Permission::findOrFail($id)]);
+        $permissionTypes = \App\Models\PermissionType::where('active', 1)->get();
+        return view("seguridad.permission.edit", ["permission" => Permission::findOrFail($id), "permissionTypes" => $permissionTypes]);
     }
 
 
@@ -78,6 +82,7 @@ class PermissionController extends Controller
         try {
             $permission = Permission::findOrFail($id);
             $permission->name = $request->get('name');
+            $permission->permission_type_id = $request->get('permission_type_id');
             $permission->update();
 
             return back()->with('success', 'El registro ha sido modificado correctamente');

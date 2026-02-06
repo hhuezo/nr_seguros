@@ -30,6 +30,7 @@ use App\Http\Controllers\polizas\DeudaController;
 use App\Http\Controllers\polizas\PolizaControlCarteraController;
 use App\Http\Controllers\polizas\PolizaSeguroController;
 use App\Http\Controllers\seguridad\PermissionController;
+use App\Http\Controllers\seguridad\PermissionTypeController;
 use App\Http\Controllers\seguridad\RoleController;
 use App\Http\Controllers\suscripcion\SuscripcionController;
 use App\Http\Controllers\suscripcion\CompaniaController;
@@ -74,6 +75,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('role/permission_link', [RoleController::class, 'permission_link']);
     Route::get('rol/get-permissions/{id}', [RoleController::class, 'getPermissions']);
     Route::resource('rol', RoleController::class);
+    Route::resource('permission_type', PermissionTypeController::class);
     Route::resource('usuario', UserController::class);
 
 

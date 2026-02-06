@@ -37,6 +37,17 @@
                                         onblur="this.value = this.value.toLowerCase();">
                                 </div>
                             </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-3" align="right">Tipo Permiso</label>
+                                <div class="col-md-6">
+                                    <select class="form-control" name="permission_type_id" required>
+                                        <option value="">Seleccione...</option>
+                                        @foreach ($permissionTypes as $obj)
+                                            <option value="{{ $obj->id }}">{{ $obj->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
 
                             <div class="form-group" align="center">
                                 <button type="submit" class="btn btn-success">Aceptar</button>
