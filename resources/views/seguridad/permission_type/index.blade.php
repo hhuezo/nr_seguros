@@ -40,9 +40,11 @@
                 <h3>Listado de tipos de permisos </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
+                @can('tipo-permiso create')
                 <button class="btn btn-info float-right" data-target="#modal-create" data-toggle="modal"> <i
                         class="fa fa-plus"></i>
                     Nuevo</button>
+                @endcan
             </div>
             <div class="clearfix"></div>
         </div>
@@ -64,12 +66,16 @@
                                 <td align="center">{{ $obj->id }}</td>
                                 <td>{{ $obj->name }}</td>
                                 <td align="center">
+                                    @can('tipo-permiso edit')
                                     <a href="" data-target="#modal-edit-{{ $obj->id }}" data-toggle="modal"
                                         class="on-default edit-row"><button class="btn btn-primary"><i
                                                 class="fa fa-pencil fa-lg"></i></button></a>
+                                    @endcan
                                     &nbsp;&nbsp;
+                                    @can('tipo-permiso delete')
                                     <a href="" data-target="#modal-delete-{{ $obj->id }}" data-toggle="modal">
                                         <button class="btn btn-danger"><i class="fa fa-trash fa-lg"></i></button></a>
+                                    @endcan
                                 </td>
                             </tr>
                             @include('seguridad.permission_type.modal')

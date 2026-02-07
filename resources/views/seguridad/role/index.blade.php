@@ -42,9 +42,11 @@
                 <h2>Listado de roles </h2>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
+                @can('rol create')
                 <button class="btn btn-info float-right" data-target="#modal-create" data-toggle="modal"> <i
                         class="fa fa-plus"></i>
                     Nuevo</button>
+                @endcan
             </div>
             <div class="clearfix"></div>
         </div>
@@ -74,16 +76,22 @@
                                 <td align="center">{{ $obj->id }}</td>
                                 <td>{{ $obj->name }}</td>
                                 <td align="center">
+                                    @can('rol edit')
                                     <button class="btn btn-primary btn-sm" onclick="openEditDrawer({{ $obj->id }})" title="Modificar Rol">
                                         <i class="fa fa-pencil fa-lg"></i>
                                     </button>
+                                    @endcan
+                                    @can('rol edit')
                                     <button class="btn btn-info btn-sm" onclick="openPermissionsDrawer_{{ $obj->id }}({{ $obj->id }})" title="Asignar Permisos" style="margin-left: 5px;">
                                         <i class="fa fa-key fa-lg"></i>
                                     </button>
+                                    @endcan
+                                    @can('rol delete')
                                     <a href="" data-target="#modal-delete-{{ $obj->id }}"
                                         data-toggle="modal" style="margin-left: 5px;">
                                         <button class="btn btn-danger btn-sm"><i class="fa fa-trash fa-lg"></i></button>
                                     </a>
+                                    @endcan
                                 </td>
                             </tr>
                             @include('seguridad.role.modal')
