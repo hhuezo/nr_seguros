@@ -248,7 +248,7 @@
                                                 <li><a href="{{ url('catalogo/departamento_nr') }}">Departamentos NR</a></li>
                                             @endcan
                                             @can('producto read')
-                                                <li><a href="{{ url('catalogo/producto') }}">Productos</a></li>
+                                                <li  id="li-producto"><a href="{{ url('catalogo/producto') }}">Productos</a></li>
                                             @endcan
                                             @can('plan read')
                                                 <li><a href="{{ url('catalogo/plan') }}">Planes</a></li>

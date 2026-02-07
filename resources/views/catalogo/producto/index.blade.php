@@ -8,8 +8,10 @@
                 <h3>Listado de Productos </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
+                @can('producto create')
                 <a href="{{ url('catalogo/producto/create/') }}"><button class="btn btn-info float-right"> <i
                             class="fa fa-plus"></i> Nuevo</button></a>
+                @endcan
             </div>
             <div class="clearfix"></div>
         </div>
@@ -37,13 +39,13 @@
                                 <td>{{ $obj->ramos->Nombre }}</td>
 
                                 <td align="center">
-                                    @can('edit users')
+                                    @can('producto edit')
                                         <a href="{{ url('catalogo/producto') }}/{{ $obj->Id }}/edit"
                                             class="on-default edit-row">
                                             <i class="fa fa-pencil fa-lg"></i></a>
                                     @endcan
 
-                                    @can('delete users')
+                                    @can('producto delete')
                                         &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}"
                                             data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
                                     @endcan
