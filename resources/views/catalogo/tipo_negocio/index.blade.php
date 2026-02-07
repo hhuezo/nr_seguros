@@ -8,11 +8,11 @@
                 <h3>Tipo de Negocio </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
-                {{-- <a href="{{ url('catalogo/tipo_negocio/create/') }}"><button class="btn btn-info float-right"> <i
-                            class="fa fa-plus"></i> Nuevo</button></a> --}}
-                <button class="btn btn-info float-right" data-target="#modal-create" data-toggle="modal"> <i
-                        class="fa fa-plus"></i>
-                    Nuevo</button>
+                @can('tipo-negocio create')
+                    <button class="btn btn-info float-right" data-target="#modal-create" data-toggle="modal"> <i
+                            class="fa fa-plus"></i>
+                        Nuevo</button>
+                @endcan
             </div>
             <div class="clearfix"></div>
         </div>
@@ -36,19 +36,14 @@
                                 <td>{{ $obj->Nombre }}</td>
                                 <td align="center">
 
-                                    @can('edit users')
-                                        {{-- <a href="{{ url('catalogo/tipo_negocio') }}/{{ $obj->Id }}/edit"
-                                            class="on-default edit-row">
-                                            <i class="fa fa-pencil fa-lg"></i></a> --}}
+                                    @can('tipo-negocio edit')                             
                                         <a href="#" data-target="#modal-edit-{{ $obj->Id }}" data-toggle="modal"
                                             class="on-default edit-row"><button class="btn btn-primary"><i
                                                     class="fa fa-pencil fa-lg"></i></button></a>
                                     @endcan
 
 
-                                    @can('delete users')
-                                        {{-- &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}"
-                                            data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a> --}}
+                                    @can('tipo-negocio delete')
                                         <a href="#" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal">
                                             <button class="btn btn-danger"><i class="fa fa-trash fa-lg"></i></button></a>
                                     @endcan
