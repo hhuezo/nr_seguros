@@ -8,8 +8,10 @@
                 <h3>Polizas de Desempleo </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
+                @can('desempleo create')
                 <a href="{{ url('polizas/desempleo/create/') }}"><button class="btn btn-info float-right"> <i
                             class="fa fa-plus"></i> Nuevo</button></a>
+                @endcan
             </div>
             <div class="clearfix"></div>
         </div>
@@ -75,30 +77,22 @@
                                 <td align="center">
 
 
-                                    <!-- Configuración -->
+                                    @can('desempleo edit')
                                     <a href="{{ url('polizas/desempleo') }}/{{ $obj->Id }}?tab=2"
-                                        class="on-default edit-row">
+                                        class="on-default edit-row" title="Generar Pago">
                                         <i class="fa fa-file fa-lg"></i>
                                     </a>
-
                                     &nbsp;&nbsp;
                                     <a href="{{ url('polizas/desempleo') }}/{{ $obj->Id }}/edit"
-                                        class="on-default edit-row">
+                                        class="on-default edit-row" title="Editar">
                                         <i class="fa fa-pencil fa-lg"></i>
                                     </a>
-
+                                    @endcan
+                                    @can('desempleo delete')
                                     &nbsp;&nbsp;
                                     <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal">
                                         <i class="fa fa-trash fa-lg"></i>
                                     </a>
-
-                                    <!-- Renovar (solo para usuarios con permiso) -->
-                                    @can('delete userss')
-                                        &nbsp;&nbsp;
-                                        <a href="{{ url('polizas/desempleo') }}/{{ $obj->Id }}/renovar"
-                                            class="on-default edit-row">
-                                            <i class="fa fa-refresh fa-lg"></i>
-                                        </a>
                                     @endcan
                                     <a data-target="#modal-renovar-{{ $obj->Id }}" data-toggle="modal"
                                         class="on-default edit-row" title="Renovar"><i class="fa fa-refresh fa-lg"></i></a>

@@ -1,5 +1,6 @@
 @extends ('welcome')
 @section('contenido')
+@can('desempleo create')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <div class="x_panel">
@@ -302,4 +303,7 @@
 
         });
     </script>
+@else
+    <p class="text-center text-danger">No tiene permiso para crear.</p>
+@endcan
 @endsection

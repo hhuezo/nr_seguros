@@ -1,6 +1,6 @@
 @extends ('welcome')
 @section('contenido')
-
+@can('seguro read')
     <!-- Toastr CSS -->
     <link href="{{ asset('vendors/toast/toastr.min.css') }}" rel="stylesheet">
 
@@ -612,4 +612,7 @@
                 });
         }
     </script>
+@else
+    <p class="text-center text-danger">No tiene permiso para ver.</p>
+@endcan
 @endsection

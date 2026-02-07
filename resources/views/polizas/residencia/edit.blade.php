@@ -1,5 +1,6 @@
 @extends ('welcome')
 @section('contenido')
+@can('residencia edit')
     @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <div class="x_panel">
@@ -1450,4 +1451,7 @@
     </script>
 
 
+@else
+    <p class="text-center text-danger">No tiene permiso para editar.</p>
+@endcan
 @endsection

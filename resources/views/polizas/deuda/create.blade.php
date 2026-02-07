@@ -1,6 +1,6 @@
 @extends ('welcome')
 @section('contenido')
-
+@can('deuda create')
     <!-- Toastr CSS -->
     <link href="{{ asset('vendors/toast/toastr.min.css') }}" rel="stylesheet">
 
@@ -412,4 +412,7 @@
             });
         }
     </script>
+@else
+    <p class="text-center text-danger">No tiene permiso para crear.</p>
+@endcan
 @endsection

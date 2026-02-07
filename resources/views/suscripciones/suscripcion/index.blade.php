@@ -43,8 +43,10 @@
                         class="fa fa-filter"></i></button>
                 <button class="btn btn-warning" data-target="#modal-filtro" data-toggle="modal"><i
                         class="fa fa-calendar"></i></button>
+                @can('suscripcion create')
                 <a href="{{ url('suscripciones/create/') }}"><button class="btn btn-info float-right"> <i
                             class="fa fa-plus"></i> Nuevo</button></a>
+                @endcan
             </div>
             <div class="clearfix"></div>
         </div>

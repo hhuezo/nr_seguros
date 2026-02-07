@@ -8,8 +8,10 @@
                 <h3>Listado de clientes </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
+                @can('gestion-cliente create')
                 <a href="{{ url('catalogo/cliente/create/') }}"><button class="btn btn-info float-right"> <i
                             class="fa fa-plus"></i> Nuevo</button></a>
+                @endcan
             </div>
             <div class="clearfix"></div>
         </div>
@@ -54,21 +56,22 @@
                                 </td>
 
                                 <td align="center">
-
-
+                                        @can('gestion-cliente edit')
                                         <a href="{{ url('catalogo/cliente') }}/{{ $obj->Id }}/edit"
                                             class="on-default edit-row">
                                             <i class="fa fa-pencil fa-lg"></i></a>
-
-
+                                        @endcan
                                         @if ($obj->Activo == 1)
+                                            @can('gestion-cliente delete')
                                             &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}"
                                                 data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
+                                            @endcan
                                         @else
+                                            @can('gestion-cliente edit')
                                             &nbsp;&nbsp;<a href="" data-target="#modal-active-{{ $obj->Id }}"
                                                 data-toggle="modal"><i class="fa fa-check-square fa-lg"></i></a>
+                                            @endcan
                                         @endif
-
                                 </td>
                             </tr>
                             @include('catalogo.cliente.modal')

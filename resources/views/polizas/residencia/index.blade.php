@@ -8,8 +8,10 @@
                 <h3>Pólizas de Residencia </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
+                @can('residencia create')
                 <a href="{{ url('polizas/residencia/create/') }}"><button class="btn btn-info float-right"> <i
                             class="fa fa-plus"></i> Nuevo</button></a>
+                @endcan
             </div>
             <div class="clearfix"></div>
         </div>
@@ -50,6 +52,7 @@
 
 
 
+                                        @can('residencia edit')
                                         @if ($obj->Modificar == 1)
                                             <a href="{{ url('polizas/residencia') }}/{{ $obj->Id }}/edit"
                                                 class="btn btn-success on-default edit-row" title="Modificar">
@@ -59,7 +62,9 @@
                                             <a href="{{ url('polizas/residencia') }}/{{ $obj->Id }}/edit?tab=2"
                                                 class="btn btn-success on-default edit-row" title="Generar Pago">
                                                 <i class="fa fa-file fa-lg"></i>
+                                            </a>
                                         @endif
+                                        @endcan
 
                                         &nbsp;
                                        <a data-target="#modal-renovar-{{ $obj->Id }}" data-toggle="modal"
@@ -68,7 +73,7 @@
 
                                     </div>
                                     <div style="display: flex; justify-content: center;">
-                                        @can('delete users')
+                                        @can('residencia delete')
                                             <a href="" class="btn btn-danger"
                                                 data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"
                                                 title="Anular Poliza"><i class="fa fa-trash fa-lg"></i></a>

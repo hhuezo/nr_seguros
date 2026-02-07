@@ -1,5 +1,6 @@
 @extends ('welcome')
 @section('contenido')
+@can('deuda edit')
 @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <div class="x_panel">
@@ -330,4 +331,7 @@
 
     }
 </script>
+@else
+    <p class="text-center text-danger">No tiene permiso para editar.</p>
+@endcan
 @endsection

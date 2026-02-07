@@ -8,8 +8,10 @@
                 <h3>Polizas de Vida </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
+                @can('vida create')
                 <a href="{{ url('polizas/vida/create/') }}"><button class="btn btn-info float-right"> <i
                             class="fa fa-plus"></i> Nuevo</button></a>
+                @endcan
             </div>
             <div class="clearfix"></div>
         </div>
@@ -39,6 +41,7 @@
                                 <td>{{ $obj->estadoPoliza->Nombre ?? '' }}</td>
 
                                 <td align="center">
+                                    @can('vida edit')
                                     @if ($obj->Configuracion == 1)
                                         <a href="{{ url('polizas/vida') }}/{{ $obj->Id }}?tab=2" title="Generar Pago">
                                             <i class="fa fa-file fa-lg"></i></a>
@@ -49,7 +52,8 @@
                                             title="Configuracion">
                                             <i class="fa fa-unlock fa-lg"></i></a>
                                     @endif
-                                    @can('delete users')
+                                    @endcan
+                                    @can('vida delete')
                                         &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}"
                                             data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
                                     @endcan

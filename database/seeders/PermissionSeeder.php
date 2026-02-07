@@ -2,8 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class PermissionSeeder extends Seeder
 {
@@ -31,19 +33,34 @@ class PermissionSeeder extends Seeder
             4 => [
                 'prefijo' => 'catalogos',
                 'modulos' => [
-                    'ejecutivos', 'estado-polizas', 'estado-venta',
-                    'nr-cartera', 'tipo-negocio', 'tipo-cobro', 'tipo-poliza',
-                    'area-comercial', 'ubicacion-cobro', 'ramo',
-                    'perfiles', 'departamento-nr', 'producto', 'plan'
+                    'ejecutivos',
+                    'estado-polizas',
+                    'estado-venta',
+                    'nr-cartera',
+                    'tipo-negocio',
+                    'tipo-cobro',
+                    'tipo-poliza',
+                    'area-comercial',
+                    'ubicacion-cobro',
+                    'ramo',
+                    'perfiles',
+                    'departamento-nr',
+                    'producto',
+                    'plan'
                 ]
             ],
             // ID 5: Suscripciones
             5 => [
                 'prefijo' => 'suscripciones',
                 'modulos' => [
-                    'gestion', 'fechas-feriadas', 'estados-casos',
-                    'tipos-ordenes', 'tipos-imc', 'tipos-clientes',
-                    'ocupaciones', 'tipo-creditos'
+                    'suscripcion',
+                    'fechas-feriadas',
+                    'estados-casos',
+                    'tipos-ordenes',
+                    'tipos-imc',
+                    'tipos-clientes',
+                    'ocupaciones',
+                    'tipo-creditos'
                 ]
             ],
             // ID 6: Catalogo Deuda
@@ -100,6 +117,15 @@ class PermissionSeeder extends Seeder
                     );
                 }
             }
+        }
+
+
+        $role = Role::findOrFail(1);
+        $role->givePermissionTo(Permission::all());
+
+        $users = User::all();
+        foreach ($users as $user) {
+            $user->assignRole(1);
         }
     }
 }

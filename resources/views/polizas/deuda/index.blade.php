@@ -8,8 +8,10 @@
                 <h3>Polizas de Deuda </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
+                @can('deuda create')
                 <a href="{{ url('polizas/deuda/create/') }}"><button class="btn btn-info float-right"> <i
                             class="fa fa-plus"></i> Nuevo</button></a>
+                @endcan
             </div>
             <div class="clearfix"></div>
         </div>
@@ -56,6 +58,7 @@
 
                                         <td align="right">
                                             <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;">
+                                                @can('deuda edit')
                                                 @if ($obj->Configuracion == 1)
                                                     <a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}/edit"
                                                         class="btn btn-primary on-default edit-row" title="Generar Pago">
@@ -68,8 +71,11 @@
                                                         class="btn btn-success on-default edit-row" title="Configuracion">
                                                         <i class="fa fa-unlock fa-lg"></i></a>
                                                 @endif
+                                                @endcan
+                                                @can('deuda delete')
                                                 <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"
                                                     class="btn btn-danger" title="Eliminar"><i class="fa fa-trash fa-lg"></i></a>
+                                                @endcan
 
                                                 <a data-target="#modal-renovar-{{ $obj->Id }}" data-toggle="modal"
                                                     class="on-default edit-row btn btn-info" title="Renovar"><i

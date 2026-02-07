@@ -1,5 +1,6 @@
 @extends ('welcome')
 @section('contenido')
+@can('gestion-aseguradora create')
 @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
 <div class="x_panel">
     <div class="row">
@@ -208,4 +209,7 @@
         console.log(document.getElementById('Diario').checked);
     }
 </script>
+@else
+    <p class="text-center text-danger">No tiene permiso para crear.</p>
+@endcan
 @endsection

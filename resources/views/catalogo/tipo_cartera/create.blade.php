@@ -1,5 +1,6 @@
 @extends ('welcome')
 @section('contenido')
+@can('linea-credito create')
 @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
 <div class="x_panel">
     <div class="clearfix"></div>
@@ -68,4 +69,7 @@
     </div>
 </div>
 @include('sweetalert::alert')
+@else
+    <p class="text-center text-danger">No tiene permiso para crear.</p>
+@endcan
 @endsection

@@ -7,9 +7,11 @@
                 <h4>Listado de polizas de seguro </h4>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
+                @can('seguro create')
                 <a href="{{ url('poliza/seguro/create') }}"><button class="btn btn-info float-right"> <i
                             class="fa fa-plus"></i>
                         Nuevo</button></a>
+                @endcan
             </div>
             <div class="clearfix"></div>
         </div>
@@ -45,11 +47,12 @@
 
                                 <!-- Opciones -->
                                 <td align="center">
-
+                                    @can('seguro read')
                                       <a href="{{ url('poliza/seguro') }}/{{ $poliza->Id }}"
-                                            class="on-default edit-row">
+                                            class="on-default edit-row" title="Ver">
                                             <i class="fa fa-eye fa-lg"></i>
                                         </a>
+                                    @endcan
                                    {{-- @if ($poliza->Configuracion == 0)
                                         <a href="{{ url('polizas/desempleo') }}/{{ $poliza->Id }}/edit"
                                             class="on-default edit-row">

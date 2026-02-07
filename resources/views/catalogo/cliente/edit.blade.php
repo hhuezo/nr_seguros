@@ -1,5 +1,6 @@
 @extends ('welcome')
 @section('contenido')
+@can('gestion-cliente edit')
     <!-- Toastr CSS -->
     <link href="{{ asset('vendors/toast/toastr.min.css') }}" rel="stylesheet">
 
@@ -1697,5 +1698,7 @@
             });
         }
     </script>
-
+@else
+    <p class="text-center text-danger">No tiene permiso para editar.</p>
+@endcan
 @endsection

@@ -1,5 +1,6 @@
 @extends ('welcome')
 @section('contenido')
+@can('residencia create')
     <script src="{{ asset('vendors/sweetalert/sweetalert.min.js') }}"></script>
 
 
@@ -338,4 +339,7 @@
 
 
 
+@else
+    <p class="text-center text-danger">No tiene permiso para crear.</p>
+@endcan
 @endsection

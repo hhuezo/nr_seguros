@@ -1,5 +1,6 @@
 @extends('welcome')
 @section('contenido')
+@can('control-cartera read')
     <style>
         .table {
             font-size: 12px;
@@ -145,9 +146,11 @@
                     <tbody>
                         <tr v-for="registro in registros" :key="registro.Id" :class="getRowClass(registro.Color)">
                             <td>
+                                @can('control-cartera edit')
                                 <button class="btn btn-primary btn-sm" @click="abrirModal(registro)">
                                     <i class="fa fa-edit"></i>
                                 </button>
+                                @endcan
                             </td>
                             <td>@{{ registro.ClienteNombre }}</td>
                             <td>@{{ formatDate(registro.VigenciaDesde) }}</td>
@@ -600,4 +603,7 @@
             document.getElementById('form-exportar-excel').submit();
         }
     </script>
+@else
+    <p class="text-center text-danger">No tiene permiso para ver Control de carteras.</p>
+@endcan
 @endsection

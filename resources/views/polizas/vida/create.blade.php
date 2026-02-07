@@ -1,7 +1,6 @@
 @extends ('welcome')
 @section('contenido')
-
-
+@can('vida create')
     <div class="x_panel">
         <div class="clearfix"></div>
         <div class="row">
@@ -518,4 +517,7 @@
             }
         }
     </script>
+@else
+    <p class="text-center text-danger">No tiene permiso para crear.</p>
+@endcan
 @endsection

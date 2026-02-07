@@ -1,5 +1,6 @@
 @extends ('welcome')
 @section('contenido')
+@can('gestion-cliente create')
     @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
     <style>
         /* Estilo para el cuadro que contiene los campos */
@@ -670,4 +671,7 @@
             });
         }
     </script>
+@else
+    <p class="text-center text-danger">No tiene permiso para crear.</p>
+@endcan
 @endsection

@@ -191,26 +191,39 @@ class SuscripcionController extends Controller
             ->addColumn('acciones', function ($row) use ($fechaInicio, $fechaFinal) {
 
                 $id = $row->Id;
-
-                return '
-                <a href="' . url("suscripciones/{$id}/edit") .
-                    '?FechaInicio=' . $fechaInicio .
-                    '&FechaFinal=' . $fechaFinal . '"
-                class="btn btn-primary">
-                    <i class="fa fa-pencil fa-lg"></i>
-                </a>
-
-                <a href="#" class="btn btn-danger" onclick="shoModalDelete(' . $id . ')">
-                    <i class="fa fa-trash fa-lg"></i>
-                </a>
-
-                <a href="#" class="btn btn-info" data-toggle="modal" data-target="#modal-comentario" onclick="getComentarios(' . $id . ')">
+                $user = auth()->user();
+            
+                $buttons = '';
+            
+                // EDITAR
+                if ($user->can('suscripcion edit')) {
+                    $buttons .= '
+                    <a href="' . url("suscripciones/{$id}/edit") . '?FechaInicio=' . $fechaInicio . '&FechaFinal=' . $fechaFinal . '"
+                       class="btn btn-primary">
+                        <i class="fa fa-pencil fa-lg"></i>
+                    </a>';
+                }
+            
+                // ELIMINAR
+                if ($user->can('suscripcion delete')) {
+                    $buttons .= '
+                    <a href="#" class="btn btn-danger" onclick="shoModalDelete(' . $id . ')">
+                        <i class="fa fa-trash fa-lg"></i>
+                    </a>';
+                }
+            
+                // COMENTARIOS (sin permiso, o agrega uno si quieres)
+                $buttons .= '
+                <a href="#" class="btn btn-info" data-toggle="modal" data-target="#modal-comentario"
+                   onclick="getComentarios(' . $id . ')">
                     <i class="fa fa-book fa-lg"></i>
-                </a>
-            ';
+                </a>';
+            
+                return $buttons;
             })
             ->rawColumns(['acciones'])
             ->make(true);
+            
     }
 
 

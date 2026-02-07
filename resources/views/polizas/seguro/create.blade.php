@@ -1,5 +1,6 @@
 @extends ('welcome')
 @section('contenido')
+@can('seguro create')
     <style>
         #loading-overlay-modal {
             display: none;
@@ -373,4 +374,7 @@
             });
         });
     </script>
+@else
+    <p class="text-center text-danger">No tiene permiso para crear.</p>
+@endcan
 @endsection

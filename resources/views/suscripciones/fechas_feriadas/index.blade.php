@@ -8,9 +8,11 @@
             <h3>Fechas Feriadas</h3>
         </div>
         <div class="col-md-6 col-sm-6 col-xs-12" align="right">
+            @can('fechas-feriadas create')
             <button class="btn btn-info float-right" data-target="#modal-create" data-toggle="modal"> <i
                     class="fa fa-plus"></i>
                 Nuevo</button>
+            @endcan
         </div>
         <div class="clearfix"></div>
     </div>
@@ -50,14 +52,12 @@
 
                         <td align="center">
 
-                            @can('edit users')
+                            @can('fechas-feriadas edit')
                             <a href="#" data-target="#modal-edit-{{ $obj->Id }}" data-toggle="modal"
                                 class="on-default edit-row"><button class="btn btn-primary"><i
                                         class="fa fa-pencil fa-lg"></i></button></a>
                             @endcan
-
-
-                            @can('delete users')
+                            @can('fechas-feriadas delete')
                             <a href="#" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal">
                                 <button class="btn btn-danger"><i class="fa fa-trash fa-lg"></i></button></a>
                             @endcan

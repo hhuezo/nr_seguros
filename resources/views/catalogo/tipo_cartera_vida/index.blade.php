@@ -8,8 +8,10 @@
                 <h3>Listado de tipo de cartera (vida) </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
+                @can('tipo-cartera-vida create')
                 <a href="{{ url('catalogo/tipo_cartera_vida/create') }}"><button class="btn btn-info float-right"> <i
                             class="fa fa-plus"></i> Nuevo</button></a>
+                @endcan
             </div>
             <div class="clearfix"></div>
         </div>
@@ -34,12 +36,12 @@
                                 <td>{{ $obj->Nombre }}</td>
                                 <!-- <td>{{ $obj->Activo == 1 ? 'Activo' : 'Desactivo' }}</td> -->
                                 <td align="center">
-                                    @can('edit users')
+                                    @can('tipo-cartera-vida edit')
                                         <a href="{{ url('catalogo/tipo_cartera_vida') }}/{{ $obj->Id }}/edit"
                                             class="on-default edit-row">
                                             <i class="fa fa-pencil fa-lg"></i></a>
                                     @endcan
-                                    @can('delete users')
+                                    @can('tipo-cartera-vida delete')
                                         &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}"
                                             data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
                                     @endcan
