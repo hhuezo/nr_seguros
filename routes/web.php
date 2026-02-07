@@ -170,7 +170,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('catalogo/tipo_cobro', TipoCobroController::class);
     Route::resource('catalogo/area_comercial', AreaComercialController::class);
-    Route::resource('catalogo/bombero', BomberoController::class);
     Route::resource('catalogo/configuracion_recibo', ConfiguracionReciboController::class);
 
     Route::put('catalogo/numeracion_recibo/{id}', [ConfiguracionReciboController::class, 'numeracion_recibo']);
