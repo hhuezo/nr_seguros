@@ -38,8 +38,10 @@
                 <h3>Requisitos de asegurabilidad </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
+                @can('perfiles create')
                 <button class="btn btn-info float-right" data-target="#modal-create" data-toggle="modal"> <i
                         class="fa fa-plus"></i> Nuevo</button>
+                @endcan
             </div>
             <div class="clearfix"></div>
         </div>
@@ -71,14 +73,14 @@
                                 <td><input type="checkbox" class="js-switch"
                                         {{ $item->DeclaracionJurada == 1 ? 'checked' : '' }}></td>
                                 <td style="text-align: center; display: flex; justify-content: center; gap: 8px;">
-                                    @can('edit users')
+                                    @can('perfiles edit')
                                         <a href="" data-target="#modal-edit-{{ $item->Id }}" data-toggle="modal"
                                             class="btn btn-primary btn-sm">
                                             <i class="fa fa-pencil fa-lg"></i>
                                         </a>
                                     @endcan
 
-                                    @can('delete users')
+                                    @can('perfiles delete')
                                         <a href="" data-target="#modal-delete-{{ $item->Id }}" data-toggle="modal"
                                             class="btn btn-danger btn-sm">
                                             <i class="fa fa-trash fa-lg"></i>
