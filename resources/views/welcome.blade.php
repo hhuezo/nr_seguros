@@ -187,19 +187,19 @@
                                 </li>
                                 @endcan
 
+                                @can('configuracion menu')  
                                 <li><a><i class="fa fa-cog"></i> Configuracion<span
                                             class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu" id="ul-configuracion">
-                                        <li><a href="{{ url('catalogo/configuracion_recibo/1/edit') }}">Configuración
-                                                de
-                                                Recibo</a></li>
-
+                                        @can('configuracion-recibo read')
+                                        <li><a href="{{ url('catalogo/configuracion_recibo/1/edit') }}">Configuración de Recibo</a></li>
+                                        @endcan
+                                        @can('numeracion-recibo read')
                                         <li><a href="{{ url('catalogo/numeracion_recibo') }}">Numeracion recibo</a></li>
-
-
+                                        @endcan
                                     </ul>
                                 </li>
-
+                                @endcan
 
                                 <li><a><i class="fa fa-folder"></i> Catálogos<span
                                             class="fa fa-chevron-down"></span></a>

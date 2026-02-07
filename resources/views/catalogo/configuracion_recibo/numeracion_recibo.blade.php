@@ -75,10 +75,12 @@
                                     </div>
                                 </div>
 
-
+    
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="form-group text-right">
+                                        @can('numeracion-recibo edit')
                                         <button type="submit" class="btn btn-success">Aceptar</button>
+                                        @endcan
                                     </div>
                                 </div>
 
