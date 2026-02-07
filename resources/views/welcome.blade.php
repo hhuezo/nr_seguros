@@ -237,7 +237,7 @@
                                             @can('ubicacion-cobro read')
                                                 <li><a href="{{ url('catalogo/ubicacion_cobro') }}">Ubicación Cobro</a></li>
                                             @endcan
-                                            @can('necesidad-proteccion read')
+                                            @can('ramo read')
                                                 <li><a href="{{ url('catalogo/necesidad_proteccion') }}">Ramos</a></li>
                                             @endcan
                                             @can('perfiles read')

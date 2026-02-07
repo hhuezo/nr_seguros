@@ -33,7 +33,7 @@ class PermissionSeeder extends Seeder
                 'modulos' => [
                     'ejecutivos', 'estado-polizas', 'estado-venta',
                     'nr-cartera', 'tipo-negocio', 'tipo-cobro', 'tipo-poliza',
-                    'area-comercial', 'ubicacion-cobro', 'necesidad-proteccion',
+                    'area-comercial', 'ubicacion-cobro', 'ramo',
                     'perfiles', 'departamento-nr', 'producto', 'plan'
                 ]
             ],
