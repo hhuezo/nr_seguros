@@ -76,11 +76,14 @@
     }
 
     .role-item {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 10px 0;
-        border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    border: 1px solid #f0f0f0;
+    border-radius: 4px;
+    background: #fafafa;
+
     }
 
     .role-item:last-child {
@@ -143,7 +146,7 @@
                     data.roles.forEach(role => {
                         const isChecked = data.userRoles.includes(role.id) ? 'checked' : '';
                         html += `
-                            <div class="role-item">
+                            <div class="role-item card" style="margin-bottom: 10px;">
                                 <input type="checkbox" 
                                     id="role_${role.id}_${userId}"
                                     class="js-switch" 
@@ -151,6 +154,7 @@
                                     onchange="updateUserRole_{{ $usuario->id }}(${userId}, ${role.id})"
                                     ${isChecked}>
                                 <label class="control-label" style="margin-bottom: 0; cursor: pointer; margin-left: 10px;" onclick="document.getElementById('role_${role.id}_${userId}').click()">${role.name}</label>
+                            <br>
                             </div>
                         `;
                     });

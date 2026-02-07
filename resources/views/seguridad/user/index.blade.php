@@ -1,16 +1,12 @@
 @extends ('welcome')
 @section('contenido')
 
-    <!-- Toastr CSS -->
     <link href="{{ asset('vendors/toast/toastr.min.css') }}" rel="stylesheet">
     
-    <!-- Drawer Styles CSS -->
     <link href="{{ asset('css/drawer_styles.css') }}" rel="stylesheet">
 
-    <!-- jQuery -->
     <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 
-    <!-- Toastr JS -->
     <script src="{{ asset('vendors/toast/toastr.min.js') }}"></script>
 
     @if (session('success'))
@@ -76,11 +72,8 @@
                                 </td>
 
                                 <td>
-                                    <label class="switch">
-                                        <input type="checkbox" onchange="toggleUserActive({{ $obj->id }})"
-                                            {{ $obj->activo == 1 ? 'checked' : '' }}>
-                                        <span class="slider round"></span>
-                                    </label>
+                                    <input type="checkbox" class="js-switch-manual" onchange="toggleUserActive({{ $obj->id }})"
+                                        {{ $obj->activo == 1 ? 'checked' : '' }} />
                                 </td>
 
                                 <td align="center">
@@ -169,7 +162,13 @@
             var table = $('#datatable').DataTable({
                 pageLength: 10,
                 displayStart: displayStart,
-                //ordering: false
+            });
+
+            // CAMBIO AQUÍ: Inicializamos solo nuestra clase personalizada
+            table.rows().nodes().to$().find('.js-switch-manual').each(function() {
+                if (!$(this).data('switchery')) {
+                    var switchery = new Switchery(this, { color: '#26B99A' });
+                }
             });
         });
     </script>

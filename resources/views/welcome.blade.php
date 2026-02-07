@@ -162,7 +162,7 @@
                             <h3>NR Seguros</h3>
                             <ul class="nav side-menu">
 
-                                @can('dashoboard-primas')
+                                @can('administracion menu')
                                 <li><a href="{{ url('/control-primas') }}"><i class="fa fa-bar-chart"></i>Control de Primas
                                         General</a></li>
                                 @endcan
