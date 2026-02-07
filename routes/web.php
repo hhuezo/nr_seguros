@@ -74,6 +74,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('permission', PermissionController::class);
     Route::post('role/permission_link', [RoleController::class, 'permission_link']);
     Route::get('rol/get-permissions/{id}', [RoleController::class, 'getPermissions']);
+    Route::get('rol/permissions-html/{id}', [RoleController::class, 'getPermissionsHtml']);
     Route::resource('rol', RoleController::class);
     Route::resource('permission_type', PermissionTypeController::class);
     Route::resource('usuario', UserController::class);

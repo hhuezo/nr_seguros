@@ -147,6 +147,38 @@ class RoleController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Devuelve el HTML del body del drawer de permisos (vista Blade).
+     * Usado por el drawer para cargar el listado sin armar HTML en JS.
+     */
+    public function getPermissionsHtml($id)
+    {
+        try {
+            $role = ModelsRole::findOrFail($id);
+            $permissions = Permission::with('type')->get()->map(function ($permission) {
+                return [
+                    'id' => $permission->id,
+                    'name' => $permission->name,
+                    'type_name' => $permission->type ? $permission->type->name : 'Otros',
+                ];
+            });
+            $groupedPermissions = $permissions->groupBy('type_name');
+            $rolePermissions = $role->permissions->pluck('id')->toArray();
+
+            $html = view('seguridad.role.permissions_drawer_body', [
+                'groupedPermissions' => $groupedPermissions,
+                'rolePermissions' => $rolePermissions,
+                'roleId' => (int) $id,
+            ])->render();
+
+            return response($html)->header('Content-Type', 'text/html; charset=UTF-8');
+        } catch (\Exception $e) {
+            return response('<p class="text-center text-danger">Error al cargar los permisos</p>', 500)
+                ->header('Content-Type', 'text/html; charset=UTF-8');
+        }
+    }
+
     public function destroy($id)
     {
         try {

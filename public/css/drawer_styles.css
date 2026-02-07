@@ -99,6 +99,16 @@
     padding: 10px 0;
 }
 
+/* Título de sección (tipo de permiso): ocupa todo el ancho del drawer */
+.permissions-section-title {
+    grid-column: 1 / -1;
+    font-weight: bold;
+    margin: 0;
+    padding: 12px 0 8px;
+    border-bottom: 2px solid #eee;
+    width: 100%;
+}
+
 .permission-item {
     display: flex;
     align-items: center;
