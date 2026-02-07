@@ -28,9 +28,11 @@
                 <h3>Listado de usuarios </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
+                @can('usuario create')
                 <button class="btn btn-info float-right" data-target="#modal-create" data-toggle="modal"> <i
                         class="fa fa-plus"></i>
                     Nuevo</button>
+                @endcan
             </div>
             <div class="clearfix"></div>
         </div>
@@ -72,17 +74,26 @@
                                 </td>
 
                                 <td>
+                                    @can('usuario edit')
                                     <input type="checkbox" class="js-switch-manual" onchange="toggleUserActive({{ $obj->id }})"
                                         {{ $obj->activo == 1 ? 'checked' : '' }} />
+                                    @else
+                                    <input type="checkbox" class="js-switch-manual" disabled
+                                        {{ $obj->activo == 1 ? 'checked' : '' }} />
+                                    @endcan
                                 </td>
 
                                 <td align="center">
+                                    @can('usuario edit')
                                     <button class="btn btn-primary btn-sm" onclick="openEditDrawer({{ $obj->id }})" title="Modificar Usuario">
                                         <i class="fa fa-pencil fa-lg"></i>
                                     </button>
+                                    @endcan
+                                    @can('usuario edit')
                                     <button class="btn btn-info btn-sm" onclick="openRolesDrawer_{{ $obj->id }}({{ $obj->id }})" title="Asignar Roles" style="margin-left: 5px;">
                                         <i class="fa fa-user-plus fa-lg"></i>
                                     </button>
+                                    @endcan
                                 </td>
                             </tr>
                         @endforeach

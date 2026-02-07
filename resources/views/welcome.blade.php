@@ -166,15 +166,26 @@
                                 <li><a href="{{ url('/control-primas') }}"><i class="fa fa-bar-chart"></i>Control de Primas
                                         General</a></li>
                                 @endcan
+
+                                @can('seguridad menu')
                                 <li><a><i class="fa fa-users"></i> Seguridad <span
                                             class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu" id="ul-seguridad">
+                                        @can('usuario read')
                                         <li id="li-catalogo-usuario"><a href="{{ url('usuario/') }}">Usuario</a></li>
+                                        @endcan
+                                        @can('permiso read')
                                         <li><a href="{{ url('permission/') }}">Permisos</a></li>
+                                        @endcan
+                                        @can('tipo-permiso read')
                                          <li><a href="{{ url('permission_type/') }}">Tipo permisos</a></li>
+                                        @endcan
+                                        @can('rol read')    
                                         <li id="li-catalogo-role"><a href="{{ url('rol/') }}">Roles</a></li>
+                                        @endcan
                                     </ul>
                                 </li>
+                                @endcan
 
                                 <li><a><i class="fa fa-cog"></i> Configuracion<span
                                             class="fa fa-chevron-down"></span></a>
