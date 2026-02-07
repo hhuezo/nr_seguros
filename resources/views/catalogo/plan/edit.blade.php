@@ -87,7 +87,10 @@
                     </tbody>
                 </table>
                 <div class="form-group" align="right">
+                    @can('plan edit')
                     <button class="btn btn-success" type="submit">Modificar</button>
+                    @endcan
+                  
                 </div>
 
             </form>
@@ -152,6 +155,7 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+        displayOption("ul-catalogo", "li-plan");
     });
 
     function modal_edit_cobertura(Id,Nombre,SumaAsegurada, Tasa, Prima) {

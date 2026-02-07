@@ -251,7 +251,7 @@
                                                 <li  id="li-producto"><a href="{{ url('catalogo/producto') }}">Productos</a></li>
                                             @endcan
                                             @can('plan read')
-                                                <li><a href="{{ url('catalogo/plan') }}">Planes</a></li>
+                                                <li  id="li-plan"><a href="{{ url('catalogo/plan') }}">Planes</a></li>
                                             @endcan
                                         </ul>
                                     </li>
