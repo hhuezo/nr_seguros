@@ -8,9 +8,11 @@
                 <h3>Listado de Ejecutivos </h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12" align="right">
-                <button class="btn btn-info float-right" data-target="#modal-create" data-toggle="modal"> <i
-                        class="fa fa-plus"></i>
-                    Nuevo</button>
+                @can('ejecutivos create')
+                    <button class="btn btn-info float-right" data-target="#modal-create" data-toggle="modal"> <i
+                            class="fa fa-plus"></i>
+                        Nuevo</button>
+                @endcan
             </div>
             <div class="clearfix"></div>
         </div>
@@ -42,12 +44,12 @@
                                 <td>{{ $obj->Correo }}</td>
 
                                 <td align="center">
-                                    @can('edit users')
+                                    @can('ejecutivos edit')
                                         <a href="#" data-target="#modal-edit-{{ $obj->Id }}" data-toggle="modal"
                                             class="on-default edit-row"><button class="btn btn-primary"><i
                                                     class="fa fa-pencil fa-lg"></i></button></a>
                                     @endcan
-                                    @can('delete users')
+                                    @can('ejecutivos delete')
                                         <a href="#" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal">
                                             <button class="btn btn-danger"><i class="fa fa-trash fa-lg"></i></button></a>
                                     @endcan
@@ -133,7 +135,7 @@
             var table = $('#datatable').DataTable({
                 pageLength: 10,
                 displayStart: displayStart,
-                ordering: false
+                //ordering: false
             });
         });
     </script>

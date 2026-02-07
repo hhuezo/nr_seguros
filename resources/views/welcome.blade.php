@@ -163,71 +163,99 @@
                             <ul class="nav side-menu">
 
                                 @can('administracion menu')
-                                <li><a href="{{ url('/control-primas') }}"><i class="fa fa-bar-chart"></i>Control de Primas
-                                        General</a></li>
+                                    <li><a href="{{ url('/control-primas') }}"><i class="fa fa-bar-chart"></i>Control de
+                                            Primas
+                                            General</a></li>
                                 @endcan
 
                                 @can('seguridad menu')
-                                <li><a><i class="fa fa-users"></i> Seguridad <span
-                                            class="fa fa-chevron-down"></span></a>
-                                    <ul class="nav child_menu" id="ul-seguridad">
-                                        @can('usuario read')
-                                        <li id="li-catalogo-usuario"><a href="{{ url('usuario/') }}">Usuario</a></li>
-                                        @endcan
-                                        @can('permiso read')
-                                        <li><a href="{{ url('permission/') }}">Permisos</a></li>
-                                        @endcan
-                                        @can('tipo-permiso read')
-                                         <li><a href="{{ url('permission_type/') }}">Tipo permisos</a></li>
-                                        @endcan
-                                        @can('rol read')    
-                                        <li id="li-catalogo-role"><a href="{{ url('rol/') }}">Roles</a></li>
-                                        @endcan
-                                    </ul>
-                                </li>
+                                    <li><a><i class="fa fa-users"></i> Seguridad <span
+                                                class="fa fa-chevron-down"></span></a>
+                                        <ul class="nav child_menu" id="ul-seguridad">
+                                            @can('usuario read')
+                                                <li id="li-catalogo-usuario"><a href="{{ url('usuario/') }}">Usuario</a></li>
+                                            @endcan
+                                            @can('permiso read')
+                                                <li><a href="{{ url('permission/') }}">Permisos</a></li>
+                                            @endcan
+                                            @can('tipo-permiso read')
+                                                <li><a href="{{ url('permission_type/') }}">Tipo permisos</a></li>
+                                            @endcan
+                                            @can('rol read')
+                                                <li id="li-catalogo-role"><a href="{{ url('rol/') }}">Roles</a></li>
+                                            @endcan
+                                        </ul>
+                                    </li>
                                 @endcan
 
-                                @can('configuracion menu')  
-                                <li><a><i class="fa fa-cog"></i> Configuracion<span
-                                            class="fa fa-chevron-down"></span></a>
-                                    <ul class="nav child_menu" id="ul-configuracion">
-                                        @can('configuracion-recibo read')
-                                        <li><a href="{{ url('catalogo/configuracion_recibo/1/edit') }}">Configuración de Recibo</a></li>
-                                        @endcan
-                                        @can('numeracion-recibo read')
-                                        <li><a href="{{ url('catalogo/numeracion_recibo') }}">Numeracion recibo</a></li>
-                                        @endcan
-                                    </ul>
-                                </li>
+                                @can('configuracion menu')
+                                    <li><a><i class="fa fa-cog"></i> Configuracion<span
+                                                class="fa fa-chevron-down"></span></a>
+                                        <ul class="nav child_menu" id="ul-configuracion">
+                                            @can('configuracion-recibo read')
+                                                <li><a href="{{ url('catalogo/configuracion_recibo/1/edit') }}">Configuración
+                                                        de Recibo</a></li>
+                                            @endcan
+                                            @can('numeracion-recibo read')
+                                                <li><a href="{{ url('catalogo/numeracion_recibo') }}">Numeracion recibo</a>
+                                                </li>
+                                            @endcan
+                                        </ul>
+                                    </li>
                                 @endcan
-
-                                <li><a><i class="fa fa-folder"></i> Catálogos<span
-                                            class="fa fa-chevron-down"></span></a>
-                                    <ul class="nav child_menu" id="ul-catalogo">
-
-
-                                        <li><a href="{{ url('catalogo/bombero') }}">Impuesto Bomberos</a></li>
-                                        <li><a href="{{ url('catalogo/ejecutivos') }}">Ejecutivo</a></li>
-                                        <li><a href="{{ url('catalogo/estado_polizas') }}">Estado Póliza</a></li>
-                                        <li><a href="{{ url('catalogo/estado_venta') }}">Estado Venta</a></li>
-                                        <li><a href="{{ url('catalogo/nr_cartera') }}">Tipo Cartera NR </a></li>
-
-                                        <li><a href="{{ url('catalogo/tipo_negocio') }}">Tipo Negocio</a></li>
-                                        <li><a href="{{ url('catalogo/tipo_cobro') }}">Tipo Cobro</a></li>
-                                        <li><a href="{{ url('catalogo/tipo_poliza') }}">Tipo Póliza (ramo)</a></li>
-                                        <li><a href="{{ url('catalogo/area_comercial') }}">Cargo o puesto</a></li>
-                                        <li><a href="{{ url('catalogo/ubicacion_cobro') }}">Ubicación Cobro</a></li>
-                                        <li><a href="{{ url('catalogo/necesidad_proteccion') }}">Ramos</a></li>
-                                        <li><a href="{{ url('catalogo/perfiles') }}">Requisitos de asegurabilidad</a>
-                                        </li>
-                                        <li><a href="{{ url('catalogo/departamento_nr') }}">Departamentos NR</a></li>
-                                        <li><a href="{{ url('catalogo/producto') }}">Productos</a></li>
-                                        <li><a href="{{ url('catalogo/plan') }}">Planes</a></li>
+                                @can('catalogos menu')
+                                    <li><a><i class="fa fa-folder"></i> Catálogos<span
+                                                class="fa fa-chevron-down"></span></a>
+                                        <ul class="nav child_menu" id="ul-catalogo">
 
 
-                                    </ul>
-                                </li>
-
+                              
+                                            @can('ejecutivos read')
+                                                <li><a href="{{ url('catalogo/ejecutivos') }}">Ejecutivo</a></li>
+                                            @endcan
+                                            @can('estado-polizas read')
+                                                <li><a href="{{ url('catalogo/estado_polizas') }}">Estado Póliza</a></li>
+                                            @endcan
+                                            @can('estado-venta read')
+                                                <li><a href="{{ url('catalogo/estado_venta') }}">Estado Venta</a></li>
+                                            @endcan
+                                            @can('nr-cartera read')
+                                                <li><a href="{{ url('catalogo/nr_cartera') }}">Tipo Cartera NR </a></li>
+                                            @endcan
+                                            @can('tipo-negocio read')
+                                                <li><a href="{{ url('catalogo/tipo_negocio') }}">Tipo Negocio</a></li>
+                                            @endcan
+                                            @can('tipo-cobro read')
+                                                <li><a href="{{ url('catalogo/tipo_cobro') }}">Tipo Cobro</a></li>
+                                            @endcan
+                                            @can('tipo-poliza read')
+                                                <li><a href="{{ url('catalogo/tipo_poliza') }}">Tipo Póliza (ramo)</a></li>
+                                            @endcan
+                                            @can('area-comercial read')
+                                                <li><a href="{{ url('catalogo/area_comercial') }}">Cargo o puesto</a></li>
+                                            @endcan
+                                            @can('ubicacion-cobro read')
+                                                <li><a href="{{ url('catalogo/ubicacion_cobro') }}">Ubicación Cobro</a></li>
+                                            @endcan
+                                            @can('necesidad-proteccion read')
+                                                <li><a href="{{ url('catalogo/necesidad_proteccion') }}">Ramos</a></li>
+                                            @endcan
+                                            @can('perfiles read')
+                                                <li><a href="{{ url('catalogo/perfiles') }}">Requisitos de asegurabilidad</a>
+                                                </li>
+                                            @endcan
+                                            @can('departamento-nr read')
+                                                <li><a href="{{ url('catalogo/departamento_nr') }}">Departamentos NR</a></li>
+                                            @endcan
+                                            @can('producto read')
+                                                <li><a href="{{ url('catalogo/producto') }}">Productos</a></li>
+                                            @endcan
+                                            @can('plan read')
+                                                <li><a href="{{ url('catalogo/plan') }}">Planes</a></li>
+                                            @endcan
+                                        </ul>
+                                    </li>
+                                @endcan
 
                                 <li><a><i class="fa fa-folder"></i> Suscripciones<span
                                             class="fa fa-chevron-down"></span></a>
@@ -293,7 +321,7 @@
                                         <li id="li-catalogo-aseguradora"><a
                                                 href="{{ url('catalogo/aseguradoras') }}">Aseguradora </a></li>
                                         <!-- <li><a href="{{ url('catalogo/necesidad_aseguradora') }}">Asignar Necesidad de Protección <br>
-                                    Aseguradora</a></li> -->
+                                Aseguradora</a></li> -->
                                     </ul>
                                 </li>
 
@@ -314,20 +342,20 @@
                                 </li>
 
                                 <!-- <li><a><i class="fa fa-file-pdf-o"></i> Reportes<span class="fa fa-chevron-down"></span></a>
-                                    <ul class="nav child_menu">
+                                <ul class="nav child_menu">
 
-                                        <li><a href="{{ url('reportes/corte_caja') }}">Cortes de caja</a></li>
+                                    <li><a href="{{ url('reportes/corte_caja') }}">Cortes de caja</a></li>
 
-                                    </ul>
-                                </li> -->
+                                </ul>
+                            </li> -->
 
                                 <!-- <li><a><i class="fa fa-suitcase"></i> Validación<span class="fa fa-chevron-down"></span></a>
-                                    <ul class="nav child_menu">
+                                <ul class="nav child_menu">
 
-                                        <li><a href="{{ url('polizas/validacion_cartera') }}">Validación de cartera</a></li>
+                                    <li><a href="{{ url('polizas/validacion_cartera') }}">Validación de cartera</a></li>
 
-                                    </ul>
-                                </li> -->
+                                </ul>
+                            </li> -->
                             </ul>
                         </div>
                         <!-- sidebar menu -->
