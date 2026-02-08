@@ -48,6 +48,7 @@ Route::middleware(['web'])->group(function () {
     Route::post('polizas/vida/exportar_historial', [VidaController::class, 'exportar_historial']);
     Route::post('polizas/vida/eliminar_comentario', [VidaController::class, 'eliminar_comentario']);
     Route::post('polizas/vida/agregar_comentario', [VidaController::class, 'agregar_comentario']);
+    Route::post('polizas/vida/exportar_extra_primados', [VidaController::class, 'exportar_extra_primados']);
 
 
 

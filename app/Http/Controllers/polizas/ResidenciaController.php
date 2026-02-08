@@ -287,6 +287,14 @@ class ResidenciaController extends Controller
 
             PolizaResidenciaTempCartera::where('PolizaResidencia', '=', $request->Residencia)->delete();
             // dd($poliza);
+
+            $registro = ResidenciaDetallePreliminar::where('Axo', $request->AxoCancelar)
+                ->where('Mes', $request->MesCancelar)
+                ->where('PolizaResidenciaId', $request->Residencia)
+                ->first();
+            if ($registro) {
+                $registro->delete();
+            }
         } catch (\Throwable $th) {
             //throw $th;
         }

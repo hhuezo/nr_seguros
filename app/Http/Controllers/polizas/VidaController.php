@@ -6,6 +6,7 @@ use App\Exports\vida\EdadMaximaExport;
 use App\Exports\vida\EdadInscripcionExport;
 use App\Exports\vida\EdadTerminacionExport;
 use App\Exports\vida\ExtraPrimadosExcluidosExport;
+use App\Exports\vida\ExtraPrimadosExport;
 use App\Exports\vida\HistoricoVidaPagosExport;
 use App\Exports\vida\NuevosRegistrosExport;
 use App\Exports\vida\RegistrosEliminadosExport;
@@ -1801,6 +1802,16 @@ class VidaController extends Controller
             VidaCarteraTemp::where('PolizaVida', '=', $request->PolizaVida)->delete();
 
             VidaCartera::where('PolizaVida', '=', $request->PolizaVida)->where('PolizaVidaDetalle', null)->delete();
+
+            $registro = VidaDetallePreliminar::where('Axo', $request->AxoCancelar)
+                ->where('Mes', $request->MesCancelar)
+                ->where('PolizaVidaId', $request->PolizaVida)
+                ->first();
+
+            if ($registro) {
+                $registro->delete();
+            }
+
         } catch (\Throwable $th) {
             //throw $th;
         }
@@ -3120,5 +3131,12 @@ class VidaController extends Controller
         $comen->update();
         alert()->success('El registro del comentario ha sido elimando correctamente')->showConfirmButton('Aceptar', '#3085d6');
         return Redirect::to('polizas/vida/' . $comen->Vida);
+    }
+
+    public function exportar_extra_primados(Request $request)
+    {
+        $poliza_vida = $request->PolizaVida;
+        $vida = Vida::findOrFail($poliza_vida);
+        return Excel::download(new ExtraPrimadosExport($vida->Id), 'Extra Primados Vida.xlsx');
     }
 }

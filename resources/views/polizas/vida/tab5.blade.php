@@ -48,6 +48,13 @@
         <div class="x_title">
             <h4>&nbsp;&nbsp; Listado de Extra Primados<small></small>
             </h4>
+            <ul class="nav navbar-right panel_toolbox">
+                <form action="{{ url('polizas/vida/exportar_extra_primados') }}" method="post">
+                    @csrf
+                    <input type="hidden" name="PolizaVida" value="{{ $poliza_vida->Id }}">
+                    <button class="btn btn-success float-right" type="submit">Exportar Extra Primados</button>
+                </form>
+            </ul>
             <div class="clearfix"></div>
         </div>
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">

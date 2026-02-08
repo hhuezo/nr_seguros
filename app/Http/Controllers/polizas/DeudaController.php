@@ -10,6 +10,7 @@ use App\Exports\DeudaFedeExport;
 use App\Exports\DeudaReciboExport;
 use App\Exports\EdadMaximaExport;
 use App\Exports\ExtraPrimadosExcluidosExport;
+use App\Exports\ExtraPrimadosExport;
 use App\Exports\HistoricoPagosExport;
 use App\Exports\RegistroRequisitosExport;
 use App\Exports\RegistroRequisitosReciboExport;
@@ -1958,6 +1959,17 @@ class DeudaController extends Controller
                 })
                 ->delete();
 
+            // borrar los datos de la tabla preliminar
+            $registro = DeudaDetallePreliminar::where('Axo', $request->Axo)
+                ->where('Mes', $request->Mes)
+                ->where('PolizaDeudaId', $request->Deuda)
+                ->first();
+
+            if ($registro) {
+                $registro->delete();
+            }
+
+
             // No borrar poliza_deuda_temp_cartera: los datos restaurados del historial deben quedar ahí.
 
             $usuario = Auth::user();
@@ -3077,5 +3089,11 @@ class DeudaController extends Controller
         $deuda = Deuda::findOrFail($id);
         $cartera = PolizaDeudaCartera::where('PolizaDeuda', $deuda->Id)->where('NoValido', 0)->where('PolizaDeudaDetalle', null)->get();
         return Excel::download(new DeudaCarteraExport($cartera), 'Cartera.xlsx');
+    }
+
+    public function exportar_extra_primados(Request $request)
+    {
+        $deuda = Deuda::findOrFail($request->Deuda);
+        return Excel::download(new ExtraPrimadosExport($deuda->Id), 'Extra Primados Deuda.xlsx');
     }
 }

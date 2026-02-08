@@ -432,10 +432,8 @@
                             </button>
                             <h4 class="modal-title">Cancelar Cobro</h4>
                             <input type="hidden" name="PolizaVida" value="{{ $poliza_vida->Id }}">
-                            <input type="hidden" name="MesCancelar"
-                                value="{{ isset($fechas) ? $fechas->Mes : '' }}">
-                            <input type="hidden" name="AxoCancelar"
-                                value="{{ isset($fechas) ? $fechas->Axo : '' }}">
+                            <input type="hidden" name="MesCancelar" value="{{ isset($fechas) ? $fechas->Mes : '' }}">
+                            <input type="hidden" name="AxoCancelar" value="{{ isset($fechas) ? $fechas->Axo : '' }}">
                         </div>
                         <div class="modal-body">
                             <p>¿Está seguro/a que desea cancelar el cobro?</p>

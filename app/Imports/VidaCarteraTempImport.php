@@ -42,6 +42,14 @@ class VidaCarteraTempImport implements ToModel, WithStartRow
         try {
             if (!empty(trim($row[0])) || !empty(trim($row[1]))  || !empty(trim($row[2]))   ) { // Al menos DUI o Pasaporte o carnet de residencia
 
+
+                //validar que las primeras 5 columnas no esten vacias o contengan espacios
+                for ($i = 0; $i < 5; $i++) {
+                    if (empty(trim($row[$i])) || strpos(trim($row[$i]), ' ') !== false) {
+                        return null;
+                    }
+                }
+
                 $modelData = [
                     'Dui' => $row[0] ?? null,
                     'Pasaporte' => $row[1] ?? null,

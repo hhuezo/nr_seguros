@@ -47,6 +47,14 @@ class PolizaDeudaTempCarteraImport implements ToModel, /*WithStartRow,*/ SkipsEm
             }
 
             if ($this->encabezados == 1) {
+
+                //validar que las primeras 5 columnas no esten vacias o contengan espacios
+                for ($i = 0; $i < 5; $i++) {
+                    if (empty(trim($row[$i])) || strpos(trim($row[$i]), ' ') !== false) {
+                        return null;
+                    }
+                }
+
                 return new PolizaDeudaTempCartera([
                     'Dui'                 => trim($row[0]),
                     'Pasaporte'           => $row[1],

@@ -620,10 +620,8 @@
                                         <h4 class="modal-title">Cancelar Cobro</h4>
 
                                         <input type="hidden" name="Residencia" value="{{ $residencia->Id }}">
-                                        <input type="hidden" name="MesCancelar"
-                                            value="{{ isset($fecha) ? $fecha->Mes : '' }}">
-                                        <input type="hidden" name="AxoCancelar"
-                                            value="{{ isset($fecha) ? $fecha->Axo : '' }}">
+                                        <input type="hidden" name="MesCancelar" value="{{ isset($fecha) ? $fecha->Mes : '' }}">
+                                        <input type="hidden" name="AxoCancelar" value="{{ isset($fecha) ? $fecha->Axo : '' }}">
                                     </div>
                                     <div class="modal-body">
                                         <p>¿Esta seguro/a que desea cancelar el cobro?</p>

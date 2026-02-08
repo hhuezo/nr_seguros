@@ -8,6 +8,7 @@ use App\Imports\DesempleoCarteraTempImport;
 use App\Models\polizas\Desempleo;
 use App\Models\polizas\DesempleoCartera;
 use App\Models\polizas\DesempleoDetalle;
+use App\Models\polizas\DesempleoDetallePreliminar;
 use App\Models\polizas\DesempleoTasaDiferenciada;
 use App\Models\polizas\DesempleoTipoCartera;
 use App\Models\temp\DesempleoCarteraTemp;
@@ -991,9 +992,19 @@ class DesempleoCarteraController extends Controller
 
         try {
 
+            $registro = DesempleoDetallePreliminar::where('Axo', $request->AxoCancelar)
+                ->where('Mes', $request->MesCancelar)
+                ->where('PolizaDesempleoId', $request->Desempleo)
+                ->first();
+
+            if ($registro) {
+                $registro->delete();
+            }
+
             $poliza = DesempleoCartera::where('PolizaDesempleo', '=', $request->Desempleo)->where('PolizaDesempleoDetalle', null)->delete();
 
             DesempleoCarteraTemp::where('PolizaDesempleo', '=', $request->Desempleo)->delete();
+
             // dd($poliza);
         } catch (\Throwable $th) {
             //throw $th;

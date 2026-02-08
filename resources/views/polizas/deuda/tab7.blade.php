@@ -59,7 +59,14 @@
         <div class="x_title">
             <h4>&nbsp;&nbsp; Listado de Extra Primados<small></small>
             </h4>
-            <div class="clearfix"></div>
+            <ul class="nav navbar-right panel_toolbox">
+                <form action="{{ url('polizas/deuda/exportar_extra_primados') }}" method="post">
+                    @csrf
+                    <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
+                    <button class="btn btn-success float-right" type="submit">Exportar Extra Primados</button>
+                </form>
+            </ul>
+            <div class="clearfix"> </div>
         </div>
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <table width="100%" class="table table-striped" id="clientes-extra">
@@ -167,6 +174,7 @@
                 console.error("Error al realizar la solicitud GET.");
             });
     }
+
 
     // function totalPago(deuda_tasa) {
     //     //alert(deuda_tasa);

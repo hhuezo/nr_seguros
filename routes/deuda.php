@@ -53,6 +53,7 @@ Route::middleware(['web'])->group(function () {
     Route::get('get_fechas_renovacion', [DeudaRenovacionController::class, 'get_fechas_renovacion']);
     Route::post('eliminar_renovacion/{id}', [DeudaRenovacionController::class, 'eliminar_renovacion']);
     Route::get('polizas/deuda/get_requisitos', [DeudaController::class, 'get_requisitos']);
+    Route::post('polizas/deuda/exportar_extra_primados', [DeudaController::class, 'exportar_extra_primados']);
 
 
 

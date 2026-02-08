@@ -54,6 +54,13 @@ class DesempleoCarteraTempImport implements ToModel, WithStartRow, SkipsEmptyRow
                 return null;
             }
 
+            //validar que las primeras 5 columnas no esten vacias o contengan espacios
+            for ($i = 0; $i < 5; $i++) {
+                if (empty(trim($row[$i])) || strpos(trim($row[$i]), ' ') !== false) {
+                    return null;
+                }
+            }
+
             // Crear registro normalmente
             return new DesempleoCarteraTemp([
                 'PolizaDesempleo' => $this->Poliza,

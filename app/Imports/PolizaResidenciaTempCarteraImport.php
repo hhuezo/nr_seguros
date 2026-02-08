@@ -42,6 +42,14 @@ class PolizaResidenciaTempCarteraImport implements ToModel, WithStartRow, SkipsE
             // Si el nombre completo está vacío o solo contiene espacios, no insertar
             return null;
         }
+
+        //validar que las primeras 5 columnas no esten vacias o contengan espacios
+        for ($i = 0; $i < 5; $i++) {
+            if (empty(trim($row[$i])) || strpos(trim($row[$i]), ' ') !== false) {
+                return null;
+            }
+        }
+
         return new PolizaResidenciaTempCartera([
             'Dui' => $row[0],
             'Nit' => $row[1],

@@ -374,6 +374,8 @@
                                 </button>
                                 <h4 class="modal-title">Cancelar Cobro</h4>
                                 <input type="hidden" name="Deuda" value="{{ $deuda->Id }}">
+                                <input type="hidden" name="Axo" value="{{ $fechas->Axo ?? '' }}">
+                                <input type="hidden" name="Mes" value="{{ $fechas->Mes ?? '' }}">
                             </div>
                             <div class="modal-body">
                                 <p>¿Esta seguro/a que desea cancelar el cobro?</p>
