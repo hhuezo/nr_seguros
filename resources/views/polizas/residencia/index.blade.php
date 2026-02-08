@@ -47,46 +47,44 @@
                                 <td>{{ \Carbon\Carbon::parse($obj->VigenciaHasta)->format('d/m/Y') }}</td>
                                 <td>{{ $obj->estadoPolizas->Nombre ?? '' }}</td>
                                 <td>{{ $obj->ejecutivos->Nombre ?? '' }}</td>
-                                <td>
-                                    <div style="display: flex; justify-content: center;">
-
-
-
+                                <td class="text-center">
+                                    <div class="poliza-opciones">
                                         @can('residencia edit')
                                         @if ($obj->Modificar == 1)
                                             <a href="{{ url('polizas/residencia') }}/{{ $obj->Id }}/edit"
-                                                class="btn btn-success on-default edit-row" title="Modificar">
-                                                <i class="fa fa-edit fa-lg"></i>
+                                                class="btn btn-sm btn-primary" title="Modificar">
+                                                <i class="fa fa-edit"></i>
                                             </a>
                                         @else
                                             <a href="{{ url('polizas/residencia') }}/{{ $obj->Id }}/edit?tab=2"
-                                                class="btn btn-success on-default edit-row" title="Generar Pago">
-                                                <i class="fa fa-file fa-lg"></i>
+                                                class="btn btn-sm btn-info" title="Generar Pago">
+                                                <i class="fa fa-file"></i>
                                             </a>
                                         @endif
                                         @endcan
-
-                                        &nbsp;
-                                       <a data-target="#modal-renovar-{{ $obj->Id }}" data-toggle="modal"
-                                        class="on-default btn btn-primary edit-row" title="Renovar"><i
-                                            class="fa fa-refresh fa-lg"></i></a>
-
-                                    </div>
-                                    <div style="display: flex; justify-content: center;">
+                                        <a data-target="#modal-renovar-{{ $obj->Id }}" data-toggle="modal"
+                                            class="btn btn-sm btn-success" title="Renovar">
+                                            <i class="fa fa-refresh"></i>
+                                        </a>
                                         @can('residencia delete')
-                                            <a href="" class="btn btn-danger"
+                                            <a href="" class="btn btn-sm btn-danger"
                                                 data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"
-                                                title="Anular Poliza"><i class="fa fa-trash fa-lg"></i></a>
+                                                title="Anular Póliza">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
                                         @endcan
                                         @if ($obj->Modificar == 1)
-                                            <a href="" class="btn btn-danger"
+                                            <a href="" class="btn btn-sm btn-warning"
                                                 data-target="#modal-desactivar-{{ $obj->Id }}" data-toggle="modal"
-                                                title="Desactivar modificación"><i class="fa fa-check-square fa-lg"></i></a>
+                                                title="Desactivar modificación">
+                                                <i class="fa fa-check-square"></i>
+                                            </a>
                                         @else
-                                            &nbsp;
-                                            <a href="" class="btn btn-warning"
+                                            <a href="" class="btn btn-sm btn-warning"
                                                 data-target="#modal-activar-{{ $obj->Id }}" data-toggle="modal"
-                                                title="Activar modificación"><i class="fa fa-unlock-alt fa-lg"></i></a>
+                                                title="Activar modificación">
+                                                <i class="fa fa-unlock-alt"></i>
+                                            </a>
                                         @endif
                                     </div>
                                 </td>

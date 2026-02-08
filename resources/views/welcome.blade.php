@@ -31,6 +31,18 @@
             margin-bottom: 0;
             /* text-align: right; */
         }
+        /* Columna Opciones en index de pólizas: 2 columnas (2 botones por fila) */
+        .poliza-opciones {
+            display: grid;
+            grid-template-columns: repeat(2, auto);
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+        }
+        .poliza-opciones .btn-sm {
+            padding: 5px 10px;
+            min-width: 32px;
+        }
     </style>
     <!-- jQuery -->
     <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>

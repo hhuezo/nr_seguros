@@ -40,26 +40,36 @@
                                 <td>{{ $obj->ejecutivo->Nombre ?? '' }}</td>
                                 <td>{{ $obj->estadoPoliza->Nombre ?? '' }}</td>
 
-                                <td align="center">
-                                    @can('vida edit')
-                                    @if ($obj->Configuracion == 1)
-                                        <a href="{{ url('polizas/vida') }}/{{ $obj->Id }}?tab=2" title="Generar Pago">
-                                            <i class="fa fa-file fa-lg"></i></a>
-                                        <a href="{{ url('polizas/vida') }}/{{ $obj->Id }}/edit" title="Configuracion">
-                                            <i class="fa fa-lock fa-lg"></i></a>
-                                    @else
-                                        <a href="{{ url('polizas/vida') }}/{{ $obj->Id }}/edit"
-                                            title="Configuracion">
-                                            <i class="fa fa-unlock fa-lg"></i></a>
-                                    @endif
-                                    @endcan
-                                    @can('vida delete')
-                                        &nbsp;&nbsp;<a href="" data-target="#modal-delete-{{ $obj->Id }}"
-                                            data-toggle="modal"><i class="fa fa-trash fa-lg"></i></a>
-                                    @endcan
-                                    <a data-target="#modal-renovar-{{ $obj->Id }}" data-toggle="modal"
-                                        class="on-default edit-row" title="Renovar"><i
-                                            class="fa fa-refresh fa-lg"></i></a>
+                                <td class="text-center">
+                                    <div class="poliza-opciones">
+                                        @can('vida edit')
+                                        @if ($obj->Configuracion == 1)
+                                            <a href="{{ url('polizas/vida') }}/{{ $obj->Id }}?tab=2"
+                                                class="btn btn-sm btn-info" title="Generar Pago">
+                                                <i class="fa fa-file"></i>
+                                            </a>
+                                            <a href="{{ url('polizas/vida') }}/{{ $obj->Id }}/edit"
+                                                class="btn btn-sm btn-primary" title="Configuración">
+                                                <i class="fa fa-lock"></i>
+                                            </a>
+                                        @else
+                                            <a href="{{ url('polizas/vida') }}/{{ $obj->Id }}/edit"
+                                                class="btn btn-sm btn-primary" title="Configuración">
+                                                <i class="fa fa-unlock"></i>
+                                            </a>
+                                        @endif
+                                        @endcan
+                                        <a data-target="#modal-renovar-{{ $obj->Id }}" data-toggle="modal"
+                                            class="btn btn-sm btn-success" title="Renovar">
+                                            <i class="fa fa-refresh"></i>
+                                        </a>
+                                        @can('vida delete')
+                                            <a href="" data-target="#modal-delete-{{ $obj->Id }}"
+                                                data-toggle="modal" class="btn btn-sm btn-danger" title="Eliminar">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        @endcan
+                                    </div>
                                 </td>
                             </tr>
                             @include('polizas.vida.modal')

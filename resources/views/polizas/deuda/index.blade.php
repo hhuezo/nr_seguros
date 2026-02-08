@@ -56,32 +56,35 @@
                                         <td></td>
                                         @endif
 
-                                        <td align="right">
-                                            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;">
+                                        <td class="text-center">
+                                            <div class="poliza-opciones">
                                                 @can('deuda edit')
                                                 @if ($obj->Configuracion == 1)
                                                     <a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}/edit"
-                                                        class="btn btn-primary on-default edit-row" title="Generar Pago">
-                                                        <i class="fa fa-file fa-lg"></i></a>
+                                                        class="btn btn-sm btn-info" title="Generar Pago">
+                                                        <i class="fa fa-file"></i>
+                                                    </a>
                                                     <a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}"
-                                                        class="btn btn-success on-default edit-row" title="Configuracion">
-                                                        <i class="fa fa-lock fa-lg"></i></a>
+                                                        class="btn btn-sm btn-primary" title="Configuración">
+                                                        <i class="fa fa-lock"></i>
+                                                    </a>
                                                 @else
                                                     <a href="{{ url('polizas/deuda') }}/{{ $obj->Id }}"
-                                                        class="btn btn-success on-default edit-row" title="Configuracion">
-                                                        <i class="fa fa-unlock fa-lg"></i></a>
+                                                        class="btn btn-sm btn-primary" title="Configuración">
+                                                        <i class="fa fa-unlock"></i>
+                                                    </a>
                                                 @endif
                                                 @endcan
-                                                @can('deuda delete')
-                                                <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"
-                                                    class="btn btn-danger" title="Eliminar"><i class="fa fa-trash fa-lg"></i></a>
-                                                @endcan
-
                                                 <a data-target="#modal-renovar-{{ $obj->Id }}" data-toggle="modal"
-                                                    class="on-default edit-row btn btn-info" title="Renovar"><i
-                                                        class="fa fa-refresh fa-lg"></i></a>
-                                                <!-- <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal" class="btn btn-danger" title="Eliminar"><i class="fa fa-trash fa-lg"></i></a> -->
-
+                                                    class="btn btn-sm btn-success" title="Renovar">
+                                                    <i class="fa fa-refresh"></i>
+                                                </a>
+                                                @can('deuda delete')
+                                                    <a href="" data-target="#modal-delete-{{ $obj->Id }}"
+                                                        data-toggle="modal" class="btn btn-sm btn-danger" title="Eliminar">
+                                                        <i class="fa fa-trash"></i>
+                                                    </a>
+                                                @endcan
                                             </div>
                                         </td>
 
