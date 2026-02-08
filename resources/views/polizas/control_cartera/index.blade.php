@@ -45,6 +45,10 @@
             background: #e9ecef !important;
             font-weight: 700;
         }
+
+        .x_panel, .x_title {
+            margin-bottom: 0 !important;
+        }
     </style>
 
 
@@ -111,7 +115,7 @@
                             <th>CIA. de seguros</th>
                             <th>Póliza No.</th>
                             <th>Fecha recepción archivo</th>
-                            <th>Fecha envío a CIA.</th>
+                            <th>Fecha envío CIA.</th>
                             <th>Trabajo efectuado día hábil</th>
                             <th>Hora tarea</th>
                             <th>Flujo asignado</th>
@@ -133,13 +137,13 @@
                             <th>Anexo de declaración</th>
                             <th>Número AC SISCO</th>
                             <th>Fecha vencimiento</th>
-                            <th>Fecha de envío a cliente</th>
+                            <th>Fech envío cliente</th>
                             <th>Reproceso de NR</th>
-                            <th>Fecha de envío de corrección</th>
+                            <th>Fecha envío corrección</th>
                             <th>Fecha seguimiento cobros</th>
                             <th>Fecha recepción de pago</th>
-                            <th>Fecha de reporte a CIA.</th>
-                            <th>Fecha de aplicación</th>
+                            <th>Fecha reporte CIA.</th>
+                            <th>Fecha aplicación</th>
                         </tr>
                     </thead>
 
