@@ -282,40 +282,31 @@
                                                 align="right">&nbsp;
                                             </label>
                                             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                                @if ($residencia->Mensual == 1)
-                                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                                        <input type="radio" name="tipoTasa" id="Mensual"
-                                                            value="1" checked>
-                                                        <label class="control-label">Tasa Millar Mensual</label>
+                                                <input type="hidden" name="tipoTasa" id="tipoTasa" value="{{ $residencia->Mensual == 1 ? '1' : '0' }}">
+                                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                                    <label class="control-label"><i class="fa fa-calendar"></i> Tasa Millar Mensual</label>
+                                                    <div style="margin-top: 8px;">
+                                                        <input type="checkbox" id="tipoTasaMensual" class="js-switch js-switch-tipo-tasa" data-switchery="true" value="1"
+                                                            {{ $residencia->Mensual == 1 ? 'checked' : '' }}>
                                                     </div>
-
-                                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                                        <input type="radio" name="tipoTasa" id="Anual"
-                                                            value="0">
-                                                        <label class="control-label">Tasa ‰ Millar Anual</label>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                                    <label class="control-label"><i class="fa fa-calendar-o"></i> Tasa ‰ Millar Anual</label>
+                                                    <div style="margin-top: 8px;">
+                                                        <input type="checkbox" id="tipoTasaAnual" class="js-switch js-switch-tipo-tasa" data-switchery="true" value="0"
+                                                            {{ $residencia->Mensual != 1 ? 'checked' : '' }}>
                                                     </div>
-                                                @else
-                                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                                        <input type="radio" name="tipoTasa" id="Mensual"
-                                                            value="1">
-                                                        <label class="control-label">Tasa Millar Mensual</label>
-                                                    </div>
-
-                                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                                        <input type="radio" name="tipoTasa" id="Anual"
-                                                            value="0" checked>
-                                                        <label class="control-label">Tasa ‰ Millar Anual</label>
-                                                    </div>
-                                                @endif
-
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="col-md-3">
-                                        <input name="ComisionIva" id="ComisionIva" type="checkbox" class="js-switch"
-                                            {{ $residencia->DescuentoIva == 1 ? 'checked' : '' }}>
-                                        <label class="control-label" align="right">¿IVA incluído?</label>
+                                        <label class="control-label">¿IVA incluído?</label>
+                                        <div style="margin-top: 8px;">
+                                            <input name="ComisionIva" id="ComisionIva" type="checkbox" class="js-switch"
+                                                {{ $residencia->DescuentoIva == 1 ? 'checked' : '' }}>
+                                        </div>
                                     </div>
 
                                     <br>
@@ -1069,6 +1060,31 @@
         $(document).ready(function() {
             //mostrar opcion en menu
             displayOption("ul-poliza", "li-poliza-residencia");
+
+            // Tasa Millar: dos switches excluyentes (Mensual = 1, Anual = 0)
+            var tipoTasaMensual = document.querySelector('#tipoTasaMensual');
+            var tipoTasaAnual = document.querySelector('#tipoTasaAnual');
+            if (tipoTasaMensual && tipoTasaAnual) {
+                tipoTasaMensual.onchange = function() {
+                    if (this.checked) {
+                        if (tipoTasaAnual.checked) {
+                            var spanAnual = tipoTasaAnual.nextElementSibling;
+                            if (spanAnual) spanAnual.click();
+                        }
+                        document.getElementById('tipoTasa').value = '1';
+                    }
+                };
+                tipoTasaAnual.onchange = function() {
+                    if (this.checked) {
+                        if (tipoTasaMensual.checked) {
+                            var spanMensual = tipoTasaMensual.nextElementSibling;
+                            if (spanMensual) spanMensual.click();
+                        }
+                        document.getElementById('tipoTasa').value = '0';
+                    }
+                };
+                document.getElementById('tipoTasa').value = tipoTasaMensual.checked ? '1' : '0';
+            }
 
             $('#comentarios').DataTable();
             $('#avisos').DataTable({ ordering: false });

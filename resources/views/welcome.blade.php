@@ -474,6 +474,15 @@
 
     <!-- Switchery -->
     <script src="{{ asset('vendors/switchery/dist/switchery.min.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            document.querySelectorAll('.js-switch').forEach(function(el) {
+                if (!el.nextElementSibling || !el.nextElementSibling.classList.contains('switchery')) {
+                    new Switchery(el, { color: '#26B99A', size: 'small' });
+                }
+            });
+        });
+    </script>
 
     <!-- Select2 -->
     <script src="{{ asset('vendors/select2/select2.min.js') }}"></script>

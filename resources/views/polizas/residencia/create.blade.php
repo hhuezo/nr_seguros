@@ -201,30 +201,31 @@
                         </div>
 
                         <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                            <input type="hidden" name="tipoTasa" id="tipoTasa" value="{{ old('tipoTasa', '1') }}">
                             <div class="form-group row">
                                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                    <input type="radio" name="tipoTasa" id="tipoTasaMensual" value="1"
-                                        {{ old('tipoTasa', '1') == '1' ? 'checked' : '' }} required>
-                                    <label class="control-label" for="tipoTasaMensual">
-                                        <i class="fa fa-calendar"></i> Tasa Millar Mensual *
-                                    </label>
+                                    <label class="control-label"><i class="fa fa-calendar"></i> Tasa Millar Mensual *</label>
+                                    <div style="margin-top: 8px;">
+                                        <input type="checkbox" id="tipoTasaMensual" class="js-switch js-switch-tipo-tasa" data-switchery="true" value="1"
+                                            {{ old('tipoTasa', '1') == '1' ? 'checked' : '' }}>
+                                    </div>
                                 </div>
-
                                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                    <input type="radio" name="tipoTasa" id="tipoTasaAnual" value="0"
-                                        {{ old('tipoTasa') == '0' ? 'checked' : '' }} required>
-                                    <label class="control-label" for="tipoTasaAnual">
-                                        <i class="fa fa-calendar-o"></i> Tasa ‰ Millar Anual *
-                                    </label>
+                                    <label class="control-label"><i class="fa fa-calendar-o"></i> Tasa ‰ Millar Anual *</label>
+                                    <div style="margin-top: 8px;">
+                                        <input type="checkbox" id="tipoTasaAnual" class="js-switch js-switch-tipo-tasa" data-switchery="true" value="0"
+                                            {{ old('tipoTasa') == '0' ? 'checked' : '' }}>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-
                         <div class="col-sm-2">
-                            <input name="ComisionIva" id="ComisionIva" type="checkbox" class="js-switch"
-                                {{ old('ComisionIva') ? 'checked' : '' }}>
-                            <label class="control-label" align="right">¿IVA incluído?</label>
+                            <label class="control-label">¿IVA incluído?</label>
+                            <div style="margin-top: 8px;">
+                                <input name="ComisionIva" id="ComisionIva" type="checkbox" class="js-switch"
+                                    {{ old('ComisionIva') ? 'checked' : '' }}>
+                            </div>
                         </div>
 
                         <br><br>
@@ -258,7 +259,31 @@
             //mostrar opcion en menu
             displayOption("ul-poliza", "li-poliza-residencia");
 
-
+            // Tasa Millar: dos switches excluyentes (Mensual = 1, Anual = 0). Switchery se inicializa en custom.min.js para todos .js-switch (no duplicar aquí).
+            var tipoTasaMensual = document.querySelector('#tipoTasaMensual');
+            var tipoTasaAnual = document.querySelector('#tipoTasaAnual');
+            if (tipoTasaMensual && tipoTasaAnual) {
+                // Al activar uno, desactivar el otro (clic en el switch visual para sincronizar)
+                tipoTasaMensual.onchange = function() {
+                    if (this.checked) {
+                        if (tipoTasaAnual.checked) {
+                            var spanAnual = tipoTasaAnual.nextElementSibling;
+                            if (spanAnual) spanAnual.click();
+                        }
+                        document.getElementById('tipoTasa').value = '1';
+                    }
+                };
+                tipoTasaAnual.onchange = function() {
+                    if (this.checked) {
+                        if (tipoTasaMensual.checked) {
+                            var spanMensual = tipoTasaMensual.nextElementSibling;
+                            if (spanMensual) spanMensual.click();
+                        }
+                        document.getElementById('tipoTasa').value = '0';
+                    }
+                };
+                document.getElementById('tipoTasa').value = tipoTasaMensual.checked ? '1' : '0';
+            }
 
             $("#Aseguradora").change(function() {
                 $('#response').html('<div><img src="../../../public/img/ajax-loader.gif"/></div>');
