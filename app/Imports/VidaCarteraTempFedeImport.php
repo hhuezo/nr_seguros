@@ -39,7 +39,7 @@ class VidaCarteraTempFedeImport implements ToModel
         if (empty(array_filter($row))) {
             return null;
         }
-        for ($i = 0; $i < 4; $i++) {
+        for ($i = 0; $i < 3; $i++) {
             if (!$tieneDato($row[$i] ?? null)) {
                 return null;
             }
