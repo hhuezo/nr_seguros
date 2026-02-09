@@ -49,8 +49,22 @@ class PolizaResidenciaTempCarteraImport implements ToModel, WithStartRow, SkipsE
             return $s !== '' && strpos($s, ' ') === false;
         };
 
+        $tieneAlgunDato = function ($v) {
+            $s = trim((string) ($v ?? ''));
+            return $s !== '';
+        };
+
+
+
+        // Columnas 2, 3 o 4 (Nit, Pasaporte, CarnetResidencia): al menos una debe tener datos; si no, se corta la importación
+        $tieneCol234 = $tieneAlgunDato($row[1] ?? '') || $tieneAlgunDato($row[2] ?? '') || $tieneAlgunDato($row[3] ?? '');
+        if (!$tieneCol234) {
+            Log::error('[PolizaResidenciaTempCarteraImport] Importación detenida: al menos una de las columnas Nit (2), Pasaporte (3) o Carnet Residencia (4) debe tener datos.');
+            throw new \Exception('VALIDATION_ERROR: Al menos una de las columnas Nit (col. 2), Pasaporte (col. 3) o Carnet Residencia (col. 4) debe tener datos. Fila con Nombre: ' . ($row[8] ?? ''));
+        }
+
         // Al menos una de las 3 primeras (Dui, Nit, Pasaporte) debe tener datos
-        $tieneDocumento = $valido($row[0] ?? '') || $valido($row[1] ?? '') || $valido($row[2] ?? '');
+        $tieneDocumento = $valido($row[3] ?? '') || $valido($row[1] ?? '') || $valido($row[2] ?? '');
         if (!$tieneDocumento) {
             Log::debug('[PolizaResidenciaTempCarteraImport] fila saltada: al menos uno de Dui/Nit/Pasaporte debe tener datos', ['row0' => $row[0] ?? '', 'row1' => $row[1] ?? '', 'row2' => $row[2] ?? '']);
             return null;
