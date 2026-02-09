@@ -150,6 +150,7 @@ trait PolizaControlCarteraTrait
                     'poliza_declarativa_reproceso.Nombre as ReprocesoNombre',
                     'aseguradora.Abreviatura'
                 )
+                ->groupBy('poliza_declarativa_control.Id')
                 ->get();
 
             $deuda = $deuda->map(function ($item) use ($usuariosMap) {
@@ -219,6 +220,7 @@ trait PolizaControlCarteraTrait
                     'poliza_declarativa_reproceso.Nombre as ReprocesoNombre',
                     'aseguradora.Abreviatura'
                 )
+                ->groupBy('poliza_declarativa_control.Id')
                 ->get();
 
             $vida = $vida->map(function ($item) use ($usuariosMap) {
@@ -295,6 +297,7 @@ trait PolizaControlCarteraTrait
                     'poliza_declarativa_reproceso.Nombre as ReprocesoNombre',
                     'aseguradora.Abreviatura'
                 )
+                ->groupBy('poliza_declarativa_control.Id')
                 ->get();
 
             $desempleo = $desempleo->map(function ($item) use ($usuariosMap) {
@@ -430,6 +433,7 @@ trait PolizaControlCarteraTrait
                 'aseguradora.Abreviatura',
                 'poliza_residencia_detalle.Residencia'
             )
+            ->groupBy('poliza_declarativa_control.Id')
             ->get();
 
         // Mapeo de nombres de usuario
