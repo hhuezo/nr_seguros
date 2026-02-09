@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Models\temp\PolizaResidenciaTempCartera;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithStartRow;
@@ -38,16 +39,27 @@ class PolizaResidenciaTempCarteraImport implements ToModel, WithStartRow, SkipsE
 
     public function model(array $row)
     {
-        if (empty(trim($row[8]))) {
+        if (empty(trim($row[8] ?? ''))) {
             // Si el nombre completo está vacío o solo contiene espacios, no insertar
             return null;
         }
 
-        //validar que las primeras 5 columnas no esten vacias o contengan espacios
-        for ($i = 0; $i < 5; $i++) {
-            if (empty(trim($row[$i])) || strpos(trim($row[$i]), ' ') !== false) {
-                return null;
-            }
+        $valido = function ($v) {
+            $s = is_string($v) ? trim($v) : trim((string) ($v ?? ''));
+            return $s !== '' && strpos($s, ' ') === false;
+        };
+
+        // Al menos una de las 3 primeras (Dui, Nit, Pasaporte) debe tener datos
+        $tieneDocumento = $valido($row[0] ?? '') || $valido($row[1] ?? '') || $valido($row[2] ?? '');
+        if (!$tieneDocumento) {
+            Log::debug('[PolizaResidenciaTempCarteraImport] fila saltada: al menos uno de Dui/Nit/Pasaporte debe tener datos', ['row0' => $row[0] ?? '', 'row1' => $row[1] ?? '', 'row2' => $row[2] ?? '']);
+            return null;
+        }
+
+        // Columnas 5 y 6 (Nacionalidad, FechaNacimiento) son obligatorias
+        if (!$valido($row[4] ?? '') || !$valido($row[5] ?? '')) {
+            Log::debug('[PolizaResidenciaTempCarteraImport] fila saltada: Nacionalidad y FechaNacimiento son obligatorios', ['row4' => $row[4] ?? '', 'row5' => $row[5] ?? '']);
+            return null;
         }
 
         return new PolizaResidenciaTempCartera([
