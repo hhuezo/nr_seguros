@@ -47,6 +47,7 @@
             <th> TOTAL DIAS CICLO DE PROCESO </th>
             <th> RESOLUCION OFICIAL </th>
             <th> % EXTRAPRIMA </th>
+            <th> CATEGORIA </th>
 
         </tr>
         @php($i = 1)
@@ -124,6 +125,7 @@
                 <td>{{ $obj->TotalDiasProceso }}</td>
                 <td>{{ $obj->ResolucionFinal }}</td>
                 <td>{{ $obj->ValorExtraPrima }}</td>
+                <td>{{ $obj->CategoriaSisa ?? '' }}</td>
 
             </tr>
             @php($i++)
