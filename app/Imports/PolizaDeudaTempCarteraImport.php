@@ -4,6 +4,7 @@ namespace App\Imports;
 
 use App\Models\temp\PolizaDeudaTempCartera;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\ToModel;
 
@@ -33,7 +34,7 @@ class PolizaDeudaTempCarteraImport implements ToModel, /*WithStartRow,*/ SkipsEm
 
     public function model(array $row)
     {
-        try {
+       try {
 
             // 🔹 LIMPIAR TODA LA FILA
             $row = array_map(function ($value) {
@@ -48,11 +49,22 @@ class PolizaDeudaTempCarteraImport implements ToModel, /*WithStartRow,*/ SkipsEm
 
             if ($this->encabezados == 1) {
 
-                //validar que las primeras 5 columnas no esten vacias o contengan espacios
-                for ($i = 0; $i < 5; $i++) {
-                    if (empty(trim($row[$i])) || strpos(trim($row[$i]), ' ') !== false) {
-                        return null;
-                    }
+                $valido = function ($v) {
+                    $s = is_string($v) ? trim($v) : trim((string) ($v ?? ''));
+                    return $s !== '' && strpos($s, ' ') === false;
+                };
+
+                // Al menos una de las 3 primeras (DUI, Pasaporte, CarnetResidencia) debe tener datos
+                $tieneDocumento = $valido($row[0] ?? '') || $valido($row[1] ?? '') || $valido($row[2] ?? '');
+                if (!$tieneDocumento) {
+                    Log::debug('[PolizaDeudaTempCarteraImport] fila saltada: al menos uno de DUI/Pasaporte/Carnet debe tener datos', ['row0' => $row[0] ?? '', 'row1' => $row[1] ?? '', 'row2' => $row[2] ?? '']);
+                    return null;
+                }
+
+                // Columnas 4 y 5 (Nacionalidad, FechaNacimiento) son obligatorias
+                if (!$valido($row[3] ?? '') || !$valido($row[4] ?? '')) {
+                    Log::debug('[PolizaDeudaTempCarteraImport] fila saltada: Nacionalidad y FechaNacimiento son obligatorios', ['row3' => $row[3] ?? '', 'row4' => $row[4] ?? '']);
+                    return null;
                 }
 
                 return new PolizaDeudaTempCartera([
