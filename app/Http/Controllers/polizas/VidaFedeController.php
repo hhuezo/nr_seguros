@@ -9,6 +9,7 @@ use App\Models\polizas\VidaTipoCartera;
 use App\Models\temp\VidaCarteraTemp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -161,9 +162,18 @@ class VidaFedeController extends Controller
         //borrar datos de tabla temporal
         VidaCarteraTemp::where('PolizaVida', $id)->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)->delete();
 
-        Excel::import(new VidaCarteraTempFedeImport($request->Axo, $request->Mes, $id, $request->FechaInicio, $request->FechaFinal, $request->PolizaVidaTipoCartera), $archivo);
-
-
+        // Leer fila a fila y dejar de leer al encontrar la primera vacía o incompleta (no evaluar las 104k filas)
+        $sheet = $excel->getActiveSheet();
+        $import = new VidaCarteraTempFedeImport($request->Axo, $request->Mes, $id, $request->FechaInicio, $request->FechaFinal, $request->PolizaVidaTipoCartera);
+        $highestRow = $sheet->getHighestRow();
+        for ($rowIndex = 2; $rowIndex <= $highestRow; $rowIndex++) {
+            $row = $sheet->rangeToArray('A' . $rowIndex . ':Z' . $rowIndex)[0];
+            $model = $import->processRow($row);
+            if ($model === null) {
+                break; // primera fila vacía o sin las 4 columnas: dejar de leer
+            }
+            $model->save();
+        }
 
         //verificando creditos repetidos
         if ($request->validacion_credito != 'on') {
