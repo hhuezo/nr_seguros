@@ -206,7 +206,6 @@ class VidaFedeController extends Controller
 
         //dd($cartera_temp->take(10));
 
-
         //tipo cobro 2 suma abierta
         if ($poliza_vida->TipoCobro == 2) {
             //tipo tarifa 1 suma uniforme
@@ -368,8 +367,9 @@ class VidaFedeController extends Controller
 
                 //suma abierta
 
-                $min = $poliza_vida->SumaMinima;
-                $max = $poliza_vida->SumaMaxima;
+                $min = $poliza_vida->SumaMinima+0;
+                $max = $poliza_vida->SumaMaxima+0;
+
 
                 if ($obj->SumaAsegurada < $min ||  $obj->SumaAsegurada > $max) {
                     $obj->TipoError = 14;
@@ -378,25 +378,6 @@ class VidaFedeController extends Controller
                     array_push($errores_array, 14);
                 }
 
-
-                /*$sumasPorCliente = [];
-                foreach ($cartera_temp as $obj1) {
-                    if (!isset($sumasPorCliente[$obj1->Dui])) {
-                        $sumasPorCliente[$obj1->Dui] = 0;
-                    }
-                    $sumasPorCliente[$obj1->Dui] += $obj1->SumaAsegurada;
-                }
-
-                foreach ($sumasPorCliente as $cliente => $sumaTotal) {
-
-
-                    if ($sumaTotal < $min ||  $sumaTotal > $max) {
-                        $obj->TipoError = 14;
-                        $obj->update();
-
-                        array_push($errores_array, 14);
-                    }
-                }*/
             }
 
 

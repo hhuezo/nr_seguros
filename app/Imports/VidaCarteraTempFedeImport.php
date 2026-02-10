@@ -56,7 +56,7 @@ class VidaCarteraTempFedeImport implements ToModel
             'FechaNacimiento' => $this->convertirFecha($row[6] ?? null),
             'Sexo' => $row[7] ?? null,
             'NumeroReferencia' => $row[8] ?? null,
-            'SumaAsegurada' => $row[10] ?? null,
+            'SumaAsegurada' => $this->aDecimal($row[10] ?? null),
             'User' => auth()->id(),
             'Axo' => $this->Axo,
             'Mes' => $this->Mes,
@@ -72,6 +72,17 @@ class VidaCarteraTempFedeImport implements ToModel
     public function model(array $row)
     {
         return $this->processRow($row);
+    }
+
+    private function aDecimal($valor): ?float
+    {
+        if ($valor === null || $valor === '') {
+            return null;
+        }
+        $s = trim((string) $valor);
+        // Quitar símbolo $ y comas (formato moneda Excel: $1,000.00 o $1,000,000.50)
+        $s = str_replace(['$', ','], ['', ''], $s);
+        return is_numeric($s) ? (float) $s : null;
     }
 
     private function convertirFecha($fechaExcel)
