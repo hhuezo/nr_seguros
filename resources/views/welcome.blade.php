@@ -533,6 +533,25 @@
             }
         }
     }
+
+    // Redirigir al login cuando la sesión expire por inactividad (solo en páginas de usuario autenticado)
+    @auth
+    (function() {
+        var loginUrl = @json(route('login'));
+        var checkInterval = 60 * 1000; // comprobar cada 60 segundos
+        setInterval(function() {
+            fetch('{{ url("/session-check") }}', {
+                method: 'GET',
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
+                credentials: 'same-origin'
+            }).then(function(res) {
+                if (res.status === 401) {
+                    window.location.href = loginUrl;
+                }
+            }).catch(function() {});
+        }, checkInterval);
+    })();
+    @endauth
 </script>
 
 </html>

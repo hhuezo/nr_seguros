@@ -65,6 +65,10 @@ Route::get('/', [HomeController::class, 'redirectToLogin']);
 
 Auth::routes();
 
+// Comprobar si la sesión sigue activa (para redirigir al login cuando expire por inactividad)
+Route::get('/session-check', function () {
+    return response()->json(['ok' => auth()->check()], auth()->check() ? 200 : 401);
+})->name('session.check');
 
 //security
 Route::middleware(['auth'])->group(function () {
