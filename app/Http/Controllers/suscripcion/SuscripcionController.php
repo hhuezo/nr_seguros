@@ -109,6 +109,7 @@ class SuscripcionController extends Controller
                 'suscripcion.FechaIngreso',
                 'ejecutivo.Nombre as Ejecutivo',
                 'aseguradora.Nombre as Aseguradora',
+                'suscripcion.CategoriaSisa as TipoPoliza',
                 'cliente.Nombre as Contratante',
                 'poliza_deuda.NumeroPoliza as PolizaDeuda',
                 'poliza_vida.NumeroPoliza as PolizaVida',
