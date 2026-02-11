@@ -193,9 +193,9 @@ class SuscripcionController extends Controller
 
                 $id = $row->Id;
                 $user = auth()->user();
-            
+
                 $buttons = '';
-            
+
                 // EDITAR
                 if ($user->can('suscripcion edit')) {
                     $buttons .= '
@@ -204,7 +204,7 @@ class SuscripcionController extends Controller
                         <i class="fa fa-pencil fa-lg"></i>
                     </a>';
                 }
-            
+
                 // ELIMINAR
                 if ($user->can('suscripcion delete')) {
                     $buttons .= '
@@ -212,19 +212,19 @@ class SuscripcionController extends Controller
                         <i class="fa fa-trash fa-lg"></i>
                     </a>';
                 }
-            
+
                 // COMENTARIOS (sin permiso, o agrega uno si quieres)
                 $buttons .= '
                 <a href="#" class="btn btn-info" data-toggle="modal" data-target="#modal-comentario"
                    onclick="getComentarios(' . $id . ')">
                     <i class="fa fa-book fa-lg"></i>
                 </a>';
-            
+
                 return $buttons;
             })
             ->rawColumns(['acciones'])
             ->make(true);
-            
+
     }
 
 
@@ -643,11 +643,13 @@ class SuscripcionController extends Controller
             $suscripcion->padecimientos()->detach();
         }
 
-        //estado de resumen de gestion
-        $resumen_gestion = ResumenGestion::findOrFail($request->ResumenGestion);
-        if($resumen_gestion->Color == 'success' || $resumen_gestion->Color == 'danger' || $resumen_gestion->Color == 'info'){
-            $suscripcion->EstadoId = 2;  //finalizado
-            $suscripcion->update();
+        // Si Resumen de Gestión tiene color verde, azul o rojo → Estado del caso = Finalizado (buscar en tabla y validar Color)
+        if ($request->filled('ResumenGestion')) {
+            $resumen_gestion = ResumenGestion::find($request->ResumenGestion);
+            if ($resumen_gestion && in_array($resumen_gestion->Color, ['success', 'danger', 'info'], true)) {
+                $suscripcion->EstadoId = 2; // finalizado
+                $suscripcion->update();
+            }
         }
 
 
