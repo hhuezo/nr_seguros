@@ -16,6 +16,7 @@
             <th> DIAS PARA COMPLETAR <br> INFORMACION (CLIENTE) </th>
             <th> GESTOR </th>
             <th> CIA </th>
+            <th> TIPO DE POLIZA </th>
             <th> CONTRATANTE </th>
             <th> NUMERO POLIZA DEUDA </th>
             <th> NUMERO POLIZA VIDA </th>
@@ -47,7 +48,6 @@
             <th> TOTAL DIAS CICLO DE PROCESO </th>
             <th> RESOLUCION OFICIAL </th>
             <th> % EXTRAPRIMA </th>
-            <th> CATEGORIA </th>
 
         </tr>
         @php($i = 1)
@@ -60,6 +60,7 @@
                 <td>{{ $obj->DiasCompletarInfoCliente }}</td>
                 <td>{{ $obj->gestor->Nombre ?? ' ' }}</td>
                 <td>{{ $obj->compania->Nombre ?? '' }}</td>
+                <td>{{ $obj->CategoriaSisa ?? '' }}</td>
                 <td>{{ $obj->contratante->Nombre ?? '' }}</td>
                 <td>{{ $obj->polizaDeuda->NumeroPoliza ?? '' }}</td>
                 <td>{{ $obj->polizaVida->NumeroPoliza ?? '' }}</td>
@@ -125,7 +126,6 @@
                 <td>{{ $obj->TotalDiasProceso }}</td>
                 <td>{{ $obj->ResolucionFinal }}</td>
                 <td>{{ $obj->ValorExtraPrima }}</td>
-                <td>{{ $obj->CategoriaSisa ?? '' }}</td>
 
             </tr>
             @php($i++)
