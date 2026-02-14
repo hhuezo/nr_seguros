@@ -43,11 +43,12 @@ class PolizaResidenciaTempCarteraImport implements ToModel, WithStartRow, SkipsE
             return null;
         }
 
-        //validar que las primeras 5 columnas no esten vacias o contengan espacios
-        for ($i = 0; $i < 5; $i++) {
-            if (empty(trim($row[$i])) || strpos(trim($row[$i]), ' ') !== false) {
-                return null;
-            }
+        // No insertar solo cuando las 3 columnas (1, 2 y 3) están vacías. Si alguna tiene valor, insertar.
+        $col1 = trim((string) ($row[1] ?? ''));
+        $col2 = trim((string) ($row[2] ?? ''));
+        $col3 = trim((string) ($row[3] ?? ''));
+        if ($col1 === '' && $col2 === '' && $col3 === '') {
+            return null;
         }
 
         return new PolizaResidenciaTempCartera([
