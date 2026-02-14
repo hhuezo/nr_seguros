@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Models\temp\PolizaResidenciaTempCartera;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithStartRow;
@@ -38,7 +39,7 @@ class PolizaResidenciaTempCarteraImport implements ToModel, WithStartRow, SkipsE
 
     public function model(array $row)
     {
-        if (empty(trim($row[8]))) {
+        if (empty(trim($row[8] ?? ''))) {
             // Si el nombre completo está vacío o solo contiene espacios, no insertar
             return null;
         }

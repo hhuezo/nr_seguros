@@ -9,6 +9,7 @@ use App\Models\polizas\VidaTipoCartera;
 use App\Models\temp\VidaCarteraTemp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -161,9 +162,18 @@ class VidaFedeController extends Controller
         //borrar datos de tabla temporal
         VidaCarteraTemp::where('PolizaVida', $id)->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)->delete();
 
-        Excel::import(new VidaCarteraTempFedeImport($request->Axo, $request->Mes, $id, $request->FechaInicio, $request->FechaFinal, $request->PolizaVidaTipoCartera), $archivo);
-
-
+        // Leer fila a fila y dejar de leer al encontrar la primera vacía o incompleta (no evaluar las 104k filas)
+        $sheet = $excel->getActiveSheet();
+        $import = new VidaCarteraTempFedeImport($request->Axo, $request->Mes, $id, $request->FechaInicio, $request->FechaFinal, $request->PolizaVidaTipoCartera);
+        $highestRow = $sheet->getHighestRow();
+        for ($rowIndex = 2; $rowIndex <= $highestRow; $rowIndex++) {
+            $row = $sheet->rangeToArray('A' . $rowIndex . ':Z' . $rowIndex)[0];
+            $model = $import->processRow($row);
+            if ($model === null) {
+                break; // primera fila vacía o sin las 4 columnas: dejar de leer
+            }
+            $model->save();
+        }
 
         //verificando creditos repetidos
         if ($request->validacion_credito != 'on') {
@@ -195,7 +205,6 @@ class VidaFedeController extends Controller
         $cartera_temp = VidaCarteraTemp::where('User', '=', auth()->user()->id)->where('PolizaVida', $id)->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)->get();
 
         //dd($cartera_temp->take(10));
-
 
         //tipo cobro 2 suma abierta
         if ($poliza_vida->TipoCobro == 2) {
@@ -358,8 +367,9 @@ class VidaFedeController extends Controller
 
                 //suma abierta
 
-                $min = $poliza_vida->SumaMinima;
-                $max = $poliza_vida->SumaMaxima;
+                $min = $poliza_vida->SumaMinima+0;
+                $max = $poliza_vida->SumaMaxima+0;
+
 
                 if ($obj->SumaAsegurada < $min ||  $obj->SumaAsegurada > $max) {
                     $obj->TipoError = 14;
@@ -368,25 +378,6 @@ class VidaFedeController extends Controller
                     array_push($errores_array, 14);
                 }
 
-
-                /*$sumasPorCliente = [];
-                foreach ($cartera_temp as $obj1) {
-                    if (!isset($sumasPorCliente[$obj1->Dui])) {
-                        $sumasPorCliente[$obj1->Dui] = 0;
-                    }
-                    $sumasPorCliente[$obj1->Dui] += $obj1->SumaAsegurada;
-                }
-
-                foreach ($sumasPorCliente as $cliente => $sumaTotal) {
-
-
-                    if ($sumaTotal < $min ||  $sumaTotal > $max) {
-                        $obj->TipoError = 14;
-                        $obj->update();
-
-                        array_push($errores_array, 14);
-                    }
-                }*/
             }
 
 

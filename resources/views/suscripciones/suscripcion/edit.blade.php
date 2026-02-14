@@ -65,6 +65,8 @@
                     @csrf
                     <div class="x_content">
                         <input type="hidden" value="{{ $suscripcion->Id }}" name="Id">
+                        <input type="hidden" name="FechaInicio" value="{{ $fechaInicio }}">
+                        <input type="hidden" name="FechaFinal" value="{{ $fechaFinal }}">
 
                         <div class="col-sm-4">
                             <label class="control-label "># Tarea</label>
@@ -457,7 +459,7 @@
                     <br>
                     <div class="form-group" align="center">
                         <button class="btn btn-success" type="submit">Guardar</button>
-                        <a href="{{ url('suscripciones/') }}"><button class="btn btn-primary"
+                        <a href="{{ url('suscripciones') }}?FechaInicio={{ $fechaInicio }}&FechaFinal={{ $fechaFinal }}"><button class="btn btn-primary"
                                 type="button">Cancelar</button></a>
                     </div>
                 </form>

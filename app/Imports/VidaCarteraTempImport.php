@@ -40,17 +40,25 @@ class VidaCarteraTempImport implements ToModel, WithStartRow
     public function model(array $row)
     {
         try {
-            if (!empty(trim($row[0])) || !empty(trim($row[1]))  || !empty(trim($row[2]))   ) { // Al menos DUI o Pasaporte o carnet de residencia
+            $valido = function ($v) {
+                $s = is_string($v) ? trim($v) : trim((string) ($v ?? ''));
+                return $s !== '' && strpos($s, ' ') === false;
+            };
 
+            // Al menos una de las 3 primeras (DUI, Pasaporte, CarnetResidencia) debe tener datos
+            $tieneDocumento = $valido($row[0] ?? '') || $valido($row[1] ?? '') || $valido($row[2] ?? '');
+            if (!$tieneDocumento) {
+                Log::debug('[VidaCarteraTempImport] fila saltada: al menos uno de DUI/Pasaporte/Carnet debe tener datos', ['row0' => $row[0] ?? '', 'row1' => $row[1] ?? '', 'row2' => $row[2] ?? '']);
+                return null;
+            }
 
-                //validar que las primeras 5 columnas no esten vacias o contengan espacios
-                for ($i = 0; $i < 5; $i++) {
-                    if (empty(trim($row[$i])) || strpos(trim($row[$i]), ' ') !== false) {
-                        return null;
-                    }
-                }
+            // Columnas 4 y 5 (Nacionalidad, FechaNacimiento) son obligatorias
+            if (!$valido($row[3] ?? '') || !$valido($row[4] ?? '')) {
+                Log::debug('[VidaCarteraTempImport] fila saltada: Nacionalidad y FechaNacimiento son obligatorios', ['row3' => $row[3] ?? '', 'row4' => $row[4] ?? '']);
+                return null;
+            }
 
-                $modelData = [
+            $modelData = [
                     'Dui' => $row[0] ?? null,
                     'Pasaporte' => $row[1] ?? null,
                     'CarnetResidencia' => $row[2] ?? null,
@@ -91,10 +99,7 @@ class VidaCarteraTempImport implements ToModel, WithStartRow
                     'PolizaVida' => $this->Poliza,
                 ];
 
-                return new TempVidaCarteraTemp($modelData);
-            } else {
-                Log::warning('Fila omitida: DUI y Pasaporte vacíos', ['fila' => $row]);
-            }
+            return new TempVidaCarteraTemp($modelData);
         } catch (\Exception $e) {
             Log::error('Error al procesar fila en model()', [
                 'fila' => $row,

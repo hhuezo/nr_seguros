@@ -73,6 +73,7 @@
                             <th>Fecha ingreso</th>
                             <th>Gestor</th>
                             <th>CIA</th>
+                            <th>Tipo de poliza</th>
                             <th>Contratante </th>
                             <th>Número <br>póliza deuda</th>
                             <th>Número <br>póliza vida</th>
@@ -310,6 +311,12 @@
                     {
                         data: 'Aseguradora',
                         name: 'aseguradora.Nombre'
+                    },
+                    {
+                        data: 'TipoPoliza',
+                        name: 'TipoPoliza',
+                        orderable: false,
+                        searchable: false
                     },
                     {
                         data: 'Contratante',

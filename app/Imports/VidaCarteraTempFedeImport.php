@@ -5,7 +5,6 @@ namespace App\Imports;
 use App\Models\temp\VidaCarteraTemp;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
-use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\ToModel;
 
 class VidaCarteraTempFedeImport implements ToModel
@@ -15,7 +14,6 @@ class VidaCarteraTempFedeImport implements ToModel
     private $Poliza;
     private $FechaInicio;
     private $FechaFinal;
-    private $encabezados = 0;
     private $PolizaVidaTipoCartera;
 
     public function __construct($Axo, $Mes, $Poliza, $FechaInicio, $FechaFinal,$PolizaVidaTipoCartera)
@@ -28,47 +26,63 @@ class VidaCarteraTempFedeImport implements ToModel
         $this->PolizaVidaTipoCartera = $PolizaVidaTipoCartera;
     }
 
-    public function model(array $row)
+    /**
+     * Procesa una fila y devuelve el modelo o null si la fila está vacía/incompleta.
+     * Usado por el controlador para leer fila a fila y dejar de leer al primer null.
+     */
+    public function processRow(array $row): ?VidaCarteraTemp
     {
-        // Saltar la fila de encabezados
-        if (trim($row[1]) == "DUI o documento de identidad") {
-            $this->encabezados = 1;
+        $tieneDato = function ($v) {
+            return trim((string) ($v ?? '')) !== '';
+        };
+
+        if (empty(array_filter($row))) {
             return null;
         }
-
-        // dd($row);
-        // Procesar solo las filas de datos
-        if ($this->encabezados == 1 && (trim($row[1]) != "DUI o documento de identidad")) {
-            // dd($row);
-            // Verificar que al menos uno de los dos campos (NIT o DUI) tenga datos
-            if (!empty(trim($row[0])) || !empty(trim($row[1]))) {
-                return new VidaCarteraTemp([
-                    'PolizaVida' => $this->Poliza,
-                    //'Nit' => $row[0] ?? null,
-                    'TipoDocumento' => $row[0],
-                    'Dui' => $row[1] ?? null,
-                    'PrimerApellido' => $row[2] ?? null,
-                    'SegundoApellido' => $row[3] ?? null,
-                    'PrimerNombre' => $row[4] ?? null,
-                    'Nacionalidad' => $row[5] ?? null,
-                    'FechaNacimiento' => $this->convertirFecha($row[6] ?? null),
-                    'Sexo' => $row[7] ?? null,
-                    'NumeroReferencia' => $row[8] ?? null,
-                    'SumaAsegurada' => $row[10] ?? null,
-                    'User' => auth()->id(),
-                    'Axo' => $this->Axo,
-                    'Mes' => $this->Mes,
-                    'FechaInicio' => $this->FechaInicio,
-                    'FechaFinal' => $this->FechaFinal,
-                    'FechaNacimientoDate' => $this->convertirFecha($row[6] ?? null, 'Y-m-d'), // FECHA NACIMIENTO (formato Y-m-d)
-                    'PolizaVidaTipoCartera' => $this->PolizaVidaTipoCartera,
-                    'FechaOtorgamiento' => $this->convertirFecha($row[9] ?? null),
-                    'FechaOtorgamientoDate' => $this->convertirFecha($row[9] ?? null, 'Y-m-d'),
-                ]);
+        for ($i = 0; $i < 3; $i++) {
+            if (!$tieneDato($row[$i] ?? null)) {
+                return null;
             }
         }
 
-        return null;
+        return new VidaCarteraTemp([
+            'PolizaVida' => $this->Poliza,
+            'TipoDocumento' => $row[0],
+            'Dui' => $row[1] ?? null,
+            'PrimerApellido' => $row[2] ?? null,
+            'SegundoApellido' => $row[3] ?? null,
+            'PrimerNombre' => $row[4] ?? null,
+            'Nacionalidad' => $row[5] ?? null,
+            'FechaNacimiento' => $this->convertirFecha($row[6] ?? null),
+            'Sexo' => $row[7] ?? null,
+            'NumeroReferencia' => $row[8] ?? null,
+            'SumaAsegurada' => $this->aDecimal($row[10] ?? null),
+            'User' => auth()->id(),
+            'Axo' => $this->Axo,
+            'Mes' => $this->Mes,
+            'FechaInicio' => $this->FechaInicio,
+            'FechaFinal' => $this->FechaFinal,
+            'FechaNacimientoDate' => $this->convertirFecha($row[6] ?? null, 'Y-m-d'),
+            'PolizaVidaTipoCartera' => $this->PolizaVidaTipoCartera,
+            'FechaOtorgamiento' => $this->convertirFecha($row[9] ?? null),
+            'FechaOtorgamientoDate' => $this->convertirFecha($row[9] ?? null, 'Y-m-d'),
+        ]);
+    }
+
+    public function model(array $row)
+    {
+        return $this->processRow($row);
+    }
+
+    private function aDecimal($valor): ?float
+    {
+        if ($valor === null || $valor === '') {
+            return null;
+        }
+        $s = trim((string) $valor);
+        // Quitar símbolo $ y comas (formato moneda Excel: $1,000.00 o $1,000,000.50)
+        $s = str_replace(['$', ','], ['', ''], $s);
+        return is_numeric($s) ? (float) $s : null;
     }
 
     private function convertirFecha($fechaExcel)

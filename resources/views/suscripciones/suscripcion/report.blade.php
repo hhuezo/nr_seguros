@@ -16,6 +16,7 @@
             <th> DIAS PARA COMPLETAR <br> INFORMACION (CLIENTE) </th>
             <th> GESTOR </th>
             <th> CIA </th>
+            <th> TIPO DE POLIZA </th>
             <th> CONTRATANTE </th>
             <th> NUMERO POLIZA DEUDA </th>
             <th> NUMERO POLIZA VIDA </th>
@@ -59,6 +60,7 @@
                 <td>{{ $obj->DiasCompletarInfoCliente }}</td>
                 <td>{{ $obj->gestor->Nombre ?? ' ' }}</td>
                 <td>{{ $obj->compania->Nombre ?? '' }}</td>
+                <td>{{ $obj->CategoriaSisa ?? '' }}</td>
                 <td>{{ $obj->contratante->Nombre ?? '' }}</td>
                 <td>{{ $obj->polizaDeuda->NumeroPoliza ?? '' }}</td>
                 <td>{{ $obj->polizaVida->NumeroPoliza ?? '' }}</td>

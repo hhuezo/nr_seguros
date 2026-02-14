@@ -109,6 +109,7 @@ class SuscripcionController extends Controller
                 'suscripcion.FechaIngreso',
                 'ejecutivo.Nombre as Ejecutivo',
                 'aseguradora.Nombre as Aseguradora',
+                'suscripcion.CategoriaSisa as TipoPoliza',
                 'cliente.Nombre as Contratante',
                 'poliza_deuda.NumeroPoliza as PolizaDeuda',
                 'poliza_vida.NumeroPoliza as PolizaVida',
@@ -192,9 +193,9 @@ class SuscripcionController extends Controller
 
                 $id = $row->Id;
                 $user = auth()->user();
-            
+
                 $buttons = '';
-            
+
                 // EDITAR
                 if ($user->can('suscripcion edit')) {
                     $buttons .= '
@@ -203,7 +204,7 @@ class SuscripcionController extends Controller
                         <i class="fa fa-pencil fa-lg"></i>
                     </a>';
                 }
-            
+
                 // ELIMINAR
                 if ($user->can('suscripcion delete')) {
                     $buttons .= '
@@ -211,19 +212,19 @@ class SuscripcionController extends Controller
                         <i class="fa fa-trash fa-lg"></i>
                     </a>';
                 }
-            
+
                 // COMENTARIOS (sin permiso, o agrega uno si quieres)
                 $buttons .= '
                 <a href="#" class="btn btn-info" data-toggle="modal" data-target="#modal-comentario"
                    onclick="getComentarios(' . $id . ')">
                     <i class="fa fa-book fa-lg"></i>
                 </a>';
-            
+
                 return $buttons;
             })
             ->rawColumns(['acciones'])
             ->make(true);
-            
+
     }
 
 
@@ -470,8 +471,10 @@ class SuscripcionController extends Controller
     {
         $tab = $request->tab ?? 1;
 
-        $fechaInicio = $request->FechaInicio ?? date('Y-12-31');
-        $fechaFinal = $request->FechaFinal ?? date('Y-01-01');
+        // Respetar fechas del index; por defecto año actual (inicio y fin)
+        $fechaInicio = $request->FechaInicio ?? session('fecha_inicio_suscripcion') ?? date('Y-01-01');
+        $fechaFinal = $request->FechaFinal ?? session('fecha_final_suscripcion') ?? date('Y-12-31');
+        session(['fecha_inicio_suscripcion' => $fechaInicio, 'fecha_final_suscripcion' => $fechaFinal]);
 
         $suscripcion = Suscripcion::findOrFail($id);
         $companias = Compania::where('Activo', 1)->get();
@@ -640,15 +643,19 @@ class SuscripcionController extends Controller
             $suscripcion->padecimientos()->detach();
         }
 
-        //estado de resumen de gestion
-        $resumen_gestion = ResumenGestion::findOrFail($request->ResumenGestion);
-        if($resumen_gestion->Color == 'success' || $resumen_gestion->Color == 'danger' || $resumen_gestion->Color == 'info'){
-            $suscripcion->EstadoId = 2;  //finalizado
-            $suscripcion->update();
+        // Si Resumen de Gestión tiene color verde, azul o rojo → Estado del caso = Finalizado (buscar en tabla y validar Color)
+        if ($request->filled('ResumenGestion')) {
+            $resumen_gestion = ResumenGestion::find($request->ResumenGestion);
+            if ($resumen_gestion && in_array($resumen_gestion->Color, ['success', 'danger', 'info'], true)) {
+                $suscripcion->EstadoId = 2; // finalizado
+                $suscripcion->update();
+            }
         }
 
 
-        return redirect('suscripciones/' . $request->Id . '/edit?tab=1')->with('success', 'El registro ha sido modificado correctamente');
+        $fechaInicio = $request->FechaInicio ?? session('fecha_inicio_suscripcion', date('Y-01-01'));
+        $fechaFinal = $request->FechaFinal ?? session('fecha_final_suscripcion', date('Y-12-31'));
+        return redirect('suscripciones/' . $request->Id . '/edit?tab=1&FechaInicio=' . urlencode($fechaInicio) . '&FechaFinal=' . urlencode($fechaFinal))->with('success', 'El registro ha sido modificado correctamente');
     }
 
     public function destroy($id)
@@ -685,7 +692,9 @@ class SuscripcionController extends Controller
         $comentario->Activo = 1;
         $comentario->Comentario = $request->Comentario;
         $comentario->save();
-        return redirect('suscripciones/' . $request->SuscripcionId . '/edit?tab=2')->with('success', 'El registro ha sido creado correctamente');
+        $fechaInicio = session('fecha_inicio_suscripcion', date('Y-01-01'));
+        $fechaFinal = session('fecha_final_suscripcion', date('Y-12-31'));
+        return redirect('suscripciones/' . $request->SuscripcionId . '/edit?tab=2&FechaInicio=' . urlencode($fechaInicio) . '&FechaFinal=' . urlencode($fechaFinal))->with('success', 'El registro ha sido creado correctamente');
     }
 
     public function agregar_padecimiento(Request $request)
@@ -747,7 +756,9 @@ class SuscripcionController extends Controller
         $comentario = Comentarios::findOrFail($id);
         $comentario->Comentario = $request->Comentario;
         $comentario->save();
-        return redirect('suscripciones/' . $comentario->SuscripcionId . '/edit?tab=2')->with('success', 'El registro ha sido modificado correctamente');
+        $fechaInicio = session('fecha_inicio_suscripcion', date('Y-01-01'));
+        $fechaFinal = session('fecha_final_suscripcion', date('Y-12-31'));
+        return redirect('suscripciones/' . $comentario->SuscripcionId . '/edit?tab=2&FechaInicio=' . urlencode($fechaInicio) . '&FechaFinal=' . urlencode($fechaFinal))->with('success', 'El registro ha sido modificado correctamente');
     }
 
 
@@ -780,8 +791,11 @@ class SuscripcionController extends Controller
     public function comentarios_delete($id)
     {
         $comentario = Comentarios::findOrFail($id);
+        $suscripcionId = $comentario->SuscripcionId;
         $comentario->delete();
-        return redirect('suscripciones/' . $comentario->SuscripcionId . '/edit?tab=2')->with('success', 'El registro ha sido eliminado correctamente');
+        $fechaInicio = session('fecha_inicio_suscripcion', date('Y-01-01'));
+        $fechaFinal = session('fecha_final_suscripcion', date('Y-12-31'));
+        return redirect('suscripciones/' . $suscripcionId . '/edit?tab=2&FechaInicio=' . urlencode($fechaInicio) . '&FechaFinal=' . urlencode($fechaFinal))->with('success', 'El registro ha sido eliminado correctamente');
     }
 
     /*
