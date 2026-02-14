@@ -445,6 +445,7 @@ class ResidenciaController extends Controller
     public function edit(Request $request, $id)
     {
         $tab = $request->tab ?? 1;
+        $MontoCartera = $request->filled('MontoCartera') ? (float) $request->MontoCartera : session('MontoCartera', 0);
 
         $residencia = Residencia::findOrFail($id);
 
@@ -557,7 +558,8 @@ class ResidenciaController extends Controller
             'ultimo_pago',
             'comentarios',
             'productos',
-            'tab'
+            'tab',
+            'MontoCartera'
         ));
     }
 
@@ -701,17 +703,6 @@ class ResidenciaController extends Controller
                 return view('polizas.validacion_cartera.resultado', compact('asegurados_limite_individual', 'idPolizaResidencia'));
             }
 
-            /* if ($request->Validar == "on") {
-
-                $eliminados = DB::select('CALL lista_residencia_eliminados(?, ?, ?, ?, ?, ?)', [$axo_evaluar, $mes_evaluar, $residencia->Id, auth()->user()->id, $request->Axo, $request->Mes]);
-
-                $nuevos = DB::select('CALL lista_residencia_nuevos(?, ?, ?, ?, ?, ?)', [$axo_evaluar, $mes_evaluar, $residencia->Id, auth()->user()->id, $request->Axo, $request->Mes]);
-
-                return view('polizas.validacion_cartera.resultado', compact('nuevos', 'eliminados'));
-            }*/
-
-            //   DB::statement("CALL insertar_temp_cartera_residencia(?, ?, ?, ?, ?)", [auth()->user()->id, $request->Axo, $request->Mes, $residencia->Id, $idUnicoCartera]);
-
             $this->insertar_temp(auth()->user()->id, $request->Axo, $request->Mes, $residencia->Id, $idUnicoCartera);
 
             $monto_cartera_total = PolizaResidenciaCartera::where('Axo', $request->Axo)
@@ -720,21 +711,9 @@ class ResidenciaController extends Controller
                 ->where('User', auth()->user()->id)
                 ->where('IdUnicoCartera', $idUnicoCartera)->sum('SumaAsegurada');
 
-            session(['idUnicoCartera' => $idUnicoCartera]);
-            session(['MontoCartera' => $monto_cartera_total]);
-            session(['FechaInicio' => $request->FechaInicio]);
-            session(['FechaFinal' => $request->FechaFinal]);
-            $idA = uniqid();
-            $filePath = 'documentos/polizas/' . $idA . $residencia->NumeroPoliza . '-' . $nombreMes . '-' . $request->Axo . '-Residencia.xlsx';
-
-            $archivo->move(public_path("documentos/polizas/"), $filePath);
-            // Storage::disk('public')->put($filePath, file_get_contents($archivo));
-
-            session(['ExcelURL' => $filePath]);
-
             alert()->success('El registro ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
 
-            return redirect('polizas/residencia/' . $request->Id . '/edit?tab=2');
+            return redirect('polizas/residencia/' . $request->Id . '/edit?tab=2&MontoCartera=' . $monto_cartera_total);
         } catch (Throwable $e) {
             print($e);
             return false;
@@ -749,11 +728,8 @@ class ResidenciaController extends Controller
         $time = Carbon::now('America/El_Salvador');
 
         $recibo = DatosGenerales::orderByDesc('Id_recibo')->first();
-        if (!$request->ExcelURL) {
-            alert()->error('No se puede generar el pago, falta subir cartera')->showConfirmButton('Aceptar', '#3085d6');
-        } else {
 
-            $usuariosReportados = DB::table('poliza_residencia_cartera')
+        $usuariosReportados = DB::table('poliza_residencia_cartera')
                 ->where('PolizaResidencia', $request->Residencia)
                 ->where('Axo', $request->Axo)
                 ->where('Mes', $request->Mes)
@@ -813,7 +789,7 @@ class ResidenciaController extends Controller
             $recibo->update();
             session(['MontoCartera' => 0]);
             alert()->success('El registro de pago ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
-        }
+
         return back();
     }
 

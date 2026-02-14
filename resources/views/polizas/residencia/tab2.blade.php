@@ -176,7 +176,7 @@
 
                                 @php
                                     use Carbon\Carbon;
-                                    $monto_cartera = session('MontoCartera', 0);
+                                    $monto_cartera = $MontoCartera ?? 0;
                                     // $monto_cartera = 3844478.89;
                                     // Determinar la tasa por millar
                                     if ($residencia->Aseguradora == 3) {
@@ -438,12 +438,7 @@
 
 
                                         <div style="display: none">
-                                            <div class="form-group">
-                                                <label>Excel URL</label>
-                                                <input type="text" class="form-control" name="ExcelURL"
-                                                    id="ExcelURL" value="{{ session('ExcelURL') }}">
-                                            </div>
-
+                                 
                                             <div class="form-group">
                                                 <label>Residencia</label>
                                                 <input type="text" class="form-control" name="Residencia"
