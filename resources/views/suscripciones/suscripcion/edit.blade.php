@@ -354,16 +354,16 @@
                         <div class="col-sm-12">
                             <label for="DireccionResidencia" class="form-label">Resumen de Gestión</label>
                             <select name="ResumenGestion" id="ResumenGestion" class="form-control"
-                                onchange="resumenGestionChanged(this.value)">
+                                onchange="resumenGestionChanged(this)">
                                 <option value="">SELECCIONE</option>
 
                                 @foreach ($resumen_gestion as $resumen)
                                     @if ($resumen->Id != 18)
-                                        <option value="{{ $resumen->Id }}" class=" bg-{{ $resumen->Color }}"
+                                        <option value="{{ $resumen->Id }}" class=" bg-{{ $resumen->Color }}" data-color="{{ $resumen->Color }}"
                                             {{ $suscripcion->ResumenGestion == $resumen->Id ? 'selected' : '' }}>
                                             {{ $resumen->Nombre }}</option>
                                     @else
-                                        <option value="{{ $resumen->Id }}" style="background-color: #000;color: #fff;"
+                                        <option value="{{ $resumen->Id }}" style="background-color: #000;color: #fff;" data-color=""
                                             {{ $suscripcion->ResumenGestion == $resumen->Id ? 'selected' : '' }}>
                                             {{ $resumen->Nombre }}</option>
                                     @endif
@@ -809,12 +809,11 @@
         }
 
 
-        function resumenGestionChanged(id) {
-            if (id > 8) {
-                document.getElementById('EstadoId').value = 2;
-            } else {
-                document.getElementById('EstadoId').value = 1;
-            }
+        // Igual que en el backend: EstadoId = 2 (finalizado) si el color es success, danger o info
+        function resumenGestionChanged(selectEl) {
+            var opt = selectEl.options[selectEl.selectedIndex];
+            var color = opt ? (opt.getAttribute('data-color') || '') : '';
+            document.getElementById('EstadoId').value = ['success', 'danger', 'info'].indexOf(color) !== -1 ? 2 : 1;
         }
 
 
