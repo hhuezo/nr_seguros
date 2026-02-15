@@ -43,9 +43,13 @@
                         @endif
                         <td>
                             @if($obj->Activo <> 0)
+                                @can('desempleo aviso print')
                                 <a href="{{ url('poliza/desempleo/get_recibo') }}/{{ $obj->Id }}/1" target="_blank"  class="btn btn-info"><span class="fa fa-print"></span></a>
                                 &nbsp;
+                                @endcan
+                                @can('desempleo aviso edit')
                                 <a href="{{ url('poliza/desempleo/get_recibo_edit') }}/{{ $obj->Id }}" target="_blank" class="btn btn-warning"><span class="fa fa-pencil"></span></a>
+                                @endcan
                                 @endif
                         </td>
                     </tr>

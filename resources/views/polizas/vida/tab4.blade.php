@@ -26,101 +26,127 @@
             </tr>
         </thead>
         @php
-        $total = 0;
+            $total = 0;
         @endphp
         <tbody>
             @foreach ($detalle as $obj)
-            <tr>
-                <td style="display: none;">{{$obj->Id}}</td>
-                <td style="text-align: center;">{{ $poliza_vida->NumeroPoliza }}</td>
-                <td style="text-align: center;">{{ $obj->Mes }}/{{ $obj->Axo }}</td>
-                <td style="text-align: center;">{{ $obj->FechaInicio ? \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') : ''}}</td>
-                <td style="text-align: center;">{{ $obj->FechaFinal ? \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') : ''}}</td>
-                <td style="text-align: center;">{{ $obj->ImpresionRecibo ? \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') : ''}}</td>
-                <td style="text-align: center;"> AC {{ str_pad($obj->NumeroRecibo,6,"0",STR_PAD_LEFT)}} {{date('Y')}}</td>
-                <td style="text-align: center;">01/01</td>
-                @if ($obj->NumeroCorrelativo)
-                <td style="text-align: center;">{{$obj->NumeroCorrelativo }}</td>
-                @else
-                <td></td>
-                @endif
-                <td style="text-align: center;">{{ $obj->FechaInicio ? \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') : ''}}
-                </td>
-                @if ($obj->PagoAplicado)
-                <td style="text-align: center;">{{ \Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') }}
-                </td>
-                @else
-                <td></td>
-                @endif
-                @if ($obj->Activo == 0)
-                <td style="text-align: right;">$0.00</td>
-                @else
-                <td style="text-align: right;">$ {{ number_format($obj->APagar, 2, '.', ',') }}
-                    @php
-                    $total += $obj->APagar;
-                    @endphp
-                </td>
-                @endif
-                @if ($obj->Activo == 0)
-                <td style="text-align: center;" class="row-error">Anulado</td>
-                @elseif(!$obj->PagoAplicado)
-                <td style="text-align: center;">Pendiente</td>
-                @elseif($obj->PagoAplicado)
-                <td style="text-align: center;">Pagado</td>
-                @else
-                <td style="text-align: center;"></td>
-                @endif
-
-
-                <td style="text-align: center;">
+                <tr>
+                    <td style="display: none;">{{ $obj->Id }}</td>
+                    <td style="text-align: center;">{{ $poliza_vida->NumeroPoliza }}</td>
+                    <td style="text-align: center;">{{ $obj->Mes }}/{{ $obj->Axo }}</td>
+                    <td style="text-align: center;">
+                        {{ $obj->FechaInicio ? \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') : '' }}</td>
+                    <td style="text-align: center;">
+                        {{ $obj->FechaFinal ? \Carbon\Carbon::parse($obj->FechaFinal)->format('d/m/Y') : '' }}</td>
+                    <td style="text-align: center;">
+                        {{ $obj->ImpresionRecibo ? \Carbon\Carbon::parse($obj->ImpresionRecibo)->format('d/m/Y') : '' }}
+                    </td>
+                    <td style="text-align: center;"> AC {{ str_pad($obj->NumeroRecibo, 6, '0', STR_PAD_LEFT) }}
+                        {{ date('Y') }}</td>
+                    <td style="text-align: center;">01/01</td>
+                    @if ($obj->NumeroCorrelativo)
+                        <td style="text-align: center;">{{ $obj->NumeroCorrelativo }}</td>
+                    @else
+                        <td></td>
+                    @endif
+                    <td style="text-align: center;">
+                        {{ $obj->FechaInicio ? \Carbon\Carbon::parse($obj->FechaInicio)->format('d/m/Y') : '' }}
+                    </td>
+                    @if ($obj->PagoAplicado)
+                        <td style="text-align: center;">
+                            {{ \Carbon\Carbon::parse($obj->PagoAplicado)->format('d/m/Y') }}
+                        </td>
+                    @else
+                        <td></td>
+                    @endif
                     @if ($obj->Activo == 0)
-                    @elseif (!$obj->ImpresionRecibo)
-                    <a href="" target="_blank" data-target="#modal-recibo-{{ $obj->Id }}" title="Generar Aviso de cobro" data-toggle="modal">
-                        <button class="btn btn-primary"><i class="fa fa-file-text-o" aria-hidden="true"></i></button>
-                    </a>
+                        <td style="text-align: right;">$0.00</td>
+                    @else
+                        <td style="text-align: right;">$ {{ number_format($obj->APagar, 2, '.', ',') }}
+                            @php
+                                $total += $obj->APagar;
+                            @endphp
+                        </td>
+                    @endif
+                    @if ($obj->Activo == 0)
+                        <td style="text-align: center;" class="row-error">Anulado</td>
                     @elseif(!$obj->PagoAplicado)
-                    <button class="btn btn-primary" onclick="modal_edit({{ $obj->Id }})">
-                        <i class="fa fa-pencil fa-lg" title="Actualizar Fechas de Cobro"></i>
-                    </button>
+                        <td style="text-align: center;">Pendiente</td>
+                    @elseif($obj->PagoAplicado)
+                        <td style="text-align: center;">Pagado</td>
+                    @else
+                        <td style="text-align: center;"></td>
                     @endif
 
 
-
-                    @if ($obj->Activo == 1)
-                    <button class="btn btn-warning" data-target="#modal-view-{{ $obj->Id }}" data-toggle="modal">
-                        <i class="fa fa-eye" align="center" title="Ver Actividad de Aviso de cobro"></i>
-                    </button>
-                    <a href="" data-target="#modal-anular-{{ $obj->Id }}" data-toggle="modal" title="Anular Aviso de Cobro">
-                        <button class="btn btn-danger" style="background-color: #ff5733;">
-                            <i class="fa fa-close fa-lg"></i>
-                        </button>
-                    </a>
-
-                    <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal" title="Eliminar Aviso de Cobro">
-                        <button class="btn btn-danger">
-                            <i class="fa fa-trash fa-lg"></i>
-                        </button>
-                    </a>
-                            @if($poliza_vida->Aseguradora == 3)
-                            <form action="{{ url('vida/exportar_excel_fede') }}" method="POST" style="display: inline-block; vertical-align: middle;">
-                            @else
-                            <form action="{{ url('vida/exportar_excel') }}" method="POST" style="display: inline-block; vertical-align: middle;">
-                            @endif
-                            @csrf
-                            <input type="hidden" value="{{ $poliza_vida->Id }}" name="Vida">
-                            <input type="hidden" value="{{ $obj->Id }}" name="VidaDetalle">
-                            <button class="btn btn-success" style="margin-top: 15px">
-                                <i class="fa fa-file-excel-o" align="center" title="Descargar Cartera a excel"></i>
-                            </button>
-                        </form>
+                    <td style="text-align: center;">
+                        @if ($obj->Activo == 0)
+                        @elseif (!$obj->ImpresionRecibo)
+                            @can('vida aviso print')
+                                <a href="" target="_blank" data-target="#modal-recibo-{{ $obj->Id }}"
+                                    title="Generar Aviso de cobro" data-toggle="modal">
+                                    <button class="btn btn-primary"><i class="fa fa-file-text-o"
+                                            aria-hidden="true"></i></button>
+                                </a>
+                            @endcan
+                        @elseif(!$obj->PagoAplicado)
+                            @can('vida estado pago edit')
+                                <button class="btn btn-primary" onclick="modal_edit({{ $obj->Id }})">
+                                    <i class="fa fa-pencil fa-lg" title="Actualizar Fechas de Cobro"></i>
+                                </button>
+                            @endcan
                         @endif
 
 
-                </td>
+
+                        @if ($obj->Activo == 1)
+                            @can('vida estado pago view')
+                                <button class="btn btn-warning" data-target="#modal-view-{{ $obj->Id }}"
+                                    data-toggle="modal">
+                                    <i class="fa fa-eye" align="center" title="Ver Actividad de Aviso de cobro"></i>
+                                </button>
+                            @endcan
+                            @can('vida estado pago annular')
+                                <a href="" data-target="#modal-anular-{{ $obj->Id }}" data-toggle="modal"
+                                    title="Anular Aviso de Cobro">
+                                    <button class="btn btn-danger" style="background-color: #ff5733;">
+                                        <i class="fa fa-close fa-lg"></i>
+                                    </button>
+                                </a>
+                            @endcan
+
+                            @can('vida estado pago delete')
+                                <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal"
+                                    title="Eliminar Aviso de Cobro">
+                                    <button class="btn btn-danger">
+                                        <i class="fa fa-trash fa-lg"></i>
+                                    </button>
+                                </a>
+                            @endcan
+                            @can('vida estado pago export')
+                                @if ($poliza_vida->Aseguradora == 3)
+                                    <form action="{{ url('vida/exportar_excel_fede') }}" method="POST"
+                                        style="display: inline-block; vertical-align: middle;">
+                                    @else
+                                        <form action="{{ url('vida/exportar_excel') }}" method="POST"
+                                            style="display: inline-block; vertical-align: middle;">
+                                @endif
+                                @csrf
+                                <input type="hidden" value="{{ $poliza_vida->Id }}" name="Vida">
+                                <input type="hidden" value="{{ $obj->Id }}" name="VidaDetalle">
+                                <button class="btn btn-success" style="margin-top: 15px">
+                                    <i class="fa fa-file-excel-o" align="center" title="Descargar Cartera a excel"></i>
+                                </button>
+                                </form>
+                            @endcan
+                        @endif
 
 
-            </tr>
-            @include('polizas.vida.modal_edit')
+                    </td>
+
+
+                </tr>
+                @include('polizas.vida.modal_edit')
             @endforeach
         </tbody>
 

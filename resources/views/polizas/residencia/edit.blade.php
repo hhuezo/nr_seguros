@@ -404,31 +404,41 @@
                                                 <td style="text-align: center;">
                                                     @if ($obj->Activo == 0)
                                                     @elseif(!$obj->ImpresionRecibo)
+                                                        @can('residencia aviso print')
                                                         <a href="" target="_blank" class="btn btn-primary"
                                                             data-target="#modal-recibo-{{ $obj->Id }}"
                                                             title="Generar Aviso de Cobro" data-toggle="modal"><i
                                                                 class="fa fa-file-text-o" aria-hidden="true"></i></a>
+                                                        @endcan
                                                     @else
+                                                        @can('residencia estado cobro edit')
                                                         <button class="btn btn-primary">
                                                             <i class="fa fa-pencil fa-lg"
                                                                 onclick="modal_edit({{ $obj->Id }})"
                                                                 title="Actualizar Fechas de Cobro"></i>
                                                         </button>
+                                                        @endcan
                                                     @endif
 
+                                                    @can('residencia estado cobro export')
                                                     <a href="{{ $fileUrl }}"
                                                         class=" btn btn-success fa fa-file-excel-o" align="center"
                                                         title="Descargar Cartera Excel"></a>
+                                                    @endcan
+                                                    @can('residencia estado cobro view')
                                                     <button class="btn btn-warning"><i
                                                             data-target="#modal-view-{{ $obj->Id }}"
                                                             data-toggle="modal" class="fa fa-eye" align="center"
                                                             title="Ver Detalles"></i></button>
+                                                    @endcan
 
                                                     @if ($obj->Activo == 1)
+                                                        @can('residencia estado cobro delete')
                                                         <a href="" class="btn btn-danger"
                                                             data-target="#modal-delete-{{ $obj->Id }}"
                                                             data-toggle="modal" title="Anular Cobro"><i
                                                                 class="fa fa-trash fa-lg"></i></a>
+                                                        @endcan
                                                     @endif
 
 
@@ -809,10 +819,14 @@
                                                             @endif
                                                             <td>
                                                                 @if ($obj->Activo != 0)
+                                                                    @can('residencia aviso print')
                                                                     <a href="{{ url('polizas/residencia/get_recibo') }}/{{ $obj->Id }}"
                                                                         class="btn btn-info">Reimprimir</a>
+                                                                    @endcan
+                                                                    @can('residencia aviso edit')
                                                                     <a href="{{ url('polizas/residencia/get_recibo_edit') }}/{{ $obj->Id }}"
                                                                         class="btn btn-warning">Editar</a>
+                                                                    @endcan
                                                                 @endif
                                                             </td>
                                                         </tr>

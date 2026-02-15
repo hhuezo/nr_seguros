@@ -73,32 +73,43 @@
                     <td style="text-align: center;">
                         @if ($obj->Activo == 0)
                         @elseif (!$obj->ImpresionRecibo)
+                            @can('desempleo aviso print')
                             <a href="" target="_blank" data-target="#modal-recibo-{{ $obj->Id }}" title="Generar Aviso de cobro" data-toggle="modal">
                                 <button class="btn btn-primary"><i class="fa fa-file-text-o" aria-hidden="true"></i></button>
                             </a>
+                            @endcan
                         @elseif(!$obj->PagoAplicado)
+                            @can('desempleo estado pago edit')
                             <button class="btn btn-primary" onclick="modal_edit({{ $obj->Id }})">
                                 <i class="fa fa-pencil fa-lg" title="Actualizar Fechas de Cobro"></i>
                             </button>
+                            @endcan
                         @endif
 
 
 
                         @if ($obj->Activo == 1)
+                            @can('desempleo estado pago view')
                             <button class="btn btn-warning" data-target="#modal-view-{{ $obj->Id }}" data-toggle="modal">
                                 <i class="fa fa-eye" align="center" title="Ver Actividad de Aviso de cobro"></i>
                             </button>
+                            @endcan
+                            @can('desempleo estado pago annular')
                             <a href="" data-target="#modal-anular-{{ $obj->Id }}" data-toggle="modal" title="Anular Aviso de Cobro">
                                 <button class="btn btn-danger" style="background-color: #ff5733;">
                                     <i class="fa fa-close fa-lg"></i>
                                 </button>
                             </a>
+                            @endcan
 
+                            @can('desempleo estado pago delete')
                             <a href="" data-target="#modal-delete-{{ $obj->Id }}" data-toggle="modal" title="Eliminar Aviso de Cobro">
                                 <button class="btn btn-danger">
                                     <i class="fa fa-trash fa-lg"></i>
                                 </button>
                             </a>
+                            @endcan
+                            @can('desempleo estado pago export')
                             @if($desempleo->Aseguradora == 3)
                                 <form action="{{ url('exportar_excel_fede') }}" method="POST" style="display: inline-block; vertical-align: middle;">
                             @else
@@ -111,6 +122,7 @@
                                     <i class="fa fa-file-excel-o" align="center" title="Descargar Cartera a excel"></i>
                                 </button>
                             </form>
+                            @endcan
                         @endif
 
 
