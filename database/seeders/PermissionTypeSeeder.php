@@ -23,7 +23,12 @@ class PermissionTypeSeeder extends Seeder
             'cliente',
             'cotizaciones',
             'aseguradoras',
-            'polizas',
+            'poliza residencia',
+            'poliza vida',
+            'poliza deuda',
+            'poliza desempleo',
+            'poliza seguro',
+            'poliza control-cartera',
         ];
 
         foreach ($tipos as $tipo) {

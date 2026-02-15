@@ -29,10 +29,13 @@
                         <td> {{ $obj->UsuariosReportados}}</td>
                         <td>
                             <div style=" display: flex;gap: 10px; align-items: center;">
+                                @can('deuda historico pago view')
                                 <a class="btn btn-primary on-default edit-row" title="Consultar Pago"
                                    onclick="mostrar_historial({{$obj->Axo}}, {{$obj->Mes}}, {{ \Carbon\Carbon::parse($obj->FechaInicio)->format('Ymd') }}, {{ \Carbon\Carbon::parse($obj->FechaFinal)->format('Ymd') }}, {{$id}});">
                                     <i class="fa fa-eye fa-lg"></i>
                                 </a>
+                                @endcan
+                                @can('deuda historico pago export')
                                 <form action="{{url('polizas/deuda/exportar_historial')}}" method="post" style="display:inline-block;">
                                     @csrf
                                     <input type="hidden" name="Axo" id="Axo" value="{{$obj->Axo}}">
@@ -44,6 +47,7 @@
                                         <i class="fa fa-file-excel-o fa-lg"></i>
                                     </button>
                                 </form>
+                                @endcan
                             </div>
                         </td>
 

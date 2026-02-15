@@ -365,7 +365,7 @@
                                     </li>
                                 @endcan
 
-                                @can('polizas menu')
+                                @canany(['poliza residencia menu', 'poliza vida menu', 'poliza deuda menu', 'poliza desempleo menu', 'poliza seguro menu', 'poliza control-cartera menu'])
                                     <li><a><i class="fa fa-folder-open-o"></i> Pólizas<span
                                                 class="fa fa-chevron-down"></span></a>
                                         <ul class="nav child_menu" id="ul-poliza">
@@ -393,7 +393,7 @@
                                             @endcan
                                         </ul>
                                     </li>
-                                @endcan
+                                @endcanany
 
                                 <!-- <li><a><i class="fa fa-file-pdf-o"></i> Reportes<span class="fa fa-chevron-down"></span></a>
                                 <ul class="nav child_menu">

@@ -11,6 +11,8 @@ class PermissionSeeder extends Seeder
 {
     public function run(): void
     {
+        $this->call(PermissionTypeSeeder::class);
+
         $acciones = ['read', 'create', 'edit', 'delete'];
 
         $estructura = [
@@ -88,11 +90,13 @@ class PermissionSeeder extends Seeder
                 'prefijo' => 'aseguradoras',
                 'modulos' => ['gestion-aseguradora']
             ],
-            // ID 11: Polizas
-            11 => [
-                'prefijo' => 'polizas',
-                'modulos' => ['residencia', 'vida', 'deuda', 'desempleo', 'seguro', 'control-cartera']
-            ]
+            // ID 11-16: Tipos de póliza (cada uno es un tipo de permiso)
+            11 => ['prefijo' => 'poliza residencia', 'modulos' => ['residencia']],
+            12 => ['prefijo' => 'poliza vida', 'modulos' => ['vida']],
+            13 => ['prefijo' => 'poliza deuda', 'modulos' => ['deuda']],
+            14 => ['prefijo' => 'poliza desempleo', 'modulos' => ['desempleo']],
+            15 => ['prefijo' => 'poliza seguro', 'modulos' => ['seguro']],
+            16 => ['prefijo' => 'poliza control-cartera', 'modulos' => ['control-cartera']],
         ];
 
         foreach ($estructura as $typeId => $datos) {
@@ -118,6 +122,53 @@ class PermissionSeeder extends Seeder
                 }
             }
         }
+
+
+        // Permisos de Deuda
+        Permission::Create(['name' => 'deuda estado pago edit', 'permission_type_id' => 13]);
+        Permission::Create(['name' => 'deuda estado pago view', 'permission_type_id' => 13]);
+        Permission::Create(['name' => 'deuda estado pago annular', 'permission_type_id' => 13]);
+        Permission::Create(['name' => 'deuda estado pago delete', 'permission_type_id' => 13]);
+        Permission::Create(['name' => 'deuda estado pago export', 'permission_type_id' => 13]);
+        Permission::Create(['name' => 'deuda aviso print', 'permission_type_id' => 13]);
+        Permission::Create(['name' => 'deuda aviso edit', 'permission_type_id' => 13]);
+        Permission::Create(['name' => 'deuda aviso export', 'permission_type_id' => 13]);
+        Permission::Create(['name' => 'deuda historico pago view', 'permission_type_id' => 13]);
+        Permission::Create(['name' => 'deuda historico pago export', 'permission_type_id' => 13]);
+
+        // Permisos de Vida
+        Permission::Create(['name' => 'vida estado pago edit', 'permission_type_id' => 12]);
+        Permission::Create(['name' => 'vida estado pago view', 'permission_type_id' => 12]);
+        Permission::Create(['name' => 'vida estado pago annular', 'permission_type_id' => 12]);
+        Permission::Create(['name' => 'vida estado pago delete', 'permission_type_id' => 12]);
+        Permission::Create(['name' => 'vida estado pago export', 'permission_type_id' => 12]);
+        Permission::Create(['name' => 'vida aviso print', 'permission_type_id' => 12]);
+        Permission::Create(['name' => 'vida aviso edit', 'permission_type_id' => 12]);
+        Permission::Create(['name' => 'vida historico pago view', 'permission_type_id' => 12]);
+        Permission::Create(['name' => 'vida historico pago export', 'permission_type_id' => 12]);
+
+
+        // Permisos de  residencia
+        Permission::Create(['name' => 'residencia estado cobro edit', 'permission_type_id' => 11]);
+        Permission::Create(['name' => 'residencia estado cobro export', 'permission_type_id' => 11]);
+        Permission::Create(['name' => 'residencia estado cobro view', 'permission_type_id' => 11]);
+        Permission::Create(['name' => 'residencia estado cobro delete', 'permission_type_id' => 11]);
+        Permission::Create(['name' => 'residencia aviso print', 'permission_type_id' => 11]);
+        Permission::Create(['name' => 'residencia aviso edit', 'permission_type_id' => 11]);
+
+        //permios de desempleo
+        Permission::Create(['name' => 'desempleo estado pago edit', 'permission_type_id' => 14]);
+        Permission::Create(['name' => 'desempleo estado pago view', 'permission_type_id' => 14]);
+        Permission::Create(['name' => 'desempleo estado pago annular', 'permission_type_id' => 14]);
+        Permission::Create(['name' => 'desempleo estado pago delete', 'permission_type_id' => 14]);
+        Permission::Create(['name' => 'desempleo estado pago export', 'permission_type_id' => 14]);
+
+        Permission::Create(['name' => 'desempleo aviso print', 'permission_type_id' => 14]);
+        Permission::Create(['name' => 'desempleo aviso edit', 'permission_type_id' => 14]);
+        
+        Permission::Create(['name' => 'desempleo historico pago view', 'permission_type_id' => 14]);
+        Permission::Create(['name' => 'desempleo historico pago export', 'permission_type_id' => 14]);
+  
 
 
         $role = Role::findOrFail(1);
