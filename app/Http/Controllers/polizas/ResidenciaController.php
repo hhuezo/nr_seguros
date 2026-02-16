@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\polizas;
 
 use App\Http\Controllers\Controller;
+use App\Imports\PolizaResidenciaTempCarteraFedeImport;
 use App\Imports\PolizaResidenciaTempCarteraImport;
 use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\Bombero;
@@ -672,8 +673,6 @@ class ResidenciaController extends Controller
         try {
             $archivo = $request->Archivo;
             PolizaResidenciaTempCartera::where('User', '=', auth()->user()->id)->delete();
-            //PolizaResidenciaTempCartera::truncate();
-            //dd(Excel::toArray(new PolizaResidenciaTempCarteraImport($request->Axo, $request->Mes, $residencia->Id, $request->FechaInicio, $request->FechaFinal), $archivo));
 
             $spreadsheet = IOFactory::load($archivo);
             $worksheet = $spreadsheet->getActiveSheet();
@@ -683,9 +682,13 @@ class ResidenciaController extends Controller
                 alert()->error('El Documento NO puede tener celdas combinadas, por favor separe las siguientes celdas: ' . implode(', ', $worksheet->getMergeCells()))->showConfirmButton('Aceptar', '#3085d6');
                 return back();
             }
-
-            Excel::import(new PolizaResidenciaTempCarteraImport($request->Axo, $request->Mes, $residencia->Id, $request->FechaInicio, $request->FechaFinal), $archivo);
-
+            if (str_contains($residencia->aseguradoras->Nombre, 'FEDE')) {
+                //fede
+                Excel::import(new PolizaResidenciaTempCarteraFedeImport($request->Axo, $request->Mes, $residencia->Id, $request->FechaInicio, $request->FechaFinal), $archivo);
+            } else {
+                //sisa
+                Excel::import(new PolizaResidenciaTempCarteraImport($request->Axo, $request->Mes, $residencia->Id, $request->FechaInicio, $request->FechaFinal), $archivo);
+            }
             $monto_cartera_total = PolizaResidenciaTempCartera::where('User', '=', auth()->user()->id)->sum('SumaAsegurada');
 
             $asegurados_limite_individual = PolizaResidenciaTempCartera::where('User', '=', auth()->user()->id)
@@ -730,65 +733,65 @@ class ResidenciaController extends Controller
         $recibo = DatosGenerales::orderByDesc('Id_recibo')->first();
 
         $usuariosReportados = DB::table('poliza_residencia_cartera')
-                ->where('PolizaResidencia', $request->Residencia)
-                ->where('Axo', $request->Axo)
-                ->where('Mes', $request->Mes)
-                ->count();
+            ->where('PolizaResidencia', $request->Residencia)
+            ->where('Axo', $request->Axo)
+            ->where('Mes', $request->Mes)
+            ->count();
 
 
-            $detalle = new DetalleResidencia();
-            $detalle->FechaInicio = $request->FechaInicio;
-            $detalle->FechaFinal = $request->FechaFinal;
-            $detalle->MontoCartera = $request->MontoCartera;
-            $detalle->Residencia = $request->Residencia;
-            $detalle->Tasa = $request->Tasa;
-            $detalle->PrimaCalculada = $request->PrimaCalculada;
-            $detalle->Descuento = $request->Descuento;
-            $detalle->PrimaDescontada = $request->PrimaDescontada;
-            $detalle->ImpuestoBomberos = $request->ImpuestoBomberos;
-            $detalle->GastosEmision = $request->GastosEmision;
-            $detalle->Otros = $request->Otros;
-            $detalle->SubTotal = $request->SubTotal;
-            $detalle->Iva = $request->Iva;
-            $detalle->TasaComision = $request->TasaComision;
-            $detalle->Comision = $request->Comision;
-            $detalle->IvaSobreComision = $request->IvaSobreComision;
-            $detalle->Retencion = $request->Retencion;
-            $detalle->ValorCCF = $request->ValorCCF;
-            $detalle->Comentario = $request->Comentario;
-            $detalle->APagar = $request->APagar;
-            $detalle->Axo = $request->Axo;
-            $detalle->Mes = $request->Mes;
+        $detalle = new DetalleResidencia();
+        $detalle->FechaInicio = $request->FechaInicio;
+        $detalle->FechaFinal = $request->FechaFinal;
+        $detalle->MontoCartera = $request->MontoCartera;
+        $detalle->Residencia = $request->Residencia;
+        $detalle->Tasa = $request->Tasa;
+        $detalle->PrimaCalculada = $request->PrimaCalculada;
+        $detalle->Descuento = $request->Descuento;
+        $detalle->PrimaDescontada = $request->PrimaDescontada;
+        $detalle->ImpuestoBomberos = $request->ImpuestoBomberos;
+        $detalle->GastosEmision = $request->GastosEmision;
+        $detalle->Otros = $request->Otros;
+        $detalle->SubTotal = $request->SubTotal;
+        $detalle->Iva = $request->Iva;
+        $detalle->TasaComision = $request->TasaComision;
+        $detalle->Comision = $request->Comision;
+        $detalle->IvaSobreComision = $request->IvaSobreComision;
+        $detalle->Retencion = $request->Retencion;
+        $detalle->ValorCCF = $request->ValorCCF;
+        $detalle->Comentario = $request->Comentario;
+        $detalle->APagar = $request->APagar;
+        $detalle->Axo = $request->Axo;
+        $detalle->Mes = $request->Mes;
 
-            $detalle->PrimaTotal = $request->PrimaTotal;
-            $detalle->DescuentoIva = $request->DescuentoIva;
-            $detalle->ExtraPrima = $request->ExtraPrima;
-            $detalle->ExcelURL = $request->ExcelURL;
-            $detalle->NumeroRecibo = ($recibo->Id_recibo) + 1;
-            $detalle->Usuario = auth()->user()->id;
-            $detalle->FechaIngreso = $time->format('Y-m-d');
-            $detalle->save();
+        $detalle->PrimaTotal = $request->PrimaTotal;
+        $detalle->DescuentoIva = $request->DescuentoIva;
+        $detalle->ExtraPrima = $request->ExtraPrima;
+        $detalle->ExcelURL = $request->ExcelURL;
+        $detalle->NumeroRecibo = ($recibo->Id_recibo) + 1;
+        $detalle->Usuario = auth()->user()->id;
+        $detalle->FechaIngreso = $time->format('Y-m-d');
+        $detalle->save();
 
-            $comen = new Comentario();
-            $comen->Comentario = 'Se agrego el pago de la cartera';
-            $comen->Activo = 1;
-            $comen->Usuario = auth()->user()->id;
-            $detalle->UsuariosReportados = $usuariosReportados;
-
-
-            $comen->FechaIngreso = $time;
-            $comen->Residencia = $request->Residencia;
-            $comen->DetalleResidencia = $detalle->Id;
-            $comen->save();
-
-            PolizaResidenciaCartera::where('FechaInicio', $request->FechaInicio)->where('FechaFinal', $request->FechaFinal)->where('PolizaResidencia', $request->Residencia)
-                ->update(['DetalleResidencia' => $detalle->Id]);
+        $comen = new Comentario();
+        $comen->Comentario = 'Se agrego el pago de la cartera';
+        $comen->Activo = 1;
+        $comen->Usuario = auth()->user()->id;
+        $detalle->UsuariosReportados = $usuariosReportados;
 
 
-            $recibo->Id_recibo = ($recibo->Id_recibo) + 1;
-            $recibo->update();
-            session(['MontoCartera' => 0]);
-            alert()->success('El registro de pago ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
+        $comen->FechaIngreso = $time;
+        $comen->Residencia = $request->Residencia;
+        $comen->DetalleResidencia = $detalle->Id;
+        $comen->save();
+
+        PolizaResidenciaCartera::where('FechaInicio', $request->FechaInicio)->where('FechaFinal', $request->FechaFinal)->where('PolizaResidencia', $request->Residencia)
+            ->update(['DetalleResidencia' => $detalle->Id]);
+
+
+        $recibo->Id_recibo = ($recibo->Id_recibo) + 1;
+        $recibo->update();
+        session(['MontoCartera' => 0]);
+        alert()->success('El registro de pago ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
 
         return back();
     }
