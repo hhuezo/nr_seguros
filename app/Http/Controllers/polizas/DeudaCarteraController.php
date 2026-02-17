@@ -100,25 +100,20 @@ class DeudaCarteraController extends Controller
 
 
         if ($ultimo_pago) {
+            // 1. Fecha basada en Axo y Mes del último pago (día 1 para evitar problemas con 28/31 días)
+            $fecha_actual = Carbon::createFromDate($ultimo_pago->Axo, $ultimo_pago->Mes, 1);
 
-            $mes = (int) $ultimo_pago->Mes;   // 1..12
-            $axo = (int) $ultimo_pago->Axo;   // asegúrate que exista el año
+            // 2. Aumentar un mes (Carbon maneja diciembre -> enero del año siguiente)
+            $nueva_fecha = $fecha_actual->addMonth();
 
-            // Aumentar un mes
-            $mes++;
+            // 3. Nuevos mes y año
+            $axo = $nueva_fecha->year;
+            $mes = $nueva_fecha->month;
 
-            if ($mes > 12) {
-                $mes = 1;
-                $axo++;
-            }
-
-            // Fecha inicial = primer día del mes calculado
-            $fecha_inicial = Carbon::create($axo, $mes, 1);
-
-            // Fecha final = +1 mes exacto
+            // 4. Fechas de inicio y final usando FechaFinal del último pago como base
+            $fecha_inicial = Carbon::parse($ultimo_pago->FechaFinal);
             $fecha_final = $fecha_inicial->copy()->addMonth();
 
-            // Formato final
             $fecha_inicial = $fecha_inicial->format('Y-m-d');
             $fecha_final   = $fecha_final->format('Y-m-d');
         }
