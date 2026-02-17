@@ -55,7 +55,7 @@ class PolizaDeudaTempCarteraImport implements ToModel, /*WithStartRow,*/ SkipsEm
                 };
 
                 // Al menos una de las 3 primeras (DUI, Pasaporte, CarnetResidencia) debe tener datos
-                $tieneDocumento = $valido($row[0] ?? '') || $valido($row[1] ?? '') || $valido($row[2] ?? '');
+                $tieneDocumento = $valido($row[0] ?? '') || $valido($row[1] ?? '') || $valido($row[2] ?? '') || $valido($row[3] ?? '') || $valido($row[4] ?? '');
                 if (!$tieneDocumento) {
                     Log::debug('[PolizaDeudaTempCarteraImport] fila saltada: al menos uno de DUI/Pasaporte/Carnet debe tener datos', ['row0' => $row[0] ?? '', 'row1' => $row[1] ?? '', 'row2' => $row[2] ?? '']);
                     return null;
