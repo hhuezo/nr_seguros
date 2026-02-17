@@ -442,137 +442,66 @@ class DeudaCarteraController extends Controller
 
         foreach ($cartera_temp as $obj) {
             $errores_array = [];
+
             // 1 error formato fecha nacimiento
             $validador_fecha_nacimiento = $this->validarFormatoFecha($obj->FechaNacimiento);
             if ($validador_fecha_nacimiento == false) {
-                //trata de convertir la fecha excel en fecha y luego comprobar nuevamente si la fecha convertida es una fecha.
                 $fecha_excel_convertida = $this->convertDate($obj->FechaNacimiento);
                 $validador_fecha_nacimiento = $this->validarFormatoFecha($fecha_excel_convertida);
 
                 if ($validador_fecha_nacimiento == false || trim($obj->FechaNacimiento) == "") {
-                    $obj->TipoError = 1;
-                    $obj->update();
-
-                    array_push($errores_array, 1);
+                    $errores_array[] = 1;
                 } else {
                     $obj->FechaNacimiento = $fecha_excel_convertida;
-                    $obj->update();
                 }
             }
-
-
 
             // 2 error formato de dui
-            if ($request->validacion_dui == 'on') {
-                $validador_dui = true;
-            } else {
+            if ($request->validacion_dui != 'on') {
                 if (empty($obj->Nacionalidad)) {
-                    $obj->TipoError = 9;
-                    $obj->update();
-
-                    array_push($errores_array, 9);
-                } else if (trim(strtolower($obj->Nacionalidad)) == 'sal') {
+                    $errores_array[] = 9;
+                } elseif (trim(strtolower($obj->Nacionalidad)) == 'sal') {
                     $validador_dui = $this->validarDocumento($obj->Dui, "dui");
-
-
-
                     if ($validador_dui == false) {
-                        $obj->TipoError = 2;
-                        $obj->update();
-
-                        array_push($errores_array, 2);
+                        $errores_array[] = 2;
                     }
                 } else {
-
                     if ($obj->Pasaporte == null && $obj->CarnetResidencia == null) {
-                        $validador_dui = false;
-                        if ($validador_dui == false) {
-                            $obj->TipoError = 8;
-                            $obj->update();
-
-                            array_push($errores_array, 8);
-                        }
-                    } else {
-                        $validador_dui = true;
+                        $errores_array[] = 8;
                     }
                 }
             }
-
-            $obj->update();
-
-
 
             // 4 nombre o apellido
             if (trim($obj->PrimerApellido) == "" || trim($obj->PrimerNombre) == "") {
-                $obj->TipoError = 4;
-                $obj->update();
-
-                array_push($errores_array, 4);
+                $errores_array[] = 4;
             }
 
-            //$obj->Errores = $errores_array;
-
-            //5 error formato fecha Otorgamiento
+            // 5 error formato fecha otorgamiento
             $validador_fecha_otorgamiento = $this->validarFormatoFecha($obj->FechaOtorgamiento);
             if ($validador_fecha_otorgamiento == false) {
-                //trata de convertir la fecha excel en fecha y luego comprobar nuevamente si la fecha convertida es una fecha.
                 $fecha_excel_convertida_otorgamiento = $this->convertDate($obj->FechaOtorgamiento);
-                //dd($obj->FechaOtorgamiento, $fecha_excel_convertida_otorgamiento);
                 $validador_fecha_otorgamiento = $this->validarFormatoFecha($fecha_excel_convertida_otorgamiento);
 
                 if ($validador_fecha_otorgamiento == false || trim($obj->FechaOtorgamiento) == "") {
-                    $obj->TipoError = 5;
-                    $obj->update();
-
-                    array_push($errores_array, 5);
+                    $errores_array[] = 5;
                 } else {
-                    //dd($fecha_excel_convertida_otorgamiento, $obj->FechaOtorgamiento);
                     $obj->FechaOtorgamiento = $fecha_excel_convertida_otorgamiento;
-                    $obj->update();
                 }
             }
 
-
-
-            //6 error formato fecha vencimiento
-            // $validador_fecha_vencimiento = $this->validarFormatoFecha($obj->FechaVencimiento);
-            // if ($validador_fecha_vencimiento == false) {
-            //     //trata de convertir la fecha excel en fecha y luego comprobar nuevamente si la fecha convertida es una fecha.
-            //     $fecha_excel_convertida_vencimiento = $this->convertDate($obj->FechaVencimiento);
-            //     $validador_fecha_vencimiento = $this->validarFormatoFecha($fecha_excel_convertida_vencimiento);
-
-            //     if ($validador_fecha_vencimiento == false || trim($obj->FechaVencimiento) == "") {
-            //         $obj->TipoError = 6;
-            //         $obj->update();
-
-            //         array_push($errores_array, 6);
-            //     } else {
-            //         $obj->FechaVencimiento = $fecha_excel_convertida_vencimiento;
-            //         $obj->update();
-            //     }
-            // }
-
-            // 7 referencia si va vacia.
+            // 7 referencia vacía
             if (trim($obj->NumeroReferencia) == "") {
-                $obj->TipoError = 7;
-                $obj->update();
-
-                array_push($errores_array, 7);
+                $errores_array[] = 7;
             }
-
 
             // 10 error sexo
             if (trim($obj->Sexo) == "" || ($obj->Sexo != "M" && $obj->Sexo != "F")) {
-                $obj->TipoError = 10;
-                $obj->update();
-
-                array_push($errores_array, 10);
+                $errores_array[] = 10;
             }
 
-
-
             // 11 error nombres o apellidos con caracteres inválidos
-            $regex = '/^[a-zA-ZÁÉÍÓÚáéíóúÑñ\s\.\'\-]+$/u'; // letras, espacios, punto, apóstrofe y guion
+            $regex = '/^[a-zA-ZÁÉÍÓÚáéíóúÑñ\s\.\'\-]+$/u';
             $campos = [
                 $obj->PrimerNombre,
                 $obj->SegundoNombre,
@@ -580,42 +509,35 @@ class DeudaCarteraController extends Controller
                 $obj->SegundoApellido,
                 $obj->ApellidoCasada
             ];
-
             foreach ($campos as $valor) {
                 if ($valor && !preg_match($regex, $valor)) {
-                    $obj->TipoError = 11;
-                    $obj->update(); // guardamos inmediatamente
-                    array_push($errores_array, 11);
-                    break; // no necesitamos seguir revisando otros campos
+                    $errores_array[] = 11;
+                    break;
                 }
             }
 
-
-            $obj->Errores = $errores_array;
+            // Un solo guardado: acumula todos los errores y corrige fechas si se normalizaron
+            $obj->update([
+                'TipoError'         => !empty($errores_array) ? $errores_array[0] : 0,
+                'Errores'           => $errores_array,
+                'FechaNacimiento'   => $obj->FechaNacimiento,
+                'FechaOtorgamiento' => $obj->FechaOtorgamiento,
+            ]);
         }
 
-
-
-
-
-
-        $data_error = $cartera_temp->where('TipoError', '<>', 0);
-
-
-        //dd($data_error);
+        // Reconsultar registros con error (la colección en memoria no tiene TipoError/Errores actualizados)
+        $data_error = PolizaDeudaTempCartera::where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+            ->where('TipoError', '<>', 0)
+            ->get();
 
         if ($data_error->count() > 0) {
             $deuda_tipo_cartera_id = $deuda_tipo_cartera->Id;
             return view('polizas.deuda.respuesta_poliza_error', compact('data_error', 'deuda', 'deuda_tipo_cartera_id'));
         }
 
-
-
-        // Filtrar nombres y apellidos que contengan caracteres inválidos
+        // Filtrar nombres/apellidos con caracteres inválidos (regex más estricta: sin apóstrofe/guion)
         $errores_nombre_apellido = $cartera_temp->filter(function ($item) {
-            // Solo letras, espacios y punto
             $regex = '/^[a-zA-ZÁÉÍÓÚáéíóúÑñ\s\.]+$/u';
-
             $campos = [
                 $item->PrimerNombre,
                 $item->SegundoNombre,
@@ -623,27 +545,29 @@ class DeudaCarteraController extends Controller
                 $item->SegundoApellido,
                 $item->ApellidoCasada
             ];
-
             foreach ($campos as $valor) {
                 if ($valor && !preg_match($regex, $valor)) {
-                    return true; // hay error
+                    return true;
                 }
             }
-
-            return false; // todos correctos
+            return false;
         });
 
-        // Actualizar TipoError = 11 en los registros que tienen errores
         foreach ($errores_nombre_apellido as $obj) {
-            $obj->TipoError = 11;
-            $obj->save();
+            $obj->update([
+                'TipoError' => 11,
+                'Errores'   => [11],
+            ]);
         }
 
-        // Si hay errores en nombres o apellidos
         if ($errores_nombre_apellido->count() > 0) {
             $deuda_tipo_cartera_id = $deuda_tipo_cartera->Id;
+            // Reconsultar para tener Errores en la vista
+            $data_error = PolizaDeudaTempCartera::where('PolizaDeudaTipoCartera', $deuda_tipo_cartera->Id)
+                ->where('TipoError', 11)
+                ->get();
             return view('polizas.deuda.respuesta_poliza_error', [
-                'data_error' => $errores_nombre_apellido,
+                'data_error' => $data_error,
                 'deuda' => $deuda,
                 'deuda_tipo_cartera_id' => $deuda_tipo_cartera_id
             ]);

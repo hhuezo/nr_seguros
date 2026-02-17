@@ -70,7 +70,12 @@ class PolizaDeudaTempCartera extends Model
         'PorcentajeExtraprima',
         'TipoDocumento',
         'SaldoInteresMora',
-        'CarnetResidencia'
+        'CarnetResidencia',
+        'Errores'
+    ];
+
+    protected $casts = [
+        'Errores' => 'array',
     ];
 
 

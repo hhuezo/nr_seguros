@@ -59,6 +59,10 @@
                                         <span style="color: red;">Formato de DUI no válido</span>
                                         @endif
 
+                                        @if(in_array(3, $registro->Errores))
+                                        <span style="color: red;">Error de validación</span>
+                                        @endif
+
                                         @if (in_array(4, $registro->Errores))
                                         @if (!$registro->PrimerNombre)
                                         <span style="color: red;">&nbsp;Falta el primer nombre</span>
@@ -72,8 +76,12 @@
                                         <span style="color: red;">Formato de fecha de otorgamiento no válido</span>
                                         @endif
 
+                                        @if(in_array(6, $registro->Errores))
+                                        <span style="color: red;">Formato de fecha de vencimiento no válido</span>
+                                        @endif
+
                                         @if(in_array(7, $registro->Errores))
-                                        <span style="color: red;">Número de referecia no válido</span>
+                                        <span style="color: red;">Número de referencia no válido</span>
                                         @endif
 
                                         @if(in_array(8, $registro->Errores))
@@ -81,7 +89,7 @@
                                         @endif
 
                                         @if(in_array(9, $registro->Errores))
-                                        <span style="color: red;">El dato de la nacionalidad esta vacia</span>
+                                        <span style="color: red;">El dato de la nacionalidad está vacío</span>
                                         @endif
 
                                         @if(in_array(10, $registro->Errores))
