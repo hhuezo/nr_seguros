@@ -40,6 +40,13 @@
             <div class="clearfix"></div>
         </div>
 
+        @if($poliza_vida->VigenciaHasta && now() > $poliza_vida->VigenciaHasta)
+            <div class="alert alert-warning" role="alert" style="background-color: #fcf8e3; color: #ba813b">
+                <b>¡Advertencia!</b> La póliza ya se venció, puede renovarla ingresando
+                <a href="{{ url('polizas/vida/renovar') }}/{{ $poliza_vida->Id }}" class="alert-link">aquí</a>
+            </div>
+        @endif
+
         @if (count($errors) > 0)
             <div class="alert alert-danger">
                 <ul>

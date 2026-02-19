@@ -40,6 +40,12 @@
             <div class="clearfix"></div>
         </div>
 
+        @if($desempleo->VigenciaHasta && now() > $desempleo->VigenciaHasta)
+            <div class="alert alert-warning" role="alert" style="background-color: #fcf8e3; color: #ba813b">
+                <b>¡Advertencia!</b> La póliza ya se venció, puede renovarla ingresando
+                <a href="{{ url('polizas/desempleo/renovar') }}/{{ $desempleo->Id }}" class="alert-link">aquí</a>
+            </div>
+        @endif
 
         <ul class="nav nav-tabs bar_tabs" id="myTab" role="tablist">
             <li class="nav-item {{ isset($tab) && $tab == 1 ? 'active in' : '' }}">
