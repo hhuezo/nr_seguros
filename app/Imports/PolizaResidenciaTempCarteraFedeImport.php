@@ -47,7 +47,8 @@ class PolizaResidenciaTempCarteraFedeImport implements ToModel, WithStartRow, Sk
         // No insertar solo cuando las 3 columnas (1, 2 y 3) están vacías. Si alguna tiene valor, insertar.
         $col1 = trim((string) ($row[1] ?? ''));
         $col2 = trim((string) ($row[2] ?? ''));
-        $col3 = trim((string) ($row[3] ?? ''));
+        $col3 = trim((string) ($row[5] ?? ''));
+        $col3 = trim((string) ($row[9] ?? ''));
         if ($col1 === '' && $col2 === '' && $col3 === '') {
             return null;
         }
