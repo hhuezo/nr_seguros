@@ -348,8 +348,13 @@ class SuscripcionController extends Controller
             $nuevoCorrelativo = $ultimo ? $ultimo + 1 : 1;
             $nuevaTarea = substr(date('Y'), -2) . 'TS-' . $nuevoCorrelativo;
 
+            // Si el NumeroTarea del request ya existe en BD, usar el siguiente correlativo
+            $numeroTareaFinal = Suscripcion::where('NumeroTarea', $request->NumeroTarea)->exists()
+                ? $nuevaTarea
+                : $request->NumeroTarea;
+
             $suscripcion = new Suscripcion();
-            $suscripcion->NumeroTarea = $request->NumeroTarea;
+            $suscripcion->NumeroTarea = $numeroTareaFinal;
             $suscripcion->FechaIngreso = $request->FechaIngreso;
             $suscripcion->GestorId = $request->Gestor;
             $suscripcion->CompaniaId = $request->CompaniaId;
