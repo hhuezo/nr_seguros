@@ -604,7 +604,7 @@ class SuscripcionController extends Controller
         $suscripcion->Estatura = $request->Estatura;
         $suscripcion->Imc = $request->Imc;
         $suscripcion->TipoIMCId = $request->TipoIMCId;
-        $suscripcion->Padecimiento = $request->Padecimiento;
+        //$suscripcion->Padecimiento = $request->Padecimiento;
         $suscripcion->TipoOrdenMedicaId = $request->TipoOrdenMedicaId;
         if ($request->EstadoId != null) {
             $suscripcion->EstadoId = $request->EstadoId;
