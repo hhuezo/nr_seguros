@@ -265,9 +265,8 @@ class DeudaController extends Controller
 
 
         //session(['MontoCartera' => 0]);
-        alert()->success('El Registro de cobro ha sido ingresado correctamente')->showConfirmButton('Aceptar', '#3085d6');
         // }
-        return back();
+        return back()->with('success', 'El Registro de cobro ha sido ingresado correctamente');
     }
 
 
@@ -468,8 +467,7 @@ class DeudaController extends Controller
         $comen->Deuda = $detalle->Deuda;
         $comen->save();
 
-        alert()->success('El registro ha sido ingresado correctamente');
-        return back();
+        return back()->with('success', 'El registro ha sido ingresado correctamente');
     }
 
     public function store_requisitos(Request $request)
@@ -507,14 +505,12 @@ class DeudaController extends Controller
             $deuda->Configuracion = 0;
             $deuda->update();
 
-            alert()->success('El registro de poliza ha sido configurado correctamente');
-            return redirect('polizas/deuda/' . $request->deuda);
+            return redirect('polizas/deuda/' . $request->deuda)->with('success', 'El registro de poliza ha sido configurado correctamente');
         } else {
             $deuda->Configuracion = 1;
             $deuda->update();
 
-            alert()->success('El registro de poliza ha sido configurado correctamente');
-            return redirect('polizas/deuda/' . $request->deuda . '/edit');
+            return redirect('polizas/deuda/' . $request->deuda . '/edit')->with('success', 'El registro de poliza ha sido configurado correctamente');
         }
     }
 
@@ -610,11 +606,8 @@ class DeudaController extends Controller
     {
         $requisito = DeudaRequisitos::findOrFail($request->id);
         $requisito->delete();
-        alert()->success('Se ha eliminado con exito');
 
-        return redirect("polizas/deuda/{$requisito->Deuda}?tab=3");
-
-        return back();
+        return redirect("polizas/deuda/{$requisito->Deuda}?tab=3")->with('success', 'Se ha eliminado con exito');
         // return response()->json(['mensaje' => 'Se ha eliminado con exito', 'title' => 'Requisito!', 'icon' => 'success', 'showConfirmButton' => 'true']);
     }
 
@@ -649,11 +642,9 @@ class DeudaController extends Controller
             $requisito->save();
             return redirect('polizas/deuda/' . $requisito->Deuda . '?tab=3')->with('success', 'El registro ha sido modificado correctamente');
         } catch (ModelNotFoundException $e) {
-            alert()->error('Requisito no encontrado');
-            return back();
+            return back()->with('error', 'Requisito no encontrado');
         } catch (Exception $e) {
-            alert()->error('Ocurrió un error al actualizar el requisito.');
-            return back();
+            return back()->with('error', 'Ocurrió un error al actualizar el requisito.');
         }
     }
 
@@ -681,13 +672,13 @@ class DeudaController extends Controller
 
     public function edit($id)
     {
+        $tab = $request->tab ?? 2;
         $deuda = Deuda::findOrFail($id);
         if ($deuda->Configuracion == 0) {
             return redirect('polizas/deuda/' . $id);
         } else {
             if ($deuda->EdadMaximaTerminacion == null || $deuda->ResponsabilidadMaxima == null) {
-                alert()->success('Debe agregar Edad Máxima y Responsabilidad Máxima');
-                return redirect('polizas/deuda/' . $id);
+                return redirect('polizas/deuda/' . $id)->with('success', 'Debe agregar Edad Máxima y Responsabilidad Máxima');
             }
 
             $requisitos = DeudaRequisitos::where('Activo', 1)->where('Deuda', $id)->get();
@@ -1019,23 +1010,6 @@ class DeudaController extends Controller
 
 
 
-            /*$historico = DB::table('poliza_deuda_cartera')
-                ->select(
-                    'Axo',
-                    'Mes',
-                    'FechaInicio',
-                    'FechaFinal',
-                    DB::raw('COUNT(*) AS total_registros'),  // Cuenta el número total de registros (usuarios)
-                )
-                ->where('PolizaDeuda', $id)  // Filtro por PolizaDeuda
-                ->where('NoValido', 0)
-                ->groupBy('Axo', 'Mes', 'FechaInicio', 'FechaFinal')  // Agrupación por los campos especificados
-                ->orderBy('Axo', 'asc')  // Ordenar primero por Axo
-                ->orderBy('Mes', 'asc')  // Luego ordenar por Mes
-                ->orderBy('FechaInicio', 'asc')  // Finalmente ordenar por FechaInicio
-                ->get();*/
-
-
 
             $array_dui = $extraprimados->pluck('Dui')->toArray();
 
@@ -1128,7 +1102,6 @@ class DeudaController extends Controller
                 ->where('PolizaDeuda', '=', $id)
                 ->orderByDesc('Id')->first();
 
-
             return view('polizas.deuda.edit', compact(
                 'totalUltimoPago',
                 'ultimaCartera',
@@ -1164,7 +1137,8 @@ class DeudaController extends Controller
                 'dataPago',
                 'dataPagoId',
                 'count_tasas_diferencidas',
-                'fechas'
+                'fechas',
+                'tab'
             ));
         }
     }
@@ -1410,8 +1384,7 @@ class DeudaController extends Controller
         $comen->FechaIngreso = $time;
         $comen->Deuda = $request->DeudaComment;
         $comen->save();
-        alert()->success('El registro del comentario ha sido creado correctamente')->showConfirmButton('Aceptar', '#3085d6');
-        return Redirect::to('polizas/deuda/' . $request->DeudaComment . '/edit');
+        return Redirect::to('polizas/deuda/' . $request->DeudaComment . '/edit')->with('success', 'El registro del comentario ha sido creado correctamente');
     }
 
     public function eliminar_comentario(Request $request)
@@ -1420,8 +1393,7 @@ class DeudaController extends Controller
         $comen = Comentario::findOrFail($request->IdComment);
         $comen->Activo = 0;
         $comen->update();
-        alert()->success('El registro del comentario ha sido elimando correctamente')->showConfirmButton('Aceptar', '#3085d6');
-        return Redirect::to('polizas/deuda/' . $comen->Deuda . '/edit');
+        return Redirect::to('polizas/deuda/' . $comen->Deuda . '/edit')->with('success', 'El registro del comentario ha sido elimando correctamente');
     }
 
 
@@ -1472,15 +1444,12 @@ class DeudaController extends Controller
             $cliente->Dui = $request->Dui;
             $cliente->save();
 
-            alert()->success('Extraprimado agregado correctamente.');
-            return redirect('polizas/deuda/' . $request->PolizaDeuda . '/edit?tab=7');
+            return redirect('polizas/deuda/' . $request->PolizaDeuda . '/edit?tab=7')->with('success', 'Extraprimado agregado correctamente.');
         } catch (\Exception $e) {
             // Log del error para depuración
             Log::error('Error al guardar extraprimado: ' . $e->getMessage());
 
-            // Mensaje de error para el usuario
-            alert()->error('Error al guardar el registro (verificar si el registro ya fue agregado anteriormente).')->persistent('Ok');
-            return redirect()->back()->withInput();
+            return redirect()->back()->withInput()->with('error', 'Error al guardar el registro (verificar si el registro ya fue agregado anteriormente).');
         }
     }
 
@@ -1492,8 +1461,7 @@ class DeudaController extends Controller
         $extra_primado->PorcentajeEP = $request->PorcentajeEP;
         // $extra_primado->PagoEP = $request->PagoEP;
         $extra_primado->update();
-        alert()->success('El registro de poliza ha sido modificado correctamente');
-        return redirect('polizas/deuda/' . $extra_primado->PolizaDeuda . '/edit?tab=7');
+        return redirect('polizas/deuda/' . $extra_primado->PolizaDeuda . '/edit?tab=7')->with('success', 'El registro de poliza ha sido modificado correctamente');
     }
 
 
@@ -1501,8 +1469,7 @@ class DeudaController extends Controller
     {
         $extra = PolizaDeudaExtraPrimados::findOrFail($request->IdExtraPrima);
         $extra->delete();
-        alert()->success('El registro ha sido eliminado correctamente');
-        return redirect('polizas/deuda/' . $extra->PolizaDeuda . '/edit?tab=7');
+        return redirect('polizas/deuda/' . $extra->PolizaDeuda . '/edit?tab=7')->with('success', 'El registro ha sido eliminado correctamente');
     }
 
     public function update(Request $request, $id)
@@ -1620,8 +1587,7 @@ class DeudaController extends Controller
         $deuda->Activo = 0;
         $deuda->update();
 
-        alert()->success('Eliminada con exito');
-        return back();
+        return back()->with('success', 'Eliminada con exito');
     }
 
     public function validarFormatoFecha($data)
@@ -1737,12 +1703,10 @@ class DeudaController extends Controller
             );
         } catch (\Throwable $th) {
 
-            alert()->error('Error al borrar el proceso actual');
-            return back();
+            return back()->with('error', 'Error al borrar el proceso actual');
         }
 
-        alert()->success('Proceso actual eliminado correctamente');
-        return redirect('polizas/deuda/' . $request->deuda_id . '/edit');
+        return redirect('polizas/deuda/' . $request->deuda_id . '/edit')->with('success', 'Proceso actual eliminado correctamente');
     }
 
 
@@ -1846,8 +1810,7 @@ class DeudaController extends Controller
             throw $e;
         }
 
-        alert()->success('Los registros han sido resturados correctamente');
-        return back();
+        return back()->with('success', 'Los registros han sido resturados correctamente');
     }
 
     public function delete_pago($id)
@@ -1880,12 +1843,10 @@ class DeudaController extends Controller
             );
         } catch (\Throwable $th) {
 
-            alert()->error('Error al eliminar el registro');
-            return back();
+            return back()->with('error', 'Error al eliminar el registro');
         }
 
-        alert()->success('El registro ha sido eliminado correctamente');
-        return back();
+        return back()->with('success', 'El registro ha sido eliminado correctamente');
     }
 
 
@@ -1988,12 +1949,10 @@ class DeudaController extends Controller
             );
         } catch (\Throwable $th) {
 
-            alert()->error('Error al eliminar el registro');
-            return back();
+            return back()->with('error', 'Error al eliminar el registro');
         }
 
-        alert()->success('El registro ha sido cancelado correctamente');
-        return back();
+        return back()->with('success', 'El registro ha sido cancelado correctamente');
     }
 
     public function reiniciar_carga(Request $request)
@@ -2090,13 +2049,11 @@ class DeudaController extends Controller
 
             DB::commit();
 
-            alert()->success('La carga ha sido reiniciada correctamente');
-            return back();
+            return back()->with('success', 'La carga ha sido reiniciada correctamente');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error al reiniciar carga: ' . $e->getMessage());
-            alert()->error('Hubo un error al reiniciar la carga');
-            return back();
+            return back()->with('error', 'Hubo un error al reiniciar la carga');
         }
     }
 

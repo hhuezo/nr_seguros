@@ -35,7 +35,7 @@ class RegistrosEliminadosExport implements FromCollection, WithHeadings
 
         $deuda = Deuda::findOrFail($this->id);
 
-        // 🔹 Si es Fedecrédito (3 o 4)
+        // Fedecrédito: nuevo formato (21 columnas acordadas hasta TARIFA)
         if ($deuda->Aseguradora == 3 || $deuda->Aseguradora == 4) {
             $data = PolizaDeudaCartera::from('poliza_deuda_cartera as pdc')
                 ->where('pdc.PolizaDeuda', $poliza_id)
@@ -47,15 +47,15 @@ class RegistrosEliminadosExport implements FromCollection, WithHeadings
                         ->whereColumn('pdtc.NumeroReferencia', 'pdc.NumeroReferencia')
                         ->where('pdtc.PolizaDeuda', $poliza_id);
                 })
-                ->join('saldos_montos as sm', 'pdc.LineaCredito', '=', 'sm.Id')
-                ->join('poliza_deuda_tipo_cartera as pdtc', 'pdc.PolizaDeudaTipoCartera', '=', 'pdtc.Id')
-                ->join('tipo_cartera as tc', 'pdtc.TipoCartera', '=', 'tc.Id')
                 ->select([
                     'pdc.TipoDocumento',
                     'pdc.Dui',
                     'pdc.PrimerApellido',
                     'pdc.SegundoApellido',
-                    DB::raw("CONCAT(PrimerNombre, ' ') AS Nombre"),
+                    'pdc.ApellidoCasada',
+                    'pdc.PrimerNombre',
+                    'pdc.SegundoNombre',
+                    DB::raw("'' AS TercerNombre"),
                     'pdc.Nacionalidad',
                     'pdc.FechaNacimiento',
                     'pdc.Sexo',
@@ -64,16 +64,15 @@ class RegistrosEliminadosExport implements FromCollection, WithHeadings
                     DB::raw("IF(pdc.MontoOtorgado IS NULL, '', ROUND(pdc.MontoOtorgado, 2)) AS MontoOtorgado"),
                     DB::raw("IF(pdc.SaldoCapital IS NULL, '', ROUND(pdc.SaldoCapital, 2)) AS SaldoCapital"),
                     DB::raw("IF(pdc.Intereses IS NULL, '', ROUND(pdc.Intereses, 2)) AS Intereses"),
-                    DB::raw("IF(pdc.SaldoInteresMora IS NULL, '', ROUND(pdc.SaldoInteresMora, 2)) AS MoraCapital"),
+                    DB::raw("IF(COALESCE(pdc.MoraCapital, pdc.SaldoInteresMora) IS NULL, '', ROUND(COALESCE(pdc.MoraCapital, pdc.SaldoInteresMora), 2)) AS MoraCapital"),
                     DB::raw("IF(pdc.InteresesMoratorios IS NULL, '', ROUND(pdc.InteresesMoratorios, 2)) AS InteresesMoratorios"),
                     DB::raw("IF(pdc.InteresesCovid IS NULL, '', ROUND(pdc.InteresesCovid, 2)) AS InteresesCovid"),
                     'pdc.PorcentajeExtraprima',
                     'pdc.Tasa',
-                    'tc.Nombre as TipoCartera',
-                    DB::raw("CONCAT(sm.Abreviatura, ' - ', sm.Descripcion) AS LineaCredito"),
                 ])
                 ->orderBy('pdc.NumeroReferencia')
                 ->get();
+            // Formato anterior: join sm, pdtc, tc y columnas CONCAT(PrimerNombre) AS Nombre, TipoCartera, LineaCredito
         } else {
             // 🔹 Otras aseguradoras
             $data = PolizaDeudaCartera::from('poliza_deuda_cartera as pdc')
@@ -129,13 +128,16 @@ class RegistrosEliminadosExport implements FromCollection, WithHeadings
         $deuda = Deuda::findOrFail($this->id);
 
         if ($deuda->Aseguradora == 3 || $deuda->Aseguradora == 4) {
-            // 🔹 Fedecrédito
+            // Fedecrédito: 21 columnas acordadas (hasta TARIFA)
             return [
                 'Tipo de documento',
                 'DUI o documento de identidad',
                 'Primer Apellido',
                 'Segundo Apellido',
-                'Nombres',
+                'Apellido de casada',
+                'primer nombre',
+                'segundo nombre',
+                'tercer nombre',
                 'Nacionalidad',
                 'Fecha de Nacimiento',
                 'Género',
@@ -149,9 +151,8 @@ class RegistrosEliminadosExport implements FromCollection, WithHeadings
                 'Intereses Covid',
                 'Extra Prima',
                 'TARIFA',
-                'TIPO CARTERA',
-                'LINEA CREDITO',
             ];
+            // Formato anterior: 'Nombres', 'TIPO CARTERA', 'LINEA CREDITO'
         } else {
             // 🔹 Otras aseguradoras
             return [

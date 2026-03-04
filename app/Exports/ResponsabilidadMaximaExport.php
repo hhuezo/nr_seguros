@@ -29,39 +29,36 @@ class ResponsabilidadMaximaExport implements FromCollection, WithHeadings
 
 
 
-        //fedecredito
+        // Fedecrédito: nuevo formato (21 columnas acordadas hasta TARIFA)
         if ($deuda->Aseguradora == 3 || $deuda->Aseguradora == 4) {
             $data = PolizaDeudaTempCartera::where('poliza_deuda_temp_cartera.PolizaDeuda', $this->id)
                 ->where('TotalCredito', '>', $responsabilidadMaxima)
-               ->join('saldos_montos as sm', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'sm.Id')
-                ->join('poliza_deuda_tipo_cartera as pdtc', 'poliza_deuda_temp_cartera.PolizaDeudaTipoCartera', '=', 'pdtc.Id')
-                ->join('tipo_cartera as tc', 'pdtc.TipoCartera', '=', 'tc.Id')
                 ->select([
                     'TipoDocumento',
                     'Dui',
                     'PrimerApellido',
                     'SegundoApellido',
+                    'ApellidoCasada',
                     'PrimerNombre',
+                    'SegundoNombre',
+                    DB::raw("'' AS TercerNombre"),
                     'Nacionalidad',
-
                     'FechaNacimiento',
                     'Sexo',
                     DB::raw("CONCAT(NumeroReferencia, ' ') AS NumeroReferencia"),
                     'FechaOtorgamiento',
                     DB::raw("IF(MontoOtorgado IS NULL, '', ROUND(MontoOtorgado, 2)) AS MontoOtorgado"),
-
                     DB::raw("IF(SaldoCapital IS NULL, '', ROUND(SaldoCapital, 2)) AS SaldoCapital"),
                     DB::raw("IF(Intereses IS NULL, '', ROUND(Intereses, 2)) AS Intereses"),
-                    DB::raw("IF(SaldoInteresMora IS NULL, '', ROUND(SaldoInteresMora, 2)) AS MoraCapital"),
+                    DB::raw("IF(COALESCE(MoraCapital, SaldoInteresMora) IS NULL, '', ROUND(COALESCE(MoraCapital, SaldoInteresMora), 2)) AS MoraCapital"),
                     DB::raw("IF(InteresesMoratorios IS NULL, '', ROUND(InteresesMoratorios, 2)) AS InteresesMoratorios"),
                     DB::raw("IF(InteresesCovid IS NULL, '', ROUND(InteresesCovid, 2)) AS InteresesCovid"),
                     'PorcentajeExtraprima',
                     'Tasa',
-                    'tc.Nombre as TipoCartera',
-                    DB::raw("CONCAT(sm.Abreviatura, ' - ', sm.Descripcion) AS LineaCredito"),
                 ])
                 ->orderBy('NumeroReferencia')
                 ->get();
+            // Formato anterior Fedecrédito (por si deciden volver): select con join sm, pdtc, tc y columnas TipoCartera, LineaCredito
         } else {
             $data = PolizaDeudaTempCartera::where('poliza_deuda_temp_cartera.PolizaDeuda', $this->id)
                 ->where('TotalCredito', '>', $responsabilidadMaxima)
@@ -111,13 +108,16 @@ class ResponsabilidadMaximaExport implements FromCollection, WithHeadings
         $deuda = Deuda::findOrFail($this->id);
 
         if ($deuda->Aseguradora == 3 || $deuda->Aseguradora == 4) {
-            // Fedecrédito
+            // Fedecrédito: 21 columnas acordadas (hasta TARIFA)
             return [
                 'Tipo de documento',
                 'DUI o documento de identidad',
                 'Primer Apellido',
                 'Segundo Apellido',
-                'Nombres',
+                'Apellido de casada',
+                'primer nombre',
+                'segundo nombre',
+                'tercer nombre',
                 'Nacionalidad',
                 'Fecha de Nacimiento',
                 'Género',
@@ -131,9 +131,8 @@ class ResponsabilidadMaximaExport implements FromCollection, WithHeadings
                 'Intereses Covid',
                 'Extra Prima',
                 'TARIFA',
-                'TIPO CARTERA',
-                'LINEA CREDITO',
             ];
+            // Formato anterior: 'Nombres' en lugar de apellido casada + 3 nombres, y 'TIPO CARTERA','LINEA CREDITO' al final
         } else {
             // Otras aseguradoras
             return [

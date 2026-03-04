@@ -28,6 +28,7 @@ class CreditosNoValidoExport implements FromCollection, WithHeadings
     {
 
         $deuda = Deuda::findOrFail($this->id);
+        // Fedecrédito: nuevo formato (21 columnas acordadas hasta TARIFA) + Motivo
         if ($deuda->Aseguradora == 3 || $deuda->Aseguradora == 4) {
 
             $data = PolizaDeudaTempCartera::from('poliza_deuda_temp_cartera as pdtc')
@@ -39,15 +40,15 @@ class CreditosNoValidoExport implements FromCollection, WithHeadings
                                 ->orWhere('pdtc.TotalCredito', '>', $deuda->ResponsabilidadMaxima);
                         });
                 })
-                ->leftJoin('saldos_montos as sm', 'pdtc.LineaCredito', '=', 'sm.Id')
-                ->leftJoin('poliza_deuda_tipo_cartera as pd_tipo', 'pdtc.PolizaDeudaTipoCartera', '=', 'pd_tipo.Id')
-                ->leftJoin('tipo_cartera as tc', 'pd_tipo.TipoCartera', '=', 'tc.Id')
                 ->select([
                     'pdtc.TipoDocumento',
                     'pdtc.Dui',
                     'pdtc.PrimerApellido',
                     'pdtc.SegundoApellido',
+                    'pdtc.ApellidoCasada',
                     'pdtc.PrimerNombre',
+                    'pdtc.SegundoNombre',
+                    DB::raw("'' AS TercerNombre"),
                     'pdtc.Nacionalidad',
                     'pdtc.FechaNacimiento',
                     'pdtc.Sexo',
@@ -56,23 +57,18 @@ class CreditosNoValidoExport implements FromCollection, WithHeadings
                     DB::raw("IF(pdtc.MontoOtorgado IS NULL, '', ROUND(pdtc.MontoOtorgado, 2)) AS MontoOtorgado"),
                     DB::raw("IF(pdtc.SaldoCapital IS NULL, '', ROUND(pdtc.SaldoCapital, 2)) AS SaldoCapital"),
                     DB::raw("IF(pdtc.Intereses IS NULL, '', ROUND(pdtc.Intereses, 2)) AS Intereses"),
-                    DB::raw("IF(pdtc.SaldoInteresMora IS NULL, '', ROUND(pdtc.SaldoInteresMora, 2)) AS MoraCapital"),
+                    DB::raw("IF(COALESCE(pdtc.MoraCapital, pdtc.SaldoInteresMora) IS NULL, '', ROUND(COALESCE(pdtc.MoraCapital, pdtc.SaldoInteresMora), 2)) AS MoraCapital"),
                     DB::raw("IF(pdtc.InteresesMoratorios IS NULL, '', ROUND(pdtc.InteresesMoratorios, 2)) AS InteresesMoratorios"),
                     DB::raw("IF(pdtc.InteresesCovid IS NULL, '', ROUND(pdtc.InteresesCovid, 2)) AS InteresesCovid"),
                     'pdtc.PorcentajeExtraprima',
                     'pdtc.Tasa',
-                    'tc.Nombre as TipoCartera',
-                    DB::raw("CONCAT(sm.Abreviatura, ' - ', sm.Descripcion) AS LineaCredito"),
+                    'pdtc.EdadDesembloso',
+                    DB::raw('pdtc.TotalCredito AS saldo_total'),
                 ])
-                ->groupBy(
-                    'pdtc.Dui',
-                    'pdtc.Pasaporte',
-                    'pdtc.CarnetResidencia',
-                    'pdtc.NumeroReferencia',
-                    'tc.Id'
-                )
+                ->groupBy('pdtc.NumeroReferencia')
                 ->orderBy('pdtc.NumeroReferencia')
                 ->get();
+            // Formato anterior: leftJoin sm, pd_tipo, tc; sin ApellidoCasada, SegundoNombre, TercerNombre; TipoCartera, LineaCredito; groupBy con tc.Id
         } else {
             $data = PolizaDeudaTempCartera::where('poliza_deuda_temp_cartera.PolizaDeuda', $this->id)
                 ->where('NoValido', 1)
@@ -150,13 +146,16 @@ class CreditosNoValidoExport implements FromCollection, WithHeadings
         $deuda = Deuda::findOrFail($this->id);
 
         if ($deuda->Aseguradora == 3 || $deuda->Aseguradora == 4) {
-            // Fedecrédito
+            // Fedecrédito: 21 columnas acordadas (hasta TARIFA) + columnas para cálculo + MOTIVO
             return [
                 'Tipo de documento',
                 'DUI o documento de identidad',
                 'Primer Apellido',
                 'Segundo Apellido',
-                'Nombres',
+                'Apellido de casada',
+                'primer nombre',
+                'segundo nombre',
+                'tercer nombre',
                 'Nacionalidad',
                 'Fecha de Nacimiento',
                 'Género',
@@ -170,10 +169,11 @@ class CreditosNoValidoExport implements FromCollection, WithHeadings
                 'Intereses Covid',
                 'Extra Prima',
                 'TARIFA',
-                'TIPO CARTERA',
-                'LINEA CREDITO',
-                 'MOTIVO',
+                'Edad desembolso',
+                'Saldo total',
+                'MOTIVO',
             ];
+            // Formato anterior: 'Nombres', 'TIPO CARTERA', 'LINEA CREDITO', 'MOTIVO'
         } else {
             // Otras aseguradoras
             return [

@@ -116,13 +116,16 @@ class DeudaCarteraFedeController extends Controller
         }
 
 
-        // Definir encabezados esperados
+        // Definir encabezados esperados (nuevo formato con 21 columnas)
         $expectedHeaders = [
             "Tipo de documento",
             "DUI o documento de identidad",
             "Primer Apellido",
             "Segundo Apellido",
-            "Nombres",
+            "Apellido de casada",
+            "primer nombre",
+            "segundo nombre",
+            "tercer nombre",
             "Nacionalidad",
             "Fecha de Nacimiento",
             "Género",
@@ -137,6 +140,27 @@ class DeudaCarteraFedeController extends Controller
             "Extra Prima",
             "TARIFA",
         ];
+        // ========== VALIDACIÓN ANTERIOR (18 columnas) – por si retoman este formato ==========
+        // $expectedHeaders = [
+        //     "Tipo de documento",
+        //     "DUI o documento de identidad",
+        //     "Primer Apellido",
+        //     "Segundo Apellido",
+        //     "Nombres",
+        //     "Nacionalidad",
+        //     "Fecha de Nacimiento",
+        //     "Género",
+        //     "Nro. de Préstamo",
+        //     "Fecha de otorgamiento",
+        //     "Monto original de desembolso",
+        //     "Saldo de deuda capital actual",
+        //     "Saldo intereses corrientes",
+        //     "Mora capital",
+        //     "Saldo intereses por mora",
+        //     "Intereses Covid",
+        //     "Extra Prima",
+        //     "TARIFA",
+        // ];
 
 
         // Función para convertir índice (0=A, 1=B, ...) en letra de Excel
@@ -163,8 +187,6 @@ class DeudaCarteraFedeController extends Controller
                 return back()->withErrors($validator);
             }
         }
-
-
 
         PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->delete();
         Excel::import(new PolizaDeudaTempCarteraFedeImport($date->year, $date->month, $deuda->Id, $request->FechaInicio, $request->FechaFinal, $deuda_tipo_cartera->Id), $archivo);
@@ -237,24 +259,12 @@ class DeudaCarteraFedeController extends Controller
                 }
             }
 
-
-
-            // 2 error formato de dui
-            // if ($obj->Dui == null || $obj->Dui == '') {
-            //     $validador_dui = false;
-            //     if ($validador_dui == false) {
-            //         $obj->TipoError = 8;
-            //         $obj->update();
-
-            //         array_push($errores_array, 8);
-            //     }
-            // } else {
-            //     $validador_dui = true;
-            // }
-
-            // $obj->update();
-
-
+            // 2 DUI o documento de identidad obligatorio (columna 2)
+            if (trim($obj->Dui ?? '') === '') {
+                $obj->TipoError = 2;
+                $obj->update();
+                array_push($errores_array, 2);
+            }
 
             // 4 nombre o apellido
             if (trim($obj->PrimerApellido) == "" || trim($obj->PrimerNombre) == "") {

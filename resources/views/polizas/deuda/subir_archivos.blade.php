@@ -1,24 +1,40 @@
 @extends ('welcome')
 @section('contenido')
+    <!-- Toastr CSS -->
+    <link href="{{ asset('vendors/toast/toastr.min.css') }}" rel="stylesheet">
+
+    <!-- jQuery -->
     <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
+
+    <!-- Toastr JS -->
+    <script src="{{ asset('vendors/toast/toastr.min.js') }}"></script>
+
+    @if (session('success'))
+        <script>toastr.success("{{ session('success') }}");</script>
+    @endif
+    @if (session('error'))
+        <script>toastr.error("{{ session('error') }}");</script>
+    @endif
+
     <script type="text/javascript">
         $(document).ready(function() {
             //mostrar opcion en menu
             displayOption("ul-poliza", "li-poliza-deuda");
+
+            // Loading al enviar "Validar póliza"
+            $('#form-validar-poliza').on('submit', function() {
+                var $btn = $(this).find('button[type="submit"]');
+                $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Validando...');
+                document.getElementById('loading-overlay').style.display = 'flex';
+            });
         });
     </script>
 
-
-
-    <!-- Agrega este div al final de tu archivo blade -->
     <div id="loading-overlay">
         <img src="{{ asset('img/ajax-loader.gif') }}" alt="Loading..." />
     </div>
 
-
     <div class="x_panel">
-
-        @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
         <div class="x_title">
             <div class="col-md-10 col-sm-10 col-xs-12">
                 <h3>Subir Carteras de <br> {{ $deuda->NumeroPoliza }} | {{ $deuda->clientes->Nombre }} </h3>
@@ -37,32 +53,17 @@
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
                 @if (session('warning'))
-                    <div class="alert alert-danger">
-                        <strong>{{ session('warning') }}</strong><br>
-
-                        @if (session('errores'))
-                            <span>
-                                {{ implode(', ', session('errores')) }}
-                            </span>
-                        @endif
-                    </div>
-                @endif
-
-
-                @if (session('error'))
-                    <div class="alert alert-danger">
-                        {{ session('error') }}
-                    </div>
+                    @php
+                        $msgWarning = session('warning');
+                        if (session('errores')) {
+                            $msgWarning .= ' ' . implode(', ', session('errores'));
+                        }
+                    @endphp
+                    <script>toastr.warning({!! json_encode($msgWarning) !!});</script>
                 @endif
 
                 @if ($errors->any())
-                    <div class="alert alert-danger">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
+                    <script>toastr.error({!! json_encode(implode(' ', $errors->all())) !!});</script>
                 @endif
 
                 <table class="table table-striped table-bordered">
@@ -110,10 +111,10 @@
 
             </div>
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align: right;">
-                <form method="POST" action="{{ url('polizas/deuda/validar_poliza') }}">
+                <form id="form-validar-poliza" method="POST" action="{{ url('polizas/deuda/validar_poliza') }}">
                     @csrf
                     <input type="hidden" value="{{ $deuda->Id }}" name="Deuda">
-                    <button class="btn btn-primary float-right">Validar póliza</button>
+                    <button type="submit" class="btn btn-primary float-right">Validar póliza</button>
                 </form>
             </div>
         </div>
@@ -126,8 +127,4 @@
 
 
 
-
-
-
-    @include('sweetalert::alert')
 @endsection

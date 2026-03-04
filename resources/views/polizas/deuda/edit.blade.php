@@ -1,8 +1,25 @@
 @extends ('welcome')
 @section('contenido')
 @can('deuda edit')
-@include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Toastr CSS -->
+    <link href="{{ asset('vendors/toast/toastr.min.css') }}" rel="stylesheet">
+
+    <!-- jQuery -->
+    <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
+
+    <!-- Toastr JS -->
+    <script src="{{ asset('vendors/toast/toastr.min.js') }}"></script>
+
+    @if (session('success'))
+        <script>toastr.success("{{ session('success') }}");</script>
+    @endif
+    @if (session('error'))
+        <script>toastr.error("{{ session('error') }}");</script>
+    @endif
+    @if (session('warning'))
+        <script>toastr.warning("{{ session('warning') }}");</script>
+    @endif
+
 <div class="x_panel">
     <style>
         .ocultar {
@@ -38,9 +55,6 @@
         }
     </style>
 
-    @php
-    $tab = request()->has('tab') ? request('tab') : 1;
-    @endphp
     <div class="clearfix"></div>
     <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
@@ -154,14 +168,6 @@
 <div id="loading-overlay-modal">
     <img src="{{ asset('img/ajax-loader.gif') }}" alt="Loading..." />
 </div>
-
-
-@include('sweetalert::alert')
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<!-- jQuery -->
-<script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function() {
 

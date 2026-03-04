@@ -35,7 +35,7 @@
                             <thead>
                                 <tr>
                                     <th>Error</th>
-                                    <th>DUI</th>
+                                    <th>Documento de identidad</th>
                                     {{-- <th>NIT</th> --}}
                                     <th>Nombre</th>
                                     <th>Fecha nacimiento</th>
@@ -56,7 +56,7 @@
                                         @endif
 
                                         @if(in_array(2, $registro->Errores))
-                                        <span style="color: red;">Formato de DUI no válido</span>
+                                        <span style="color: red;">Documento no válido</span>
                                         @endif
 
                                         @if(in_array(3, $registro->Errores))
