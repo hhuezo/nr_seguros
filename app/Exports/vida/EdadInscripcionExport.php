@@ -29,14 +29,17 @@ class EdadInscripcionExport implements FromCollection, WithHeadings
         $data = VidaCarteraTemp::where('PolizaVida', $this->id)->get();
 
         if ($vida->Aseguradora == 3 || $vida->Aseguradora == 4) {
-            //fedecredito
+            // Fedecrédito: nuevo formato (16 columnas hasta TARIFA)
             $poliza_edad_maxima = collect(DB::select("
                 SELECT
                     pdtc.TipoDocumento AS TIPO_DOCUMENTO,
                     pdtc.DUI AS DUI,
                     pdtc.PrimerApellido AS PRIMERAPELLIDO,
                     pdtc.SegundoApellido AS SEGUNDOAPELLIDO,
+                    pdtc.ApellidoCasada AS APELLIDOCASADA,
                     pdtc.PrimerNombre AS PRIMERNOMBRE,
+                    pdtc.SegundoNombre AS SEGUNDONOMBRE,
+                    '' AS TERCERNOMBRE,
                     pdtc.Nacionalidad AS NACIONALIDAD,
                     pdtc.FechaNacimiento AS FECNACIMIENTO,
                     pdtc.Sexo AS GENERO,
@@ -48,6 +51,7 @@ class EdadInscripcionExport implements FromCollection, WithHeadings
                 FROM poliza_vida_cartera_temp AS pdtc
                 WHERE pdtc.PolizaVida = ? AND EdadDesembloso > ?
             ", [$this->id, $vida->EdadMaximaInscripcion]));
+            // Formato anterior: sin ApellidoCasada, SegundoNombre, TercerNombre; PrimerNombre como Nombres
         } else {
             $poliza_edad_maxima = collect(DB::select("
                 SELECT
@@ -86,22 +90,26 @@ class EdadInscripcionExport implements FromCollection, WithHeadings
         $vida = Vida::findOrFail($this->id);
 
         if ($vida->Aseguradora == 3 || $vida->Aseguradora == 4) {
-            //fedecredito
+            // Fedecrédito: 16 columnas acordadas (hasta TARIFA)
             return [
-                'Tipo de Documento',
+                'Tipo de documento',
                 'DUI o documento de identidad',
                 'Primer Apellido',
                 'Segundo Apellido',
-                'Nombres',
+                'Apellido de casada',
+                'primer nombre',
+                'segundo nombre',
+                'tercer nombre',
                 'Nacionalidad',
                 'Fecha de Nacimiento',
                 'Género',
                 'Nro. de Préstamo',
                 'Fecha de otorgamiento',
-                'Suma asegurada ',
+                'SUMA ASEGURADA',
                 'Extra Prima',
                 'TARIFA',
             ];
+            // Formato anterior: 13 columnas con 'Nombres', 'Suma asegurada '
         } else {
             return [
                 'DUI',

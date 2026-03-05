@@ -102,22 +102,41 @@ class VidaFedeController extends Controller
         // Crear validador vacío
         $validator = Validator::make([], []);
 
-        // 2. Validar primera fila
+        // 2. Validar primera fila (nuevo formato 16 columnas Fedecrédito vida)
         $expectedColumns = [
             "Tipo de documento",
             "DUI o documento de identidad",
             "Primer Apellido",
             "Segundo Apellido",
-            "Nombres",
+            "Apellido de casada",
+            "primer nombre",
+            "segundo nombre",
+            "tercer nombre",
             "Nacionalidad",
             "Fecha de Nacimiento",
             "Género",
             "Nro. de Préstamo",
             "Fecha de otorgamiento",
-            "Suma asegurada",
+            "SUMA ASEGURADA",
             "Extra Prima",
             "TARIFA",
         ];
+        // Formato anterior (por si deciden volver):
+        // $expectedColumns = [
+        //     "Tipo de documento",
+        //     "DUI o documento de identidad",
+        //     "Primer Apellido",
+        //     "Segundo Apellido",
+        //     "Nombres",
+        //     "Nacionalidad",
+        //     "Fecha de Nacimiento",
+        //     "Género",
+        //     "Nro. de Préstamo",
+        //     "Fecha de otorgamiento",
+        //     "Suma asegurada",
+        //     "Extra Prima",
+        //     "TARIFA",
+        // ];
 
         $firstRow = $excel->getActiveSheet()->rangeToArray('A1:Z1')[0];
 

@@ -38,8 +38,7 @@ class RegistrosEliminadosExport implements FromCollection, WithHeadings
 
         if ($hayCartera) {
             if ($vida->Aseguradora == 3 || $vida->Aseguradora == 4) {
-
-                //fedecredito
+                // Fedecrédito: nuevo formato (16 columnas hasta TARIFA)
                 $registrosEliminados = DB::table('poliza_vida_cartera AS c')
                     ->where('c.Mes', (int) $mesAnterior)
                     ->where('c.Axo', (int) $anioAnterior)
@@ -55,7 +54,10 @@ class RegistrosEliminadosExport implements FromCollection, WithHeadings
                         'c.Dui AS DUI',
                         'c.PrimerApellido AS PRIMERAPELLIDO',
                         'c.SegundoApellido AS SEGUNDOAPELLIDO',
+                        'c.ApellidoCasada AS APELLIDOCASADA',
                         'c.PrimerNombre AS PRIMERNOMBRE',
+                        'c.SegundoNombre AS SEGUNDONOMBRE',
+                        DB::raw("'' AS TERCERNOMBRE"),
                         'c.Nacionalidad AS NACIONALIDAD',
                         'c.FechaNacimiento AS FECNACIMIENTO',
                         'c.Sexo AS GENERO',
@@ -66,6 +68,7 @@ class RegistrosEliminadosExport implements FromCollection, WithHeadings
                         'c.Tasa AS TARIFA',
                     ])
                     ->get();
+                // Formato anterior: sin ApellidoCasada, SegundoNombre, TercerNombre
             } else {
                 $registrosEliminados = DB::table('poliza_vida_cartera AS c')
                     ->where('c.Mes', (int) $mesAnterior)
@@ -111,23 +114,26 @@ class RegistrosEliminadosExport implements FromCollection, WithHeadings
         $vida = Vida::findOrFail($this->id);
 
         if ($vida->Aseguradora == 3 || $vida->Aseguradora == 4) {
-            //fedecredito
+            // Fedecrédito: 16 columnas acordadas (hasta TARIFA)
             return [
-                'Tipo de Documento',
+                'Tipo de documento',
                 'DUI o documento de identidad',
                 'Primer Apellido',
                 'Segundo Apellido',
-                'Nombres',
+                'Apellido de casada',
+                'primer nombre',
+                'segundo nombre',
+                'tercer nombre',
                 'Nacionalidad',
                 'Fecha de Nacimiento',
                 'Género',
                 'Nro. de Préstamo',
                 'Fecha de otorgamiento',
-                'Suma asegurada ',
+                'SUMA ASEGURADA',
                 'Extra Prima',
                 'TARIFA',
-
             ];
+            // Formato anterior: 13 columnas con 'Nombres', 'Suma asegurada '
         } else {
 
 

@@ -45,28 +45,63 @@ class VidaCarteraTempFedeImport implements ToModel
             }
         }
 
+        // Nuevo formato 16 columnas: tercer nombre se une a segundo nombre si viene
+        $segundoNombre = trim((string) ($row[6] ?? ''));
+        $tercerNombre = trim((string) ($row[7] ?? ''));
+        if ($tercerNombre !== '') {
+            $segundoNombre = $segundoNombre === '' ? $tercerNombre : $segundoNombre . ' ' . $tercerNombre;
+        }
+
         return new VidaCarteraTemp([
             'PolizaVida' => $this->Poliza,
-            'TipoDocumento' => $row[0],
+            'TipoDocumento' => $row[0] ?? null,
             'Dui' => $row[1] ?? null,
             'PrimerApellido' => $row[2] ?? null,
             'SegundoApellido' => $row[3] ?? null,
-            'PrimerNombre' => $row[4] ?? null,
-            'Nacionalidad' => $row[5] ?? null,
-            'FechaNacimiento' => $this->convertirFecha($row[6] ?? null),
-            'Sexo' => $row[7] ?? null,
-            'NumeroReferencia' => $row[8] ?? null,
-            'SumaAsegurada' => $this->aDecimal($row[10] ?? null),
+            'ApellidoCasada' => $row[4] ?? null,
+            'PrimerNombre' => $row[5] ?? null,
+            'SegundoNombre' => $segundoNombre ?: null,
+            'Nacionalidad' => $row[8] ?? null,
+            'FechaNacimiento' => $this->convertirFecha($row[9] ?? null),
+            'Sexo' => $row[10] ?? null,
+            'NumeroReferencia' => $row[11] ?? null,
+            'FechaOtorgamiento' => $this->convertirFecha($row[12] ?? null),
+            'SumaAsegurada' => $this->aDecimal($row[13] ?? null),
+            'PorcentajeExtraprima' => $row[14] ?? null,
+            'Tasa' => (isset($row[15]) && trim((string) $row[15]) !== '' && is_numeric(str_replace([',', '$'], '', $row[15]))) ? (float) str_replace([',', '$'], '', $row[15]) : null,
             'User' => auth()->id(),
             'Axo' => $this->Axo,
             'Mes' => $this->Mes,
             'FechaInicio' => $this->FechaInicio,
             'FechaFinal' => $this->FechaFinal,
-            'FechaNacimientoDate' => $this->convertirFecha($row[6] ?? null, 'Y-m-d'),
+            'FechaNacimientoDate' => $this->convertirFecha($row[9] ?? null, 'Y-m-d'),
             'PolizaVidaTipoCartera' => $this->PolizaVidaTipoCartera,
-            'FechaOtorgamiento' => $this->convertirFecha($row[9] ?? null),
-            'FechaOtorgamientoDate' => $this->convertirFecha($row[9] ?? null, 'Y-m-d'),
+            'FechaOtorgamientoDate' => $this->convertirFecha($row[12] ?? null, 'Y-m-d'),
         ]);
+
+        // Formato anterior (13 columnas, por si deciden volver):
+        // return new VidaCarteraTemp([
+        //     'PolizaVida' => $this->Poliza,
+        //     'TipoDocumento' => $row[0],
+        //     'Dui' => $row[1] ?? null,
+        //     'PrimerApellido' => $row[2] ?? null,
+        //     'SegundoApellido' => $row[3] ?? null,
+        //     'PrimerNombre' => $row[4] ?? null,
+        //     'Nacionalidad' => $row[5] ?? null,
+        //     'FechaNacimiento' => $this->convertirFecha($row[6] ?? null),
+        //     'Sexo' => $row[7] ?? null,
+        //     'NumeroReferencia' => $row[8] ?? null,
+        //     'SumaAsegurada' => $this->aDecimal($row[10] ?? null),
+        //     'User' => auth()->id(),
+        //     'Axo' => $this->Axo,
+        //     'Mes' => $this->Mes,
+        //     'FechaInicio' => $this->FechaInicio,
+        //     'FechaFinal' => $this->FechaFinal,
+        //     'FechaNacimientoDate' => $this->convertirFecha($row[6] ?? null, 'Y-m-d'),
+        //     'PolizaVidaTipoCartera' => $this->PolizaVidaTipoCartera,
+        //     'FechaOtorgamiento' => $this->convertirFecha($row[9] ?? null),
+        //     'FechaOtorgamientoDate' => $this->convertirFecha($row[9] ?? null, 'Y-m-d'),
+        // ]);
     }
 
     public function model(array $row)
