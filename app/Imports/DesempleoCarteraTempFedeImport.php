@@ -48,52 +48,49 @@ class DesempleoCarteraTempFedeImport implements ToModel, WithStartRow
         }
 
         try {
-            // Verificar si tiene algún identificador (DUI, Pasaporte o Carnet)
-            if (empty($row[0]) && empty($row[1]) && empty($row[2])) {
+            // Verificar si tiene algún identificador (columna 1 = DUI/documento)
+            if (empty($row[1])) {
                 Log::warning('Fila sin identificador omitida.', ['row' => $row]);
                 return null;
             }
 
-            // Crear registro normalmente
+            // Fedecrédito desempleo: 21 columnas. Tercer nombre se une a SegundoNombre.
+            $segundoNombre = trim(($row[6] ?? '') . ' ' . ($row[7] ?? ''));
+
             return new TempDesempleoCarteraTemp([
                 'PolizaDesempleo'       => $this->Poliza,
-                'TipoPersona'           => $row[0] ?? null, // TIPO DE DOCUMENTO
-                'Dui'                   => $row[1] ?? null, // DUI O DOCUMENTO DE IDENTIDAD
-                'PrimerApellido'        => $row[2] ?? null, // PRIMER APELLIDO
-                'SegundoApellido'       => $row[3] ?? null, // SEGUNDO APELLIDO
-                'PrimerNombre'          => $row[4] ?? null, // NOMBRES
-                'Nacionalidad'          => $row[5] ?? null, // NACIONALIDAD
-                'FechaNacimiento'       => $this->convertirFecha($row[6] ?? null), // FECHA DE NACIMIENTO
-                'Sexo'                  => $row[7] ?? null, // GÉNERO
-                'NumeroReferencia'      => $row[8] ?? null, // NRO. DE PRÉSTAMO
-                'FechaOtorgamiento'     => $this->convertirFecha($row[9] ?? null), // FECHA DE OTORGAMIENTO
-                'MontoOtorgado'         => $row[10] ?? null, // MONTO ORIGINAL DE DESEMBOLSO
-                'SaldoCapital'          => $row[11] ?? null, // SALDO DE DEUDA CAPITAL ACTUAL
-                'Intereses'             => $row[12] ?? null, // SALDO INTERESES CORRIENTES
-                'MoraCapital'           => $row[13] ?? null, // MORA CAPITAL
-                'InteresesMoratorios'   => $row[14] ?? null, // SALDO INTERESES POR MORA
-                'InteresesCovid'        => $row[15] ?? null, // INTERESES COVID
-                'PorcentajeExtraprima'  => $row[16] ?? null, // EXTRA PRIMA
-                'Tarifa'                => $row[17] ?? null, // TARIFA
+                'TipoPersona'           => $row[0] ?? null,   // Tipo de documento
+                'Dui'                   => $row[1] ?? null,   // DUI o documento de identidad
+                'PrimerApellido'        => $row[2] ?? null,   // Primer Apellido
+                'SegundoApellido'       => $row[3] ?? null,   // Segundo Apellido
+                'ApellidoCasada'        => $row[4] ?? null,   // Apellido de casada
+                'PrimerNombre'          => $row[5] ?? null,   // primer nombre
+                'SegundoNombre'         => $segundoNombre ?: null, // segundo + tercer nombre
+                'Nacionalidad'          => $row[8] ?? null,   // Nacionalidad
+                'FechaNacimiento'       => $this->convertirFecha($row[9] ?? null),   // Fecha de Nacimiento
+                'Sexo'                  => $row[10] ?? null, // Género
+                'NumeroReferencia'      => $row[11] ?? null,  // Nro. de Préstamo
+                'FechaOtorgamiento'     => $this->convertirFecha($row[12] ?? null), // Fecha de otorgamiento
+                'MontoOtorgado'         => $row[13] ?? null,  // Monto original de desembolso
+                'SaldoCapital'          => $row[14] ?? null,  // Saldo de deuda capital actual
+                'Intereses'             => $row[15] ?? null,  // Saldo intereses corrientes
+                'MoraCapital'           => $row[16] ?? null,  // Mora capital
+                'InteresesMoratorios'   => $row[17] ?? null,  // Saldo intereses por mora
+                'InteresesCovid'        => $row[18] ?? null, // Intereses Covid
+                'PorcentajeExtraprima'  => $row[19] ?? null, // Extra Prima
+                'Tarifa'                => $row[20] ?? null,  // TARIFA
 
-                // Valores adicionales automáticos
                 'User'                  => auth()->id(),
                 'Axo'                   => $this->Axo,
                 'Mes'                   => $this->Mes,
                 'FechaInicio'           => $this->FechaInicio,
                 'FechaFinal'            => $this->FechaFinal,
-
-                // Conversiones de fecha
-                'FechaNacimientoDate'   => $this->convertirFecha($row[6] ?? null),
-                'FechaOtorgamientoDate' => $this->convertirFecha($row[9] ?? null),
-
-                // Valores por defecto
-                'NoValido'              => 0,
-                'Excluido'              => 0,
-                'Rehabilitado'          => 0,
-
-                // Tipo de cartera
-                'DesempleoTipoCartera'  => $this->tipo_cartera,
+                'FechaNacimientoDate'   => $this->convertirFecha($row[9] ?? null),
+                'FechaOtorgamientoDate' => $this->convertirFecha($row[12] ?? null),
+                'NoValido'               => 0,
+                'Excluido'               => 0,
+                'Rehabilitado'           => 0,
+                'DesempleoTipoCartera'   => $this->tipo_cartera,
             ]);
         } catch (\Throwable $e) {
             // Si ocurre un error al procesar una fila, se registra en el log

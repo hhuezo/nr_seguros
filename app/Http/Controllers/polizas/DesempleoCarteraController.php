@@ -588,25 +588,28 @@ class DesempleoCarteraController extends Controller
             return back()->withErrors($validator);
         }
 
-        // 2️⃣ Validar encabezados esperados
+        // 2️⃣ Validar encabezados esperados (Fedecrédito desempleo: 21 columnas)
         $expectedColumns = [
-            "TIPO DE DOCUMENTO",
-            "DUI O DOCUMENTO DE IDENTIDAD",
-            "PRIMER APELLIDO",
-            "SEGUNDO APELLIDO",
-            "NOMBRES",
-            "NACIONALIDAD",
-            "FECHA DE NACIMIENTO",
-            "GÉNERO",
-            "NRO. DE PRÉSTAMO",
-            "FECHA DE OTORGAMIENTO",
-            "MONTO ORIGINAL DE DESEMBOLSO",
-            "SALDO DE DEUDA CAPITAL ACTUAL",
-            "SALDO INTERESES CORRIENTES",
-            "MORA CAPITAL",
-            "SALDO INTERESES POR MORA",
-            "INTERESES COVID",
-            "EXTRA PRIMA",
+            "Tipo de documento",
+            "DUI o documento de identidad",
+            "Primer Apellido",
+            "Segundo Apellido",
+            "Apellido de casada",
+            "primer nombre",
+            "segundo nombre",
+            "tercer nombre",
+            "Nacionalidad",
+            "Fecha de Nacimiento",
+            "Género",
+            "Nro. de Préstamo",
+            "Fecha de otorgamiento",
+            "Monto original de desembolso",
+            "Saldo de deuda capital actual",
+            "Saldo intereses corrientes",
+            "Mora capital",
+            "Saldo intereses por mora",
+            "Intereses Covid",
+            "Extra Prima",
             "TARIFA",
         ];
 
@@ -620,21 +623,22 @@ class DesempleoCarteraController extends Controller
             return back()->withErrors($validator);
         }
 
-        // Normalizar valores (eliminar espacios y convertir a mayúsculas)
-        $firstRow = array_map(fn($v) => mb_strtoupper(trim($v), 'UTF-8'), $firstRow);
+        // Normalizar (trim) y minúsculas para comparación case-insensitive
+        $firstRow = array_map(fn($v) => mb_strtolower(trim($v ?? ''), 'UTF-8'), $firstRow);
+        $expectedColumnsLower = array_map(fn($v) => mb_strtolower($v, 'UTF-8'), $expectedColumns);
 
         // Validar cantidad de columnas
-        if (count($firstRow) < count($expectedColumns)) {
+        if (count($firstRow) < count($expectedColumnsLower)) {
             $validator->errors()->add('Archivo', 'Error de formato: faltan columnas en la primera fila.');
             return back()->withErrors($validator);
         }
 
         // Validar nombre y orden de columnas
-        foreach ($expectedColumns as $index => $expectedColumn) {
+        foreach ($expectedColumnsLower as $index => $expectedColumn) {
             if (!isset($firstRow[$index]) || $firstRow[$index] !== $expectedColumn) {
                 $validator->errors()->add(
                     'Archivo',
-                    "Error de formato: la columna " . ($index + 1) . " debe ser '$expectedColumn', se encontró '{$firstRow[$index]}'"
+                    "Error de formato: la columna " . ($index + 1) . " debe ser '{$expectedColumns[$index]}', se encontró '{$firstRow[$index]}'"
                 );
                 return back()->withErrors($validator);
             }

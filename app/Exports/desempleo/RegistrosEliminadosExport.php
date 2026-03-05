@@ -38,31 +38,37 @@ class RegistrosEliminadosExport implements FromCollection, WithHeadings
 
         if ($hayCartera) {
             if ($desempleo->Aseguradora == 3 || $desempleo->Aseguradora == 4) {
-                $registrosEliminados = DB::table('poliza_desempleo_cartera AS c')
-                    ->where('c.Mes', (int) $mesAnterior)
-                    ->where('c.Axo', (int) $anioAnterior)
-                    ->where('c.PolizaDesempleo', $desempleo->Id)
-                    ->whereNotExists(function ($query) {
-                        $query->select(DB::raw(1))
-                            ->from('poliza_desempleo_cartera_temp AS t')
-                            ->whereRaw('t.NumeroReferencia = c.NumeroReferencia')
-                            ->whereRaw('t.Identificador = c.Identificador');
-                    })
-                    ->select([
-                        'c.TipoPersona AS TIPO_DOCUMENTO,',
-                        'c.Dui AS DUI,',
-                        'c.PrimerApellido AS PRIMERAPELLIDO,',
-                        'c.SegundoApellido AS SEGUNDOAPELLIDO,',
-                        'c.PrimerNombre AS PRIMERNOMBRE,',
-                        'c.Nacionalidad AS NACIONALIDAD,',
-                        'c.FechaNacimiento AS FECNACIMIENTO,',
-                        'c.Sexo AS GENERO,',
-                        'c.NumeroReferencia AS NUMREFERENCIA,',
-                        'c.FechaOtorgamiento AS FECOTORGAMIENTO,',
-                        'c.MontoOtorgado AS MONTO_OTORGADO,',
-                        'c.Tasa AS TARIFA',
-                    ])
-                    ->get();
+                // Fedecrédito: formato 21 columnas; cartera no tiene PorcentajeExtraprima → NULL
+                $registrosEliminados = collect(DB::select("
+                    SELECT
+                        c.TipoPersona AS TIPO_DOCUMENTO,
+                        c.Dui AS DUI,
+                        c.PrimerApellido AS PRIMERAPELLIDO,
+                        c.SegundoApellido AS SEGUNDOAPELLIDO,
+                        c.ApellidoCasada AS APELLIDOCASADA,
+                        c.PrimerNombre AS PRIMERNOMBRE,
+                        c.SegundoNombre AS SEGUNDONOMBRE,
+                        '' AS TERCERNOMBRE,
+                        c.Nacionalidad AS NACIONALIDAD,
+                        c.FechaNacimiento AS FECNACIMIENTO,
+                        c.Sexo AS GENERO,
+                        c.NumeroReferencia AS NUMREFERENCIA,
+                        c.FechaOtorgamiento AS FECOTORGAMIENTO,
+                        c.MontoOtorgado AS MONTO_ORIGINAL_DESEMBOLSO,
+                        c.SaldoCapital AS SALDO_DEUDA_CAPITAL,
+                        c.Intereses AS SALDO_INTERESES_CORRIENTES,
+                        c.MoraCapital AS MORA_CAPITAL,
+                        c.InteresesMoratorios AS SALDO_INTERESES_MORA,
+                        c.InteresesCovid AS INTERESES_COVID,
+                        NULL AS EXTRA_PRIMA,
+                        c.Tasa AS TARIFA
+                    FROM poliza_desempleo_cartera AS c
+                    WHERE c.Mes = ? AND c.Axo = ? AND c.PolizaDesempleo = ?
+                    AND NOT EXISTS (
+                        SELECT 1 FROM poliza_desempleo_cartera_temp AS t
+                        WHERE t.NumeroReferencia = c.NumeroReferencia AND t.Identificador = c.Identificador
+                    )
+                ", [(int) $mesAnterior, (int) $anioAnterior, $desempleo->Id]));
             } else {
 
 
@@ -110,18 +116,28 @@ class RegistrosEliminadosExport implements FromCollection, WithHeadings
     {
         $desempleo = Desempleo::findOrFail($this->id);
         if ($desempleo->Aseguradora == 3 || $desempleo->Aseguradora == 4) {
+            // Fedecrédito desempleo: 21 columnas
             return [
-                'Tipo de Documento',
+                'Tipo de documento',
                 'DUI o documento de identidad',
                 'Primer Apellido',
                 'Segundo Apellido',
-                'Nombres',
+                'Apellido de casada',
+                'primer nombre',
+                'segundo nombre',
+                'tercer nombre',
                 'Nacionalidad',
                 'Fecha de Nacimiento',
                 'Género',
                 'Nro. de Préstamo',
                 'Fecha de otorgamiento',
-                'Monto Otorgado',
+                'Monto original de desembolso',
+                'Saldo de deuda capital actual',
+                'Saldo intereses corrientes',
+                'Mora capital',
+                'Saldo intereses por mora',
+                'Intereses Covid',
+                'Extra Prima',
                 'TARIFA',
             ];
         } else {

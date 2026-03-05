@@ -22,24 +22,33 @@ class RegistrosRehabilitadosExport implements FromCollection, WithHeadings
 
         $desempleo = Desempleo::findOrFail($this->id);
         if ($desempleo->Aseguradora == 3 || $desempleo->Aseguradora == 4) {
-            $registros_rehabilitados = DB::table('poliza_desempleo_cartera_temp AS t')
-                ->where('t.PolizaDesempleo', $desempleo->Id)
-                ->where('t.Rehabilitado', 1)
-                ->select([
-                    't.TipoPersona AS TIPO_DOCUMENTO,',
-                    't.Dui AS DUI,',
-                    't.PrimerApellido AS PRIMERAPELLIDO,',
-                    't.SegundoApellido AS SEGUNDOAPELLIDO,',
-                    't.PrimerNombre AS PRIMERNOMBRE,',
-                    't.Nacionalidad AS NACIONALIDAD,',
-                    't.FechaNacimiento AS FECNACIMIENTO,',
-                    't.Sexo AS GENERO,',
-                    't.NumeroReferencia AS NUMREFERENCIA,',
-                    't.FechaOtorgamiento AS FECOTORGAMIENTO,',
-                    't.MontoOtorgado AS MONTO_OTORGADO,',
-                    't.Tasa AS TARIFA',
-                ])
-                ->get();
+            // Fedecrédito: formato 21 columnas (nombres desglosados + saldos/intereses)
+            $registros_rehabilitados = collect(DB::select("
+                SELECT
+                    t.TipoPersona AS TIPO_DOCUMENTO,
+                    t.Dui AS DUI,
+                    t.PrimerApellido AS PRIMERAPELLIDO,
+                    t.SegundoApellido AS SEGUNDOAPELLIDO,
+                    t.ApellidoCasada AS APELLIDOCASADA,
+                    t.PrimerNombre AS PRIMERNOMBRE,
+                    t.SegundoNombre AS SEGUNDONOMBRE,
+                    '' AS TERCERNOMBRE,
+                    t.Nacionalidad AS NACIONALIDAD,
+                    t.FechaNacimiento AS FECNACIMIENTO,
+                    t.Sexo AS GENERO,
+                    t.NumeroReferencia AS NUMREFERENCIA,
+                    t.FechaOtorgamiento AS FECOTORGAMIENTO,
+                    t.MontoOtorgado AS MONTO_ORIGINAL_DESEMBOLSO,
+                    t.SaldoCapital AS SALDO_DEUDA_CAPITAL,
+                    t.Intereses AS SALDO_INTERESES_CORRIENTES,
+                    t.MoraCapital AS MORA_CAPITAL,
+                    t.InteresesMoratorios AS SALDO_INTERESES_MORA,
+                    t.InteresesCovid AS INTERESES_COVID,
+                    t.PorcentajeExtraprima AS EXTRA_PRIMA,
+                    t.Tasa AS TARIFA
+                FROM poliza_desempleo_cartera_temp AS t
+                WHERE t.PolizaDesempleo = ? AND t.Rehabilitado = 1
+            ", [$desempleo->Id]));
         } else {
 
 
@@ -76,18 +85,28 @@ class RegistrosRehabilitadosExport implements FromCollection, WithHeadings
     {
         $desempleo = Desempleo::findOrFail($this->id);
         if ($desempleo->Aseguradora == 3 || $desempleo->Aseguradora == 4) {
+            // Fedecrédito desempleo: 21 columnas
             return [
-                'Tipo de Documento',
+                'Tipo de documento',
                 'DUI o documento de identidad',
                 'Primer Apellido',
                 'Segundo Apellido',
-                'Nombres',
+                'Apellido de casada',
+                'primer nombre',
+                'segundo nombre',
+                'tercer nombre',
                 'Nacionalidad',
                 'Fecha de Nacimiento',
                 'Género',
                 'Nro. de Préstamo',
                 'Fecha de otorgamiento',
-                'Monto Otorgado',
+                'Monto original de desembolso',
+                'Saldo de deuda capital actual',
+                'Saldo intereses corrientes',
+                'Mora capital',
+                'Saldo intereses por mora',
+                'Intereses Covid',
+                'Extra Prima',
                 'TARIFA',
             ];
         } else {
