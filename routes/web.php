@@ -41,6 +41,7 @@ use App\Http\Controllers\suscripcion\TipoOrdenMedicaController;
 use App\Http\Controllers\suscripcion\TipoImcController;
 use App\Http\Controllers\suscripcion\TipoClienteController;
 use App\Http\Controllers\suscripcion\TipoCreditoController;
+use App\Http\Controllers\ConsultaClienteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -186,6 +187,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('catalogo/cliente/verificarCredenciales', [ClienteController::class, 'verificarCredenciales']);
 
     Route::resource('catalogo/cliente', ClienteController::class); //el resource va siempre de ultimo o ocurre problema con metodo controller::show()
+
+    // Consulta de cliente en todas las carteras
+    Route::get('consulta/cliente', [ConsultaClienteController::class, 'index']);
+    Route::get('consulta/cliente/buscar', [ConsultaClienteController::class, 'buscar']);
 
 
 

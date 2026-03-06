@@ -394,6 +394,16 @@
                                         </ul>
                                     </li>
                                 @endcanany
+                                <li>
+                                    <a>
+                                    <i class="fa fa-shield"></i> Consulta de cliente <span class="fa fa-chevron-down"></span></a>
+                                    <ul id="ul-aseguradoras" class="nav child_menu">
+
+                                            <li id="li-consulta-cliente"><a
+                                                    href="{{ url('consulta/cliente') }}">Consulta de cliente </a></li>
+
+                                    </ul>
+                                </li>
 
                                 <!-- <li><a><i class="fa fa-file-pdf-o"></i> Reportes<span class="fa fa-chevron-down"></span></a>
                                 <ul class="nav child_menu">
