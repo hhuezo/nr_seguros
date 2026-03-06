@@ -133,45 +133,45 @@
                                             <td>{{ $formatearFecha($resultado->FechaVencimiento ?? null) }}</td>
                                             <td>{{ $resultado->NumeroReferencia ?? '-' }}</td>
                                             <td>
-                                                @if(isset($resultado->MontoOtorgado) && $resultado->MontoOtorgado)
-                                                    ${{ number_format($resultado->MontoOtorgado, 2, '.', ',') }}
-                                                @elseif(isset($resultado->SumaAsegurada) && $resultado->SumaAsegurada)
-                                                    ${{ number_format($resultado->SumaAsegurada, 2, '.', ',') }}
+                                                @if(isset($resultado->MontoOtorgado) && $resultado->MontoOtorgado !== '' && $resultado->MontoOtorgado !== null)
+                                                    ${{ number_format((float) $resultado->MontoOtorgado, 2, '.', ',') }}
+                                                @elseif(isset($resultado->SumaAsegurada) && $resultado->SumaAsegurada !== '' && $resultado->SumaAsegurada !== null)
+                                                    ${{ number_format((float) $resultado->SumaAsegurada, 2, '.', ',') }}
                                                 @else
                                                     -
                                                 @endif
                                             </td>
                                             <td>
-                                                @if(isset($resultado->SaldoCapital) && $resultado->SaldoCapital)
-                                                    ${{ number_format($resultado->SaldoCapital, 2, '.', ',') }}
+                                                @if(isset($resultado->SaldoCapital) && $resultado->SaldoCapital !== '' && $resultado->SaldoCapital !== null)
+                                                    ${{ number_format((float) $resultado->SaldoCapital, 2, '.', ',') }}
                                                 @else
                                                     -
                                                 @endif
                                             </td>
                                             <td>
-                                                @if(isset($resultado->Intereses) && $resultado->Intereses)
-                                                    ${{ number_format($resultado->Intereses, 2, '.', ',') }}
+                                                @if(isset($resultado->Intereses) && $resultado->Intereses !== '' && $resultado->Intereses !== null)
+                                                    ${{ number_format((float) $resultado->Intereses, 2, '.', ',') }}
                                                 @else
                                                     -
                                                 @endif
                                             </td>
                                             <td>
-                                                @if(isset($resultado->InteresesMoratorios) && $resultado->InteresesMoratorios)
-                                                    ${{ number_format($resultado->InteresesMoratorios, 2, '.', ',') }}
+                                                @if(isset($resultado->InteresesMoratorios) && $resultado->InteresesMoratorios !== '' && $resultado->InteresesMoratorios !== null)
+                                                    ${{ number_format((float) $resultado->InteresesMoratorios, 2, '.', ',') }}
                                                 @else
                                                     -
                                                 @endif
                                             </td>
                                             <td>
-                                                @if(isset($resultado->InteresesCovid) && $resultado->InteresesCovid)
-                                                    ${{ number_format($resultado->InteresesCovid, 2, '.', ',') }}
+                                                @if(isset($resultado->InteresesCovid) && $resultado->InteresesCovid !== '' && $resultado->InteresesCovid !== null)
+                                                    ${{ number_format((float) $resultado->InteresesCovid, 2, '.', ',') }}
                                                 @else
                                                     -
                                                 @endif
                                             </td>
                                             <td>
-                                                @if(isset($resultado->PorcentajeExtraprima) && $resultado->PorcentajeExtraprima)
-                                                    {{ number_format($resultado->PorcentajeExtraprima, 2, '.', ',') }}%
+                                                @if(isset($resultado->PorcentajeExtraprima) && $resultado->PorcentajeExtraprima !== '' && $resultado->PorcentajeExtraprima !== null)
+                                                    {{ number_format((float) $resultado->PorcentajeExtraprima, 2, '.', ',') }}%
                                                 @else
                                                     -
                                                 @endif
