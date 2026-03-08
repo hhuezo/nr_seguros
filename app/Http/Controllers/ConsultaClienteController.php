@@ -36,11 +36,26 @@ class ConsultaClienteController extends Controller
 
         $resultados = collect();
 
-        // Buscar en PolizaDeudaCartera
+        // Obtener el último mes y año de PolizaDeudaCartera
+        $ultimoDeuda = PolizaDeudaCartera::select('Axo', 'Mes')
+            ->whereNotNull('Axo')
+            ->whereNotNull('Mes')
+            ->orderBy('Axo', 'desc')
+            ->orderBy('Mes', 'desc')
+            ->first();
+
+        // Buscar en PolizaDeudaCartera - solo del último mes
         $deudaCartera = PolizaDeudaCartera::where(function($query) use ($busqueda) {
             $query->where('poliza_deuda_cartera.Dui', 'like', '%' . $busqueda . '%')
                   ->orWhere('poliza_deuda_cartera.Pasaporte', 'like', '%' . $busqueda . '%');
-        })
+        });
+
+        if ($ultimoDeuda) {
+            $deudaCartera->where('poliza_deuda_cartera.Axo', $ultimoDeuda->Axo)
+                         ->where('poliza_deuda_cartera.Mes', $ultimoDeuda->Mes);
+        }
+
+        $deudaCartera = $deudaCartera
         ->leftJoin('poliza_deuda', 'poliza_deuda.Id', '=', 'poliza_deuda_cartera.PolizaDeuda')
         ->leftJoin('aseguradora', 'aseguradora.Id', '=', 'poliza_deuda.Aseguradora')
         ->leftJoin('cliente', 'cliente.Id', '=', 'poliza_deuda.Asegurado')
@@ -85,13 +100,28 @@ class ConsultaClienteController extends Controller
             return $item;
         });
 
-        // Buscar en PolizaResidenciaCartera
+        // Obtener el último mes y año de PolizaResidenciaCartera
+        $ultimoResidencia = PolizaResidenciaCartera::select('Axo', 'Mes')
+            ->whereNotNull('Axo')
+            ->whereNotNull('Mes')
+            ->orderBy('Axo', 'desc')
+            ->orderBy('Mes', 'desc')
+            ->first();
+
+        // Buscar en PolizaResidenciaCartera - solo del último mes
         $residenciaCartera = PolizaResidenciaCartera::where(function($query) use ($busqueda) {
             $query->where('poliza_residencia_cartera.Dui', 'like', '%' . $busqueda . '%')
                   ->orWhere('poliza_residencia_cartera.Nit', 'like', '%' . $busqueda . '%')
                   ->orWhere('poliza_residencia_cartera.Pasaporte', 'like', '%' . $busqueda . '%')
                   ->orWhere('poliza_residencia_cartera.CarnetResidencia', 'like', '%' . $busqueda . '%');
-        })
+        });
+
+        if ($ultimoResidencia) {
+            $residenciaCartera->where('poliza_residencia_cartera.Axo', $ultimoResidencia->Axo)
+                               ->where('poliza_residencia_cartera.Mes', $ultimoResidencia->Mes);
+        }
+
+        $residenciaCartera = $residenciaCartera
         ->leftJoin('poliza_residencia', 'poliza_residencia.Id', '=', 'poliza_residencia_cartera.PolizaResidencia')
         ->leftJoin('aseguradora', 'aseguradora.Id', '=', 'poliza_residencia.Aseguradora')
         ->leftJoin('cliente', 'cliente.Id', '=', 'poliza_residencia.Asegurado')
@@ -133,12 +163,27 @@ class ConsultaClienteController extends Controller
             return $item;
         });
 
-        // Buscar en VidaCartera
+        // Obtener el último mes y año de VidaCartera
+        $ultimoVida = VidaCartera::select('Axo', 'Mes')
+            ->whereNotNull('Axo')
+            ->whereNotNull('Mes')
+            ->orderBy('Axo', 'desc')
+            ->orderBy('Mes', 'desc')
+            ->first();
+
+        // Buscar en VidaCartera - solo del último mes
         $vidaCartera = VidaCartera::where(function($query) use ($busqueda) {
             $query->where('poliza_vida_cartera.Dui', 'like', '%' . $busqueda . '%')
                   ->orWhere('poliza_vida_cartera.Nit', 'like', '%' . $busqueda . '%')
                   ->orWhere('poliza_vida_cartera.Pasaporte', 'like', '%' . $busqueda . '%');
-        })
+        });
+
+        if ($ultimoVida) {
+            $vidaCartera->where('poliza_vida_cartera.Axo', $ultimoVida->Axo)
+                        ->where('poliza_vida_cartera.Mes', $ultimoVida->Mes);
+        }
+
+        $vidaCartera = $vidaCartera
         ->leftJoin('poliza_vida', 'poliza_vida.Id', '=', 'poliza_vida_cartera.PolizaVida')
         ->leftJoin('aseguradora', 'aseguradora.Id', '=', 'poliza_vida.Aseguradora')
         ->leftJoin('cliente', 'cliente.Id', '=', 'poliza_vida.Asegurado')
@@ -182,11 +227,26 @@ class ConsultaClienteController extends Controller
             return $item;
         });
 
-        // Buscar en DesempleoCartera
+        // Obtener el último mes y año de DesempleoCartera
+        $ultimoDesempleo = DesempleoCartera::select('Axo', 'Mes')
+            ->whereNotNull('Axo')
+            ->whereNotNull('Mes')
+            ->orderBy('Axo', 'desc')
+            ->orderBy('Mes', 'desc')
+            ->first();
+
+        // Buscar en DesempleoCartera - solo del último mes
         $desempleoCartera = DesempleoCartera::where(function($query) use ($busqueda) {
             $query->where('poliza_desempleo_cartera.Dui', 'like', '%' . $busqueda . '%')
                   ->orWhere('poliza_desempleo_cartera.Pasaporte', 'like', '%' . $busqueda . '%');
-        })
+        });
+
+        if ($ultimoDesempleo) {
+            $desempleoCartera->where('poliza_desempleo_cartera.Axo', $ultimoDesempleo->Axo)
+                              ->where('poliza_desempleo_cartera.Mes', $ultimoDesempleo->Mes);
+        }
+
+        $desempleoCartera = $desempleoCartera
         ->leftJoin('poliza_desempleo', 'poliza_desempleo.Id', '=', 'poliza_desempleo_cartera.PolizaDesempleo')
         ->leftJoin('aseguradora', 'aseguradora.Id', '=', 'poliza_desempleo.Aseguradora')
         ->leftJoin('cliente', 'cliente.Id', '=', 'poliza_desempleo.Asegurado')

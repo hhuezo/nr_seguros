@@ -831,9 +831,15 @@ class SuscripcionController extends Controller
             ->get(['FechaInicio', 'FechaFinal']);
 
         // 4. Calcular días hábiles base (sin fines de semana)
-        $diasHabiles = $inicio->diffInDaysFiltered(function (Carbon $fecha) {
-            return !$fecha->isWeekend();
-        }, $fin->copy()->addDay());
+        // Contar días hábiles desde inicio hasta fin (ambos inclusivos)
+        $diasHabiles = 0;
+        $fechaActual = $inicio->copy();
+        while ($fechaActual->lte($fin)) {
+            if (!$fechaActual->isWeekend()) {
+                $diasHabiles++;
+            }
+            $fechaActual->addDay();
+        }
 
         // 5. Restar feriados que caen en días laborales
         $diasFeriados = 0;
@@ -850,7 +856,7 @@ class SuscripcionController extends Controller
             }
         }
 
-        return $diasHabiles - $diasFeriados - 1;
+        return $diasHabiles - $diasFeriados;
     }
 
 

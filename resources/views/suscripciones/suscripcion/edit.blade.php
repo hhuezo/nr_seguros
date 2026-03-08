@@ -415,7 +415,7 @@
                         </div>
                         <div class="col-sm-6">
                             <label class="control-label ">Total dias ciclo de proceso</label>
-                            <input type="text" name="TotalDiasProceso" readonly
+                            <input type="text" name="TotalDiasProceso" id="TotalDiasProceso" readonly
                                 value="{{ $suscripcion->TotalDiasProceso }}" class="form-control">
                         </div>
 
@@ -452,7 +452,7 @@
                         <div class="col-sm-3">
                             <label class="control-label ">Dias de procesamiento de resolución</label>
                             <input type="number" name="DiasProcesamiento" id="DiasProcesamiento"
-                                value="{{ old('DiasProcesamiento') }}" readonly class="form-control">
+                                value="{{ old('DiasProcesamiento', $suscripcion->DiasProcesamientoResolucion) }}" readonly class="form-control">
                         </div>
                     </div>
                     <div class="clearfix"></div>
