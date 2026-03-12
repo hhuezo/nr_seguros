@@ -30,7 +30,7 @@ class PolizaDeudaTempCarteraComImport implements ToModel, /*WithStartRow,*/ Skip
 
     public function __construct($PolizaDeuda, $FechaInicio, $FechaFinal, $credito)
     {
-  
+
         $this->PolizaDeuda = $PolizaDeuda;
         $this->FechaInicio = $FechaInicio;
         $this->FechaFinal = $FechaFinal;
@@ -56,12 +56,12 @@ class PolizaDeudaTempCarteraComImport implements ToModel, /*WithStartRow,*/ Skip
             // $row[6] = str_replace(" ", ",", $row[6]);
             // $row[7] = str_replace(" ", ",", $row[7]);
             // $row[8] = str_replace(" ", ",", $row[8]);
-            // $row[9] = str_replace(" ", ",", $row[9]);            
+            // $row[9] = str_replace(" ", ",", $row[9]);
             // $row[10] = str_replace(" ", ",", $row[10]);
 
 
             return new PolizaDeudaTempCartera([
-                'Nit' => $row[0],
+               // 'Nit' => $row[0],
                 'Dui' => $row[1],
                 'Pasaporte' => $row[2],
                 'Nacionalidad' => $row[3],
@@ -76,7 +76,7 @@ class PolizaDeudaTempCarteraComImport implements ToModel, /*WithStartRow,*/ Skip
                 'Sexo' => $row[12],
                 'FechaOtorgamiento' => $row[13],
                 'FechaVencimiento' => $row[14],
-                'Ocupacion' => $row[15],
+               // 'Ocupacion' => $row[15],
                 'NumeroReferencia' => $row[16],
                 'MontoOtorgado' => $row[17],
                 'SaldoCapital' => $row[18],
@@ -92,7 +92,7 @@ class PolizaDeudaTempCarteraComImport implements ToModel, /*WithStartRow,*/ Skip
                 'FechaInicio' =>  $this->FechaInicio,
                 'FechaFinal' =>  $this->FechaFinal,
                 'PolizaDeudaTipoCartera' => $this->credito,
-                'NoValido' => 1,
+                'NoValido' => 0,
             ]);
         }
     }

@@ -300,7 +300,7 @@
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
-                                <form action="{{ url('polizas/deuda/eliminar_pago') }},{{$deuda->Id}}" method="POST" >
+                                <form action="{{ url('polizas/deuda/eliminar_pago') }}/{{$deuda->Id}}" method="POST" >
                                     @csrf
                                     <div class="modal-body">
                                         <div class="form-group row">

@@ -996,9 +996,9 @@ class DeudaCarteraController extends Controller
 
         $cartera_temp = PolizaDeudaTempCartera::where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->get();
 
-        foreach ($cartera_temp as $obj) {
-            $obj->TotalCredito = $obj->calculoTodalSaldo();
-            $obj->update();
+        foreach ($cartera_temp as $obj1) {
+            $obj1->TotalCredito = $obj1->calculoTodalSaldo();
+            $obj1->update();
         }
 
         alert()->success('Exito', 'La cartera fue subida con exito');
@@ -1487,12 +1487,12 @@ class DeudaCarteraController extends Controller
             ]);
 
 
-        $poliza_cumulos = PolizaDeudaTempCartera::join('poliza_deuda_creditos as pdc', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'pdc.Id')
-            ->select(
+        $poliza_cumulos = PolizaDeudaTempCartera:://join('poliza_deuda_creditos as pdc', 'poliza_deuda_temp_cartera.LineaCredito', '=', 'pdc.Id')
+            select(
                 'poliza_deuda_temp_cartera.Id',
                 'poliza_deuda_temp_cartera.Dui',
                 'poliza_deuda_temp_cartera.Edad',
-                'poliza_deuda_temp_cartera.Nit',
+                // 'poliza_deuda_temp_cartera.Nit',
                 'poliza_deuda_temp_cartera.PrimerNombre',
                 'poliza_deuda_temp_cartera.SegundoNombre',
                 'poliza_deuda_temp_cartera.PrimerApellido',
@@ -1507,10 +1507,11 @@ class DeudaCarteraController extends Controller
                 DB::raw("GROUP_CONCAT(DISTINCT poliza_deuda_temp_cartera.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
                 DB::raw('MAX(poliza_deuda_temp_cartera.EdadDesembloso) as EdadDesembloso'),
                 DB::raw('MAX(poliza_deuda_temp_cartera.FechaOtorgamientoDate) as FechaOtorgamiento'),
+                DB::raw('SUM(poliza_deuda_temp_cartera.TotalCredito) as SaldoCumulo'),
                 'poliza_deuda_temp_cartera.Excluido',
                 'poliza_deuda_temp_cartera.OmisionPerfil',
-                "poliza_deuda_temp_cartera.saldo_total",
-                'pdc.MontoMaximoIndividual as MontoMaximoIndividual'
+                // "poliza_deuda_temp_cartera.saldo_total",
+                // 'pdc.MontoMaximoIndividual as MontoMaximoIndividual'
             )
             ->where('poliza_deuda_temp_cartera.PolizaDeuda', $deuda->Id)
             ->groupBy('poliza_deuda_temp_cartera.Dui', 'poliza_deuda_temp_cartera.Mes', 'poliza_deuda_temp_cartera.Axo')
@@ -1885,7 +1886,7 @@ class DeudaCarteraController extends Controller
         foreach ($tempData as $tempRecord) {
             try {
                 $poliza = new PolizaDeudaCartera();
-                $poliza->Nit = $tempRecord->Nit;
+               // $poliza->Nit = $tempRecord->Nit;
                 $poliza->Dui = $tempRecord->Dui;
                 $poliza->Pasaporte = $tempRecord->Pasaporte;
                 $poliza->Nacionalidad = $tempRecord->Nacionalidad;
@@ -1900,7 +1901,7 @@ class DeudaCarteraController extends Controller
                 $poliza->Sexo = $tempRecord->Sexo;
                 $poliza->FechaOtorgamiento = $tempRecord->FechaOtorgamiento;
                 $poliza->FechaVencimiento = $tempRecord->FechaVencimiento;
-                $poliza->Ocupacion = $tempRecord->Ocupacion;
+              //  $poliza->Ocupacion = $tempRecord->Ocupacion;
                 $poliza->NumeroReferencia = $tempRecord->NumeroReferencia;
                 $poliza->MontoOtorgado = $tempRecord->MontoOtorgado;
                 $poliza->SaldoCapital = $tempRecord->SaldoCapital;
@@ -1919,7 +1920,9 @@ class DeudaCarteraController extends Controller
                 $poliza->FechaNacimientoDate = $tempRecord->FechaNacimientoDate;
                 $poliza->Edad = $tempRecord->Edad;
                 $poliza->LineaCredito = $tempRecord->LineaCredito;
+                $poliza->TotalCredito = $tempRecord->TotalCredito;
                 $poliza->NoValido = $tempRecord->NoValido;
+                $poliza->PolizaDeudaTipoCartera = $tempRecord->PolizaDeudaTipoCartera;
                 $poliza->save();
             } catch (\Exception $e) {
                 // Captura errores y los guarda en el log

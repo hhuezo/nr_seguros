@@ -71,7 +71,8 @@ class PolizaDeudaTempCartera extends Model
         'TipoDocumento',
         'SaldoInteresMora',
         'CarnetResidencia',
-        'Errores'
+        'Errores',
+        'TotalCredito'
     ];
 
     protected $casts = [
