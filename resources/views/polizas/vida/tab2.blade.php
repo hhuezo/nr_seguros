@@ -620,7 +620,7 @@
 
 
 
-        let porcentaje_impuesto_bombero = {{ $poliza_vida->ImpuestoBombero }};
+        let porcentaje_impuesto_bombero = {{ $poliza_vida->ImpuestoBombero ?? 0}} ;
         if (porcentaje_impuesto_bombero > 0) {
             prima_a_cobrar = prima_a_cobrar - (prima_a_cobrar * (porcentaje_impuesto_bombero / 100));
         }

@@ -15,6 +15,7 @@ use App\Exports\vida\VidaCarteraExport;
 use App\Exports\vida\VidaExport;
 use App\Exports\vida\VidaFedeExport;
 use App\Http\Controllers\Controller;
+use App\Imports\VidaCarteraTempCompImport;
 use App\Imports\VidaCarteraTempImport;
 use App\Models\catalogo\Aseguradora;
 use App\Models\catalogo\Cliente;
@@ -1056,6 +1057,115 @@ class VidaController extends Controller
             'fechaFinal'
         ));
     }
+    public function subir_cartera_complementario($id)
+    {
+        $poliza_vida = Vida::findOrFail($id);
+        $poliza_vida_tipo_cartera = $poliza_vida->vida_tipos_cartera;
+
+        foreach ($poliza_vida_tipo_cartera as $item) {
+            $item->Total = VidaCarteraTemp::where('PolizaVida', $id)
+                ->where('PolizaVidaTipoCartera', $item->Id)
+                ->sum('SumaAsegurada');
+            $item->Mes = VidaCarteraTemp::where('PolizaVida', $id)
+                ->where('PolizaVidaTipoCartera', $item->Id)
+                ->groupBy('Mes')->value('Mes');
+            $item->Axo = VidaCarteraTemp::where('PolizaVida', $id)
+                ->where('PolizaVidaTipoCartera', $item->Id)
+                ->groupBy('Axo')->value('Axo');
+        }
+
+        $meses = [
+            '',
+            'Enero',
+            'Febrero',
+            'Marzo',
+            'Abril',
+            'Mayo',
+            'Junio',
+            'Julio',
+            'Agosto',
+            'Septiembre',
+            'Octubre',
+            'Noviembre',
+            'Diciembre'
+        ];
+
+        // 👉 Por defecto: del primer día del mes anterior al primer día del mes actual
+        $fechaInicio = Carbon::now()->subMonth()->startOfMonth();
+        $fechaFinal = Carbon::now()->startOfMonth();
+        $axo = $fechaInicio->year;
+        $mes = (int) $fechaInicio->month;
+        $anioSeleccionado = $fechaInicio->year;
+
+        // 👉 Rango de años válidos según vigencia
+        $vigenciaDesde = Carbon::parse($poliza_vida->VigenciaDesde);
+        $vigenciaHasta = Carbon::parse($poliza_vida->VigenciaHasta);
+        $anios = array_combine(
+            $years = range($vigenciaDesde->year, $vigenciaHasta->year),
+            $years
+        );
+
+
+
+        // ✅ Formato Y-m-d para el Blade
+        $fechaInicio = $fechaInicio->format('Y-m-d');
+        $fechaFinal = $fechaFinal->format('Y-m-d');
+
+        // Último pago activo
+        $ultimo_pago = VidaDetalle::where('PolizaVida', $id)
+            ->where('Activo', 1)
+            ->latest('Id')
+            ->first();
+
+
+        if ($ultimo_pago) {
+            // 1. Creamos una fecha basada en el Axo y Mes del array
+            // Usamos el día 1 para evitar problemas con meses de 28/31 días al saltar
+            $fecha_actual = Carbon::createFromDate($ultimo_pago['Axo'], $ultimo_pago['Mes'], 1);
+
+            // 2. Aumentamos un mes (Carbon se encarga de pasar de diciembre 2025 a enero 2026)
+            $nueva_fecha = $fecha_actual->addMonth();
+
+            // 3. Asignamos los nuevos valores
+            $axo = $nueva_fecha->year;
+            $mes = $nueva_fecha->month;
+
+            // 4. Para las fechas de inicio y final (usando tus campos FechaFinal como base)
+            $fecha_inicial = Carbon::parse($ultimo_pago['FechaFinal']);
+            $fecha_final = $fecha_inicial->copy()->addMonth();
+
+            $fechaInicio = $fecha_inicial->format('Y-m-d');
+            $fechaFinal = $fecha_final->format('Y-m-d');
+        }
+
+        // Último registro temporal de cartera
+        $registro_cartera = VidaCarteraTemp::where('PolizaVida', $id)->first();
+
+        if ($registro_cartera) {
+            $axo = $registro_cartera->Axo;
+            $mes = (int) $registro_cartera->Mes;
+
+            $fechaInicio = $registro_cartera->FechaInicio;
+            $fechaFinal = $registro_cartera->FechaFinal;
+        }
+
+
+
+
+
+
+        return view('polizas.vida.subir_archivos_complementario', compact(
+            'poliza_vida',
+            'poliza_vida_tipo_cartera',
+            'meses',
+            'anios',
+            'axo',
+            'mes',
+            'anioSeleccionado',
+            'fechaInicio',
+            'fechaFinal'
+        ));
+    }
 
 
 
@@ -1232,6 +1342,93 @@ class VidaController extends Controller
             'axoActual',
             'mesActual',
             'poliza_responsabilidad_maxima',
+            'extra_primados'
+        ));
+    }
+
+    public function validar_poliza_recibos($id)
+    {
+        $poliza_vida = Vida::findOrFail($id);
+
+        $temp_data_fisrt = VidaCarteraTemp::where('PolizaVida', $id)->first();
+
+        if (!$temp_data_fisrt) {
+            alert()->error('No se han cargado las carteras');
+            return back();
+        }
+
+        // 🔹 Actualizar el identificador (Dui -> Pasaporte -> Carnet)
+        DB::table('poliza_vida_cartera_temp')
+            ->where('PolizaVida', $id)
+            ->update([
+                'Identificador' => DB::raw("COALESCE(NULLIF(Dui,''), NULLIF(Pasaporte,''), NULLIF(CarnetResidencia,''))")
+            ]);
+
+        // 🔹 Actualizar tasa faltante
+        VidaCarteraTemp::where('PolizaVida', $id)
+            ->whereNull('Tasa')
+            ->update(['Tasa' => $poliza_vida->Tasa]);
+
+
+        //estableciendo fecha de nacimiento date y calculando edad
+       /* VidaCarteraTemp::where('PolizaVida', $id)
+            ->update([
+                'FechaNacimientoDate' => DB::raw("STR_TO_DATE(FechaNacimiento, '%d/%m/%Y')"),
+                'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaFinal)"),
+                'FechaOtorgamientoDate' => DB::raw("STR_TO_DATE(FechaOtorgamiento, '%d/%m/%Y')"),
+                'EdadDesembloso' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaOtorgamientoDate)"),
+            ]);*/
+
+        $poliza_cumulos = VidaCarteraTemp::select(
+            'poliza_vida_cartera_temp.Id',
+            'poliza_vida_cartera_temp.Identificador',
+            'poliza_vida_cartera_temp.Dui',
+            'poliza_vida_cartera_temp.Edad',
+            'poliza_vida_cartera_temp.PrimerNombre',
+            'poliza_vida_cartera_temp.SegundoNombre',
+            'poliza_vida_cartera_temp.PrimerApellido',
+            'poliza_vida_cartera_temp.SegundoApellido',
+            'poliza_vida_cartera_temp.ApellidoCasada',
+            'poliza_vida_cartera_temp.FechaNacimiento',
+            'poliza_vida_cartera_temp.NumeroReferencia',
+            'poliza_vida_cartera_temp.Mes',
+            'poliza_vida_cartera_temp.Axo',
+            DB::raw("GROUP_CONCAT(DISTINCT poliza_vida_cartera_temp.NumeroReferencia SEPARATOR ', ') AS ConcatenatedNumeroReferencia"),
+            DB::raw('MAX(poliza_vida_cartera_temp.EdadDesembloso) as EdadDesembloso'),
+            DB::raw('MAX(poliza_vida_cartera_temp.FechaOtorgamientoDate) as FechaOtorgamiento'),
+            DB::raw('SUM(poliza_vida_cartera_temp.SumaAsegurada) as SumaCumulo')
+        )
+            ->where('poliza_vida_cartera_temp.PolizaVida', $poliza_vida->Id)
+            ->groupBy('poliza_vida_cartera_temp.Identificador', 'poliza_vida_cartera_temp.Mes', 'poliza_vida_cartera_temp.Axo')
+            ->get();
+        // dd($poliza_cumulos);
+        // Obtener mes y año actual de los registros temporales
+        $mesActual = $temp_data_fisrt->Mes ?? null;
+        $axoActual = $temp_data_fisrt->Axo ?? null;
+
+        // Inicializar variables que la vista puede necesitar
+        $registros_rehabilitados = collect();
+        $registros_eliminados = collect();
+        $nuevos_registros = collect();
+        $poliza_responsabilidad_maxima = collect();
+        $poliza_edad_maxima = collect();
+        $poliza_edad_terminacion = collect();
+        $extra_primados = $poliza_vida->extra_primados ?? collect();
+
+        $meses = array('', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
+
+        return view('polizas.vida.respuesta_poliza_recibo', compact(
+            'meses',
+            'poliza_vida',
+            'poliza_cumulos',
+            'mesActual',
+            'axoActual',
+            'registros_rehabilitados',
+            'registros_eliminados',
+            'nuevos_registros',
+            'poliza_responsabilidad_maxima',
+            'poliza_edad_maxima',
+            'poliza_edad_terminacion',
             'extra_primados'
         ));
     }
@@ -1665,6 +1862,391 @@ class VidaController extends Controller
 
         return back();
     }
+    public function create_pago_recibo(Request $request)
+    {
+        $request->validate([
+
+            'FechaInicio' => 'required|date',
+            'FechaFinal' => 'required|date|after_or_equal:FechaInicio',
+            'Archivo' => 'required|file|mimes:csv,xlsx,xls|max:2048',
+            'PolizaVidaTipoCartera' => 'required|integer',
+        ], [
+
+            'FechaInicio.required' => 'El campo Fecha de inicio es obligatorio.',
+            'FechaInicio.date' => 'El campo Fecha de inicio debe ser una fecha válida.',
+            'FechaFinal.required' => 'El campo Fecha final es obligatorio.',
+            'FechaFinal.date' => 'El campo Fecha final debe ser una fecha válida.',
+            'FechaFinal.after_or_equal' => 'La fecha final debe ser igual o posterior a la fecha de inicio.',
+            'Archivo.required' => 'El campo Archivo es obligatorio.',
+            'Archivo.file' => 'El campo Archivo debe ser un archivo válido.',
+            'Archivo.mimes' => 'El archivo debe ser de tipo CSV, XLSX o XLS.',
+            'Archivo.max' => 'El archivo no debe superar los 2MB.',
+            'PolizaVidaTipoCartera.required' => 'El campo tipo cartera es obligatorio.',
+            'PolizaVidaTipoCartera.integer' => 'El campo tipo cartera no válido.',
+        ]);
+
+
+        $id = $request->Id;
+
+        $poliza_vida = Vida::findOrFail($id);
+
+        $poliza_vida_tipo_cartera = $poliza_vida->vida_tipos_cartera;
+
+        foreach ($poliza_vida_tipo_cartera as $item) {
+
+            $item->Mes = VidaCarteraTemp::where('PolizaVida', $id)
+                ->where('PolizaVidaTipoCartera', $item->Id)
+                ->groupBy('Mes')->value('Mes');
+            $item->Axo = VidaCarteraTemp::where('PolizaVida', $id)
+                ->where('PolizaVidaTipoCartera', $item->Id)
+                ->groupBy('Axo')->value('Axo');
+        }
+
+        // Crear validador vacío
+        $validator = Validator::make([], []);
+
+
+        $archivo = $request->Archivo;
+
+        $excel = IOFactory::load($archivo);
+
+        // Verifica si hay al menos dos hojas
+        $sheetsCount = $excel->getSheetCount();
+
+        if ($sheetsCount > 1) {
+            return redirect('polizas/vida/' . $id . '?tab=2')
+                ->withErrors(['excel_file' => 'La cartera solo puede contener un solo libro de Excel']);
+        }
+
+
+
+
+        // 2. Validar primera fila
+        $expectedColumns = [
+            "DUI",
+            "PASAPORTE",
+            "CARNET RESI",
+            "NACIONALIDAD",
+            "FECNACIMIENTO",
+            "TIPO PERSONA",
+            "GENERO",
+            "PRIMERAPELLIDO",
+            "SEGUNDOAPELLIDO",
+            "APELLIDOCASADA",
+            "PRIMERNOMBRE",
+            "SEGUNDONOMBRE",
+            "NOMBRE SOCIEDAD",
+            "FECOTORGAMIENTO",
+            "FECHA DE VENCIMIENTO",
+            "NUMREFERENCIA",
+            "SUMA ASEGURADA",
+            "SALDO DE CAPITAL",
+            "INTERES CORRIENTES",
+            "INTERES MORATORIO",
+            "INTERES COVID",
+            "TARIFA",
+            "TIPO DE DEUDA",
+            "PORCENTAJE EXTRAPRIMA",
+            "MES",
+            "AÑO",
+
+        ];
+
+        $firstRow = $excel->getActiveSheet()->rangeToArray('A1:Z1')[0];
+
+        // Validar que no esté vacío
+        if (empty(array_filter($firstRow))) {
+            $validator->errors()->add('Archivo', 'El archivo está vacío o no tiene el formato esperado');
+            return back()->withErrors($validator);
+        }
+
+        // Normalizar (trim) y pasar a minúsculas para ignorar mayúsculas
+        $firstRow = array_map(fn($v) => mb_strtolower(trim($v)), $firstRow);
+        $expectedColumnsLower = array_map(fn($v) => mb_strtolower($v), $expectedColumns);
+
+        // Función para convertir índice a letra (0 => A, 1 => B, etc.)
+        function columnLetter($index)
+        {
+            $letter = '';
+            while ($index >= 0) {
+                $letter = chr($index % 26 + 65) . $letter;
+                $index = floor($index / 26) - 1;
+            }
+            return $letter;
+        }
+
+        // Validar cantidad de columnas
+        if (count($firstRow) < count($expectedColumnsLower)) {
+            $validator->errors()->add('Archivo', 'Error de formato: faltan columnas en la primera fila');
+            return back()->withErrors($validator);
+        }
+
+        // Validar que todas las columnas sean iguales y en el mismo orden
+        foreach ($expectedColumnsLower as $index => $expectedColumn) {
+            if (!isset($firstRow[$index]) || $firstRow[$index] !== $expectedColumn) {
+                $validator->errors()->add(
+                    'Archivo',
+                    "Error de formato: la columna " . columnLetter($index) . " debe ser '{$expectedColumns[$index]}'"
+                );
+                return back()->withErrors($validator);
+            }
+        }
+
+
+
+
+
+        //borrar datos de tabla temporal
+        VidaCarteraTemp::where('PolizaVida', $id)->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)->delete();
+
+        Excel::import(new VidaCarteraTempCompImport($request->Axo, $request->Mes, $id, $request->FechaInicio, $request->FechaFinal, $request->PolizaVidaTipoCartera, $poliza_vida->TarifaExcel), $archivo);
+
+        //calculando edades y fechas de nacimiento
+        VidaCarteraTemp::where('PolizaVida', $poliza_vida->Id)
+            ->update([
+                'Edad' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaFinal)"),
+                'EdadDesembloso' => DB::raw("TIMESTAMPDIFF(YEAR, FechaNacimientoDate, FechaOtorgamientoDate)"),
+            ]);
+
+        //calculando errores de cartera
+        $cartera_temp = VidaCarteraTemp::where('PolizaVida', $id)->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)->get();
+
+        //dd($cartera_temp->take(10));
+
+
+
+        //tipo cobro 2 suma abierta
+        if ($poliza_vida->TipoCobro == 2) {
+            //tipo tarifa 1 suma uniforme
+            if ($poliza_vida->TipoTarifa == 1) {
+                $montos = [$poliza_vida->SumaAsegurada];
+            }
+            //tipo tarifa 2 multi categoria
+            else if ($poliza_vida->TipoTarifa == 2) {
+                $montos = explode(',', $poliza_vida->Multitarifa);
+            }
+        } else if ($poliza_vida->TipoCobro == 1) {
+            $montos = [$poliza_vida->SumaMinima, $poliza_vida->SumaMaxima];
+        }
+
+
+
+        // dd($montos,$poliza_vida->TipoTarifa);
+
+        foreach ($cartera_temp as $obj) {
+            $errores_array = [];
+
+            if ($obj->FechaNacimientoDate == null) {
+                $obj->TipoError = 1;
+                $obj->update();
+                array_push($errores_array, 1);
+            }
+
+
+            if ($obj->FechaOtorgamientoDate == null) {
+                $obj->TipoError = 2;
+                $obj->update();
+                array_push($errores_array, 2);
+            }
+
+            if ($request->validacion_dui == 'on') {
+                $validador_dui = true;
+            } else {
+                // Validar si la nacionalidad está vacía
+                if (empty($obj->Nacionalidad)) {
+                    $obj->TipoError = 3;
+                    $obj->update();
+                    $errores_array[] = 3; // Agregar error al array
+                }
+                // Validar si la nacionalidad es SAL (El Salvador)
+                else if (strtolower(trim($obj->Nacionalidad)) == 'sal') {
+                    $validador_dui = $this->validarDocumento($obj->Dui, "dui");
+                    if (!$validador_dui) {
+                        $obj->TipoError = 4;
+                        $obj->update();
+                        $errores_array[] = 4; // Agregar error al array
+                    }
+                }
+                // Validar si el pasaporte está vacío para nacionalidades no SAL
+                else if (empty($obj->Pasaporte) && empty($obj->CarnetResidencia)) {
+                    $validador_dui = false;
+                    $obj->TipoError = 5;
+                    $obj->update();
+                    $errores_array[] = 5; // Agregar error al array
+                } else {
+                    $validador_dui = true;
+                }
+            }
+
+
+
+
+
+            // 4 nombre o apellido
+            if (trim($obj->PrimerApellido) == "" || trim($obj->PrimerNombre) == "") {
+                $obj->TipoError = 6;
+                $obj->update();
+
+                array_push($errores_array, 6);
+            }
+
+
+            // 7 referencia si va vacia.
+            if (trim($obj->NumeroReferencia) == "") {
+                $obj->TipoError = 7;
+                $obj->update();
+
+                array_push($errores_array, 7);
+            }
+
+
+            // 10 error sexo
+            if (empty(trim($obj->Sexo)) || !in_array($obj->Sexo, ['M', 'F'])) {
+                $obj->TipoError = 8;
+                $obj->update();
+                $errores_array[] = 8; // Agregar error al array
+            }
+
+
+            //validar cantidad asegurada o multi categoria error 10
+
+            if ($poliza_vida->TipoCobro == 2) {
+                if (!in_array($obj->SumaAsegurada, $montos)) {
+                    $obj->TipoError = 10;
+                    $obj->update();
+
+                    array_push($errores_array, 10);
+                }
+            }
+
+
+
+            // 11 error nombres o apellidos con caracteres inválidos
+            $regex = '/^[a-zA-ZÁÉÍÓÚáéíóúÑñ\s\.\'\-]+$/u'; // letras, espacios, punto, apóstrofe y guion
+            $campos = [
+                $obj->PrimerNombre,
+                $obj->SegundoNombre,
+                $obj->PrimerApellido,
+                $obj->SegundoApellido,
+                $obj->ApellidoCasada
+            ];
+
+            foreach ($campos as $valor) {
+                if ($valor && !preg_match($regex, $valor)) {
+                    $obj->TipoError = 11;
+                    $obj->update(); // guardamos inmediatamente
+                    array_push($errores_array, 11);
+                    break; // no necesitamos seguir revisando otros campos
+                }
+            }
+
+            //error 12 tipo de cobro
+
+
+            if ($poliza_vida->TipoCobro == 2) {
+                //por credito
+                if ($poliza_vida->TipoTarifa == 1) {
+                    //tarifa uniforme
+                    if ($obj->SumaAsegurada != $poliza_vida->SumaAsegurada) {
+                        $obj->TipoError = 12;
+                        $obj->update();
+
+                        array_push($errores_array, 12);
+                    }
+                } else {
+                    //multitarifa de la poliza
+                    $multitarifas = array_map('intval', explode(",", $poliza_vida->Multitarifa));
+                    if (!in_array($obj->SumaAsegurada, $multitarifas)) {
+                        $obj->TipoError = 13;
+                        $obj->update();
+
+                        array_push($errores_array, 13);
+                    }
+                }
+            } else if ($poliza_vida->TipoCobro == 1) {
+                //suma abierta
+
+                $min = $poliza_vida->SumaMinima;
+                $max = $poliza_vida->SumaMaxima;
+
+                if ($obj->SumaAsegurada < $min ||  $obj->SumaAsegurada > $max) {
+                    $obj->TipoError = 14;
+                    $obj->update();
+                    array_push($errores_array, 14);
+                }
+            }
+
+
+            $obj->Errores = $errores_array;
+        }
+
+
+
+        $data_error = $cartera_temp->where('TipoError', '<>', 0);
+
+
+        if ($data_error->count() > 0) {
+            return view('polizas.vida.respuesta_poliza_error', compact('data_error', 'poliza_vida'));
+        }
+
+
+        $temp_data_fisrt = VidaCarteraTemp::where('PolizaVida', $id)->where('PolizaVidaTipoCartera', '=', $request->PolizaVidaTipoCartera)->first();
+
+        if (!$temp_data_fisrt) {
+            alert()->error('No se han cargado las carteras');
+            return back();
+        }
+
+
+
+
+
+
+        //tasa diferenciada
+        $vida_tipo_cartera = VidaTipoCartera::findOrFail($request->PolizaVidaTipoCartera);
+
+        $tasas_diferenciadas = $vida_tipo_cartera->tasa_diferenciada;
+
+        //si la tarifa no viene en el excel se calculara la tasa
+        if ($poliza_vida->TarifaExcel != 1) {
+            if ($vida_tipo_cartera->TipoCalculo == 1) {
+                foreach ($tasas_diferenciadas as $tasa) {
+                    //dd($tasa);
+                    VidaCarteraTemp::where('User', auth()->user()->id)
+                        ->where('PolizaVidaTipoCartera', $vida_tipo_cartera->Id)
+                        ->whereBetween('FechaOtorgamientoDate', [$tasa->FechaDesde, $tasa->FechaHasta])
+                        ->update([
+                            //'MontoMaximoIndividual' => $vida_tipo_cartera->MontoMaximoIndividual,
+                            'Tasa' => $tasa->Tasa
+                        ]);
+                }
+            } else  if ($vida_tipo_cartera->TipoCalculo == 2) {
+                foreach ($tasas_diferenciadas as $tasa) {
+                    VidaCarteraTemp::where('User', auth()->user()->id)
+                        ->where('PolizaVidaTipoCartera', $vida_tipo_cartera->Id)
+                        ->whereBetween('SumaAsegurada', [$tasa->MontoDesde, $tasa->MontoHasta])
+                        ->update([
+                            //'MontoMaximoIndividual' => $vida_tipo_cartera->MontoMaximoIndividual,
+                            'Tasa' => $tasa->Tasa
+                        ]);
+                }
+            } else {
+                VidaCarteraTemp::where('User', auth()->user()->id)
+                    // ->where('PolizaVidaTipoCartera', $vida_tipo_cartera->Id)
+                    ->update([
+                        //'MontoMaximoIndividual' => $vida_tipo_cartera->MontoMaximoIndividual,
+                        'Tasa' => $poliza_vida->Tasa
+                    ]);
+            }
+        }
+
+        //agregar la validacion para las edades maximas de inscripcion
+
+        alert()->success('Exito', 'La cartera fue subida con exito');
+
+
+        return back();
+    }
 
     public function get_cartera($id, $mes, $axo)
     {
@@ -1811,7 +2393,6 @@ class VidaController extends Controller
             if ($registro) {
                 $registro->delete();
             }
-
         } catch (\Throwable $th) {
             //throw $th;
         }
@@ -2328,6 +2909,63 @@ class VidaController extends Controller
         alert()->success('El registro de poliza ha sido ingresado correctamente');
         return redirect('polizas/vida/' . $id . '?tab=2');
     }
+    public function store_poliza_recibo(Request $request, $id)
+    {
+
+        $tempData = VidaCarteraTemp::where('NoValido', 0)
+            ->where('PolizaVida', $id)
+            ->get();
+
+        // Iterar sobre los resultados y realizar la inserción en la tabla principal
+        foreach ($tempData as $tempRecord) {
+            try {
+                $poliza = new VidaCartera();
+                $poliza->PolizaVida = $tempRecord->PolizaVida ?? null;
+                $poliza->Nit = $tempRecord->Nit ?? null;
+                $poliza->Dui = $tempRecord->Dui ?? null;
+                $poliza->Pasaporte = $tempRecord->Pasaporte ?? null;
+                $poliza->Identificador = $tempRecord->Dui ?: ($tempRecord->Pasaporte ?: ($tempRecord->CarnetResidencia ?: null));
+
+                $poliza->Nacionalidad = $tempRecord->Nacionalidad ?? null;
+                $poliza->FechaNacimiento = $tempRecord->FechaNacimiento ?? null;
+                $poliza->TipoPersona = $tempRecord->TipoPersona ?? null;
+                $poliza->PrimerApellido = $tempRecord->PrimerApellido ?? null;
+                $poliza->SegundoApellido = $tempRecord->SegundoApellido ?? null;
+                $poliza->ApellidoCasada = $tempRecord->ApellidoCasada ?? null;
+                $poliza->PrimerNombre = $tempRecord->PrimerNombre ?? null;
+                $poliza->SegundoNombre = $tempRecord->SegundoNombre ?? null;
+                $poliza->Sexo = $tempRecord->Sexo ?? null;
+                $poliza->FechaOtorgamiento = $tempRecord->FechaOtorgamiento ?? null;
+                $poliza->FechaVencimiento = $tempRecord->FechaVencimiento ?? null;
+                $poliza->NumeroReferencia = $tempRecord->NumeroReferencia ?? null;
+                $poliza->SumaAsegurada = $tempRecord->SumaAsegurada ?? null;
+                $poliza->User = $tempRecord->User;
+                $poliza->Axo = $tempRecord->Axo ?? null;
+                $poliza->Mes = $tempRecord->Mes ?? null;
+                $poliza->TipoDocumento = $tempRecord->TipoDocumento ?? null;
+                $poliza->PorcentajeExtraprima = $tempRecord->PorcentajeExtraprima ?? null;
+                $poliza->FechaInicio = $tempRecord->FechaInicio ?? null;
+                $poliza->FechaFinal = $tempRecord->FechaFinal ?? null;
+                $poliza->FechaNacimientoDate = $tempRecord->FechaNacimientoDate ?? null;
+                $poliza->FechaOtorgamientoDate = $tempRecord->FechaOtorgamientoDate ?? null;
+                $poliza->Edad = $tempRecord->Edad ?? null;
+                $poliza->EdadDesembloso = $tempRecord->EdadDesembloso ?? null;
+                $poliza->PolizaVidaTipoCartera = $tempRecord->PolizaVidaTipoCartera ?? null;
+                $poliza->Tasa = $tempRecord->Tasa ?? null;
+                $poliza->save();
+            } catch (\Exception $e) {
+                // Captura errores y los guarda en el log
+                Log::error("Error al insertar en poliza_vida_cartera: " . $e->getMessage(), [
+                    'NumeroReferencia' => $tempRecord->NumeroReferencia,
+                    'Usuario' => auth()->user()->id ?? 'N/A',
+                    'Datos' => $tempRecord
+                ]);
+            }
+        }
+
+        alert()->success('El registro de poliza ha sido ingresado correctamente');
+        return redirect('polizas/vida/' . $id . '?tab=2');
+    }
 
     public function update_extraprimado(Request $request)
     {
@@ -2632,6 +3270,14 @@ class VidaController extends Controller
     }
 
     public function eliminar_pago(Request $request, $id)
+    {
+        // dd($id);
+        VidaCarteraTemp::where('PolizaVida', $id)->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)->delete();
+        alert()->success('Cartera eliminada correctamente');
+        return back();
+    }
+
+    public function eliminar_pago_recibo(Request $request, $id)
     {
         // dd($id);
         VidaCarteraTemp::where('PolizaVida', $id)->where('PolizaVidaTipoCartera', $request->PolizaVidaTipoCartera)->delete();

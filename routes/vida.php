@@ -15,13 +15,18 @@ Route::middleware(['web'])->group(function () {
 
 
     Route::post('polizas/vida/create_pago/{id}', [VidaController::class, 'create_pago']);
+    Route::post('polizas/vida/create_pago_recibo/{id}', [VidaController::class, 'create_pago_recibo']);
     Route::post('polizas/vida/eliminar_pago/{id}', [VidaController::class, 'eliminar_pago']);
+    Route::post('polizas/vida/eliminar_pago_recibo/{id}', [VidaController::class, 'eliminar_pago_recibo']);
     Route::get('polizas/vida/subir_cartera/{id}', [VidaController::class, 'subir_cartera']);
+    Route::get('polizas/vida/subir_cartera_complementario/{id}', [VidaController::class, 'subir_cartera_complementario']);
     Route::post('polizas/vida/validar_poliza/{id}', [VidaController::class, 'validar_poliza']);
+    Route::post('polizas/vida/validar_poliza_recibos/{id}', [VidaController::class, 'validar_poliza_recibos']);
     Route::post('polizas/vida/delete_temp/{id}', [VidaController::class, 'delete_temp']);
     Route::post('polizas/vida/agregar_no_valido/{id}', [VidaController::class, 'agregar_no_valido']);
     Route::get('polizas/vida/get_no_valido/{id}', [VidaController::class, 'get_no_valido']);
     Route::post('polizas/vida/store_poliza/{id}', [VidaController::class, 'store_poliza']);
+    Route::post('polizas/vida/store_poliza_recibo/{id}', [VidaController::class, 'store_poliza_recibo']);
     Route::get('polizas/vida/tasas/{id}', [VidaController::class, 'tasas']);
     Route::post('finalizar_configuracion_vida', [VidaController::class, 'finalizar_configuracion']);
 
@@ -32,6 +37,7 @@ Route::middleware(['web'])->group(function () {
     Route::put('polizas/vida/tasa_diferenciada/{id}', [VidaTasaDiferenciadaController::class, 'update']);
 
     Route::post('polizas/vida/fede/create_pago', [VidaFedeController::class, 'create_pago']);
+    Route::post('polizas/vida/fede/create_pago_recibo', [VidaFedeController::class, 'create_pago_recibo']);
 
     Route::post('polizas/vida/agregar_tipo_cartera/{id}', [VidaTasaDiferenciadaController::class, 'agregar_tipo_cartera']);
     Route::post('polizas/vida/delete_tipo_cartera', [VidaTasaDiferenciadaController::class, 'delete_tipo_cartera']);

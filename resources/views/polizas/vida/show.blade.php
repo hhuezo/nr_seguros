@@ -333,6 +333,10 @@
                 aria-labelledby="profile-tab">
 
                 <ul class="nav navbar-right panel_toolbox">
+                    <a href="{{ url('polizas/vida/subir_cartera_complementario') }}/{{ $poliza_vida->Id }}">
+                        <button type="button" class="btn btn-success float-right">
+                            Recibos Complementarios</button>
+                    </a>
                     <a href="{{ url('polizas/vida/subir_cartera') }}/{{ $poliza_vida->Id }}">
                         <button type="button" class="btn btn-info float-right">
                             Subir Archivo Excel</button>
