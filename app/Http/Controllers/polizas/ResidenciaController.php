@@ -468,7 +468,7 @@ class ResidenciaController extends Controller
 
         $now = Carbon::now();
         $mes = $now->month;
-        $anio = $now->year;
+        $axo = $now->year;
         // Primer día del mes
         // Primer día del mes
         $FechaInicio = $now->copy()->startOfMonth()->format('Y-m-d');
