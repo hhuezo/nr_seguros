@@ -150,6 +150,7 @@ trait PolizaControlCarteraTrait
                     'poliza_declarativa_reproceso.Nombre as ReprocesoNombre',
                     'aseguradora.Abreviatura'
                 )
+                ->where('poliza_deuda.EstadoPoliza', '<>', 3)
                 ->groupBy('poliza_declarativa_control.Id')
                 ->get();
 
@@ -220,6 +221,7 @@ trait PolizaControlCarteraTrait
                     'poliza_declarativa_reproceso.Nombre as ReprocesoNombre',
                     'aseguradora.Abreviatura'
                 )
+                ->where('poliza_vida.EstadoPoliza', '<>', 3)
                 ->groupBy('poliza_declarativa_control.Id')
                 ->get();
 
@@ -297,6 +299,7 @@ trait PolizaControlCarteraTrait
                     'poliza_declarativa_reproceso.Nombre as ReprocesoNombre',
                     'aseguradora.Abreviatura'
                 )
+                ->where('poliza_desempleo.EstadoPoliza', '<>', 3)
                 ->groupBy('poliza_declarativa_control.Id')
                 ->get();
 
@@ -433,6 +436,7 @@ trait PolizaControlCarteraTrait
                 'aseguradora.Abreviatura',
                 'poliza_residencia_detalle.Residencia'
             )
+            ->where('poliza_residencia.EstadoPoliza', '<>', 3)
             ->groupBy('poliza_declarativa_control.Id')
             ->get();
 
