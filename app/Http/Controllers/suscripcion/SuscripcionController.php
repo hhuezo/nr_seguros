@@ -876,6 +876,9 @@ class SuscripcionController extends Controller
             $request->fecha_fin
         );
 
+        // Regla de negocio: contar diferencia entre fechas sin incluir el día inicial.
+        $dias = max(0, $dias - 1);
+
         return response()->json(['dias_habiles' => $dias]);
     }
 
