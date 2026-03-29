@@ -244,7 +244,7 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
-                                        <h5 class="modal-title" id="exampleModalLabel">Subir archivo Excel..</h5>
+                                        <h5 class="modal-title" id="exampleModalLabel">Subir archivo Excel Fede..</h5>
                                     </div>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>

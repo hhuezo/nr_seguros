@@ -785,7 +785,7 @@ class DeudaController extends Controller
 
                 foreach ($dataPagoTemp as $item) {
 
-                    //dd($item);
+                   // dd($item);
                     //por fechas
                     if ($item['TipoCalculo'] == 1) {
 
@@ -838,6 +838,7 @@ class DeudaController extends Controller
                             ->where('LineaCredito', $item['LineaCredito'])
                             ->whereBetween('EdadDesembloso', [$item['EdadDesde'], $item['EdadHasta']])
                             ->first();
+                           // dd($total);
 
                         // Si $total es null, aseguramos que los valores sean 0
                         $item['MontoOtorgado'] = $total->MontoOtorgado ?? 0;
@@ -1101,6 +1102,8 @@ class DeudaController extends Controller
             $fechas = PolizaDeudaCartera::select('Mes', 'Axo', 'FechaInicio', 'FechaFinal')
                 ->where('PolizaDeuda', '=', $id)
                 ->orderByDesc('Id')->first();
+
+              //  dd($fechas);
 
             return view('polizas.deuda.edit', compact(
                 'totalUltimoPago',

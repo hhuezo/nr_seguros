@@ -581,22 +581,24 @@ class DeudaCarteraFedeController extends Controller
         }
 
         // 2. Validar primera fila
-        $firstRow = $excel->getActiveSheet()->rangeToArray('A1:Z1')[0];
+        $firstRow = $excel->getActiveSheet()->rangeToArray('A1:W1')[0];
 
         if (!isset($firstRow[0])) {
             $validator->errors()->add('Archivo', 'El archivo está vacío o no tiene el formato esperado');
             return back()->withErrors($validator);
         }
 
-        if (trim($firstRow[0]) !== "NIT") {
-            $validator->errors()->add('Archivo', 'Error de formato del archivo, La primera columna de la primera fila debe ser "NIT"');
-            return back()->withErrors($validator);
-        }
+        // if (trim($firstRow[0]) !== "NIT") {
+        //     $validator->errors()->add('Archivo', 'Error de formato del archivo, La primera columna de la primera fila debe ser "NIT"');
+        //     return back()->withErrors($validator);
+        // }
 
         if (!isset($firstRow[1])) {
             $validator->errors()->add('Archivo', 'Error de formato del archivo, El archivo no contiene la columna DUI');
             return back()->withErrors($validator);
         }
+
+       // dd($deuda->Id, $request->FechaInicio, $request->FechaFinal, $deuda_tipo_cartera->Id);
         try {
 
             PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->delete();
@@ -616,8 +618,9 @@ class DeudaCarteraFedeController extends Controller
 
 
         //calculando errores de cartera
-        $cartera_temp = PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('LineaCredito', '=', $deuda_tipo_cartera->Id)->get();
+        $cartera_temp = PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->get();
 
+        //dd($cartera_temp);
 
 
 

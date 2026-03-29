@@ -38,63 +38,54 @@ class PolizaDeudaTempCarteraFedeComImport implements ToModel, /*WithStartRow,*/ 
     }
     public function model(array $row)
     {
-        if (trim($row[0]) == "NIT" && trim($row[1]) == "DUI") {
+        if (trim($row[1]) == "DUI o documento de identidad") {
             $this->encabezados = 1;
+            return null;
         }
 
-        if ($this->encabezados == 1 && (trim($row[0]) != "NIT" && trim($row[1]) != "DUI")) {
-
-            // Check if row[10] is empty and row[9] has two words with each word length >= 3
-            // if (empty($row[10]) && strpos($row[9], '') !== false) {
-            //     $words = explode(' ', $row[9]);
-            //     if (count($words) >= 2 && strlen($words[0]) >= 3 && strlen($words[1]) >= 3) {
-            //         $row[9] = $words[0];
-            //         $row[10] = $words[1];
-            //     }
-            // }
-
-            // $row[6] = str_replace(" ", ",", $row[6]);
-            // $row[7] = str_replace(" ", ",", $row[7]);
-            // $row[8] = str_replace(" ", ",", $row[8]);
-            // $row[9] = str_replace(" ", ",", $row[9]);
-            // $row[10] = str_replace(" ", ",", $row[10]);
+        if ($this->encabezados == 1) {
 
 
 
+
+            // Nuevo formato 16 columnas: tercer nombre se une a segundo nombre si viene
+            $segundoNombre = trim((string) ($row[6] ?? ''));
+            $tercerNombre = trim((string) ($row[7] ?? ''));
+            if ($tercerNombre !== '') {
+                $segundoNombre = $segundoNombre === '' ? $tercerNombre : $segundoNombre . ' ' . $tercerNombre;
+            }
+          //  dd($row);
 
             return new PolizaDeudaTempCartera([
-                'Nit' => $row[0],
-                'Dui' => $row[1],
-                'Pasaporte' => $row[2],
-                'Nacionalidad' => $row[3],
-                'FechaNacimiento' => $row[4],
-                'TipoPersona' => $row[5],
-                'PrimerApellido' => $row[6],
-                'SegundoApellido' => $row[7],
-                'ApellidoCasada' => $row[8],
-                'PrimerNombre' => $row[9],
-                'SegundoNombre' => $row[10],
-                'NombreSociedad' => $row[11],
-                'Sexo' => $row[12],
-                'FechaOtorgamiento' => $row[13],
-                'FechaVencimiento' => $row[14],
-                'Ocupacion' => $row[15],
-                'NumeroReferencia' => $row[16],
-                'MontoOtorgado' => $row[17],
-                'SaldoCapital' => $row[18],
-                'Intereses' => $row[19],
-                'InteresesMoratorios' => $row[20],
-                'InteresesCovid' => $row[21],
-                'MontoNominal' => $row[22],
-                'SaldoTotal' => $row[23],
+                'TipoDocumento' => $row[0] ?? null,
+                'Dui' => $row[1] ?? null,
+                'PrimerApellido' => $row[2] ?? null,
+                'SegundoApellido' => $row[3] ?? null,
+                'ApellidoCasada' => $row[4] ?? null,
+                'PrimerNombre' => $row[5] ?? null,
+                'SegundoNombre' => $segundoNombre ?: null,
+                'Nacionalidad' => $row[8] ?? null,
+                'FechaNacimiento' => $row[9] ?? null,
+                'Sexo' => $row[10] ?? null,
+                'NumeroReferencia' => $row[11] ?? null,
+                'FechaOtorgamiento' => $row[12] ?? null,
+                'MontoOtorgado' => $row[13] ?? null,
+                'SaldoCapital' => $row[14] ?? null,
+                'Intereses' => $row[15] ?? null,
+                'MoraCapital' => $row[16] ?? null,
+                'InteresesMoratorios' => $row[17] ?? null,
+                'InteresesCovid' => $row[18] ?? null,
+                'PorcentajeExtraprima' => $row[19] ?? null,
+                'Tasa' => (isset($row[20]) && trim($row[20]) !== '' && is_numeric($row[20]))
+                    ? (float) $row[20] : null,
                 'User' => auth()->user()->id,
-                'Axo' =>  $row[29],
-                'Mes' =>  $row[28],
+                'Axo' => $row[22],
+                'Mes' => $row[21],
+                'NoValido' => 0,
                 'PolizaDeuda' =>  $this->PolizaDeuda,
                 'FechaInicio' =>  $this->FechaInicio,
                 'FechaFinal' =>  $this->FechaFinal,
                 'PolizaDeudaTipoCartera' => $this->credito,
-                'NoValido' => 1,
             ]);
         }
     }

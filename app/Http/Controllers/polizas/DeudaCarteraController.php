@@ -781,10 +781,10 @@ class DeudaCarteraController extends Controller
             return back()->withErrors($validator);
         }
 
-        if (trim($firstRow[0]) !== "NIT") {
+        /*if (trim($firstRow[0]) !== "NIT") {
             $validator->errors()->add('Archivo', 'Error de formato del archivo, La primera columna de la primera fila debe ser "NIT"');
             return back()->withErrors($validator);
-        }
+        }*/
 
         if (!isset($firstRow[1])) {
             $validator->errors()->add('Archivo', 'Error de formato del archivo, El archivo no contiene la columna DUI');
@@ -792,9 +792,9 @@ class DeudaCarteraController extends Controller
         }
 
 
-        PolizaDeudaTempCartera::where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->delete();
 
         try {
+            PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->delete();
             Excel::import(new PolizaDeudaTempCarteraComImport($deuda->Id, $request->FechaInicio, $request->FechaFinal, $deuda_tipo_cartera->Id), $archivo);
         } catch (Throwable $e) {
             // Filtramos solo nuestros errores de validación
@@ -807,7 +807,7 @@ class DeudaCarteraController extends Controller
         }
 
         //calculando errores de cartera
-        $cartera_temp = PolizaDeudaTempCartera::where('LineaCredito', '=', $deuda_tipo_cartera->Id)->get();
+        $cartera_temp = PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->get();
 
         foreach ($cartera_temp as $obj) {
             $errores_array = [];
@@ -939,9 +939,10 @@ class DeudaCarteraController extends Controller
 
 
         $data_error = $cartera_temp->where('TipoError', '<>', 0);
+        $deuda_tipo_cartera_id = $deuda_tipo_cartera->Id;
 
         if ($data_error->count() > 0) {
-            return view('polizas.deuda.respuesta_poliza_error', compact('data_error', 'deuda', 'credito'));
+            return view('polizas.deuda.respuesta_poliza_error', compact('data_error', 'deuda', 'deuda_tipo_cartera_id'));
         }
 
         //calculando edades y fechas de nacimiento
@@ -1917,6 +1918,8 @@ class DeudaCarteraController extends Controller
                 $poliza->FechaInicio = $tempRecord->FechaInicio;
                 $poliza->FechaFinal = $tempRecord->FechaFinal;
                 $poliza->TipoError = $tempRecord->TipoError;
+                $poliza->Tasa = $tempRecord->Tasa;
+                $poliza->EdadDesembloso = $tempRecord->EdadDesembloso;
                 $poliza->FechaNacimientoDate = $tempRecord->FechaNacimientoDate;
                 $poliza->Edad = $tempRecord->Edad;
                 $poliza->LineaCredito = $tempRecord->LineaCredito;
