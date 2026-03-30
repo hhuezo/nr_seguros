@@ -113,6 +113,13 @@
                                                 <br />rehabilitados</a>
                                         </li>
 
+                                        @isset($poliza_cumulos)
+                                            <li role="presentation" class=""><a href="#tab_cumulos" role="tab"
+                                                    id="cumulos-tab" data-toggle="tab" aria-expanded="false">Listado de
+                                                <br />cúmulos</a>
+                                            </li>
+                                        @endisset
+
 
                                     </ul>
                                     <div id="myTabContent" class="tab-content">
@@ -421,6 +428,81 @@
                                                 </tbody>
                                             </table>
                                         </div>
+
+                                        @isset($poliza_cumulos)
+                                            <div role="tabpanel" class="tab-pane" id="tab_cumulos"
+                                                aria-labelledby="cumulos-tab">
+                                                <br>
+                                                <div class="col-md-6 col-sm-12" align="left">
+                                                    <h4>Listado de cúmulos</h4>
+                                                </div>
+                                                <div class="clearfix"></div>
+                                                <br>
+                                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                                    <table class="table table-striped table-hover align-middle"
+                                                        id="table6">
+                                                        <thead class="table-primary text-center">
+                                                            <tr>
+                                                                <th>Número crédito</th>
+                                                                <th>DUI</th>
+                                                                <th>Nombre</th>
+                                                                <th>Fecha nacimiento</th>
+                                                                <th>Edad actual</th>
+                                                                <th>Edad otorgamiento</th>
+                                                                <th>Fecha otorgamiento</th>
+                                                                <th>Mes</th>
+                                                                <th>Año</th>
+                                                                <th>Cúmulo</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach ($poliza_cumulos as $registro)
+                                                                <tr>
+                                                                    <td>
+                                                                        @php
+                                                                            $referencias = array_filter(
+                                                                                explode(
+                                                                                    ',',
+                                                                                    $registro->ConcatenatedNumeroReferencia ??
+                                                                                        '',
+                                                                                ),
+                                                                            );
+                                                                        @endphp
+                                                                        @if (count($referencias) > 0)
+                                                                            {{ implode(', ', $referencias) }}
+                                                                        @else
+                                                                            {{ $registro->NumeroReferencia ?? '-' }}
+                                                                        @endif
+                                                                    </td>
+                                                                    <td>{{ $registro->Dui ?? '-' }}</td>
+                                                                    <td>
+                                                                        {{ trim("{$registro->PrimerNombre} {$registro->SegundoNombre} {$registro->PrimerApellido} {$registro->SegundoApellido} {$registro->ApellidoCasada}") }}
+                                                                    </td>
+                                                                    <td class="text-center">
+                                                                        {{ $registro->FechaNacimiento ?? '-' }}</td>
+                                                                    <td class="text-center text-nowrap">
+                                                                        {{ $registro->Edad ? "{$registro->Edad} años" : '-' }}
+                                                                    </td>
+                                                                    <td class="text-center text-nowrap">
+                                                                        {{ $registro->EdadDesembloso ? "{$registro->EdadDesembloso} años" : '-' }}
+                                                                    </td>
+                                                                    <td class="text-center">
+                                                                        {{ $registro->FechaOtorgamiento ? date('d/m/Y', strtotime($registro->FechaOtorgamiento)) : '-' }}
+                                                                    </td>
+                                                                    <td class="text-center">
+                                                                        {{ $meses[$registro->Mes] ?? $registro->Mes }}</td>
+                                                                    <td class="text-center">{{ $registro->Axo ?? '-' }}
+                                                                    </td>
+                                                                    <td class="text-right text-nowrap">
+                                                                        ${{ number_format($registro->SaldoCumulo ?? 0, 2, '.', ',') }}
+                                                                    </td>
+                                                                </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        @endisset
                                     </div>
 
                                 </div>
@@ -488,6 +570,11 @@
             $('#table5').DataTable({
                 paging: false
             });
+            @isset($poliza_cumulos)
+                $('#table6').DataTable({
+                    paging: false
+                });
+            @endisset
 
             getNoValido({{ $desempleo->Id }});
             document.getElementById('btnGuardarCartera').addEventListener('click', function() {

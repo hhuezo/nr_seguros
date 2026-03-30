@@ -405,6 +405,7 @@ class DesempleoController extends Controller
         //dd($dataPagoTemp);
 
         foreach ($dataPagoTemp as $item) {
+            //dd($item);
 
             //por fechas
             if ($item['TipoCalculo'] == 1) {
@@ -484,10 +485,11 @@ class DesempleoController extends Controller
                                     COALESCE(SUM(MontoNominal), 0) as MontoNominal,
                                     COALESCE(SUM(TotalCredito), 0) as TotalCredito
                                 ')
-                    ->where('PolizaDesempleoDetalle', null)
-                    ->where('PolizaDesempleo', $id)
+                   // ->where('PolizaDesempleoDetalle', null)
+                   // ->where('PolizaDesempleo', $id)
                     ->where('DesempleoTipoCartera', $item['DesempleoTipoCartera'])
                     ->first();
+                   // dd($total);
 
                 // Si $total es null, aseguramos que los valores sean 0
                 $item['MontoOtorgado'] = $total->MontoOtorgado ?? 0;
@@ -563,6 +565,7 @@ class DesempleoController extends Controller
         $comentarios = Comentario::where('Desempleo', $desempleo->Id)->where('Activo', '=', 1)->get();
         $ultimo_pago = DesempleoDetalle::where('Desempleo', $desempleo->Id)->where('Activo', 1) //->where('PagoAplicado', '<>', null)
             ->orderBy('Id', 'desc')->first();
+
 
         $data = [
             "saldoCapital" => $saldoCapital,

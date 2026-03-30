@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\polizas\DesempleoCarteraComController;
 use App\Http\Controllers\polizas\DesempleoCarteraController;
 use App\Http\Controllers\polizas\DesempleoController;
 use App\Http\Controllers\polizas\DesempleoRenovacionController;
@@ -13,6 +14,7 @@ Route::middleware(['web'])->group(function () {
     Route::post('polizas/desempleo/agregar_no_valido/{id}', [DesempleoController::class, 'agregar_no_valido']);
     Route::get('polizas/desempleo/get_no_valido/{id}', [DesempleoController::class, 'get_no_valido']);
     Route::post('polizas/desempleo/store_poliza/{id}', [DesempleoController::class, 'store_poliza']);
+    Route::post('polizas/desempleo/store_poliza_recibo/{id}', [DesempleoCarteraComController::class, 'store_poliza']);
 
     Route::post('polizas/desempleo/borrar_proceso_actual/{id}', [DesempleoController::class, 'borrar_proceso_actual']);
     Route::post('polizas/desempleo/agregar_pago', [DesempleoController::class, 'agregar_pago']);
@@ -24,11 +26,15 @@ Route::middleware(['web'])->group(function () {
     Route::post('finalizar_configuracion_desempleo', [DesempleoController::class, 'finalizar_configuracion']);
 
     Route::get('polizas/desempleo/subir_cartera/{id}', [DesempleoCarteraController::class, 'subir_cartera']);
+    Route::get('polizas/desempleo/subir_cartera_recibo/{id}', [DesempleoCarteraComController::class, 'subir_cartera_recibo']);
     Route::post('polizas/desempleo/create_pago/{id}', [DesempleoCarteraController::class, 'create_pago']);
+    Route::post('polizas/desempleo/create_pago_complementario/{id}', [DesempleoCarteraComController::class, 'create_pago']);
     Route::post('polizas/desempleo/eliminar_pago/{id}', [DesempleoCarteraController::class, 'eliminar_pago']);
 
     Route::post('polizas/desempleo/create_pago_fedecredito/{id}', [DesempleoCarteraController::class, 'create_pago_fedecredito']);
+    Route::post('polizas/desempleo/create_pago_complementario_fedecredito/{id}', [DesempleoCarteraComController::class, 'create_pago_fedecredito']);
     Route::post('polizas/desempleo/validar_poliza/{id}', [DesempleoCarteraController::class, 'validar_poliza']);
+    Route::post('polizas/desempleo/validar_poliza_complementario/{id}', [DesempleoCarteraComController::class, 'validar_poliza']);
 
     Route::post('polizas/desempleo/cancelar_pago', [DesempleoCarteraController::class, 'cancelar_pago']);
     Route::post('poliza/desempleo/reiniciar_carga', [DesempleoCarteraController::class, 'reiniciar_carga']);

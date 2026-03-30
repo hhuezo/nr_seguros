@@ -43,6 +43,8 @@
 
 
 <ul class="nav navbar-right panel_toolbox">
+    <a href="{{ url('polizas/desempleo/subir_cartera_recibo') }}/{{ $desempleo->Id }}" class="btn btn-warning float-right">
+        Recibo complementario</a>
     <a href="{{ url('polizas/desempleo/subir_cartera') }}/{{ $desempleo->Id }}" class="btn btn-info float-right">
         Subir Archivo Excel</a>
 </ul>
