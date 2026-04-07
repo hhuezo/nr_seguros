@@ -485,7 +485,7 @@ class DesempleoController extends Controller
                                     COALESCE(SUM(MontoNominal), 0) as MontoNominal,
                                     COALESCE(SUM(TotalCredito), 0) as TotalCredito
                                 ')
-                   // ->where('PolizaDesempleoDetalle', null)
+                    ->where('PolizaDesempleoDetalle', null)
                    // ->where('PolizaDesempleo', $id)
                     ->where('DesempleoTipoCartera', $item['DesempleoTipoCartera'])
                     ->first();
