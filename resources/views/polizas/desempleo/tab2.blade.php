@@ -374,9 +374,9 @@
                             </button>
                             <h4 class="modal-title">Cancelar Cobro</h4>
 
-                            <input type="hidden" name="Desempleo" value="{{ $desempleo->Id }}">
-                            <input type="hidden" name="MesCancelar" value="{{ isset($fecha) ? $fecha->Mes : '' }}">
-                            <input type="hidden" name="AxoCancelar" value="{{ isset($fecha) ? $fecha->Axo : '' }}">
+                            <input type="text" name="Desempleo" value="{{ $desempleo->Id }}">
+                            <input type="text" name="MesCancelar" value="{{ isset($fechas) ? $fechas->Mes : '' }}">
+                            <input type="text" name="AxoCancelar" value="{{ isset($fechas) ? $fechas->Axo : '' }}">
                         </div>
                         <div class="modal-body">
                             <p>¿Esta seguro/a que desea cancelar el cobro?</p>
