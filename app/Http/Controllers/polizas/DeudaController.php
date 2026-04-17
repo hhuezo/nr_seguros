@@ -731,7 +731,7 @@ class DeudaController extends Controller
 
             //para datos que no tengan la tasa en archivo excel
             if ($deuda->TarifaExcel != 1) {
-                foreach ($deuda->deuda_tipos_cartera as $deuda_tipos_cartera) {
+                foreach ($deuda->deuda_tipos_cartera->where('Activo', 1) as $deuda_tipos_cartera) {
 
                     foreach ($deuda_tipos_cartera->tasa_diferenciada as $tasa_diferenciada) {
 
