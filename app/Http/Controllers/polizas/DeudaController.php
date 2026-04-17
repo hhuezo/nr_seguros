@@ -683,6 +683,7 @@ class DeudaController extends Controller
 
             $requisitos = DeudaRequisitos::where('Activo', 1)->where('Deuda', $id)->get();
 
+
             //formando encabezados
             $data[0][0] = "REQUISITOS";
 
@@ -941,7 +942,7 @@ class DeudaController extends Controller
 
             $polizas_vida = Vida::get();
             $polizas_desempleo = Desempleo::get();
-            $requisitos = DeudaRequisitos::where('Deuda', $deuda->Id)->get();
+            $requisitos = DeudaRequisitos::where('Deuda', $deuda->Id)->where('Activo',1)->get();
             $tipos_contribuyente = TipoContribuyente::get();
             $rutas = Ruta::where('Activo', '=', 1)->get();
             $ubicaciones_cobro = UbicacionCobro::where('Activo', '=', 1)->get();
