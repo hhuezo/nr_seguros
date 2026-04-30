@@ -773,30 +773,80 @@ class DeudaCarteraController extends Controller
             return back()->withErrors($validator);
         }
 
-        // 2. Validar primera fila
+        // 2. Validar primera fila (orden y cantidad según plantilla complementaria)
+        $expectedColumnsCarteraCom = [
+            'DUI',
+            'PASAPORTE',
+            'CARNET RESI',
+            'NACIONALIDAD',
+            'FECNACIMIENTO',
+            'TIPO PERSONA',
+            'GENERO',
+            'PRIMERAPELLIDO',
+            'SEGUNDOAPELLIDO',
+            'APELLIDOCASADA',
+            'PRIMERNOMBRE',
+            'SEGUNDONOMBRE',
+            'NOMBRE SOCIEDAD',
+            'FECOTORGAMIENTO',
+            'FECHA DE VENCIMIENTO',
+            'NUMREFERENCIA',
+            ['SUMA ASEGURADA', 'MONTO OTORGADO'],
+            'SALDO DE CAPITAL',
+            'INTERES CORRIENTES',
+            'INTERES MORATORIO',
+            'INTERES COVID',
+            'TARIFA',
+            'TIPO DE DEUDA',
+            'PORCENTAJE EXTRAPRIMA',
+            'AÑO',
+            'MES',
+        ];
+
         $firstRow = $excel->getActiveSheet()->rangeToArray('A1:Z1')[0];
 
-        if (!isset($firstRow[0])) {
+        if (empty(array_filter($firstRow))) {
             $validator->errors()->add('Archivo', 'El archivo está vacío o no tiene el formato esperado');
             return back()->withErrors($validator);
         }
 
-        /*if (trim($firstRow[0]) !== "NIT") {
-            $validator->errors()->add('Archivo', 'Error de formato del archivo, La primera columna de la primera fila debe ser "NIT"');
-            return back()->withErrors($validator);
-        }*/
+        $firstRow = array_map('trim', $firstRow);
 
-        if (!isset($firstRow[1])) {
-            $validator->errors()->add('Archivo', 'Error de formato del archivo, El archivo no contiene la columna DUI');
+        if (count($firstRow) !== count($expectedColumnsCarteraCom)) {
+            $validator->errors()->add(
+                'Archivo',
+                'Error de formato: la primera fila debe tener exactamente ' . count($expectedColumnsCarteraCom) . ' columnas; se encontraron ' . count($firstRow) . '.'
+            );
             return back()->withErrors($validator);
         }
 
+        foreach ($expectedColumnsCarteraCom as $index => $expectedColumn) {
+            $actual = $firstRow[$index] ?? '';
+            $ok = is_array($expectedColumn)
+                ? in_array($actual, $expectedColumn, true)
+                : $actual === $expectedColumn;
+            if (!$ok) {
+                $expectedLabel = is_array($expectedColumn)
+                    ? "'" . implode("' o '", $expectedColumn) . "'"
+                    : "'" . $expectedColumn . "'";
+                $validator->errors()->add(
+                    'Archivo',
+                    'Error de formato: la columna ' . ($index + 1) . ' debe ser ' . $expectedLabel . '.'
+                );
+                return back()->withErrors($validator);
+            }
+        }
 
 
         try {
             PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->delete();
             Excel::import(new PolizaDeudaTempCarteraComImport($deuda->Id, $request->FechaInicio, $request->FechaFinal, $deuda_tipo_cartera->Id), $archivo);
         } catch (Throwable $e) {
+            // dd('holi',$e->getMessage());
+            if($e->getMessage() == 'Undefined array key 25' || $e->getMessage() == 'Undefined array key 24') {
+                alert()->error('Error', 'Los registros no tiene definido el mes o el año')->persistent('Ok');
+                return back();
+            }
             // Filtramos solo nuestros errores de validación
             if (strpos($e->getMessage(), 'VALIDATION_ERROR:') === 0) {
                 return back()->with('error', str_replace('VALIDATION_ERROR: ', '', $e->getMessage()));
