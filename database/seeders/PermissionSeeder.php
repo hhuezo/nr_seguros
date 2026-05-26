@@ -62,7 +62,8 @@ class PermissionSeeder extends Seeder
                     'tipos-imc',
                     'tipos-clientes',
                     'ocupaciones',
-                    'tipo-creditos'
+                    'tipo-creditos',
+                    'resumen-gestion'
                 ]
             ],
             // ID 6: Catalogo Deuda

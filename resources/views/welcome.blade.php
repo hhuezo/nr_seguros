@@ -300,6 +300,9 @@
                                             @can('tipo-creditos read')
                                                 <li><a href="{{ url('tipocreditos') }}">Tipos Crédito </a></li>
                                             @endcan
+                                            @can('resumen-gestion read')
+                                                <li><a href="{{ url('resumengestiones') }}">Resumen de Gestión</a></li>
+                                            @endcan
                                         </ul>
                                     </li>
                                 @endcan
