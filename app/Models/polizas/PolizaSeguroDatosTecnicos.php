@@ -20,6 +20,7 @@ class PolizaSeguroDatosTecnicos extends Model
         'PolizaSeguroId',
         'Nombre',
         'Descripcion',
+        'Valor',
         'Activo'
     ];
 }

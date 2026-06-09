@@ -10,7 +10,7 @@ class Producto extends Model
     use HasFactory;
     protected $table = 'producto';
     protected $primaryKey = 'Id'; // Especificamos la clave primaria
-    protected $fillable = ['Nombre', 'Aseguradora', 'NecesidadProteccion', 'Descripcion','Activo'];
+    protected $fillable = ['Nombre', 'Aseguradora', 'NecesidadProteccion', 'Descripcion','PermiteDependientesCertificado','Activo'];
     public $timestamps = false;
 
     public function aseguradoras()
@@ -36,5 +36,13 @@ class Producto extends Model
     public function planes()
     {
         return $this->hasMany(Plan::class, 'Producto', 'Id');
+    }
+
+    public function certificadoCampos()
+    {
+        return $this->hasMany(ProductoCertificadoCampo::class, 'Producto', 'Id')
+            ->where('Activo', 1)
+            ->orderBy('Orden', 'asc')
+            ->orderBy('Id', 'asc');
     }
 }

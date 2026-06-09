@@ -3,12 +3,13 @@
 namespace App\Models\polizas;
 
 use App\Models\catalogo\Aseguradora;
-use App\Models\catalogo\Cancelacion;
 use App\Models\catalogo\Cliente;
 use App\Models\catalogo\Departamento;
 use App\Models\catalogo\DepartamentoNR;
+use App\Models\catalogo\Ejecutivo;
 use App\Models\catalogo\EstadoPoliza;
 use App\Models\catalogo\FormaPago;
+use App\Models\catalogo\MotivoCancelacion;
 use App\Models\catalogo\Negocio;
 use App\Models\catalogo\Plan;
 use App\Models\catalogo\Producto;
@@ -29,10 +30,14 @@ class PolizaSeguro extends Model
 
         'Oferta',
         'FormaPago',
+        'NumCuotas',
         'NumeroPoliza',
         'EstadoPoliza',
         'Productos',
         'Planes',
+        'SumaAsegurada',
+        'PrimaNetaAnual',
+        'PorcentajeComisionNR',
         'Cliente',
         'VigenciaDesde',
         'VigenciaHasta',
@@ -42,6 +47,7 @@ class PolizaSeguro extends Model
         'CodCancelacion',
         'FechaEnvioAnexo',
         'Observacion',
+        'DatosRamo',
         'SolicitudRenovacion',
         'OrigenPoliza',
         'FechaVinculacion',
@@ -52,6 +58,7 @@ class PolizaSeguro extends Model
         'EjecutivoCia',
         'GrupoCliente',
         'Deducible',
+        'ValorDeducible',
         'Activo',
         'Usuario',
 
@@ -74,7 +81,7 @@ class PolizaSeguro extends Model
 
     public function cancelacion()
     {
-        return $this->belongsTo(Cancelacion::class, 'CodCancelacion', 'Id');
+        return $this->belongsTo(MotivoCancelacion::class, 'CodCancelacion', 'Id');
     }
 
     public function departamento()
@@ -97,6 +104,11 @@ class PolizaSeguro extends Model
         return $this->belongsTo(Plan::class, 'Planes', 'Id');
     }
 
+    public function ejecutivoCia()
+    {
+        return $this->belongsTo(Ejecutivo::class, 'EjecutivoCia', 'Id');
+    }
+
     public function coberturas()
     {
         return $this->hasMany(PolizaSeguroCobertura::class, 'PolizaSeguroId', 'Id');
@@ -105,5 +117,26 @@ class PolizaSeguro extends Model
     public function datosTecnicos()
     {
         return $this->hasMany(PolizaSeguroDatosTecnicos::class, 'PolizaSeguroId', 'Id');
+    }
+
+    public function certificados()
+    {
+        return $this->hasMany(PolizaSeguroCertificado::class, 'PolizaSeguroId', 'Id')
+            ->where('Activo', 1)
+            ->orderBy('NumeroCertificado', 'asc');
+    }
+
+    public function beneficiarios()
+    {
+        return $this->hasMany(PolizaSeguroBeneficiario::class, 'PolizaSeguroId', 'Id')
+            ->where('Activo', 1)
+            ->orderBy('Id', 'asc');
+    }
+
+    public function cesionBeneficios()
+    {
+        return $this->hasMany(PolizaSeguroCesionBeneficio::class, 'PolizaSeguroId', 'Id')
+            ->where('Activo', 1)
+            ->orderBy('Id', 'asc');
     }
 }

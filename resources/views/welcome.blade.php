@@ -231,6 +231,9 @@
                                             @can('estado-venta read')
                                                 <li><a href="{{ url('catalogo/estado_venta') }}">Estado Venta</a></li>
                                             @endcan
+                                            <li><a href="{{ url('catalogo/motivo_cancelacion') }}">Motivos de cancelacion (no declarativas)</a></li>
+                                            <li><a href="{{ url('catalogo/origen_poliza') }}">Origen de poliza (no declarativas)</a></li>
+                                            <li><a href="{{ url('catalogo/tipo_deducible') }}">Tipo de deducible (no declarativas)</a></li>
                                             @can('nr-cartera read')
                                                 <li><a href="{{ url('catalogo/nr_cartera') }}">Tipo Cartera NR </a></li>
                                             @endcan
@@ -251,6 +254,9 @@
                                             @endcan
                                             @can('ramo read')
                                                 <li><a href="{{ url('catalogo/necesidad_proteccion') }}">Ramos</a></li>
+                                            @endcan
+                                            @can('ramo read')
+                                                <li><a href="{{ url('catalogo/agrupador_ramo') }}">Agrupador de ramos</a></li>
                                             @endcan
                                             @can('perfiles read')
                                                 <li><a href="{{ url('catalogo/perfiles') }}">Requisitos de asegurabilidad</a>

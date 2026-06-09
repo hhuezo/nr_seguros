@@ -7,14 +7,18 @@ use App\Http\Controllers\ControlPrimasController;
 use App\Http\Controllers\seguridad\UserController;
 use App\Http\Controllers\catalogo\ClienteController;
 use App\Http\Controllers\catalogo\AseguradoraController;
+use App\Http\Controllers\catalogo\AgrupadorRamoController;
 use App\Http\Controllers\catalogo\AsignacionNecesidadAseguradoraController;
 use App\Http\Controllers\catalogo\BomberoController;
 use App\Http\Controllers\catalogo\ConfiguracionReciboController;
+use App\Http\Controllers\catalogo\DeducibleController;
 use App\Http\Controllers\catalogo\DepartamentoNRController;
 use App\Http\Controllers\catalogo\EjecutivoController;
 use App\Http\Controllers\catalogo\EstadoPolizaController;
 use App\Http\Controllers\catalogo\EstadoVentaController;
+use App\Http\Controllers\catalogo\MotivoCancelacionController;
 use App\Http\Controllers\catalogo\NecesidadProteccionController;
+use App\Http\Controllers\catalogo\OrigenPolizaController;
 use App\Http\Controllers\catalogo\TipoCarteraController;
 use App\Http\Controllers\catalogo\TipoNegocioController;
 use App\Http\Controllers\catalogo\TipoPolizaController;
@@ -101,12 +105,19 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('catalogo/ejecutivos', EjecutivoController::class);
     Route::resource('catalogo/estado_polizas', EstadoPolizaController::class);
     Route::resource('catalogo/estado_venta', EstadoVentaController::class);
+    Route::resource('catalogo/motivo_cancelacion', MotivoCancelacionController::class);
+    Route::resource('catalogo/origen_poliza', OrigenPolizaController::class);
+    Route::resource('catalogo/tipo_deducible', DeducibleController::class);
     Route::resource('catalogo/tipo_cartera', TipoCarteraController::class);
     Route::resource('catalogo/nr_cartera', NrCarteraController::class);
     Route::resource('catalogo/tipo_negocio', TipoNegocioController::class);
     Route::resource('catalogo/tipo_poliza', TipoPolizaController::class);
     Route::resource('catalogo/ubicacion_cobro', UbicacionCobroController::class);
+    Route::post('catalogo/necesidad_proteccion/add_campo', [NecesidadProteccionController::class, 'add_campo']);
+    Route::post('catalogo/necesidad_proteccion/edit_campo', [NecesidadProteccionController::class, 'edit_campo']);
+    Route::post('catalogo/necesidad_proteccion/delete_campo', [NecesidadProteccionController::class, 'delete_campo']);
     Route::resource('catalogo/necesidad_proteccion', NecesidadProteccionController::class);
+    Route::resource('catalogo/agrupador_ramo', AgrupadorRamoController::class);
     Route::resource('catalogo/necesidad_aseguradora', AsignacionNecesidadAseguradoraController::class);
     Route::resource('catalogo/departamento_nr', DepartamentoNRController::class);
 
@@ -116,6 +127,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('catalogo/producto/add_dato_tecnico', [ProductoController::class, 'add_dato_tecnico']);
     Route::post('catalogo/producto/edit_dato_tecnico', [ProductoController::class, 'edit_dato_tecnico']);
     Route::post('catalogo/producto/delete_dato_tecnico', [ProductoController::class, 'delete_dato_tecnico']);
+    Route::post('catalogo/producto/certificado/config/{id}', [ProductoController::class, 'save_certificado_config']);
+    Route::post('catalogo/producto/certificado/add_campo', [ProductoController::class, 'add_certificado_campo']);
+    Route::post('catalogo/producto/certificado/edit_campo', [ProductoController::class, 'edit_certificado_campo']);
+    Route::post('catalogo/producto/certificado/delete_campo', [ProductoController::class, 'delete_certificado_campo']);
     Route::resource('catalogo/producto', ProductoController::class);
 
 
@@ -123,11 +138,13 @@ Route::middleware(['auth'])->group(function () {
     Route::post('catalogo/plan/edit_cobertura_detalle', [PlanController::class, 'edit_cobertura_detalle']);
     Route::resource('catalogo/plan', PlanController::class);
 
-    Route::get('negocio/getCliente', [NegocioController::class, 'getCliente']);
-    Route::get('negocio/getProducto', [NegocioController::class, 'getProducto']);
-    Route::get('negocio/getPlan', [NegocioController::class, 'getPlan']);
-    Route::get('negocio/elegirCotizacion', [NegocioController::class, 'elegirCotizacion']);
+      Route::get('negocio/getCliente', [NegocioController::class, 'getCliente']);
+      Route::get('negocio/getProducto', [NegocioController::class, 'getProducto']);
+      Route::get('negocio/getPlan', [NegocioController::class, 'getPlan']);
+      Route::get('negocio/getCamposRamo', [NegocioController::class, 'getCamposRamo']);
+      Route::get('negocio/elegirCotizacion', [NegocioController::class, 'elegirCotizacion']);
 
+    Route::post('catalogo/negocio/{id}/datos_ramo', [NegocioController::class, 'update_datos_ramo']);
     Route::post('catalogo/negocio/add_cotizacion', [NegocioController::class, 'add_cotizacion']);
     Route::post('catalogo/negocio/edit_cotizacion', [NegocioController::class, 'edit_cotizacion']);
     Route::post('catalogo/negocio/delete_cotizacion', [NegocioController::class, 'delete_cotizacion']);
@@ -244,6 +261,18 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('poliza/seguro/cobertura_store/{id}', [PolizaSeguroController::class, 'cobertura_store']);
     Route::post('poliza/seguro/dato_tecnico_store/{id}', [PolizaSeguroController::class, 'dato_tecnico_store']);
+    Route::post('poliza/seguro/datos_tecnicos_save/{id}', [PolizaSeguroController::class, 'datos_tecnicos_save']);
+    Route::post('poliza/seguro/certificado_store/{id}', [PolizaSeguroController::class, 'certificado_store']);
+    Route::post('poliza/seguro/certificado_update/{id}', [PolizaSeguroController::class, 'certificado_update']);
+    Route::post('poliza/seguro/certificado_delete/{id}', [PolizaSeguroController::class, 'certificado_delete']);
+    Route::post('poliza/seguro/dependiente_store/{id}', [PolizaSeguroController::class, 'dependiente_store']);
+    Route::post('poliza/seguro/dependiente_update/{id}', [PolizaSeguroController::class, 'dependiente_update']);
+    Route::post('poliza/seguro/dependiente_delete/{id}', [PolizaSeguroController::class, 'dependiente_delete']);
+    Route::post('poliza/seguro/cesion_beneficios_store/{id}', [PolizaSeguroController::class, 'cesion_beneficios_store']);
+    Route::post('poliza/seguro/cesion_beneficios_update/{id}', [PolizaSeguroController::class, 'cesion_beneficios_update']);
+    Route::post('poliza/seguro/cesion_beneficios_delete/{id}', [PolizaSeguroController::class, 'cesion_beneficios_delete']);
+    Route::post('poliza/seguro/beneficiario_store/{id}', [PolizaSeguroController::class, 'beneficiario_store']);
+    Route::post('poliza/seguro/beneficiario_delete/{id}', [PolizaSeguroController::class, 'beneficiario_delete']);
     Route::delete('poliza/seguro/cobertura_delete/{id}', [PolizaSeguroController::class, 'cobertura_delete']);
     Route::delete('poliza/seguro/dato_tecnico_delete/{id}', [PolizaSeguroController::class, 'dato_tecnico_delete']);
 

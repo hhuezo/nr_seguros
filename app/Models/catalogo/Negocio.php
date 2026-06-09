@@ -30,6 +30,7 @@ class Negocio extends Model
         'DepartamentoNr',
         'NumCoutas',
         'Observacion',
+        'DatosRamo',
         'Activo',
         'FechaIngreso',
         'UsuarioIngreso',

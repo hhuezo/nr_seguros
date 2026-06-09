@@ -4,12 +4,11 @@
     <div class="x_panel">
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-horizontal form-label-left">
-
                 <div class="x_title">
                     <h2>Modificar Producto <small></small></h2>
                     <ul class="nav navbar-right panel_toolbox">
                         <a href="{{ url('catalogo/producto') }}?idRegistro={{ $producto->Id }}"
-                            class="btn btn-info fa fa-undo " style="color: white"> Atrás</a>
+                            class="btn btn-info fa fa-undo " style="color: white"> Atras</a>
                     </ul>
                     <div class="clearfix"></div>
                 </div>
@@ -23,63 +22,49 @@
                     </div>
                 @endif
 
-                <div class="" role="tabpanel" data-example-id="togglable-tabs">
+                <div role="tabpanel">
                     <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-                        <li role="presentation" class="{{ session('tab1') == 1 ? 'active' : '' }}"><a href="#producto"
-                                id="producto-tab" role="tab" data-toggle="tab" aria-expanded="true">Producto</a>
-
+                        <li role="presentation" class="{{ session('tab1') == 1 ? 'active' : '' }}">
+                            <a href="#producto" id="producto-tab" role="tab" data-toggle="tab">Producto</a>
                         </li>
-                        <li role="presentation" class="{{ session('tab1') == 2 ? 'active' : '' }}"><a href="#coberturas"
-                                role="tab" id="coberturas-tab" data-toggle="tab" aria-expanded="false">Coberturas</a>
+                        <li role="presentation" class="{{ session('tab1') == 2 ? 'active' : '' }}">
+                            <a href="#coberturas" role="tab" id="coberturas-tab" data-toggle="tab">Coberturas</a>
                         </li>
-
-                        <li role="presentation" class="{{ session('tab1') == 3 ? 'active' : '' }}"><a href="#datos_tecnicos"
-                                role="tab" id="datos_tecnicos-tab" data-toggle="tab" aria-expanded="false">Datos
-                                técnicos</a>
+                        <li role="presentation" class="{{ session('tab1') == 3 ? 'active' : '' }}">
+                            <a href="#datos_tecnicos" role="tab" id="datos_tecnicos-tab" data-toggle="tab">Datos tecnicos</a>
                         </li>
-
+                        <li role="presentation" class="{{ session('tab1') == 4 ? 'active' : '' }}">
+                            <a href="#certificado" role="tab" id="certificado-tab" data-toggle="tab">Certificado</a>
+                        </li>
                     </ul>
 
-
                     <div id="myTabContent" class="tab-content">
-                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 1 ? 'active in' : '' }} "
-                            id="producto" aria-labelledby="home-tab">
-
+                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 1 ? 'active in' : '' }}" id="producto">
                             <form method="POST" action="{{ route('producto.update', $producto->Id) }}">
                                 @method('PUT')
                                 @csrf
-
                                 <div class="x_content">
                                     <br />
                                     <div class="row">
                                         <div class="col-sm-6">
                                             <label class="control-label ">Nombre del Producto</label>
-                                            <input type="text" name="Nombre" id="Nombre"
-                                                value="{{ $producto->Nombre }}" class="form-control">
+                                            <input type="text" name="Nombre" value="{{ $producto->Nombre }}" class="form-control">
                                         </div>
                                         <div class="col-sm-6">
-                                            <label for="Aseguradora" class="form-label">Aseguradora</label>
-                                            <select id="Aseguradora" name="Aseguradora" class="form-control select2"
-                                                style="width: 100%">
+                                            <label class="form-label">Aseguradora</label>
+                                            <select name="Aseguradora" class="form-control select2" style="width: 100%">
                                                 @foreach ($aseguradoras as $obj)
-                                                    <option value="{{ $obj->Id }}"
-                                                        {{ $producto->Aseguradora == $obj->Id ? 'selected' : '' }}>
-                                                        {{ $obj->Nombre }}
-                                                    </option>
+                                                    <option value="{{ $obj->Id }}" {{ $producto->Aseguradora == $obj->Id ? 'selected' : '' }}>{{ $obj->Nombre }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
                                     </div>
                                     <div class="row" style="padding-top: 15px!important;">
                                         <div class="col-sm-6">
-                                            <label for="NecesidadProteccion" class="form-label">Ramo</label>
-                                            <select id="NecesidadProteccion" name="NecesidadProteccion"
-                                                class="form-control select2" style="width: 100%">
+                                            <label class="form-label">Ramo</label>
+                                            <select name="NecesidadProteccion" class="form-control select2" style="width: 100%">
                                                 @foreach ($ramos as $obj)
-                                                    <option value="{{ $obj->Id }}"
-                                                        {{ $producto->NecesidadProteccion == $obj->Id ? 'selected' : '' }}>
-                                                        {{ $obj->Nombre }}
-                                                    </option>
+                                                    <option value="{{ $obj->Id }}" {{ $producto->NecesidadProteccion == $obj->Id ? 'selected' : '' }}>{{ $obj->Nombre }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -87,30 +72,25 @@
                                     <br>
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                            <label for="Descripcion" class="form-label">Descripción</label>
+                                            <label class="form-label">Descripcion</label>
                                             <textarea class="form-control" name="Descripcion">{{ $producto->Descripcion }}</textarea>
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="form-group" align="center">
                                     @can('producto edit')
                                         <button class="btn btn-success" type="submit">Modificar</button>
                                     @endcan
-                                    <a href="{{ url('catalogo/producto/') }}"><button class="btn btn-primary"
-                                            type="button">Cancelar</button></a>
+                                    <a href="{{ url('catalogo/producto/') }}"><button class="btn btn-primary" type="button">Cancelar</button></a>
                                 </div>
-
                             </form>
-
                         </div>
 
-                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 2 ? 'active in' : '' }}"
-                            id="coberturas" aria-labelledby="home-tab">
+                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 2 ? 'active in' : '' }}" id="coberturas">
                             <div class="col-12" style="text-align: right;">
-                                <button class="btn btn-primary" data-toggle="modal"
-                                    data-target=".bs-modal-nuevo-cobertura"><i class="fa fa-plus fa-lg"></i>
-                                    Nueva Cobertura</button>
+                                <button class="btn btn-primary" data-toggle="modal" data-target=".bs-modal-nuevo-cobertura">
+                                    <i class="fa fa-plus fa-lg"></i> Nueva Cobertura
+                                </button>
                             </div>
                             @if ($coberturas->count() > 0)
                                 <br>
@@ -119,7 +99,7 @@
                                         <tr>
                                             <th>N</th>
                                             <th>Cobertura</th>
-                                            <th>Tarificación</th>
+                                            <th>Tarificacion</th>
                                             <th>Descuento</th>
                                             <th>IVA</th>
                                             <th>Acciones</th>
@@ -131,17 +111,8 @@
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $obj->Nombre }}</td>
                                                 <td>{{ $obj->tarificacion->Nombre ?? '' }}</td>
-
-                                                @if ($obj->Descuento)
-                                                    <td>Si</td>
-                                                @else
-                                                    <td>No</td>
-                                                @endif
-                                                @if ($obj->Iva)
-                                                    <td>Si</td>
-                                                @else
-                                                    <td>No</td>
-                                                @endif
+                                                <td>{{ $obj->Descuento ? 'Si' : 'No' }}</td>
+                                                <td>{{ $obj->Iva ? 'Si' : 'No' }}</td>
                                                 <td>
                                                     <i class="fa fa-pencil fa-lg"
                                                         onclick="modal_edit_cobertura({{ $obj->Id }},'{{ $obj->Nombre }}','{{ $obj->Tarificacion }}','{{ $obj->Descuento }}','{{ $obj->Iva }}')"
@@ -150,32 +121,21 @@
                                                     <i class="fa fa-trash fa-lg"
                                                         onclick="modal_delete_cobertura({{ $obj->Id }})"
                                                         data-target="#modal-delete-cobertura" data-toggle="modal"></i>
-
-
                                                 </td>
                                             </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
                             @else
-                                <div style="height: 200px">
-                                    <br>
-                                    <div class="alert alert-danger alert-dismissible " role="alert">
-                                        <button type="button" class="close" data-dismiss="alert"
-                                            aria-label="Close"><span aria-hidden="true">×</span>
-                                        </button>
-                                        <strong>Sin datos que mostrar.</strong>
-                                    </div>
-                                </div>
+                                <div style="height: 120px"><br><div class="alert alert-danger">Sin datos que mostrar.</div></div>
                             @endif
                         </div>
 
-                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 3 ? 'active in' : '' }}"
-                            id="datos_tecnicos" aria-labelledby="home-tab">
+                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 3 ? 'active in' : '' }}" id="datos_tecnicos">
                             <div class="col-12" style="text-align: right;">
-                                <button class="btn btn-primary" data-toggle="modal"
-                                    data-target=".bs-modal-nuevo-dato_tecnico"><i class="fa fa-plus fa-lg"></i>
-                                    Nuevo Dato Técnico</button>
+                                <button class="btn btn-primary" data-toggle="modal" data-target=".bs-modal-nuevo-dato_tecnico">
+                                    <i class="fa fa-plus fa-lg"></i> Nuevo Dato Tecnico
+                                </button>
                             </div>
                             @if ($datos_tecnicos->count() > 0)
                                 <br>
@@ -184,7 +144,7 @@
                                         <tr>
                                             <th>N</th>
                                             <th>Campo</th>
-                                            <th>Descripción</th>
+                                            <th>Descripcion</th>
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
@@ -208,310 +168,374 @@
                                     </tbody>
                                 </table>
                             @else
-                                <div style="height: 200px">
-                                    <br>
-                                    <div class="alert alert-danger alert-dismissible " role="alert">
-                                        <button type="button" class="close" data-dismiss="alert"
-                                            aria-label="Close"><span aria-hidden="true">×</span>
-                                        </button>
-                                        <strong>Sin datos que mostrar.</strong>
-                                    </div>
-                                </div>
+                                <div style="height: 120px"><br><div class="alert alert-danger">Sin datos que mostrar.</div></div>
                             @endif
                         </div>
 
+                        <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 4 ? 'active in' : '' }}" id="certificado">
+                            <form method="POST" action="{{ url('catalogo/producto/certificado/config/' . $producto->Id) }}">
+                                @csrf
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <label class="control-label">El certificado permite dependientes</label>
+                                        <select name="PermiteDependientesCertificado" class="form-control">
+                                            <option value="0" {{ (int) $producto->PermiteDependientesCertificado === 0 ? 'selected' : '' }}>No</option>
+                                            <option value="1" {{ (int) $producto->PermiteDependientesCertificado === 1 ? 'selected' : '' }}>Si</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-6" style="padding-top: 24px;">
+                                        <button class="btn btn-success" type="submit">Guardar configuracion</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <hr>
+                            <div class="col-12" style="text-align: right;">
+                                <button class="btn btn-primary" data-toggle="modal" data-target=".bs-modal-nuevo-certificado-campo">
+                                    <i class="fa fa-plus fa-lg"></i> Nuevo Campo de Certificado
+                                </button>
+                            </div>
+                            @if ($certificado_campos->count() > 0)
+                                <br>
+                                <table class="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Orden</th>
+                                            <th>Etiqueta</th>
+                                            <th>Nombre campo</th>
+                                            <th>Tipo</th>
+                                            <th>Validacion</th>
+                                            <th>Req.</th>
+                                            <th>Reporte</th>
+                                            <th>Opciones</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($certificado_campos as $obj)
+                                            @php
+                                                $opciones = [];
+                                                if ($obj->OpcionesJson) {
+                                                    $tmp = json_decode($obj->OpcionesJson, true);
+                                                    $opciones = is_array($tmp) ? $tmp : [];
+                                                }
+                                            @endphp
+                                            <tr>
+                                                <td>{{ $obj->Orden }}</td>
+                                                <td>{{ $obj->Etiqueta }}</td>
+                                                <td>{{ $obj->NombreCampo }}</td>
+                                                <td>{{ $obj->TipoCampo }}</td>
+                                                <td>{{ $obj->ValidacionCampo ?? 'ninguna' }}</td>
+                                                <td>{{ $obj->Requerido ? 'Si' : 'No' }}</td>
+                                                <td>{{ $obj->MostrarEnReporte ? 'Si' : 'No' }}</td>
+                                                <td>{{ implode(', ', $opciones) }}</td>
+                                                <td>
+                                                    <i class="fa fa-pencil fa-lg"
+                                                        onclick='modal_edit_certificado_campo(@json($obj->Id), @json($obj->Etiqueta), @json($obj->NombreCampo), @json($obj->TipoCampo), @json($obj->ValidacionCampo ?? "ninguna"), @json((string)$obj->Requerido), @json((string)($obj->MostrarEnReporte ?? 0)), @json((string)$obj->Orden), @json($obj->Placeholder ?? ""), @json($obj->Ayuda ?? ""), @json(implode("\n", $opciones)))'
+                                                        data-target="#modal-edit-certificado-campo" data-toggle="modal"></i>
+                                                    &nbsp;&nbsp;
+                                                    <i class="fa fa-trash fa-lg"
+                                                        onclick="modal_delete_certificado_campo({{ $obj->Id }})"
+                                                        data-target="#modal-delete-certificado-campo" data-toggle="modal"></i>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            @else
+                                <div style="height: 120px"><br><div class="alert alert-danger">Sin campos de certificado configurados.</div></div>
+                            @endif
+                        </div>
                     </div>
-
-
-
-                </div>
-            </div>
-
-        </div>
-
-        {{-- modales datos tecnicos --}}
-        {{-- ingresar dato tecnico --}}
-        <div class="col-12">
-            <div class="modal fade bs-modal-nuevo-dato_tecnico" tabindex="-1" role="dialog" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <form method="POST" action="{{ url('catalogo/producto/add_dato_tecnico') }}">
-                        @csrf
-                        <div class="modal-content">
-
-                            <div class="modal-header">
-                                <h4 class="modal-title" id="myModalLabel">Nuevo dato técnico</h4>
-                            </div>
-                            <div class="modal-body">
-                                <input type="hidden" name="Producto" value="{{ $producto->Id }}" class="form-control">
-                                <div class="form-group">
-                                    <div class="row">
-                                        Nombre
-                                        <input type="text" name="Nombre" class="form-control" required>
-                                    </div>
-                                    <div class="row">
-                                        Descripción
-                                        <textarea class="form-control" name="Descripcion"></textarea>
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div>&nbsp; </div>
-                            <div class="clearfix"></div>
-                            <br>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                <button type="submit" class="btn btn-primary">Guardar</button>
-                            </div>
-
-                    </form>
-
                 </div>
             </div>
         </div>
-        {{-- editar dato tecnico --}}
-        <div class="col-12">
-            <div class="modal fade modal-edit-dato_tecnico" tabindex="-1" role="dialog" aria-hidden="true"
-                id="modal-edit-dato_tecnico">
-                <div class="modal-dialog modal-lg">
-                    <form method="POST" action="{{ url('catalogo/producto/edit_dato_tecnico') }}">
-                        @csrf
-                        <div class="modal-content">
 
-                            <div class="modal-header">
-                                <h4 class="modal-title" id="myModalLabel">Editar dato técnico</h4>
-                                <input type="hidden" name="Id" id="ModalDatoTecnicoId" class="form-control"
-                                    required>
-                            </div>
-                            <div class="modal-body">
-                                <input type="hidden" name="Producto" value="{{ $producto->Id }}" class="form-control">
-                                <div class="form-group">
-                                    <div class="row">
-                                        Nombre
-                                        <input type="text" name="Nombre" id="ModalDatoTecnicoNombre"
-                                            class="form-control" required>
-                                    </div>
-                                    <div class="row">
-                                        Descripción
-                                        <textarea class="form-control" name="Descripcion" id="ModalDatoTecnicoDescripcion"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>&nbsp; </div>
-                            <div class="clearfix"></div>
-                            <br>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                <button type="submit" class="btn btn-primary">Guardar</button>
-                            </div>
-
-                    </form>
-
-                </div>
+        <div class="modal fade bs-modal-nuevo-dato_tecnico" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <form method="POST" action="{{ url('catalogo/producto/add_dato_tecnico') }}">
+                    @csrf
+                    <div class="modal-content">
+                        <div class="modal-header"><h4 class="modal-title">Nuevo dato tecnico</h4></div>
+                        <div class="modal-body">
+                            <input type="hidden" name="Producto" value="{{ $producto->Id }}" class="form-control">
+                            <div class="form-group">Nombre<input type="text" name="Nombre" class="form-control" required></div>
+                            <div class="form-group">Descripcion<textarea class="form-control" name="Descripcion"></textarea></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
-        {{-- eliminar dato tecnico --}}
 
-        <div class="col-12">
-            <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
-                id="modal-delete-dato_tecnico">
+        <div class="modal fade modal-edit-dato_tecnico" tabindex="-1" role="dialog" aria-hidden="true" id="modal-edit-dato_tecnico">
+            <div class="modal-dialog modal-lg">
+                <form method="POST" action="{{ url('catalogo/producto/edit_dato_tecnico') }}">
+                    @csrf
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Editar dato tecnico</h4>
+                            <input type="hidden" name="Id" id="ModalDatoTecnicoId">
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" name="Producto" value="{{ $producto->Id }}" class="form-control">
+                            <div class="form-group">Nombre<input type="text" name="Nombre" id="ModalDatoTecnicoNombre" class="form-control" required></div>
+                            <div class="form-group">Descripcion<textarea class="form-control" name="Descripcion" id="ModalDatoTecnicoDescripcion"></textarea></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
 
+        <div class="modal fade" id="modal-delete-dato_tecnico" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
                 <form method="POST" action="{{ url('catalogo/producto/delete_dato_tecnico') }}">
                     @csrf
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">×</span>
-                                </button>
-                                <input type="hidden" name="Id" id="IdDatoTecnico">
-                                <h4 class="modal-title">Eliminar dato técnico</h4>
-                            </div>
-                            <div class="modal-body">
-                                <p>Confirme si desea Eliminar el Registro</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                                <button type="submit" class="btn btn-primary">Confirmar</button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    {{-- modales cobertura --}}
-    <div class="col-12">
-        <div class="modal fade bs-modal-nuevo-cobertura" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <form method="POST" action="{{ url('catalogo/producto/add_cobertura') }}">
-                    @csrf
                     <div class="modal-content">
-
-                        <div class="modal-header">
-                            <h4 class="modal-title" id="myModalLabel">Nueva cobertura</h4>
-                        </div>
-                        <div class="modal-body">
-                            <input type="hidden" name="Producto" value="{{ $producto->Id }}" class="form-control">
-                            <div class="form-group">
-                                <div class="col-sm-6">
-                                    Nombre
-                                    <input type="text" name="Nombre" class="form-control" required>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <div class="col-sm-6">
-                                    Tarificación
-                                    <select name="Tarificacion" id="Tarificacion" class="form-control" required>
-                                        @foreach ($tarificaciones as $tarificacion)
-                                            <option value="{{ $tarificacion->Id }}">{{ $tarificacion->Nombre }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <div class="col-sm-6">
-                                    Descuento
-                                    <select name="Descuento" id="Descuento" class="form-control" required>
-                                        <option value="0" {{ old('Descuento') == '0' ? 'selected' : '' }}>No</option>
-                                        <option value="1" {{ old('Descuento') == '1' ? 'selected' : '' }}>Si</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-sm-6">
-                                    IVA
-                                    <select name="Iva" id="Iva" class="form-control" required>
-                                        <option value="0" {{ old('Iva') == '0' ? 'selected' : '' }}>No</option>
-                                        <option value="1" {{ old('Iva') == '1' ? 'selected' : '' }}>Si</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                        </div>
-                        <div>&nbsp; </div>
-                        <div class="clearfix"></div>
-                        <br>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary">Guardar</button>
-                        </div>
-
-                </form>
-
-            </div>
-        </div>
-    </div>
-
-    <div class="col-12">
-        <div class="modal fade modal-edit-cobertura" tabindex="-1" role="dialog" aria-hidden="true"
-            id="modal-edit-cobertura">
-            <div class="modal-dialog modal-lg">
-                <form method="POST" action="{{ url('catalogo/producto/edit_cobertura') }}">
-                    @csrf
-                    <div class="modal-content">
-
-                        <div class="modal-header">
-                            <h4 class="modal-title" id="myModalLabel">Editar cobertura</h4>
-                            <input type="hidden" name="Id" id="ModalCoberturaId" class="form-control" required>
-                        </div>
-                        <div class="modal-body">
-                            <input type="hidden" name="Producto" value="{{ $producto->Id }}" class="form-control">
-                            <div class="form-group">
-                                <div class="col-sm-6">
-                                    Nombre
-                                    <input type="text" name="Nombre" id="ModalCoberturaNombre" class="form-control"
-                                        required>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <div class="col-sm-6">
-                                    Tarificación
-                                    <select name="Tarificacion" id="ModalCoberturaTarificacion" class="form-control"
-                                        required>
-                                        @foreach ($tarificaciones as $tarificacion)
-                                            <option value="{{ $tarificacion->Id }}"
-                                                {{ $producto->Tarificacion = $tarificacion->Id ? 'selectred' : '' }}>
-                                                {{ $tarificacion->Nombre }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <div class="col-sm-6">
-                                    Descuento
-                                    <select name="Descuento" id="ModalCoberturaDescuento" class="form-control" required>
-                                        <option value="0" {{ old('Descuento') == '0' ? 'selected' : '' }}>No</option>
-                                        <option value="1" {{ old('Descuento') == '1' ? 'selected' : '' }}>Si</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-sm-6">
-                                    IVA
-                                    <select name="Iva" id="ModalCoberturaIva" class="form-control" required>
-                                        <option value="0" {{ old('Iva') == '0' ? 'selected' : '' }}>No</option>
-                                        <option value="1" {{ old('Iva') == '1' ? 'selected' : '' }}>Si</option>
-                                    </select>
-                                </div>
-                            </div>
-
-
-                        </div>
-                        <div>&nbsp; </div>
-                        <div class="clearfix"></div>
-                        <br>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary">Guardar</button>
-                        </div>
-
-                </form>
-
-            </div>
-        </div>
-    </div>
-
-    <div class="col-12">
-        <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
-            id="modal-delete-cobertura">
-
-            <form method="POST" action="{{ url('catalogo/producto/delete_cobertura') }}">
-                @csrf
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">×</span>
-                            </button>
-                            <input type="hidden" name="Id" id="Idcobertura">
-                            <h4 class="modal-title">Eliminar Cobertura</h4>
-                        </div>
-                        <div class="modal-body">
-                            <p>Confirme si desea Eliminar el Registro</p>
-                        </div>
+                        <div class="modal-header"><h4 class="modal-title">Eliminar dato tecnico</h4></div>
+                        <div class="modal-body"><input type="hidden" name="Id" id="IdDatoTecnico"><p>Confirme si desea eliminar.</p></div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
                             <button type="submit" class="btn btn-primary">Confirmar</button>
                         </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
+        </div>
+
+        <div class="modal fade bs-modal-nuevo-cobertura" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <form method="POST" action="{{ url('catalogo/producto/add_cobertura') }}">
+                    @csrf
+                    <div class="modal-content">
+                        <div class="modal-header"><h4 class="modal-title">Nueva cobertura</h4></div>
+                        <div class="modal-body">
+                            <input type="hidden" name="Producto" value="{{ $producto->Id }}">
+                            <div class="form-group">Nombre<input type="text" name="Nombre" class="form-control" required></div>
+                            <div class="form-group">
+                                Tarificacion
+                                <select name="Tarificacion" class="form-control" required>
+                                    @foreach ($tarificaciones as $tarificacion)
+                                        <option value="{{ $tarificacion->Id }}">{{ $tarificacion->Nombre }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">Descuento
+                                <select name="Descuento" class="form-control" required>
+                                    <option value="0">No</option><option value="1">Si</option>
+                                </select>
+                            </div>
+                            <div class="form-group">IVA
+                                <select name="Iva" class="form-control" required>
+                                    <option value="0">No</option><option value="1">Si</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-edit-cobertura" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <form method="POST" action="{{ url('catalogo/producto/edit_cobertura') }}">
+                    @csrf
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Editar cobertura</h4>
+                            <input type="hidden" name="Id" id="ModalCoberturaId">
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" name="Producto" value="{{ $producto->Id }}">
+                            <div class="form-group">Nombre<input type="text" name="Nombre" id="ModalCoberturaNombre" class="form-control" required></div>
+                            <div class="form-group">Tarificacion
+                                <select name="Tarificacion" id="ModalCoberturaTarificacion" class="form-control" required>
+                                    @foreach ($tarificaciones as $tarificacion)
+                                        <option value="{{ $tarificacion->Id }}">{{ $tarificacion->Nombre }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">Descuento
+                                <select name="Descuento" id="ModalCoberturaDescuento" class="form-control" required>
+                                    <option value="0">No</option><option value="1">Si</option>
+                                </select>
+                            </div>
+                            <div class="form-group">IVA
+                                <select name="Iva" id="ModalCoberturaIva" class="form-control" required>
+                                    <option value="0">No</option><option value="1">Si</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-delete-cobertura" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <form method="POST" action="{{ url('catalogo/producto/delete_cobertura') }}">
+                    @csrf
+                    <div class="modal-content">
+                        <div class="modal-header"><h4 class="modal-title">Eliminar cobertura</h4></div>
+                        <div class="modal-body"><input type="hidden" name="Id" id="Idcobertura"><p>Confirme si desea eliminar.</p></div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="modal fade bs-modal-nuevo-certificado-campo" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <form method="POST" action="{{ url('catalogo/producto/certificado/add_campo') }}">
+                    @csrf
+                    <div class="modal-content">
+                        <div class="modal-header"><h4 class="modal-title">Nuevo campo de certificado</h4></div>
+                        <div class="modal-body">
+                            <input type="hidden" name="Producto" value="{{ $producto->Id }}">
+                            <div class="row">
+                                <div class="col-sm-6"><label>Etiqueta</label><input type="text" name="Etiqueta" class="form-control" required></div>
+                                <div class="col-sm-6"><label>Nombre campo (clave)</label><input type="text" name="NombreCampo" class="form-control" required></div>
+                            </div>
+                            <div class="row" style="margin-top:10px;">
+                                <div class="col-sm-4"><label>Tipo</label>
+                                    <select name="TipoCampo" class="form-control">
+                                        <option value="text">text</option><option value="number">number</option><option value="date">date</option>
+                                        <option value="select">select</option><option value="textarea">textarea</option><option value="email">email</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-4"><label>Validacion del valor</label>
+                                    <select name="ValidacionCampo" class="form-control">
+                                        <option value="ninguna">Sin validacion especial</option>
+                                        <option value="dui">DUI 00000000-0</option>
+                                        <option value="solo_numeros">Solo numeros</option>
+                                        <option value="solo_numeros_letras">Solo numeros y letras</option>
+                                        <option value="solo_texto">Solo letras y caracteres comunes</option>
+                                        <option value="correo">Correo electronico</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-4"><label>Requerido</label>
+                                    <select name="Requerido" class="form-control"><option value="1">Si</option><option value="0">No</option></select>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top:10px;">
+                                <div class="col-sm-4"><label>Mostrar en reporte</label>
+                                    <select name="MostrarEnReporte" class="form-control"><option value="0">No</option><option value="1">Si</option></select>
+                                </div>
+                                <div class="col-sm-4"><label>Orden</label><input type="number" name="Orden" min="1" class="form-control" value="1"></div>
+                            </div>
+                            <div class="row" style="margin-top:10px;">
+                                <div class="col-sm-6"><label>Placeholder</label><input type="text" name="Placeholder" class="form-control"></div>
+                                <div class="col-sm-6"><label>Ayuda</label><input type="text" name="Ayuda" class="form-control"></div>
+                            </div>
+                            <div class="form-group" style="margin-top:10px;">
+                                <label>Opciones (solo si el tipo es select, una por linea)</label>
+                                <textarea name="OpcionesTexto" class="form-control" rows="4"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-edit-certificado-campo" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <form method="POST" action="{{ url('catalogo/producto/certificado/edit_campo') }}">
+                    @csrf
+                    <div class="modal-content">
+                        <div class="modal-header"><h4 class="modal-title">Editar campo de certificado</h4></div>
+                        <div class="modal-body">
+                            <input type="hidden" name="Id" id="CertCampoId">
+                            <div class="row">
+                                <div class="col-sm-6"><label>Etiqueta</label><input type="text" name="Etiqueta" id="CertCampoEtiqueta" class="form-control" required></div>
+                                <div class="col-sm-6"><label>Nombre campo (clave)</label><input type="text" name="NombreCampo" id="CertCampoNombreCampo" class="form-control" required></div>
+                            </div>
+                            <div class="row" style="margin-top:10px;">
+                                <div class="col-sm-4"><label>Tipo</label>
+                                    <select name="TipoCampo" id="CertCampoTipoCampo" class="form-control">
+                                        <option value="text">text</option><option value="number">number</option><option value="date">date</option>
+                                        <option value="select">select</option><option value="textarea">textarea</option><option value="email">email</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-4"><label>Validacion del valor</label>
+                                    <select name="ValidacionCampo" id="CertCampoValidacionCampo" class="form-control">
+                                        <option value="ninguna">Sin validacion especial</option>
+                                        <option value="dui">DUI 00000000-0</option>
+                                        <option value="solo_numeros">Solo numeros</option>
+                                        <option value="solo_numeros_letras">Solo numeros y letras</option>
+                                        <option value="solo_texto">Solo letras y caracteres comunes</option>
+                                        <option value="correo">Correo electronico</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-4"><label>Requerido</label>
+                                    <select name="Requerido" id="CertCampoRequerido" class="form-control"><option value="1">Si</option><option value="0">No</option></select>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top:10px;">
+                                <div class="col-sm-4"><label>Mostrar en reporte</label>
+                                    <select name="MostrarEnReporte" id="CertCampoMostrarEnReporte" class="form-control"><option value="0">No</option><option value="1">Si</option></select>
+                                </div>
+                                <div class="col-sm-4"><label>Orden</label><input type="number" name="Orden" id="CertCampoOrden" min="1" class="form-control"></div>
+                            </div>
+                            <div class="row" style="margin-top:10px;">
+                                <div class="col-sm-6"><label>Placeholder</label><input type="text" name="Placeholder" id="CertCampoPlaceholder" class="form-control"></div>
+                                <div class="col-sm-6"><label>Ayuda</label><input type="text" name="Ayuda" id="CertCampoAyuda" class="form-control"></div>
+                            </div>
+                            <div class="form-group" style="margin-top:10px;">
+                                <label>Opciones (solo si el tipo es select, una por linea)</label>
+                                <textarea name="OpcionesTexto" id="CertCampoOpcionesTexto" class="form-control" rows="4"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-delete-certificado-campo" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <form method="POST" action="{{ url('catalogo/producto/certificado/delete_campo') }}">
+                    @csrf
+                    <div class="modal-content">
+                        <div class="modal-header"><h4 class="modal-title">Eliminar campo de certificado</h4></div>
+                        <div class="modal-body"><input type="hidden" name="Id" id="CertCampoDeleteId"><p>Confirme si desea eliminar.</p></div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-    </div>
 
-    <!-- jQuery -->
     <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}"></script>
-
     <script type="text/javascript">
         $(document).ready(function() {
-               //mostrar opcion en menu
-               displayOption("ul-catalogo", "li-producto");
+            displayOption("ul-catalogo", "li-producto");
         });
 
         function modal_edit_dato_tecnico(Id, Nombre, Descripcion) {
@@ -519,11 +543,7 @@
             $('#ModalDatoTecnicoNombre').val(Nombre);
             $('#ModalDatoTecnicoDescripcion').val(Descripcion);
         }
-
-        function modal_delete_dato_tecnico(id) {
-            $('#IdDatoTecnico').val(id);
-            //$('#modal_borrar_ato_tecnico').modal('show');
-        }
+        function modal_delete_dato_tecnico(id) { $('#IdDatoTecnico').val(id); }
 
         function modal_edit_cobertura(Id, Nombre, Tarificacion, Descuento, Iva) {
             $('#ModalCoberturaId').val(Id);
@@ -532,13 +552,22 @@
             $('#ModalCoberturaDescuento').val(Descuento);
             $('#ModalCoberturaIva').val(Iva);
         }
+        function modal_delete_cobertura(id) { $('#Idcobertura').val(id); }
 
-        function modal_delete_cobertura(id) {
-            $('#Idcobertura').val(id);
-            $('#modal_borrar_documento').modal('show');
+        function modal_edit_certificado_campo(id, etiqueta, nombreCampo, tipoCampo, validacionCampo, requerido, mostrarEnReporte, orden, placeholder, ayuda, opcionesTexto) {
+            $('#CertCampoId').val(id);
+            $('#CertCampoEtiqueta').val(etiqueta);
+            $('#CertCampoNombreCampo').val(nombreCampo);
+            $('#CertCampoTipoCampo').val(tipoCampo);
+            $('#CertCampoValidacionCampo').val(validacionCampo || 'ninguna');
+            $('#CertCampoRequerido').val(requerido);
+            $('#CertCampoMostrarEnReporte').val(mostrarEnReporte);
+            $('#CertCampoOrden').val(orden);
+            $('#CertCampoPlaceholder').val(placeholder);
+            $('#CertCampoAyuda').val(ayuda);
+            $('#CertCampoOpcionesTexto').val(opcionesTexto);
         }
+        function modal_delete_certificado_campo(id) { $('#CertCampoDeleteId').val(id); }
     </script>
-    </div>
     @include('sweetalert::alert')
-
 @endsection

@@ -18,7 +18,11 @@ class NecesidadProteccion extends Model
     protected $fillable = [
         'Nombre',
         'Activo',
-        'TipoPoliza'
+        'TipoPoliza',
+        'AgrupadorRamo',
+        'PorcentajeComisionNoDeclarativa',
+        'ComisionBomberos',
+        'PorcentajeBomberos'
     ];
 
     protected $guarded = [];
@@ -30,6 +34,18 @@ class NecesidadProteccion extends Model
     public function tipo_poliza()
     {
         return $this->belongsTo(TipoPoliza::class, 'TipoPoliza', 'Id');
+    }
+
+    public function agrupador_ramo()
+    {
+        return $this->belongsTo(AgrupadorRamo::class, 'AgrupadorRamo', 'Id');
+    }
+
+    public function campos()
+    {
+        return $this->hasMany(NecesidadProteccionCampo::class, 'NecesidadProteccion', 'Id')
+            ->where('Activo', 1)
+            ->orderBy('Id', 'asc');
     }
 
 }

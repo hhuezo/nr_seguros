@@ -15,6 +15,7 @@ use App\Models\catalogo\EstadoVenta;
 use App\Models\catalogo\FormaPago;
 use App\Models\catalogo\Genero;
 use App\Models\catalogo\NecesidadProteccion;
+use App\Models\catalogo\NecesidadProteccionCampo;
 use App\Models\catalogo\Negocio;
 use App\Models\catalogo\NegocioAccidente;
 use App\Models\catalogo\NegocioAuto;
@@ -84,7 +85,7 @@ class NegocioController extends Controller
             if ($request->TipoPersona == 1) {
                 $cliente->Dui = $request->Dui;
             } else {
-                $cliente->Nit = $request->NitEmpresas;
+                $cliente->Nit = $request->NitEmpresa;
             }
             $cliente->Nombre = $request->NombreCliente;
             $cliente->FormaPago = $request->FormaPago;
@@ -150,11 +151,17 @@ class NegocioController extends Controller
         $cliente_estado = ClienteEstado::get();
         $departamentosnr= DepartamentoNR::where('Activo', 1)->get();
         $cotizaciones= Cotizacion::where('Negocio', $negocio->Id)->where('Activo', 1)->get();
+        $cotizacionAprobada = $cotizaciones->firstWhere('Aceptado', 1) ?? $cotizaciones->first();
         $contactosNegocio= NegocioContacto::where('negocio', $negocio->Id)->where('Activo', 1)->get();
         $documentos = NegocioDocumento::where('Negocio', $negocio->Id)->where('Activo',1)->get();
         $gestiones=NegocioGestiones::where('Negocio', $negocio->Id)->where('Activo',1)->get();
+        $ramoFormulario = $cotizaciones->count() == 0
+            ? old('NecesidadProteccion', $negocio->NecesidadProteccion)
+            : $negocio->NecesidadProteccion;
+        $camposRamo = $this->camposRamoActivos($ramoFormulario);
+        $datosRamo = json_decode($negocio->DatosRamo ?: '{}', true) ?: [];
 
-        return view('catalogo.negocio.edit', compact('gestiones','documentos','contactosNegocio','cotizaciones','negocio','departamentosnr','carteras','cliente_estado', 'tipos_negocio', 'estados_venta', 'ejecutivos', 'necesidad_proteccion'));
+        return view('catalogo.negocio.edit', compact('gestiones','documentos','contactosNegocio','cotizaciones','cotizacionAprobada','negocio','departamentosnr','carteras','cliente_estado', 'tipos_negocio', 'estados_venta', 'ejecutivos', 'necesidad_proteccion', 'camposRamo', 'datosRamo'));
     }
 
     public function update(Request $request, $id)
@@ -162,6 +169,7 @@ class NegocioController extends Controller
         $negocio = Negocio::findOrFail($id);
         $cotizaciones= Cotizacion::where('Negocio', $id)->where('Activo', 1)->get();
 
+        try {
         //diferenciar al tipo de cliente
         if ($request->TipoPersona == 1) { //cliente natural
             $cliente = Cliente::where('Dui', $request->Dui)->first();
@@ -174,7 +182,7 @@ class NegocioController extends Controller
             if ($request->TipoPersona == 1) {
                 $cliente->Dui = $request->Dui;
             } else {
-                $cliente->Nit = $request->NitEmpresas;
+                $cliente->Nit = $request->NitEmpresa;
             }
             $cliente->Nombre = $request->NombreCliente;
             $cliente->FormaPago = $request->FormaPago;
@@ -208,8 +216,35 @@ class NegocioController extends Controller
 
         session(['tab1' => '1']);
         alert()->success('El registro ha sido modificado correctamente');
-        return redirect('catalogo/negocio/' . $negocio->Id . '/edit');
+        return redirect('catalogo/negocio/' . $negocio->Id . '/edit')
+            ->with('success', 'El negocio se guardo correctamente.');
+        } catch (\Throwable $e) {
+            report($e);
 
+            session(['tab1' => '1']);
+            alert()->error('No se pudo guardar el negocio. Revise la informacion e intente nuevamente');
+
+            return back()
+                ->withInput()
+                ->with('error', 'No se pudo guardar el negocio. Revise la informacion e intente nuevamente.');
+        }
+
+    }
+
+    public function update_datos_ramo(Request $request, $id)
+    {
+        $negocio = Negocio::findOrFail($id);
+        $camposRamo = $this->camposRamoActivos($negocio->NecesidadProteccion);
+
+        $request->validate($this->reglasCamposRamo($camposRamo));
+
+        $negocio->DatosRamo = $this->buildDatosRamo($request->all(), $camposRamo);
+        $negocio->update();
+
+        session(['tab2' => '5']);
+        alert()->success('Los datos generales del ramo se guardaron correctamente');
+
+        return back()->with('success', 'Los datos generales del ramo se guardaron correctamente.');
     }
 
     public function destroy($id)
@@ -264,36 +299,33 @@ class NegocioController extends Controller
     {
         //obtener el producto
         $planes= Plan::where('Producto',$request->Producto)->get();
-        $datos_tecnicos= DatosTecnicos::where('Producto',$request->Producto)->get();
+        return response()->json([
+            'datosRecibidos' => $planes,
+        ]);
+    }
 
-        return response()->json(['datosRecibidos' => $planes,'datos_tecnicos'=>$datos_tecnicos]);
+    public function getCamposRamo(Request $request)
+    {
+        $campos = $this->camposRamoActivos($request->Ramo);
+
+        return response()->json([
+            'campos' => $campos,
+        ]);
     }
 
     public function add_cotizacion(Request $request){
-
-        $data = $request->input();
-        $jsonObject = [];
-
-        foreach ($data as $key => $value) {
-            if (is_numeric($key)) {
-                $jsonObject[$key] = $value;
-            }
-        }
-        $jsonObject=json_encode($jsonObject);
-        //dd( $data,$jsonObject);
-
         $cotizacion = new Cotizacion();
-        $cotizacion->Negocio = $data['Negocio'];
-        $cotizacion->Plan = $data['Plan'];
-        $cotizacion->SumaAsegurada = $data['SumaAsegurada'];
-        $cotizacion->PrimaNetaAnual = $data['PrimaNetaAnual'];
-        $cotizacion->Observaciones = $data['Observaciones'];
-        $cotizacion->DatosTecnicos =  $jsonObject;
+        $cotizacion->Negocio = $request->Negocio;
+        $cotizacion->Plan = $request->Plan;
+        $cotizacion->SumaAsegurada = $request->SumaAsegurada;
+        $cotizacion->PrimaNetaAnual = $request->PrimaNetaAnual;
+        $cotizacion->Observaciones = $request->Observaciones;
+        $cotizacion->DatosTecnicos = '{}';
         $cotizacion->Aceptado = 0;
         $cotizacion->Activo  = 1 ;
         $cotizacion->save();
 
-        $negocio = Negocio::findOrFail($data['Negocio']);
+        $negocio = Negocio::findOrFail($request->Negocio);
 
         if($negocio->NecesidadProteccion!= $cotizacion->planes->productos->NecesidadProteccion){
             $negocio->update(['NecesidadProteccion' => $cotizacion->planes->productos->NecesidadProteccion]);
@@ -301,28 +333,16 @@ class NegocioController extends Controller
 
         alert()->success('El registro ha sido creado correctamente');
 
-        session(['tab2' => '1']);
+        session(['tab2' => '5']);
         return back();
     }
 
     public function edit_cotizacion(Request $request){
         $cotizacion = Cotizacion::findOrFail($request->Id);
 
-        $data = $request->input();
-        $jsonObject = [];
-
-        foreach ($data as $key => $value) {
-            if (is_numeric($key)) {
-                $jsonObject[$key] = $value;
-            }
-        }
-        $jsonObject=json_encode($jsonObject);
-        //dd($cotizacion, $data,$jsonObject);
-
-        $cotizacion->SumaAsegurada = $data['SumaAsegurada'];
-        $cotizacion->PrimaNetaAnual = $data['PrimaNetaAnual'];
-        $cotizacion->Observaciones = $data['Observaciones'];
-        $cotizacion->DatosTecnicos =  $jsonObject;
+        $cotizacion->SumaAsegurada = $request->SumaAsegurada;
+        $cotizacion->PrimaNetaAnual = $request->PrimaNetaAnual;
+        $cotizacion->Observaciones = $request->Observaciones;
 
 
         $cotizacion->update();
@@ -330,7 +350,7 @@ class NegocioController extends Controller
 
         alert()->success('El registro ha sido modificado correctamente');
 
-        session(['tab2' => '1']);
+        session(['tab2' => '5']);
         return back();
     }
 
@@ -348,7 +368,7 @@ class NegocioController extends Controller
         Cotizacion::findOrFail($request->Id)->update(['Activo' => 0]);
         alert()->error('El registro ha sido eliminado correctamente');
 
-        session(['tab2' => '1']);
+        session(['tab2' => '5']);
         return back();
     }
 
@@ -459,6 +479,98 @@ class NegocioController extends Controller
 
         session(['tab2' => '4']);
         return back();
+    }
+
+    private function buildDatosVariables(array $data): string
+    {
+        $jsonObject = [];
+
+        foreach ($data as $key => $value) {
+            if (is_numeric($key)) {
+                $jsonObject[$key] = $value;
+            }
+        }
+
+        return json_encode($jsonObject);
+    }
+
+    private function camposRamoActivos($ramoId)
+    {
+        if (empty($ramoId)) {
+            return collect();
+        }
+
+        return NecesidadProteccionCampo::where('NecesidadProteccion', $ramoId)
+            ->where('Activo', 1)
+            ->orderBy('Id', 'asc')
+            ->get();
+    }
+
+    private function reglasCamposRamo($campos, string $prefix = 'ramo_'): array
+    {
+        $reglas = [];
+
+        foreach ($campos as $campo) {
+            $nombre = $prefix . $campo->Id;
+            $campoReglas = [$campo->Requerido ? 'required' : 'nullable'];
+
+            switch ($campo->TipoCampo) {
+                case 'number':
+                    $campoReglas[] = 'numeric';
+                    break;
+                case 'date':
+                    $campoReglas[] = 'date';
+                    break;
+                case 'email':
+                    $campoReglas[] = 'email';
+                    break;
+                case 'textarea':
+                case 'text':
+                default:
+                    $campoReglas[] = 'string';
+                    break;
+            }
+
+            switch ($campo->ValidacionCampo) {
+                case 'dui':
+                    $campoReglas[] = 'regex:/^\d{8}-\d$/';
+                    break;
+                case 'solo_numeros':
+                    $campoReglas[] = 'regex:/^\d+$/';
+                    break;
+                case 'solo_numeros_letras':
+                    $campoReglas[] = 'regex:/^[A-Za-z0-9]+$/';
+                    break;
+                case 'solo_texto':
+                    $campoReglas[] = 'regex:/^[\pL\s\.,#\-\/()&@\'\":;]+$/u';
+                    break;
+                case 'correo':
+                    if (!in_array('email', $campoReglas, true)) {
+                        $campoReglas[] = 'email';
+                    }
+                    break;
+            }
+
+            $reglas[$nombre] = $campoReglas;
+        }
+
+        return $reglas;
+    }
+
+    private function buildDatosRamo(array $data, $campos, string $prefix = 'ramo_'): string
+    {
+        if ($campos->isEmpty()) {
+            return '{}';
+        }
+
+        $jsonObject = [];
+
+        foreach ($campos as $campo) {
+            $nombre = $prefix . $campo->Id;
+            $jsonObject[$campo->Id] = array_key_exists($nombre, $data) ? $data[$nombre] : null;
+        }
+
+        return json_encode($jsonObject, JSON_UNESCAPED_UNICODE);
     }
 
 }
