@@ -28,12 +28,12 @@
                         <label class="control-label">Color</label>
                         <select class="form-control" name="Color">
                             <option value="" {{ empty($obj->Color) ? 'selected' : '' }}>Sin color</option>
-                            <option value="success" {{ $obj->Color === 'success' ? 'selected' : '' }}>Verde (success) — finaliza el caso</option>
-                            <option value="danger" {{ $obj->Color === 'danger' ? 'selected' : '' }}>Rojo (danger) — finaliza el caso</option>
-                            <option value="info" {{ $obj->Color === 'info' ? 'selected' : '' }}>Azul (info) — finaliza el caso</option>
-                            <option value="warning" {{ $obj->Color === 'warning' ? 'selected' : '' }}>Amarillo (warning)</option>
-                            <option value="primary" {{ $obj->Color === 'primary' ? 'selected' : '' }}>Primario (primary)</option>
-                            <option value="secondary" {{ $obj->Color === 'secondary' ? 'selected' : '' }}>Secundario (secondary)</option>
+                            <option value="success" {{ $obj->Color === 'success' ? 'selected' : '' }} class="bg-success">Verde (success) — finaliza el caso</option>
+                            <option value="danger" {{ $obj->Color === 'danger' ? 'selected' : '' }} class="bg-danger">Rojo (danger) — finaliza el caso</option>
+                            <option value="info" {{ $obj->Color === 'info' ? 'selected' : '' }} class="bg-info">Azul (info) — finaliza el caso</option>
+                            <option value="warning" {{ $obj->Color === 'warning' ? 'selected' : '' }} class="bg-warning">Amarillo (warning)</option>
+                            <option value="primary" {{ $obj->Color === 'primary' ? 'selected' : '' }} class="bg-primary">Primario (primary)</option>
+                            <option value="secondary" {{ $obj->Color === 'secondary' ? 'selected' : '' }} class="bg-secondary">Secundario (secondary)</option>
                         </select>
                     </div>
 

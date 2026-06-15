@@ -95,12 +95,12 @@
                             <label class="control-label">Color</label>
                             <select class="form-control" name="Color">
                                 <option value="">Sin color</option>
-                                <option value="success">Verde (success) — finaliza el caso</option>
-                                <option value="danger">Rojo (danger) — finaliza el caso</option>
-                                <option value="info">Azul (info) — finaliza el caso</option>
-                                <option value="warning">Amarillo (warning)</option>
-                                <option value="primary">Primario (primary)</option>
-                                <option value="secondary">Secundario (secondary)</option>
+                                <option value="success" class="bg-success">Verde (success) — finaliza el caso</option>
+                                <option value="danger" class="bg-danger">Rojo (danger) — finaliza el caso</option>
+                                <option value="info" class="bg-info">Azul (info) — finaliza el caso</option>
+                                <option value="warning" class="bg-warning">Amarillo (warning)</option>
+                                <option value="primary" class="bg-primary">Primario (primary)</option>
+                                <option value="secondary" class="bg-secondary">Secundario (secondary)</option>
                             </select>
                         </div>
                     </div>
