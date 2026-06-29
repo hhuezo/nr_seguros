@@ -80,6 +80,7 @@ Route::middleware(['web'])->group(function () {
     Route::post('polizas/vida/delete_pago/{id}', [VidaController::class, 'delete_pago']);
 
     Route::get('poliza/vida/get_recibo/{id}/{exportar}', [VidaController::class, 'get_recibo']);
+    Route::get('poliza/vida/get_recibos_poliza/{id}', [VidaController::class, 'get_recibos_poliza']);
     Route::get('poliza/vida/get_recibo_edit/{id}', [VidaController::class, 'get_recibo_edit']);
     Route::post('poliza/vida/get_recibo_edit', [VidaController::class, 'get_recibo_update']);
     Route::post('polizas/vida/store_poliza_primara_carga/{id}', [VidaController::class, 'primera_carga']);

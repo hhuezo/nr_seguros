@@ -3107,6 +3107,54 @@ class VidaController extends Controller
         return $pdf->stream('Recibos.pdf');
     }
 
+    public function get_recibos_poliza($id)
+    {
+        $poliza_vida = Vida::findOrFail($id);
+        $cliente = Cliente::findOrFail($poliza_vida->Asegurado);
+        $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        $configuracion = ConfiguracionRecibo::first();
+
+        $detalles = VidaDetalle::where('PolizaVida', $id)
+            ->whereNotNull('ImpresionRecibo')
+            ->orderBy('FechaInicio', 'asc')
+            ->orderBy('Id', 'asc')
+            ->get();
+
+        $historialesActivos = VidaHistorialRecibo::whereIn('PolizaVidaDetalle', $detalles->pluck('Id'))
+            ->where('Activo', 1)
+            ->orderBy('PolizaVidaDetalle', 'asc')
+            ->orderBy('Id', 'desc')
+            ->get()
+            ->groupBy('PolizaVidaDetalle')
+            ->map(function ($grupo) {
+                return $grupo->first();
+            });
+
+        $recibos = $detalles->map(function ($detalle) use ($historialesActivos) {
+            $reciboHistorial = $historialesActivos->get($detalle->Id);
+
+            if (!$reciboHistorial) {
+                return null;
+            }
+
+            return [
+                'detalle' => $detalle,
+                'recibo_historial' => $reciboHistorial,
+            ];
+        })->filter()->values();
+
+        if ($recibos->isEmpty()) {
+            abort(404, 'No se encontraron avisos de cobro activos para esta poliza.');
+        }
+
+        $pdf = \PDF::loadView(
+            'polizas.vida.recibos_conglomerado',
+            compact('configuracion', 'cliente', 'poliza_vida', 'meses', 'recibos')
+        )->setWarnings(false)->setPaper('letter');
+
+        return $pdf->stream('AvisosCobro.pdf');
+    }
+
     public function get_recibo_edit($id)
     {
         $detalle = VidaDetalle::findOrFail($id);

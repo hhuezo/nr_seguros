@@ -1,10 +1,27 @@
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        @php
+            $avisosActivos = $detalle->filter(function ($obj) {
+                return $obj->ImpresionRecibo != null && (int) ($obj->Activo ?? 0) !== 0;
+            });
+        @endphp
 
 
         <div class="x_title">
-            <h4>&nbsp;&nbsp; Avisos de Cobro<small></small>
-            </h4>
+            <div class="row">
+                <div class="col-sm-6">
+                    <h4>&nbsp;&nbsp; Avisos de Cobro<small></small></h4>
+                </div>
+                <div class="col-sm-6 text-right">
+                    @can('vida aviso print')
+                        <button type="button" class="btn btn-success"
+                            onclick="mostrarAvisosCobroPoliza('{{ url('poliza/vida/get_recibos_poliza/' . $poliza_vida->Id) }}')"
+                            {{ $avisosActivos->count() === 0 ? 'disabled' : '' }}>
+                            <i class="fa fa-file-pdf-o"></i> Descargar avisos cobro
+                        </button>
+                    @endcan
+                </div>
+            </div>
             <div class="clearfix"></div>
         </div>
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -68,3 +85,30 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="modal-avisos-cobro-poliza" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style="width: 95%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Avisos de cobro de la póliza</h4>
+            </div>
+            <div class="modal-body" style="padding: 0;">
+                <iframe id="iframe-avisos-cobro-poliza" src="" style="width: 100%; height: 80vh; border: 0;"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function mostrarAvisosCobroPoliza(url) {
+        $('#iframe-avisos-cobro-poliza').attr('src', url);
+        $('#modal-avisos-cobro-poliza').modal('show');
+    }
+
+    $('#modal-avisos-cobro-poliza').on('hidden.bs.modal', function() {
+        $('#iframe-avisos-cobro-poliza').attr('src', '');
+    });
+</script>
