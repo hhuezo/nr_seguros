@@ -87,6 +87,8 @@ class ConsultaClienteController extends Controller
         ->leftJoin('poliza_deuda', 'poliza_deuda.Id', '=', 'poliza_deuda_cartera.PolizaDeuda')
         ->leftJoin('aseguradora', 'aseguradora.Id', '=', 'poliza_deuda.Aseguradora')
         ->leftJoin('cliente', 'cliente.Id', '=', 'poliza_deuda.Asegurado')
+        ->leftJoin('plan as plan_deuda', 'plan_deuda.Id', '=', 'poliza_deuda.Plan')
+        ->leftJoin('producto as producto_deuda', 'producto_deuda.Id', '=', 'plan_deuda.Producto')
         ->leftJoin('saldos_montos', 'saldos_montos.Id', '=', 'poliza_deuda_cartera.LineaCredito')
         ->select(
             DB::raw("'Deuda' as TipoCartera"),
@@ -116,6 +118,7 @@ class ConsultaClienteController extends Controller
             'poliza_deuda_cartera.Tasa as TarifaMes',
             'poliza_deuda.NumeroPoliza',
             'aseguradora.Nombre as AseguradoraNombre',
+            DB::raw("TRIM(CONCAT(COALESCE(producto_deuda.Nombre, ''), CASE WHEN producto_deuda.Nombre IS NOT NULL AND plan_deuda.Nombre IS NOT NULL THEN ' / ' ELSE '' END, COALESCE(plan_deuda.Nombre, ''))) as ProductoPlan"),
             'cliente.Nombre as ContratanteNombre',
             'saldos_montos.Descripcion as LineaDescripcion',
             DB::raw("COALESCE(poliza_deuda_cartera.PorcentajeExtraprima, NULL) as PorcentajeExtraprima")
@@ -165,6 +168,8 @@ class ConsultaClienteController extends Controller
         ->leftJoin('poliza_residencia', 'poliza_residencia.Id', '=', 'poliza_residencia_cartera.PolizaResidencia')
         ->leftJoin('aseguradora', 'aseguradora.Id', '=', 'poliza_residencia.Aseguradora')
         ->leftJoin('cliente', 'cliente.Id', '=', 'poliza_residencia.Asegurado')
+        ->leftJoin('plan as plan_residencia', 'plan_residencia.Id', '=', 'poliza_residencia.Plan')
+        ->leftJoin('producto as producto_residencia', 'producto_residencia.Id', '=', 'plan_residencia.Producto')
         ->select(
             DB::raw("'Residencia' as TipoCartera"),
             'poliza_residencia_cartera.NombreCompleto',
@@ -194,6 +199,7 @@ class ConsultaClienteController extends Controller
             'poliza_residencia_cartera.Tarifa as TarifaMes',
             'poliza_residencia.NumeroPoliza',
             'aseguradora.Nombre as AseguradoraNombre',
+            DB::raw("TRIM(CONCAT(COALESCE(producto_residencia.Nombre, ''), CASE WHEN producto_residencia.Nombre IS NOT NULL AND plan_residencia.Nombre IS NOT NULL THEN ' / ' ELSE '' END, COALESCE(plan_residencia.Nombre, ''))) as ProductoPlan"),
             'cliente.Nombre as ContratanteNombre',
             DB::raw("NULL as LineaDescripcion"),
             DB::raw("NULL as PorcentajeExtraprima")
@@ -237,6 +243,9 @@ class ConsultaClienteController extends Controller
         ->leftJoin('poliza_vida', 'poliza_vida.Id', '=', 'poliza_vida_cartera.PolizaVida')
         ->leftJoin('aseguradora', 'aseguradora.Id', '=', 'poliza_vida.Aseguradora')
         ->leftJoin('cliente', 'cliente.Id', '=', 'poliza_vida.Asegurado')
+        ->leftJoin('plan as plan_vida', 'plan_vida.Id', '=', 'poliza_vida.Plan')
+        ->leftJoin('producto as producto_vida_plan', 'producto_vida_plan.Id', '=', 'plan_vida.Producto')
+        ->leftJoin('producto as producto_vida_directo', 'producto_vida_directo.Id', '=', 'poliza_vida.Producto')
         ->select(
             DB::raw("'Vida' as TipoCartera"),
             'poliza_vida_cartera.PrimerNombre',
@@ -265,6 +274,7 @@ class ConsultaClienteController extends Controller
             'poliza_vida_cartera.Tasa as TarifaMes',
             'poliza_vida.NumeroPoliza',
             'aseguradora.Nombre as AseguradoraNombre',
+            DB::raw("TRIM(CONCAT(COALESCE(producto_vida_directo.Nombre, producto_vida_plan.Nombre, ''), CASE WHEN COALESCE(producto_vida_directo.Nombre, producto_vida_plan.Nombre) IS NOT NULL AND plan_vida.Nombre IS NOT NULL THEN ' / ' ELSE '' END, COALESCE(plan_vida.Nombre, ''))) as ProductoPlan"),
             'cliente.Nombre as ContratanteNombre',
             DB::raw("NULL as LineaDescripcion"),
             DB::raw("COALESCE(poliza_vida_cartera.PorcentajeExtraprima, NULL) as PorcentajeExtraprima")
@@ -313,6 +323,8 @@ class ConsultaClienteController extends Controller
         ->leftJoin('poliza_desempleo', 'poliza_desempleo.Id', '=', 'poliza_desempleo_cartera.PolizaDesempleo')
         ->leftJoin('aseguradora', 'aseguradora.Id', '=', 'poliza_desempleo.Aseguradora')
         ->leftJoin('cliente', 'cliente.Id', '=', 'poliza_desempleo.Asegurado')
+        ->leftJoin('plan as plan_desempleo', 'plan_desempleo.Id', '=', 'poliza_desempleo.Plan')
+        ->leftJoin('producto as producto_desempleo', 'producto_desempleo.Id', '=', 'plan_desempleo.Producto')
         ->select(
             DB::raw("'Desempleo' as TipoCartera"),
             'poliza_desempleo_cartera.PrimerNombre',
@@ -341,6 +353,7 @@ class ConsultaClienteController extends Controller
             'poliza_desempleo_cartera.Tasa as TarifaMes',
             'poliza_desempleo.NumeroPoliza',
             'aseguradora.Nombre as AseguradoraNombre',
+            DB::raw("TRIM(CONCAT(COALESCE(producto_desempleo.Nombre, ''), CASE WHEN producto_desempleo.Nombre IS NOT NULL AND plan_desempleo.Nombre IS NOT NULL THEN ' / ' ELSE '' END, COALESCE(plan_desempleo.Nombre, ''))) as ProductoPlan"),
             'cliente.Nombre as ContratanteNombre',
             DB::raw("NULL as LineaDescripcion"),
             DB::raw("NULL as PorcentajeExtraprima")

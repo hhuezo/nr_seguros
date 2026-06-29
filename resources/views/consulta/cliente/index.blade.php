@@ -105,6 +105,7 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Aseguradora</th>
+                                        <th>Producto / Plan</th>
                                         <th>Poliza</th>
                                         <th>Periodo</th>
                                         <th>Tarifa Mes</th>
@@ -174,6 +175,7 @@
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $resultado->AseguradoraNombre ?? '-' }}</td>
+                                            <td>{{ !empty($resultado->ProductoPlan) ? $resultado->ProductoPlan : '-' }}</td>
                                             <td>{{ $resultado->NumeroPoliza ?? '-' }}</td>
                                             <td>{{ $resultado->PeriodoRegistro ?? '-' }}</td>
                                             <td>{{ $formatearPorcentaje($resultado->TarifaMes ?? null) }}</td>
