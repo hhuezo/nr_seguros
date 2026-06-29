@@ -64,7 +64,7 @@
                         <tr>
                             <td>{{ $obj->Nombre }}</td>
                             <td>${{  number_format($obj->pivot->SumaAsegurada, 2, '.', ',')}}</td>
-                            <td>{{  number_format($obj->pivot->Tasa, 3, '.', ',')}}</td>
+                            <td>{{  number_format($obj->pivot->Tasa, 6, '.', ',')}}</td>
                             <td>${{  number_format($obj->pivot->Prima, 2, '.', ',')}}</td>
                             <td>
                                 <i class="fa fa-pencil fa-lg" onclick="modal_edit_cobertura({{ $obj->Id }},'{{ $obj->Nombre }}','{{ $obj->pivot->SumaAsegurada}}','{{ $obj->pivot->Tasa}}','{{ $obj->pivot->Prima }}')" data-target="#modal-edit-cobertura" data-toggle="modal"></i>
@@ -76,7 +76,7 @@
                         <tr>
                             <td>{{ $obj->Nombre }}</td>
                             <td>${{number_format(0, 2, '.', ',')}}</td>
-                            <td>{{number_format(0, 3, '.', ',')}}</td>
+                            <td>{{number_format(0, 6, '.', ',')}}</td>
                             <td>${{number_format(0, 2, '.', ',')}}</td>
                             <td>
                                 <i class="fa fa-pencil fa-lg" onclick="modal_edit_cobertura({{ $obj->Id }},'{{ $obj->Nombre }}','0','0','0')" data-target="#modal-edit-cobertura" data-toggle="modal"></i>
@@ -90,7 +90,7 @@
                     @can('plan edit')
                     <button class="btn btn-success" type="submit">Modificar</button>
                     @endcan
-                  
+
                 </div>
 
             </form>
@@ -125,7 +125,7 @@
                                     </div>
                                     <div class="col-sm-6">
                                        Tasa
-                                        <input type="number" name="Tasa" id="ModalCoberturaTasa" step="0.01" class="form-control" required>
+                                        <input type="number" name="Tasa" id="ModalCoberturaTasa" step="0.000001" class="form-control" required>
                                     </div>
                                     <div class="col-sm-6">
                                         Prima
@@ -162,7 +162,7 @@
         $('#ModalCoberturaId').val(Id);
         $('#ModalCoberturaNombre').val(Nombre);
         $('#ModalCoberturaSumaAsegurada').val(Number(SumaAsegurada).toFixed(2));
-        $('#ModalCoberturaTasa').val(Number(Tasa).toFixed(3));
+        $('#ModalCoberturaTasa').val(Number(Tasa).toFixed(6));
         $('#ModalCoberturaPrima').val(Number(Prima).toFixed(2));
     }
 

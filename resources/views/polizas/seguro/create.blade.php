@@ -2,20 +2,39 @@
 @section('contenido')
 @can('seguro create')
     @php
+        $oldRamo = old('Ramo');
+        $oldAseguradoraId = old('Aseguradora');
+        $oldProductoId = old('Productos');
+        $oldPlanId = old('Planes');
+        $oldIvaIncluido = old('IvaIncluido', 'N');
+
         $productosCatalogo = $productos->map(function ($producto) {
             return [
                 'id' => $producto->Id,
                 'nombre' => $producto->Nombre,
                 'ramo' => $producto->NecesidadProteccion,
                 'aseguradora' => $producto->Aseguradora,
+                'comision' => $producto->PorcentajeComisionNoDeclarativa,
             ];
         })->values();
 
         $planesCatalogo = $planes->map(function ($plan) {
+            $tarifas = collect($plan->planesCoberturaDetalles ?? [])
+                ->pluck('Tasa')
+                ->filter(function ($tasa) {
+                    return $tasa !== null && $tasa !== '';
+                })
+                ->map(function ($tasa) {
+                    return rtrim(rtrim(number_format((float) $tasa, 6, '.', ''), '0'), '.');
+                })
+                ->unique()
+                ->values();
+
             return [
                 'id' => $plan->Id,
                 'nombre' => $plan->Nombre,
                 'producto' => $plan->Producto,
+                'tarifa_label' => $tarifas->implode(' / '),
             ];
         })->values();
 
@@ -23,6 +42,14 @@
             return [
                 'id' => $item->Id,
                 'nombre' => $item->Nombre,
+            ];
+        })->values();
+
+        $ramosCatalogo = $ramos->map(function ($item) {
+            return [
+                'id' => $item->Id,
+                'nombre' => $item->Nombre,
+                'comision' => $item->PorcentajeComisionNoDeclarativa,
             ];
         })->values();
     @endphp
@@ -130,6 +157,10 @@
         <form id="formPolizaSeguroCreate" class="poliza-form" action="{{ url('poliza/seguro') }}" method="post">
             @csrf
 
+            <input type="hidden" name="Planes" id="Planes" value="{{ $oldPlanId }}">
+            <input type="hidden" name="NumCuotas" id="NumCuotas" value="{{ old('NumCuotas') }}">
+            <input type="hidden" name="IvaIncluido" id="IvaIncluido" value="{{ $oldIvaIncluido }}">
+
             <div class="poliza-section">
                 <h5 class="poliza-section-title">Origen de la poliza</h5>
                 <div class="row">
@@ -151,6 +182,28 @@
                             @endforeach
                         </select>
                     </div>
+
+                    <div class="col-md-2 col-sm-6 poliza-field">
+                        <label class="control-label" for="NumeroVigencia">Num. Vigencia</label>
+                        <input type="number" name="NumeroVigencia" id="NumeroVigencia" class="form-control" min="1" value="{{ old('NumeroVigencia', 1) }}">
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 poliza-field">
+                        <label class="control-label" for="NumeroPoliza">Numero poliza *</label>
+                        <input type="text" name="NumeroPoliza" id="NumeroPoliza" class="form-control" value="{{ old('NumeroPoliza') }}" required>
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 poliza-field">
+                        <label class="control-label" for="EstadoPoliza">Estado de poliza *</label>
+                        <select name="EstadoPoliza" id="EstadoPoliza" class="form-control select2" style="width: 100%" required>
+                            @foreach ($estado_poliza as $estado)
+                                <option value="{{ $estado->Id }}" {{ old('EstadoPoliza') == $estado->Id ? 'selected' : '' }}>
+                                    {{ $estado->Nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
                     <div class="col-md-6 col-sm-6 poliza-field">
                         <label class="control-label" for="Cliente">Nombre cliente *</label>
                         <select name="Cliente" id="Cliente" class="form-control select2" style="width: 100%" required>
@@ -163,223 +216,91 @@
                         </select>
                     </div>
 
-                    <div class="col-md-2 col-sm-5 poliza-field">
+                    <div class="col-md-3 col-sm-5 poliza-field">
                         <label class="control-label" for="NumeroDocumento">Numero documento *</label>
-                        <input type="text" name="NumeroDocumento" id="NumeroDocumento" class="form-control"
-                               value="{{ old('NumeroDocumento') }}" readonly>
-                    </div>
-
-                    <div class="col-md-4 col-sm-6 poliza-field">
-                        <label class="control-label" for="NumeroPoliza">Numero poliza *</label>
-                        <input type="text" name="NumeroPoliza" id="NumeroPoliza" class="form-control"
-                               value="{{ old('NumeroPoliza') }}" required>
-                    </div>
-
-                    <div class="col-md-4 col-sm-6 poliza-field">
-                        <label class="control-label" for="Ramo">Ramo *</label>
-                        <select name="Ramo" id="Ramo" class="form-control select2" style="width: 100%" required>
-                            <option value="" selected disabled>Seleccione...</option>
-                            @foreach ($ramos as $obj)
-                                <option value="{{ $obj->Id }}"
-                                    data-comision="{{ $obj->PorcentajeComisionNoDeclarativa }}"
-                                    {{ old('Ramo') == $obj->Id ? 'selected' : '' }}>
-                                    {{ $obj->Nombre }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="col-md-4 col-sm-6 poliza-field">
-                        <label class="control-label" for="Aseguradora">Aseguradora *</label>
-                        <select name="Aseguradora" id="Aseguradora" class="form-control select2" style="width: 100%" required>
-                            <option value="" selected disabled>Seleccione...</option>
-                            @foreach ($aseguradora as $obj)
-                                <option value="{{ $obj->Id }}" {{ old('Aseguradora') == $obj->Id ? 'selected' : '' }}>
-                                    {{ $obj->Nombre }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="col-md-4 col-sm-6 poliza-field">
-                        <label class="control-label" for="Productos">Productos *</label>
-                        <select name="Productos" id="Productos" class="form-control select2" style="width: 100%" required>
-                            <option value="" selected disabled>Seleccione...</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-4 col-sm-6 poliza-field">
-                        <label class="control-label" for="Planes">Planes *</label>
-                        <select name="Planes" id="Planes" class="form-control select2" style="width: 100%" required>
-                            <option value="" selected disabled>Seleccione...</option>
-                        </select>
-                    </div>
-
-
-
-
-
-                    <div class="col-md-4 col-sm-6 poliza-field">
-                        <label class="control-label" for="DepartamentoNr">Departamento NR</label>
-                        <select name="DepartamentoNr" id="DepartamentoNr" class="form-control select2" style="width: 100%">
-                            <option value="" selected disabled>Seleccione...</option>
-                            @foreach ($departamento_nr as $obj)
-                                <option value="{{ $obj->Id }}" {{ old('DepartamentoNr') == $obj->Id ? 'selected' : '' }}>
-                                    {{ $obj->Nombre }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="col-md-4 col-sm-6 poliza-field">
-                        <label class="control-label" for="EjecutivoCia">Ejecutivo que atenderá</label>
-                        <select name="EjecutivoCia" id="EjecutivoCia" class="form-control select2" style="width: 100%">
-                            <option value="" selected disabled>Seleccione...</option>
-                            @foreach ($ejecutivos as $obj)
-                                <option value="{{ $obj->Id }}" {{ old('EjecutivoCia') == $obj->Id ? 'selected' : '' }}>
-                                    {{ $obj->Nombre }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-4 col-sm-6 poliza-field">
-                        <label class="control-label" for="EstadoPoliza">Estado de poliza *</label>
-                        <select name="EstadoPoliza" id="EstadoPoliza" class="form-control select2" style="width: 100%" required>
-                            @foreach ($estado_poliza as $estado)
-                                <option value="{{ $estado->Id }}" {{ old('EstadoPoliza') == $estado->Id ? 'selected' : '' }}>
-                                    {{ $estado->Nombre }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-2 col-sm-6 poliza-field">
-                        <label class="control-label" for="Deducible">Tipo de deducible</label>
-                        <select name="Deducible" id="Deducible" class="form-control select2" style="width: 100%">
-                            <option value="" selected disabled>Seleccione...</option>
-                            @foreach ($tipo_deducible as $obj)
-                                <option value="{{ $obj->Id }}" {{ old('Deducible') == $obj->Id ? 'selected' : '' }}>
-                                    {{ $obj->Nombre }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-2 col-sm-5 poliza-field">
-                        <label class="control-label" for="ValorDeducible">Valor deducible</label>
-                        <input type="number" name="ValorDeducible" id="ValorDeducible" class="form-control"
-                               step="0.01" value="{{ old('ValorDeducible') }}">
-                    </div>
-
-                    <div class="col-md-3 col-sm-6 poliza-field">
-                        <label class="control-label" for="FormaPago">Forma de pago *</label>
-                        <select name="FormaPago" id="FormaPago" class="form-control select2" style="width: 100%" required>
-                            @foreach ($forma_pago as $pago)
-                                <option value="{{ $loop->index }}" {{ old('FormaPago') == $loop->index ? 'selected' : '' }}>
-                                    {{ $pago == '' ? 'Seleccione...' : $pago }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-1 col-sm-6 poliza-field">
-                        <label class="control-label" for="NumCuotas">Cuotas</label>
-                        <input type="number" name="NumCuotas" id="NumCuotas" class="form-control"
-                               value="{{ old('NumCuotas') }}" >
-                    </div>
-                    <div class="col-md-2 col-sm-6 poliza-field">
-                        <label class="control-label" for="SumaAsegurada">Suma asegurada</label>
-                        <input type="number" name="SumaAsegurada" id="SumaAsegurada" class="form-control"
-                               step="0.01" value="{{ old('SumaAsegurada') }}" >
-                    </div>
-
-                    <div class="col-md-2 col-sm-6 poliza-field">
-                        <label class="control-label" for="PrimaNetaAnual">Prima neta anual</label>
-                        <input type="number" name="PrimaNetaAnual" id="PrimaNetaAnual" class="form-control"
-                               step="0.01" value="{{ old('PrimaNetaAnual') }}" >
-                    </div>
-                    <div class="col-md-2 col-sm-6 poliza-field">
-                        <label class="control-label" for="PorcentajeComisionNR">% Comisión NR</label>
-                        <input type="number" name="PorcentajeComisionNR" id="PorcentajeComisionNR" class="form-control"
-                               step="0.0001" value="{{ old('PorcentajeComisionNR') }}">
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="poliza-section">
-                <h5 class="poliza-section-title">Vigencia y cancelación</h5>
-                <div class="row">
-                    <div class="col-md-2 col-sm-6 poliza-field">
-                        <label class="control-label" for="vigencia_desde">Vigencia desde *</label>
-                        <input class="form-control" id="vigencia_desde" name="VigenciaDesde" type="date"
-                            value="{{ old('VigenciaDesde') }}" required>
-                    </div>
-
-                    <div class="col-md-2 col-sm-6 poliza-field">
-                        <label class="control-label" for="vigencia_hasta">Vigencia hasta *</label>
-                        <input class="form-control" id="vigencia_hasta" name="VigenciaHasta" type="date"
-                            value="{{ old('VigenciaHasta') }}" required>
-                    </div>
-
-                    <div class="col-md-1 col-sm-6 poliza-field">
-                        <label class="control-label" for="dias_vigencia">Dias</label>
-                        <input type="number" name="DiasVigencia" id="dias_vigencia" class="form-control"
-                            value="{{ old('DiasVigencia') }}" readonly>
-                    </div>
-                    <div class="col-md-5 col-sm-6 poliza-field">
-                        <label class="control-label" for="CodCancelacion">Motivos de cancelacion</label>
-                        <select name="CodCancelacion" id="CodCancelacion" class="form-control select2" style="width: 100%">
-                            <option value="" selected disabled>Seleccione...</option>
-                            @foreach ($motivos_cancelacion as $obj)
-                                <option value="{{ $obj->Id }}" {{ old('CodCancelacion') == $obj->Id ? 'selected' : '' }}>
-                                    {{ $obj->Nombre }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-2 col-sm-6 poliza-field">
-                        <label class="control-label" for="FechaCancelacion">Fecha cancelacion</label>
-                        <input type="date" name="FechaCancelacion" id="FechaCancelacion" class="form-control"
-                               value="{{ old('FechaCancelacion') }}">
-                    </div>
-
-                    <div class="col-md-10 col-sm-6 poliza-field">
-                        <label class="control-label" for="MotivoCancelacion">Motivo cancelacion</label>
-                        <input type="text" name="MotivoCancelacion" id="MotivoCancelacion" class="form-control"
-                            value="{{ old('MotivoCancelacion') }}">
-                    </div>
-
-                    <div class="col-md-2 col-sm-6 poliza-field">
-                        <label class="control-label" for="FechaEnvioAnexo">Fecha envio anexo</label>
-                        <input type="date" name="FechaEnvioAnexo" id="FechaEnvioAnexo" class="form-control"
-                            value="{{ old('FechaEnvioAnexo') }}">
-                    </div>
-                </div>
-            </div>
-
-            <div class="poliza-section">
-                <h5 class="poliza-section-title">Administracion y seguimiento</h5>
-                <div class="row">
-                    <div class="col-md-6 col-sm-6 poliza-field">
-                        <label class="control-label" for="Observacion">Observacion Ren.</label>
-                        <input type="text" name="Observacion" id="Observacion" class="form-control"
-                            value="{{ old('Observacion') }}">
-                    </div>
-
-                    <div class="col-md-3 col-sm-6 poliza-field">
-                        <label class="control-label" for="SolicitudRenovacion">Solicitud renovacion</label>
-                        <input type="date" name="SolicitudRenovacion" id="SolicitudRenovacion" class="form-control"
-                            value="{{ old('SolicitudRenovacion') }}">
+                        <input type="text" name="NumeroDocumento" id="NumeroDocumento" class="form-control" value="{{ old('NumeroDocumento') }}" readonly>
                     </div>
 
                     <div class="col-md-3 col-sm-6 poliza-field">
                         <label class="control-label" for="FechaVinculacion">Fecha vinculacion</label>
-                        <input type="date" name="FechaVinculacion" id="FechaVinculacion" class="form-control"
-                            value="{{ old('FechaVinculacion') }}">
+                        <input type="date" name="FechaVinculacion" id="FechaVinculacion" class="form-control" value="{{ old('FechaVinculacion') }}">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-2 col-sm-6 poliza-field">
+                        <label class="control-label" for="vigencia_desde">Vigencia desde *</label>
+                        <input class="form-control" id="vigencia_desde" name="VigenciaDesde" type="date" value="{{ old('VigenciaDesde') }}" required>
+                    </div>
+
+                    <div class="col-md-2 col-sm-6 poliza-field">
+                        <label class="control-label" for="vigencia_hasta">Vigencia hasta *</label>
+                        <input class="form-control" id="vigencia_hasta" name="VigenciaHasta" type="date" value="{{ old('VigenciaHasta') }}" required>
+                    </div>
+
+                    <div class="col-md-1 col-sm-6 poliza-field">
+                        <label class="control-label" for="dias_vigencia">Dias</label>
+                        <input type="number" name="DiasVigencia" id="dias_vigencia" class="form-control" value="{{ old('DiasVigencia') }}" readonly>
                     </div>
 
                     <div class="col-md-4 col-sm-6 poliza-field">
+                        <label class="control-label" for="FormaPago">Forma de pago *</label>
+                        <select name="FormaPago" id="FormaPago" class="form-control select2" style="width: 100%" required>
+                            <option value="">Seleccione...</option>
+                            @foreach ($forma_pago as $pago)
+                                <option value="{{ $pago->Id }}" {{ old('FormaPago') == $pago->Id ? 'selected' : '' }}>
+                                    {{ $pago->Nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 poliza-field">
+                        <label class="control-label" for="PorcentajeComisionNR">% Comision NR</label>
+                        <input type="number" name="PorcentajeComisionNR" id="PorcentajeComisionNR" class="form-control" step="0.0001" value="{{ old('PorcentajeComisionNR') }}">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3 col-sm-6 poliza-field">
+                        <label class="control-label" for="Aseguradora">Aseguradora *</label>
+                        <select name="Aseguradora" id="Aseguradora" class="form-control select2" style="width: 100%" required>
+                            <option value="">Seleccione...</option>
+                            @foreach ($aseguradora as $obj)
+                                <option value="{{ $obj->Id }}" {{ $oldAseguradoraId == $obj->Id ? 'selected' : '' }}>
+                                    {{ $obj->Nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 poliza-field">
+                        <label class="control-label" for="Ramo">Ramo *</label>
+                        <select name="Ramo" id="Ramo" class="form-control select2" style="width: 100%" required>
+                            <option value="">Seleccione...</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 poliza-field">
+                        <label class="control-label" for="Productos">Productos *</label>
+                        <select name="Productos" id="Productos" class="form-control select2" style="width: 100%" required>
+                            <option value="">Seleccione...</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 poliza-field">
+                        <label class="control-label" for="PlanesVisible">Planes *</label>
+                        <select id="PlanesVisible" class="form-control select2" style="width: 100%" required>
+                            <option value="">Seleccione...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 col-sm-6 poliza-field">
                         <label class="control-label" for="OrigenPoliza">Origen poliza</label>
                         <select name="OrigenPoliza" id="OrigenPoliza" class="form-control select2" style="width: 100%">
-                            <option value="" selected disabled>Seleccione...</option>
+                            <option value="">Seleccione...</option>
                             @foreach ($origen_poliza as $obj)
                                 <option value="{{ $obj->Id }}" {{ old('OrigenPoliza') == $obj->Id ? 'selected' : '' }}>
                                     {{ $obj->Nombre }}
@@ -388,38 +309,141 @@
                         </select>
                     </div>
 
+                    <div class="col-md-4 col-sm-6 poliza-field">
+                        <label class="control-label" for="SustituidaPoliza">Sustituye poliza</label>
+                        <input type="text" name="SustituidaPoliza" id="SustituidaPoliza" class="form-control" value="{{ old('SustituidaPoliza') }}">
+                    </div>
+                </div>
 
+                <div class="row">
+                    <div class="col-md-3 col-sm-6 poliza-field">
+                        <label class="control-label" for="SumaAsegurada">Suma asegurada</label>
+                        <input id="SumaAsegurada" name="SumaAsegurada" type="hidden" value="{{ old('SumaAsegurada') }}">
+                        <input class="form-control" id="SumaAseguradaDisplay" type="text" value="{{ is_numeric(old('SumaAsegurada')) ? '$' . number_format((float) old('SumaAsegurada'), 2) : '' }}" readonly>
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 poliza-field">
+                        <label class="control-label" for="TarifaPlan">Tarifa</label>
+                        <input class="form-control" id="TarifaPlan" type="text" value="" readonly>
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 poliza-field">
+                        <label class="control-label" for="PrimaNetaAnual">Prima neta anual</label>
+                        <input id="PrimaNetaAnual" name="PrimaNetaAnual" type="hidden" value="{{ old('PrimaNetaAnual') }}">
+                        <input class="form-control" id="PrimaNetaAnualDisplay" type="text" value="{{ is_numeric(old('PrimaNetaAnual')) ? '$' . number_format((float) old('PrimaNetaAnual'), 2) : '' }}" readonly>
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 poliza-field">
+                        <label class="control-label">Iva incluido</label>
+                        <div style="padding-top: 6px;">
+                            <input type="checkbox" id="IvaIncluidoSwitch" class="js-switch" {{ $oldIvaIncluido === 'S' ? 'checked' : '' }}>
+                            <span id="IvaIncluidoLabel" style="margin-left: 8px;">{{ $oldIvaIncluido === 'S' ? 'Si' : 'No' }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3 col-sm-6 poliza-field">
+                        <label class="control-label" for="PorcentajeDescuentoRentabilidad">% Descuento rentabilidad</label>
+                        <input class="form-control" id="PorcentajeDescuentoRentabilidad" name="PorcentajeDescuentoRentabilidad" type="number" step="0.0001" value="{{ old('PorcentajeDescuentoRentabilidad') }}">
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 poliza-field">
+                        <label class="control-label" for="PorcentajeDescuentoBuenaExperiencia">% Descuento buena experiencia</label>
+                        <input class="form-control" id="PorcentajeDescuentoBuenaExperiencia" name="PorcentajeDescuentoBuenaExperiencia" type="number" step="0.0001" value="{{ old('PorcentajeDescuentoBuenaExperiencia') }}">
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 poliza-field">
+                        <label class="control-label" for="PorcentajeOtrosDescuentos">% Otros descuentos</label>
+                        <input class="form-control" id="PorcentajeOtrosDescuentos" name="PorcentajeOtrosDescuentos" type="number" step="0.0001" value="{{ old('PorcentajeOtrosDescuentos') }}">
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 poliza-field">
+                        <label class="control-label" for="PorcentajeComsionCliente">% Comision cliente</label>
+                        <input class="form-control" id="PorcentajeComsionCliente" name="PorcentajeComsionCliente" type="number" step="0.0001" value="{{ old('PorcentajeComsionCliente') }}">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 col-sm-6 poliza-field">
+                        <label class="control-label" for="ClausulasEspeciales">Clausulas especiales</label>
+                        <textarea class="form-control" id="ClausulasEspeciales" name="ClausulasEspeciales" rows="4">{{ old('ClausulasEspeciales') }}</textarea>
+                    </div>
 
                     <div class="col-md-4 col-sm-6 poliza-field">
-                        <label class="control-label" for="FechaRecepcion">Fecha recepcion</label>
-                        <input type="date" name="FechaRecepcion" id="FechaRecepcion" class="form-control"
-                            value="{{ old('FechaRecepcion') }}">
+                        <label class="control-label" for="BeneficiosAdicionales">Beneficios adicionales</label>
+                        <textarea class="form-control" id="BeneficiosAdicionales" name="BeneficiosAdicionales" rows="4">{{ old('BeneficiosAdicionales') }}</textarea>
+                    </div>
+
+                    <div class="col-md-4 col-sm-6 poliza-field">
+                        <label class="control-label" for="Comentarios">Comentarios</label>
+                        <textarea class="form-control" id="Comentarios" name="Comentarios" rows="4">{{ old('Comentarios') }}</textarea>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 col-sm-6 poliza-field">
+                        <label class="control-label" for="TipoCarteraNR">Tipo de cartera</label>
+                        <select name="TipoCarteraNR" id="TipoCarteraNR" class="form-control select2" style="width: 100%">
+                            <option value="">Seleccione...</option>
+                            @foreach ($tipo_cartera_nr as $obj)
+                                <option value="{{ $obj->Id }}" {{ old('TipoCarteraNR') == $obj->Id ? 'selected' : '' }}>
+                                    {{ $obj->Nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-md-4 col-sm-6 poliza-field">
+                        <label class="control-label" for="EjecutivoCia">Ejecutivo que atendera</label>
+                        <select name="EjecutivoCia" id="EjecutivoCia" class="form-control select2" style="width: 100%">
+                            <option value="">Seleccione...</option>
+                            @foreach ($ejecutivos as $obj)
+                                <option value="{{ $obj->Id }}" {{ old('EjecutivoCia') == $obj->Id ? 'selected' : '' }}>
+                                    {{ $obj->Nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-md-2 col-sm-6 poliza-field" style="display: none !important;">
+                        <label class="control-label" for="Deducible">Tipo de deducible</label>
+                        <select name="Deducible" id="Deducible" class="form-control select2" style="width: 100%">
+                            <option value="">Seleccione...</option>
+                            @foreach ($tipo_deducible as $obj)
+                                <option value="{{ $obj->Id }}" {{ old('Deducible') == $obj->Id ? 'selected' : '' }}>
+                                    {{ $obj->Nombre }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
             </div>
 
             <div class="poliza-section">
-                <h5 class="poliza-section-title">Datos complementarios</h5>
+                <h5 class="poliza-section-title">Cancelacion poliza</h5>
                 <div class="row">
+                    <div class="col-md-2 col-sm-6 poliza-field">
+                        <label class="control-label" for="FechaCancelacion">Fecha cancelacion</label>
+                        <input type="date" name="FechaCancelacion" id="FechaCancelacion" class="form-control" value="{{ old('FechaCancelacion') }}">
+                    </div>
+
                     <div class="col-md-3 col-sm-6 poliza-field">
-                        <label class="control-label" for="SustituidaPoliza">Sustituida por poliza</label>
-                        <input type="date" name="SustituidaPoliza" id="SustituidaPoliza" class="form-control"
-                            value="{{ old('SustituidaPoliza') }}">
+                        <label class="control-label" for="CodCancelacion">Motivos de cancelacion</label>
+                        <select name="CodCancelacion" id="CodCancelacion" class="form-control select2" style="width: 100%">
+                            <option value="">Seleccione...</option>
+                            @foreach ($motivos_cancelacion as $obj)
+                                <option value="{{ $obj->Id }}" {{ old('CodCancelacion') == $obj->Id ? 'selected' : '' }}>
+                                    {{ $obj->Nombre }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
 
-                    <div class="col-md-5 col-sm-6 poliza-field">
-                        <label class="control-label" for="ObservacionSiniestro">Observacion siniestro</label>
-                        <input type="text" name="ObservacionSiniestro" id="ObservacionSiniestro" class="form-control"
-                            value="{{ old('ObservacionSiniestro') }}">
+                    <div class="col-md-7 col-sm-6 poliza-field">
+                        <label class="control-label" for="MotivoCancelacion">Observaciones cancelacion</label>
+                        <input type="text" name="MotivoCancelacion" id="MotivoCancelacion" class="form-control" value="{{ old('MotivoCancelacion') }}">
                     </div>
-
-                    <div class="col-md-4 col-sm-6 poliza-field">
-                        <label class="control-label" for="GrupoCliente">Grupo cliente</label>
-                        <input type="text" name="GrupoCliente" id="GrupoCliente" class="form-control"
-                            value="{{ old('GrupoCliente') }}">
-                    </div>
-
-
                 </div>
             </div>
 
@@ -442,13 +466,76 @@
         const productosCatalogo = @json($productosCatalogo);
         const planesCatalogo = @json($planesCatalogo);
         const aseguradorasCatalogo = @json($aseguradorasCatalogo);
-        const oldAseguradora = "{{ old('Aseguradora') }}";
-        const oldProducto = "{{ old('Productos') }}";
-        const oldPlan = "{{ old('Planes') }}";
+        const ramosCatalogo = @json($ramosCatalogo);
+        const oldRamo = "{{ $oldRamo }}";
+        const oldProducto = "{{ $oldProductoId }}";
+        const oldPlan = "{{ $oldPlanId }}";
 
         function formatoDecimal2(valor) {
             const numero = parseFloat(valor);
             return isNaN(numero) ? '' : numero.toFixed(2);
+        }
+
+        function normalizarNumeroMoneda(valor) {
+            if (valor === null || valor === undefined || valor === '') {
+                return '';
+            }
+
+            const texto = String(valor).replace(/[^0-9.-]/g, '');
+            const numero = parseFloat(texto);
+            return isNaN(numero) ? '' : numero;
+        }
+
+        function formatoMonedaUsd(valor) {
+            const numero = normalizarNumeroMoneda(valor);
+
+            if (numero === '') {
+                return '';
+            }
+
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(numero);
+        }
+
+        function setReadonlyCurrency(inputId, displayId, valor) {
+            const valorNormalizado = valor === '' ? '' : formatoDecimal2(valor);
+            $('#' + inputId).val(valorNormalizado);
+            $('#' + displayId).val(formatoMonedaUsd(valorNormalizado));
+        }
+
+        function aplicarMayusculasFormulario(selector) {
+            const formulario = $(selector);
+
+            if (!formulario.length) {
+                return;
+            }
+
+            const objetivo = 'input[type="text"]:not([readonly]):not(.currency-field), textarea';
+
+            function sanitizarTextoEncabezado(valor) {
+                return String(valor || '')
+                    .replace(/ñ/g, '__enie_lower__')
+                    .replace(/Ñ/g, '__enie_upper__')
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .replace(/__enie_lower__/g, 'ñ')
+                    .replace(/__enie_upper__/g, 'Ñ')
+                    .toLocaleUpperCase('es-SV');
+            }
+
+            formulario.on('input blur', objetivo, function() {
+                this.value = sanitizarTextoEncabezado(this.value);
+            });
+
+            formulario.on('submit', function() {
+                formulario.find(objetivo).each(function() {
+                    this.value = sanitizarTextoEncabezado(this.value);
+                });
+            });
         }
 
         function reiniciarSelect(selector, texto) {
@@ -458,43 +545,72 @@
             return select;
         }
 
+        function actualizarIvaIncluidoLabel() {
+            const activo = $('#IvaIncluido').val() === 'S';
+            $('#IvaIncluidoLabel').text(activo ? 'Si' : 'No');
+        }
+
+        function actualizarTarifaPlan() {
+            const planId = $('#Planes').val();
+            const plan = planesCatalogo.find(function(item) {
+                return String(item.id) === String(planId);
+            });
+
+            $('#TarifaPlan').val(plan && plan.tarifa_label ? plan.tarifa_label : '');
+        }
+
         function cargarComisionRamo() {
             const option = $('#Ramo option:selected');
             const comision = option.data('comision');
             $('#PorcentajeComisionNR').val(comision || '');
         }
 
-        function poblarAseguradoras(aseguradoraSeleccionada = '') {
-            const ramo = $('#Ramo').val();
-            const select = reiniciarSelect('#Aseguradora', 'Seleccione...');
-            const aseguradorasPermitidas = [];
+        function cargarComisionProducto() {
+            const productoId = $('#Productos').val();
+            const producto = productosCatalogo.find(function(item) {
+                return String(item.id) === String(productoId);
+            });
+
+            if (producto && producto.comision !== null && producto.comision !== '') {
+                $('#PorcentajeComisionNR').val(producto.comision);
+            } else {
+                cargarComisionRamo();
+            }
+        }
+
+        function poblarRamos(ramoSeleccionado = '') {
+            const aseguradora = $('#Aseguradora').val();
+            const select = reiniciarSelect('#Ramo', 'Seleccione...');
+            const ramosPermitidos = [];
 
             productosCatalogo
                 .filter(function(producto) {
-                    return ramo && producto.ramo == ramo;
+                    return aseguradora && String(producto.aseguradora) === String(aseguradora);
                 })
                 .forEach(function(producto) {
-                    const aseguradoraId = String(producto.aseguradora);
-                    if (aseguradoraId && aseguradorasPermitidas.indexOf(aseguradoraId) === -1) {
-                        aseguradorasPermitidas.push(aseguradoraId);
+                    const ramoId = String(producto.ramo);
+                    if (ramoId && ramosPermitidos.indexOf(ramoId) === -1) {
+                        ramosPermitidos.push(ramoId);
                     }
                 });
 
-            aseguradorasCatalogo
-                .filter(function(aseguradora) {
-                    return aseguradorasPermitidas.indexOf(String(aseguradora.id)) !== -1;
+            ramosCatalogo
+                .filter(function(ramo) {
+                    return ramosPermitidos.indexOf(String(ramo.id)) !== -1;
                 })
-                .forEach(function(aseguradora) {
-                    select.append(new Option(aseguradora.nombre, aseguradora.id, false, aseguradora.id == aseguradoraSeleccionada));
+                .forEach(function(ramo) {
+                    const option = new Option(ramo.nombre, ramo.id, false, String(ramo.id) === String(ramoSeleccionado));
+                    $(option).attr('data-comision', ramo.comision ?? '');
+                    select.append(option);
                 });
 
-            if (aseguradoraSeleccionada && aseguradorasPermitidas.indexOf(String(aseguradoraSeleccionada)) !== -1) {
-                select.val(aseguradoraSeleccionada);
+            if (ramoSeleccionado && ramosPermitidos.indexOf(String(ramoSeleccionado)) !== -1) {
+                select.val(String(ramoSeleccionado));
             } else {
                 select.val('');
             }
 
-            select.prop('disabled', !ramo).trigger('change.select2');
+            select.prop('disabled', !aseguradora).trigger('change.select2');
         }
 
         function poblarProductos(productoSeleccionado = '', planSeleccionado = '') {
@@ -502,7 +618,7 @@
             const aseguradora = $('#Aseguradora').val();
             const select = reiniciarSelect('#Productos', 'Seleccione...');
 
-            reiniciarSelect('#Planes', 'Seleccione...').trigger('change.select2');
+            limpiarPlan();
 
             if (!ramo || !aseguradora) {
                 select.val('').trigger('change.select2');
@@ -511,10 +627,10 @@
 
             productosCatalogo
                 .filter(function(producto) {
-                    return producto.ramo == ramo && producto.aseguradora == aseguradora;
+                    return String(producto.ramo) === String(ramo) && String(producto.aseguradora) === String(aseguradora);
                 })
                 .forEach(function(producto) {
-                    select.append(new Option(producto.nombre, producto.id, false, producto.id == productoSeleccionado));
+                    select.append(new Option(producto.nombre, producto.id, false, String(producto.id) === String(productoSeleccionado)));
                 });
 
             select.val(productoSeleccionado || '').trigger('change.select2');
@@ -522,17 +638,32 @@
         }
 
         function poblarPlanes(productoId = '', planSeleccionado = '') {
-            const select = reiniciarSelect('#Planes', 'Seleccione...');
+            const select = reiniciarSelect('#PlanesVisible', 'Seleccione...');
+            const planesProducto = planesCatalogo.filter(function(plan) {
+                return productoId && String(plan.producto) === String(productoId);
+            });
 
-            planesCatalogo
-                .filter(function(plan) {
-                    return productoId && plan.producto == productoId;
-                })
-                .forEach(function(plan) {
-                    select.append(new Option(plan.nombre, plan.id, false, plan.id == planSeleccionado));
-                });
+            planesProducto.forEach(function(plan) {
+                select.append(new Option(plan.nombre, plan.id, false, String(plan.id) === String(planSeleccionado)));
+            });
 
-            select.val(planSeleccionado || '').trigger('change.select2');
+            if (planSeleccionado && planesProducto.some(function(plan) {
+                return String(plan.id) === String(planSeleccionado);
+            })) {
+                select.val(String(planSeleccionado));
+            } else {
+                select.val('');
+            }
+
+            $('#Planes').val(select.val() || '');
+            actualizarTarifaPlan();
+            select.trigger('change.select2');
+        }
+
+        function limpiarPlan() {
+            $('#Planes').val('');
+            $('#PlanesVisible').val('').trigger('change.select2');
+            actualizarTarifaPlan();
         }
 
         function mostrarCargando(mostrar) {
@@ -557,23 +688,24 @@
 
         function limpiarDatosOferta() {
             bloquearCliente(false);
-            $('#FormaPago').val('').trigger('change');
             $('#Cliente').val('').trigger('change');
-            $('#Ramo').val('').trigger('change.select2');
-            poblarAseguradoras();
-            poblarProductos();
-            $('#DepartamentoNr').val('').trigger('change');
-            $('#EjecutivoCia').val('').trigger('change');
-            $('#NumeroPoliza').val('');
             $('#NumeroDocumento').val('');
+            $('#NumeroPoliza').val('');
+            $('#NumeroVigencia').val('1');
+            $('#Aseguradora').val('').trigger('change.select2');
+            poblarRamos();
+            poblarProductos();
+            $('#FormaPago').val('').trigger('change');
             $('#NumCuotas').val('');
-            $('#Deducible').val('').trigger('change');
-            $('#ValorDeducible').val('');
-            $('#SumaAsegurada').val('');
-            $('#PrimaNetaAnual').val('');
+            setReadonlyCurrency('SumaAsegurada', 'SumaAseguradaDisplay', '');
+            setReadonlyCurrency('PrimaNetaAnual', 'PrimaNetaAnualDisplay', '');
             $('#PorcentajeComisionNR').val('');
             $('#vigencia_desde').val('');
-            $('#Observacion').val('');
+            $('#TipoCarteraNR').val('').trigger('change');
+            $('#EjecutivoCia').val('').trigger('change');
+            $('#IvaIncluido').val('N');
+            $('#IvaIncluidoSwitch').prop('checked', false);
+            actualizarIvaIncluidoLabel();
             calcularDias();
         }
 
@@ -594,31 +726,32 @@
                 success: function(data) {
                     mostrarCargando(false);
 
-                    if (data.success) {
-                        cargandoOferta = true;
-                        $('#Ramo').val(data.oferta.ramo ?? '').trigger('change.select2');
-                        poblarAseguradoras(data.oferta.aseguradora ?? '');
-                        poblarProductos(data.oferta.productos ?? '', data.oferta.planes ?? '');
-                        $('#FormaPago').val(data.oferta.forma_pago ?? '').trigger('change');
-                        $('#Cliente').val(data.oferta.id_cliente ?? '').trigger('change');
-                        $('#DepartamentoNr').val(data.oferta.departamento ?? '').trigger('change');
-                        $('#EjecutivoCia').val(data.oferta.ejecutivo ?? '').trigger('change');
-                        bloquearCliente(true);
-                        cargandoOferta = false;
-
-                        $('#NumeroPoliza').val(data.oferta.numero_poliza ?? '');
-                        $('#NumeroDocumento').val(data.oferta.numero_documento ?? '');
-                        $('#NumCuotas').val(data.oferta.num_cuotas ?? '');
-                        $('#SumaAsegurada').val(data.oferta.cotizacion ? formatoDecimal2(data.oferta.cotizacion.suma_asegurada) : '');
-                        $('#PrimaNetaAnual').val(data.oferta.cotizacion ? formatoDecimal2(data.oferta.cotizacion.prima_neta_anual) : '');
-                        $('#PorcentajeComisionNR').val(data.oferta.porcentaje_comision_nr ?? '');
-                        $('#vigencia_desde').val(data.oferta.vigencia_desde ?? '');
-                        $('#Observacion').val(data.oferta.observacion ?? '');
-                        calcularDias();
-                    } else {
+                    if (!data.success) {
                         limpiarDatosOferta();
                         toastr.warning(data.message || 'No se pudo obtener la oferta seleccionada.');
+                        return;
                     }
+
+                    cargandoOferta = true;
+                    $('#Aseguradora').val(data.oferta.aseguradora ?? '').trigger('change.select2');
+                    poblarRamos(data.oferta.ramo ?? '');
+                    poblarProductos(data.oferta.productos ?? '', data.oferta.planes ?? '');
+                    $('#FormaPago').val(data.oferta.forma_pago ?? '').trigger('change');
+                    $('#Cliente').val(data.oferta.id_cliente ?? '').trigger('change');
+                    $('#TipoCarteraNR').val(data.oferta.tipo_cartera_nr ?? '').trigger('change');
+                    $('#EjecutivoCia').val(data.oferta.ejecutivo ?? '').trigger('change');
+                    bloquearCliente(true);
+                    cargandoOferta = false;
+
+                    $('#NumeroPoliza').val(data.oferta.numero_poliza ?? '');
+                    $('#NumeroDocumento').val(data.oferta.numero_documento ?? '');
+                    $('#NumCuotas').val(data.oferta.num_cuotas ?? '');
+                    setReadonlyCurrency('SumaAsegurada', 'SumaAseguradaDisplay', data.oferta.cotizacion ? data.oferta.cotizacion.suma_asegurada : '');
+                    setReadonlyCurrency('PrimaNetaAnual', 'PrimaNetaAnualDisplay', data.oferta.cotizacion ? data.oferta.cotizacion.prima_neta_anual : '');
+                    $('#PorcentajeComisionNR').val(data.oferta.porcentaje_comision_nr ?? '');
+                    $('#vigencia_desde').val(data.oferta.vigencia_desde ?? '');
+                    actualizarTarifaPlan();
+                    calcularDias();
                 },
                 error: function() {
                     mostrarCargando(false);
@@ -632,25 +765,35 @@
         hastaInput.addEventListener('change', calcularDias);
 
         $('#Oferta').on('change', select_oferta);
-        $('#Ramo').on('change', function() {
+        $('#Aseguradora').on('change', function() {
             if (!cargandoOferta) {
+                poblarRamos();
                 cargarComisionRamo();
-                poblarAseguradoras();
                 poblarProductos();
             }
         });
-        $('#Aseguradora').on('change', function() {
+        $('#Ramo').on('change', function() {
             if (!cargandoOferta) {
+                cargarComisionRamo();
                 poblarProductos();
             }
         });
         $('#Productos').on('change', function() {
             if (!cargandoOferta) {
                 poblarPlanes($(this).val(), '');
+                cargarComisionProducto();
             }
         });
+        $('#PlanesVisible').on('change', function() {
+            $('#Planes').val($(this).val() || '');
+            actualizarTarifaPlan();
+        });
+        $('#IvaIncluidoSwitch').on('change', function() {
+            $('#IvaIncluido').val($(this).is(':checked') ? 'S' : 'N');
+            actualizarIvaIncluidoLabel();
+        });
 
-        $('#Cliente').change(function() {
+        $('#Cliente').on('change', function() {
             if (cargandoOferta) {
                 return;
             }
@@ -685,16 +828,24 @@
             btn.html('<i class="fa fa-spinner fa-spin"></i> Guardando...');
         });
 
+        aplicarMayusculasFormulario('#formPolizaSeguroCreate');
+
         if ($('#Oferta').val()) {
             bloquearCliente(true);
             select_oferta();
         } else {
-            poblarAseguradoras(oldAseguradora);
+            poblarRamos(oldRamo);
             poblarProductos(oldProducto, oldPlan);
+            actualizarTarifaPlan();
+            actualizarIvaIncluidoLabel();
+
             if ($('#Ramo').val() && !$('#PorcentajeComisionNR').val()) {
-                cargarComisionRamo();
+                cargarComisionProducto();
             }
         }
+
+        setReadonlyCurrency('SumaAsegurada', 'SumaAseguradaDisplay', $('#SumaAsegurada').val());
+        setReadonlyCurrency('PrimaNetaAnual', 'PrimaNetaAnualDisplay', $('#PrimaNetaAnual').val());
         calcularDias();
     </script>
 @else

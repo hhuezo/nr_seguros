@@ -232,8 +232,12 @@
                                                 <li><a href="{{ url('catalogo/estado_venta') }}">Estado Venta</a></li>
                                             @endcan
                                             <li><a href="{{ url('catalogo/motivo_cancelacion') }}">Motivos de cancelacion (no declarativas)</a></li>
+                                            <li><a href="{{ url('catalogo/estado_certificado') }}">Estados de certificado (no declarativas)</a></li>
+                                            <li><a href="{{ url('catalogo/forma_pago_polizas') }}">Formas de pago polizas (no declarativas)</a></li>
                                             <li><a href="{{ url('catalogo/origen_poliza') }}">Origen de poliza (no declarativas)</a></li>
                                             <li><a href="{{ url('catalogo/tipo_deducible') }}">Tipo de deducible (no declarativas)</a></li>
+                                            <li><a href="{{ url('catalogo/parentesco_beneficiario') }}">Parentescos de beneficiarios (no declarativas)</a></li>
+                                            <li><a href="{{ url('catalogo/cesionario') }}">Cesionarios (no declarativas)</a></li>
                                             @can('nr-cartera read')
                                                 <li><a href="{{ url('catalogo/nr_cartera') }}">Tipo Cartera NR </a></li>
                                             @endcan

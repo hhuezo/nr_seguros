@@ -8,9 +8,9 @@ use App\Models\catalogo\Cobertura;
 use App\Models\catalogo\CoberturaTarificacion;
 use App\Models\catalogo\NecesidadProteccion;
 use App\Models\catalogo\Plan;
-use App\Models\catalogo\PlanCoberturaDetalle;
 use App\Models\catalogo\Producto;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PlanController extends Controller
 {
@@ -136,8 +136,15 @@ class PlanController extends Controller
 
     public function edit_cobertura_detalle(Request $request)
     {
+        $request->validate([
+            'Plan' => 'required|integer',
+            'Cobertura' => 'required|integer',
+            'SumaAsegurada' => 'required|numeric',
+            'Tasa' => 'required|numeric',
+            'Prima' => 'required|numeric',
+        ]);
 
-        PlanCoberturaDetalle::updateOrInsert(
+        DB::table('plan_cobertura_detalle')->updateOrInsert(
             ['Plan' => $request->Plan, 'Cobertura' => $request->Cobertura], // Condiciones de búsqueda
             ['SumaAsegurada' => $request->SumaAsegurada, 'Tasa' => $request->Tasa, 'Prima' => $request->Prima, 'Activo' => '1'] // Datos a actualizar o crear
         );

@@ -10,7 +10,8 @@ class PlanCoberturaDetalle extends Model
     use HasFactory;
     protected $table = 'plan_cobertura_detalle';
     protected $fillable = ['Plan', 'Cobertura', 'SumaAsegurada', 'Tasa', 'Prima', 'Activo'];
-    protected $primaryKey = ['Plan', 'Cobertura'];
+    // Tabla pivote con llave compuesta logica; las escrituras se hacen con DB::table().
+    public $incrementing = false;
     public $timestamps = false;
 
     public function coberturas()

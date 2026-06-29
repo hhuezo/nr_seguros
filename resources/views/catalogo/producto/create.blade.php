@@ -51,6 +51,15 @@
                                     @endforeach
                                 </select>
                             </div>
+                            <div class="col-sm-6">
+                                <label class="form-label">% Comisión NR (No Declarativas)</label>
+                                <div class="input-group">
+                                    <input class="form-control text-right" name="PorcentajeComisionNoDeclarativa" type="number" min="0" max="100"
+                                        step="0.0001" value="{{ old('PorcentajeComisionNoDeclarativa') }}" placeholder="0.0000">
+                                    <span class="input-group-addon">%</span>
+                                </div>
+                                <small class="text-muted">Tasa de comisión propia del producto.</small>
+                            </div>
                         </div>
                         <br>
                         <div class="col-md-12">

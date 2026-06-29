@@ -68,6 +68,15 @@
                                                 @endforeach
                                             </select>
                                         </div>
+                                        <div class="col-sm-6">
+                                            <label class="form-label">% Comisión NR (No Declarativas)</label>
+                                            <div class="input-group">
+                                                <input class="form-control text-right" name="PorcentajeComisionNoDeclarativa" type="number" min="0" max="100"
+                                                    step="0.0001" value="{{ old('PorcentajeComisionNoDeclarativa', $producto->PorcentajeComisionNoDeclarativa) }}" placeholder="0.0000">
+                                                <span class="input-group-addon">%</span>
+                                            </div>
+                                            <small class="text-muted">Tasa de comisión propia del producto.</small>
+                                        </div>
                                     </div>
                                     <br>
                                     <div class="col-md-12">
@@ -415,7 +424,7 @@
                             </div>
                             <div class="row" style="margin-top:10px;">
                                 <div class="col-sm-4"><label>Tipo</label>
-                                    <select name="TipoCampo" class="form-control">
+                                    <select name="TipoCampo" class="form-control js-cert-tipo-campo" data-opciones-target="#opciones-certificado-nuevo">
                                         <option value="text">text</option><option value="number">number</option><option value="date">date</option>
                                         <option value="select">select</option><option value="textarea">textarea</option><option value="email">email</option>
                                     </select>
@@ -444,9 +453,11 @@
                                 <div class="col-sm-6"><label>Placeholder</label><input type="text" name="Placeholder" class="form-control"></div>
                                 <div class="col-sm-6"><label>Ayuda</label><input type="text" name="Ayuda" class="form-control"></div>
                             </div>
-                            <div class="form-group" style="margin-top:10px;">
-                                <label>Opciones (solo si el tipo es select, una por linea)</label>
-                                <textarea name="OpcionesTexto" class="form-control" rows="4"></textarea>
+                            <div class="form-group js-cert-opciones" id="opciones-certificado-nuevo" style="margin-top:10px; display:none;">
+                                <label>Opciones del select <span class="text-danger">*</span></label>
+                                <textarea name="OpcionesTexto" class="form-control js-cert-opciones-texto" rows="4"
+                                    placeholder="Ingrese una opción por línea&#10;Ejemplo:&#10;Masculino&#10;Femenino"></textarea>
+                                <small class="text-muted">Estas opciones serán las que verá el usuario al llenar el certificado.</small>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -472,7 +483,7 @@
                             </div>
                             <div class="row" style="margin-top:10px;">
                                 <div class="col-sm-4"><label>Tipo</label>
-                                    <select name="TipoCampo" id="CertCampoTipoCampo" class="form-control">
+                                    <select name="TipoCampo" id="CertCampoTipoCampo" class="form-control js-cert-tipo-campo" data-opciones-target="#opciones-certificado-edit">
                                         <option value="text">text</option><option value="number">number</option><option value="date">date</option>
                                         <option value="select">select</option><option value="textarea">textarea</option><option value="email">email</option>
                                     </select>
@@ -501,9 +512,11 @@
                                 <div class="col-sm-6"><label>Placeholder</label><input type="text" name="Placeholder" id="CertCampoPlaceholder" class="form-control"></div>
                                 <div class="col-sm-6"><label>Ayuda</label><input type="text" name="Ayuda" id="CertCampoAyuda" class="form-control"></div>
                             </div>
-                            <div class="form-group" style="margin-top:10px;">
-                                <label>Opciones (solo si el tipo es select, una por linea)</label>
-                                <textarea name="OpcionesTexto" id="CertCampoOpcionesTexto" class="form-control" rows="4"></textarea>
+                            <div class="form-group js-cert-opciones" id="opciones-certificado-edit" style="margin-top:10px; display:none;">
+                                <label>Opciones del select <span class="text-danger">*</span></label>
+                                <textarea name="OpcionesTexto" id="CertCampoOpcionesTexto" class="form-control js-cert-opciones-texto" rows="4"
+                                    placeholder="Ingrese una opción por línea&#10;Ejemplo:&#10;Masculino&#10;Femenino"></textarea>
+                                <small class="text-muted">Estas opciones serán las que verá el usuario al llenar el certificado.</small>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -566,8 +579,33 @@
             $('#CertCampoPlaceholder').val(placeholder);
             $('#CertCampoAyuda').val(ayuda);
             $('#CertCampoOpcionesTexto').val(opcionesTexto);
+            toggleOpcionesCertificado($('#CertCampoTipoCampo'));
         }
         function modal_delete_certificado_campo(id) { $('#CertCampoDeleteId').val(id); }
+
+        function toggleOpcionesCertificado($select) {
+            var target = $select.data('opciones-target');
+            var $wrapper = $(target);
+            var $textarea = $wrapper.find('.js-cert-opciones-texto');
+
+            if ($select.val() === 'select') {
+                $wrapper.show();
+                $textarea.prop('required', true);
+            } else {
+                $wrapper.hide();
+                $textarea.prop('required', false).val('');
+            }
+        }
+
+        $(document).on('change', '.js-cert-tipo-campo', function() {
+            toggleOpcionesCertificado($(this));
+        });
+
+        $(function() {
+            $('.js-cert-tipo-campo').each(function() {
+                toggleOpcionesCertificado($(this));
+            });
+        });
     </script>
     @include('sweetalert::alert')
 @endsection

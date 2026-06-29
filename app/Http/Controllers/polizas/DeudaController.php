@@ -50,7 +50,6 @@ use App\Models\polizas\PolizaDeudaCartera;
 use App\Models\polizas\PolizaDeudaExtraPrimadosMensual;
 use App\Models\polizas\PolizaDeudaHistorica;
 use App\Models\polizas\PolizaDeudaTasaDiferenciada;
-use App\Models\polizas\PolizaSeguroCobertura;
 use App\Models\polizas\Vida;
 use App\Models\temp\PolizaDeudaTempCartera;
 use Carbon\Carbon;

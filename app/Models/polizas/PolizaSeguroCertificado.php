@@ -2,6 +2,10 @@
 
 namespace App\Models\polizas;
 
+use App\Models\catalogo\EstadoCertificado;
+use App\Models\catalogo\MotivoCancelacion;
+use App\Models\catalogo\Plan;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,7 +19,38 @@ class PolizaSeguroCertificado extends Model
 
     protected $fillable = [
         'PolizaSeguroId',
+        'Plan',
         'NumeroCertificado',
+        'CertificadoAseguradora',
+        'CodAsegurado',
+        'Asegurado',
+        'VigenciaDesde',
+        'VigenciaHasta',
+        'FechaInclusion',
+        'DiasVigencia',
+        'ValorAsegurado',
+        'PrimaTotal',
+        'PorcentajeDescuentoRentabilidad',
+        'ValorDescuento',
+        'PorcentajeDescuentoBuenaExperiencia',
+        'ValorDescuentoBuenaExperiencia',
+        'PorcentajeOtrosDescuentos',
+        'ValorOtrosDescuentos',
+        'PrimaNeta',
+        'PrimaExenta',
+        'GastosEmision',
+        'GastosFraccionamiento',
+        'GastosBomberos',
+        'OtrosGastos',
+        'Impuestos',
+        'TotalCertificado',
+        'Estado',
+        'EstadoCertificado',
+        'MotivoCancelacion',
+        'MotivoExclusion',
+        'FechaExclusion',
+        'UsuarioModifica',
+        'FechaModificacion',
         'DatosJson',
         'Observacion',
         'Activo',
@@ -31,5 +66,65 @@ class PolizaSeguroCertificado extends Model
         return $this->hasMany(PolizaSeguroCertificadoDependiente::class, 'PolizaSeguroCertificadoId', 'Id')
             ->where('Activo', 1)
             ->orderBy('NumeroDependiente', 'asc');
+    }
+
+    public function plan()
+    {
+        return $this->belongsTo(Plan::class, 'Plan', 'Id');
+    }
+
+    public function coberturasCertificado()
+    {
+        return $this->hasMany(PolizaSeguroCertificadoCobertura::class, 'PolizaSeguroCertificadoId', 'Id')
+            ->where('Activo', 1)
+            ->orderBy('Id', 'asc');
+    }
+
+    public function datosTecnicosCertificado()
+    {
+        return $this->hasMany(PolizaSeguroCertificadoDatoTecnico::class, 'PolizaSeguroCertificadoId', 'Id')
+            ->where('Activo', 1)
+            ->orderBy('Id', 'asc');
+    }
+
+    public function beneficiarios()
+    {
+        return $this->hasMany(PolizaSeguroBeneficiario::class, 'PolizaSeguroCertificadoId', 'Id')
+            ->where('Activo', 1)
+            ->orderBy('Id', 'asc');
+    }
+
+    public function beneficiariosTodos()
+    {
+        return $this->hasMany(PolizaSeguroBeneficiario::class, 'PolizaSeguroCertificadoId', 'Id')
+            ->orderBy('Id', 'asc');
+    }
+
+    public function cesionBeneficios()
+    {
+        return $this->hasMany(PolizaSeguroCesionBeneficio::class, 'PolizaSeguroCertificadoId', 'Id')
+            ->where('Activo', 1)
+            ->orderBy('Id', 'asc');
+    }
+
+    public function cesionBeneficiosTodos()
+    {
+        return $this->hasMany(PolizaSeguroCesionBeneficio::class, 'PolizaSeguroCertificadoId', 'Id')
+            ->orderBy('Id', 'asc');
+    }
+
+    public function estadoCertificado()
+    {
+        return $this->belongsTo(EstadoCertificado::class, 'EstadoCertificado', 'Id');
+    }
+
+    public function motivoCancelacion()
+    {
+        return $this->belongsTo(MotivoCancelacion::class, 'MotivoCancelacion', 'Id');
+    }
+
+    public function usuarioModifica()
+    {
+        return $this->belongsTo(User::class, 'UsuarioModifica', 'id');
     }
 }

@@ -65,11 +65,21 @@ class ProductoController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'Nombre' => 'required|string|max:150',
+            'Aseguradora' => 'required|exists:aseguradora,Id',
+            'NecesidadProteccion' => 'required|exists:necesidad_proteccion,Id',
+            'PorcentajeComisionNoDeclarativa' => 'nullable|numeric|min:0|max:100',
+        ]);
+
         $producto = new Producto();
         $producto->Nombre = $request->Nombre;
         $producto->Aseguradora = $request->Aseguradora;
         $producto->NecesidadProteccion = $request->NecesidadProteccion;
         $producto->Descripcion = $request->Descripcion;
+        $producto->PorcentajeComisionNoDeclarativa = $request->PorcentajeComisionNoDeclarativa !== null && $request->PorcentajeComisionNoDeclarativa !== ''
+            ? $request->PorcentajeComisionNoDeclarativa
+            : null;
         $producto->Activo = 1;
         $producto->save();
 
@@ -118,11 +128,21 @@ class ProductoController extends Controller
 
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'Nombre' => 'required|string|max:150',
+            'Aseguradora' => 'required|exists:aseguradora,Id',
+            'NecesidadProteccion' => 'required|exists:necesidad_proteccion,Id',
+            'PorcentajeComisionNoDeclarativa' => 'nullable|numeric|min:0|max:100',
+        ]);
+
         $producto = Producto::findOrFail($id);
         $producto->Nombre = $request->Nombre;
         $producto->Aseguradora = $request->Aseguradora;
         $producto->NecesidadProteccion = $request->NecesidadProteccion;
         $producto->Descripcion = $request->Descripcion;
+        $producto->PorcentajeComisionNoDeclarativa = $request->PorcentajeComisionNoDeclarativa !== null && $request->PorcentajeComisionNoDeclarativa !== ''
+            ? $request->PorcentajeComisionNoDeclarativa
+            : null;
         $producto->update();
         session(['tab1' => '1']);
         alert()->success('El registro ha sido modificado correctamente');
@@ -235,15 +255,26 @@ class ProductoController extends Controller
             'Producto' => 'required|exists:producto,Id',
             'Etiqueta' => 'required|string|max:150',
             'NombreCampo' => 'required|string|max:150',
-            'TipoCampo' => 'required|string|max:30',
+            'TipoCampo' => 'required|in:text,number,date,select,textarea,email',
             'ValidacionCampo' => 'required|in:' . implode(',', $this->validacionesCampoCertificado()),
             'Orden' => 'nullable|integer|min:1',
             'Requerido' => 'required|in:0,1',
             'MostrarEnReporte' => 'required|in:0,1',
-            'OpcionesTexto' => 'nullable|string',
+            'OpcionesTexto' => 'nullable|string|required_if:TipoCampo,select',
             'Placeholder' => 'nullable|string|max:200',
             'Ayuda' => 'nullable|string',
         ]);
+
+        $opcionesJson = null;
+        if ($request->TipoCampo === 'select') {
+            $opcionesJson = $this->buildOpcionesJson($request->OpcionesTexto);
+
+            if (!$opcionesJson) {
+                return back()
+                    ->withErrors(['OpcionesTexto' => 'Debe ingresar al menos una opcion cuando el tipo de campo es select.'])
+                    ->withInput();
+            }
+        }
 
         $campo = new ProductoCertificadoCampo();
         $campo->Producto = $request->Producto;
@@ -256,7 +287,7 @@ class ProductoController extends Controller
         $campo->Orden = $request->Orden ?: 1;
         $campo->Placeholder = $request->Placeholder ?: null;
         $campo->Ayuda = $request->Ayuda ?: null;
-        $campo->OpcionesJson = $this->buildOpcionesJson($request->OpcionesTexto);
+        $campo->OpcionesJson = $opcionesJson;
         $campo->Activo = 1;
         $campo->save();
 
@@ -271,15 +302,26 @@ class ProductoController extends Controller
             'Id' => 'required|exists:producto_certificado_campos,Id',
             'Etiqueta' => 'required|string|max:150',
             'NombreCampo' => 'required|string|max:150',
-            'TipoCampo' => 'required|string|max:30',
+            'TipoCampo' => 'required|in:text,number,date,select,textarea,email',
             'ValidacionCampo' => 'required|in:' . implode(',', $this->validacionesCampoCertificado()),
             'Orden' => 'nullable|integer|min:1',
             'Requerido' => 'required|in:0,1',
             'MostrarEnReporte' => 'required|in:0,1',
-            'OpcionesTexto' => 'nullable|string',
+            'OpcionesTexto' => 'nullable|string|required_if:TipoCampo,select',
             'Placeholder' => 'nullable|string|max:200',
             'Ayuda' => 'nullable|string',
         ]);
+
+        $opcionesJson = null;
+        if ($request->TipoCampo === 'select') {
+            $opcionesJson = $this->buildOpcionesJson($request->OpcionesTexto);
+
+            if (!$opcionesJson) {
+                return back()
+                    ->withErrors(['OpcionesTexto' => 'Debe ingresar al menos una opcion cuando el tipo de campo es select.'])
+                    ->withInput();
+            }
+        }
 
         $campo = ProductoCertificadoCampo::findOrFail($request->Id);
         $campo->Etiqueta = $request->Etiqueta;
@@ -291,7 +333,7 @@ class ProductoController extends Controller
         $campo->Orden = $request->Orden ?: 1;
         $campo->Placeholder = $request->Placeholder ?: null;
         $campo->Ayuda = $request->Ayuda ?: null;
-        $campo->OpcionesJson = $this->buildOpcionesJson($request->OpcionesTexto);
+        $campo->OpcionesJson = $opcionesJson;
         $campo->update();
 
         alert()->success('Campo de certificado actualizado correctamente');

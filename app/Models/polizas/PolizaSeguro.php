@@ -8,9 +8,10 @@ use App\Models\catalogo\Departamento;
 use App\Models\catalogo\DepartamentoNR;
 use App\Models\catalogo\Ejecutivo;
 use App\Models\catalogo\EstadoPoliza;
-use App\Models\catalogo\FormaPago;
+use App\Models\catalogo\FormaPagoPoliza;
 use App\Models\catalogo\MotivoCancelacion;
 use App\Models\catalogo\Negocio;
+use App\Models\catalogo\NrCartera;
 use App\Models\catalogo\Plan;
 use App\Models\catalogo\Producto;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -29,6 +30,7 @@ class PolizaSeguro extends Model
     protected $fillable = [
 
         'Oferta',
+        'NumeroVigencia',
         'FormaPago',
         'NumCuotas',
         'NumeroPoliza',
@@ -52,8 +54,17 @@ class PolizaSeguro extends Model
         'OrigenPoliza',
         'FechaVinculacion',
         'Departamento',
+        'TipoCarteraNR',
         'FechaRecepcion',
         'SustituidaPoliza',
+        'ClausulasEspeciales',
+        'BeneficiosAdicionales',
+        'Comentarios',
+        'IvaIncluido',
+        'PorcentajeDescuentoRentabilidad',
+        'PorcentajeDescuentoBuenaExperiencia',
+        'PorcentajeOtrosDescuentos',
+        'PorcentajeComsionCliente',
         'ObservacionSiniestro',
         'EjecutivoCia',
         'GrupoCliente',
@@ -71,7 +82,7 @@ class PolizaSeguro extends Model
 
     public function forma_pago()
     {
-        return $this->belongsTo(FormaPago::class, 'FormaPago', 'Id');
+        return $this->belongsTo(FormaPagoPoliza::class, 'FormaPago', 'Id');
     }
 
     public function estado_polizas()
@@ -87,6 +98,11 @@ class PolizaSeguro extends Model
     public function departamento()
     {
         return $this->belongsTo(DepartamentoNR::class, 'Departamento', 'Id');
+    }
+
+    public function tipoCarteraNr()
+    {
+        return $this->belongsTo(NrCartera::class, 'TipoCarteraNR', 'Id');
     }
 
     public function clientes()
@@ -109,16 +125,6 @@ class PolizaSeguro extends Model
         return $this->belongsTo(Ejecutivo::class, 'EjecutivoCia', 'Id');
     }
 
-    public function coberturas()
-    {
-        return $this->hasMany(PolizaSeguroCobertura::class, 'PolizaSeguroId', 'Id');
-    }
-
-    public function datosTecnicos()
-    {
-        return $this->hasMany(PolizaSeguroDatosTecnicos::class, 'PolizaSeguroId', 'Id');
-    }
-
     public function certificados()
     {
         return $this->hasMany(PolizaSeguroCertificado::class, 'PolizaSeguroId', 'Id')
@@ -126,17 +132,11 @@ class PolizaSeguro extends Model
             ->orderBy('NumeroCertificado', 'asc');
     }
 
-    public function beneficiarios()
+    public function renovaciones()
     {
-        return $this->hasMany(PolizaSeguroBeneficiario::class, 'PolizaSeguroId', 'Id')
+        return $this->hasMany(PolizaSeguroRenovacion::class, 'PolizaSeguroId', 'Id')
             ->where('Activo', 1)
-            ->orderBy('Id', 'asc');
-    }
-
-    public function cesionBeneficios()
-    {
-        return $this->hasMany(PolizaSeguroCesionBeneficio::class, 'PolizaSeguroId', 'Id')
-            ->where('Activo', 1)
-            ->orderBy('Id', 'asc');
+            ->orderBy('FechaRegistro', 'desc')
+            ->orderBy('Id', 'desc');
     }
 }

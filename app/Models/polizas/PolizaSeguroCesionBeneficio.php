@@ -2,6 +2,7 @@
 
 namespace App\Models\polizas;
 
+use App\Models\catalogo\Cesionario;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,18 +16,28 @@ class PolizaSeguroCesionBeneficio extends Model
 
     protected $fillable = [
         'PolizaSeguroId',
+        'PolizaSeguroCertificadoId',
         'CodigoSesion',
-        'Beneficiario',
+        'CesionarioId',
         'FechaVigencia',
         'FechaCancelacion',
         'SumaCedida',
         'Observaciones',
-        'Propietario',
         'Activo',
     ];
 
     public function poliza()
     {
         return $this->belongsTo(PolizaSeguro::class, 'PolizaSeguroId', 'Id');
+    }
+
+    public function certificado()
+    {
+        return $this->belongsTo(PolizaSeguroCertificado::class, 'PolizaSeguroCertificadoId', 'Id');
+    }
+
+    public function cesionario()
+    {
+        return $this->belongsTo(Cesionario::class, 'CesionarioId', 'Id');
     }
 }
