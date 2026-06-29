@@ -217,6 +217,7 @@ Route::middleware(['auth'])->group(function () {
     // Consulta de cliente en todas las carteras
     Route::get('consulta/cliente', [ConsultaClienteController::class, 'index']);
     Route::get('consulta/cliente/buscar', [ConsultaClienteController::class, 'buscar']);
+    Route::get('consulta/cliente/exportar', [ConsultaClienteController::class, 'exportar']);
 
 
 

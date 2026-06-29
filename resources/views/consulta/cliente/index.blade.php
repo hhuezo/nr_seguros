@@ -74,6 +74,13 @@
                             Se encontraron <strong>{{ $resultados->count() }}</strong> registro(s) para: <strong>{{ $busqueda }}</strong>
                         </div>
 
+                        <div style="margin-bottom: 15px;">
+                            <a href="{{ url('consulta/cliente/exportar') . '?' . http_build_query(['busqueda' => $busqueda ?? '', 'tipo_busqueda' => $tipo_busqueda ?? 'documento']) }}"
+                                class="btn btn-success">
+                                <i class="fa fa-file-excel-o"></i> Descargar Excel
+                            </a>
+                        </div>
+
                         <div class="table-responsive" style="margin-bottom: 15px;">
                             <table class="table table-bordered table-condensed" style="font-size: 11px; margin-bottom: 0;">
                                 <thead>
