@@ -17,7 +17,8 @@ class ResumenGestion extends Model
 
     protected $fillable = [
         'Nombre',
-        'Activo'
+        'Activo',
+        'Color'
     ];
 
     protected $guarded = [];

@@ -842,6 +842,7 @@
         }
 
         function calculo() {
+            console.log("calculo");
             const peso = document.getElementById('Peso').value;
             const estatura = document.getElementById('Estatura').value;
 
@@ -863,21 +864,23 @@
 
                 let tipo_imc = 1;
 
+
                 if (total < 18.5) {
                     tipo_imc = 1;
-                } else if (total >= 18.5 && total < 24.9) {
+                } else if (total >= 18.5 && total < 25) {
                     tipo_imc = 2;
-                } else if (total >= 25 && total < 29.9) {
+                } else if (total >= 25 && total < 30) {
                     tipo_imc = 3;
-                } else if (total >= 30 && total < 34.9) {
+                } else if (total >= 30 && total < 35) {
                     tipo_imc = 4;
-                } else if (total >= 35 && total < 39.9) {
+                } else if (total >= 35 && total < 40) {
                     tipo_imc = 5;
-                } else if (total >= 40 && total < 49.9) {
+                } else if (total >= 40 && total < 50) {
                     tipo_imc = 6;
                 } else {
                     tipo_imc = 7;
                 }
+                console.log("tipo_imc " + tipo_imc);
 
                 document.getElementById('TipoImcId').value = tipo_imc;
 

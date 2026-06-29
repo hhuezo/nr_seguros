@@ -84,7 +84,7 @@
                 <td>Fecha Final:
                     {{ $fechas != null ? date('d/m/Y', strtotime($fechas->FechaFinal)) : '' }}
                 </td>
-                <td>Mes: {{ $fechas != null ? $meses[$fechas->Mes] : '' }}</td>
+                <td>Mes: {{ isset($fechas->Mes) && isset($meses[$fechas->Mes]) ? $meses[$fechas->Mes] : '' }}</td>
             </tr>
         </table>
         <br>

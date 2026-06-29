@@ -49,6 +49,7 @@ use App\Http\Controllers\suscripcion\TipoOrdenMedicaController;
 use App\Http\Controllers\suscripcion\TipoImcController;
 use App\Http\Controllers\suscripcion\TipoClienteController;
 use App\Http\Controllers\suscripcion\TipoCreditoController;
+use App\Http\Controllers\suscripcion\ResumenGestionController;
 use App\Http\Controllers\ConsultaClienteController;
 
 /*
@@ -258,6 +259,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('ocupaciones', OcupacionController::class);
     Route::resource('tipocreditos', TipoCreditoController::class);
+    Route::resource('resumengestiones', ResumenGestionController::class);
     Route::resource('fechasferiadas', FechasFeriadasController::class);
 
 

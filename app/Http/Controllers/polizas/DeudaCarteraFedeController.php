@@ -580,25 +580,69 @@ class DeudaCarteraFedeController extends Controller
             return back()->withErrors($validator);
         }
 
-        // 2. Validar primera fila
-        $firstRow = $excel->getActiveSheet()->rangeToArray('A1:W1')[0];
+        // 2. Validar primera fila (orden y cantidad según plantilla FEDE)
+        $expectedColumns = [
+            'Tipo de documento',
+            'DUI o documento de identidad',
+            'Primer Apellido',
+            'Segundo Apellido',
+            'Apellido de casada',
+            'primer nombre',
+            'segundo nombre',
+            'tercer nombre',
+            'Nacionalidad',
+            'Fecha de Nacimiento',
+            'Género',
+            'Nro. de Préstamo',
+            'Fecha de otorgamiento',
+            'Monto original de desembolso',
+            'Saldo de deuda capital actual',
+            'Saldo intereses corrientes',
+            'Mora capital',
+            'Saldo intereses por mora',
+            'Intereses Covid',
+            'Extra Prima',
+            'TARIFA',
+            'MES',
+            'AÑO',
+        ];
 
-        if (!isset($firstRow[0])) {
+        $lastCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(count($expectedColumns));
+        $firstRow = $excel->getActiveSheet()->rangeToArray('A1:' . $lastCol . '1')[0];
+
+        if (empty(array_filter($firstRow))) {
             $validator->errors()->add('Archivo', 'El archivo está vacío o no tiene el formato esperado');
             return back()->withErrors($validator);
         }
 
-        // if (trim($firstRow[0]) !== "NIT") {
-        //     $validator->errors()->add('Archivo', 'Error de formato del archivo, La primera columna de la primera fila debe ser "NIT"');
-        //     return back()->withErrors($validator);
-        // }
+        $firstRow = array_map('trim', $firstRow);
 
-        if (!isset($firstRow[1])) {
-            $validator->errors()->add('Archivo', 'Error de formato del archivo, El archivo no contiene la columna DUI');
+        if (count($firstRow) !== count($expectedColumns)) {
+            $validator->errors()->add(
+                'Archivo',
+                'Error de formato: la primera fila debe tener exactamente ' . count($expectedColumns) . ' columnas; se encontraron ' . count($firstRow) . '.'
+            );
             return back()->withErrors($validator);
         }
 
-       // dd($deuda->Id, $request->FechaInicio, $request->FechaFinal, $deuda_tipo_cartera->Id);
+        foreach ($expectedColumns as $index => $expectedColumn) {
+            $actual = $firstRow[$index] ?? '';
+            $ok = is_array($expectedColumn)
+                ? in_array($actual, $expectedColumn, true)
+                : $actual === $expectedColumn;
+            if (!$ok) {
+                $expectedLabel = is_array($expectedColumn)
+                    ? "'" . implode("' o '", $expectedColumn) . "'"
+                    : "'" . $expectedColumn . "'";
+                $validator->errors()->add(
+                    'Archivo',
+                    'Error de formato: la columna ' . ($index + 1) . ' debe ser ' . $expectedLabel . '.'
+                );
+                return back()->withErrors($validator);
+            }
+        }
+
+        // dd($deuda->Id, $request->FechaInicio, $request->FechaFinal, $deuda_tipo_cartera->Id);
         try {
 
             PolizaDeudaTempCartera::where('User', '=', auth()->user()->id)->where('PolizaDeudaTipoCartera', '=', $deuda_tipo_cartera->Id)->delete();
