@@ -26,6 +26,6 @@ class Plan extends Model
     public function coberturas()
     {
         return $this->belongsToMany(Cobertura::class, 'plan_cobertura_detalle', 'Plan', 'Cobertura')
-            ->withPivot(['SumaAsegurada', 'Tasa', 'Prima', 'Activo']);
+            ->withPivot(['Tarificacion', 'TarificacionNombre', 'SumaAsegurada', 'Tasa', 'Prima', 'CoberturaPrincipal', 'Activo']);
     }
 }

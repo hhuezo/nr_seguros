@@ -48,4 +48,12 @@ class NecesidadProteccion extends Model
             ->orderBy('Id', 'asc');
     }
 
+    public function camposComparativosVentas()
+    {
+        return $this->hasMany(VentasCampoComparativo::class, 'NecesidadProteccion', 'Id')
+            ->where('Activo', 1)
+            ->orderBy('Orden', 'asc')
+            ->orderBy('Id', 'asc');
+    }
+
 }

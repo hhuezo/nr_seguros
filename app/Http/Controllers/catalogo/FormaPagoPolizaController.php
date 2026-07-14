@@ -16,7 +16,9 @@ class FormaPagoPolizaController extends Controller
 
     public function index()
     {
-        $formas_pago_polizas = FormaPagoPoliza::where('Activo', 1)->get();
+        $formas_pago_polizas = FormaPagoPoliza::where('Activo', 1)
+            ->ordenado()
+            ->get();
         return view('catalogo.forma_pago_polizas.index', compact('formas_pago_polizas'));
     }
 
@@ -29,10 +31,12 @@ class FormaPagoPolizaController extends Controller
     {
         $request->validate([
             'Nombre' => 'required|string|max:150',
+            'Orden' => 'nullable|integer|min:0',
         ]);
 
         $formaPago = new FormaPagoPoliza();
         $formaPago->Nombre = $request->Nombre;
+        $formaPago->Orden = $request->Orden;
         $formaPago->Activo = 1;
         $formaPago->save();
 
@@ -49,10 +53,12 @@ class FormaPagoPolizaController extends Controller
     {
         $request->validate([
             'Nombre' => 'required|string|max:150',
+            'Orden' => 'nullable|integer|min:0',
         ]);
 
         $formaPago = FormaPagoPoliza::findOrFail($id);
         $formaPago->Nombre = $request->Nombre;
+        $formaPago->Orden = $request->Orden;
         $formaPago->update();
 
         alert()->success('El registro ha sido modificado correctamente');

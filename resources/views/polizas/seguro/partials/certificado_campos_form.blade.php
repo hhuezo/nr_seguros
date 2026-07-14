@@ -3,10 +3,25 @@
         $campoValores = $campoValores ?? [];
         $valorCampo = $campoValores[$campo->Id] ?? '';
         $validacionCampo = $campo->ValidacionCampo ?? 'ninguna';
+        $origenOpciones = $campo->OrigenOpciones ?? 'manual';
+        $catalogoOrigen = $campo->CatalogoOrigen ?? null;
         $opciones = [];
-        if ($campo->OpcionesJson) {
+        if ($campo->TipoCampo === 'select' && $origenOpciones === 'catalogo' && $catalogoOrigen === 'parentesco_beneficiario') {
+            $opciones = collect($catalogosOpcionesCertificado['parentesco_beneficiario'] ?? [])
+                ->map(function ($opcion) {
+                    return [
+                        'valor' => $opcion['Id'] ?? null,
+                        'texto' => $opcion['Nombre'] ?? '',
+                    ];
+                })
+                ->filter(fn($opcion) => $opcion['valor'] !== null && $opcion['texto'] !== '')
+                ->values()
+                ->all();
+        } elseif ($campo->OpcionesJson) {
             $tmp = json_decode($campo->OpcionesJson, true);
-            $opciones = is_array($tmp) ? $tmp : [];
+            $opciones = is_array($tmp)
+                ? collect($tmp)->map(fn($opcion) => ['valor' => $opcion, 'texto' => $opcion])->all()
+                : [];
         }
         $required = (int) $campo->Requerido === 1 ? 'required' : '';
         $tipo = in_array($campo->TipoCampo, ['text', 'number', 'date', 'email']) ? $campo->TipoCampo : 'text';
@@ -41,7 +56,7 @@
             <select name="campos[{{ $campo->Id }}]" class="form-control" data-validacion-campo="{{ $validacionCampo }}" {{ $required }}>
                 <option value="">Seleccione...</option>
                 @foreach ($opciones as $opcion)
-                    <option value="{{ $opcion }}" {{ (string) $valorCampo === (string) $opcion ? 'selected' : '' }}>{{ $opcion }}</option>
+                    <option value="{{ $opcion['valor'] }}" {{ (string) $valorCampo === (string) $opcion['valor'] ? 'selected' : '' }}>{{ $opcion['texto'] }}</option>
                 @endforeach
             </select>
         @else

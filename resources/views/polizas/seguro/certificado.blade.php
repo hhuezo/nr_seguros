@@ -47,9 +47,18 @@
 
             return $fallback;
         };
-        $formatearValorDetalle = function ($campo, $valor) {
+        $formatearValorDetalle = function ($campo, $valor) use (&$catalogosOpcionesCertificado) {
             if ($valor === null || $valor === '') {
                 return '';
+            }
+
+            if (($campo->OrigenOpciones ?? 'manual') === 'catalogo' && $campo->CatalogoOrigen === 'parentesco_beneficiario') {
+                $opcion = collect($catalogosOpcionesCertificado['parentesco_beneficiario'] ?? [])
+                    ->first(function ($item) use ($valor) {
+                        return (string) ($item['Id'] ?? '') === (string) $valor;
+                    });
+
+                return $opcion['Nombre'] ?? $valor;
             }
 
             if (($campo->TipoCampo ?? null) === 'number') {
@@ -97,6 +106,7 @@
         .cert-section { border-top: 1px solid #e5e7eb; padding: 14px 0 4px; }
         .cert-section:first-child { border-top: 0; }
         .cert-field { margin-bottom: 10px; }
+        .cert-main-right .cert-section { border-top: 0; padding-top: 0; }
         .cert-field label { color: #334155; display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px; }
         .cert-field .form-control[readonly] { background: #f8fafc; color: #334155; }
         .money-field { text-align: right; }
@@ -152,13 +162,8 @@
             font-size: 12px;
             white-space: nowrap;
         }
-        .cert-detail-table .fila-principal td { background: #e8f2fb; font-weight: 600; }
         .cert-detail-table .fila-dependiente td { background: #f8fbff; }
         .cert-detail-table .fila-dependiente:nth-child(even) td { background: #dcebf8; }
-        .cert-detail-table .cert-toggle {
-            min-width: 28px;
-            padding: 2px 6px;
-        }
         .cert-detail-table .money-cell { text-align: right; white-space: nowrap; }
         .cert-detail-table .btn-inline-group {
             display: flex;
@@ -229,7 +234,7 @@
 
         <ul class="nav nav-tabs bar_tabs cert-tabs" role="tablist">
             <li class="active"><a href="#certificado" data-toggle="tab">Certificado</a></li>
-            <li class="{{ !$esEdicion ? 'disabled' : '' }}"><a href="#sumas" data-toggle="tab" aria-disabled="{{ !$esEdicion ? 'true' : 'false' }}">Sumas Aseguradas</a></li>
+            <li class="{{ !$esEdicion ? 'disabled' : '' }}"><a href="#sumas" data-toggle="tab" aria-disabled="{{ !$esEdicion ? 'true' : 'false' }}">Coberturas</a></li>
             <li class="{{ !$esEdicion ? 'disabled' : '' }}"><a href="#detalle" data-toggle="tab" aria-disabled="{{ !$esEdicion ? 'true' : 'false' }}">Detalle del Asegurado</a></li>
             <li class="{{ !$esEdicion ? 'disabled' : '' }}"><a href="#beneficiarios" data-toggle="tab" aria-disabled="{{ !$esEdicion ? 'true' : 'false' }}">Beneficiarios</a></li>
             <li class="{{ !$esEdicion ? 'disabled' : '' }}"><a href="#cesiones" data-toggle="tab" aria-disabled="{{ !$esEdicion ? 'true' : 'false' }}">Cesiones de Beneficios</a></li>
@@ -240,31 +245,65 @@
             <div class="tab-pane fade active in" id="certificado">
                 <form id="formCertificado" method="POST" action="{{ $action }}">
                     @csrf
+                    <div class="row">
+                        <div class="col-md-6 col-sm-12 cert-main-left">
                     <div class="cert-section">
                         <div class="row">
-                            <div class="col-md-3 col-sm-6 cert-field">
+                            <div class="col-md-4 col-sm-4 cert-field">
                                 <label>Poliza</label>
                                 <input type="text" class="form-control" value="{{ $poliza->NumeroPoliza ?: $poliza->Id }}" readonly>
                             </div>
-                            <div class="col-md-2 col-sm-6 cert-field">
+                            <div class="col-md-4 col-sm-4 cert-field">
                                 <label>Certificado interno</label>
                                 <input type="text" class="form-control" value="{{ $certificado->NumeroCertificado }}" readonly>
                             </div>
-                            <div class="col-md-2 col-sm-6 cert-field">
+                            <div class="col-md-4 col-sm-4 cert-field">
                                 <label>Certificado aseguradora</label>
                                 <input type="text" name="CertificadoAseguradora" class="form-control" value="{{ old('CertificadoAseguradora', $certificado->CertificadoAseguradora) }}">
                             </div>
-                            <div class="col-md-2 col-sm-6 cert-field">
+                            <div class="col-md-5 cert-field">
+                                <label>Vigencia desde *</label>
+                                <input type="date" name="VigenciaDesde" id="VigenciaDesde" class="form-control" value="{{ old('VigenciaDesde', $fecha($certificado->VigenciaDesde)) }}" required>
+                            </div>
+                            <div class="col-md-5 cert-field">
+                                <label>Vigencia hasta *</label>
+                                <input type="date" name="VigenciaHasta" id="VigenciaHasta" class="form-control" value="{{ old('VigenciaHasta', $fecha($certificado->VigenciaHasta)) }}" required>
+                            </div>
+                            <div class="col-md-2 cert-field">
                                 <label>Dias</label>
                                 <input type="text" id="DiasVigencia" class="form-control money-field" value="{{ $certificado->DiasVigencia }}" readonly>
                             </div>
                             <div class="col-md-3 cert-field">
+                                <label>Fecha inclusion *</label>
+                                <input type="date" name="FechaInclusion" class="form-control" value="{{ old('FechaInclusion', $fecha($certificado->FechaInclusion)) }}" required>
+                            </div>
+                            <div class="col-md-9 cert-field">
                                 <label>Estado certificado *</label>
                                 <select name="EstadoCertificado" class="form-control select2" style="width:100%;" required>
                                     <option value="">Seleccione...</option>
                                     @foreach ($estados_certificado as $estado)
                                         <option value="{{ $estado->Id }}" {{ $estadoCertificadoActual == $estado->Id ? 'selected' : '' }}>{{ $estado->Nombre }}</option>
                                     @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-4 cert-field">
+                                <label>DUI/ Numero Documento. *</label>
+                                <input type="text" name="CodAsegurado" class="form-control" value="{{ old('CodAsegurado', $certificado->CodAsegurado) }}" required>
+                            </div>
+                            <div class="col-md-8 cert-field">
+                                <label>Nombre asegurado / Bien Asegurado  *</label>
+                                <input type="text" name="Asegurado" class="form-control" value="{{ old('Asegurado', $certificado->Asegurado) }}" required>
+                            </div>
+                            <div class="col-md-6 cert-field">
+                                <label>Fecha nacimiento</label>
+                                <input type="date" name="FechaNacimiento" class="form-control" value="{{ old('FechaNacimiento', $fecha($certificado->FechaNacimiento)) }}">
+                            </div>
+                            <div class="col-md-6 cert-field">
+                                <label>Sexo</label>
+                                <select name="Sexo" class="form-control select2" style="width:100%;">
+                                    <option value="">Seleccione...</option>
+                                    <option value="M" {{ old('Sexo', $certificado->Sexo) === 'M' ? 'selected' : '' }}>MASCULINO</option>
+                                    <option value="F" {{ old('Sexo', $certificado->Sexo) === 'F' ? 'selected' : '' }}>FEMENINO</option>
                                 </select>
                             </div>
                         </div>
@@ -287,34 +326,14 @@
 
                     <div class="cert-section">
                         <div class="row">
-                            <div class="col-md-3 cert-field">
-                                <label>DUI/ Numero Documento. *</label>
-                                <input type="text" name="CodAsegurado" class="form-control" value="{{ old('CodAsegurado', $certificado->CodAsegurado) }}" required>
-                            </div>
-                            <div class="col-md-5 cert-field">
-                                <label>Nombre asegurado / Bien Asegurado  *</label>
-                                <input type="text" name="Asegurado" class="form-control" value="{{ old('Asegurado', $certificado->Asegurado) }}" required>
-                            </div>
-                            <div class="col-md-2 cert-field">
-                                <label>Vigencia desde *</label>
-                                <input type="date" name="VigenciaDesde" id="VigenciaDesde" class="form-control" value="{{ old('VigenciaDesde', $fecha($certificado->VigenciaDesde)) }}" required>
-                            </div>
-                            <div class="col-md-2 cert-field">
-                                <label>Vigencia hasta *</label>
-                                <input type="date" name="VigenciaHasta" id="VigenciaHasta" class="form-control" value="{{ old('VigenciaHasta', $fecha($certificado->VigenciaHasta)) }}" required>
-                            </div>
-                            <div class="col-md-3 cert-field">
-                                <label>Fecha inclusion *</label>
-                                <input type="date" name="FechaInclusion" class="form-control" value="{{ old('FechaInclusion', $fecha($certificado->FechaInclusion)) }}" required>
-                            </div>
 
 {{--                            incluir este campo nuevo de fecha de exclusion--}}
-                            <div class="col-md-3 cert-field">
+                            <div class="col-md-4 cert-field">
                                 <label>Fecha exclusión </label>
                                 <input type="date" name="FechaExclusion" class="form-control" value="{{ old('FechaExclusion', $fecha($certificado->FechaExclusion)) }}">
                             </div>
 {{--                            agregar este nuevo campo tambien--}}
-                            <div class="col-md-3 cert-field">
+                            <div class="col-md-8 cert-field">
                                 <label>Motivo Exclusión</label>
                                 <select name="MotivoCancelacion" class="form-control select2" style="width:100%;">
                                     <option value="">Seleccione...</option>
@@ -324,7 +343,7 @@
                                 </select>
                             </div>
 
-                                <div class="col-md-3 cert-field">
+                                <div class="col-md-12 cert-field">
                                 <label>Notas exclusión </label>
                                 <input type="text" name="MotivoExclusion" class="form-control" value="{{ old('MotivoExclusion', $certificado->MotivoExclusion) }}">
                             </div>
@@ -335,19 +354,16 @@
 
                     <div class="cert-section">
                         <div class="row">
-                            <div class="col-md-6 col-sm-12">
-                                <div class="row">
-
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12 cert-field">
-                                        <label>Observacion / comentarios</label>
-                                        <textarea name="Observacion" class="form-control" rows="5">{{ old('Observacion', $certificado->Observacion) }}</textarea>
-                                    </div>
-                                </div>
+                            <div class="col-md-12 cert-field">
+                                <label>Observacion / comentarios</label>
+                                <textarea name="Observacion" class="form-control" rows="5">{{ old('Observacion', $certificado->Observacion) }}</textarea>
                             </div>
-                            @if ($esEdicion)
-                                <div class="col-md-6 col-sm-12">
+                        </div>
+                    </div>
+                        </div>
+                        <div class="col-md-6 col-sm-12 cert-main-right">
+                            <div class="cert-section">
+                                <fieldset {{ !$esEdicion ? 'disabled' : '' }}>
                                     <table class="cert-money-table">
                                         <thead>
                                             <tr>
@@ -413,7 +429,7 @@
                                                 <td><input type="text" name="OtrosGastos" class="form-control money-field currency-field" inputmode="decimal" value="{{ old('OtrosGastos', $numero($certificado->OtrosGastos)) }}"></td>
                                             </tr>
                                             <tr>
-                                                <td>Impuestos</td>
+                                                <td>IVA 13%</td>
                                                 <td><input type="text" name="Impuestos" class="form-control money-field currency-field" inputmode="decimal" value="{{ old('Impuestos', $numero($certificado->Impuestos)) }}" readonly></td>
                                             </tr>
                                             <tr>
@@ -422,10 +438,9 @@
                                             </tr>
                                         </tbody>
                                     </table>
-                                </div>
-                            @endif
+                                </fieldset>
+                            </div>
                         </div>
-
                     </div>
 
                     <div class="cert-actions">
@@ -448,6 +463,8 @@
                 @else
                     <form id="formSumasAseguradas" method="POST" action="{{ url('poliza/seguro/certificado_sumas_save/' . $certificado->Id) }}">
                         @csrf
+                        {{-- El tab de coberturas tiene su propio form; se replica el plan seleccionado para que viaje en este POST. --}}
+                        <input type="hidden" name="Plan" id="PlanSumas" value="{{ $planSumasActual }}">
                         <div class="cert-section">
 
                             <div class="table-responsive">
@@ -462,8 +479,6 @@
                                             <th>Dias prorrata</th>
                                             <th>Prima anual</th>
                                             <th>Prima prorrata</th>
-                                            <th>% Ded.</th>
-                                            <th>Deducible</th>
                                         </tr>
                                     </thead>
                                     <tbody></tbody>
@@ -476,15 +491,13 @@
                                             <th></th>
                                             <th class="text-right" id="TotalPrimaAnual">$0.00</th>
                                             <th class="text-right" id="TotalPrima">$0.00</th>
-                                            <th></th>
-                                            <th></th>
                                         </tr>
                                     </tfoot>
                                 </table>
                             </div>
                             <div class="cert-actions">
                                 <button type="submit" id="btnGuardarSumas" class="btn btn-primary">
-                                    <i class="fa fa-save"></i> Guardar sumas aseguradas
+                                    <i class="fa fa-save"></i> Guardar Coberturas
                                 </button>
                             </div>
                         </div>
@@ -493,91 +506,55 @@
             </div>
             <div class="tab-pane fade" id="detalle">
                 @if (!$esEdicion)
-                    <div class="alert alert-info">Guarde el certificado para completar el detalle del asegurado.</div>
+                    <div class="alert alert-info">Guarde el certificado para registrar dependientes.</div>
                 @else
                     <div class="cert-section">
                         <div class="cert-header" style="border-bottom:0; margin-bottom:0;">
                             <div>
-                                <h4 style="margin:0;">Detalle del asegurado</h4>
-                                <div class="cert-context">Campos configurados desde el producto asociado al plan del certificado.</div>
+                                <h4 style="margin:0;">Dependientes del certificado</h4>
+                                <div class="cert-context">La caratula del certificado contiene al asegurado principal; aqui se registran solo dependientes.</div>
                             </div>
+                            @if ($permite_dependientes && $certificado_campos->count() > 0)
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDependienteCreate">
+                                    <i class="fa fa-plus"></i> Nuevo dependiente
+                                </button>
+                            @endif
                         </div>
 
-                        @if ($certificado_campos->count() > 0)
-                            <form method="POST" action="{{ url('poliza/seguro/certificado_detalle_save/' . $certificado->Id) }}">
-                                @csrf
-                                <div class="row">
-                                    @php $campoValores = old('campos', $campoValoresCertificado ?? []); @endphp
-                                    @include('polizas.seguro.partials.certificado_campos_form')
-                                </div>
-                                <div class="cert-actions">
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="fa fa-save"></i> Guardar detalle
-                                    </button>
-                                </div>
-                            </form>
+                        @if (!$permite_dependientes)
+                            <div class="alert alert-warning">El producto asociado al plan del certificado no permite dependientes.</div>
+                        @elseif ($certificado_campos->count() === 0)
+                            <div class="alert alert-warning">El producto no tiene campos dinamicos configurados para capturar dependientes.</div>
                         @else
-                            <div class="alert alert-warning">El producto no tiene campos dinamicos configurados para el certificado.</div>
-                        @endif
-                    </div>
-
-                    <div class="cert-section">
-                            <div class="cert-header" style="border-bottom:0; margin-bottom:0;">
-                                <div>
-                                    <h4 style="margin:0;">Integrantes del certificado</h4>
-                                    <div class="cert-context">El asegurado principal puede desplegar sus dependientes / beneficiarios.</div>
-                                </div>
-                                @if ($permite_dependientes)
-                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDependienteCreate">
-                                        <i class="fa fa-plus"></i> Nuevo dependiente / beneficiario
-                                    </button>
-                                @endif
-                            </div>
-
                             <div class="table-responsive">
                                 <table id="tabla-detalle-asegurados" class="table table-bordered cert-detail-table" style="width:100%;">
                                     <thead>
                                         <tr>
-                                            <th style="width:44px;"></th>
+                                            <th>Dependiente</th>
                                             <th>Certificado</th>
                                             @foreach ($certificado_campos as $campo)
                                                 <th>{{ $campo->Etiqueta }}</th>
                                             @endforeach
+                                            <th>Observacion</th>
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @php
-                                            $cantidadDependientes = $certificado->dependientes->count();
-                                        @endphp
-                                        <tr class="fila-principal">
-                                            <td class="text-center">
-                                                <button type="button" class="btn btn-default btn-xs cert-toggle js-toggle-integrantes" {{ $cantidadDependientes === 0 ? 'disabled' : '' }}>
-                                                    <i class="fa fa-plus"></i>
-                                                </button>
-                                            </td>
-                                            <td>{{ $certificado->NumeroCertificado }}</td>
-                                            @foreach ($certificado_campos as $campo)
-                                                <td>{{ $formatearValorDetalle($campo, $campoValoresCertificado[$campo->Id] ?? '') }}</td>
-                                            @endforeach
-                                            <td class="text-center">
-                                                <a href="#certificado" data-toggle="tab" class="btn btn-info btn-sm">
-                                                    <i class="fa fa-pencil"></i>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                        @foreach ($certificado->dependientes as $dependiente)
+                                        @forelse ($certificado->dependientes as $dependiente)
                                             @php
                                                 $datosDependiente = json_decode($dependiente->DatosJson ?: '[]', true);
                                                 $datosDependiente = is_array($datosDependiente) ? $datosDependiente : [];
-                                                $valoresDependiente = collect($datosDependiente)->pluck('Valor', 'CampoId')->all();
+                                                $valoresDependiente = collect($datosDependiente)->mapWithKeys(function ($dato) {
+                                                    return [$dato['CampoId'] => $dato['ValorId'] ?? $dato['Valor'] ?? null];
+                                                })->all();
                                             @endphp
-                                            <tr class="fila-dependiente" style="display:none;">
-                                                <td></td>
+                                            <tr class="fila-dependiente">
+                                                <td>{{ $dependiente->NumeroDependiente }}</td>
                                                 <td>{{ $certificado->NumeroCertificado }}</td>
                                                 @foreach ($certificado_campos as $campo)
                                                     <td>{{ $formatearValorDetalle($campo, $valoresDependiente[$campo->Id] ?? '') }}</td>
                                                 @endforeach
+                                                <td>{{ $dependiente->Observacion }}</td>
                                                 <td class="text-center">
                                                     <div class="btn-inline-group">
                                                         <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modalDependienteEdit{{ $dependiente->Id }}">
@@ -592,11 +569,16 @@
                                                     </div>
                                                 </td>
                                             </tr>
-                                        @endforeach
+                                        @empty
+                                            <tr>
+                                                <td colspan="{{ $certificado_campos->count() + 4 }}" class="text-center text-muted">No hay dependientes registrados para este certificado.</td>
+                                            </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
                             </div>
-                        </div>
+                        @endif
+                    </div>
                 @endif
             </div>
             <div class="tab-pane fade" id="beneficiarios">
@@ -836,7 +818,9 @@
             @php
                 $datosDependiente = json_decode($dependiente->DatosJson ?: '[]', true);
                 $datosDependiente = is_array($datosDependiente) ? $datosDependiente : [];
-                $campoValoresDependiente = collect($datosDependiente)->pluck('Valor', 'CampoId')->all();
+                $campoValoresDependiente = collect($datosDependiente)->mapWithKeys(function ($dato) {
+                    return [$dato['CampoId'] => $dato['ValorId'] ?? $dato['Valor'] ?? null];
+                })->all();
             @endphp
             <div class="modal fade" id="modalDependienteEdit{{ $dependiente->Id }}" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
                 <div class="modal-dialog modal-lg">
@@ -1184,6 +1168,44 @@
                 'value="' + numeroDecimal(valor, decimales) + '"' + atributosMoneda + ' ' + extraAttrs + '>';
         }
 
+        function escapeAttr(valor) {
+            return String(valor ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/"/g, '&quot;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
+
+        function normalizarTextoCalculo(valor) {
+            return String(valor || '')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase()
+                .trim();
+        }
+
+        function calcularPrimaAnualCobertura(suma, tasa, primaBase, tarificacionNombre) {
+            const tipo = normalizarTextoCalculo(tarificacionNombre);
+
+            if (tipo.includes('sin cobro')) {
+                return 0;
+            }
+
+            if (tipo.includes('prima')) {
+                return primaBase;
+            }
+
+            if (tipo.includes('millar')) {
+                return suma * (tasa / 1000);
+            }
+
+            if (tipo.includes('porcentual')) {
+                return suma * (tasa / 100);
+            }
+
+            return tasa > 0 ? (suma * tasa) : primaBase;
+        }
+
         function diasProrrataExcel() {
             const desde = document.getElementById('VigenciaDesde').value;
             const hasta = document.getElementById('VigenciaHasta').value;
@@ -1207,7 +1229,7 @@
             tbody.empty();
 
             if (!coberturas || coberturas.length === 0) {
-                tbody.append('<tr><td colspan="10" class="text-center text-muted">El plan seleccionado no tiene coberturas configuradas.</td></tr>');
+                tbody.append('<tr><td colspan="8" class="text-center text-muted">El plan seleccionado no tiene coberturas configuradas.</td></tr>');
                 calcularTotalesSumas();
                 return;
             }
@@ -1215,22 +1237,24 @@
             coberturas.forEach(function(cobertura, index) {
                 const nombre = cobertura.Nombre || '';
                 const coberturaId = cobertura.Cobertura || '';
+                const tarificacion = cobertura.Tarificacion || '';
+                const tarificacionNombre = cobertura.TarificacionNombre || '';
                 const primaAnual = cobertura.PrimaAnual !== null && cobertura.PrimaAnual !== undefined ? cobertura.PrimaAnual : cobertura.Prima;
                 const row = '<tr>' +
                     '<td>' + (index + 1) + '</td>' +
                     '<td>' +
                         '<input type="hidden" name="coberturas[' + index + '][Cobertura]" value="' + coberturaId + '">' +
-                        '<input type="hidden" name="coberturas[' + index + '][Nombre]" value="' + nombre.replace(/"/g, '&quot;') + '">' +
-                        nombre +
+                        '<input type="hidden" name="coberturas[' + index + '][Tarificacion]" value="' + escapeAttr(tarificacion) + '">' +
+                        '<input type="hidden" name="coberturas[' + index + '][TarificacionNombre]" value="' + escapeAttr(tarificacionNombre) + '">' +
+                        '<input type="hidden" name="coberturas[' + index + '][Nombre]" value="' + escapeAttr(nombre) + '">' +
+                        escapeAttr(nombre) +
                     '</td>' +
                     '<td>' + inputTabla('coberturas', index, 'SumaAsegurada', cobertura.SumaAsegurada, 2, 'js-suma-asegurada', '', true) + '</td>' +
-                    '<td>' + inputTabla('coberturas', index, 'PorcentajeSuma', cobertura.PorcentajeSuma, 4) + '</td>' +
+                    '<td>' + inputTabla('coberturas', index, 'PorcentajeSuma', cobertura.PorcentajeSuma, 6) + '</td>' +
                     '<td>' + inputTabla('coberturas', index, 'Tasa', cobertura.Tasa, 6, 'js-tasa') + '</td>' +
                     '<td>' + inputTabla('coberturas', index, 'DiasProrrata', cobertura.DiasProrrata, 0, 'js-dias-prorrata', 'readonly') + '</td>' +
                     '<td>' + inputTabla('coberturas', index, 'PrimaAnual', primaAnual, 2, 'js-prima-anual', 'readonly data-base-prima-anual="' + numeroDecimal(primaAnual, 2) + '"', true) + '</td>' +
                     '<td>' + inputTabla('coberturas', index, 'Prima', cobertura.Prima, 2, 'js-prima', '', true) + '</td>' +
-                    '<td>' + inputTabla('coberturas', index, 'PorcentajeDeducible', cobertura.PorcentajeDeducible, 4) + '</td>' +
-                    '<td><input type="text" class="form-control" name="coberturas[' + index + '][Deducible]" value="' + ((cobertura.Deducible || '') + '').replace(/"/g, '&quot;') + '"></td>' +
                     '</tr>';
                 tbody.append(row);
             });
@@ -1251,8 +1275,9 @@
             const tasa = parseFloat(fila.find('.js-tasa').val()) || 0;
             const primaAnualInput = fila.find('.js-prima-anual');
             const primaInput = fila.find('.js-prima');
+            const tarificacionNombre = fila.find('input[name$="[TarificacionNombre]"]').val() || '';
             const primaAnualBase = parseCurrency(primaAnualInput.data('base-prima-anual')) || 0;
-            const primaAnual = tasa > 0 ? (suma * tasa) : primaAnualBase;
+            const primaAnual = calcularPrimaAnualCobertura(suma, tasa, primaAnualBase, tarificacionNombre);
             const primaProrrata = (primaAnual / 365) * dias;
 
             fila.find('.js-dias-prorrata').val(dias);
@@ -1524,6 +1549,7 @@
             }
 
             $('#PlanCertificado').on('change select2:select', function() {
+                $('#PlanSumas').val($(this).val());
                 renderCoberturasSumas(coberturasDelPlan($(this).val()));
             });
 
@@ -1565,6 +1591,7 @@
             });
 
             $('#formSumasAseguradas').on('submit', function() {
+                $('#PlanSumas').val($('#PlanCertificado').val());
                 $('#btnGuardarSumas').prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Guardando...');
             });
 
@@ -1633,14 +1660,6 @@
             this.value = this.value.replace(/[^\p{L}\s\.,#\-\/()&@'":;]/gu, '');
         });
 
-        $(document).on('click', '.js-toggle-integrantes', function() {
-            const boton = $(this);
-            const filas = $('.fila-dependiente');
-            const visible = filas.filter(':visible').length > 0;
-
-            filas.toggle(!visible);
-            boton.find('i').toggleClass('fa-plus', visible).toggleClass('fa-minus', !visible);
-        });
     </script>
 @else
     <p class="text-center text-danger">No tiene permiso para ver.</p>

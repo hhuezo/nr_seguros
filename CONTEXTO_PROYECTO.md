@@ -1,12 +1,80 @@
 # Contexto del proyecto NR Seguros
 
-Revision base: 2026-06-23.
+Revision base: 2026-07-13.
 
 Este documento sirve como punto de entrada para futuras sesiones de trabajo. Si se pierde el historial, leer este archivo primero y luego abrir los archivos indicados en cada seccion.
 
 Documento complementario:
 
 - `CORRELACION_SISTEMA_BD.md`: mapa sistema-BD por modulo, con rutas, controladores, modelos, vistas, tablas y relaciones practicas.
+- `MODULO_VENTAS_ROADMAP.md`: analisis funcional y roadmap del nuevo modulo `ventas`, pensado para sustituir gradualmente `negocios`.
+
+## Cambios recientes relevantes
+
+Actualizado hasta 2026-07-13.
+
+### Actualizacion 2026-07-13
+
+- Menu/catalogos:
+  - Se separaron catalogos en `Catalogos comerciales`, `Catalogos polizas no declarativas` y `Configuracion de poliza`.
+  - `Configuracion de poliza` agrupa: agrupador de ramos, tipo de poliza, ramos/necesidades, productos y planes.
+  - `forma_pago_polizas` ahora tiene `Orden`; el modelo `FormaPagoPoliza` expone `ordenado()` y las caratulas de poliza usan ese orden.
+- Catalogos comerciales / ventas:
+  - Existe CRUD `catalogo/ventas_campo_comparativo` para plantillas comparativas por ramo.
+  - Existe CRUD `catalogo/ventas_plan_comercial` para planes comerciales y su pantalla de valores por plantilla.
+  - Existe `ventas/ofertas` como entrada principal del nuevo modulo.
+  - Existe `ventas/ofertas/formulario` como formulario visual/base sin persistencia transaccional final.
+  - El formulario de ventas usa catalogos reales para gestor, tipo cliente, ramo, aseguradora y etapa.
+  - Cliente en ventas se busca con Select2 mediante `ventas/ofertas/clientes` y detalle con `ventas/ofertas/clientes/{id}`.
+  - Planes ofertados carga planes comerciales por ramo, permite agregarlos visualmente y marcar elegido.
+- Producto/certificado:
+  - `producto_certificado_campos` ahora soporta opciones desde catalogo con `OrigenOpciones` y `CatalogoOrigen`.
+  - Caso implementado: parentescos desde `parentesco` / `catalogo/parentesco_beneficiario`.
+- Planes y coberturas:
+  - Existe `catalogo/plan/create` para crear encabezado de plan.
+  - En plan edit, cada cobertura copia la tarificacion del producto/cobertura.
+  - `plan_cobertura_detalle` guarda `Tarificacion`, `TarificacionNombre` y `CoberturaPrincipal`.
+  - La UI habilita solo los campos que aplican segun tarificacion: tasa millar/porcentual, prima fija o sin cobro.
+- Certificado no declarativo:
+  - La caratula del certificado es la fuente del asegurado principal.
+  - El tab `Detalle del Asegurado` ahora mantiene solamente dependientes; ya no guarda datos del titular en `PolizaSeguroCertificado.DatosJson`.
+  - Los dependientes viven en `poliza_seguro_certificado_dependientes.DatosJson`, usando los campos configurados en producto-certificado.
+  - En create, los tabs secundarios se muestran bloqueados hasta guardar el certificado.
+  - `EstadoCertificado` inicia como `CERTIFICADO VIGENTE` si el catalogo existe activo.
+  - `FechaInclusion` inicia vacia y es requerida.
+  - `CodAsegurado` del primer certificado se precarga desde el documento del contratante; para persona juridica usa NIT.
+  - Se agregaron `FechaNacimiento` y `Sexo` opcionales. `FechaNacimiento` no se autollenara para evitar datos irreales.
+  - La tabla de detalle general de cobro se ve en create pero queda deshabilitada hasta guardar.
+- Coberturas de certificado:
+  - Se eliminaron `% Deducible` y `Deducible`.
+  - `PorcentajeSuma` permite 6 decimales.
+  - Las coberturas guardan snapshot `Tarificacion` y `TarificacionNombre`.
+  - El calculo de prima usa tarificacion: millar divide entre 1000, porcentual divide entre 100, prima fija usa monto y sin cobro queda en 0.
+- `consulta/cliente` mantiene Excel y agrega prima del registro donde la fuente mensual permite obtenerla.
+
+- `consulta/cliente` ya no es solo una busqueda simple por documento:
+  - ahora permite buscar por `DUI`, `NIT`, `Pasaporte`, `DUI/NIT/Pasaporte` y `Nombre completo`
+  - para `Nombre completo` exige minimo 4 caracteres
+  - muestra `Periodo`, `Tarifa Mes`, `Producto / Plan` y totales acumulados
+  - tiene exportacion Excel con el mismo dataset visible en pantalla
+- `consulta/cliente` toma `Tarifa Mes` desde la cartera mensual, no desde la cabecera de poliza.
+- `consulta/cliente` muestra `% Extraprima` solo donde la fuente actual lo soporta claramente:
+  - deuda: `poliza_deuda_cartera.PorcentajeExtraprima`
+  - vida: `poliza_vida_cartera.PorcentajeExtraprima`
+  - residencia/desempleo: no hay fuente equivalente activa en el flujo actual
+- En la BD local revisada al 2026-06-29 no hay registros reales cargados de extraprima mensual:
+  - `poliza_deuda_extra_primado_mensual`: 0
+  - `poliza_vida_extra_primado_mensual`: 0
+  - `poliza_deuda_cartera` con `% extraprima != 0`: 0
+  - `poliza_vida_cartera` con `% extraprima != 0`: 0
+- `polizas/vida`, tab `Ver aviso`, ya tiene boton `Descargar avisos cobro`:
+  - genera un PDF conglomerado por poliza
+  - se muestra en modal con `iframe`
+  - usa el ultimo historial activo por `VidaDetalle`
+  - no recalcula el aviso desde la poliza viva; reutiliza el snapshot historico
+- `polizas/vida/recibo.blade.php` mantiene el diseno aprobado. Para reutilizarlo sin cambiar formato se extrajo un parcial compartido:
+  - `resources/views/polizas/vida/partials/recibo_contenido.blade.php`
+  - el aviso individual y el conglomerado usan el mismo contenido
 
 ## Stack
 
@@ -23,6 +91,7 @@ Documento complementario:
 
 - `routes/web.php`: concentra rutas web. La mayor parte esta dentro de `Route::middleware(['auth'])->group(...)`.
 - `app/Http/Controllers/catalogo`: catalogos, clientes, aseguradoras, productos, planes, negocios/ofertas.
+- `app/Http/Controllers/ventas`: nuevo modulo comercial/ofertas, actualmente con base visual y endpoints de lectura.
 - `app/Http/Controllers/polizas`: polizas declarativas, no declarativas, carteras, renovaciones y validaciones.
 - `app/Http/Controllers/suscripcion`: suscripciones y catalogos de suscripcion.
 - `app/Http/Controllers/seguridad`: usuarios, roles, permisos y tipos de permisos.
@@ -107,6 +176,13 @@ Patron de permisos:
 
 Nota: algunos enlaces de catalogos no declarativos en el menu aparecen sin `@can` especifico propio, por ejemplo motivo de cancelacion, estado de certificado, forma de pago poliza, origen poliza, tipo deducible y parentescos.
 
+Menu nuevo:
+
+- `Catalogos comerciales`: `ventas_campo_comparativo`, `ventas_plan_comercial`.
+- `Catalogos polizas no declarativas`: catalogos auxiliares de polizas no declarativas.
+- `Configuracion de poliza`: agrupador de ramos, tipo de poliza, ramos/necesidades, productos y planes.
+- `Ventas`: entrada `ventas/ofertas`.
+
 ## Catalogos
 
 Controladores en `app/Http/Controllers/catalogo`:
@@ -119,6 +195,7 @@ Controladores en `app/Http/Controllers/catalogo`:
 - Negocios/ofertas: `NegocioController`
 - Estados y auxiliares: `EstadoPolizaController`, `EstadoCertificadoController`, `EstadoVentaController`, `MotivoCancelacionController`, `FormaPagoPolizaController`, `OrigenPolizaController`, `DeducibleController`, `ParentescoBeneficiarioController`
 - Otros: `EjecutivoController`, `DepartamentoNRController`, `TipoCarteraController`, `TipoNegocioController`, `TipoCobroController`, `TipoPolizaController`, `UbicacionCobroController`, `PerfilController`, `ConfiguracionReciboController`
+- Catalogos comerciales: `VentasCampoComparativoController`, `VentasPlanComercialController`
 
 Vistas en `resources/views/catalogo/*`.
 
@@ -173,14 +250,15 @@ Plan:
 
 - Modelo: `app/Models/catalogo/PlanCoberturaDetalle.php`
 - Tabla: `plan_cobertura_detalle`
-- Campos logicos: `Plan`, `Cobertura`, `SumaAsegurada`, `Tasa`, `Prima`, `Activo`
+- Campos logicos: `Plan`, `Cobertura`, `SumaAsegurada`, `Tasa`, `Prima`, `Tarificacion`, `TarificacionNombre`, `CoberturaPrincipal`, `Activo`
 - El modelo no incrementa llave (`public $incrementing = false`); algunas escrituras usan `DB::table()`.
 
 Campos dinamicos:
 
 - Ramo: `NecesidadProteccionCampo`, guardado como JSON en `Negocio.DatosRamo` y `PolizaSeguro.DatosRamo`.
-- Certificado/dependiente: `ProductoCertificadoCampo`, guardado en `PolizaSeguroCertificado.DatosJson` y `PolizaSeguroCertificadoDependiente.DatosJson`.
+- Certificado/dependiente: `ProductoCertificadoCampo`. Desde 2026-07-13, el tab detalle del certificado usa solo `PolizaSeguroCertificadoDependiente.DatosJson`; `PolizaSeguroCertificado.DatosJson` queda como legado/no usar para titular.
 - Validaciones conocidas: correo/email, dui, solo numeros, solo numeros y letras, solo texto, number, date.
+- Select de catalogo implementado: parentescos desde `parentesco` cuando `OrigenOpciones = catalogo` y `CatalogoOrigen = parentesco_beneficiario`.
 
 ## Negocios y cotizaciones
 
@@ -236,6 +314,10 @@ Patron funcional:
 - Manejan carteras mensuales, archivos importados, temporales, preliminares, validaciones, pagos/recibos, historicos, renovaciones, tasas diferenciadas, registros excluidos y reportes.
 - Usan mucho `app/Imports` y `app/Exports`.
 - Rutas principales usan prefijos `polizas/deuda`, `polizas/vida`, `polizas/desempleo`, `polizas/residencia`, y algunas acciones auxiliares usan `poliza/deuda`, `poliza/vida`, `poliza/desempleo`.
+- Los avisos de cobro no se guardan como PDF fisico:
+  - guardan snapshot/tablas de historial (`*_historial_recibo`)
+  - el PDF se genera al vuelo con `\PDF::loadView(...)->stream(...)`
+  - editar un aviso normalmente crea un nuevo registro de historial y vuelve a renderizar el PDF
 
 ## Polizas no declarativas / seguro generico
 
@@ -283,7 +365,7 @@ Flujo no declarativo:
 3. Guardar datos dinamicos del ramo.
 4. Gestionar coberturas y datos tecnicos de poliza.
 5. Crear certificados.
-6. En cada certificado: datos base, sumas aseguradas, detalle del asegurado, dependientes, beneficiarios, cesiones y datos tecnicos.
+6. En cada certificado: datos base, coberturas/sumas, dependientes, beneficiarios, cesiones y datos tecnicos.
 
 Reglas importantes:
 
@@ -291,10 +373,11 @@ Reglas importantes:
 - `productoConfigCertificado()` puede derivar el producto desde el plan del certificado; si no, usa producto de poliza.
 - `siguienteNumeroCertificado()` calcula consecutivo por poliza.
 - Beneficiarios de certificado no pueden superar 100% sumado.
-- `certificado_sumas_save()` recalcula totales de suma asegurada y prima desde coberturas del certificado.
+- `certificado_sumas_save()` recalcula totales de suma asegurada y prima desde coberturas del certificado; si el form independiente no envia `Plan`, usa el plan vigente del certificado.
 - `datos_tecnicos_save()` guarda campos de ramo y valores tecnicos a nivel poliza.
 - `certificado_datos_tecnicos_save()` sincroniza valores tecnicos a nivel certificado.
 - Si `PermiteDependientesCertificado` no esta activo en producto, no permite dependientes.
+- El asegurado principal vive en la caratula del certificado (`CodAsegurado`, `Asegurado`, `FechaNacimiento`, `Sexo`); el tab detalle es solo para hijos/dependientes.
 
 Rutas utiles:
 
@@ -358,6 +441,23 @@ No declarativas/certificados:
 - `2026_06_13_110930_add_certificado_to_poliza_seguro_beneficiarios_table.php`
 - `2026_06_14_113544_add_certificado_to_poliza_seguro_cesion_beneficios_table.php`
 - `2026_06_18_090000_create_poliza_seguro_certificado_datos_tecnicos_table.php`
+- `2026_07_08_090000_add_catalogos_polizas_no_declarativas_menu_permissions.php`
+- `2026_07_08_100000_add_configuracion_poliza_menu_permissions.php`
+- `2026_07_08_110000_add_orden_to_forma_pago_polizas_table.php`
+- `2026_07_08_120000_add_catalogo_origen_to_producto_certificado_campos_table.php`
+- `2026_07_08_130000_drop_deducible_fields_from_poliza_seguro_certificado_coberturas_table.php`
+- `2026_07_08_140000_expand_porcentaje_suma_precision_in_poliza_seguro_certificado_coberturas_table.php`
+- `2026_07_08_150000_add_tarificacion_snapshot_to_poliza_seguro_certificado_coberturas_table.php`
+- `2026_07_09_090000_add_tarificacion_and_principal_to_plan_cobertura_detalle_table.php`
+- `2026_07_09_100000_add_fecha_nacimiento_and_sexo_to_poliza_seguro_certificados_table.php`
+
+Ventas/catalogos comerciales:
+
+- `2026_06_30_090000_create_ventas_campo_comparativo_table.php`
+- `2026_06_30_100000_simplify_ventas_campo_comparativo_table.php`
+- `2026_06_30_110000_create_ventas_plan_comercial_tables.php`
+- `2026_06_30_120000_add_catalogos_comerciales_menu_permission.php`
+- `2026_06_30_130000_add_ventas_menu_permissions.php`
 
 Permisos:
 
@@ -367,7 +467,7 @@ Permisos:
 
 ## Base de datos real
 
-Revision de BD local: 2026-06-23.
+Revision de BD local: 2026-07-13.
 
 Conexion usada por `.env`:
 
@@ -379,7 +479,7 @@ Conexion usada por `.env`:
 Estado:
 
 - `php artisan migrate:status` muestra todas las migraciones del repositorio como `Ran`.
-- La base tiene 167 tablas.
+- La base tiene 170 tablas.
 - Hay datos reales, no es una BD vacia de desarrollo.
 
 Conteos observados en tablas principales:
@@ -402,14 +502,24 @@ Conteos observados en tablas principales:
 - `poliza_seguro_cesion_beneficios`: 1
 - `poliza_vida`: 40
 - `poliza_vida_cartera`: 351852
+- `poliza_vida_historial_recibo`: tabla clave para snapshots de avisos de cobro de vida
 - `poliza_desempleo`: 19
 - `poliza_desempleo_cartera`: 66267
+- `poliza_desempleo_historial_recibo`: tabla clave para snapshots de avisos de cobro de desempleo
 - `poliza_residencia`: 15
+- `poliza_residencia_historial_recibo`: tabla clave para snapshots de avisos de cobro de residencia
 - `poliza_deuda`: 0
+- `poliza_deuda_historial_recibo`: tabla clave para snapshots de avisos de cobro de deuda
 - `suscripcion`: 680
 - `permissions`: 210
 - `roles`: 15
 - `users`: 31
+
+Tablas nuevas relevantes:
+
+- `ventas_campo_comparativo`
+- `ventas_plan_comercial`
+- `ventas_plan_comercial_valor`
 
 ### Grupos de tablas reales
 
@@ -542,7 +652,7 @@ Seguridad:
 
 `producto_certificado_campos`:
 
-- `Producto`, `Etiqueta`, `NombreCampo`, `TipoCampo`, `ValidacionCampo`, `Requerido`, `MostrarEnReporte`, `Orden`, `Placeholder`, `Ayuda`, `OpcionesJson`, `Activo`.
+- `Producto`, `Etiqueta`, `NombreCampo`, `TipoCampo`, `ValidacionCampo`, `Requerido`, `MostrarEnReporte`, `Orden`, `Placeholder`, `Ayuda`, `OpcionesJson`, `OrigenOpciones`, `CatalogoOrigen`, `Activo`.
 
 `necesidad_proteccion`:
 
@@ -553,6 +663,8 @@ Seguridad:
 - Llave primaria compuesta real por `Plan` + `Cobertura`.
 - `SumaAsegurada` y `Prima` quedaron como `decimal(65,38)`.
 - `Tasa` quedo como `decimal(12,6)`.
+- Snapshot de tarificacion: `Tarificacion`, `TarificacionNombre`.
+- `CoberturaPrincipal` identifica la cobertura base/principal del plan.
 
 `poliza_seguro`:
 
@@ -564,7 +676,7 @@ Seguridad:
 
 `poliza_seguro_certificados`:
 
-- Base: `PolizaSeguroId`, `Plan`, `NumeroCertificado`, `CertificadoAseguradora`, `CodAsegurado`, `Asegurado`, `VigenciaDesde`, `VigenciaHasta`, `FechaInclusion`, `DiasVigencia`.
+- Base: `PolizaSeguroId`, `Plan`, `NumeroCertificado`, `CertificadoAseguradora`, `CodAsegurado`, `Asegurado`, `FechaNacimiento`, `Sexo`, `VigenciaDesde`, `VigenciaHasta`, `FechaInclusion`, `DiasVigencia`.
 - Montos: `ValorAsegurado`, `PrimaTotal`, `PorcentajeDescuentoRentabilidad`, `ValorDescuento`, `PrimaNeta`, `PrimaExenta`, `GastosEmision`, `GastosFraccionamiento`, `GastosBomberos`, `OtrosGastos`, `Impuestos`, `TotalCertificado`.
 - Estado/cancelacion: `Estado`, `EstadoCertificado`, `MotivoCancelacion`, `MotivoExclusion`, `FechaExclusion`.
 - Otros: `Deducible`, `Participacion`, `PorcentajeDepreciacion`, `PrimaMinima`, `UsuarioModifica`, `FechaModificacion`, `Vendedor`, `DatosJson`, `Observacion`, `Activo`.
@@ -573,17 +685,41 @@ Nota tecnica: `Vendedor` en BD es `varchar(200)`, aunque el controlador valida c
 
 `poliza_seguro_certificado_coberturas`:
 
-- `PolizaSeguroCertificadoId`, `Cobertura`, `Nombre`, `SumaAsegurada`, `PorcentajeSuma`, `Tasa`, `DiasProrrata`, `PrimaAnual`, `Prima`, `PorcentajeDeducible`, `Deducible`, `Activo`.
+- `PolizaSeguroCertificadoId`, `Cobertura`, `Tarificacion`, `TarificacionNombre`, `Nombre`, `SumaAsegurada`, `PorcentajeSuma`, `Tasa`, `DiasProrrata`, `PrimaAnual`, `Prima`, `Activo`.
+- `PorcentajeSuma` usa precision de 6 decimales.
+- `% Deducible` y `Deducible` fueron eliminados.
 
 `suscripcion`:
 
 - Gestiona flujo de tareas, compania, contratante, polizas deuda/vida, asegurado, ocupacion, DUI, edad/genero, sumas aseguradas, IMC, padecimientos, orden medica, estado, fechas de gestion, reproceso y total de dias.
+
+`poliza_vida_historial_recibo` / `poliza_desempleo_historial_recibo` / `poliza_deuda_historial_recibo` / `poliza_residencia_historial_recibo`:
+
+- Guardan el snapshot del aviso de cobro:
+  - `ImpresionRecibo`
+  - `NombreCliente`
+  - `NitCliente`
+  - `DireccionResidencia`
+  - `NumeroRecibo`
+  - `CompaniaAseguradora`
+  - `ProductoSeguros`
+  - `NumeroPoliza`
+  - `VigenciaDesde`, `VigenciaHasta`
+  - `FechaInicio`, `FechaFin`
+  - `MontoCartera`, `PrimaCalculada`, `ExtraPrima` o equivalentes
+  - descuentos, comisiones, IVA, total a pagar
+  - `NumeroCorrelativo`, `Cuota`, `Usuario`, `Activo`
+- No guardan el binario/ruta del PDF. El archivo se recompone cada vez desde Blade + snapshot.
 
 ## Comandos utiles
 
 - `php artisan route:list --path=catalogo`
 - `php artisan route:list --path=poliza`
 - `php artisan route:list --path=poliza/seguro`
+- `php artisan route:list --path=poliza/vida`
+- `php artisan route:list --path=consulta/cliente`
+- `php artisan route:list --path=ventas`
+- `php artisan route:list --path=catalogo/ventas`
 - `php artisan route:list --path=suscripciones`
 - `php artisan migrate:status`
 - `php artisan test`
@@ -610,6 +746,18 @@ Catalogos:
 4. Vista en `resources/views/catalogo/{modulo}`
 5. Menu/permisos en `resources/views/welcome.blade.php` y seeders de permisos si necesita acceso.
 
+Ventas:
+
+1. `MODULO_VENTAS_ROADMAP.md`
+2. `app/Http/Controllers/ventas/VentasOfertaController.php`
+3. `resources/views/ventas/ofertas/index.blade.php`
+4. `resources/views/ventas/ofertas/formulario.blade.php`
+5. Catalogos comerciales:
+   - `app/Http/Controllers/catalogo/VentasCampoComparativoController.php`
+   - `app/Http/Controllers/catalogo/VentasPlanComercialController.php`
+   - `resources/views/catalogo/ventas_campo_comparativo`
+   - `resources/views/catalogo/ventas_plan_comercial`
+
 Permisos:
 
 1. `database/seeders/PermissionSeeder.php`
@@ -631,6 +779,26 @@ Suscripciones:
 1. `app/Http/Controllers/suscripcion/SuscripcionController.php`
 2. `resources/views/suscripciones/suscripcion`
 3. Catalogos de suscripcion si el cambio toca estados, tipos o fechas feriadas.
+
+Consulta cliente:
+
+1. `app/Http/Controllers/ConsultaClienteController.php`
+2. `resources/views/consulta/cliente/index.blade.php`
+3. Revisar fuentes mensuales por ramo:
+   - `poliza_deuda_cartera`
+   - `poliza_residencia_cartera`
+   - `poliza_vida_cartera`
+   - `poliza_desempleo_cartera`
+4. Si toca exportacion: `app/Exports/ConsultaClienteExport.php`
+
+Avisos de cobro vida:
+
+1. `app/Http/Controllers/polizas/VidaController.php`
+2. `resources/views/polizas/vida/tab6.blade.php`
+3. `resources/views/polizas/vida/recibo.blade.php`
+4. `resources/views/polizas/vida/partials/recibo_contenido.blade.php`
+5. `resources/views/polizas/vida/recibos_conglomerado.blade.php`
+6. Tablas: `poliza_vida_detalle`, `poliza_vida_historial_recibo`
 
 ## Riesgos de mantenimiento
 

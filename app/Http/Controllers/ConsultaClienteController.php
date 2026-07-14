@@ -100,6 +100,42 @@ class ConsultaClienteController extends Controller
 
     private function obtenerConsultaClienteData(string $busqueda, string $tipoBusqueda): array
     {
+        $deudaExtraPrimaMensual = DB::table('poliza_deuda_extra_primado_mensual')
+            ->select(
+                'DeudaDetalle',
+                'PolizaDeuda',
+                'NumeroReferencia',
+                DB::raw('MAX(PorcentajeEP) as PorcentajeEP'),
+                DB::raw('SUM(PagoEP) as PagoEP')
+            )
+            ->groupBy('DeudaDetalle', 'PolizaDeuda', 'NumeroReferencia');
+
+        $deudaExtraPrimaMaestro = DB::table('poliza_deuda_extra_primado')
+            ->select(
+                'PolizaDeuda',
+                'NumeroReferencia',
+                DB::raw('MAX(PorcentajeEP) as PorcentajeEP')
+            )
+            ->groupBy('PolizaDeuda', 'NumeroReferencia');
+
+        $vidaExtraPrimaMensual = DB::table('poliza_vida_extra_primado_mensual')
+            ->select(
+                'VidaDetalle',
+                'PolizaVida',
+                'NumeroReferencia',
+                DB::raw('MAX(PorcentajeEP) as PorcentajeEP'),
+                DB::raw('SUM(PagoEP) as PagoEP')
+            )
+            ->groupBy('VidaDetalle', 'PolizaVida', 'NumeroReferencia');
+
+        $vidaExtraPrimaMaestro = DB::table('poliza_vida_extra_primado')
+            ->select(
+                'PolizaVida',
+                'NumeroReferencia',
+                DB::raw('MAX(PorcentajeEP) as PorcentajeEP')
+            )
+            ->groupBy('PolizaVida', 'NumeroReferencia');
+
         $ultimoDeuda = PolizaDeudaCartera::select('Axo', 'Mes')
             ->whereNotNull('Axo')
             ->whereNotNull('Mes')
@@ -134,6 +170,16 @@ class ConsultaClienteController extends Controller
             ->leftJoin('plan as plan_deuda', 'plan_deuda.Id', '=', 'poliza_deuda.Plan')
             ->leftJoin('producto as producto_deuda', 'producto_deuda.Id', '=', 'plan_deuda.Producto')
             ->leftJoin('saldos_montos', 'saldos_montos.Id', '=', 'poliza_deuda_cartera.LineaCredito')
+            ->leftJoin('poliza_deuda_detalle as deuda_detalle', 'deuda_detalle.Id', '=', 'poliza_deuda_cartera.PolizaDeudaDetalle')
+            ->leftJoinSub($deudaExtraPrimaMensual, 'deuda_ep_mensual', function ($join) {
+                $join->on('deuda_ep_mensual.DeudaDetalle', '=', 'deuda_detalle.Id')
+                    ->on('deuda_ep_mensual.PolizaDeuda', '=', 'poliza_deuda_cartera.PolizaDeuda')
+                    ->whereRaw('deuda_ep_mensual.NumeroReferencia COLLATE utf8mb4_unicode_ci = poliza_deuda_cartera.NumeroReferencia COLLATE utf8mb4_unicode_ci');
+            })
+            ->leftJoinSub($deudaExtraPrimaMaestro, 'deuda_ep_maestro', function ($join) {
+                $join->on('deuda_ep_maestro.PolizaDeuda', '=', 'poliza_deuda_cartera.PolizaDeuda')
+                    ->whereRaw('deuda_ep_maestro.NumeroReferencia COLLATE utf8mb4_unicode_ci = poliza_deuda_cartera.NumeroReferencia COLLATE utf8mb4_unicode_ci');
+            })
             ->select(
                 DB::raw("'Deuda' as TipoCartera"),
                 'poliza_deuda_cartera.PrimerNombre',
@@ -165,7 +211,16 @@ class ConsultaClienteController extends Controller
                 DB::raw("TRIM(CONCAT(COALESCE(producto_deuda.Nombre, ''), CASE WHEN producto_deuda.Nombre IS NOT NULL AND plan_deuda.Nombre IS NOT NULL THEN ' / ' ELSE '' END, COALESCE(plan_deuda.Nombre, ''))) as ProductoPlan"),
                 'cliente.Nombre as ContratanteNombre',
                 'saldos_montos.Descripcion as LineaDescripcion',
-                DB::raw("COALESCE(poliza_deuda_cartera.PorcentajeExtraprima, NULL) as PorcentajeExtraprima")
+                DB::raw("(COALESCE(poliza_deuda_cartera.TotalCredito, 0) * COALESCE(poliza_deuda_cartera.Tasa, 0)) as PrimaMes"),
+                DB::raw("COALESCE(deuda_ep_mensual.PorcentajeEP, deuda_ep_maestro.PorcentajeEP, poliza_deuda_cartera.PorcentajeExtraprima) as PorcentajeExtraprima"),
+                DB::raw("
+                    CASE
+                        WHEN COALESCE(deuda_ep_mensual.PorcentajeEP, deuda_ep_maestro.PorcentajeEP, poliza_deuda_cartera.PorcentajeExtraprima) IS NULL THEN NULL
+                        WHEN deuda_ep_mensual.PagoEP IS NOT NULL AND deuda_ep_mensual.PagoEP <> 0 THEN deuda_ep_mensual.PagoEP
+                        ELSE (COALESCE(poliza_deuda_cartera.TotalCredito, 0) * COALESCE(poliza_deuda_cartera.Tasa, 0))
+                            * (COALESCE(deuda_ep_mensual.PorcentajeEP, deuda_ep_maestro.PorcentajeEP, poliza_deuda_cartera.PorcentajeExtraprima) / 100)
+                    END as ExtraPrimaMes
+                ")
             )
             ->get()
             ->map(function ($item) {
@@ -243,7 +298,9 @@ class ConsultaClienteController extends Controller
                 DB::raw("TRIM(CONCAT(COALESCE(producto_residencia.Nombre, ''), CASE WHEN producto_residencia.Nombre IS NOT NULL AND plan_residencia.Nombre IS NOT NULL THEN ' / ' ELSE '' END, COALESCE(plan_residencia.Nombre, ''))) as ProductoPlan"),
                 'cliente.Nombre as ContratanteNombre',
                 DB::raw("NULL as LineaDescripcion"),
-                DB::raw("NULL as PorcentajeExtraprima")
+                DB::raw("poliza_residencia_cartera.PrimaMensual as PrimaMes"),
+                DB::raw("NULL as PorcentajeExtraprima"),
+                DB::raw("NULL as ExtraPrimaMes")
             )
             ->get()
             ->map(function ($item) {
@@ -285,6 +342,16 @@ class ConsultaClienteController extends Controller
             ->leftJoin('plan as plan_vida', 'plan_vida.Id', '=', 'poliza_vida.Plan')
             ->leftJoin('producto as producto_vida_plan', 'producto_vida_plan.Id', '=', 'plan_vida.Producto')
             ->leftJoin('producto as producto_vida_directo', 'producto_vida_directo.Id', '=', 'poliza_vida.Producto')
+            ->leftJoin('poliza_vida_detalle as vida_detalle', 'vida_detalle.Id', '=', 'poliza_vida_cartera.PolizaVidaDetalle')
+            ->leftJoinSub($vidaExtraPrimaMensual, 'vida_ep_mensual', function ($join) {
+                $join->on('vida_ep_mensual.VidaDetalle', '=', 'vida_detalle.Id')
+                    ->on('vida_ep_mensual.PolizaVida', '=', 'poliza_vida_cartera.PolizaVida')
+                    ->whereRaw('vida_ep_mensual.NumeroReferencia COLLATE utf8mb4_unicode_ci = poliza_vida_cartera.NumeroReferencia COLLATE utf8mb4_unicode_ci');
+            })
+            ->leftJoinSub($vidaExtraPrimaMaestro, 'vida_ep_maestro', function ($join) {
+                $join->on('vida_ep_maestro.PolizaVida', '=', 'poliza_vida_cartera.PolizaVida')
+                    ->whereRaw('vida_ep_maestro.NumeroReferencia COLLATE utf8mb4_unicode_ci = poliza_vida_cartera.NumeroReferencia COLLATE utf8mb4_unicode_ci');
+            })
             ->select(
                 DB::raw("'Vida' as TipoCartera"),
                 'poliza_vida_cartera.PrimerNombre',
@@ -316,7 +383,16 @@ class ConsultaClienteController extends Controller
                 DB::raw("TRIM(CONCAT(COALESCE(producto_vida_directo.Nombre, producto_vida_plan.Nombre, ''), CASE WHEN COALESCE(producto_vida_directo.Nombre, producto_vida_plan.Nombre) IS NOT NULL AND plan_vida.Nombre IS NOT NULL THEN ' / ' ELSE '' END, COALESCE(plan_vida.Nombre, ''))) as ProductoPlan"),
                 'cliente.Nombre as ContratanteNombre',
                 DB::raw("NULL as LineaDescripcion"),
-                DB::raw("COALESCE(poliza_vida_cartera.PorcentajeExtraprima, NULL) as PorcentajeExtraprima")
+                DB::raw("(COALESCE(poliza_vida_cartera.SumaAsegurada, 0) * COALESCE(poliza_vida_cartera.Tasa, 0)) as PrimaMes"),
+                DB::raw("COALESCE(vida_ep_mensual.PorcentajeEP, vida_ep_maestro.PorcentajeEP, poliza_vida_cartera.PorcentajeExtraprima) as PorcentajeExtraprima"),
+                DB::raw("
+                    CASE
+                        WHEN COALESCE(vida_ep_mensual.PorcentajeEP, vida_ep_maestro.PorcentajeEP, poliza_vida_cartera.PorcentajeExtraprima) IS NULL THEN NULL
+                        WHEN vida_ep_mensual.PagoEP IS NOT NULL AND vida_ep_mensual.PagoEP <> 0 THEN vida_ep_mensual.PagoEP
+                        ELSE (COALESCE(poliza_vida_cartera.SumaAsegurada, 0) * COALESCE(poliza_vida_cartera.Tasa, 0))
+                            * (COALESCE(vida_ep_mensual.PorcentajeEP, vida_ep_maestro.PorcentajeEP, poliza_vida_cartera.PorcentajeExtraprima) / 100)
+                    END as ExtraPrimaMes
+                ")
             )
             ->get()
             ->map(function ($item) {
@@ -393,7 +469,9 @@ class ConsultaClienteController extends Controller
                 DB::raw("TRIM(CONCAT(COALESCE(producto_desempleo.Nombre, ''), CASE WHEN producto_desempleo.Nombre IS NOT NULL AND plan_desempleo.Nombre IS NOT NULL THEN ' / ' ELSE '' END, COALESCE(plan_desempleo.Nombre, ''))) as ProductoPlan"),
                 'cliente.Nombre as ContratanteNombre',
                 DB::raw("NULL as LineaDescripcion"),
-                DB::raw("NULL as PorcentajeExtraprima")
+                DB::raw("(COALESCE(poliza_desempleo_cartera.TotalCredito, 0) * COALESCE(poliza_desempleo_cartera.Tasa, 0)) as PrimaMes"),
+                DB::raw("NULL as PorcentajeExtraprima"),
+                DB::raw("NULL as ExtraPrimaMes")
             )
             ->get()
             ->map(function ($item) {
@@ -438,6 +516,12 @@ class ConsultaClienteController extends Controller
             }), 2),
             'InteresesCovid' => round($resultados->sum(function ($item) {
                 return (float) ($item->InteresesCovid ?? 0);
+            }), 2),
+            'PrimaMes' => round($resultados->sum(function ($item) {
+                return (float) ($item->PrimaMes ?? 0);
+            }), 2),
+            'ExtraPrimaMes' => round($resultados->sum(function ($item) {
+                return (float) ($item->ExtraPrimaMes ?? 0);
             }), 2),
         ];
 

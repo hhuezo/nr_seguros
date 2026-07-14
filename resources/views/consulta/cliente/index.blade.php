@@ -91,6 +91,8 @@
                                         <th>Total Interes Corriente</th>
                                         <th>Total Interes Moratorio</th>
                                         <th>Total Interes COVID</th>
+                                        <th>Total Prima Mes</th>
+                                        <th>Total Extraprima Mes</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -101,6 +103,8 @@
                                         <td>${{ number_format((float) ($totales['Intereses'] ?? 0), 2, '.', ',') }}</td>
                                         <td>${{ number_format((float) ($totales['InteresesMoratorios'] ?? 0), 2, '.', ',') }}</td>
                                         <td>${{ number_format((float) ($totales['InteresesCovid'] ?? 0), 2, '.', ',') }}</td>
+                                        <td>${{ number_format((float) ($totales['PrimaMes'] ?? 0), 2, '.', ',') }}</td>
+                                        <td>${{ number_format((float) ($totales['ExtraPrimaMes'] ?? 0), 2, '.', ',') }}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -116,6 +120,9 @@
                                         <th>Poliza</th>
                                         <th>Periodo</th>
                                         <th>Tarifa Mes</th>
+                                        <th>Prima Mes</th>
+                                        <th>% Extraprima</th>
+                                        <th>Extraprima Mes</th>
                                         <th>Contratante</th>
                                         <th>Linea</th>
                                         <th>Documento Identidad</th>
@@ -136,7 +143,6 @@
                                         <th>Interes Corriente</th>
                                         <th>Interes Moratorio</th>
                                         <th>Interes COVID</th>
-                                        <th>% Extraprima</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -186,6 +192,9 @@
                                             <td>{{ $resultado->NumeroPoliza ?? '-' }}</td>
                                             <td>{{ $resultado->PeriodoRegistro ?? '-' }}</td>
                                             <td>{{ $formatearPorcentaje($resultado->TarifaMes ?? null) }}</td>
+                                            <td>{{ $formatearDinero($resultado->PrimaMes ?? null) }}</td>
+                                            <td>{{ $formatearPorcentaje($resultado->PorcentajeExtraprima ?? null, 2) }}</td>
+                                            <td>{{ $formatearDinero($resultado->ExtraPrimaMes ?? null) }}</td>
                                             <td>{{ $resultado->ContratanteNombre ?? '-' }}</td>
                                             <td>{{ $resultado->LineaDescripcion ?? '-' }}</td>
                                             <td>{{ $documentoIdentidad ?: '-' }}</td>
@@ -206,7 +215,6 @@
                                             <td>{{ $formatearDinero($resultado->Intereses ?? null) }}</td>
                                             <td>{{ $formatearDinero($resultado->InteresesMoratorios ?? null) }}</td>
                                             <td>{{ $formatearDinero($resultado->InteresesCovid ?? null) }}</td>
-                                            <td>{{ $formatearPorcentaje($resultado->PorcentajeExtraprima ?? null, 2) }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>

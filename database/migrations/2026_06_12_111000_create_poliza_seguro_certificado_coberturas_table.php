@@ -12,9 +12,11 @@ return new class extends Migration
             $table->bigIncrements('Id');
             $table->unsignedBigInteger('PolizaSeguroCertificadoId');
             $table->unsignedBigInteger('Cobertura')->nullable();
+            $table->unsignedBigInteger('Tarificacion')->nullable();
+            $table->string('TarificacionNombre', 100)->nullable();
             $table->string('Nombre', 250);
             $table->decimal('SumaAsegurada', 14, 2)->nullable();
-            $table->decimal('PorcentajeSuma', 8, 4)->nullable();
+            $table->decimal('PorcentajeSuma', 10, 6)->nullable();
             $table->decimal('Tasa', 12, 6)->nullable();
             $table->decimal('Prima', 14, 2)->nullable();
             $table->decimal('PorcentajeDeducible', 8, 4)->nullable();

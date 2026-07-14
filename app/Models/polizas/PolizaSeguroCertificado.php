@@ -24,6 +24,8 @@ class PolizaSeguroCertificado extends Model
         'CertificadoAseguradora',
         'CodAsegurado',
         'Asegurado',
+        'FechaNacimiento',
+        'Sexo',
         'VigenciaDesde',
         'VigenciaHasta',
         'FechaInclusion',

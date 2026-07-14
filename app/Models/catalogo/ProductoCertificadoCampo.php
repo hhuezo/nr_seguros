@@ -25,6 +25,8 @@ class ProductoCertificadoCampo extends Model
         'Placeholder',
         'Ayuda',
         'OpcionesJson',
+        'OrigenOpciones',
+        'CatalogoOrigen',
         'Activo',
     ];
 

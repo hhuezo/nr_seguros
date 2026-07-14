@@ -26,6 +26,9 @@ class ConsultaClienteExport implements FromCollection, WithHeadings, ShouldAutoS
                 $resultado->NumeroPoliza ?? '',
                 $resultado->PeriodoRegistro ?? '',
                 $this->formatearPorcentaje($resultado->TarifaMes ?? null, 4),
+                $this->formatearDinero($resultado->PrimaMes ?? null),
+                $this->formatearPorcentaje($resultado->PorcentajeExtraprima ?? null, 2),
+                $this->formatearDinero($resultado->ExtraPrimaMes ?? null),
                 $resultado->ContratanteNombre ?? '',
                 $resultado->LineaDescripcion ?? '',
                 $this->documentoIdentidad($resultado),
@@ -46,7 +49,6 @@ class ConsultaClienteExport implements FromCollection, WithHeadings, ShouldAutoS
                 $this->formatearDinero($resultado->Intereses ?? null),
                 $this->formatearDinero($resultado->InteresesMoratorios ?? null),
                 $this->formatearDinero($resultado->InteresesCovid ?? null),
-                $this->formatearPorcentaje($resultado->PorcentajeExtraprima ?? null, 2),
             ];
         });
     }
@@ -59,6 +61,9 @@ class ConsultaClienteExport implements FromCollection, WithHeadings, ShouldAutoS
             'Poliza',
             'Periodo',
             'Tarifa Mes',
+            'Prima Mes',
+            '% Extraprima',
+            'Extraprima Mes',
             'Contratante',
             'Linea',
             'Documento Identidad',
@@ -79,7 +84,6 @@ class ConsultaClienteExport implements FromCollection, WithHeadings, ShouldAutoS
             'Interes Corriente',
             'Interes Moratorio',
             'Interes COVID',
-            '% Extraprima',
         ];
     }
 

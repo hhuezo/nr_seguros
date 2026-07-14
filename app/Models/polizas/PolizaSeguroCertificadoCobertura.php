@@ -17,6 +17,8 @@ class PolizaSeguroCertificadoCobertura extends Model
     protected $fillable = [
         'PolizaSeguroCertificadoId',
         'Cobertura',
+        'Tarificacion',
+        'TarificacionNombre',
         'Nombre',
         'SumaAsegurada',
         'PorcentajeSuma',
@@ -24,8 +26,6 @@ class PolizaSeguroCertificadoCobertura extends Model
         'DiasProrrata',
         'PrimaAnual',
         'Prima',
-        'PorcentajeDeducible',
-        'Deducible',
         'Activo',
     ];
 

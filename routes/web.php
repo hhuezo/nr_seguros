@@ -27,6 +27,8 @@ use App\Http\Controllers\catalogo\TipoCarteraController;
 use App\Http\Controllers\catalogo\TipoNegocioController;
 use App\Http\Controllers\catalogo\TipoPolizaController;
 use App\Http\Controllers\catalogo\UbicacionCobroController;
+use App\Http\Controllers\catalogo\VentasCampoComparativoController;
+use App\Http\Controllers\catalogo\VentasPlanComercialController;
 use App\Http\Controllers\catalogo\NegocioController;
 use App\Http\Controllers\catalogo\NrCarteraController;
 use App\Http\Controllers\catalogo\PerfilController;
@@ -51,6 +53,7 @@ use App\Http\Controllers\suscripcion\TipoClienteController;
 use App\Http\Controllers\suscripcion\TipoCreditoController;
 use App\Http\Controllers\suscripcion\ResumenGestionController;
 use App\Http\Controllers\ConsultaClienteController;
+use App\Http\Controllers\ventas\VentasOfertaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -126,6 +129,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('catalogo/necesidad_proteccion/edit_campo', [NecesidadProteccionController::class, 'edit_campo']);
     Route::post('catalogo/necesidad_proteccion/delete_campo', [NecesidadProteccionController::class, 'delete_campo']);
     Route::resource('catalogo/necesidad_proteccion', NecesidadProteccionController::class);
+    Route::get('catalogo/ventas_campo_comparativo/ramo/{id}', [VentasCampoComparativoController::class, 'ramo']);
+    Route::resource('catalogo/ventas_campo_comparativo', VentasCampoComparativoController::class);
+    Route::get('catalogo/ventas_plan_comercial/{id}/valores', [VentasPlanComercialController::class, 'valores']);
+    Route::post('catalogo/ventas_plan_comercial/{id}/valores', [VentasPlanComercialController::class, 'valoresSave']);
+    Route::resource('catalogo/ventas_plan_comercial', VentasPlanComercialController::class);
     Route::resource('catalogo/agrupador_ramo', AgrupadorRamoController::class);
     Route::resource('catalogo/necesidad_aseguradora', AsignacionNecesidadAseguradoraController::class);
     Route::resource('catalogo/departamento_nr', DepartamentoNRController::class);
@@ -137,6 +145,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('catalogo/producto/edit_dato_tecnico', [ProductoController::class, 'edit_dato_tecnico']);
     Route::post('catalogo/producto/delete_dato_tecnico', [ProductoController::class, 'delete_dato_tecnico']);
     Route::post('catalogo/producto/certificado/config/{id}', [ProductoController::class, 'save_certificado_config']);
+    Route::post('catalogo/producto/certificado/heredar_parentesco/{id}', [ProductoController::class, 'heredar_parentesco_certificado']);
     Route::post('catalogo/producto/certificado/add_campo', [ProductoController::class, 'add_certificado_campo']);
     Route::post('catalogo/producto/certificado/edit_campo', [ProductoController::class, 'edit_certificado_campo']);
     Route::post('catalogo/producto/certificado/delete_campo', [ProductoController::class, 'delete_certificado_campo']);
@@ -151,7 +160,12 @@ Route::middleware(['auth'])->group(function () {
       Route::get('negocio/getProducto', [NegocioController::class, 'getProducto']);
       Route::get('negocio/getPlan', [NegocioController::class, 'getPlan']);
       Route::get('negocio/getCamposRamo', [NegocioController::class, 'getCamposRamo']);
-      Route::get('negocio/elegirCotizacion', [NegocioController::class, 'elegirCotizacion']);
+    Route::get('negocio/elegirCotizacion', [NegocioController::class, 'elegirCotizacion']);
+
+    Route::get('ventas/ofertas', [VentasOfertaController::class, 'index']);
+    Route::get('ventas/ofertas/formulario', [VentasOfertaController::class, 'formulario']);
+    Route::get('ventas/ofertas/clientes', [VentasOfertaController::class, 'buscarClientes']);
+    Route::get('ventas/ofertas/clientes/{id}', [VentasOfertaController::class, 'clienteDetalle']);
 
     Route::post('catalogo/negocio/{id}/datos_ramo', [NegocioController::class, 'update_datos_ramo']);
     Route::post('catalogo/negocio/add_cotizacion', [NegocioController::class, 'add_cotizacion']);

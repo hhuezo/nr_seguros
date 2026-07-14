@@ -260,13 +260,17 @@ class ProductoController extends Controller
             'Orden' => 'nullable|integer|min:1',
             'Requerido' => 'required|in:0,1',
             'MostrarEnReporte' => 'required|in:0,1',
-            'OpcionesTexto' => 'nullable|string|required_if:TipoCampo,select',
+            'OrigenOpciones' => 'nullable|in:manual,catalogo',
+            'CatalogoOrigen' => 'nullable|required_if:OrigenOpciones,catalogo|in:parentesco_beneficiario',
+            'OpcionesTexto' => 'nullable|string',
             'Placeholder' => 'nullable|string|max:200',
             'Ayuda' => 'nullable|string',
         ]);
 
+        $origenOpciones = $request->OrigenOpciones === 'catalogo' ? 'catalogo' : 'manual';
+        $catalogoOrigen = $origenOpciones === 'catalogo' ? $request->CatalogoOrigen : null;
         $opcionesJson = null;
-        if ($request->TipoCampo === 'select') {
+        if ($request->TipoCampo === 'select' && $origenOpciones === 'manual') {
             $opcionesJson = $this->buildOpcionesJson($request->OpcionesTexto);
 
             if (!$opcionesJson) {
@@ -288,6 +292,8 @@ class ProductoController extends Controller
         $campo->Placeholder = $request->Placeholder ?: null;
         $campo->Ayuda = $request->Ayuda ?: null;
         $campo->OpcionesJson = $opcionesJson;
+        $campo->OrigenOpciones = $request->TipoCampo === 'select' ? $origenOpciones : 'manual';
+        $campo->CatalogoOrigen = $request->TipoCampo === 'select' ? $catalogoOrigen : null;
         $campo->Activo = 1;
         $campo->save();
 
@@ -307,13 +313,17 @@ class ProductoController extends Controller
             'Orden' => 'nullable|integer|min:1',
             'Requerido' => 'required|in:0,1',
             'MostrarEnReporte' => 'required|in:0,1',
-            'OpcionesTexto' => 'nullable|string|required_if:TipoCampo,select',
+            'OrigenOpciones' => 'nullable|in:manual,catalogo',
+            'CatalogoOrigen' => 'nullable|required_if:OrigenOpciones,catalogo|in:parentesco_beneficiario',
+            'OpcionesTexto' => 'nullable|string',
             'Placeholder' => 'nullable|string|max:200',
             'Ayuda' => 'nullable|string',
         ]);
 
+        $origenOpciones = $request->OrigenOpciones === 'catalogo' ? 'catalogo' : 'manual';
+        $catalogoOrigen = $origenOpciones === 'catalogo' ? $request->CatalogoOrigen : null;
         $opcionesJson = null;
-        if ($request->TipoCampo === 'select') {
+        if ($request->TipoCampo === 'select' && $origenOpciones === 'manual') {
             $opcionesJson = $this->buildOpcionesJson($request->OpcionesTexto);
 
             if (!$opcionesJson) {
@@ -334,9 +344,43 @@ class ProductoController extends Controller
         $campo->Placeholder = $request->Placeholder ?: null;
         $campo->Ayuda = $request->Ayuda ?: null;
         $campo->OpcionesJson = $opcionesJson;
+        $campo->OrigenOpciones = $campo->TipoCampo === 'select' ? $origenOpciones : 'manual';
+        $campo->CatalogoOrigen = $campo->TipoCampo === 'select' ? $catalogoOrigen : null;
         $campo->update();
 
         alert()->success('Campo de certificado actualizado correctamente');
+        session(['tab2' => '4']);
+        return back();
+    }
+
+    public function heredar_parentesco_certificado(Request $request, $id)
+    {
+        $producto = Producto::findOrFail($id);
+        $campo = ProductoCertificadoCampo::where('Producto', $producto->Id)
+            ->where('NombreCampo', 'parentesco')
+            ->first();
+
+        if (!$campo) {
+            $campo = new ProductoCertificadoCampo();
+            $campo->Producto = $producto->Id;
+            $campo->Etiqueta = 'Parentesco';
+            $campo->NombreCampo = 'parentesco';
+            $campo->Orden = ((int) ProductoCertificadoCampo::where('Producto', $producto->Id)->max('Orden')) + 1;
+        }
+
+        $campo->TipoCampo = 'select';
+        $campo->ValidacionCampo = 'ninguna';
+        $campo->Requerido = 1;
+        $campo->MostrarEnReporte = 1;
+        $campo->Placeholder = null;
+        $campo->Ayuda = 'Opciones heredadas del catalogo de parentescos de beneficiarios.';
+        $campo->OpcionesJson = null;
+        $campo->OrigenOpciones = 'catalogo';
+        $campo->CatalogoOrigen = 'parentesco_beneficiario';
+        $campo->Activo = 1;
+        $campo->save();
+
+        alert()->success('Campo de parentesco heredado correctamente');
         session(['tab2' => '4']);
         return back();
     }

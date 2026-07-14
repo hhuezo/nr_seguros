@@ -182,27 +182,49 @@
                         </div>
 
                         <div role="tabpanel" class="tab-pane fade {{ session('tab1') == 4 ? 'active in' : '' }}" id="certificado">
+                            @php
+                                $parentescoHeredado = $certificado_campos->first(function ($campo) {
+                                    return $campo->NombreCampo === 'parentesco'
+                                        && ($campo->OrigenOpciones ?? 'manual') === 'catalogo'
+                                        && $campo->CatalogoOrigen === 'parentesco_beneficiario';
+                                });
+                            @endphp
                             <form method="POST" action="{{ url('catalogo/producto/certificado/config/' . $producto->Id) }}">
                                 @csrf
                                 <div class="row">
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-3">
                                         <label class="control-label">El certificado permite dependientes</label>
                                         <select name="PermiteDependientesCertificado" class="form-control">
                                             <option value="0" {{ (int) $producto->PermiteDependientesCertificado === 0 ? 'selected' : '' }}>No</option>
                                             <option value="1" {{ (int) $producto->PermiteDependientesCertificado === 1 ? 'selected' : '' }}>Si</option>
                                         </select>
                                     </div>
-                                    <div class="col-sm-6" style="padding-top: 24px;">
+                                    <div class="col-sm-3" style="padding-top: 24px;">
                                         <button class="btn btn-success" type="submit">Guardar configuracion</button>
                                     </div>
                                 </div>
                             </form>
-                            <hr>
-                            <div class="col-12" style="text-align: right;">
-                                <button class="btn btn-primary" data-toggle="modal" data-target=".bs-modal-nuevo-certificado-campo">
-                                    <i class="fa fa-plus fa-lg"></i> Nuevo Campo de Certificado
-                                </button>
+                            <div class="row" style="margin-top: 12px;">
+                                <div class="col-sm-12" style="text-align: right;">
+                                    @if ($parentescoHeredado)
+                                        <button type="button" class="btn btn-success" disabled>
+                                            <i class="fa fa-check fa-lg"></i> Parentescos heredados
+                                        </button>
+                                    @else
+                                        <form method="POST" action="{{ url('catalogo/producto/certificado/heredar_parentesco/' . $producto->Id) }}" style="display:inline-block;">
+                                            @csrf
+                                            <button type="submit" class="btn btn-info">
+                                                <i class="fa fa-sitemap fa-lg"></i> Heredar parentescos
+                                            </button>
+                                        </form>
+                                    @endif
+                                    <button class="btn btn-primary" data-toggle="modal" data-target=".bs-modal-nuevo-certificado-campo">
+                                        <i class="fa fa-plus fa-lg"></i> Nuevo Campo de Certificado
+                                    </button>
+                                </div>
                             </div>
+                            <hr>
+
                             @if ($certificado_campos->count() > 0)
                                 <br>
                                 <table class="table table-striped table-bordered">
@@ -227,6 +249,7 @@
                                                     $tmp = json_decode($obj->OpcionesJson, true);
                                                     $opciones = is_array($tmp) ? $tmp : [];
                                                 }
+                                                $esCatalogo = ($obj->OrigenOpciones ?? 'manual') === 'catalogo';
                                             @endphp
                                             <tr>
                                                 <td>{{ $obj->Orden }}</td>
@@ -236,10 +259,18 @@
                                                 <td>{{ $obj->ValidacionCampo ?? 'ninguna' }}</td>
                                                 <td>{{ $obj->Requerido ? 'Si' : 'No' }}</td>
                                                 <td>{{ $obj->MostrarEnReporte ? 'Si' : 'No' }}</td>
-                                                <td>{{ implode(', ', $opciones) }}</td>
+                                                <td>
+                                                    @if ($esCatalogo)
+                                                        <span class="label label-success">Heredado desde Parentescos</span>
+                                                        <br>
+                                                        <small class="text-muted">Catalogo: {{ $obj->CatalogoOrigen }}</small>
+                                                    @else
+                                                        {{ implode(', ', $opciones) }}
+                                                    @endif
+                                                </td>
                                                 <td>
                                                     <i class="fa fa-pencil fa-lg"
-                                                        onclick='modal_edit_certificado_campo(@json($obj->Id), @json($obj->Etiqueta), @json($obj->NombreCampo), @json($obj->TipoCampo), @json($obj->ValidacionCampo ?? "ninguna"), @json((string)$obj->Requerido), @json((string)($obj->MostrarEnReporte ?? 0)), @json((string)$obj->Orden), @json($obj->Placeholder ?? ""), @json($obj->Ayuda ?? ""), @json(implode("\n", $opciones)))'
+                                                        onclick='modal_edit_certificado_campo(@json($obj->Id), @json($obj->Etiqueta), @json($obj->NombreCampo), @json($obj->TipoCampo), @json($obj->ValidacionCampo ?? "ninguna"), @json((string)$obj->Requerido), @json((string)($obj->MostrarEnReporte ?? 0)), @json((string)$obj->Orden), @json($obj->Placeholder ?? ""), @json($obj->Ayuda ?? ""), @json(implode("\n", $opciones)), @json($obj->OrigenOpciones ?? "manual"), @json($obj->CatalogoOrigen ?? ""))'
                                                         data-target="#modal-edit-certificado-campo" data-toggle="modal"></i>
                                                     &nbsp;&nbsp;
                                                     <i class="fa fa-trash fa-lg"
@@ -418,6 +449,8 @@
                         <div class="modal-header"><h4 class="modal-title">Nuevo campo de certificado</h4></div>
                         <div class="modal-body">
                             <input type="hidden" name="Producto" value="{{ $producto->Id }}">
+                            <input type="hidden" name="OrigenOpciones" value="manual">
+                            <input type="hidden" name="CatalogoOrigen" value="">
                             <div class="row">
                                 <div class="col-sm-6"><label>Etiqueta</label><input type="text" name="Etiqueta" class="form-control" required></div>
                                 <div class="col-sm-6"><label>Nombre campo (clave)</label><input type="text" name="NombreCampo" class="form-control" required></div>
@@ -477,6 +510,8 @@
                         <div class="modal-header"><h4 class="modal-title">Editar campo de certificado</h4></div>
                         <div class="modal-body">
                             <input type="hidden" name="Id" id="CertCampoId">
+                            <input type="hidden" name="OrigenOpciones" id="CertCampoOrigenOpciones" value="manual">
+                            <input type="hidden" name="CatalogoOrigen" id="CertCampoCatalogoOrigen" value="">
                             <div class="row">
                                 <div class="col-sm-6"><label>Etiqueta</label><input type="text" name="Etiqueta" id="CertCampoEtiqueta" class="form-control" required></div>
                                 <div class="col-sm-6"><label>Nombre campo (clave)</label><input type="text" name="NombreCampo" id="CertCampoNombreCampo" class="form-control" required></div>
@@ -567,7 +602,7 @@
         }
         function modal_delete_cobertura(id) { $('#Idcobertura').val(id); }
 
-        function modal_edit_certificado_campo(id, etiqueta, nombreCampo, tipoCampo, validacionCampo, requerido, mostrarEnReporte, orden, placeholder, ayuda, opcionesTexto) {
+        function modal_edit_certificado_campo(id, etiqueta, nombreCampo, tipoCampo, validacionCampo, requerido, mostrarEnReporte, orden, placeholder, ayuda, opcionesTexto, origenOpciones, catalogoOrigen) {
             $('#CertCampoId').val(id);
             $('#CertCampoEtiqueta').val(etiqueta);
             $('#CertCampoNombreCampo').val(nombreCampo);
@@ -579,6 +614,8 @@
             $('#CertCampoPlaceholder').val(placeholder);
             $('#CertCampoAyuda').val(ayuda);
             $('#CertCampoOpcionesTexto').val(opcionesTexto);
+            $('#CertCampoOrigenOpciones').val(origenOpciones || 'manual');
+            $('#CertCampoCatalogoOrigen').val(catalogoOrigen || '');
             toggleOpcionesCertificado($('#CertCampoTipoCampo'));
         }
         function modal_delete_certificado_campo(id) { $('#CertCampoDeleteId').val(id); }
@@ -588,7 +625,11 @@
             var $wrapper = $(target);
             var $textarea = $wrapper.find('.js-cert-opciones-texto');
 
-            if ($select.val() === 'select') {
+            var origen = $select.attr('id') === 'CertCampoTipoCampo'
+                ? ($('#CertCampoOrigenOpciones').val() || 'manual')
+                : 'manual';
+
+            if ($select.val() === 'select' && origen === 'manual') {
                 $wrapper.show();
                 $textarea.prop('required', true);
             } else {

@@ -5,23 +5,24 @@ namespace App\Models\catalogo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class FormaPagoPoliza extends Model
+class VentasCampoComparativo extends Model
 {
     use HasFactory;
 
-    protected $table = 'forma_pago_polizas';
+    protected $table = 'ventas_campo_comparativo';
     protected $primaryKey = 'Id';
     public $timestamps = false;
 
     protected $fillable = [
-        'Nombre',
+        'NecesidadProteccion',
+        'Etiqueta',
+        'NombreInterno',
         'Orden',
         'Activo',
     ];
 
-    public function scopeOrdenado($query)
+    public function ramo()
     {
-        return $query->orderByRaw('COALESCE(Orden, Id) ASC')
-            ->orderBy('Nombre');
+        return $this->belongsTo(NecesidadProteccion::class, 'NecesidadProteccion', 'Id');
     }
 }

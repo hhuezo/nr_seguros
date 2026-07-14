@@ -29,6 +29,7 @@
             <thead>
                 <tr>
                     <th width="8%">#</th>
+                    <th width="12%">Orden</th>
                     <th>Nombre</th>
                     <th width="16%">Acciones</th>
                 </tr>
@@ -37,6 +38,7 @@
                 @foreach ($formas_pago_polizas as $obj)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
+                        <td>{{ $obj->Orden ?? '-' }}</td>
                         <td>{{ $obj->Nombre }}</td>
                         <td align="center">
                             <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-edit-{{ $obj->Id }}">
@@ -66,6 +68,10 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
+                        <label>Orden</label>
+                        <input type="number" name="Orden" class="form-control" value="{{ old('Orden') }}" min="0" step="1">
+                    </div>
+                    <div class="form-group">
                         <label>Nombre</label>
                         <input type="text" name="Nombre" class="form-control" value="{{ old('Nombre') }}" maxlength="150" required
                             oninput="let s=this.selectionStart,e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e)">
@@ -94,6 +100,10 @@
                         <h4 class="modal-title">Editar forma de pago</h4>
                     </div>
                     <div class="modal-body">
+                        <div class="form-group">
+                            <label>Orden</label>
+                            <input type="number" name="Orden" class="form-control" value="{{ old('Orden', $obj->Orden) }}" min="0" step="1">
+                        </div>
                         <div class="form-group">
                             <label>Nombre</label>
                             <input type="text" name="Nombre" class="form-control" value="{{ old('Nombre', $obj->Nombre) }}" maxlength="150" required

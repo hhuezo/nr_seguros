@@ -1,21 +1,22 @@
 # Correlacion sistema - base de datos
 
-Revision: 2026-06-23.
+Revision: 2026-07-13.
 
 Este documento cruza el sistema Laravel con la base `nrseguros`: modulos funcionales, rutas, controladores, vistas, modelos y tablas. Usarlo cuando haya que ubicar donde tocar codigo y que tablas se afectan.
 
 ## Lectura general
 
-El sistema esta dividido en cinco bloques:
+El sistema esta dividido en varios bloques:
 
 - Seguridad y permisos.
 - Catalogos maestros.
 - Clientes, aseguradoras, negocios y cotizaciones.
+- Ventas/ofertas y catalogos comerciales.
 - Polizas declarativas: deuda, vida, desempleo, residencia y control de cartera.
 - Polizas no declarativas: modulo `poliza/seguro`, certificados y anexos.
 - Suscripciones.
 
-La BD tiene 167 tablas. El sistema no depende solo de foreign keys fisicas: muchas relaciones estan implementadas en modelos/controladores aunque la tabla no tenga restriccion FK. Ejemplo claro: `poliza_seguro` guarda `Productos`, `Planes`, `Cliente`, `FormaPago`, etc. como `int(11)` sin FK fisica.
+La BD local revisada al 2026-07-13 tiene 170 tablas. El sistema no depende solo de foreign keys fisicas: muchas relaciones estan implementadas en modelos/controladores aunque la tabla no tenga restriccion FK. Ejemplo claro: `poliza_seguro` guarda `Productos`, `Planes`, `Cliente`, `FormaPago`, etc. como `int(11)` sin FK fisica.
 
 ## Seguridad y permisos
 
@@ -93,6 +94,8 @@ Controladores y tablas:
 | Agrupador ramo | `catalogo/agrupador_ramo` | `AgrupadorRamoController` | `AgrupadorRamo` | `agrupador_ramo` | `catalogo/agrupador_ramo` |
 | Perfiles | `catalogo/perfiles` | `PerfilController` | `Perfil` | `perfiles` | `catalogo/perfiles` |
 | Configuracion recibo | `catalogo/configuracion_recibo` | `ConfiguracionReciboController` | `ConfiguracionRecibo` | `configuracion_recibos` | `catalogo/configuracion_recibo` |
+| Plantillas comparativas | `catalogo/ventas_campo_comparativo` | `VentasCampoComparativoController` | `VentasCampoComparativo` | `ventas_campo_comparativo` | `catalogo/ventas_campo_comparativo` |
+| Planes comerciales | `catalogo/ventas_plan_comercial` | `VentasPlanComercialController` | `VentasPlanComercial` | `ventas_plan_comercial` | `catalogo/ventas_plan_comercial` |
 
 ## Clientes
 
@@ -223,12 +226,70 @@ Relaciones BD confirmadas:
 - `plan_cobertura_detalle.Plan -> plan.Id`
 - `plan_cobertura_detalle.Cobertura -> cobertura.Id`
 
+Notas 2026-07-13:
+
+- `producto_certificado_campos` puede tomar opciones de catalogo por `OrigenOpciones` y `CatalogoOrigen`.
+- Caso activo: `CatalogoOrigen = parentesco_beneficiario` lee de `parentesco`.
+- `plan_cobertura_detalle` conserva snapshot de tarificacion (`Tarificacion`, `TarificacionNombre`) y marca `CoberturaPrincipal`.
+- En plan edit, la tarificacion limita que campos captura el usuario: tasa millar/porcentual, prima fija o sin cobro.
+
 Uso funcional:
 
 - Ramo (`necesidad_proteccion`) define clasificacion, comisiones y campos dinamicos de ramo.
 - Producto define aseguradora, ramo, coberturas, datos tecnicos, campos de certificado y si permite dependientes.
 - Plan agrupa coberturas por producto con suma asegurada, tasa y prima.
 - Cotizacion y poliza usan plan/producto para inicializar valores.
+
+## Ventas y catalogos comerciales
+
+Rutas:
+
+- `ventas/ofertas`
+- `ventas/ofertas/formulario`
+- `ventas/ofertas/clientes`
+- `ventas/ofertas/clientes/{id}`
+- `catalogo/ventas_campo_comparativo`
+- `catalogo/ventas_campo_comparativo/ramo/{id}`
+- `catalogo/ventas_plan_comercial`
+- `catalogo/ventas_plan_comercial/{id}/valores`
+
+Controladores:
+
+- `app/Http/Controllers/ventas/VentasOfertaController.php`
+- `app/Http/Controllers/catalogo/VentasCampoComparativoController.php`
+- `app/Http/Controllers/catalogo/VentasPlanComercialController.php`
+
+Vistas:
+
+- `resources/views/ventas/ofertas/index.blade.php`
+- `resources/views/ventas/ofertas/formulario.blade.php`
+- `resources/views/catalogo/ventas_campo_comparativo`
+- `resources/views/catalogo/ventas_plan_comercial`
+
+Modelos/tablas:
+
+- `VentasCampoComparativo` -> `ventas_campo_comparativo`
+- `VentasPlanComercial` -> `ventas_plan_comercial`
+- `VentasPlanComercialValor` -> `ventas_plan_comercial_valor`
+
+Relaciones logicas:
+
+- `ventas_campo_comparativo.NecesidadProteccion -> necesidad_proteccion.Id`
+- `ventas_plan_comercial.Aseguradora -> aseguradora.Id`
+- `ventas_plan_comercial.NecesidadProteccion -> necesidad_proteccion.Id`
+- `ventas_plan_comercial.Producto -> producto.Id`
+- `ventas_plan_comercial.Plan -> plan.Id`
+- `ventas_plan_comercial_valor.PlanComercial -> ventas_plan_comercial.Id`
+- `ventas_plan_comercial_valor.CampoComparativo -> ventas_campo_comparativo.Id`
+
+Estado funcional:
+
+- `ventas_campo_comparativo` estandariza conceptos/casillas por ramo; no guarda valores.
+- `ventas_plan_comercial` define una opcion comercial reusable vinculada a aseguradora/ramo/producto/plan tecnico.
+- `ventas_plan_comercial_valor` guarda el texto especifico de cada plan comercial por cada concepto de la plantilla.
+- `ventas/ofertas` es la entrada del modulo.
+- `ventas/ofertas/formulario` es base visual/de lectura: consulta cliente, carga catalogos y arma planes ofertados en pantalla, pero aun no persiste oportunidad/oferta.
+- Cliente se busca por Select2 con `ventas/ofertas/clientes`; el detalle trae telefono/correo para completar la caratula visual.
 
 ## Negocios y ofertas
 
@@ -346,7 +407,9 @@ Correlacion funcional:
 - `DatosRamo` viene de `necesidad_proteccion_campos`.
 - `Productos` y `Planes` apuntan logicamente a `producto` y `plan`, aunque no hay FK fisica en BD.
 - `poliza_seguro_certificados` guarda certificado por poliza.
-- `DatosJson` del certificado/dependiente viene de `producto_certificado_campos`.
+- El asegurado principal vive en la caratula de `poliza_seguro_certificados`.
+- El tab `Detalle del Asegurado` usa solo dependientes: `poliza_seguro_certificado_dependientes.DatosJson`.
+- `PolizaSeguroCertificado.DatosJson` queda como legado/no usar para capturar titular.
 - Coberturas del certificado nacen del plan (`plan_cobertura_detalle`) y se materializan en `poliza_seguro_certificado_coberturas`.
 - Datos tecnicos del certificado nacen de `datos_tecnicos` del producto y se materializan en `poliza_seguro_certificado_datos_tecnicos`.
 - Beneficiarios y cesiones pueden existir a nivel poliza o certificado segun `PolizaSeguroCertificadoId`.
@@ -356,6 +419,9 @@ Riesgos de este modulo:
 - `poliza_seguro` no tiene FKs fisicas para varios catalogos.
 - `poliza_seguro_certificados.Vendedor` es `varchar(200)` en BD, pero codigo lo valida/relaciona como ejecutivo id.
 - El calculo de totales vive en controlador y JavaScript de vistas.
+- El calculo de prima de coberturas depende de la tarificacion snapshot. Si falta, hay fallback, pero lo correcto es que plan/cobertura tenga `TarificacionNombre`.
+- `FechaNacimiento` y `Sexo` del certificado son opcionales; fecha nacimiento no debe autollenarse para evitar datos irreales.
+- En create de certificado, tabs secundarios estan bloqueados aunque algunos componentes se rendericen deshabilitados.
 
 ## Polizas declarativas
 
@@ -415,6 +481,14 @@ Relaciones principales:
 - `poliza_deuda_cartera.PolizaDeuda -> poliza_deuda.Id`
 - `poliza_deuda_detalle.Deuda -> poliza_deuda.Id`
 
+Avisos de cobro deuda:
+
+- `poliza_deuda_historial_recibo` guarda snapshot por `PolizaDeudaDetalle`.
+- `DeudaController::save_recibo()` crea el snapshot inicial.
+- `DeudaController::get_recibo($id, $exportar)` recompone el PDF desde `resources/views/polizas/deuda/recibo.blade.php`.
+- Si `exportar == 2` puede salir a Excel, pero el PDF sigue siendo generado al vuelo.
+- No persiste PDF fisico en disco.
+
 ### Vida
 
 Rutas:
@@ -422,6 +496,8 @@ Rutas:
 - `polizas/vida`
 - `poliza/vida/*`
 - `vida/exportar_excel*`
+- `poliza/vida/get_recibo/{id}/{exportar}`
+- `poliza/vida/get_recibos_poliza/{id}`
 
 Controladores:
 
@@ -456,6 +532,26 @@ Relaciones principales:
 - `poliza_vida_detalle_preliminar.PolizaVidaId -> poliza_vida.Id`
 - `poliza_vida_tasa_diferenciada.PolizaVidaTipoCartera -> poliza_vida_tipo_cartera.Id`
 - Varias columnas de `poliza_vida` como aseguradora/cliente/estado existen sin FK fisica.
+
+Avisos de cobro vida:
+
+- `poliza_vida_detalle` es la tabla operativa del recibo/periodo.
+- `poliza_vida_historial_recibo` guarda el snapshot historico del aviso por `PolizaVidaDetalle`.
+- `VidaController::save_recibo()` crea el snapshot inicial del aviso.
+- `VidaController::get_recibo($id, $exportar)`:
+  - busca el ultimo historial por `PolizaVidaDetalle`
+  - si no existe, lo crea
+  - renderiza `resources/views/polizas/vida/recibo.blade.php`
+  - devuelve PDF inline con `stream(...)`
+- `VidaController::get_recibo_update()` crea un nuevo historial y vuelve a generar el PDF; no reusa un archivo fisico.
+- `VidaController::get_recibos_poliza($id)`:
+  - genera PDF conglomerado por poliza
+  - toma el ultimo historial activo por cada `VidaDetalle`
+  - usa `resources/views/polizas/vida/recibos_conglomerado.blade.php`
+  - reutiliza el mismo contenido aprobado mediante `resources/views/polizas/vida/partials/recibo_contenido.blade.php`
+- Resultado tecnico:
+  - el PDF no se guarda en disco
+  - el documento se recompone cada vez desde snapshot BD + Blade
 
 ### Desempleo
 
@@ -499,6 +595,13 @@ Relaciones principales:
 - `poliza_desempleo_cartera.PolizaDesempleo -> poliza_desempleo.Id`
 - `poliza_desempleo_detalle.Desempleo -> poliza_desempleo.Id`
 
+Avisos de cobro desempleo:
+
+- `poliza_desempleo_historial_recibo` guarda snapshot por `PolizaDesempleoDetalle`.
+- `DesempleoController::save_recibo()` crea el snapshot.
+- `DesempleoController::get_recibo($id, $exportar)` genera PDF al vuelo desde `resources/views/polizas/desempleo/recibo.blade.php`.
+- Igual que vida, no persiste PDF fisico; persiste datos historicos y recompone.
+
 ### Residencia
 
 Rutas:
@@ -528,6 +631,13 @@ Relaciones principales:
 
 - `poliza_residencia_detalle_preliminar.PolizaResidenciaId -> poliza_residencia.Id`
 - En otras tablas de residencia muchas relaciones son logicas por id sin FK fisica.
+
+Avisos de cobro residencia:
+
+- `poliza_residencia_historial_recibo` guarda snapshot por `PolizaResidenciaDetalle`.
+- `ResidenciaController::save_recibo()` crea snapshot.
+- `ResidenciaController::get_recibo($id)` genera PDF al vuelo desde `resources/views/polizas/residencia/recibo.blade.php`.
+- No persiste PDF en disco.
 
 ### Control declarativas
 
@@ -559,10 +669,63 @@ Relaciones:
 
 Consulta cliente:
 
-- Rutas: `consulta/cliente`, `consulta/cliente/buscar`
+- Rutas: `consulta/cliente`, `consulta/cliente/buscar`, `consulta/cliente/exportar`
 - Controlador: `ConsultaClienteController`
 - Cruza carteras de deuda, vida, desempleo y residencia.
 - Vista: `resources/views/consulta`
+
+Correlacion funcional actual:
+
+- Soporta cinco tipos de busqueda:
+  - `dui`
+  - `nit`
+  - `pasaporte`
+  - `documento` (DUI/NIT/Pasaporte)
+  - `nombre`
+- Si `tipo_busqueda = nombre`, exige minimo 4 caracteres antes de ejecutar.
+- Siempre consulta el ultimo `Axo/Mes` disponible de cada cartera, no el historico completo.
+- La pantalla y el Excel usan la misma logica del controlador; no hay una consulta paralela para exportacion.
+
+Fuentes relevantes por columna:
+
+- `Periodo`:
+  - `poliza_deuda_cartera.Axo/Mes`
+  - `poliza_residencia_cartera.Axo/Mes`
+  - `poliza_vida_cartera.Axo/Mes`
+  - `poliza_desempleo_cartera.Axo/Mes`
+- `Tarifa Mes`:
+  - deuda: `poliza_deuda_cartera.Tasa`
+  - residencia: `poliza_residencia_cartera.Tarifa`
+  - vida: `poliza_vida_cartera.Tasa`
+  - desempleo: `poliza_desempleo_cartera.Tasa`
+- `Producto / Plan`:
+  - deuda: `poliza_deuda.Plan -> plan -> producto`
+  - residencia: `poliza_residencia.Plan -> plan -> producto`
+  - vida: `poliza_vida.Producto` directo o fallback `poliza_vida.Plan -> plan -> producto`
+  - desempleo: `poliza_desempleo.Plan -> plan -> producto`
+- `% Extraprima`:
+  - deuda: `poliza_deuda_cartera.PorcentajeExtraprima`
+  - vida: `poliza_vida_cartera.PorcentajeExtraprima`
+  - residencia/desempleo: sin fuente equivalente activa en este flujo
+- `Prima`:
+  - se toma desde el registro mensual/cartera cuando la fuente tiene columna util para prima del periodo.
+  - exportacion Excel usa el mismo dataset del controlador.
+
+Busqueda por nombre:
+
+- deuda: concatenacion de nombres/apellidos y `NombreSociedad`
+- residencia: `NombreCompleto` y `NombreSociedad`
+- vida: concatenacion de nombres/apellidos
+- desempleo: concatenacion de nombres/apellidos y `NombreSociedad`
+
+Totales visibles/exportables:
+
+- `MontoOtorgado`
+- `SumaAsegurada`
+- `SaldoCapital`
+- `Intereses`
+- `InteresesMoratorios`
+- `InteresesCovid`
 
 Validacion cartera:
 

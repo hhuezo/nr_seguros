@@ -231,13 +231,6 @@
                                             @can('estado-venta read')
                                                 <li><a href="{{ url('catalogo/estado_venta') }}">Estado Venta</a></li>
                                             @endcan
-                                            <li><a href="{{ url('catalogo/motivo_cancelacion') }}">Motivos de cancelacion (no declarativas)</a></li>
-                                            <li><a href="{{ url('catalogo/estado_certificado') }}">Estados de certificado (no declarativas)</a></li>
-                                            <li><a href="{{ url('catalogo/forma_pago_polizas') }}">Formas de pago polizas (no declarativas)</a></li>
-                                            <li><a href="{{ url('catalogo/origen_poliza') }}">Origen de poliza (no declarativas)</a></li>
-                                            <li><a href="{{ url('catalogo/tipo_deducible') }}">Tipo de deducible (no declarativas)</a></li>
-                                            <li><a href="{{ url('catalogo/parentesco_beneficiario') }}">Parentescos de beneficiarios (no declarativas)</a></li>
-                                            <li><a href="{{ url('catalogo/cesionario') }}">Cesionarios (no declarativas)</a></li>
                                             @can('nr-cartera read')
                                                 <li><a href="{{ url('catalogo/nr_cartera') }}">Tipo Cartera NR </a></li>
                                             @endcan
@@ -247,20 +240,11 @@
                                             @can('tipo-cobro read')
                                                 <li><a href="{{ url('catalogo/tipo_cobro') }}">Tipo Cobro</a></li>
                                             @endcan
-                                            @can('tipo-poliza read')
-                                                <li><a href="{{ url('catalogo/tipo_poliza') }}">Tipo Póliza (ramo)</a></li>
-                                            @endcan
                                             @can('area-comercial read')
                                                 <li><a href="{{ url('catalogo/area_comercial') }}">Cargo o puesto</a></li>
                                             @endcan
                                             @can('ubicacion-cobro read')
                                                 <li><a href="{{ url('catalogo/ubicacion_cobro') }}">Ubicación Cobro</a></li>
-                                            @endcan
-                                            @can('ramo read')
-                                                <li><a href="{{ url('catalogo/necesidad_proteccion') }}">Ramos</a></li>
-                                            @endcan
-                                            @can('ramo read')
-                                                <li><a href="{{ url('catalogo/agrupador_ramo') }}">Agrupador de ramos</a></li>
                                             @endcan
                                             @can('perfiles read')
                                                 <li><a href="{{ url('catalogo/perfiles') }}">Requisitos de asegurabilidad</a>
@@ -269,12 +253,71 @@
                                             @can('departamento-nr read')
                                                 <li><a href="{{ url('catalogo/departamento_nr') }}">Departamentos NR</a></li>
                                             @endcan
+                                        </ul>
+                                    </li>
+                                @endcan
+
+                                @can('configuracion-poliza menu')
+                                    <li><a><i class="fa fa-cogs"></i> Configuración de póliza<span
+                                                class="fa fa-chevron-down"></span></a>
+                                        <ul class="nav child_menu" id="ul-configuracion-poliza">
+                                            @can('agrupador-ramo read')
+                                                <li><a href="{{ url('catalogo/agrupador_ramo') }}">Agrupador de ramos</a></li>
+                                            @endcan
+                                            @can('tipo-poliza read')
+                                                <li><a href="{{ url('catalogo/tipo_poliza') }}">Tipo Póliza</a></li>
+                                            @endcan
+                                            @can('ramo read')
+                                                <li><a href="{{ url('catalogo/necesidad_proteccion') }}">Ramos</a></li>
+                                            @endcan
                                             @can('producto read')
-                                                <li id="li-producto"><a href="{{ url('catalogo/producto') }}">Productos</a>
-                                                </li>
+                                                <li id="li-producto"><a href="{{ url('catalogo/producto') }}">Productos</a></li>
                                             @endcan
                                             @can('plan read')
                                                 <li id="li-plan"><a href="{{ url('catalogo/plan') }}">Planes</a></li>
+                                            @endcan
+                                        </ul>
+                                    </li>
+                                @endcan
+
+                                @can('catalogos-polizas-no-declarativas menu')
+                                    <li><a><i class="fa fa-folder-open"></i> Catálogos pólizas no declarativas<span
+                                                class="fa fa-chevron-down"></span></a>
+                                        <ul class="nav child_menu" id="ul-catalogos-polizas-no-declarativas">
+                                            @can('motivo-cancelacion read')
+                                                <li><a href="{{ url('catalogo/motivo_cancelacion') }}">Motivos de cancelacion</a></li>
+                                            @endcan
+                                            @can('estado-certificado read')
+                                                <li><a href="{{ url('catalogo/estado_certificado') }}">Estados de certificado</a></li>
+                                            @endcan
+                                            @can('forma-pago-poliza read')
+                                                <li><a href="{{ url('catalogo/forma_pago_polizas') }}">Formas de pago polizas</a></li>
+                                            @endcan
+                                            @can('origen-poliza read')
+                                                <li><a href="{{ url('catalogo/origen_poliza') }}">Origen de poliza</a></li>
+                                            @endcan
+                                            @can('tipo-deducible read')
+                                                <li><a href="{{ url('catalogo/tipo_deducible') }}">Tipo de deducible</a></li>
+                                            @endcan
+                                            @can('parentesco-beneficiario read')
+                                                <li><a href="{{ url('catalogo/parentesco_beneficiario') }}">Parentescos de beneficiarios</a></li>
+                                            @endcan
+                                            @can('cesionario read')
+                                                <li><a href="{{ url('catalogo/cesionario') }}">Cesionarios</a></li>
+                                            @endcan
+                                        </ul>
+                                    </li>
+                                @endcan
+
+                                @can('catalogos-comerciales menu')
+                                    <li><a><i class="fa fa-briefcase"></i> Catálogos comerciales<span
+                                                class="fa fa-chevron-down"></span></a>
+                                        <ul class="nav child_menu" id="ul-catalogos-comerciales">
+                                            @can('ventas-campo-comparativo read')
+                                                <li><a href="{{ url('catalogo/ventas_campo_comparativo') }}">Plantillas comparativas</a></li>
+                                            @endcan
+                                            @can('ventas-plan-comercial read')
+                                                <li><a href="{{ url('catalogo/ventas_plan_comercial') }}">Planes comerciales</a></li>
                                             @endcan
                                         </ul>
                                     </li>
@@ -362,6 +405,17 @@
                                             @can('negocio read')
                                                 <li id="opcionNegocio"><a href="{{ url('catalogo/negocio') }}">Negocio</a>
                                                 </li>
+                                            @endcan
+                                        </ul>
+                                    </li>
+                                @endcan
+
+                                @can('ventas menu')
+                                    <li id="botonMenuVentas"><a><i class="fa fa-line-chart"></i> Ventas
+                                            <span class="fa fa-chevron-down"></span></a>
+                                        <ul class="nav child_menu" id="menuVentas">
+                                            @can('ventas-ofertas read')
+                                                <li id="opcionVentasOfertas"><a href="{{ url('ventas/ofertas') }}">Ofertas</a></li>
                                             @endcan
                                         </ul>
                                     </li>

@@ -180,7 +180,9 @@ class PolizaSeguroController extends Controller
 
             $reglaValidacion = $campo->ValidacionCampo ?? 'ninguna';
 
-            if ($reglaValidacion === 'correo' || $campo->TipoCampo === 'email') {
+            if (($campo->OrigenOpciones ?? 'manual') === 'catalogo' && $campo->CatalogoOrigen === 'parentesco_beneficiario') {
+                $rule .= '|integer|exists:parentesco,Id';
+            } elseif ($reglaValidacion === 'correo' || $campo->TipoCampo === 'email') {
                 $rule .= '|email';
             } elseif ($reglaValidacion === 'dui') {
                 $rule .= '|regex:/^\d{8}-\d$/';
@@ -205,16 +207,38 @@ class PolizaSeguroController extends Controller
     private function buildDatosCertificado(Request $request, $campos)
     {
         $valores = $request->input('campos', []);
+        $parentescos = collect();
 
-        return $campos->map(function ($campo) use ($valores) {
+        if ($campos->contains(function ($campo) {
+            return ($campo->OrigenOpciones ?? 'manual') === 'catalogo'
+                && $campo->CatalogoOrigen === 'parentesco_beneficiario';
+        })) {
+            $parentescos = Parentesco::where('Activo', 1)
+                ->orWhereIn('Id', collect($valores)->filter(fn($valor) => is_numeric($valor))->values()->all())
+                ->get()
+                ->keyBy('Id');
+        }
+
+        return $campos->map(function ($campo) use ($valores, $parentescos) {
+            $valor = $valores[$campo->Id] ?? null;
+            $valorId = null;
+
+            if (($campo->OrigenOpciones ?? 'manual') === 'catalogo' && $campo->CatalogoOrigen === 'parentesco_beneficiario') {
+                $valorId = $valor !== null && $valor !== '' ? (int) $valor : null;
+                $valor = $valorId ? ($parentescos[$valorId]->Nombre ?? null) : null;
+            }
+
             return [
                 'CampoId' => $campo->Id,
                 'NombreCampo' => $campo->NombreCampo,
                 'Etiqueta' => $campo->Etiqueta,
                 'TipoCampo' => $campo->TipoCampo,
                 'ValidacionCampo' => $campo->ValidacionCampo ?? 'ninguna',
+                'OrigenOpciones' => $campo->OrigenOpciones ?? 'manual',
+                'CatalogoOrigen' => $campo->CatalogoOrigen,
                 'MostrarEnReporte' => (int) ($campo->MostrarEnReporte ?? 0),
-                'Valor' => $valores[$campo->Id] ?? null,
+                'ValorId' => $valorId,
+                'Valor' => $valor,
             ];
         })->values()->all();
     }
@@ -227,7 +251,33 @@ class PolizaSeguroController extends Controller
 
         $datos = json_decode($json, true);
 
-        return is_array($datos) ? collect($datos)->pluck('Valor', 'CampoId')->all() : [];
+        return is_array($datos)
+            ? collect($datos)->mapWithKeys(function ($dato) {
+                return [$dato['CampoId'] => $dato['ValorId'] ?? $dato['Valor'] ?? null];
+            })->all()
+            : [];
+    }
+
+    private function catalogosOpcionesCertificado($campos): array
+    {
+        $catalogos = [];
+
+        if ($campos->contains(function ($campo) {
+            return ($campo->OrigenOpciones ?? 'manual') === 'catalogo'
+                && $campo->CatalogoOrigen === 'parentesco_beneficiario';
+        })) {
+            $catalogos['parentesco_beneficiario'] = $this->parentescosCatalogo()
+                ->map(function ($parentesco) {
+                    return [
+                        'Id' => $parentesco->Id,
+                        'Nombre' => $parentesco->Nombre,
+                    ];
+                })
+                ->values()
+                ->all();
+        }
+
+        return $catalogos;
     }
 
     private function siguienteNumeroCertificado($polizaId)
@@ -236,12 +286,49 @@ class PolizaSeguroController extends Controller
         return ((int) $ultimo) + 1;
     }
 
+    private function documentoContratanteCertificado($cliente): string
+    {
+        if (!$cliente) {
+            return '';
+        }
+
+        // El certificado 1 nace con el documento del contratante; juridicos usan NIT como identificador principal.
+        if ((int) ($cliente->TipoPersona ?? 0) === 2) {
+            return $cliente->Nit ?: ($cliente->Dui ?: ($cliente->Pasaporte ?? ''));
+        }
+
+        return $cliente->Dui ?: ($cliente->Nit ?: ($cliente->Pasaporte ?? ''));
+    }
+
+    private function sexoContratanteCertificado($cliente): ?string
+    {
+        if (!$cliente) {
+            return null;
+        }
+
+        return match ((int) ($cliente->Genero ?? 0)) {
+            1 => 'M',
+            2 => 'F',
+            default => null,
+        };
+    }
+
+    private function normalizarOpcionalesCertificado(Request $request): void
+    {
+        $request->merge([
+            'FechaNacimiento' => $request->filled('FechaNacimiento') ? $request->FechaNacimiento : null,
+            'Sexo' => $request->filled('Sexo') ? $request->Sexo : null,
+        ]);
+    }
+
     private function reglasCertificadoBase(): array
     {
         return [
             'CertificadoAseguradora' => 'nullable|string|max:100',
             'CodAsegurado' => 'required|string|max:100',
             'Asegurado' => 'required|string|max:200',
+            'FechaNacimiento' => 'nullable|date',
+            'Sexo' => 'nullable|in:M,F',
             'VigenciaDesde' => 'required|date',
             'VigenciaHasta' => 'required|date|after_or_equal:VigenciaDesde',
             'FechaInclusion' => 'required|date',
@@ -525,6 +612,8 @@ class PolizaSeguroController extends Controller
         $certificado->CertificadoAseguradora = $request->CertificadoAseguradora;
         $certificado->CodAsegurado = $request->CodAsegurado;
         $certificado->Asegurado = $request->Asegurado;
+        $certificado->FechaNacimiento = $request->filled('FechaNacimiento') ? $request->FechaNacimiento : null;
+        $certificado->Sexo = $request->filled('Sexo') ? $request->Sexo : null;
         $certificado->VigenciaDesde = $request->VigenciaDesde;
         $certificado->VigenciaHasta = $request->VigenciaHasta;
         $certificado->FechaInclusion = $request->FechaInclusion;
@@ -577,11 +666,15 @@ class PolizaSeguroController extends Controller
 
         $planCoberturasCatalogo = DB::table('plan_cobertura_detalle as detalle')
             ->leftJoin('cobertura as cobertura', 'cobertura.Id', '=', 'detalle.Cobertura')
+            ->leftJoin('cobertura_tarificacion as tarificacion', 'tarificacion.Id', '=', 'cobertura.Tarificacion')
             ->whereIn('detalle.Plan', $planesCertificado->pluck('Id'))
             ->where('detalle.Activo', 1)
             ->select([
                 'detalle.Plan',
                 'detalle.Cobertura',
+                DB::raw('COALESCE(detalle.Tarificacion, cobertura.Tarificacion) as Tarificacion'),
+                DB::raw('COALESCE(detalle.TarificacionNombre, tarificacion.Nombre) as TarificacionNombre'),
+                'detalle.CoberturaPrincipal',
                 'cobertura.Nombre',
                 'detalle.SumaAsegurada',
                 'detalle.Tasa',
@@ -595,6 +688,9 @@ class PolizaSeguroController extends Controller
                 return $detalles->map(function ($detalle) {
                     return [
                         'Cobertura' => $detalle->Cobertura,
+                        'Tarificacion' => $detalle->Tarificacion,
+                        'TarificacionNombre' => $detalle->TarificacionNombre,
+                        'CoberturaPrincipal' => (int) ($detalle->CoberturaPrincipal ?? 0),
                         'Nombre' => $detalle->Nombre ?? '',
                         'SumaAsegurada' => $detalle->SumaAsegurada,
                         'PorcentajeSuma' => null,
@@ -602,8 +698,6 @@ class PolizaSeguroController extends Controller
                         'DiasProrrata' => null,
                         'PrimaAnual' => $detalle->Prima,
                         'Prima' => null,
-                        'PorcentajeDeducible' => null,
-                        'Deducible' => null,
                     ];
                 })->values();
             });
@@ -615,8 +709,12 @@ class PolizaSeguroController extends Controller
 
         $certificadoCoberturas = $coberturasGuardadas->count() > 0
             ? $coberturasGuardadas->map(function ($detalle) {
+                $tarificacionCatalogo = optional(optional($detalle->cobertura)->tarificacion);
+
                 return [
                     'Cobertura' => $detalle->Cobertura,
+                    'Tarificacion' => $detalle->Tarificacion ?? optional($detalle->cobertura)->Tarificacion,
+                    'TarificacionNombre' => $detalle->TarificacionNombre ?? $tarificacionCatalogo->Nombre,
                     'Nombre' => $detalle->Nombre,
                     'SumaAsegurada' => $detalle->SumaAsegurada,
                     'PorcentajeSuma' => $detalle->PorcentajeSuma,
@@ -624,8 +722,6 @@ class PolizaSeguroController extends Controller
                     'DiasProrrata' => $detalle->DiasProrrata,
                     'PrimaAnual' => $detalle->PrimaAnual,
                     'Prima' => $detalle->Prima,
-                    'PorcentajeDeducible' => $detalle->PorcentajeDeducible,
-                    'Deducible' => $detalle->Deducible,
                 ];
             })->values()
             : collect($planCoberturasCatalogo->get($planCertificadoActual, []));
@@ -672,7 +768,7 @@ class PolizaSeguroController extends Controller
         $clientes = Cliente::where('Activo', 1)->get();
         $ofertas = $this->ofertasAceptadas();
         $tipo_cartera_nr = $this->catalogoTipoCarteraNr();
-        $forma_pago = FormaPagoPoliza::where('Activo', 1)->get();
+        $forma_pago = FormaPagoPoliza::where('Activo', 1)->ordenado()->get();
         $estado_poliza = EstadoPoliza::get();
         $motivos_cancelacion = MotivoCancelacion::where('Activo', 1)->get();
         $origen_poliza = OrigenPoliza::where('Activo', 1)->get();
@@ -900,7 +996,7 @@ class PolizaSeguroController extends Controller
         $clientes = Cliente::where('Activo', 1)->get();
         $ofertas = $this->ofertasAceptadas($poliza_seguro->Oferta);
         $tipo_cartera_nr = $this->catalogoTipoCarteraNr();
-        $forma_pago = FormaPagoPoliza::where('Activo', 1)->get();
+        $forma_pago = FormaPagoPoliza::where('Activo', 1)->ordenado()->get();
         $estado_poliza = EstadoPoliza::get();
         $motivos_cancelacion = MotivoCancelacion::where('Activo', 1)->get();
         $origen_poliza = OrigenPoliza::where('Activo', 1)->get();
@@ -1094,19 +1190,23 @@ class PolizaSeguroController extends Controller
         $esPrimerCertificado = $numeroCertificado === 1;
         $cliente = $poliza->clientes;
         $estadoVigente = EstadoCertificado::where('Activo', 1)
-            ->where('Nombre', 'CERTIFICADO VIGENTE')
-            ->first();
+            ->get()
+            ->first(function ($estado) {
+                return trim(mb_strtoupper($estado->Nombre)) === 'CERTIFICADO VIGENTE';
+            });
 
         $certificado = new PolizaSeguroCertificado([
             'PolizaSeguroId' => $poliza->Id,
             'Plan' => $poliza->Planes,
             'NumeroCertificado' => $numeroCertificado,
             'CertificadoAseguradora' => (string) $numeroCertificado,
-            'CodAsegurado' => $esPrimerCertificado ? ($cliente->Dui ?? '') : '',
+            'CodAsegurado' => $esPrimerCertificado ? $this->documentoContratanteCertificado($cliente) : '',
             'Asegurado' => $esPrimerCertificado ? ($cliente->Nombre ?? '') : '',
+            'FechaNacimiento' => null,
+            'Sexo' => $esPrimerCertificado ? $this->sexoContratanteCertificado($cliente) : null,
             'VigenciaDesde' => $poliza->VigenciaDesde,
             'VigenciaHasta' => $poliza->VigenciaHasta,
-            'FechaInclusion' => now()->format('Y-m-d'),
+            'FechaInclusion' => null,
             'DiasVigencia' => $this->calcularDiasCertificado($poliza->VigenciaDesde, $poliza->VigenciaHasta),
             'EstadoCertificado' => $estadoVigente->Id ?? null,
             'Estado' => $estadoVigente->Nombre ?? 'CERTIFICADO VIGENTE',
@@ -1146,6 +1246,7 @@ class PolizaSeguroController extends Controller
         ];
         $productoCertificado = $this->productoConfigCertificado($certificado->Plan, $poliza->Productos) ?: $poliza->producto;
         $certificadoCampos = $this->certificadoCampos($productoCertificado->Id ?? $poliza->Productos);
+        $catalogosOpcionesCertificado = $this->catalogosOpcionesCertificado($certificadoCampos);
         $cesionarios = Cesionario::where('Activo', 1)->orderBy('Nombre', 'asc')->get();
         $siguienteCodigoCesion = 1;
 
@@ -1154,6 +1255,7 @@ class PolizaSeguroController extends Controller
             'poliza' => $poliza,
             'certificado' => $certificado,
             'certificado_campos' => $certificadoCampos,
+            'catalogosOpcionesCertificado' => $catalogosOpcionesCertificado,
             'campoValoresCertificado' => [],
             'producto_certificado_config' => $productoCertificado,
             'permite_dependientes' => (int) ($productoCertificado->PermiteDependientesCertificado ?? 0) === 1,
@@ -1175,6 +1277,7 @@ class PolizaSeguroController extends Controller
             'MotivoExclusion',
             'Observacion',
         ]);
+        $this->normalizarOpcionalesCertificado($request);
         $request->validate($this->reglasCertificadoBase());
 
         if (PolizaSeguroCertificado::where('PolizaSeguroId', $poliza->Id)
@@ -1214,7 +1317,7 @@ class PolizaSeguroController extends Controller
             'poliza.clientes',
             'poliza.producto',
             'usuarioModifica',
-            'coberturasCertificado',
+            'coberturasCertificado.cobertura.tarificacion',
             'datosTecnicosCertificado',
             'dependientes',
             'beneficiarios.parentesco',
@@ -1226,6 +1329,7 @@ class PolizaSeguroController extends Controller
         $datosTecnicos = $this->datosTecnicosCertificado($certificado);
         $productoCertificado = $this->productoConfigCertificado($certificado->Plan, $certificado->poliza->Productos) ?: $certificado->poliza->producto;
         $certificadoCampos = $this->certificadoCampos($productoCertificado->Id ?? $certificado->poliza->Productos);
+        $catalogosOpcionesCertificado = $this->catalogosOpcionesCertificado($certificadoCampos);
         $cesionarios = Cesionario::where('Activo', 1)->orderBy('Nombre', 'asc')->get();
         $siguienteCodigoCesion = $this->siguienteCodigoSesionCesion($certificado->Id);
 
@@ -1234,6 +1338,7 @@ class PolizaSeguroController extends Controller
             'poliza' => $certificado->poliza,
             'certificado' => $certificado,
             'certificado_campos' => $certificadoCampos,
+            'catalogosOpcionesCertificado' => $catalogosOpcionesCertificado,
             'campoValoresCertificado' => $this->valoresDatosCertificado($certificado->DatosJson),
             'producto_certificado_config' => $productoCertificado,
             'permite_dependientes' => (int) ($productoCertificado->PermiteDependientesCertificado ?? 0) === 1,
@@ -1255,6 +1360,7 @@ class PolizaSeguroController extends Controller
             'MotivoExclusion',
             'Observacion',
         ]);
+        $this->normalizarOpcionalesCertificado($request);
         $request->validate($this->reglasCertificadoBase());
 
         $this->asignarDatosCertificado($certificado, $request, $certificado->poliza);
@@ -1286,10 +1392,19 @@ class PolizaSeguroController extends Controller
     {
         $certificado = PolizaSeguroCertificado::with('poliza')->findOrFail($id);
 
+        // Coberturas se guarda desde un form independiente; si no viaja Plan, usamos el plan vigente del certificado.
+        if (!$request->filled('Plan')) {
+            $request->merge([
+                'Plan' => $certificado->Plan ?: $certificado->poliza->Planes,
+            ]);
+        }
+
         $request->validate([
             'Plan' => 'required|integer|exists:plan,Id',
             'coberturas' => 'nullable|array',
             'coberturas.*.Cobertura' => 'nullable|integer|exists:cobertura,Id',
+            'coberturas.*.Tarificacion' => 'nullable|integer|exists:cobertura_tarificacion,Id',
+            'coberturas.*.TarificacionNombre' => 'nullable|string|max:100',
             'coberturas.*.Nombre' => 'required_with:coberturas|string|max:250',
             'coberturas.*.SumaAsegurada' => 'nullable|numeric|min:0',
             'coberturas.*.PorcentajeSuma' => 'nullable|numeric',
@@ -1297,8 +1412,6 @@ class PolizaSeguroController extends Controller
             'coberturas.*.DiasProrrata' => 'nullable|integer|min:0',
             'coberturas.*.PrimaAnual' => 'nullable|numeric|min:0',
             'coberturas.*.Prima' => 'nullable|numeric|min:0',
-            'coberturas.*.PorcentajeDeducible' => 'nullable|numeric',
-            'coberturas.*.Deducible' => 'nullable|string|max:200',
         ]);
 
         $planValido = Plan::where('Activo', 1)
@@ -1319,8 +1432,14 @@ class PolizaSeguroController extends Controller
                 return !empty($detalle['Nombre']) || !empty($detalle['Cobertura']);
             })
             ->values();
+        $tarificacionesPorCobertura = DB::table('cobertura as cobertura')
+            ->leftJoin('cobertura_tarificacion as tarificacion', 'tarificacion.Id', '=', 'cobertura.Tarificacion')
+            ->whereIn('cobertura.Id', $coberturas->pluck('Cobertura')->filter()->unique()->values())
+            ->select('cobertura.Id', 'cobertura.Tarificacion', 'tarificacion.Nombre as TarificacionNombre')
+            ->get()
+            ->keyBy('Id');
 
-        DB::transaction(function () use ($certificado, $request, $coberturas, &$totalSumaAsegurada, &$totalPrima) {
+        DB::transaction(function () use ($certificado, $request, $coberturas, $tarificacionesPorCobertura, &$totalSumaAsegurada, &$totalPrima) {
             PolizaSeguroCertificadoCobertura::where('PolizaSeguroCertificadoId', $certificado->Id)
                 ->where('Activo', 1)
                 ->update(['Activo' => 0]);
@@ -1328,12 +1447,15 @@ class PolizaSeguroController extends Controller
             foreach ($coberturas as $detalle) {
                 $sumaAsegurada = (float) ($detalle['SumaAsegurada'] ?? 0);
                 $prima = (float) ($detalle['Prima'] ?? 0);
+                $tarificacion = $tarificacionesPorCobertura->get($detalle['Cobertura'] ?? null);
                 $totalSumaAsegurada += $sumaAsegurada;
                 $totalPrima += $prima;
 
                 PolizaSeguroCertificadoCobertura::create([
                     'PolizaSeguroCertificadoId' => $certificado->Id,
                     'Cobertura' => $detalle['Cobertura'] ?? null,
+                    'Tarificacion' => $tarificacion->Tarificacion ?? $detalle['Tarificacion'] ?? null,
+                    'TarificacionNombre' => $tarificacion->TarificacionNombre ?? $detalle['TarificacionNombre'] ?? null,
                     'Nombre' => $detalle['Nombre'] ?? '',
                     'SumaAsegurada' => $sumaAsegurada,
                     'PorcentajeSuma' => $detalle['PorcentajeSuma'] ?? null,
@@ -1341,8 +1463,6 @@ class PolizaSeguroController extends Controller
                     'DiasProrrata' => $detalle['DiasProrrata'] ?? null,
                     'PrimaAnual' => $detalle['PrimaAnual'] ?? null,
                     'Prima' => $prima,
-                    'PorcentajeDeducible' => $detalle['PorcentajeDeducible'] ?? null,
-                    'Deducible' => $detalle['Deducible'] ?? null,
                     'Activo' => 1,
                 ]);
             }
