@@ -234,7 +234,7 @@ class VidaFedeController extends Controller
             }
             //tipo tarifa 2 multi categoria
             else if ($poliza_vida->TipoTarifa == 2) {
-                $montos = explode(',', $poliza_vida->Multitarifa);
+                $montos = array_map(fn ($valor) => round((float) trim($valor), 2), explode(',', $poliza_vida->Multitarifa));
             }
         } else if ($poliza_vida->TipoCobro == 1) {
             $montos = [$poliza_vida->SumaMinima, $poliza_vida->SumaMaxima];
@@ -373,9 +373,10 @@ class VidaFedeController extends Controller
                         array_push($errores_array, 12);
                     }
                 } else {
-                    //multitarifa de la poliza
-                    $multitarifas = array_map('intval', explode(",", $poliza_vida->Multitarifa));
-                    if (!in_array($obj->SumaAsegurada, $multitarifas)) {
+                    //multitarifa de la poliza (soporta decimales, p.ej. 571.43,1142.86)
+                    $multitarifas = array_map(fn ($valor) => round((float) trim($valor), 2), explode(',', $poliza_vida->Multitarifa));
+                    $sumaAsegurada = round((float) $obj->SumaAsegurada, 2);
+                    if (!in_array($sumaAsegurada, $multitarifas, true)) {
                         $obj->TipoError = 13;
                         $obj->update();
 
@@ -653,7 +654,7 @@ class VidaFedeController extends Controller
             }
             //tipo tarifa 2 multi categoria
             else if ($poliza_vida->TipoTarifa == 2) {
-                $montos = explode(',', $poliza_vida->Multitarifa);
+                $montos = array_map(fn ($valor) => round((float) trim($valor), 2), explode(',', $poliza_vida->Multitarifa));
             }
         } else if ($poliza_vida->TipoCobro == 1) {
             $montos = [$poliza_vida->SumaMinima, $poliza_vida->SumaMaxima];
@@ -792,9 +793,10 @@ class VidaFedeController extends Controller
                         array_push($errores_array, 12);
                     }
                 } else {
-                    //multitarifa de la poliza
-                    $multitarifas = array_map('intval', explode(",", $poliza_vida->Multitarifa));
-                    if (!in_array($obj->SumaAsegurada, $multitarifas)) {
+                    //multitarifa de la poliza (soporta decimales, p.ej. 571.43,1142.86)
+                    $multitarifas = array_map(fn ($valor) => round((float) trim($valor), 2), explode(',', $poliza_vida->Multitarifa));
+                    $sumaAsegurada = round((float) $obj->SumaAsegurada, 2);
+                    if (!in_array($sumaAsegurada, $multitarifas, true)) {
                         $obj->TipoError = 13;
                         $obj->update();
 

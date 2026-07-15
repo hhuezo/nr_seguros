@@ -1634,11 +1634,11 @@ class VidaController extends Controller
         if ($poliza_vida->TipoCobro == 2) {
             //tipo tarifa 1 suma uniforme
             if ($poliza_vida->TipoTarifa == 1) {
-                $montos = [$poliza_vida->SumaAsegurada];
+                $montos = [round((float) $poliza_vida->SumaAsegurada, 2)];
             }
             //tipo tarifa 2 multi categoria
             else if ($poliza_vida->TipoTarifa == 2) {
-                $montos = explode(',', $poliza_vida->Multitarifa);
+                $montos = array_map(fn ($valor) => round((float) trim($valor), 2), explode(',', $poliza_vida->Multitarifa));
             }
         } else if ($poliza_vida->TipoCobro == 1) {
             $montos = [$poliza_vida->SumaMinima, $poliza_vida->SumaMaxima];
@@ -1726,7 +1726,7 @@ class VidaController extends Controller
             //validar cantidad asegurada o multi categoria error 10
 
             if ($poliza_vida->TipoCobro == 2) {
-                if (!in_array($obj->SumaAsegurada, $montos)) {
+                if (!in_array(round((float) $obj->SumaAsegurada, 2), $montos, true)) {
                     $obj->TipoError = 10;
                     $obj->update();
 
@@ -1769,9 +1769,10 @@ class VidaController extends Controller
                         array_push($errores_array, 12);
                     }
                 } else {
-                    //multitarifa de la poliza
-                    $multitarifas = array_map('intval', explode(",", $poliza_vida->Multitarifa));
-                    if (!in_array($obj->SumaAsegurada, $multitarifas)) {
+                    //multitarifa de la poliza (soporta decimales, p.ej. 571.43,1142.86)
+                    $multitarifas = array_map(fn ($valor) => round((float) trim($valor), 2), explode(',', $poliza_vida->Multitarifa));
+                    $sumaAsegurada = round((float) $obj->SumaAsegurada, 2);
+                    if (!in_array($sumaAsegurada, $multitarifas, true)) {
                         $obj->TipoError = 13;
                         $obj->update();
 
@@ -2019,11 +2020,11 @@ class VidaController extends Controller
         if ($poliza_vida->TipoCobro == 2) {
             //tipo tarifa 1 suma uniforme
             if ($poliza_vida->TipoTarifa == 1) {
-                $montos = [$poliza_vida->SumaAsegurada];
+                $montos = [round((float) $poliza_vida->SumaAsegurada, 2)];
             }
             //tipo tarifa 2 multi categoria
             else if ($poliza_vida->TipoTarifa == 2) {
-                $montos = explode(',', $poliza_vida->Multitarifa);
+                $montos = array_map(fn ($valor) => round((float) trim($valor), 2), explode(',', $poliza_vida->Multitarifa));
             }
         } else if ($poliza_vida->TipoCobro == 1) {
             $montos = [$poliza_vida->SumaMinima, $poliza_vida->SumaMaxima];
@@ -2111,7 +2112,7 @@ class VidaController extends Controller
             //validar cantidad asegurada o multi categoria error 10
 
             if ($poliza_vida->TipoCobro == 2) {
-                if (!in_array($obj->SumaAsegurada, $montos)) {
+                if (!in_array(round((float) $obj->SumaAsegurada, 2), $montos, true)) {
                     $obj->TipoError = 10;
                     $obj->update();
 
@@ -2154,9 +2155,10 @@ class VidaController extends Controller
                         array_push($errores_array, 12);
                     }
                 } else {
-                    //multitarifa de la poliza
-                    $multitarifas = array_map('intval', explode(",", $poliza_vida->Multitarifa));
-                    if (!in_array($obj->SumaAsegurada, $multitarifas)) {
+                    //multitarifa de la poliza (soporta decimales, p.ej. 571.43,1142.86)
+                    $multitarifas = array_map(fn ($valor) => round((float) trim($valor), 2), explode(',', $poliza_vida->Multitarifa));
+                    $sumaAsegurada = round((float) $obj->SumaAsegurada, 2);
+                    if (!in_array($sumaAsegurada, $multitarifas, true)) {
                         $obj->TipoError = 13;
                         $obj->update();
 

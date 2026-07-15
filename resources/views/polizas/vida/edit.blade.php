@@ -315,7 +315,7 @@
                                         style="display: {{ $vida->TipoTarifa == 2 ? 'block' : 'none' }}">
                                         <label class="control-label" align="right">Multicategoria</label>
                                         <input class="form-control" name="Multitarifa" type="text" id="Multitarifa"
-                                            value="{{ $vida->Multitarifa }}" oninput="formatMultitarifa(this)">
+                                            value="{{ $vida->Multitarifa }}" onblur="formatMultitarifa(this)">
                                         <label id="multitarifa-error" class="text-danger" style="display: none;">Formato
                                             inválido: use cantidades separadas por coma.</label>
                                     </div>
@@ -797,9 +797,9 @@
             }
         }
 
-        // Validación del formato Multitarifa (ejemplo: 1000,2000,3000)
+        // Validación del formato Multitarifa (ejemplo: 1000,2000.50,3000) — al salir del campo
         function formatMultitarifa(input) {
-            let regex = /^(\d+)(,\d+)*$/;
+            let regex = /^(\d+(\.\d{1,2})?)(,\d+(\.\d{1,2})?)*$/;
             let errorLabel = document.getElementById("multitarifa-error");
 
             if (!regex.test(input.value.trim()) && input.value.trim() !== "") {
