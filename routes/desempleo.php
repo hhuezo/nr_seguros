@@ -34,6 +34,9 @@ Route::middleware(['web'])->group(function () {
     Route::post('polizas/desempleo/create_pago_fedecredito/{id}', [DesempleoCarteraController::class, 'create_pago_fedecredito']);
     Route::post('polizas/desempleo/create_pago_complementario_fedecredito/{id}', [DesempleoCarteraComController::class, 'create_pago_fedecredito']);
     Route::post('polizas/desempleo/validar_poliza/{id}', [DesempleoCarteraController::class, 'validar_poliza']);
+    Route::post('polizas/desempleo/validar_poliza_init/{id}', [DesempleoCarteraController::class, 'validar_poliza_init']);
+    Route::post('polizas/desempleo/validar_poliza_chunk/{id}', [DesempleoCarteraController::class, 'validar_poliza_chunk']);
+    Route::post('polizas/desempleo/validar_poliza_resultado/{id}', [DesempleoCarteraController::class, 'validar_poliza_resultado']);
     Route::post('polizas/desempleo/validar_poliza_complementario/{id}', [DesempleoCarteraComController::class, 'validar_poliza']);
 
     Route::post('polizas/desempleo/cancelar_pago', [DesempleoCarteraController::class, 'cancelar_pago']);
