@@ -14,6 +14,7 @@ use App\Models\polizas\DesempleoTipoCartera;
 use App\Models\temp\DesempleoCarteraTemp;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -886,11 +887,24 @@ class DesempleoCarteraController extends Controller
             ]);
 
         $total = DesempleoCarteraTemp::where('PolizaDesempleo', $id)->count();
+        $cacheKey = $this->validarCacheKey($id);
+
+        Cache::put($cacheKey, [
+            'axo_actual' => (int) $temp_data_first->Axo,
+            'mes_actual' => (int) $temp_data_first->Mes,
+            'axo_anterior' => $periodo['axo_anterior'],
+            'mes_anterior' => $periodo['mes_anterior'],
+            'edad_ids' => [],
+            'eliminados_ids' => [],
+            'nuevos_ids' => [],
+            'rehabilitados_ids' => [],
+            'total_saldo' => null,
+        ], now()->addMinutes(60));
 
         return response()->json([
             'ok' => true,
             'total' => $total,
-            'chunk_size' => 500,
+            'chunk_size' => 400,
             'axo_actual' => (int) $temp_data_first->Axo,
             'mes_actual' => (int) $temp_data_first->Mes,
             'axo_anterior' => $periodo['axo_anterior'],
@@ -907,7 +921,7 @@ class DesempleoCarteraController extends Controller
         set_time_limit(120);
 
         $lastId = (int) $request->input('last_id', 0);
-        $chunkSize = max(100, min(1000, (int) $request->input('chunk_size', 500)));
+        $chunkSize = max(100, min(1000, (int) $request->input('chunk_size', 400)));
         $axoAnterior = (int) $request->input('axo_anterior');
         $mesAnterior = (int) $request->input('mes_anterior');
         $mesAnteriorString = $axoAnterior . '-' . $mesAnterior;
@@ -964,78 +978,243 @@ class DesempleoCarteraController extends Controller
     }
 
     /**
-     * Paso 3: calcula resumen (edad máxima, eliminados, nuevos) y muestra resultado.
+     * Paso 3: calcula resumen por subpasos (edad / eliminados / nuevos / rehabilitados / vista).
+     */
+    public function validar_poliza_resumen(Request $request, $id)
+    {
+        set_time_limit(120);
+
+        $paso = $request->input('paso', 'edad');
+        $cacheKey = $this->validarCacheKey($id);
+        $state = Cache::get($cacheKey);
+
+        if (!$state) {
+            return response()->json(['ok' => false, 'message' => 'Sesión de validación expirada. Vuelve a iniciar.'], 422);
+        }
+
+        $desempleo = Desempleo::findOrFail($id);
+        $axoAnterior = (int) $state['axo_anterior'];
+        $mesAnterior = (int) $state['mes_anterior'];
+        $chunkSize = max(100, min(1000, (int) $request->input('chunk_size', 400)));
+        $lastId = (int) $request->input('last_id', 0);
+
+        if ($paso === 'edad') {
+            $chunk = DesempleoCarteraTemp::where('PolizaDesempleo', $id)
+                ->where('EdadDesembloso', '>', $desempleo->EdadMaximaInscripcion)
+                ->where('Id', '>', $lastId)
+                ->orderBy('Id')
+                ->limit($chunkSize)
+                ->get(['Id', 'NumeroReferencia', 'Identificador']);
+
+            if ($chunk->isEmpty()) {
+                return response()->json(['ok' => true, 'done' => true, 'last_id' => $lastId, 'processed' => 0, 'next' => 'eliminados']);
+            }
+
+            $refs = $chunk->pluck('NumeroReferencia')->unique()->filter(function ($v) {
+                return $v !== null && $v !== '';
+            })->values()->all();
+
+            $existingSet = [];
+            if (!empty($refs)) {
+                $existing = DB::table('poliza_desempleo_cartera')
+                    ->whereIn('NumeroReferencia', $refs)
+                    ->get(['NumeroReferencia', 'Identificador']);
+
+                foreach ($existing as $row) {
+                    $existingSet[trim((string) $row->NumeroReferencia) . '|' . trim((string) $row->Identificador)] = true;
+                }
+            }
+
+            $edadIds = [];
+            foreach ($chunk as $row) {
+                $key = trim((string) $row->NumeroReferencia) . '|' . trim((string) $row->Identificador);
+                if (!isset($existingSet[$key])) {
+                    $edadIds[] = $row->Id;
+                }
+            }
+
+            if (!empty($edadIds)) {
+                $state['edad_ids'] = array_values(array_unique(array_merge($state['edad_ids'], $edadIds)));
+                Cache::put($cacheKey, $state, now()->addMinutes(60));
+            }
+
+            return response()->json([
+                'ok' => true,
+                'done' => false,
+                'last_id' => (int) $chunk->max('Id'),
+                'processed' => $chunk->count(),
+                'accumulated' => count($state['edad_ids']),
+                'next' => 'edad',
+            ]);
+        }
+
+        if ($paso === 'eliminados') {
+            $countCartera = DesempleoCartera::where('PolizaDesempleo', $id)->count();
+            if ($countCartera === 0) {
+                $state['eliminados_ids'] = [];
+                Cache::put($cacheKey, $state, now()->addMinutes(60));
+                return response()->json(['ok' => true, 'done' => true, 'last_id' => 0, 'processed' => 0, 'next' => 'nuevos']);
+            }
+
+            $chunk = DB::table('poliza_desempleo_cartera')
+                ->where('Mes', $mesAnterior)
+                ->where('Axo', $axoAnterior)
+                ->where('PolizaDesempleo', $id)
+                ->where('Id', '>', $lastId)
+                ->orderBy('Id')
+                ->limit($chunkSize)
+                ->get(['Id', 'NumeroReferencia', 'Identificador']);
+
+            if ($chunk->isEmpty()) {
+                return response()->json(['ok' => true, 'done' => true, 'last_id' => $lastId, 'processed' => 0, 'next' => 'nuevos']);
+            }
+
+            $refs = $chunk->pluck('NumeroReferencia')->unique()->filter(function ($v) {
+                return $v !== null && $v !== '';
+            })->values()->all();
+
+            $tempSet = [];
+            if (!empty($refs)) {
+                $enTemp = DB::table('poliza_desempleo_cartera_temp')
+                    ->where('PolizaDesempleo', $id)
+                    ->whereIn('NumeroReferencia', $refs)
+                    ->get(['NumeroReferencia', 'Identificador']);
+
+                foreach ($enTemp as $row) {
+                    $tempSet[trim((string) $row->NumeroReferencia) . '|' . trim((string) $row->Identificador)] = true;
+                }
+            }
+
+            $eliminadosIds = [];
+            foreach ($chunk as $row) {
+                $key = trim((string) $row->NumeroReferencia) . '|' . trim((string) $row->Identificador);
+                if (!isset($tempSet[$key])) {
+                    $eliminadosIds[] = $row->Id;
+                }
+            }
+
+            if (!empty($eliminadosIds)) {
+                $state['eliminados_ids'] = array_values(array_unique(array_merge($state['eliminados_ids'], $eliminadosIds)));
+                Cache::put($cacheKey, $state, now()->addMinutes(60));
+            }
+
+            return response()->json([
+                'ok' => true,
+                'done' => false,
+                'last_id' => (int) $chunk->max('Id'),
+                'processed' => $chunk->count(),
+                'accumulated' => count($state['eliminados_ids']),
+                'next' => 'eliminados',
+            ]);
+        }
+
+        if ($paso === 'nuevos') {
+            $chunk = DesempleoCarteraTemp::where('PolizaDesempleo', $id)
+                ->where('Id', '>', $lastId)
+                ->orderBy('Id')
+                ->limit($chunkSize)
+                ->get(['Id', 'NumeroReferencia', 'Identificador']);
+
+            if ($chunk->isEmpty()) {
+                return response()->json(['ok' => true, 'done' => true, 'last_id' => $lastId, 'processed' => 0, 'next' => 'rehabilitados']);
+            }
+
+            $refs = $chunk->pluck('NumeroReferencia')->unique()->filter(function ($v) {
+                return $v !== null && $v !== '';
+            })->values()->all();
+
+            $existingSet = [];
+            if (!empty($refs)) {
+                $existing = DB::table('poliza_desempleo_cartera')
+                    ->where('PolizaDesempleo', $id)
+                    ->where('Axo', $axoAnterior)
+                    ->where('Mes', $mesAnterior)
+                    ->whereIn('NumeroReferencia', $refs)
+                    ->get(['NumeroReferencia', 'Identificador']);
+
+                foreach ($existing as $row) {
+                    $existingSet[trim((string) $row->NumeroReferencia) . '|' . trim((string) $row->Identificador)] = true;
+                }
+            }
+
+            $nuevosIds = [];
+            foreach ($chunk as $row) {
+                $key = trim((string) $row->NumeroReferencia) . '|' . trim((string) $row->Identificador);
+                if (!isset($existingSet[$key])) {
+                    $nuevosIds[] = $row->Id;
+                }
+            }
+
+            if (!empty($nuevosIds)) {
+                $state['nuevos_ids'] = array_values(array_unique(array_merge($state['nuevos_ids'], $nuevosIds)));
+                Cache::put($cacheKey, $state, now()->addMinutes(60));
+            }
+
+            return response()->json([
+                'ok' => true,
+                'done' => false,
+                'last_id' => (int) $chunk->max('Id'),
+                'processed' => $chunk->count(),
+                'accumulated' => count($state['nuevos_ids']),
+                'next' => 'nuevos',
+            ]);
+        }
+
+        if ($paso === 'rehabilitados') {
+            $ids = DesempleoCarteraTemp::where('PolizaDesempleo', $id)
+                ->where('Rehabilitado', 1)
+                ->where('Id', '>', $lastId)
+                ->orderBy('Id')
+                ->limit($chunkSize)
+                ->pluck('Id')
+                ->all();
+
+            if (empty($ids)) {
+                $state['total_saldo'] = (float) DesempleoCarteraTemp::where('PolizaDesempleo', $id)->sum('SaldoTotal');
+                Cache::put($cacheKey, $state, now()->addMinutes(60));
+                return response()->json(['ok' => true, 'done' => true, 'last_id' => $lastId, 'processed' => 0, 'next' => 'vista']);
+            }
+
+            $state['rehabilitados_ids'] = array_values(array_unique(array_merge($state['rehabilitados_ids'], $ids)));
+            Cache::put($cacheKey, $state, now()->addMinutes(60));
+
+            return response()->json([
+                'ok' => true,
+                'done' => false,
+                'last_id' => (int) max($ids),
+                'processed' => count($ids),
+                'accumulated' => count($state['rehabilitados_ids']),
+                'next' => 'rehabilitados',
+            ]);
+        }
+
+        return response()->json(['ok' => false, 'message' => 'Paso no válido'], 422);
+    }
+
+    /**
+     * Paso final: arma la vista de resumen con los IDs acumulados en cache.
      */
     public function validar_poliza_resultado($id)
     {
-        set_time_limit(300);
+        set_time_limit(180);
+
+        $cacheKey = $this->validarCacheKey($id);
+        $state = Cache::get($cacheKey);
+
+        if (!$state) {
+            alert()->error('Sesión de validación expirada. Vuelve a validar la póliza.');
+            return redirect('polizas/desempleo/subir_cartera/' . $id);
+        }
 
         $desempleo = Desempleo::findOrFail($id);
-        $temp_data_first = DesempleoCarteraTemp::where('PolizaDesempleo', $id)->first();
+        $axoActual = $state['axo_actual'];
+        $mesActual = $state['mes_actual'];
 
-        if (!$temp_data_first) {
-            alert()->error('No se han cargado las carteras');
-            return back();
-        }
-
-        $axoActual = $temp_data_first->Axo;
-        $mesActual = $temp_data_first->Mes;
-        $periodo = $this->periodoAnteriorDesempleo($axoActual, $mesActual);
-        $mesAnterior = $periodo['mes_anterior'];
-        $axoAnterior = $periodo['axo_anterior'];
-
-        $poliza_edad_maxima = DesempleoCarteraTemp::where('PolizaDesempleo', $id)
-            ->where('EdadDesembloso', '>', $desempleo->EdadMaximaInscripcion)
-            ->whereNotExists(function ($query) {
-                $query->select(DB::raw(1))
-                    ->from('poliza_desempleo_cartera')
-                    ->whereColumn(
-                        'poliza_desempleo_cartera.Identificador',
-                        'poliza_desempleo_cartera_temp.Identificador'
-                    )
-                    ->whereColumn(
-                        'poliza_desempleo_cartera.NumeroReferencia',
-                        'poliza_desempleo_cartera_temp.NumeroReferencia'
-                    );
-            })
-            ->get();
-
-        $count_data_cartera = DesempleoCartera::where('PolizaDesempleo', $id)->count();
-
-        if ($count_data_cartera > 0) {
-            $registros_eliminados = DB::table('poliza_desempleo_cartera AS pdc')
-                ->where('pdc.Mes', (int) $mesAnterior)
-                ->where('pdc.Axo', (int) $axoAnterior)
-                ->where('pdc.PolizaDesempleo', $id)
-                ->whereNotExists(function ($query) {
-                    $query->select(DB::raw(1))
-                        ->from('poliza_desempleo_cartera_temp AS pdtc')
-                        ->whereRaw('pdtc.NumeroReferencia = pdc.NumeroReferencia')
-                        ->whereRaw('pdtc.Identificador = pdc.Identificador');
-                })
-                ->select('pdc.*')
-                ->groupBy('NumeroReferencia', 'Identificador')
-                ->get();
-        } else {
-            $registros_eliminados = DesempleoCarteraTemp::where('Id', 0)->get();
-        }
-
-        $nuevos_registros = DB::table('poliza_desempleo_cartera_temp AS t')
-            ->where('t.PolizaDesempleo', $id)
-            ->whereNotExists(function ($query) use ($id, $axoAnterior, $mesAnterior) {
-                $query->select(DB::raw(1))
-                    ->from('poliza_desempleo_cartera AS c')
-                    ->where('c.PolizaDesempleo', $id)
-                    ->where('c.Axo', $axoAnterior)
-                    ->where('c.Mes', $mesAnterior)
-                    ->whereRaw("TRIM(COALESCE(c.NumeroReferencia, '')) = TRIM(COALESCE(t.NumeroReferencia, ''))")
-                    ->whereRaw("TRIM(COALESCE(c.Identificador, '')) = TRIM(COALESCE(t.Identificador, ''))");
-            })
-            ->select('t.*')
-            ->get();
-
-        $total = DesempleoCarteraTemp::where('PolizaDesempleo', $id)->sum('SaldoTotal');
-        $registros_rehabilitados = DesempleoCarteraTemp::where('PolizaDesempleo', $id)->where('Rehabilitado', 1)->get();
+        $poliza_edad_maxima = $this->cargarTempPorIds($state['edad_ids'] ?? []);
+        $nuevos_registros = $this->cargarTempPorIds($state['nuevos_ids'] ?? []);
+        $registros_rehabilitados = $this->cargarTempPorIds($state['rehabilitados_ids'] ?? []);
+        $registros_eliminados = $this->cargarCarteraPorIds($state['eliminados_ids'] ?? []);
+        $total = $state['total_saldo'] ?? DesempleoCarteraTemp::where('PolizaDesempleo', $id)->sum('SaldoTotal');
 
         return view('polizas.desempleo.respuesta_poliza', compact(
             'total',
@@ -1074,6 +1253,19 @@ class DesempleoCarteraController extends Controller
             $lastId = $chunk['last_id'];
         } while (empty($chunk['done']) && ($chunk['processed'] ?? 0) > 0);
 
+        foreach (['edad', 'eliminados', 'nuevos', 'rehabilitados'] as $paso) {
+            $lastId = 0;
+            do {
+                $resumenRequest = new Request([
+                    'paso' => $paso,
+                    'last_id' => $lastId,
+                    'chunk_size' => $data['chunk_size'],
+                ]);
+                $res = $this->validar_poliza_resumen($resumenRequest, $id)->getData(true);
+                $lastId = $res['last_id'] ?? 0;
+            } while (empty($res['done']) && ($res['processed'] ?? 0) > 0);
+        }
+
         return $this->validar_poliza_resultado($id);
     }
 
@@ -1090,6 +1282,47 @@ class DesempleoCarteraController extends Controller
             'mes_anterior' => (int) $mesActual - 1,
             'axo_anterior' => (int) $axoActual,
         ];
+    }
+
+    private function validarCacheKey($id): string
+    {
+        $userId = auth()->id() ?? 'guest';
+        return "desempleo_validar_{$id}_{$userId}";
+    }
+
+    private function cargarTempPorIds(array $ids)
+    {
+        if (empty($ids)) {
+            return collect();
+        }
+
+        $rows = collect();
+        foreach (array_chunk($ids, 1000) as $chunk) {
+            $rows = $rows->merge(
+                DesempleoCarteraTemp::whereIn('Id', $chunk)->get()
+            );
+        }
+
+        return $rows->values();
+    }
+
+    private function cargarCarteraPorIds(array $ids)
+    {
+        if (empty($ids)) {
+            return collect();
+        }
+
+        $rows = collect();
+        foreach (array_chunk($ids, 1000) as $chunk) {
+            $rows = $rows->merge(
+                DesempleoCartera::whereIn('Id', $chunk)->get()
+            );
+        }
+
+        // Mantener unicidad por referencia+identificador como el groupBy original
+        return $rows->unique(function ($item) {
+            return $item->NumeroReferencia . '|' . $item->Identificador;
+        })->values();
     }
 
 

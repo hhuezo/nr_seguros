@@ -181,7 +181,15 @@
             var csrfToken = '{{ csrf_token() }}';
             var urlInit = '{{ url('polizas/desempleo/validar_poliza_init') }}/' + polizaId;
             var urlChunk = '{{ url('polizas/desempleo/validar_poliza_chunk') }}/' + polizaId;
+            var urlResumen = '{{ url('polizas/desempleo/validar_poliza_resumen') }}/' + polizaId;
             var urlResultado = '{{ url('polizas/desempleo/validar_poliza_resultado') }}/' + polizaId;
+
+            var resumenPasos = [
+                { paso: 'edad', label: 'Calculando edad máxima...', base: 70, span: 6 },
+                { paso: 'eliminados', label: 'Detectando eliminados...', base: 76, span: 6 },
+                { paso: 'nuevos', label: 'Detectando nuevos...', base: 82, span: 8 },
+                { paso: 'rehabilitados', label: 'Listando rehabilitados...', base: 90, span: 5 }
+            ];
 
             function setProgress(percent, label, detail) {
                 percent = Math.max(0, Math.min(100, Math.round(percent)));
@@ -210,7 +218,7 @@
                 } else if (xhr.status === 419) {
                     msg = 'La sesión expiró. Recarga la página e intenta de nuevo.';
                 } else if (xhr.status === 504 || xhr.status === 502) {
-                    msg = 'El servidor tardó demasiado. Intenta de nuevo; el proceso por lotes debería evitar el timeout.';
+                    msg = 'El servidor tardó demasiado en un lote. Intenta de nuevo.';
                 }
                 alert(msg);
             }
@@ -218,7 +226,7 @@
             function processChunks(meta, lastId, processed) {
                 var total = meta.total || 1;
                 setProgress(
-                    10 + (75 * processed / total),
+                    5 + (65 * processed / total),
                     'Marcando rehabilitados...',
                     processed + ' de ' + total + ' registros'
                 );
@@ -243,19 +251,8 @@
                         var nextProcessed = processed + (res.processed || 0);
 
                         if (res.done || !res.processed) {
-                            setProgress(90, 'Generando resumen...', 'Calculando edad máxima, nuevos y eliminados');
-                            $.ajax({
-                                url: urlResultado,
-                                method: 'POST',
-                                data: { _token: csrfToken },
-                                success: function(html) {
-                                    setProgress(100, 'Listo', '');
-                                    document.open();
-                                    document.write(html);
-                                    document.close();
-                                },
-                                error: ajaxError
-                            });
+                            setProgress(70, 'Generando resumen...', 'Edad máxima');
+                            processResumen(meta, 0, 0, 0);
                             return;
                         }
 
@@ -265,9 +262,60 @@
                 });
             }
 
+            function processResumen(meta, pasoIndex, lastId, processedInPaso) {
+                var pasoCfg = resumenPasos[pasoIndex];
+                if (!pasoCfg) {
+                    setProgress(98, 'Cargando resumen...', 'Abriendo resultado');
+                    window.location.href = urlResultado;
+                    return;
+                }
+
+                var ratio = meta.total ? Math.min(1, processedInPaso / meta.total) : 0;
+                setProgress(
+                    pasoCfg.base + (pasoCfg.span * ratio),
+                    pasoCfg.label,
+                    (processedInPaso ? processedInPaso + ' procesados' : 'Iniciando...') +
+                        (pasoCfg.paso === 'nuevos' || pasoCfg.paso === 'edad' || pasoCfg.paso === 'eliminados' || pasoCfg.paso === 'rehabilitados'
+                            ? '' : '')
+                );
+
+                $.ajax({
+                    url: urlResumen,
+                    method: 'POST',
+                    data: {
+                        _token: csrfToken,
+                        paso: pasoCfg.paso,
+                        last_id: lastId,
+                        chunk_size: meta.chunk_size
+                    },
+                    success: function(res) {
+                        if (!res.ok) {
+                            hideProgress();
+                            alert(res.message || 'Error al calcular el resumen');
+                            return;
+                        }
+
+                        if (res.done || !res.processed) {
+                            processResumen(meta, pasoIndex + 1, 0, 0);
+                            return;
+                        }
+
+                        var detail = (res.accumulated != null ? res.accumulated + ' encontrados · ' : '') +
+                            'lote ' + res.processed + ' regs';
+                        setProgress(
+                            pasoCfg.base + (pasoCfg.span * Math.min(1, (processedInPaso + res.processed) / (meta.total || 1))),
+                            pasoCfg.label,
+                            detail
+                        );
+                        processResumen(meta, pasoIndex, res.last_id, processedInPaso + res.processed);
+                    },
+                    error: ajaxError
+                });
+            }
+
             $('#btn-validar-poliza').on('click', function() {
                 showProgress();
-                setProgress(5, 'Preparando datos...', 'Actualizando identificadores');
+                setProgress(2, 'Preparando datos...', 'Actualizando identificadores');
 
                 $.ajax({
                     url: urlInit,
@@ -286,7 +334,7 @@
                             return;
                         }
 
-                        setProgress(10, 'Marcando rehabilitados...', '0 de ' + res.total + ' registros');
+                        setProgress(5, 'Marcando rehabilitados...', '0 de ' + res.total + ' registros');
                         processChunks(res, 0, 0);
                     },
                     error: ajaxError

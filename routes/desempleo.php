@@ -36,7 +36,8 @@ Route::middleware(['web'])->group(function () {
     Route::post('polizas/desempleo/validar_poliza/{id}', [DesempleoCarteraController::class, 'validar_poliza']);
     Route::post('polizas/desempleo/validar_poliza_init/{id}', [DesempleoCarteraController::class, 'validar_poliza_init']);
     Route::post('polizas/desempleo/validar_poliza_chunk/{id}', [DesempleoCarteraController::class, 'validar_poliza_chunk']);
-    Route::post('polizas/desempleo/validar_poliza_resultado/{id}', [DesempleoCarteraController::class, 'validar_poliza_resultado']);
+    Route::post('polizas/desempleo/validar_poliza_resumen/{id}', [DesempleoCarteraController::class, 'validar_poliza_resumen']);
+    Route::match(['get', 'post'], 'polizas/desempleo/validar_poliza_resultado/{id}', [DesempleoCarteraController::class, 'validar_poliza_resultado']);
     Route::post('polizas/desempleo/validar_poliza_complementario/{id}', [DesempleoCarteraComController::class, 'validar_poliza']);
 
     Route::post('polizas/desempleo/cancelar_pago', [DesempleoCarteraController::class, 'cancelar_pago']);
