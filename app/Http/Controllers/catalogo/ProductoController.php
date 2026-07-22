@@ -70,6 +70,7 @@ class ProductoController extends Controller
             'Aseguradora' => 'required|exists:aseguradora,Id',
             'NecesidadProteccion' => 'required|exists:necesidad_proteccion,Id',
             'PorcentajeComisionNoDeclarativa' => 'nullable|numeric|min:0|max:100',
+            'CalcularIva' => 'nullable|in:0,1',
         ]);
 
         $producto = new Producto();
@@ -80,6 +81,7 @@ class ProductoController extends Controller
         $producto->PorcentajeComisionNoDeclarativa = $request->PorcentajeComisionNoDeclarativa !== null && $request->PorcentajeComisionNoDeclarativa !== ''
             ? $request->PorcentajeComisionNoDeclarativa
             : null;
+        $producto->CalcularIva = (int) $request->input('CalcularIva', 0);
         $producto->Activo = 1;
         $producto->save();
 
@@ -133,6 +135,7 @@ class ProductoController extends Controller
             'Aseguradora' => 'required|exists:aseguradora,Id',
             'NecesidadProteccion' => 'required|exists:necesidad_proteccion,Id',
             'PorcentajeComisionNoDeclarativa' => 'nullable|numeric|min:0|max:100',
+            'CalcularIva' => 'nullable|in:0,1',
         ]);
 
         $producto = Producto::findOrFail($id);
@@ -143,6 +146,7 @@ class ProductoController extends Controller
         $producto->PorcentajeComisionNoDeclarativa = $request->PorcentajeComisionNoDeclarativa !== null && $request->PorcentajeComisionNoDeclarativa !== ''
             ? $request->PorcentajeComisionNoDeclarativa
             : null;
+        $producto->CalcularIva = (int) $request->input('CalcularIva', 0);
         $producto->update();
         session(['tab1' => '1']);
         alert()->success('El registro ha sido modificado correctamente');

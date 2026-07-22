@@ -27,6 +27,7 @@
         $fechaModificacion = $certificado->FechaModificacion
             ? \Illuminate\Support\Carbon::parse($certificado->FechaModificacion)->format('Y-m-d')
             : now()->format('Y-m-d');
+        $aplicaIvaProducto = (int) ($poliza->producto->CalcularIva ?? 0) === 1;
         $planSumasActual = old('Plan', $planCertificadoActual);
         $coberturasSumasIniciales = collect(old('coberturas', $certificadoCoberturas->toArray()))->values();
         $normalizarCampo = function ($texto) {
@@ -155,6 +156,25 @@
         }
         .cert-sumas-table .coverage-name { min-width: 260px; }
         .cert-sumas-table tfoot th { background: #eef2f7; font-weight: 700; }
+        .cert-tarificacion-label {
+            display: inline-block;
+            margin-top: 4px;
+            padding: 3px 7px;
+            border-radius: 10px;
+            background: #eef2ff;
+            color: #1e3a8a;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .cert-config-warning {
+            display: block;
+            margin-top: 4px;
+            color: #b45309;
+            font-size: 11px;
+        }
+        .cert-row-disabled {
+            background: #fff7ed;
+        }
         .cert-detail-table td { font-size: 12px; vertical-align: top !important; }
         .cert-detail-table th {
             background: #4f93cf;
@@ -1087,7 +1107,20 @@
                 return Number.isFinite(valor) ? valor : 0;
             }
 
-            const limpio = String(valor || '').replace(/[^0-9.\-]/g, '');
+            let texto = String(valor || '').trim();
+
+            if (texto.includes(',') && !texto.includes('.')) {
+                const partes = texto.split(',');
+                const ultimaParte = partes[partes.length - 1] || '';
+
+                if (partes.length === 2 && ultimaParte.length !== 3) {
+                    texto = texto.replace(',', '.');
+                } else {
+                    texto = texto.replace(/,/g, '');
+                }
+            }
+
+            const limpio = texto.replace(/,/g, '').replace(/[^0-9.\-]/g, '');
             const numero = parseFloat(limpio);
             return Number.isFinite(numero) ? numero : 0;
         }
@@ -1203,7 +1236,29 @@
                 return suma * (tasa / 100);
             }
 
-            return tasa > 0 ? (suma * tasa) : primaBase;
+            return tasa > 0 ? (suma * (tasa / 100)) : primaBase;
+        }
+
+        function textoTipoTarificacion(tarificacionNombre) {
+            const tipo = normalizarTextoCalculo(tarificacionNombre);
+
+            if (tipo.includes('sin cobro')) {
+                return 'Sin cobro de prima';
+            }
+
+            if (tipo.includes('millar')) {
+                return 'Tasa por millar';
+            }
+
+            if (tipo.includes('porcentual')) {
+                return 'Tasa porcentual';
+            }
+
+            if (tipo.includes('prima')) {
+                return 'Prima fija';
+            }
+
+            return tarificacionNombre || 'Tarificacion no definida';
         }
 
         function diasProrrataExcel() {
@@ -1239,22 +1294,44 @@
                 const coberturaId = cobertura.Cobertura || '';
                 const tarificacion = cobertura.Tarificacion || '';
                 const tarificacionNombre = cobertura.TarificacionNombre || '';
-                const primaAnual = cobertura.PrimaAnual !== null && cobertura.PrimaAnual !== undefined ? cobertura.PrimaAnual : cobertura.Prima;
-                const row = '<tr>' +
-                    '<td>' + (index + 1) + '</td>' +
-                    '<td>' +
-                        '<input type="hidden" name="coberturas[' + index + '][Cobertura]" value="' + coberturaId + '">' +
+                const tipoTarificacion = normalizarTextoCalculo(tarificacionNombre);
+                const configuradaEnPlan = parseInt(cobertura.ConfiguradaEnPlan ?? 1, 10) === 1;
+                const sinCobro = tipoTarificacion.includes('sin cobro');
+                const configurablePorTarificacion = tipoTarificacion.includes('porcentual') ||
+                    tipoTarificacion.includes('millar') ||
+                    tipoTarificacion.includes('prima');
+                const capturaPermitida = configuradaEnPlan || configurablePorTarificacion;
+                const filaBloqueada = !capturaPermitida || sinCobro;
+                const camposBloqueados = filaBloqueada ? 'readonly' : '';
+                const camposNoConfigurados = (!capturaPermitida || sinCobro) ? 'disabled' : camposBloqueados;
+                const camposCalculados = (!capturaPermitida || sinCobro) ? 'disabled' : 'readonly';
+                const metadataInputs = capturaPermitida && !sinCobro
+                    ? '<input type="hidden" name="coberturas[' + index + '][Cobertura]" value="' + coberturaId + '">' +
                         '<input type="hidden" name="coberturas[' + index + '][Tarificacion]" value="' + escapeAttr(tarificacion) + '">' +
                         '<input type="hidden" name="coberturas[' + index + '][TarificacionNombre]" value="' + escapeAttr(tarificacionNombre) + '">' +
-                        '<input type="hidden" name="coberturas[' + index + '][Nombre]" value="' + escapeAttr(nombre) + '">' +
+                        '<input type="hidden" name="coberturas[' + index + '][Nombre]" value="' + escapeAttr(nombre) + '">'
+                    : '';
+                const sumaAsegurada = capturaPermitida ? cobertura.SumaAsegurada : 0;
+                const porcentajeSuma = capturaPermitida ? cobertura.PorcentajeSuma : 0;
+                const tasa = capturaPermitida ? cobertura.Tasa : 0;
+                const diasProrrata = capturaPermitida ? cobertura.DiasProrrata : 0;
+                const primaAnual = capturaPermitida
+                    ? (cobertura.PrimaAnual !== null && cobertura.PrimaAnual !== undefined ? cobertura.PrimaAnual : cobertura.Prima)
+                    : 0;
+                const prima = capturaPermitida ? cobertura.Prima : 0;
+                const row = '<tr' + (filaBloqueada ? ' class="cert-row-disabled"' : '') + '>' +
+                    '<td>' + (index + 1) + '</td>' +
+                    '<td>' +
+                        metadataInputs +
                         escapeAttr(nombre) +
+                        '<br><span class="cert-tarificacion-label">' + escapeAttr(textoTipoTarificacion(tarificacionNombre)) + '</span>' +
                     '</td>' +
-                    '<td>' + inputTabla('coberturas', index, 'SumaAsegurada', cobertura.SumaAsegurada, 2, 'js-suma-asegurada', '', true) + '</td>' +
-                    '<td>' + inputTabla('coberturas', index, 'PorcentajeSuma', cobertura.PorcentajeSuma, 6) + '</td>' +
-                    '<td>' + inputTabla('coberturas', index, 'Tasa', cobertura.Tasa, 6, 'js-tasa') + '</td>' +
-                    '<td>' + inputTabla('coberturas', index, 'DiasProrrata', cobertura.DiasProrrata, 0, 'js-dias-prorrata', 'readonly') + '</td>' +
-                    '<td>' + inputTabla('coberturas', index, 'PrimaAnual', primaAnual, 2, 'js-prima-anual', 'readonly data-base-prima-anual="' + numeroDecimal(primaAnual, 2) + '"', true) + '</td>' +
-                    '<td>' + inputTabla('coberturas', index, 'Prima', cobertura.Prima, 2, 'js-prima', '', true) + '</td>' +
+                    '<td>' + inputTabla('coberturas', index, 'SumaAsegurada', sumaAsegurada, 2, 'js-suma-asegurada', camposNoConfigurados, true) + '</td>' +
+                    '<td>' + inputTabla('coberturas', index, 'PorcentajeSuma', porcentajeSuma, 6, '', camposNoConfigurados) + '</td>' +
+                    '<td>' + inputTabla('coberturas', index, 'Tasa', tasa, 6, 'js-tasa', camposNoConfigurados) + '</td>' +
+                    '<td>' + inputTabla('coberturas', index, 'DiasProrrata', diasProrrata, 0, 'js-dias-prorrata', camposCalculados) + '</td>' +
+                    '<td>' + inputTabla('coberturas', index, 'PrimaAnual', primaAnual, 2, 'js-prima-anual', camposCalculados + ' data-base-prima-anual="' + numeroDecimal(primaAnual, 2) + '"', true) + '</td>' +
+                    '<td>' + inputTabla('coberturas', index, 'Prima', prima, 2, 'js-prima', camposNoConfigurados, true) + '</td>' +
                     '</tr>';
                 tbody.append(row);
             });
@@ -1270,9 +1347,14 @@
 
         function recalcularProrrataFila(row, forzarPrima = false) {
             const fila = $(row);
+
+            if (fila.find('input[name$="[Cobertura]"]').length === 0) {
+                return;
+            }
+
             const dias = diasProrrataExcel();
             const suma = parseCurrency(fila.find('.js-suma-asegurada').val()) || 0;
-            const tasa = parseFloat(fila.find('.js-tasa').val()) || 0;
+            const tasa = parseCurrency(fila.find('.js-tasa').val()) || 0;
             const primaAnualInput = fila.find('.js-prima-anual');
             const primaInput = fila.find('.js-prima');
             const tarificacionNombre = fila.find('input[name$="[TarificacionNombre]"]').val() || '';
@@ -1323,7 +1405,7 @@
             const gastosFraccionamiento = parseCurrency($('input[name="GastosFraccionamiento"]').val()) || 0;
             const gastosBomberos = parseCurrency($('input[name="GastosBomberos"]').val()) || 0;
             const otrosGastos = parseCurrency($('input[name="OtrosGastos"]').val()) || 0;
-            const aplicaIva = @json(strtoupper((string) ($poliza->IvaIncluido ?? 'N')) === 'S');
+            const aplicaIva = @json($aplicaIvaProducto);
 
             const valorDescuentoRentabilidad = primaTotal * (porcentajeRentabilidad / 100);
             const baseBuenaExperiencia = Math.max(primaTotal - valorDescuentoRentabilidad, 0);
@@ -1331,7 +1413,7 @@
             const baseOtrosDescuentos = Math.max(baseBuenaExperiencia - valorDescuentoBuenaExperiencia, 0);
             const valorOtrosDescuentos = baseOtrosDescuentos * (porcentajeOtrosDescuentos / 100);
             const primaNeta = Math.max(baseOtrosDescuentos - valorOtrosDescuentos, 0);
-            const baseImponible = Math.max(primaNeta - primaExenta, 0);
+            const baseImponible = primaNeta;
             const impuestos = aplicaIva ? (baseImponible * 0.13) : 0;
             const totalCertificado = primaNeta + gastosEmision + gastosFraccionamiento + gastosBomberos + otrosGastos + impuestos;
 

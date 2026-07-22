@@ -13,7 +13,9 @@
         $planTitulo = $poliza_seguro->plan->Nombre ?? '';
         $totalCertificados = $poliza_seguro->certificados->count();
         $totalValorAsegurado = (float) $poliza_seguro->certificados->sum('ValorAsegurado');
-        $totalPrimaNeta = (float) $poliza_seguro->certificados->sum('PrimaNeta');
+        $totalPrimaNeta = (float) $poliza_seguro->certificados->sum(function ($certificado) {
+            return $certificado->TotalCertificado ?? $certificado->PrimaNeta ?? 0;
+        });
         $resumenSumaAsegurada = old('SumaAsegurada', $totalCertificados > 0 ? $totalValorAsegurado : $poliza_seguro->SumaAsegurada);
         $resumenPrimaNetaAnual = old('PrimaNetaAnual', $totalCertificados > 0 ? $totalPrimaNeta : $poliza_seguro->PrimaNetaAnual);
         $vigenciaHastaCarbon = $poliza_seguro->VigenciaHasta ? \Illuminate\Support\Carbon::parse($poliza_seguro->VigenciaHasta) : null;
@@ -509,7 +511,9 @@
                 @php
                     $totalCertificados = $poliza_seguro->certificados->count();
                     $totalValorAsegurado = $poliza_seguro->certificados->sum('ValorAsegurado');
-                    $totalPrimaNeta = $poliza_seguro->certificados->sum('PrimaNeta');
+                    $totalPrimaNeta = $poliza_seguro->certificados->sum(function ($certificado) {
+                        return $certificado->TotalCertificado ?? $certificado->PrimaNeta ?? 0;
+                    });
                 @endphp
                 <table id="tabla-certificados" class="table table-striped table-bordered" style="width:100%;">
                     <thead>
@@ -528,6 +532,7 @@
                     <tbody>
                         @foreach ($poliza_seguro->certificados as $certificado)
                             @php
+                                $primaNetaSnapshot = $certificado->TotalCertificado ?? $certificado->PrimaNeta;
                                 $cantidadDependientes = $certificado->dependientes->count();
                                 $textoDependientes = $certificado->dependientes->map(function ($dependiente) {
                                     $datos = json_decode($dependiente->DatosJson ?: '[]', true);
@@ -557,7 +562,7 @@
                                 <td>{{ $certificado->VigenciaDesde }}</td>
                                 <td>{{ $certificado->VigenciaHasta }}</td>
                                 <td class="cert-money-cell">{{ $certificado->ValorAsegurado !== null ? '$' . number_format($certificado->ValorAsegurado, 2, '.', ',') : '' }}</td>
-                                <td class="cert-money-cell">{{ $certificado->PrimaNeta !== null ? '$' . number_format($certificado->PrimaNeta, 2, '.', ',') : '' }}</td>
+                                <td class="cert-money-cell">{{ $primaNetaSnapshot !== null ? '$' . number_format($primaNetaSnapshot, 2, '.', ',') : '' }}</td>
                                 <td>{{ $certificado->Estado }}</td>
                                 <td style="text-align:center;">
                                     <div class="btn-inline-group">

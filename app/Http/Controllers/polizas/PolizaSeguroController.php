@@ -135,7 +135,7 @@ class PolizaSeguroController extends Controller
         $totales = PolizaSeguroCertificado::where('PolizaSeguroId', $poliza->Id)
             ->where('Activo', 1)
             ->selectRaw('COALESCE(SUM(ValorAsegurado), 0) as TotalSumaAsegurada')
-            ->selectRaw('COALESCE(SUM(PrimaNeta), 0) as TotalPrimaNeta')
+            ->selectRaw('COALESCE(SUM(COALESCE(TotalCertificado, PrimaNeta)), 0) as TotalPrimaNeta')
             ->first();
 
         $poliza->SumaAsegurada = $totales->TotalSumaAsegurada ?? 0;
@@ -365,6 +365,37 @@ class PolizaSeguroController extends Controller
         return Carbon::parse($desde)->diffInDays(Carbon::parse($hasta));
     }
 
+    private function normalizarTextoCalculoPrima(?string $valor): string
+    {
+        $texto = strtolower(trim((string) $valor));
+        $normalizado = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $texto);
+
+        return $normalizado !== false ? $normalizado : $texto;
+    }
+
+    private function calcularPrimaAnualCoberturaCertificado(float $suma, float $tasa, float $primaBase, ?string $tarificacionNombre): float
+    {
+        $tipo = $this->normalizarTextoCalculoPrima($tarificacionNombre);
+
+        if (str_contains($tipo, 'sin cobro')) {
+            return 0;
+        }
+
+        if (str_contains($tipo, 'prima')) {
+            return $primaBase;
+        }
+
+        if (str_contains($tipo, 'millar')) {
+            return $suma * ($tasa / 1000);
+        }
+
+        if (str_contains($tipo, 'porcentual')) {
+            return $suma * ($tasa / 100);
+        }
+
+        return $tasa > 0 ? $suma * ($tasa / 100) : $primaBase;
+    }
+
     private function calcularDetalleCobroCertificado(
         $primaTotal,
         $porcentajeDescuentoRentabilidad,
@@ -396,7 +427,7 @@ class PolizaSeguroController extends Controller
 
         $valorOtrosDescuentos = round($baseOtrosDescuentos * ($porcentajeOtrosDescuentos / 100), 2);
         $primaNeta = round(max($baseOtrosDescuentos - $valorOtrosDescuentos, 0), 2);
-        $baseImponible = max($primaNeta - $primaExenta, 0);
+        $baseImponible = $primaNeta;
         $impuestos = $aplicaIva ? round($baseImponible * 0.13, 2) : 0.0;
         $totalGastos = round($gastosEmision + $gastosFraccionamiento + $gastosBomberos + $otrosGastos, 2);
         $totalCertificado = round($primaNeta + $totalGastos + $impuestos, 2);
@@ -414,6 +445,19 @@ class PolizaSeguroController extends Controller
     private function normalizarValorSn($valor): string
     {
         return strtoupper((string) $valor) === 'S' ? 'S' : 'N';
+    }
+
+    private function productoCalculaIvaCertificado(?PolizaSeguro $poliza): bool
+    {
+        if (!$poliza) {
+            return false;
+        }
+
+        if (!$poliza->relationLoaded('producto')) {
+            $poliza->load('producto');
+        }
+
+        return (int) ($poliza->producto->CalcularIva ?? 0) === 1;
     }
 
     private function tarifaPlanTexto(?Plan $plan): ?string
@@ -608,7 +652,7 @@ class PolizaSeguroController extends Controller
     private function asignarDatosCertificado(PolizaSeguroCertificado $certificado, Request $request, ?PolizaSeguro $poliza = null): void
     {
         $poliza = $poliza ?: $certificado->poliza;
-        $aplicaIva = $poliza && $this->normalizarValorSn($poliza->IvaIncluido) === 'S';
+        $aplicaIva = $this->productoCalculaIvaCertificado($poliza);
         $certificado->CertificadoAseguradora = $request->CertificadoAseguradora;
         $certificado->CodAsegurado = $request->CodAsegurado;
         $certificado->Asegurado = $request->Asegurado;
@@ -664,14 +708,18 @@ class PolizaSeguroController extends Controller
             ->orderBy('Nombre', 'asc')
             ->get();
 
-        $planCoberturasCatalogo = DB::table('plan_cobertura_detalle as detalle')
+        $planIdsCertificado = $planesCertificado->pluck('Id');
+        $planesCertificadoPorId = $planesCertificado->keyBy('Id');
+
+        $planCoberturasConfiguradas = DB::table('plan_cobertura_detalle as detalle')
             ->leftJoin('cobertura as cobertura', 'cobertura.Id', '=', 'detalle.Cobertura')
             ->leftJoin('cobertura_tarificacion as tarificacion', 'tarificacion.Id', '=', 'cobertura.Tarificacion')
-            ->whereIn('detalle.Plan', $planesCertificado->pluck('Id'))
+            ->whereIn('detalle.Plan', $planIdsCertificado)
             ->where('detalle.Activo', 1)
             ->select([
                 'detalle.Plan',
                 'detalle.Cobertura',
+                DB::raw('1 as ConfiguradaEnPlan'),
                 DB::raw('COALESCE(detalle.Tarificacion, cobertura.Tarificacion) as Tarificacion'),
                 DB::raw('COALESCE(detalle.TarificacionNombre, tarificacion.Nombre) as TarificacionNombre'),
                 'detalle.CoberturaPrincipal',
@@ -681,34 +729,81 @@ class PolizaSeguroController extends Controller
                 'detalle.Prima',
             ])
             ->orderBy('detalle.Plan')
+            ->orderBy('detalle.Cobertura')
+            ->get()
+            ->groupBy('Plan');
+
+        $coberturasConfiguradasPorPlan = $planCoberturasConfiguradas
+            ->map(function ($detalles) {
+                return $detalles->pluck('Cobertura')->filter()->unique()->values();
+            });
+
+        $coberturasDisponiblesProducto = DB::table('cobertura as cobertura')
+            ->leftJoin('cobertura_tarificacion as tarificacion', 'tarificacion.Id', '=', 'cobertura.Tarificacion')
+            ->whereIn('cobertura.Producto', $planesCertificado->pluck('Producto')->unique()->values())
+            ->where('cobertura.Activo', 1)
+            ->select([
+                'cobertura.Producto',
+                'cobertura.Id as Cobertura',
+                DB::raw('0 as ConfiguradaEnPlan'),
+                'cobertura.Tarificacion',
+                'tarificacion.Nombre as TarificacionNombre',
+                DB::raw('0 as CoberturaPrincipal'),
+                'cobertura.Nombre',
+                DB::raw('0 as SumaAsegurada'),
+                DB::raw('0 as Tasa'),
+                DB::raw('0 as Prima'),
+            ])
             ->orderBy('cobertura.Nombre')
             ->get()
-            ->groupBy('Plan')
-            ->map(function ($detalles) {
-                return $detalles->map(function ($detalle) {
-                    return [
-                        'Cobertura' => $detalle->Cobertura,
-                        'Tarificacion' => $detalle->Tarificacion,
-                        'TarificacionNombre' => $detalle->TarificacionNombre,
-                        'CoberturaPrincipal' => (int) ($detalle->CoberturaPrincipal ?? 0),
-                        'Nombre' => $detalle->Nombre ?? '',
-                        'SumaAsegurada' => $detalle->SumaAsegurada,
-                        'PorcentajeSuma' => null,
-                        'Tasa' => $detalle->Tasa,
-                        'DiasProrrata' => null,
-                        'PrimaAnual' => $detalle->Prima,
-                        'Prima' => null,
-                    ];
-                })->values();
-            });
+            ->groupBy('Producto');
+
+        $mapearCoberturaCatalogo = function ($detalle) {
+            return [
+                'Cobertura' => $detalle->Cobertura,
+                'Tarificacion' => $detalle->Tarificacion,
+                'TarificacionNombre' => $detalle->TarificacionNombre,
+                'ConfiguradaEnPlan' => (int) ($detalle->ConfiguradaEnPlan ?? 0),
+                'CoberturaPrincipal' => (int) ($detalle->CoberturaPrincipal ?? 0),
+                'Nombre' => $detalle->Nombre ?? '',
+                'SumaAsegurada' => $detalle->SumaAsegurada,
+                'PorcentajeSuma' => null,
+                'Tasa' => $detalle->Tasa,
+                'DiasProrrata' => null,
+                'PrimaAnual' => $detalle->Prima,
+                'Prima' => null,
+            ];
+        };
+
+        $planCoberturasCatalogo = $planesCertificadoPorId->mapWithKeys(function ($plan, $planId) use (
+            $planCoberturasConfiguradas,
+            $coberturasConfiguradasPorPlan,
+            $coberturasDisponiblesProducto,
+            $mapearCoberturaCatalogo
+        ) {
+            $configuradas = $planCoberturasConfiguradas->get($planId, collect());
+            $configuradasIds = $coberturasConfiguradasPorPlan->get($planId, collect());
+
+            $disponibles = $coberturasDisponiblesProducto
+                ->get($plan->Producto, collect())
+                ->reject(function ($cobertura) use ($configuradasIds) {
+                    return $configuradasIds->contains($cobertura->Cobertura);
+                });
+
+            return [
+                $planId => $configuradas
+                    ->concat($disponibles)
+                    ->map($mapearCoberturaCatalogo)
+                    ->values(),
+            ];
+        });
 
         $planCertificadoActual = $certificado->Plan ?: $poliza->Planes;
         $coberturasGuardadas = $certificado->exists
             ? $certificado->coberturasCertificado
             : collect();
 
-        $certificadoCoberturas = $coberturasGuardadas->count() > 0
-            ? $coberturasGuardadas->map(function ($detalle) {
+        $mapearCoberturaGuardada = function ($detalle) {
                 $tarificacionCatalogo = optional(optional($detalle->cobertura)->tarificacion);
 
                 return [
@@ -723,8 +818,35 @@ class PolizaSeguroController extends Controller
                     'PrimaAnual' => $detalle->PrimaAnual,
                     'Prima' => $detalle->Prima,
                 ];
-            })->values()
-            : collect($planCoberturasCatalogo->get($planCertificadoActual, []));
+            };
+
+        $coberturasGuardadasPorCobertura = $coberturasGuardadas->keyBy('Cobertura');
+        $coberturasCatalogoActual = collect($planCoberturasCatalogo->get($planCertificadoActual, []));
+
+        $certificadoCoberturas = $coberturasCatalogoActual->map(function ($coberturaCatalogo) use ($coberturasGuardadasPorCobertura, $mapearCoberturaGuardada) {
+            $coberturaGuardada = $coberturasGuardadasPorCobertura->get($coberturaCatalogo['Cobertura']);
+            $sinCobro = str_contains(
+                $this->normalizarTextoCalculoPrima($coberturaCatalogo['TarificacionNombre'] ?? null),
+                'sin cobro'
+            );
+
+            if (!$coberturaGuardada || $sinCobro) {
+                return $coberturaCatalogo;
+            }
+
+            return array_merge($coberturaCatalogo, $mapearCoberturaGuardada($coberturaGuardada));
+        });
+
+        $coberturasFueraCatalogo = $coberturasGuardadas
+            ->reject(function ($detalle) use ($coberturasCatalogoActual) {
+                return $coberturasCatalogoActual->pluck('Cobertura')->contains($detalle->Cobertura);
+            })
+            ->map($mapearCoberturaGuardada)
+            ->values();
+
+        $certificadoCoberturas = $certificadoCoberturas
+            ->concat($coberturasFueraCatalogo)
+            ->values();
 
         return compact(
             'planesCertificado',
@@ -752,7 +874,20 @@ class PolizaSeguroController extends Controller
 
     public function index()
     {
-        $polizas = PolizaSeguro::get();
+        $polizas = PolizaSeguro::with([
+            'clientes',
+            'forma_pago',
+            'producto',
+            'plan',
+            'estado_polizas',
+        ])
+            ->where(function ($query) {
+                $query->where('Activo', 1)
+                    ->orWhereNull('Activo');
+            })
+            ->orderByDesc('Id')
+            ->get();
+
         return view('polizas.seguro.index', compact('polizas'));
     }
 
@@ -956,7 +1091,7 @@ class PolizaSeguroController extends Controller
         if ($request->has('ValorDeducible')) {
             $poliza_seguro->ValorDeducible = $request->ValorDeducible;
         }
-        $poliza_seguro->Activo = $request->Activo;
+        $poliza_seguro->Activo = $request->input('Activo', 1);
         $poliza_seguro->Usuario = $request->Usuario;
         $poliza_seguro->save();
 
@@ -1268,7 +1403,7 @@ class PolizaSeguroController extends Controller
 
     public function certificado_store($id, Request $request)
     {
-        $poliza = PolizaSeguro::findOrFail($id);
+        $poliza = PolizaSeguro::with('producto')->findOrFail($id);
         $numeroCertificado = $this->siguienteNumeroCertificado($poliza->Id);
         $this->normalizarCamposMayuscula($request, [
             'CertificadoAseguradora',
@@ -1390,7 +1525,7 @@ class PolizaSeguroController extends Controller
 
     public function certificado_sumas_save($id, Request $request)
     {
-        $certificado = PolizaSeguroCertificado::with('poliza')->findOrFail($id);
+        $certificado = PolizaSeguroCertificado::with('poliza.producto')->findOrFail($id);
 
         // Coberturas se guarda desde un form independiente; si no viaja Plan, usamos el plan vigente del certificado.
         if (!$request->filled('Plan')) {
@@ -1405,7 +1540,7 @@ class PolizaSeguroController extends Controller
             'coberturas.*.Cobertura' => 'nullable|integer|exists:cobertura,Id',
             'coberturas.*.Tarificacion' => 'nullable|integer|exists:cobertura_tarificacion,Id',
             'coberturas.*.TarificacionNombre' => 'nullable|string|max:100',
-            'coberturas.*.Nombre' => 'required_with:coberturas|string|max:250',
+            'coberturas.*.Nombre' => 'nullable|string|max:250',
             'coberturas.*.SumaAsegurada' => 'nullable|numeric|min:0',
             'coberturas.*.PorcentajeSuma' => 'nullable|numeric',
             'coberturas.*.Tasa' => 'nullable|numeric',
@@ -1432,6 +1567,38 @@ class PolizaSeguroController extends Controller
                 return !empty($detalle['Nombre']) || !empty($detalle['Cobertura']);
             })
             ->values();
+        $detallesPlanPorCobertura = DB::table('plan_cobertura_detalle')
+            ->where('Plan', $request->Plan)
+            ->where('Activo', 1)
+            ->get()
+            ->keyBy('Cobertura');
+        $productoPlan = Plan::where('Id', $request->Plan)->value('Producto');
+        $coberturasProductoPorId = DB::table('cobertura as cobertura')
+            ->leftJoin('cobertura_tarificacion as tarificacion', 'tarificacion.Id', '=', 'cobertura.Tarificacion')
+            ->where('cobertura.Producto', $productoPlan)
+            ->where('cobertura.Activo', 1)
+            ->select('cobertura.Id', 'cobertura.Tarificacion', 'tarificacion.Nombre as TarificacionNombre')
+            ->get()
+            ->keyBy('Id');
+        $coberturas = $coberturas
+            ->filter(function ($detalle) use ($detallesPlanPorCobertura, $coberturasProductoPorId) {
+                $coberturaId = $detalle['Cobertura'] ?? null;
+
+                if ($detallesPlanPorCobertura->has($coberturaId)) {
+                    return true;
+                }
+
+                $coberturaProducto = $coberturasProductoPorId->get($coberturaId);
+                if (!$coberturaProducto) {
+                    return false;
+                }
+
+                return !str_contains(
+                    $this->normalizarTextoCalculoPrima($coberturaProducto->TarificacionNombre),
+                    'sin cobro'
+                );
+            })
+            ->values();
         $tarificacionesPorCobertura = DB::table('cobertura as cobertura')
             ->leftJoin('cobertura_tarificacion as tarificacion', 'tarificacion.Id', '=', 'cobertura.Tarificacion')
             ->whereIn('cobertura.Id', $coberturas->pluck('Cobertura')->filter()->unique()->values())
@@ -1439,29 +1606,54 @@ class PolizaSeguroController extends Controller
             ->get()
             ->keyBy('Id');
 
-        DB::transaction(function () use ($certificado, $request, $coberturas, $tarificacionesPorCobertura, &$totalSumaAsegurada, &$totalPrima) {
+        DB::transaction(function () use ($certificado, $request, $coberturas, $tarificacionesPorCobertura, $detallesPlanPorCobertura, $coberturasProductoPorId, &$totalSumaAsegurada, &$totalPrima) {
             PolizaSeguroCertificadoCobertura::where('PolizaSeguroCertificadoId', $certificado->Id)
                 ->where('Activo', 1)
                 ->update(['Activo' => 0]);
 
             foreach ($coberturas as $detalle) {
                 $sumaAsegurada = (float) ($detalle['SumaAsegurada'] ?? 0);
+                $tasa = (float) ($detalle['Tasa'] ?? 0);
+                $diasProrrata = (int) ($detalle['DiasProrrata'] ?? 0);
+                $primaAnualBase = (float) ($detalle['PrimaAnual'] ?? 0);
                 $prima = (float) ($detalle['Prima'] ?? 0);
                 $tarificacion = $tarificacionesPorCobertura->get($detalle['Cobertura'] ?? null);
+                $detallePlan = $detallesPlanPorCobertura->get($detalle['Cobertura'] ?? null);
+                $coberturaProducto = $coberturasProductoPorId->get($detalle['Cobertura'] ?? null);
+                $tarificacionNombre = $detallePlan->TarificacionNombre ?? $tarificacion->TarificacionNombre ?? $coberturaProducto->TarificacionNombre ?? $detalle['TarificacionNombre'] ?? null;
+                $primaAnualCalculada = $this->calcularPrimaAnualCoberturaCertificado(
+                    $sumaAsegurada,
+                    $tasa,
+                    $primaAnualBase,
+                    $tarificacionNombre
+                );
+
+                if ($primaAnualCalculada > 0) {
+                    $primaAnualBase = $primaAnualCalculada;
+                }
+
+                if ($prima <= 0 && $primaAnualBase > 0) {
+                    $diasCalculo = $diasProrrata > 0
+                        ? $diasProrrata
+                        : ($this->calcularDiasCertificado($certificado->VigenciaDesde, $certificado->VigenciaHasta) ?? 0);
+                    $prima = round(($primaAnualBase / 365) * $diasCalculo, 2);
+                    $diasProrrata = $diasCalculo;
+                }
+
                 $totalSumaAsegurada += $sumaAsegurada;
                 $totalPrima += $prima;
 
                 PolizaSeguroCertificadoCobertura::create([
                     'PolizaSeguroCertificadoId' => $certificado->Id,
                     'Cobertura' => $detalle['Cobertura'] ?? null,
-                    'Tarificacion' => $tarificacion->Tarificacion ?? $detalle['Tarificacion'] ?? null,
-                    'TarificacionNombre' => $tarificacion->TarificacionNombre ?? $detalle['TarificacionNombre'] ?? null,
+                    'Tarificacion' => $detallePlan->Tarificacion ?? $tarificacion->Tarificacion ?? $coberturaProducto->Tarificacion ?? $detalle['Tarificacion'] ?? null,
+                    'TarificacionNombre' => $tarificacionNombre,
                     'Nombre' => $detalle['Nombre'] ?? '',
                     'SumaAsegurada' => $sumaAsegurada,
                     'PorcentajeSuma' => $detalle['PorcentajeSuma'] ?? null,
-                    'Tasa' => $detalle['Tasa'] ?? null,
-                    'DiasProrrata' => $detalle['DiasProrrata'] ?? null,
-                    'PrimaAnual' => $detalle['PrimaAnual'] ?? null,
+                    'Tasa' => $tasa,
+                    'DiasProrrata' => $diasProrrata ?: null,
+                    'PrimaAnual' => $primaAnualBase,
                     'Prima' => $prima,
                     'Activo' => 1,
                 ]);
@@ -1480,7 +1672,7 @@ class PolizaSeguroController extends Controller
                 $certificado->GastosFraccionamiento,
                 $certificado->GastosBomberos,
                 $certificado->OtrosGastos,
-                $this->normalizarValorSn($certificado->poliza->IvaIncluido) === 'S'
+                $this->productoCalculaIvaCertificado($certificado->poliza)
             );
             $certificado->ValorDescuento = $detalleCobro['ValorDescuento'];
             $certificado->ValorDescuentoBuenaExperiencia = $detalleCobro['ValorDescuentoBuenaExperiencia'];
@@ -1817,6 +2009,15 @@ class PolizaSeguroController extends Controller
 
     public function destroy($id)
     {
-        //
+        abort_unless(auth()->user()->can('seguro delete'), 403);
+
+        $poliza = PolizaSeguro::where(function ($query) {
+            $query->where('Activo', 1)
+                ->orWhereNull('Activo');
+        })->findOrFail($id);
+        $poliza->Activo = 0;
+        $poliza->save();
+
+        return redirect('poliza/seguro')->with('success', 'Poliza eliminada correctamente');
     }
 }

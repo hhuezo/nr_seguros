@@ -10,7 +10,7 @@ class Producto extends Model
     use HasFactory;
     protected $table = 'producto';
     protected $primaryKey = 'Id'; // Especificamos la clave primaria
-    protected $fillable = ['Nombre', 'Aseguradora', 'NecesidadProteccion', 'Descripcion','PorcentajeComisionNoDeclarativa','PermiteDependientesCertificado','Activo'];
+    protected $fillable = ['Nombre', 'Aseguradora', 'NecesidadProteccion', 'Descripcion','PorcentajeComisionNoDeclarativa','CalcularIva','PermiteDependientesCertificado','Activo'];
     public $timestamps = false;
 
     public function aseguradoras()

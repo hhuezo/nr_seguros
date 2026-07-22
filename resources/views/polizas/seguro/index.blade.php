@@ -48,9 +48,15 @@
                                 <!-- Opciones -->
                                 <td align="center">
                                     @can('seguro read')
-                                      <a href="{{ url('poliza/seguro') }}/{{ $poliza->Id }}"
-                                            class="on-default edit-row" title="Ver">
-                                            <i class="fa fa-eye fa-lg"></i>
+                                        <a href="{{ url('poliza/seguro') }}/{{ $poliza->Id }}"
+                                            class="btn btn-sm btn-info" title="Ver">
+                                            <i class="fa fa-eye"></i>
+                                        </a>
+                                    @endcan
+                                    @can('seguro delete')
+                                        <a href="" data-target="#modal-delete-{{ $poliza->Id }}" data-toggle="modal"
+                                            class="btn btn-sm btn-danger" title="Eliminar">
+                                            <i class="fa fa-trash"></i>
                                         </a>
                                     @endcan
                                    {{-- @if ($poliza->Configuracion == 0)
@@ -81,6 +87,33 @@
 
                                 </td>
                             </tr>
+                            @can('seguro delete')
+                                <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
+                                    id="modal-delete-{{ $poliza->Id }}">
+                                    <form method="POST" action="{{ route('seguro.destroy', $poliza->Id) }}">
+                                        @method('delete')
+                                        @csrf
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">×</span>
+                                                    </button>
+                                                    <h4 class="modal-title">Eliminar poliza</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>Confirme si desea eliminar la poliza {{ $poliza->NumeroPoliza }}.</p>
+                                                    <p>Esta accion no podrá reestablecerse.</p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                                    <button type="submit" class="btn btn-danger">Confirmar</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            @endcan
                         @endforeach
                     </tbody>
                 </table>
@@ -88,4 +121,13 @@
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function() {
+            $('#datatable').DataTable({
+                pageLength: 10,
+                ordering: false
+            });
+        });
+    </script>
+    @include('sweetalert::alert')
 @endsection

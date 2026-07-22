@@ -60,7 +60,7 @@
                                         </div>
                                     </div>
                                     <div class="row" style="padding-top: 15px!important;">
-                                        <div class="col-sm-6">
+                                        <div class="col-sm-4">
                                             <label class="form-label">Ramo</label>
                                             <select name="NecesidadProteccion" class="form-control select2" style="width: 100%">
                                                 @foreach ($ramos as $obj)
@@ -68,7 +68,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-sm-6">
+                                        <div class="col-sm-4">
                                             <label class="form-label">% Comisión NR (No Declarativas)</label>
                                             <div class="input-group">
                                                 <input class="form-control text-right" name="PorcentajeComisionNoDeclarativa" type="number" min="0" max="100"
@@ -76,6 +76,14 @@
                                                 <span class="input-group-addon">%</span>
                                             </div>
                                             <small class="text-muted">Tasa de comisión propia del producto.</small>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="form-label">Calcular IVA</label>
+                                            <select name="CalcularIva" class="form-control" required>
+                                                <option value="0" {{ old('CalcularIva', $producto->CalcularIva ?? 0) == 0 ? 'selected' : '' }}>No</option>
+                                                <option value="1" {{ old('CalcularIva', $producto->CalcularIva ?? 0) == 1 ? 'selected' : '' }}>Si</option>
+                                            </select>
+                                            <small class="text-muted">Aplica IVA al total de prima del producto.</small>
                                         </div>
                                     </div>
                                     <br>
